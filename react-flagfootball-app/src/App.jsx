@@ -4,6 +4,7 @@ import { ConfigProvider, theme } from 'antd';
 import { PocketProvider, usePocket } from './contexts/PocketContext';
 import { TrainingProvider } from './contexts/TrainingContext';
 import { AnalyticsProvider } from './contexts/AnalyticsContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import QueryProvider from './providers/QueryProvider';
 import { useOnlineStatus } from './hooks';
 import useAppStore from './stores/useAppStore';
@@ -176,11 +177,13 @@ const AppContent = () => {
 const App = () => {
   return (
     <ErrorBoundary>
-      <QueryProvider>
-        <PocketProvider>
-          <AppContent />
-        </PocketProvider>
-      </QueryProvider>
+      <ThemeProvider>
+        <QueryProvider>
+          <PocketProvider>
+            <AppContent />
+          </PocketProvider>
+        </QueryProvider>
+      </ThemeProvider>
     </ErrorBoundary>
   );
 };

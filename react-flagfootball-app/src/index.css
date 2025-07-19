@@ -2,44 +2,69 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Unified Design System Variables */
+/* Radix UI Theme System */
 :root {
-  /* Primary brand colors */
-  --primary-50: #eff6ff;
-  --primary-100: #dbeafe;
-  --primary-200: #bfdbfe;
-  --primary-300: #93c5fd;
-  --primary-400: #60a5fa;
-  --primary-500: #3b82f6;
-  --primary-600: #2563eb;
-  --primary-700: #1d4ed8;
-  --primary-800: #1e40af;
-  --primary-900: #1e3a8a;
+  /* Light Theme (Default) */
+  --background: #ffffff;
+  --foreground: #0f172a;
+  
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+  
+  --primary: #2563eb;
+  --primary-foreground: #f8fafc;
+  
+  --secondary: #f1f5f9;
+  --secondary-foreground: #0f172a;
+  
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  
+  --accent: #f1f5f9;
+  --accent-foreground: #0f172a;
+  
+  --destructive: #ef4444;
+  --destructive-foreground: #f8fafc;
+  
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: #2563eb;
+  
+  --radius: 0.5rem;
+}
 
-  /* Gradient backgrounds */
-  --bg-gradient-start: #111827;
-  --bg-gradient-middle: #1e40af;
-  --bg-gradient-end: #7c3aed;
+/* Dark Theme */
+.dark {
+  --background: #020617;
+  --foreground: #f8fafc;
   
-  /* Surface colors */
-  --surface-primary: rgba(255, 255, 255, 0.1);
-  --surface-secondary: rgba(255, 255, 255, 0.05);
-  --surface-hover: rgba(255, 255, 255, 0.15);
+  --card: #0f172a;
+  --card-foreground: #f8fafc;
   
-  /* Text colors */
-  --text-primary: #ffffff;
-  --text-secondary: #e2e8f0;
-  --text-muted: #94a3b8;
+  --popover: #0f172a;
+  --popover-foreground: #f8fafc;
   
-  /* Status colors */
-  --success-color: #10b981;
-  --error-color: #ef4444;
-  --warning-color: #f59e0b;
-  --info-color: #3b82f6;
+  --primary: #3b82f6;
+  --primary-foreground: #0f172a;
   
-  /* Border and shadow */
-  --border-color: rgba(255, 255, 255, 0.1);
-  --shadow-color: rgba(0, 0, 0, 0.3);
+  --secondary: #1e293b;
+  --secondary-foreground: #f8fafc;
+  
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+  
+  --accent: #1e293b;
+  --accent-foreground: #f8fafc;
+  
+  --destructive: #7f1d1d;
+  --destructive-foreground: #f8fafc;
+  
+  --border: #1e293b;
+  --input: #1e293b;
+  --ring: #3b82f6;
 }
 
 /* Base Styles */
@@ -59,13 +84,14 @@ body {
   line-height: 1.6;
 }
 
-/* App Container - Unified Dark Theme */
+/* App Container - Theme Aware */
 .app {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-middle) 50%, var(--bg-gradient-end) 100%);
-  color: var(--text-primary);
+  background-color: var(--background);
+  color: var(--foreground);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Loading Spinner */
@@ -83,47 +109,56 @@ body {
   to { transform: rotate(360deg); }
 }
 
-/* Unified Button Styles */
+/* Theme-Aware Button Styles */
 .btn {
-  @apply px-4 py-2 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 backdrop-blur-sm;
+  @apply px-4 py-2 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
 }
 
 .btn-primary {
-  background: var(--primary-600);
-  color: var(--text-primary);
-  @apply hover:bg-blue-700 focus:ring-blue-500 shadow-lg;
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  @apply hover:opacity-90 focus:ring-2 shadow-sm;
 }
 
 .btn-secondary {
-  background: var(--surface-primary);
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
-  @apply hover:bg-white/20 focus:ring-blue-500;
+  background-color: var(--secondary);
+  color: var(--secondary-foreground);
+  border: 1px solid var(--border);
+  @apply hover:opacity-90 focus:ring-2;
 }
 
 .btn-danger {
-  background: var(--error-color);
-  color: var(--text-primary);
-  @apply hover:bg-red-600 focus:ring-red-500 shadow-lg;
+  background-color: var(--destructive);
+  color: var(--destructive-foreground);
+  @apply hover:opacity-90 focus:ring-2 shadow-sm;
 }
 
-.btn-success {
-  background: var(--success-color);
-  color: var(--text-primary);
-  @apply hover:bg-green-600 focus:ring-green-500 shadow-lg;
+.btn-muted {
+  background-color: var(--muted);
+  color: var(--muted-foreground);
+  @apply hover:opacity-90 focus:ring-2;
 }
 
-/* Unified Card Styles */
+/* Theme-Aware Card Styles */
 .card {
-  background: var(--surface-primary);
-  border: 1px solid var(--border-color);
-  color: var(--text-primary);
-  @apply rounded-2xl shadow-xl p-6 backdrop-blur-sm;
+  background-color: var(--card);
+  color: var(--card-foreground);
+  border: 1px solid var(--border);
+  @apply rounded-lg shadow-sm p-6 transition-all duration-200;
 }
 
 .card-hover {
-  @apply transform transition-all duration-300 hover:scale-105 hover:shadow-2xl;
-  background: var(--surface-hover);
+  @apply hover:shadow-md transform transition-all duration-200 hover:scale-[1.02];
+}
+
+/* Light theme specific styles */
+:root .card {
+  @apply shadow-sm border;
+}
+
+/* Dark theme specific styles */
+.dark .card {
+  @apply shadow-lg;
 }
 
 /* Form Styles */

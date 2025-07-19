@@ -6,6 +6,7 @@ import { useAnalytics } from '../contexts/AnalyticsContext';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { Avatar, AvatarImage, AvatarFallback } from '../components/ui/Avatar';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../components/ui/Tooltip';
+import ThemeToggle from '../components/ThemeToggle';
 
 const DashboardView = React.memo(function DashboardView() {
   const { user, logout, pb } = usePocket();
@@ -663,9 +664,9 @@ const DashboardView = React.memo(function DashboardView() {
 
   return (
     <TooltipProvider>
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900">
+      <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
         {/* Header */}
-        <header className="bg-black/20 backdrop-blur-sm border-b border-white/10">
+        <header className="bg-card border-b border-border shadow-sm">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-4">
               {/* Logo and Navigation */}
@@ -675,8 +676,8 @@ const DashboardView = React.memo(function DashboardView() {
                     <span className="text-white font-bold text-xl">🏈</span>
                   </div>
                   <div>
-                    <h1 className="text-xl font-bold text-white">Training Ecosystem</h1>
-                    <p className="text-sm text-blue-200">AI-Powered Flag Football Mastery</p>
+                    <h1 className="text-xl font-bold text-foreground">MERLINS PLAYBOOK</h1>
+                    <p className="text-sm text-muted-foreground">AI-Powered Flag Football Mastery</p>
                   </div>
                 </div>
                 
@@ -711,15 +712,17 @@ const DashboardView = React.memo(function DashboardView() {
               {/* User Actions */}
               <div className="flex items-center space-x-4">
                 <div className="text-right hidden md:block">
-                  <div className="text-sm text-blue-200">Current Streak</div>
-                  <div className="text-2xl font-bold text-yellow-400">7 days 🔥</div>
+                  <div className="text-sm text-muted-foreground">Current Streak</div>
+                  <div className="text-2xl font-bold text-yellow-500">7 days 🔥</div>
                 </div>
                 
-                <button className="p-2 text-white/70 hover:text-white rounded-lg hover:bg-white/10 transition-all duration-200">
+                <button className="p-2 text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted transition-all duration-200">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                 </button>
+
+                <ThemeToggle />
 
                 <Avatar className="h-10 w-10 cursor-pointer hover:scale-110 transition-transform duration-200 ring-2 ring-white/20">
                   <AvatarImage src={user?.avatar} alt={user?.name || user?.email} />
