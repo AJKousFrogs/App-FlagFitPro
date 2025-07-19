@@ -121,22 +121,22 @@ const LoginView = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         {isDemoMode && (
-          <div className="rounded-md bg-green-100 p-6 border-2 border-green-300 shadow-lg">
+          <div className="rounded-2xl bg-green-900/20 backdrop-blur-sm p-6 border-2 border-green-400/30 shadow-2xl">
             <div className="flex">
               <div className="flex-shrink-0">
-                <svg className="h-8 w-8 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="h-8 w-8 text-green-400" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
               </div>
               <div className="ml-3 flex-1">
-                <h3 className="text-lg font-bold text-green-800">🎉 DEMO MODE ACTIVE - FINAL FIX v3</h3>
-                <div className="mt-2 text-sm text-green-700">
+                <h3 className="text-lg font-bold text-green-100">🎉 DEMO MODE ACTIVE - FINAL FIX v3</h3>
+                <div className="mt-2 text-sm text-green-200">
                   <p className="font-semibold">✅ SUCCESS: Authentication completely bypassed!</p>
                   <p>🔑 Use ANY email/password combination to login</p>
-                  <p className="text-xs text-green-600 mt-2 font-mono">Build: {new Date().toISOString()}</p>
+                  <p className="text-xs text-green-300 mt-2 font-mono">Build: {new Date().toISOString()}</p>
                 </div>
                 <div className="mt-4 space-y-2">
                   <button
@@ -145,7 +145,7 @@ const LoginView = () => {
                   >
                     🚀 INSTANT DEMO ACCESS
                   </button>
-                  <p className="text-xs text-green-600 text-center">No registration required!</p>
+                  <p className="text-xs text-green-300 text-center">No registration required!</p>
                 </div>
               </div>
             </div>
@@ -153,14 +153,14 @@ const LoginView = () => {
         )}
         
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
             Sign in to FlagFit Pro
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
+          <p className="mt-2 text-center text-sm text-gray-300">
             Or{' '}
             <Link
               to="/register"
-              className="font-medium text-indigo-600 hover:text-indigo-500"
+              className="font-medium text-blue-400 hover:text-blue-300"
             >
               create a new account
             </Link>
@@ -168,7 +168,7 @@ const LoginView = () => {
         </div>
         
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm -space-y-px">
+          <div className="rounded-2xl shadow-2xl bg-white/10 backdrop-blur-sm border border-white/20 p-6 space-y-4">
             <div>
               <label htmlFor="email" className="sr-only">
                 Email address
@@ -179,17 +179,17 @@ const LoginView = () => {
                 type="email"
                 autoComplete="email"
                 required
-                className={`appearance-none rounded-none relative block w-full px-3 py-2 border ${
+                className={`appearance-none relative block w-full px-4 py-3 border ${
                   errors.email
-                    ? 'border-red-300 placeholder-red-500 text-red-900 focus:outline-none focus:ring-red-500 focus:border-red-500 focus:z-10 sm:text-sm'
-                    : 'border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm'
-                } rounded-t-md`}
+                    ? 'border-red-400 placeholder-red-400 text-white bg-red-900/20 focus:outline-none focus:ring-red-400 focus:border-red-400 focus:z-10 sm:text-sm'
+                    : 'border-white/30 placeholder-gray-300 text-white bg-white/10 focus:outline-none focus:ring-blue-400 focus:border-blue-400 focus:z-10 sm:text-sm'
+                } rounded-lg backdrop-blur-sm`}
                 placeholder="Email address"
                 value={formData.email}
                 onChange={handleChange}
               />
               {errors.email && (
-                <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+                <p className="mt-1 text-sm text-red-400">{errors.email}</p>
               )}
             </div>
             <div>
@@ -202,23 +202,23 @@ const LoginView = () => {
                 type="password"
                 autoComplete="current-password"
                 required
-                className={`appearance-none rounded-none relative block w-full px-3 py-2 border ${
+                className={`appearance-none relative block w-full px-4 py-3 border ${
                   errors.password
-                    ? 'border-red-300 placeholder-red-500 text-red-900 focus:outline-none focus:ring-red-500 focus:border-red-500 focus:z-10 sm:text-sm'
-                    : 'border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm'
-                } rounded-b-md`}
+                    ? 'border-red-400 placeholder-red-400 text-white bg-red-900/20 focus:outline-none focus:ring-red-400 focus:border-red-400 focus:z-10 sm:text-sm'
+                    : 'border-white/30 placeholder-gray-300 text-white bg-white/10 focus:outline-none focus:ring-blue-400 focus:border-blue-400 focus:z-10 sm:text-sm'
+                } rounded-lg backdrop-blur-sm`}
                 placeholder="Password"
                 value={formData.password}
                 onChange={handleChange}
               />
               {errors.password && (
-                <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+                <p className="mt-1 text-sm text-red-400">{errors.password}</p>
               )}
             </div>
           </div>
 
           {successMessage && (
-            <div className="rounded-md bg-green-50 p-4 mb-4">
+            <div className="rounded-2xl bg-green-900/20 backdrop-blur-sm border border-green-400/30 p-4 mb-4">
               <div className="flex">
                 <div className="flex-shrink-0">
                   <svg
@@ -236,7 +236,7 @@ const LoginView = () => {
                   </svg>
                 </div>
                 <div className="ml-3">
-                  <h3 className="text-sm font-medium text-green-800">
+                  <h3 className="text-sm font-medium text-green-100">
                     <p>{successMessage}</p>
                   </h3>
                 </div>
@@ -245,7 +245,7 @@ const LoginView = () => {
           )}
 
           {authError && (
-            <div className="rounded-md bg-red-50 p-4">
+            <div className="rounded-2xl bg-red-900/20 backdrop-blur-sm border border-red-400/30 p-4">
               <div className="flex">
                 <div className="flex-shrink-0">
                   <svg
@@ -263,10 +263,10 @@ const LoginView = () => {
                   </svg>
                 </div>
                 <div className="ml-3">
-                  <h3 className="text-sm font-medium text-red-800">
+                  <h3 className="text-sm font-medium text-red-100">
                     Authentication failed
                   </h3>
-                  <div className="mt-2 text-sm text-red-700">
+                  <div className="mt-2 text-sm text-red-200">
                     <p>{authError}</p>
                   </div>
                 </div>
@@ -282,9 +282,9 @@ const LoginView = () => {
                 type="checkbox"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
-                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                className="h-4 w-4 text-blue-500 focus:ring-blue-400 border-white/30 bg-white/10 rounded"
               />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
+              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-300">
                 Remember me
               </label>
             </div>
@@ -292,7 +292,7 @@ const LoginView = () => {
             <div className="text-sm">
               <Link
                 to="/forgot-password"
-                className="font-medium text-indigo-600 hover:text-indigo-500"
+                className="font-medium text-blue-400 hover:text-blue-300"
               >
                 Forgot your password?
               </Link>
@@ -303,10 +303,10 @@ const LoginView = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className={`group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white ${
+              className={`group relative w-full flex justify-center py-3 px-6 border border-transparent text-sm font-bold rounded-xl text-white shadow-2xl backdrop-blur-sm transition-all duration-200 ${
                 isLoading
-                  ? 'bg-indigo-400 cursor-not-allowed'
-                  : 'bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
+                  ? 'bg-blue-400/50 cursor-not-allowed'
+                  : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transform hover:scale-105'
               }`}
             >
               {isLoading ? (
@@ -351,8 +351,8 @@ const LoginView = () => {
         </form>
         
         {/* Sponsors Section */}
-        <div className="mt-8 pt-6 border-t border-gray-200">
-          <p className="text-center text-xs text-gray-500 mb-4">
+        <div className="mt-8 pt-6 border-t border-white/20">
+          <p className="text-center text-xs text-gray-400 mb-4">
             Proudly sponsored by
           </p>
           <div className="flex justify-center items-center space-x-12">
