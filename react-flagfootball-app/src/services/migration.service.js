@@ -3,12 +3,11 @@
  * Handles database schema migrations and version tracking
  */
 
-import * as pocketbaseModule from './pocketbase.service.js';
+import pocketbaseService from './pocketbase.service.js';
 import logger from './logger.service';
 import sentryService from './sentry.service';
 import env from '../config/environment';
 
-const { pocketbaseService } = pocketbaseModule;
 
 class MigrationService {
   constructor() {

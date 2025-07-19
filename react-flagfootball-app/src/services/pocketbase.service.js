@@ -405,4 +405,5 @@ class PocketBaseService {
 }
 
 // Export singleton instance
-export const pocketbaseService = new PocketBaseService(); 
+export const pocketbaseService = new PocketBaseService();
+export default pocketbaseService; 
