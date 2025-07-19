@@ -6,7 +6,7 @@
 import logger from './logger.service';
 import sentryService from './sentry.service';
 import env from '../config/environment';
-import pocketbaseService from './pocketbase.service.js';
+import { pocketbaseService } from './pocketbase.service.js';
 
 
 class BackupService {
