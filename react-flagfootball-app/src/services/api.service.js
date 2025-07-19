@@ -4,8 +4,8 @@
  */
 
 import env from '../config/environment';
-import logger from './logger.service';
-import sentryService from './sentry.service';
+import logger from './logger.service.js';
+import sentryService from './sentry.service.js';
 
 // API version configuration
 const API_VERSIONS = {

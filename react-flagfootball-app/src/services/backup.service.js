@@ -3,8 +3,8 @@
  * Monitors and manages database backups
  */
 
-import logger from './logger.service';
-import sentryService from './sentry.service';
+import logger from './logger.service.js';
+import sentryService from './sentry.service.js';
 import env from '../config/environment';
 import pocketbaseService from './pocketbase.service.js';
 

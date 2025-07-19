@@ -4,8 +4,8 @@
  */
 
 import pocketbaseService from './pocketbase.service.js';
-import logger from './logger.service';
-import sentryService from './sentry.service';
+import logger from './logger.service.js';
+import sentryService from './sentry.service.js';
 
 
 class DatabaseService {

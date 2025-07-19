@@ -1,6 +1,6 @@
 // Auth Service for React
 import pocketbaseService from './pocketbase.service.js';
-import cacheService from './cache.service';
+import cacheService from './cache.service.js';
 
 class AuthService {
   constructor() {
