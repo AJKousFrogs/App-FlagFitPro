@@ -3,7 +3,7 @@
  * Handles database schema migrations and version tracking
  */
 
-import * as pocketbaseModule from './pocketbase.service';
+import * as pocketbaseModule from './pocketbase.service.js';
 import logger from './logger.service';
 import sentryService from './sentry.service';
 import env from '../config/environment';

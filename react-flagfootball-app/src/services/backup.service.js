@@ -6,7 +6,7 @@
 import logger from './logger.service';
 import sentryService from './sentry.service';
 import env from '../config/environment';
-import * as pocketbaseModule from './pocketbase.service';
+import * as pocketbaseModule from './pocketbase.service.js';
 
 const { pocketbaseService } = pocketbaseModule;
 
