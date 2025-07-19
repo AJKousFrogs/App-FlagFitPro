@@ -3,9 +3,9 @@
  * Provides enhanced database connection handling and monitoring
  */
 
-import { pocketbaseService } from './pocketbase.service.js';
-import logger from './logger.service.js';
-import sentryService from './sentry.service.js';
+import { pocketbaseService } from './pocketbase.service';
+import logger from './logger.service';
+import sentryService from './sentry.service';
 
 class DatabaseService {
   constructor() {

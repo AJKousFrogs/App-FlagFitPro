@@ -1,7 +1,7 @@
 // Training Service for React
-import { pocketbaseService } from './pocketbase.service.js';
-import cacheService from './cache.service.js';
-import { getStartDateForTimeframe, calculateStreakDays, formatDuration } from '../utils/dateUtils.js';
+import { pocketbaseService } from './pocketbase.service';
+import cacheService from './cache.service';
+import { getStartDateForTimeframe, calculateStreakDays, formatDuration } from '../utils/dateUtils';
 
 class TrainingService {
   constructor() {

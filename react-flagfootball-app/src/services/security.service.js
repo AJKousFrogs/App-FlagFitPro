@@ -3,8 +3,8 @@
  * Provides client-side security utilities and rate limiting
  */
 
-import logger from './logger.service.js';
-import env from '../config/environment.js';
+import logger from './logger.service';
+import env from '../config/environment';
 
 class SecurityService {
   constructor() {

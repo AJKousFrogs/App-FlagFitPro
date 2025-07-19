@@ -3,9 +3,9 @@
  * Provides application monitoring and metrics collection
  */
 
-import logger from './logger.service.js';
-import sentryService from './sentry.service.js';
-import env from '../config/environment.js';
+import logger from './logger.service';
+import sentryService from './sentry.service';
+import env from '../config/environment';
 
 class MonitoringService {
   constructor() {

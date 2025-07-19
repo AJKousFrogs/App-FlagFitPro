@@ -3,7 +3,7 @@
  * Provides structured logging with multiple transports
  */
 
-import env from '../config/environment.js';
+import env from '../config/environment';
 
 // Log levels
 export const LOG_LEVELS = {
