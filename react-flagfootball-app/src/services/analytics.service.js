@@ -1,6 +1,8 @@
 // Analytics Service for React
-import { pocketbaseService } from './pocketbase.service';
+import * as pocketbaseModule from './pocketbase.service';
 import cacheService from './cache.service';
+
+const { pocketbaseService } = pocketbaseModule;
 
 class AnalyticsService {
   constructor() {

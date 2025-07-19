@@ -6,7 +6,9 @@
 import logger from './logger.service';
 import sentryService from './sentry.service';
 import env from '../config/environment';
-import { pocketbaseService } from './pocketbase.service';
+import * as pocketbaseModule from './pocketbase.service';
+
+const { pocketbaseService } = pocketbaseModule;
 
 class BackupService {
   constructor() {

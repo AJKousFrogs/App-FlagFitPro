@@ -3,9 +3,11 @@
  * Provides enhanced database connection handling and monitoring
  */
 
-import { pocketbaseService } from './pocketbase.service';
+import * as pocketbaseModule from './pocketbase.service';
 import logger from './logger.service';
 import sentryService from './sentry.service';
+
+const { pocketbaseService } = pocketbaseModule;
 
 class DatabaseService {
   constructor() {
