@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { analyticsService } from '../services/analytics.service';
-import { usePocket } from './PocketContext';
+import { analyticsService } from '../services/analytics.service.js';
+import { usePocket } from './PocketContext.jsx';
 
 // Initial state
 const initialState = {

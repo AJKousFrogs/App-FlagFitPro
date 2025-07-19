@@ -1,11 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App';
+import App from './App.jsx';
 import './index.css';
 
 // Initialize services
-import logger from './services/logger.service';
-import sentryService from './services/sentry.service';
+import logger from './services/logger.service.js';
+import sentryService from './services/sentry.service.js';
 
 // Sentry is conditionally initialized in the service constructor
 // No need to explicitly call init here
