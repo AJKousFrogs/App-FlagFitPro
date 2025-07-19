@@ -5,6 +5,103 @@ import { usePocket } from '../contexts/PocketContext';
 const TournamentsView = () => {
   const { user } = usePocket();
   const [selectedPeriod, setSelectedPeriod] = useState('monthly');
+  
+  // Tournament system state
+  const [activeTab, setActiveTab] = useState('tournaments');
+  const [selectedTournamentType, setSelectedTournamentType] = useState('skill-based');
+  const [showCreateTournament, setShowCreateTournament] = useState(false);
+  const [showNutritionPlanner, setShowNutritionPlanner] = useState(false);
+  const [showFinancialPlanner, setShowFinancialPlanner] = useState(false);
+  const [nextMatchDate, setNextMatchDate] = useState(new Date(Date.now() + 3 * 24 * 60 * 60 * 1000)); // 3 days from now
+
+  // Tournament data
+  const tournamentData = useMemo(() => ({
+    'skill-based': [
+      { id: 1, name: 'Quick Match - Beginner', participants: '12/16', xpRange: '0-1000', prize: '50 XP', status: 'open', startTime: '2:00 PM', difficulty: 'Beginner' },
+      { id: 2, name: 'Ranked Ladder - Intermediate', participants: '8/8', xpRange: '1000-5000', prize: '150 XP', status: 'full', startTime: '4:00 PM', difficulty: 'Intermediate' },
+      { id: 3, name: 'Elite Championship', participants: '4/8', xpRange: '5000+', prize: '500 XP + Gear', status: 'open', startTime: '6:00 PM', difficulty: 'Elite' }
+    ],
+    'seasonal': [
+      { id: 4, name: 'European Spring League', participants: '24/32', duration: '12 weeks', prize: '$5000 + Equipment', status: 'registration', startDate: 'March 15', type: 'International' },
+      { id: 5, name: 'North American Championship', participants: '18/24', duration: '16 weeks', prize: '$15000', status: 'ongoing', startDate: 'February 1', type: 'International' },
+      { id: 6, name: 'Asia-Pacific League', participants: '12/20', duration: '10 weeks', prize: '$3000', status: 'registration', startDate: 'April 1', type: 'International' }
+    ],
+    'championships': [
+      { id: 7, name: 'City Championship 2024', participants: '32/64', format: 'Single Elimination', prize: '$2000', status: 'open', date: 'Next Weekend', type: 'Local' },
+      { id: 8, name: 'Regional Finals', participants: '16/16', format: 'Double Elimination', prize: '$5000', status: 'full', date: 'March 10', type: 'Regional' },
+      { id: 9, name: 'Amateur League Cup', participants: '8/32', format: 'Round Robin', prize: '$800', status: 'open', date: 'February 25', type: 'Local' }
+    ]
+  }), []);
+
+  // AI Nutrition Scheduler
+  const calculateNutritionPlan = (matchDate, weatherTemp = 22) => {
+    const matchTime = new Date(matchDate);
+    const now = new Date();
+    const hoursUntilMatch = (matchTime - now) / (1000 * 60 * 60);
+    
+    const plan = {
+      immediate: [],
+      preMatch: [],
+      matchDay: [],
+      postMatch: []
+    };
+
+    if (hoursUntilMatch > 72) {
+      plan.immediate = [
+        { time: 'Now', action: 'Start hydration prep', items: ['Increase water intake to 3L daily', 'Begin electrolyte balance'], icon: '💧' },
+        { time: 'Daily', action: 'Nutrition prep', items: ['Focus on complex carbs', 'Lean protein meals'], icon: '🥗' }
+      ];
+    }
+
+    if (hoursUntilMatch <= 24) {
+      plan.preMatch = [
+        { time: 'T-12h', action: 'Pre-competition meal', items: ['Pasta with lean protein', 'Low fiber vegetables'], icon: '🍝' },
+        { time: 'T-3h', action: 'Final meal', items: ['400-600 calories', 'Complex carbs', 'Minimal fiber'], icon: '🥙' },
+        { time: 'T-90min', action: 'Hydration boost', items: ['500ml water', '250ml electrolyte drink'], icon: '🥤' }
+      ];
+    }
+
+    plan.matchDay = [
+      { time: 'T-30min', action: 'Pre-game fuel', items: ['1 protein bar', 'Banana', weatherTemp > 25 ? 'Extra electrolytes' : 'Light caffeine'], icon: '🍌' },
+      { time: 'Halftime', action: 'Quick energy', items: ['Energy gel', '200ml sports drink'], icon: '⚡' },
+      { time: 'Every 15min', action: 'Hydration reminder', items: [`${weatherTemp > 25 ? '250ml' : '150ml'} electrolyte solution`], icon: '💧' }
+    ];
+
+    plan.postMatch = [
+      { time: 'T+30min', action: 'Recovery window', items: ['Protein shake (25g)', 'Simple carbs', 'Chocolate milk'], icon: '🥛' },
+      { time: 'T+2h', action: 'Full recovery meal', items: ['Balanced meal', 'Anti-inflammatory foods', 'Omega-3 rich fish'], icon: '🐟' }
+    ];
+
+    return plan;
+  };
+
+  // Financial Planning Data
+  const financialData = useMemo(() => {
+    const userXP = currentUserData?.xp || 3250;
+    const sponsorshipTier = userXP >= 10000 ? 'elite' : userXP >= 5000 ? 'rising' : 'emerging';
+    
+    return {
+      seasonCosts: {
+        equipment: { base: 300, current: 285, category: 'Essential' },
+        training: { base: 500, current: 425, category: 'Development' },
+        nutrition: { base: 400, current: 360, category: 'Performance' },
+        travel: { base: 600, current: 540, category: 'Competition' },
+        registration: { base: 200, current: 180, category: 'Access' }
+      },
+      sponsorshipStatus: {
+        tier: sponsorshipTier,
+        currentSupport: sponsorshipTier === 'elite' ? 1500 : sponsorshipTier === 'rising' ? 500 : 200,
+        potential: sponsorshipTier === 'elite' ? 2500 : sponsorshipTier === 'rising' ? 1200 : 600,
+        nextTierXP: sponsorshipTier === 'elite' ? null : sponsorshipTier === 'rising' ? 10000 : 5000
+      },
+      savingsGoals: {
+        monthly: 158,
+        emergency: 380,
+        equipment: 95,
+        totalAnnual: 1895
+      }
+    };
+  }, [currentUserData]);
 
   // Mock leaderboard data - in real app this would come from your backend
   const leaderboardData = useMemo(() => [
@@ -202,31 +299,419 @@ const TournamentsView = () => {
           )}
         </div>
 
-        {/* Tournament Types Section */}
-        <div className="bg-white rounded-lg shadow-sm p-8 text-center">
-          <div className="text-6xl mb-4">🏆</div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Tournaments Coming Soon!</h2>
-          <p className="text-gray-600 mb-6">
-            We're building an exciting tournament system where you can compete against other teams, 
-            join leagues, and showcase your skills in flag football competitions.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
-            <div className="bg-blue-50 rounded-lg p-4">
-              <div className="text-2xl mb-2">🎯</div>
-              <h3 className="font-semibold text-blue-900">Skill-Based Matchmaking</h3>
-              <p className="text-sm text-blue-700">Compete against players of similar skill levels</p>
-            </div>
-            <div className="bg-green-50 rounded-lg p-4">
-              <div className="text-2xl mb-2">🏅</div>
-              <h3 className="font-semibold text-green-900">Seasonal Leagues</h3>
-              <p className="text-sm text-green-700">Join ongoing leagues with regular matches</p>
-            </div>
-            <div className="bg-purple-50 rounded-lg p-4">
-              <div className="text-2xl mb-2">🎖️</div>
-              <h3 className="font-semibold text-purple-900">Championships</h3>
-              <p className="text-sm text-purple-700">Compete for ultimate bragging rights</p>
-            </div>
+        {/* Main Tournament System */}
+        <div className="bg-white rounded-lg shadow-sm">
+          {/* Tab Navigation */}
+          <div className="border-b border-gray-200">
+            <nav className="flex space-x-8 px-6">
+              <button
+                onClick={() => setActiveTab('tournaments')}
+                className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === 'tournaments'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                🏆 Tournaments
+              </button>
+              <button
+                onClick={() => setActiveTab('nutrition')}
+                className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === 'nutrition'
+                    ? 'border-green-500 text-green-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                🥗 AI Nutrition Planner
+              </button>
+              <button
+                onClick={() => setActiveTab('financial')}
+                className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === 'financial'
+                    ? 'border-purple-500 text-purple-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                💰 Financial Planner
+              </button>
+            </nav>
           </div>
+
+          {/* Tournament Tab */}
+          {activeTab === 'tournaments' && (
+            <div className="p-6">
+              {/* Tournament Type Selector */}
+              <div className="flex justify-between items-center mb-6">
+                <div className="flex space-x-4">
+                  <button
+                    onClick={() => setSelectedTournamentType('skill-based')}
+                    className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                      selectedTournamentType === 'skill-based'
+                        ? 'bg-blue-100 text-blue-700 border-2 border-blue-300'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                  >
+                    🎯 Skill-Based
+                  </button>
+                  <button
+                    onClick={() => setSelectedTournamentType('seasonal')}
+                    className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                      selectedTournamentType === 'seasonal'
+                        ? 'bg-green-100 text-green-700 border-2 border-green-300'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                  >
+                    🏅 Seasonal Leagues
+                  </button>
+                  <button
+                    onClick={() => setSelectedTournamentType('championships')}
+                    className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                      selectedTournamentType === 'championships'
+                        ? 'bg-purple-100 text-purple-700 border-2 border-purple-300'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                  >
+                    🎖️ Championships
+                  </button>
+                </div>
+                <button
+                  onClick={() => setShowCreateTournament(true)}
+                  className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-all"
+                >
+                  + Create Tournament
+                </button>
+              </div>
+
+              {/* Tournament Cards */}
+              <div className="space-y-4">
+                {tournamentData[selectedTournamentType].map((tournament) => (
+                  <div key={tournament.id} className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-3 mb-2">
+                          <h3 className="text-lg font-semibold text-gray-900">{tournament.name}</h3>
+                          <span className={`px-2 py-1 text-xs rounded-full ${
+                            tournament.status === 'open' ? 'bg-green-100 text-green-700' :
+                            tournament.status === 'full' ? 'bg-red-100 text-red-700' :
+                            tournament.status === 'ongoing' ? 'bg-blue-100 text-blue-700' :
+                            'bg-yellow-100 text-yellow-700'
+                          }`}>
+                            {tournament.status}
+                          </span>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                          <div>
+                            <p className="text-sm text-gray-500">Participants</p>
+                            <p className="font-medium">{tournament.participants}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-500">
+                              {selectedTournamentType === 'skill-based' ? 'XP Range' : 
+                               selectedTournamentType === 'seasonal' ? 'Duration' : 'Format'}
+                            </p>
+                            <p className="font-medium">
+                              {tournament.xpRange || tournament.duration || tournament.format}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-500">Prize</p>
+                            <p className="font-medium text-green-600">{tournament.prize}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-500">
+                              {selectedTournamentType === 'skill-based' ? 'Start Time' : 'Date'}
+                            </p>
+                            <p className="font-medium">
+                              {tournament.startTime || tournament.startDate || tournament.date}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex space-x-2">
+                        <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                          {tournament.status === 'full' ? 'Join Waitlist' : 'Join Tournament'}
+                        </button>
+                        <button className="border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                          View Details
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* AI Nutrition Planner Tab */}
+          {activeTab === 'nutrition' && (
+            <div className="p-6">
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">🤖 AI Nutrition Scheduler</h2>
+                <p className="text-gray-600">Optimize your performance with personalized nutrition timing for your next match</p>
+              </div>
+
+              {/* Match Selection */}
+              <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-6 mb-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900">Next Match: City Championship Qualifier</h3>
+                    <p className="text-gray-600">
+                      {nextMatchDate.toLocaleDateString('en-US', { 
+                        weekday: 'long', 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-gray-500">Hours until match</p>
+                    <p className="text-2xl font-bold text-blue-600">
+                      {Math.round((nextMatchDate - new Date()) / (1000 * 60 * 60))}h
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Nutrition Plan */}
+              {(() => {
+                const nutritionPlan = calculateNutritionPlan(nextMatchDate, 24);
+                return (
+                  <div className="space-y-6">
+                    {nutritionPlan.immediate.length > 0 && (
+                      <div className="bg-blue-50 rounded-lg p-6">
+                        <h4 className="text-lg font-semibold text-blue-900 mb-4">🚨 Immediate Actions</h4>
+                        <div className="space-y-3">
+                          {nutritionPlan.immediate.map((item, index) => (
+                            <div key={index} className="flex items-start space-x-3">
+                              <span className="text-2xl">{item.icon}</span>
+                              <div>
+                                <p className="font-medium text-blue-900">{item.time}: {item.action}</p>
+                                <ul className="text-blue-700 text-sm mt-1">
+                                  {item.items.map((detail, i) => (
+                                    <li key={i}>• {detail}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {nutritionPlan.preMatch.length > 0 && (
+                      <div className="bg-yellow-50 rounded-lg p-6">
+                        <h4 className="text-lg font-semibold text-yellow-900 mb-4">⏰ Pre-Match Timeline</h4>
+                        <div className="space-y-3">
+                          {nutritionPlan.preMatch.map((item, index) => (
+                            <div key={index} className="flex items-start space-x-3">
+                              <span className="text-2xl">{item.icon}</span>
+                              <div>
+                                <p className="font-medium text-yellow-900">{item.time}: {item.action}</p>
+                                <ul className="text-yellow-700 text-sm mt-1">
+                                  {item.items.map((detail, i) => (
+                                    <li key={i}>• {detail}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="bg-green-50 rounded-lg p-6">
+                      <h4 className="text-lg font-semibold text-green-900 mb-4">🏃‍♂️ Match Day Protocol</h4>
+                      <div className="space-y-3">
+                        {nutritionPlan.matchDay.map((item, index) => (
+                          <div key={index} className="flex items-start space-x-3">
+                            <span className="text-2xl">{item.icon}</span>
+                            <div>
+                              <p className="font-medium text-green-900">{item.time}: {item.action}</p>
+                              <ul className="text-green-700 text-sm mt-1">
+                                {item.items.map((detail, i) => (
+                                  <li key={i}>• {detail}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="bg-purple-50 rounded-lg p-6">
+                      <h4 className="text-lg font-semibold text-purple-900 mb-4">🔄 Post-Match Recovery</h4>
+                      <div className="space-y-3">
+                        {nutritionPlan.postMatch.map((item, index) => (
+                          <div key={index} className="flex items-start space-x-3">
+                            <span className="text-2xl">{item.icon}</span>
+                            <div>
+                              <p className="font-medium text-purple-900">{item.time}: {item.action}</p>
+                              <ul className="text-purple-700 text-sm mt-1">
+                                {item.items.map((detail, i) => (
+                                  <li key={i}>• {detail}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+          )}
+
+          {/* Financial Planner Tab */}
+          {activeTab === 'financial' && (
+            <div className="p-6">
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">💰 Season Financial Planner</h2>
+                <p className="text-gray-600">Manage your season costs, track sponsorship opportunities, and plan your budget</p>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Season Costs */}
+                <div className="bg-white border border-gray-200 rounded-lg p-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">📊 Season Cost Breakdown</h3>
+                  <div className="space-y-4">
+                    {Object.entries(financialData.seasonCosts).map(([category, data]) => (
+                      <div key={category} className="flex justify-between items-center">
+                        <div>
+                          <p className="font-medium text-gray-900 capitalize">{category}</p>
+                          <p className="text-sm text-gray-500">{data.category}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-semibold text-gray-900">${data.current}</p>
+                          {data.current < data.base && (
+                            <p className="text-sm text-green-600">Save ${data.base - data.current}</p>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                    <div className="border-t pt-4">
+                      <div className="flex justify-between items-center">
+                        <p className="font-semibold text-gray-900">Total Annual Cost</p>
+                        <p className="text-xl font-bold text-gray-900">
+                          ${Object.values(financialData.seasonCosts).reduce((sum, item) => sum + item.current, 0)}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Sponsorship Status */}
+                <div className="bg-gradient-to-br from-purple-50 to-blue-50 border border-purple-200 rounded-lg p-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">🎯 Sponsorship Status</h3>
+                  <div className="space-y-4">
+                    <div>
+                      <div className="flex justify-between items-center mb-2">
+                        <p className="font-medium text-gray-900">Current Tier</p>
+                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                          financialData.sponsorshipStatus.tier === 'elite' ? 'bg-gold-100 text-gold-800' :
+                          financialData.sponsorshipStatus.tier === 'rising' ? 'bg-silver-100 text-silver-800' :
+                          'bg-bronze-100 text-bronze-800'
+                        }`}>
+                          {financialData.sponsorshipStatus.tier.charAt(0).toUpperCase() + financialData.sponsorshipStatus.tier.slice(1)}
+                        </span>
+                      </div>
+                      <div className="bg-gray-200 rounded-full h-2">
+                        <div 
+                          className="bg-purple-500 h-2 rounded-full"
+                          style={{ 
+                            width: `${(financialData.sponsorshipStatus.currentSupport / financialData.sponsorshipStatus.potential) * 100}%` 
+                          }}
+                        ></div>
+                      </div>
+                      <div className="flex justify-between text-sm text-gray-600 mt-1">
+                        <span>${financialData.sponsorshipStatus.currentSupport} current</span>
+                        <span>${financialData.sponsorshipStatus.potential} potential</span>
+                      </div>
+                    </div>
+
+                    {financialData.sponsorshipStatus.nextTierXP && (
+                      <div className="bg-white rounded-lg p-4">
+                        <p className="text-sm text-gray-600 mb-1">Next Tier Requirements</p>
+                        <p className="font-medium text-gray-900">
+                          {financialData.sponsorshipStatus.nextTierXP - (currentUserData?.xp || 3250)} XP needed
+                        </p>
+                        <p className="text-sm text-green-600">
+                          +${financialData.sponsorshipStatus.tier === 'emerging' ? 300 : 1000} potential funding
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Savings Goals */}
+                <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">🎯 Savings Targets</h3>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <p className="text-gray-700">Monthly Target</p>
+                      <p className="font-semibold text-green-600">${financialData.savingsGoals.monthly}</p>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <p className="text-gray-700">Emergency Fund</p>
+                      <p className="font-semibold text-green-600">${financialData.savingsGoals.emergency}</p>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <p className="text-gray-700">Equipment Replacement</p>
+                      <p className="font-semibold text-green-600">${financialData.savingsGoals.equipment}</p>
+                    </div>
+                    <div className="border-t pt-4">
+                      <div className="flex justify-between items-center">
+                        <p className="font-semibold text-gray-900">Annual Goal</p>
+                        <p className="text-xl font-bold text-green-600">${financialData.savingsGoals.totalAnnual}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Sponsorship Opportunities */}
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">🤝 Sponsorship Opportunities</h3>
+                  <div className="space-y-3">
+                    <div className="bg-white rounded-lg p-4">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <p className="font-medium text-gray-900">Local Sports Store</p>
+                          <p className="text-sm text-gray-600">Equipment sponsorship</p>
+                        </div>
+                        <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-sm">Match: 95%</span>
+                      </div>
+                    </div>
+                    <div className="bg-white rounded-lg p-4">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <p className="font-medium text-gray-900">NutriBoost Supplements</p>
+                          <p className="text-sm text-gray-600">Nutrition partnership</p>
+                        </div>
+                        <span className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded text-sm">Match: 78%</span>
+                      </div>
+                    </div>
+                    <div className="bg-white rounded-lg p-4">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <p className="font-medium text-gray-900">TravelEasy Transport</p>
+                          <p className="text-sm text-gray-600">Travel cost support</p>
+                        </div>
+                        <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-sm">Match: 82%</span>
+                      </div>
+                    </div>
+                  </div>
+                  <button className="w-full mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg font-medium transition-colors">
+                    Apply to Sponsors
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
