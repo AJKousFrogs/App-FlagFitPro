@@ -317,7 +317,7 @@ const ProfileView = () => {
                         type="text"
                         value={profileData.height}
                         onChange={(e) => handleInputChange('height', e.target.value)}
-                        placeholder="e.g., 6'2\""
+                        placeholder="e.g., 6'2&quot;"
                         className="w-full p-3 rounded-lg border border-border bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-transparent"
                       />
                     </div>
