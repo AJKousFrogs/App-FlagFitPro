@@ -2,6 +2,26 @@
 
 This is the React frontend for the FlagFit Pro application, migrated from Vue.js with comprehensive technical debt resolution.
 
+## 🚀 Quick Deploy
+
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/AJKous31/flagfit-pro-training-app)
+
+**One-click deployment to Netlify with automatic configuration!**
+
+### Manual Deployment Steps:
+1. Click the "Deploy to Netlify" button above
+2. Connect your GitHub account if prompted
+3. Configure environment variables (optional):
+   - `VITE_POCKETBASE_URL` - Your PocketBase backend URL
+   - `VITE_APP_ENVIRONMENT` - Set to `production`
+4. Click "Deploy site"
+5. Your app will be live in 2-3 minutes! 🎉
+
+### Alternative Platforms:
+- **Vercel**: Currently experiencing module resolution issues
+- **Railway**: Great for full-stack deployment with backend
+- **GitHub Pages**: For static deployment only
+
 ## 🚀 Features
 
 - **Authentication System**: Complete login/register functionality with JWT tokens
