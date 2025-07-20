@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "cd react-flagfootball-app && npm ci && npm run build",
+  "buildCommand": "cd react-flagfootball-app && npm install && npm run build",
   "outputDirectory": "react-flagfootball-app/dist",
   "installCommand": "echo 'Skipping root install'",
   "framework": null,
