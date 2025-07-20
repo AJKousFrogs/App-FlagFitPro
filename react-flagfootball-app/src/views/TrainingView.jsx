@@ -11,6 +11,7 @@ import ProgressTracker from '../components/ProgressTracker';
 import WeeklyChallenges from '../components/WeeklyChallenges';
 import OfflineWorkouts from '../components/OfflineWorkouts';
 import BuddySystem from '../components/BuddySystem';
+import { hybridAnalyticsService } from '../services/hybrid-analytics.service.js';
 
 const TrainingView = () => {
   const { user } = usePocket();
@@ -161,6 +162,13 @@ const TrainingView = () => {
   ];
 
   useEffect(() => {
+    // Track training view load
+    hybridAnalyticsService.trackPageView({
+      page_title: 'Training Dashboard',
+      user_level: playerLevel.name,
+      current_streak: currentStreak
+    });
+
     // Simulate loading
     setTimeout(() => setIsLoading(false), 1500);
     
@@ -175,6 +183,14 @@ const TrainingView = () => {
   }, []);
 
   const handleStartTraining = (category) => {
+    // Track training session start
+    hybridAnalyticsService.trackUserAction('training_started', {
+      training_category: category,
+      user_level: playerLevel.name,
+      difficulty: trainingCategories[category]?.difficulty,
+      current_streak: currentStreak
+    });
+
     setActiveCategory(category);
     setShowTrainingSession(true);
     setShowAchievement(true);
@@ -182,6 +198,15 @@ const TrainingView = () => {
   };
 
   const handleCompleteTraining = (results) => {
+    // Track training session completion
+    hybridAnalyticsService.trackUserAction('training_completed', {
+      training_category: activeCategory,
+      results: results,
+      xp_gained: 100,
+      session_duration: results?.duration || 0,
+      performance_score: results?.score || 0
+    });
+
     setShowTrainingSession(false);
     // Update user progress, XP, etc.
     console.log('Training completed:', results);

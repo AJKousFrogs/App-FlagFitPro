@@ -1,5 +1,5 @@
-import React, { Suspense, lazy } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import React, { Suspense, lazy, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { ConfigProvider, theme } from 'antd';
 import { PocketProvider, usePocket } from './contexts/PocketContext';
 import { TrainingProvider } from './contexts/TrainingContext';
@@ -8,6 +8,7 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import QueryProvider from './providers/QueryProvider';
 import { useOnlineStatus } from './hooks/index';
 import useAppStore from './stores/useAppStore';
+import { hybridAnalyticsService } from './services/hybrid-analytics.service.js';
 
 // Import components
 import LoadingSpinner from './components/LoadingSpinner';
@@ -54,6 +55,22 @@ const PublicRoute = ({ children }) => {
   return children;
 };
 
+// Route Analytics Component
+const RouteAnalytics = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    // Track page view on route change
+    hybridAnalyticsService.trackPageView({
+      page_path: location.pathname,
+      page_title: document.title,
+      referrer: document.referrer
+    });
+  }, [location]);
+
+  return null;
+};
+
 // App Routes Component (inside AuthProvider)
 const AppRoutes = () => {
   return (
@@ -63,6 +80,7 @@ const AppRoutes = () => {
         v7_relativeSplatPath: true
       }}
     >
+      <RouteAnalytics />
       <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><LoadingSpinner size="lg" /></div>}>
         <Routes>
           {/* Public Routes */}

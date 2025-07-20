@@ -6,9 +6,13 @@ import './index.css';
 // Initialize services
 import logger from './services/logger.service';
 import sentryService from './services/sentry.service';
+import { hybridAnalyticsService } from './services/hybrid-analytics.service.js';
 
 // Sentry is conditionally initialized in the service constructor
 // No need to explicitly call init here
+
+// Initialize hybrid analytics and performance tracking
+hybridAnalyticsService.startPerformanceTracking();
 
 // Log application startup
 logger.info('Application starting', {
@@ -18,6 +22,13 @@ logger.info('Application starting', {
     width: window.innerWidth,
     height: window.innerHeight
   }
+});
+
+// Track app initialization
+hybridAnalyticsService.trackEvent({
+  type: 'app_initialized',
+  app_version: import.meta.env.VITE_APP_VERSION || '1.0.0',
+  environment: import.meta.env.VITE_APP_ENVIRONMENT || 'development'
 });
 
 // Create root element
