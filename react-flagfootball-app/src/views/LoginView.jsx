@@ -101,6 +101,7 @@ const LoginView = () => {
 
   // Clear auth error when component mounts and load remembered email
   React.useEffect(() => {
+    // Clear auth error only on mount
     clearError();
     
     // Load remembered email if available
@@ -109,7 +110,7 @@ const LoginView = () => {
       setFormData(prev => ({ ...prev, email: rememberedEmail }));
       setRememberMe(true);
     }
-  }, []); // Remove clearError dependency to prevent re-renders
+  }, [clearError]); // Include clearError in dependencies
 
   const handleDemoLogin = async () => {
     try {

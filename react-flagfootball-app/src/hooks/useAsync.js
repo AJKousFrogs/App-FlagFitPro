@@ -31,7 +31,7 @@ export const useAsync = (asyncFunction, immediate = false) => {
     if (immediate) {
       execute();
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [immediate, execute]);
 
   return {
     data,

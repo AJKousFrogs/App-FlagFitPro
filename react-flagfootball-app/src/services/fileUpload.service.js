@@ -1,4 +1,5 @@
 import pocketbaseService from './pocketbase-client.service.js';
+import { COLLECTIONS } from '../config/collections.js';
 
 class FileUploadService {
   constructor() {
@@ -117,7 +118,7 @@ class FileUploadService {
       formData.append('tags', JSON.stringify(metadata.tags || []));
 
       // Upload to PocketBase
-      const record = await pocketbaseService.pb.collection('progress_photos').create(formData);
+      const record = await pocketbaseService.pb.collection(COLLECTIONS.PROGRESS_PHOTOS).create(formData);
 
       return {
         success: true,
@@ -157,7 +158,7 @@ class FileUploadService {
       formData.append('tags', JSON.stringify(metadata.tags || []));
 
       // Upload to PocketBase (you'll need to create a training_videos collection)
-      const record = await pocketbaseService.pb.collection('training_videos').create(formData);
+      const record = await pocketbaseService.pb.collection(COLLECTIONS.TRAINING_VIDEOS).create(formData);
 
       return {
         success: true,
@@ -212,7 +213,7 @@ class FileUploadService {
         filter += ` && category="${category}"`;
       }
 
-      const records = await pocketbaseService.pb.collection('progress_photos').getFullList({
+      const records = await pocketbaseService.pb.collection(COLLECTIONS.PROGRESS_PHOTOS).getFullList({
         filter,
         sort: '-created'
       });
@@ -321,7 +322,7 @@ class FileUploadService {
       });
 
       // Determine collection based on file type
-      const collection = file.type.startsWith('image/') ? 'progress_photos' : 'training_videos';
+      const collection = file.type.startsWith('image/') ? COLLECTIONS.PROGRESS_PHOTOS : COLLECTIONS.TRAINING_VIDEOS;
       const url = `${pocketbaseService.pb.baseUrl}/api/collections/${collection}/records`;
 
       xhr.open('POST', url);

@@ -1,6 +1,7 @@
 // Analytics Service for React
 import pocketbaseService from './pocketbase-client.service.js';
 import cacheService from './cache.service';
+import { COLLECTIONS } from '../config/collections.js';
 
 class AnalyticsService {
   constructor() {
@@ -35,7 +36,7 @@ class AnalyticsService {
    */
   async trackEvent(eventData) {
     try {
-      const result = await this._getPocketbase().create('analytics_events', {
+      const result = await this._getPocketbase().create(COLLECTIONS.ANALYTICS_EVENTS, {
         event_type: eventData.type,
         event_data: eventData,
         user_id: this._getPocketbase().authStore.model?.id,
@@ -80,7 +81,7 @@ class AnalyticsService {
         filter: this.buildEventFilterString(filters)
       };
 
-      const result = await pocketbase.getList('analytics_events', options);
+      const result = await pocketbase.getList(COLLECTIONS.ANALYTICS_EVENTS, options);
       
       if (result.error) {
         console.error('PocketBase error fetching analytics events:', result.error);

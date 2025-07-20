@@ -20,14 +20,27 @@ export function PocketProvider({ children }) {
   const isProduction = import.meta.env.PROD;
   const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
   
-  // Force demo mode in multiple scenarios
-  const isDemoMode = true; // FORCE DEMO MODE FOR NOW
-  /* 
-  Original logic:
+  // Smart demo mode detection based on environment
   const isDemoMode = !pocketbaseUrl || 
     pocketbaseUrl.includes('your-pocketbase-instance') ||
     pocketbaseUrl.includes('127.0.0.1') ||
     pocketbaseUrl.includes('localhost') ||
+    (hostname.includes('vercel.app') && !pocketbaseUrl.includes('production-domain.com')) ||
+    import.meta.env.VITE_APP_ENVIRONMENT === 'demo';
+  
+  console.log('🔧 Environment Check:', {
+    pocketbaseUrl,
+    hostname,
+    isDemoMode,
+    environment: import.meta.env.VITE_APP_ENVIRONMENT
+  });
+  
+  /* 
+  Demo mode is enabled when:
+  - No PocketBase URL configured
+  - URL points to localhost/127.0.0.1
+  - Deployed to Vercel without production backend
+  - Explicitly set to demo environment
     isProduction ||
     hostname.includes('vercel.app') ||
     hostname.includes('netlify.app');

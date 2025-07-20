@@ -1,6 +1,7 @@
 // Training Service for React
 import pocketbaseService from './pocketbase-client.service.js';
 import cacheService from './cache.service';
+import { COLLECTIONS } from '../config/collections.js';
 import { getStartDateForTimeframe, calculateStreakDays, formatDuration } from '../utils/dateUtils';
 
 class TrainingService {
@@ -81,7 +82,7 @@ class TrainingService {
         filter: this.buildFilterString(filters)
       };
 
-      const result = await pocketbase.getList('training_sessions', options);
+      const result = await pocketbase.getList(COLLECTIONS.TRAINING_SESSIONS, options);
       
       if (result.error) {
         console.error('PocketBase error fetching training sessions:', result.error);
@@ -108,7 +109,7 @@ class TrainingService {
   async createTrainingSession(sessionData) {
     try {
       const pocketbase = this._getPocketbase();
-      const result = await pocketbase.create('training_sessions', {
+      const result = await pocketbase.create(COLLECTIONS.TRAINING_SESSIONS, {
         ...sessionData,
         user_id: pocketbase.authStore.model?.id,
         created: new Date().toISOString()
@@ -137,7 +138,7 @@ class TrainingService {
    */
   async updateTrainingSession(sessionId, sessionData) {
     try {
-      const result = await this._getPocketbase().update('training_sessions', sessionId, {
+      const result = await this._getPocketbase().update(COLLECTIONS.TRAINING_SESSIONS, sessionId, {
         ...sessionData,
         updated: new Date().toISOString()
       });
@@ -164,7 +165,7 @@ class TrainingService {
    */
   async deleteTrainingSession(sessionId) {
     try {
-      const result = await this._getPocketbase().delete('training_sessions', sessionId);
+      const result = await this._getPocketbase().delete(COLLECTIONS.TRAINING_SESSIONS, sessionId);
 
       if (result.error) {
         throw new Error(result.error);
@@ -264,7 +265,7 @@ class TrainingService {
         filter: this.buildFilterString(filters)
       };
 
-      const result = await pocketbase.getList('training_goals', options);
+      const result = await pocketbase.getList(COLLECTIONS.TRAINING_GOALS, options);
       
       if (result.error) {
         console.error('PocketBase error fetching training goals:', result.error);
@@ -291,7 +292,7 @@ class TrainingService {
   async createTrainingGoal(goalData) {
     try {
       const pocketbase = this._getPocketbase();
-      const result = await pocketbase.create('training_goals', {
+      const result = await pocketbase.create(COLLECTIONS.TRAINING_GOALS, {
         ...goalData,
         user_id: pocketbase.authStore.model?.id,
         created: new Date().toISOString()
@@ -319,7 +320,7 @@ class TrainingService {
    */
   async updateTrainingGoal(goalId, goalData) {
     try {
-      const result = await this._getPocketbase().update('training_goals', goalId, {
+      const result = await this._getPocketbase().update(COLLECTIONS.TRAINING_GOALS, goalId, {
         ...goalData,
         updated: new Date().toISOString()
       });
@@ -345,7 +346,7 @@ class TrainingService {
    */
   async deleteTrainingGoal(goalId) {
     try {
-      const result = await this._getPocketbase().delete('training_goals', goalId);
+      const result = await this._getPocketbase().delete(COLLECTIONS.TRAINING_GOALS, goalId);
 
       if (result.error) {
         throw new Error(result.error);
@@ -405,7 +406,7 @@ class TrainingService {
    * @returns {Function} - Unsubscribe function
    */
   subscribeToTrainingSessions(callback) {
-    return this._getPocketbase().subscribe('training_sessions', callback);
+    return this._getPocketbase().subscribe(COLLECTIONS.TRAINING_SESSIONS, callback);
   }
 
   /**
@@ -414,7 +415,7 @@ class TrainingService {
    * @returns {Function} - Unsubscribe function
    */
   subscribeToTrainingGoals(callback) {
-    return this._getPocketbase().subscribe('training_goals', callback);
+    return this._getPocketbase().subscribe(COLLECTIONS.TRAINING_GOALS, callback);
   }
 
   /**

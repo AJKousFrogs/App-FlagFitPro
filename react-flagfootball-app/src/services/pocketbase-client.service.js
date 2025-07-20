@@ -1,4 +1,5 @@
 import PocketBase from 'pocketbase';
+import { COLLECTIONS } from '../config/collections.js';
 
 /**
  * PocketBase Service for FlagFit Pro
@@ -37,7 +38,7 @@ class PocketBaseService {
         hasName: !!userPayload.name
       });
       
-      const record = await this.pb.collection('_pb_users_auth_').create(userPayload);
+      const record = await this.pb.collection(COLLECTIONS.USERS).create(userPayload);
       
       console.log('User created successfully:', record.email);
       
@@ -109,12 +110,12 @@ class PocketBaseService {
   
   async _performLogin(email, password) {
     try {
-      console.log('Attempting login with:', { email, password: `${password.substring(0, 3)}***` });
+      console.log('Attempting login with email:', email);
       
       // Clear all pending requests before login attempt
       this.clearPendingRequests();
       
-      const authData = await this.pb.collection('_pb_users_auth_').authWithPassword(email, password);
+      const authData = await this.pb.collection(COLLECTIONS.USERS).authWithPassword(email, password);
       
       console.log('Login successful:', {
         user: authData.record?.email,
@@ -178,7 +179,7 @@ class PocketBaseService {
    */
   async updateProfile(profileData) {
     try {
-      const record = await this.pb.collection('_pb_users_auth_').update(this.authStore.model.id, profileData);
+      const record = await this.pb.collection(COLLECTIONS.USERS).update(this.authStore.model.id, profileData);
       return { user: record };
     } catch (error) {
       throw new Error(error.message);
