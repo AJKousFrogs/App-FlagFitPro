@@ -18,7 +18,6 @@ This is the React frontend for the FlagFit Pro application, migrated from Vue.js
 5. Your app will be live in 2-3 minutes! 🎉
 
 ### Alternative Platforms:
-- **Vercel**: Currently experiencing module resolution issues
 - **Railway**: Great for full-stack deployment with backend
 - **GitHub Pages**: For static deployment only
 

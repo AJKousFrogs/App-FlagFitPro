@@ -4,31 +4,20 @@ This guide covers deploying FlagFit Pro to production environments.
 
 ## 🚀 Quick Deploy
 
-### Option 1: Vercel (Recommended)
+### Netlify (Recommended)
 
 1. **Connect Repository**
-   ```bash
-   # Install Vercel CLI
-   npm i -g vercel
-   
-   # Deploy from project directory
-   vercel
-   ```
+   - Push code to GitHub
+   - Connect repository in Netlify dashboard
+   - Set build command: `npm run build`
+   - Set publish directory: `dist`
 
-2. **Configure Environment Variables**
-   - Go to Vercel Dashboard → Project Settings → Environment Variables
-   - Add your Supabase credentials:
-     ```
-     VITE_SUPABASE_URL=your_supabase_url
-     VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-     ```
+2. **Environment Variables**
+   - Go to Site Settings → Environment Variables
+   - Add Supabase credentials
 
 3. **Deploy**
-   ```bash
-   vercel --prod
-   ```
-
-### Option 2: Netlify
+   - Netlify will auto-deploy on git push
 
 1. **Connect Repository**
    - Push code to GitHub
@@ -79,18 +68,13 @@ VITE_ENABLE_PUSH_NOTIFICATIONS=true
 
 #### Custom Domain Setup
 
-1. **Vercel**
-   - Go to Project Settings → Domains
-   - Add your custom domain
-   - Configure DNS records
-
-2. **Netlify**
+1. **Netlify**
    - Go to Site Settings → Domain Management
    - Add custom domain
    - Update DNS records
 
 #### SSL Certificate
-- Automatically handled by Vercel/Netlify
+- Automatically handled by Netlify
 - Force HTTPS redirect in app configuration
 
 ### 4. PWA Configuration
@@ -151,7 +135,6 @@ Configure service worker caching:
 
 ### 3. CDN Configuration
 
-- **Vercel**: Automatic CDN with edge locations
 - **Netlify**: Global CDN with automatic optimization
 - **Custom CDN**: Configure Cloudflare or similar
 
@@ -265,7 +248,6 @@ Sentry.init({
 
 ### 2. Performance Monitoring
 
-- **Vercel Analytics**: Built-in performance monitoring
 - **Netlify Analytics**: Site performance insights
 - **Google Analytics**: User behavior tracking
 
@@ -314,12 +296,13 @@ jobs:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           
-      - name: Deploy to Vercel
-        uses: amondnet/vercel-action@v25
+      - name: Deploy to Netlify
+        uses: nwtgck/actions-netlify@v2.0
         with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.ORG_ID }}
-          vercel-project-id: ${{ secrets.PROJECT_ID }}
+          publish-dir: './dist'
+          production-branch: main
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: "Deploy from GitHub Actions"
 ```
 
 ## 🧪 Testing
@@ -383,7 +366,6 @@ npm run lint
 
 ### Support Resources
 
-- **Vercel Documentation**: [vercel.com/docs](https://vercel.com/docs)
 - **Netlify Documentation**: [netlify.com/docs](https://netlify.com/docs)
 - **Supabase Documentation**: [supabase.com/docs](https://supabase.com/docs)
 

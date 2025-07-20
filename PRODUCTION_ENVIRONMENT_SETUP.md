@@ -9,7 +9,7 @@
 
 ### Required New Variables
 
-Add these variables to your production environment (Vercel, Netlify, or your hosting platform):
+Add these variables to your production environment (Netlify or your hosting platform):
 
 ```bash
 # API Configuration (NEW)
@@ -96,24 +96,6 @@ ALLOWED_ORIGINS=https://flagfitpro.com,https://www.flagfitpro.com,https://app.fl
 ---
 
 ## 🌐 Platform-Specific Instructions
-
-### Vercel Deployment
-
-1. **Go to your Vercel dashboard**
-2. **Select your project**
-3. **Navigate to Settings → Environment Variables**
-4. **Add each variable:**
-
-```bash
-# Add these variables one by one:
-VITE_API_BASE_URL=https://your-api.vercel.app
-VITE_AI_SERVICE_URL=https://your-ai-service.vercel.app
-CSRF_SECRET=your-generated-csrf-secret
-ALLOWED_ORIGINS=https://your-domain.vercel.app
-NODE_ENV=production
-```
-
-5. **Redeploy your application**
 
 ### Netlify Deployment
 

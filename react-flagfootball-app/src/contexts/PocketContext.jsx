@@ -25,7 +25,6 @@ export function PocketProvider({ children }) {
     pocketbaseUrl.includes('your-pocketbase-instance') ||
     pocketbaseUrl.includes('127.0.0.1') ||
     pocketbaseUrl.includes('localhost') ||
-    (hostname.includes('vercel.app') && !pocketbaseUrl.includes('production-domain.com')) ||
     import.meta.env.VITE_APP_ENVIRONMENT === 'demo';
   
   console.log('🔧 Environment Check:', {
@@ -39,11 +38,7 @@ export function PocketProvider({ children }) {
   Demo mode is enabled when:
   - No PocketBase URL configured
   - URL points to localhost/127.0.0.1
-  - Deployed to Vercel without production backend
   - Explicitly set to demo environment
-    isProduction ||
-    hostname.includes('vercel.app') ||
-    hostname.includes('netlify.app');
   */
   
   console.log('🔧 PocketContext initialization:', {

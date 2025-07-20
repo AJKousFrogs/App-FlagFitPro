@@ -47,10 +47,7 @@ railway create flagfit-pro
 railway up
 ```
 
-### Vercel (Currently Not Recommended)
-- Experiencing persistent module resolution issues
-- Multiple attempts made to fix ES module imports
-- Recommend using Netlify instead
+
 
 ### GitHub Pages (Static Only)
 ```yaml

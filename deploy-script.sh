@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# FlagFit Pro - Vercel Deployment Script
-# This script commits and pushes the build fixes to trigger a new Vercel deployment
+# FlagFit Pro - Netlify Deployment Script
+# This script commits and pushes the build fixes to trigger a new Netlify deployment
 
 echo "🚀 Starting FlagFit Pro deployment process..."
 
@@ -37,9 +37,9 @@ git diff --cached --name-only
 
 # Commit the changes
 echo "💾 Committing changes..."
-git commit -m "Fix Vercel build: Remove .js extensions from service imports and fix Sentry compatibility
+git commit -m "Fix Netlify build: Remove .js extensions from service imports and fix Sentry compatibility
 
-- Fixed module resolution issues in Vercel build
+- Fixed module resolution issues in Netlify build
 - Removed .js extensions from all service imports
 - Fixed Sentry API compatibility issues
 - Ensures proper build process for production deployment"
@@ -54,9 +54,9 @@ echo "📋 Summary:"
 echo "   - All service imports fixed (removed .js extensions)"
 echo "   - Sentry compatibility issues resolved"
 echo "   - Changes committed and pushed to main branch"
-echo "   - Vercel should now trigger a new deployment"
+echo "   - Netlify should now trigger a new deployment"
 echo ""
-echo "🔗 Check your Vercel dashboard for deployment status:"
-echo "   https://vercel.com/dashboard"
+echo "🔗 Check your Netlify dashboard for deployment status:"
+echo "   https://app.netlify.com"
 echo ""
 echo "🎉 Your FlagFit Pro app should deploy successfully now!" 

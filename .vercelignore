@@ -1,8 +1,0 @@
-# Force fresh builds - ignore cache
-.vercel
-*.log
-.env.local
-pb_data
-pb_migrations
-pocketbase*
-*.zip

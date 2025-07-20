@@ -65,17 +65,6 @@ VITE_ENABLE_WEARABLE_SYNC=false
 
 ### 4. Deployment Platforms
 
-#### Vercel Deployment
-```bash
-# Install Vercel CLI
-npm i -g vercel
-
-# Deploy
-vercel --prod
-
-# Configure environment variables in Vercel dashboard
-```
-
 #### Netlify Deployment
 1. Connect GitHub repository
 2. Set build command: `npm run build`
@@ -141,7 +130,7 @@ vercel --prod
 # Revert to previous version
 git checkout v1.0
 npm run build
-vercel --prod
+# Netlify will auto-deploy from the reverted commit
 ```
 
 ### 3. Environment Rollback

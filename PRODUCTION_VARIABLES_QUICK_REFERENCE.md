@@ -74,12 +74,6 @@ curl -I https://your-domain.com
 
 ## 📱 Platform-Specific Setup
 
-### Vercel
-1. Dashboard → Project → Settings → Environment Variables
-2. Add each variable from the table above
-3. Set environment to "Production"
-4. Redeploy
-
 ### Netlify
 1. Dashboard → Site → Site settings → Environment variables
 2. Add each variable from the table above
