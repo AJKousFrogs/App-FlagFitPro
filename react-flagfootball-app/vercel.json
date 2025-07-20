@@ -1,7 +1,10 @@
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
+  "version": 2,
+  "buildCommand": "cd react-flagfootball-app && npm ci && npm run build",
+  "outputDirectory": "react-flagfootball-app/dist",
+  "installCommand": "cd react-flagfootball-app && npm ci",
   "framework": "vite",
+  "nodejs": "18.x",
   "rewrites": [
     {
       "source": "/(.*)",
@@ -9,13 +12,14 @@
     }
   ],
   "env": {
+    "NODE_VERSION": "18.19.0",
     "VITE_APP_ENVIRONMENT": "production",
     "VITE_APP_NAME": "FlagFit Pro",
     "VITE_APP_VERSION": "1.0.2"
   },
-  "functions": {
-    "app/api/**/*.js": {
-      "runtime": "nodejs18.x"
+  "build": {
+    "env": {
+      "NODE_OPTIONS": "--max-old-space-size=4096"
     }
   }
 }
