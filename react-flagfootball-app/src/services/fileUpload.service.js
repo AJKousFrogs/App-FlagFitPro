@@ -1,5 +1,5 @@
-import pocketbaseService from '@services/pocketbase-client.service.js';
-import { COLLECTIONS } from '@config/collections.js';
+import pocketbaseService from './pocketbase-client.service.js';
+import { COLLECTIONS } from '../config/collections.js';
 
 class FileUploadService {
   constructor() {
