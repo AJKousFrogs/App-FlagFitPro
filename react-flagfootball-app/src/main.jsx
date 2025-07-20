@@ -4,8 +4,7 @@ import App from './App.jsx';
 import './index.css';
 
 // Initialize services
-import logger from './services/logger.service.js';
-import sentryService from './services/sentry.service.js';
+import { logger, sentryService } from './services/index.js';
 
 // Sentry is conditionally initialized in the service constructor
 // No need to explicitly call init here

@@ -1,6 +1,5 @@
 // Dependency Injection Container for React App
-import pocketbaseService from './pocketbase.service.js';
-import cacheService from './cache.service.js';
+import { pocketbaseService, cacheService } from './index.js';
 
 class Container {
   constructor() {
