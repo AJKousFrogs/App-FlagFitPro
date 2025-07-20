@@ -6,8 +6,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import SwaggerUI from 'swagger-ui-react';
 import 'swagger-ui-react/swagger-ui.css';
-import env from '../config/environment.js';
-import logger from '../services/logger.service.js';
+import env from '../config/environment';
+import logger from '../services/logger.service';
 
 const ApiDocumentation = ({ className = '' }) => {
   const [apiSpec, setApiSpec] = useState(null);

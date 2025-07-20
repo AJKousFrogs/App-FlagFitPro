@@ -1,12 +1,19 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { fileUploadService } from '../services/fileUpload.service';
+import { usePocket } from '../contexts/PocketContext';
+import FileUploadZone from './FileUploadZone';
 
 const ProgressTracker = ({ onBack }) => {
+  const { user } = usePocket();
   const [photos, setPhotos] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('form');
   const [showCamera, setShowCamera] = useState(false);
   const [capturedPhoto, setCapturedPhoto] = useState(null);
   const [comparison, setComparison] = useState({ before: null, after: null });
   const [showComparison, setShowComparison] = useState(false);
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const fileInputRef = useRef(null);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -55,8 +62,21 @@ const ProgressTracker = ({ onBack }) => {
   ];
 
   useEffect(() => {
-    setPhotos(samplePhotos);
-  }, []);
+    loadUserPhotos();
+  }, [user, selectedCategory]);
+
+  const loadUserPhotos = async () => {
+    if (!user?.id) return;
+    
+    try {
+      const userPhotos = await fileUploadService.getUserProgressPhotos(user.id, selectedCategory);
+      setPhotos(userPhotos);
+    } catch (error) {
+      console.error('Failed to load photos:', error);
+      // Fallback to sample photos for demo
+      setPhotos(samplePhotos.filter(photo => photo.category === selectedCategory));
+    }
+  };
 
   // Camera functionality
   const startCamera = async () => {
@@ -101,18 +121,46 @@ const ProgressTracker = ({ onBack }) => {
     setShowCamera(false);
   };
 
-  const savePhoto = (photoData, title, notes) => {
-    const newPhoto = {
-      id: Date.now(),
-      category: selectedCategory,
-      date: new Date(),
-      title: title || `${photoCategories.find(c => c.id === selectedCategory)?.name} - ${new Date().toLocaleDateString()}`,
-      notes: notes || '',
-      url: photoData
-    };
+  const savePhoto = async (photoData, title, notes) => {
+    if (!user?.id) {
+      console.error('User not authenticated');
+      return;
+    }
+
+    setIsUploading(true);
     
-    setPhotos(prev => [newPhoto, ...prev]);
-    setCapturedPhoto(null);
+    try {
+      // Convert data URL to File
+      const response = await fetch(photoData);
+      const blob = await response.blob();
+      const file = new File([blob], `progress-photo-${Date.now()}.jpg`, { type: 'image/jpeg' });
+
+      const metadata = {
+        userId: user.id,
+        title: title || `${photoCategories.find(c => c.id === selectedCategory)?.name} - ${new Date().toLocaleDateString()}`,
+        category: selectedCategory,
+        notes: notes || '',
+        tags: []
+      };
+
+      const result = await fileUploadService.uploadProgressPhoto(file, metadata);
+      
+      if (result.success) {
+        // Add to local state
+        const newPhoto = {
+          ...result.record,
+          photoUrl: result.fileUrl
+        };
+        setPhotos(prev => [newPhoto, ...prev]);
+        setCapturedPhoto(null);
+      } else {
+        console.error('Upload failed:', result.error);
+      }
+    } catch (error) {
+      console.error('Failed to save photo:', error);
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const handleFileUpload = (event) => {
@@ -184,7 +232,7 @@ const ProgressTracker = ({ onBack }) => {
               className="hidden"
             />
             <button
-              onClick={() => fileInputRef.current?.click()}
+              onClick={() => setShowUploadModal(true)}
               className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg font-semibold transition-colors"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -381,8 +429,17 @@ const ProgressTracker = ({ onBack }) => {
                     comparison.after?.id === photo.id ? 'ring-2 ring-green-400' : ''
                   }`}
                 >
-                  <div className="w-full h-48 bg-gray-700 flex items-center justify-center">
-                    <span className="text-gray-400">📷 {photo.title}</span>
+                  <div className="w-full h-48 bg-gray-700 flex items-center justify-center overflow-hidden rounded-t-lg">
+                    {photo.photoUrl || photo.url ? (
+                      <img
+                        src={photo.photoUrl || photo.url}
+                        alt={photo.title}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <span className="text-gray-400">📷 {photo.title}</span>
+                    )}
                   </div>
                   <div className="p-4">
                     <h3 className="font-semibold mb-1">{photo.title}</h3>
@@ -396,6 +453,131 @@ const ProgressTracker = ({ onBack }) => {
             </div>
           )}
         </div>
+
+        {/* File Upload Modal */}
+        {showUploadModal && (
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-gray-900 rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-2xl font-bold">Upload Progress Photos</h3>
+                <button
+                  onClick={() => setShowUploadModal(false)}
+                  className="text-gray-400 hover:text-white"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="mb-6">
+                <label className="block text-sm font-medium mb-2">Category</label>
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className="w-full p-3 rounded-lg bg-white/20 text-white border border-white/30 focus:ring-2 focus:ring-blue-500"
+                >
+                  {photoCategories.map(category => (
+                    <option key={category.id} value={category.id} className="bg-gray-800">
+                      {category.icon} {category.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <FileUploadZone
+                accept="image/*"
+                multiple={false}
+                maxSize={5 * 1024 * 1024} // 5MB
+                onUploadStart={(files) => {
+                  setIsUploading(true);
+                  setUploadProgress(0);
+                }}
+                onUploadProgress={(progress) => {
+                  setUploadProgress(progress);
+                }}
+                onUploadComplete={async (results) => {
+                  if (results.length > 0 && results[0].success) {
+                    const fileData = results[0].data;
+                    
+                    // Show title/notes input modal
+                    const title = prompt('Photo title (optional):') || '';
+                    const notes = prompt('Notes (optional):') || '';
+
+                    if (!user?.id) {
+                      console.error('User not authenticated');
+                      setIsUploading(false);
+                      return;
+                    }
+
+                    try {
+                      const metadata = {
+                        userId: user.id,
+                        title: title || `${photoCategories.find(c => c.id === selectedCategory)?.name} - ${new Date().toLocaleDateString()}`,
+                        category: selectedCategory,
+                        notes: notes,
+                        tags: []
+                      };
+
+                      const result = await fileUploadService.uploadProgressPhoto(fileData.file, metadata);
+                      
+                      if (result.success) {
+                        const newPhoto = {
+                          ...result.record,
+                          photoUrl: result.fileUrl
+                        };
+                        setPhotos(prev => [newPhoto, ...prev]);
+                        setShowUploadModal(false);
+                      } else {
+                        console.error('Upload failed:', result.error);
+                        alert('Upload failed: ' + result.error);
+                      }
+                    } catch (error) {
+                      console.error('Upload error:', error);
+                      alert('Upload failed. Please try again.');
+                    }
+                  }
+                  setIsUploading(false);
+                }}
+                onUploadError={(errors) => {
+                  console.error('Upload errors:', errors);
+                  alert('Upload failed: ' + errors.join(', '));
+                  setIsUploading(false);
+                }}
+                disabled={isUploading}
+                className="mb-6"
+              >
+                <div className="text-center p-8">
+                  <div className="text-4xl mb-4">📸</div>
+                  <div className="text-lg font-medium mb-2">
+                    Drop your progress photo here
+                  </div>
+                  <div className="text-sm text-gray-300 mb-4">
+                    or click to select from your device
+                  </div>
+                  <div className="text-xs text-gray-400">
+                    Supports JPEG, PNG, WebP • Max 5MB
+                  </div>
+                </div>
+              </FileUploadZone>
+
+              {isUploading && (
+                <div className="bg-white/10 rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium">Uploading...</span>
+                    <span className="text-sm">{Math.round(uploadProgress)}%</span>
+                  </div>
+                  <div className="w-full bg-gray-700 rounded-full h-2">
+                    <div 
+                      className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${uploadProgress}%` }}
+                    ></div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Hidden canvas for photo capture */}
         <canvas ref={canvasRef} className="hidden" />

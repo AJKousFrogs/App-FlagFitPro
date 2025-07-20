@@ -1,28 +1,28 @@
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ConfigProvider, theme } from 'antd';
-import { PocketProvider, usePocket } from './contexts/PocketContext.jsx';
-import { TrainingProvider } from './contexts/TrainingContext.jsx';
-import { AnalyticsProvider } from './contexts/AnalyticsContext.jsx';
-import { ThemeProvider } from './contexts/ThemeContext.jsx';
-import QueryProvider from './providers/QueryProvider.jsx';
-import { useOnlineStatus } from './hooks/index.js';
-import useAppStore from './stores/useAppStore.js';
+import { PocketProvider, usePocket } from './contexts/PocketContext';
+import { TrainingProvider } from './contexts/TrainingContext';
+import { AnalyticsProvider } from './contexts/AnalyticsContext';
+import { ThemeProvider } from './contexts/ThemeContext';
+import QueryProvider from './providers/QueryProvider';
+import { useOnlineStatus } from './hooks/index';
+import useAppStore from './stores/useAppStore';
 
 // Import components
-import LoadingSpinner from './components/LoadingSpinner.jsx';
-import OfflineBanner from './components/OfflineBanner.jsx';
-import ErrorBoundary from './components/ErrorBoundary.jsx';
+import LoadingSpinner from './components/LoadingSpinner';
+import OfflineBanner from './components/OfflineBanner';
+import ErrorBoundary from './components/ErrorBoundary';
 
 // Lazy load views for code splitting
-const LoginView = lazy(() => import('./views/LoginView.jsx'));
-const RegisterView = lazy(() => import('./views/RegisterView.jsx'));
-const DashboardView = lazy(() => import('./views/DashboardView.jsx'));
-const TrainingView = lazy(() => import('./views/TrainingView.jsx'));
-const ProfileView = lazy(() => import('./views/ProfileView.jsx'));
-const OnboardingView = lazy(() => import('./views/OnboardingView.jsx'));
-const TournamentsView = lazy(() => import('./views/TournamentsView.jsx'));
-const CommunityView = lazy(() => import('./views/CommunityView.jsx'));
+const LoginView = lazy(() => import('./views/LoginView'));
+const RegisterView = lazy(() => import('./views/RegisterView'));
+const DashboardView = lazy(() => import('./views/DashboardView'));
+const TrainingView = lazy(() => import('./views/TrainingView'));
+const ProfileView = lazy(() => import('./views/ProfileView'));
+const OnboardingView = lazy(() => import('./views/OnboardingView'));
+const TournamentsView = lazy(() => import('./views/TournamentsView'));
+const CommunityView = lazy(() => import('./views/CommunityView'));
 
 // Protected Route Component (must be inside AuthProvider)
 const ProtectedRoute = ({ children }) => {

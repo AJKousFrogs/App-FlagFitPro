@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect } from 'react';
-import { useStandardReducer } from '../hooks/useReducer.js';
-import { authService } from '../services/auth.service.js';
+import { useStandardReducer } from '../hooks/useReducer';
+import { authService } from '../services/auth.service';
 
 // Action types
 const AUTH_ACTIONS = {

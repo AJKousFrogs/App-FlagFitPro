@@ -3,9 +3,9 @@
  * Provides request/response security processing
  */
 
-import securityService from '../services/security.service.js';
-import logger from '../services/logger.service.js';
-import sentryService from '../services/sentry.service.js';
+import securityService from '../services/security.service';
+import logger from '../services/logger.service';
+import sentryService from '../services/sentry.service';
 
 class SecurityMiddleware {
   constructor() {
