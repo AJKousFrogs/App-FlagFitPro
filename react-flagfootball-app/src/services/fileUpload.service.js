@@ -1,4 +1,4 @@
-import { pocketbaseService } from './pocketbase-client.service';
+import pocketbaseService from './pocketbase-client.service';
 
 class FileUploadService {
   constructor() {
