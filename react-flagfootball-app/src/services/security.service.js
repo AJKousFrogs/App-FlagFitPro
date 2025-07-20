@@ -4,7 +4,7 @@
  */
 
 import logger from './logger.service';
-import env from '../config/environment';
+import env from '../config/environment.js';
 
 class SecurityService {
   constructor() {

@@ -4,7 +4,7 @@
  */
 
 import * as Sentry from '@sentry/react';
-import env from '../config/environment';
+import env from '../config/environment.js';
 import logger from './logger.service';
 
 class SentryService {

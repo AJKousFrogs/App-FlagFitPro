@@ -6,7 +6,7 @@
 import pocketbaseService from './pocketbase-client.service.js';
 import logger from './logger.service';
 import sentryService from './sentry.service';
-import env from '../config/environment';
+import env from '../config/environment.js';
 
 
 class MigrationService {

@@ -4,8 +4,8 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { apiService, API_VERSIONS } from '../services/api.service';
-import logger from '../services/logger.service';
+import { apiService, API_VERSIONS } from '../services/api.service.js';
+import logger from '../services/logger.service.js';
 
 /**
  * Enhanced useApi hook with versioning support

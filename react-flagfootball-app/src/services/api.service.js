@@ -3,7 +3,7 @@
  * Provides a centralized API client with version management
  */
 
-import env from '../config/environment';
+import env from '../config/environment.js';
 import logger from './logger.service';
 import sentryService from './sentry.service';
 

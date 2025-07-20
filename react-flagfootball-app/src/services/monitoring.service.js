@@ -5,7 +5,7 @@
 
 import logger from './logger.service';
 import sentryService from './sentry.service';
-import env from '../config/environment';
+import env from '../config/environment.js';
 
 class MonitoringService {
   constructor() {
