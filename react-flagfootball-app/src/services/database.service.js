@@ -3,7 +3,7 @@
  * Provides enhanced database connection handling and monitoring
  */
 
-import pocketbaseService from './pocketbase-client.service';
+import pocketbaseService from './pocketbase-client.service.js';
 import logger from './logger.service';
 import sentryService from './sentry.service';
 
