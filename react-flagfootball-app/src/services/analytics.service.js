@@ -1,6 +1,6 @@
 // Analytics Service for React
-import pocketbaseService from './pocketbase-client.service.js';
-import cacheService from './cache.service.js';
+import pocketbaseService from './pocketbase-client.service';
+import cacheService from './cache.service';
 
 class AnalyticsService {
   constructor() {
