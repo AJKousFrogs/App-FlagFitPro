@@ -67,29 +67,10 @@ class HybridAnalyticsService {
    * @param {Object} performanceData - Performance metrics
    */
   async trackPerformance(performanceData) {
-    if (!this.isOnline) return;
-
-    try {
-      const response = await fetch(`${this.functionsUrl}/performance`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          user_id: this.getCurrentUserId(),
-          page_url: window.location.href,
-          ...performanceData
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error(`Performance tracking failed: ${response.status}`);
-      }
-
-      return await response.json();
-    } catch (error) {
-      logger.error('Failed to track performance:', error);
-    }
+    // Temporarily disabled to prevent 500 errors
+    // TODO: Configure Neon database for production
+    console.log('Performance tracking temporarily disabled:', performanceData);
+    return null;
   }
 
   /**
@@ -112,25 +93,10 @@ class HybridAnalyticsService {
    * @returns {Promise<Object>} - Advanced analytics data
    */
   async getAdvancedAnalytics(params = {}) {
-    if (!this.isOnline) {
-      logger.warn('Advanced analytics unavailable offline');
-      return this.getOfflineAnalytics();
-    }
-
-    try {
-      const queryParams = new URLSearchParams(params).toString();
-      const response = await fetch(`${this.functionsUrl}/analytics?${queryParams}`);
-      
-      if (!response.ok) {
-        throw new Error(`Analytics request failed: ${response.status}`);
-      }
-
-      return await response.json();
-    } catch (error) {
-      logger.error('Failed to get advanced analytics:', error);
-      // Fallback to PocketBase analytics
-      return this.getBasicAnalytics(params);
-    }
+    // Temporarily disabled to prevent 500 errors
+    // TODO: Configure Neon database for production
+    console.log('Advanced analytics temporarily disabled, using basic analytics');
+    return this.getBasicAnalytics(params);
   }
 
   /**
@@ -139,23 +105,10 @@ class HybridAnalyticsService {
    * @returns {Promise<Object>} - User behavior data
    */
   async getUserBehavior(params = {}) {
-    if (!this.isOnline) {
-      return { userJourneys: [], featureUsage: [], conversionFunnel: [], retention: [] };
-    }
-
-    try {
-      const queryParams = new URLSearchParams(params).toString();
-      const response = await fetch(`${this.functionsUrl}/user-behavior?${queryParams}`);
-      
-      if (!response.ok) {
-        throw new Error(`User behavior request failed: ${response.status}`);
-      }
-
-      return await response.json();
-    } catch (error) {
-      logger.error('Failed to get user behavior:', error);
-      return { userJourneys: [], featureUsage: [], conversionFunnel: [], retention: [] };
-    }
+    // Temporarily disabled to prevent 500 errors
+    // TODO: Configure Neon database for production
+    console.log('User behavior analytics temporarily disabled');
+    return { userJourneys: [], featureUsage: [], conversionFunnel: [], retention: [] };
   }
 
   /**
@@ -164,23 +117,10 @@ class HybridAnalyticsService {
    * @returns {Promise<Object>} - Performance report
    */
   async getPerformanceReport(params = {}) {
-    if (!this.isOnline) {
-      return { summary: {}, pagePerformance: [], trends: [] };
-    }
-
-    try {
-      const queryParams = new URLSearchParams(params).toString();
-      const response = await fetch(`${this.functionsUrl}/performance?${queryParams}`);
-      
-      if (!response.ok) {
-        throw new Error(`Performance report request failed: ${response.status}`);
-      }
-
-      return await response.json();
-    } catch (error) {
-      logger.error('Failed to get performance report:', error);
-      return { summary: {}, pagePerformance: [], trends: [] };
-    }
+    // Temporarily disabled to prevent 500 errors
+    // TODO: Configure Neon database for production
+    console.log('Performance report temporarily disabled');
+    return { summary: {}, pagePerformance: [], trends: [] };
   }
 
   /**
@@ -188,32 +128,10 @@ class HybridAnalyticsService {
    * @param {Object} eventData - Event data
    */
   async trackToNeon(eventData) {
-    try {
-      const response = await fetch(`${this.functionsUrl}/analytics`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          user_id: this.getCurrentUserId(),
-          event_type: eventData.type,
-          event_data: eventData,
-          session_id: eventData.session_id,
-          page_url: eventData.page_url,
-          user_agent: eventData.user_agent
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error(`Neon tracking failed: ${response.status}`);
-      }
-
-      return await response.json();
-    } catch (error) {
-      logger.error('Failed to track to Neon:', error);
-      // Add to queue for retry
-      this.eventQueue.push(eventData);
-    }
+    // Temporarily disabled to prevent 500 errors
+    // TODO: Configure Neon database for production
+    console.log('Neon tracking temporarily disabled:', eventData.type);
+    return null;
   }
 
   /**

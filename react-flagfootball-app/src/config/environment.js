@@ -20,7 +20,7 @@ class EnvironmentConfig {
 
       // API Configuration
       api: {
-        pocketbaseUrl: import.meta.env.VITE_POCKETBASE_URL || 'http://127.0.0.1:8090',
+        pocketbaseUrl: import.meta.env.VITE_POCKETBASE_URL || (import.meta.env.PROD ? 'https://your-pocketbase-instance.com' : 'http://127.0.0.1:8090'),
         timeout: parseInt(import.meta.env.VITE_API_TIMEOUT) || 30000,
         cacheTTL: parseInt(import.meta.env.VITE_CACHE_TTL) || 300000,
         baseUrl: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001',
