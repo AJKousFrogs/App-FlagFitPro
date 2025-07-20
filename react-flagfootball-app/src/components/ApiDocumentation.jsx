@@ -28,7 +28,7 @@ const ApiDocumentation = ({ className = '' }) => {
       description: 'API Server v1'
     },
     {
-      url: 'https://api.flagfitpro.com/v1',
+      url: 'https://api.merlinsplaybook.com/v1',
       description: 'Production Server'
     }
   ];
@@ -75,12 +75,12 @@ const ApiDocumentation = ({ className = '' }) => {
       return {
         openapi: '3.0.3',
         info: {
-          title: 'FlagFit Pro API',
+          title: 'MERLINS PLAYBOOK API',
           description: 'Flag Football Training and Analytics Platform API',
           version: '1.0.0',
           contact: {
-            name: 'FlagFit Pro API Support',
-            email: 'api-support@flagfitpro.com'
+            name: 'MERLINS PLAYBOOK API Support',
+            email: 'api-support@merlinsplaybook.com'
           }
         },
         servers,
@@ -370,7 +370,7 @@ const ApiDocumentation = ({ className = '' }) => {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-bold text-gray-900">API Documentation</h2>
-            <p className="text-gray-600 mt-1">Interactive API reference for FlagFit Pro</p>
+            <p className="text-gray-600 mt-1">Interactive API reference for MERLINS PLAYBOOK</p>
           </div>
           
           <div className="flex items-center space-x-4">
@@ -495,10 +495,10 @@ const ApiDocumentation = ({ className = '' }) => {
               Need help? Contact our API support team.
             </p>
             <a
-              href="mailto:api-support@flagfitpro.com"
+              href="mailto:api-support@merlinsplaybook.com"
               className="text-blue-600 hover:text-blue-800 text-sm font-medium"
             >
-              api-support@flagfitpro.com
+              api-support@merlinsplaybook.com
             </a>
           </div>
         </div>

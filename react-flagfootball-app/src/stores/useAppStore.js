@@ -76,7 +76,7 @@ const useAppStore = create()(
         }
       }),
       {
-        name: 'flagfit-app-store',
+        name: 'merlins-playbook-store',
         partialize: (state) => ({
           theme: state.theme,
           user: state.user,
@@ -86,7 +86,7 @@ const useAppStore = create()(
       }
     ),
     {
-      name: 'flagfit-app-store'
+      name: 'merlins-playbook-store'
     }
   )
 )

@@ -114,7 +114,7 @@ const LoginView = () => {
 
   const handleDemoLogin = async () => {
     try {
-      await login('demo@flagfit.com', 'demo123');
+      await login('demo@merlinsplaybook.com', 'demo123');
       navigate('/dashboard');
     } catch (error) {
       console.error('Demo login failed:', error);

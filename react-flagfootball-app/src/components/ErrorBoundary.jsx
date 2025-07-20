@@ -48,7 +48,7 @@ Error: ${this.state.error?.message || 'Unknown error'}
 Stack: ${this.state.error?.stack || 'Not available'}
 Component Stack: ${this.state.errorInfo?.componentStack || 'Not available'}
       `);
-      window.location.href = `mailto:support@flagfitpro.com?subject=${subject}&body=${body}`;
+      window.location.href = `mailto:support@merlinsplaybook.com?subject=${subject}&body=${body}`;
     }
   };
 
