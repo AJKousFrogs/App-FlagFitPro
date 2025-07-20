@@ -155,7 +155,7 @@ const LoginView = () => {
         
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
-            Sign in to FlagFit Pro
+            Sign in to MERLINS PLAYBOOK
           </h2>
           <p className="mt-2 text-center text-sm text-gray-300">
             Or{' '}

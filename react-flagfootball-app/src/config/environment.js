@@ -13,7 +13,7 @@ class EnvironmentConfig {
     return {
       // App Configuration
       app: {
-        name: import.meta.env.VITE_APP_NAME || 'FlagFit Pro',
+        name: import.meta.env.VITE_APP_NAME || 'MERLINS PLAYBOOK',
         version: import.meta.env.VITE_APP_VERSION || '1.0.0',
         environment: import.meta.env.VITE_APP_ENVIRONMENT || 'development'
       },

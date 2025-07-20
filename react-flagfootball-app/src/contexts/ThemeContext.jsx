@@ -16,7 +16,7 @@ export const useTheme = () => {
   return context;
 };
 
-export const ThemeProvider = ({ children, defaultTheme = 'light', storageKey = 'flag-fit-theme' }) => {
+export const ThemeProvider = ({ children, defaultTheme = 'light', storageKey = 'merlins-playbook-theme' }) => {
   const [theme, setTheme] = useState(() => {
     // Check localStorage first
     if (typeof window !== 'undefined') {

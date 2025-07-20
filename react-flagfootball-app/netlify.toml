@@ -5,7 +5,7 @@
 [build.environment]
   NODE_VERSION = "18"
   VITE_APP_ENVIRONMENT = "production"
-  VITE_APP_NAME = "FlagFit Pro"
+  VITE_APP_NAME = "MERLINS PLAYBOOK"
   VITE_APP_VERSION = "1.0.2"
 
 [[redirects]]

@@ -51,7 +51,7 @@ const OnboardingView = () => {
         return (
           <div className="space-y-6">
             <div className="text-center">
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome to FlagFit Pro!</h2>
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome to MERLINS PLAYBOOK!</h2>
               <p className="text-gray-600">Let&apos;s get you set up for success</p>
             </div>
             
