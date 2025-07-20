@@ -966,3 +966,15 @@ File pb_hooks/auth.pb.js changed, restarting...
 [0.00ms] SELECT `_otps`.* FROM `_otps` WHERE (`collectionRef`='pbc_3142635823') AND (`created` < '2025-07-20 13:57:05.673Z')
 [0.00ms] SELECT `_mfas`.* FROM `_mfas` WHERE (`collectionRef`='_pb_users_auth_') AND (`created` < '2025-07-20 13:30:05.673Z')
 [0.00ms] SELECT `_mfas`.* FROM `_mfas` WHERE (`collectionRef`='pbc_3142635823') AND (`created` < '2025-07-20 13:30:05.673Z')
+[3.00ms] SELECT `_collections`.* FROM `_collections` WHERE `type`='auth' ORDER BY `created` ASC
+[3.00ms] SELECT `_collections`.* FROM `_collections` WHERE `type`='auth' ORDER BY `created` ASC
+[0.00ms] SELECT `_mfas`.* FROM `_mfas` WHERE (`collectionRef`='_pb_users_auth_') AND (`created` < '2025-07-20 18:30:06.106Z')
+[0.00ms] SELECT `_otps`.* FROM `_otps` WHERE (`collectionRef`='_pb_users_auth_') AND (`created` < '2025-07-20 18:57:06.106Z')
+[0.00ms] SELECT `_mfas`.* FROM `_mfas` WHERE (`collectionRef`='pbc_3142635823') AND (`created` < '2025-07-20 18:30:06.106Z')
+[0.00ms] SELECT `_otps`.* FROM `_otps` WHERE (`collectionRef`='pbc_3142635823') AND (`created` < '2025-07-20 18:57:06.106Z')
+[6.00ms] SELECT `_collections`.* FROM `_collections` WHERE `type`='auth' ORDER BY `created` ASC
+[11.00ms] SELECT `_collections`.* FROM `_collections` WHERE `type`='auth' ORDER BY `created` ASC
+[0.00ms] SELECT `_otps`.* FROM `_otps` WHERE (`collectionRef`='_pb_users_auth_') AND (`created` < '2025-07-20 19:57:06.307Z')
+[0.00ms] SELECT `_otps`.* FROM `_otps` WHERE (`collectionRef`='pbc_3142635823') AND (`created` < '2025-07-20 19:57:06.307Z')
+[0.00ms] SELECT `_mfas`.* FROM `_mfas` WHERE (`collectionRef`='_pb_users_auth_') AND (`created` < '2025-07-20 19:30:06.307Z')
+[0.00ms] SELECT `_mfas`.* FROM `_mfas` WHERE (`collectionRef`='pbc_3142635823') AND (`created` < '2025-07-20 19:30:06.308Z')
