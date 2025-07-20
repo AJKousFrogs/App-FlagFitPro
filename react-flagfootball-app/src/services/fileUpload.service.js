@@ -1,4 +1,4 @@
-import { pb } from './pocketbase';
+import { pocketbaseService } from './pocketbase-client.service';
 
 class FileUploadService {
   constructor() {
@@ -117,12 +117,12 @@ class FileUploadService {
       formData.append('tags', JSON.stringify(metadata.tags || []));
 
       // Upload to PocketBase
-      const record = await pb.collection('progress_photos').create(formData);
+      const record = await pocketbaseService.pb.collection('progress_photos').create(formData);
 
       return {
         success: true,
         record,
-        fileUrl: pb.files.getUrl(record, record.photo)
+        fileUrl: pocketbaseService.pb.files.getUrl(record, record.photo)
       };
     } catch (error) {
       console.error('Progress photo upload failed:', error);
@@ -157,12 +157,12 @@ class FileUploadService {
       formData.append('tags', JSON.stringify(metadata.tags || []));
 
       // Upload to PocketBase (you'll need to create a training_videos collection)
-      const record = await pb.collection('training_videos').create(formData);
+      const record = await pocketbaseService.pb.collection('training_videos').create(formData);
 
       return {
         success: true,
         record,
-        fileUrl: pb.files.getUrl(record, record.video)
+        fileUrl: pocketbaseService.pb.files.getUrl(record, record.video)
       };
     } catch (error) {
       console.error('Training video upload failed:', error);
@@ -180,7 +180,7 @@ class FileUploadService {
    * @returns {string} File URL
    */
   getFileUrl(record, filename) {
-    return pb.files.getUrl(record, filename);
+    return pocketbaseService.pb.files.getUrl(record, filename);
   }
 
   /**
@@ -191,7 +191,7 @@ class FileUploadService {
    */
   async deleteFile(collection, recordId) {
     try {
-      await pb.collection(collection).delete(recordId);
+      await pocketbaseService.pb.collection(collection).delete(recordId);
       return true;
     } catch (error) {
       console.error('File deletion failed:', error);
@@ -212,7 +212,7 @@ class FileUploadService {
         filter += ` && category="${category}"`;
       }
 
-      const records = await pb.collection('progress_photos').getFullList({
+      const records = await pocketbaseService.pb.collection('progress_photos').getFullList({
         filter,
         sort: '-created'
       });
@@ -322,10 +322,10 @@ class FileUploadService {
 
       // Determine collection based on file type
       const collection = file.type.startsWith('image/') ? 'progress_photos' : 'training_videos';
-      const url = `${pb.baseUrl}/api/collections/${collection}/records`;
+      const url = `${pocketbaseService.pb.baseUrl}/api/collections/${collection}/records`;
 
       xhr.open('POST', url);
-      xhr.setRequestHeader('Authorization', `Bearer ${pb.authStore.token}`);
+      xhr.setRequestHeader('Authorization', `Bearer ${pocketbaseService.pb.authStore.token}`);
       xhr.send(formData);
     });
   }
