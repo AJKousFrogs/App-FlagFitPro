@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
-import { trainingService } from '../services/index.js';
+import { trainingService } from '../services/training.service.js';
 import { usePocket } from './PocketContext.jsx';
 
 // Initial state

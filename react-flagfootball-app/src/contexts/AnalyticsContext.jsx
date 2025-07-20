@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { analyticsService } from '../services/index.js';
+import { analyticsService } from '../services/analytics.service.js';
 import { usePocket } from './PocketContext.jsx';
 
 // Initial state
