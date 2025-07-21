@@ -676,7 +676,7 @@ const DashboardView = React.memo(function DashboardView() {
                     <span className="text-white font-bold text-xl">🏈</span>
                   </div>
                   <div>
-                    <h1 className="text-xl font-bold text-foreground">MERLINS PLAYBOOK</h1>
+                    <h1 className="text-xl font-bold text-foreground">{import.meta.env.VITE_APP_NAME || 'FlagFit Pro'}</h1>
                     <p className="text-sm text-muted-foreground">AI-Powered Flag Football Mastery</p>
                   </div>
                 </div>

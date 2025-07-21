@@ -22,7 +22,7 @@ export default defineConfig({
       process.env.VITE_POCKETBASE_URL || 'http://127.0.0.1:8090'
     ),
     'import.meta.env.VITE_APP_NAME': JSON.stringify(
-      process.env.VITE_APP_NAME || 'MERLINS PLAYBOOK'
+      process.env.VITE_APP_NAME || 'FlagFit Pro'
     ),
     'import.meta.env.VITE_APP_VERSION': JSON.stringify(
       process.env.VITE_APP_VERSION || '1.0.1'

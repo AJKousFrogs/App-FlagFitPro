@@ -12,7 +12,7 @@ export function PocketProvider({ children }) {
   if (typeof window !== 'undefined') {
     console.log('🌐 Current URL:', window.location.href);
     console.log('🌐 User Agent:', navigator.userAgent);
-    document.title = `MERLINS PLAYBOOK - Build ${BUILD_ID.substring(BUILD_ID.length - 10)}`;
+    document.title = `${import.meta.env.VITE_APP_NAME || 'FlagFit Pro'} - Build ${BUILD_ID.substring(BUILD_ID.length - 10)}`;
   }
   
   // Demo mode flag - when true, bypasses authentication
