@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { usePocket } from '../contexts/PocketContext';
+import { useNeonDatabase } from '../contexts/NeonDatabaseContext';
 
 const BuddySystem = ({ onBack }) => {
-  const { user, isDemoMode } = usePocket();
+  const { user, isDemoMode } = useNeonDatabase();
   const [activeTab, setActiveTab] = useState('find');
   const [buddies, setBuddies] = useState([]);
   const [pendingRequests, setPendingRequests] = useState([]);

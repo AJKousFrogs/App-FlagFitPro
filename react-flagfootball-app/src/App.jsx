@@ -1,7 +1,7 @@
 import React, { Suspense, lazy, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { ConfigProvider, theme } from 'antd';
-import { PocketProvider, usePocket } from './contexts/PocketContext';
+import { NeonDatabaseProvider, useNeonDatabase } from './contexts/NeonDatabaseContext';
 import { TrainingProvider } from './contexts/TrainingContext';
 import { AnalyticsProvider } from './contexts/AnalyticsContext';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -28,7 +28,7 @@ const RadixThemeDemo = lazy(() => import('./components/RadixThemeDemo'));
 
 // Protected Route Component (must be inside AuthProvider)
 const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, isLoading } = usePocket();
+  const { isAuthenticated, isLoading } = useNeonDatabase();
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -43,7 +43,7 @@ const ProtectedRoute = ({ children }) => {
 
 // Public Route Component (redirects if already authenticated)
 const PublicRoute = ({ children }) => {
-  const { isAuthenticated, isLoading } = usePocket();
+  const { isAuthenticated, isLoading } = useNeonDatabase();
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -206,9 +206,9 @@ const App = () => {
     <ErrorBoundary>
       <ThemeProvider>
         <QueryProvider>
-          <PocketProvider>
+          <NeonDatabaseProvider>
             <AppContent />
-          </PocketProvider>
+          </NeonDatabaseProvider>
         </QueryProvider>
       </ThemeProvider>
     </ErrorBoundary>

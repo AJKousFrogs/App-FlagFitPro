@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
 import { trainingService } from '../services/training.service';
-import { usePocket } from './PocketContext';
+import { useNeonDatabase } from './NeonDatabaseContext';
 
 // Initial state
 const initialState = {
@@ -175,7 +175,10 @@ export const TrainingProvider = ({ children }) => {
   const fetchSessions = useCallback(async (filters = {}) => {
     try {
       dispatch({ type: TRAINING_ACTIONS.FETCH_SESSIONS_START });
-      const sessions = await trainingService.getSessions(filters);
+      const sessions = await trainingService.getSessions({
+        ...filters,
+        userId: user?.id // Pass current user ID
+      });
       dispatch({
         type: TRAINING_ACTIONS.FETCH_SESSIONS_SUCCESS,
         payload: sessions
@@ -190,13 +193,13 @@ export const TrainingProvider = ({ children }) => {
       // Return empty array to prevent further errors
       return [];
     }
-  }, []);
+  }, [user?.id]);
 
   // Fetch stats
   const fetchStats = useCallback(async (timeframe = 'all') => {
     try {
       dispatch({ type: TRAINING_ACTIONS.FETCH_STATS_START });
-      const stats = await trainingService.getStats(timeframe);
+      const stats = await trainingService.getStats(timeframe, user?.id);
       dispatch({
         type: TRAINING_ACTIONS.FETCH_STATS_SUCCESS,
         payload: stats
@@ -216,13 +219,15 @@ export const TrainingProvider = ({ children }) => {
         streakDays: 0
       };
     }
-  }, []);
+  }, [user?.id]);
 
   // Fetch goals
   const fetchGoals = useCallback(async () => {
     try {
       dispatch({ type: TRAINING_ACTIONS.FETCH_GOALS_START });
-      const goals = await trainingService.getGoals();
+      const goals = await trainingService.getGoals({
+        userId: user?.id // Pass current user ID
+      });
       dispatch({
         type: TRAINING_ACTIONS.FETCH_GOALS_SUCCESS,
         payload: goals
@@ -237,10 +242,10 @@ export const TrainingProvider = ({ children }) => {
       // Return empty array to prevent errors
       return [];
     }
-  }, []);
+  }, [user?.id]);
 
   // Only initialize training data after successful authentication
-  const { isAuthenticated, isLoading: authLoading } = usePocket();
+  const { isAuthenticated, isLoading: authLoading, user } = useNeonDatabase();
   
   useEffect(() => {
     // Only initialize when user is authenticated and not loading
@@ -264,12 +269,15 @@ export const TrainingProvider = ({ children }) => {
     } else {
       console.log('Skipping training data initialization - auth not ready:', { authLoading, isAuthenticated });
     }
-  }, [isAuthenticated, authLoading]);
+  }, [isAuthenticated, authLoading, fetchSessions, fetchStats, fetchGoals]);
 
   // Create session
   const createSession = async (sessionData) => {
     dispatch({ type: TRAINING_ACTIONS.CREATE_SESSION_START });
-    const session = await trainingService.createSession(sessionData);
+    const session = await trainingService.createSession({
+      ...sessionData,
+      userId: user?.id // Pass current user ID
+    });
     dispatch({
       type: TRAINING_ACTIONS.CREATE_SESSION_SUCCESS,
       payload: session
@@ -325,7 +333,10 @@ export const TrainingProvider = ({ children }) => {
   // Create goal
   const createGoal = async (goalData) => {
     dispatch({ type: TRAINING_ACTIONS.UPDATE_GOAL_START });
-    const goal = await trainingService.createGoal(goalData);
+    const goal = await trainingService.createGoal({
+      ...goalData,
+      userId: user?.id // Pass current user ID
+    });
     dispatch({
       type: TRAINING_ACTIONS.UPDATE_GOAL_SUCCESS,
       payload: goal

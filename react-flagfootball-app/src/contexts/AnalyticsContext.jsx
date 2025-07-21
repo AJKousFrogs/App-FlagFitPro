@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { analyticsService } from '../services/analytics.service';
-import { usePocket } from './PocketContext';
+import { useNeonDatabase } from './NeonDatabaseContext';
 
 // Initial state
 const initialState = {
@@ -152,7 +152,7 @@ export const AnalyticsProvider = ({ children }) => {
   const [state, dispatch] = useReducer(analyticsReducer, initialState);
 
   // Only initialize analytics data after successful authentication
-  const { isAuthenticated, isLoading: authLoading } = usePocket();
+  const { isAuthenticated, isLoading: authLoading } = useNeonDatabase();
 
   useEffect(() => {
     // Only initialize when user is authenticated and not loading

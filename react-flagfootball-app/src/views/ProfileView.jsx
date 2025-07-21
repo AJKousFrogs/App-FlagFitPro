@@ -1,11 +1,11 @@
 import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { usePocket } from '../contexts/PocketContext';
+import { useNeonDatabase } from '../contexts/NeonDatabaseContext';
 import { useTheme } from '../contexts/ThemeContext';
 import ThemeToggle from '../components/ThemeToggle';
 
 const ProfileView = () => {
-  const { user, updateProfile, logout, isLoading } = usePocket();
+  const { user, updateProfile, logout, isLoading } = useNeonDatabase();
   const { theme } = useTheme();
   const [activeTab, setActiveTab] = useState('profile');
   const [isEditing, setIsEditing] = useState(false);

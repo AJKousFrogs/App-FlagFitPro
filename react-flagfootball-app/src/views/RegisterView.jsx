@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { usePocket } from '../contexts/PocketContext';
+import { useNeonDatabase } from '../contexts/NeonDatabaseContext';
 
 const RegisterView = () => {
   const [formData, setFormData] = useState({
@@ -13,7 +13,7 @@ const RegisterView = () => {
   });
   const [validationErrors, setValidationErrors] = useState({});
   
-  const { register, error, clearError, isLoading } = usePocket();
+  const { register, error, clearError, isLoading } = useNeonDatabase();
   const navigate = useNavigate();
 
   const validateForm = () => {

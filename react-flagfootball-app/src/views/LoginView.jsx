@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
-import { usePocket } from '../contexts/PocketContext';
+import { useNeonDatabase } from '../contexts/NeonDatabaseContext';
 import LaprimafitLogo from '../assets/logos/laprimafit-correct.svg';
 import ChemiusLogo from '../assets/logos/logo-chemius-header.png';
 import GearxproLogo from '../assets/logos/gearxpro-original.png';
@@ -8,7 +8,7 @@ import GearxproLogo from '../assets/logos/gearxpro-original.png';
 const LoginView = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, error: authError, clearError, isLoading, isDemoMode } = usePocket();
+  const { login, error: authError, clearError, isLoading, isDemoMode } = useNeonDatabase();
   
   const [formData, setFormData] = useState({
     email: '',

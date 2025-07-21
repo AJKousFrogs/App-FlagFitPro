@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { fileUploadService } from '../services/fileUpload.service';
-import { usePocket } from '../contexts/PocketContext';
+import { useNeonDatabase } from '../contexts/NeonDatabaseContext';
 import FileUploadZone from './FileUploadZone';
 
 const ProgressTracker = ({ onBack }) => {
-  const { user } = usePocket();
+  const { user } = useNeonDatabase();
   const [photos, setPhotos] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('form');
   const [showCamera, setShowCamera] = useState(false);

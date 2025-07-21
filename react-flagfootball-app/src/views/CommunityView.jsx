@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { usePocket } from '../contexts/PocketContext';
+import { useNeonDatabase } from '../contexts/NeonDatabaseContext';
 
 const CommunityView = () => {
-  const { user } = usePocket();
+  const { user } = useNeonDatabase();
   
   // Main navigation state
   const [activeTab, setActiveTab] = useState('chat');

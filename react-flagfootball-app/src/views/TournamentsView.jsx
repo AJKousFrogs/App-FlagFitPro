@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { usePocket } from '../contexts/PocketContext';
+import { useNeonDatabase } from '../contexts/NeonDatabaseContext';
 
 const TournamentsView = () => {
-  const { user } = usePocket();
+  const { user } = useNeonDatabase();
   const [selectedPeriod, setSelectedPeriod] = useState('monthly');
   
   // Tournament system state

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { usePocket } from '../contexts/PocketContext';
+import { useNeonDatabase } from '../contexts/NeonDatabaseContext';
 import LoadingSpinner from '../components/LoadingSpinner';
 import TrainingSession from '../components/TrainingSession';
 import CommunityHub from '../components/CommunityHub';
@@ -14,7 +14,7 @@ import BuddySystem from '../components/BuddySystem';
 import { hybridAnalyticsService } from '../services/hybrid-analytics.service.js';
 
 const TrainingView = () => {
-  const { user } = usePocket();
+  const { user } = useNeonDatabase();
   const [activeCategory, setActiveCategory] = useState('routes');
   const [currentStreak, setCurrentStreak] = useState(7);
   const [playerLevel, setPlayerLevel] = useState({ name: 'Route Runner Pro', xp: 2400, nextLevel: 3000 });

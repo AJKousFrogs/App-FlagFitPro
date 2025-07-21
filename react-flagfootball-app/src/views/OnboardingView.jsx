@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { usePocket } from '../contexts/PocketContext';
+import { useNeonDatabase } from '../contexts/NeonDatabaseContext';
 
 const OnboardingView = () => {
   const navigate = useNavigate();
-  const { user, updateProfile } = usePocket();
+  const { user, updateProfile } = useNeonDatabase();
   const [step, setStep] = useState(1);
   const [onboardingData, setOnboardingData] = useState({
     position: '',

@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { usePocket } from '../contexts/PocketContext';
+import { useNeonDatabase } from '../contexts/NeonDatabaseContext';
 import { useTraining } from '../contexts/TrainingContext';
 import { useAnalytics } from '../contexts/AnalyticsContext';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -9,7 +9,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../com
 import ThemeToggle from '../components/ThemeToggle';
 
 const DashboardView = React.memo(function DashboardView() {
-  const { user, logout, pb } = usePocket();
+  const { user, logout, db } = useNeonDatabase();
   const { stats, sessions, isLoading: trainingLoading } = useTraining();
   const { isLoading: analyticsLoading } = useAnalytics();
   const location = useLocation();
