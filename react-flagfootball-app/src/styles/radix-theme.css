@@ -1,0 +1,216 @@
+/* Radix UI Custom Theme Variables */
+
+/* Light Theme Variables */
+:root {
+  /* Accent colors (olive/green) */
+  --accent-1: #fdfcfd;
+  --accent-2: #f7f6f5;
+  --accent-3: #edeae3;
+  --accent-4: #e4ddd1;
+  --accent-5: #ddd2bd;
+  --accent-6: #d3c6a6;
+  --accent-7: #c5b588;
+  --accent-8: #b5a05e;
+  --accent-9: #777733;
+  --accent-10: #6e6d2e;
+  --accent-11: #5c5a29;
+  --accent-12: #2e2d1c;
+
+  /* Gray colors */
+  --gray-1: #fcfcfc;
+  --gray-2: #f9f9f9;
+  --gray-3: #f0f0f0;
+  --gray-4: #e8e8e8;
+  --gray-5: #e0e0e0;
+  --gray-6: #d6d6d6;
+  --gray-7: #c7c7c7;
+  --gray-8: #b5b5b5;
+  --gray-9: #111111;
+  --gray-10: #0e0e0e;
+  --gray-11: #0b0b0b;
+  --gray-12: #080808;
+
+  /* Background colors */
+  --background-base: #ffffff;
+  --background-subtle: #fefefe;
+  --background-ui: #f9f9f9;
+  --background-hover: #f2f2f2;
+  --background-pressed: #eaeaea;
+
+  /* Text colors */
+  --text-primary: #11181c;
+  --text-secondary: #687076;
+  --text-tertiary: #889096;
+  --text-quaternary: #a1a7ad;
+
+  /* Semantic colors */
+  --success: #30a46c;
+  --warning: #f76b15;
+  --error: #e5484d;
+  --info: #0090ff;
+
+  /* Component colors */
+  --background: #ffffff;
+  --foreground: #11181c;
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+  --primary: #777733;
+  --primary-foreground: #ffffff;
+  --secondary: #f1f5f9;
+  --secondary-foreground: #0f172a;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --accent: #f1f5f9;
+  --accent-foreground: #0f172a;
+  --destructive: #ef4444;
+  --destructive-foreground: #f8fafc;
+  --border: #e4e4e7;
+  --input: #ffffff;
+  --ring: #0ea5e9;
+  --radius: 0.5rem;
+}
+
+/* Dark Theme Variables */
+:root.dark {
+  /* Accent colors (olive/green for dark) */
+  --accent-1: #151514;
+  --accent-2: #1a1a17;
+  --accent-3: #202017;
+  --accent-4: #26251c;
+  --accent-5: #2d2b22;
+  --accent-6: #363227;
+  --accent-7: #433e2d;
+  --accent-8: #544d37;
+  --accent-9: #777733;
+  --accent-10: #8b8540;
+  --accent-11: #a09c4c;
+  --accent-12: #e4e2b8;
+
+  /* Gray colors (dark) */
+  --gray-1: #111111;
+  --gray-2: #191919;
+  --gray-3: #222222;
+  --gray-4: #2a2a2a;
+  --gray-5: #313131;
+  --gray-6: #3a3a3a;
+  --gray-7: #484848;
+  --gray-8: #606060;
+  --gray-9: #6e6e6e;
+  --gray-10: #7b7b7b;
+  --gray-11: #b4b4b4;
+  --gray-12: #eeeeee;
+
+  /* Background colors (dark) */
+  --background-base: #111111;
+  --background-subtle: #151515;
+  --background-ui: #191919;
+  --background-hover: #1f1f1f;
+  --background-pressed: #262626;
+
+  /* Text colors (dark) */
+  --text-primary: #ffffff;
+  --text-secondary: #b4b4b4;
+  --text-tertiary: #8b8b8b;
+  --text-quaternary: #6e6e6e;
+
+  /* Semantic colors (dark) */
+  --success: #46a758;
+  --warning: #f76b15;
+  --error: #e5484d;
+  --info: #0090ff;
+
+  /* Component colors (dark) */
+  --background: #111111;
+  --foreground: #ffffff;
+  --card: #1a1a1a;
+  --card-foreground: #f8fafc;
+  --popover: #1a1a1a;
+  --popover-foreground: #f8fafc;
+  --primary: #777733;
+  --primary-foreground: #ffffff;
+  --secondary: #1e293b;
+  --secondary-foreground: #f8fafc;
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+  --accent: #1e293b;
+  --accent-foreground: #f8fafc;
+  --destructive: #ef4444;
+  --destructive-foreground: #f8fafc;
+  --border: #27272a;
+  --input: #1a1a1a;
+  --ring: #0ea5e9;
+}
+
+/* Base styles */
+* {
+  border-color: hsl(var(--border));
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
+/* Radix UI component overrides */
+[data-radix-theme] {
+  background-color: var(--background-base);
+  color: var(--text-primary);
+}
+
+/* Custom component classes */
+.radix-theme-light {
+  --color-background: var(--background-base);
+  --color-text: var(--text-primary);
+  --color-accent: var(--accent-9);
+  --color-gray: var(--gray-9);
+  --color-border: var(--border);
+}
+
+.radix-theme-dark {
+  --color-background: var(--background-base);
+  --color-text: var(--text-primary);
+  --color-accent: var(--accent-9);
+  --color-gray: var(--gray-9);
+  --color-border: var(--border);
+}
+
+/* Utility classes for Radix colors */
+.bg-accent-1 { background-color: var(--accent-1); }
+.bg-accent-2 { background-color: var(--accent-2); }
+.bg-accent-3 { background-color: var(--accent-3); }
+.bg-accent-4 { background-color: var(--accent-4); }
+.bg-accent-5 { background-color: var(--accent-5); }
+.bg-accent-6 { background-color: var(--accent-6); }
+.bg-accent-7 { background-color: var(--accent-7); }
+.bg-accent-8 { background-color: var(--accent-8); }
+.bg-accent-9 { background-color: var(--accent-9); }
+.bg-accent-10 { background-color: var(--accent-10); }
+.bg-accent-11 { background-color: var(--accent-11); }
+.bg-accent-12 { background-color: var(--accent-12); }
+
+.text-accent-9 { color: var(--accent-9); }
+.text-accent-11 { color: var(--accent-11); }
+.text-accent-12 { color: var(--accent-12); }
+
+.bg-gray-1 { background-color: var(--gray-1); }
+.bg-gray-2 { background-color: var(--gray-2); }
+.bg-gray-3 { background-color: var(--gray-3); }
+.bg-gray-4 { background-color: var(--gray-4); }
+.bg-gray-5 { background-color: var(--gray-5); }
+.bg-gray-6 { background-color: var(--gray-6); }
+.bg-gray-7 { background-color: var(--gray-7); }
+.bg-gray-8 { background-color: var(--gray-8); }
+.bg-gray-9 { background-color: var(--gray-9); }
+.bg-gray-10 { background-color: var(--gray-10); }
+.bg-gray-11 { background-color: var(--gray-11); }
+.bg-gray-12 { background-color: var(--gray-12); }
+
+.text-gray-9 { color: var(--gray-9); }
+.text-gray-11 { color: var(--gray-11); }
+.text-gray-12 { color: var(--gray-12); }
+
+.border-gray-3 { border-color: var(--gray-3); }
+.border-gray-6 { border-color: var(--gray-6); }
+.border-accent-6 { border-color: var(--accent-6); }

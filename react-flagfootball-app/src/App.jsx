@@ -24,6 +24,7 @@ const ProfileView = lazy(() => import('./views/ProfileView'));
 const OnboardingView = lazy(() => import('./views/OnboardingView'));
 const TournamentsView = lazy(() => import('./views/TournamentsView'));
 const CommunityView = lazy(() => import('./views/CommunityView'));
+const RadixThemeDemo = lazy(() => import('./components/RadixThemeDemo'));
 
 // Protected Route Component (must be inside AuthProvider)
 const ProtectedRoute = ({ children }) => {
@@ -147,6 +148,14 @@ const AppRoutes = () => {
             element={
               <ProtectedRoute>
                 <CommunityView />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/theme-demo" 
+            element={
+              <ProtectedRoute>
+                <RadixThemeDemo />
               </ProtectedRoute>
             } 
           />
