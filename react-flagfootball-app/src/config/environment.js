@@ -13,14 +13,14 @@ class EnvironmentConfig {
     return {
       // App Configuration
       app: {
-        name: import.meta.env.VITE_APP_NAME || 'MERLINS PLAYBOOK',
+        name: import.meta.env.VITE_APP_NAME || 'FlagFit Pro',
         version: import.meta.env.VITE_APP_VERSION || '1.0.0',
         environment: import.meta.env.VITE_APP_ENVIRONMENT || 'development'
       },
 
       // API Configuration
       api: {
-        pocketbaseUrl: import.meta.env.VITE_POCKETBASE_URL || (import.meta.env.PROD ? 'https://your-pocketbase-instance.com' : 'http://127.0.0.1:8090'),
+        pocketbaseUrl: import.meta.env.VITE_POCKETBASE_URL || 'http://127.0.0.1:8090',
         timeout: parseInt(import.meta.env.VITE_API_TIMEOUT) || 30000,
         cacheTTL: parseInt(import.meta.env.VITE_CACHE_TTL) || 300000,
         baseUrl: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001',
@@ -66,7 +66,7 @@ class EnvironmentConfig {
     }
 
     // Validate environment
-    const validEnvironments = ['development', 'staging', 'production'];
+    const validEnvironments = ['development', 'staging', 'production', 'demo'];
     if (!validEnvironments.includes(this.config.app.environment)) {
       errors.push(`VITE_APP_ENVIRONMENT must be one of: ${validEnvironments.join(', ')}`);
     }
