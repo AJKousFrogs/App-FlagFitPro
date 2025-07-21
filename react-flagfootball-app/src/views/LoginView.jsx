@@ -122,7 +122,7 @@ const LoginView = () => {
   };
 
   return (
-    // Dark gradient background for login page
+    // Dark gradient background for login page - v1.0.4
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         {isDemoMode && (

@@ -4,9 +4,10 @@
 
 [build.environment]
   NODE_VERSION = "18"
-  VITE_APP_ENVIRONMENT = "demo"
+  VITE_APP_ENVIRONMENT = "production"
   VITE_APP_NAME = "FlagFit Pro"
-  VITE_APP_VERSION = "1.0.3"
+  VITE_APP_VERSION = "1.0.4"
+  VITE_POCKETBASE_URL = ""
   VITE_ENABLE_ANALYTICS = "false"
   VITE_ENABLE_SENTRY = "false"
 
