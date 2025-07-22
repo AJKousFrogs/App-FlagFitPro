@@ -20,7 +20,7 @@ class AnalyticsService {
   _getConfig() {
     if (!this.config) {
       this.config = {
-        pocketbaseUrl: import.meta.env.VITE_POCKETBASE_URL || 'http://127.0.0.1:8090',
+        pocketbaseUrl: import.meta.env.VITE_POCKETBASE_URL || import.meta.env.VITE_DATABASE_URL || process.env.POCKETBASE_URL || '',
         apiTimeout: 30000,
         cacheTTL: 5 * 60 * 1000, // 5 minutes
         maxRetries: 3

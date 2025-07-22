@@ -7,7 +7,11 @@ import { COLLECTIONS } from '../config/collections.js';
  */
 class PocketBaseService {
   constructor() {
-    this.pb = new PocketBase(import.meta.env.VITE_POCKETBASE_URL || 'http://127.0.0.1:8090');
+    const pocketbaseUrl = import.meta.env.VITE_POCKETBASE_URL || import.meta.env.VITE_DATABASE_URL || process.env.POCKETBASE_URL || '';
+    if (!pocketbaseUrl) {
+      console.warn('No PocketBase URL configured. Using fallback localhost for development.');
+    }
+    this.pb = new PocketBase(pocketbaseUrl || 'http://127.0.0.1:8090');
     this.authStore = this.pb.authStore;
     this.pendingRequests = new Map();
   }

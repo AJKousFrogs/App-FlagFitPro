@@ -15,12 +15,14 @@ class SecurityMiddleware {
       enableXSSProtection: true,
       enableInputValidation: true,
       trustedDomains: [
-        window.location.origin,
+        typeof window !== 'undefined' ? window.location.origin : '',
         'http://localhost:3000',
-        'http://localhost:8090',
         'http://127.0.0.1:3000',
-        'http://127.0.0.1:8090'
-      ]
+        // PocketBase URLs - environment-configurable
+        import.meta.env.VITE_POCKETBASE_URL,
+        import.meta.env.VITE_DATABASE_URL,
+        process.env.POCKETBASE_URL
+      ].filter(Boolean)
     };
   }
 

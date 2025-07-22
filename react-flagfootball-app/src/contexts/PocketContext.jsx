@@ -65,8 +65,8 @@ export function PocketProvider({ children }) {
       return new PocketBase('https://demo.example.com'); // Dummy URL
     }
     
-    // Use environment variable or fallback to localhost for development
-    const finalUrl = pocketbaseUrl || 'http://127.0.0.1:8090';
+    // Use environment variable with multiple fallbacks
+    const finalUrl = pocketbaseUrl || import.meta.env.VITE_DATABASE_URL || process.env.POCKETBASE_URL || 'http://127.0.0.1:8090';
     const instance = new PocketBase(finalUrl);
     
     // Load persisted auth from localStorage on initialization

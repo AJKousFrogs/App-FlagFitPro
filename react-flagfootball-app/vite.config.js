@@ -5,13 +5,13 @@ export default defineConfig({
   plugins: [react()],
   build: {
     outDir: 'dist',
-    target: 'esnext',
+    target: 'es2020', // Better compatibility than esnext
     minify: 'terser',
     cssMinify: true,
     rollupOptions: {
       output: {
         manualChunks: (id) => {
-          // Core React - keep minimal for fast loading
+          // React and ReactDOM - keep together to preserve internal dependencies
           if (id.includes('react/') || id.includes('react-dom/')) {
             return 'react-core';
           }
@@ -23,7 +23,8 @@ export default defineConfig({
           
           // Critical UI components
           if (id.includes('src/components/LoadingSpinner') || 
-              id.includes('src/components/ErrorBoundary')) {
+              id.includes('src/components/ErrorBoundary') ||
+              id.includes('src/components/CriticalLoader')) {
             return 'critical-ui';
           }
           
@@ -32,7 +33,7 @@ export default defineConfig({
             return 'ui-antd';
           }
           
-          // Radix UI - split by component type
+          // Radix UI - split by component type but keep scheduler dependencies
           if (id.includes('@radix-ui/')) {
             if (id.includes('dialog') || id.includes('dropdown') || id.includes('select')) {
               return 'radix-interactive';
@@ -74,8 +75,11 @@ export default defineConfig({
             return 'utils';
           }
           
-          // Node modules - vendor chunks
-          if (id.includes('node_modules')) {
+          // Node modules - vendor chunks (but exclude React ecosystem)
+          if (id.includes('node_modules') && 
+              !id.includes('react') && 
+              !id.includes('@radix-ui') && 
+              !id.includes('scheduler')) {
             return 'vendor';
           }
         },
@@ -114,9 +118,9 @@ export default defineConfig({
   },
   
   define: {
-    // Provide fallbacks for environment variables
+    // Provide production-ready environment variables with proper fallbacks
     'import.meta.env.VITE_POCKETBASE_URL': JSON.stringify(
-      process.env.VITE_POCKETBASE_URL || process.env.NETLIFY_DATABASE_URL || 'http://127.0.0.1:8090'
+      process.env.VITE_POCKETBASE_URL || process.env.NETLIFY_DATABASE_URL || process.env.DATABASE_URL || ''
     ),
     'import.meta.env.VITE_APP_NAME': JSON.stringify(
       process.env.VITE_APP_NAME || 'FlagFit Pro'
@@ -125,7 +129,10 @@ export default defineConfig({
       process.env.VITE_APP_VERSION || '1.0.7'
     ),
     'import.meta.env.VITE_NEON_DATABASE_URL': JSON.stringify(
-      process.env.VITE_NEON_DATABASE_URL || process.env.NETLIFY_DATABASE_URL || ''
+      process.env.VITE_NEON_DATABASE_URL || process.env.NETLIFY_DATABASE_URL || process.env.DATABASE_URL || ''
+    ),
+    'import.meta.env.VITE_APP_ENVIRONMENT': JSON.stringify(
+      process.env.VITE_APP_ENVIRONMENT || process.env.NODE_ENV || 'production'
     )
   }
 })
