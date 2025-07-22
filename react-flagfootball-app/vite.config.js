@@ -71,7 +71,7 @@ export default defineConfig({
       process.env.VITE_APP_NAME || 'FlagFit Pro'
     ),
     'import.meta.env.VITE_APP_VERSION': JSON.stringify(
-      process.env.VITE_APP_VERSION || '1.0.5'
+      process.env.VITE_APP_VERSION || '1.0.6'
     ),
     'import.meta.env.VITE_NEON_DATABASE_URL': JSON.stringify(
       process.env.VITE_NEON_DATABASE_URL || process.env.NETLIFY_DATABASE_URL || ''

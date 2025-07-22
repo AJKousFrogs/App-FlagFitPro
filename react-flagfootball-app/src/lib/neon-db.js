@@ -4,19 +4,18 @@ import * as schema from './schema';
 
 // Get database URL from environment variables
 const getDatabaseUrl = () => {
-  if (typeof window !== 'undefined') {
-    // Client-side - should not access database directly
-    return null;
+  // Check for actual Neon database URLs only
+  const neonUrl = import.meta.env.VITE_NEON_DATABASE_URL || 
+                  import.meta.env.VITE_DATABASE_URL ||
+                  process.env.NETLIFY_DATABASE_URL ||
+                  process.env.NETLIFY_DATABASE_URL_UNPOOLED;
+  
+  // Only return valid Neon URLs (not PocketBase URLs or empty strings)
+  if (neonUrl && neonUrl.includes('neon.tech')) {
+    return neonUrl;
   }
-
-  // Server-side or build time
-  return (
-    import.meta.env.VITE_NEON_DATABASE_URL || 
-    import.meta.env.VITE_DATABASE_URL ||
-    import.meta.env.VITE_POCKETBASE_URL ||
-    process.env.NETLIFY_DATABASE_URL ||
-    process.env.NETLIFY_DATABASE_URL_UNPOOLED
-  );
+  
+  return null; // Force demo mode if no valid Neon URL
 };
 
 let db = null;
@@ -71,12 +70,18 @@ export const executeRawQuery = async (query, params = []) => {
 
 // Test database connection
 export const testConnection = async () => {
+  // Skip connection test if no database URL
+  if (!getDatabaseUrl()) {
+    console.log('🔧 Demo mode active - skipping database connection test');
+    return false;
+  }
+  
   try {
     const result = await executeRawQuery('SELECT NOW() as current_time');
     console.log('✅ Database connection test successful:', result);
     return true;
   } catch (error) {
-    console.error('❌ Database connection test failed:', error);
+    console.warn('⚠️ Database connection test failed, falling back to demo mode:', error.message);
     return false;
   }
 };

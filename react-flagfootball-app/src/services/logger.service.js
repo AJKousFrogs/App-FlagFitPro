@@ -26,8 +26,8 @@ class LoggerService {
       this.addTransport('console', this.consoleTransport);
     }
 
-    // Remote logging transport for production
-    if (env.isProduction) {
+    // Remote logging transport for production (only if endpoint is configured)
+    if (env.isProduction && env.getConfig().logging?.remoteEndpoint) {
       this.addTransport('remote', this.remoteTransport);
     }
 
@@ -118,8 +118,16 @@ class LoggerService {
 
   remoteTransport = async (logEntry) => {
     try {
-      // Send logs to remote endpoint
-      await fetch('/api/logs', {
+      // Get remote endpoint from config
+      const endpoint = env.getConfig().logging?.remoteEndpoint || '/api/logs';
+      
+      // Only attempt if endpoint is properly configured (not default)
+      if (endpoint === '/api/logs') {
+        return; // Skip if using default placeholder endpoint
+      }
+      
+      // Send logs to configured remote endpoint
+      await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -127,8 +135,11 @@ class LoggerService {
         body: JSON.stringify(logEntry)
       });
     } catch (error) {
-      // Fail silently for remote logging
-      console.warn('Failed to send log to remote endpoint:', error);
+      // Fail silently for remote logging - don't spam console
+      // Only log in debug mode
+      if (env.debugMode) {
+        console.warn('Failed to send log to remote endpoint:', error);
+      }
     }
   };
 

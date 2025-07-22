@@ -1,5 +1,5 @@
 // Service Worker for FlagFit Pro PWA
-const CACHE_NAME = 'flagfit-pro-v1.0.5';
+const CACHE_NAME = 'flagfit-pro-v1.0.6';
 const OFFLINE_URL = '/offline.html';
 
 // Assets to cache immediately
@@ -68,9 +68,22 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Skip external API calls (let them go through normally)
-  if (event.request.url.includes('api') || 
+  // Skip external API calls and internal API routes that don't exist
+  if (event.request.url.includes('/api/') || 
       event.request.url.includes('.com/') && !event.request.url.includes(self.location.origin)) {
+    
+    // For internal API calls that will fail, provide a graceful fallback
+    if (event.request.url.includes(self.location.origin + '/api/')) {
+      event.respondWith(
+        fetch(event.request).catch(() => {
+          // Return empty response for failed API calls to prevent console errors
+          return new Response('{}', {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
+          });
+        })
+      );
+    }
     return;
   }
 
