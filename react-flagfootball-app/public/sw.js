@@ -1,5 +1,5 @@
 // Service Worker for FlagFit Pro PWA
-const CACHE_NAME = 'flagfit-pro-v1.0.6';
+const CACHE_NAME = 'flagfit-pro-v1.0.7';
 const OFFLINE_URL = '/offline.html';
 
 // Assets to cache immediately

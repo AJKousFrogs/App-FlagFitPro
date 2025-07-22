@@ -10,26 +10,74 @@ export default defineConfig({
     cssMinify: true,
     rollupOptions: {
       output: {
-        manualChunks: {
-          // Core React
-          vendor: ['react', 'react-dom'],
+        manualChunks: (id) => {
+          // Core React - keep minimal for fast loading
+          if (id.includes('react/') || id.includes('react-dom/')) {
+            return 'react-core';
+          }
           
-          // Routing
-          router: ['react-router-dom'],
+          // Router - load early for navigation
+          if (id.includes('react-router')) {
+            return 'router';
+          }
           
-          // UI Libraries  
-          ui: ['antd'],
-          radix: ['@radix-ui/react-icons', '@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-select'],
+          // Critical UI components
+          if (id.includes('src/components/LoadingSpinner') || 
+              id.includes('src/components/ErrorBoundary')) {
+            return 'critical-ui';
+          }
           
-          // Database & API
-          database: ['drizzle-orm', '@neondatabase/serverless'],
-          pocketbase: ['pocketbase'],
+          // Large UI libraries - defer loading
+          if (id.includes('antd')) {
+            return 'ui-antd';
+          }
           
-          // Charts & Analytics
-          charts: ['recharts'],
+          // Radix UI - split by component type
+          if (id.includes('@radix-ui/')) {
+            if (id.includes('dialog') || id.includes('dropdown') || id.includes('select')) {
+              return 'radix-interactive';
+            }
+            return 'radix-base';
+          }
           
-          // State Management
-          state: ['zustand', '@tanstack/react-query']
+          // Database - only load when needed
+          if (id.includes('drizzle-orm') || id.includes('@neondatabase/serverless')) {
+            return 'database';
+          }
+          
+          // Legacy PocketBase - separate chunk
+          if (id.includes('pocketbase')) {
+            return 'pocketbase';
+          }
+          
+          // Charts - defer until dashboard
+          if (id.includes('recharts')) {
+            return 'charts';
+          }
+          
+          // State management
+          if (id.includes('zustand') || id.includes('@tanstack/react-query')) {
+            return 'state';
+          }
+          
+          // View components - lazy load
+          if (id.includes('src/views/')) {
+            const viewName = id.split('/').pop()?.replace('.jsx', '');
+            if (viewName === 'LoginView' || viewName === 'RegisterView') {
+              return 'auth-views';
+            }
+            return 'app-views';
+          }
+          
+          // Utilities and helpers
+          if (id.includes('src/utils/') || id.includes('src/hooks/')) {
+            return 'utils';
+          }
+          
+          // Node modules - vendor chunks
+          if (id.includes('node_modules')) {
+            return 'vendor';
+          }
         },
         // Optimize chunk names and hashing
         chunkFileNames: 'assets/[name]-[hash].js',
@@ -38,8 +86,11 @@ export default defineConfig({
       }
     },
     // Performance optimizations
-    chunkSizeWarningLimit: 500,
-    assetsInlineLimit: 4096,
+    chunkSizeWarningLimit: 300, // Smaller chunks for better loading
+    assetsInlineLimit: 2048, // Inline smaller assets
+    
+    // Enable code splitting and tree shaking
+    sourcemap: false, // Disable sourcemaps in production for smaller bundles
     
     // Terser options for better compression
     terserOptions: {
@@ -71,7 +122,7 @@ export default defineConfig({
       process.env.VITE_APP_NAME || 'FlagFit Pro'
     ),
     'import.meta.env.VITE_APP_VERSION': JSON.stringify(
-      process.env.VITE_APP_VERSION || '1.0.6'
+      process.env.VITE_APP_VERSION || '1.0.7'
     ),
     'import.meta.env.VITE_NEON_DATABASE_URL': JSON.stringify(
       process.env.VITE_NEON_DATABASE_URL || process.env.NETLIFY_DATABASE_URL || ''

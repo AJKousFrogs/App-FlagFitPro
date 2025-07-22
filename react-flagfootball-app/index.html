@@ -100,8 +100,15 @@
     <link rel="dns-prefetch" href="//fonts.googleapis.com" />
     <link rel="preconnect" href="https://api.netlify.com" crossorigin />
     
-    <!-- Resource Hints for Critical Assets -->
+    <!-- Critical Resource Preloading -->
     <link rel="preload" href="/icons/icon.svg" as="image" type="image/svg+xml" />
+    <link rel="modulepreload" href="/src/main.jsx" />
+    <link rel="preload" href="/assets/index-moFY9hKw.css" as="style" />
+    <link rel="preload" href="/src/App.jsx" as="script" />
+    <link rel="preload" href="/src/contexts/NeonDatabaseContext.jsx" as="script" />
+    
+    <!-- Preload critical fonts (if any) -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   </head>
   <body>
     <div id="root"></div>

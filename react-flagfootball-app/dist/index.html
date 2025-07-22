@@ -100,16 +100,18 @@
     <link rel="dns-prefetch" href="//fonts.googleapis.com" />
     <link rel="preconnect" href="https://api.netlify.com" crossorigin />
     
-    <!-- Resource Hints for Critical Assets -->
+    <!-- Critical Resource Preloading -->
     <link rel="preload" href="/icons/icon.svg" as="image" type="image/svg+xml" />
-    <script type="module" crossorigin src="/assets/index-CJHwazVB.js"></script>
-    <link rel="modulepreload" crossorigin href="/assets/vendor-DJcYfsJ3.js">
-    <link rel="modulepreload" crossorigin href="/assets/router-BsG519jG.js">
-    <link rel="modulepreload" crossorigin href="/assets/radix-CqEFPxQN.js">
-    <link rel="modulepreload" crossorigin href="/assets/database-DbHHkb4E.js">
-    <link rel="modulepreload" crossorigin href="/assets/pocketbase-C4A4t2yg.js">
-    <link rel="modulepreload" crossorigin href="/assets/state-vq_TIEBi.js">
-    <link rel="modulepreload" crossorigin href="/assets/ui-B0jCRXiy.js">
+    <link rel="modulepreload" href="/assets/main-CqoMqfpi.jsx" />
+    <link rel="preload" href="/assets/index-moFY9hKw.css" as="style" />
+    <link rel="preload" href="/assets/App-0dyzP40S.jsx" as="script" />
+    <link rel="preload" href="/assets/NeonDatabaseContext-CNT50nz2.jsx" as="script" />
+    
+    <!-- Preload critical fonts (if any) -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <script type="module" crossorigin src="/assets/index-BxRhjc9d.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/react-core-Dz7sk3e0.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-PYlDrQIE.js">
     <link rel="stylesheet" crossorigin href="/assets/index-moFY9hKw.css">
   </head>
   <body>
