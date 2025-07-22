@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://flagfit-pro-training-app.netlify.app/sitemap.xml
+
+# Preferred delay between requests (in seconds)
+Crawl-delay: 1
+
+# Block sensitive areas
+Disallow: /api/
+Disallow: /*.json$
+Disallow: /sw.js
+Disallow: /offline.html

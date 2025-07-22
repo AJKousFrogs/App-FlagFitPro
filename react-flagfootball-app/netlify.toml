@@ -6,11 +6,66 @@
   NODE_VERSION = "18"
   VITE_APP_ENVIRONMENT = "production"
   VITE_APP_NAME = "FlagFit Pro"
-  VITE_APP_VERSION = "1.0.4"
+  VITE_APP_VERSION = "1.0.5"
   VITE_POCKETBASE_URL = ""
   VITE_ENABLE_ANALYTICS = "false"
   VITE_ENABLE_SENTRY = "false"
 
+# Security headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+# Cache static assets
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Cache icons and manifest
+[[headers]]
+  for = "/icons/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/manifest.json"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+    Content-Type = "application/manifest+json"
+
+# Service worker - no cache
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+    Service-Worker-Allowed = "/"
+
+# HTML files - short cache
+[[headers]]
+  for = "*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=300"
+
+# PWA offline page
+[[headers]]
+  for = "/offline.html"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+# Preload critical resources
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Link = "</icons/icon.svg>; rel=preload; as=image; type=image/svg+xml, </manifest.json>; rel=preload; as=manifest"
+
+# SPA routing - must be last
 [[redirects]]
   from = "/*"
   to = "/index.html"

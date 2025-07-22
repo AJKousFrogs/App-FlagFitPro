@@ -2,37 +2,133 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FlagFit Pro</title>
-    <meta name="description" content="Flag football training and analytics platform" />
-    <meta name="theme-color" content="#4a7c59" />
     
-    <!-- PWA Meta Tags -->
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https:; worker-src 'self';" />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="X-Frame-Options" content="DENY" />
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
+    
+    <!-- Viewport and Performance -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="format-detection" content="telephone=no" />
+    
+    <!-- Favicon and Icons -->
+    <link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16x16.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    
+    <!-- Theme and App Meta -->
+    <meta name="theme-color" content="#4a7c59" />
+    <meta name="background-color" content="#ffffff" />
+    <meta name="application-name" content="FlagFit Pro" />
+    
+    <!-- Mobile App Meta Tags -->
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="FlagFit Pro" />
+    <meta name="msapplication-TileColor" content="#4a7c59" />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png" />
+    <link rel="apple-touch-icon" sizes="144x144" href="/icons/icon-144x144.png" />
+    <link rel="apple-touch-icon" sizes="120x120" href="/icons/icon-120x120.png" />
+    <link rel="apple-touch-icon" sizes="114x114" href="/icons/icon-114x114.png" />
+    <link rel="apple-touch-icon" sizes="76x76" href="/icons/icon-76x76.png" />
+    <link rel="apple-touch-icon" sizes="72x72" href="/icons/icon-72x72.png" />
+    <link rel="apple-touch-icon" sizes="60x60" href="/icons/icon-60x60.png" />
+    <link rel="apple-touch-icon" sizes="57x57" href="/icons/icon-57x57.png" />
+    
+    <!-- SEO Meta Tags -->
+    <title>FlagFit Pro - Professional Flag Football Training Platform</title>
+    <meta name="description" content="Professional flag football training and analytics platform for players, coaches, and teams. Track progress, analyze performance, and improve your game with data-driven insights." />
+    <meta name="keywords" content="flag football, training, analytics, sports, fitness, coaching, performance, drills, team management" />
+    <meta name="author" content="FlagFit Pro Team" />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow" />
+    <link rel="canonical" href="https://flagfit-pro-training-app.netlify.app/" />
     
     <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="FlagFit Pro" />
-    <meta property="og:description" content="Flag football training and analytics platform" />
+    <meta property="og:title" content="FlagFit Pro - Professional Flag Football Training Platform" />
+    <meta property="og:description" content="Professional flag football training and analytics platform for players, coaches, and teams. Track progress, analyze performance, and improve your game with data-driven insights." />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://flagfit-pro-training-app.netlify.app/" />
+    <meta property="og:image" content="https://flagfit-pro-training-app.netlify.app/icons/icon-512x512.png" />
+    <meta property="og:image:width" content="512" />
+    <meta property="og:image:height" content="512" />
+    <meta property="og:image:alt" content="FlagFit Pro Logo" />
+    <meta property="og:site_name" content="FlagFit Pro" />
+    <meta property="og:locale" content="en_US" />
     
-    <!-- Accessibility and SEO -->
-    <meta name="robots" content="index, follow" />
-    <meta name="author" content="FlagFit Pro Team" />
-    <meta name="keywords" content="flag football, training, analytics, sports, fitness" />
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="FlagFit Pro - Professional Flag Football Training Platform" />
+    <meta name="twitter:description" content="Professional flag football training and analytics platform for players, coaches, and teams." />
+    <meta name="twitter:image" content="https://flagfit-pro-training-app.netlify.app/icons/icon-512x512.png" />
+    <meta name="twitter:image:alt" content="FlagFit Pro Logo" />
     
-    <!-- Using system fonts instead of Google Fonts for better performance -->
-    <script type="module" crossorigin src="/assets/index-N2LDwbJJ.js"></script>
-    <link rel="modulepreload" crossorigin href="/assets/vendor-DavUf6mE.js">
-    <link rel="modulepreload" crossorigin href="/assets/router-DPNDLrNe.js">
-    <link rel="modulepreload" crossorigin href="/assets/ui-CyFLrfD-.js">
-    <link rel="modulepreload" crossorigin href="/assets/pocketbase-Cvr5EOFW.js">
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "FlagFit Pro",
+      "description": "Professional flag football training and analytics platform for players, coaches, and teams",
+      "url": "https://flagfit-pro-training-app.netlify.app/",
+      "applicationCategory": "SportsApplication",
+      "operatingSystem": "Web Browser",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "FlagFit Pro Team"
+      }
+    }
+    </script>
+    
+    <!-- Performance Hints -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+    <link rel="preconnect" href="https://api.netlify.com" crossorigin />
+    
+    <!-- Resource Hints for Critical Assets -->
+    <link rel="preload" href="/icons/icon.svg" as="image" type="image/svg+xml" />
+    <script type="module" crossorigin src="/assets/index-u2PwgTdo.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/vendor-DJcYfsJ3.js">
+    <link rel="modulepreload" crossorigin href="/assets/router-BsG519jG.js">
+    <link rel="modulepreload" crossorigin href="/assets/radix-CqEFPxQN.js">
+    <link rel="modulepreload" crossorigin href="/assets/database-DbHHkb4E.js">
+    <link rel="modulepreload" crossorigin href="/assets/pocketbase-C4A4t2yg.js">
+    <link rel="modulepreload" crossorigin href="/assets/state-vq_TIEBi.js">
+    <link rel="modulepreload" crossorigin href="/assets/ui-B0jCRXiy.js">
     <link rel="stylesheet" crossorigin href="/assets/index-moFY9hKw.css">
   </head>
   <body>
     <div id="root"></div>
+    
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+              console.log('Service Worker registered successfully:', registration.scope);
+            })
+            .catch((error) => {
+              console.log('Service Worker registration failed:', error);
+            });
+        });
+      }
+    </script>
   </body>
 </html> 
