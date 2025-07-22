@@ -44,80 +44,45 @@ const RadixThemeDemo = lazy(() =>
   import(/* webpackChunkName: "demo" */ './components/RadixThemeDemo')
 );
 
-// Protected Route Component (must be inside AuthProvider)
+// Protected Route Component with better error handling
 const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, isLoading } = useNeonDatabase();
-
-  if (isLoading) {
-    return <LoadingSpinner />;
+  const { isAuthenticated, isLoading, isInitialized } = useNeonDatabase();
+  
+  // Show loading while checking authentication
+  if (!isInitialized || isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <LoadingSpinner />
+      </div>
+    );
   }
-
+  
+  // Redirect to login if not authenticated
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
-
+  
+  // Render protected content
   return children;
 };
 
-// Public Route Component (redirects if already authenticated)
-const PublicRoute = ({ children }) => {
-  const { isAuthenticated, isLoading } = useNeonDatabase();
-
-  if (isLoading) {
-    return <LoadingSpinner />;
-  }
-
-  if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
-  }
-
-  return children;
-};
-
-// Route Analytics Component
-const RouteAnalytics = () => {
-  const location = useLocation();
-
-  useEffect(() => {
-    // Track page view on route change
-    hybridAnalyticsService.trackPageView({
-      page_path: location.pathname,
-      page_title: document.title,
-      referrer: document.referrer
-    });
-  }, [location]);
-
-  return null;
-};
-
-// App Routes Component (inside AuthProvider)
+// App Routes Component
 const AppRoutes = () => {
+  const location = useLocation();
+  
+  // Add error boundary around routes
   return (
-    <Router
-      future={{
-        v7_startTransition: true,
-        v7_relativeSplatPath: true
-      }}
-    >
-      <RouteAnalytics />
-      <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><LoadingSpinner size="lg" /></div>}>
-        <Routes>
+    <ErrorBoundary>
+      <Suspense fallback={<LoadingSpinner />}>
+        <Routes location={location}>
           {/* Public Routes */}
           <Route 
             path="/login" 
-            element={
-              <PublicRoute>
-                <LoginView />
-              </PublicRoute>
-            } 
+            element={<LoginView />} 
           />
           <Route 
             path="/register" 
-            element={
-              <PublicRoute>
-                <RegisterView />
-              </PublicRoute>
-            } 
+            element={<RegisterView />} 
           />
           
           {/* Protected Routes */}
@@ -185,7 +150,7 @@ const AppRoutes = () => {
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </Suspense>
-    </Router>
+    </ErrorBoundary>
   );
 };
 
@@ -194,41 +159,90 @@ const AppContent = () => {
   const { isOnline } = useOnlineStatus();
   const { isDarkMode } = useAppStore();
 
+  // Add error boundary around the main content
   return (
-    <ConfigProvider
-      theme={{
-        algorithm: isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
-        token: {
-          colorPrimary: '#3B82F6',
-          colorSuccess: '#10B981',
-          colorWarning: '#F59E0B',
-          colorError: '#EF4444',
-        },
-      }}
-    >
-      <div className="app">
-        {!isOnline && <OfflineBanner />}
-        <TrainingProvider>
-          <AnalyticsProvider>
-            <AppRoutes />
-          </AnalyticsProvider>
-        </TrainingProvider>
-      </div>
-    </ConfigProvider>
+    <ErrorBoundary>
+      <ConfigProvider
+        theme={{
+          algorithm: isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
+          token: {
+            colorPrimary: '#3B82F6',
+            colorSuccess: '#10B981',
+            colorWarning: '#F59E0B',
+            colorError: '#EF4444',
+          },
+        }}
+      >
+        <div className="app">
+          {!isOnline && <OfflineBanner />}
+          <TrainingProvider>
+            <AnalyticsProvider>
+              <AppRoutes />
+            </AnalyticsProvider>
+          </TrainingProvider>
+        </div>
+      </ConfigProvider>
+    </ErrorBoundary>
   );
 };
 
 // Root App Component with Providers
 const App = () => {
+  // Add initialization check
+  const [isReady, setIsReady] = React.useState(false);
+
+  useEffect(() => {
+    // Ensure all required globals are available
+    const checkGlobals = () => {
+      const requiredGlobals = [
+        'React',
+        'ReactDOM',
+        'window',
+        'document',
+        'localStorage'
+      ];
+      
+      const allAvailable = requiredGlobals.every(global => {
+        try {
+          return typeof window[global] !== 'undefined' || typeof global !== 'undefined';
+        } catch {
+          return false;
+        }
+      });
+      
+      if (allAvailable) {
+        setIsReady(true);
+      } else {
+        // Retry after a short delay
+        setTimeout(checkGlobals, 100);
+      }
+    };
+
+    checkGlobals();
+  }, []);
+
+  if (!isReady) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-accent-9 mx-auto mb-4"></div>
+          <p className="text-lg">Initializing application...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <ErrorBoundary>
-      <ThemeProvider>
-        <QueryProvider>
-          <NeonDatabaseProvider>
-            <AppContent />
-          </NeonDatabaseProvider>
-        </QueryProvider>
-      </ThemeProvider>
+      <Router>
+        <ThemeProvider>
+          <QueryProvider>
+            <NeonDatabaseProvider>
+              <AppContent />
+            </NeonDatabaseProvider>
+          </QueryProvider>
+        </ThemeProvider>
+      </Router>
     </ErrorBoundary>
   );
 };

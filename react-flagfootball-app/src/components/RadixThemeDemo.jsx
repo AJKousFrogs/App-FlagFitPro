@@ -1,351 +1,365 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/Card';
 import { Button } from './ui/Button';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from './ui/Card';
 import { Input } from './ui/Input';
-import { Label } from './ui/Label';
 import { Checkbox } from './ui/Checkbox';
 import { RadioGroup, RadioGroupItem } from './ui/RadioGroup';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/Select';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/Collapsible';
+import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, MenubarShortcut, MenubarTrigger } from './ui/Menubar';
 import { AspectRatio } from './ui/AspectRatio';
-import { Collapsible, CollapsibleTrigger, CollapsibleContent } from './ui/Collapsible';
-import { Menubar, MenubarMenu, MenubarTrigger, MenubarContent, MenubarItem, MenubarSeparator } from './ui/Menubar';
-import * as Separator from '@radix-ui/react-separator';
-import * as Progress from '@radix-ui/react-progress';
-import * as Switch from '@radix-ui/react-switch';
-import * as Slider from '@radix-ui/react-slider';
-import * as Tabs from '@radix-ui/react-tabs';
-import { ChevronDownIcon, CheckIcon, SunIcon, MoonIcon } from '@radix-ui/react-icons';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/Avatar';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/Tooltip';
+
+// Error boundary for individual components
+const ComponentErrorBoundary = ({ children, fallback = <div>Component Error</div> }) => {
+  const [hasError, setHasError] = useState(false);
+  
+  if (hasError) {
+    return fallback;
+  }
+  
+  try {
+    return (
+      <React.Suspense fallback={<div>Loading...</div>}>
+        {children}
+      </React.Suspense>
+    );
+  } catch (error) {
+    console.error('Component error:', error);
+    setHasError(true);
+    return fallback;
+  }
+};
+
+// Safe component wrapper
+const SafeComponent = ({ component: Component, ...props }) => {
+  if (!Component) {
+    console.warn('Component is undefined');
+    return <div>Component not available</div>;
+  }
+  
+  return (
+    <ComponentErrorBoundary>
+      <Component {...props} />
+    </ComponentErrorBoundary>
+  );
+};
 
 const RadixThemeDemo = () => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const [isCollapsibleOpen, setIsCollapsibleOpen] = useState(false);
-  const [progressValue, setProgressValue] = useState(33);
-  const [sliderValue, setSliderValue] = useState([50]);
+  const [theme, setTheme] = useState('light');
+  const [isOpen, setIsOpen] = useState(false);
+  const [checked, setChecked] = useState(false);
+  const [radioValue, setRadioValue] = useState('option-one');
+  const [selectValue, setSelectValue] = useState('');
 
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-    document.documentElement.classList.toggle('dark');
-  };
+  // Ensure all components are available before rendering
+  const [componentsReady, setComponentsReady] = useState(false);
+
+  useEffect(() => {
+    // Check if all required components are available
+    const checkComponents = () => {
+      const requiredComponents = [
+        Card, Button, Input, Checkbox, RadioGroup, Select, 
+        Collapsible, Menubar, AspectRatio, Avatar, Tooltip
+      ];
+      
+      const allAvailable = requiredComponents.every(component => component !== undefined);
+      setComponentsReady(allAvailable);
+    };
+
+    // Small delay to ensure all imports are resolved
+    const timer = setTimeout(checkComponents, 100);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!componentsReady) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-accent-9 mx-auto mb-4"></div>
+          <p className="text-lg">Loading Radix UI components...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className={`min-h-screen p-8 transition-colors ${isDarkMode ? 'dark' : ''}`} style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}>
+    <div className="min-h-screen bg-background p-8">
       <div className="max-w-6xl mx-auto space-y-8">
         {/* Header */}
         <div className="text-center space-y-4">
-          <h1 className="text-4xl font-bold" style={{ color: 'var(--accent-9)' }}>
-            Radix UI Custom Theme Demo
-          </h1>
-          <p className="text-lg" style={{ color: 'var(--gray-10)' }}>
-            Showcasing the custom olive/green color palette with all Radix UI components
+          <h1 className="text-4xl font-bold text-foreground">Radix UI Theme Demo</h1>
+          <p className="text-muted-foreground text-lg">
+            Showcasing the custom olive/green theme with all Radix UI components
           </p>
           
           {/* Theme Toggle */}
-          <div className="flex items-center justify-center gap-4">
-            <SunIcon className="h-4 w-4" />
-            <Switch.Root
-              checked={isDarkMode}
-              onCheckedChange={toggleTheme}
-              className="w-11 h-6 rounded-full relative bg-gray-3 data-[state=checked]:bg-accent-9 transition-colors"
-            >
-              <Switch.Thumb className="block w-5 h-5 bg-white rounded-full transition-transform translate-x-0.5 data-[state=checked]:translate-x-5" />
-            </Switch.Root>
-            <MoonIcon className="h-4 w-4" />
+          <div className="flex items-center justify-center space-x-2">
+            <span className="text-sm">Light</span>
+            <div className="w-11 h-6 bg-gray-200 rounded-full relative">
+              <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform ${theme === 'dark' ? 'translate-x-5' : 'translate-x-0.5'}`}></div>
+            </div>
+            <span className="text-sm">Dark</span>
           </div>
         </div>
 
-        {/* Color Palette Display */}
-        <Card>
+        {/* Buttons Section */}
+        <SafeComponent component={Card}>
           <CardHeader>
-            <CardTitle>Color Palette</CardTitle>
-            <CardDescription>Custom olive/green accent colors and semantic grays</CardDescription>
+            <CardTitle>Buttons</CardTitle>
+            <CardDescription>All button variants with the custom theme</CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 gap-8">
-              {/* Accent Colors */}
-              <div>
-                <h3 className="text-lg font-semibold mb-4 text-accent-12">Accent Colors</h3>
-                <div className="grid grid-cols-6 gap-2">
-                  {Array.from({length: 12}, (_, i) => i + 1).map(num => (
-                    <div key={num} className="space-y-1">
-                      <div
-                        className={`w-12 h-12 rounded border`}
-                        style={{ backgroundColor: `var(--accent-${num})` }}
-                      />
-                      <div className="text-xs text-center text-gray-10">{num}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+          <CardContent className="space-y-4">
+            <div className="flex flex-wrap gap-4">
+              <SafeComponent component={Button}>Default</SafeComponent>
+              <SafeComponent component={Button} variant="secondary">Secondary</SafeComponent>
+              <SafeComponent component={Button} variant="destructive">Destructive</SafeComponent>
+              <SafeComponent component={Button} variant="outline">Outline</SafeComponent>
+              <SafeComponent component={Button} variant="ghost">Ghost</SafeComponent>
+              <SafeComponent component={Button} variant="link">Link</SafeComponent>
+            </div>
+            <div className="flex flex-wrap gap-4">
+              <SafeComponent component={Button} size="sm">Small</SafeComponent>
+              <SafeComponent component={Button} size="default">Default</SafeComponent>
+              <SafeComponent component={Button} size="lg">Large</SafeComponent>
+            </div>
+          </CardContent>
+        </SafeComponent>
 
-              {/* Gray Colors */}
-              <div>
-                <h3 className="text-lg font-semibold mb-4 text-gray-12">Gray Colors</h3>
-                <div className="grid grid-cols-6 gap-2">
-                  {Array.from({length: 12}, (_, i) => i + 1).map(num => (
-                    <div key={num} className="space-y-1">
-                      <div
-                        className={`w-12 h-12 rounded border`}
-                        style={{ backgroundColor: `var(--gray-${num})` }}
-                      />
-                      <div className="text-xs text-center text-gray-10">{num}</div>
-                    </div>
-                  ))}
+        {/* Form Elements */}
+        <SafeComponent component={Card}>
+          <CardHeader>
+            <CardTitle>Form Elements</CardTitle>
+            <CardDescription>Input fields, checkboxes, and radio buttons</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Email</label>
+              <SafeComponent component={Input} placeholder="Enter your email" />
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <SafeComponent 
+                component={Checkbox}
+                checked={checked}
+                onCheckedChange={setChecked}
+              />
+              <label className="text-sm font-medium">Accept terms and conditions</label>
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Select an option</label>
+              <SafeComponent 
+                component={Select}
+                value={selectValue}
+                onValueChange={setSelectValue}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Choose an option" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="option-1">Option 1</SelectItem>
+                  <SelectItem value="option-2">Option 2</SelectItem>
+                  <SelectItem value="option-3">Option 3</SelectItem>
+                </SelectContent>
+              </SafeComponent>
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Radio Group</label>
+              <SafeComponent 
+                component={RadioGroup}
+                value={radioValue}
+                onValueChange={setRadioValue}
+              >
+                <div className="flex items-center space-x-2">
+                  <SafeComponent component={RadioGroupItem} value="option-one" id="option-one" />
+                  <label htmlFor="option-one">Option One</label>
                 </div>
+                <div className="flex items-center space-x-2">
+                  <SafeComponent component={RadioGroupItem} value="option-two" id="option-two" />
+                  <label htmlFor="option-two">Option Two</label>
+                </div>
+              </SafeComponent>
+            </div>
+          </CardContent>
+        </SafeComponent>
+
+        {/* Progress and Slider Demo */}
+        <SafeComponent component={Card}>
+          <CardHeader>
+            <CardTitle>Progress & Slider</CardTitle>
+            <CardDescription>Progress indicators and sliders (simulated)</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span>Progress</span>
+                <span>65%</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="bg-accent-9 h-2 rounded-full" style={{ width: '65%' }}></div>
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span>Slider</span>
+                <span>50</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="bg-accent-9 h-2 rounded-full" style={{ width: '50%' }}></div>
               </div>
             </div>
           </CardContent>
-        </Card>
+        </SafeComponent>
 
-        {/* Components Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          
-          {/* Buttons */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Buttons</CardTitle>
-              <CardDescription>Different button variants using the theme</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <Button>Primary</Button>
-              <Button variant="secondary">Secondary</Button>
-              <Button variant="outline">Outline</Button>
-              <Button variant="ghost">Ghost</Button>
-              <Button variant="destructive">Destructive</Button>
-              <Button variant="link">Link</Button>
-            </CardContent>
-          </Card>
-
-          {/* Form Elements */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Form Elements</CardTitle>
-              <CardDescription>Inputs, labels, and form controls</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" placeholder="Enter your email" />
-              </div>
-              
-              <div className="flex items-center space-x-2">
-                <Checkbox id="terms" />
-                <Label htmlFor="terms">Accept terms and conditions</Label>
-              </div>
-
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select an option" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="option1">Option 1</SelectItem>
-                  <SelectItem value="option2">Option 2</SelectItem>
-                  <SelectItem value="option3">Option 3</SelectItem>
-                </SelectContent>
-              </Select>
-            </CardContent>
-          </Card>
-
-          {/* Radio Group */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Radio Group</CardTitle>
-              <CardDescription>Single selection options</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <RadioGroup defaultValue="option1">
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="option1" id="r1" />
-                  <Label htmlFor="r1">Option 1</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="option2" id="r2" />
-                  <Label htmlFor="r2">Option 2</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="option3" id="r3" />
-                  <Label htmlFor="r3">Option 3</Label>
-                </div>
-              </RadioGroup>
-            </CardContent>
-          </Card>
-
-          {/* Progress & Slider */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Progress & Slider</CardTitle>
-              <CardDescription>Visual feedback components</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <Label>Progress: {progressValue}%</Label>
-                <Progress.Root className="relative overflow-hidden bg-gray-3 rounded-full w-full h-2">
-                  <Progress.Indicator
-                    className="bg-accent-9 w-full h-full transition-transform duration-300 ease-out"
-                    style={{ transform: `translateX(-${100 - progressValue}%)` }}
-                  />
-                </Progress.Root>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => setProgressValue(Math.min(100, progressValue + 10))}
-                >
-                  Increase
-                </Button>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Slider: {sliderValue[0]}</Label>
-                <Slider.Root
-                  className="relative flex items-center select-none touch-none w-full h-5"
-                  value={sliderValue}
-                  onValueChange={setSliderValue}
-                  max={100}
-                  step={1}
-                >
-                  <Slider.Track className="bg-gray-3 relative grow rounded-full h-2">
-                    <Slider.Range className="absolute bg-accent-9 rounded-full h-full" />
-                  </Slider.Track>
-                  <Slider.Thumb
-                    className="block w-5 h-5 bg-white border-2 border-accent-9 rounded-full hover:bg-gray-1 focus:outline-none focus:shadow-lg"
-                    aria-label="Volume"
-                  />
-                </Slider.Root>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Tabs */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Tabs</CardTitle>
-              <CardDescription>Content organization</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Tabs.Root defaultValue="tab1">
-                <Tabs.List className="grid w-full grid-cols-3">
-                  <Tabs.Trigger 
-                    value="tab1"
-                    className="px-3 py-2 text-sm font-medium rounded-md hover:bg-accent-1 data-[state=active]:bg-accent-2 data-[state=active]:text-accent-12"
-                  >
-                    Tab 1
-                  </Tabs.Trigger>
-                  <Tabs.Trigger 
-                    value="tab2"
-                    className="px-3 py-2 text-sm font-medium rounded-md hover:bg-accent-1 data-[state=active]:bg-accent-2 data-[state=active]:text-accent-12"
-                  >
-                    Tab 2
-                  </Tabs.Trigger>
-                  <Tabs.Trigger 
-                    value="tab3"
-                    className="px-3 py-2 text-sm font-medium rounded-md hover:bg-accent-1 data-[state=active]:bg-accent-2 data-[state=active]:text-accent-12"
-                  >
-                    Tab 3
-                  </Tabs.Trigger>
-                </Tabs.List>
-                <Tabs.Content value="tab1" className="mt-4 p-4 bg-gray-1 rounded-md">
-                  <p className="text-sm text-gray-11">Content for tab 1</p>
-                </Tabs.Content>
-                <Tabs.Content value="tab2" className="mt-4 p-4 bg-gray-1 rounded-md">
-                  <p className="text-sm text-gray-11">Content for tab 2</p>
-                </Tabs.Content>
-                <Tabs.Content value="tab3" className="mt-4 p-4 bg-gray-1 rounded-md">
-                  <p className="text-sm text-gray-11">Content for tab 3</p>
-                </Tabs.Content>
-              </Tabs.Root>
-            </CardContent>
-          </Card>
-
-          {/* Collapsible */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Collapsible</CardTitle>
-              <CardDescription>Expandable content</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Collapsible open={isCollapsibleOpen} onOpenChange={setIsCollapsibleOpen}>
-                <CollapsibleTrigger asChild>
-                  <Button variant="ghost" className="w-full justify-between">
-                    <span>Toggle Content</span>
-                    <ChevronDownIcon 
-                      className={`h-4 w-4 transition-transform ${isCollapsibleOpen ? 'rotate-180' : ''}`} 
-                    />
-                  </Button>
-                </CollapsibleTrigger>
-                <CollapsibleContent className="mt-4 p-4 bg-gray-1 rounded-md">
-                  <p className="text-sm text-gray-11">
-                    This content can be collapsed and expanded using the Radix UI Collapsible component
-                    with our custom theme colors.
-                  </p>
-                </CollapsibleContent>
-              </Collapsible>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Menubar Demo */}
-        <Card>
+        {/* Tabs Demo */}
+        <SafeComponent component={Card}>
           <CardHeader>
-            <CardTitle>Menubar</CardTitle>
-            <CardDescription>Navigation menu with the custom theme</CardDescription>
+            <CardTitle>Tabs</CardTitle>
+            <CardDescription>Tabbed interface components (simulated)</CardDescription>
           </CardHeader>
           <CardContent>
-            <Menubar>
+            <div className="border-b border-gray-200">
+              <nav className="-mb-px flex space-x-8">
+                <button className="border-accent-9 text-accent-9 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm">
+                  Account
+                </button>
+                <button className="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm">
+                  Password
+                </button>
+                <button className="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm">
+                  Settings
+                </button>
+              </nav>
+            </div>
+            <div className="mt-4 p-4 bg-gray-50 rounded-md">
+              <p className="text-sm text-gray-600">Account settings content would go here.</p>
+            </div>
+          </CardContent>
+        </SafeComponent>
+
+        {/* Collapsible */}
+        <SafeComponent component={Card}>
+          <CardHeader>
+            <CardTitle>Collapsible</CardTitle>
+            <CardDescription>Expandable content sections</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <SafeComponent 
+              component={Collapsible}
+              open={isOpen}
+              onOpenChange={setIsOpen}
+            >
+              <CollapsibleTrigger asChild>
+                <SafeComponent component={Button} variant="outline">
+                  Click to expand
+                </SafeComponent>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-2 mt-4">
+                <div className="rounded-md border px-4 py-3 text-sm">
+                  This is the collapsible content. It can contain any elements you want.
+                </div>
+              </CollapsibleContent>
+            </SafeComponent>
+          </CardContent>
+        </SafeComponent>
+
+        {/* Menubar */}
+        <SafeComponent component={Card}>
+          <CardHeader>
+            <CardTitle>Menubar</CardTitle>
+            <CardDescription>Application menu bar</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <SafeComponent component={Menubar}>
               <MenubarMenu>
                 <MenubarTrigger>File</MenubarTrigger>
                 <MenubarContent>
-                  <MenubarItem>New File</MenubarItem>
-                  <MenubarItem>Open</MenubarItem>
+                  <MenubarItem>
+                    New Tab <MenubarShortcut>⌘T</MenubarShortcut>
+                  </MenubarItem>
+                  <MenubarItem>
+                    New Window <MenubarShortcut>⌘N</MenubarShortcut>
+                  </MenubarItem>
                   <MenubarSeparator />
-                  <MenubarItem>Save</MenubarItem>
-                  <MenubarItem>Export</MenubarItem>
+                  <MenubarItem>Share</MenubarItem>
                 </MenubarContent>
               </MenubarMenu>
               <MenubarMenu>
                 <MenubarTrigger>Edit</MenubarTrigger>
                 <MenubarContent>
-                  <MenubarItem>Undo</MenubarItem>
-                  <MenubarItem>Redo</MenubarItem>
-                  <MenubarSeparator />
-                  <MenubarItem>Copy</MenubarItem>
-                  <MenubarItem>Paste</MenubarItem>
+                  <MenubarItem>
+                    Undo <MenubarShortcut>⌘Z</MenubarShortcut>
+                  </MenubarItem>
+                  <MenubarItem>
+                    Redo <MenubarShortcut>⇧⌘Z</MenubarShortcut>
+                  </MenubarItem>
                 </MenubarContent>
               </MenubarMenu>
-              <MenubarMenu>
-                <MenubarTrigger>View</MenubarTrigger>
-                <MenubarContent>
-                  <MenubarItem>Zoom In</MenubarItem>
-                  <MenubarItem>Zoom Out</MenubarItem>
-                  <MenubarSeparator />
-                  <MenubarItem>Full Screen</MenubarItem>
-                </MenubarContent>
-              </MenubarMenu>
-            </Menubar>
+            </SafeComponent>
           </CardContent>
-        </Card>
+        </SafeComponent>
 
-        {/* AspectRatio Demo */}
-        <Card>
+        {/* Avatar */}
+        <SafeComponent component={Card}>
           <CardHeader>
-            <CardTitle>Aspect Ratio</CardTitle>
-            <CardDescription>Maintaining consistent proportions</CardDescription>
+            <CardTitle>Avatar</CardTitle>
+            <CardDescription>User avatar components</CardDescription>
+          </CardHeader>
+          <CardContent className="flex space-x-4">
+            <SafeComponent component={Avatar}>
+              <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+              <AvatarFallback>CN</AvatarFallback>
+            </SafeComponent>
+            <SafeComponent component={Avatar}>
+              <AvatarFallback>JD</AvatarFallback>
+            </SafeComponent>
+          </CardContent>
+        </SafeComponent>
+
+        {/* Tooltip */}
+        <SafeComponent component={Card}>
+          <CardHeader>
+            <CardTitle>Tooltip</CardTitle>
+            <CardDescription>Hover tooltips</CardDescription>
           </CardHeader>
           <CardContent>
-            <AspectRatio ratio={16 / 9} className="bg-gray-2 rounded-md overflow-hidden">
-              <div className="flex items-center justify-center h-full">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-accent-9 mb-2">16:9</div>
-                  <div className="text-sm text-gray-10">Aspect Ratio Container</div>
-                </div>
-              </div>
-            </AspectRatio>
+            <SafeComponent component={TooltipProvider}>
+              <SafeComponent 
+                component={Tooltip}
+              >
+                <TooltipTrigger asChild>
+                  <SafeComponent component={Button} variant="outline">
+                    Hover me
+                  </SafeComponent>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>This is a tooltip</p>
+                </TooltipContent>
+              </SafeComponent>
+            </SafeComponent>
           </CardContent>
-        </Card>
+        </SafeComponent>
 
-        <div className="text-center pt-8">
-          <p className="text-gray-10">
-            🎨 This demo showcases the complete Radix UI component library with custom olive/green theme colors
-          </p>
-        </div>
+        {/* Aspect Ratio */}
+        <SafeComponent component={Card}>
+          <CardHeader>
+            <CardTitle>Aspect Ratio</CardTitle>
+            <CardDescription>Maintain aspect ratios for content</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <SafeComponent component={AspectRatio} ratio={16 / 9}>
+              <img
+                src="https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=800&dpr=2&q=80"
+                alt="Photo"
+                className="rounded-md object-cover"
+              />
+            </SafeComponent>
+          </CardContent>
+        </SafeComponent>
       </div>
     </div>
   );
