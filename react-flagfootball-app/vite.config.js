@@ -8,6 +8,9 @@ export default defineConfig({
     target: 'es2020', // Better compatibility than esnext
     minify: 'terser',
     cssMinify: true,
+    commonjsOptions: {
+      include: [/node_modules/]
+    },
     rollupOptions: {
       output: {
         manualChunks: (id) => {
