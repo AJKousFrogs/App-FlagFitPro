@@ -26,13 +26,13 @@ class LoggerService {
       this.addTransport('console', this.consoleTransport);
     }
 
-    // Remote logging transport for production (only if endpoint is configured)
-    if (env.isProduction && env.getConfig().logging?.remoteEndpoint) {
-      this.addTransport('remote', this.remoteTransport);
+    // DISABLED: Remote logging transport completely disabled to prevent 404 errors
+    // Remote logging should be implemented with proper backend endpoint only
+    
+    // Local storage transport for client-side persistence (only in development)
+    if (env.isDevelopment) {
+      this.addTransport('localStorage', this.localStorageTransport);
     }
-
-    // Local storage transport for client-side persistence
-    this.addTransport('localStorage', this.localStorageTransport);
   }
 
   addTransport(name, transport) {
