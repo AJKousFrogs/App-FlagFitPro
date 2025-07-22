@@ -87,6 +87,9 @@
     "terser": "^5.43.1",
     "vitest": "^3.2.4"
   },
+  "overrides": {
+    "@radix-ui/react-use-layout-effect": "1.0.1"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
