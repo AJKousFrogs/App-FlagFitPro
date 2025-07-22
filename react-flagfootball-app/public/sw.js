@@ -151,13 +151,13 @@ self.addEventListener('push', (event) => {
     const options = {
       body: data.body || 'New notification from FlagFit Pro',
       icon: '/icons/icon-192x192.png',
-      badge: '/icons/icon-72x72.png',
+      badge: '/icons/icon-192x192.png',
       data: data,
       actions: [
         {
           action: 'view',
           title: 'View',
-          icon: '/icons/icon-72x72.png'
+          icon: '/icons/icon-192x192.png'
         },
         {
           action: 'dismiss',

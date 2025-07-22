@@ -15,9 +15,8 @@
     
     <!-- Favicon and Icons -->
     <link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16x16.png" />
-    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png" />
+    <link rel="shortcut icon" href="/icons/icon.svg" />
     
     <!-- PWA Manifest -->
     <link rel="manifest" href="/manifest.json" />
@@ -36,15 +35,8 @@
     <meta name="msapplication-config" content="/browserconfig.xml" />
     
     <!-- Apple Touch Icons -->
-    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
-    <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png" />
-    <link rel="apple-touch-icon" sizes="144x144" href="/icons/icon-144x144.png" />
-    <link rel="apple-touch-icon" sizes="120x120" href="/icons/icon-120x120.png" />
-    <link rel="apple-touch-icon" sizes="114x114" href="/icons/icon-114x114.png" />
-    <link rel="apple-touch-icon" sizes="76x76" href="/icons/icon-76x76.png" />
-    <link rel="apple-touch-icon" sizes="72x72" href="/icons/icon-72x72.png" />
-    <link rel="apple-touch-icon" sizes="60x60" href="/icons/icon-60x60.png" />
-    <link rel="apple-touch-icon" sizes="57x57" href="/icons/icon-57x57.png" />
+    <link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192x192.png" />
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
     
     <!-- SEO Meta Tags -->
     <title>FlagFit Pro - Professional Flag Football Training Platform</title>
@@ -111,27 +103,103 @@
   <body>
     <div id="root"></div>
     
-    <!-- Performance API Polyfill for React Scheduler -->
+    <!-- Comprehensive Performance API Polyfill for React Scheduler -->
     <script>
-      // Ensure performance.now() is available for React scheduler
-      if (!window.performance || !window.performance.now) {
-        window.performance = window.performance || {};
-        window.performance.now = window.performance.now || 
-          window.performance.webkitNow || 
-          window.performance.mozNow || 
-          window.performance.msNow || 
-          function() { return new Date().getTime(); };
-      }
-      
-      // Ensure requestIdleCallback is available or provide fallback
-      if (!window.requestIdleCallback) {
-        window.requestIdleCallback = function(callback, options) {
-          return setTimeout(callback, (options && options.timeout) || 16);
-        };
-        window.cancelIdleCallback = function(id) {
-          clearTimeout(id);
-        };
-      }
+      // Initialize performance object with comprehensive timing API support
+      (function() {
+        // Ensure performance object exists
+        if (!window.performance) {
+          window.performance = {};
+        }
+
+        // Polyfill performance.now() with high precision timing
+        if (!window.performance.now) {
+          const startTime = Date.now();
+          window.performance.now = window.performance.webkitNow || 
+            window.performance.mozNow || 
+            window.performance.msNow || 
+            function() { return Date.now() - startTime; };
+        }
+
+        // Polyfill performance.timeOrigin for React scheduler
+        if (typeof window.performance.timeOrigin === 'undefined') {
+          window.performance.timeOrigin = window.performance.timing ? 
+            window.performance.timing.navigationStart : 
+            Date.now() - window.performance.now();
+        }
+
+        // Polyfill performance.mark() for React profiling
+        if (!window.performance.mark) {
+          const marks = {};
+          window.performance.mark = function(name) {
+            marks[name] = window.performance.now();
+          };
+          window.performance.getEntriesByName = function(name) {
+            return marks[name] ? [{ name: name, startTime: marks[name] }] : [];
+          };
+          window.performance.measure = function(name, startMark, endMark) {
+            const start = marks[startMark] || 0;
+            const end = marks[endMark] || window.performance.now();
+            return { name: name, duration: end - start };
+          };
+          window.performance.clearMarks = function(name) {
+            if (name) delete marks[name];
+            else Object.keys(marks).forEach(key => delete marks[key]);
+          };
+        }
+
+        // Polyfill requestIdleCallback for React scheduler
+        if (!window.requestIdleCallback) {
+          window.requestIdleCallback = function(callback, options) {
+            const timeout = (options && options.timeout) || 50;
+            const start = window.performance.now();
+            
+            return setTimeout(function() {
+              callback({
+                didTimeout: false,
+                timeRemaining: function() {
+                  return Math.max(0, timeout - (window.performance.now() - start));
+                }
+              });
+            }, 1);
+          };
+          
+          window.cancelIdleCallback = function(id) {
+            clearTimeout(id);
+          };
+        }
+
+        // Polyfill MessageChannel for React scheduler
+        if (!window.MessageChannel) {
+          window.MessageChannel = function() {
+            const callbacks = [];
+            this.port1 = {
+              postMessage: function(data) {
+                setTimeout(function() {
+                  callbacks.forEach(function(callback) {
+                    callback({ data: data });
+                  });
+                }, 0);
+              },
+              addEventListener: function(type, callback) {
+                if (type === 'message') callbacks.push(callback);
+              },
+              removeEventListener: function(type, callback) {
+                const index = callbacks.indexOf(callback);
+                if (index > -1) callbacks.splice(index, 1);
+              }
+            };
+            this.port2 = this.port1;
+          };
+        }
+
+        // Ensure all timing methods are bound to performance object
+        ['now', 'mark', 'measure', 'clearMarks', 'getEntriesByName'].forEach(function(method) {
+          if (window.performance[method]) {
+            window.performance[method] = window.performance[method].bind(window.performance);
+          }
+        });
+      })();
     </script>
     
     <script type="module" src="/src/main.jsx"></script>

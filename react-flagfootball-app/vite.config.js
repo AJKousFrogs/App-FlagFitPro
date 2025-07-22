@@ -11,8 +11,8 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: (id) => {
-          // React and ReactDOM - keep together to preserve internal dependencies
-          if (id.includes('react/') || id.includes('react-dom/')) {
+          // React ecosystem - keep all together to preserve internal dependencies
+          if (id.includes('react/') || id.includes('react-dom/') || id.includes('scheduler/')) {
             return 'react-core';
           }
           
@@ -78,8 +78,7 @@ export default defineConfig({
           // Node modules - vendor chunks (but exclude React ecosystem)
           if (id.includes('node_modules') && 
               !id.includes('react') && 
-              !id.includes('@radix-ui') && 
-              !id.includes('scheduler')) {
+              !id.includes('@radix-ui')) {
             return 'vendor';
           }
         },
