@@ -11,113 +11,293 @@
 
 **All pages maintain this consistent color scheme:**
 - Login/Register: White backgrounds with green buttons
-- Dashboard: White cards with green progress bars
+- Dashboard: White cards with green progress indicators
 - Training: Green gradients for challenges, white cards for content
 - Profile/Community: Consistent white backgrounds with green accents
 
-## PocketBase Setup Instructions
+## 🗄️ Database Setup: Neon PostgreSQL
 
-## Current Status
-✅ Authentication service fixed - removed problematic caching
-✅ Auto-cancellation issues resolved - added request deduplication  
-✅ Test data prepared with placeholder user IDs
-❌ User account needs to be created in PocketBase
-❌ Collections need to be created in PocketBase
+### Step 1: Create Neon Database
 
-## Step 1: Create User Account
+1. **Sign Up for Neon**
+   - Go to [neon.tech](https://neon.tech)
+   - Create a free account
+   - Verify your email
 
-1. Go to http://127.0.0.1:8090/_/
-2. Login with your admin credentials
-3. Go to **Collections > users**
-4. Click **"New record"**
-5. Fill in the following details:
+2. **Create New Project**
+   - Click "Create New Project"
+   - Project name: `flagfit-pro`
+   - Region: Choose closest to your users
+   - Click "Create Project"
+
+3. **Get Connection String**
+   - In your project dashboard, click "Connection Details"
+   - Copy the connection string (starts with `postgresql://`)
+
+### Step 2: Environment Configuration
+
+1. **Create Environment File**
+   ```bash
+   cd react-flagfootball-app
+   cp env.example .env.local
    ```
-   email: aljosa@ljubljanafrogs.si
-   password: Futsal12!!!
-   passwordConfirm: Futsal12!!!
-   name: Aljosa Kous
-   firstName: Aljosa
-   lastName: Kous
-   role: admin
+
+2. **Edit Environment Variables**
+   ```bash
+   # .env.local
+   VITE_NEON_DATABASE_URL=postgresql://username:password@host/database
+   VITE_APP_ENVIRONMENT=development
+   VITE_APP_NAME=FlagFit Pro
+   VITE_APP_VERSION=1.0.0
    ```
-6. Click **Save**
-7. **Copy the generated user ID** (you'll need this for the test data)
 
-## Step 2: Create Collections
+### Step 3: Database Schema Setup
 
-### training_sessions Collection
-1. Go to **Collections** > **New collection**
-2. Set **Name**: `training_sessions`
-3. Set **Type**: `Base collection`
-4. Add these fields:
-   - `user_id` (Relation) → Collection: users, Required: Yes
-   - `title` (Text) → Required: Yes, Max: 255
-   - `description` (Text) → Max: 1000
-   - `session_type` (Select) → Values: strength,agility,endurance,skills
-   - `duration` (Number) → Min: 0, Max: 300
-   - `date` (Date) → Required: Yes
-   - `exercises` (JSON)
-   - `completed` (Bool) → Default: false
+1. **Install Dependencies**
+   ```bash
+   npm install
+   ```
 
-### training_goals Collection  
-1. Create new collection: `training_goals`
-2. Add these fields:
-   - `user_id` (Relation) → Collection: users, Required: Yes
-   - `title` (Text) → Required: Yes, Max: 255
-   - `description` (Text) → Max: 1000
-   - `target_date` (Date)
-   - `completed` (Bool) → Default: false
-   - `progress` (Number) → Min: 0, Max: 100
+2. **Generate Database Schema**
+   ```bash
+   npm run db:generate
+   ```
 
-### Set API Rules for Both Collections
+3. **Run Database Migrations**
+   ```bash
+   npm run db:migrate
+   ```
+
+### Step 4: Verify Database Connection
+
+1. **Test Connection**
+   ```bash
+   npm run db:test
+   ```
+
+2. **Check Tables Created**
+   - Go to Neon dashboard
+   - Click "Tables" in the left sidebar
+   - Verify these tables exist:
+     - `users`
+     - `training_sessions`
+     - `training_goals`
+     - `analytics_events`
+     - `teams`
+     - `team_members`
+
+## 🚀 Application Setup
+
+### Step 1: Install Dependencies
+```bash
+cd react-flagfootball-app
+npm install
 ```
-List/Search: @request.auth.id != ""
-View: @request.auth.id != ""
-Create: @request.auth.id != "" && @request.data.user_id = @request.auth.id
-Update: @request.auth.id != "" && user_id = @request.auth.id
-Delete: @request.auth.id != "" && user_id = @request.auth.id
+
+### Step 2: Start Development Server
+```bash
+npm run dev
 ```
 
-## Step 3: Update Test Data
+### Step 3: Access Application
+- **Local Development**: http://localhost:4000/
+- **Database Admin**: Neon dashboard at neon.tech
 
-1. Open `pocketbase-data/training_goals_fixed.json`
-2. Replace all `"REPLACE_WITH_ACTUAL_USER_ID"` with your actual user ID
-3. Open `pocketbase-data/training_sessions_simple.json`  
-4. Replace all `"REPLACE_WITH_ACTUAL_USER_ID"` with your actual user ID
+## 👤 Create First User
 
-## Step 4: Import Test Data
+### Option 1: Register Through App
+1. Go to http://localhost:4000/register
+2. Fill in registration form
+3. Verify email (if enabled)
+4. Login with credentials
 
-1. Go to **Collections > training_goals**
-2. Click **Import**
-3. Upload `training_goals_fixed.json`
-4. Go to **Collections > training_sessions**
-5. Click **Import**
-6. Upload `training_sessions_simple.json`
+### Option 2: Direct Database Insert
+```sql
+-- Insert test user directly into database
+INSERT INTO users (id, email, username, firstName, lastName, role, isActive, createdAt)
+VALUES (
+  gen_random_uuid(),
+  'admin@flagfit.com',
+  'admin',
+  'Admin',
+  'User',
+  'admin',
+  true,
+  NOW()
+);
+```
 
-## Step 5: Test Authentication
+## 🔧 Development Commands
 
-1. Open http://127.0.0.1:3001 in your browser
-2. Try logging in with:
-   - Email: `aljosa@ljubljanafrogs.si`
-   - Password: `Futsal12!!!`
+### Database Commands
+```bash
+npm run db:generate    # Generate new migration
+npm run db:migrate     # Run pending migrations
+npm run db:reset       # Reset database (development only)
+npm run db:seed        # Seed with test data
+```
 
-## Troubleshooting
+### Development Commands
+```bash
+npm run dev            # Start development server
+npm run build          # Build for production
+npm run preview        # Preview production build
+npm run test           # Run tests
+npm run lint           # Lint code
+npm run lint:fix       # Fix linting issues
+```
 
-If you get authentication errors:
-- Check that the user was created successfully
-- Verify the email and password are correct
-- Check browser console for detailed error messages
+## 🧪 Testing the Setup
 
-If data import fails:
-- Verify all collections have the correct field types
-- Make sure the user ID in the JSON files matches your actual user ID
-- Try importing one record manually first to test the collection setup
+### 1. Test Authentication
+- Go to http://localhost:4000/login
+- Try logging in with test credentials
+- Verify redirect to dashboard
 
-## What Was Fixed
+### 2. Test Database Connection
+- Check browser console for database connection logs
+- Verify no connection errors
+- Test creating a training session
 
-1. **Authentication Caching**: Removed problematic caching that was interfering with login
-2. **Auto-cancellation**: Added request deduplication to prevent duplicate API calls
-3. **Error Handling**: Improved error logging to identify authentication issues
-4. **User Data**: Fixed name from "Urs" to "Kous" as requested
+### 3. Test Features
+- Create a new training session
+- Add a training goal
+- Check analytics tracking
+- Test responsive design
 
-The app should now work properly once you complete the PocketBase setup above!
+## 🚨 Troubleshooting
+
+### Database Connection Issues
+```bash
+# Check environment variables
+echo $VITE_NEON_DATABASE_URL
+
+# Test connection manually
+npm run db:test
+
+# Check Neon dashboard for connection limits
+```
+
+### Build Issues
+```bash
+# Clear node modules and reinstall
+rm -rf node_modules package-lock.json
+npm install
+
+# Clear Vite cache
+npm run dev -- --force
+```
+
+### Port Issues
+```bash
+# Check if port 4000 is in use
+lsof -i :4000
+
+# Use different port
+npm run dev -- --port 4001
+```
+
+## 📊 Database Schema Reference
+
+### Users Table
+```sql
+CREATE TABLE users (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  email TEXT UNIQUE NOT NULL,
+  username TEXT UNIQUE,
+  firstName TEXT,
+  lastName TEXT,
+  role TEXT DEFAULT 'athlete',
+  isActive BOOLEAN DEFAULT true,
+  createdAt TIMESTAMP DEFAULT NOW()
+);
+```
+
+### Training Sessions Table
+```sql
+CREATE TABLE training_sessions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  userId UUID REFERENCES users(id),
+  title TEXT NOT NULL,
+  description TEXT,
+  type TEXT,
+  duration INTEGER,
+  difficulty TEXT,
+  status TEXT DEFAULT 'planned',
+  scheduledAt TIMESTAMP,
+  completedAt TIMESTAMP,
+  tags TEXT[],
+  createdAt TIMESTAMP DEFAULT NOW()
+);
+```
+
+### Training Goals Table
+```sql
+CREATE TABLE training_goals (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  userId UUID REFERENCES users(id),
+  title TEXT NOT NULL,
+  description TEXT,
+  type TEXT,
+  targetValue NUMERIC,
+  currentValue NUMERIC,
+  unit TEXT,
+  priority TEXT,
+  status TEXT DEFAULT 'active',
+  targetDate TIMESTAMP,
+  createdAt TIMESTAMP DEFAULT NOW()
+);
+```
+
+## 🔒 Security Considerations
+
+### Environment Variables
+- Never commit `.env.local` to version control
+- Use different databases for development and production
+- Rotate database passwords regularly
+
+### Database Security
+- Enable SSL connections
+- Use connection pooling
+- Implement proper user roles
+- Regular backup schedule
+
+## 📈 Performance Optimization
+
+### Database Optimization
+- Add indexes for frequently queried columns
+- Use connection pooling
+- Monitor query performance
+- Regular maintenance
+
+### Application Optimization
+- Enable code splitting
+- Optimize bundle size
+- Use React.memo for expensive components
+- Implement proper caching
+
+## ✅ Setup Checklist
+
+- [ ] Neon PostgreSQL account created
+- [ ] Database project created
+- [ ] Connection string copied
+- [ ] Environment variables configured
+- [ ] Dependencies installed
+- [ ] Database migrations run
+- [ ] Development server started
+- [ ] First user created
+- [ ] Authentication tested
+- [ ] Features verified working
+
+## 🎉 Success!
+
+Once you've completed all steps, you should have a fully functional FlagFit Pro application running with:
+
+- ✅ **Neon PostgreSQL Database**: Connected and working
+- ✅ **Authentication System**: Login/register functional
+- ✅ **Training Management**: Create and track sessions
+- ✅ **Progress Tracking**: Analytics and goals working
+- ✅ **Responsive Design**: Works on all devices
+- ✅ **Consistent Branding**: FlagFit Pro colors throughout
+
+**Your FlagFit Pro application is now ready for development!** 🚀
