@@ -36,12 +36,9 @@ export default defineConfig({
             return 'ui-antd';
           }
           
-          // Radix UI - split by component type but keep scheduler dependencies
+          // Radix UI - keep all Radix components together to avoid hook issues
           if (id.includes('@radix-ui/')) {
-            if (id.includes('dialog') || id.includes('dropdown') || id.includes('select')) {
-              return 'radix-interactive';
-            }
-            return 'radix-base';
+            return 'radix-ui';
           }
           
           // Database - only load when needed
@@ -78,7 +75,7 @@ export default defineConfig({
             return 'utils';
           }
           
-          // Node modules - vendor chunks (but exclude React ecosystem)
+          // Node modules - vendor chunks (but exclude React ecosystem and Radix)
           if (id.includes('node_modules') && 
               !id.includes('react') && 
               !id.includes('@radix-ui')) {
