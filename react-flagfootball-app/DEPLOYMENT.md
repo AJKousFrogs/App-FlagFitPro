@@ -1,5 +1,20 @@
 # 🚀 Deployment Guide - FlagFit Pro
 
+## 🎨 Design System
+
+**FlagFit Pro uses a consistent color scheme across all pages:**
+- **Primary**: Green (#16A34A) for buttons, links, and actions
+- **Background**: White (#FFFFFF) for cards and main backgrounds
+- **Text**: Black (#111827) for headings and main text
+- **Accents**: Green gradients for highlights and progress bars
+- **Borders**: Light gray (#E5E7EB) for card borders
+
+**All pages follow this branding:**
+- Login/Register: White backgrounds with green accents
+- Dashboard: White cards with green progress indicators
+- Training: Green gradients for challenges, white cards for content
+- Profile/Community: Consistent white backgrounds with green elements
+
 ## Quick Start with Netlify (Recommended)
 
 ### Option 1: One-Click Deploy

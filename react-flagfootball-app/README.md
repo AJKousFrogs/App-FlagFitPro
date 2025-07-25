@@ -29,6 +29,7 @@ This is the React frontend for the FlagFit Pro application, migrated from Vue.js
 - **Responsive Design**: Mobile-first design with Tailwind CSS
 - **Modern Architecture**: React hooks, context API, and service layer pattern
 - **Code Quality**: ESLint, Prettier, and comprehensive documentation
+- **Consistent Branding**: FlagFit Pro color scheme (white, green, black)
 
 ## 🛠 Tech Stack
 

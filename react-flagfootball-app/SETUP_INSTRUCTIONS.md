@@ -1,4 +1,21 @@
-# PocketBase Setup Instructions
+# FlagFit Pro Setup Instructions
+
+## 🎨 Design System Overview
+
+**FlagFit Pro uses a consistent branding system:**
+- **Primary Color**: Green (#16A34A) for all interactive elements
+- **Background**: White (#FFFFFF) for clean, modern appearance
+- **Text**: Black (#111827) for excellent readability
+- **Accents**: Green gradients for highlights and progress indicators
+- **Borders**: Light gray (#E5E7EB) for subtle separation
+
+**All pages maintain this consistent color scheme:**
+- Login/Register: White backgrounds with green buttons
+- Dashboard: White cards with green progress bars
+- Training: Green gradients for challenges, white cards for content
+- Profile/Community: Consistent white backgrounds with green accents
+
+## PocketBase Setup Instructions
 
 ## Current Status
 ✅ Authentication service fixed - removed problematic caching

@@ -2,6 +2,21 @@
 
 A comprehensive Progressive Web App (PWA) for flag football training management with role-based dashboards for Athletes, Coaches, and Admins.
 
+## 🎨 Design System
+
+**FlagFit Pro features a consistent, professional color scheme:**
+- **Primary**: Green (#16A34A) for all interactive elements and branding
+- **Background**: White (#FFFFFF) for clean, modern appearance
+- **Text**: Black (#111827) for excellent readability
+- **Accents**: Green gradients for highlights and progress indicators
+- **Borders**: Light gray (#E5E7EB) for subtle separation
+
+**All pages maintain this consistent branding:**
+- Login/Register: White backgrounds with green buttons
+- Dashboard: White cards with green progress indicators
+- Training: Green gradients for challenges, white cards for content
+- Profile/Community: Consistent white backgrounds with green accents
+
 ## 🏗️ Architecture
 
 - **Frontend**: React 18 + Vite + Tailwind CSS
