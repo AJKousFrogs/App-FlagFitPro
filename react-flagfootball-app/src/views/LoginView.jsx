@@ -122,8 +122,8 @@ const LoginView = () => {
   };
 
   return (
-    // Dark gradient background for login page - v1.0.4
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 py-12 px-4 sm:px-6 lg:px-8">
+    // FlagFit Pro gradient background for login page
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-white via-green-50 to-green-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         {isDemoMode && (
           <div className="rounded-2xl bg-green-900/20 backdrop-blur-sm p-6 border-2 border-green-400/30 shadow-2xl">
@@ -155,14 +155,14 @@ const LoginView = () => {
         )}
         
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Sign in to {import.meta.env.VITE_APP_NAME || 'FlagFit Pro'}
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-300">
+          <p className="mt-2 text-center text-sm text-gray-600">
             Or{' '}
             <Link
               to="/register"
-              className="font-medium text-blue-400 hover:text-blue-300"
+              className="font-medium text-green-600 hover:text-green-700"
             >
               create a new account
             </Link>
@@ -170,7 +170,7 @@ const LoginView = () => {
         </div>
         
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-2xl shadow-2xl bg-white/10 backdrop-blur-sm border border-white/20 p-6 space-y-4">
+          <div className="rounded-2xl shadow-2xl bg-white border border-gray-200 p-6 space-y-4">
             <div>
               <label htmlFor="email" className="sr-only">
                 Email address
@@ -183,9 +183,9 @@ const LoginView = () => {
                 required
                 className={`appearance-none relative block w-full px-4 py-3 border ${
                   errors.email
-                    ? 'border-red-400 placeholder-red-400 text-white bg-red-900/20 focus:outline-none focus:ring-red-400 focus:border-red-400 focus:z-10 sm:text-sm'
-                    : 'border-white/30 placeholder-gray-300 text-white bg-white/10 focus:outline-none focus:ring-blue-400 focus:border-blue-400 focus:z-10 sm:text-sm'
-                } rounded-lg backdrop-blur-sm`}
+                    ? 'border-red-500 placeholder-red-500 text-red-900 bg-red-50 focus:outline-none focus:ring-red-500 focus:border-red-500 focus:z-10 sm:text-sm'
+                    : 'border-gray-300 placeholder-gray-400 text-gray-900 bg-white focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm'
+                } rounded-lg`}
                 placeholder="Email address"
                 value={formData.email}
                 onChange={handleChange}
@@ -206,9 +206,9 @@ const LoginView = () => {
                 required
                 className={`appearance-none relative block w-full px-4 py-3 border ${
                   errors.password
-                    ? 'border-red-400 placeholder-red-400 text-white bg-red-900/20 focus:outline-none focus:ring-red-400 focus:border-red-400 focus:z-10 sm:text-sm'
-                    : 'border-white/30 placeholder-gray-300 text-white bg-white/10 focus:outline-none focus:ring-blue-400 focus:border-blue-400 focus:z-10 sm:text-sm'
-                } rounded-lg backdrop-blur-sm`}
+                    ? 'border-red-500 placeholder-red-500 text-red-900 bg-red-50 focus:outline-none focus:ring-red-500 focus:border-red-500 focus:z-10 sm:text-sm'
+                    : 'border-gray-300 placeholder-gray-400 text-gray-900 bg-white focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm'
+                } rounded-lg`}
                 placeholder="Password"
                 value={formData.password}
                 onChange={handleChange}
@@ -284,9 +284,9 @@ const LoginView = () => {
                 type="checkbox"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
-                className="h-4 w-4 text-blue-500 focus:ring-blue-400 border-white/30 bg-white/10 rounded"
+                className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 bg-white rounded"
               />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-300">
+              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
                 Remember me
               </label>
             </div>
@@ -294,7 +294,7 @@ const LoginView = () => {
             <div className="text-sm">
               <Link
                 to="/forgot-password"
-                className="font-medium text-blue-400 hover:text-blue-300"
+                className="font-medium text-green-600 hover:text-green-700"
               >
                 Forgot your password?
               </Link>
@@ -305,10 +305,10 @@ const LoginView = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className={`group relative w-full flex justify-center py-3 px-6 border border-transparent text-sm font-bold rounded-xl text-white shadow-2xl backdrop-blur-sm transition-all duration-200 ${
+              className={`group relative w-full flex justify-center py-3 px-6 border border-transparent text-sm font-bold rounded-xl text-white shadow-2xl transition-all duration-200 ${
                 isLoading
-                  ? 'bg-blue-400/50 cursor-not-allowed'
-                  : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transform hover:scale-105'
+                  ? 'bg-green-400 cursor-not-allowed'
+                  : 'bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transform hover:scale-105'
               }`}
             >
               {isLoading ? (
@@ -353,8 +353,8 @@ const LoginView = () => {
         </form>
         
         {/* Sponsors Section */}
-        <div className="mt-8 pt-6 border-t border-white/20">
-          <p className="text-center text-xs text-gray-400 mb-4">
+        <div className="mt-8 pt-6 border-t border-gray-200">
+          <p className="text-center text-xs text-gray-600 mb-4">
             Proudly sponsored by
           </p>
           <div className="flex justify-center items-center space-x-12">
