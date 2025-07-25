@@ -746,7 +746,7 @@ const DashboardView = React.memo(function DashboardView() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
         {/* AI Coach Section */}
-        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-3xl p-6 mb-6 relative overflow-hidden">
+        <div className="bg-gradient-to-r from-green-600 to-green-700 rounded-3xl p-6 mb-6 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full -ml-12 -mb-12"></div>
           <div className="relative z-10">
@@ -756,7 +756,7 @@ const DashboardView = React.memo(function DashboardView() {
               </div>
               <div>
                 <h2 className="text-xl font-bold text-white">Your AI Coach</h2>
-                <p className="text-purple-100">Based on your sleep data, I recommend focusing on technique over intensity today. Smart training wins games! 🧠</p>
+                <p className="text-green-100">Based on your sleep data, I recommend focusing on technique over intensity today. Smart training wins games! 🧠</p>
               </div>
             </div>
             <button className="bg-white/20 hover:bg-white/30 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200">
@@ -766,11 +766,11 @@ const DashboardView = React.memo(function DashboardView() {
         </div>
 
         {/* Level Progress Section */}
-        <div className="bg-gradient-to-r from-gray-800 to-gray-900 rounded-3xl p-6 mb-6 text-white">
+        <div className="bg-white rounded-3xl shadow-lg border border-gray-200 p-6 mb-6 text-gray-900">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="text-xl font-bold">Route Runner Pro</h3>
-              <p className="text-gray-300">Level 12 • 2400/3000 XP</p>
+              <p className="text-green-700">Level 12 • 2400/3000 XP</p>
             </div>
             <div className="flex space-x-2">
               <div className="w-10 h-10 bg-yellow-500 rounded-full flex items-center justify-center">
@@ -790,10 +790,10 @@ const DashboardView = React.memo(function DashboardView() {
               </div>
             </div>
           </div>
-          <div className="w-full bg-gray-700 rounded-full h-3 mb-2">
-            <div className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full" style={{width: '80%'}}></div>
+          <div className="w-full bg-gray-200 rounded-full h-3 mb-2">
+            <div className="bg-gradient-to-r from-green-500 to-green-600 h-3 rounded-full" style={{width: '80%'}}></div>
           </div>
-          <p className="text-gray-300 text-sm">600 XP to next level</p>
+          <p className="text-green-700 text-sm">600 XP to next level</p>
         </div>
 
         {/* Main Grid Layout */}
@@ -801,15 +801,15 @@ const DashboardView = React.memo(function DashboardView() {
           
           {/* Daily Challenge */}
           <div className="lg:col-span-2">
-            <div className="bg-gradient-to-r from-pink-500 to-red-500 rounded-3xl p-6 text-white relative overflow-hidden">
+            <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-3xl p-6 text-white relative overflow-hidden">
               <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12"></div>
               <div className="relative z-10">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-xl font-bold">⏱ Daily Challenge</h3>
-                  <span className="text-pink-100 text-sm">12h 45m left</span>
+                  <span className="text-green-100 text-sm">12h 45m left</span>
                 </div>
                 <h4 className="text-lg font-semibold mb-2">Route Master</h4>
-                <p className="text-pink-100 mb-4">Run 3 different routes with 90%+ accuracy</p>
+                <p className="text-green-100 mb-4">Run 3 different routes with 90%+ accuracy</p>
                 <div className="flex items-center justify-between">
                   <div className="text-yellow-300 font-semibold">75 XP + Precision Badge</div>
                   <button className="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg font-medium transition-colors duration-200">
@@ -821,23 +821,23 @@ const DashboardView = React.memo(function DashboardView() {
           </div>
 
           {/* This Week Stats */}
-          <div className="bg-gradient-to-r from-gray-800 to-blue-900 rounded-3xl p-6 text-white">
+          <div className="bg-white rounded-3xl shadow-lg border border-gray-200 p-6 text-gray-900">
             <h3 className="text-lg font-bold mb-4">📊 This Week</h3>
             <div className="space-y-3">
               <div className="flex justify-between">
-                <span className="text-gray-300">Workouts</span>
+                <span className="text-gray-600">Workouts</span>
                 <span className="font-bold">5/7</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-300">Total Time</span>
+                <span className="text-gray-600">Total Time</span>
                 <span className="font-bold">4h 32m</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-300">Avg. Rating</span>
+                <span className="text-gray-600">Avg. Rating</span>
                 <span className="font-bold text-yellow-400">4.8/5</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-300">Calories</span>
+                <span className="text-gray-600">Calories</span>
                 <span className="font-bold text-orange-400">1,247</span>
               </div>
             </div>

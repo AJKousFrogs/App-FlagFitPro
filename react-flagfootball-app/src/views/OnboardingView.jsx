@@ -192,7 +192,7 @@ const OnboardingView = () => {
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">
               <div 
-                className="bg-indigo-600 h-2 rounded-full transition-all duration-300"
+                className="bg-green-600 h-2 rounded-full transition-all duration-300"
                 style={{ width: `${(step / 3) * 100}%` }}
               ></div>
             </div>
@@ -220,7 +220,7 @@ const OnboardingView = () => {
               )}
               <button
                 onClick={handleNext}
-                className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+                className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
               >
                 {step === 3 ? 'Get Started' : 'Next'}
               </button>
