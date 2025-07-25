@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:react-flagfootball-app/dist/assets/ui-antd-oegjAZzY.js
 import{R as e,y as t,r,l as n}from"./react-core-DzYFkBFS.js";import{x as o}from"./radix-base-BtIxbxB2.js";var i,a,c={exports:{}};
-========
-import{R as e,y as t,r,l as n}from"./react-core-BxJkzGRI.js";import{w as o}from"./radix-base-BF5jKfZ_.js";var i,a,c={exports:{}};
->>>>>>>> 2e13b41fd39b2e1d286cedb7d30ba99476de90ab:react-flagfootball-app/dist/assets/ui-antd-DPtwLCJg.js
 /*!
 	Copyright (c) 2018 Jed Watson.
 	Licensed under the MIT License (MIT), see

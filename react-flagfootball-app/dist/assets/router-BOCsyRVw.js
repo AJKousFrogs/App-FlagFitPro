@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:react-flagfootball-app/dist/assets/router-BOCsyRVw.js
 import{r as e,l as t}from"./react-core-DzYFkBFS.js";
-========
-import{r as e,l as t}from"./react-core-BxJkzGRI.js";
->>>>>>>> 2e13b41fd39b2e1d286cedb7d30ba99476de90ab:react-flagfootball-app/dist/assets/router-DQkzg774.js
 /**
  * @remix-run/router v1.23.0
  *
