@@ -41,7 +41,7 @@ const TrainingView = () => {
     routes: {
       name: 'Route Running',
       icon: '🏃',
-      color: 'from-blue-500 to-blue-600',
+      color: 'from-green-500 to-green-600',
       routes: 15,
       completed: 8,
       difficulty: 'Intermediate',
@@ -50,7 +50,7 @@ const TrainingView = () => {
     plyometrics: {
       name: 'Plyometrics',
       icon: '⚡',
-      color: 'from-yellow-500 to-orange-500',
+      color: 'from-green-500 to-green-600',
       routes: 12,
       completed: 5,
       difficulty: 'Beginner',
@@ -59,7 +59,7 @@ const TrainingView = () => {
     sprints: {
       name: 'Speed Training',
       icon: '🏃‍♂️',
-      color: 'from-red-500 to-pink-500',
+      color: 'from-green-500 to-green-600',
       routes: 8,
       completed: 6,
       difficulty: 'Advanced',
@@ -68,7 +68,7 @@ const TrainingView = () => {
     catching: {
       name: 'Catching',
       icon: '🎯',
-      color: 'from-green-500 to-emerald-500',
+      color: 'from-green-500 to-green-600',
       routes: 10,
       completed: 4,
       difficulty: 'Intermediate',
@@ -77,7 +77,7 @@ const TrainingView = () => {
     strength: {
       name: 'Strength',
       icon: '💪',
-      color: 'from-purple-500 to-indigo-500',
+      color: 'from-green-500 to-green-600',
       routes: 20,
       completed: 12,
       difficulty: 'Beginner',
@@ -86,7 +86,7 @@ const TrainingView = () => {
     recovery: {
       name: 'Recovery',
       icon: '🧘',
-      color: 'from-teal-500 to-cyan-500',
+      color: 'from-green-500 to-green-600',
       routes: 6,
       completed: 3,
       difficulty: 'Beginner',
@@ -241,12 +241,12 @@ const TrainingView = () => {
   // Show drill library if active
   if (showDrillLibrary) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 text-white p-6">
+      <div className="min-h-screen bg-gradient-to-br from-white via-green-50 to-green-100 text-gray-900 p-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-6">
             <button
               onClick={() => setShowDrillLibrary(false)}
-              className="flex items-center space-x-2 text-blue-200 hover:text-white transition-colors"
+              className="flex items-center space-x-2 text-green-600 hover:text-green-700 transition-colors"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -266,12 +266,12 @@ const TrainingView = () => {
   // Show calendar if active
   if (showCalendar) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 text-white p-6">
+      <div className="min-h-screen bg-gradient-to-br from-white via-green-50 to-green-100 text-gray-900 p-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-6">
             <button
               onClick={() => setShowCalendar(false)}
-              className="flex items-center space-x-2 text-blue-200 hover:text-white transition-colors"
+              className="flex items-center space-x-2 text-green-600 hover:text-green-700 transition-colors"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -328,17 +328,17 @@ const TrainingView = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-white via-green-50 to-green-100 flex items-center justify-center">
         <div className="text-center">
           <LoadingSpinner />
-          <p className="text-white mt-4 text-lg">Preparing your personalized training experience...</p>
+          <p className="text-gray-900 mt-4 text-lg">Preparing your personalized training experience...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 text-white">
+    <div className="min-h-screen bg-gradient-to-br from-white via-green-50 to-green-100 text-gray-900">
       {/* Achievement Popup */}
       {showAchievement && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
@@ -357,15 +357,15 @@ const TrainingView = () => {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent">
                 Training Ecosystem
               </h1>
-              <p className="text-blue-200 mt-2">AI-Powered Flag Football Mastery</p>
+              <p className="text-green-700 mt-2">AI-Powered Flag Football Mastery</p>
             </div>
             <div className="flex items-center space-x-4">
               <button
                 onClick={() => setShowCalendar(true)}
-                className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg font-semibold transition-colors"
+                className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg font-semibold transition-colors"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -374,7 +374,7 @@ const TrainingView = () => {
               </button>
               <button
                 onClick={() => setShowDrillLibrary(true)}
-                className="flex items-center space-x-2 bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg font-semibold transition-colors"
+                className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg font-semibold transition-colors"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
@@ -393,7 +393,7 @@ const TrainingView = () => {
               </button>
               <button
                 onClick={() => setShowWeeklyChallenges(true)}
-                className="flex items-center space-x-2 bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded-lg font-semibold transition-colors"
+                className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg font-semibold transition-colors"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -402,7 +402,7 @@ const TrainingView = () => {
               </button>
               <button
                 onClick={() => setShowOfflineWorkouts(true)}
-                className="flex items-center space-x-2 bg-teal-600 hover:bg-teal-700 px-4 py-2 rounded-lg font-semibold transition-colors"
+                className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg font-semibold transition-colors"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -411,7 +411,7 @@ const TrainingView = () => {
               </button>
               <button
                 onClick={() => setShowBuddySystem(true)}
-                className="flex items-center space-x-2 bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg font-semibold transition-colors"
+                className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg font-semibold transition-colors"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -419,23 +419,23 @@ const TrainingView = () => {
                 <span>Buddies</span>
               </button>
               <div className="text-right">
-                <div className="text-sm text-blue-200">Current Streak</div>
-                <div className="text-2xl font-bold text-yellow-400">{currentStreak} days 🔥</div>
+                <div className="text-sm text-green-700">Current Streak</div>
+                <div className="text-2xl font-bold text-green-600">{currentStreak} days 🔥</div>
               </div>
             </div>
           </div>
 
           {/* AI Coach Section */}
-          <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-3xl p-6 mb-6 relative overflow-hidden">
+          <div className="bg-gradient-to-r from-green-600 to-green-700 rounded-3xl p-6 mb-6 relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent"></div>
             <div className="relative flex items-start space-x-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-2xl animate-pulse">
+              <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center text-2xl animate-pulse">
                 🤖
               </div>
               <div className="flex-1">
-                <h3 className="text-xl font-bold mb-2">Your AI Coach</h3>
-                <p className="text-blue-100 text-lg leading-relaxed">{aiCoachMessage}</p>
-                <button className="mt-4 bg-white/20 hover:bg-white/30 px-6 py-2 rounded-full text-sm font-semibold transition-all backdrop-blur-sm">
+                <h3 className="text-xl font-bold mb-2 text-white">Your AI Coach</h3>
+                <p className="text-green-100 text-lg leading-relaxed">{aiCoachMessage}</p>
+                <button className="mt-4 bg-white/20 hover:bg-white/30 px-6 py-2 rounded-full text-sm font-semibold transition-all backdrop-blur-sm text-white">
                   Ask Coach a Question
                 </button>
               </div>
@@ -443,11 +443,11 @@ const TrainingView = () => {
           </div>
 
           {/* Player Progress */}
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-6">
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 mb-6">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h3 className="text-xl font-bold">{playerLevel.name}</h3>
-                <p className="text-blue-200">Level 12 • {playerLevel.xp}/{playerLevel.nextLevel} XP</p>
+                <h3 className="text-xl font-bold text-gray-900">{playerLevel.name}</h3>
+                <p className="text-green-700">Level 12 • {playerLevel.xp}/{playerLevel.nextLevel} XP</p>
               </div>
               <div className="flex space-x-2">
                 {achievements.map((achievement, index) => (
@@ -465,13 +465,13 @@ const TrainingView = () => {
                 ))}
               </div>
             </div>
-            <div className="w-full bg-gray-700 rounded-full h-3 mb-2">
+            <div className="w-full bg-gray-200 rounded-full h-3 mb-2">
               <div 
-                className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full transition-all duration-1000"
+                className="bg-gradient-to-r from-green-500 to-green-600 h-3 rounded-full transition-all duration-1000"
                 style={{ width: `${progressPercentage}%` }}
               ></div>
             </div>
-            <p className="text-sm text-blue-200">
+            <p className="text-sm text-green-700">
               {playerLevel.nextLevel - playerLevel.xp} XP to next level
             </p>
           </div>
@@ -483,20 +483,20 @@ const TrainingView = () => {
           <div className="lg:col-span-3">
             {/* Daily Challenge */}
             {dailyChallenge && (
-              <div className="bg-gradient-to-r from-red-500 to-pink-500 rounded-2xl p-6 mb-6 relative overflow-hidden">
+              <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-2xl p-6 mb-6 relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent"></div>
                 <div className="relative">
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-xl font-bold">🎯 Daily Challenge</h3>
-                    <span className="bg-white/20 px-3 py-1 rounded-full text-sm">
+                    <h3 className="text-xl font-bold text-white">🎯 Daily Challenge</h3>
+                    <span className="bg-white/20 px-3 py-1 rounded-full text-sm text-white">
                       {dailyChallenge.timeLeft} left
                     </span>
                   </div>
-                  <h4 className="text-lg font-semibold mb-2">{dailyChallenge.title}</h4>
-                  <p className="text-pink-100 mb-4">{dailyChallenge.description}</p>
+                  <h4 className="text-lg font-semibold mb-2 text-white">{dailyChallenge.title}</h4>
+                  <p className="text-green-100 mb-4">{dailyChallenge.description}</p>
                   <div className="flex items-center justify-between">
-                    <span className="text-yellow-300 font-semibold">{dailyChallenge.reward}</span>
-                    <button className="bg-white/20 hover:bg-white/30 px-6 py-2 rounded-full font-semibold transition-all">
+                    <span className="text-yellow-200 font-semibold">{dailyChallenge.reward}</span>
+                    <button className="bg-white/20 hover:bg-white/30 px-6 py-2 rounded-full font-semibold transition-all text-white">
                       Accept Challenge
                     </button>
                   </div>
