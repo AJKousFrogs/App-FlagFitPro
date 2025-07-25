@@ -106,8 +106,11 @@ export default defineConfig({
   
   // Development server optimizations
   server: {
-    host: true,
-    port: 5173
+    host: 'localhost',
+    port: 4000,
+    hmr: {
+      port: 4000
+    }
   },
   
   // Preview server optimizations  
@@ -116,22 +119,40 @@ export default defineConfig({
     port: 4173
   },
   
+  // Resolve configuration to ensure proper module resolution
+  resolve: {
+    alias: {
+      'react': 'react',
+      'react-dom': 'react-dom'
+    }
+  },
+  
+  // Optimize dependencies
+  optimizeDeps: {
+    include: [
+      'react',
+      'react-dom',
+      '@radix-ui/react-slot',
+      '@radix-ui/react-tooltip',
+      '@radix-ui/react-label',
+      '@radix-ui/react-checkbox',
+      '@radix-ui/react-collapsible',
+      '@radix-ui/react-select',
+      '@radix-ui/react-avatar',
+      '@radix-ui/react-menubar',
+      '@radix-ui/react-radio-group',
+      '@radix-ui/react-aspect-ratio',
+      '@radix-ui/react-icons',
+      '@radix-ui/react-use-layout-effect'
+    ]
+  },
+  
   define: {
     // Provide production-ready environment variables with proper fallbacks
-    'import.meta.env.VITE_POCKETBASE_URL': JSON.stringify(
-      process.env.VITE_POCKETBASE_URL || process.env.NETLIFY_DATABASE_URL || process.env.DATABASE_URL || ''
-    ),
-    'import.meta.env.VITE_APP_NAME': JSON.stringify(
-      process.env.VITE_APP_NAME || 'FlagFit Pro'
-    ),
-    'import.meta.env.VITE_APP_VERSION': JSON.stringify(
-      process.env.VITE_APP_VERSION || '1.0.7'
-    ),
-    'import.meta.env.VITE_NEON_DATABASE_URL': JSON.stringify(
-      process.env.VITE_NEON_DATABASE_URL || process.env.NETLIFY_DATABASE_URL || process.env.DATABASE_URL || ''
-    ),
-    'import.meta.env.VITE_APP_ENVIRONMENT': JSON.stringify(
-      process.env.VITE_APP_ENVIRONMENT || process.env.NODE_ENV || 'production'
-    )
+    'import.meta.env.VITE_POCKETBASE_URL': JSON.stringify('http://127.0.0.1:8090'),
+    'import.meta.env.VITE_APP_NAME': JSON.stringify('FlagFit Pro'),
+    'import.meta.env.VITE_APP_VERSION': JSON.stringify('1.0.7'),
+    'import.meta.env.VITE_NEON_DATABASE_URL': JSON.stringify(''),
+    'import.meta.env.VITE_APP_ENVIRONMENT': JSON.stringify('development')
   }
 })

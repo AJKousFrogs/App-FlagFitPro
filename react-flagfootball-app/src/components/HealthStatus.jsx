@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useApiHealth } from '../hooks/useApi';
-import logger from '../services/logger.service';
+// Removed direct import - will use dynamic import when needed
 
 const HealthStatus = ({ minimal = false, className = '' }) => {
   const { healthStatus, checking, checkHealth, overallHealth, isOverallHealthy } = useApiHealth();

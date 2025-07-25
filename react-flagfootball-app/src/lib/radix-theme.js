@@ -6,53 +6,53 @@
 // Light theme color palette
 export const lightTheme = {
   colors: {
-    // Accent colors (olive/green from your first image)
+    // Accent colors (FlagFit Pro green)
     accent: {
-      1: '#fdfcfd',
-      2: '#f7f6f5', 
-      3: '#edeae3',
-      4: '#e4ddd1',
-      5: '#ddd2bd',
-      6: '#d3c6a6',
-      7: '#c5b588',
-      8: '#b5a05e',
-      9: '#777733', // Main accent color
-      10: '#6e6d2e',
-      11: '#5c5a29',
-      12: '#2e2d1c'
+      1: '#f0fdf4',
+      2: '#dcfce7', 
+      3: '#bbf7d0',
+      4: '#86efac',
+      5: '#4ade80',
+      6: '#22c55e',
+      7: '#16a34a',
+      8: '#15803d',
+      9: '#166534', // Main accent color - FlagFit Pro green
+      10: '#14532d',
+      11: '#052e16',
+      12: '#022c22'
     },
     
-    // Gray colors 
+    // Gray colors (FlagFit Pro black/white theme)
     gray: {
-      1: '#fcfcfc',
-      2: '#f9f9f9',
-      3: '#f0f0f0',
-      4: '#e8e8e8',
-      5: '#e0e0e0',
-      6: '#d6d6d6',
-      7: '#c7c7c7',
-      8: '#b5b5b5',
-      9: '#111111', // Main gray
-      10: '#0e0e0e',
-      11: '#0b0b0b',
-      12: '#080808'
+      1: '#ffffff', // Pure white
+      2: '#fafafa',
+      3: '#f5f5f5',
+      4: '#e5e5e5',
+      5: '#d4d4d4',
+      6: '#a3a3a3',
+      7: '#737373',
+      8: '#525252',
+      9: '#404040',
+      10: '#262626',
+      11: '#171717',
+      12: '#000000' // Pure black
     },
 
-    // Background colors
+    // Background colors (FlagFit Pro white theme)
     background: {
-      base: '#ffffff',
-      subtle: '#fefefe',
-      ui: '#f9f9f9',
-      hover: '#f2f2f2',
-      pressed: '#eaeaea'
+      base: '#ffffff', // Pure white
+      subtle: '#fafafa',
+      ui: '#f5f5f5',
+      hover: '#e5e5e5',
+      pressed: '#d4d4d4'
     },
 
-    // Text colors
+    // Text colors (FlagFit Pro black theme)
     text: {
-      primary: '#11181c',
-      secondary: '#687076', 
-      tertiary: '#889096',
-      quaternary: '#a1a7ad'
+      primary: '#000000', // Pure black
+      secondary: '#404040', 
+      tertiary: '#737373',
+      quaternary: '#a3a3a3'
     }
   }
 };
@@ -60,53 +60,53 @@ export const lightTheme = {
 // Dark theme color palette  
 export const darkTheme = {
   colors: {
-    // Accent colors (olive/green adapted for dark)
+    // Accent colors (FlagFit Pro green for dark theme)
     accent: {
-      1: '#151514',
-      2: '#1a1a17',
-      3: '#202017',
-      4: '#26251c',
-      5: '#2d2b22',
-      6: '#363227',
-      7: '#433e2d',
-      8: '#544d37',
-      9: '#777733', // Same main accent
-      10: '#8b8540',
-      11: '#a09c4c',
-      12: '#e4e2b8'
+      1: '#022c22',
+      2: '#052e16',
+      3: '#14532d',
+      4: '#166534',
+      5: '#15803d',
+      6: '#16a34a',
+      7: '#22c55e',
+      8: '#4ade80',
+      9: '#86efac', // Main accent color - FlagFit Pro green (lighter for dark)
+      10: '#bbf7d0',
+      11: '#dcfce7',
+      12: '#f0fdf4'
     },
 
-    // Gray colors (dark)
+    // Gray colors (FlagFit Pro dark theme - inverted)
     gray: {
-      1: '#111111',
-      2: '#191919', 
-      3: '#222222',
-      4: '#2a2a2a',
-      5: '#313131',
-      6: '#3a3a3a',
-      7: '#484848',
-      8: '#606060',
-      9: '#6e6e6e',
-      10: '#7b7b7b',
-      11: '#b4b4b4',
-      12: '#eeeeee'
+      1: '#000000', // Pure black
+      2: '#171717',
+      3: '#262626',
+      4: '#404040',
+      5: '#525252',
+      6: '#737373',
+      7: '#a3a3a3',
+      8: '#d4d4d4',
+      9: '#e5e5e5',
+      10: '#f5f5f5',
+      11: '#fafafa',
+      12: '#ffffff' // Pure white
     },
 
-    // Background colors (dark)
+    // Background colors (FlagFit Pro dark theme)
     background: {
-      base: '#111111',
-      subtle: '#151515',
-      ui: '#191919',
-      hover: '#1f1f1f',
-      pressed: '#262626'
+      base: '#000000', // Pure black
+      subtle: '#171717',
+      ui: '#262626',
+      hover: '#404040',
+      pressed: '#525252'
     },
 
-    // Text colors (dark)
+    // Text colors (FlagFit Pro dark theme)
     text: {
-      primary: '#ffffff',
-      secondary: '#b4b4b4',
-      tertiary: '#8b8b8b', 
-      quaternary: '#6e6e6e'
+      primary: '#ffffff', // Pure white
+      secondary: '#f5f5f5',
+      tertiary: '#d4d4d4', 
+      quaternary: '#a3a3a3'
     }
   }
 };

@@ -4,8 +4,8 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { apiService, API_VERSIONS } from '../services/api.service.js';
-import logger from '../services/logger.service.js';
+// Removed direct import - will use dynamic import when needed
+// Removed direct import - will use dynamic import when needed
 
 /**
  * Enhanced useApi hook with versioning support

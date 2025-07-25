@@ -5,7 +5,7 @@
 
 import * as Sentry from '@sentry/react';
 import env from '../config/environment.js';
-import logger from './logger.service';
+// Removed direct import - will use dynamic import when needed
 
 class SentryService {
   constructor() {

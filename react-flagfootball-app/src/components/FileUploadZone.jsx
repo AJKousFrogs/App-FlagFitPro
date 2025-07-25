@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { fileUploadService } from '../services/fileUpload.service';
+// Removed direct import - will use dynamic import when needed
 
 const FileUploadZone = ({
   accept = 'image/*',

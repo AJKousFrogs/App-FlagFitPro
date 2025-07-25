@@ -8,7 +8,6 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import QueryProvider from './providers/QueryProvider';
 import { useOnlineStatus } from './hooks/index';
 import useAppStore from './stores/useAppStore';
-import { hybridAnalyticsService } from './services/hybrid-analytics.service.js';
 
 // Import components
 import LoadingSpinner from './components/LoadingSpinner';
@@ -42,6 +41,9 @@ const CommunityView = lazy(() =>
 );
 const RadixThemeDemo = lazy(() => 
   import(/* webpackChunkName: "demo" */ './components/RadixThemeDemo')
+);
+const RadixTest = lazy(() => 
+  import(/* webpackChunkName: "test" */ './components/RadixTest')
 );
 
 // Protected Route Component with better error handling
@@ -139,6 +141,14 @@ const AppRoutes = () => {
             element={
               <ProtectedRoute>
                 <RadixThemeDemo />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/radix-test" 
+            element={
+              <ProtectedRoute>
+                <RadixTest />
               </ProtectedRoute>
             } 
           />

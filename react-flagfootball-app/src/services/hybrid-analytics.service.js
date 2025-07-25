@@ -7,8 +7,8 @@
  * - Neon/PostgreSQL: Advanced analytics, complex queries, reporting
  */
 
-import { analyticsService } from './analytics.service.js';
-import logger from './logger.service.js';
+// Removed direct import - will use dynamic import when needed
+// Removed direct import - will use dynamic import when needed
 
 class HybridAnalyticsService {
   constructor() {

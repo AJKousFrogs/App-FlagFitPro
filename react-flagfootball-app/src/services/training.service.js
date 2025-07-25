@@ -1,6 +1,6 @@
 // Training Service for React - Updated for Neon Database
-import neonDatabaseService from './neon-database.service.js';
-import cacheService from './cache.service.js';
+// Removed direct import - will use dynamic import when needed
+// Removed direct import - will use dynamic import when needed
 import { getStartDateForTimeframe, calculateStreakDays, formatDuration } from '../utils/dateUtils';
 
 class TrainingService {

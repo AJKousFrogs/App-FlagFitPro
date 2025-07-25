@@ -1,11 +1,9 @@
 import React from 'react';
-import logger from '../services/logger.service';
-import sentryService from '../services/sentry.service';
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { hasError: false, error: null, errorInfo: null, eventId: null };
+    this.state = { hasError: false, error: null, errorInfo: null };
   }
 
   static getDerivedStateFromError() {
@@ -14,42 +12,25 @@ class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    // Log the error locally
-    logger.logError(error, 'React Error Boundary');
-    
-    // Send to Sentry with context
-    const eventId = sentryService.captureException(error, {
-      errorBoundary: {
-        componentStack: errorInfo.componentStack,
-        errorBoundaryStack: errorInfo.errorBoundaryStack || 'Not available'
-      },
-      react: {
-        componentStack: errorInfo.componentStack
-      }
-    });
+    // Simple console logging instead of service imports
+    console.error('React Error Boundary caught an error:', error);
+    console.error('Error info:', errorInfo);
 
     this.setState({
       error,
-      errorInfo,
-      eventId
+      errorInfo
     });
   }
 
   handleReportError = () => {
-    if (sentryService.isAvailable()) {
-      sentryService.showReportDialog({
-        eventId: this.state.eventId
-      });
-    } else {
-      // Fallback: open email client
-      const subject = encodeURIComponent('Application Error Report');
-      const body = encodeURIComponent(`
+    // Fallback: open email client
+    const subject = encodeURIComponent('Application Error Report');
+    const body = encodeURIComponent(`
 Error: ${this.state.error?.message || 'Unknown error'}
 Stack: ${this.state.error?.stack || 'Not available'}
 Component Stack: ${this.state.errorInfo?.componentStack || 'Not available'}
-      `);
-      window.location.href = `mailto:support@merlinsplaybook.com?subject=${subject}&body=${body}`;
-    }
+    `);
+    window.location.href = `mailto:support@flagfitpro.com?subject=${subject}&body=${body}`;
   };
 
   handleReload = () => {
@@ -105,7 +86,7 @@ Component Stack: ${this.state.errorInfo?.componentStack || 'Not available'}
 
               <div className="mt-4 pt-4 border-t border-gray-200">
                 <p className="text-xs text-gray-500">
-                  Error ID: {this.state.eventId || 'Not available'}
+                  Error ID: Not available
                 </p>
               </div>
             </div>

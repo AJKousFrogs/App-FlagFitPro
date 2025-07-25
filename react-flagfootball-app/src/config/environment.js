@@ -20,7 +20,7 @@ class EnvironmentConfig {
 
       // API Configuration
       api: {
-        pocketbaseUrl: import.meta.env.VITE_POCKETBASE_URL || import.meta.env.VITE_DATABASE_URL || process.env.POCKETBASE_URL || '',
+        pocketbaseUrl: import.meta.env.VITE_POCKETBASE_URL || import.meta.env.VITE_DATABASE_URL || (import.meta.env.DEV ? 'http://127.0.0.1:8090' : ''),
         timeout: parseInt(import.meta.env.VITE_API_TIMEOUT) || 30000,
         cacheTTL: parseInt(import.meta.env.VITE_CACHE_TTL) || 300000,
         baseUrl: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001',
@@ -51,8 +51,8 @@ class EnvironmentConfig {
   validateConfig() {
     const errors = [];
 
-    // Validate required URLs
-    if (!this.isValidUrl(this.config.api.pocketbaseUrl)) {
+    // Validate required URLs - only in production
+    if (this.config.app.environment === 'production' && !this.isValidUrl(this.config.api.pocketbaseUrl)) {
       errors.push('VITE_POCKETBASE_URL must be a valid URL');
     }
 

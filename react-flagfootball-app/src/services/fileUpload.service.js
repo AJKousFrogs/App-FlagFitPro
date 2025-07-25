@@ -1,4 +1,4 @@
-import pocketbaseService from './pocketbase-client.service.js';
+// Removed direct import - will use dynamic import when needed
 import { COLLECTIONS } from '../config/collections.js';
 
 class FileUploadService {

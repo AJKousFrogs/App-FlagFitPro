@@ -11,7 +11,7 @@ import ProgressTracker from '../components/ProgressTracker';
 import WeeklyChallenges from '../components/WeeklyChallenges';
 import OfflineWorkouts from '../components/OfflineWorkouts';
 import BuddySystem from '../components/BuddySystem';
-import { hybridAnalyticsService } from '../services/hybrid-analytics.service.js';
+// Removed direct import - will use dynamic import when needed
 
 const TrainingView = () => {
   const { user } = useNeonDatabase();

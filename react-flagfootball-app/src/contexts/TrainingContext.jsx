@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
-import { trainingService } from '../services/training.service';
 import { useNeonDatabase } from './NeonDatabaseContext';
 
 // Initial state
@@ -170,11 +169,15 @@ const TrainingContext = createContext();
 // Provider component
 export const TrainingProvider = ({ children }) => {
   const [state, dispatch] = useReducer(trainingReducer, initialState);
+  
+  // Get authentication data first
+  const { isAuthenticated, isLoading: authLoading, user } = useNeonDatabase();
 
   // Fetch sessions
   const fetchSessions = useCallback(async (filters = {}) => {
     try {
       dispatch({ type: TRAINING_ACTIONS.FETCH_SESSIONS_START });
+      const { trainingService } = await import('../services/training.service');
       const sessions = await trainingService.getSessions({
         ...filters,
         userId: user?.id // Pass current user ID
@@ -199,6 +202,7 @@ export const TrainingProvider = ({ children }) => {
   const fetchStats = useCallback(async (timeframe = 'all') => {
     try {
       dispatch({ type: TRAINING_ACTIONS.FETCH_STATS_START });
+      const { trainingService } = await import('../services/training.service');
       const stats = await trainingService.getStats(timeframe, user?.id);
       dispatch({
         type: TRAINING_ACTIONS.FETCH_STATS_SUCCESS,
@@ -225,6 +229,7 @@ export const TrainingProvider = ({ children }) => {
   const fetchGoals = useCallback(async () => {
     try {
       dispatch({ type: TRAINING_ACTIONS.FETCH_GOALS_START });
+      const { trainingService } = await import('../services/training.service');
       const goals = await trainingService.getGoals({
         userId: user?.id // Pass current user ID
       });
@@ -243,9 +248,6 @@ export const TrainingProvider = ({ children }) => {
       return [];
     }
   }, [user?.id]);
-
-  // Only initialize training data after successful authentication
-  const { isAuthenticated, isLoading: authLoading, user } = useNeonDatabase();
   
   useEffect(() => {
     // Only initialize when user is authenticated and not loading
@@ -274,6 +276,7 @@ export const TrainingProvider = ({ children }) => {
   // Create session
   const createSession = async (sessionData) => {
     dispatch({ type: TRAINING_ACTIONS.CREATE_SESSION_START });
+    const { trainingService } = await import('../services/training.service');
     const session = await trainingService.createSession({
       ...sessionData,
       userId: user?.id // Pass current user ID
@@ -288,6 +291,7 @@ export const TrainingProvider = ({ children }) => {
   // Update session
   const updateSession = async (sessionId, updates) => {
     dispatch({ type: TRAINING_ACTIONS.UPDATE_SESSION_START });
+    const { trainingService } = await import('../services/training.service');
     const session = await trainingService.updateSession(sessionId, updates);
     dispatch({
       type: TRAINING_ACTIONS.UPDATE_SESSION_SUCCESS,
@@ -299,6 +303,7 @@ export const TrainingProvider = ({ children }) => {
   // Delete session
   const deleteSession = async (sessionId) => {
     dispatch({ type: TRAINING_ACTIONS.DELETE_SESSION_START });
+    const { trainingService } = await import('../services/training.service');
     await trainingService.deleteSession(sessionId);
     dispatch({
       type: TRAINING_ACTIONS.DELETE_SESSION_SUCCESS,
@@ -322,6 +327,7 @@ export const TrainingProvider = ({ children }) => {
   // Update goal
   const updateGoal = async (goalId, updates) => {
     dispatch({ type: TRAINING_ACTIONS.UPDATE_GOAL_START });
+    const { trainingService } = await import('../services/training.service');
     const goal = await trainingService.updateGoal(goalId, updates);
     dispatch({
       type: TRAINING_ACTIONS.UPDATE_GOAL_SUCCESS,
@@ -333,6 +339,7 @@ export const TrainingProvider = ({ children }) => {
   // Create goal
   const createGoal = async (goalData) => {
     dispatch({ type: TRAINING_ACTIONS.UPDATE_GOAL_START });
+    const { trainingService } = await import('../services/training.service');
     const goal = await trainingService.createGoal({
       ...goalData,
       userId: user?.id // Pass current user ID
@@ -347,6 +354,7 @@ export const TrainingProvider = ({ children }) => {
   // Delete goal
   const deleteGoal = async (goalId) => {
     dispatch({ type: TRAINING_ACTIONS.UPDATE_GOAL_START });
+    const { trainingService } = await import('../services/training.service');
     await trainingService.deleteGoal(goalId);
     // Refresh goals after deletion
     await fetchGoals();
@@ -354,12 +362,14 @@ export const TrainingProvider = ({ children }) => {
 
   // Get session by ID
   const getSessionById = async (sessionId) => {
+    const { trainingService } = await import('../services/training.service');
     const session = await trainingService.getSessionById(sessionId);
     return session;
   };
 
   // Get recommended drills
   const getRecommendedDrills = async (filters = {}) => {
+    const { trainingService } = await import('../services/training.service');
     const drills = await trainingService.getRecommendedDrills(filters);
     return drills;
   };

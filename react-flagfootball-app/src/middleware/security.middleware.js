@@ -3,9 +3,9 @@
  * Provides request/response security processing
  */
 
-import securityService from '../services/security.service.js';
-import logger from '../services/logger.service.js';
-import sentryService from '../services/sentry.service.js';
+// Removed direct import - will use dynamic import when needed
+// Removed direct import - will use dynamic import when needed
+// Removed direct import - will use dynamic import when needed
 
 class SecurityMiddleware {
   constructor() {
@@ -21,7 +21,7 @@ class SecurityMiddleware {
         // PocketBase URLs - environment-configurable
         import.meta.env.VITE_POCKETBASE_URL,
         import.meta.env.VITE_DATABASE_URL,
-        process.env.POCKETBASE_URL
+        import.meta.env.VITE_POCKETBASE_URL
       ].filter(Boolean)
     };
   }

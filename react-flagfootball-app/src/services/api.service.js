@@ -4,8 +4,8 @@
  */
 
 import env from '../config/environment.js';
-import logger from './logger.service';
-import sentryService from './sentry.service';
+// Removed direct import - will use dynamic import when needed
+// Removed direct import - will use dynamic import when needed
 
 // API version configuration
 const API_VERSIONS = {

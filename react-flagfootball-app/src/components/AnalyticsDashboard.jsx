@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, Row, Col, Statistic, Progress, Table, Select, DatePicker, Spin, Alert } from 'antd';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { TrophyOutlined, UserOutlined, FireOutlined, ClockCircleOutlined, BarChartOutlined, DashboardOutlined } from '@ant-design/icons';
-import { hybridAnalyticsService } from '../services/hybrid-analytics.service.js';
+// Removed direct import - will use dynamic import when needed
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;

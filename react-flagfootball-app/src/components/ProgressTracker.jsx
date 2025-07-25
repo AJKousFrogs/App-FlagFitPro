@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { fileUploadService } from '../services/fileUpload.service';
+// Removed direct import - will use dynamic import when needed
 import { useNeonDatabase } from '../contexts/NeonDatabaseContext';
 import FileUploadZone from './FileUploadZone';
 

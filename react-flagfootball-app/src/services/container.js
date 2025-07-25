@@ -1,6 +1,6 @@
 // Dependency Injection Container for React App
-import pocketbaseService from './pocketbase-client.service.js';
-import cacheService from './cache.service';
+// Removed direct import - will use dynamic import when needed
+// Removed direct import - will use dynamic import when needed
 
 class Container {
   constructor() {
@@ -21,7 +21,7 @@ class Container {
 
     // Register configuration
     this.register('config', () => ({
-      pocketbaseUrl: import.meta.env.VITE_POCKETBASE_URL || import.meta.env.VITE_DATABASE_URL || process.env.POCKETBASE_URL || '',
+      pocketbaseUrl: import.meta.env.VITE_POCKETBASE_URL || import.meta.env.VITE_DATABASE_URL || '',
       apiTimeout: 30000,
       cacheTTL: 5 * 60 * 1000, // 5 minutes
       maxRetries: 3

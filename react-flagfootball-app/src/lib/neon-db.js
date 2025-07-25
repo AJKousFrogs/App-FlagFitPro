@@ -7,8 +7,7 @@ const getDatabaseUrl = () => {
   // Check for actual Neon database URLs only
   const neonUrl = import.meta.env.VITE_NEON_DATABASE_URL || 
                   import.meta.env.VITE_DATABASE_URL ||
-                  process.env.NETLIFY_DATABASE_URL ||
-                  process.env.NETLIFY_DATABASE_URL_UNPOOLED;
+                    import.meta.env.VITE_NEON_DATABASE_URL || '';
   
   // Only return valid Neon URLs (not PocketBase URLs or empty strings)
   if (neonUrl && neonUrl.includes('neon.tech')) {

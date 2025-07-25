@@ -3,7 +3,7 @@
  * Provides client-side security utilities and rate limiting
  */
 
-import logger from './logger.service';
+// Removed direct import - will use dynamic import when needed
 import env from '../config/environment.js';
 
 class SecurityService {

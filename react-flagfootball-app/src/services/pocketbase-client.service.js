@@ -7,7 +7,7 @@ import { COLLECTIONS } from '../config/collections.js';
  */
 class PocketBaseService {
   constructor() {
-    const pocketbaseUrl = import.meta.env.VITE_POCKETBASE_URL || import.meta.env.VITE_DATABASE_URL || process.env.POCKETBASE_URL || '';
+    const pocketbaseUrl = import.meta.env.VITE_POCKETBASE_URL || import.meta.env.VITE_DATABASE_URL || '';
     if (!pocketbaseUrl) {
       console.warn('No PocketBase URL configured. Using fallback localhost for development.');
     }

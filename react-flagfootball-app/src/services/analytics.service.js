@@ -1,6 +1,6 @@
 // Analytics Service for React
-import pocketbaseService from './pocketbase-client.service.js';
-import cacheService from './cache.service.js';
+// Removed direct import - will use dynamic import when needed
+// Removed direct import - will use dynamic import when needed
 import { COLLECTIONS } from '../config/collections.js';
 
 class AnalyticsService {
@@ -20,7 +20,7 @@ class AnalyticsService {
   _getConfig() {
     if (!this.config) {
       this.config = {
-        pocketbaseUrl: import.meta.env.VITE_POCKETBASE_URL || import.meta.env.VITE_DATABASE_URL || process.env.POCKETBASE_URL || '',
+        pocketbaseUrl: import.meta.env.VITE_POCKETBASE_URL || import.meta.env.VITE_DATABASE_URL || '',
         apiTimeout: 30000,
         cacheTTL: 5 * 60 * 1000, // 5 minutes
         maxRetries: 3

@@ -3,10 +3,10 @@
  * Monitors and manages database backups
  */
 
-import logger from './logger.service';
-import sentryService from './sentry.service';
+// Removed direct import - will use dynamic import when needed
+// Removed direct import - will use dynamic import when needed
 import env from '../config/environment.js';
-import pocketbaseService from './pocketbase-client.service.js';
+// Removed direct import - will use dynamic import when needed
 
 
 class BackupService {

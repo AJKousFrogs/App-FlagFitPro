@@ -1,5 +1,4 @@
 import { createContext, useState, useEffect, useMemo, useCallback, useContext } from 'react';
-import neonDatabaseService from '../services/neon-database.service';
 
 export const NeonDatabaseContext = createContext(null);
 
@@ -15,7 +14,7 @@ export function NeonDatabaseProvider({ children }) {
   }
   
   // Check if we're in demo mode
-  const isDemoMode = neonDatabaseService.isInDemoMode();
+  const isDemoMode = false; // Will be set after dynamic import
   
   console.log('🔧 NeonDatabaseContext initialization:', {
     isDemoMode,
@@ -67,7 +66,8 @@ export function NeonDatabaseProvider({ children }) {
       setIsLoading(true);
       
       try {
-        await neonDatabaseService.initialize();
+        const neonDatabaseService = await import('../services/neon-database.service');
+        await neonDatabaseService.default.initialize();
         console.log('✅ Neon database service initialized successfully');
       } catch (error) {
         console.warn('Database initialization failed, falling back to demo mode:', error);
@@ -88,7 +88,8 @@ export function NeonDatabaseProvider({ children }) {
     try {
       console.log('NeonDatabaseContext: Attempting login for:', email);
       
-      const authData = await neonDatabaseService.authenticate(email, password);
+      const neonDatabaseService = await import('../services/neon-database.service');
+      const authData = await neonDatabaseService.default.authenticate(email, password);
       
       if (authData.success) {
         const authInfo = {
@@ -126,7 +127,8 @@ export function NeonDatabaseProvider({ children }) {
     try {
       console.log('NeonDatabaseContext: Attempting registration for:', userData.email);
       
-      const newUser = await neonDatabaseService.createUser({
+      const neonDatabaseService = await import('../services/neon-database.service');
+      const newUser = await neonDatabaseService.default.createUser({
         email: userData.email,
         firstName: userData.firstName,
         lastName: userData.lastName,
@@ -179,7 +181,8 @@ export function NeonDatabaseProvider({ children }) {
         throw new Error('No user logged in');
       }
       
-      const updatedUser = await neonDatabaseService.updateUser(user.id, profileData);
+      const neonDatabaseService = await import('../services/neon-database.service');
+      const updatedUser = await neonDatabaseService.default.updateUser(user.id, profileData);
       
       // Update local state
       setUser(updatedUser);
@@ -205,7 +208,13 @@ export function NeonDatabaseProvider({ children }) {
   }, []);
 
   // Database service proxy - provide access to database operations
-  const db = useMemo(() => neonDatabaseService, []);
+  const db = useMemo(() => ({
+    // This will be dynamically imported when needed
+    getService: async () => {
+      const neonDatabaseService = await import('../services/neon-database.service');
+      return neonDatabaseService.default;
+    }
+  }), []);
 
   const value = useMemo(() => ({
     // Database service access

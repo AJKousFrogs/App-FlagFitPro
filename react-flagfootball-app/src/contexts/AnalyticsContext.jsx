@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { analyticsService } from '../services/analytics.service';
 import { useNeonDatabase } from './NeonDatabaseContext';
 
 // Initial state
@@ -182,6 +181,7 @@ export const AnalyticsProvider = ({ children }) => {
   const fetchEvents = async (filters = {}) => {
     try {
       dispatch({ type: ANALYTICS_ACTIONS.FETCH_EVENTS_START });
+      const { analyticsService } = await import('../services/analytics.service');
       const events = await analyticsService.getEvents(filters);
       dispatch({
         type: ANALYTICS_ACTIONS.FETCH_EVENTS_SUCCESS,
@@ -201,6 +201,7 @@ export const AnalyticsProvider = ({ children }) => {
   const trackEvent = async (eventData) => {
     try {
       dispatch({ type: ANALYTICS_ACTIONS.TRACK_EVENT_START });
+      const { analyticsService } = await import('../services/analytics.service');
       const event = await analyticsService.trackEvent(eventData);
       dispatch({
         type: ANALYTICS_ACTIONS.TRACK_EVENT_SUCCESS,
@@ -220,6 +221,7 @@ export const AnalyticsProvider = ({ children }) => {
   const fetchMetrics = async (timeframe = '7d') => {
     try {
       dispatch({ type: ANALYTICS_ACTIONS.FETCH_METRICS_START });
+      const { analyticsService } = await import('../services/analytics.service');
       const metrics = await analyticsService.getMetrics(timeframe);
       dispatch({
         type: ANALYTICS_ACTIONS.FETCH_METRICS_SUCCESS,
@@ -239,6 +241,7 @@ export const AnalyticsProvider = ({ children }) => {
   const fetchUserBehavior = async (filters = {}) => {
     try {
       dispatch({ type: ANALYTICS_ACTIONS.FETCH_USER_BEHAVIOR_START });
+      const { analyticsService } = await import('../services/analytics.service');
       const behavior = await analyticsService.getUserBehavior(filters);
       dispatch({
         type: ANALYTICS_ACTIONS.FETCH_USER_BEHAVIOR_SUCCESS,
@@ -258,6 +261,7 @@ export const AnalyticsProvider = ({ children }) => {
   const fetchPerformance = async (timeframe = '7d') => {
     try {
       dispatch({ type: ANALYTICS_ACTIONS.FETCH_PERFORMANCE_START });
+      const { analyticsService } = await import('../services/analytics.service');
       const performance = await analyticsService.getPerformance(timeframe);
       dispatch({
         type: ANALYTICS_ACTIONS.FETCH_PERFORMANCE_SUCCESS,
@@ -330,16 +334,19 @@ export const AnalyticsProvider = ({ children }) => {
 
   // Get conversion funnel
   const getConversionFunnel = async (funnelId) => {
+    const { analyticsService } = await import('../services/analytics.service');
     return analyticsService.getConversionFunnel(funnelId);
   };
 
   // Get A/B test results
   const getABTestResults = async (testId) => {
+    const { analyticsService } = await import('../services/analytics.service');
     return analyticsService.getABTestResults(testId);
   };
 
   // Export analytics data
   const exportData = async (format = 'csv', filters = {}) => {
+    const { analyticsService } = await import('../services/analytics.service');
     return analyticsService.exportData(format, filters);
   };
 

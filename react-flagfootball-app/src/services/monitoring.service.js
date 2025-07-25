@@ -3,8 +3,8 @@
  * Provides application monitoring and metrics collection
  */
 
-import logger from './logger.service';
-import sentryService from './sentry.service';
+// Removed direct import - will use dynamic import when needed
+// Removed direct import - will use dynamic import when needed
 import env from '../config/environment.js';
 
 class MonitoringService {
