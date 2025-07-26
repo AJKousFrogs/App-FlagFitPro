@@ -6,6 +6,6 @@ export { useOnlineStatus } from './useOnlineStatus';
 export { useIsomorphicLayoutEffect } from './useIsomorphicLayoutEffect';
 
 // Context hooks (re-exported from contexts)
-export { usePocket } from '../contexts/PocketContext';
+export { useNeonDatabase } from '../contexts/NeonDatabaseContext';
 export { useTraining } from '../contexts/TrainingContext';
 export { useAnalytics } from '../contexts/AnalyticsContext'; 

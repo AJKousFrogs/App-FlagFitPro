@@ -24,6 +24,9 @@ const RegisterView = lazy(() =>
 const DashboardView = lazy(() => 
   import(/* webpackChunkName: "dashboard", webpackPrefetch: true */ './views/DashboardView')
 );
+const ComprehensiveDashboardView = lazy(() => 
+  import(/* webpackChunkName: "comprehensive-dashboard", webpackPrefetch: true */ './views/ComprehensiveDashboardView')
+);
 const TrainingView = lazy(() => 
   import(/* webpackChunkName: "training", webpackPreload: true */ './views/TrainingView')
 );
@@ -93,6 +96,14 @@ const AppRoutes = () => {
             element={
               <ProtectedRoute>
                 <DashboardView />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/comprehensive-dashboard" 
+            element={
+              <ProtectedRoute>
+                <ComprehensiveDashboardView />
               </ProtectedRoute>
             } 
           />

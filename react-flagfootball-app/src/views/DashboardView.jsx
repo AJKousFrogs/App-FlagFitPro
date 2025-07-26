@@ -4,9 +4,11 @@ import { useNeonDatabase } from '../contexts/NeonDatabaseContext';
 import { useTraining } from '../contexts/TrainingContext';
 import { useAnalytics } from '../contexts/AnalyticsContext';
 import LoadingSpinner from '../components/LoadingSpinner';
+import Navigation from '../components/Navigation';
 import { Avatar, AvatarImage, AvatarFallback } from '../components/ui/Avatar';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../components/ui/Tooltip';
-import ThemeToggle from '../components/ThemeToggle';
+import { Button } from '../components/ui/Button';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
 
 const DashboardView = React.memo(function DashboardView() {
   const { user, logout, db } = useNeonDatabase();
@@ -665,86 +667,132 @@ const DashboardView = React.memo(function DashboardView() {
   return (
     <TooltipProvider>
       <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
-        {/* Header */}
-        <header className="bg-card border-b border-border shadow-sm">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center py-4">
-              {/* Logo and Navigation */}
-              <div className="flex items-center space-x-8">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-gradient-to-r from-green-400 to-blue-500 rounded-xl flex items-center justify-center shadow-lg">
-                    <span className="text-white font-bold text-xl">🏈</span>
-                  </div>
-                  <div>
-                    <h1 className="text-xl font-bold text-foreground">{import.meta.env.VITE_APP_NAME || 'FlagFit Pro'}</h1>
-                    <p className="text-sm text-muted-foreground">AI-Powered Flag Football Mastery</p>
-                  </div>
-                </div>
-                
-                <nav className="hidden md:flex space-x-2">
-                  <button className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg font-semibold text-white transition-colors">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2v16a2 2 0 002 2z" />
-                    </svg>
-                    <span>📅 Calendar</span>
-                  </button>
-                  <Link 
-                    to="/training" 
-                    className="flex items-center space-x-2 bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg font-semibold text-white transition-colors"
-                  >
-                    <span>💪 Drills</span>
-                  </Link>
-                  <button className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg font-semibold text-white transition-colors">
-                    <span>📈 Progress</span>
-                  </button>
-                  <button className="flex items-center space-x-2 bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded-lg font-semibold text-white transition-colors">
-                    <span>🏆 Challenges</span>
-                  </button>
-                  <button className="flex items-center space-x-2 bg-teal-600 hover:bg-teal-700 px-4 py-2 rounded-lg font-semibold text-white transition-colors">
-                    <span>💾 Offline</span>
-                  </button>
-                  <button className="flex items-center space-x-2 bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg font-semibold text-white transition-colors">
-                    <span>👥 Buddies</span>
-                  </button>
-                </nav>
-              </div>
-
-              {/* User Actions */}
-              <div className="flex items-center space-x-4">
-                <div className="text-right hidden md:block">
-                  <div className="text-sm text-muted-foreground">Current Streak</div>
-                  <div className="text-2xl font-bold text-yellow-500">7 days 🔥</div>
-                </div>
-                
-                <button className="p-2 text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted transition-all duration-200">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                </button>
-
-                <ThemeToggle />
-
-                <Avatar className="h-10 w-10 cursor-pointer hover:scale-110 transition-transform duration-200 ring-2 ring-white/20">
-                  <AvatarImage src={user?.avatar} alt={user?.name || user?.email} />
-                  <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold">
-                    {user?.name ? user.name.charAt(0).toUpperCase() : user?.email?.charAt(0).toUpperCase() || 'D'}
-                  </AvatarFallback>
-                </Avatar>
-
-                <button 
-                  onClick={handleLogout}
-                  className="px-4 py-2 text-sm font-medium text-white/80 hover:text-white bg-white/10 hover:bg-white/20 rounded-lg transition-all duration-200"
-                >
-                  Logout
-                </button>
-              </div>
-            </div>
-          </div>
-        </header>
+        <Navigation />
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
+        {/* Welcome Section */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+            Welcome back, {user?.firstName || 'Athlete'}! 🏈
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400">
+            Ready to dominate today's training session?
+          </p>
+        </div>
+
+        {/* Progress Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <Card className="bg-gradient-to-r from-green-500 to-green-600 text-white">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-green-100 text-sm font-medium">Current Streak</p>
+                  <p className="text-3xl font-bold">7</p>
+                  <p className="text-green-100 text-sm">days</p>
+                </div>
+                <div className="text-4xl">🔥</div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-blue-100 text-sm font-medium">Weekly Progress</p>
+                  <p className="text-3xl font-bold">85%</p>
+                  <p className="text-blue-100 text-sm">Complete</p>
+                </div>
+                <div className="text-4xl">📈</div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-r from-purple-500 to-purple-600 text-white">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-purple-100 text-sm font-medium">Monthly Goals</p>
+                  <p className="text-3xl font-bold">3/5</p>
+                  <p className="text-purple-100 text-sm">Achieved</p>
+                </div>
+                <div className="text-4xl">🎯</div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Today's Progress */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>Today's Progress</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="text-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <p className="text-sm text-gray-600 dark:text-gray-400">Routes</p>
+                <p className="text-2xl font-bold text-green-600">8/10</p>
+              </div>
+              <div className="text-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <p className="text-sm text-gray-600 dark:text-gray-400">Avg Time</p>
+                <p className="text-2xl font-bold text-blue-600">2.4s</p>
+              </div>
+              <div className="text-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <p className="text-sm text-gray-600 dark:text-gray-400">Accuracy</p>
+                <p className="text-2xl font-bold text-purple-600">87%</p>
+              </div>
+              <div className="text-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <p className="text-sm text-gray-600 dark:text-gray-400">Form Score</p>
+                <p className="text-2xl font-bold text-orange-600">92%</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        {/* Quick Actions */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>Quick Actions</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <Button 
+                onClick={() => navigate('/training')}
+                className="h-20 flex flex-col items-center justify-center space-y-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white"
+              >
+                <span className="text-2xl">🏃</span>
+                <span className="text-sm font-medium">Start Training</span>
+              </Button>
+              
+              <Button 
+                onClick={() => navigate('/profile')}
+                className="h-20 flex flex-col items-center justify-center space-y-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white"
+              >
+                <span className="text-2xl">👤</span>
+                <span className="text-sm font-medium">View Profile</span>
+              </Button>
+              
+              <Button 
+                onClick={() => navigate('/community')}
+                className="h-20 flex flex-col items-center justify-center space-y-2 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white"
+              >
+                <span className="text-2xl">👥</span>
+                <span className="text-sm font-medium">Join Community</span>
+              </Button>
+              
+              <Button 
+                onClick={() => setShowWizard(true)}
+                className="h-20 flex flex-col items-center justify-center space-y-2 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white"
+              >
+                <span className="text-2xl">📝</span>
+                <span className="text-sm font-medium">Create Session</span>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* AI Coach Section */}
         <div className="bg-gradient-to-r from-green-600 to-green-700 rounded-3xl p-6 mb-6 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 
 const TrainingSession = ({ category, onBack, onComplete }) => {
   const [currentDrill, setCurrentDrill] = useState(0);
@@ -10,11 +10,24 @@ const TrainingSession = ({ category, onBack, onComplete }) => {
   const [showAROverlay, setShowAROverlay] = useState(false);
   const [cameraPermission, setCameraPermission] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [workoutMode, setWorkoutMode] = useState(false);
+  const [autoPreload, setAutoPreload] = useState(true);
+  const [audioEnabled, setAudioEnabled] = useState(true);
+  const [vibrationEnabled, setVibrationEnabled] = useState(true);
+  const [sessionPaused, setSessionPaused] = useState(false);
+  const [nextDrillPreview, setNextDrillPreview] = useState(null);
+  const [performanceHistory, setPerformanceHistory] = useState([]);
+  const [aiInsights, setAiInsights] = useState([]);
+  const [fatigueLevel, setFatigueLevel] = useState(0);
+  const [restRecommendations, setRestRecommendations] = useState([]);
+  
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const intervalRef = useRef(null);
+  const audioContextRef = useRef(null);
+  const nextDrillTimerRef = useRef(null);
 
-  // Training drills data based on category
+  // Enhanced Training drills data with progressive difficulty
   const drillSets = {
     routes: [
       {
@@ -28,7 +41,12 @@ const TrainingSession = ({ category, onBack, onComplete }) => {
         arMarkers: [
           { x: 50, y: 60, label: 'Plant foot here' },
           { x: 70, y: 40, label: 'Cut direction' }
-        ]
+        ],
+        audioCues: ['Plant', 'Cut', 'Accelerate'],
+        vibrationPattern: [100, 200, 100],
+        nextDrill: 'Double Move',
+        restTime: 60,
+        targetHeartRate: 140
       },
       {
         name: 'Double Move',
@@ -41,63 +59,70 @@ const TrainingSession = ({ category, onBack, onComplete }) => {
         arMarkers: [
           { x: 50, y: 70, label: 'First fake' },
           { x: 80, y: 30, label: 'Real break' }
-        ]
+        ],
+        audioCues: ['Fake', 'Break', 'Go'],
+        vibrationPattern: [200, 100, 300],
+        nextDrill: 'Post Route',
+        restTime: 90,
+        targetHeartRate: 160
       },
       {
-        name: 'Comeback Route',
-        description: 'Drive 12 yards, turn and settle',
-        duration: 40,
-        reps: 5,
-        difficulty: 'Intermediate',
-        keyPoints: ['Full speed drive', 'Quick turn', 'Present target'],
-        video: '/videos/comeback.mp4',
+        name: 'Post Route',
+        description: 'Deep route with precise timing',
+        duration: 60,
+        reps: 4,
+        difficulty: 'Advanced',
+        keyPoints: ['Maintain speed', 'Look for ball', 'Adjust to coverage'],
+        video: '/videos/post-route.mp4',
         arMarkers: [
-          { x: 50, y: 20, label: 'Turn point' },
-          { x: 50, y: 60, label: 'Settle here' }
-        ]
+          { x: 50, y: 20, label: 'Break point' },
+          { x: 80, y: 10, label: 'Deep target' }
+        ],
+        audioCues: ['Go', 'Break', 'Ball'],
+        vibrationPattern: [300, 200, 400],
+        nextDrill: null,
+        restTime: 120,
+        targetHeartRate: 170
       }
     ],
     plyometrics: [
       {
-        name: 'Depth Jumps',
-        description: 'Step off box, land and explode up',
+        name: 'Box Jumps',
+        description: 'Explosive vertical jumps',
         duration: 45,
         reps: 10,
         difficulty: 'Intermediate',
-        keyPoints: ['Soft landing', 'Immediate explosion', 'Full extension'],
-        video: '/videos/depth-jumps.mp4',
+        keyPoints: ['Soft landing', 'Full extension', 'Quick reset'],
+        video: '/videos/box-jumps.mp4',
         arMarkers: [
-          { x: 50, y: 80, label: 'Landing zone' },
-          { x: 50, y: 20, label: 'Max height' }
-        ]
-      },
-      {
-        name: 'Lateral Bounds',
-        description: 'Single-leg lateral jumps with hold',
-        duration: 35,
-        reps: 12,
-        difficulty: 'Beginner',
-        keyPoints: ['Single leg power', 'Stable landing', 'Opposite arm drive'],
-        video: '/videos/lateral-bounds.mp4',
-        arMarkers: [
-          { x: 30, y: 50, label: 'Left target' },
-          { x: 70, y: 50, label: 'Right target' }
-        ]
+          { x: 50, y: 50, label: 'Jump target' },
+          { x: 50, y: 80, label: 'Landing zone' }
+        ],
+        audioCues: ['Ready', 'Jump', 'Land'],
+        vibrationPattern: [150, 250, 150],
+        nextDrill: 'Depth Jumps',
+        restTime: 75,
+        targetHeartRate: 150
       }
     ],
     sprints: [
       {
-        name: 'Acceleration Sprints',
-        description: '20-yard builds from 0 to max speed',
-        duration: 60,
+        name: '40-Yard Dash',
+        description: 'Maximum speed sprint',
+        duration: 8,
         reps: 6,
-        difficulty: 'Intermediate',
-        keyPoints: ['Low start position', 'Gradual rise', 'Pump arms'],
-        video: '/videos/acceleration.mp4',
+        difficulty: 'Advanced',
+        keyPoints: ['Explosive start', 'Drive phase', 'Maintain form'],
+        video: '/videos/40-yard-dash.mp4',
         arMarkers: [
-          { x: 10, y: 50, label: 'Start' },
-          { x: 90, y: 50, label: 'Finish' }
-        ]
+          { x: 20, y: 50, label: 'Start line' },
+          { x: 80, y: 50, label: 'Finish line' }
+        ],
+        audioCues: ['Set', 'Go', 'Finish'],
+        vibrationPattern: [100, 500, 100],
+        nextDrill: 'Shuttle Run',
+        restTime: 180,
+        targetHeartRate: 180
       }
     ]
   };
@@ -105,14 +130,112 @@ const TrainingSession = ({ category, onBack, onComplete }) => {
   const currentDrillSet = drillSets[category] || drillSets.routes;
   const drill = currentDrillSet[currentDrill];
 
-  // AI Form Analysis simulation
-  const analyzeForm = () => {
+  // Audio and Vibration Setup
+  useEffect(() => {
+    if (audioEnabled && 'AudioContext' in window) {
+      audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    
+    return () => {
+      if (audioContextRef.current) {
+        audioContextRef.current.close();
+      }
+    };
+  }, [audioEnabled]);
+
+  // Auto-preload next drill
+  useEffect(() => {
+    if (autoPreload && currentDrill < currentDrillSet.length - 1) {
+      const nextDrill = currentDrillSet[currentDrill + 1];
+      setNextDrillPreview(nextDrill);
+      
+      // Preload next drill video
+      if (nextDrill.video) {
+        const video = new Audio(nextDrill.video);
+        video.load();
+      }
+    } else {
+      setNextDrillPreview(null);
+    }
+  }, [currentDrill, currentDrillSet, autoPreload]);
+
+  // Audio cue system
+  const playAudioCue = useCallback((cue) => {
+    if (!audioEnabled || !audioContextRef.current) return;
+    
+    const oscillator = audioContextRef.current.createOscillator();
+    const gainNode = audioContextRef.current.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContextRef.current.destination);
+    
+    oscillator.frequency.setValueAtTime(800, audioContextRef.current.currentTime);
+    oscillator.frequency.setValueAtTime(1200, audioContextRef.current.currentTime + 0.1);
+    
+    gainNode.gain.setValueAtTime(0.3, audioContextRef.current.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContextRef.current.currentTime + 0.2);
+    
+    oscillator.start(audioContextRef.current.currentTime);
+    oscillator.stop(audioContextRef.current.currentTime + 0.2);
+  }, [audioEnabled]);
+
+  // Vibration cue system
+  const playVibrationCue = useCallback((pattern) => {
+    if (!vibrationEnabled || !navigator.vibrate) return;
+    navigator.vibrate(pattern);
+  }, [vibrationEnabled]);
+
+  // Enhanced form analysis with AI insights
+  const analyzeForm = useCallback(() => {
     setIsAnalyzing(true);
     
-    // Simulate AI analysis
+    // Simulate AI analysis with enhanced insights
     setTimeout(() => {
       const score = Math.floor(Math.random() * 40) + 60; // 60-100 score
       setFormScore(score);
+      
+      // Generate AI insights based on performance
+      const insights = [];
+      
+      if (score >= 90) {
+        insights.push({
+          type: 'excellent',
+          message: 'Perfect form! Your technique is textbook quality.',
+          suggestion: 'Try increasing speed while maintaining form.'
+        });
+      } else if (score >= 70) {
+        insights.push({
+          type: 'good',
+          message: 'Good execution with room for improvement.',
+          suggestion: 'Focus on explosive first step and arm drive.'
+        });
+      } else {
+        insights.push({
+          type: 'needs_work',
+          message: 'Form needs attention. Let\'s break it down.',
+          suggestion: 'Practice the movement slowly, focusing on each key point.'
+        });
+      }
+      
+      // Fatigue analysis
+      const newFatigueLevel = Math.min(100, fatigueLevel + Math.floor(Math.random() * 10));
+      setFatigueLevel(newFatigueLevel);
+      
+      if (newFatigueLevel > 70) {
+        insights.push({
+          type: 'fatigue',
+          message: 'Signs of fatigue detected.',
+          suggestion: 'Consider taking a longer rest or switching to lighter drills.'
+        });
+        
+        setRestRecommendations([
+          'Take 3-5 minutes active rest',
+          'Hydrate and stretch',
+          'Consider reducing intensity'
+        ]);
+      }
+      
+      setAiInsights(insights);
       
       const feedbackMessages = [
         "Excellent form! Your timing is perfect.",
@@ -125,13 +248,25 @@ const TrainingSession = ({ category, onBack, onComplete }) => {
       setFeedback(feedbackMessages[Math.floor(Math.random() * feedbackMessages.length)]);
       setIsAnalyzing(false);
     }, 2000);
-  };
+  }, [fatigueLevel]);
 
-  // Timer functionality
+  // Timer functionality with enhanced features
   useEffect(() => {
-    if (isActive && timer > 0) {
+    if (isActive && timer > 0 && !sessionPaused) {
       intervalRef.current = setInterval(() => {
         setTimer(timer - 1);
+        
+        // Audio and vibration cues based on timer
+        if (timer === 10) {
+          playAudioCue('warning');
+          playVibrationCue([100, 100, 100]);
+        } else if (timer === 5) {
+          playAudioCue('final');
+          playVibrationCue([200, 200, 200]);
+        } else if (timer === 1) {
+          playAudioCue('finish');
+          playVibrationCue([500]);
+        }
       }, 1000);
     } else if (timer === 0 && isActive) {
       setIsActive(false);
@@ -139,7 +274,7 @@ const TrainingSession = ({ category, onBack, onComplete }) => {
     }
     
     return () => clearInterval(intervalRef.current);
-  }, [isActive, timer]);
+  }, [isActive, timer, sessionPaused, playAudioCue, playVibrationCue, analyzeForm]);
 
   // Camera setup for AR overlay
   useEffect(() => {
@@ -160,24 +295,114 @@ const TrainingSession = ({ category, onBack, onComplete }) => {
     }
   }, [showAROverlay]);
 
-  const startDrill = () => {
+  // Workout mode toggle
+  const toggleWorkoutMode = () => {
+    setWorkoutMode(!workoutMode);
+    if (!workoutMode) {
+      // Enter distraction-free mode
+      document.body.style.overflow = 'hidden';
+    } else {
+      // Exit distraction-free mode
+      document.body.style.overflow = 'auto';
+    }
+  };
+
+  // Enhanced drill start with auto-save
+  const startDrill = useCallback(() => {
     setTimer(drill.duration);
     setIsActive(true);
     setReps(0);
     setFeedback('');
     setFormScore(0);
-  };
+    setAiInsights([]);
+    
+    // Auto-save session state
+    const sessionState = {
+      category,
+      currentDrill,
+      timer: drill.duration,
+      reps: 0,
+      timestamp: new Date().toISOString()
+    };
+    localStorage.setItem('trainingSessionState', JSON.stringify(sessionState));
+    
+    // Play start cue
+    playAudioCue('start');
+    playVibrationCue([100, 100, 100]);
+  }, [drill, category, currentDrill, playAudioCue, playVibrationCue]);
 
-  const nextDrill = () => {
+  // Enhanced drill completion
+  const nextDrill = useCallback(() => {
+    // Save performance history
+    const performance = {
+      drill: drill.name,
+      score: formScore,
+      reps: reps,
+      duration: drill.duration,
+      timestamp: new Date().toISOString()
+    };
+    setPerformanceHistory(prev => [...prev, performance]);
+    
     if (currentDrill < currentDrillSet.length - 1) {
       setCurrentDrill(currentDrill + 1);
+      setNextDrillPreview(null);
+      
+      // Auto-start next drill if in workout mode
+      if (workoutMode && autoPreload) {
+        setTimeout(() => {
+          startDrill();
+        }, 3000); // 3-second transition
+      }
     } else {
-      onComplete({
+      // Session complete
+      const finalResults = {
         category,
         drillsCompleted: currentDrillSet.length,
-        avgFormScore: formScore,
-        totalTime: currentDrillSet.reduce((sum, drill) => sum + drill.duration, 0)
-      });
+        avgFormScore: performanceHistory.reduce((sum, p) => sum + p.score, formScore) / (performanceHistory.length + 1),
+        totalTime: currentDrillSet.reduce((sum, d) => sum + d.duration, 0),
+        performanceHistory: [...performanceHistory, performance],
+        fatigueLevel,
+        aiInsights
+      };
+      
+      // Clear session state
+      localStorage.removeItem('trainingSessionState');
+      
+      // Exit workout mode
+      if (workoutMode) {
+        document.body.style.overflow = 'auto';
+      }
+      
+      onComplete(finalResults);
+    }
+  }, [currentDrill, currentDrillSet, drill, formScore, reps, performanceHistory, fatigueLevel, aiInsights, workoutMode, autoPreload, startDrill, onComplete]);
+
+  // Quick exit with auto-save
+  const handleQuickExit = () => {
+    const sessionState = {
+      category,
+      currentDrill,
+      timer,
+      reps,
+      timestamp: new Date().toISOString(),
+      performanceHistory
+    };
+    localStorage.setItem('trainingSessionState', JSON.stringify(sessionState));
+    
+    if (workoutMode) {
+      document.body.style.overflow = 'auto';
+    }
+    
+    onBack();
+  };
+
+  // Pause/Resume functionality
+  const togglePause = () => {
+    setSessionPaused(!sessionPaused);
+    if (sessionPaused) {
+      playAudioCue('resume');
+    } else {
+      playAudioCue('pause');
     }
   };
 
@@ -190,10 +415,61 @@ const TrainingSession = ({ category, onBack, onComplete }) => {
     }
   };
 
+  // Distraction-free workout mode layout
+  if (workoutMode) {
+    return (
+      <div className="fixed inset-0 bg-black z-50 flex items-center justify-center">
+        <div className="text-center text-white">
+          {/* Timer Display */}
+          <div className="text-8xl font-bold mb-8">
+            {Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, '0')}
+          </div>
+          
+          {/* Current Drill */}
+          <div className="text-2xl mb-4">{drill.name}</div>
+          
+          {/* Reps Counter */}
+          <div className="text-xl mb-8">
+            Reps: {reps} / {drill.reps}
+          </div>
+          
+          {/* Quick Controls */}
+          <div className="flex justify-center space-x-4">
+            <button
+              onClick={() => setReps(reps + 1)}
+              className="bg-green-600 hover:bg-green-700 px-6 py-3 rounded-lg text-lg font-semibold"
+            >
+              +1 Rep
+            </button>
+            <button
+              onClick={togglePause}
+              className="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg text-lg font-semibold"
+            >
+              {sessionPaused ? 'Resume' : 'Pause'}
+            </button>
+            <button
+              onClick={handleQuickExit}
+              className="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-lg text-lg font-semibold"
+            >
+              Exit
+            </button>
+          </div>
+          
+          {/* Next Drill Preview */}
+          {nextDrillPreview && (
+            <div className="mt-8 p-4 bg-white/10 rounded-lg">
+              <div className="text-sm text-gray-300">Next: {nextDrillPreview.name}</div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 text-white p-6">
       <div className="max-w-4xl mx-auto">
-        {/* Header */}
+        {/* Enhanced Header */}
         <div className="flex items-center justify-between mb-6">
           <button
             onClick={onBack}
@@ -204,27 +480,58 @@ const TrainingSession = ({ category, onBack, onComplete }) => {
             </svg>
             <span>Back to Training</span>
           </button>
-          <div className="text-sm text-blue-200">
-            Drill {currentDrill + 1} of {currentDrillSet.length}
+          
+          <div className="flex items-center space-x-4">
+            <div className="text-sm text-blue-200">
+              Drill {currentDrill + 1} of {currentDrillSet.length}
+            </div>
+            
+            {/* Workout Mode Toggle */}
+            <button
+              onClick={toggleWorkoutMode}
+              className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg font-semibold transition-colors"
+            >
+              {workoutMode ? 'Exit Workout Mode' : 'Enter Workout Mode'}
+            </button>
           </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Video/AR Section */}
+          {/* Enhanced Video/AR Section */}
           <div className="space-y-4">
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold">Training Video</h2>
-                <button
-                  onClick={() => setShowAROverlay(!showAROverlay)}
-                  className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
-                    showAROverlay 
-                      ? 'bg-purple-600 hover:bg-purple-700' 
-                      : 'bg-blue-600 hover:bg-blue-700'
-                  }`}
-                >
-                  {showAROverlay ? 'Hide AR' : 'Show AR'}
-                </button>
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => setShowAROverlay(!showAROverlay)}
+                    className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                      showAROverlay 
+                        ? 'bg-purple-600 hover:bg-purple-700' 
+                        : 'bg-blue-600 hover:bg-blue-700'
+                    }`}
+                  >
+                    {showAROverlay ? 'Hide AR' : 'Show AR'}
+                  </button>
+                  
+                  {/* Audio/Vibration Controls */}
+                  <button
+                    onClick={() => setAudioEnabled(!audioEnabled)}
+                    className={`px-3 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                      audioEnabled ? 'bg-green-600' : 'bg-gray-600'
+                    }`}
+                  >
+                    🔊
+                  </button>
+                  <button
+                    onClick={() => setVibrationEnabled(!vibrationEnabled)}
+                    className={`px-3 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                      vibrationEnabled ? 'bg-green-600' : 'bg-gray-600'
+                    }`}
+                  >
+                    📳
+                  </button>
+                </div>
               </div>
               
               {/* Video Container */}
@@ -259,19 +566,28 @@ const TrainingSession = ({ category, onBack, onComplete }) => {
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
                     <div className="text-center">
-                      <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-                          <path d="M8.267 14.68c-.184 0-.308-.018-.372-.036A1.533 1.533 0 0 1 6.5 13.133V6.867a1.533 1.533 0 0 1 1.395-1.511c.064-.018.188-.036.372-.036.964 0 1.733.794 1.733 1.774v5.804c0 .98-.769 1.774-1.733 1.774z"/>
-                        </svg>
-                      </div>
-                      <p className="text-gray-300">Video: {drill.name}</p>
+                      <div className="text-6xl mb-4">🎥</div>
+                      <p className="text-gray-400">Training Video</p>
+                      <p className="text-sm text-gray-500">{drill.name}</p>
                     </div>
                   </div>
                 )}
               </div>
+              
+              {/* Audio Cues Display */}
+              <div className="mt-4 p-4 bg-white/5 rounded-lg">
+                <h4 className="text-sm font-semibold mb-2">Audio Cues:</h4>
+                <div className="flex space-x-2">
+                  {drill.audioCues.map((cue, index) => (
+                    <span key={index} className="px-2 py-1 bg-blue-600 rounded text-xs">
+                      {cue}
+                    </span>
+                  ))}
+                </div>
+              </div>
             </div>
 
-            {/* Form Analysis */}
+            {/* Enhanced AI Form Analysis */}
             {(formScore > 0 || isAnalyzing) && (
               <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
                 <h3 className="text-lg font-bold mb-4">🤖 AI Form Analysis</h3>
@@ -300,14 +616,38 @@ const TrainingSession = ({ category, onBack, onComplete }) => {
                         style={{ width: `${formScore}%` }}
                       ></div>
                     </div>
-                    <p className="text-blue-200 text-sm">{feedback}</p>
+                    
+                    {/* AI Insights */}
+                    {aiInsights.map((insight, index) => (
+                      <div key={index} className={`p-3 rounded-lg ${
+                        insight.type === 'excellent' ? 'bg-green-500/20 border-green-500' :
+                        insight.type === 'good' ? 'bg-yellow-500/20 border-yellow-500' :
+                        insight.type === 'needs_work' ? 'bg-red-500/20 border-red-500' :
+                        'bg-blue-500/20 border-blue-500'
+                      } border`}>
+                        <p className="text-sm font-semibold mb-1">{insight.message}</p>
+                        <p className="text-xs opacity-80">{insight.suggestion}</p>
+                      </div>
+                    ))}
+                    
+                    {/* Fatigue Warning */}
+                    {fatigueLevel > 70 && (
+                      <div className="p-3 bg-orange-500/20 border border-orange-500 rounded-lg">
+                        <p className="text-sm font-semibold text-orange-300 mb-2">⚠️ Fatigue Detected</p>
+                        <div className="text-xs space-y-1">
+                          {restRecommendations.map((rec, index) => (
+                            <div key={index} className="text-orange-200">• {rec}</div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
             )}
           </div>
 
-          {/* Drill Details */}
+          {/* Enhanced Drill Details */}
           <div className="space-y-4">
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
               <div className="flex items-center justify-between mb-4">
@@ -332,7 +672,7 @@ const TrainingSession = ({ category, onBack, onComplete }) => {
                 </ul>
               </div>
 
-              {/* Timer and Controls */}
+              {/* Enhanced Timer and Controls */}
               <div className="space-y-4">
                 <div className="text-center">
                   <div className="text-6xl font-bold text-blue-400 mb-2">
@@ -364,14 +704,14 @@ const TrainingSession = ({ category, onBack, onComplete }) => {
                     </button>
                   ) : (
                     <button
-                      onClick={() => setIsActive(!isActive)}
+                      onClick={togglePause}
                       className={`flex-1 py-3 rounded-lg font-semibold transition-colors ${
-                        isActive 
-                          ? 'bg-red-600 hover:bg-red-700' 
-                          : 'bg-blue-600 hover:bg-blue-700'
+                        sessionPaused 
+                          ? 'bg-green-600 hover:bg-green-700' 
+                          : 'bg-red-600 hover:bg-red-700'
                       }`}
                     >
-                      {isActive ? 'Pause' : 'Resume'}
+                      {sessionPaused ? 'Resume' : 'Pause'}
                     </button>
                   )}
                   
@@ -393,6 +733,39 @@ const TrainingSession = ({ category, onBack, onComplete }) => {
                 )}
               </div>
             </div>
+
+            {/* Next Drill Preview */}
+            {nextDrillPreview && (
+              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+                <h3 className="text-lg font-bold mb-4">⏭️ Next Drill Preview</h3>
+                <div className="space-y-3">
+                  <h4 className="font-semibold text-blue-200">{nextDrillPreview.name}</h4>
+                  <p className="text-sm text-gray-300">{nextDrillPreview.description}</p>
+                  <div className="flex justify-between text-sm">
+                    <span>Duration: {nextDrillPreview.duration}s</span>
+                    <span>Reps: {nextDrillPreview.reps}</span>
+                  </div>
+                  <div className="text-xs text-gray-400">
+                    Rest time: {nextDrillPreview.restTime}s
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Performance History */}
+            {performanceHistory.length > 0 && (
+              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
+                <h3 className="text-lg font-bold mb-4">📊 Performance History</h3>
+                <div className="space-y-2">
+                  {performanceHistory.slice(-3).map((perf, index) => (
+                    <div key={index} className="flex justify-between items-center p-2 bg-white/5 rounded">
+                      <span className="text-sm">{perf.drill}</span>
+                      <span className="text-sm font-semibold">{perf.score}/100</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
