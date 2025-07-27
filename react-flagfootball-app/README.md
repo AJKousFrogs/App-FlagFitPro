@@ -7,6 +7,7 @@ A comprehensive React-based training platform for flag football players and coac
 ### **Frontend**
 - **React 18** with Vite for fast development
 - **Tailwind CSS** for modern styling
+- **Poppins Font** for modern typography
 - **React Router** for navigation
 - **Framer Motion** for animations
 - **ESLint** for code quality
@@ -60,8 +61,17 @@ A comprehensive React-based training platform for flag football players and coac
 - Recovery science protocols
 - Dietary restriction management
 
+### **🎨 Modern Design System**
+- **Poppins Font Family** for clean, modern typography
+- **Custom Color Palette** with primary, secondary, and accent colors
+- **Consistent Typography Scale** (H1-H6) with proper hierarchy
+- **Modern UI Components** with shadows, borders, and spacing
+- **Responsive Design** optimized for all devices
+- **Dark/Light Mode** support
+- **Accessibility** compliant design patterns
+
 ### **📱 Mobile-First Design**
-- Responsive wireframe interface
+- Responsive interface with modern styling
 - Touch-optimized interactions
 - Offline capability
 - Progressive Web App features
@@ -131,7 +141,8 @@ react-flagfootball-app/
 │   ├── hooks/             # Custom React hooks
 │   ├── services/          # API and business logic
 │   ├── utils/             # Utility functions
-│   └── views/             # Page components
+│   ├── views/             # Page components
+│   └── styles/            # CSS and design system files
 ├── database/              # Database migrations and schema
 ├── scripts/               # Database seeding scripts
 ├── docs/                  # Documentation
@@ -184,6 +195,26 @@ npm run db:migrate-drizzle
 npm run db:seed
 ```
 
+## 🎨 **Design System**
+
+### **Typography**
+- **Poppins Font Family** for modern, clean typography
+- **Consistent Heading Scale**: H1 (32px), H2 (28px), H3 (24px), H4 (20px), H5 (18px), H6 (16px)
+- **Body Text**: 16px with 1.5 line height for optimal readability
+- **Font Weights**: Regular (400), Medium (500), Semi-Bold (600), Bold (700)
+
+### **Color Palette**
+- **Primary Colors**: Modern blue and green gradients
+- **Secondary Colors**: Neutral grays and whites
+- **Accent Colors**: Orange and yellow for highlights
+- **Status Colors**: Success (green), Warning (yellow), Error (red), Info (blue)
+
+### **Component Design**
+- **Cards**: Subtle shadows with rounded corners
+- **Buttons**: Modern gradients with hover effects
+- **Forms**: Clean inputs with focus states
+- **Navigation**: Sticky headers with smooth transitions
+
 ## 📊 **Performance Features**
 
 - **Code Splitting** for optimal loading
@@ -221,12 +252,18 @@ For support and questions:
 
 ## 🎯 **Roadmap**
 
-- [ ] Mobile app development
-- [ ] Advanced AI coaching features
-- [ ] Real-time multiplayer features
-- [ ] Integration with wearable devices
-- [ ] Advanced analytics dashboard
-- [ ] Tournament management system
+- [ ] **Modern Design Implementation**
+  - [ ] Poppins font integration
+  - [ ] Custom color palette implementation
+  - [ ] Modern component library
+  - [ ] Dark/Light mode toggle
+- [ ] **Enhanced Features**
+  - [ ] Mobile app development
+  - [ ] Advanced AI coaching features
+  - [ ] Real-time multiplayer features
+  - [ ] Integration with wearable devices
+  - [ ] Advanced analytics dashboard
+  - [ ] Tournament management system
 
 ---
 
