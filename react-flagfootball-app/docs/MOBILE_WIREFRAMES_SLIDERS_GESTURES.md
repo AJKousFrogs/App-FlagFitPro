@@ -1,0 +1,473 @@
+# Mobile Sliders & Gesture Controls Wireframes
+
+## Page Overview
+Comprehensive mobile slider interfaces, gesture controls, and touch interactions for training parameters, timer adjustments, performance metrics, and nutrition tracking.
+
+## **Slider Control Interfaces**
+
+### **Timer Duration Slider**
+
+```
+┌─────────────────────────────────────┐ ← iPhone 14 Pro (393×852)
+│ Set Timer Duration                  │
+├─────────────────────────────────────┤
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ Duration: 30 minutes            │ │
+│ │                                 │ │
+│ │ 5min    15min    30min    2h    │ │ ← Quick presets
+│ │  │       │        │       │     │ │
+│ │  ●───────●────────●───────○     │ │ ← Visual timeline
+│ │                                 │ │
+│ │ ░░░░░░░░░░░████████████░░░░░░░  │ │ ← Main slider
+│ │                                 │ │
+│ │            ┌───────┐             │ │ ← Drag handle with
+│ │            │  30   │             │ │   current value
+│ │            │ min   │             │ │
+│ │            └───────┘             │ │
+│ │                                 │ │
+│ │ 0        30min        2h        │ │ ← Min/max labels
+│ └─────────────────────────────────┘ │
+│                                     │
+│ Touch Actions:                      │
+│ • Drag slider handle to adjust     │
+│ • Tap on timeline to jump to time  │
+│ • Tap presets for quick selection   │
+│ • Long press for precise adjustment │
+│                                     │
+└─────────────────────────────────────┘
+```
+
+### **Multi-Value Slider (Training Intensity)**
+
+```
+┌─────────────────────────────────────┐
+│ Training Intensity Settings         │
+├─────────────────────────────────────┤
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ Effort Level: 75%               │ │
+│ │                                 │ │
+│ │ Light   Moderate   High   Max   │ │
+│ │  │        │        │      │     │ │
+│ │  ○────────●────────○──────○     │ │
+│ │                                 │ │
+│ │ ░░░░░░░░░░░░███████░░░░░░░░░░░  │ │ ← Color-coded
+│ │                                 │ │   intensity
+│ │          ┌─────┐                │ │
+│ │          │ 75% │ ← Draggable     │ │
+│ │          └─────┘   thumb         │ │
+│ │                                 │ │
+│ │ 📊 Impact on Performance:       │ │
+│ │ • Moderate burn rate            │ │
+│ │ • Good endurance building       │ │
+│ │ • Recovery time: 8-12 hours     │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ Heart Rate Target: 145-160 BPM  │ │
+│ │ ░░░███████████████████░░░░░░░░  │ │ ← Range slider
+│ │  └──────────────────────┘       │ │   with two thumbs
+│ │ 100      145    160      200    │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+└─────────────────────────────────────┘
+```
+
+### **Circular Slider (Rest Time)**
+
+```
+┌─────────────────────────────────────┐
+│ Rest Between Drills                 │
+├─────────────────────────────────────┤
+│                                     │
+│         ┌─────────────────┐         │
+│         │        3min     │         │ ← Center display
+│         │                 │         │
+│         │    ●────────●   │         │ ← Circular progress
+│         │  ●           ● │         │   with drag point
+│         │ ●             ●│         │
+│         │●               │         │
+│         │ ●             ●│         │
+│         │  ●           ● │         │
+│         │    ●────────●   │         │
+│         │                 │         │
+│         └─────────────────┘         │
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ Quick Settings:                 │ │
+│ │ [30s] [1m] [2m] [3m] [5m]       │ │ ← Preset buttons
+│ │                                 │ │
+│ │ Auto-adjust based on:           │ │
+│ │ ☑️ Training intensity           │ │
+│ │ ☑️ Heart rate recovery          │ │
+│ │ ☐ Environmental conditions     │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+│ Touch Actions:                      │
+│ • Drag around circle to adjust     │
+│ • Tap inside for precise input     │
+│ • Double tap to reset to default   │
+│                                     │
+└─────────────────────────────────────┘
+```
+
+### **Weight/Performance Sliders**
+
+```
+┌─────────────────────────────────────┐
+│ Performance Tracking Input          │
+├─────────────────────────────────────┤
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ Weight: 185.2 lbs               │ │
+│ │ ░░░░░░░░░░░░░░██░░░░░░░░░░░░░░░  │ │ ← Fine-grained
+│ │ 120        185.2        250     │ │   weight slider
+│ │                                 │ │
+│ │ Weekly Change: -0.8 lbs ↓       │ │ ← Trend indicator
+│ │ Target Range: 182-188 lbs       │ │
+│ │ ┌───┐        ┌───┐              │ │ ← Target range
+│ │ │182│████████│188│              │ │   visualization
+│ │ └───┘        └───┘              │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ Energy Level (1-10)             │ │
+│ │                                 │ │
+│ │ 😴 ┌─┬─┬─┬─┬─┬─┬─┬─┬─┬─┐ 🔥     │ │ ← Visual energy
+│ │    │1│2│3│4│5│6│7│8│9│10│       │ │   scale with
+│ │    └─┴─┴─┴─┴─┴─┴─┴█┴─┴─┘       │ │   tap selection
+│ │                   ▲              │ │
+│ │              Selected: 8         │ │
+│ │                                 │ │
+│ │ Quick Notes:                    │ │
+│ │ [Tired] [Normal] [Energized]    │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+└─────────────────────────────────────┘
+```
+
+## **Gesture Control Patterns**
+
+### **Swipe Navigation**
+
+```
+┌─────────────────────────────────────┐
+│ Training Session Navigation         │
+├─────────────────────────────────────┤
+│                                     │
+│ ← Swipe left: Previous drill        │
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │                                 │ │
+│ │      Current Drill 3/8          │ │
+│ │     Route Running: Slants       │ │
+│ │                                 │ │
+│ │         ┌─ 2:15 ─┐               │ │
+│ │         │       │               │ │
+│ │         └───────┘               │ │
+│ │                                 │ │
+│ │    [⏸️ Pause] [✅ Complete]      │ │
+│ │                                 │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+│ Swipe right: Next drill →          │
+│                                     │
+│ ┌─ Gesture Indicators ─┐           │
+│ │ ●●●○○○○○ Drill progress          │ │
+│ │ ← → Swipe to navigate            │ │
+│ │ ↑ Swipe up for options          │ │
+│ │ ↓ Swipe down to close           │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+│ Advanced Gestures:                  │
+│ • Long press: Drill details        │
+│ • Double tap: Quick complete       │
+│ • Pinch out: Full screen timer     │
+│ • Pinch in: Minimize view          │
+│                                     │
+└─────────────────────────────────────┘
+```
+
+### **Pull-to-Refresh Patterns**
+
+```
+┌─────────────────────────────────────┐
+│ ↓ Pull to refresh team stats        │ ← Pull indicator
+├─────────────────────────────────────┤
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ 🔄 Updating stats...            │ │ ← Loading state
+│ │ ████████████████████████░░░░░░  │ │   with progress
+│ │ 85% complete                    │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+│ Pull Behaviors:                     │
+│ • Light pull: Preview refresh       │
+│ • Full pull: Trigger refresh        │
+│ • Over-pull: Force refresh all      │
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ 📊 Updated Data Available       │ │ ← Success state
+│ │ • 3 new performance entries     │ │
+│ │ • 2 team chemistry updates      │ │
+│ │ • 1 coach message               │ │
+│ │                                 │ │
+│ │ Last updated: Just now ✓        │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+│ Alternative Refresh Methods:        │
+│ • Shake device                      │
+│ • Long press header                 │
+│ • Auto-refresh (when app opens)    │
+│                                     │
+└─────────────────────────────────────┘
+```
+
+### **Drag and Drop (Team Formation)**
+
+```
+┌─────────────────────────────────────┐
+│ Team Formation Builder              │
+├─────────────────────────────────────┤
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │          🏈 Field Layout        │ │
+│ │                                 │ │
+│ │ ┌─────┐     ┌─────┐     ┌─────┐ │ │ ← Drag players
+│ │ │ QB  │     │ WR1 │     │ WR2 │ │ │   to positions
+│ │ │Alex │     │Mike │     │Chris│ │ │
+│ │ └─────┘     └─────┘     └─────┘ │ │
+│ │                                 │ │
+│ │    ┌─────┐              ┌─────┐ │ │
+│ │    │ C   │              │ S   │ │ │
+│ │    │Tyler│              │Jake │ │ │
+│ │    └─────┘              └─────┘ │ │
+│ │                                 │ │
+│ │ ┌─ Bench Players ─┐             │ │
+│ │ │[Sam] [Tom] [Ben]│ ← Available │ │
+│ │ └─────────────────┘   players   │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+│ Drag Actions:                       │
+│ • Long press + drag to move         │
+│ • Drop on position to assign        │
+│ • Drop on bench to remove           │
+│ • Snap to valid positions only      │
+│                                     │
+│ Visual Feedback:                    │
+│ • Drop zones highlight on drag      │
+│ • Invalid drops show red outline    │ │
+│ • Haptic feedback on successful drop│
+│                                     │
+└─────────────────────────────────────┘
+```
+
+## **Complex Gesture Interactions**
+
+### **Multi-Touch Timer Control**
+
+```
+┌─────────────────────────────────────┐
+│ Advanced Timer Controls             │
+├─────────────────────────────────────┤
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │         ┌─ 28:45 ─┐               │ │
+│ │         │ Game    │               │ │ ← Main timer
+│ │         │ Break   │               │ │
+│ │         └─────────┘               │ │
+│ │                                 │ │
+│ │ Two-finger gestures:            │ │
+│ │ ↕️ Pinch: Adjust timer size      │ │
+│ │ ⤴️ Rotate: Change timer type     │ │
+│ │ 👆👆 Two-finger tap: Split timer │ │
+│ │                                 │ │
+│ │ ┌─ Split Timers ─┐              │ │ ← Multi-timer mode
+│ │ │ Activity: 8:15  │              │ │
+│ │ │ Warning:  5:00  │              │ │
+│ │ │ Critical: 2:00  │              │ │
+│ │ └─────────────────┘              │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+│ Three-finger gestures:              │
+│ • Three-finger tap: Quick actions   │
+│ • Three-finger swipe up: Full screen│
+│ • Three-finger swipe down: Minimize │
+│                                     │
+│ Accessibility:                      │
+│ • Voice over support                │
+│ • Large text mode                   │
+│ • High contrast mode                │
+│ • Switch control compatibility      │
+│                                     │
+└─────────────────────────────────────┘
+```
+
+### **Force Touch / 3D Touch**
+
+```
+┌─────────────────────────────────────┐
+│ Force Touch Quick Actions           │
+├─────────────────────────────────────┤
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ 📊 Performance Card             │ │ ← Light press:
+│ │ QB Completion: 67%              │ │   preview
+│ │ Last game: vs Eagles            │ │
+│ │                                 │ │
+│ │ Force press for actions... ↓    │ │ ← Force press:
+│ └─────────────────────────────────┘ │   quick menu
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ Quick Actions Menu              │ │ ← Force touch
+│ │                                 │ │   context menu
+│ │ 📊 View Details                 │ │
+│ │ 📤 Share Stats                  │ │
+│ │ 📝 Add Note                     │ │
+│ │ 🎯 Set Goal                     │ │
+│ │ ❌ Cancel                       │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+│ Force Levels:                       │
+│ • Light: Peek preview               │
+│ • Medium: Context menu              │
+│ • Hard: Quick action                │
+│                                     │
+│ Alternative for older devices:      │
+│ • Long press (2+ seconds)           │
+│ • Double tap and hold               │
+│ • Vibration feedback simulation     │
+│                                     │
+└─────────────────────────────────────┘
+```
+
+## **Slider Customization**
+
+### **Custom Slider Themes**
+
+```
+┌─────────────────────────────────────┐
+│ Slider Appearance Settings          │
+├─────────────────────────────────────┤
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ Theme: Performance Mode         │ │
+│ │                                 │ │
+│ │ ████████████████████████░░░░░░  │ │ ← Green theme
+│ │                                 │ │
+│ │ Theme: Recovery Mode            │ │
+│ │                                 │ │
+│ │ ████████████████████████░░░░░░  │ │ ← Blue theme
+│ │                                 │ │
+│ │ Theme: High Intensity           │ │
+│ │                                 │ │
+│ │ ████████████████████████░░░░░░  │ │ ← Red theme
+│ └─────────────────────────────────┘ │
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ Slider Behavior                 │ │
+│ │ ☑️ Haptic feedback on change    │ │
+│ │ ☑️ Sound effects enabled        │ │
+│ │ ☑️ Visual value hints           │ │
+│ │ ☐ Logarithmic scale             │ │
+│ │ ☑️ Snap to meaningful values    │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ Accessibility Options           │ │
+│ │ ☑️ Large slider handles         │ │
+│ │ ☑️ High contrast colors         │ │
+│ │ ☑️ Voice feedback               │ │
+│ │ ☐ Reduced motion                │ │
+│ │ ☑️ Alternative input methods    │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+└─────────────────────────────────────┘
+```
+
+### **Smart Value Suggestions**
+
+```
+┌─────────────────────────────────────┐
+│ Intelligent Timer Recommendations   │
+├─────────────────────────────────────┤
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ 🤖 AI Suggestion                │ │
+│ │ Based on your typical pattern:  │ │
+│ │                                 │ │
+│ │ ░░░░░░░░░░░████████████░░░░░░░  │ │ ← Suggested value
+│ │           ↑ 32min               │ │   highlighted
+│ │                                 │ │
+│ │ Factors considered:             │ │
+│ │ • Weather: Hot (+2min)          │ │
+│ │ • Game importance: High (+3min) │ │
+│ │ • Team energy: Good (-2min)     │ │
+│ │ • Historical average: 29min     │ │
+│ │                                 │ │
+│ │ [Accept] [Adjust] [Ignore]      │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ Context-Aware Presets           │ │
+│ │                                 │ │
+│ │ Tournament Mode:                │ │
+│ │ [30m Standard] [45m Extended]   │ │
+│ │                                 │ │
+│ │ Practice Mode:                  │ │
+│ │ [15m Quick] [20m Standard]      │ │
+│ │                                 │ │
+│ │ Recovery Mode:                  │ │
+│ │ [1h Rest] [2h Recovery]         │ │
+│ │                                 │ │
+│ │ Custom:                         │ │
+│ │ [Coach AJ's Preference: 35m]    │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+└─────────────────────────────────────┘
+```
+
+## **Advanced Gesture Recognition**
+
+### **Training Motion Capture**
+
+```
+┌─────────────────────────────────────┐
+│ Motion-Based Training Input         │
+├─────────────────────────────────────┤
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ Route Running: Count Reps       │ │
+│ │                                 │ │
+│ │ 📱 Hold phone while running     │ │ ← Device motion
+│ │                                 │ │   detection
+│ │ ┌───────────────────────────────┐ │ │
+│ │ │ Rep Count: 8                  │ │ │ ← Auto-counting
+│ │ │ ████████████████████████░░░░  │ │ │   based on
+│ │ │ Progress: 80% (8/10 reps)     │ │ │   movement
+│ │ └───────────────────────────────┘ │ │
+│ │                                 │ │
+│ │ Motion Quality:                 │ │
+│ │ • Speed: Consistent ✓           │ │
+│ │ • Form: Good ✓                  │ │
+│ │ • Direction: Accurate ✓         │ │
+│ │ • Timing: Slightly fast ⚠️      │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ Gesture Commands               │ │
+│ │                                 │ │
+│ │ Shake phone: Start/Stop timer   │ │
+│ │ Flip phone: Pause workout       │ │
+│ │ Double tap side: Next drill     │ │
+│ │ Wave over screen: Skip current  │ │ ← Proximity sensor
+│ │                                 │ │   gestures
+│ │ Voice + gesture combo:          │ │
+│ │ Say "next" + swipe right       │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+└─────────────────────────────────────┘
+```
+
+This comprehensive mobile gesture and slider system provides intuitive touch controls, customizable interfaces, and intelligent suggestions that adapt to user patterns and training contexts.

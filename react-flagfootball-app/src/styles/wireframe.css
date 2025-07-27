@@ -1,0 +1,128 @@
+/* WIREFRAME STYLES - STRIPS ALL EXISTING STYLING */
+
+/* Reset all styles to wireframe appearance */
+* {
+  box-sizing: border-box;
+}
+
+/* Basic wireframe styling */
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #000;
+  background: #fff;
+}
+
+/* All elements get wireframe borders */
+div, section, article, aside, header, footer, nav, main {
+  border: 1px solid #ccc;
+  margin: 2px;
+  padding: 8px;
+  background: #fff;
+}
+
+/* Buttons as wireframe boxes */
+button, .btn, [role="button"] {
+  border: 2px solid #000;
+  background: #fff;
+  padding: 8px 16px;
+  margin: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #000;
+}
+
+/* Input fields as wireframe boxes */
+input, textarea, select {
+  border: 2px solid #000;
+  background: #fff;
+  padding: 8px;
+  margin: 4px;
+  font-size: 14px;
+  color: #000;
+}
+
+/* Cards as wireframe boxes */
+.card, [class*="card"] {
+  border: 2px solid #000;
+  background: #fff;
+  padding: 16px;
+  margin: 8px;
+}
+
+/* Navigation as wireframe */
+nav, [role="navigation"] {
+  border: 2px solid #000;
+  background: #f0f0f0;
+  padding: 12px;
+  margin: 4px;
+}
+
+/* Headers as wireframe */
+h1, h2, h3, h4, h5, h6 {
+  border: 1px solid #000;
+  background: #f0f0f0;
+  padding: 8px;
+  margin: 4px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* Images as placeholder boxes */
+img {
+  border: 2px dashed #000;
+  background: #f0f0f0;
+  min-width: 100px;
+  min-height: 100px;
+  display: block;
+  margin: 4px;
+}
+
+/* Links as underlined text */
+a {
+  color: #000;
+  text-decoration: underline;
+  border: none;
+  background: none;
+}
+
+/* Remove all existing styling */
+* {
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  background-image: none !important;
+  background-color: #fff !important;
+  color: #000 !important;
+  font-family: Arial, sans-serif !important;
+  font-size: 14px !important;
+  line-height: 1.4 !important;
+}
+
+/* Override any existing theme styles */
+[class*="theme"], [class*="dark"], [class*="light"] {
+  background: #fff !important;
+  color: #000 !important;
+}
+
+/* Remove animations and transitions */
+* {
+  animation: none !important;
+  transition: none !important;
+  transform: none !important;
+}
+
+/* Make all interactive elements visible */
+button:hover, input:hover, a:hover {
+  border-color: #666 !important;
+  background: #f0f0f0 !important;
+}
+
+/* Ensure all content is visible */
+.hidden, [hidden], .invisible {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+} 

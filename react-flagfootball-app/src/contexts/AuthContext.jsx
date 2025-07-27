@@ -103,7 +103,7 @@ export const AuthProvider = ({ children }) => {
 
     // Only check auth on mount, don't depend on actions
     checkAuth();
-  }, []); // Empty dependency array to run only once
+  }, [actions]); // Add actions dependency
 
   // Login function
   const login = React.useCallback(async (credentials) => {
@@ -151,7 +151,7 @@ export const AuthProvider = ({ children }) => {
       // Still clear local state even if server logout fails
       actions.logout();
     }
-  }, []); // Remove actions dependency
+  }, [actions]); // Add actions dependency
 
   // Update profile function
   const updateProfile = React.useCallback(async (profileData) => {
@@ -165,12 +165,12 @@ export const AuthProvider = ({ children }) => {
       actions.updateProfileFailure(error.message);
       throw error;
     }
-  }, []); // Remove actions dependency
+  }, [actions]); // Add actions dependency
 
   // Clear error function
   const clearError = React.useCallback(() => {
     actions.clearError();
-  }, []); // Remove actions dependency
+  }, [actions]); // Add actions dependency
 
   const value = React.useMemo(() => {
     console.log('AuthContext: Current state update:', {

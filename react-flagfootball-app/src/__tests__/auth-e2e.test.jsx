@@ -97,7 +97,7 @@ describe('Authentication E2E Flow', () => {
     mockPocketBase.authStore.isValid = true;
 
     // Step 2: Access protected route (Dashboard)
-    const { rerender } = render(
+    render(
       <TestApp>
         <DashboardView />
       </TestApp>
@@ -271,10 +271,10 @@ describe('Authentication E2E Flow', () => {
     mockPocketBase.collection().authRefresh.mockResolvedValue(mockAuthData);
 
     // This would typically be in a ProfileView or SettingsView
-    const profileData = {
-      password: 'newpassword123',
-      passwordConfirm: 'newpassword123'
-    };
+    // const profileData = {
+    //   password: 'newpassword123',
+    //   passwordConfirm: 'newpassword123'
+    // };
 
     // Simulate calling updateProfile with password change
     // This should trigger token invalidation
