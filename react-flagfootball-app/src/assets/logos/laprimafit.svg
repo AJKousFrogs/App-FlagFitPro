@@ -1,0 +1,13 @@
+<svg width="120" height="40" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="laprimafit-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#FF6B35" />
+      <stop offset="100%" style="stop-color:#FF8E4D" />
+    </linearGradient>
+  </defs>
+  <rect width="120" height="40" rx="8" fill="url(#laprimafit-gradient)" />
+  <text x="60" y="14" font-family="Arial, sans-serif" font-size="9" font-weight="bold" text-anchor="middle" fill="white">LAPRIMAFIT</text>
+  <text x="60" y="26" font-family="Arial, sans-serif" font-size="6" text-anchor="middle" fill="white" opacity="0.9">FITNESS & WELLNESS</text>
+  <circle cx="15" cy="20" r="6" fill="white" opacity="0.2" />
+  <circle cx="105" cy="20" r="6" fill="white" opacity="0.2" />
+</svg>

@@ -1,0 +1,492 @@
+# Mobile Dashboard Wireframes Documentation
+
+## Page Overview
+Mobile-optimized dashboard layouts with card-based design, touch-friendly interactions, and gesture-based navigation for both player and coach views.
+
+## **Mobile Player Dashboard**
+
+### **Main Dashboard - Mobile**
+
+```
+┌─────────────────────────────────────┐ ← iPhone 14 Pro (393×852)
+│ ☰ MERLINS PLAYBOOK    🔍 👤        │
+├─────────────────────────────────────┤
+│ ↓ Pull to refresh                   │
+├─────────────────────────────────────┤
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ 👋 Welcome back, Alex!          │ │
+│ │ QB/WR • Hawks • Level 8         │ │
+│ │ 🔥 7 day streak                 │ │
+│ │                                 │ │
+│ │ ⏰ Next: Practice Tomorrow 7PM  │ │
+│ │ vs Eagles Prep • 🌤️ 75°F        │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+│ ┌─────────────────────────────────┐ │ ← Swipe left/right
+│ │ 📊 Quick Stats          › More  │ │   for more cards
+│ │                                 │ │
+│ │ ┌─────┐ ┌─────┐ ┌─────┐ ┌─────┐ │ │
+│ │ │ 67% │ │ 8.3 │ │ L8  │ │ 23h │ │ │
+│ │ │Comp%│ │Chem │ │Lvl  │ │Hrs  │ │ │
+│ │ └─────┘ └─────┘ └─────┘ └─────┘ │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ 🏃 Training Focus              │ │
+│ │                                 │ │
+│ │ • QB Pocket Presence (-0.3s)   │ │
+│ │ • WR Route Timing (+12%)        │ │
+│ │ • Red Zone Efficiency (67→75%) │ │
+│ │                                 │ │
+│ │ [Start Training Session] →      │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ 🤖 AI Coach Message             │ │
+│ │ "Ready for today's route        │ │
+│ │ session? Your timing with Mike  │ │
+│ │ has improved 23% this week! 🔥" │ │
+│ │                      [Got it!] │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+│ ● ○ ○ ○ ← Swipe indicators          │
+│                                     │
+└─────────────────────────────────────┘
+```
+
+### **Dashboard Card Swiping**
+
+```
+┌─────────────────────────────────────┐
+│ ┌─────────────────────────────────┐ │ ← Card 1 (visible)
+│ │ 📊 Performance Summary          │ │
+│ │ ████████████████████████████    │ │ ← Swipe left to
+│ │ ← Swipe for Team Chemistry      │ │   reveal card 2
+│ └─────────────────────────────────┘ │
+│                                     │
+│ ┌───────────────────┐               │ ← Card 2 (partially
+│ │ 👥 Team Chemistry │               │   visible, preview)
+│ │ 8.3/10 with Mike  │               │
+│ └───────────────────┘               │
+│                                     │
+│ ● ● ○ ○ ← Page indicators           │
+│                                     │
+│ Alternative Views:                  │ │
+│ • Performance Stats                 │
+│ • Team Chemistry                    │
+│ • Training Progress                 │
+│ • Game Schedule                     │
+│                                     │
+└─────────────────────────────────────┘
+```
+
+### **Mobile Quick Actions**
+
+```
+┌─────────────────────────────────────┐
+│ ⚡ Quick Actions                     │
+├─────────────────────────────────────┤
+│                                     │
+│ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ │
+│ │  🏃  │ │  💬  │ │  📊  │ │  ⏰  │ │ ← Large touch
+│ │Train │ │Chat  │ │Stats │ │Timer │ │   targets
+│ └──────┘ └──────┘ └──────┘ └──────┘ │
+│                                     │
+│ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ │
+│ │  🥤  │ │  📱  │ │  👥  │ │  🎯  │ │
+│ │ Log  │ │Share │ │Invite│ │Goals │ │
+│ │Drink │ │Stats │ │Team  │ │Track │ │
+│ └──────┘ └──────┘ └──────┘ └──────┘ │
+│                                     │
+│ [Customize Actions]                 │
+│                                     │
+└─────────────────────────────────────┘
+```
+
+### **Collapsible Sections**
+
+```
+┌─────────────────────────────────────┐
+│ 📈 Recent Activity            ⌄     │ ← Tap to expand/
+├─────────────────────────────────────┤   collapse
+│ ✅ Route Running (2h ago)           │
+│ 📊 Stats updated vs Eagles          │
+│ 🏆 Achievement: Route Master        │
+│ [View All Activity] →               │
+└─────────────────────────────────────┘
+│                                     │
+│ 📅 Upcoming Events            ⌄     │
+├─────────────────────────────────────┤
+│ Tomorrow 7PM: Team Practice         │
+│ Friday 8PM: QB/WR Chemistry         │
+│ Saturday: Tournament vs Eagles      │
+│ [View Full Schedule] →              │
+└─────────────────────────────────────┘
+│                                     │
+│ 👥 Team Updates               ⌄     │
+├─────────────────────────────────────┤
+│ Collapsed (tap to expand)           │
+└─────────────────────────────────────┘
+```
+
+## **Mobile Coach Dashboard**
+
+### **Coach Dashboard - Mobile**
+
+```
+┌─────────────────────────────────────┐
+│ ☰ COACH VIEW            🔍 👨‍🏫      │
+├─────────────────────────────────────┤
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ 👨‍🏫 Coach AJ • Hawks HC          │ │
+│ │ 23 active players • 6-2 record  │ │
+│ │                                 │ │
+│ │ 🚨 3 alerts • ⚠️ 2 at-risk       │ │
+│ │ Next Game: vs Eagles Tomorrow   │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ 📊 Team Status Overview         │ │
+│ │                                 │ │
+│ │ ┌─────┐ ┌─────┐ ┌─────┐ ┌─────┐ │ │
+│ │ │ 18  │ │ 7.8 │ │ 85% │ │ 3   │ │ │
+│ │ │Rdy  │ │Chem │ │Fit  │ │Inj  │ │ │
+│ │ └─────┘ └─────┘ └─────┘ └─────┘ │ │
+│ │                                 │ │
+│ │ [View Team Details] →           │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ ⚠️ Immediate Attention          │ │
+│ │                                 │ │
+│ │ • Alex Rivera: Completion % ↓   │ │
+│ │ • Mike Johnson: Hydration ⚠️    │ │
+│ │ • Chris Wilson: Injury report   │ │
+│ │                                 │ │
+│ │ [Address Issues] →              │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ 🏈 Quick Coach Actions          │ │
+│ │                                 │ │
+│ │ [Log Stats] [Send Message]      │ │
+│ │ [Set Timer] [Take Attendance]   │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+└─────────────────────────────────────┘
+```
+
+### **Team Management Cards**
+
+```
+┌─────────────────────────────────────┐
+│ 👥 Player Management                │
+├─────────────────────────────────────┤
+│                                     │
+│ ┌─────────────────────────────────┐ │ ← Swipe left for
+│ │ 🏈 Alex Rivera (QB/WR)          │ │   quick actions
+│ │ Level 8 • 7 day streak          │ │
+│ │ Performance: 📈 Improving       │ │
+│ │ Chemistry: 8.3/10 avg           │ │
+│ │                                 │ │
+│ │     ← Swipe for actions         │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ 🎯 Mike Johnson (WR)            │ │
+│ │ Level 6 • 3 day streak          │ │
+│ │ Performance: ⚠️ Needs attention │ │
+│ │ Chemistry: 7.2/10 avg           │ │
+│ │                                 │ │
+│ │     ← Swipe for actions         │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+│ ● ● ○ ○ ○ ○  (6 more players)      │
+│                                     │
+│ [View All Players] [Add Player]     │
+│                                     │
+└─────────────────────────────────────┘
+```
+
+### **Swipe Actions - Player Card**
+
+```
+┌─────────────────────────────────────┐
+│                                     │
+│ ┌─────────────────────────────────┐ │ ← Swiped left to
+│ │ 🏈 Alex Rivera (QB/WR)      ✕   │ │   reveal actions
+│ │ ┌─────┐┌─────┐┌─────┐┌─────┐   │ │
+│ │ │ 📊  ││ 💬  ││ ⚠️  ││ ⚙️  │   │ │
+│ │ │View ││Msg  ││Flag ││Edit │   │ │
+│ │ │Stats││     ││Issue││     │   │ │
+│ │ └─────┘└─────┘└─────┘└─────┘   │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+│ Long press actions:                 │
+│ • Quick message                     │
+│ • Flag for attention                │
+│ • Add to watchlist                  │
+│ • View performance history          │
+│                                     │
+└─────────────────────────────────────┘
+```
+
+## **Mobile Stats & Analytics**
+
+### **Performance Graphs - Mobile**
+
+```
+┌─────────────────────────────────────┐
+│ ← Stats        📊 Performance       │
+├─────────────────────────────────────┤
+│                                     │
+│ [Week] [Month] [Season] [All Time]  │ ← Time period tabs
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ QB Completion %                 │ │
+│ │                                 │ │
+│ │ 75%┤                          ● │ │ ← Simplified
+│ │ 70%┤                    ●       │ │   mobile graph
+│ │ 65%┤          ●                 │ │
+│ │ 60%┤    ●                       │ │
+│ │ 55%┤●                           │ │
+│ │    └─────────────────────────── │ │
+│ │    W1  W2  W3  W4  W5  W6  W7  │ │
+│ │                                 │ │
+│ │ 📈 +8% improvement this month   │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+│ ● ○ ○ ← Swipe for more charts      │
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ Key Insights                    │ │
+│ │ • Best performance: Crossing routes │ │
+│ │ • Focus area: Red zone efficiency │ │
+│ │ • Trend: Steady improvement     │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+│ [Share Stats] [Export Data]         │
+│                                     │
+└─────────────────────────────────────┘
+```
+
+### **Pinch to Zoom - Charts**
+
+```
+┌─────────────────────────────────────┐
+│ 📊 Detailed View (Pinch to zoom)    │
+├─────────────────────────────────────┤
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │                                 │ │ ← Zoomed in chart
+│ │ 72%┤        ●●●                 │ │   with data points
+│ │ 70%┤      ●    ●●               │ │
+│ │ 68%┤    ●                       │ │
+│ │ 66%┤  ●                         │ │
+│ │ 64%┤●                           │ │
+│ │    └─────────────────────────── │ │
+│ │    Game 1  2  3  4  5  6  7     │ │
+│ │                                 │ │
+│ │ Tap point for details:          │ │
+│ │ Game 5: 71% vs Eagles           │ │
+│ │ 15/21 completions, 2 TDs        │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+│ Gestures:                           │
+│ • Pinch to zoom in/out              │
+│ • Tap data points for details      │
+│ • Swipe left/right to pan          │
+│ • Double tap to reset zoom         │
+│                                     │
+└─────────────────────────────────────┘
+```
+
+## **Mobile Community Hub**
+
+### **Team Chat - Mobile**
+
+```
+┌─────────────────────────────────────┐
+│ ← Back      👥 Team Chat       ⋮    │
+├─────────────────────────────────────┤
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ 👨‍🏫 Coach AJ              10:30AM │ │ ← Chat bubbles
+│ │ Great practice today everyone!  │ │   optimized for
+│ │ Remember tomorrow starts 6PM   │ │   mobile reading
+│ │ sharp. 🏈                      │ │
+│ │                            ❤️👍 │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │             Mike Johnson (WR)   │ │
+│ │                        10:45AM │ │
+│ │ Can someone share the new route │ │
+│ │ diagrams? 📋                   │ │
+│ │ 👍2                             │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ You                    11:20AM │ │
+│ │ Excited for the new plays! 🔥  │ │
+│ │                            🔥3 │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+│ ─────────────────────────────────── │
+│ [📎] [Type message...     ] [Send] │ ← Input area
+│      [😊] [🏈] [📊] [⏰]             │   with quick
+└─────────────────────────────────────┘   emoji access
+```
+
+### **Chat Room Switching**
+
+```
+┌─────────────────────────────────────┐
+│ 💬 Active Chats            [+ New]  │
+├─────────────────────────────────────┤
+│                                     │
+│ ┌─────────────────────────────────┐ │ ← Horizontal
+│ │🏈│👥│🛡️│👨‍🏫│                    │ │   scrollable
+│ └─────────────────────────────────┘ │   chat tabs
+│                                     │
+│ Currently: 👥 Team Chat (3 unread)  │
+│                                     │
+│ Quick switch:                       │ │
+│ • 🏈 Main Team - 3 new messages     │
+│ • 🛡️ Defense - 1 new message        │
+│ • 👨‍🏫 Coaches - Active now          │
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ Recent in QB/WR Squad:          │ │
+│ │ "Let's practice route timing    │ │
+│ │ after main session today"       │ │
+│ │                    [Switch] →  │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+│ [Notification Settings]             │
+│                                     │
+└─────────────────────────────────────┘
+```
+
+## **Mobile Form Interfaces**
+
+### **Profile Edit - Mobile**
+
+```
+┌─────────────────────────────────────┐
+│ ← Cancel     Edit Profile      Save │
+├─────────────────────────────────────┤
+│                                     │
+│        ┌─────────┐                  │
+│        │   🏈    │ [Change Photo]   │ ← Large touch
+│        │ Avatar  │                  │   targets
+│        └─────────┘                  │
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ First Name                      │ │
+│ │ [Alex                         ] │ │ ← Full-width
+│ └─────────────────────────────────┘ │   inputs
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ Last Name                       │ │
+│ │ [Rivera                       ] │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ Primary Position                │ │
+│ │ [Quarterback (QB)          ▼] │ │ ← Mobile-friendly
+│ └─────────────────────────────────┘ │   dropdown
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ Secondary Position              │ │
+│ │ [Wide Receiver (WR)        ▼] │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ Team                            │ │
+│ │ [Hawks                     ▼] │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ Experience Level                │ │
+│ │ ○ Beginner  ● Intermediate      │ │ ← Radio buttons
+│ │ ○ Advanced  ○ Professional      │ │   with large
+│ └─────────────────────────────────┘ │   touch areas
+│                                     │
+└─────────────────────────────────────┘
+```
+
+### **Mobile Input Optimization**
+
+```
+┌─────────────────────────────────────┐
+│ Input Field Focus State             │
+├─────────────────────────────────────┤
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ 📧 Email Address             ✓  │ │ ← Validation icons
+│ │ [alex.rivera@hawks.com        ] │ │
+│ │ ✓ Valid email format            │ │ ← Real-time feedback
+│ └─────────────────────────────────┘ │
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ 📞 Phone Number                 │ │
+│ │ [(555) 123-4567               ] │ │ ← Auto-formatting
+│ │ 🇺🇸 +1 • Auto-detected          │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ 🏋️ Weight (for performance calc) │ │
+│ │ [185] lbs [Change to kg]        │ │ ← Unit conversion
+│ └─────────────────────────────────┘ │
+│                                     │
+│ Auto-features:                      │
+│ • Auto-capitalize names             │
+│ • Auto-format phone numbers        │
+│ • Smart keyboard types              │
+│ • Auto-save drafts                  │
+│ • Predictive text for positions     │
+│                                     │
+└─────────────────────────────────────┘
+```
+
+### **Multi-Step Forms - Mobile**
+
+```
+┌─────────────────────────────────────┐
+│ Step 2 of 4: Physical Metrics   ×  │
+├─────────────────────────────────────┤
+│ ●●○○                                │ ← Progress indicator
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ Height                          │ │
+│ │ ┌─────────┐ ┌─────────┐         │ │
+│ │ │    6    │ │    2    │ ft/in   │ │ ← Dual input
+│ │ │    ↕️    │ │    ↕️    │         │ │   spinners
+│ │ └─────────┘ └─────────┘         │ │
+│ │ = 6'2" (188cm)                  │ │ ← Auto conversion
+│ └─────────────────────────────────┘ │
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ Weight                          │ │
+│ │ ████████████████████████████░░  │ │ ← Slider input
+│ │ 185 lbs                         │ │   alternative
+│ │ Range: 120-300 lbs              │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+│ ┌─────────────────────────────────┐ │
+│ │ 40-Yard Dash Time (optional)    │ │
+│ │ [4.6] seconds                   │ │
+│ │ Don't know? [Test Now] [Skip]   │ │
+│ └─────────────────────────────────┘ │
+│                                     │
+│ [← Previous]           [Continue →] │
+│                                     │
+│ [Save Draft] [Complete Later]       │
+│                                     │
+└─────────────────────────────────────┘
+```
+
+This mobile dashboard system provides comprehensive card-based layouts, touch-optimized interactions, and gesture navigation that works seamlessly across all mobile devices while maintaining full feature parity with desktop versions.

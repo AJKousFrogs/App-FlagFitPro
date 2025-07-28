@@ -1,0 +1,61 @@
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Build outputs
+dist/
+build/
+*/dist/
+*/build/
+
+# Generated files
+*.min.js
+*.bundle.js
+*.d.ts
+
+# Environment files
+.env*
+!.env.example
+
+# Package files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Coverage
+coverage/
+*.lcov
+
+# Database
+*.sqlite
+*.db
+
+# Service worker
+sw.js
+
+# Git
+.git/
+
+# Husky
+.husky/
+
+# Backend build files
+flagfitpro-backend/dist/
+flagfitpro-backend/**/*.d.ts
+flagfitpro-backend/**/*.js
+
+# Frontend build files
+react-flagfootball-app/dist/
+react-flagfootball-app/build/ 

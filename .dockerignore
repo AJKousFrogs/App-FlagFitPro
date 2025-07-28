@@ -1,0 +1,14 @@
+node_modules
+react-flagfootball-app/node_modules
+react-flagfootball-app/dist
+*.log
+.env*
+!.env.example
+.git
+.DS_Store
+README.md
+docs/
+*.md
+pb_data/backups
+pb_data/storage
+pocketbase_*.zip

@@ -1,0 +1,9 @@
+<svg width="200" height="40" viewBox="0 0 200 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- LaPrimaFit logo recreation in black (this was already black in original) -->
+  <g>
+    <!-- Text: la primafit in a clean layout -->
+    <text x="10" y="16" font-family="Arial, sans-serif" font-size="14" font-weight="300" fill="#000000">la</text>
+    <text x="30" y="16" font-family="Arial, sans-serif" font-size="14" font-weight="600" fill="#000000">primafit</text>
+    <text x="10" y="30" font-family="Arial, sans-serif" font-size="8" font-weight="300" fill="#000000" opacity="0.7">FITNESS & WELLNESS</text>
+  </g>
+</svg>
