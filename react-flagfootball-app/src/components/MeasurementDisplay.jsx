@@ -4,7 +4,8 @@ import {
   convertWeight, 
   convertHeight,
   inchesToFeetInches,
-  cmToMetersCm
+  cmToMetersCm,
+  formatWeight
 } from '../utils/measurementUtils';
 
 const MeasurementDisplay = ({ 

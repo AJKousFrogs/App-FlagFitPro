@@ -3,9 +3,39 @@ import MeasurementDisplay from './MeasurementDisplay';
 import WeeklyTrainingSchedule from './WeeklyTrainingSchedule';
 import PlayersLeaderboard from './PlayersLeaderboard';
 import SponsorBanner from './SponsorBanner';
+import PerformancePredictionEngine from './PerformancePredictionEngine';
+import InjuryRiskAssessment from './InjuryRiskAssessment';
+import NutritionPerformanceAnalytics from './NutritionPerformanceAnalytics';
+import InteractivePerformanceVisualization from './InteractivePerformanceVisualization';
+import TeamChemistryAnalytics from './TeamChemistryAnalytics';
 
 const DraggableDashboard = ({ isPremium = false }) => {
   const [dashboardSections, setDashboardSections] = useState([
+    {
+      id: 'performance-prediction',
+      title: '🤖 AI Performance Prediction',
+      content: <PerformancePredictionEngine />
+    },
+    {
+      id: 'injury-risk-assessment',
+      title: '🛡️ Injury Risk Assessment',
+      content: <InjuryRiskAssessment />
+    },
+    {
+      id: 'nutrition-performance-analytics',
+      title: '🥗 Nutrition-Performance Analytics',
+      content: <NutritionPerformanceAnalytics />
+    },
+    {
+      id: 'interactive-performance-visualization',
+      title: '📊 Interactive Performance Visualization',
+      content: <InteractivePerformanceVisualization />
+    },
+    {
+      id: 'team-chemistry-analytics',
+      title: '🤝 Team Chemistry Analytics',
+      content: <TeamChemistryAnalytics />
+    },
     {
       id: 'players-leaderboard',
       title: '🏆 Players Leaderboard',

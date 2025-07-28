@@ -1,26 +1,22 @@
 import React from 'react';
 
-const LoadingSpinner = React.memo(({ size = 'md', className = '' }) => {
+const LoadingSpinner = ({ size = 'medium', message = 'Loading...' }) => {
   const sizeClasses = {
-    sm: 'w-4 h-4',
-    md: 'w-8 h-8',
-    lg: 'w-12 h-12',
-    xl: 'w-16 h-16'
+    small: 'w-4 h-4',
+    medium: 'w-8 h-8',
+    large: 'w-12 h-12'
   };
 
   return (
-    <div className={`flex justify-center items-center ${className}`}>
-      <div
-        className={`${sizeClasses[size]} border-4 border-gray-200 border-t-green-600 rounded-full animate-spin`}
-        role="status"
-        aria-label="Loading"
-      >
-        <span className="sr-only">Loading...</span>
+    <div className="loading-container">
+      <div className={`loading-spinner ${sizeClasses[size]}`}>
+        <div className="spinner-ring"></div>
+        <div className="spinner-ring"></div>
+        <div className="spinner-ring"></div>
       </div>
+      {message && <div className="loading-message">{message}</div>}
     </div>
   );
-});
-
-LoadingSpinner.displayName = 'LoadingSpinner';
+};
 
 export default LoadingSpinner; 
