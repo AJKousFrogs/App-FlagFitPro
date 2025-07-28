@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1753538890417,
+      "tag": "20250726140810_init_flag_football_schema",
+      "breakpoints": true
+    }
+  ]
+}
