@@ -14,6 +14,16 @@
 
 The Flag Football Training App is a comprehensive training platform that combines modern web technologies with sports science to deliver personalized training experiences, advanced performance analytics, and team management tools.
 
+### 🛠 Technology Stack
+- **Frontend**: React 18 + Vite + Tailwind CSS + TypeScript
+- **Backend**: Neon PostgreSQL + Drizzle ORM
+- **Authentication**: JWT with React Context + React Query
+- **State Management**: React Query + Context API
+- **Database**: PostgreSQL with Drizzle migrations
+- **Testing**: Jest + React Testing Library (>95% coverage)
+- **Performance**: Advanced monitoring + code splitting
+- **Security**: AES-256 encryption + CSRF protection
+
 ## ✨ Key Features
 
 ### 🏆 Performance Analytics
@@ -99,11 +109,22 @@ src/
    # Edit .env with your configuration
    ```
 
+<<<<<<< Updated upstream
 4. **Initialize database**
    ```bash
    npm run db:setup
    npm run db:migrate
    npm run db:seed
+=======
+4. **Set Up Database**
+   ```bash
+   # In .env file, add your Neon database connection string
+   DATABASE_URL="postgresql://username:password@hostname/database?sslmode=require"
+   VITE_DATABASE_URL="postgresql://username:password@hostname/database?sslmode=require"
+   
+   # Run database setup
+   npm run db:setup
+>>>>>>> Stashed changes
    ```
 
 5. **Start development server**
@@ -111,6 +132,7 @@ src/
    npm run dev
    ```
 
+<<<<<<< Updated upstream
 ## 📊 Advanced Features
 
 ### 🤖 AI Performance Engine
@@ -147,12 +169,18 @@ The application uses a comprehensive PostgreSQL schema including:
 - **Touch Interactions**: Intuitive mobile gestures
 - **Offline Capability**: Core features work without internet
 - **Push Notifications**: Training reminders and updates
+=======
+6. **Access Application**
+   - React App: http://127.0.0.1:4000/
+   - Database: Access via Drizzle Studio (npm run db:studio)
+>>>>>>> Stashed changes
 
 ## 🔧 Development
 
 ### Available Scripts
 
 ```bash
+<<<<<<< Updated upstream
 npm run dev          # Start development server
 npm run build        # Build for production
 npm run preview      # Preview production build
@@ -161,35 +189,112 @@ npm run lint         # Code quality checks
 npm run db:setup     # Initialize database
 npm run db:migrate   # Run database migrations
 npm run db:seed      # Populate with sample data
+=======
+npm run dev          # Start React development server
+npm run build        # Build React app for production
+npm run test         # Run React tests
+npm run lint         # Lint React code
+npm run db:setup     # Set up database with migrations and seed data
+npm run db:studio    # Open Drizzle Studio for database management
+>>>>>>> Stashed changes
 ```
 
 ### Code Quality
 
+<<<<<<< Updated upstream
 - **ESLint**: Consistent code formatting
 - **Prettier**: Automatic code formatting
 - **Testing**: Comprehensive test coverage with Vitest
 - **Type Safety**: PropTypes for component validation
+=======
+```
+flagfit-pro-training-app/
+├── react-flagfootball-app/     # React frontend application
+│   ├── src/
+│   │   ├── components/         # Reusable UI components
+│   │   ├── contexts/           # React Context providers
+│   │   ├── hooks/              # Custom React hooks
+│   │   ├── services/           # API services
+│   │   ├── views/              # Page components
+│   │   └── ...
+│   ├── package.json
+│   └── vite.config.js
+├── drizzle/                    # Database migrations and metadata
+├── CLAUDE.md                   # Architecture guidelines
+└── README.md
+```
+
+## 🔐 Authentication
+
+### Enhanced Security Features
+- **JWT Authentication**: Secure token-based authentication
+- **Session Management**: Automatic token refresh and validation
+- **Rate Limiting**: Protection against brute force attacks
+- **Database Security**: Encrypted connections and secure credential handling
+- **Data Integrity**: Comprehensive backup and recovery systems
+
+### Test Credentials
+- **Email**: `demo@flagfit.com`
+- **Password**: `password123`
+
+### User Roles
+- **Athletes**: Access training programs and track progress
+- **Coaches**: Manage teams and assign programs
+- **Admins**: Full system administration access
+
+### Authentication Flow
+1. **Login**: Email/password with JWT token generation
+2. **Token Validation**: Automatic token validation on app initialization
+3. **Session Management**: Secure token storage and renewal
+4. **Logout**: Complete token cleanup and session termination
+
+## 🗄️ Database
+
+### Neon PostgreSQL Tables
+- `users`: User authentication and profiles
+- `training_sessions`: Training session data
+- `training_goals`: User training objectives
+- `analytics_events`: Application analytics
+- `teams`: Team management
+- `games`: Game statistics and history
+
+### Migrations
+Database migrations are located in `/drizzle/` and managed via Drizzle ORM. Run `npm run db:migrate` to apply migrations.
+>>>>>>> Stashed changes
 
 ## 🚀 Deployment
 
 The application is deployment-ready with:
 
+<<<<<<< Updated upstream
 - **Netlify Configuration**: Automated deployments
 - **Environment Management**: Secure config handling
 - **Performance Optimization**: Optimized builds
 - **CDN Integration**: Fast global content delivery
+=======
+### Database Configuration
+Set up your Neon PostgreSQL connection string in environment variables for production deployment.
+>>>>>>> Stashed changes
 
 ## 📄 Legal Compliance
 
 Enhanced legal documentation included:
 
+<<<<<<< Updated upstream
 - **Privacy Policy**: GDPR Articles 13 & 14 compliant with Slovenia and Germany specific provisions
 - **Terms of Use**: Comprehensive legal protections with health disclaimers
 - **Data Processing Register**: Complete transparency on all data processing activities
 - **AI Processing Disclosure**: Detailed AI logic explanations and user rights
+=======
+### Database Testing
+```bash
+npm run db:test
+```
+>>>>>>> Stashed changes
 
 ## 📄 Documentation
 
+<<<<<<< Updated upstream
 Comprehensive documentation available in `/docs/`:
 
 - **API Documentation**: Complete API reference
@@ -200,6 +305,13 @@ Comprehensive documentation available in `/docs/`:
 ## 🤝 Contributing
 
 We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+=======
+1. Follow the architecture guidelines in `CLAUDE.md`
+2. Use React functional components with hooks
+3. Use Neon PostgreSQL with Drizzle ORM for all database operations
+4. Write tests for new features
+5. Follow the existing code style
+>>>>>>> Stashed changes
 
 ## 📄 License
 
@@ -207,6 +319,7 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## 🙏 Acknowledgments
 
+<<<<<<< Updated upstream
 - Sports science research from leading institutions
 - USDA FoodData Central for nutrition database
 - Open-source community for amazing tools and libraries
@@ -224,3 +337,9 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 [Documentation](docs/) • [API Guide](docs/API.md) • [Contributing](CONTRIBUTING.md) • [License](LICENSE.md)
 
 </div>
+=======
+- Check the React app documentation in `/react-flagfootball-app/README.md`
+- Review Neon documentation at https://neon.tech/docs
+- Review Drizzle ORM documentation at https://orm.drizzle.team/docs/overview
+- Open issues on GitHub for bugs or feature requests
+>>>>>>> Stashed changes
