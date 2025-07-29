@@ -1,0 +1,20 @@
+<svg width="160" height="40" viewBox="0 0 160 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- GearXPro logo recreation in black -->
+  <g>
+    <!-- X symbol/logo mark -->
+    <g transform="translate(8, 8)">
+      <!-- Two crossing elements forming X -->
+      <rect x="0" y="10" width="20" height="4" rx="2" fill="#000000" transform="rotate(45 10 12)"/>
+      <rect x="0" y="10" width="20" height="4" rx="2" fill="#000000" transform="rotate(-45 10 12)"/>
+      <!-- Small circles at intersections -->
+      <circle cx="5" cy="7" r="2" fill="#000000"/>
+      <circle cx="15" cy="7" r="2" fill="#000000"/>
+      <circle cx="5" cy="17" r="2" fill="#000000"/>
+      <circle cx="15" cy="17" r="2" fill="#000000"/>
+    </g>
+    
+    <!-- Text: GEAR XPRO -->
+    <text x="40" y="18" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#000000">GEAR</text>
+    <text x="85" y="18" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#000000">XPRO</text>
+  </g>
+</svg>
