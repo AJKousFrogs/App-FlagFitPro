@@ -1,27 +1,33 @@
-import React, { useState, Suspense } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
+import React, { useState, Suspense, memo, useCallback, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { MeasurementProvider } from './contexts/MeasurementContext';
+import { AuthProvider } from './contexts/AuthContext';
+import { NeonDatabaseProvider } from './contexts/NeonDatabaseContext';
+import { useAuth } from './hooks/useAuth.js';
+import { queryClient } from './lib/queryClient.js';
+import { initializePerformanceMonitoring } from './utils/performance';
+import { createLazyRoute, preloadManager } from './utils/codesplitting';
+import { initializeConnectionPools } from './utils/connectionPool';
+import { initializeScalability } from './utils/scalability';
 import Breadcrumbs from './components/Breadcrumbs';
 import LoadingSpinner from './components/LoadingSpinner';
-import NotificationSystem from './components/NotificationSystem';
-import SearchSystem from './components/SearchSystem';
-import AvatarMenu from './components/AvatarMenu';
-import OfflineSync from './components/OfflineSync';
-import AccessibilityFeatures from './components/AccessibilityFeatures';
-import WeatherSystem from './components/WeatherSystem';
+import NewNavigation from './components/NewNavigation';
+import ErrorBoundary from './components/ErrorBoundary';
 import './styles/components.css';
 
-// Lazy load page components for better performance
-const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
-const TrainingPage = React.lazy(() => import('./pages/TrainingPage'));
-const CommunityPage = React.lazy(() => import('./pages/CommunityPage'));
-const ProfilePage = React.lazy(() => import('./pages/ProfilePage'));
-const TournamentsPage = React.lazy(() => import('./pages/TournamentsPage'));
-const LoginPage = React.lazy(() => import('./pages/LoginPage'));
-const RegisterPage = React.lazy(() => import('./pages/RegisterPage'));
+// Enterprise-grade lazy loading with advanced error handling and preloading
+const DashboardPage = createLazyRoute(() => import('./pages/DashboardPage'), 'Dashboard');
+const TrainingPage = createLazyRoute(() => import('./pages/TrainingPage'), 'Training');
+const CommunityPage = createLazyRoute(() => import('./pages/CommunityPage'), 'Community');
+const ProfilePage = createLazyRoute(() => import('./pages/ProfilePage'), 'Profile');
+const TournamentsPage = createLazyRoute(() => import('./pages/TournamentsPage'), 'Tournaments');
+const LoginPage = createLazyRoute(() => import('./pages/LoginPage'), 'Login');
+const RegisterPage = createLazyRoute(() => import('./pages/RegisterPage'), 'Register');
 
-// Header Component
-const Header = ({ onLogout, isPremium, onTogglePremium }) => {
+// Header Component with React.memo for performance
+const Header = memo(() => {
   const location = useLocation();
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
 
@@ -29,132 +35,239 @@ const Header = ({ onLogout, isPremium, onTogglePremium }) => {
     return null; // Don't show header on auth pages
   }
 
-  return (
-    <header>
-      <h1>🏈 FlagFit Pro</h1>
-      <nav>
-        <Link to="/dashboard">Dashboard</Link>
-        <Link to="/training">Training</Link>
-        <Link to="/community">Community</Link>
-        <Link to="/tournaments">Tournaments</Link>
-        <Link to="/profile">Profile</Link>
-      </nav>
-      <div className="header-controls">
-        <SearchSystem />
-        <NotificationSystem />
-        <AvatarMenu />
-        <OfflineSync />
-        <WeatherSystem />
-        <button 
-          onClick={onTogglePremium}
-          style={{
-            border: '1px solid #333',
-            background: isPremium ? '#4CAF50' : '#fff',
-            color: isPremium ? '#fff' : '#333',
-            padding: '4px 8px',
-            fontSize: '12px',
-            marginRight: '10px'
-          }}
-        >
-          {isPremium ? '⭐ Premium' : '💰 Free'}
-        </button>
-        <button onClick={onLogout}>Logout</button>
-      </div>
-    </header>
-  );
-};
+  return <NewNavigation />;
+});
 
-// Loading Fallback Component
-const PageLoading = () => (
+Header.displayName = 'Header';
+
+// Loading Fallback Component with React.memo
+const PageLoading = memo(() => (
   <div className="page-loading">
     <LoadingSpinner size="large" message="Loading page..." />
   </div>
-);
+));
 
-// Main App Component
-const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isPremium, setIsPremium] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+PageLoading.displayName = 'PageLoading';
 
-  const handleLogin = (userData) => {
-    setIsLoading(true);
-    // Simulate login process
-    setTimeout(() => {
-      setIsAuthenticated(true);
-      setIsLoading(false);
-    }, 1000);
-  };
+// Protected Route component
+const ProtectedRoute = memo(({ children }) => {
+  const { isAuthenticated, isLoading } = useAuth();
+  
+  if (isLoading) {
+    return <PageLoading />;
+  }
+  
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  return children;
+});
 
-  const handleRegister = (userData) => {
-    setIsLoading(true);
-    // Simulate registration process
-    setTimeout(() => {
-      setIsAuthenticated(true);
-      setIsLoading(false);
-    }, 1000);
-  };
+ProtectedRoute.displayName = 'ProtectedRoute';
 
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-  };
-
-  const handleTogglePremium = () => {
-    setIsPremium(!isPremium);
-  };
-
-  // Protected Route Component
-  const ProtectedRoute = ({ children }) => {
-    if (!isAuthenticated) {
-      return <LoginPage onLogin={handleLogin} />;
+// App Content Component with React Query
+const AppContent = memo(() => {
+  const { isAuthenticated, isLoading, login, register } = useAuth();
+  
+  const handleLogin = useCallback(async (credentials) => {
+    try {
+      await login(credentials);
+    } catch (error) {
+      console.error('Login failed:', error);
+      throw error;
     }
-    return children;
-  };
+  }, [login]);
+
+  const handleRegister = useCallback(async (userData) => {
+    try {
+      await register(userData);
+    } catch (error) {
+      console.error('Registration failed:', error);
+      throw error;
+    }
+  }, [register]);
+
+
 
   return (
-    <MeasurementProvider>
-      <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-        <div className="app">
-          <Header 
-            onLogout={handleLogout}
-            isPremium={isPremium}
-            onTogglePremium={handleTogglePremium}
-          />
+    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <div className="app">
+        <Header />
+        
+        <Routes>
+          {/* Public routes */}
+          <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+          <Route path="/register" element={<RegisterPage onRegister={handleRegister} />} />
           
-          {!isAuthenticated ? (
-            <Routes>
-              <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
-              <Route path="/register" element={<RegisterPage onRegister={handleRegister} />} />
-              <Route path="*" element={<LoginPage onLogin={handleLogin} />} />
-            </Routes>
-          ) : (
-            <>
+          {/* Protected routes */}
+          <Route path="/" element={
+            <ProtectedRoute>
               <Breadcrumbs />
               <main>
                 <Suspense fallback={<PageLoading />}>
-                  <Routes>
-                    <Route path="/" element={<DashboardPage />} />
-                    <Route path="/dashboard" element={<DashboardPage />} />
-                    <Route path="/training" element={<TrainingPage />} />
-                    <Route path="/community" element={<CommunityPage />} />
-                    <Route path="/profile" element={<ProfilePage />} />
-                    <Route path="/tournaments" element={<TournamentsPage />} />
-                    <Route path="*" element={<DashboardPage />} />
-                  </Routes>
+                  <DashboardPage />
                 </Suspense>
               </main>
-            </>
-          )}
+            </ProtectedRoute>
+          } />
+          <Route path="/dashboard" element={
+            <ProtectedRoute>
+              <Breadcrumbs />
+              <main>
+                <Suspense fallback={<PageLoading />}>
+                  <DashboardPage />
+                </Suspense>
+              </main>
+            </ProtectedRoute>
+          } />
+          <Route path="/training" element={
+            <ProtectedRoute>
+              <Breadcrumbs />
+              <main>
+                <Suspense fallback={<PageLoading />}>
+                  <TrainingPage />
+                </Suspense>
+              </main>
+            </ProtectedRoute>
+          } />
+          <Route path="/community" element={
+            <ProtectedRoute>
+              <Breadcrumbs />
+              <main>
+                <Suspense fallback={<PageLoading />}>
+                  <CommunityPage />
+                </Suspense>
+              </main>
+            </ProtectedRoute>
+          } />
+          <Route path="/profile" element={
+            <ProtectedRoute>
+              <Breadcrumbs />
+              <main>
+                <Suspense fallback={<PageLoading />}>
+                  <ProfilePage />
+                </Suspense>
+              </main>
+            </ProtectedRoute>
+          } />
+          <Route path="/tournaments" element={
+            <ProtectedRoute>
+              <Breadcrumbs />
+              <main>
+                <Suspense fallback={<PageLoading />}>
+                  <TournamentsPage />
+                </Suspense>
+              </main>
+            </ProtectedRoute>
+          } />
           
-          {isLoading && (
-            <div className="loading-overlay">
-              <LoadingSpinner size="large" message="Processing..." />
-            </div>
-          )}
-        </div>
-      </Router>
-    </MeasurementProvider>
+          {/* Catch all - redirect to login or dashboard based on auth status */}
+          <Route path="*" element={
+            isAuthenticated ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />
+          } />
+        </Routes>
+        
+        {isLoading && (
+          <div className="loading-overlay">
+            <LoadingSpinner size="large" message="Processing..." />
+          </div>
+        )}
+      </div>
+    </Router>
+  );
+});
+
+AppContent.displayName = 'AppContent';
+
+// Main App Component with React Query Provider and Performance Monitoring
+const App = () => {
+  useEffect(() => {
+    // Initialize enterprise-grade performance monitoring
+    initializePerformanceMonitoring({
+      enabled: true,
+      sampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0
+    });
+
+    // Initialize connection pools for scalability
+    initializeConnectionPools();
+
+    // Initialize scalability infrastructure
+    initializeScalability({
+      servers: [
+        { url: 'https://api.flagfootball.com', weight: 2 },
+        { url: 'https://api2.flagfootball.com', weight: 1 }
+      ],
+      services: {
+        'user-service': [
+          { url: 'https://users.flagfootball.com' },
+          { url: 'https://users2.flagfootball.com' }
+        ],
+        'training-service': [
+          { url: 'https://training.flagfootball.com' }
+        ]
+      },
+      autoScaling: {
+        minInstances: 2,
+        maxInstances: 20,
+        targetCPU: 70,
+        targetMemory: 80
+      }
+    });
+
+    // Setup intelligent preloading based on user behavior
+    const setupPreloading = () => {
+      // Preload likely next pages based on current route
+      const currentPath = window.location.pathname;
+      
+      if (currentPath === '/login' || currentPath === '/register') {
+        // Preload dashboard after auth pages
+        preloadManager.addToQueue(DashboardPage, 8);
+      } else if (currentPath === '/dashboard') {
+        // Preload frequently accessed pages from dashboard
+        preloadManager.addToQueue(TrainingPage, 6);
+        preloadManager.addToQueue(ProfilePage, 4);
+      }
+    };
+
+    setupPreloading();
+
+    // Preload on navigation hints
+    const handleMouseOver = (e) => {
+      const link = e.target.closest('a[href]');
+      if (link) {
+        const href = link.getAttribute('href');
+        if (href === '/training') preloadManager.addToQueue(TrainingPage, 7);
+        else if (href === '/community') preloadManager.addToQueue(CommunityPage, 7);
+        else if (href === '/profile') preloadManager.addToQueue(ProfilePage, 7);
+        else if (href === '/tournaments') preloadManager.addToQueue(TournamentsPage, 7);
+      }
+    };
+
+    document.addEventListener('mouseover', handleMouseOver);
+    
+    return () => {
+      document.removeEventListener('mouseover', handleMouseOver);
+    };
+  }, []);
+
+  return (
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <NeonDatabaseProvider>
+            <MeasurementProvider>
+              <AppContent />
+              {/* React Query DevTools - only in development */}
+              {process.env.NODE_ENV === 'development' && (
+                <ReactQueryDevtools initialIsOpen={false} />
+              )}
+            </MeasurementProvider>
+          </NeonDatabaseProvider>
+        </AuthProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 };
 
-export default App;
+export default memo(App);

@@ -156,6 +156,122 @@ class NotificationService {
       throw error;
     }
   }
+
+  // Get user notifications (without token parameter for component usage)
+  async getUserNotifications() {
+    try {
+      // For now, return mock data since we don't have a backend
+      return [
+        {
+          id: '1',
+          title: 'Training Reminder',
+          message: 'You have a training session scheduled in 30 minutes.',
+          type: 'training',
+          read: false,
+          createdAt: new Date(Date.now() - 1000 * 60 * 30).toISOString()
+        },
+        {
+          id: '2',
+          title: 'Nutrition Tip',
+          message: 'Remember to stay hydrated during your workout!',
+          type: 'nutrition',
+          read: true,
+          createdAt: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString()
+        },
+        {
+          id: '3',
+          title: 'Recovery Check-in',
+          message: 'How are you feeling after yesterday\'s training?',
+          type: 'recovery',
+          read: false,
+          createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString()
+        }
+      ];
+    } catch (error) {
+      console.error('Error fetching user notifications:', error);
+      return [];
+    }
+  }
+
+  // Mark as read (without token parameter)
+  async markAsRead(notificationId) {
+    try {
+      // For now, just log the action
+      console.log('Marking notification as read:', notificationId);
+      return { success: true };
+    } catch (error) {
+      console.error('Error marking notification as read:', error);
+      throw error;
+    }
+  }
+
+  // Mark all as read (without token parameter)
+  async markAllAsRead() {
+    try {
+      // For now, just log the action
+      console.log('Marking all notifications as read');
+      return { success: true };
+    } catch (error) {
+      console.error('Error marking all notifications as read:', error);
+      throw error;
+    }
+  }
+
+  // Delete notification (without token parameter)
+  async deleteNotification(notificationId) {
+    try {
+      // For now, just log the action
+      console.log('Deleting notification:', notificationId);
+      return { success: true };
+    } catch (error) {
+      console.error('Error deleting notification:', error);
+      throw error;
+    }
+  }
+
+  // Send notification
+  async sendNotification(notificationData) {
+    try {
+      // For now, just log the action
+      console.log('Sending notification:', notificationData);
+      return { success: true };
+    } catch (error) {
+      console.error('Error sending notification:', error);
+      throw error;
+    }
+  }
+
+  // Send emergency notification
+  async sendEmergencyNotification(message, priority = 'high') {
+    try {
+      // For now, just log the action
+      console.log('Sending emergency notification:', { message, priority });
+      return { success: true };
+    } catch (error) {
+      console.error('Error sending emergency notification:', error);
+      throw error;
+    }
+  }
+
+  // Get user preferences (without token parameter)
+  async getUserPreferences() {
+    try {
+      // For now, return default preferences
+      return {
+        email: true,
+        push: true,
+        sms: false,
+        training: true,
+        nutrition: true,
+        recovery: true,
+        team: true,
+        system: false
+      };
+    } catch (error) {
+      console.error('Error fetching user preferences:', error);
+      return {};
+    }
+  }
 }
 
 export default new NotificationService(); 

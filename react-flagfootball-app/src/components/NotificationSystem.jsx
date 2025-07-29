@@ -1,48 +1,82 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef, memo } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 
-const NotificationSystem = () => {
+const NotificationSystem = memo(() => {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const { user } = useAuth();
+  const abortControllerRef = useRef(null);
+  const isMountedRef = useRef(true);
 
-  // Backend Integration - Fetch notifications
+  // Backend Integration - Fetch notifications with cleanup
   useEffect(() => {
-    fetchNotifications();
+    if (user) {
+      fetchNotifications();
+    }
+    
+    // Cleanup function to prevent memory leaks
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
   }, [user]);
+  
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, []);
 
-  const fetchNotifications = async () => {
+  const fetchNotifications = useCallback(async () => {
+    if (!user || !isMountedRef.current) return;
+    
     try {
+      // Create new abort controller for this request
+      abortControllerRef.current = new AbortController();
+      
       const response = await fetch('/api/notifications', {
         headers: {
           'Authorization': `Bearer ${user.token}`,
           'Content-Type': 'application/json'
-        }
+        },
+        signal: abortControllerRef.current.signal
       });
       
-      if (response.ok) {
+      if (response.ok && isMountedRef.current) {
         const data = await response.json();
         setNotifications(data.notifications);
         setUnreadCount(data.unreadCount);
       }
     } catch (error) {
-      console.error('Error fetching notifications:', error);
+      if (error.name !== 'AbortError' && isMountedRef.current) {
+        console.error('Error fetching notifications:', error);
+      }
     }
-  };
+  }, [user]);
 
-  // Backend Integration - Mark notification as read
-  const markAsRead = async (notificationId) => {
+  // Backend Integration - Mark notification as read with cleanup
+  const markAsRead = useCallback(async (notificationId) => {
+    if (!user || !isMountedRef.current) return;
+    
     try {
+      const abortController = new AbortController();
+      
       const response = await fetch(`/api/notifications/${notificationId}/read`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${user.token}`,
           'Content-Type': 'application/json'
-        }
+        },
+        signal: abortController.signal
       });
       
-      if (response.ok) {
+      if (response.ok && isMountedRef.current) {
         // Update local state
         setNotifications(prev => 
           prev.map(notif => 
@@ -157,5 +191,7 @@ const NotificationSystem = () => {
     </div>
   );
 };
+
+NotificationSystem.displayName = 'NotificationSystem';
 
 export default NotificationSystem; 

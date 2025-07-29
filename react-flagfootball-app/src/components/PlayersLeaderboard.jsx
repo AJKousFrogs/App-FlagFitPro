@@ -1,4 +1,12 @@
 import React, { useState } from 'react';
+import { 
+  TrophyIcon, 
+  BoltIcon, 
+  ShieldCheckIcon, 
+  UserIcon,
+  GiftIcon,
+  ChartBarIcon
+} from '@heroicons/react/24/outline';
 
 const PlayersLeaderboard = () => {
   const [leaderboardData] = useState([
@@ -9,7 +17,7 @@ const PlayersLeaderboard = () => {
       position: 'WR',
       xp: 2847,
       level: 'Elite',
-      avatar: '🏃',
+      avatar: <UserIcon className="h-8 w-8 text-blue-500" />,
       stats: {
         weightLoss: 12, // lbs
         trainings: 45, // sessions
@@ -17,7 +25,7 @@ const PlayersLeaderboard = () => {
         fortyYard: 4.3, // seconds
         totalXP: 2847
       },
-      sponsorReward: '🏆 $500 GearX Pro Gift Card + Chemius Supplements',
+      sponsorReward: <><TrophyIcon className="h-4 w-4 inline mr-1" />$500 GearX Pro Gift Card + Chemius Supplements</>,
       isCurrentUser: false
     },
     {
@@ -27,7 +35,7 @@ const PlayersLeaderboard = () => {
       position: 'QB',
       xp: 2654,
       level: 'Pro',
-      avatar: '🏈',
+      avatar: <UserIcon className="h-8 w-8 text-green-500" />,
       stats: {
         weightLoss: 8,
         trainings: 42,
@@ -35,7 +43,7 @@ const PlayersLeaderboard = () => {
         fortyYard: 4.5,
         totalXP: 2654
       },
-      sponsorReward: '🥈 $250 LaprimaFit Gear',
+      sponsorReward: <><TrophyIcon className="h-4 w-4 inline mr-1" />$250 LaprimaFit Gear</>,
       isCurrentUser: true
     },
     {
@@ -45,7 +53,7 @@ const PlayersLeaderboard = () => {
       position: 'Blitzer',
       xp: 2489,
       level: 'Pro',
-      avatar: '⚡',
+      avatar: <BoltIcon className="h-8 w-8 text-yellow-500" />,
       stats: {
         weightLoss: 15,
         trainings: 38,
@@ -53,7 +61,7 @@ const PlayersLeaderboard = () => {
         fortyYard: 4.4,
         totalXP: 2489
       },
-      sponsorReward: '🥉 $100 Chemius Supplements',
+      sponsorReward: <><TrophyIcon className="h-4 w-4 inline mr-1" />$100 Chemius Supplements</>,
       isCurrentUser: false
     },
     {
@@ -63,7 +71,7 @@ const PlayersLeaderboard = () => {
       position: 'DB',
       xp: 2312,
       level: 'Advanced',
-      avatar: '🛡️',
+      avatar: <ShieldCheckIcon className="h-8 w-8 text-purple-500" />,
       stats: {
         weightLoss: 6,
         trainings: 35,
@@ -81,7 +89,7 @@ const PlayersLeaderboard = () => {
       position: 'Center',
       xp: 2156,
       level: 'Advanced',
-      avatar: '🏈',
+      avatar: <UserIcon className="h-8 w-8 text-indigo-500" />,
       stats: {
         weightLoss: 10,
         trainings: 32,
@@ -99,7 +107,7 @@ const PlayersLeaderboard = () => {
       position: 'WR',
       xp: 1987,
       level: 'Intermediate',
-      avatar: '🏃',
+      avatar: <UserIcon className="h-8 w-8 text-red-500" />,
       stats: {
         weightLoss: 5,
         trainings: 28,
@@ -117,7 +125,7 @@ const PlayersLeaderboard = () => {
       position: 'Blitzer',
       xp: 1843,
       level: 'Intermediate',
-      avatar: '⚡',
+      avatar: <BoltIcon className="h-8 w-8 text-orange-500" />,
       stats: {
         weightLoss: 18,
         trainings: 25,
@@ -135,7 +143,7 @@ const PlayersLeaderboard = () => {
       position: 'DB',
       xp: 1721,
       level: 'Intermediate',
-      avatar: '🛡️',
+      avatar: <ShieldCheckIcon className="h-8 w-8 text-teal-500" />,
       stats: {
         weightLoss: 3,
         trainings: 22,
@@ -153,7 +161,7 @@ const PlayersLeaderboard = () => {
       position: 'WR',
       xp: 1598,
       level: 'Beginner',
-      avatar: '🏃',
+      avatar: <UserIcon className="h-8 w-8 text-pink-500" />,
       stats: {
         weightLoss: 7,
         trainings: 18,
@@ -171,7 +179,7 @@ const PlayersLeaderboard = () => {
       position: 'Center',
       xp: 1456,
       level: 'Beginner',
-      avatar: '🏈',
+      avatar: <UserIcon className="h-8 w-8 text-gray-500" />,
       stats: {
         weightLoss: 4,
         trainings: 15,
@@ -188,9 +196,9 @@ const PlayersLeaderboard = () => {
 
   const getRankIcon = (rank) => {
     switch (rank) {
-      case 1: return '🥇';
-      case 2: return '🥈';
-      case 3: return '🥉';
+      case 1: return <TrophyIcon className="h-6 w-6 text-yellow-500" />;
+      case 2: return <TrophyIcon className="h-6 w-6 text-gray-400" />;
+      case 3: return <TrophyIcon className="h-6 w-6 text-amber-600" />;
       default: return `#${rank}`;
     }
   };
@@ -212,7 +220,10 @@ const PlayersLeaderboard = () => {
         <h3>🏆 Players Leaderboard</h3>
         <p>Compete with players across all teams! Top performers earn sponsor rewards.</p>
         <div className="xp-system-info">
-          <h4>📊 XP System Breakdown:</h4>
+          <h4 className="flex items-center gap-2">
+            <ChartBarIcon className="h-5 w-5" />
+            XP System Breakdown:
+          </h4>
           <div className="xp-breakdown">
             <span>💪 Weight Loss: 50 XP/lb</span>
             <span>🏋️ Training Sessions: 25 XP/session</span>
@@ -305,7 +316,7 @@ const PlayersLeaderboard = () => {
               <div className="reward-col">
                 {player.sponsorReward ? (
                   <div className="reward-info">
-                    <span className="reward-icon">🎁</span>
+                    <GiftIcon className="h-4 w-4 reward-icon" />
                     <span className="reward-text">{player.sponsorReward}</span>
                   </div>
                 ) : (

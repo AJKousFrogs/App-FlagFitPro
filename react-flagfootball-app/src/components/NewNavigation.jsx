@@ -2,41 +2,49 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useNeonDatabase } from '../contexts/NeonDatabaseContext';
 import { Avatar, AvatarImage, AvatarFallback } from './ui/Avatar';
+import { 
+  HomeIcon, 
+  UserGroupIcon, 
+  TrophyIcon, 
+  BellIcon, 
+  MagnifyingGlassIcon,
+  UserIcon,
+  CogIcon,
+  ArrowRightOnRectangleIcon,
+  PlusIcon,
+  Bars3Icon
+} from '@heroicons/react/24/outline';
+
+import ThemeToggle from './ThemeToggle';
 import BackupManager from './BackupManager';
 import NotificationCenter from './NotificationCenter';
 import BackupErrorBoundary from './BackupErrorBoundary';
 import PreFlightChecklistView from './PreFlightChecklistView';
 import NotificationService from '../services/NotificationService';
-import ThemeToggle from './ThemeToggle';
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
-} from './ui/NavigationMenu';
-import { cn } from '../utils/cn';
 
 const NewNavigation = () => {
   const { user, logout } = useNeonDatabase();
   const location = useLocation();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [showActivityMenu, setShowActivityMenu] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [syncStatus, setSyncStatus] = useState({ synced: true, lastSync: new Date() });
+  
   const [teamData] = useState({
     name: 'Hawks',
     nextGame: 'vs Eagles Tomorrow',
     chemistry: 7.8,
     unreadMessages: 3
   });
-  
   const [onboardingStatus] = useState({
     completed: false,
     currentStep: 2,
     totalSteps: 5
   });
-  
+
   // Backup and Notification state
   const [showBackupManager, setShowBackupManager] = useState(false);
   const [showNotificationCenter, setShowNotificationCenter] = useState(false);
@@ -44,9 +52,10 @@ const NewNavigation = () => {
   const [unreadNotifications, setUnreadNotifications] = useState(0);
   
   const searchRef = useRef(null);
-  const menuRef = useRef(null);
+  const profileMenuRef = useRef(null);
+  const activityMenuRef = useRef(null);
 
-  // Initialize notifications and backup status
+  // Initialize notifications and sync status
   useEffect(() => {
     if (user?.id) {
       // Subscribe to notifications
@@ -62,13 +71,6 @@ const NewNavigation = () => {
       // Initialize notification count (mock data)
       setUnreadNotifications(3);
 
-      // Initialize backup status (mock data)
-      // setBackupStatus({
-      //   lastBackup: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), // 1 day ago
-      //   hasIssues: false,
-      //   inProgress: false
-      // });
-
       return unsubscribe;
     }
   }, [user]);
@@ -79,8 +81,11 @@ const NewNavigation = () => {
       if (searchRef.current && !searchRef.current.contains(event.target)) {
         setSearchOpen(false);
       }
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setIsMenuOpen(false);
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
+        setShowProfileMenu(false);
+      }
+      if (activityMenuRef.current && !activityMenuRef.current.contains(event.target)) {
+        setShowActivityMenu(false);
       }
     };
 
@@ -115,41 +120,32 @@ const NewNavigation = () => {
     setShowBackupManager(false);
   };
 
+  // Navigation items - grouped by content destinations and utilities
+  const contentDestinations = [
+    { path: '/dashboard', name: 'Dashboard', icon: HomeIcon },
+    { path: '/training', name: 'Training', icon: UserIcon },
+    { path: '/community', name: 'Community', icon: UserGroupIcon },
+    { path: '/tournaments', name: 'Tournaments', icon: TrophyIcon }
+  ];
+
   const isActive = (path) => location.pathname === path || location.pathname.startsWith(`${path}/`);
+
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    // Implement search functionality
+    console.log('Searching for:', query);
+  };
 
   const showRegistrationLink = !user;
 
-  const ListItem = React.forwardRef(({ className, title, children, ...props }, ref) => {
-    return (
-      <li>
-        <NavigationMenuLink asChild>
-          <a
-            ref={ref}
-            className={cn(
-              "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-              className
-            )}
-            {...props}
-          >
-            <div className="text-sm font-medium leading-none">{title}</div>
-            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-              {children}
-            </p>
-          </a>
-        </NavigationMenuLink>
-      </li>
-    );
-  });
-  ListItem.displayName = "ListItem";
-
   return (
-    <nav className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
+    <nav className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50" role="navigation">
       <div className="max-w-7xl mx-auto">
         {/* Setup Progress Banner - Only show if not completed */}
         {!onboardingStatus.completed && (
-          <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-3">
+          <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2">
             <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-6">
+              <div className="flex items-center space-x-4">
                 <span className="text-sm font-medium">
                   Complete your setup: Step {onboardingStatus.currentStep} of {onboardingStatus.totalSteps}
                 </span>
@@ -164,7 +160,7 @@ const NewNavigation = () => {
               </div>
               <Link
                 to="/onboarding"
-                className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                className="bg-white/20 hover:bg-white/30 text-white px-4 py-1.5 rounded-md text-sm font-medium transition-colors"
               >
                 Continue Setup
               </Link>
@@ -173,125 +169,136 @@ const NewNavigation = () => {
         )}
 
         {/* Main Navigation Bar */}
-        <div className="flex items-center justify-between h-16 px-6">
-          {/* Left Section - Logo & Brand */}
-          <div className="flex items-center">
-            <Link to="/dashboard" className="flex items-center">
+        <div className="flex items-center justify-between h-14 px-4">
+          {/* Left Section - Brand & Content Destinations */}
+          <div className="flex items-center space-x-8">
+            {/* Brand & Primary Shortcut */}
+            <Link to="/dashboard" className="flex items-center space-x-2">
+              <HomeIcon className="h-8 w-8 text-blue-600" />
               <span className="text-xl font-bold text-gray-900 dark:text-white">
-                Merlins Playbook
+                FlagFit Pro
               </span>
             </Link>
+
+            {/* Content Destinations - Desktop */}
+            <div className="hidden lg:flex items-center space-x-6">
+              {contentDestinations.map((item) => (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`flex items-center space-x-1 text-sm font-medium px-3 py-2 transition-all duration-200 ${
+                    isActive(item.path)
+                      ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'
+                      : 'text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:border-b hover:border-blue-600/40 dark:hover:border-blue-400/40'
+                  }`}
+                  aria-current={isActive(item.path) ? 'page' : undefined}
+                >
+                  <item.icon className="h-5 w-5" />
+                  <span>{item.name}</span>
+                  {item.path === '/community' && teamData.unreadMessages > 0 && (
+                    <span className="ml-1 text-xs bg-red-500 text-white px-1.5 py-0.5 rounded-full">
+                      {teamData.unreadMessages}
+                    </span>
+                  )}
+                </Link>
+              ))}
+            </div>
           </div>
 
-          {/* Center Section - Main Navigation */}
-          <div className="hidden lg:block">
-            <NavigationMenu>
-              <NavigationMenuList className="space-x-8">
-                <NavigationMenuItem>
-                  <NavigationMenuLink asChild>
-                    <Link 
-                      to="/dashboard"
-                      className={cn(
-                        navigationMenuTriggerStyle,
-                        "h-12 px-6 py-3 text-base font-medium transition-all duration-200",
-                        isActive('/dashboard')
-                          ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 border-b-2 border-blue-600 dark:border-blue-400"
-                          : "text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800"
-                      )}
-                    >
-                      Dashboard
-                    </Link>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-
-                <NavigationMenuItem>
-                  <NavigationMenuLink asChild>
-                    <Link 
-                      to="/training"
-                      className={cn(
-                        navigationMenuTriggerStyle,
-                        "h-12 px-6 py-3 text-base font-medium transition-all duration-200",
-                        isActive('/training')
-                          ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 border-b-2 border-blue-600 dark:border-blue-400"
-                          : "text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800"
-                      )}
-                    >
-                      Practice
-                    </Link>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger
-                    className={cn(
-                      "h-12 px-6 py-3 text-base font-medium transition-all duration-200",
-                      isActive('/community')
-                        ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 border-b-2 border-blue-600 dark:border-blue-400"
-                        : "text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800"
-                    )}
-                  >
-                    Community
-                    {teamData.unreadMessages > 0 && (
-                      <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">
-                        ({teamData.unreadMessages})
-                      </span>
-                    )}
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <ul className="grid gap-3 p-4 w-[400px] md:w-[500px] lg:w-[600px]">
-                      <ListItem href="/community/team" title="Team Chat">
-                        Connect with your teammates and coaches
-                      </ListItem>
-                      <ListItem href="/community/forums" title="Discussion Forums">
-                        Share strategies and get advice from the community
-                      </ListItem>
-                      <ListItem href="/community/events" title="Team Events">
-                        View upcoming team events and activities
-                      </ListItem>
-                    </ul>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger
-                    className={cn(
-                      "h-12 px-6 py-3 text-base font-medium transition-all duration-200",
-                      isActive('/tournaments')
-                        ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 border-b-2 border-blue-600 dark:border-blue-400"
-                        : "text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800"
-                    )}
-                  >
-                    Tournaments
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <ul className="grid gap-3 p-4 w-[400px] md:w-[500px] lg:w-[600px]">
-                      <ListItem href="/tournaments/upcoming" title="Upcoming Tournaments">
-                        View and register for upcoming tournaments
-                      </ListItem>
-                      <ListItem href="/tournaments/past" title="Past Results">
-                        Review your tournament history and performance
-                      </ListItem>
-                      <ListItem href="/tournaments/standings" title="Current Standings">
-                        Check your position in ongoing tournaments
-                      </ListItem>
-                    </ul>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-              </NavigationMenuList>
-            </NavigationMenu>
-          </div>
-
-          {/* Right Section - User Menu Only */}
+          {/* Right Section - Utilities */}
           <div className="flex items-center space-x-4">
-            {/* Theme Toggle */}
-            <ThemeToggle className="hidden md:flex" />
-            
-            {/* User Menu */}
+            {/* Global Search - Desktop */}
             {user && (
-              <div className="relative" ref={menuRef}>
+              <div className="hidden md:flex items-center relative" ref={searchRef}>
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    value={searchQuery}
+                    onChange={(e) => handleSearch(e.target.value)}
+                    className="w-48 px-3 py-1.5 pl-8 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                  <MagnifyingGlassIcon className="absolute left-2.5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                </div>
+              </div>
+            )}
+
+            {/* Activity Menu (Notifications + Sync Status) */}
+            {user && (
+              <div className="relative" ref={activityMenuRef}>
                 <button
-                  onClick={() => setIsMenuOpen(!isMenuOpen)}
-                  className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                  onClick={() => setShowActivityMenu(!showActivityMenu)}
+                  className="flex items-center space-x-1 text-sm font-medium px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-200"
+                  title="Activity & Notifications"
+                >
+                  <BellIcon className="h-6 w-6" />
+                  <span className="hidden lg:block">Activity</span>
+                  {unreadNotifications > 0 && (
+                    <span className="text-xs bg-red-500 text-white px-1.5 py-0.5 rounded-full">
+                      {unreadNotifications > 99 ? '99+' : unreadNotifications}
+                    </span>
+                  )}
+                  {syncStatus.synced && (
+                    <span className="text-green-500 text-sm">✓</span>
+                  )}
+                </button>
+
+                {showActivityMenu && (
+                  <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg py-3 z-50 border border-gray-200 dark:border-gray-700">
+                    {/* Sync Status */}
+                    <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-600 dark:text-gray-400">Sync Status</span>
+                        <span className="text-green-500 text-sm">✓ Synced</span>
+                      </div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        Last sync: {syncStatus.lastSync.toLocaleTimeString()}
+                      </div>
+                    </div>
+
+                    {/* Notifications */}
+                    <div className="px-4 py-2">
+                      <div className="text-sm font-medium text-gray-900 dark:text-white mb-2">
+                        Recent Notifications
+                      </div>
+                      <div className="space-y-2">
+                        <div className="text-sm text-gray-700 dark:text-gray-300">
+                          Team practice scheduled for tomorrow
+                        </div>
+                        <div className="text-sm text-gray-700 dark:text-gray-300">
+                          New training drill available
+                        </div>
+                        <div className="text-sm text-gray-700 dark:text-gray-300">
+                          Tournament registration opens soon
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="px-4 pt-2 border-t border-gray-200 dark:border-gray-700">
+                      <button
+                        onClick={() => {
+                          handleNotificationClick();
+                          setShowActivityMenu(false);
+                        }}
+                        className="w-full text-left text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
+                      >
+                        View All Notifications
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Theme Toggle */}
+            <ThemeToggle />
+
+            {/* User Profile Menu */}
+            {user && (
+              <div className="relative" ref={profileMenuRef}>
+                <button
+                  onClick={() => setShowProfileMenu(!showProfileMenu)}
+                  className="flex items-center space-x-2 p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                 >
                   <Avatar className="h-8 w-8">
                     <AvatarImage src={user?.avatar} alt={user?.firstName} />
@@ -302,11 +309,12 @@ const NewNavigation = () => {
                   <span className="hidden lg:block text-sm font-medium text-gray-700 dark:text-gray-300">
                     {user?.firstName || 'User'}
                   </span>
+                  <span className="text-gray-400">▼</span>
                 </button>
 
-                {/* Dropdown Menu */}
-                {isMenuOpen && (
+                {showProfileMenu && (
                   <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-lg shadow-lg py-2 z-50 border border-gray-200 dark:border-gray-700">
+                    {/* User Info */}
                     <div className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700">
                       <div className="font-semibold">{user?.firstName} {user?.lastName}</div>
                       <div className="text-gray-500 dark:text-gray-400 text-xs">{user?.email}</div>
@@ -317,101 +325,54 @@ const NewNavigation = () => {
                       )}
                     </div>
                     
-                    {!onboardingStatus.completed && (
-                      <Link
-                        to="/onboarding"
-                        className="block px-4 py-2 text-sm text-blue-600 dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700 font-medium"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        Complete Setup ({onboardingStatus.currentStep}/{onboardingStatus.totalSteps})
-                      </Link>
-                    )}
-                    
+                    {/* Profile Actions */}
                     <Link
                       to="/profile"
                       className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                      onClick={() => setIsMenuOpen(false)}
+                      onClick={() => setShowProfileMenu(false)}
                     >
-                      Profile
+                      My Profile
                     </Link>
-                    
-                    <Link
-                      to="/performance"
-                      className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      Stats
-                    </Link>
-                    
-                    <Link
-                      to="/progress"
-                      className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      Progress
-                    </Link>
-                    
-                    <button
-                      onClick={() => {
-                        handleNotificationClick();
-                        setIsMenuOpen(false);
-                      }}
-                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                    >
-                      Notifications
-                      {unreadNotifications > 0 && (
-                        <span className="ml-2 text-xs bg-red-500 text-white px-1.5 py-0.5 rounded-full">
-                          {unreadNotifications}
-                        </span>
-                      )}
-                    </button>
-                    
+
+                    {/* Tools Submenu */}
+                    <div className="relative group">
+                      <button className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                        Sync Tools ›
+                      </button>
+                      <div className="absolute left-full top-0 ml-1 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg py-2 border border-gray-200 dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                        <button className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                          Check Status
+                        </button>
+                        <button className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                          Force Sync
+                        </button>
+                        <button className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                          Clear Offline Data
+                        </button>
+                      </div>
+                    </div>
+
                     <button
                       onClick={() => {
                         handleBackupClick();
-                        setIsMenuOpen(false);
+                        setShowProfileMenu(false);
                       }}
                       className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                     >
                       Backup & Recovery
                     </button>
                     
-                    <Link
-                      to="/settings"
-                      className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      App Settings
-                    </Link>
-                    
-                    {/* Theme Toggle */}
-                    <div className="px-4 py-2 border-t border-gray-200 dark:border-gray-600">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-700 dark:text-gray-300">Theme</span>
-                        <ThemeToggle showLabel={false} />
-                      </div>
-                    </div>
-                    
                     {/* Developer/Admin Tools */}
                     {(user?.role === 'coach' || process.env.NODE_ENV === 'development') && (
-                      <>
-                        <button
-                          onClick={() => {
-                            setShowPreFlightChecklist(true);
-                            setIsMenuOpen(false);
-                          }}
-                          className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border-t border-gray-200 dark:border-gray-600"
-                        >
-                          System Health Check
-                        </button>
-                        <Link
-                          to="/dragdrop-test"
-                          className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                          onClick={() => setIsMenuOpen(false)}
-                        >
-                          Drag & Drop Test
-                        </Link>
-                      </>
+                      <button
+                        onClick={() => {
+                          setShowPreFlightChecklist(true);
+                          setShowProfileMenu(false);
+                        }}
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border-t border-gray-200 dark:border-gray-600"
+                      >
+                        System Health Check
+                      </button>
                     )}
                     
                     <button
@@ -441,7 +402,7 @@ const NewNavigation = () => {
               className="lg:hidden inline-flex items-center justify-center p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
             >
               <span className="sr-only">Open main menu</span>
-              <span className="text-sm font-medium">Menu</span>
+              <Bars3Icon className="h-6 w-6" />
             </button>
           </div>
         </div>
@@ -449,65 +410,34 @@ const NewNavigation = () => {
         {/* Mobile Navigation */}
         {isMenuOpen && (
           <div className="lg:hidden border-t border-gray-200 dark:border-gray-700">
-            <div className="px-4 pt-4 pb-6 space-y-2">
-              <Link
-                to="/dashboard"
-                className={`flex items-center justify-between px-4 py-3 rounded-lg text-base font-medium transition-colors ${
-                  isActive('/dashboard')
-                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
-                    : 'text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400'
-                }`}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <span>Dashboard</span>
-              </Link>
-              
-              <Link
-                to="/training"
-                className={`flex items-center justify-between px-4 py-3 rounded-lg text-base font-medium transition-colors ${
-                  isActive('/training')
-                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
-                    : 'text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400'
-                }`}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <span>Practice</span>
-              </Link>
-              
-              <Link
-                to="/community"
-                className={`flex items-center justify-between px-4 py-3 rounded-lg text-base font-medium transition-colors ${
-                  isActive('/community')
-                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
-                    : 'text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400'
-                }`}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <span>Community</span>
-                {teamData.unreadMessages > 0 && (
-                  <span className="text-xs text-gray-500 dark:text-gray-400">
-                    ({teamData.unreadMessages})
-                  </span>
-                )}
-              </Link>
-              
-              <Link
-                to="/tournaments"
-                className={`flex items-center justify-between px-4 py-3 rounded-lg text-base font-medium transition-colors ${
-                  isActive('/tournaments')
-                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
-                    : 'text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400'
-                }`}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <span>Tournaments</span>
-              </Link>
+            <div className="px-2 pt-2 pb-3 space-y-1">
+              {contentDestinations.map((item) => (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-base font-medium transition-colors ${
+                    isActive(item.path)
+                      ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+                      : 'text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400'
+                  }`}
+                  onClick={() => setIsMenuOpen(false)}
+                  aria-current={isActive(item.path) ? 'page' : undefined}
+                >
+                  <item.icon className="h-6 w-6" />
+                  <span>{item.name}</span>
+                  {item.path === '/community' && teamData.unreadMessages > 0 && (
+                    <span className="ml-auto text-xs bg-red-500 text-white px-1.5 py-0.5 rounded-full">
+                      {teamData.unreadMessages}
+                    </span>
+                  )}
+                </Link>
+              ))}
               
               {/* Mobile Registration Link */}
               {showRegistrationLink && (
                 <Link
                   to="/register"
-                  className="block w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg text-base font-medium transition-colors text-center"
+                  className="block w-full bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-base font-medium transition-colors text-center"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Sign Up

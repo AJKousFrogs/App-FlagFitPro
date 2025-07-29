@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import MeasurementDisplay from './MeasurementDisplay';
+import WeeklyTrainingSchedule from './WeeklyTrainingSchedule';
 
 const AICoachMessage = () => {
   const [currentMessage, setCurrentMessage] = useState({
@@ -184,6 +186,37 @@ const AICoachMessage = () => {
         <button>Ask AI Coach</button>
         <button>View Progress</button>
         <button>Get Training Tips</button>
+      </div>
+
+      {/* Physical Profile Section */}
+      <div className="physical-profile-section">
+        <h4>📊 Physical Profile</h4>
+        <div className="physical-profile-grid">
+          <MeasurementDisplay
+            type="weight"
+            value={185}
+            label="Current Weight"
+          />
+          <MeasurementDisplay
+            type="height"
+            value={74}
+            label="Height"
+          />
+          <div className="stats-card">
+            <div>BMI: 22.4</div>
+            <div>71st percentile</div>
+          </div>
+          <div className="stats-card">
+            <div>Muscle Mass: 42.3%</div>
+            <div>89th percentile</div>
+          </div>
+        </div>
+        
+        {/* Weekly Training Schedule - Full week view */}
+        <div className="training-schedule-section">
+          <h5>📅 Weekly Training Schedule</h5>
+          <WeeklyTrainingSchedule />
+        </div>
       </div>
     </div>
   );

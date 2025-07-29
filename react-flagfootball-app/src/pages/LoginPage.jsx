@@ -1,69 +1,89 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, memo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import SponsorBanner from '../components/SponsorBanner';
+import { useAuth } from '../contexts/AuthContext';
+import ErrorBoundary from '../components/ErrorBoundary';
 
-const LoginPage = ({ onLogin }) => {
+const LoginPage = memo(({ onLogin }) => {
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [validationErrors, setValidationErrors] = useState({});
+  const { isLoading, error: authError, login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  // Client-side validation
+  const validateForm = useCallback(() => {
+    const errors = {};
+    
+    if (!formData.email) {
+      errors.email = 'Email is required';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      errors.email = 'Please enter a valid email address';
+    }
+    
+    if (!formData.password) {
+      errors.password = 'Password is required';
+    } else if (formData.password.length < 3) {
+      errors.password = 'Password must be at least 3 characters long';
+    }
+    
+    return errors;
+  }, [formData]);
+
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
-    console.log('🔍 Form submitted!', formData);
-    setIsLoading(true);
-    setError('');
+    
+    // Clear previous validation errors
+    setValidationErrors({});
+    
+    // Validate form
+    const errors = validateForm();
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      return;
+    }
     
     try {
-      // Simulate login process
-      console.log('🔄 Starting login process...');
+      // Use the authentication context
+      await login(formData);
       
-      // Basic validation
-      if (!formData.email || !formData.password) {
-        console.log('❌ Validation failed - missing fields');
-        throw new Error('Please fill in all fields');
-      }
-      
-      console.log('✅ Validation passed, simulating API call...');
-      
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      console.log('📞 Calling onLogin function...');
-      
-      // Call the onLogin function from App.jsx
+      // Call the onLogin prop if provided (for backward compatibility)
       if (onLogin) {
-        console.log('✅ onLogin function exists, calling it...');
         onLogin(formData);
-      } else {
-        console.log('⚠️ onLogin function is undefined!');
       }
       
-      console.log('🧭 Navigating to dashboard...');
-      // Navigate to dashboard
+      // Navigate to dashboard on successful login
       navigate('/dashboard');
     } catch (err) {
-      console.log('❌ Error occurred:', err.message);
-      setError(err.message || 'Login failed. Please try again.');
-    } finally {
-      console.log('🏁 Login process finished');
-      setIsLoading(false);
+      console.error('Login failed:', err.message);
+      // Error is handled by the AuthContext
     }
-  };
+  }, [formData, validateForm, login, onLogin, navigate]);
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
+  const handleChange = useCallback((e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    
+    // Clear validation error when user starts typing
+    if (validationErrors[name]) {
+      setValidationErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
+  }, [validationErrors]);
 
   return (
-    <div className="login-page">
-      <div className="login-form">
+    <ErrorBoundary>
+      <div className="login-page">
+        <div className="login-form">
         <h2>Welcome Back! 🏈</h2>
         <div>Ready to dominate today&apos;s training?</div>
         
@@ -81,9 +101,17 @@ const LoginPage = ({ onLogin }) => {
           }}
         />
         
-        {error && (
+        {authError && (
           <div className="error-message" style={{ color: 'red', marginBottom: '1rem' }}>
-            {error}
+            {authError}
+          </div>
+        )}
+        
+        {Object.keys(validationErrors).length > 0 && (
+          <div className="validation-errors" style={{ color: 'red', marginBottom: '1rem' }}>
+            {Object.values(validationErrors).map((error, index) => (
+              <div key={index}>{error}</div>
+            ))}
           </div>
         )}
         
@@ -98,7 +126,15 @@ const LoginPage = ({ onLogin }) => {
               placeholder="Enter your email"
               required
               disabled={isLoading}
+              className={validationErrors.email ? 'input-error' : ''}
+              aria-invalid={!!validationErrors.email}
+              aria-describedby={validationErrors.email ? 'email-error' : undefined}
             />
+            {validationErrors.email && (
+              <div id="email-error" className="field-error" style={{ color: 'red', fontSize: '14px' }}>
+                {validationErrors.email}
+              </div>
+            )}
           </div>
           
           <div className="form-group">
@@ -111,23 +147,31 @@ const LoginPage = ({ onLogin }) => {
               placeholder="Enter your password"
               required
               disabled={isLoading}
+              className={validationErrors.password ? 'input-error' : ''}
+              aria-invalid={!!validationErrors.password}
+              aria-describedby={validationErrors.password ? 'password-error' : undefined}
             />
+            {validationErrors.password && (
+              <div id="password-error" className="field-error" style={{ color: 'red', fontSize: '14px' }}>
+                {validationErrors.password}
+              </div>
+            )}
           </div>
           
           <button 
             type="submit" 
             className="login-btn"
             disabled={isLoading}
-            onClick={() => console.log('🔘 Button clicked!')}
             style={{
-              cursor: 'pointer',
-              backgroundColor: '#fff',
+              cursor: isLoading ? 'not-allowed' : 'pointer',
+              backgroundColor: isLoading ? '#ccc' : '#fff',
               border: '2px solid #333',
               padding: '12px',
               width: '100%',
               fontSize: '16px',
               fontWeight: 'bold',
-              margin: '15px 0'
+              margin: '15px 0',
+              opacity: isLoading ? 0.7 : 1
             }}
           >
             {isLoading ? 'Signing In...' : 'Sign In'}
@@ -158,9 +202,16 @@ const LoginPage = ({ onLogin }) => {
             <div className="sponsor-logo">Chemius</div>
           </div>
         </div>
+        </div>
       </div>
-    </div>
+    </ErrorBoundary>
   );
+});
+
+LoginPage.displayName = 'LoginPage';
+
+LoginPage.propTypes = {
+  onLogin: PropTypes.func
 };
 
 export default LoginPage; 

@@ -307,12 +307,12 @@ const AccessibilityFeatures = () => {
       <div className="accessibility-help">
         <h4>🎯 Quick Voice Commands</h4>
         <ul>
-          <li>"Go to dashboard" - Navigate to dashboard</li>
-          <li>"Start training" - Open training page</li>
-          <li>"Show profile" - Open profile page</li>
-          <li>"Toggle high contrast" - Switch contrast mode</li>
-          <li>"Increase text size" - Make text larger</li>
-          <li>"Stop listening" - Disable voice commands</li>
+          <li>&ldquo;Go to dashboard&rdquo; - Navigate to dashboard</li>
+          <li>&ldquo;Start training&rdquo; - Open training page</li>
+          <li>&ldquo;Show profile&rdquo; - Open profile page</li>
+          <li>&ldquo;Toggle high contrast&rdquo; - Switch contrast mode</li>
+          <li>&ldquo;Increase text size&rdquo; - Make text larger</li>
+          <li>&ldquo;Stop listening&rdquo; - Disable voice commands</li>
         </ul>
       </div>
       

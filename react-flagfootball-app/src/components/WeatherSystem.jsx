@@ -1,4 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { 
+  BoltIcon, 
+  SunIcon, 
+  CloudIcon, 
+  CloudRainIcon,
+  CloudSnowIcon,
+  HomeIcon,
+  ChartBarIcon
+} from '@heroicons/react/24/outline';
 import { useAuth } from '../contexts/AuthContext';
 
 const WeatherSystem = () => {
@@ -215,12 +224,12 @@ const WeatherSystem = () => {
   };
 
   const getWeatherIcon = (conditions) => {
-    if (conditions.includes('thunderstorm')) return '⚡';
-    if (conditions.includes('rain')) return '🌧️';
-    if (conditions.includes('snow')) return '❄️';
-    if (conditions.includes('cloud')) return '☁️';
-    if (conditions.includes('clear')) return '☀️';
-    return '🌤️';
+    if (conditions.includes('thunderstorm')) return <BoltIcon className="h-6 w-6 text-yellow-500" />;
+    if (conditions.includes('rain')) return <CloudRainIcon className="h-6 w-6 text-blue-500" />;
+    if (conditions.includes('snow')) return <CloudSnowIcon className="h-6 w-6 text-blue-300" />;
+    if (conditions.includes('cloud')) return <CloudIcon className="h-6 w-6 text-gray-500" />;
+    if (conditions.includes('clear')) return <SunIcon className="h-6 w-6 text-yellow-500" />;
+    return <SunIcon className="h-6 w-6 text-yellow-400" />;
   };
 
   if (isLoading) {
@@ -253,7 +262,10 @@ const WeatherSystem = () => {
           </div>
 
           <div className="performance-impact">
-            <h4>🏈 Performance Impact</h4>
+            <h4 className="flex items-center gap-2">
+            <HomeIcon className="h-5 w-5" />
+            Performance Impact
+          </h4>
             <div className="impact-metrics">
               <div className="metric">
                 <span>Passing:</span>
@@ -329,10 +341,10 @@ const WeatherSystem = () => {
 
       <div className="weather-actions">
         <button onClick={() => window.location.href = '/weather/forecast'}>
-          📊 Extended Forecast
+                      <ChartBarIcon className="h-5 w-5" /> Extended Forecast
         </button>
         <button onClick={() => window.location.href = '/weather/history'}>
-          📈 Weather History
+                      <ChartBarIcon className="h-5 w-5" /> Weather History
         </button>
         <button onClick={() => window.location.href = '/weather/settings'}>
           ⚙️ Weather Settings

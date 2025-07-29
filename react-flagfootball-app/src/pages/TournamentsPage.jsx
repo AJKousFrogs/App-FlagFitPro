@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
 import SponsorBanner from '../components/SponsorBanner';
+import { 
+  TrophyIcon, 
+  UserGroupIcon, 
+  ChartBarIcon, 
+  BeakerIcon,
+  CalendarIcon,
+  MapPinIcon
+} from '@heroicons/react/24/outline';
 import AICoachMessage from '../components/AICoachMessage';
 
 const TournamentsPage = () => {
@@ -120,7 +128,10 @@ const TournamentsPage = () => {
 
   return (
     <div className="tournaments-page">
-      <h1>🏆 Tournaments</h1>
+      <h1 className="flex items-center gap-2">
+        <TrophyIcon className="h-8 w-8 text-yellow-500" />
+        Tournaments
+      </h1>
       
       {/* Top Sponsor Banner */}
       <SponsorBanner 
@@ -129,7 +140,7 @@ const TournamentsPage = () => {
         isPremium={false}
         sponsor={{
           name: 'LaprimaFit',
-          logo: '💪',
+          logo: <UserGroupIcon className="h-6 w-6" />,
           message: 'Tournament preparation gear',
           cta: 'Shop Now',
           link: '#'
@@ -600,7 +611,7 @@ const TournamentsPage = () => {
         isPremium={false}
         sponsor={{
           name: 'Chemius',
-          logo: '🧪',
+          logo: <BeakerIcon className="h-6 w-6" />,
           message: 'Tournament nutrition supplements',
           cta: 'Get Supplements',
           link: '#'

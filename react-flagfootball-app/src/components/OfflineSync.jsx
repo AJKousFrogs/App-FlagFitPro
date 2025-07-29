@@ -97,24 +97,20 @@ const OfflineSync = () => {
 
   // Backend Integration - Sync individual change
   const syncChange = async (change) => {
-    try {
-      const response = await fetch(change.endpoint, {
-        method: change.method,
-        headers: {
-          'Authorization': `Bearer ${user.token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(change.data)
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Sync failed: ${response.status}`);
-      }
-      
-      return await response.json();
-    } catch (error) {
-      throw error;
+    const response = await fetch(change.endpoint, {
+      method: change.method,
+      headers: {
+        'Authorization': `Bearer ${user.token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(change.data)
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Sync failed: ${response.status}`);
     }
+    
+    return await response.json();
   };
 
   // Backend Integration - Add change to pending queue
@@ -209,7 +205,7 @@ const OfflineSync = () => {
       
       {!isOnline && (
         <div className="offline-warning">
-          ⚠️ You're offline. Changes will sync when connection is restored.
+          ⚠️ You&apos;re offline. Changes will sync when connection is restored.
         </div>
       )}
       

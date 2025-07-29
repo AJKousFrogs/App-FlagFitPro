@@ -3,6 +3,13 @@ import PhysicalProfileCard from '../components/PhysicalProfileCard';
 import MeasurementToggle from '../components/MeasurementToggle';
 import MeasurementInput from '../components/MeasurementInput';
 import SponsorBanner from '../components/SponsorBanner';
+import { 
+  TrophyIcon, 
+  BoltIcon, 
+  BeakerIcon,
+  UserIcon,
+  ChartBarIcon
+} from '@heroicons/react/24/outline';
 
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState('personal');
@@ -32,7 +39,10 @@ const ProfilePage = () => {
 
   return (
     <div className="profile-page">
-      <h1>👤 Profile</h1>
+      <h1 className="flex items-center gap-2">
+        <UserIcon className="h-8 w-8 text-blue-600" />
+        Profile
+      </h1>
       
       {/* Top Sponsor Banner */}
       <SponsorBanner 
@@ -41,7 +51,7 @@ const ProfilePage = () => {
         isPremium={false}
         sponsor={{
           name: 'GearXPro',
-          logo: '⚡',
+          logo: <BoltIcon className="h-6 w-6" />,
           message: 'Personalized training gear',
           cta: 'Shop Now',
           link: '#'
@@ -279,7 +289,7 @@ const ProfilePage = () => {
         isPremium={false}
         sponsor={{
           name: 'Chemius',
-          logo: '🧪',
+          logo: <BeakerIcon className="h-6 w-6" />,
           message: 'Personalized nutrition plans',
           cta: 'Get Plan',
           link: '#'

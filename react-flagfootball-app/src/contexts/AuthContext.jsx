@@ -1,5 +1,4 @@
-import React, { createContext, useContext, useEffect } from 'react';
-import { useStandardReducer } from '../hooks/useReducer';
+import React, { createContext, useContext, useEffect, useReducer, useRef } from 'react';
 
 // Action types
 const AUTH_ACTIONS = {
@@ -15,7 +14,8 @@ const AUTH_ACTIONS = {
   CHECK_AUTH_FAILURE: 'CHECK_AUTH_FAILURE',
   UPDATE_PROFILE_START: 'UPDATE_PROFILE_START',
   UPDATE_PROFILE_SUCCESS: 'UPDATE_PROFILE_SUCCESS',
-  UPDATE_PROFILE_FAILURE: 'UPDATE_PROFILE_FAILURE'
+  UPDATE_PROFILE_FAILURE: 'UPDATE_PROFILE_FAILURE',
+  CLEAR_ERROR: 'CLEAR_ERROR'
 };
 
 // Initial state
@@ -30,6 +30,16 @@ const initialState = {
 // Custom reducer for auth-specific logic
 const authReducer = (state, action) => {
   switch (action.type) {
+    case AUTH_ACTIONS.LOGIN_START:
+    case AUTH_ACTIONS.REGISTER_START:
+    case AUTH_ACTIONS.CHECK_AUTH_START:
+    case AUTH_ACTIONS.UPDATE_PROFILE_START:
+      return {
+        ...state,
+        isLoading: true,
+        error: null
+      };
+
     case AUTH_ACTIONS.LOGIN_SUCCESS:
     case AUTH_ACTIONS.REGISTER_SUCCESS:
       return {
@@ -67,6 +77,22 @@ const authReducer = (state, action) => {
         isLoading: false,
         error: null
       };
+
+    case AUTH_ACTIONS.LOGIN_FAILURE:
+    case AUTH_ACTIONS.REGISTER_FAILURE:
+    case AUTH_ACTIONS.CHECK_AUTH_FAILURE:
+    case AUTH_ACTIONS.UPDATE_PROFILE_FAILURE:
+      return {
+        ...state,
+        isLoading: false,
+        error: action.payload
+      };
+
+    case AUTH_ACTIONS.CLEAR_ERROR:
+      return {
+        ...state,
+        error: null
+      };
     
     default:
       return state;
@@ -78,118 +104,135 @@ const AuthContext = createContext();
 
 // Provider component
 export const AuthProvider = ({ children }) => {
-  const [state, , actions] = useStandardReducer(
-    initialState,
-    AUTH_ACTIONS,
-    authReducer
-  );
+  const [state, dispatch] = useReducer(authReducer, initialState);
+
+  // Ref to track if component is mounted (prevent race conditions)
+  const isMountedRef = useRef(true);
+  const abortControllerRef = useRef(null);
 
   // Check authentication status on mount
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        actions.checkAuthStart();
+        // Create abort controller for this request
+        abortControllerRef.current = new AbortController();
+        
+        if (!isMountedRef.current) return;
+        dispatch({ type: AUTH_ACTIONS.CHECK_AUTH_START });
+        
         const { authService } = await import('../services/auth.service');
-        const user = await authService.getCurrentUser();
+        const user = await authService.getCurrentUser(abortControllerRef.current.signal);
+        
+        // Check if component is still mounted before updating state
+        if (!isMountedRef.current) return;
+        
         if (user) {
-          actions.checkAuthSuccess({ user });
+          dispatch({ type: AUTH_ACTIONS.CHECK_AUTH_SUCCESS, payload: { user } });
         } else {
-          actions.checkAuthFailure('No authenticated user found');
+          dispatch({ type: AUTH_ACTIONS.CHECK_AUTH_FAILURE, payload: 'No authenticated user found' });
         }
       } catch (error) {
-        actions.checkAuthFailure(error.message);
+        // Only update state if component is still mounted and not aborted
+        if (isMountedRef.current && error.name !== 'AbortError') {
+          dispatch({ type: AUTH_ACTIONS.CHECK_AUTH_FAILURE, payload: error.message });
+        }
       }
     };
 
-    // Only check auth on mount, don't depend on actions
+    // Only check auth on mount
     checkAuth();
-  }, [actions]); // Add actions dependency
 
-  // Login function
+    // Cleanup function to prevent race conditions
+    return () => {
+      isMountedRef.current = false;
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, []);
+
+  // Login function with race condition protection
   const login = React.useCallback(async (credentials) => {
+    const abortController = new AbortController();
     try {
-      console.log('AuthContext: Starting login process');
-      actions.loginStart();
+      if (!isMountedRef.current) return;
+      dispatch({ type: AUTH_ACTIONS.LOGIN_START });
+      
       const { authService } = await import('../services/auth.service');
-      const result = await authService.login(credentials);
-      console.log('AuthContext: Login service returned result, calling loginSuccess');
-      actions.loginSuccess(result);
-      console.log('AuthContext: LoginSuccess called, new auth state should be:', { 
-        isAuthenticated: true, 
-        user: result.user?.email 
-      });
+      const result = await authService.login(credentials, abortController.signal);
+      
+      if (!isMountedRef.current) return;
+      dispatch({ type: AUTH_ACTIONS.LOGIN_SUCCESS, payload: result });
       return result;
     } catch (error) {
-      console.error('AuthContext: Login failed:', error.message);
-      actions.loginFailure(error.message);
+      if (isMountedRef.current && error.name !== 'AbortError') {
+        dispatch({ type: AUTH_ACTIONS.LOGIN_FAILURE, payload: error.message });
+      }
       throw error;
     }
-  }, [actions]);
+  }, []);
 
-  // Register function
+  // Register function with race condition protection
   const register = React.useCallback(async (userData) => {
+    const abortController = new AbortController();
     try {
-      actions.registerStart();
+      if (!isMountedRef.current) return;
+      dispatch({ type: AUTH_ACTIONS.REGISTER_START });
+      
       const { authService } = await import('../services/auth.service');
-      const result = await authService.register(userData);
-      actions.registerSuccess(result);
+      const result = await authService.register(userData, abortController.signal);
+      
+      if (!isMountedRef.current) return;
+      dispatch({ type: AUTH_ACTIONS.REGISTER_SUCCESS, payload: result });
       return result;
     } catch (error) {
-      actions.registerFailure(error.message);
+      if (isMountedRef.current && error.name !== 'AbortError') {
+        dispatch({ type: AUTH_ACTIONS.REGISTER_FAILURE, payload: error.message });
+      }
       throw error;
     }
-  }, [actions]);
+  }, []);
 
   // Logout function
   const logout = React.useCallback(async () => {
     try {
       const { authService } = await import('../services/auth.service');
       await authService.logout();
-      actions.logout();
+      dispatch({ type: AUTH_ACTIONS.LOGOUT });
     } catch (error) {
       console.error('Logout error:', error);
       // Still clear local state even if server logout fails
-      actions.logout();
+      dispatch({ type: AUTH_ACTIONS.LOGOUT });
     }
-  }, [actions]); // Add actions dependency
+  }, []);
 
   // Update profile function
   const updateProfile = React.useCallback(async (profileData) => {
     try {
-      actions.updateProfileStart();
+      dispatch({ type: AUTH_ACTIONS.UPDATE_PROFILE_START });
       const { authService } = await import('../services/auth.service');
       const result = await authService.updateProfile(profileData);
-      actions.updateProfileSuccess(result);
+      dispatch({ type: AUTH_ACTIONS.UPDATE_PROFILE_SUCCESS, payload: result });
       return result;
     } catch (error) {
-      actions.updateProfileFailure(error.message);
+      dispatch({ type: AUTH_ACTIONS.UPDATE_PROFILE_FAILURE, payload: error.message });
       throw error;
     }
-  }, [actions]); // Add actions dependency
+  }, []);
 
   // Clear error function
   const clearError = React.useCallback(() => {
-    actions.clearError();
-  }, [actions]); // Add actions dependency
+    dispatch({ type: 'CLEAR_ERROR' });
+  }, []);
 
-  const value = React.useMemo(() => {
-    console.log('AuthContext: Current state update:', {
-      isAuthenticated: state.isAuthenticated,
-      isLoading: state.isLoading,
-      hasUser: !!state.user,
-      userEmail: state.user?.email,
-      error: state.error
-    });
-    
-    return {
-      ...state,
-      login,
-      register,
-      logout,
-      updateProfile,
-      clearError
-    };
-  }, [state, login, register, logout, updateProfile, clearError]);
+  const value = React.useMemo(() => ({
+    ...state,
+    login,
+    register,
+    logout,
+    updateProfile,
+    clearError
+  }), [state, login, register, logout, updateProfile, clearError]);
 
   return (
     <AuthContext.Provider value={value}>

@@ -209,31 +209,89 @@ class RealPreFlightChecker {
   findSyntaxIssues(content, filename) {
     const issues = [];
 
-    // Check for 'this' in functional components
-    if (filename.includes('.jsx') && content.includes('this.') && !content.includes('class ')) {
-      const matches = content.match(/this\./g);
-      if (matches) {
-        issues.push(`${matches.length} 'this' references in functional component`);
+    // Enhanced 'this' detection with better context awareness
+    if (filename.includes('.jsx') && content.includes('this.')) {
+      const lines = content.split('\n');
+      let thisIssues = 0;
+      
+      lines.forEach((line, index) => {
+        // Skip comments and strings
+        const trimmedLine = line.trim();
+        if (trimmedLine.startsWith('//') || trimmedLine.startsWith('/*')) return;
+        if (line.includes('"this.') || line.includes("'this.")) return;
+        
+        // Check if this is a functional component (no class declaration)
+        if (line.includes('this.') && !content.includes('class ') && !content.includes('extends ')) {
+          thisIssues++;
+        }
+      });
+      
+      if (thisIssues > 0) {
+        issues.push(`${thisIssues} 'this' references in functional component`);
       }
     }
 
-    // Check for missing imports
-    const importRegex = /import.*from.*['"]([^'"]+)['"]/g;
-    const imports = [...content.matchAll(importRegex)].map(match => match[1]);
-    
-    // Check for React import in JSX files
-    if (filename.includes('.jsx') && !content.includes('import React')) {
-      issues.push('Missing React import in JSX file');
+    // Enhanced React import detection for modern React
+    if (filename.includes('.jsx') || filename.includes('.tsx')) {
+      const reactImportPatterns = [
+        /import\s+React\s+from\s+['"]react['"]/,
+        /import\s+\*\s+as\s+React\s+from\s+['"]react['"]/,
+        /import\s+\{[^}]*React[^}]*\}\s+from\s+['"]react['"]/,
+        /import\s+\{[^}]*\}\s+from\s+['"]react['"]/ // Modern React 17+ doesn't require explicit React import
+      ];
+      
+      const hasReactImport = reactImportPatterns.some(pattern => pattern.test(content));
+      
+      // Only warn about missing React import for older React versions or specific cases
+      if (!hasReactImport && content.includes('React.') && !content.includes('import React')) {
+        issues.push('Missing React import in JSX file');
+      }
     }
 
-    // Check for unused variables (basic check)
-    const variableRegex = /const\s+(\w+)\s*=/g;
-    const variables = [...content.matchAll(variableRegex)].map(match => match[1]);
+    // Enhanced variable usage detection
+    const variableDeclarations = content.match(/const\s+(\w+)\s*=|let\s+(\w+)\s*=|var\s+(\w+)\s*=/g);
     
-    for (const variable of variables) {
-      const usageCount = (content.match(new RegExp(`\\b${variable}\\b`, 'g')) || []).length;
-      if (usageCount === 1) { // Only declared, never used
-        issues.push(`Unused variable: ${variable}`, 'warning');
+    if (variableDeclarations) {
+      variableDeclarations.forEach(declaration => {
+        const varName = declaration.match(/(?:const|let|var)\s+(\w+)\s*=/)[1];
+        
+        // Skip common patterns that might be false positives
+        if (['i', 'j', 'k', 'index', 'key', 'item', 'element'].includes(varName)) return;
+        
+        // Check for usage in JSX, destructuring, template literals, etc.
+        const usagePatterns = [
+          new RegExp(`\\b${varName}\\b`, 'g'),
+          new RegExp(`\\{${varName}\\}`, 'g'),
+          new RegExp(`\\[${varName}\\]`, 'g'),
+          new RegExp(`\\$\\{${varName}\\}`, 'g')
+        ];
+        
+        const totalUsage = usagePatterns.reduce((count, pattern) => {
+          return count + (content.match(pattern) || []).length;
+        }, 0);
+        
+        // Only flag if truly unused (declaration only)
+        if (totalUsage <= 1) {
+          issues.push(`Potentially unused variable: ${varName}`);
+        }
+      });
+    }
+
+    // Check for common JSX issues
+    if (filename.includes('.jsx') || filename.includes('.tsx')) {
+      // Check for missing key props in lists
+      const mapWithoutKey = content.match(/\.map\s*\(\s*\([^)]*\)\s*=>\s*<[^>]*>/g);
+      if (mapWithoutKey && !content.includes('key=')) {
+        issues.push('Missing key prop in list rendering');
+      }
+      
+      // Check for accessibility issues
+      if (content.includes('<img') && !content.includes('alt=')) {
+        issues.push('Missing alt attribute on img tag');
+      }
+      
+      if (content.includes('<button') && !content.includes('aria-label=') && !content.includes('>.*</button>')) {
+        issues.push('Button without accessible label');
       }
     }
 
@@ -478,14 +536,45 @@ class RealPreFlightChecker {
       try {
         const content = readFileSync(file, 'utf8');
         
-        // Check for inline functions in JSX (performance issue)
-        const inlineFunctionMatches = content.match(/onClick=\{[^}]*=>[^}]*\}/g);
-        if (inlineFunctionMatches && inlineFunctionMatches.length > 5) {
+        // Enhanced inline function detection with context
+        const inlineFunctionPatterns = [
+          /onClick=\{[^}]*=>[^}]*\}/g,
+          /onChange=\{[^}]*=>[^}]*\}/g,
+          /onSubmit=\{[^}]*=>[^}]*\}/g,
+          /onBlur=\{[^}]*=>[^}]*\}/g,
+          /onFocus=\{[^}]*=>[^}]*\}/g
+        ];
+        
+        let totalInlineFunctions = 0;
+        inlineFunctionPatterns.forEach(pattern => {
+          const matches = content.match(pattern);
+          if (matches) {
+            totalInlineFunctions += matches.length;
+          }
+        });
+        
+        // Only flag if there are many inline functions (more than 3)
+        if (totalInlineFunctions > 3) {
           performanceIssues++;
         }
         
-        // Check for missing React.memo or useMemo for expensive operations
-        if (content.includes('map') && content.includes('filter') && !content.includes('useMemo')) {
+        // Check for expensive operations without optimization
+        const expensiveOperations = [
+          /\.map\s*\([^)]*\)\s*\.filter\s*\([^)]*\)/g,
+          /\.filter\s*\([^)]*\)\s*\.map\s*\([^)]*\)/g,
+          /\.reduce\s*\([^)]*\)/g
+        ];
+        
+        const hasExpensiveOps = expensiveOperations.some(pattern => pattern.test(content));
+        const hasOptimization = content.includes('useMemo') || content.includes('useCallback') || content.includes('React.memo');
+        
+        if (hasExpensiveOps && !hasOptimization) {
+          performanceIssues++;
+        }
+        
+        // Check for missing dependency arrays in useEffect
+        const useEffectWithoutDeps = content.match(/useEffect\s*\(\s*\([^)]*\)\s*=>\s*\{[^}]*\}(?!\s*,\s*\[)/g);
+        if (useEffectWithoutDeps) {
           performanceIssues++;
         }
       } catch (error) {

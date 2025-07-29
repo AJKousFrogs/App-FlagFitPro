@@ -8,6 +8,15 @@ import InjuryRiskAssessment from './InjuryRiskAssessment';
 import NutritionPerformanceAnalytics from './NutritionPerformanceAnalytics';
 import InteractivePerformanceVisualization from './InteractivePerformanceVisualization';
 import TeamChemistryAnalytics from './TeamChemistryAnalytics';
+import { 
+  BoltIcon, 
+  BeakerIcon, 
+  ShieldCheckIcon, 
+  UserGroupIcon, 
+  TrophyIcon,
+  CogIcon,
+  PlusIcon
+} from '@heroicons/react/24/outline';
 
 const DraggableDashboard = ({ isPremium = false }) => {
   const [dashboardSections, setDashboardSections] = useState([
@@ -40,37 +49,6 @@ const DraggableDashboard = ({ isPremium = false }) => {
       id: 'players-leaderboard',
       title: '🏆 Players Leaderboard',
       content: <PlayersLeaderboard />
-    },
-    {
-      id: 'physical-profile',
-      title: 'Physical Profile',
-      content: (
-        <div>
-          <div className="grid">
-            <MeasurementDisplay
-              type="weight"
-              value={185}
-              label="Current Weight"
-            />
-            <MeasurementDisplay
-              type="height"
-              value={74}
-              label="Height"
-            />
-            <div className="stats-card">
-              <div>BMI: 22.4</div>
-              <div>71st percentile</div>
-            </div>
-            <div className="stats-card">
-              <div>Muscle Mass: 42.3%</div>
-              <div>89th percentile</div>
-            </div>
-          </div>
-          
-          {/* Weekly Training Schedule - Full week view */}
-          <WeeklyTrainingSchedule />
-        </div>
-      )
     },
     {
       id: 'team-chemistry',
@@ -211,7 +189,7 @@ const DraggableDashboard = ({ isPremium = false }) => {
         isPremium={isPremium}
         sponsor={{
           name: 'Chemius',
-          logo: '💊',
+          logo: <BeakerIcon className="h-6 w-6" />,
           message: 'Optimize your performance with our premium supplement line',
           cta: 'Shop Supplements',
           link: '#'
@@ -249,7 +227,7 @@ const DraggableDashboard = ({ isPremium = false }) => {
         isPremium={isPremium}
         sponsor={{
           name: 'LaprimaFit',
-          logo: '💪',
+          logo: <UserGroupIcon className="h-6 w-6" />,
           message: 'Premium training equipment for serious athletes',
           cta: 'Shop Now',
           link: '#'

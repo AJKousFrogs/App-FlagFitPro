@@ -109,8 +109,11 @@ export default defineConfig({
     host: 'localhost',
     port: 4000,
     hmr: {
-      port: 4000
-    }
+      port: 4000,
+      overlay: false // Disable error overlay to prevent fetch errors
+    },
+    // Disable strict port to avoid conflicts
+    strictPort: false
   },
   
   // Preview server optimizations  

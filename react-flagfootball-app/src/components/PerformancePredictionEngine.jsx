@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/Card';
-import { Progress } from './ui/Progress';
 
 const PerformancePredictionEngine = () => {
   const [predictions, setPredictions] = useState({

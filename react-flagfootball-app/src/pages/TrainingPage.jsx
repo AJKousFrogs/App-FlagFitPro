@@ -1,8 +1,14 @@
 import React, { useState } from 'react';
-import DraggableTrainingSchedule from '../components/DraggableTrainingSchedule';
 import WeeklyTrainingSchedule from '../components/WeeklyTrainingSchedule';
 import SponsorBanner from '../components/SponsorBanner';
 import AICoachMessage from '../components/AICoachMessage';
+import { 
+  UserIcon, 
+  BoltIcon, 
+  UserGroupIcon,
+  ChartBarIcon,
+  BeakerIcon
+} from '@heroicons/react/24/outline';
 
 const TrainingPage = () => {
   const [activeTab, setActiveTab] = useState('schedule');
@@ -78,12 +84,12 @@ const TrainingPage = () => {
 
   // Training categories with progress
   const [trainingCategories] = useState([
-    { name: 'Route Running', icon: '🏃', routes: 15, completed: 8, color: '#4CAF50' },
-    { name: 'Plyometrics', icon: '⚡', routes: 12, completed: 5, color: '#FF9800' },
-    { name: 'Speed Training', icon: '🏃‍♂️', routes: 8, completed: 6, color: '#2196F3' },
-    { name: 'Catching', icon: '🎯', routes: 10, completed: 4, color: '#9C27B0' },
-    { name: 'Strength', icon: '💪', routes: 20, completed: 12, color: '#F44336' },
-    { name: 'Recovery', icon: '🧘', routes: 6, completed: 3, color: '#607D8B' }
+    { name: 'Route Running', icon: UserIcon, routes: 15, completed: 8, color: '#4CAF50' },
+    { name: 'Plyometrics', icon: BoltIcon, routes: 12, completed: 5, color: '#FF9800' },
+    { name: 'Speed Training', icon: UserIcon, routes: 8, completed: 6, color: '#2196F3' },
+    { name: 'Catching', icon: TargetIcon, routes: 10, completed: 4, color: '#9C27B0' },
+    { name: 'Strength', icon: UserGroupIcon, routes: 20, completed: 12, color: '#F44336' },
+    { name: 'Recovery', icon: UserIcon, routes: 6, completed: 3, color: '#607D8B' }
   ]);
 
   // Team chemistry data
@@ -132,7 +138,10 @@ const TrainingPage = () => {
 
   return (
     <div className="training-page">
-      <h1>🏃‍♂️ Training</h1>
+              <h1 className="flex items-center gap-2">
+          <UserIcon className="h-8 w-8 text-blue-600" />
+          Training
+        </h1>
       
       {/* Top Sponsor Banner */}
       <SponsorBanner 
@@ -141,7 +150,7 @@ const TrainingPage = () => {
         isPremium={false}
         sponsor={{
           name: 'LaprimaFit',
-          logo: '💪',
+          logo: <UserGroupIcon className="h-6 w-6" />,
           message: 'Premium training equipment',
           cta: 'Shop Now',
           link: '#'
@@ -248,7 +257,7 @@ const TrainingPage = () => {
         <div className="bento-grid">
           {trainingCategories.map((category) => (
             <div key={category.name} className="bento-category-card">
-              <div className="category-icon">{category.icon}</div>
+                              <category.icon className="h-8 w-8" style={{ color: category.color }} />
               <h3>{category.name}</h3>
               <div className="category-progress">
                 <div className="progress-text">
@@ -401,7 +410,7 @@ const TrainingPage = () => {
         isPremium={false}
         sponsor={{
           name: 'GearXPro',
-          logo: '⚡',
+          logo: <BoltIcon className="h-6 w-6" />,
           message: 'Performance tracking devices',
           cta: 'Explore',
           link: '#'

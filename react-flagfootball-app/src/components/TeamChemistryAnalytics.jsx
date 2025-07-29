@@ -7,8 +7,51 @@ const TeamChemistryAnalytics = () => {
     positionGroups: [],
     communicationMetrics: {},
     performanceImpact: {},
-    recommendations: [],
-    trends: []
+            recommendations: [
+          {
+            id: 1,
+            title: 'Strengthen WR Corps Chemistry',
+            priority: 'high',
+            problem: 'David Lee and Ashley Green need more synchronized route running practice.',
+            actions: [
+              'Schedule 3x weekly route running sessions for WR2 and WR3',
+              'Implement buddy system for film study',
+              'Create competitive route precision challenges'
+            ],
+            expectedImpact: '+4% completion rate on multi-receiver routes',
+            affectedPlayers: ['David Lee', 'Ashley Green', 'Mike Johnson'],
+            timeline: '2-3 weeks'
+          },
+          {
+            id: 2,
+            title: 'Improve In-Game Communication',
+            priority: 'medium',
+            problem: 'Communication clarity drops 6% during high-pressure situations.',
+            actions: [
+              'Practice communication under crowd noise',
+              'Develop simplified audible system',
+              'Implement hand signal backup system'
+            ],
+            expectedImpact: '+2.3 points average in close games',
+            affectedPlayers: ['Alex Rodriguez', 'Chris Wilson', 'Entire Offense'],
+            timeline: '1-2 weeks'
+          },
+          {
+            id: 3,
+            title: 'Develop Secondary Leadership',
+            priority: 'medium',
+            problem: 'Over-reliance on Alex Rodriguez for field leadership.',
+            actions: [
+              'Rotate captain responsibilities in practice',
+              'Mentor Jordan Smith as defensive signal caller',
+              'Create leadership development program'
+            ],
+            expectedImpact: '+8% performance when QB is under pressure',
+            affectedPlayers: ['Jordan Smith', 'Sarah Kim', 'Tony Martinez'],
+            timeline: '3-4 weeks'
+          }
+        ],
+        trends: []
   });
   
   const [activeView, setActiveView] = useState('overview');
@@ -653,7 +696,9 @@ const TeamChemistryAnalytics = () => {
                 <span className="rec-title">{rec.title}</span>
                 <span className={`rec-priority ${rec.priority}`}>{rec.priority} priority</span>
               </div>
-              <div className="rec-description">{rec.description}</div>
+              <div className="rec-description">
+                <strong>Problem:</strong> {rec.problem}
+              </div>
               <div className="rec-actions">
                 <strong>Recommended Actions:</strong>
                 <ul>
@@ -663,7 +708,11 @@ const TeamChemistryAnalytics = () => {
                 </ul>
               </div>
               <div className="rec-impact">
-                <strong>Expected Impact:</strong> {rec.expectedImprovement}
+                <strong>Expected Impact:</strong> {rec.expectedImpact}
+              </div>
+              <div className="rec-details">
+                <div><strong>Affected Players:</strong> {rec.affectedPlayers.join(', ')}</div>
+                <div><strong>Timeline:</strong> {rec.timeline}</div>
               </div>
             </div>
           ))}

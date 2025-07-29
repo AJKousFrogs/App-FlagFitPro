@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 
 const SearchSystem = () => {
   const [query, setQuery] = useState('');
@@ -149,7 +150,7 @@ const SearchSystem = () => {
       <form onSubmit={handleSearchSubmit} className="search-form">
         <input
           type="text"
-          placeholder="🔍 Search FlagFit Pro..."
+                          placeholder="Search FlagFit Pro..."
           value={query}
           onChange={handleSearchChange}
           onFocus={() => setIsOpen(true)}
@@ -157,7 +158,7 @@ const SearchSystem = () => {
           aria-label="Search"
         />
         <button type="submit" className="search-button" aria-label="Search">
-          🔍
+                          <MagnifyingGlassIcon className="h-5 w-5" />
         </button>
       </form>
       
