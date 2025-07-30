@@ -100,7 +100,7 @@ export const AuthProvider = ({ children }) => {
     const checkAuth = async () => {
       try {
         actions.checkAuthStart();
-        const { authService } = await import('../services/auth.service');
+        const { authService } = await import('../services/AuthService');
         const user = await authService.getCurrentUser();
         if (user) {
           actions.checkAuthSuccess({ user });
@@ -121,7 +121,7 @@ export const AuthProvider = ({ children }) => {
     try {
       console.log('AuthContext: Starting login process');
       actions.loginStart();
-      const { authService } = await import('../services/auth.service');
+      const { authService } = await import('../services/AuthService');
       const result = await authService.login(credentials);
       console.log('AuthContext: Login service returned result, calling loginSuccess');
       actions.loginSuccess(result);
@@ -141,7 +141,7 @@ export const AuthProvider = ({ children }) => {
   const register = React.useCallback(async (userData) => {
     try {
       actions.registerStart();
-      const { authService } = await import('../services/auth.service');
+      const { authService } = await import('../services/AuthService');
       const result = await authService.register(userData);
       actions.registerSuccess(result);
       return result;
@@ -154,7 +154,7 @@ export const AuthProvider = ({ children }) => {
   // Logout function
   const logout = React.useCallback(async () => {
     try {
-      const { authService } = await import('../services/auth.service');
+      const { authService } = await import('../services/AuthService');
       await authService.logout();
       actions.logout();
     } catch (error) {
@@ -168,7 +168,7 @@ export const AuthProvider = ({ children }) => {
   const updateProfile = React.useCallback(async (profileData) => {
     try {
       actions.updateProfileStart();
-      const { authService } = await import('../services/auth.service');
+      const { authService } = await import('../services/AuthService');
       const result = await authService.updateProfile(profileData);
       actions.updateProfileSuccess(result);
       return result;
