@@ -1,0 +1,91 @@
+{
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@context7/mcp-server"],
+      "env": {
+        "CONTEXT7_API_KEY": "${CONTEXT7_API_KEY}",
+        "CONTEXT7_PORT": "3000"
+      },
+      "allowedTools": [
+        "resolve-library-id",
+        "get-library-docs"
+      ],
+      "description": "Context7 - Software documentation finder for sports science and development libraries"
+    },
+    "sequential-thought": {
+      "command": "npx",
+      "args": ["-y", "@sequential-thought/mcp-server"],
+      "env": {
+        "SEQUENTIAL_THOUGHT_PORT": "3001"
+      },
+      "allowedTools": [
+        "sequentialthinking"
+      ],
+      "description": "Sequential Thought - Chain-of-thought reasoning framework for complex decision making"
+    }
+  },
+  "allowedTools": [
+    "resolve-library-id",
+    "get-library-docs", 
+    "sequentialthinking",
+    "Bash",
+    "Read",
+    "Write",
+    "Edit",
+    "MultiEdit",
+    "Glob",
+    "Grep",
+    "LS",
+    "WebFetch",
+    "WebSearch",
+    "TodoWrite",
+    "Task"
+  ],
+  "maxTokens": 100000,
+  "temperature": 0.7,
+  "enableDevtools": true,
+  "autoSave": true,
+  "workspaceSettings": {
+    "projectName": "Flag Football Training App",
+    "projectType": "react-vite-sports-app",
+    "framework": "React 18 + Vite + TypeScript",
+    "database": "Neon PostgreSQL + Drizzle ORM",
+    "ui": "Radix UI + Tailwind CSS + Ant Design",
+    "features": [
+      "AI Coaching System",
+      "Nutrition Tracking", 
+      "Recovery Monitoring",
+      "Performance Analytics",
+      "Training Schedules",
+      "Player Leaderboards",
+      "Community Features"
+    ]
+  },
+  "contextFiles": [
+    "CLAUDE.md",
+    "@prompt_plan.md",
+    "package.json",
+    "vite.config.js",
+    "src/App.jsx",
+    "docs/ARCHITECTURE.md",
+    "docs/FEATURES_IMPLEMENTATION_SUMMARY.md"
+  ],
+  "ignorePatterns": [
+    "node_modules/**",
+    "dist/**",
+    "build/**",
+    ".git/**",
+    "*.log",
+    ".env.local",
+    ".env.production"
+  ],
+  "shortcuts": {
+    "dev": "npm run dev",
+    "build": "npm run build", 
+    "test": "npm run test",
+    "lint": "npm run lint",
+    "health": "npm run health:check",
+    "ports": "npm run port:info"
+  }
+}

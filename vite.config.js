@@ -107,16 +107,18 @@ export default defineConfig({
   // Development server optimizations
   server: {
     host: 'localhost',
-    port: 4000,
+    port: process.env.VITE_DEV_PORT || 4000,
+    strictPort: false, // Allow port fallback
     hmr: {
-      port: 4000
+      port: process.env.VITE_HMR_PORT || (process.env.VITE_DEV_PORT || 4000)
     }
   },
   
   // Preview server optimizations  
   preview: {
     host: true,
-    port: 4173
+    port: process.env.VITE_PREVIEW_PORT || 4173,
+    strictPort: false // Allow port fallback
   },
   
   // Resolve configuration to ensure proper module resolution

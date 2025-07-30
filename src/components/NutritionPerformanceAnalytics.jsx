@@ -388,7 +388,7 @@ const NutritionPerformanceAnalytics = () => {
       <div className="stats-card nutrition-actions">
         <h4>⚡ Take Action</h4>
         <div className="action-buttons">
-          <button className="action-btn primary">Log Today's Meals</button>
+          <button className="action-btn primary">Log Today&apos;s Meals</button>
           <button className="action-btn secondary">Generate Meal Plan</button>
           <button className="action-btn secondary">Track Hydration</button>
           <button className="action-btn secondary">Export Nutrition Report</button>

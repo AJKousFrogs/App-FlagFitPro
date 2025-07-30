@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect } from 'react';
-import { useStandardReducer } from '../hooks/useReducer';
+import { useReducer } from 'react';
 
 // Action types
 const AUTH_ACTIONS = {
@@ -78,11 +78,22 @@ const AuthContext = createContext();
 
 // Provider component
 export const AuthProvider = ({ children }) => {
-  const [state, , actions] = useStandardReducer(
-    initialState,
-    AUTH_ACTIONS,
-    authReducer
-  );
+  const [state, dispatch] = useReducer(authReducer, initialState);
+
+  // Action creators
+  const actions = {
+    checkAuthStart: () => dispatch({ type: AUTH_ACTIONS.CHECK_AUTH_START }),
+    checkAuthSuccess: (payload) => dispatch({ type: AUTH_ACTIONS.CHECK_AUTH_SUCCESS, payload }),
+    checkAuthFailure: (payload) => dispatch({ type: AUTH_ACTIONS.CHECK_AUTH_FAILURE, payload }),
+    loginStart: () => dispatch({ type: AUTH_ACTIONS.LOGIN_START }),
+    loginSuccess: (payload) => dispatch({ type: AUTH_ACTIONS.LOGIN_SUCCESS, payload }),
+    loginFailure: (payload) => dispatch({ type: AUTH_ACTIONS.LOGIN_FAILURE, payload }),
+    registerStart: () => dispatch({ type: AUTH_ACTIONS.REGISTER_START }),
+    registerSuccess: (payload) => dispatch({ type: AUTH_ACTIONS.REGISTER_SUCCESS, payload }),
+    registerFailure: (payload) => dispatch({ type: AUTH_ACTIONS.REGISTER_FAILURE, payload }),
+    logoutSuccess: () => dispatch({ type: AUTH_ACTIONS.LOGOUT_SUCCESS }),
+    updateProfileSuccess: (payload) => dispatch({ type: AUTH_ACTIONS.UPDATE_PROFILE_SUCCESS, payload })
+  };
 
   // Check authentication status on mount
   useEffect(() => {

@@ -97,7 +97,13 @@
     "react-dom": "^18.3.1"
   },
   "scripts": {
-    "dev": "vite",
+    "dev": "node scripts/dev-with-port-management.js",
+    "dev:unsafe": "vite",
+    "port:info": "node scripts/port-manager.js info",
+    "port:cleanup": "node scripts/port-manager.js cleanup",
+    "port:release-all": "node scripts/port-manager.js release-all",
+    "health:check": "node scripts/health-check-enhanced.js check",
+    "health:monitor": "node scripts/health-check-enhanced.js monitor",
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix",
     "db:setup": "node scripts/setupDatabase.js",

@@ -36,15 +36,28 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Fetch event - serve from cache with network fallback
+// Fetch event - cache-first with network fallback
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
-        // Return cached version or fetch from network
-        return response || fetch(event.request);
-      }
-    )
+        // Cache hit - return response
+        if (response) {
+          return response;
+        }
+        // No cache hit - fetch from network
+        return fetch(event.request).catch((error) => {
+          console.error('Fetch failed:', error);
+          // You might want to return a fallback response here
+          throw error; // Re-throw the error if you can't handle it gracefully
+        });
+      })
+      .catch((error) => {
+        console.error('Error in fetch handler:', error);
+        // Handle errors from caches.match or the initial fetch call
+        // You might return a generic error response or a fallback page
+        throw error; // Re-throw the error if you can't handle it gracefully
+      })
   );
 });
 
