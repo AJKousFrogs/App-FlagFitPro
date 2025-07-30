@@ -193,15 +193,109 @@ function checkEnvironmentVariables() {
     console.log('ℹ️  No .env.example file found');
   }
   
-  // Check important environment variables
-  const importantVars = ['NODE_ENV', 'VITE_DEV_PORT'];
-  importantVars.forEach(varName => {
-    if (process.env[varName]) {
-      console.log(`✅ ${varName} is set`);
+  // Check critical environment variables
+  const criticalVars = [
+    { name: 'VITE_NEON_DATABASE_URL', required: true, description: 'Database connection' },
+    { name: 'CONTEXT7_API_KEY', required: true, description: 'AI research features' }
+  ];
+  
+  const importantVars = [
+    { name: 'VITE_DEV_PORT', required: false, description: 'Development server port' },
+    { name: 'VITE_APP_NAME', required: false, description: 'Application name' },
+    { name: 'VITE_ENABLE_MCP', required: false, description: 'MCP services' }
+  ];
+  
+  // Check critical variables
+  console.log('🔴 Critical Variables:');
+  criticalVars.forEach(variable => {
+    if (process.env[variable.name]) {
+      if (process.env[variable.name].includes('your_') || process.env[variable.name].includes('_here')) {
+        console.log(`⚠️  ${variable.name} needs real value (${variable.description})`);
+      } else {
+        console.log(`✅ ${variable.name} configured`);
+      }
     } else {
-      console.log(`ℹ️  ${varName} not set (using defaults)`);
+      console.log(`❌ ${variable.name} missing (${variable.description})`);
+      console.log(`   Required for: ${variable.description}`);
     }
   });
+  
+  // Check important variables
+  console.log('🟡 Optional Variables:');
+  importantVars.forEach(variable => {
+    if (process.env[variable.name]) {
+      console.log(`✅ ${variable.name} is set`);
+    } else {
+      console.log(`ℹ️  ${variable.name} not set (${variable.description})`);
+    }
+  });
+  
+  console.log();
+}
+
+// Check security configuration
+function checkSecurity() {
+  console.log('🔒 Security Check:');
+  
+  // Check if .env is in .gitignore
+  try {
+    const gitignoreContent = fs.readFileSync('.gitignore', 'utf8');
+    if (gitignoreContent.includes('.env')) {
+      console.log('✅ .env files properly excluded from git');
+    } else {
+      console.log('❌ .env not found in .gitignore - SECURITY RISK!');
+      console.log('   Add ".env" to .gitignore immediately');
+    }
+  } catch (error) {
+    console.log('⚠️  .gitignore file not found');
+    console.log('   Create .gitignore and add .env to it');
+  }
+  
+  // Check if .env file is accidentally staged
+  try {
+    const { execSync } = require('child_process');
+    const gitStatus = execSync('git status --porcelain 2>/dev/null || echo "not-git"', { encoding: 'utf8' });
+    
+    if (gitStatus !== 'not-git' && gitStatus.includes('.env')) {
+      console.log('🚨 CRITICAL: .env file is staged for commit!');
+      console.log('   Run: git reset .env');
+      console.log('   Then add .env to .gitignore');
+    } else if (gitStatus !== 'not-git') {
+      console.log('✅ No .env files staged for commit');
+    }
+  } catch (error) {
+    // Git not available or not a git repo
+    console.log('ℹ️  Git status check skipped');
+  }
+  
+  // Check for hardcoded secrets in common files
+  const sensitivePatterns = [
+    'password=',
+    'secret=', 
+    'api_key=',
+    'token=',
+    'sk-', // OpenAI API keys
+    'postgresql://'
+  ];
+  
+  const filesToCheck = ['src/main.jsx', 'src/App.jsx', 'vite.config.js'];
+  let secretsFound = false;
+  
+  filesToCheck.forEach(file => {
+    if (fs.existsSync(file)) {
+      const content = fs.readFileSync(file, 'utf8').toLowerCase();
+      sensitivePatterns.forEach(pattern => {
+        if (content.includes(pattern)) {
+          console.log(`⚠️  Potential secret in ${file}: ${pattern}`);
+          secretsFound = true;
+        }
+      });
+    }
+  });
+  
+  if (!secretsFound) {
+    console.log('✅ No obvious secrets found in source code');
+  }
   
   console.log();
 }
@@ -264,6 +358,7 @@ async function runChecks() {
   checkFilePermissions();
   checkDependencies();
   checkEnvironmentVariables();
+  checkSecurity();
   checkPorts();
   
   setTimeout(() => {
