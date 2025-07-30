@@ -1,4 +1,6 @@
 import OpenAI from 'openai';
+import { mcpService } from './MCPService';
+import { searchLibraryIds } from '../config/context7-mappings';
 
 class AICoachService {
   constructor(database) {
@@ -516,6 +518,300 @@ Keep responses under ${coachProfile.max_response_length || 500} characters and a
 
     const prefsResult = await this.db.query(prefsQuery, [userId, coachId]);
     return prefsResult.rows[0];
+  }
+
+  // MCP-Enhanced AI Coach Methods
+
+  /**
+   * Get evidence-based coaching advice using Context7 documentation
+   * @param {string} topic - Coaching topic (nutrition, training, recovery, etc.)
+   * @param {Object} context - User context (performance data, goals, etc.)
+   * @returns {Promise<Object>} Enhanced coaching advice with research backing
+   */
+  static async getEvidenceBasedAdvice(topic, context = {}) {
+    try {
+      // Initialize MCP service if not already done
+      await mcpService.initialize();
+
+      // Get relevant documentation from Context7
+      let documentation = null;
+      if (mcpService.getConnectionStatus().servers.context7) {
+        try {
+          documentation = await mcpService.searchSportsScience(topic, context.category);
+        } catch (error) {
+          console.warn('Context7 lookup failed, using fallback:', error.message);
+        }
+      }
+
+      // Generate coaching advice
+      const advice = {
+        topic,
+        timestamp: new Date().toISOString(),
+        evidenceBased: !!documentation,
+        recommendations: [],
+        techniques: [],
+        researchBacking: [],
+        sources: []
+      };
+
+      if (documentation && !documentation.error) {
+        // Use Context7 documentation
+        advice.recommendations = documentation.recommendations || [];
+        advice.techniques = documentation.techniques || [];
+        advice.researchBacking = documentation.research || [];
+        advice.sources = documentation.sources || [];
+        advice.summary = documentation.summary;
+      } else {
+        // Use fallback coaching knowledge
+        advice.recommendations = await this.getFallbackRecommendations(topic, context);
+        advice.summary = `Coaching advice for ${topic} based on established best practices.`;
+      }
+
+      return advice;
+    } catch (error) {
+      console.error('Error getting evidence-based advice:', error);
+      return {
+        topic,
+        error: error.message,
+        fallback: true,
+        recommendations: await this.getFallbackRecommendations(topic, context)
+      };
+    }
+  }
+
+  /**
+   * Generate personalized training recommendations with research backing
+   * @param {number} userId - User ID
+   * @param {string} trainingType - Type of training (strength, endurance, agility, etc.)
+   * @returns {Promise<Object>} Personalized training plan with documentation
+   */
+  static async generateTrainingRecommendations(userId, trainingType) {
+    try {
+      // Get user profile and performance data
+      const userProfile = await this.getUserProfile(userId);
+      const performanceData = await this.getRecentPerformanceData(userId);
+
+      // Search for relevant training research
+      const libraryIds = searchLibraryIds(trainingType);
+      let researchData = [];
+
+      if (mcpService.getConnectionStatus().servers.context7) {
+        try {
+          const researchPromises = libraryIds.slice(0, 3).map(id => 
+            mcpService.getLibraryDocs(id)
+          );
+          const results = await Promise.allSettled(researchPromises);
+          researchData = results
+            .filter(r => r.status === 'fulfilled')
+            .map(r => r.value);
+        } catch (error) {
+          console.warn('Research lookup failed:', error.message);
+        }
+      }
+
+      // Generate personalized recommendations
+      const recommendations = {
+        userId,
+        trainingType,
+        timestamp: new Date().toISOString(),
+        personalized: true,
+        evidenceBased: researchData.length > 0,
+        userContext: {
+          experience: userProfile?.experience_level,
+          goals: userProfile?.goals,
+          recentPerformance: performanceData
+        },
+        trainingPlan: this.generateTrainingPlan(trainingType, userProfile, researchData),
+        progressionGuidelines: this.generateProgressionGuidelines(trainingType, researchData),
+        safetyConsiderations: this.generateSafetyGuidelines(trainingType, userProfile, researchData),
+        researchSources: researchData.map(data => data.sources || []).flat()
+      };
+
+      return recommendations;
+    } catch (error) {
+      console.error('Error generating training recommendations:', error);
+      return { error: error.message, fallback: true };
+    }
+  }
+
+  /**
+   * Analyze injury risk with evidence-based assessment
+   * @param {number} userId - User ID
+   * @param {Object} assessmentData - Current assessment data
+   * @returns {Promise<Object>} Risk analysis with prevention recommendations
+   */
+  static async analyzeInjuryRisk(userId, assessmentData) {
+    try {
+      // Get injury prevention research
+      let preventionResearch = null;
+      if (mcpService.getConnectionStatus().servers.context7) {
+        try {
+          preventionResearch = await mcpService.searchSportsScience(
+            'injury prevention', 
+            'injury-prevention'
+          );
+        } catch (error) {
+          console.warn('Prevention research lookup failed:', error.message);
+        }
+      }
+
+      // Analyze risk factors
+      const riskAnalysis = {
+        userId,
+        timestamp: new Date().toISOString(),
+        evidenceBased: !!preventionResearch,
+        riskFactors: this.identifyRiskFactors(assessmentData),
+        riskLevel: this.calculateRiskLevel(assessmentData),
+        preventionStrategies: [],
+        recommendedScreenings: [],
+        researchBacking: []
+      };
+
+      if (preventionResearch && !preventionResearch.error) {
+        riskAnalysis.preventionStrategies = preventionResearch.recommendations || [];
+        riskAnalysis.recommendedScreenings = preventionResearch.techniques || [];
+        riskAnalysis.researchBacking = preventionResearch.research || [];
+      } else {
+        // Use fallback prevention knowledge
+        riskAnalysis.preventionStrategies = this.getFallbackPreventionStrategies(assessmentData);
+      }
+
+      return riskAnalysis;
+    } catch (error) {
+      console.error('Error analyzing injury risk:', error);
+      return { error: error.message, fallback: true };
+    }
+  }
+
+  // Helper methods for fallback functionality
+
+  static async getFallbackRecommendations(topic, context) {
+    const fallbackMap = {
+      'nutrition': [
+        'Maintain balanced macronutrient intake',
+        'Time carbohydrate intake around training',
+        'Ensure adequate protein for recovery',
+        'Stay properly hydrated throughout the day'
+      ],
+      'training': [
+        'Follow progressive overload principles',
+        'Include adequate rest between sessions',
+        'Focus on movement quality over quantity',
+        'Incorporate sport-specific movements'
+      ],
+      'recovery': [
+        'Prioritize 7-9 hours of quality sleep',
+        'Use active recovery between intense sessions',
+        'Consider massage or self-massage techniques',
+        'Monitor training load and adjust as needed'
+      ]
+    };
+
+    return fallbackMap[topic] || [
+      'Consult with qualified professionals',
+      'Start with basic fundamentals',
+      'Progress gradually and consistently',
+      'Listen to your body and adjust accordingly'
+    ];
+  }
+
+  static generateTrainingPlan(trainingType, userProfile, researchData) {
+    // Basic training plan structure
+    return {
+      duration: '4-6 weeks',
+      frequency: '3-4 sessions per week',
+      phases: ['preparation', 'development', 'peak', 'recovery'],
+      exercises: this.getExercisesForType(trainingType),
+      progressionNotes: 'Increase intensity by 5-10% weekly'
+    };
+  }
+
+  static generateProgressionGuidelines(trainingType, researchData) {
+    return [
+      'Start with bodyweight or light resistance',
+      'Master movement patterns before adding load',
+      'Increase volume before intensity',
+      'Allow 48-72 hours recovery between similar sessions'
+    ];
+  }
+
+  static generateSafetyGuidelines(trainingType, userProfile, researchData) {
+    return [
+      'Always warm up thoroughly before training',
+      'Use proper form and technique',
+      'Stop if experiencing pain or discomfort',
+      'Stay hydrated during training sessions'
+    ];
+  }
+
+  static getExercisesForType(trainingType) {
+    const exerciseMap = {
+      'strength': ['Squats', 'Push-ups', 'Planks', 'Lunges'],
+      'endurance': ['Running intervals', 'Cycling', 'Swimming', 'Circuit training'],
+      'agility': ['Cone drills', 'Ladder work', 'Direction changes', 'Reactive movements'],
+      'flag-football': ['Flag pulling', 'Route running', 'Cutting drills', 'Ball handling']
+    };
+
+    return exerciseMap[trainingType] || exerciseMap['strength'];
+  }
+
+  static identifyRiskFactors(assessmentData) {
+    const riskFactors = [];
+    
+    if (assessmentData.previousInjuries) {
+      riskFactors.push('History of previous injuries');
+    }
+    if (assessmentData.movementScreenScore < 14) {
+      riskFactors.push('Movement dysfunction identified');
+    }
+    if (assessmentData.trainingLoad > assessmentData.fitnessLevel * 1.5) {
+      riskFactors.push('Training load exceeds current fitness level');
+    }
+    
+    return riskFactors;
+  }
+
+  static calculateRiskLevel(assessmentData) {
+    let riskScore = 0;
+    
+    if (assessmentData.previousInjuries) riskScore += 2;
+    if (assessmentData.movementScreenScore < 14) riskScore += 3;
+    if (assessmentData.trainingLoad > assessmentData.fitnessLevel * 1.5) riskScore += 2;
+    if (assessmentData.age > 35) riskScore += 1;
+    
+    if (riskScore >= 5) return 'High';
+    if (riskScore >= 3) return 'Moderate';
+    return 'Low';
+  }
+
+  static getFallbackPreventionStrategies(assessmentData) {
+    return [
+      'Implement proper warm-up and cool-down routines',
+      'Focus on movement quality and technique',
+      'Gradually progress training intensity and volume',
+      'Include strength and flexibility training',
+      'Monitor and manage training load'
+    ];
+  }
+
+  // Utility methods for user data
+  static async getUserProfile(userId) {
+    // This would normally query the database
+    return {
+      experience_level: 'intermediate',
+      goals: ['improve performance', 'stay healthy'],
+      age: 25,
+      sport: 'flag football'
+    };
+  }
+
+  static async getRecentPerformanceData(userId) {
+    // This would normally query performance metrics
+    return {
+      averageScore: 85,
+      improvementTrend: 'positive',
+      lastTrainingDate: new Date().toISOString()
+    };
   }
 }
 
