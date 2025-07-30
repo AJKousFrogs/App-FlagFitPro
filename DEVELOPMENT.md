@@ -71,13 +71,107 @@ chmod -R 644 *.json *.md *.js *.jsx *.ts *.tsx
 # Right-click project folder → Properties → Security
 ```
 
-## 🛠️ Troubleshooting Development Issues
+## 🛠️ Quick Troubleshooting Steps
 
-### HMR Not Working?
-1. **First try**: Refresh browser (`Ctrl+R` or `Cmd+R`)
-2. **Second try**: Hard refresh (`Ctrl+Shift+R` or `Cmd+Shift+R`)
-3. **Third try**: Clear browser cache
-4. **Last resort**: Restart development server
+### 🚀 **One-Command Solutions**
+```bash
+# Step 1: Quick troubleshoot (clears cache + checks environment + restarts)
+npm run troubleshoot
+
+# Step 2: Deep clean (removes node_modules + reinstalls + checks environment)  
+npm run debug
+
+# Step 3: Nuclear option (complete reset)
+npm run clean:full
+```
+
+### 🔍 **Step-by-Step Troubleshooting**
+
+#### **1. Clear Cache** 🧹
+```bash
+# Clear Vite cache only
+npm run clean:cache
+
+# Clear node_modules and reinstall
+npm run clean:node
+
+# Nuclear option - clear everything
+npm run clean:full
+```
+
+#### **2. Check Console** 🔍
+**Browser Developer Console:**
+- Press `F12` or `Ctrl+Shift+I` (Windows/Linux) or `Cmd+Option+I` (Mac)
+- Look for **red error messages** in Console tab
+- Check **Network tab** for failed requests
+- Look for **warning messages** in yellow
+
+**Terminal Console:**
+```bash
+# Check for build errors
+npm run build
+
+# Check for linting issues  
+npm run lint
+
+# Run environment diagnostics
+npm run doctor
+```
+
+#### **3. Verify Dependencies** 📦
+```bash
+# Check if dependencies are installed
+ls node_modules
+
+# Verify key packages exist
+npm run doctor  # Includes dependency check
+
+# Update to latest versions (careful!)
+npm update
+
+# Check for outdated packages
+npm outdated
+```
+
+#### **4. Test Incremental Changes** 🔬
+```bash
+# Start with clean state
+git stash  # Save current changes
+
+# Test if issue exists without changes
+npm run dev
+
+# Apply changes incrementally
+git stash pop
+# Test one file change at a time
+```
+
+### 🔧 **Common Issues & Solutions**
+
+#### **HMR Not Working?**
+1. **Quick fixes** (in order):
+   ```bash
+   # Refresh browser
+   Ctrl+R (Windows/Linux) or Cmd+R (Mac)
+   
+   # Hard refresh  
+   Ctrl+Shift+R (Windows/Linux) or Cmd+Shift+R (Mac)
+   
+   # Clear browser cache
+   Ctrl+Shift+Delete (Windows/Linux) or Cmd+Shift+Delete (Mac)
+   
+   # Restart with clean cache
+   npm run troubleshoot
+   ```
+
+2. **For persistent HMR issues**:
+   ```bash
+   # Force polling mode (for cloud folders, Docker, WSL)
+   npm run dev:polling
+   
+   # Check if in problematic location
+   npm run check:location
+   ```
 
 ### File Changes Not Detected?
 ```bash

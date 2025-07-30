@@ -239,6 +239,22 @@ function performanceRecommendations() {
   console.log();
 }
 
+// Troubleshooting recommendations
+function troubleshootingRecommendations() {
+  console.log('🚨 Quick Troubleshooting Commands:');
+  console.log('   npm run troubleshoot  - Quick fix (cache + restart)');
+  console.log('   npm run debug         - Deep clean (node_modules reset)');
+  console.log('   npm run clean:full    - Nuclear option (complete reset)');
+  console.log('   npm run dev:polling   - Force file polling mode');
+  console.log('   npm run doctor        - Run this check again');
+  console.log();
+  console.log('📚 Documentation:');
+  console.log('   DEVELOPMENT.md        - Complete development guide');
+  console.log('   TROUBLESHOOTING.md    - Quick reference card');
+  console.log('   .env.example          - Environment variable examples');
+  console.log();
+}
+
 // Main execution
 async function runChecks() {
   console.log('Running comprehensive development environment check...\n');
@@ -252,14 +268,15 @@ async function runChecks() {
   
   setTimeout(() => {
     performanceRecommendations();
+    troubleshootingRecommendations();
     
     console.log('🎉 Environment check complete!');
-    console.log('\nQuick Start Commands:');
+    console.log('\n🚀 Quick Start Commands:');
     console.log('   npm run dev           - Start development server');
     console.log('   npm run dev:polling   - Start with file polling (for cloud folders)');
     console.log('   npm run dev:fresh     - Clean cache and start development');
-    console.log('   npm run check:env     - Run this check again');
-    console.log('\nFor more help, see: DEVELOPMENT.md');
+    console.log('   npm run troubleshoot  - Quick fix for common issues');
+    console.log('\n💡 Need help? See: DEVELOPMENT.md & TROUBLESHOOTING.md');
   }, 200);
 }
 
