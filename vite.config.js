@@ -1,8 +1,32 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
+// Check if we're in development mode
+const isDev = process.env.NODE_ENV === 'development' || process.env.NODE_ENV !== 'production'
+
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react({
+      // Enable Fast Refresh for better HMR experience
+      fastRefresh: true,
+      // Include dev tools in development
+      babel: isDev ? {
+        plugins: ['@babel/plugin-transform-react-jsx-development']
+      } : undefined
+    })
+  ],
+  
+  // Development-specific settings
+  ...(isDev && {
+    // Enable detailed logging in development
+    logLevel: 'info',
+    // Clear screen on rebuild
+    clearScreen: true,
+    // Enable CSS source maps in development
+    css: {
+      devSourcemap: true
+    }
+  }),
   build: {
     outDir: 'dist',
     target: 'es2020', // Better compatibility than esnext
@@ -93,7 +117,7 @@ export default defineConfig({
     assetsInlineLimit: 2048, // Inline smaller assets
     
     // Enable code splitting and tree shaking
-    sourcemap: false, // Disable sourcemaps in production for smaller bundles
+    sourcemap: isDev, // Enable sourcemaps in development for debugging
     
     // Terser options for better compression
     terserOptions: {
@@ -109,8 +133,27 @@ export default defineConfig({
     host: 'localhost',
     port: process.env.VITE_DEV_PORT || 4000,
     strictPort: false, // Allow port fallback
+    open: false, // Don't auto-open browser
+    cors: true, // Enable CORS for API calls
     hmr: {
-      port: process.env.VITE_HMR_PORT || (process.env.VITE_DEV_PORT || 4000)
+      port: process.env.VITE_HMR_PORT || (process.env.VITE_DEV_PORT || 4000),
+      overlay: true, // Show error overlay in development
+      clientPort: process.env.VITE_HMR_PORT || (process.env.VITE_DEV_PORT || 4000)
+    },
+    watch: {
+      usePolling: false, // Use file system events (faster)
+      interval: 100, // Polling interval if usePolling is true
+      ignored: ['**/node_modules/**', '**/dist/**']
+    },
+    // Warm up frequently used files for faster HMR
+    warmup: {
+      clientFiles: [
+        './src/main.jsx',
+        './src/App.jsx',
+        './src/components/**/*.jsx',
+        './src/pages/**/*.jsx',
+        './src/services/**/*.js'
+      ]
     }
   },
   
