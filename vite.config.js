@@ -4,6 +4,25 @@ import react from '@vitejs/plugin-react'
 // Check if we're in development mode
 const isDev = process.env.NODE_ENV === 'development' || process.env.NODE_ENV !== 'production'
 
+// Detect environments that need polling for file watching
+const needsPolling = () => {
+  try {
+    // Force polling via environment variable
+    if (process.env.VITE_USE_POLLING === 'true') return true
+    
+    // Check for common environments that need polling
+    const isWSL = process.platform === 'linux' && process.env.WSL_DISTRO_NAME
+    const isDocker = process.env.IS_DOCKER || process.env.DOCKER_CONTAINER
+    const isCodespaces = process.env.CODESPACES
+    const isGitpod = process.env.GITPOD_WORKSPACE_ID
+    
+    return !!(isWSL || isDocker || isCodespaces || isGitpod)
+  } catch (error) {
+    // Fallback to false if detection fails
+    return false
+  }
+}
+
 export default defineConfig({
   plugins: [
     react({
@@ -141,9 +160,26 @@ export default defineConfig({
       clientPort: process.env.VITE_HMR_PORT || (process.env.VITE_DEV_PORT || 4000)
     },
     watch: {
-      usePolling: false, // Use file system events (faster)
-      interval: 100, // Polling interval if usePolling is true
-      ignored: ['**/node_modules/**', '**/dist/**']
+      // Intelligent polling detection for better cross-platform compatibility
+      usePolling: needsPolling(),
+      // Optimized intervals based on environment
+      interval: needsPolling() ? 1000 : 100, // Slower polling for remote filesystems
+      binaryInterval: needsPolling() ? 2000 : 1000, // Binary file polling
+      ignored: [
+        '**/node_modules/**', 
+        '**/dist/**',
+        '**/.git/**',
+        '**/coverage/**',
+        '**/.nyc_output/**'
+      ],
+      // Additional options for problematic environments
+      ...(needsPolling() && {
+        // Use polling for all files in problematic environments
+        usePolling: true,
+        // More aggressive polling options
+        atomic: false, // Disable atomic writes detection
+        alwaysStat: true, // Always use fs.stat for file changes
+      })
     },
     // Warm up frequently used files for faster HMR
     warmup: {
@@ -198,6 +234,13 @@ export default defineConfig({
     'import.meta.env.VITE_APP_NAME': JSON.stringify('FlagFit Pro'),
     'import.meta.env.VITE_APP_VERSION': JSON.stringify('1.0.7'),
     'import.meta.env.VITE_NEON_DATABASE_URL': JSON.stringify(''),
-    'import.meta.env.VITE_APP_ENVIRONMENT': JSON.stringify('development')
+    'import.meta.env.VITE_APP_ENVIRONMENT': JSON.stringify('development'),
+    // File watching configuration info
+    'import.meta.env.VITE_WATCH_POLLING': JSON.stringify(needsPolling().toString()),
+    'import.meta.env.VITE_WATCH_INTERVAL': JSON.stringify(needsPolling() ? '1000' : '100')
   }
+
+  // Environment-specific overrides for file watching issues
+  // Set VITE_USE_POLLING=true to force polling mode
+  // Set VITE_WATCH_INTERVAL=2000 for slower polling if needed
 })
