@@ -119,16 +119,10 @@ export const AuthProvider = ({ children }) => {
   // Login function
   const login = React.useCallback(async (credentials) => {
     try {
-      console.log('AuthContext: Starting login process');
       actions.loginStart();
       const { authService } = await import('../services/AuthService');
       const result = await authService.login(credentials);
-      console.log('AuthContext: Login service returned result, calling loginSuccess');
       actions.loginSuccess(result);
-      console.log('AuthContext: LoginSuccess called, new auth state should be:', { 
-        isAuthenticated: true, 
-        user: result.user?.email 
-      });
       return result;
     } catch (error) {
       console.error('AuthContext: Login failed:', error.message);
@@ -183,24 +177,19 @@ export const AuthProvider = ({ children }) => {
     actions.clearError();
   }, [actions]); // Add actions dependency
 
-  const value = React.useMemo(() => {
-    console.log('AuthContext: Current state update:', {
+  const value = React.useMemo(() => ({
       isAuthenticated: state.isAuthenticated,
       isLoading: state.isLoading,
       hasUser: !!state.user,
       userEmail: state.user?.email,
-      error: state.error
-    });
-    
-    return {
+      error: state.error,
       ...state,
       login,
       register,
       logout,
       updateProfile,
       clearError
-    };
-  }, [state, login, register, logout, updateProfile, clearError]);
+    }), [state, login, register, logout, updateProfile, clearError]);
 
   return (
     <AuthContext.Provider value={value}>

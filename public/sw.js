@@ -1,20 +1,31 @@
 // Service Worker for Flag Football App Push Notifications
 // Handles push notifications, background sync, and caching
 
-const CACHE_NAME = 'flag-football-v1';
+const CACHE_NAME = 'flag-football-v5-dev';
 const urlsToCache = [
   '/',
+  '/index.html',
   '/manifest.json',
-  '/icons/app-icon.png',
-  '/icons/badge.png'
+  '/offline.html'
 ];
 
-// Install event - cache resources
+// Install event - cache resources with better error handling
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
-        return cache.addAll(urlsToCache);
+        // Only cache resources that exist, handle failures gracefully
+        return Promise.allSettled(
+          urlsToCache.map(url => 
+            cache.add(url).catch(error => {
+              console.warn(`Failed to cache ${url}:`, error);
+              return null; // Continue with other resources
+            })
+          )
+        );
+      })
+      .catch(error => {
+        console.error('Service Worker install failed:', error);
       })
   );
   self.skipWaiting();
@@ -27,6 +38,7 @@ self.addEventListener('activate', (event) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
           if (cacheName !== CACHE_NAME) {
+            console.log('Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
@@ -36,30 +48,174 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Fetch event - cache-first with network fallback
+// Fetch event - simplified cache-first with network fallback for better Vite compatibility
 self.addEventListener('fetch', (event) => {
+  // Bypass requests for Vite client and other development-specific resources
+  if (event.request.url.includes('@vite/') || 
+      event.request.url.includes('/__') ||
+      event.request.url.includes('?import') ||
+      event.request.url.includes('&import') ||
+      event.request.url.includes('.vite/')) {
+    return; // Allow the browser to handle these requests normally
+  }
+
+  // Skip non-GET requests
+  if (event.request.method !== 'GET') {
+    return;
+  }
+
+  // Skip chrome-extension and other non-http requests
+  if (!event.request.url.startsWith('http')) {
+    return;
+  }
+
+  // Skip authentication requests to ensure fresh data
+  const url = new URL(event.request.url);
+  const sensitiveEndpoints = ['/api/auth/', '/api/login', '/api/register', '/api/logout'];
+  if (sensitiveEndpoints.some(endpoint => url.pathname.includes(endpoint))) {
+    return; // Let these go directly to network
+  }
+
+  // Handle SPA routes - for HTML document requests, serve index.html
+  if (event.request.destination === 'document') {
+    // Check if this is a SPA route (not a static file)
+    if (isSPARoute(url.pathname)) {
+      event.respondWith(
+        fetch('/index.html')
+          .then((response) => {
+            // Cache the index.html response if successful
+            if (response.ok) {
+              const responseClone = response.clone();
+              caches.open(CACHE_NAME).then((cache) => {
+                cache.put('/index.html', responseClone);
+              }).catch(() => {/* Ignore cache errors */});
+            }
+            return response;
+          })
+          .catch(() => {
+            // Fallback to cached index.html for SPA routes
+            return caches.match('/index.html')
+              .then((cachedResponse) => {
+                if (cachedResponse) {
+                  return cachedResponse;
+                }
+                // Final fallback to offline page
+                return caches.match('/offline.html');
+              });
+          })
+      );
+      return;
+    }
+  }
+
+  // For all other requests, use simple cache-first with network fallback
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
-        // Cache hit - return response
+        // Return cached version or fetch from network
         if (response) {
+          // For static assets, also update cache in background
+          if (isCacheable(event.request)) {
+            fetch(event.request).then((networkResponse) => {
+              if (networkResponse && networkResponse.ok) {
+                caches.open(CACHE_NAME).then((cache) => {
+                  cache.put(event.request, networkResponse.clone());
+                }).catch(() => {/* Ignore cache errors */});
+              }
+            }).catch(() => {/* Ignore network errors for background updates */});
+          }
           return response;
         }
-        // No cache hit - fetch from network
-        return fetch(event.request).catch((error) => {
-          console.error('Fetch failed:', error);
-          // You might want to return a fallback response here
-          throw error; // Re-throw the error if you can't handle it gracefully
-        });
+        
+        // Not in cache, fetch from network
+        return fetch(event.request)
+          .then((networkResponse) => {
+            // Cache successful responses if they're cacheable
+            if (networkResponse && networkResponse.ok && isCacheable(event.request)) {
+              const responseToCache = networkResponse.clone();
+              caches.open(CACHE_NAME).then((cache) => {
+                cache.put(event.request, responseToCache);
+              }).catch(() => {/* Ignore cache errors */});
+            }
+            return networkResponse;
+          });
       })
       .catch((error) => {
-        console.error('Error in fetch handler:', error);
-        // Handle errors from caches.match or the initial fetch call
-        // You might return a generic error response or a fallback page
-        throw error; // Re-throw the error if you can't handle it gracefully
+        // Log errors for debugging
+        console.error('Fetch failed:', event.request.url, error);
+        
+        // Return offline page for document requests
+        if (event.request.destination === 'document') {
+          return caches.match('/offline.html')
+            .then((offlineResponse) => {
+              if (offlineResponse) {
+                return offlineResponse;
+              }
+              // Final fallback
+              return new Response('Application is offline', {
+                status: 503,
+                statusText: 'Service Unavailable',
+                headers: { 'Content-Type': 'text/plain' }
+              });
+            });
+        }
+        
+        // For other resources, return a generic error
+        return new Response('Resource unavailable offline', {
+          status: 503,
+          statusText: 'Service Unavailable',
+          headers: { 'Content-Type': 'text/plain' }
+        });
       })
   );
 });
+
+// Helper function to determine if a path is a SPA route
+function isSPARoute(pathname) {
+  // Static file extensions that should not be treated as SPA routes
+  const staticExtensions = ['.js', '.css', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.woff', '.woff2', '.ttf', '.html', '.json', '.xml', '.txt'];
+  const hasStaticExtension = staticExtensions.some(ext => pathname.endsWith(ext));
+  
+  // API routes should not be treated as SPA routes
+  const isApiRoute = pathname.startsWith('/api/');
+  
+  // If it has a static extension or is an API route, it's not a SPA route
+  if (hasStaticExtension || isApiRoute) {
+    return false;
+  }
+  
+  // Everything else is likely a SPA route (React Router handles these)
+  return true;
+}
+
+// Helper function to determine if a request should be cached
+function isCacheable(request) {
+  const url = new URL(request.url);
+  
+  // Only cache GET requests
+  if (request.method !== 'GET') {
+    return false;
+  }
+  
+  // Don't cache Vite development resources
+  if (url.pathname.includes('@vite/') || 
+      url.pathname.includes('/__') ||
+      url.searchParams.has('import')) {
+    return false;
+  }
+  
+  // Cache static assets
+  const cacheableExtensions = ['.js', '.css', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.woff', '.woff2', '.ttf', '.json'];
+  const isStaticAsset = cacheableExtensions.some(ext => url.pathname.endsWith(ext));
+  
+  // Cache certain API responses (but not auth endpoints)
+  const isApiRequest = url.pathname.startsWith('/api/') && 
+                       !url.pathname.includes('auth') && 
+                       !url.pathname.includes('login') && 
+                       !url.pathname.includes('register');
+  
+  return isStaticAsset || isApiRequest;
+}
 
 // Push event - handle incoming push notifications
 self.addEventListener('push', (event) => {
@@ -137,150 +293,105 @@ self.addEventListener('notificationclick', (event) => {
   
   const notificationData = event.notification.data;
   const action = event.action;
-  
-  let urlToOpen = '/';
-  
-  // Determine URL based on notification type and action
-  if (action === 'emergency_response') {
-    urlToOpen = '/emergency';
-  } else if (action === 'view_details' || action === 'view') {
-    switch (notificationData.type) {
-      case 'EMERGENCY':
-        urlToOpen = '/emergency';
-        break;
-      case 'TEAM_MESSAGE':
-        urlToOpen = '/community/team';
-        break;
-      case 'TRAINING_REMINDER':
-        urlToOpen = '/training';
-        break;
-      case 'GAME_UPDATE':
-        urlToOpen = '/tournaments';
-        break;
-      case 'INJURY_REPORT':
-        urlToOpen = '/safety';
-        break;
-      default:
-        urlToOpen = '/dashboard';
-    }
-  } else if (action === 'dismiss') {
-    // Just close the notification
-    return;
-  }
-  
-  // Open or focus the app
-  event.waitUntil(
-    clients.matchAll({ type: 'window', includeUncontrolled: true })
-      .then((clientList) => {
-        // Check if app is already open
-        for (const client of clientList) {
-          if (client.url.includes(urlToOpen) && 'focus' in client) {
-            return client.focus();
+
+  // Handle different notification actions
+  switch (action) {
+    case 'emergency_response':
+      // Open emergency response page
+      event.waitUntil(
+        clients.openWindow('/emergency-response')
+      );
+      break;
+      
+    case 'view_details':
+      // Open notification details
+      event.waitUntil(
+        clients.openWindow('/notifications')
+      );
+      break;
+      
+    case 'dismiss':
+      // Just close the notification
+      break;
+      
+    default:
+      // Default action - open the app
+      event.waitUntil(
+        clients.matchAll({ type: 'window' }).then((clientList) => {
+          // Check if app is already open
+          for (const client of clientList) {
+            if (client.url.includes('/') && 'focus' in client) {
+              return client.focus();
+            }
           }
-        }
-        
-        // If no matching client found, open new window
-        if (clients.openWindow) {
-          return clients.openWindow(urlToOpen);
-        }
-      })
-  );
+          // Open new window if app is not open
+          if (clients.openWindow) {
+            return clients.openWindow('/');
+          }
+        })
+      );
+  }
 });
 
-// Background sync for offline notifications
+// Background sync for offline functionality
 self.addEventListener('sync', (event) => {
-  if (event.tag === 'background-sync') {
-    event.waitUntil(
-      // Handle background sync tasks
-      syncNotifications()
-    );
+  console.log('Background sync triggered:', event.tag);
+  
+  switch (event.tag) {
+    case 'sync-notifications':
+      event.waitUntil(syncNotifications());
+      break;
+      
+    case 'background-backup':
+      event.waitUntil(performBackgroundBackup());
+      break;
+      
+    default:
+      console.log('Unknown sync tag:', event.tag);
   }
 });
 
 // Sync notifications when back online
 async function syncNotifications() {
   try {
-    // Get any queued notifications from IndexedDB or localStorage
-    const queuedNotifications = await getQueuedNotifications();
+    const notifications = await getQueuedNotifications();
     
-    for (const notification of queuedNotifications) {
-      // Send queued notifications
+    for (const notification of notifications) {
       await sendNotification(notification);
     }
     
-    // Clear the queue
     await clearNotificationQueue();
+    console.log('Notifications synced successfully');
   } catch (error) {
-    console.error('Error syncing notifications:', error);
+    console.error('Failed to sync notifications:', error);
   }
 }
 
-// Get queued notifications (mock implementation)
+// Get queued notifications from IndexedDB
 async function getQueuedNotifications() {
-  // In a real implementation, this would read from IndexedDB
+  // This would typically use IndexedDB to get queued notifications
+  // For now, return empty array
   return [];
 }
 
-// Send notification (mock implementation)
+// Send notification to server
 async function sendNotification(notification) {
-  // In a real implementation, this would send to notification service
-  console.log('Sending queued notification:', notification);
+  // This would typically send the notification to your backend
+  console.log('Sending notification:', notification);
 }
 
-// Clear notification queue (mock implementation)
+// Clear notification queue
 async function clearNotificationQueue() {
-  // In a real implementation, this would clear IndexedDB
-  console.log('Notification queue cleared');
+  // This would typically clear the notification queue from IndexedDB
+  console.log('Clearing notification queue');
 }
 
-// Handle message from main thread
-self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting();
-  }
-});
-
-// Periodic background sync for automatic backups (experimental)
-self.addEventListener('periodicsync', (event) => {
-  if (event.tag === 'backup-sync') {
-    event.waitUntil(
-      performBackgroundBackup()
-    );
-  }
-});
-
-// Perform background backup (mock implementation)
+// Perform background backup
 async function performBackgroundBackup() {
   try {
     console.log('Performing background backup...');
-    
-    // In a real implementation, this would:
-    // 1. Check if backup is needed
-    // 2. Collect critical data
-    // 3. Store backup locally or sync to server
-    // 4. Send notification if backup fails
-    
-    const backupSuccess = true; // Mock result
-    
-    if (!backupSuccess) {
-      // Show notification if backup failed
-      self.registration.showNotification('Backup Failed', {
-        body: 'Automatic backup could not be completed. Please check your data.',
-        icon: '/icons/app-icon.png',
-        badge: '/icons/badge.png',
-        tag: 'backup-failed',
-        actions: [
-          {
-            action: 'retry_backup',
-            title: 'Retry'
-          },
-          {
-            action: 'view_backup',
-            title: 'View Details'
-          }
-        ]
-      });
-    }
+    // This would typically backup user data to the server
+    // For now, just log the action
   } catch (error) {
     console.error('Background backup failed:', error);
   }

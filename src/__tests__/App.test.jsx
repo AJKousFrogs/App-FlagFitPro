@@ -3,35 +3,12 @@ import { render } from '@testing-library/react'
 import { describe, it, expect, vi } from 'vitest'
 import App from '../App'
 
-// Mock the pocketbase service
-vi.mock('../services/pocketbase.service', () => ({
-  pocketbaseService: {
+// Mock the auth service
+vi.mock('../services/AuthService', () => ({
+  default: {
     isAuthenticated: () => false,
     getCurrentUser: () => Promise.resolve(null),
-    pb: {
-      authStore: {
-        isValid: false,
-        model: null
-      }
-    }
-  }
-}))
-
-// Mock the container service
-vi.mock('../services/container', () => ({
-  container: {
-    resolve: vi.fn((service) => {
-      if (service === 'pocketbase') {
-        return {
-          isAuthenticated: () => false,
-          getCurrentUser: () => Promise.resolve(null)
-        }
-      }
-      if (service === 'config') {
-        return {}
-      }
-      return {}
-    })
+    getToken: () => null
   }
 }))
 

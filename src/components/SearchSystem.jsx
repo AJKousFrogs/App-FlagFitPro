@@ -19,16 +19,21 @@ const SearchSystem = () => {
 
   const fetchRecentSearches = async () => {
     try {
-      const response = await fetch('/api/search/recent', {
-        headers: {
-          'Authorization': `Bearer ${user.token}`,
-          'Content-Type': 'application/json'
+      // Check if user is not null before accessing its properties
+      if (user) {
+        const response = await fetch('/api/search/recent', {
+          headers: {
+            'Authorization': `Bearer ${user.token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setRecentSearches(data.recentSearches);
         }
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        setRecentSearches(data.recentSearches);
+      } else {
+        // Handle the case where user is null, e.g., log a message or redirect to login
       }
     } catch (error) {
       console.error('Error fetching recent searches:', error);
@@ -37,16 +42,20 @@ const SearchSystem = () => {
 
   const fetchQuickActions = async () => {
     try {
-      const response = await fetch('/api/search/quick-actions', {
-        headers: {
-          'Authorization': `Bearer ${user.token}`,
-          'Content-Type': 'application/json'
+      // Apply the same check for the quick actions fetch
+      if (user) {
+        const response = await fetch('/api/search/quick-actions', {
+          headers: {
+            'Authorization': `Bearer ${user.token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setQuickActions(data.quickActions);
         }
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        setQuickActions(data.quickActions);
+      } else {
       }
     } catch (error) {
       console.error('Error fetching quick actions:', error);
@@ -56,6 +65,12 @@ const SearchSystem = () => {
   // Backend Integration - Search functionality
   const performSearch = async (searchQuery) => {
     if (!searchQuery.trim()) {
+      setResults([]);
+      return;
+    }
+
+    // Check if user is authenticated before performing search
+    if (!user) {
       setResults([]);
       return;
     }
@@ -88,14 +103,18 @@ const SearchSystem = () => {
   // Backend Integration - Save recent search
   const saveRecentSearch = async (searchQuery) => {
     try {
-      await fetch('/api/search/recent', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${user.token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ query: searchQuery })
-      });
+      // Check if user is authenticated before saving
+      if (user) {
+        await fetch('/api/search/recent', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${user.token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ query: searchQuery })
+        });
+      } else {
+      }
     } catch (error) {
       console.error('Error saving recent search:', error);
     }
@@ -104,20 +123,24 @@ const SearchSystem = () => {
   // Backend Integration - Execute quick action
   const executeQuickAction = async (action) => {
     try {
-      const response = await fetch('/api/search/quick-action', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${user.token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ action: action.id })
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        if (data.redirectUrl) {
-          window.location.href = data.redirectUrl;
+      // Check if user is authenticated before executing quick action
+      if (user) {
+        const response = await fetch('/api/search/quick-action', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${user.token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ action: action.id })
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.redirectUrl) {
+            window.location.href = data.redirectUrl;
+          }
         }
+      } else {
       }
     } catch (error) {
       console.error('Error executing quick action:', error);

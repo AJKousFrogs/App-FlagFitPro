@@ -40,6 +40,27 @@ const PhysicalProfileCard = ({
               {metrics.age ? `${metrics.age} years` : 'Not set'}
             </div>
           </div>
+          
+          <div className="metric-item">
+            <label>BMI</label>
+            <div className="metric-value">
+              {metrics.bmi ? `${metrics.bmi}` : 'N/A'}
+            </div>
+          </div>
+          
+          <div className="metric-item">
+            <label>Muscle Mass</label>
+            <div className="metric-value">
+              {metrics.muscleMass ? `${metrics.muscleMass}%` : 'N/A'}
+            </div>
+          </div>
+          
+          <div className="metric-item">
+            <label>Body Fat</label>
+            <div className="metric-value">
+              {metrics.bodyFat ? `${metrics.bodyFat}%` : 'N/A'}
+            </div>
+          </div>
         </div>
         
         {expanded && (

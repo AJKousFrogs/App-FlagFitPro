@@ -3,126 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FlagFit Pro - Offline</title>
+    <title>Offline - Flag Football App</title>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #4a7c59 0%, #3B82F6 100%);
             color: white;
             text-align: center;
+            padding: 20px;
         }
-        
-        .container {
-            max-width: 400px;
-            padding: 2rem;
+
+        .offline-container {
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
-        
-        .logo {
-            font-size: 4rem;
-            font-weight: bold;
-            margin-bottom: 1rem;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+
+        .offline-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
         }
-        
-        .title {
-            font-size: 1.5rem;
+
+        h1 {
+            font-size: 24px;
             font-weight: 600;
-            margin-bottom: 1rem;
+            margin-bottom: 10px;
         }
-        
-        .message {
-            font-size: 1rem;
+
+        p {
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 30px;
             opacity: 0.9;
-            margin-bottom: 2rem;
-            line-height: 1.6;
         }
-        
-        .retry-btn {
+
+        .retry-button {
             background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.3);
             color: white;
             padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 1rem;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 500;
             cursor: pointer;
             transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
         }
-        
-        .retry-btn:hover {
+
+        .retry-button:hover {
             background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
             transform: translateY(-2px);
         }
-        
-        .features {
-            margin-top: 2rem;
-            font-size: 0.9rem;
-            opacity: 0.8;
+
+        .status {
+            margin-top: 20px;
+            font-size: 14px;
+            opacity: 0.7;
         }
-        
-        .features ul {
-            list-style: none;
-            padding: 0;
-        }
-        
-        .features li {
-            margin: 0.5rem 0;
-        }
-        
-        .features li:before {
-            content: '✓';
-            margin-right: 0.5rem;
-            font-weight: bold;
+
+        @media (max-width: 480px) {
+            .offline-container {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 20px;
+            }
+            
+            p {
+                font-size: 14px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="logo">FF</div>
-        <div class="title">You're Offline</div>
-        <div class="message">
-            It looks like you're not connected to the internet. Don't worry - some features of FlagFit Pro work offline!
-        </div>
+    <div class="offline-container">
+        <div class="offline-icon">📶</div>
+        <h1>You're Offline</h1>
+        <p>It looks like you've lost your internet connection. Don't worry, you can still access cached content.</p>
         
-        <button class="retry-btn" onclick="window.location.reload()">
+        <button class="retry-button" onclick="window.location.reload()">
             Try Again
         </button>
         
-        <div class="features">
-            <p><strong>Available Offline:</strong></p>
-            <ul>
-                <li>View cached training data</li>
-                <li>Browse previously loaded content</li>
-                <li>Access your profile information</li>
-            </ul>
+        <div class="status">
+            <div id="connection-status">Checking connection...</div>
         </div>
     </div>
-    
+
     <script>
-        // Auto-retry when back online
-        window.addEventListener('online', () => {
-            window.location.reload();
-        });
-        
-        // Show connection status
-        function updateStatus() {
+        // Check connection status
+        function updateConnectionStatus() {
+            const statusElement = document.getElementById('connection-status');
+            
             if (navigator.onLine) {
-                window.location.reload();
+                statusElement.textContent = 'Connection restored! Reloading...';
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            } else {
+                statusElement.textContent = 'No internet connection detected';
             }
         }
-        
-        // Check connection status periodically
-        setInterval(updateStatus, 5000);
+
+        // Listen for online/offline events
+        window.addEventListener('online', updateConnectionStatus);
+        window.addEventListener('offline', updateConnectionStatus);
+
+        // Check initial status
+        updateConnectionStatus();
+
+        // Periodically check connection
+        setInterval(updateConnectionStatus, 5000);
     </script>
 </body>
 </html>

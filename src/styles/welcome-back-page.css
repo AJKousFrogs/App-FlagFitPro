@@ -1,0 +1,463 @@
+/* Welcome Back Page Styles */
+/* Modern design with proper styling for the updated component structure */
+
+/* Main container styles */
+.welcome-back-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+/* Card styles */
+.welcome-back-card {
+  width: 100%;
+  max-width: 28rem;
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.welcome-back-card:focus-within {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Header styles */
+.welcome-back-header {
+  padding: 2rem 2rem 1.5rem 2rem;
+  text-align: center;
+}
+
+.welcome-back-title {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 0.5rem;
+}
+
+.welcome-back-subtitle {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  color: #6b7280;
+}
+
+/* Content styles */
+.welcome-back-content {
+  padding: 0 2rem 2rem 2rem;
+}
+
+.welcome-back-content > * + * {
+  margin-top: 1.5rem;
+}
+
+/* Sponsor banner styles */
+.sponsor-banner {
+  background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%);
+  border: 2px solid #fbbf24;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  transition: all 0.3s ease;
+}
+
+.sponsor-banner:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.2);
+}
+
+.sponsor-banner-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sponsor-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.sponsor-banner-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+}
+
+.sponsor-badge {
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  background-color: #fef3c7;
+  color: #92400e;
+  white-space: nowrap;
+}
+
+.sponsor-button {
+  background-color: #f59e0b;
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sponsor-button:hover {
+  background-color: #d97706;
+  transform: translateY(-1px);
+}
+
+/* Form styles */
+.welcome-back-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  line-height: 1.25rem;
+}
+
+.form-input-wrapper {
+  position: relative;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  border: 2px solid #e5e7eb;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  transition: all 0.15s ease-in-out;
+  background: white;
+  color: #111827;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-input.error {
+  border-color: #f87171;
+}
+
+.form-input.error:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.form-input:disabled {
+  background-color: #f9fafb;
+  color: #6b7280;
+  cursor: not-allowed;
+}
+
+.form-input.password {
+  padding-right: 3rem;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 0.5rem;
+  color: #6b7280;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.15s ease-in-out;
+}
+
+.password-toggle:hover {
+  color: #374151;
+}
+
+.password-toggle:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.form-message {
+  font-size: 0.875rem;
+  color: #dc2626;
+  line-height: 1.25rem;
+}
+
+/* Button styles */
+.welcome-back-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  position: relative;
+  user-select: none;
+  white-space: nowrap;
+  vertical-align: middle;
+  text-decoration: none;
+}
+
+.welcome-back-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.welcome-back-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Primary button */
+.welcome-back-button.primary {
+  background-color: #111827;
+  color: white;
+  padding: 1rem 1.5rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  width: 100%;
+}
+
+.welcome-back-button.primary:hover:not(:disabled) {
+  background-color: #1f2937;
+}
+
+/* Outline button */
+.welcome-back-button.outline {
+  background-color: transparent;
+  color: #374151;
+  border: 2px solid #e5e7eb;
+  padding: 0.75rem 1rem;
+  width: 100%;
+}
+
+.welcome-back-button.outline:hover:not(:disabled) {
+  border-color: #d1d5db;
+  background-color: #f9fafb;
+}
+
+/* Loading spinner */
+.loading-spinner {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Alternative login options */
+.alternative-login {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.alternative-login-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  border: 2px solid #e5e7eb;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  background-color: transparent;
+  color: #374151;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.alternative-login-button:hover:not(:disabled) {
+  border-color: #d1d5db;
+  background-color: #f9fafb;
+}
+
+.alternative-login-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.alternative-login-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Footer links */
+.welcome-back-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: center;
+  padding-top: 1rem;
+}
+
+.welcome-back-link {
+  color: #2563eb;
+  text-decoration: underline;
+  transition: color 0.15s ease-in-out;
+  font-size: 0.875rem;
+}
+
+.welcome-back-link:hover {
+  color: #1d4ed8;
+}
+
+.welcome-back-text {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+/* Error message styles */
+.error-message {
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.error-message-text {
+  color: #dc2626;
+  font-size: 0.875rem;
+}
+
+/* Responsive design */
+@media (max-width: 640px) {
+  .welcome-back-card {
+    margin: 1rem;
+    border-radius: 0.75rem;
+  }
+  
+  .welcome-back-header {
+    padding: 1.5rem 1.5rem 1rem 1.5rem;
+  }
+  
+  .welcome-back-content {
+    padding: 0 1.5rem 1.5rem 1.5rem;
+  }
+  
+  .welcome-back-title {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+  
+  .welcome-back-button.primary {
+    padding: 0.875rem 1.25rem;
+    font-size: 1rem;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .welcome-back-container {
+    background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  }
+  
+  .welcome-back-card {
+    background: #1f2937;
+    border-color: #374151;
+  }
+  
+  .welcome-back-title {
+    color: #f9fafb;
+  }
+  
+  .welcome-back-subtitle {
+    color: #d1d5db;
+  }
+  
+  .form-label {
+    color: #d1d5db;
+  }
+  
+  .form-input {
+    background: #374151;
+    border-color: #4b5563;
+    color: #f9fafb;
+  }
+  
+  .form-input:focus {
+    border-color: #60a5fa;
+  }
+  
+  .alternative-login-button {
+    color: #d1d5db;
+    border-color: #4b5563;
+  }
+  
+  .alternative-login-button:hover:not(:disabled) {
+    background-color: #374151;
+    border-color: #6b7280;
+  }
+  
+  .welcome-back-text {
+    color: #d1d5db;
+  }
+}
+
+/* Accessibility enhancements */
+@media (prefers-reduced-motion: reduce) {
+  .welcome-back-card,
+  .sponsor-banner,
+  .form-input,
+  .welcome-back-button,
+  .alternative-login-button,
+  .welcome-back-link {
+    transition: none;
+  }
+  
+  .loading-spinner {
+    animation: none;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .welcome-back-card {
+    border-width: 2px;
+  }
+  
+  .welcome-back-button {
+    border-width: 2px;
+  }
+  
+  .form-input {
+    border-width: 2px;
+  }
+} 

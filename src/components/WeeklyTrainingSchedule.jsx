@@ -3,10 +3,10 @@ import React, { useState } from 'react';
 const WeeklyTrainingSchedule = () => {
   const [weeklySchedule, setWeeklySchedule] = useState([
     { day: 'Monday', training: 'Team Practice', time: '6:00 PM', type: 'team' },
-    { day: 'Tuesday', training: 'Plyometrics', time: '5:30 PM', type: 'plyo' },
+    { day: 'Tuesday', training: 'Isometrics', time: '5:30 PM', type: 'isometrics' },
     { day: 'Wednesday', training: 'Lifting', time: '7:00 PM', type: 'lifting' },
     { day: 'Thursday', training: 'Team Practice', time: '6:00 PM', type: 'team' },
-    { day: 'Friday', training: 'AI Recommended', time: '5:00 PM', type: 'ai' },
+    { day: 'Friday', training: 'Plyometrics', time: '5:00 PM', type: 'plyo' },
     { day: 'Saturday', training: 'Game Day', time: '2:00 PM', type: 'game' },
     { day: 'Sunday', training: 'Rest Day', time: '--', type: 'rest' }
   ]);
@@ -15,6 +15,7 @@ const WeeklyTrainingSchedule = () => {
     { value: 'team', label: 'Team Practice', color: '#4CAF50' },
     { value: 'plyo', label: 'Plyometrics', color: '#FF9800' },
     { value: 'lifting', label: 'Lifting', color: '#2196F3' },
+    { value: 'isometrics', label: 'Isometrics', color: '#00BCD4' },
     { value: 'ai', label: 'AI Recommended', color: '#9C27B0' },
     { value: 'game', label: 'Game Day', color: '#F44336' },
     { value: 'rest', label: 'Rest Day', color: '#9E9E9E' }

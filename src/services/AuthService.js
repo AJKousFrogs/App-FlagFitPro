@@ -5,7 +5,7 @@
 
 class AuthService {
   constructor() {
-    this.baseURL = import.meta.env.VITE_API_URL || '/api';
+    this.baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
     this.tokenKey = 'flagfit_auth_token';
     this.userKey = 'flagfit_user_data';
   }
@@ -17,7 +17,9 @@ class AuthService {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
+        credentials: 'include', // Include cookies for CORS
         body: JSON.stringify({ email, password }),
       });
 
@@ -52,7 +54,9 @@ class AuthService {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
+        credentials: 'include', // Include cookies for CORS
         body: JSON.stringify(userData),
       });
 
@@ -90,7 +94,10 @@ class AuthService {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
           },
+          credentials: 'include', // Include cookies for CORS
         });
       }
     } catch (error) {
@@ -138,7 +145,10 @@ class AuthService {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
+        credentials: 'include', // Include cookies for CORS
       });
 
       if (!response.ok) {
@@ -170,7 +180,9 @@ class AuthService {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json',
         },
+        credentials: 'include', // Include cookies for CORS
         body: JSON.stringify(updates),
       });
 
@@ -210,6 +222,9 @@ class AuthService {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json',
+        },
+        credentials: 'include', // Include cookies for CORS
         },
         body: JSON.stringify({ currentPassword, newPassword }),
       });
@@ -238,7 +253,9 @@ class AuthService {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
+        credentials: 'include', // Include cookies for CORS
         body: JSON.stringify({ email }),
       });
 
@@ -266,7 +283,9 @@ class AuthService {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
+        credentials: 'include', // Include cookies for CORS
         body: JSON.stringify({ token }),
       });
 

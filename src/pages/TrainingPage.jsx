@@ -3,6 +3,9 @@ import DraggableTrainingSchedule from '../components/DraggableTrainingSchedule';
 import WeeklyTrainingSchedule from '../components/WeeklyTrainingSchedule';
 import SponsorBanner from '../components/SponsorBanner';
 import AICoachMessage from '../components/AICoachMessage';
+import LA28Countdown from '../components/LA28Countdown';
+import TrainingCategories from '../components/TrainingCategories';
+import CoachRecommendedDrills from '../components/CoachRecommendedDrills';
 
 const TrainingPage = () => {
   const [activeTab, setActiveTab] = useState('schedule');
@@ -36,55 +39,9 @@ const TrainingPage = () => {
     }
   });
 
-  // Coach-recommended drills
-  const [recommendedDrills] = useState([
-    {
-      id: 1,
-      title: 'QB Pocket Movement Drills',
-      coach: 'Coach AJ',
-      duration: 30,
-      difficulty: 'Advanced',
-      focus: 'Decision making under pressure',
-      description: 'Improve pocket presence and decision-making under pressure'
-    },
-    {
-      id: 2,
-      title: 'QB-WR Chemistry Drills',
-      coach: 'Team Chemistry',
-      duration: 45,
-      difficulty: 'Intermediate',
-      focus: 'Timing with Mike Johnson',
-      description: 'Build chemistry and timing with your primary receiver'
-    },
-    {
-      id: 3,
-      title: 'Blitzer Pass Rush Drills',
-      coach: 'Defense Coach',
-      duration: 25,
-      difficulty: 'Intermediate',
-      focus: 'Pass rush techniques',
-      description: 'Improve pass rush effectiveness and pressure'
-    },
-    {
-      id: 4,
-      title: 'DB Coverage Drills',
-      coach: 'Defense Coach',
-      duration: 35,
-      difficulty: 'Advanced',
-      focus: 'Coverage techniques',
-      description: 'Enhance coverage skills and positioning'
-    }
-  ]);
 
-  // Training categories with progress
-  const [trainingCategories] = useState([
-    { name: 'Route Running', icon: '🏃', routes: 15, completed: 8, color: '#4CAF50' },
-    { name: 'Plyometrics', icon: '⚡', routes: 12, completed: 5, color: '#FF9800' },
-    { name: 'Speed Training', icon: '🏃‍♂️', routes: 8, completed: 6, color: '#2196F3' },
-    { name: 'Catching', icon: '🎯', routes: 10, completed: 4, color: '#9C27B0' },
-    { name: 'Strength', icon: '💪', routes: 20, completed: 12, color: '#F44336' },
-    { name: 'Recovery', icon: '🧘', routes: 6, completed: 3, color: '#607D8B' }
-  ]);
+
+
 
   // Team chemistry data
   const [teamChemistry] = useState([
@@ -121,14 +78,7 @@ const TrainingPage = () => {
     }
   };
 
-  const getDifficultyColor = (difficulty) => {
-    switch(difficulty) {
-      case 'Beginner': return '#4CAF50';
-      case 'Intermediate': return '#FF9800';
-      case 'Advanced': return '#F44336';
-      default: return '#9E9E9E';
-    }
-  };
+
 
   return (
     <div className="training-page">
@@ -150,6 +100,9 @@ const TrainingPage = () => {
       
       {/* AI Coach Message */}
       <AICoachMessage />
+      
+      {/* LA28 Olympic Games Countdown */}
+      <LA28Countdown />
       
       {/* Training Stats Overview */}
       <div className="training-stats-overview">
@@ -202,72 +155,17 @@ const TrainingPage = () => {
         </div>
       </div>
       
-      {/* Coach-Recommended Drills - Bento Grid */}
-      <div className="recommended-drills-section">
-        <h2>Coach-Recommended Drills</h2>
-        
-        <div className="bento-grid">
-          {recommendedDrills.map((drill) => (
-            <div key={drill.id} className="bento-drill-card">
-              <div className="drill-header">
-                <h3>{drill.title}</h3>
-                <span className="coach-badge">{drill.coach}</span>
-              </div>
-              
-              <div className="drill-meta">
-                <span>Duration: {drill.duration} min</span>
-                <span 
-                  className="difficulty-badge"
-                  style={{ backgroundColor: getDifficultyColor(drill.difficulty) }}
-                >
-                  {drill.difficulty}
-                </span>
-              </div>
-              
-              <div className="drill-focus">
-                <strong>Focus:</strong> {drill.focus}
-              </div>
-              
-              <div className="drill-description">
-                {drill.description}
-              </div>
-              
-              <div className="drill-actions">
-                <button className="btn-primary">Start Drill</button>
-                <button className="btn-secondary">View Details</button>
-              </div>
-            </div>
-          ))}
-        </div>
+
+      
+
+      
+      {/* Enhanced Training Categories Component */}
+      <div className="enhanced-training-categories-section">
+        <TrainingCategories />
       </div>
       
-      {/* Training Categories - Bento Grid */}
-      <div className="training-categories-section">
-        <h2>Training Categories</h2>
-        
-        <div className="bento-grid">
-          {trainingCategories.map((category) => (
-            <div key={category.name} className="bento-category-card">
-              <div className="category-icon">{category.icon}</div>
-              <h3>{category.name}</h3>
-              <div className="category-progress">
-                <div className="progress-text">
-                  {category.completed}/{category.routes} completed
-                </div>
-                <div className="progress-bar">
-                  <div 
-                    className="progress-fill"
-                    style={{ 
-                      width: `${(category.completed / category.routes) * 100}%`,
-                      backgroundColor: category.color
-                    }}
-                  ></div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* Coach Recommended Drills */}
+      <CoachRecommendedDrills />
       
       {/* Team Chemistry Building */}
       <div className="team-chemistry-section">

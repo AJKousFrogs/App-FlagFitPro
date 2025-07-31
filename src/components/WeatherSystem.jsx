@@ -154,7 +154,6 @@ const WeatherSystem = () => {
       });
       
       if (response.ok) {
-        console.log('Weather preferences saved');
       }
     } catch (error) {
       console.error('Error saving weather preferences:', error);
@@ -193,7 +192,6 @@ const WeatherSystem = () => {
       });
       
       if (response.ok) {
-        console.log('Weather incident reported');
       }
     } catch (error) {
       console.error('Error reporting weather incident:', error);

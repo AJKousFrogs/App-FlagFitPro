@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     
     <!-- Security Headers -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https:; worker-src 'self';" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' http://localhost:* ws://localhost:*; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https: ws://localhost:* http://localhost:*; worker-src 'self';" />
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
     <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
@@ -98,6 +98,8 @@
     
     <!-- Preload critical fonts (if any) -->
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- React Developer Tools removed - use browser extension instead -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" /></noscript>
   </head>
@@ -205,18 +207,54 @@
     
     <script type="module" src="/src/main.jsx"></script>
     
-    <!-- Service Worker Registration -->
+    <!-- Service Worker Management -->
     <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js')
-            .then((registration) => {
-              console.log('Service Worker registered successfully:', registration.scope);
-            })
-            .catch((error) => {
-              console.log('Service Worker registration failed:', error);
+      // Enhanced development detection
+      const isDevelopment = window.location.hostname === 'localhost' || 
+                           window.location.hostname === '127.0.0.1' ||
+                           window.location.port === '4000' ||
+                           window.location.port === '4001' ||
+                           window.location.href.includes('localhost') ||
+                           window.location.href.includes('127.0.0.1');
+      
+      if (isDevelopment) {
+        console.log('🚫 Development mode detected - Service Worker disabled');
+        
+        // Load error handler first
+        const errorScript = document.createElement('script');
+        errorScript.src = '/dev-error-handler.js';
+        errorScript.onload = () => console.log('🔧 Development error handler loaded');
+        document.head.appendChild(errorScript);
+        
+        // Load the service worker disabler in development
+        const script = document.createElement('script');
+        script.src = '/disable-sw.js';
+        script.onload = () => console.log('✅ Service Worker disabler loaded successfully');
+        script.onerror = (e) => {
+          console.log('⚠️ Could not load service worker disabler - this is normal for first load');
+          // Manually disable if script fails to load
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(registrations => {
+              registrations.forEach(registration => registration.unregister());
             });
-        });
+          }
+        };
+        document.head.appendChild(script);
+      } else {
+        console.log('🚀 Production mode - Service Worker enabled');
+        
+        // Register service worker only in production
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js')
+              .then((registration) => {
+                console.log('✅ Service Worker registered successfully:', registration.scope);
+              })
+              .catch((error) => {
+                console.log('❌ Service Worker registration failed:', error);
+              });
+          });
+        }
       }
     </script>
   </body>

@@ -174,7 +174,6 @@ const Navigation = () => {
   const handleSearch = (query) => {
     setSearchQuery(query);
     // Implement search functionality
-    console.log('Searching for:', query);
   };
 
   const { primaryItems, secondaryItems } = getNavigationItems();

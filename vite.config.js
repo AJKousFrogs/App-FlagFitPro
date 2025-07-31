@@ -27,11 +27,7 @@ export default defineConfig({
   plugins: [
     react({
       // Enable Fast Refresh for better HMR experience
-      fastRefresh: true,
-      // Include dev tools in development
-      babel: isDev ? {
-        plugins: ['@babel/plugin-transform-react-jsx-development']
-      } : undefined
+      fastRefresh: true
     })
   ],
   
@@ -89,9 +85,9 @@ export default defineConfig({
             return 'database';
           }
           
-          // Legacy PocketBase - separate chunk
-          if (id.includes('pocketbase')) {
-            return 'pocketbase';
+          // Database - separate chunk
+          if (id.includes('drizzle') || id.includes('pg')) {
+            return 'database';
           }
           
           // Charts - defer until dashboard
@@ -149,14 +145,21 @@ export default defineConfig({
   
   // Development server optimizations
   server: {
-    host: 'localhost',
+    host: '0.0.0.0',
     port: process.env.VITE_DEV_PORT || 4000,
     strictPort: false, // Allow port fallback
     open: false, // Don't auto-open browser
     cors: true, // Enable CORS for API calls
+    // Headers to prevent service worker caching issues
+    headers: {
+      'Service-Worker-Allowed': '/',
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0'
+    },
     hmr: {
       port: process.env.VITE_HMR_PORT || (process.env.VITE_DEV_PORT || 4000),
-      overlay: true, // Show error overlay in development
+      overlay: false, // Disable overlay to prevent service worker conflicts
       clientPort: process.env.VITE_HMR_PORT || (process.env.VITE_DEV_PORT || 4000)
     },
     watch: {
@@ -230,7 +233,7 @@ export default defineConfig({
   
   define: {
     // Provide production-ready environment variables with proper fallbacks
-    'import.meta.env.VITE_POCKETBASE_URL': JSON.stringify('http://127.0.0.1:8090'),
+    'import.meta.env.DATABASE_URL': JSON.stringify(process.env.DATABASE_URL || ''),
     'import.meta.env.VITE_APP_NAME': JSON.stringify('FlagFit Pro'),
     'import.meta.env.VITE_APP_VERSION': JSON.stringify('1.0.7'),
     'import.meta.env.VITE_NEON_DATABASE_URL': JSON.stringify(''),
