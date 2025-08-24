@@ -1,31 +1,40 @@
 {
-  "name": "flagfit-pro-fresh-start",
-  "version": "1.0.0",
+  "name": "flagfit-pro",
+  "version": "2.0.0",
   "type": "module",
-  "description": "Fresh start for FlagFit Pro dashboard",
-  "main": "index.js",
+  "description": "FlagFit Pro - Elite Flag Football Training Platform with Wireframe Integration",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js",
-    "seed": "node scripts/seedDashboardData.js",
-    "setup": "npm install && npm run seed",
-    "test": "node scripts/test-dashboard.js",
-    "test:login": "node scripts/test-login.js"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
-    "express": "^5.1.0",
-    "cors": "^2.8.5",
-    "dotenv": "^16.6.1",
-    "pg": "^8.11.3",
-    "bcryptjs": "^2.4.3",
-    "jsonwebtoken": "^9.0.2",
-    "node-fetch": "^3.3.2",
-    "chart.js": "^4.4.1",
-    "chartjs-adapter-date-fns": "^3.0.0",
-    "date-fns": "^3.3.1"
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.28.0"
   },
-  "devDependencies": {},
-  "keywords": ["flag-football", "dashboard", "fresh-start"],
-  "author": "FlagFit Pro Team",
+  "devDependencies": {
+    "@eslint/js": "^9.13.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.3",
+    "eslint": "^9.13.0",
+    "eslint-plugin-react": "^7.37.2",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.14",
+    "globals": "^15.11.0",
+    "vite": "^6.0.1"
+  },
+  "keywords": [
+    "flag-football", 
+    "training", 
+    "react", 
+    "vite", 
+    "wireframes",
+    "ai-coaching",
+    "olympics"
+  ],
+  "author": "FlagFit Pro Development Team",
   "license": "MIT"
 }
