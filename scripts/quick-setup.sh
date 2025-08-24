@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "🚀 Quick PocketBase Setup"
+echo "🚀 Quick Database Setup"
 echo "========================"
 echo ""
 echo "This script will automatically create all required collections."

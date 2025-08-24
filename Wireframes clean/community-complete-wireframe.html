@@ -1,0 +1,1886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlagFit Pro - Complete Community Wireframe (Black & White)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Black and White Wireframe Design System with Poppins Typography */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            color: #1a1a1a;
+            background-color: #ffffff;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Typography Hierarchy - All Poppins */
+        h1 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 2.5rem;
+            line-height: 1.2;
+            color: #1a1a1a;
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1.875rem;
+            line-height: 1.3;
+            color: #1a1a1a;
+            margin-bottom: 0.75rem;
+        }
+
+        h3 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1.5rem;
+            line-height: 1.4;
+            color: #1a1a1a;
+            margin-bottom: 0.5rem;
+        }
+
+        h4 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            font-size: 1.25rem;
+            line-height: 1.4;
+            color: #1a1a1a;
+            margin-bottom: 0.5rem;
+        }
+
+        h5 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            font-size: 1.125rem;
+            line-height: 1.4;
+            color: #1a1a1a;
+            margin-bottom: 0.25rem;
+        }
+
+        p, .body-text {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 400;
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #4a4a4a;
+            margin-bottom: 1rem;
+        }
+
+        .small-text {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 400;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            color: #6b6b6b;
+        }
+
+        .caption {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 400;
+            font-size: 0.75rem;
+            line-height: 1.4;
+            color: #8a8a8a;
+        }
+
+        /* CTA and Button Styles - Black and White */
+        .btn, .cta-primary, .cta-secondary {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cta-primary {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            border: 2px solid #1a1a1a;
+        }
+
+        .cta-primary:hover {
+            background-color: #ffffff;
+            color: #1a1a1a;
+            border: 2px solid #1a1a1a;
+        }
+
+        .cta-secondary {
+            background-color: #ffffff;
+            color: #1a1a1a;
+            border: 2px solid #1a1a1a;
+        }
+
+        .cta-secondary:hover {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            border: 2px solid #1a1a1a;
+        }
+
+        /* Layout Structure */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .header {
+            background-color: #ffffff;
+            border-bottom: 2px solid #e5e5e5;
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: #1a1a1a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            color: #4a4a4a;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: #f5f5f5;
+            color: #1a1a1a;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+        }
+
+        /* Community Grid */
+        .community-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        /* Cards */
+        .card {
+            background-color: #ffffff;
+            border: 2px solid #e5e5e5;
+            border-radius: 12px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: #1a1a1a;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-icon {
+            font-size: 2rem;
+            /* Emojis keep their natural colors */
+        }
+
+        .card-title {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1.25rem;
+            color: #1a1a1a;
+        }
+
+        .card-metric {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 2.5rem;
+            color: #1a1a1a;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-description {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 400;
+            color: #4a4a4a;
+            margin-bottom: 1rem;
+        }
+
+        .card-trend {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            font-size: 0.875rem;
+            color: #1a1a1a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Sections */
+        .section {
+            background-color: #ffffff;
+            border: 2px solid #e5e5e5;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .section-title {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1.5rem;
+            color: #1a1a1a;
+        }
+
+        /* Leaderboard */
+        .leaderboard {
+            background-color: #ffffff;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.3s ease;
+        }
+
+        .leaderboard-item:hover {
+            background-color: #f9f9f9;
+        }
+
+        .rank {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: #1a1a1a;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .player-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #e5e5e5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .player-info {
+            flex: 1;
+        }
+
+        .player-name {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 0.25rem;
+        }
+
+        .player-stats {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 400;
+            color: #6b6b6b;
+            font-size: 0.875rem;
+        }
+
+        .player-score {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 1.125rem;
+            color: #1a1a1a;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .stat-item {
+            background-color: #ffffff;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: #1a1a1a;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            color: #4a4a4a;
+            font-size: 0.875rem;
+        }
+
+        /* Team Chemistry Section */
+        .chemistry-section {
+            background-color: #fafafa;
+            border: 2px solid #1a1a1a;
+        }
+
+        .chemistry-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chemistry-card {
+            background-color: #ffffff;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .chemistry-score {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 2rem;
+            color: #1a1a1a;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .chemistry-label {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            color: #4a4a4a;
+            font-size: 0.875rem;
+        }
+
+        /* Progress Bars */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: #e5e5e5;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: #1a1a1a;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        /* Chat & Messages */
+        .chat-container {
+            background-color: #ffffff;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            padding: 1rem;
+            border-bottom: 1px solid #e5e5e5;
+            background-color: #f9f9f9;
+        }
+
+        .chat-title {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .message-author {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            color: #1a1a1a;
+            font-size: 0.875rem;
+        }
+
+        .message-time {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 400;
+            color: #8a8a8a;
+            font-size: 0.75rem;
+        }
+
+        .message-content {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 400;
+            color: #4a4a4a;
+            font-size: 0.875rem;
+            padding-left: 1rem;
+        }
+
+        .chat-input {
+            display: flex;
+            padding: 1rem;
+            border-top: 1px solid #e5e5e5;
+            gap: 0.5rem;
+        }
+
+        .chat-input input {
+            flex: 1;
+            font-family: 'Poppins', sans-serif;
+            padding: 0.75rem;
+            border: 1px solid #e5e5e5;
+            border-radius: 6px;
+            font-size: 0.875rem;
+        }
+
+        .chat-input button {
+            padding: 0.75rem 1rem;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .chat-input button:hover {
+            background-color: #333;
+        }
+
+        /* Activity Feed */
+        .activity-feed {
+            background-color: #ffffff;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .activity-icon {
+            font-size: 1.5rem;
+            /* Emojis keep their natural colors */
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-text {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 400;
+            color: #4a4a4a;
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-time {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 400;
+            color: #8a8a8a;
+            font-size: 0.75rem;
+        }
+
+        /* Community Social Feed Layout */
+        .community-layout {
+            display: grid;
+            grid-template-columns: 300px 1fr 280px;
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .community-sidebar {
+            background-color: #ffffff;
+            border: 2px solid #e5e5e5;
+            border-radius: 12px;
+            padding: 1.5rem;
+            height: fit-content;
+            position: sticky;
+            top: 2rem;
+        }
+
+        .social-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .feed-post {
+            background-color: #ffffff;
+            border: 2px solid #e5e5e5;
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .feed-post:hover {
+            border-color: #1a1a1a;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .user-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .post-user-info {
+            flex: 1;
+        }
+
+        .post-username {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            color: #1a1a1a;
+            font-size: 1rem;
+            margin-bottom: 0.125rem;
+        }
+
+        .post-time {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 400;
+            color: #6b6b6b;
+            font-size: 0.75rem;
+        }
+
+        .post-content {
+            margin-bottom: 1rem;
+        }
+
+        .post-text {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 400;
+            color: #1a1a1a;
+            font-size: 0.9375rem;
+            line-height: 1.5;
+            margin-bottom: 0.75rem;
+        }
+
+        .post-media {
+            background-color: #f8f9fa;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            text-align: center;
+            color: #6b6b6b;
+        }
+
+        .post-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .post-action {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            color: #6b6b6b;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 400;
+            font-size: 0.875rem;
+            transition: color 0.3s ease;
+        }
+
+        .post-action:hover {
+            color: #1a1a1a;
+        }
+
+        .post-action.active {
+            color: #1a1a1a;
+            font-weight: 500;
+        }
+
+        .activity-sidebar {
+            background-color: #ffffff;
+            border: 2px solid #e5e5e5;
+            border-radius: 12px;
+            padding: 1.5rem;
+            height: fit-content;
+            position: sticky;
+            top: 2rem;
+        }
+
+        .create-post {
+            background-color: #ffffff;
+            border: 2px solid #e5e5e5;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .create-post-input {
+            width: 100%;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            padding: 0.75rem;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9375rem;
+            resize: vertical;
+            min-height: 80px;
+            margin-bottom: 1rem;
+        }
+
+        .create-post-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .post-options {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .post-option {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            color: #6b6b6b;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 400;
+            font-size: 0.875rem;
+            transition: color 0.3s ease;
+        }
+
+        .post-option:hover {
+            color: #1a1a1a;
+        }
+
+        .community-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-badge {
+            background-color: #f8f9fa;
+            border: 1px solid #e5e5e5;
+            border-radius: 16px;
+            padding: 0.5rem 1rem;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            font-size: 0.875rem;
+            color: #1a1a1a;
+        }
+
+        .trending-topics {
+            margin-bottom: 1.5rem;
+        }
+
+        .topic-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .topic-item {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .topic-item:hover {
+            background-color: #f8f9fa;
+            margin: 0 -0.5rem;
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+            border-radius: 6px;
+        }
+
+        .topic-name {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            color: #1a1a1a;
+            font-size: 0.875rem;
+        }
+
+        .topic-count {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 400;
+            color: #6b6b6b;
+            font-size: 0.75rem;
+        }
+
+        /* Lists */
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-item {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 400;
+            color: #4a4a4a;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .feature-icon {
+            font-size: 1rem;
+            /* Emojis keep their natural colors */
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .community-layout {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .community-sidebar,
+            .activity-sidebar {
+                position: static;
+                margin-bottom: 1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .nav {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .community-stats {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .create-post-actions {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+
+            .post-options {
+                justify-content: center;
+            }
+
+            .feed-post {
+                padding: 1rem;
+            }
+
+            .post-actions {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+        }
+
+            .community-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            .chat-container {
+                height: 300px;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card, .section {
+            animation: fadeInUp 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">
+                <span>🏈</span>
+                <span>FlagFit Pro</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#" class="nav-link">Dashboard</a></li>
+                <li><a href="#" class="nav-link">Training</a></li>
+                <li><a href="#" class="nav-link active">Community</a></li>
+                <li><a href="#" class="nav-link">Tournament</a></li>
+            </ul>
+            <div class="user-profile">
+                <div class="avatar">JD</div>
+                <span class="small-text">John Doe</span>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1>Team Community</h1>
+            <p>Stay connected with your teammates through real-time updates and team achievements</p>
+        </div>
+
+        <!-- Social Media Style Community Layout -->
+        <div class="community-layout">
+            <!-- Left Sidebar -->
+            <div class="community-sidebar">
+                <h3>Community Stats</h3>
+                <div class="community-stats">
+                    <div class="stat-badge">2,847 Members</div>
+                    <div class="stat-badge">156 Posts Today</div>
+                    <div class="stat-badge">12 Challenges</div>
+                    <div class="stat-badge">89 Mentors</div>
+                </div>
+
+                <div class="trending-topics">
+                    <h4>🔥 Trending Topics</h4>
+                    <ul class="topic-list">
+                        <li class="topic-item">
+                            <div class="topic-name">#Olympic2028Prep</div>
+                            <div class="topic-count">247 posts</div>
+                        </li>
+                        <li class="topic-item">
+                            <div class="topic-name">#RouteRunning</div>
+                            <div class="topic-count">189 posts</div>
+                        </li>
+                        <li class="topic-item">
+                            <div class="topic-name">#TeamChemistry</div>
+                            <div class="topic-count">143 posts</div>
+                        </li>
+                        <li class="topic-item">
+                            <div class="topic-name">#RecoveryTips</div>
+                            <div class="topic-count">128 posts</div>
+                        </li>
+                        <li class="topic-item">
+                            <div class="topic-name">#NutritionAdvice</div>
+                            <div class="topic-count">95 posts</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="mentor-network">
+                    <h4>🎓 Available Mentors</h4>
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <span class="feature-icon">👨‍💼</span>
+                            <span>Coach Martinez - Olympic Strategy</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">👩‍⚕️</span>
+                            <span>Dr. Johnson - Sports Medicine</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🏃‍♂️</span>
+                            <span>Alex Thompson - Speed Training</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Feed -->
+            <div class="main-feed">
+                <!-- Create Post -->
+                <div class="create-post">
+                    <textarea class="create-post-input" placeholder="Share your training insights, ask questions, or celebrate achievements..."></textarea>
+                    <div class="create-post-actions">
+                        <div class="post-options">
+                            <div class="post-option">
+                                <span>📷</span>
+                                <span>Photo</span>
+                            </div>
+                            <div class="post-option">
+                                <span>🎥</span>
+                                <span>Video</span>
+                            </div>
+                            <div class="post-option">
+                                <span>📊</span>
+                                <span>Stats</span>
+                            </div>
+                        </div>
+                        <button class="cta-primary">Post</button>
+                    </div>
+                </div>
+
+                <!-- Social Feed -->
+                <div class="social-feed">
+                    <!-- Post 1 -->
+                    <div class="feed-post">
+                        <div class="post-header">
+                            <div class="user-avatar">MR</div>
+                            <div class="post-user-info">
+                                <div class="post-username">Marcus Rivera</div>
+                                <div class="post-time">2 hours ago • Coach</div>
+                            </div>
+                        </div>
+                        <div class="post-content">
+                            <div class="post-text">Just analyzed the European Championship film. The key to success will be mastering the double-move routes under pressure. Who's working on their route precision this week? #Olympic2028Prep</div>
+                            <div class="post-media">🎥 Training Video: Double-Move Technique Breakdown</div>
+                        </div>
+                        <div class="post-actions">
+                            <div class="post-action">
+                                <span>👍</span>
+                                <span>47 likes</span>
+                            </div>
+                            <div class="post-action">
+                                <span>💬</span>
+                                <span>23 comments</span>
+                            </div>
+                            <div class="post-action">
+                                <span>🔄</span>
+                                <span>12 shares</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Post 2 -->
+                    <div class="feed-post">
+                        <div class="post-header">
+                            <div class="user-avatar">SJ</div>
+                            <div class="post-user-info">
+                                <div class="post-username">Sarah Johnson</div>
+                                <div class="post-time">4 hours ago • Elite Athlete</div>
+                            </div>
+                        </div>
+                        <div class="post-content">
+                            <div class="post-text">Recovery day complete! 🧊 Ice bath ✅ Mobility work ✅ Nutrition on point ✅ Sometimes the hardest training happens when you're not training. #RecoveryTips</div>
+                        </div>
+                        <div class="post-actions">
+                            <div class="post-action active">
+                                <span>👍</span>
+                                <span>89 likes</span>
+                            </div>
+                            <div class="post-action">
+                                <span>💬</span>
+                                <span>34 comments</span>
+                            </div>
+                            <div class="post-action">
+                                <span>🔄</span>
+                                <span>18 shares</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                <div class="card-metric">8.7/10</div>
+                <p class="card-description">Overall team cohesion</p>
+                <div class="card-trend">
+                    <span>📈</span>
+                    <span>+0.4 this week</span>
+                </div>
+            </div>
+
+            <!-- Community Ranking Card -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">🏆</span>
+                    <h3 class="card-title">Community Rank</h3>
+                </div>
+                <div class="card-metric">#12</div>
+                <p class="card-description">Out of 847 teams</p>
+                <div class="card-trend">
+                    <span>⬆️</span>
+                    <span>Up 3 positions</span>
+                </div>
+            </div>
+
+            <!-- Active Members Card -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">👥</span>
+                    <h3 class="card-title">Active Members</h3>
+                </div>
+                <div class="card-metric">28</div>
+                <p class="card-description">Team members online</p>
+                <div class="card-trend">
+                    <span>🟢</span>
+                    <span>12 online now</span>
+                </div>
+            </div>
+
+            <!-- Messages Card -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">💬</span>
+                    <h3 class="card-title">Team Messages</h3>
+                </div>
+                <div class="card-metric">47</div>
+                <p class="card-description">Unread messages</p>
+                <div class="card-trend">
+                    <span>🔔</span>
+                    <span>3 new discussions</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🤝 Enhanced Team Chemistry with AI -->
+        <div class="section chemistry-section">
+            <div class="section-header">
+                <h2>🤝 Team Chemistry Analysis</h2>
+                <button class="cta-primary">View Detailed Report</button>
+            </div>
+            
+            <div class="chemistry-grid">
+                <div class="chemistry-card">
+                    <span class="chemistry-score">9.2/10</span>
+                    <span class="chemistry-label">Communication</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 92%"></div>
+                    </div>
+                    <div class="small-text">📈 Excellent verbal coordination</div>
+                </div>
+                
+                <div class="chemistry-card">
+                    <span class="chemistry-score">8.5/10</span>
+                    <span class="chemistry-label">Trust</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 85%"></div>
+                    </div>
+                    <div class="small-text">🤝 Strong mutual confidence</div>
+                </div>
+                
+                <div class="chemistry-card">
+                    <span class="chemistry-score">8.1/10</span>
+                    <span class="chemistry-label">Coordination</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 81%"></div>
+                    </div>
+                    <div class="small-text">⚡ Synchronized movements</div>
+                </div>
+                
+                <div class="chemistry-card">
+                    <span class="chemistry-score">8.9/10</span>
+                    <span class="chemistry-label">Leadership</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 89%"></div>
+                    </div>
+                    <div class="small-text">👑 Clear team direction</div>
+                </div>
+            </div>
+
+            <h4>🤖 AI Team Building Assistant</h4>
+            <div class="activity-feed">
+                <div class="activity-item">
+                    <span class="activity-icon">✅</span>
+                    <div class="activity-content">
+                        <div class="activity-text"><strong>Status:</strong> Team chemistry is healthy - no intervention needed</div>
+                        <div class="activity-time">Last analyzed 15 minutes ago</div>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <span class="activity-icon">🎯</span>
+                    <div class="activity-content">
+                        <div class="activity-text"><strong>Recent Success:</strong> Trust building exercise resulted in +1.2 improvement</div>
+                        <div class="activity-time">3 days ago</div>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <span class="activity-icon">📊</span>
+                    <div class="activity-content">
+                        <div class="activity-text"><strong>Trend:</strong> Communication scores trending upward (+0.6 this month)</div>
+                        <div class="activity-time">Weekly analysis</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🏆 Team Leaderboard -->
+        <div class="section">
+            <div class="section-header">
+                <h2>🏆 Team Performance Leaderboard</h2>
+                <button class="cta-secondary">View Full Rankings</button>
+            </div>
+            
+            <div class="leaderboard">
+                <div class="leaderboard-item">
+                    <div class="rank">1</div>
+                    <div class="player-avatar">MJ</div>
+                    <div class="player-info">
+                        <div class="player-name">Marcus Johnson</div>
+                        <div class="player-stats">QB • 47 games • 89% win rate</div>
+                    </div>
+                    <div class="player-score">2,847 pts</div>
+                </div>
+                
+                <div class="leaderboard-item">
+                    <div class="rank">2</div>
+                    <div class="player-avatar">AR</div>
+                    <div class="player-info">
+                        <div class="player-name">Alex Rivera</div>
+                        <div class="player-stats">WR • 44 games • 85% win rate</div>
+                    </div>
+                    <div class="player-score">2,634 pts</div>
+                </div>
+                
+                <div class="leaderboard-item">
+                    <div class="rank">3</div>
+                    <div class="player-avatar">JD</div>
+                    <div class="player-info">
+                        <div class="player-name">John Doe (You)</div>
+                        <div class="player-stats">RB • 42 games • 83% win rate</div>
+                    </div>
+                    <div class="player-score">2,512 pts</div>
+                </div>
+                
+                <div class="leaderboard-item">
+                    <div class="rank">4</div>
+                    <div class="player-avatar">ST</div>
+                    <div class="player-info">
+                        <div class="player-name">Sarah Thompson</div>
+                        <div class="player-stats">DB • 39 games • 81% win rate</div>
+                    </div>
+                    <div class="player-score">2,301 pts</div>
+                </div>
+                
+                <div class="leaderboard-item">
+                    <div class="rank">5</div>
+                    <div class="player-avatar">DM</div>
+                    <div class="player-info">
+                        <div class="player-name">David Martinez</div>
+                        <div class="player-stats">LB • 41 games • 79% win rate</div>
+                    </div>
+                    <div class="player-score">2,198 pts</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 💬 Team Chat & Communication -->
+        <div class="section">
+            <div class="section-header">
+                <h2>💬 Team Communications</h2>
+                <button class="cta-secondary">Manage Channels</button>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-value">3</span>
+                    <span class="stat-label">Active Channels</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">47</span>
+                    <span class="stat-label">Unread Messages</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">12</span>
+                    <span class="stat-label">Online Now</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">156</span>
+                    <span class="stat-label">Messages Today</span>
+                </div>
+            </div>
+
+            <div class="chat-container">
+                <div class="chat-header">
+                    <div class="chat-title"># General Team Chat</div>
+                </div>
+                <div class="chat-messages">
+                    <div class="message">
+                        <div class="message-header">
+                            <span class="message-author">Marcus Johnson</span>
+                            <span class="message-time">2:34 PM</span>
+                        </div>
+                        <div class="message-content">Great practice today everyone! Our timing on the quick slants is getting much better. Let's focus on our red zone plays tomorrow.</div>
+                    </div>
+                    
+                    <div class="message">
+                        <div class="message-header">
+                            <span class="message-author">Alex Rivera</span>
+                            <span class="message-time">2:36 PM</span>
+                        </div>
+                        <div class="message-content">Agreed! I felt much more comfortable with those routes. The chemistry building exercises are really helping our coordination.</div>
+                    </div>
+                    
+                    <div class="message">
+                        <div class="message-header">
+                            <span class="message-author">Sarah Thompson</span>
+                            <span class="message-time">2:38 PM</span>
+                        </div>
+                        <div class="message-content">Defense looked solid too. Our pass coverage is improving week by week. Can't wait for the next game! 🏆</div>
+                    </div>
+                    
+                    <div class="message">
+                        <div class="message-header">
+                            <span class="message-author">Coach Williams</span>
+                            <span class="message-time">2:45 PM</span>
+                        </div>
+                        <div class="message-content">Team chemistry scores just came in - 8.7/10! Highest we've had all season. Keep up the great work everyone!</div>
+                    </div>
+                </div>
+                <div class="chat-input">
+                    <input type="text" placeholder="Type your message..." />
+                    <button>Send</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 📊 Community Statistics -->
+        <div class="section">
+            <div class="section-header">
+                <h2>📊 Community Statistics</h2>
+                <button class="cta-secondary">Detailed Analytics</button>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-value">847</span>
+                    <span class="stat-label">Total Teams</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">12,634</span>
+                    <span class="stat-label">Active Players</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">3,429</span>
+                    <span class="stat-label">Games Played</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">8.4/10</span>
+                    <span class="stat-label">Avg Team Chemistry</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">124</span>
+                    <span class="stat-label">Days to LA28</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">73%</span>
+                    <span class="stat-label">Olympic Readiness</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🌟 Recent Activity Feed -->
+        <div class="section">
+            <div class="section-header">
+                <h2>🌟 Recent Team Activity</h2>
+                <button class="cta-secondary">View All Activity</button>
+            </div>
+            
+            <div class="activity-feed">
+                <div class="activity-item">
+                    <span class="activity-icon">🏆</span>
+                    <div class="activity-content">
+                        <div class="activity-text"><strong>Marcus Johnson</strong> achieved a new personal best in 40-yard dash: 4.42s</div>
+                        <div class="activity-time">15 minutes ago</div>
+                    </div>
+                </div>
+                
+                <div class="activity-item">
+                    <span class="activity-icon">🤝</span>
+                    <div class="activity-content">
+                        <div class="activity-text">Team completed a chemistry building exercise - Trust score improved by +1.2</div>
+                        <div class="activity-time">2 hours ago</div>
+                    </div>
+                </div>
+                
+                <div class="activity-item">
+                    <span class="activity-icon">🎯</span>
+                    <div class="activity-content">
+                        <div class="activity-text"><strong>Alex Rivera</strong> completed advanced route running training program</div>
+                        <div class="activity-time">4 hours ago</div>
+                    </div>
+                </div>
+                
+                <div class="activity-item">
+                    <span class="activity-icon">📊</span>
+                    <div class="activity-content">
+                        <div class="activity-text">Weekly team analytics report generated - Performance trending upward</div>
+                        <div class="activity-time">6 hours ago</div>
+                    </div>
+                </div>
+                
+                <div class="activity-item">
+                    <span class="activity-icon">🏋️</span>
+                    <div class="activity-content">
+                        <div class="activity-text"><strong>Sarah Thompson</strong> logged strength training session - Power metrics improved</div>
+                        <div class="activity-time">8 hours ago</div>
+                    </div>
+                </div>
+                
+                <div class="activity-item">
+                    <span class="activity-icon">🎮</span>
+                    <div class="activity-content">
+                        <div class="activity-text">Team scrimmage scheduled for tomorrow 4:30 PM - Olympic preparation focus</div>
+                        <div class="activity-time">1 day ago</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🎁 Community Rewards & Recognition -->
+        <div class="section">
+            <div class="section-header">
+                <h2>🎁 Team Achievements & Rewards</h2>
+                <button class="cta-secondary">Claim Rewards</button>
+            </div>
+            
+            <div class="feature-list">
+                <div class="feature-item">
+                    <span class="feature-icon">🏅</span>
+                    <span>Team Chemistry Excellence Award - 8.7/10 rating achieved</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🔥</span>
+                    <span>Training Streak: 12 consecutive days of team practice</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🎯</span>
+                    <span>Skill Mastery: 95% completion rate on technical drills</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">👑</span>
+                    <span>Leadership Recognition: Marcus Johnson - Captain of the Week</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">📈</span>
+                    <span>Performance Improvement: +15% team efficiency this month</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🌟</span>
+                    <span>Community Impact: Top 5% in team chemistry ratings</span>
+                </div>
+            </div>
+        </div>
+            <!-- Right Sidebar -->
+            <div class="activity-sidebar">
+                <h4>🏆 Active Challenges</h4>
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <span class="feature-icon">🏃</span>
+                        <span>Speed Challenge - 247 participants</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">💪</span>
+                        <span>Strength Goals - 189 participants</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🎯</span>
+                        <span>Accuracy Contest - 156 participants</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">👥</span>
+                        <span>Team Building - 98 participants</span>
+                    </div>
+                </div>
+
+                <h4 style="margin-top: 2rem;">📅 Upcoming Events</h4>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <span class="timeline-icon">🏆</span>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Regional Qualifier</div>
+                            <div class="timeline-date">Aug 15, 2025</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="timeline-icon">🎓</span>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Coaching Clinic</div>
+                            <div class="timeline-date">Aug 22, 2025</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="timeline-icon">🤝</span>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Team Chemistry Workshop</div>
+                            <div class="timeline-date">Aug 29, 2025</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🏆 LA28 Olympic Qualification Community Section -->
+        <div class="section olympic-section">
+            <div class="section-header">
+                <h2>🏆 Team Olympic Journey</h2>
+                <button class="cta-primary">View Full Pathway</button>
+            </div>
+            
+            <div class="olympic-metrics">
+                <div class="olympic-metric">
+                    <span class="metric-value">78%</span>
+                    <span class="metric-label">Team Qualification Probability</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 78%"></div>
+                    </div>
+                    <div class="metric-trend">Based on team performance and chemistry</div>
+                </div>
+                
+                <div class="olympic-metric">
+                    <span class="metric-value">#6</span>
+                    <span class="metric-label">Team World Ranking</span>
+                    <div class="metric-trend">↗ Moved up 1 position this month</div>
+                </div>
+                
+                <div class="olympic-metric">
+                    <span class="metric-value">124 days</span>
+                    <span class="metric-label">Until European Championships</span>
+                    <div class="metric-trend">🇫🇷 France, September 24-27, 2025</div>
+                </div>
+            </div>
+
+            <h4>🛤️ Official IFAF Qualification Pathway</h4>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <span class="timeline-icon">✅</span>
+                    <div class="timeline-content">
+                        <div class="timeline-title">Regional Tournaments</div>
+                        <div class="timeline-date">2024 - Completed</div>
+                        <div class="timeline-description">Team qualified for Continental Championships</div>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <span class="timeline-icon">🏃</span>
+                    <div class="timeline-content">
+                        <div class="timeline-title">European Championships</div>
+                        <div class="timeline-date">September 24-27, 2025</div>
+                        <div class="timeline-description">1 automatic Olympic spot available</div>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <span class="timeline-icon">🎯</span>
+                    <div class="timeline-content">
+                        <div class="timeline-title">2026 World Championship</div>
+                        <div class="timeline-date">July 15-21, 2026 (Germany)</div>
+                        <div class="timeline-description">6 Olympic spots available</div>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <span class="timeline-icon">🏅</span>
+                    <div class="timeline-content">
+                        <div class="timeline-title">LA28 Olympics</div>
+                        <div class="timeline-date">July 14-30, 2028</div>
+                        <div class="timeline-description">6 teams per gender - ONLY 60 ATHLETES</div>
+                    </div>
+                </div>
+            </div>
+
+            <h4>📊 Team vs Olympic Standards</h4>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-value">87/100</span>
+                    <span class="stat-label">Team Performance</span>
+                    <div class="small-text">vs 85/100 Olympic standard</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">8.4/10</span>
+                    <span class="stat-label">Team Chemistry</span>
+                    <div class="small-text">vs 8.0/10 Olympic standard</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">92%</span>
+                    <span class="stat-label">Preparation</span>
+                    <div class="small-text">vs 90% Olympic standard</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">78%</span>
+                    <span class="stat-label">Qualification</span>
+                    <div class="small-text">vs 75% Olympic standard</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🎁 Sponsor Product Discovery & Community Rewards -->
+        <div class="section">
+            <div class="section-header">
+                <h2>🎁 Team Sponsor Rewards & Products</h2>
+                <button class="cta-secondary">Browse Team Catalog</button>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-value">8,247</span>
+                    <span class="stat-label">Team Points Total</span>
+                    <div class="small-text">Combined team effort</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">PLATINUM</span>
+                    <span class="stat-label">Team Tier</span>
+                    <div class="small-text">Elite team status</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">23</span>
+                    <span class="stat-label">Team Products</span>
+                    <div class="small-text">Available for team</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">+45%</span>
+                    <span class="stat-label">Team Discount</span>
+                    <div class="small-text">Platinum tier benefit</div>
+                </div>
+            </div>
+
+            <h4>🏪 Team Featured Products</h4>
+            <div class="team-products">
+                <div class="team-product">
+                    <span class="product-icon">👕</span>
+                    <div class="product-content">
+                        <div class="product-title">Team GEARXPro Jerseys</div>
+                        <div class="product-description">Custom team jerseys with Olympic prep design</div>
+                        <div class="product-price">1,200 pts (Team discount: 800 pts)</div>
+                        <button class="cta-secondary">Get for Team</button>
+                    </div>
+                </div>
+                <div class="team-product">
+                    <span class="product-icon">🏋️</span>
+                    <div class="product-content">
+                        <div class="product-title">Team LaPrimaFit Recovery Kit</div>
+                        <div class="product-description">Complete recovery system for all team members</div>
+                        <div class="product-price">2,500 pts (Team discount: 1,750 pts)</div>
+                        <button class="cta-secondary">Get for Team</button>
+                    </div>
+                </div>
+            </div>
+
+            <h4>🎖️ Team Earning Opportunities</h4>
+            <div class="team-earning">
+                <div class="earning-item">
+                    <span class="earning-icon">🏃</span>
+                    <span>Team training session: +100 points (all members)</span>
+                </div>
+                <div class="earning-item">
+                    <span class="earning-icon">🏆</span>
+                    <span>Tournament participation: +500 points (team)</span>
+                </div>
+                <div class="earning-item">
+                    <span class="earning-icon">👥</span>
+                    <span>Team chemistry improvement: +200 points</span>
+                </div>
+                <div class="earning-item">
+                    <span class="earning-icon">📈</span>
+                    <span>Olympic prep milestone: +1,000 points (team)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🌍 Multilingual Community Features -->
+        <div class="section">
+            <div class="section-header">
+                <h2>🌍 Multilingual Community Features</h2>
+                <button class="cta-secondary">Language Settings</button>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-value">5</span>
+                    <span class="stat-label">Languages</span>
+                    <div class="small-text">English, Spanish, Chinese, Japanese, French</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">🇺🇸</span>
+                    <span class="stat-label">Team Language</span>
+                    <div class="small-text">English (Primary)</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">3</span>
+                    <span class="stat-label">Team Languages</span>
+                <div class="small-text">English, Spanish, French</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">✓</span>
+                    <span class="stat-label">Translation</span>
+                    <div class="small-text">Real-time available</div>
+                </div>
+            </div>
+
+            <h4>🌐 Team Language Composition</h4>
+            <div class="team-languages">
+                <div class="language-item">
+                    <span class="language-flag">🇺🇸</span>
+                    <div class="language-content">
+                        <div class="language-name">English</div>
+                        <div class="language-count">8 players (Primary)</div>
+                    </div>
+                </div>
+                <div class="language-item">
+                    <span class="language-flag">🇪🇸</span>
+                    <div class="language-content">
+                        <div class="language-name">Spanish</div>
+                        <div class="language-count">2 players</div>
+                    </div>
+                </div>
+                <div class="language-item">
+                    <span class="language-flag">🇫🇷</span>
+                    <div class="language-content">
+                        <div class="language-name">French</div>
+                        <div class="language-count">2 players</div>
+                    </div>
+                </div>
+            </div>
+
+            <h4>🔊 Real-Time Translation Features</h4>
+            <div class="translation-features">
+                <div class="feature-item">
+                    <span class="feature-icon">💬</span>
+                    <span>Chat translation: ✓ Available in all languages</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">📢</span>
+                    <span>Announcements: ✓ Multi-language support</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">📋</span>
+                    <span>Training plans: ✓ Translated automatically</span>
+                </div>
+            </div>
+
+            <h4>🌍 Global Team Connections</h4>
+            <div class="global-connections">
+                <div class="connection-item">
+                    <span class="connection-icon">🌍</span>
+                    <span>International tournaments: Connect with global teams</span>
+                </div>
+                <div class="connection-item">
+                    <span class="connection-icon">🤝</span>
+                    <span>Cultural exchange: Learn from international players</span>
+                </div>
+                <div class="connection-item">
+                    <span class="connection-icon">🏆</span>
+                    <span>Olympic preparation: Global competition insights</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Interactive functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Card hover effects
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                card.addEventListener('click', function() {
+                    console.log('Card clicked:', this.querySelector('.card-title').textContent);
+                });
+            });
+
+            // Leaderboard interactions
+            const leaderboardItems = document.querySelectorAll('.leaderboard-item');
+            leaderboardItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    console.log('Player selected:', this.querySelector('.player-name').textContent);
+                });
+            });
+
+            // Chat functionality
+            const chatInput = document.querySelector('.chat-input input');
+            const chatButton = document.querySelector('.chat-input button');
+            const chatMessages = document.querySelector('.chat-messages');
+
+            if (chatButton && chatInput) {
+                chatButton.addEventListener('click', function() {
+                    const message = chatInput.value.trim();
+                    if (message) {
+                        // Create new message element
+                        const messageDiv = document.createElement('div');
+                        messageDiv.className = 'message';
+                        messageDiv.innerHTML = `
+                            <div class="message-header">
+                                <span class="message-author">John Doe</span>
+                                <span class="message-time">Now</span>
+                            </div>
+                            <div class="message-content">${message}</div>
+                        `;
+                        chatMessages.appendChild(messageDiv);
+                        chatInput.value = '';
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    }
+                });
+
+                chatInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        chatButton.click();
+                    }
+                });
+            }
+
+            // Button interactions
+            const buttons = document.querySelectorAll('.cta-primary, .cta-secondary');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    console.log('Button clicked:', this.textContent);
+                });
+            });
+
+            // Animate progress bars
+            const progressBars = document.querySelectorAll('.progress-fill');
+            progressBars.forEach(bar => {
+                const width = bar.style.width;
+                bar.style.width = '0%';
+                setTimeout(() => {
+                    bar.style.width = width;
+                }, 500);
+            });
+
+            // Activity feed interactions
+            const activityItems = document.querySelectorAll('.activity-item');
+            activityItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    console.log('Activity clicked:', this.querySelector('.activity-text').textContent);
+                });
+            });
+
+            // Real-time updates simulation
+            setInterval(() => {
+                const onlineCount = document.querySelector('.community-grid .card:nth-child(3) .card-metric');
+                if (onlineCount) {
+                    const current = parseInt(onlineCount.textContent);
+                    const variation = Math.floor(Math.random() * 6) - 3; // -3 to +3
+                    const newCount = Math.max(20, current + variation);
+                    onlineCount.textContent = newCount;
+                }
+            }, 5000);
+        });
+    </script>
+</body>
+</html>

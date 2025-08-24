@@ -26,14 +26,14 @@ class HealthCheckService {
           timeout: 5000
         },
         {
-          name: 'PocketBase API',
+          name: 'Database API',
           url: 'http://localhost:8090/api/health',
           method: 'GET',
           expectedStatus: 200,
           timeout: 3000
         },
         {
-          name: 'PocketBase Admin',
+          name: 'Database Admin',
           url: 'http://localhost:8090/_/',
           method: 'GET',
           expectedStatus: 200,

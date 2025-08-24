@@ -40,7 +40,6 @@
 4. **Environment Variables** (Optional)
    ```
    DATABASE_URL=postgresql://username:password@hostname/database?sslmode=require
-   VITE_DATABASE_URL=postgresql://username:password@hostname/database?sslmode=require
    VITE_APP_ENVIRONMENT=production
    VITE_APP_NAME=FlagFit Pro
    ```
@@ -96,7 +95,6 @@ VITE_APP_ENVIRONMENT=production
 
 # Optional (for Neon database)
 DATABASE_URL=postgresql://username:password@hostname/database?sslmode=require
-VITE_DATABASE_URL=postgresql://username:password@hostname/database?sslmode=require
 
 # Optional (for analytics)
 VITE_ENABLE_ANALYTICS=true
