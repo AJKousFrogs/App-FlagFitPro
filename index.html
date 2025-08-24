@@ -1,55 +1,203 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FlagFit Pro - Fresh Start</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            margin: 0;
-            padding: 40px;
-            background-color: #f5f5f5;
-            text-align: center;
+  <head>
+    <meta charset="UTF-8" />
+    
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https:; worker-src 'self';" />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- SEO and Brand Identity -->
+    <title>FlagFit Pro - Elite Flag Football Training & Analytics Platform</title>
+    <meta name="description" content="Professional flag football training platform with advanced analytics, AI coaching, team management, and LA28 Olympic preparation tools." />
+    <meta name="keywords" content="flag football, training, analytics, coaching, sports tech, LA28, olympics" />
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="FlagFit Pro Development Team" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="FlagFit Pro - Elite Flag Football Training Platform" />
+    <meta property="og:description" content="Advanced flag football training with AI coaching, team analytics, and Olympic preparation tools." />
+    <meta property="og:site_name" content="FlagFit Pro" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:title" content="FlagFit Pro - Elite Flag Football Training Platform" />
+    <meta property="twitter:description" content="Advanced flag football training with AI coaching, team analytics, and Olympic preparation tools." />
+    
+    <!-- Favicon and Touch Icons -->
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#1a1a1a" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+              console.log('SW registered: ', registration);
+            })
+            .catch((registrationError) => {
+              console.log('SW registration failed: ', registrationError);
+            });
+        });
+      }
+    </script>
+    
+    <!-- Preconnect to External Services -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- Performance: Preload Critical Resources -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" as="style" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" />
+    
+    <!-- Comprehensive Performance API Polyfill for React Scheduler -->
+    <script>
+      // Initialize performance object with comprehensive timing API support
+      (function() {
+        // Ensure performance object exists
+        if (!window.performance) {
+          window.performance = {};
         }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+        // Polyfill MessageChannel for React scheduler
+        if (!window.MessageChannel) {
+          window.MessageChannel = function() {
+            const callbacks = [];
+            this.port1 = {
+              postMessage: function(data) {
+                setTimeout(function() {
+                  callbacks.forEach(function(callback) {
+                    callback({ data: data });
+                  });
+                }, 0);
+              }
+            };
+            this.port2 = {
+              onmessage: null,
+              addEventListener: function(type, callback) {
+                if (type === 'message') {
+                  callbacks.push(callback);
+                }
+              }
+            };
+          };
         }
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
+
+        // Enhanced performance timing methods
+        if (!window.performance.now) {
+          let start = Date.now();
+          window.performance.now = function() {
+            return Date.now() - start;
+          };
         }
-        p {
-            color: #666;
-            line-height: 1.6;
-            margin-bottom: 20px;
+
+        // Request animation frame polyfill
+        if (!window.requestAnimationFrame) {
+          window.requestAnimationFrame = function(callback) {
+            return setTimeout(callback, 1000/60);
+          };
         }
-        .success {
-            color: #10b981;
-            font-weight: 600;
+
+        if (!window.cancelAnimationFrame) {
+          window.cancelAnimationFrame = function(id) {
+            clearTimeout(id);
+          };
         }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>🏈 FlagFit Pro - Fresh Start</h1>
-        <p class="success">✅ All old frontend code has been completely removed!</p>
-        <p>Your workspace is now clean and ready for a fresh start.</p>
-        <p>You can now build your dashboard from scratch with whatever approach you prefer.</p>
-        <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;">
-        <p><strong>What was cleaned up:</strong></p>
-        <ul style="text-align: left; display: inline-block; color: #666;">
-            <li>React components and pages</li>
-            <li>Vite configuration</li>
-            <li>Tailwind CSS</li>
-            <li>All build artifacts</li>
-            <li>Development processes</li>
-        </ul>
-    </div>
-</body>
+
+        // High precision timer fallback
+        if (!window.performance.timeOrigin) {
+          window.performance.timeOrigin = Date.now();
+        }
+
+        // React Scheduler support
+        window.scheduler = window.scheduler || {
+          postTask: function(callback, options) {
+            const priority = options && options.priority || 'user-blocking';
+            const delay = priority === 'background' ? 1000 : 
+                         priority === 'user-visible' ? 100 : 0;
+            
+            return setTimeout(callback, delay);
+          },
+          
+          unstable_scheduleCallback: function(priority, callback, options) {
+            const delay = priority === 5 ? 1000 : 
+                         priority === 3 ? 100 : 0;
+            return setTimeout(callback, delay);
+          }
+        };
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+    
+    <!-- Performance monitoring -->
+    <script>
+      // Cache management and performance monitoring
+      if ('caches' in window) {
+        // Clear old caches on version updates
+        window.addEventListener('load', function() {
+          caches.keys().then(function(cacheNames) {
+            return Promise.all(
+              cacheNames.map(function(cacheName) {
+                if (cacheName.includes('old-version')) {
+                  return caches.delete(cacheName);
+                }
+              })
+            );
+          }).then(function() {
+            console.log('All caches cleared');
+          });
+        });
+      }
+      
+      // Basic error tracking
+      window.addEventListener('error', function(e) {
+        console.error('Global error:', e.error);
+      });
+      
+      window.addEventListener('unhandledrejection', function(e) {
+        console.error('Unhandled promise rejection:', e.reason);
+      });
+      
+      // Performance measurement
+      window.addEventListener('load', function() {
+        if (window.performance && window.performance.measure) {
+          try {
+            performance.measure('app-load', 'navigationStart');
+            const measure = performance.getEntriesByName('app-load')[0];
+            console.log('App load time:', measure.duration + 'ms');
+          } catch (e) {
+            // Fallback measurement
+            console.log('Page loaded in:', Date.now() - performance.timeOrigin + 'ms');
+          }
+        }
+      });
+      
+      // Clear service worker cache if needed
+      if ('serviceWorker' in navigator && 'caches' in window) {
+        window.clearSWCache = function() {
+          caches.keys().then(function(cacheNames) {
+            return Promise.all(
+              cacheNames.map(function(cacheName) {
+                return caches.delete(cacheName);
+              })
+            );
+          }).then(function() {
+            console.log('All caches cleared');
+          });
+        }
+      }
+    </script>
+  </body>
 </html>

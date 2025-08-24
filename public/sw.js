@@ -4,9 +4,7 @@
 const CACHE_NAME = 'flag-football-v1';
 const urlsToCache = [
   '/',
-  '/manifest.json',
-  '/icons/app-icon.png',
-  '/icons/badge.png'
+  '/manifest.json'
 ];
 
 // Install event - cache resources
@@ -14,7 +12,19 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
-        return cache.addAll(urlsToCache);
+        // Try to cache each resource individually to avoid failing all if one fails
+        return Promise.allSettled(
+          urlsToCache.map(url => 
+            cache.add(url).catch(error => {
+              console.log('Failed to cache:', url, error);
+              return null;
+            })
+          )
+        );
+      })
+      .catch(error => {
+        console.log('Cache setup failed:', error);
+        return null;
       })
   );
   self.skipWaiting();
@@ -41,10 +51,44 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
-        // Return cached version or fetch from network
-        return response || fetch(event.request);
-      }
-    )
+        // Return cached version if available
+        if (response) {
+          return response;
+        }
+        
+        // Otherwise fetch from network with error handling
+        return fetch(event.request).catch((error) => {
+          console.log('Fetch failed for:', event.request.url, error);
+          
+          // For navigation requests, return a basic offline page
+          if (event.request.mode === 'navigate') {
+            return new Response(`
+              <!DOCTYPE html>
+              <html>
+                <head>
+                  <title>Offline - FlagFit Pro</title>
+                  <meta charset="utf-8">
+                  <meta name="viewport" content="width=device-width, initial-scale=1">
+                </head>
+                <body>
+                  <h1>You're offline</h1>
+                  <p>Please check your internet connection and try again.</p>
+                  <button onclick="window.location.reload()">Retry</button>
+                </body>
+              </html>
+            `, {
+              headers: { 'Content-Type': 'text/html' },
+              status: 200
+            });
+          }
+          
+          // For other requests, return a basic error response
+          return new Response('Resource not available offline', {
+            status: 503,
+            statusText: 'Service Unavailable'
+          });
+        });
+      })
   );
 });
 

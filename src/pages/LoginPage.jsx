@@ -65,7 +65,7 @@ const LoginPage = ({ onLogin }) => {
     <div className="login-page">
       <div className="login-form">
         <h2>Welcome Back! 🏈</h2>
-        <div>Ready to dominate today&apos;s training?</div>
+        <div>Ready to dominate today&apos;s training? (Hot Reload Test ✅)</div>
         
         {/* Top Banner for Free Users */}
         <SponsorBanner 

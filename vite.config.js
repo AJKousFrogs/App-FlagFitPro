@@ -106,11 +106,10 @@ export default defineConfig({
   
   // Development server optimizations
   server: {
-    host: 'localhost',
-    port: 4000,
-    hmr: {
-      port: 4000
-    }
+    host: '127.0.0.1',
+    port: 3000,
+    strictPort: false,
+    open: false
   },
   
   // Preview server optimizations  
