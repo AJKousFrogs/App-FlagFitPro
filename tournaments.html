@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlagFit Pro - Tournaments</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f8fafc;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            text-align: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 40px;
+            padding: 0 20px;
+        }
+
+        .nav-item {
+            display: block;
+            padding: 15px 25px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-left-color: white;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tournament-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .tournaments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .tournament-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .tournament-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .tournament-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            position: relative;
+        }
+
+        .tournament-status {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .tournament-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .tournament-subtitle {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .tournament-body {
+            padding: 25px;
+        }
+
+        .tournament-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+        }
+
+        .info-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .info-icon.date {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .info-icon.location {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .info-icon.prize {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .info-icon.teams {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .tournament-progress {
+            margin-bottom: 20px;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+        }
+
+        .tournament-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn.primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .action-btn.primary:hover {
+            background: #5a6fd8;
+        }
+
+        .action-btn.secondary {
+            background: #f1f5f9;
+            color: #64748b;
+            border: 2px solid #e2e8f0;
+        }
+
+        .action-btn.secondary:hover {
+            background: #e2e8f0;
+        }
+
+        .bracket-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .bracket-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .bracket {
+            display: flex;
+            justify-content: space-between;
+            gap: 40px;
+            overflow-x: auto;
+            padding: 20px 0;
+        }
+
+        .bracket-round {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            min-width: 200px;
+        }
+
+        .round-title {
+            text-align: center;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .match {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            position: relative;
+        }
+
+        .match.completed {
+            border-color: #10b981;
+        }
+
+        .match.upcoming {
+            border-color: #667eea;
+        }
+
+        .team {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .team:last-child {
+            border-bottom: none;
+        }
+
+        .team.winner {
+            font-weight: 600;
+            color: #10b981;
+        }
+
+        .team-name {
+            font-size: 0.9rem;
+        }
+
+        .team-score {
+            font-weight: 600;
+            min-width: 30px;
+            text-align: right;
+        }
+
+        .leaderboard {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+        }
+
+        .leaderboard-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 25px;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .leaderboard-item:last-child {
+            border-bottom: none;
+        }
+
+        .rank {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+        }
+
+        .rank.first {
+            background: linear-gradient(135deg, #ffd700 0%, #ffb300 100%);
+        }
+
+        .rank.second {
+            background: linear-gradient(135deg, #c0c0c0 0%, #a0a0a0 100%);
+        }
+
+        .rank.third {
+            background: linear-gradient(135deg, #cd7f32 0%, #b87333 100%);
+        }
+
+        .rank.other {
+            background: #e2e8f0;
+            color: #64748b;
+        }
+
+        .team-info {
+            flex: 1;
+        }
+
+        .team-name-lb {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .team-stats {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 2px;
+        }
+
+        .points {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .tournaments-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tournament-info {
+                grid-template-columns: 1fr;
+            }
+
+            .bracket {
+                gap: 20px;
+            }
+
+            .bracket-round {
+                min-width: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="sidebar">
+        <div class="logo">🏈 FlagFit Pro</div>
+        <a href="dashboard.html" class="nav-item">📊 Dashboard</a>
+        <a href="training.html" class="nav-item">⚡ Training</a>
+        <a href="#" class="nav-item active">🏆 Tournaments</a>
+        <a href="#" class="nav-item">👥 Community</a>
+        <a href="chat.html" class="nav-item">💬 Team Chat</a>
+        <a href="#" class="nav-item">⚙️ Settings</a>
+    </nav>
+
+    <main class="main-content">
+        <header class="header">
+            <div>
+                <h1 style="font-size: 1.5rem; font-weight: 600; color: #333;">Tournament Hub</h1>
+                <p style="color: #666; margin-top: 5px;">Join competitions and track your progress</p>
+            </div>
+            <div>
+                <button class="action-btn primary" onclick="showCreateTournament()">Create Tournament</button>
+            </div>
+        </header>
+
+        <div class="tournament-tabs">
+            <button class="tab-btn active" onclick="switchTab('upcoming')">Upcoming</button>
+            <button class="tab-btn" onclick="switchTab('live')">Live</button>
+            <button class="tab-btn" onclick="switchTab('completed')">Completed</button>
+            <button class="tab-btn" onclick="switchTab('my-tournaments')">My Tournaments</button>
+        </div>
+
+        <section class="tournaments-grid" id="tournamentsGrid">
+            <div class="tournament-card">
+                <div class="tournament-header">
+                    <div class="tournament-status">Registration Open</div>
+                    <div class="tournament-title">Fall Championship</div>
+                    <div class="tournament-subtitle">Regional Flag Football League</div>
+                </div>
+                <div class="tournament-body">
+                    <div class="tournament-info">
+                        <div class="info-item">
+                            <div class="info-icon date">📅</div>
+                            <div>
+                                <div>Oct 15-17</div>
+                                <div style="font-size: 0.8rem; color: #666;">3 days</div>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-icon location">📍</div>
+                            <div>
+                                <div>Central Park</div>
+                                <div style="font-size: 0.8rem; color: #666;">New York</div>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-icon prize">💰</div>
+                            <div>
+                                <div>$5,000</div>
+                                <div style="font-size: 0.8rem; color: #666;">Prize pool</div>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-icon teams">👥</div>
+                            <div>
+                                <div>24/32 teams</div>
+                                <div style="font-size: 0.8rem; color: #666;">Registered</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tournament-progress">
+                        <div class="progress-label">
+                            <span>Registration Progress</span>
+                            <span>75%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 75%"></div>
+                        </div>
+                    </div>
+                    <div class="tournament-actions">
+                        <button class="action-btn primary">Register Team</button>
+                        <button class="action-btn secondary">View Details</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tournament-card">
+                <div class="tournament-header">
+                    <div class="tournament-status" style="background: #10b981;">Live Now</div>
+                    <div class="tournament-title">Summer Slam</div>
+                    <div class="tournament-subtitle">Elite Division Tournament</div>
+                </div>
+                <div class="tournament-body">
+                    <div class="tournament-info">
+                        <div class="info-item">
+                            <div class="info-icon date">📅</div>
+                            <div>
+                                <div>Today</div>
+                                <div style="font-size: 0.8rem; color: #666;">Round 2</div>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-icon location">📍</div>
+                            <div>
+                                <div>Sports Complex</div>
+                                <div style="font-size: 0.8rem; color: #666;">LA</div>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-icon prize">💰</div>
+                            <div>
+                                <div>$10,000</div>
+                                <div style="font-size: 0.8rem; color: #666;">Prize pool</div>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-icon teams">👥</div>
+                            <div>
+                                <div>16 teams</div>
+                                <div style="font-size: 0.8rem; color: #666;">Competing</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tournament-progress">
+                        <div class="progress-label">
+                            <span>Tournament Progress</span>
+                            <span>50%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 50%"></div>
+                        </div>
+                    </div>
+                    <div class="tournament-actions">
+                        <button class="action-btn primary">Watch Live</button>
+                        <button class="action-btn secondary">View Bracket</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tournament-card">
+                <div class="tournament-header">
+                    <div class="tournament-status">Coming Soon</div>
+                    <div class="tournament-title">Winter League</div>
+                    <div class="tournament-subtitle">Indoor Flag Football</div>
+                </div>
+                <div class="tournament-body">
+                    <div class="tournament-info">
+                        <div class="info-item">
+                            <div class="info-icon date">📅</div>
+                            <div>
+                                <div>Dec 1-15</div>
+                                <div style="font-size: 0.8rem; color: #666;">2 weeks</div>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-icon location">📍</div>
+                            <div>
+                                <div>Indoor Arena</div>
+                                <div style="font-size: 0.8rem; color: #666;">Chicago</div>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-icon prize">💰</div>
+                            <div>
+                                <div>$7,500</div>
+                                <div style="font-size: 0.8rem; color: #666;">Prize pool</div>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-icon teams">👥</div>
+                            <div>
+                                <div>0/24 teams</div>
+                                <div style="font-size: 0.8rem; color: #666;">Registered</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tournament-progress">
+                        <div class="progress-label">
+                            <span>Opens in</span>
+                            <span>30 days</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="tournament-actions">
+                        <button class="action-btn secondary">Set Reminder</button>
+                        <button class="action-btn secondary">View Details</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bracket-container" id="bracketContainer">
+            <h3 class="bracket-title">Summer Slam - Tournament Bracket</h3>
+            <div class="bracket">
+                <div class="bracket-round">
+                    <div class="round-title">Quarter Finals</div>
+                    <div class="match completed">
+                        <div class="team winner">
+                            <span class="team-name">Thunder Bolts</span>
+                            <span class="team-score">21</span>
+                        </div>
+                        <div class="team">
+                            <span class="team-name">Lightning Strike</span>
+                            <span class="team-score">14</span>
+                        </div>
+                    </div>
+                    <div class="match completed">
+                        <div class="team winner">
+                            <span class="team-name">Storm Chasers</span>
+                            <span class="team-score">28</span>
+                        </div>
+                        <div class="team">
+                            <span class="team-name">Wind Runners</span>
+                            <span class="team-score">17</span>
+                        </div>
+                    </div>
+                    <div class="match upcoming">
+                        <div class="team">
+                            <span class="team-name">Fire Eagles</span>
+                            <span class="team-score">-</span>
+                        </div>
+                        <div class="team">
+                            <span class="team-name">Ice Wolves</span>
+                            <span class="team-score">-</span>
+                        </div>
+                    </div>
+                    <div class="match upcoming">
+                        <div class="team">
+                            <span class="team-name">Sky Hawks</span>
+                            <span class="team-score">-</span>
+                        </div>
+                        <div class="team">
+                            <span class="team-name">Ground Force</span>
+                            <span class="team-score">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bracket-round">
+                    <div class="round-title">Semi Finals</div>
+                    <div class="match upcoming">
+                        <div class="team">
+                            <span class="team-name">Thunder Bolts</span>
+                            <span class="team-score">-</span>
+                        </div>
+                        <div class="team">
+                            <span class="team-name">Storm Chasers</span>
+                            <span class="team-score">-</span>
+                        </div>
+                    </div>
+                    <div class="match upcoming">
+                        <div class="team">
+                            <span class="team-name">TBD</span>
+                            <span class="team-score">-</span>
+                        </div>
+                        <div class="team">
+                            <span class="team-name">TBD</span>
+                            <span class="team-score">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bracket-round">
+                    <div class="round-title">Final</div>
+                    <div class="match upcoming">
+                        <div class="team">
+                            <span class="team-name">TBD</span>
+                            <span class="team-score">-</span>
+                        </div>
+                        <div class="team">
+                            <span class="team-name">TBD</span>
+                            <span class="team-score">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="leaderboard">
+            <h3 class="leaderboard-title">Tournament Rankings</h3>
+            <div id="leaderboardList">
+                <div class="leaderboard-item">
+                    <div class="rank first">1</div>
+                    <div class="team-info">
+                        <div class="team-name-lb">Thunder Bolts</div>
+                        <div class="team-stats">5 wins • 0 losses • 145 points scored</div>
+                    </div>
+                    <div class="points">2,500</div>
+                </div>
+                <div class="leaderboard-item">
+                    <div class="rank second">2</div>
+                    <div class="team-info">
+                        <div class="team-name-lb">Storm Chasers</div>
+                        <div class="team-stats">4 wins • 1 loss • 128 points scored</div>
+                    </div>
+                    <div class="points">2,200</div>
+                </div>
+                <div class="leaderboard-item">
+                    <div class="rank third">3</div>
+                    <div class="team-info">
+                        <div class="team-name-lb">Fire Eagles</div>
+                        <div class="team-stats">4 wins • 1 loss • 112 points scored</div>
+                    </div>
+                    <div class="points">2,100</div>
+                </div>
+                <div class="leaderboard-item">
+                    <div class="rank other">4</div>
+                    <div class="team-info">
+                        <div class="team-name-lb">Ice Wolves</div>
+                        <div class="team-stats">3 wins • 2 losses • 98 points scored</div>
+                    </div>
+                    <div class="points">1,850</div>
+                </div>
+                <div class="leaderboard-item">
+                    <div class="rank other">5</div>
+                    <div class="team-info">
+                        <div class="team-name-lb">Sky Hawks</div>
+                        <div class="team-stats">3 wins • 2 losses • 89 points scored</div>
+                    </div>
+                    <div class="points">1,720</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script type="module">
+        import { authManager } from './src/auth-manager.js';
+        import { apiClient } from './src/api-config.js';
+
+        async function initTournamentsPage() {
+            if (!authManager.requireAuth()) return;
+
+            await loadTournaments();
+        }
+
+        async function loadTournaments() {
+            try {
+                const response = await apiClient.get('/api/tournaments');
+                
+                if (response.success && response.data.tournaments) {
+                    updateTournamentsGrid(response.data.tournaments);
+                }
+                
+                if (response.success && response.data.leaderboard) {
+                    updateLeaderboard(response.data.leaderboard);
+                }
+            } catch (error) {
+                console.error('Failed to load tournaments:', error);
+                authManager.showError('Failed to load tournament data');
+            }
+        }
+
+        function updateTournamentsGrid(tournaments) {
+            const grid = document.getElementById('tournamentsGrid');
+            
+            grid.innerHTML = tournaments.map(tournament => `
+                <div class="tournament-card">
+                    <div class="tournament-header">
+                        <div class="tournament-status" style="background: ${getStatusColor(tournament.status)};">${tournament.status}</div>
+                        <div class="tournament-title">${tournament.name}</div>
+                        <div class="tournament-subtitle">${tournament.description}</div>
+                    </div>
+                    <div class="tournament-body">
+                        <div class="tournament-info">
+                            <div class="info-item">
+                                <div class="info-icon date">📅</div>
+                                <div>
+                                    <div>${tournament.date}</div>
+                                    <div style="font-size: 0.8rem; color: #666;">${tournament.duration}</div>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-icon location">📍</div>
+                                <div>
+                                    <div>${tournament.location}</div>
+                                    <div style="font-size: 0.8rem; color: #666;">${tournament.city}</div>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-icon prize">💰</div>
+                                <div>
+                                    <div>$${tournament.prizePool.toLocaleString()}</div>
+                                    <div style="font-size: 0.8rem; color: #666;">Prize pool</div>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-icon teams">👥</div>
+                                <div>
+                                    <div>${tournament.registeredTeams}/${tournament.maxTeams} teams</div>
+                                    <div style="font-size: 0.8rem; color: #666;">Registered</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tournament-progress">
+                            <div class="progress-label">
+                                <span>${tournament.progressLabel}</span>
+                                <span>${tournament.progressPercent}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${tournament.progressPercent}%"></div>
+                            </div>
+                        </div>
+                        <div class="tournament-actions">
+                            <button class="action-btn primary" onclick="handleTournamentAction('${tournament.id}', '${tournament.primaryAction}')">${tournament.primaryActionText}</button>
+                            <button class="action-btn secondary" onclick="viewTournamentDetails('${tournament.id}')">View Details</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateLeaderboard(teams) {
+            const leaderboard = document.getElementById('leaderboardList');
+            
+            leaderboard.innerHTML = teams.map((team, index) => `
+                <div class="leaderboard-item">
+                    <div class="rank ${getRankClass(index + 1)}">${index + 1}</div>
+                    <div class="team-info">
+                        <div class="team-name-lb">${team.name}</div>
+                        <div class="team-stats">${team.wins} wins • ${team.losses} losses • ${team.pointsScored} points scored</div>
+                    </div>
+                    <div class="points">${team.points.toLocaleString()}</div>
+                </div>
+            `).join('');
+        }
+
+        function getStatusColor(status) {
+            const colors = {
+                'Registration Open': 'rgba(102, 126, 234, 0.8)',
+                'Live Now': '#10b981',
+                'Coming Soon': '#f59e0b',
+                'Completed': '#6b7280'
+            };
+            return colors[status] || 'rgba(102, 126, 234, 0.8)';
+        }
+
+        function getRankClass(rank) {
+            if (rank === 1) return 'first';
+            if (rank === 2) return 'second';
+            if (rank === 3) return 'third';
+            return 'other';
+        }
+
+        window.switchTab = function(tab) {
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+            
+            // Load tournaments for selected tab
+            loadTournamentsByType(tab);
+        }
+
+        async function loadTournamentsByType(type) {
+            try {
+                const response = await apiClient.get(`/api/tournaments?type=${type}`);
+                
+                if (response.success) {
+                    updateTournamentsGrid(response.data.tournaments || []);
+                }
+            } catch (error) {
+                console.error('Failed to load tournaments by type:', error);
+                // Show default tournaments if API fails
+            }
+        }
+
+        window.handleTournamentAction = async function(tournamentId, action) {
+            try {
+                authManager.showLoading('Processing...');
+                
+                const response = await apiClient.post(`/api/tournaments/${tournamentId}/${action}`);
+                
+                if (response.success) {
+                    authManager.showSuccess(`Successfully ${action}ed for tournament!`);
+                    await loadTournaments(); // Refresh tournaments
+                } else {
+                    authManager.showError(response.error || `Failed to ${action}`);
+                }
+            } catch (error) {
+                console.error('Tournament action failed:', error);
+                authManager.showError(`Failed to ${action} for tournament`);
+            } finally {
+                authManager.hideLoading();
+            }
+        }
+
+        window.viewTournamentDetails = function(tournamentId) {
+            authManager.showSuccess('Opening tournament details...');
+            // In a real app, this would navigate to a detailed tournament page
+        }
+
+        window.showCreateTournament = function() {
+            authManager.showSuccess('Opening tournament creation form...');
+            // In a real app, this would show a tournament creation modal
+        }
+
+        document.addEventListener('DOMContentLoaded', initTournamentsPage);
+    </script>
+</body>
+</html>

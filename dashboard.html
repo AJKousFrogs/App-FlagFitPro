@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlagFit Pro - Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f8fafc;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            text-align: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 40px;
+            padding: 0 20px;
+        }
+
+        .nav-item {
+            display: block;
+            padding: 15px 25px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-left-color: white;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .welcome-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .stat-change {
+            font-size: 0.8rem;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .stat-change.positive {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .stat-change.negative {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .chart-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .recent-activity {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .activity-icon.training {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .activity-icon.game {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .activity-icon.achievement {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .activity-time {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .action-btn {
+            background: white;
+            border: 2px solid #e1e5e9;
+            padding: 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .action-btn:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .action-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .logout-btn {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .logout-btn:hover {
+            background: #ff3742;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="sidebar">
+        <div class="logo">🏈 FlagFit Pro</div>
+        <a href="#" class="nav-item active">📊 Dashboard</a>
+        <a href="#" class="nav-item">⚡ Training</a>
+        <a href="#" class="nav-item">🏆 Tournaments</a>
+        <a href="#" class="nav-item">👥 Community</a>
+        <a href="#" class="nav-item">📈 Analytics</a>
+        <a href="#" class="nav-item">⚙️ Settings</a>
+    </nav>
+
+    <main class="main-content">
+        <header class="header">
+            <div>
+                <h1 class="welcome-text">Welcome back, <span id="userName">Player</span>!</h1>
+                <p style="color: #666; margin-top: 5px;">Here's your performance overview</p>
+            </div>
+            <div class="user-info">
+                <span id="userRole" style="background: #667eea; color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem;"></span>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+        </header>
+
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="totalGames">0</div>
+                <div class="stat-label">Total Games</div>
+                <div class="stat-change positive" id="gamesChange">+2 this week</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="winRate">0%</div>
+                <div class="stat-label">Win Rate</div>
+                <div class="stat-change positive" id="winRateChange">+5% this month</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalTouchdowns">0</div>
+                <div class="stat-label">Touchdowns</div>
+                <div class="stat-change positive" id="touchdownsChange">+3 this week</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="trainingHours">0</div>
+                <div class="stat-label">Training Hours</div>
+                <div class="stat-change positive" id="trainingChange">+2.5h this week</div>
+            </div>
+        </section>
+
+        <section class="dashboard-grid">
+            <div class="chart-container">
+                <h3 class="chart-title">Performance Over Time</h3>
+                <canvas id="performanceChart" width="400" height="200"></canvas>
+            </div>
+            
+            <div class="recent-activity">
+                <h3 class="chart-title">Recent Activity</h3>
+                <div id="activityList">
+                    <div class="activity-item">
+                        <div class="activity-icon training">🏃</div>
+                        <div class="activity-content">
+                            <div class="activity-title">Completed Speed Training</div>
+                            <div class="activity-time">2 hours ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon game">🏈</div>
+                        <div class="activity-content">
+                            <div class="activity-title">Won Against Eagles 21-14</div>
+                            <div class="activity-time">1 day ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon achievement">🏆</div>
+                        <div class="activity-content">
+                            <div class="activity-title">Earned MVP Badge</div>
+                            <div class="activity-time">3 days ago</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="quick-actions">
+            <a href="#" class="action-btn">
+                <span class="action-icon">⚡</span>
+                <strong>Start Training</strong>
+                <div style="font-size: 0.8rem; color: #666; margin-top: 5px;">Begin new session</div>
+            </a>
+            <a href="#" class="action-btn">
+                <span class="action-icon">📊</span>
+                <strong>View Analytics</strong>
+                <div style="font-size: 0.8rem; color: #666; margin-top: 5px;">Performance insights</div>
+            </a>
+            <a href="#" class="action-btn">
+                <span class="action-icon">🏆</span>
+                <strong>Join Tournament</strong>
+                <div style="font-size: 0.8rem; color: #666; margin-top: 5px;">Upcoming events</div>
+            </a>
+            <a href="#" class="action-btn">
+                <span class="action-icon">👥</span>
+                <strong>Team Chat</strong>
+                <div style="font-size: 0.8rem; color: #666; margin-top: 5px;">Connect with team</div>
+            </a>
+        </section>
+    </main>
+
+    <script type="module">
+        import { authManager } from './src/auth-manager.js';
+        import { apiClient } from './src/api-config.js';
+
+        let performanceChart;
+
+        async function initDashboard() {
+            if (!authManager.requireAuth()) return;
+
+            const user = authManager.getCurrentUser();
+            if (user) {
+                document.getElementById('userName').textContent = user.name || user.email || 'Player';
+                document.getElementById('userRole').textContent = (user.role || 'player').toUpperCase();
+            }
+
+            await loadDashboardData();
+            initChart();
+        }
+
+        async function loadDashboardData() {
+            try {
+                const response = await apiClient.get('/api/dashboard');
+                
+                if (response.success) {
+                    const data = response.data;
+                    
+                    document.getElementById('totalGames').textContent = data.totalGames || 0;
+                    document.getElementById('winRate').textContent = `${data.winRate || 0}%`;
+                    document.getElementById('totalTouchdowns').textContent = data.totalTouchdowns || 0;
+                    document.getElementById('trainingHours').textContent = data.trainingHours || 0;
+                    
+                    if (data.recentActivity) {
+                        updateActivityList(data.recentActivity);
+                    }
+                    
+                    if (data.performanceData) {
+                        updateChart(data.performanceData);
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to load dashboard data:', error);
+                authManager.showError('Failed to load dashboard data');
+            }
+        }
+
+        function updateActivityList(activities) {
+            const activityList = document.getElementById('activityList');
+            activityList.innerHTML = activities.map(activity => `
+                <div class="activity-item">
+                    <div class="activity-icon ${activity.type}">
+                        ${activity.icon}
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">${activity.title}</div>
+                        <div class="activity-time">${activity.timeAgo}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function initChart() {
+            const ctx = document.getElementById('performanceChart').getContext('2d');
+            
+            performanceChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Performance Score',
+                        data: [65, 72, 68, 75, 82, 78, 85],
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateChart(data) {
+            if (performanceChart && data) {
+                performanceChart.data.datasets[0].data = data.values || [];
+                performanceChart.data.labels = data.labels || [];
+                performanceChart.update();
+            }
+        }
+
+        window.logout = async function() {
+            await authManager.logout();
+            window.location.href = '/login.html';
+        }
+
+        authManager.onLogin((user) => {
+            console.log('User logged in:', user);
+            loadDashboardData();
+        });
+
+        authManager.onLogout(() => {
+            window.location.href = '/login.html';
+        });
+
+        document.addEventListener('DOMContentLoaded', initDashboard);
+    </script>
+</body>
+</html>

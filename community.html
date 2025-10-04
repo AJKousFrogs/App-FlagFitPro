@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlagFit Pro - Community</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f8fafc;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            text-align: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 40px;
+            padding: 0 20px;
+        }
+
+        .nav-item {
+            display: block;
+            padding: 15px 25px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-left-color: white;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .community-grid {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 30px;
+        }
+
+        .feed-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .create-post {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .post-input {
+            width: 100%;
+            min-height: 80px;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            resize: vertical;
+            outline: none;
+            margin-bottom: 15px;
+        }
+
+        .post-input:focus {
+            border-color: #667eea;
+        }
+
+        .post-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .post-options {
+            display: flex;
+            gap: 15px;
+        }
+
+        .post-option {
+            padding: 8px 15px;
+            background: #f1f5f9;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .post-option:hover {
+            background: #e2e8f0;
+        }
+
+        .post-btn {
+            padding: 10px 25px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .post-btn:hover {
+            background: #5a6fd8;
+        }
+
+        .post-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .post {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .post-header {
+            padding: 20px 25px 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .post-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .post-info {
+            flex: 1;
+        }
+
+        .post-author {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 3px;
+        }
+
+        .post-meta {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .post-content {
+            padding: 0 25px 20px;
+        }
+
+        .post-text {
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .post-image {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .post-engagement {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 25px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .engagement-stats {
+            display: flex;
+            gap: 20px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .engagement-actions {
+            display: flex;
+            gap: 20px;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .action-btn:hover {
+            background: #f1f5f9;
+        }
+
+        .action-btn.liked {
+            color: #ff4757;
+        }
+
+        .sidebar-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .trending-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .trending-item:last-child {
+            border-bottom: none;
+        }
+
+        .trending-topic {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .trending-count {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .suggested-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .suggested-user:last-child {
+            border-bottom: none;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 500;
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        .user-detail {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .follow-btn {
+            padding: 6px 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .follow-btn:hover {
+            background: #5a6fd8;
+        }
+
+        .achievement-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: linear-gradient(135deg, #ffd700 0%, #ffb300 100%);
+            border-radius: 8px;
+            color: #8b4513;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+
+        .comments-section {
+            padding: 0 25px 20px;
+            border-top: 1px solid #f0f0f0;
+            display: none;
+        }
+
+        .comments-section.show {
+            display: block;
+        }
+
+        .comment {
+            display: flex;
+            gap: 12px;
+            padding: 15px 0;
+            border-bottom: 1px solid #f8f9fa;
+        }
+
+        .comment:last-child {
+            border-bottom: none;
+        }
+
+        .comment-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .comment-content {
+            flex: 1;
+        }
+
+        .comment-author {
+            font-weight: 500;
+            color: #333;
+            font-size: 0.9rem;
+            margin-bottom: 3px;
+        }
+
+        .comment-text {
+            color: #555;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .comment-time {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .community-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .post-actions {
+                flex-direction: column;
+                gap: 15px;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="sidebar">
+        <div class="logo">🏈 FlagFit Pro</div>
+        <a href="dashboard.html" class="nav-item">📊 Dashboard</a>
+        <a href="training.html" class="nav-item">⚡ Training</a>
+        <a href="tournaments.html" class="nav-item">🏆 Tournaments</a>
+        <a href="#" class="nav-item active">👥 Community</a>
+        <a href="chat.html" class="nav-item">💬 Team Chat</a>
+        <a href="#" class="nav-item">⚙️ Settings</a>
+    </nav>
+
+    <main class="main-content">
+        <header class="header">
+            <div>
+                <h1 style="font-size: 1.5rem; font-weight: 600; color: #333;">Community Hub</h1>
+                <p style="color: #666; margin-top: 5px;">Connect with the flag football community</p>
+            </div>
+            <div>
+                <button class="post-btn" onclick="scrollToCreatePost()">Create Post</button>
+            </div>
+        </header>
+
+        <div class="community-grid">
+            <div class="feed-container">
+                <div class="create-post">
+                    <textarea 
+                        id="postInput" 
+                        class="post-input" 
+                        placeholder="What's on your mind? Share your latest training, game highlights, or tips with the community..."
+                    ></textarea>
+                    <div class="post-actions">
+                        <div class="post-options">
+                            <button class="post-option">📷 Photo</button>
+                            <button class="post-option">🎥 Video</button>
+                            <button class="post-option">📊 Poll</button>
+                        </div>
+                        <button class="post-btn" id="submitPost" disabled onclick="createPost()">Post</button>
+                    </div>
+                </div>
+
+                <div id="postsContainer">
+                    <div class="post">
+                        <div class="post-header">
+                            <div class="post-avatar">CM</div>
+                            <div class="post-info">
+                                <div class="post-author">Coach Mike Thompson</div>
+                                <div class="post-meta">2 hours ago • 📍 Training Field</div>
+                            </div>
+                        </div>
+                        <div class="post-content">
+                            <div class="post-text">
+                                Great practice session today! I'm seeing incredible improvement in everyone's route running. The precision passing drill really paid off. Keep up the momentum team! 🏈💪
+                            </div>
+                        </div>
+                        <div class="post-engagement">
+                            <div class="engagement-stats">
+                                <span>👍 24 likes</span>
+                                <span>💬 8 comments</span>
+                                <span>🔄 3 shares</span>
+                            </div>
+                            <div class="engagement-actions">
+                                <button class="action-btn" onclick="toggleLike(this, 'post1')">
+                                    <span>👍</span> Like
+                                </button>
+                                <button class="action-btn" onclick="toggleComments('post1')">
+                                    <span>💬</span> Comment
+                                </button>
+                                <button class="action-btn">
+                                    <span>🔄</span> Share
+                                </button>
+                            </div>
+                        </div>
+                        <div class="comments-section" id="comments-post1">
+                            <div class="comment">
+                                <div class="comment-avatar">SC</div>
+                                <div class="comment-content">
+                                    <div class="comment-author">Sarah Chen</div>
+                                    <div class="comment-text">Couldn't agree more! My timing felt perfect today.</div>
+                                    <div class="comment-time">1 hour ago</div>
+                                </div>
+                            </div>
+                            <div class="comment">
+                                <div class="comment-avatar">JD</div>
+                                <div class="comment-content">
+                                    <div class="comment-author">Jake Davis</div>
+                                    <div class="comment-text">Those cone drills are really helping with my cuts!</div>
+                                    <div class="comment-time">45 minutes ago</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="post">
+                        <div class="post-header">
+                            <div class="post-avatar">AL</div>
+                            <div class="post-info">
+                                <div class="post-author">Alex Rodriguez</div>
+                                <div class="post-meta">4 hours ago • 🏆 Tournament Victory</div>
+                            </div>
+                        </div>
+                        <div class="post-content">
+                            <div class="achievement-badge">
+                                🏆 Tournament Champion! First place in the Regional Championship!
+                            </div>
+                            <div class="post-text">
+                                What an incredible weekend! Our team played phenomenally and took home the championship trophy. Special thanks to everyone who supported us. This one's for the community! 🙌
+                            </div>
+                        </div>
+                        <div class="post-engagement">
+                            <div class="engagement-stats">
+                                <span>👍 87 likes</span>
+                                <span>💬 23 comments</span>
+                                <span>🔄 12 shares</span>
+                            </div>
+                            <div class="engagement-actions">
+                                <button class="action-btn liked" onclick="toggleLike(this, 'post2')">
+                                    <span>❤️</span> Loved
+                                </button>
+                                <button class="action-btn" onclick="toggleComments('post2')">
+                                    <span>💬</span> Comment
+                                </button>
+                                <button class="action-btn">
+                                    <span>🔄</span> Share
+                                </button>
+                            </div>
+                        </div>
+                        <div class="comments-section" id="comments-post2">
+                            <div class="comment">
+                                <div class="comment-avatar">MT</div>
+                                <div class="comment-content">
+                                    <div class="comment-author">Maya Thompson</div>
+                                    <div class="comment-text">Congratulations! Well deserved victory! 🎉</div>
+                                    <div class="comment-time">3 hours ago</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="post">
+                        <div class="post-header">
+                            <div class="post-avatar">RJ</div>
+                            <div class="post-info">
+                                <div class="post-author">Riley Johnson</div>
+                                <div class="post-meta">6 hours ago • ⚡ Training Tips</div>
+                            </div>
+                        </div>
+                        <div class="post-content">
+                            <div class="post-text">
+                                Pro tip for new players: Focus on your flag positioning! Keep them loose enough to grab but not so loose they fall off during runs. Game changer for defense! 🎯
+                            </div>
+                        </div>
+                        <div class="post-engagement">
+                            <div class="engagement-stats">
+                                <span>👍 42 likes</span>
+                                <span>💬 15 comments</span>
+                                <span>🔄 8 shares</span>
+                            </div>
+                            <div class="engagement-actions">
+                                <button class="action-btn" onclick="toggleLike(this, 'post3')">
+                                    <span>👍</span> Like
+                                </button>
+                                <button class="action-btn" onclick="toggleComments('post3')">
+                                    <span>💬</span> Comment
+                                </button>
+                                <button class="action-btn">
+                                    <span>🔄</span> Share
+                                </button>
+                            </div>
+                        </div>
+                        <div class="comments-section" id="comments-post3"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-content">
+                <div class="sidebar-section">
+                    <h3 class="section-title">🔥 Trending Topics</h3>
+                    <div class="trending-item">
+                        <div class="trending-topic">#FlagFootballTips</div>
+                        <div class="trending-count">142 posts</div>
+                    </div>
+                    <div class="trending-item">
+                        <div class="trending-topic">#TrainingTuesday</div>
+                        <div class="trending-count">89 posts</div>
+                    </div>
+                    <div class="trending-item">
+                        <div class="trending-topic">#GameHighlights</div>
+                        <div class="trending-count">76 posts</div>
+                    </div>
+                    <div class="trending-item">
+                        <div class="trending-topic">#TeamBuilding</div>
+                        <div class="trending-count">54 posts</div>
+                    </div>
+                    <div class="trending-item">
+                        <div class="trending-topic">#TournamentPrep</div>
+                        <div class="trending-count">38 posts</div>
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <h3 class="section-title">👥 Suggested Connections</h3>
+                    <div class="suggested-user">
+                        <div class="user-avatar">DS</div>
+                        <div class="user-info">
+                            <div class="user-name">David Smith</div>
+                            <div class="user-detail">Pro Coach • 2.3k followers</div>
+                        </div>
+                        <button class="follow-btn">Follow</button>
+                    </div>
+                    <div class="suggested-user">
+                        <div class="user-avatar">EM</div>
+                        <div class="user-info">
+                            <div class="user-name">Emma Martinez</div>
+                            <div class="user-detail">Team Captain • 1.8k followers</div>
+                        </div>
+                        <button class="follow-btn">Follow</button>
+                    </div>
+                    <div class="suggested-user">
+                        <div class="user-avatar">TW</div>
+                        <div class="user-info">
+                            <div class="user-name">Tyler Wilson</div>
+                            <div class="user-detail">Athletic Trainer • 1.2k followers</div>
+                        </div>
+                        <button class="follow-btn">Follow</button>
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <h3 class="section-title">🏆 Recent Achievements</h3>
+                    <div class="achievement-badge">
+                        🥇 Regional Champions
+                    </div>
+                    <div class="achievement-badge" style="background: linear-gradient(135deg, #c0c0c0 0%, #a0a0a0 100%);">
+                        🥈 Training Milestone
+                    </div>
+                    <div class="achievement-badge" style="background: linear-gradient(135deg, #cd7f32 0%, #b87333 100%);">
+                        🥉 Community Helper
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module">
+        import { authManager } from './src/auth-manager.js';
+        import { apiClient } from './src/api-config.js';
+
+        let postCounter = 4;
+
+        async function initCommunityPage() {
+            if (!authManager.requireAuth()) return;
+
+            setupPostInput();
+            await loadCommunityFeed();
+        }
+
+        function setupPostInput() {
+            const postInput = document.getElementById('postInput');
+            const submitBtn = document.getElementById('submitPost');
+
+            postInput.addEventListener('input', function() {
+                submitBtn.disabled = !this.value.trim();
+            });
+        }
+
+        async function loadCommunityFeed() {
+            try {
+                const response = await apiClient.get('/api/community/feed');
+                
+                if (response.success && response.data.posts) {
+                    updateFeed(response.data.posts);
+                }
+            } catch (error) {
+                console.error('Failed to load community feed:', error);
+                // Keep existing demo posts if API fails
+            }
+        }
+
+        function updateFeed(posts) {
+            const container = document.getElementById('postsContainer');
+            const currentUser = authManager.getCurrentUser();
+            
+            // Keep existing create post at top, add new posts
+            const existingPosts = container.innerHTML;
+            container.innerHTML = posts.map(post => createPostHTML(post, currentUser)).join('') + existingPosts;
+        }
+
+        function createPostHTML(post, currentUser) {
+            return `
+                <div class="post">
+                    <div class="post-header">
+                        <div class="post-avatar">${getInitials(post.author)}</div>
+                        <div class="post-info">
+                            <div class="post-author">${post.authorName}</div>
+                            <div class="post-meta">${formatTime(post.timestamp)} • ${post.location || '📍 Community'}</div>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        ${post.achievement ? `<div class="achievement-badge">${post.achievement}</div>` : ''}
+                        <div class="post-text">${escapeHtml(post.content)}</div>
+                        ${post.image ? `<img src="${post.image}" alt="Post image" class="post-image">` : ''}
+                    </div>
+                    <div class="post-engagement">
+                        <div class="engagement-stats">
+                            <span>👍 ${post.likes || 0} likes</span>
+                            <span>💬 ${post.comments || 0} comments</span>
+                            <span>🔄 ${post.shares || 0} shares</span>
+                        </div>
+                        <div class="engagement-actions">
+                            <button class="action-btn ${post.isLiked ? 'liked' : ''}" onclick="toggleLike(this, '${post.id}')">
+                                <span>${post.isLiked ? '❤️' : '👍'}</span> ${post.isLiked ? 'Loved' : 'Like'}
+                            </button>
+                            <button class="action-btn" onclick="toggleComments('${post.id}')">
+                                <span>💬</span> Comment
+                            </button>
+                            <button class="action-btn">
+                                <span>🔄</span> Share
+                            </button>
+                        </div>
+                    </div>
+                    <div class="comments-section" id="comments-${post.id}">
+                        ${post.topComments ? post.topComments.map(comment => createCommentHTML(comment)).join('') : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        function createCommentHTML(comment) {
+            return `
+                <div class="comment">
+                    <div class="comment-avatar">${getInitials(comment.author)}</div>
+                    <div class="comment-content">
+                        <div class="comment-author">${comment.authorName}</div>
+                        <div class="comment-text">${escapeHtml(comment.text)}</div>
+                        <div class="comment-time">${formatTime(comment.timestamp)}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        window.createPost = async function() {
+            const postInput = document.getElementById('postInput');
+            const content = postInput.value.trim();
+            
+            if (!content) return;
+
+            const user = authManager.getCurrentUser();
+            
+            try {
+                const response = await apiClient.post('/api/community/posts', {
+                    content: content
+                });
+                
+                if (response.success) {
+                    // Add post to UI immediately
+                    addPostToUI({
+                        id: `post${postCounter++}`,
+                        author: user.email,
+                        authorName: user.name || 'You',
+                        content: content,
+                        timestamp: new Date().toISOString(),
+                        likes: 0,
+                        comments: 0,
+                        shares: 0,
+                        isLiked: false
+                    });
+                    
+                    postInput.value = '';
+                    document.getElementById('submitPost').disabled = true;
+                    
+                    authManager.showSuccess('Post created successfully!');
+                }
+            } catch (error) {
+                console.error('Failed to create post:', error);
+                
+                // Still add to UI for demo purposes
+                addPostToUI({
+                    id: `post${postCounter++}`,
+                    author: user.email,
+                    authorName: user.name || 'You',
+                    content: content,
+                    timestamp: new Date().toISOString(),
+                    likes: 0,
+                    comments: 0,
+                    shares: 0,
+                    isLiked: false
+                });
+                
+                postInput.value = '';
+                document.getElementById('submitPost').disabled = true;
+                
+                authManager.showSuccess('Post created!');
+            }
+        }
+
+        function addPostToUI(post) {
+            const container = document.getElementById('postsContainer');
+            const postHTML = createPostHTML(post, authManager.getCurrentUser());
+            
+            // Insert after create post form
+            container.insertAdjacentHTML('afterbegin', postHTML);
+        }
+
+        window.toggleLike = async function(button, postId) {
+            try {
+                const isLiked = button.classList.contains('liked');
+                
+                const response = await apiClient.post(`/api/community/posts/${postId}/${isLiked ? 'unlike' : 'like'}`);
+                
+                if (response.success || true) { // Allow for demo
+                    button.classList.toggle('liked');
+                    
+                    if (button.classList.contains('liked')) {
+                        button.innerHTML = '<span>❤️</span> Loved';
+                    } else {
+                        button.innerHTML = '<span>👍</span> Like';
+                    }
+                    
+                    // Update like count in stats
+                    const stats = button.closest('.post-engagement').querySelector('.engagement-stats');
+                    const likeSpan = stats.children[0];
+                    const currentLikes = parseInt(likeSpan.textContent.match(/\d+/)[0]);
+                    const newLikes = isLiked ? currentLikes - 1 : currentLikes + 1;
+                    likeSpan.textContent = `👍 ${newLikes} likes`;
+                }
+            } catch (error) {
+                console.error('Failed to toggle like:', error);
+                // Still toggle for demo
+                button.classList.toggle('liked');
+            }
+        }
+
+        window.toggleComments = function(postId) {
+            const commentsSection = document.getElementById(`comments-${postId}`);
+            commentsSection.classList.toggle('show');
+        }
+
+        window.scrollToCreatePost = function() {
+            document.querySelector('.create-post').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('postInput').focus();
+        }
+
+        function getInitials(name) {
+            if (!name) return '??';
+            return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+        }
+
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diff = now - date;
+            
+            if (diff < 3600000) { // Less than 1 hour
+                return `${Math.floor(diff / 60000)} minutes ago`;
+            } else if (diff < 86400000) { // Less than 1 day
+                return `${Math.floor(diff / 3600000)} hours ago`;
+            } else {
+                return date.toLocaleDateString();
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        document.addEventListener('DOMContentLoaded', initCommunityPage);
+    </script>
+</body>
+</html>
