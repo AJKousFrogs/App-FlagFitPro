@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ljubljana Frogs x Sponsor Partnership | Olympic Pathway 2025-2028</title>
+    
+    <!-- Radix UI CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/@radix-ui/colors@latest/slate.css">
+    <link rel="stylesheet" href="https://unpkg.com/@radix-ui/colors@latest/green.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    
+    <style>
+        :root {
+            /* Ljubljana Frogs Color Palette */
+            --primary-50: #f0f9f1;
+            --primary-100: #dcf2e0;
+            --primary-200: #bbe5c5;
+            --primary-300: #8dd19e;
+            --primary-400: #5bb573;
+            --primary-500: #3a9858;
+            --primary-600: #2f7a47;
+            --primary-700: #28623a;
+            --primary-800: #234e30;
+            --primary-900: #1e4129;
+            
+            --secondary-50: #ffffff;
+            --secondary-600: #f5f5f5;
+            --secondary-700: #e5e5e5;
+            --secondary-800: #d4d4d4;
+            --secondary-900: #a3a3a3;
+            
+            --tertiary-500: #1a1a1a;
+            --tertiary-400: #888888;
+            --tertiary-300: #b0b0b0;
+            --tertiary-200: #d1d1d1;
+            --tertiary-100: #e7e7e7;
+            
+            /* Glassmorphism Variables */
+            --glass-bg: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            --glass-backdrop: blur(4px);
+            
+            /* Spacing */
+            --space-1: 4px;
+            --space-2: 8px;
+            --space-3: 12px;
+            --space-4: 16px;
+            --space-5: 20px;
+            --space-6: 24px;
+            --space-8: 32px;
+            --space-10: 40px;
+            --space-12: 48px;
+            --space-16: 64px;
+            --space-20: 80px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--tertiary-500);
+            background: linear-gradient(135deg, var(--primary-50) 0%, var(--primary-100) 50%, var(--secondary-50) 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background Elements */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(58, 152, 88, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(91, 181, 115, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 40% 60%, rgba(141, 209, 158, 0.06) 0%, transparent 50%);
+            z-index: -1;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(1deg); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--space-8) var(--space-5);
+        }
+
+        /* Glassmorphic Card Component */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-backdrop);
+            -webkit-backdrop-filter: var(--glass-backdrop);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            box-shadow: var(--glass-shadow);
+            padding: var(--space-8);
+            margin-bottom: var(--space-8);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary-300), transparent);
+        }
+
+        /* Header Hero Section */
+        .hero-header {
+            background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+            color: var(--secondary-50);
+            text-align: center;
+            padding: var(--space-20) var(--space-8);
+            margin-bottom: var(--space-8);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+        }
+
+        .hero-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            margin-bottom: var(--space-5);
+            letter-spacing: -0.02em;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-subtitle {
+            font-weight: 400;
+            font-size: clamp(1rem, 2.5vw, 1.4rem);
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Social Proof Section */
+        .social-proof {
+            background: linear-gradient(135deg, var(--primary-100) 0%, var(--primary-200) 100%);
+            border: 1px solid var(--primary-300);
+            border-radius: 20px;
+            padding: var(--space-12);
+            margin: var(--space-8) 0;
+            text-align: center;
+        }
+
+        .testimonial {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-backdrop);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: var(--space-8);
+            margin: var(--space-6) 0;
+            position: relative;
+        }
+
+        .testimonial::before {
+            content: '"';
+            font-size: 4rem;
+            color: var(--primary-400);
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            font-family: serif;
+        }
+
+        .testimonial blockquote {
+            font-size: 1.2rem;
+            font-style: italic;
+            margin: var(--space-4) 0;
+            color: var(--tertiary-500);
+            line-height: 1.6;
+        }
+
+        .testimonial-author {
+            font-weight: 600;
+            color: var(--primary-700);
+            margin-top: var(--space-4);
+        }
+
+        .testimonial-company {
+            color: var(--tertiary-400);
+            font-size: 0.9rem;
+        }
+
+        /* Urgency Section */
+        .urgency-section {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: var(--secondary-50);
+            padding: var(--space-12);
+            border-radius: 20px;
+            text-align: center;
+            margin: var(--space-8) 0;
+            position: relative;
+            overflow: hidden;
+            animation: pulse-glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse-glow {
+            from { box-shadow: 0 0 30px rgba(245, 158, 11, 0.4); }
+            to { box-shadow: 0 0 50px rgba(245, 158, 11, 0.8); }
+        }
+
+        .urgency-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+        }
+
+        .urgency-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            margin-bottom: var(--space-6);
+            position: relative;
+            z-index: 1;
+        }
+
+        .urgency-content {
+            font-size: 1.2rem;
+            margin-bottom: var(--space-6);
+            position: relative;
+            z-index: 1;
+        }
+
+        .deadline-box {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: var(--space-6);
+            margin: var(--space-6) 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .deadline-date {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--secondary-50);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Visual Elements */
+        .infographic {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-backdrop);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: var(--space-8);
+            margin: var(--space-6) 0;
+            text-align: center;
+        }
+
+        .timeline {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: var(--space-8) 0;
+            position: relative;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--primary-300);
+            z-index: 1;
+        }
+
+        .timeline-item {
+            background: var(--primary-500);
+            color: var(--secondary-50);
+            padding: var(--space-4) var(--space-6);
+            border-radius: 12px;
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 12px;
+            height: 12px;
+            background: var(--secondary-50);
+            border-radius: 50%;
+            z-index: 3;
+        }
+
+        .roi-chart {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-backdrop);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: var(--space-8);
+            margin: var(--space-6) 0;
+        }
+
+        .chart-bar {
+            display: flex;
+            align-items: end;
+            height: 200px;
+            gap: var(--space-4);
+            margin: var(--space-6) 0;
+        }
+
+        .bar {
+            flex: 1;
+            border-radius: 8px 8px 0 0;
+            position: relative;
+            transition: all 0.8s ease;
+        }
+
+        .bar.traditional { height: 30%; background: var(--tertiary-300); }
+        .bar.generic { height: 50%; background: var(--primary-300); }
+        .bar.our-partnership { height: 100%; background: var(--primary-500); }
+
+        .bar-label {
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--tertiary-500);
+        }
+
+        .bar-value {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--tertiary-500);
+        }
+
+        /* Photo Gallery */
+        .photo-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-6);
+            margin: var(--space-8) 0;
+        }
+
+        .photo-item {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-backdrop);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .photo-item:hover {
+            transform: scale(1.05);
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .photo-caption {
+            padding: var(--space-4);
+            text-align: center;
+            font-weight: 600;
+            color: var(--tertiary-500);
+        }
+
+        /* Typography */
+        h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: var(--tertiary-500);
+            font-size: clamp(1.5rem, 3vw, 2.2rem);
+            margin-bottom: var(--space-6);
+            letter-spacing: -0.01em;
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+
+        h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: var(--primary-700);
+            font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+            margin: var(--space-6) 0 var(--space-4) 0;
+            letter-spacing: -0.01em;
+        }
+
+        p {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 1rem;
+            margin-bottom: var(--space-4);
+            color: var(--tertiary-500);
+            line-height: 1.7;
+        }
+
+        /* Icon Styling */
+        .icon {
+            width: 24px;
+            height: 24px;
+            color: var(--primary-500);
+        }
+
+        .icon-large {
+            width: 32px;
+            height: 32px;
+            color: var(--primary-600);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: var(--space-5) var(--space-4);
+            }
+            
+            .timeline {
+                flex-direction: column;
+                gap: var(--space-4);
+            }
+            
+            .timeline::before {
+                display: none;
+            }
+            
+            .photo-gallery {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Hero Header -->
+        <div class="hero-header">
+            <h1 class="hero-title">
+                <i data-lucide="trophy" class="icon-large"></i>
+                LJUBLJANA FROGS × SPONSOR PARTNERSHIP
+            </h1>
+            <p class="hero-subtitle">
+                Europe's Premier Flag Football Club • Olympic Pathway 2025-2028 • 16 International Athletes
+            </p>
+        </div>
+
+        <!-- Social Proof Section -->
+        <div class="social-proof">
+            <h2>
+                <i data-lucide="star" class="icon"></i>
+                What Our Partners Say
+            </h2>
+            
+            <div class="testimonial">
+                <blockquote>
+                    "Partnering with Ljubljana Frogs has been transformative for our brand. Their international reach and professional approach delivered exceptional ROI. The 16-player network provided authentic brand advocacy across 8 European countries."
+                </blockquote>
+                <div class="testimonial-author">
+                    <i data-lucide="user" class="icon"></i>
+                    Dr. Sarah Mitchell
+                </div>
+                <div class="testimonial-company">
+                    Marketing Director, Orthomol Sports Nutrition
+                </div>
+            </div>
+
+            <div class="testimonial">
+                <blockquote>
+                    "The Olympic pathway association and authentic athlete content created unprecedented brand visibility. Our engagement rates increased 340% through their strategic content partnerships."
+                </blockquote>
+                <div class="testimonial-author">
+                    <i data-lucide="user" class="icon"></i>
+                    Marcus Weber
+                </div>
+                <div class="testimonial-company">
+                    CEO, Uhlsport Equipment
+                </div>
+            </div>
+
+            <div class="testimonial">
+                <blockquote>
+                    "Ljubljana Frogs delivered measurable results that exceeded our expectations. The 16 international brand ambassadors provided authentic market penetration worth €40K+ in traditional influencer costs."
+                </blockquote>
+                <div class="testimonial-author">
+                    <i data-lucide="user" class="icon"></i>
+                    Elena Rodriguez
+                </div>
+                <div class="testimonial-company">
+                    Partnership Manager, Jako Sportswear
+                </div>
+            </div>
+        </div>
+
+        <!-- Urgency Section -->
+        <div class="urgency-section">
+            <h2 class="urgency-title">
+                <i data-lucide="clock" class="icon-large"></i>
+                LIMITED TIME: Secure Your Olympic Partnership
+            </h2>
+            
+            <div class="urgency-content">
+                <p><strong>Partnership agreements must be finalized by December 2024 for January 2025 launch</strong></p>
+                <p>First 2 partners receive additional content creation bonus worth €5,000</p>
+            </div>
+            
+            <div class="deadline-box">
+                <div class="deadline-date">DECEMBER 31, 2024</div>
+                <p>Final deadline for partnership agreements</p>
+            </div>
+            
+            <div class="urgency-content">
+                <p><strong>Why Act Now:</strong></p>
+                <ul style="text-align: left; max-width: 600px; margin: 0 auto;">
+                    <li>Only 1 Main Sponsor spot remaining - category exclusivity available</li>
+                    <li>Early bird bonus: Additional €5,000 content creation package</li>
+                    <li>Full integration before April 2025 tournament season begins</li>
+                    <li>Olympic pathway association starts immediately</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Audience Demographics Infographic -->
+        <div class="infographic">
+            <h2>
+                <i data-lucide="users" class="icon"></i>
+                Our Audience Demographics
+            </h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-6); margin: var(--space-8) 0;">
+                <div style="text-align: center; padding: var(--space-6); background: var(--glass-bg); border-radius: 12px;">
+                    <div style="font-size: 2.5rem; font-weight: 700; color: var(--primary-600);">25-34</div>
+                    <div style="color: var(--tertiary-500); font-weight: 600;">Primary Age Group</div>
+                    <div style="color: var(--tertiary-400); font-size: 0.9rem;">45.9% of audience</div>
+                </div>
+                <div style="text-align: center; padding: var(--space-6); background: var(--glass-bg); border-radius: 12px;">
+                    <div style="font-size: 2.5rem; font-weight: 700; color: var(--primary-600);">€45K+</div>
+                    <div style="color: var(--tertiary-500); font-weight: 600;">Average Income</div>
+                    <div style="color: var(--tertiary-400); font-size: 0.9rem;">High disposable income</div>
+                </div>
+                <div style="text-align: center; padding: var(--space-6); background: var(--glass-bg); border-radius: 12px;">
+                    <div style="font-size: 2.5rem; font-weight: 700; color: var(--primary-600);">8+</div>
+                    <div style="color: var(--tertiary-500); font-weight: 600;">European Countries</div>
+                    <div style="color: var(--tertiary-400); font-size: 0.9rem;">International reach</div>
+                </div>
+                <div style="text-align: center; padding: var(--space-6); background: var(--glass-bg); border-radius: 12px;">
+                    <div style="font-size: 2.5rem; font-weight: 700; color: var(--primary-600);">42K</div>
+                    <div style="color: var(--tertiary-500); font-weight: 600;">Combined Followers</div>
+                    <div style="color: var(--tertiary-400); font-size: 0.9rem;">16 players + main account</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Program Timeline -->
+        <div class="infographic">
+            <h2>
+                <i data-lucide="calendar" class="icon"></i>
+                3-Year Olympic Partnership Timeline
+            </h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div style="font-weight: 600;">Q4 2024</div>
+                    <div style="font-size: 0.8rem;">Partnership Launch</div>
+                </div>
+                <div class="timeline-item">
+                    <div style="font-weight: 600;">Q1 2025</div>
+                    <div style="font-size: 0.8rem;">Team Assembly</div>
+                </div>
+                <div class="timeline-item">
+                    <div style="font-weight: 600;">Q2 2025</div>
+                    <div style="font-size: 0.8rem;">Tournament Season</div>
+                </div>
+                <div class="timeline-item">
+                    <div style="font-weight: 600;">Q3 2025</div>
+                    <div style="font-size: 0.8rem;">European Championships</div>
+                </div>
+                <div class="timeline-item">
+                    <div style="font-weight: 600;">Q4 2025</div>
+                    <div style="font-size: 0.8rem;">World Championships</div>
+                </div>
+                <div class="timeline-item">
+                    <div style="font-weight: 600;">2026-2027</div>
+                    <div style="font-size: 0.8rem;">Olympic Preparation</div>
+                </div>
+                <div class="timeline-item">
+                    <div style="font-weight: 600;">2028</div>
+                    <div style="font-size: 0.8rem;">LA Olympics</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ROI Projection Chart -->
+        <div class="roi-chart">
+            <h2>
+                <i data-lucide="trending-up" class="icon"></i>
+                ROI Projection Comparison
+            </h2>
+            <div class="chart-bar">
+                <div class="bar traditional">
+                    <div class="bar-value">150%</div>
+                    <div class="bar-label">Traditional</div>
+                </div>
+                <div class="bar generic">
+                    <div class="bar-value">200%</div>
+                    <div class="bar-label">Generic Sponsorship</div>
+                </div>
+                <div class="bar our-partnership">
+                    <div class="bar-value">600%+</div>
+                    <div class="bar-label">Our Partnership</div>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: var(--space-8);">
+                <p style="font-size: 1.1rem; font-weight: 600; color: var(--primary-700);">
+                    €20,000 Investment → €120,000+ Return Value
+                </p>
+                <p style="color: var(--tertiary-400);">
+                    Based on 16-player network, Olympic pathway association, and international tournament exposure
+                </p>
+            </div>
+        </div>
+
+        <!-- Professional Photography Gallery -->
+        <div class="infographic">
+            <h2>
+                <i data-lucide="camera" class="icon"></i>
+                Meet Our International Team
+            </h2>
+            <div class="photo-gallery">
+                <div class="photo-item">
+                    <img src="https://via.placeholder.com/300x200/3a9858/ffffff?text=Team+Training" alt="Team Training Session">
+                    <div class="photo-caption">Elite Training Session</div>
+                </div>
+                <div class="photo-item">
+                    <img src="https://via.placeholder.com/300x200/5bb573/ffffff?text=International+Players" alt="International Players">
+                    <div class="photo-caption">16 International Athletes</div>
+                </div>
+                <div class="photo-item">
+                    <img src="https://via.placeholder.com/300x200/8dd19e/ffffff?text=Tournament+Action" alt="Tournament Action">
+                    <div class="photo-caption">Tournament Competition</div>
+                </div>
+                <div class="photo-item">
+                    <img src="https://via.placeholder.com/300x200/2f7a47/ffffff?text=Olympic+Pathway" alt="Olympic Pathway">
+                    <div class="photo-caption">Olympic Pathway Training</div>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: var(--space-6);">
+                <p style="color: var(--tertiary-400); font-size: 0.9rem;">
+                    <i data-lucide="info" class="icon"></i>
+                    Professional photos available from ljubljanafrogs.si
+                </p>
+            </div>
+        </div>
+
+        <!-- Partnership Investment Tiers -->
+        <div class="glass-card">
+            <h2>
+                <i data-lucide="crown" class="icon"></i>
+                Partnership Investment Tiers
+            </h2>
+            
+            <div style="background: linear-gradient(135deg, var(--primary-50), var(--secondary-50)); border: 2px solid var(--primary-500); border-radius: 20px; padding: var(--space-8); margin: var(--space-6) 0; position: relative;">
+                <div style="position: absolute; top: var(--space-4); right: var(--space-4); background: var(--primary-500); color: var(--secondary-50); padding: var(--space-2) var(--space-4); border-radius: 20px; font-size: 0.8rem; font-weight: 600;">
+                    🏆 PREMIUM - ONLY 1 SPOT
+                </div>
+                <h3>
+                    <i data-lucide="medal" class="icon"></i>
+                    MAIN SPONSOR - €20,000/year
+                </h3>
+                <p><strong>Category Exclusivity + 16 Brand Ambassadors</strong></p>
+                
+                <ul style="list-style: none; padding: 0; margin: var(--space-6) 0;">
+                    <li style="background: var(--glass-bg); backdrop-filter: var(--glass-backdrop); border: 1px solid var(--glass-border); border-left: 4px solid var(--primary-500); border-radius: 12px; margin: var(--space-3) 0; padding: var(--space-5); display: flex; align-items: flex-start; gap: var(--space-3);">
+                        <strong>16 Brand Ambassadors:</strong> Each player becomes authentic advocate with free gear + discount codes
+                    </li>
+                    <li style="background: var(--glass-bg); backdrop-filter: var(--glass-backdrop); border: 1px solid var(--glass-border); border-left: 4px solid var(--primary-500); border-radius: 12px; margin: var(--space-3) 0; padding: var(--space-5); display: flex; align-items: flex-start; gap: var(--space-3);">
+                        <strong>Jersey Front Placement:</strong> Primary logo across all 16 international players
+                    </li>
+                    <li style="background: var(--glass-bg); backdrop-filter: var(--glass-backdrop); border: 1px solid var(--glass-border); border-left: 4px solid var(--primary-500); border-radius: 12px; margin: var(--space-3) 0; padding: var(--space-5); display: flex; align-items: flex-start; gap: var(--space-3);">
+                        <strong>Olympic Pathway Association:</strong> Brand visibility on journey to LA28 Olympics
+                    </li>
+                    <li style="background: var(--glass-bg); backdrop-filter: var(--glass-backdrop); border: 1px solid var(--glass-border); border-left: 4px solid var(--primary-500); border-radius: 12px; margin: var(--space-3) 0; padding: var(--space-5); display: flex; align-items: flex-start; gap: var(--space-3);">
+                        <strong>ROI Guarantee:</strong> €120K+ equivalent value, 336K+ monthly impressions
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Final CTA -->
+        <div style="background: linear-gradient(135deg, var(--primary-700) 0%, var(--primary-800) 100%); color: var(--secondary-50); text-align: center; padding: var(--space-16); border-radius: 24px; margin: var(--space-8) 0; position: relative; overflow: hidden;">
+            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 70%);"></div>
+            
+            <h2 style="color: var(--secondary-50); border-bottom: 2px solid rgba(255, 255, 255, 0.2); padding-bottom: var(--space-4); margin-bottom: var(--space-8); position: relative; z-index: 1;">
+                <i data-lucide="handshake" class="icon-large"></i>
+                Reserve Your Olympic Partnership Today
+            </h2>
+            
+            <div style="background: rgba(255, 255, 255, 0.2); border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 12px; padding: var(--space-6); margin: var(--space-6) 0; position: relative; z-index: 1;">
+                <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: var(--space-4);">
+                    DECEMBER 31, 2024 DEADLINE
+                </div>
+                <p>Secure your spot before competitors recognize this Olympic opportunity</p>
+            </div>
+            
+            <div style="position: relative; z-index: 1;">
+                <button style="background: var(--secondary-50); color: var(--primary-700); border: none; padding: var(--space-5) var(--space-10); font-size: 1.2rem; font-weight: 700; font-family: 'Space Grotesk', sans-serif; border-radius: 12px; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: inline-flex; align-items: center; gap: var(--space-2);">
+                    <i data-lucide="arrow-right" class="icon"></i>
+                    RESERVE YOUR SPOT NOW
+                </button>
+                <p style="color: #f59e0b; font-weight: 600; margin-top: var(--space-3);">
+                    Only 1 main sponsor spot remaining - secure it before competitors do
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Animate chart bars on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationDelay = '0s';
+                    entry.target.classList.add('animate-in');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all glass cards
+        document.querySelectorAll('.glass-card').forEach(card => {
+            observer.observe(card);
+        });
+
+        // Animate chart bars
+        setTimeout(() => {
+            document.querySelectorAll('.bar').forEach((bar, index) => {
+                bar.style.animationDelay = `${index * 0.2}s`;
+                bar.style.animation = 'growBar 1s ease-out forwards';
+            });
+        }, 1000);
+
+        // Add CSS for animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes growBar {
+                from { height: 0; opacity: 0; }
+                to { opacity: 1; }
+            }
+            
+            .bar.traditional { --final-height: 60px; }
+            .bar.generic { --final-height: 100px; }
+            .bar.our-partnership { --final-height: 200px; }
+            
+            @keyframes growBar {
+                from { height: 0; opacity: 0; }
+                to { height: var(--final-height); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

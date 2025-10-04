@@ -37,7 +37,7 @@ The FlagFit Pro database consists of four main systems:
 ## Prerequisites
 
 ### Database Requirements
-- PostgreSQL 12+ or Neon PostgreSQL
+- Neon PostgreSQL (recommended) or PostgreSQL 12+
 - Database user with CREATE, INSERT, UPDATE, DELETE permissions
 - Sufficient storage space (minimum 2GB recommended)
 
@@ -191,12 +191,12 @@ ORDER BY record_count DESC;
 ### Common Issues
 
 1. **Database Connection Failed**
-   - Verify PostgreSQL is running
+   - Verify Neon PostgreSQL connection
    - Check database credentials in `.env`
-   - Ensure database exists: `createdb flagfootball_dev`
+   - Ensure database exists and is accessible
 
 2. **Migration Errors**
-   - Check PostgreSQL version (12+ required)
+   - Check database connectivity
    - Verify user permissions
    - Clear migration history if needed: `DELETE FROM migrations;`
 
@@ -206,7 +206,7 @@ ORDER BY record_count DESC;
    - Check database constraints and foreign keys
 
 4. **Performance Issues**
-   - Optimize PostgreSQL configuration
+   - Optimize database configuration
    - Add appropriate indexes
    - Consider database partitioning for large datasets
 
@@ -214,7 +214,8 @@ ORDER BY record_count DESC;
 To completely reset the database:
 
 ```bash
-# Drop and recreate database
+# Drop and recreate database (for local PostgreSQL only)
+# For Neon PostgreSQL, use the Neon console to reset the database
 dropdb flagfootball_dev
 createdb flagfootball_dev
 
@@ -231,7 +232,8 @@ node scripts/setupDatabase.js
 
 ### Backup Strategy
 ```bash
-# Create database backup
+# Create database backup (for local PostgreSQL)
+# For Neon PostgreSQL, use the Neon console for backups
 pg_dump flagfootball_dev > backup_$(date +%Y%m%d).sql
 
 # Restore from backup
@@ -254,7 +256,7 @@ ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC;
 
 For database setup issues:
 1. Check the troubleshooting section above
-2. Review PostgreSQL logs
+2. Review database logs
 3. Verify environment configuration
 4. Contact the development team
 

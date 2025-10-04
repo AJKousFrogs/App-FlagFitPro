@@ -457,7 +457,7 @@ Backup Creation → Medical Response → Documentation → Follow-up
 ```typescript
 interface SecurityLayers {
   authentication: {
-    provider: "Supabase Auth" | "Custom JWT";
+    provider: "Custom JWT";
     methods: ["email/password", "OAuth", "magic_links"];
     mfa: boolean;
   };

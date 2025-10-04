@@ -8,6 +8,9 @@ import { getPool, closeDatabaseConnection } from './config/database.js';
 import algorithmRoutes from './routes/algorithmRoutes.js';
 import dashboardRoutes from './routes/dashboardRoutes.js';
 import analyticsRoutes from './routes/analyticsRoutes.js';
+import coachRoutes from './routes/coachRoutes.js';
+import communityRoutes from './routes/communityRoutes.js';
+import tournamentRoutes from './routes/tournamentRoutes.js';
 
 // Load environment variables
 dotenv.config();
@@ -27,7 +30,12 @@ app.use(cors({
     // Add support for common development ports
     'http://localhost:8080',
     'http://localhost:8000',
-    'http://localhost:5000'
+    'http://localhost:5000',
+    // Netlify deployment URLs
+    'https://*.netlify.app',
+    'https://*.netlify.com',
+    // Production domain (adjust as needed)
+    'https://flagfit-pro.netlify.app'
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -158,6 +166,15 @@ app.use('/api/dashboard', dashboardRoutes);
 
 // Analytics API routes
 app.use('/api/analytics', analyticsRoutes);
+
+// Coach API routes
+app.use('/api/coach', coachRoutes);
+
+// Community API routes
+app.use('/api/community', communityRoutes);
+
+// Tournament API routes
+app.use('/api/tournaments', tournamentRoutes);
 
 // Simple login route for testing (accepts any email/password) - Enhanced
 app.post('/api/auth/login', async (req, res) => {

@@ -11,12 +11,12 @@
     "seed": "node scripts/seedDashboardData.js",
     "setup": "npm install && npm run seed",
     "test": "node scripts/test-dashboard.js",
-    "test:login": "node scripts/test-login.js"
+    "build": "echo 'Build completed - serving static files'",
+    "clean": "echo 'Clean completed'"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "chart.js": "^4.4.1",
-    "chartjs-adapter-date-fns": "^3.0.0",
     "cors": "^2.8.5",
     "date-fns": "^3.3.1",
     "dotenv": "^16.6.1",

@@ -203,7 +203,7 @@ The AI coach can cite specific studies when providing recommendations:
 4. **Quality Assurance**: Data validation and verification processes
 
 ### 🚀 Next Steps
-1. **Database Setup**: Configure PostgreSQL database connection
+1. **Database Setup**: Configure Neon PostgreSQL database connection
 2. **Migration Execution**: Run the plyometrics research migration
 3. **Data Seeding**: Execute the seeding script
 4. **AI Training**: Update AI coach with new knowledge base

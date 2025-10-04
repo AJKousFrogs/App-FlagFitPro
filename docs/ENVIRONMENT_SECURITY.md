@@ -29,7 +29,7 @@ echo ".env" >> .gitignore
 ### **🔴 Critical (Required for App Function)**
 ```bash
 # Database Connection (REQUIRED)
-VITE_NEON_DATABASE_URL=postgresql://username:password@host:port/database
+DATABASE_URL=postgresql://username:password@host:port/database
 
 # MCP Services (REQUIRED for AI features)
 CONTEXT7_API_KEY=your_context7_api_key_here
@@ -128,7 +128,7 @@ JWT_SECRET=generate_random_secret_here
 ```javascript
 // In your app, validate required environment variables
 const requiredEnvVars = [
-  'VITE_NEON_DATABASE_URL',
+  'DATABASE_URL',
   'CONTEXT7_API_KEY'
 ];
 
@@ -191,7 +191,7 @@ Document in `.env.example`:
 # Database Connection (REQUIRED)
 # Get from: https://neon.tech dashboard → connection string
 # Format: postgresql://username:password@host:port/database
-VITE_NEON_DATABASE_URL=your_neon_database_url_here
+DATABASE_URL=your_neon_database_url_here
 
 # Context7 API Key (REQUIRED for AI features)  
 # Get from: https://context7.ai dashboard → API keys

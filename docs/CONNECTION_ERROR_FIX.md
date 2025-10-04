@@ -150,7 +150,7 @@ Update your `.env` file:
 
 # Add your API configuration
 VITE_API_URL=http://localhost:3001/api
-VITE_DATABASE_URL=your_neon_postgresql_connection_string
+DATABASE_URL=your_neon_postgresql_connection_string
 ```
 
 ### 3. Backend API Example
