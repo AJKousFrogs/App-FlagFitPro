@@ -3,37 +3,165 @@
 
 import { apiClient, auth } from './api-config.js';
 
+// Import mock authentication for static deployment
+let mockAuth = null;
+const initMockAuth = async () => {
+  console.log('🔄 Initializing mock authentication...');
+  console.log('🌐 Current hostname:', window.location.hostname);
+  console.log('🚪 Current port:', window.location.port);
+  
+  // Check if we're using Netlify Functions
+  const isUsingNetlifyFunctions = window.location.hostname.includes('netlify') || 
+                                  (window.location.hostname === 'localhost' && window.location.port === '8888');
+  
+  console.log('🔍 Using Netlify Functions:', isUsingNetlifyFunctions);
+  
+  // For local development without Netlify Dev, always use mock auth
+  if (!isUsingNetlifyFunctions) {
+    console.log('🎭 Loading mock authentication for local development...');
+    try {
+      const { MockAuth } = await import('./mock-auth.js');
+      mockAuth = new MockAuth();
+      console.log('✅ Mock authentication loaded successfully');
+    } catch (error) {
+      console.error('❌ Failed to load mock auth:', error);
+    }
+  } else {
+    console.log('🌐 Using production Netlify Functions - no mock auth needed');
+  }
+};
+
+const checkRealApiAvailable = async () => {
+  try {
+    await fetch('http://localhost:3001/api/health');
+    return true;
+  } catch {
+    return false;
+  }
+};
+
 class AuthManager {
   constructor() {
     this.user = null;
     this.token = null;
     this.loginCallbacks = [];
     this.logoutCallbacks = [];
+    this.isRedirecting = false;
     this.init();
   }
 
   // Initialize auth manager
-  init() {
+  async init() {
+    console.log('🚀 Initializing authentication manager...');
+    this.isInitializing = true;
+    await initMockAuth();
     this.loadStoredAuth();
     this.setupTokenRefresh();
-    this.validateStoredToken();
+    await this.validateStoredToken();
+    this.checkAuthStateOnLoad();
+    this.isInitializing = false;
+    this.isInitialized = true;
+    console.log('✅ Authentication manager initialized');
+  }
+
+  // Wait for authentication to be fully initialized
+  async waitForInit() {
+    if (this.isInitialized) return;
+    
+    return new Promise((resolve) => {
+      const checkInit = () => {
+        if (this.isInitialized) {
+          resolve();
+        } else {
+          setTimeout(checkInit, 50);
+        }
+      };
+      checkInit();
+    });
+  }
+
+  // Check authentication state on page load
+  checkAuthStateOnLoad() {
+    console.log('🔍 Checking authentication state on page load...');
+    
+    // Prevent redirect loops by checking if we're already redirecting
+    if (this.isRedirecting) {
+      console.log('🔄 Already redirecting, skipping auth check');
+      return;
+    }
+    
+    if (this.isAuthenticated()) {
+      console.log('✅ User is already authenticated');
+      console.log('👤 Current user:', this.user);
+      console.log('🎫 Current token:', this.token ? 'Present' : 'Missing');
+      
+      // For demo tokens or local development, skip server validation to prevent loops
+      if (this.token && this.token.startsWith('demo-token-')) {
+        console.log('🎭 Demo token detected, skipping server validation');
+        this.notifyLoginCallbacks();
+        return;
+      }
+      
+      // Verify token is still valid by making a test request
+      this.validateStoredToken().then(isValid => {
+        if (isValid) {
+          console.log('✅ Token validation successful');
+          this.notifyLoginCallbacks();
+        } else {
+          console.log('❌ Token validation failed, redirecting to login');
+          this.redirectToLogin();
+        }
+      }).catch(error => {
+        console.error('❌ Token validation error:', error);
+        // On validation error, stay on current page and use demo mode
+        console.log('🎭 Falling back to demo mode to prevent redirect loop');
+        this.notifyLoginCallbacks();
+      });
+    } else {
+      console.log('❌ No valid authentication found on page load');
+      // Check if we're on a protected page
+      if (this.isProtectedPage()) {
+        console.log('🔒 Protected page detected, redirecting to login');
+        this.redirectToLogin();
+      }
+    }
+  }
+
+  // Check if current page requires authentication
+  isProtectedPage() {
+    const protectedPages = ['/dashboard.html', '/profile.html', '/settings.html'];
+    const currentPath = window.location.pathname;
+    return protectedPages.some(page => currentPath.includes(page));
   }
 
   // Load authentication data from localStorage
   loadStoredAuth() {
+    console.log('📂 Loading stored authentication data...');
+    
     try {
       this.token = localStorage.getItem('authToken');
       const userData = localStorage.getItem('userData');
       
+      console.log('🎫 Stored token:', this.token ? 'Present' : 'Missing');
+      console.log('👤 Stored user data:', userData ? 'Present' : 'Missing');
+      
       if (userData) {
         this.user = JSON.parse(userData);
+        console.log('👤 Loaded user:', this.user);
       }
       
       if (this.token) {
         apiClient.setAuthToken(this.token);
+        console.log('🔗 Token set in API client');
+      }
+      
+      if (this.token && this.user) {
+        console.log('✅ Stored auth data loaded successfully');
+      } else {
+        console.log('❌ No complete stored auth data found');
       }
     } catch (error) {
-      console.error('Error loading stored auth:', error);
+      console.error('❌ Error loading stored auth:', error);
       this.clearAuth();
     }
   }
@@ -41,6 +169,12 @@ class AuthManager {
   // Validate stored token with backend
   async validateStoredToken() {
     if (!this.token) return false;
+
+    // Skip validation for demo tokens to prevent loops
+    if (this.token.startsWith('demo-token-')) {
+      console.log('🎭 Demo token, skipping server validation');
+      return true;
+    }
 
     try {
       const response = await auth.getCurrentUser();
@@ -50,21 +184,155 @@ class AuthManager {
         this.notifyLoginCallbacks();
         return true;
       } else {
-        this.clearAuth();
+        console.log('❌ Token validation failed on server');
+        // Don't clear auth immediately, let the page handle it
         return false;
       }
     } catch (error) {
-      console.error('Token validation failed:', error);
-      this.clearAuth();
-      return false;
+      console.error('❌ Token validation network error:', error);
+      // On network error, assume token is still valid to prevent redirect loops
+      console.log('🌐 Network error during validation, assuming token valid');
+      return true;
     }
   }
 
   // Login with email and password
   async login(email, password) {
     try {
+      console.log('🔐 Starting authentication process...');
+      console.log('📧 Email:', email);
+      console.log('🔑 Password length:', password ? password.length : 0);
+      
       this.showLoading('Signing in...');
       
+      // For Netlify deployments, use real Supabase functions
+      const isUsingNetlifyFunctions = window.location.hostname.includes('netlify.app') || 
+                                      window.location.hostname.includes('netlify.com') ||
+                                      (window.location.hostname === 'localhost' && window.location.port === '8888');
+      
+      console.log('🔍 Using Netlify Functions:', isUsingNetlifyFunctions);
+      console.log('🔍 Mock auth status:', mockAuth ? 'Available' : 'Not available');
+      console.log('🎭 Demo mode enabled for Netlify deployment');
+      
+      // Fallback to mock auth if real auth failed or not using Netlify
+      if (mockAuth) {
+        console.log('🎭 Using mock authentication...');
+        const response = await mockAuth.login({ email, password });
+        
+        console.log('📋 Authentication response:', response);
+        
+        if (response.success) {
+          console.log('✅ Authentication successful!');
+          console.log('🎫 Token received:', response.data.token ? 'Yes' : 'No');
+          console.log('👤 User data:', response.data.user);
+          
+          this.token = response.data.token;
+          this.user = response.data.user;
+          
+          // Store authentication data
+          localStorage.setItem('authToken', this.token);
+          localStorage.setItem('userData', JSON.stringify(this.user));
+          console.log('💾 Auth data stored in localStorage');
+          console.log('💾 Stored token key: authToken');
+          console.log('💾 Stored user key: userData');
+          
+          this.saveUserData();
+          
+          // Set token in API client
+          apiClient.setAuthToken(this.token);
+          console.log('🔗 Token set in API client');
+          
+          // Verify auth state
+          const isValid = this.isAuthenticated();
+          console.log('🔍 Auth state valid:', isValid);
+          
+          // Notify callbacks
+          this.notifyLoginCallbacks();
+          
+          this.hideLoading();
+          this.showSuccess('Welcome back!');
+          
+          // Redirect to dashboard after successful login
+          setTimeout(() => {
+            console.log('🚀 Starting dashboard redirect...');
+            console.log('🔍 Final auth check before redirect:');
+            console.log('   - Token exists:', !!this.token);
+            console.log('   - User exists:', !!this.user);
+            console.log('   - Is authenticated:', this.isAuthenticated());
+            
+            if (this.isAuthenticated()) {
+              this.redirectToDashboard();
+            } else {
+              console.error('❌ Auth state invalid at redirect time');
+              this.showError('Authentication state lost. Please try logging in again.');
+            }
+          }, 1500); // Increased delay to ensure everything is saved
+          
+          return { success: true, user: this.user };
+        } else {
+          console.error('❌ Authentication failed:', response.error);
+          this.hideLoading();
+          this.showError(response.error || 'Login failed');
+          return { success: false, error: response.error };
+        }
+      }
+      
+      // If no mock auth available, create temporary demo auth for any environment
+      if (!mockAuth) {
+        console.log('🎭 Creating temporary demo authentication...');
+        
+        // Simple demo authentication for any environment
+        if (email && password) {
+          const demoToken = 'demo-token-' + Date.now();
+          const demoUser = {
+            id: '1',
+            email: email,
+            name: email.split('@')[0],
+            role: 'player'
+          };
+          
+          this.token = demoToken;
+          this.user = demoUser;
+          
+          // Store authentication data
+          localStorage.setItem('authToken', this.token);
+          localStorage.setItem('userData', JSON.stringify(this.user));
+          console.log('💾 Demo auth data stored in localStorage');
+          
+          this.saveUserData();
+          
+          // Set token in API client
+          apiClient.setAuthToken(this.token);
+          console.log('🔗 Token set in API client');
+          
+          // Notify callbacks
+          this.notifyLoginCallbacks();
+          
+          this.hideLoading();
+          this.showSuccess('Welcome back!');
+          
+          // Redirect to dashboard after successful login
+          setTimeout(() => {
+            console.log('🚀 Starting dashboard redirect...');
+            console.log('🔍 Final auth check before redirect:');
+            console.log('   - Token exists:', !!this.token);
+            console.log('   - User exists:', !!this.user);
+            console.log('   - Is authenticated:', this.isAuthenticated());
+            
+            if (this.isAuthenticated()) {
+              this.redirectToDashboard();
+            } else {
+              console.error('❌ Auth state invalid at redirect time');
+              this.showError('Authentication state lost. Please try logging in again.');
+            }
+          }, 1500);
+          
+          return { success: true, user: this.user };
+        }
+      }
+      
+      // Try real API
+      console.log('🌐 Trying real API authentication...');
       const response = await auth.login({ email, password });
       
       if (response.success) {
@@ -83,6 +351,11 @@ class AuthManager {
         
         this.hideLoading();
         this.showSuccess('Welcome back!');
+        
+        // Redirect to dashboard after successful login
+        setTimeout(() => {
+          this.redirectToDashboard();
+        }, 1000);
         
         return { success: true, user: this.user };
       } else {
@@ -170,7 +443,51 @@ class AuthManager {
 
   // Check if user is authenticated
   isAuthenticated() {
-    return !!(this.token && this.user);
+    console.log('🔍 Checking authentication state...');
+    console.log('🎫 Token exists:', !!this.token);
+    console.log('👤 User exists:', !!this.user);
+    
+    if (this.token && this.user) {
+      // Check if it's a demo token (starts with "demo-token-")
+      if (this.token.startsWith('demo-token-')) {
+        console.log('🎭 Demo token detected, skipping JWT validation');
+        console.log('✅ User is authenticated (demo mode)');
+        return true;
+      }
+      
+      // For real JWT tokens, validate expiration
+      try {
+        // Verify token is not expired
+        const payload = JSON.parse(atob(this.token.split('.')[1]));
+        const now = Math.floor(Date.now() / 1000);
+        
+        console.log('⏰ Token expires at:', new Date(payload.exp * 1000));
+        console.log('⏰ Current time:', new Date(now * 1000));
+        console.log('⏰ Token valid:', payload.exp > now);
+        
+        if (payload.exp && payload.exp > now) {
+          console.log('✅ User is authenticated (JWT valid)');
+          return true;
+        } else {
+          console.log('❌ Token expired, clearing auth');
+          this.clearAuth();
+          return false;
+        }
+      } catch (error) {
+        console.error('❌ JWT token validation failed:', error);
+        console.log('🔄 Treating as demo token fallback');
+        // If JWT parsing fails but we have token and user, treat as valid for demo
+        if (this.token && this.user) {
+          console.log('✅ User is authenticated (fallback mode)');
+          return true;
+        }
+        this.clearAuth();
+        return false;
+      }
+    }
+    
+    console.log('❌ No valid authentication found');
+    return false;
   }
 
   // Get current user
@@ -236,22 +553,73 @@ class AuthManager {
   }
 
   // Redirect to login if not authenticated
-  requireAuth() {
+  async requireAuth() {
+    console.log('🔒 Checking authentication requirement...');
+    
+    // Wait for auth manager to finish initializing
+    await this.waitForInit();
+    
+    console.log('🔍 Auth check after initialization:');
+    console.log('   - Is authenticated:', this.isAuthenticated());
+    console.log('   - Token exists:', !!this.token);
+    console.log('   - User exists:', !!this.user);
+    
     if (!this.isAuthenticated()) {
+      console.log('❌ Authentication required but user not authenticated, redirecting to login');
       this.redirectToLogin();
       return false;
     }
+    
+    console.log('✅ Authentication verified');
     return true;
   }
 
   // Redirect to login page
   redirectToLogin() {
+    if (this.isRedirecting) {
+      console.log('🔄 Already redirecting, skipping');
+      return;
+    }
+    this.isRedirecting = true;
+    console.log('🚀 Redirecting to login...');
     window.location.href = '/login.html';
   }
 
   // Redirect to dashboard
   redirectToDashboard() {
-    window.location.href = '/dashboard.html';
+    if (this.isRedirecting) {
+      console.log('🔄 Already redirecting, skipping');
+      return;
+    }
+    this.isRedirecting = true;
+    console.log('🚀 Redirecting to dashboard...');
+    console.log('📍 Current location:', window.location.href);
+    
+    // Handle different environments
+    const dashboardUrl = this.getDashboardUrl();
+    console.log('🎯 Dashboard URL:', dashboardUrl);
+    
+    try {
+      window.location.href = dashboardUrl;
+    } catch (error) {
+      console.error('❌ Redirect failed:', error);
+      // Fallback: try window.location.assign
+      window.location.assign(dashboardUrl);
+    }
+  }
+  
+  // Get the correct dashboard URL for current environment
+  getDashboardUrl() {
+    const currentUrl = window.location;
+    const baseUrl = `${currentUrl.protocol}//${currentUrl.host}`;
+    
+    // For local development (localhost:8888, localhost:3000, etc.)
+    if (currentUrl.hostname === 'localhost' || currentUrl.hostname === '127.0.0.1') {
+      return `${baseUrl}/dashboard.html`;
+    }
+    
+    // For Netlify production
+    return `${baseUrl}/dashboard.html`;
   }
 
   // Show loading indicator

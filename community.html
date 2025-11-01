@@ -436,12 +436,13 @@
 <body>
     <nav class="sidebar">
         <div class="logo">🏈 FlagFit Pro</div>
-        <a href="dashboard.html" class="nav-item">📊 Dashboard</a>
-        <a href="training.html" class="nav-item">⚡ Training</a>
-        <a href="tournaments.html" class="nav-item">🏆 Tournaments</a>
-        <a href="#" class="nav-item active">👥 Community</a>
-        <a href="chat.html" class="nav-item">💬 Team Chat</a>
-        <a href="#" class="nav-item">⚙️ Settings</a>
+        <a href="/dashboard.html" class="nav-item">📊 Dashboard</a>
+        <a href="/training.html" class="nav-item">⚡ Training</a>
+        <a href="/tournaments.html" class="nav-item">🏆 Tournaments</a>
+        <a href="/community.html" class="nav-item active">👥 Community</a>
+        <a href="/analytics.html" class="nav-item">📈 Analytics</a>
+        <a href="/coach.html" class="nav-item">👨‍🏫 Coach</a>
+        <a href="#" class="nav-item" onclick="alert('Settings page coming soon!')">⚙️ Settings</a>
     </nav>
 
     <main class="main-content">
@@ -687,6 +688,60 @@
 
             setupPostInput();
             await loadCommunityFeed();
+            
+            // Add demo posts to make the community feel active
+            setTimeout(addDemoPosts, 500);
+        }
+        
+        function addDemoPosts() {
+            const demoPosts = [
+                {
+                    id: 'demo1',
+                    author: 'sarah.williams',
+                    authorName: 'Sarah Williams',
+                    content: 'Just hit a new personal best on my 40-yard dash! 4.8 seconds! 🏃‍♀️💨 All those early morning training sessions are paying off. Who else is working on their speed this week?',
+                    timestamp: new Date(Date.now() - 4*60*60*1000).toISOString(),
+                    likes: 18,
+                    comments: 5,
+                    shares: 2,
+                    isLiked: false,
+                    location: '🏃‍♀️ Track'
+                },
+                {
+                    id: 'demo2',
+                    author: 'alex.rodriguez',
+                    authorName: 'Alex Rodriguez',
+                    content: 'Game highlights from yesterday\'s scrimmage! That touchdown pass in the final minutes was INSANE! 🏈🔥 Great teamwork everyone!',
+                    timestamp: new Date(Date.now() - 18*60*60*1000).toISOString(),
+                    likes: 31,
+                    comments: 12,
+                    shares: 8,
+                    isLiked: true,
+                    location: '🏟️ Championship Field',
+                    achievement: '🏆 Game MVP'
+                },
+                {
+                    id: 'demo3',
+                    author: 'tyler.johnson',
+                    authorName: 'Tyler Johnson',
+                    content: 'Quick tip for better flag pulling: Watch the hips, not the feet! The hips don\'t lie and will tell you exactly where the runner is going. Works every time! 💯',
+                    timestamp: new Date(Date.now() - 2*24*60*60*1000).toISOString(),
+                    likes: 45,
+                    comments: 15,
+                    shares: 12,
+                    isLiked: false,
+                    location: '💡 Training Tips'
+                }
+            ];
+            
+            const container = document.getElementById('postsContainer');
+            if (container) {
+                demoPosts.forEach(post => {
+                    const postHTML = createPostHTML(post, authManager.getCurrentUser());
+                    container.insertAdjacentHTML('beforeend', postHTML);
+                });
+                console.log('✅ Demo posts added to community feed');
+            }
         }
 
         function setupPostInput() {

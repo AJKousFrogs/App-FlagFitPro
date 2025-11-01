@@ -137,24 +137,10 @@
     </div>
 
     <script type="module">
-        import { authManager } from './src/auth-manager.js';
-
         document.addEventListener('DOMContentLoaded', function() {
-            // Show loading
-            document.getElementById('loadingText').style.display = 'block';
-            document.getElementById('actionButtons').style.display = 'none';
-            
-            // Check if user is already authenticated
-            setTimeout(() => {
-                if (authManager.isAuthenticated()) {
-                    // Redirect to dashboard if already logged in
-                    window.location.href = '/dashboard.html';
-                } else {
-                    // Show sign in options
-                    document.getElementById('loadingText').style.display = 'none';
-                    document.getElementById('actionButtons').style.display = 'block';
-                }
-            }, 1000);
+            // Skip authentication check and show login buttons immediately
+            document.getElementById('loadingText').style.display = 'none';
+            document.getElementById('actionButtons').style.display = 'block';
         });
     </script>
 </body>

@@ -246,6 +246,14 @@
 
         <div class="error-message" id="errorMessage"></div>
         <div class="success-message" id="successMessage"></div>
+        
+        <!-- Manual redirect button (backup) -->
+        <div id="manualRedirect" style="display: none; margin: 20px 0; padding: 15px; background: #e3f2fd; border-radius: 8px; border-left: 4px solid #2196f3;">
+            <p style="margin: 0 0 10px 0; color: #1976d2; font-weight: 500;">✅ Login successful!</p>
+            <button type="button" id="goDashboard" style="background: #2196f3; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 500;">
+                Go to Dashboard →
+            </button>
+        </div>
 
         <form id="loginForm">
             <div class="form-group">
@@ -294,15 +302,50 @@
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
+            console.log('📝 Login form submitted');
+            
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             
-            const result = await authManager.login(email, password);
+            console.log('📧 Email entered:', email);
+            console.log('🔑 Password length:', password ? password.length : 0);
             
-            if (result.success) {
-                setTimeout(() => {
-                    authManager.redirectToDashboard();
-                }, 1500);
+            try {
+                const result = await authManager.login(email, password);
+                
+                console.log('📋 Login result:', result);
+                
+                if (result.success) {
+                    console.log('✅ Login successful! Auth manager will handle redirect...');
+                    
+                    // Show manual redirect button as backup after 3 seconds
+                    setTimeout(() => {
+                        console.log('⏰ Showing manual redirect button as backup...');
+                        document.getElementById('manualRedirect').style.display = 'block';
+                    }, 3000);
+                    
+                    // Note: authManager.login() already handles the redirect internally
+                    // No need to call redirectToDashboard() here again
+                } else {
+                    console.error('❌ Login failed:', result.error);
+                }
+            } catch (error) {
+                console.error('❌ Login error:', error);
+            }
+        });
+
+        // Manual redirect button event listener
+        document.getElementById('goDashboard').addEventListener('click', function() {
+            console.log('🔘 Manual redirect button clicked');
+            console.log('🔍 Auth state check:');
+            console.log('   - Is authenticated:', authManager.isAuthenticated());
+            console.log('   - Current user:', authManager.getCurrentUser());
+            
+            if (authManager.isAuthenticated()) {
+                authManager.redirectToDashboard();
+            } else {
+                console.error('❌ Not authenticated, cannot redirect');
+                alert('Please log in first');
             }
         });
 
@@ -310,6 +353,12 @@
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('email').value = 'test@flagfitpro.com';
             document.getElementById('password').value = 'demo123';
+            
+            console.log('🔍 Page loaded, checking for existing auth...');
+            if (authManager.isAuthenticated()) {
+                console.log('👤 User already logged in, redirecting to dashboard...');
+                authManager.redirectToDashboard();
+            }
         });
     </script>
 </body>

@@ -7,14 +7,20 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "dev:hot": "nodemon server.js --watch . --ext js,json,html,css --ignore node_modules/ --ignore *.backup",
+    "dev:frontend": "node simple-server.js",
+    "dev:netlify": "netlify dev",
+    "dev:hot": "nodemon dev-server.cjs --watch . --ext js,json,html,css --ignore node_modules/ --ignore *.backup",
+    "dev:api": "nodemon server.js --watch . --ext js,json --ignore node_modules/ --ignore *.backup",
+    "dev:full": "concurrently \"npm run dev:api\" \"npm run dev:hot\"",
     "seed": "node scripts/seedDashboardData.js",
     "setup": "npm install && npm run seed",
     "test": "node scripts/test-dashboard.js",
-    "build": "echo 'Build completed - serving static files'",
-    "clean": "echo 'Clean completed'"
+    "build": "echo 'Static site build completed'",
+    "clean": "echo 'Clean completed'",
+    "deploy": "./deploy-to-netlify.sh"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.58.0",
     "bcryptjs": "^2.4.3",
     "chart.js": "^4.4.1",
     "cors": "^2.8.5",
@@ -35,8 +41,12 @@
   "license": "MIT",
   "devDependencies": {
     "autoprefixer": "^10.4.21",
+    "chokidar": "^3.5.3",
+    "concurrently": "^8.2.2",
+    "netlify-cli": "^17.0.0",
     "nodemon": "^3.1.10",
     "postcss": "^8.5.6",
-    "tailwindcss": "^4.1.12"
+    "tailwindcss": "^4.1.12",
+    "ws": "^8.14.2"
   }
 }

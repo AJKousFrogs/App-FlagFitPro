@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlagFit Pro - Coach Team Management Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Coach Dashboard Design System */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            color: #1a1a1a;
+            background-color: #ffffff;
+            min-height: 100vh;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Typography */
+        h1 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 2.5rem;
+            line-height: 1.2;
+            color: #1a1a1a;
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1.875rem;
+            line-height: 1.3;
+            color: #1a1a1a;
+            margin-bottom: 0.75rem;
+        }
+
+        h3 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1.5rem;
+            line-height: 1.4;
+            color: #1a1a1a;
+            margin-bottom: 0.5rem;
+        }
+
+        h4 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            font-size: 1.25rem;
+            line-height: 1.4;
+            color: #1a1a1a;
+            margin-bottom: 0.5rem;
+        }
+
+        p, .body-text {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 400;
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #4a4a4a;
+            margin-bottom: 1rem;
+        }
+
+        .small-text {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 400;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            color: #6b6b6b;
+        }
+
+        /* Buttons */
+        .btn, .cta-primary, .cta-secondary, .coach-btn {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cta-primary, .coach-btn-primary {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            border: 2px solid #1a1a1a;
+        }
+
+        .cta-primary:hover, .coach-btn-primary:hover {
+            background-color: #ffffff;
+            color: #1a1a1a;
+            border: 2px solid #1a1a1a;
+        }
+
+        .cta-secondary, .coach-btn-secondary {
+            background-color: #ffffff;
+            color: #1a1a1a;
+            border: 2px solid #1a1a1a;
+        }
+
+        .cta-secondary:hover, .coach-btn-secondary:hover {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            border: 2px solid #1a1a1a;
+        }
+
+        /* Header & Navigation */
+        .coach-header {
+            background-color: #ffffff;
+            border-bottom: 2px solid #e5e5e5;
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .coach-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .coach-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: #1a1a1a;
+        }
+
+        .coach-tabs {
+            display: flex;
+            gap: 0;
+            background-color: #f5f5f5;
+            border-radius: 10px;
+            padding: 4px;
+        }
+
+        .coach-tab {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #6b6b6b;
+            transition: all 0.3s ease;
+            border: none;
+            background: none;
+            cursor: pointer;
+        }
+
+        .coach-tab.active {
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+
+        .coach-tab:hover:not(.active) {
+            background-color: #e5e5e5;
+            color: #1a1a1a;
+        }
+
+        .coach-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .coach-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .coach-info h4 {
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        .coach-role {
+            font-size: 0.875rem;
+            color: #6b6b6b;
+        }
+
+        /* Layout */
+        .coach-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            font-size: 1.125rem;
+            color: #6b6b6b;
+        }
+
+        /* Overview Cards */
+        .coach-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .overview-card {
+            background-color: #ffffff;
+            border: 2px solid #e5e5e5;
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .overview-card:hover {
+            border-color: #1a1a1a;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-icon-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-icon {
+            font-size: 2rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin: 0;
+        }
+
+        .card-metric {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 2.5rem;
+            color: #1a1a1a;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-description {
+            color: #4a4a4a;
+            margin-bottom: 1rem;
+        }
+
+        .card-trend {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #1a1a1a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Team Section */
+        .team-section {
+            background-color: #ffffff;
+            border: 2px solid #e5e5e5;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Players Grid */
+        .players-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .player-card {
+            background-color: #ffffff;
+            border: 1px solid #e5e5e5;
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .player-card:hover {
+            border-color: #1a1a1a;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .player-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .player-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1.125rem;
+        }
+
+        .player-info {
+            flex: 1;
+        }
+
+        .player-name {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin: 0 0 0.25rem 0;
+        }
+
+        .player-position {
+            font-size: 0.875rem;
+            color: #6b6b6b;
+        }
+
+        .player-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-active {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+
+        .status-injured {
+            background-color: #fee2e2;
+            color: #dc2626;
+        }
+
+        .status-rest {
+            background-color: #fef3c7;
+            color: #d97706;
+        }
+
+        .player-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: #6b6b6b;
+            font-weight: 500;
+        }
+
+        .player-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #e5e5e5;
+            border-radius: 6px;
+            background: #ffffff;
+            color: #1a1a1a;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            border-color: #1a1a1a;
+            background: #f5f5f5;
+        }
+
+        /* Chemistry Section */
+        .chemistry-section {
+            background-color: #fafafa;
+            border: 2px solid #1a1a1a;
+        }
+
+        .chemistry-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chemistry-card {
+            background-color: #ffffff;
+            border: 1px solid #e5e5e5;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .chemistry-score {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 2rem;
+            color: #1a1a1a;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .chemistry-label {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            color: #4a4a4a;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .chemistry-trend {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            font-size: 0.75rem;
+            color: #6b6b6b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        /* Progress Bars */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: #e5e5e5;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: #1a1a1a;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        /* Feature List */
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-item {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 400;
+            color: #4a4a4a;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .feature-icon {
+            font-size: 1.25rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .coach-container {
+                padding: 1rem;
+            }
+
+            .coach-nav {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .coach-tabs {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .coach-overview {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .players-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .overview-card, .team-section, .player-card {
+            animation: fadeInUp 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- Coach Header -->
+    <header class="coach-header">
+        <nav class="coach-nav">
+            <div class="coach-logo">
+                <span>🏈</span>
+                <span>FlagFit Pro Coach</span>
+            </div>
+            
+            <div class="coach-tabs">
+                <a href="/dashboard.html" class="coach-tab">← Back to Dashboard</a>
+                <button class="coach-tab active" onclick="switchTab('team')">Team Management</button>
+                <button class="coach-tab" onclick="switchTab('training')">Training</button>
+                <button class="coach-tab" onclick="switchTab('games')">Games</button>
+                <button class="coach-tab" onclick="switchTab('analytics')">Analytics</button>
+            </div>
+            
+            <div class="coach-profile">
+                <div class="coach-avatar" id="coachAvatar">CW</div>
+                <div class="coach-info">
+                    <h4 id="coachName">Coach Williams</h4>
+                    <div class="coach-role">Head Coach</div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Container -->
+    <div class="coach-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1>Team Management Dashboard</h1>
+            <p>Manage your team roster, track chemistry, and optimize Olympic readiness</p>
+        </div>
+
+        <!-- Team Overview Cards -->
+        <div class="coach-overview">
+            <div class="overview-card">
+                <div class="card-header">
+                    <div class="card-icon-wrapper">
+                        <span class="card-icon">👥</span>
+                        <h3 class="card-title">Active Players</h3>
+                    </div>
+                </div>
+                <span class="card-metric" id="activePlayersCount">12</span>
+                <p class="card-description">Full roster strength</p>
+                <div class="card-trend">
+                    <span>✅</span>
+                    <span id="availableToday">10/12 available today</span>
+                </div>
+            </div>
+
+            <div class="overview-card">
+                <div class="card-header">
+                    <div class="card-icon-wrapper">
+                        <span class="card-icon">🤝</span>
+                        <h3 class="card-title">Team Chemistry</h3>
+                    </div>
+                </div>
+                <span class="card-metric" id="teamChemistryScore">8.4/10</span>
+                <p class="card-description">Overall cohesion rating</p>
+                <div class="card-trend">
+                    <span>📈</span>
+                    <span>+0.3 this week</span>
+                </div>
+            </div>
+
+            <div class="overview-card">
+                <div class="card-header">
+                    <div class="card-icon-wrapper">
+                        <span class="card-icon">🏆</span>
+                        <h3 class="card-title">Olympic Readiness</h3>
+                    </div>
+                </div>
+                <span class="card-metric" id="olympicReadiness">78%</span>
+                <p class="card-description">LA28 preparation level</p>
+                <div class="card-trend">
+                    <span>🎯</span>
+                    <span>Target: 85% by Dec</span>
+                </div>
+            </div>
+
+            <div class="overview-card">
+                <div class="card-header">
+                    <div class="card-icon-wrapper">
+                        <span class="card-icon">🌍</span>
+                        <h3 class="card-title">World Ranking</h3>
+                    </div>
+                </div>
+                <span class="card-metric" id="worldRanking">#6</span>
+                <p class="card-description">Current global position</p>
+                <div class="card-trend">
+                    <span>⬆️</span>
+                    <span>Up from #8</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Player Management Section -->
+        <div class="team-section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <span>👥</span>
+                    Player Roster Management
+                </h2>
+                <button class="cta-primary" onclick="addPlayer()">Add Player</button>
+            </div>
+
+            <div class="players-grid" id="playersGrid">
+                <!-- Players will be dynamically loaded here -->
+            </div>
+        </div>
+
+        <!-- Team Chemistry Analysis -->
+        <div class="team-section chemistry-section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <span>🤝</span>
+                    Team Chemistry Management
+                </h2>
+                <button class="cta-primary" onclick="runAIAnalysis()">AI Analysis</button>
+            </div>
+
+            <div class="chemistry-grid">
+                <div class="chemistry-card">
+                    <span class="chemistry-score">9.1/10</span>
+                    <div class="chemistry-label">Communication</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 91%"></div>
+                    </div>
+                    <div class="chemistry-trend">
+                        <span>📈</span>
+                        <span>Excellent</span>
+                    </div>
+                </div>
+
+                <div class="chemistry-card">
+                    <span class="chemistry-score">8.7/10</span>
+                    <div class="chemistry-label">Trust</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 87%"></div>
+                    </div>
+                    <div class="chemistry-trend">
+                        <span>🤝</span>
+                        <span>Strong</span>
+                    </div>
+                </div>
+
+                <div class="chemistry-card">
+                    <span class="chemistry-score">7.9/10</span>
+                    <div class="chemistry-label">Coordination</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 79%"></div>
+                    </div>
+                    <div class="chemistry-trend">
+                        <span>⚡</span>
+                        <span>Good</span>
+                    </div>
+                </div>
+
+                <div class="chemistry-card">
+                    <span class="chemistry-score">8.2/10</span>
+                    <div class="chemistry-label">Leadership</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 82%"></div>
+                    </div>
+                    <div class="chemistry-trend">
+                        <span>👑</span>
+                        <span>Solid</span>
+                    </div>
+                </div>
+            </div>
+
+            <h4>🤖 AI Team Building Recommendations</h4>
+            <div class="feature-list">
+                <div class="feature-item">
+                    <span class="feature-icon">✅</span>
+                    <span>Team chemistry is healthy - no immediate intervention needed</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">💡</span>
+                    <span>Suggestion: Pair Marcus Johnson with newer players for mentorship</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🎯</span>
+                    <span>Focus area: Improve coordination through specialized drills</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">📊</span>
+                    <span>Next analysis: Scheduled for next Monday</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { authManager } from './src/auth-manager.js';
+        import { apiClient } from './src/api-config.js';
+
+        // Sample player data
+        const playersData = [
+            {
+                id: 1,
+                name: "Marcus Johnson",
+                position: "Quarterback",
+                number: 12,
+                status: "active",
+                olympicScore: 92,
+                accuracy: "89%",
+                fortyYard: "4.45s",
+                games: 47
+            },
+            {
+                id: 2,
+                name: "Vince Machi",
+                position: "Wide Receiver",
+                number: 84,
+                status: "active",
+                olympicScore: 88,
+                accuracy: "94%",
+                fortyYard: "4.38s",
+                games: 44
+            },
+            {
+                id: 3,
+                name: "Sarah Thompson",
+                position: "Defensive Back",
+                number: 21,
+                status: "injured",
+                olympicScore: 85,
+                accuracy: "12",
+                fortyYard: "4.52s",
+                games: 39
+            },
+            {
+                id: 4,
+                name: "David Martinez",
+                position: "Linebacker",
+                number: 55,
+                status: "rest",
+                olympicScore: 83,
+                accuracy: "87",
+                fortyYard: "4.61s",
+                games: 41
+            },
+            {
+                id: 5,
+                name: "Emily Chen",
+                position: "Wide Receiver",
+                number: 18,
+                status: "active",
+                olympicScore: 90,
+                accuracy: "91%",
+                fortyYard: "4.41s",
+                games: 35
+            },
+            {
+                id: 6,
+                name: "Jason Williams",
+                position: "Running Back",
+                number: 28,
+                status: "active",
+                olympicScore: 86,
+                accuracy: "78%",
+                fortyYard: "4.35s",
+                games: 42
+            }
+        ];
+
+        async function initCoachDashboard() {
+            if (!authManager.requireAuth()) return;
+
+            // Update coach profile
+            const user = authManager.getCurrentUser();
+            if (user) {
+                const initials = (user.name || user.email || 'CW').split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+                document.getElementById('coachAvatar').textContent = initials;
+                document.getElementById('coachName').textContent = user.name || 'Coach ' + user.email?.split('@')[0] || 'Coach Williams';
+            }
+
+            loadPlayers();
+            updateTeamStats();
+        }
+
+        function loadPlayers() {
+            const playersGrid = document.getElementById('playersGrid');
+            playersGrid.innerHTML = playersData.map(player => createPlayerCard(player)).join('');
+        }
+
+        function createPlayerCard(player) {
+            const initials = player.name.split(' ').map(n => n[0]).join('').toUpperCase();
+            const statusClass = `status-${player.status}`;
+            const statusText = player.status.charAt(0).toUpperCase() + player.status.slice(1);
+            
+            // Determine the second stat based on position
+            let secondStat = '';
+            let secondStatLabel = '';
+            if (player.position.includes('Quarterback')) {
+                secondStat = player.accuracy;
+                secondStatLabel = 'Accuracy';
+            } else if (player.position.includes('Receiver')) {
+                secondStat = player.accuracy;
+                secondStatLabel = 'Catch Rate';
+            } else if (player.position.includes('Defensive')) {
+                secondStat = player.accuracy;
+                secondStatLabel = 'Interceptions';
+            } else {
+                secondStat = player.accuracy;
+                secondStatLabel = 'Tackles';
+            }
+
+            return `
+                <div class="player-card">
+                    <div class="player-header">
+                        <div class="player-avatar">${initials}</div>
+                        <div class="player-info">
+                            <h4 class="player-name">${player.name}</h4>
+                            <div class="player-position">${player.position} • #${player.number}</div>
+                        </div>
+                        <div class="player-status ${statusClass}">${statusText}</div>
+                    </div>
+                    
+                    <div class="player-stats">
+                        <div class="stat-item">
+                            <span class="stat-value">${player.olympicScore}</span>
+                            <span class="stat-label">Olympic Score</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">${secondStat}</span>
+                            <span class="stat-label">${secondStatLabel}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">${player.fortyYard}</span>
+                            <span class="stat-label">40-Yard</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">${player.games}</span>
+                            <span class="stat-label">Games</span>
+                        </div>
+                    </div>
+                    
+                    <div class="player-actions">
+                        <button class="action-btn" onclick="viewPlayerProfile(${player.id})">View Profile</button>
+                        <button class="action-btn" onclick="editPlayer(${player.id})">Edit</button>
+                        <button class="action-btn" onclick="viewPlayerStats(${player.id})">${player.status === 'injured' ? 'Injury Report' : 'Stats'}</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateTeamStats() {
+            const activeCount = playersData.filter(p => p.status === 'active').length;
+            const availableCount = playersData.filter(p => p.status === 'active' || p.status === 'rest').length;
+            
+            document.getElementById('activePlayersCount').textContent = playersData.length;
+            document.getElementById('availableToday').textContent = `${availableCount}/${playersData.length} available today`;
+        }
+
+        // Tab switching functionality
+        window.switchTab = function(tab) {
+            document.querySelectorAll('.coach-tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`[onclick="switchTab('${tab}')"]`).classList.add('active');
+            
+            // Here you would implement actual tab switching logic
+            console.log('Switched to tab:', tab);
+        }
+
+        // Player management functions
+        window.addPlayer = function() {
+            alert('Add Player functionality would open a modal/form here');
+        }
+
+        window.viewPlayerProfile = function(playerId) {
+            const player = playersData.find(p => p.id === playerId);
+            alert(`View profile for ${player.name}`);
+        }
+
+        window.editPlayer = function(playerId) {
+            const player = playersData.find(p => p.id === playerId);
+            alert(`Edit player ${player.name}`);
+        }
+
+        window.viewPlayerStats = function(playerId) {
+            const player = playersData.find(p => p.id === playerId);
+            alert(`View stats for ${player.name}`);
+        }
+
+        window.runAIAnalysis = function() {
+            alert('Running AI analysis on team chemistry...');
+        }
+
+        document.addEventListener('DOMContentLoaded', initCoachDashboard);
+    </script>
+</body>
+</html>

@@ -2,37 +2,44 @@
 // Handles different environments (development, production, Netlify)
 
 const getApiBaseUrl = () => {
-  // Check if we're in production (Netlify)
+  // Use Netlify Functions for production (real Supabase backend)
   if (window.location.hostname.includes('netlify.app') || window.location.hostname.includes('netlify.com')) {
-    // Production Netlify deployment
-    return 'https://flagfit-pro-api.herokuapp.com'; // Update with your backend URL
+    // Use Netlify Functions for real data
+    return window.location.origin + '/.netlify/functions';
   }
   
-  // Check if we're in local development
+  // Check if we're in local development with Netlify Dev
+  if (window.location.hostname === 'localhost' && window.location.port === '8888') {
+    // Netlify Dev environment
+    return 'http://localhost:8888/.netlify/functions';
+  }
+  
+  // Check if we're in local development with real API
   if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    // Try to use real API if available, fallback to mock
     return 'http://localhost:3001';
   }
   
-  // Default fallback
-  return 'http://localhost:3001';
+  // Default fallback to mock for other static hosting
+  return 'mock://api';
 };
 
 export const API_BASE_URL = getApiBaseUrl();
 
-// API Endpoints
+// API Endpoints - Updated for Netlify Functions
 export const API_ENDPOINTS = {
-  // Authentication
+  // Authentication (Netlify Functions)
   auth: {
-    login: '/api/auth/login',
-    register: '/api/auth/register',
+    login: API_BASE_URL.includes('netlify/functions') ? '/auth-login' : '/api/auth/login',
+    register: API_BASE_URL.includes('netlify/functions') ? '/auth-register' : '/api/auth/register',
     logout: '/api/auth/logout',
-    me: '/api/auth/me',
+    me: API_BASE_URL.includes('netlify/functions') ? '/auth-me' : '/api/auth/me',
     csrf: '/api/auth/csrf'
   },
   
-  // Dashboard
+  // Dashboard (Netlify Functions)
   dashboard: {
-    overview: '/api/dashboard/overview',
+    overview: API_BASE_URL.includes('netlify/functions') ? '/dashboard' : '/api/dashboard/overview',
     trainingCalendar: '/api/dashboard/training-calendar',
     olympicQualification: '/api/dashboard/olympic-qualification',
     sponsorRewards: '/api/dashboard/sponsor-rewards',
@@ -41,6 +48,12 @@ export const API_ENDPOINTS = {
     notifications: '/api/dashboard/notifications',
     dailyQuote: '/api/dashboard/daily-quote',
     health: '/api/dashboard/health'
+  },
+  
+  // Training (Netlify Functions)
+  training: {
+    stats: API_BASE_URL.includes('netlify/functions') ? '/training-stats' : '/api/training/stats',
+    complete: API_BASE_URL.includes('netlify/functions') ? '/training-stats' : '/api/training/complete'
   },
   
   // Analytics
@@ -103,6 +116,21 @@ export class ApiClient {
       'Content-Type': 'application/json',
       'Accept': 'application/json'
     };
+    
+    // Import mock API for static deployment
+    this.mockApi = null;
+    if (this.baseUrl === 'mock://api') {
+      this.initMockApi();
+    }
+  }
+  
+  async initMockApi() {
+    try {
+      const { mockApiClient } = await import('./mock-api.js');
+      this.mockApi = mockApiClient;
+    } catch (error) {
+      console.warn('Failed to load mock API:', error);
+    }
   }
   
   // Set authentication token
@@ -121,6 +149,26 @@ export class ApiClient {
   
   // Make HTTP request
   async request(endpoint, options = {}) {
+    // Use mock API if in static deployment mode
+    if (this.baseUrl === 'mock://api') {
+      if (!this.mockApi) {
+        await this.initMockApi();
+      }
+      
+      if (this.mockApi) {
+        if (options.method === 'POST' || options.method === 'PUT') {
+          const data = options.body ? JSON.parse(options.body) : {};
+          return await this.mockApi.post(endpoint, data);
+        } else {
+          return await this.mockApi.get(endpoint);
+        }
+      }
+      
+      // Fallback for mock API
+      return { success: true, data: {} };
+    }
+    
+    // Real API request
     const url = `${this.baseUrl}${endpoint}`;
     const config = {
       headers: { ...this.defaultHeaders },
@@ -145,6 +193,23 @@ export class ApiClient {
       return await response.json();
     } catch (error) {
       console.error(`API request failed: ${endpoint}`, error);
+      
+      // Fallback to mock data in development if real API fails
+      if (this.baseUrl.includes('localhost')) {
+        console.warn('Real API failed, falling back to mock data');
+        if (!this.mockApi) {
+          await this.initMockApi();
+        }
+        if (this.mockApi) {
+          if (options.method === 'POST' || options.method === 'PUT') {
+            const data = options.body ? JSON.parse(options.body) : {};
+            return await this.mockApi.post(endpoint, data);
+          } else {
+            return await this.mockApi.get(endpoint);
+          }
+        }
+      }
+      
       throw error;
     }
   }

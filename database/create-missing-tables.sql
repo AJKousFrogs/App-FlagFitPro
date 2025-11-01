@@ -270,3 +270,4 @@ INSERT INTO notifications (user_id, notification_type, message, priority) VALUES
 ON CONFLICT DO NOTHING;
 
 COMMIT;
+

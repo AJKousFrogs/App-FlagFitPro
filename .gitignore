@@ -94,3 +94,6 @@ temp/
 *.backup
 *.bak
 *.orig
+
+# Hot reload development files
+flagfit-pro-deploy.tar.gz
