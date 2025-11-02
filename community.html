@@ -442,7 +442,7 @@
         <a href="/community.html" class="nav-item active">👥 Community</a>
         <a href="/analytics.html" class="nav-item">📈 Analytics</a>
         <a href="/coach.html" class="nav-item">👨‍🏫 Coach</a>
-        <a href="#" class="nav-item" onclick="alert('Settings page coming soon!')">⚙️ Settings</a>
+        <a href="/settings.html" class="nav-item">⚙️ Settings</a>
     </nav>
 
     <main class="main-content">
@@ -680,17 +680,50 @@
     <script type="module">
         import { authManager } from './src/auth-manager.js';
         import { apiClient } from './src/api-config.js';
+        import { PerformanceUtils } from './src/performance-utils.js';
+        import { AccessibilityUtils } from './src/accessibility-utils.js';
 
         let postCounter = 4;
 
         async function initCommunityPage() {
             if (!authManager.requireAuth()) return;
 
-            setupPostInput();
-            await loadCommunityFeed();
+            // Use performance monitoring
+            await PerformanceUtils.measureAsyncPerformance('Community Page Load', async () => {
+                setupPostInput();
+                await loadCommunityFeed();
+            });
+            
+            // Setup optimized scrolling for posts
+            setupInfiniteScrolling();
             
             // Add demo posts to make the community feel active
             setTimeout(addDemoPosts, 500);
+        }
+        
+        function setupInfiniteScrolling() {
+            const postsContainer = document.getElementById('postsContainer');
+            let isLoading = false;
+            
+            const loadMorePosts = PerformanceUtils.throttle(async () => {
+                if (isLoading) return;
+                
+                const scrollPosition = window.scrollY + window.innerHeight;
+                const documentHeight = document.documentElement.scrollHeight;
+                
+                // Load more when 200px from bottom
+                if (scrollPosition >= documentHeight - 200) {
+                    isLoading = true;
+                    
+                    // Simulate loading more posts
+                    setTimeout(() => {
+                        addDemoPosts();
+                        isLoading = false;
+                    }, 1000);
+                }
+            }, 250);
+            
+            window.addEventListener('scroll', loadMorePosts);
         }
         
         function addDemoPosts() {
@@ -748,9 +781,12 @@
             const postInput = document.getElementById('postInput');
             const submitBtn = document.getElementById('submitPost');
 
-            postInput.addEventListener('input', function() {
+            // Use debounced input handler for better performance
+            const debouncedInputHandler = PerformanceUtils.debounce(function() {
                 submitBtn.disabled = !this.value.trim();
-            });
+            }, 150);
+
+            postInput.addEventListener('input', debouncedInputHandler);
         }
 
         async function loadCommunityFeed() {

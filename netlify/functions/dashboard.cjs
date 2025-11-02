@@ -4,7 +4,12 @@
 const jwt = require('jsonwebtoken');
 const { db, checkEnvVars } = require('./supabase-client.cjs');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production';
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET) {
+  console.error('CRITICAL: JWT_SECRET environment variable is not set!');
+  throw new Error('JWT_SECRET environment variable is required for security');
+}
 
 // Get real dashboard data from Supabase database
 const getDashboardData = async (userId) => {

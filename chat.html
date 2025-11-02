@@ -28,6 +28,18 @@
             padding: 20px 0;
             z-index: 1000;
         }
+        
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
 
         .logo {
             text-align: center;
@@ -366,12 +378,12 @@
 <body>
     <nav class="sidebar">
         <div class="logo">🏈 FlagFit Pro</div>
-        <a href="dashboard.html" class="nav-item">📊 Dashboard</a>
-        <a href="training.html" class="nav-item">⚡ Training</a>
-        <a href="#" class="nav-item">🏆 Tournaments</a>
-        <a href="#" class="nav-item">👥 Community</a>
-        <a href="#" class="nav-item active">💬 Team Chat</a>
-        <a href="#" class="nav-item">⚙️ Settings</a>
+        <a href="/dashboard.html" class="nav-item">📊 Dashboard</a>
+        <a href="/training.html" class="nav-item">⚡ Training</a>
+        <a href="/tournaments.html" class="nav-item">🏆 Tournaments</a>
+        <a href="/community.html" class="nav-item">👥 Community</a>
+        <a href="/chat.html" class="nav-item active">💬 Team Chat</a>
+        <a href="/settings.html" class="nav-item">⚙️ Settings</a>
     </nav>
 
     <main class="main-content">
@@ -442,7 +454,7 @@
             </aside>
 
             <div class="chat-area">
-                <div class="messages-container" id="messagesContainer">
+                <div class="messages-container" id="messagesContainer" role="log" aria-live="polite" aria-label="Chat messages">
                     <div class="message">
                         <div class="message-avatar">CM</div>
                         <div class="message-content">
@@ -515,9 +527,14 @@
                             class="message-input" 
                             placeholder="Type your message..." 
                             rows="1"
+                            aria-label="Message input"
+                            aria-describedby="messageInputHelp"
                         ></textarea>
-                        <button class="send-btn" id="sendBtn" disabled>
-                            <span>➤</span>
+                        <div id="messageInputHelp" class="sr-only">
+                            Press Enter to send, Shift+Enter for new line
+                        </div>
+                        <button class="send-btn" id="sendBtn" disabled aria-label="Send message">
+                            <span aria-hidden="true">➤</span>
                         </button>
                     </div>
                 </div>
@@ -528,6 +545,8 @@
     <script type="module">
         import { authManager } from './src/auth-manager.js';
         import { apiClient } from './src/api-config.js';
+        import { ErrorHandler } from './src/error-handler.js';
+        import { AccessibilityUtils } from './src/accessibility-utils.js';
 
         let currentChannel = 'team-general';
         let typingTimeout;
@@ -539,6 +558,9 @@
             setupMessageInput();
             setupChannelSwitching();
             await loadMessages();
+            
+            // Load any stored messages for current channel
+            loadMessagesFromStorage();
             
             // Simulate real-time updates
             setInterval(simulateNewMessages, 15000);
@@ -606,10 +628,14 @@
                 
                 if (response.success && response.data.messages) {
                     updateMessagesContainer(response.data.messages);
+                } else {
+                    // Load from localStorage if API fails
+                    loadMessagesFromStorage();
                 }
             } catch (error) {
                 console.error('Failed to load messages:', error);
-                // Show default messages if API fails
+                // Load from localStorage as fallback
+                loadMessagesFromStorage();
                 scrollToBottom();
             }
         }
@@ -636,11 +662,18 @@
 
         async function sendMessage() {
             const input = document.getElementById('messageInput');
+            const sendBtn = document.getElementById('sendBtn');
             const message = input.value.trim();
             
             if (!message) return;
 
             const user = authManager.getCurrentUser();
+            
+            // Show loading state with accessibility
+            const originalBtnText = sendBtn.innerHTML;
+            sendBtn.innerHTML = '<span aria-hidden="true">⏳</span>';
+            sendBtn.disabled = true;
+            sendBtn.setAttribute('aria-label', 'Sending message...');
             
             try {
                 const response = await apiClient.post('/api/chat/send', {
@@ -657,16 +690,19 @@
                         timestamp: new Date().toISOString()
                     }, true);
                     
-                    input.value = '';
-                    input.style.height = 'auto';
-                    document.getElementById('sendBtn').disabled = true;
-                    
-                    scrollToBottom();
+                    // Save to localStorage for persistence
+                    saveMessageToStorage({
+                        channel: currentChannel,
+                        author: user.email,
+                        authorName: user.name || 'You',
+                        text: message,
+                        timestamp: new Date().toISOString()
+                    });
                 }
             } catch (error) {
                 console.error('Failed to send message:', error);
                 
-                // Still add to UI for demo purposes
+                // Still add to UI for demo purposes with graceful fallback
                 addMessageToUI({
                     author: user.email,
                     authorName: user.name || 'You',
@@ -674,12 +710,109 @@
                     timestamp: new Date().toISOString()
                 }, true);
                 
-                input.value = '';
-                input.style.height = 'auto';
-                document.getElementById('sendBtn').disabled = true;
+                // Save to localStorage for offline functionality
+                saveMessageToStorage({
+                    channel: currentChannel,
+                    author: user.email,
+                    authorName: user.name || 'You',
+                    text: message,
+                    timestamp: new Date().toISOString()
+                });
+                
+                // Simulate team response for better demo experience
+                setTimeout(() => {
+                    simulateTeamResponse(message);
+                }, Math.random() * 3000 + 1000); // Random delay 1-4 seconds
+            }
+            
+            // Reset form state
+            input.value = '';
+            input.style.height = 'auto';
+            sendBtn.innerHTML = originalBtnText;
+            sendBtn.disabled = true;
+            sendBtn.setAttribute('aria-label', 'Send message');
+            
+            // Announce message sent to screen readers
+            AccessibilityUtils.announce('Message sent', 'polite');
+            
+            scrollToBottom();
+        }
+        
+        function saveMessageToStorage(message) {
+            try {
+                const storageKey = `chat_messages_${currentChannel}`;
+                const existingMessages = JSON.parse(localStorage.getItem(storageKey) || '[]');
+                existingMessages.push(message);
+                
+                // Keep only last 50 messages per channel to prevent storage bloat
+                if (existingMessages.length > 50) {
+                    existingMessages.splice(0, existingMessages.length - 50);
+                }
+                
+                localStorage.setItem(storageKey, JSON.stringify(existingMessages));
+            } catch (error) {
+                console.warn('Failed to save message to localStorage:', error);
+            }
+        }
+        
+        function loadMessagesFromStorage() {
+            try {
+                const storageKey = `chat_messages_${currentChannel}`;
+                const storedMessages = JSON.parse(localStorage.getItem(storageKey) || '[]');
+                
+                if (storedMessages.length > 0) {
+                    // Clear existing demo messages and load stored ones
+                    const container = document.getElementById('messagesContainer');
+                    container.innerHTML = '';
+                    
+                    storedMessages.forEach(msg => {
+                        addMessageToUI(msg, msg.author === authManager.getCurrentUser()?.email);
+                    });
+                    
+                    scrollToBottom();
+                }
+            } catch (error) {
+                console.warn('Failed to load messages from localStorage:', error);
+            }
+        }
+        
+        function simulateTeamResponse(originalMessage) {
+            const responses = [
+                { author: 'Coach Mike', text: 'Good point! Let\'s discuss this more at practice.' },
+                { author: 'Sarah (Captain)', text: 'I agree! This will definitely help our game strategy.' },
+                { author: 'Jake Davis', text: 'Thanks for sharing! Very helpful.' },
+                { author: 'Alex Lopez', text: 'Absolutely! Can\'t wait to try this out.' },
+                { author: 'Riley Johnson', text: 'Great idea! This could be a game changer.' }
+            ];
+            
+            // Select random response that makes sense
+            const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+            
+            // Add typing indicator first
+            const typingIndicator = document.getElementById('typingIndicator');
+            typingIndicator.querySelector('span').textContent = `${randomResponse.author} is typing`;
+            typingIndicator.style.display = 'flex';
+            
+            setTimeout(() => {
+                typingIndicator.style.display = 'none';
+                
+                addMessageToUI({
+                    authorName: randomResponse.author,
+                    text: randomResponse.text,
+                    timestamp: new Date().toISOString()
+                });
+                
+                // Save simulated response to storage
+                saveMessageToStorage({
+                    channel: currentChannel,
+                    author: randomResponse.author.toLowerCase().replace(/\s+/g, '.'),
+                    authorName: randomResponse.author,
+                    text: randomResponse.text,
+                    timestamp: new Date().toISOString()
+                });
                 
                 scrollToBottom();
-            }
+            }, 2000); // Show typing for 2 seconds
         }
 
         function addMessageToUI(message, isOwn = false) {

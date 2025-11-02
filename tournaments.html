@@ -431,6 +431,61 @@
             .bracket-round {
                 min-width: 150px;
             }
+            
+            .tournament-card {
+                margin-bottom: 1rem;
+            }
+            
+            .tournament-info h3 {
+                font-size: 1rem;
+            }
+            
+            .tournament-meta {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .sidebar {
+                width: 100%;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+            
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .filter-tabs {
+                overflow-x: auto;
+                padding-bottom: 0.5rem;
+            }
+            
+            .filter-tab {
+                white-space: nowrap;
+                min-width: 80px;
+            }
+            
+            .tournaments-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .bracket {
+                overflow-x: auto;
+                padding-bottom: 1rem;
+            }
         }
     </style>
 </head>
@@ -443,7 +498,7 @@
         <a href="/community.html" class="nav-item">👥 Community</a>
         <a href="/analytics.html" class="nav-item">📈 Analytics</a>
         <a href="/coach.html" class="nav-item">👨‍🏫 Coach</a>
-        <a href="#" class="nav-item" onclick="alert('Settings page coming soon!')">⚙️ Settings</a>
+        <a href="/settings.html" class="nav-item">⚙️ Settings</a>
     </nav>
 
     <main class="main-content">
@@ -762,16 +817,52 @@
     <script type="module">
         import { authManager } from './src/auth-manager.js';
         import { apiClient } from './src/api-config.js';
+        import { PerformanceUtils } from './src/performance-utils.js';
+        import { AccessibilityUtils } from './src/accessibility-utils.js';
 
         async function initTournamentsPage() {
             if (!authManager.requireAuth()) return;
 
-            await loadTournaments();
+            // Use performance monitoring for page load
+            await PerformanceUtils.measureAsyncPerformance('Tournament Page Load', async () => {
+                await loadTournaments();
+            });
+            
+            // Setup optimized scroll handling for leaderboard
+            setupOptimizedScrolling();
+        }
+        
+        function setupOptimizedScrolling() {
+            const leaderboard = document.getElementById('leaderboardList');
+            if (leaderboard) {
+                // Add intersection observer for lazy loading leaderboard items
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                        }
+                    });
+                }, { threshold: 0.1 });
+                
+                leaderboard.querySelectorAll('.leaderboard-item').forEach(item => {
+                    observer.observe(item);
+                });
+            }
         }
 
         async function loadTournaments() {
             try {
-                const response = await apiClient.get('/api/tournaments');
+                // Check cache first for faster loading
+                const cacheKey = 'tournaments_data';
+                let response = PerformanceUtils.getCachedResponse(cacheKey);
+                
+                if (!response) {
+                    response = await apiClient.get('/api/tournaments');
+                    // Cache successful responses for 5 minutes
+                    if (response.success) {
+                        PerformanceUtils.cacheResponse(cacheKey, response, 5);
+                    }
+                }
                 
                 if (response.success && response.data.tournaments) {
                     updateTournamentsGrid(response.data.tournaments);

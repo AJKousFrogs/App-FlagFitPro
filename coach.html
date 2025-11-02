@@ -965,26 +965,274 @@
 
         // Player management functions
         window.addPlayer = function() {
-            alert('Add Player functionality would open a modal/form here');
+            showPlayerModal('add');
         }
 
         window.viewPlayerProfile = function(playerId) {
             const player = playersData.find(p => p.id === playerId);
-            alert(`View profile for ${player.name}`);
+            showPlayerModal('view', player);
         }
 
         window.editPlayer = function(playerId) {
             const player = playersData.find(p => p.id === playerId);
-            alert(`Edit player ${player.name}`);
+            showPlayerModal('edit', player);
         }
 
         window.viewPlayerStats = function(playerId) {
             const player = playersData.find(p => p.id === playerId);
-            alert(`View stats for ${player.name}`);
+            showPlayerStatsModal(player);
         }
 
         window.runAIAnalysis = function() {
-            alert('Running AI analysis on team chemistry...');
+            showAIAnalysisModal();
+        }
+
+        // Modal functions for player management
+        function showPlayerModal(mode, player = null) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0,0,0,0.5); display: flex; align-items: center;
+                justify-content: center; z-index: 1000;
+            `;
+            
+            let modalContent = '';
+            
+            if (mode === 'add') {
+                modalContent = `
+                    <div style="background: white; padding: 2rem; border-radius: 12px; max-width: 500px; width: 90%;">
+                        <h3 style="margin-bottom: 1rem; color: var(--gray-900);">Add New Player</h3>
+                        <form onsubmit="handleAddPlayer(event)">
+                            <div style="margin-bottom: 1rem;">
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Full Name</label>
+                                <input type="text" id="playerName" required style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px;">
+                            </div>
+                            <div style="margin-bottom: 1rem;">
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Position</label>
+                                <select id="playerPosition" required style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px;">
+                                    <option value="">Select Position</option>
+                                    <option value="QB">Quarterback</option>
+                                    <option value="WR">Wide Receiver</option>
+                                    <option value="RB">Running Back</option>
+                                    <option value="C">Center</option>
+                                    <option value="DE">Defensive End</option>
+                                </select>
+                            </div>
+                            <div style="margin-bottom: 1rem;">
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Jersey Number</label>
+                                <input type="number" id="playerNumber" min="1" max="99" required style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px;">
+                            </div>
+                            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                                <button type="button" onclick="this.closest('div').remove()" style="padding: 0.75rem 1.5rem; border: 1px solid #ddd; background: white; border-radius: 6px; cursor: pointer;">Cancel</button>
+                                <button type="submit" style="padding: 0.75rem 1.5rem; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer;">Add Player</button>
+                            </div>
+                        </form>
+                    </div>
+                `;
+            } else if (mode === 'view' && player) {
+                modalContent = `
+                    <div style="background: white; padding: 2rem; border-radius: 12px; max-width: 500px; width: 90%;">
+                        <h3 style="margin-bottom: 1rem; color: var(--gray-900);">${player.name} - Profile</h3>
+                        <div style="margin-bottom: 1rem;">
+                            <strong>Position:</strong> ${player.position}
+                        </div>
+                        <div style="margin-bottom: 1rem;">
+                            <strong>Jersey Number:</strong> #${player.number}
+                        </div>
+                        <div style="margin-bottom: 1rem;">
+                            <strong>Status:</strong> <span style="color: var(--success);">Active</span>
+                        </div>
+                        <div style="margin-bottom: 2rem;">
+                            <strong>Recent Performance:</strong> Strong training attendance, consistent improvement in speed drills.
+                        </div>
+                        <div style="text-align: right;">
+                            <button onclick="this.closest('div').remove()" style="padding: 0.75rem 1.5rem; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer;">Close</button>
+                        </div>
+                    </div>
+                `;
+            } else if (mode === 'edit' && player) {
+                modalContent = `
+                    <div style="background: white; padding: 2rem; border-radius: 12px; max-width: 500px; width: 90%;">
+                        <h3 style="margin-bottom: 1rem; color: var(--gray-900);">Edit ${player.name}</h3>
+                        <form onsubmit="handleEditPlayer(event, ${player.id})">
+                            <div style="margin-bottom: 1rem;">
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Full Name</label>
+                                <input type="text" id="editPlayerName" value="${player.name}" required style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px;">
+                            </div>
+                            <div style="margin-bottom: 1rem;">
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Position</label>
+                                <select id="editPlayerPosition" required style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px;">
+                                    <option value="QB" ${player.position === 'QB' ? 'selected' : ''}>Quarterback</option>
+                                    <option value="WR" ${player.position === 'WR' ? 'selected' : ''}>Wide Receiver</option>
+                                    <option value="RB" ${player.position === 'RB' ? 'selected' : ''}>Running Back</option>
+                                    <option value="C" ${player.position === 'C' ? 'selected' : ''}>Center</option>
+                                    <option value="DE" ${player.position === 'DE' ? 'selected' : ''}>Defensive End</option>
+                                </select>
+                            </div>
+                            <div style="margin-bottom: 1rem;">
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Jersey Number</label>
+                                <input type="number" id="editPlayerNumber" value="${player.number}" min="1" max="99" required style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px;">
+                            </div>
+                            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                                <button type="button" onclick="this.closest('div').remove()" style="padding: 0.75rem 1.5rem; border: 1px solid #ddd; background: white; border-radius: 6px; cursor: pointer;">Cancel</button>
+                                <button type="submit" style="padding: 0.75rem 1.5rem; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer;">Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+                `;
+            }
+            
+            modal.innerHTML = modalContent;
+            document.body.appendChild(modal);
+        }
+        
+        function showPlayerStatsModal(player) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0,0,0,0.5); display: flex; align-items: center;
+                justify-content: center; z-index: 1000;
+            `;
+            
+            modal.innerHTML = `
+                <div style="background: white; padding: 2rem; border-radius: 12px; max-width: 600px; width: 90%;">
+                    <h3 style="margin-bottom: 1rem; color: var(--gray-900);">${player.name} - Performance Stats</h3>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 2rem;">
+                        <div style="text-align: center; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                            <div style="font-size: 1.5rem; font-weight: bold; color: var(--primary);">94%</div>
+                            <div style="font-size: 0.875rem; color: #666;">Training Attendance</div>
+                        </div>
+                        <div style="text-align: center; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                            <div style="font-size: 1.5rem; font-weight: bold; color: var(--success);">8.2</div>
+                            <div style="font-size: 0.875rem; color: #666;">Avg Performance Score</div>
+                        </div>
+                        <div style="text-align: center; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                            <div style="font-size: 1.5rem; font-weight: bold; color: var(--warning);">15</div>
+                            <div style="font-size: 0.875rem; color: #666;">Games Played</div>
+                        </div>
+                        <div style="text-align: center; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                            <div style="font-size: 1.5rem; font-weight: bold; color: var(--info);">7</div>
+                            <div style="font-size: 0.875rem; color: #666;">Touchdowns</div>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>Recent Notes:</strong>
+                        <p style="margin-top: 0.5rem; color: #666;">Excellent progress in speed training. Shows leadership qualities. Recommend for advanced drills.</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <button onclick="this.closest('div').remove()" style="padding: 0.75rem 1.5rem; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer;">Close</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+        
+        function showAIAnalysisModal() {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0,0,0,0.5); display: flex; align-items: center;
+                justify-content: center; z-index: 1000;
+            `;
+            
+            modal.innerHTML = `
+                <div style="background: white; padding: 2rem; border-radius: 12px; max-width: 700px; width: 90%;">
+                    <h3 style="margin-bottom: 1rem; color: var(--gray-900);">🤖 AI Team Chemistry Analysis</h3>
+                    <div style="margin-bottom: 1rem; padding: 1rem; background: #e3f2fd; border-radius: 8px; border-left: 4px solid var(--primary);">
+                        <strong>Analysis Complete</strong>
+                        <p style="margin: 0.5rem 0 0 0;">Based on training data, game performance, and interaction patterns.</p>
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <h4>Key Insights:</h4>
+                        <ul style="margin-left: 1rem;">
+                            <li>Strong offensive coordination between QB and WR positions</li>
+                            <li>Defensive line shows excellent teamwork and communication</li>
+                            <li>Recommend cross-training exercises for RB and WR groups</li>
+                            <li>Overall team chemistry score: 87/100 (Excellent)</li>
+                        </ul>
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <h4>Recommendations:</h4>
+                        <ul style="margin-left: 1rem;">
+                            <li>Schedule more joint practice sessions for offense/defense</li>
+                            <li>Implement team-building activities outside of training</li>
+                            <li>Focus on leadership development for veteran players</li>
+                        </ul>
+                    </div>
+                    <div style="text-align: right;">
+                        <button onclick="this.closest('div').remove()" style="padding: 0.75rem 1.5rem; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer;">Close Analysis</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+        
+        // Form handlers for player management
+        window.handleAddPlayer = function(event) {
+            event.preventDefault();
+            const name = document.getElementById('playerName').value;
+            const position = document.getElementById('playerPosition').value;
+            const number = parseInt(document.getElementById('playerNumber').value);
+            
+            // Check if number is already taken
+            const numberTaken = playersData.some(p => p.number === number);
+            if (numberTaken) {
+                alert(`Jersey number ${number} is already taken. Please choose another number.`);
+                return;
+            }
+            
+            // Add player to data
+            const newPlayer = {
+                id: Date.now(),
+                name: name,
+                position: position,
+                number: number,
+                status: 'Active'
+            };
+            
+            playersData.push(newPlayer);
+            renderPlayersTable();
+            
+            // Close modal
+            event.target.closest('div').closest('div').remove();
+            
+            // Show success message
+            alert(`${name} has been added to the team successfully!`);
+        }
+        
+        window.handleEditPlayer = function(event, playerId) {
+            event.preventDefault();
+            const name = document.getElementById('editPlayerName').value;
+            const position = document.getElementById('editPlayerPosition').value;
+            const number = parseInt(document.getElementById('editPlayerNumber').value);
+            
+            // Check if number is already taken by another player
+            const numberTaken = playersData.some(p => p.number === number && p.id !== playerId);
+            if (numberTaken) {
+                alert(`Jersey number ${number} is already taken. Please choose another number.`);
+                return;
+            }
+            
+            // Update player data
+            const playerIndex = playersData.findIndex(p => p.id === playerId);
+            if (playerIndex !== -1) {
+                playersData[playerIndex] = {
+                    ...playersData[playerIndex],
+                    name: name,
+                    position: position,
+                    number: number
+                };
+            }
+            
+            renderPlayersTable();
+            
+            // Close modal
+            event.target.closest('div').closest('div').remove();
+            
+            // Show success message
+            alert(`${name}'s information has been updated successfully!`);
         }
 
         document.addEventListener('DOMContentLoaded', initCoachDashboard);

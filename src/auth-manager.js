@@ -6,28 +6,32 @@ import { apiClient, auth } from './api-config.js';
 // Import mock authentication for static deployment
 let mockAuth = null;
 const initMockAuth = async () => {
-  console.log('🔄 Initializing mock authentication...');
-  console.log('🌐 Current hostname:', window.location.hostname);
-  console.log('🚪 Current port:', window.location.port);
+  // Initialize mock authentication for development only
+  const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  if (isDevelopment) {
+    console.log('🔄 Initializing mock authentication for development...');
+  }
   
   // Check if we're using Netlify Functions
   const isUsingNetlifyFunctions = window.location.hostname.includes('netlify') || 
                                   (window.location.hostname === 'localhost' && window.location.port === '8888');
   
-  console.log('🔍 Using Netlify Functions:', isUsingNetlifyFunctions);
+  if (isDevelopment) {
+    console.log('🔍 Using Netlify Functions:', isUsingNetlifyFunctions);
+  }
   
   // For local development without Netlify Dev, always use mock auth
   if (!isUsingNetlifyFunctions) {
-    console.log('🎭 Loading mock authentication for local development...');
+    if (isDevelopment) console.log('🎭 Loading mock authentication for local development...');
     try {
       const { MockAuth } = await import('./mock-auth.js');
       mockAuth = new MockAuth();
-      console.log('✅ Mock authentication loaded successfully');
+      if (isDevelopment) console.log('✅ Mock authentication loaded successfully');
     } catch (error) {
-      console.error('❌ Failed to load mock auth:', error);
+      if (isDevelopment) console.error('❌ Failed to load mock auth:', error);
     }
   } else {
-    console.log('🌐 Using production Netlify Functions - no mock auth needed');
+    if (isDevelopment) console.log('🌐 Using production Netlify Functions - no mock auth needed');
   }
 };
 
@@ -52,7 +56,7 @@ class AuthManager {
 
   // Initialize auth manager
   async init() {
-    console.log('🚀 Initializing authentication manager...');
+    if (window.location.hostname === 'localhost') console.log('🚀 Initializing authentication manager...');
     this.isInitializing = true;
     await initMockAuth();
     this.loadStoredAuth();
@@ -61,7 +65,7 @@ class AuthManager {
     this.checkAuthStateOnLoad();
     this.isInitializing = false;
     this.isInitialized = true;
-    console.log('✅ Authentication manager initialized');
+    if (window.location.hostname === 'localhost') console.log('✅ Authentication manager initialized');
   }
 
   // Wait for authentication to be fully initialized
@@ -82,18 +86,21 @@ class AuthManager {
 
   // Check authentication state on page load
   checkAuthStateOnLoad() {
-    console.log('🔍 Checking authentication state on page load...');
+    const isLocalDev = window.location.hostname === 'localhost';
+    if (isLocalDev) console.log('🔍 Checking authentication state on page load...');
     
     // Prevent redirect loops by checking if we're already redirecting
     if (this.isRedirecting) {
-      console.log('🔄 Already redirecting, skipping auth check');
+      if (isLocalDev) console.log('🔄 Already redirecting, skipping auth check');
       return;
     }
     
     if (this.isAuthenticated()) {
-      console.log('✅ User is already authenticated');
-      console.log('👤 Current user:', this.user);
-      console.log('🎫 Current token:', this.token ? 'Present' : 'Missing');
+      if (isLocalDev) {
+        console.log('✅ User is already authenticated');
+        console.log('👤 Current user:', this.user?.email || 'Unknown');
+        console.log('🎫 Current token:', this.token ? 'Present' : 'Missing');
+      }
       
       // For demo tokens or local development, skip server validation to prevent loops
       if (this.token && this.token.startsWith('demo-token-')) {
@@ -448,11 +455,21 @@ class AuthManager {
     console.log('👤 User exists:', !!this.user);
     
     if (this.token && this.user) {
-      // Check if it's a demo token (starts with "demo-token-")
+      // Check if it's a demo token (starts with "demo-token-") - only allow in development
       if (this.token.startsWith('demo-token-')) {
-        console.log('🎭 Demo token detected, skipping JWT validation');
-        console.log('✅ User is authenticated (demo mode)');
-        return true;
+        const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        if (isDevelopment) {
+          if (window.location.hostname === 'localhost') {
+            console.log('🎭 Demo token detected in development, skipping JWT validation');
+            console.log('✅ User is authenticated (demo mode)');
+          }
+          return true;
+        } else {
+          // Demo tokens not allowed in production
+          console.error('❌ Demo token detected in production environment - security violation');
+          this.logout();
+          return false;
+        }
       }
       
       // For real JWT tokens, validate expiration
@@ -688,6 +705,54 @@ class AuthManager {
   // Show error message
   showError(message) {
     this.showNotification(message, 'error');
+  }
+  
+  // Show warning message
+  showWarning(message) {
+    this.showNotification(message, 'warning');
+  }
+  
+  // Show info message
+  showInfo(message) {
+    this.showNotification(message, 'info');
+  }
+  
+  // Show loading overlay
+  showLoading(message = 'Loading...') {
+    // Remove any existing loading
+    const existing = document.querySelector('.auth-loading-overlay');
+    if (existing) existing.remove();
+    
+    const overlay = document.createElement('div');
+    overlay.className = 'auth-loading-overlay';
+    overlay.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10002;
+    `;
+    
+    overlay.innerHTML = `
+      <div style="background: white; padding: 2rem; border-radius: 12px; text-align: center; min-width: 200px;">
+        <div style="font-size: 2rem; margin-bottom: 1rem; animation: spin 1s linear infinite;">⏳</div>
+        <div style="font-weight: 500; color: #374151;">${message}</div>
+      </div>
+    `;
+    
+    document.body.appendChild(overlay);
+    return overlay;
+  }
+  
+  // Hide loading overlay
+  hideLoading() {
+    const loading = document.querySelector('.auth-loading-overlay');
+    if (loading) loading.remove();
   }
 
   // Show notification

@@ -6,9 +6,32 @@
     <title>FlagFit Pro - Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./src/modern-design-system.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./src/ui-design-system.css">
+    <!-- Chart.js with multiple CDN fallbacks -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js" defer></script>
+    <script>
+        // Fallback if primary CDN fails
+        window.addEventListener('load', function() {
+            if (typeof Chart === 'undefined') {
+                console.log('Loading Chart.js fallback...');
+                const fallbackScript = document.createElement('script');
+                fallbackScript.src = 'https://unpkg.com/chart.js@4.4.1/dist/chart.umd.js';
+                fallbackScript.onload = function() {
+                    console.log('Chart.js fallback loaded successfully');
+                    if (window.initDashboardCharts) window.initDashboardCharts();
+                };
+                fallbackScript.onerror = function() {
+                    console.warn('Chart.js fallback also failed, using mock charts');
+                    if (window.initMockCharts) window.initMockCharts();
+                };
+                document.head.appendChild(fallbackScript);
+            } else {
+                console.log('Chart.js loaded successfully');
+                if (window.initDashboardCharts) window.initDashboardCharts();
+            }
+        });
+    </script>
     <style>
         /* Dashboard-specific styles */
         .dashboard-container {
@@ -456,7 +479,7 @@
         <!-- Sidebar -->
         <div class="sidebar">
             <div class="sidebar-header">
-                <a href="#" class="sidebar-brand">
+                <a href="/dashboard.html" class="sidebar-brand">
                     <span>🏈</span>
                     FlagFit Pro
                 </a>
@@ -465,7 +488,7 @@
             <nav class="sidebar-nav">
                 <div class="nav-section">
                     <div class="nav-section-title">Main</div>
-                    <a href="#" class="nav-item active">
+                    <a href="/dashboard.html" class="nav-item active">
                         <span class="nav-icon">📊</span>
                         Dashboard
                     </a>
@@ -493,7 +516,7 @@
                         <span class="nav-icon">📈</span>
                         Analytics
                     </a>
-                    <a href="#" class="nav-item">
+                    <a href="/settings.html" class="nav-item">
                         <span class="nav-icon">⚙️</span>
                         Settings
                     </a>
@@ -685,6 +708,8 @@
     <script type="module">
         import { authManager } from './src/auth-manager.js';
         import { apiClient, dashboard } from './src/api-config.js';
+        import { PerformanceUtils } from './src/performance-utils.js';
+        import { AccessibilityUtils } from './src/accessibility-utils.js';
 
         // Initialize dashboard
         document.addEventListener('DOMContentLoaded', async function() {

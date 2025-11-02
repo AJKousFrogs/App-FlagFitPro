@@ -14,10 +14,10 @@ const getApiBaseUrl = () => {
     return 'http://localhost:8888/.netlify/functions';
   }
   
-  // Check if we're in local development with real API
+  // For local development, always use mock API to avoid CORS and function issues
   if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-    // Try to use real API if available, fallback to mock
-    return 'http://localhost:3001';
+    console.log('🎭 Local development detected - using mock API');
+    return 'mock://api';
   }
   
   // Default fallback to mock for other static hosting

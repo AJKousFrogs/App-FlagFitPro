@@ -27,7 +27,12 @@ const demoUsers = [
   }
 ];
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production';
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET) {
+  console.error('CRITICAL: JWT_SECRET environment variable is not set!');
+  throw new Error('JWT_SECRET environment variable is required for security');
+}
 
 // Seed demo users if they don't exist
 async function seedDemoUsers() {

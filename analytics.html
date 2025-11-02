@@ -64,9 +64,47 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
+        /* Sidebar Navigation Styles */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px 0;
+            z-index: 1000;
+        }
+        
+        .logo {
+            text-align: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 40px;
+            padding: 0 20px;
+        }
+
+        .nav-item {
+            display: block;
+            padding: 15px 25px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-left-color: white;
+        }
+
         .dashboard-container {
             max-width: 1400px;
             margin: 0 auto;
+            margin-left: 270px;
             padding: 2rem;
             /* Fallback for older browsers */
             padding: 2rem;
@@ -346,7 +384,12 @@
         }
 
         @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
             .dashboard-container {
+                margin-left: 0;
                 padding: 1rem;
             }
             
@@ -561,6 +604,18 @@
     <!-- Skip link for accessibility -->
     <a href="#main-content" class="skip-link">Skip to main content</a>
     
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
+        <div class="logo">🏈 FlagFit Pro</div>
+        <a href="/dashboard.html" class="nav-item">📊 Dashboard</a>
+        <a href="/training.html" class="nav-item">⚡ Training</a>
+        <a href="/tournaments.html" class="nav-item">🏆 Tournaments</a>
+        <a href="/community.html" class="nav-item">👥 Community</a>
+        <a href="/chat.html" class="nav-item">💬 Team Chat</a>
+        <a href="/analytics.html" class="nav-item active">📈 Analytics</a>
+        <a href="/settings.html" class="nav-item">⚙️ Settings</a>
+    </nav>
+    
     <div class="dashboard-container" id="main-content">
         <!-- Dashboard Header -->
         <div class="dashboard-header">
@@ -696,16 +751,16 @@
                 </div>
                 <div class="chart-insights">
                     <div class="insight-item">
-                        <div class="insight-value">92</div>
-                        <div class="insight-label">WR Performance</div>
+                        <div class="insight-value">94</div>
+                        <div class="insight-label">Lorenzo S. #21</div>
                     </div>
                     <div class="insight-item">
-                        <div class="insight-value">87</div>
-                        <div class="insight-label">QB Performance</div>
+                        <div class="insight-value">91</div>
+                        <div class="insight-label">Aljosa K. #55</div>
                     </div>
                     <div class="insight-item">
-                        <div class="insight-value">78</div>
-                        <div class="insight-label">Rusher Performance</div>
+                        <div class="insight-value">89</div>
+                        <div class="insight-label">Vince M. #10</div>
                     </div>
                 </div>
             </div>
@@ -975,14 +1030,15 @@
             const ctx = document.getElementById('positionPerformanceChart');
             if (!ctx) return;
             
+            // Real team roster: Vince Machi #10, Lorenzo Scaperotta #21, Aleks Bordon #9, etc.
             charts.positionPerformance = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ['QB', 'WR', 'RB', 'DB', 'Rusher'],
+                    labels: ['Vince M. #10', 'Lorenzo S. #21', 'Aleks B. #9', 'Aljosa K. #55', 'Nils J. #7'],
                     datasets: [{
                         label: 'Performance Score',
-                        data: [89, 85, 92, 78, 83],
-                        backgroundColor: '#3B82F6'
+                        data: [89, 94, 87, 91, 85],
+                        backgroundColor: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6']
                     }]
                 },
                 options: {

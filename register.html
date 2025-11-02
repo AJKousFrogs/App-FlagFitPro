@@ -217,7 +217,7 @@
             <span>Already have an account?</span>
         </div>
 
-        <a href="login.html" class="login-link">Sign in here</a>
+        <a href="/login.html" class="login-link">Sign in here</a>
     </div>
 
     <script type="module">
@@ -232,16 +232,19 @@
             const confirmPassword = document.getElementById('confirmPassword').value;
             
             // Hide any existing messages
-            document.getElementById('errorMessage').style.display = 'none';
-            document.getElementById('successMessage').style.display = 'none';
+            hideMessage('errorMessage');
+            hideMessage('successMessage');
             
-            // Validate password confirmation
-            if (password !== confirmPassword) {
-                const errorMsg = document.getElementById('errorMessage');
-                errorMsg.textContent = 'Passwords do not match';
-                errorMsg.style.display = 'block';
+            // Validate all form inputs
+            if (!validateRegisterForm(name, email, password, confirmPassword)) {
                 return;
             }
+            
+            // Show loading state
+            const submitButton = this.querySelector('button[type="submit"]');
+            const originalText = submitButton.innerHTML;
+            submitButton.innerHTML = '<span>⏳</span> Creating Account...';
+            submitButton.disabled = true;
             
             const result = await authManager.register({
                 name: name,
@@ -256,13 +259,80 @@
             }
         });
 
-        // Pre-fill with demo data for easy testing
+        // Pre-fill with demo data for easy testing (development only)
         document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('name').value = 'Demo User';
-            document.getElementById('email').value = 'demo@flagfitpro.com';
-            document.getElementById('password').value = 'demo123';
-            document.getElementById('confirmPassword').value = 'demo123';
+            const isDemoMode = window.location.hostname === 'localhost' || 
+                              window.location.hostname === '127.0.0.1' ||
+                              window.location.search.includes('demo=true');
+            
+            if (isDemoMode) {
+                document.getElementById('name').value = 'Demo User';
+                document.getElementById('email').value = 'demo@flagfitpro.com';
+                document.getElementById('password').value = 'demo123';
+                document.getElementById('confirmPassword').value = 'demo123';
+            }
         });
+
+        // Form validation functions
+        function validateRegisterForm(name, email, password, confirmPassword) {
+            // Name validation
+            if (!name || name.trim().length < 2) {
+                showMessage('errorMessage', 'Please enter a valid full name (at least 2 characters).');
+                return false;
+            }
+            
+            // Email validation
+            if (!email || email.trim() === '') {
+                showMessage('errorMessage', 'Please enter your email address.');
+                return false;
+            }
+            
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showMessage('errorMessage', 'Please enter a valid email address.');
+                return false;
+            }
+            
+            // Password validation
+            if (!password || password.length < 8) {
+                showMessage('errorMessage', 'Password must be at least 8 characters long.');
+                return false;
+            }
+            
+            // Password strength validation
+            const hasUpperCase = /[A-Z]/.test(password);
+            const hasLowerCase = /[a-z]/.test(password);
+            const hasNumbers = /\d/.test(password);
+            
+            if (!hasUpperCase || !hasLowerCase || !hasNumbers) {
+                showMessage('errorMessage', 'Password must contain at least one uppercase letter, one lowercase letter, and one number.');
+                return false;
+            }
+            
+            // Password confirmation validation
+            if (password !== confirmPassword) {
+                showMessage('errorMessage', 'Passwords do not match.');
+                return false;
+            }
+            
+            return true;
+        }
+        
+        function showMessage(elementId, message) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.style.display = 'block';
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 5000);
+        }
+        
+        function hideMessage(elementId) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'none';
+        }
     </script>
 </body>
 </html>

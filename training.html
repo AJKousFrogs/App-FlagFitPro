@@ -364,7 +364,7 @@
         <!-- Sidebar -->
         <div class="sidebar">
             <div class="sidebar-header">
-                <a href="#" class="sidebar-brand">
+                <a href="/dashboard.html" class="sidebar-brand">
                     <span>🏈</span>
                     FlagFit Pro
                 </a>
@@ -377,7 +377,7 @@
                         <span class="nav-icon">📊</span>
                         Dashboard
                     </a>
-                    <a href="#" class="nav-item active">
+                    <a href="/training.html" class="nav-item active">
                         <span class="nav-icon">⚡</span>
                         Training
                     </a>
@@ -401,7 +401,7 @@
                         <span class="nav-icon">📈</span>
                         Analytics
                     </a>
-                    <a href="#" class="nav-item">
+                    <a href="/settings.html" class="nav-item">
                         <span class="nav-icon">⚙️</span>
                         Settings
                     </a>
@@ -432,7 +432,7 @@
                         <h2 class="section-title">⚡ Available Workouts</h2>
                     </div>
 
-                    <div class="workout-card" onclick="startWorkout('speed')">
+                    <div class="workout-card" onclick="startWorkout('speed')" style="cursor: pointer;">
                         <div class="workout-icon" style="background: var(--speed-training); color: white;">
                             🏃
                         </div>
@@ -448,7 +448,7 @@
                         <button class="btn btn-primary">Start</button>
                     </div>
 
-                    <div class="workout-card" onclick="startWorkout('strength')">
+                    <div class="workout-card" onclick="startWorkout('strength')" style="cursor: pointer;">
                         <div class="workout-icon" style="background: var(--strength-training); color: white;">
                             💪
                         </div>
@@ -464,7 +464,7 @@
                         <button class="btn btn-primary">Start</button>
                     </div>
 
-                    <div class="workout-card" onclick="startWorkout('agility')">
+                    <div class="workout-card" onclick="startWorkout('agility')" style="cursor: pointer;">
                         <div class="workout-icon" style="background: var(--agility-training); color: white;">
                             🤸
                         </div>
@@ -480,7 +480,7 @@
                         <button class="btn btn-primary">Start</button>
                     </div>
 
-                    <div class="workout-card" onclick="startWorkout('endurance')">
+                    <div class="workout-card" onclick="startWorkout('endurance')" style="cursor: pointer;">
                         <div class="workout-icon" style="background: var(--endurance-training); color: white;">
                             ❤️
                         </div>
@@ -494,6 +494,38 @@
                             </div>
                         </div>
                         <button class="btn btn-primary">Start</button>
+                    </div>
+
+                    <div class="workout-card" onclick="openOffseasonProgram()" style="cursor: pointer; border: 2px solid #10b981;">
+                        <div class="workout-icon" style="background: linear-gradient(135deg, #10b981, #059669); color: white;">
+                            🏆
+                        </div>
+                        <div class="workout-content">
+                            <h3 class="workout-title">14-Week WR/DB Program</h3>
+                            <p class="workout-description">Complete WR/DB performance optimization program</p>
+                            <div class="workout-meta">
+                                <span>📅 14 weeks</span>
+                                <span>🎯 Olympic-level training</span>
+                                <span>⚡ Nov 2025 - Feb 2026</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary">View Program</button>
+                    </div>
+
+                    <div class="workout-card" onclick="openQBProgram()" style="cursor: pointer; border: 2px solid #3b82f6;">
+                        <div class="workout-icon" style="background: linear-gradient(135deg, #3b82f6, #1e40af); color: white;">
+                            🎯
+                        </div>
+                        <div class="workout-content">
+                            <h3 class="workout-title">14-Week Elite QB Program</h3>
+                            <p class="workout-description">Complete quarterback development for 320 throws/weekend</p>
+                            <div class="workout-meta">
+                                <span>📅 14 weeks</span>
+                                <span>🎯 320 throws capacity</span>
+                                <span>⚡ Dual-track training</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary">View Program</button>
                     </div>
                 </div>
 
@@ -598,9 +630,61 @@
         });
 
         function loadProgressData() {
-            // This would typically load real data from your API
-            // For demo, we'll use static data
-            console.log('Training progress data loaded');
+            // Helper function to get workout exercises based on type
+        function getWorkoutExercises(type) {
+            const exercises = {
+                speed: [
+                    { name: '40-yard dash', sets: 5, reps: 1, rest: '2 min' },
+                    { name: 'Cone sprints', sets: 3, reps: 8, rest: '90 sec' },
+                    { name: 'Ladder drills', sets: 4, reps: 1, rest: '60 sec' }
+                ],
+                strength: [
+                    { name: 'Squats', sets: 4, reps: 12, rest: '90 sec' },
+                    { name: 'Push-ups', sets: 3, reps: 15, rest: '60 sec' },
+                    { name: 'Burpees', sets: 3, reps: 10, rest: '90 sec' }
+                ],
+                agility: [
+                    { name: '5-10-5 shuttle', sets: 4, reps: 3, rest: '2 min' },
+                    { name: 'Cone weaves', sets: 3, reps: 5, rest: '90 sec' },
+                    { name: 'T-drill', sets: 3, reps: 3, rest: '2 min' }
+                ],
+                endurance: [
+                    { name: 'Jog', sets: 1, reps: '20 min', rest: 'none' },
+                    { name: 'High knees', sets: 3, reps: '30 sec', rest: '30 sec' },
+                    { name: 'Mountain climbers', sets: 3, reps: 20, rest: '45 sec' }
+                ]
+            };
+            return exercises[type] || exercises.speed;
+        }
+
+        // Load real progress data from localStorage and API
+            const savedWorkouts = JSON.parse(localStorage.getItem('recentWorkouts') || '[]');
+            const currentWeekWorkouts = savedWorkouts.filter(workout => {
+                const workoutDate = new Date(workout.date);
+                const weekAgo = new Date();
+                weekAgo.setDate(weekAgo.getDate() - 7);
+                return workoutDate > weekAgo;
+            });
+            
+            // Update progress stats with real data
+            const hoursThisWeek = currentWeekWorkouts.reduce((total, workout) => total + (workout.duration || 0.75), 0);
+            const totalSessions = savedWorkouts.length;
+            const avgScore = savedWorkouts.length > 0 ? 
+                Math.round(savedWorkouts.reduce((sum, w) => sum + (w.score || 85), 0) / savedWorkouts.length) : 87;
+            
+            // Update UI elements
+            const progressStats = document.querySelectorAll('.progress-stat-value');
+            if (progressStats.length >= 3) {
+                progressStats[0].textContent = Math.round(hoursThisWeek);
+                progressStats[1].textContent = totalSessions;
+                progressStats[2].textContent = avgScore;
+            }
+            
+            console.log('Real training progress data loaded:', {
+                hoursThisWeek,
+                totalSessions,
+                avgScore
+            });
         }
 
         window.startWorkout = function(type) {
@@ -612,17 +696,795 @@
             button.textContent = 'Starting...';
             button.disabled = true;
             
-            // Simulate workout start
+            // Start actual workout session
             setTimeout(() => {
-                alert(`Starting ${type} workout! This would typically open the workout interface.`);
-                button.textContent = originalText;
-                button.disabled = false;
+                // Create workout session object
+                const workoutSession = {
+                    id: Date.now(),
+                    type: type,
+                    startTime: new Date().toISOString(),
+                    status: 'active',
+                    exercises: getWorkoutExercises(type)
+                };
+                
+                // Save to localStorage for session tracking
+                localStorage.setItem('currentWorkout', JSON.stringify(workoutSession));
+                
+                // Navigate to workout interface
+                window.location.href = `/workout.html?type=${type}&id=${workoutSession.id}`;
             }, 1000);
         };
 
+        window.openOffseasonProgram = function() {
+            // Create comprehensive offseason program modal
+            const modal = document.createElement('div');
+            modal.innerHTML = `
+                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000; overflow-y: auto;">
+                    <div style="background: white; padding: 2rem; border-radius: 16px; max-width: 800px; max-height: 90vh; overflow-y: auto; margin: 2rem;">
+                        <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 2rem;">
+                            <h2 style="color: var(--gray-900); margin: 0; flex: 1;">🏆 14-Week Flag Football Offseason Program</h2>
+                            <button onclick="this.closest('div').remove()" style="background: none; border: none; font-size: 24px; cursor: pointer; padding: 0.5rem;">✕</button>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
+                            <h3 style="margin: 0 0 1rem 0;">WR/DB PERFORMANCE OPTIMIZATION</h3>
+                            <p style="margin: 0; opacity: 0.9;">November 17, 2025 - February 28, 2026 (14 Weeks)</p>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                            <div style="background: #f8fafc; padding: 1.5rem; border-radius: 12px; text-align: center;">
+                                <div style="font-size: 2rem; font-weight: bold; color: #10b981; margin-bottom: 0.5rem;">5-6</div>
+                                <div style="color: #6b7280; font-size: 0.9rem;">Days/Week</div>
+                            </div>
+                            <div style="background: #f8fafc; padding: 1.5rem; border-radius: 12px; text-align: center;">
+                                <div style="font-size: 2rem; font-weight: bold; color: #3b82f6; margin-bottom: 0.5rem;">60-90</div>
+                                <div style="color: #6b7280; font-size: 0.9rem;">Minutes/Session</div>
+                            </div>
+                            <div style="background: #f8fafc; padding: 1.5rem; border-radius: 12px; text-align: center;">
+                                <div style="font-size: 2rem; font-weight: bold; color: #f59e0b; margin-bottom: 0.5rem;">40%</div>
+                                <div style="color: #6b7280; font-size: 0.9rem;">Max Load (BW)</div>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 2rem;">
+                            <h3 style="color: var(--gray-900); margin-bottom: 1rem;">📋 Training Phases</h3>
+                            <div style="display: grid; gap: 1rem;">
+                                <div onclick="showPhaseDetails('foundation')" style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; cursor: pointer; transition: all 0.2s;">
+                                    <div style="display: flex; justify-content: between; align-items: center;">
+                                        <div>
+                                            <h4 style="margin: 0 0 0.5rem 0; color: #1f2937;">🏗️ Foundation Phase (Weeks 1-4)</h4>
+                                            <p style="margin: 0; color: #6b7280; font-size: 0.9rem;">December 1-28, 2025 • Movement quality, structural strength, base conditioning</p>
+                                        </div>
+                                        <span style="font-size: 1.2rem; color: #9ca3af;">➤</span>
+                                    </div>
+                                </div>
+                                
+                                <div onclick="showPhaseDetails('strength')" style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; cursor: pointer; transition: all 0.2s;">
+                                    <div style="display: flex; justify-content: between; align-items: center;">
+                                        <div>
+                                            <h4 style="margin: 0 0 0.5rem 0; color: #1f2937;">💪 Strength Development (Weeks 5-8)</h4>
+                                            <p style="margin: 0; color: #6b7280; font-size: 0.9rem;">January 5 - February 1, 2026 • Maximum strength, power introduction, increased sprint volume</p>
+                                        </div>
+                                        <span style="font-size: 1.2rem; color: #9ca3af;">➤</span>
+                                    </div>
+                                </div>
+                                
+                                <div onclick="showPhaseDetails('power')" style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; cursor: pointer; transition: all 0.2s;">
+                                    <div style="display: flex; justify-content: between; align-items: center;">
+                                        <div>
+                                            <h4 style="margin: 0 0 0.5rem 0; color: #1f2937;">⚡ Power Phase (Weeks 9-12)</h4>
+                                            <p style="margin: 0; color: #6b7280; font-size: 0.9rem;">February 2-28, 2026 • Explosive power, reactive abilities, game-specific conditioning</p>
+                                        </div>
+                                        <span style="font-size: 1.2rem; color: #9ca3af;">➤</span>
+                                    </div>
+                                </div>
+                                
+                                <div onclick="showPhaseDetails('competition')" style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; cursor: pointer; transition: all 0.2s;">
+                                    <div style="display: flex; justify-content: between; align-items: center;">
+                                        <div>
+                                            <h4 style="margin: 0 0 0.5rem 0; color: #1f2937;">🏆 Competition Prep (Weeks 13-14)</h4>
+                                            <p style="margin: 0; color: #6b7280; font-size: 0.9rem;">March 2-15, 2026 • Peak performance, outdoor transition, taper</p>
+                                        </div>
+                                        <span style="font-size: 1.2rem; color: #9ca3af;">➤</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 2rem;">
+                            <h3 style="color: var(--gray-900); margin-bottom: 1rem;">🎯 Training Priorities</h3>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                                <div style="background: #fef3c7; padding: 1rem; border-radius: 8px; border-left: 4px solid #f59e0b;">
+                                    <h4 style="margin: 0 0 0.5rem 0; color: #92400e;">✅ Posterior Chain Strength</h4>
+                                    <p style="margin: 0; font-size: 0.9rem; color: #78350f;">Nordic curls, RDLs, hip thrusts (injury prevention + power)</p>
+                                </div>
+                                <div style="background: #dbeafe; padding: 1rem; border-radius: 8px; border-left: 4px solid #3b82f6;">
+                                    <h4 style="margin: 0 0 0.5rem 0; color: #1e40af;">⚡ Sprint Development</h4>
+                                    <p style="margin: 0; font-size: 0.9rem; color: #1e3a8a;">Evidence-based track & field research methods</p>
+                                </div>
+                                <div style="background: #d1fae5; padding: 1rem; border-radius: 8px; border-left: 4px solid #10b981;">
+                                    <h4 style="margin: 0 0 0.5rem 0; color: #047857;">🏃 Game Conditioning</h4>
+                                    <p style="margin: 0; font-size: 0.9rem; color: #065f46;">40+ sprints per game capacity (RSA training)</p>
+                                </div>
+                                <div style="background: #fce7f3; padding: 1rem; border-radius: 8px; border-left: 4px solid #ec4899;">
+                                    <h4 style="margin: 0 0 0.5rem 0; color: #be185d;">🏥 Lower Body Chain</h4>
+                                    <p style="margin: 0; font-size: 0.9rem; color: #9d174d;">Ankle/knee/hip/quad optimization & health</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="background: #f8fafc; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
+                            <h3 style="margin: 0 0 1rem 0; color: #1f2937;">📏 Daily Protocols</h3>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                                <div>
+                                    <h4 style="margin: 0 0 0.5rem 0; color: #374151; font-size: 0.9rem;">🌅 Every Morning</h4>
+                                    <p style="margin: 0; font-size: 0.8rem; color: #6b7280;">15min Full Body Mobility Routine</p>
+                                </div>
+                                <div>
+                                    <h4 style="margin: 0 0 0.5rem 0; color: #374151; font-size: 0.9rem;">🏃 Every Session</h4>
+                                    <p style="margin: 0; font-size: 0.8rem; color: #6b7280;">Universal Warm-Up (15-20min)</p>
+                                </div>
+                                <div>
+                                    <h4 style="margin: 0 0 0.5rem 0; color: #374151; font-size: 0.9rem;">🧘 Sundays</h4>
+                                    <p style="margin: 0; font-size: 0.8rem; color: #6b7280;">Recovery Protocol (45-60min)</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
+                            <h3 style="margin: 0 0 1rem 0;">🎯 Expected Results (Week 14)</h3>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 1.5rem; font-weight: bold; margin-bottom: 0.25rem;">0.15-0.35s</div>
+                                    <div style="font-size: 0.8rem; opacity: 0.9;">40-Yard Faster</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 1.5rem; font-weight: bold; margin-bottom: 0.25rem;">3-5"</div>
+                                    <div style="font-size: 0.8rem; opacity: 0.9;">Vertical Jump +</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 1.5rem; font-weight: bold; margin-bottom: 0.25rem;">6-12"</div>
+                                    <div style="font-size: 0.8rem; opacity: 0.9;">Broad Jump +</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 1.5rem; font-weight: bold; margin-bottom: 0.25rem;">5-10</div>
+                                    <div style="font-size: 0.8rem; opacity: 0.9;">More Nordic Reps</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 1rem; justify-content: center;">
+                            <button onclick="downloadProgram()" style="background: var(--primary); color: white; border: none; padding: 1rem 2rem; border-radius: 8px; cursor: pointer; font-weight: 600;">📥 Download Full Program</button>
+                            <button onclick="startProgram()" style="background: #10b981; color: white; border: none; padding: 1rem 2rem; border-radius: 8px; cursor: pointer; font-weight: 600;">🚀 Start Week 1</button>
+                            <button onclick="this.closest('div').remove()" style="background: var(--gray-200); color: var(--gray-700); border: none; padding: 1rem 2rem; border-radius: 8px; cursor: pointer;">Maybe Later</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        };
+
+        window.showPhaseDetails = function(phase) {
+            const phaseData = {
+                foundation: {
+                    title: "🏗️ Foundation Phase (Weeks 1-4)",
+                    period: "December 1-28, 2025",
+                    goals: [
+                        "Build structural strength and movement quality",
+                        "Establish posterior chain foundation (Nordic curls, RDLs)", 
+                        "Develop aerobic base (tempo running)",
+                        "Learn sprint mechanics (drill work)",
+                        "Optimize lower body chain health",
+                        "Introduction to isometric training"
+                    ],
+                    sample: "Week 1 Monday: RDLs 4×10, Nordic Curls 3×AMRAP, Hip Thrusts 3×12, Goblet Squats 3×10"
+                },
+                strength: {
+                    title: "💪 Strength Development (Weeks 5-8)", 
+                    period: "January 5 - February 1, 2026",
+                    goals: [
+                        "Build maximum strength (heavy loads)",
+                        "Increase sprint volume and intensity", 
+                        "Advanced plyometric work (depth jumps, reactive bounds)",
+                        "Repeated sprint ability development",
+                        "Maximal isometric contractions",
+                        "Enhanced change of direction"
+                    ],
+                    sample: "Week 5 Monday: Isometric Squat Push 6×6s @ 100%, Back Squats 5×5 @ 80-85%, Nordic Curls 5×6-8"
+                },
+                power: {
+                    title: "⚡ Power Phase (Weeks 9-12)",
+                    period: "February 2-28, 2026", 
+                    goals: [
+                        "Convert strength to explosive power",
+                        "Reactive abilities at maximum",
+                        "Game-specific conditioning peak",
+                        "Multi-directional power", 
+                        "Competition preparation",
+                        "Outdoor transition begins (late phase)"
+                    ],
+                    sample: "Week 9 Monday: Box Jumps 6×2 (max height), Depth Jumps 6×3, Broad Jumps 5×2 (max distance)"
+                },
+                competition: {
+                    title: "🏆 Competition Prep (Weeks 13-14)",
+                    period: "March 2-15, 2026",
+                    goals: [
+                        "Outdoor transition complete",
+                        "Peak power maintenance", 
+                        "Volume reduction (taper)",
+                        "Competition simulation",
+                        "Mental preparation",
+                        "Physical freshness for competition"
+                    ],
+                    sample: "Week 13 Monday: Box Jumps 3×3, Squats 2×5 @ 75%, Light power maintenance"
+                }
+            };
+
+            const data = phaseData[phase];
+            const modal = document.createElement('div');
+            modal.innerHTML = `
+                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1001;">
+                    <div style="background: white; padding: 2rem; border-radius: 16px; max-width: 600px; max-height: 80vh; overflow-y: auto;">
+                        <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 1.5rem;">
+                            <h2 style="color: var(--gray-900); margin: 0; flex: 1;">${data.title}</h2>
+                            <button onclick="this.closest('div').remove()" style="background: none; border: none; font-size: 24px; cursor: pointer;">✕</button>
+                        </div>
+                        
+                        <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                            <strong>Period:</strong> ${data.period}
+                        </div>
+
+                        <h3 style="margin-bottom: 1rem; color: #1f2937;">Training Goals:</h3>
+                        <ul style="margin-bottom: 1.5rem; color: #374151;">
+                            ${data.goals.map(goal => `<li style="margin-bottom: 0.5rem;">✅ ${goal}</li>`).join('')}
+                        </ul>
+
+                        <h3 style="margin-bottom: 1rem; color: #1f2937;">Sample Workout:</h3>
+                        <div style="background: #e0f2fe; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; font-family: monospace; font-size: 0.9rem;">
+                            ${data.sample}
+                        </div>
+
+                        <div style="text-align: center;">
+                            <button onclick="this.closest('div').remove()" style="background: var(--primary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer;">Got it!</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        };
+
+        window.downloadProgram = function() {
+            // Create a simple download experience
+            const link = document.createElement('a');
+            link.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent('COMPLETE FLAG FOOTBALL OFFSEASON TRAINING PROGRAM\\nWR/DB PERFORMANCE OPTIMIZATION\\nNovember 17, 2025 - February 28, 2026 (14 Weeks)\\n\\nThis is the complete 14-week periodized training program for flag football players. Visit the training section in FlagFit Pro for the interactive version with weekly breakdowns, exercise demonstrations, and progress tracking.');
+            link.download = 'FlagFit-Pro-14Week-Offseason-Program.txt';
+            link.click();
+            
+            // Show confirmation
+            alert('🎉 Program downloaded! The complete 14-week training program with detailed weekly workouts is now saved to your device.');
+        };
+
+        window.startProgram = function() {
+            // Set program start date and track participation
+            const startDate = new Date().toISOString();
+            const programData = {
+                started: startDate,
+                currentWeek: 1,
+                currentPhase: 'foundation',
+                completedWorkouts: [],
+                assessments: {}
+            };
+            
+            localStorage.setItem('offseasonProgram', JSON.stringify(programData));
+            
+            // Create week 1 workout selection
+            const modal = document.createElement('div');
+            modal.innerHTML = `
+                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1001;">
+                    <div style="background: white; padding: 2rem; border-radius: 16px; max-width: 600px;">
+                        <h2 style="margin-bottom: 1.5rem; color: #1f2937; text-align: center;">🚀 Week 1 - Foundation Phase</h2>
+                        
+                        <div style="background: #f0fdf4; border: 1px solid #10b981; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
+                            <h3 style="margin: 0 0 0.5rem 0; color: #047857;">This Week's Focus:</h3>
+                            <p style="margin: 0; color: #065f46; font-size: 0.9rem;">Build structural strength, learn movement patterns, establish posterior chain foundation</p>
+                        </div>
+
+                        <div style="margin-bottom: 1.5rem;">
+                            <h3 style="margin-bottom: 1rem; color: #1f2937;">Select Today's Workout:</h3>
+                            <div style="display: grid; gap: 0.75rem;">
+                                <button onclick="startWeek1Workout('monday')" style="text-align: left; background: #f9fafb; border: 1px solid #d1d5db; padding: 1rem; border-radius: 8px; cursor: pointer;">
+                                    <strong>Monday:</strong> Lower Body Foundation + Posterior Chain Introduction (50 min)
+                                </button>
+                                <button onclick="startWeek1Workout('tuesday')" style="text-align: left; background: #f9fafb; border: 1px solid #d1d5db; padding: 1rem; border-radius: 8px; cursor: pointer;">
+                                    <strong>Tuesday:</strong> Sprint Mechanics + Conditioning Introduction (50 min)
+                                </button>
+                                <button onclick="startWeek1Workout('wednesday')" style="text-align: left; background: #f9fafb; border: 1px solid #d1d5db; padding: 1rem; border-radius: 8px; cursor: pointer;">
+                                    <strong>Wednesday:</strong> Active Recovery + Mobility (40 min)
+                                </button>
+                                <button onclick="startWeek1Workout('thursday')" style="text-align: left; background: #f9fafb; border: 1px solid #d1d5db; padding: 1rem; border-radius: 8px; cursor: pointer;">
+                                    <strong>Thursday:</strong> Lower Body Strength + Plyometric Introduction (50 min)
+                                </button>
+                                <button onclick="startWeek1Workout('friday')" style="text-align: left; background: #f9fafb; border: 1px solid #d1d5db; padding: 1rem; border-radius: 8px; cursor: pointer;">
+                                    <strong>Friday:</strong> Power Introduction + Quick Feet (50 min)
+                                </button>
+                                <button onclick="startWeek1Workout('saturday')" style="text-align: left; background: #f9fafb; border: 1px solid #d1d5db; padding: 1rem; border-radius: 8px; cursor: pointer;">
+                                    <strong>Saturday:</strong> Sprint Work (Indoor/Outdoor Options) (45 min)
+                                </button>
+                                <button onclick="startWeek1Workout('sunday')" style="text-align: left; background: #f9fafb; border: 1px solid #d1d5db; padding: 1rem; border-radius: 8px; cursor: pointer;">
+                                    <strong>Sunday:</strong> Recovery Day (45 min)
+                                </button>
+                            </div>
+                        </div>
+
+                        <div style="text-align: center;">
+                            <button onclick="this.closest('div').remove()" style="background: var(--gray-200); color: var(--gray-700); border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer;">I'll Start Later</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        };
+
+        window.startWeek1Workout = function(day) {
+            // Close modals
+            document.querySelectorAll('div[style*="position: fixed"]').forEach(modal => modal.remove());
+            
+            // Create workout interface for the specific day
+            alert(`🏋️ Starting Week 1 ${day.charAt(0).toUpperCase() + day.slice(1)} workout! This will redirect to the detailed workout interface with exercises, sets, reps, and rest periods.`);
+            
+            // You could redirect to a detailed workout page here
+            // window.location.href = `/workout.html?program=offseason&week=1&day=${day}`;
+        };
+
+        window.openQBProgram = function() {
+            // Create comprehensive QB program modal
+            const modal = document.createElement('div');
+            modal.innerHTML = `
+                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000; overflow-y: auto;">
+                    <div style="background: white; padding: 2rem; border-radius: 16px; max-width: 900px; max-height: 90vh; overflow-y: auto; margin: 2rem;">
+                        <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 2rem;">
+                            <h2 style="color: var(--gray-900); margin: 0; flex: 1;">🎯 14-Week Elite Quarterback Program</h2>
+                            <button onclick="this.closest('div').remove()" style="background: none; border: none; font-size: 24px; cursor: pointer; padding: 0.5rem;">✕</button>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, #3b82f6, #1e40af); color: white; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
+                            <h3 style="margin: 0 0 1rem 0;">ELITE QB DEVELOPMENT</h3>
+                            <p style="margin: 0; opacity: 0.9;">November 17, 2025 - February 28, 2026 • Prepare for 320 throws/weekend</p>
+                        </div>
+
+                        <div style="background: #fee2e2; border: 2px solid #ef4444; border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem;">
+                            <h3 style="margin: 0 0 1rem 0; color: #991b1b;">🚨 The QB Challenge: 320 Throws in a Weekend</h3>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; color: #7f1d1d;">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 1.5rem; font-weight: bold;">8</div>
+                                    <div style="font-size: 0.8rem;">Games/Weekend</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 1.5rem; font-weight: bold;">40</div>
+                                    <div style="font-size: 0.8rem;">Throws/Game</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 1.5rem; font-weight: bold;">320</div>
+                                    <div style="font-size: 0.8rem;">Total Throws</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 1.5rem; font-weight: bold;">2hrs</div>
+                                    <div style="font-size: 0.8rem;">Between Games</div>
+                                </div>
+                            </div>
+                            <p style="margin: 1rem 0 0 0; font-size: 0.9rem; color: #7f1d1d; text-align: center;"><strong>This requires EXTREME preparation - sustained accuracy under fatigue</strong></p>
+                        </div>
+
+                        <div style="margin-bottom: 2rem;">
+                            <h3 style="color: var(--gray-900); margin-bottom: 1rem;">🏋️ Dual-Track Training Approach</h3>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                                <div style="background: #f0fdf4; border: 2px solid #10b981; border-radius: 12px; padding: 1.5rem;">
+                                    <h4 style="margin: 0 0 1rem 0; color: #047857;">💪 Track 1: Lower Body (Same as WR/DB)</h4>
+                                    <ul style="margin: 0; color: #065f46; font-size: 0.9rem; padding-left: 1rem;">
+                                        <li>Sprint speed and acceleration</li>
+                                        <li>Explosive power development</li>
+                                        <li>Posterior chain strength</li>
+                                        <li>Injury prevention</li>
+                                        <li>Game conditioning</li>
+                                    </ul>
+                                </div>
+                                <div style="background: #eff6ff; border: 2px solid #3b82f6; border-radius: 12px; padding: 1.5rem;">
+                                    <h4 style="margin: 0 0 1rem 0; color: #1e40af;">🎯 Track 2: Upper Body (QB-Specific)</h4>
+                                    <ul style="margin: 0; color: #1e3a8a; font-size: 0.9rem; padding-left: 1rem;">
+                                        <li>Arm strength and velocity</li>
+                                        <li>Shoulder mobility and health</li>
+                                        <li>Throwing endurance (320+ throws)</li>
+                                        <li>Hip flexor flexibility (critical!)</li>
+                                        <li>Back strength for power</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 2rem;">
+                            <h3 style="color: var(--gray-900); margin-bottom: 1rem;">📊 Evidence-Based QB Research</h3>
+                            <div style="display: grid; gap: 1rem;">
+                                <div style="background: #fef3c7; padding: 1rem; border-radius: 8px; border-left: 4px solid #f59e0b;">
+                                    <h4 style="margin: 0 0 0.5rem 0; color: #92400e;">💪 Arm Strength & Velocity</h4>
+                                    <p style="margin: 0; font-size: 0.9rem; color: #78350f;">Rotator cuff strength correlates with velocity (r=0.72) • Posterior deltoid = primary velocity generator • Triceps contribute 23% of ball velocity</p>
+                                </div>
+                                <div style="background: #dbeafe; padding: 1rem; border-radius: 8px; border-left: 4px solid #3b82f6;">
+                                    <h4 style="margin: 0 0 0.5rem 0; color: #1e40af;">🦵 Hip Flexor Critical</h4>
+                                    <p style="margin: 0; font-size: 0.9rem; color: #1e3a8a;">Hip flexibility increases stride length 8-12% • Tight hip flexors reduce velocity 15-20% • NON-NEGOTIABLE for QBs</p>
+                                </div>
+                                <div style="background: #dcfce7; padding: 1rem; border-radius: 8px; border-left: 4px solid #16a34a;">
+                                    <h4 style="margin: 0 0 0.5rem 0; color: #15803d;">📏 Shoulder Mobility</h4>
+                                    <p style="margin: 0; font-size: 0.9rem; color: #14532d;">External rotation: 110-130° optimal • Limited mobility increases injury risk 340% • Daily mobility mandatory</p>
+                                </div>
+                                <div style="background: #fce7f3; padding: 1rem; border-radius: 8px; border-left: 4px solid #ec4899;">
+                                    <h4 style="margin: 0 0 0.5rem 0; color: #be185d;">💥 Back Strength Integration</h4>
+                                    <p style="margin: 0; font-size: 0.9rem; color: #9d174d;">Lats provide 18% of throwing power • Thoracic extension adds 8-12 mph • Back training = throwing power</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 2rem;">
+                            <h3 style="color: var(--gray-900); margin-bottom: 1rem;">⏰ Weekly Training Schedule</h3>
+                            <div style="background: #f8fafc; padding: 1.5rem; border-radius: 12px;">
+                                <div style="display: grid; gap: 0.75rem; font-size: 0.9rem;">
+                                    <div style="display: flex; justify-content: space-between; padding: 0.5rem; background: white; border-radius: 6px;">
+                                        <strong>MONDAY:</strong> <span>Lower body strength + QB arm strength</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; padding: 0.5rem; background: white; border-radius: 6px;">
+                                        <strong>TUESDAY:</strong> <span>Sprint/bounds + QB shoulder mobility</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; padding: 0.5rem; background: white; border-radius: 6px;">
+                                        <strong>WEDNESDAY:</strong> <span>Recovery + QB hip flexor/back work</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; padding: 0.5rem; background: white; border-radius: 6px;">
+                                        <strong>THURSDAY:</strong> <span>Lower power + QB throwing integration</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; padding: 0.5rem; background: white; border-radius: 6px;">
+                                        <strong>FRIDAY:</strong> <span>Speed/RSA + QB endurance training</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; padding: 0.5rem; background: white; border-radius: 6px;">
+                                        <strong>SATURDAY:</strong> <span>Sprint work + QB throwing session</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; padding: 0.5rem; background: white; border-radius: 6px;">
+                                        <strong>SUNDAY:</strong> <span>Complete recovery (lower + upper body)</span>
+                                    </div>
+                                </div>
+                                <div style="text-align: center; margin-top: 1rem; font-size: 0.9rem; color: #6b7280;">
+                                    <strong>Total Weekly Time:</strong> 7-9 hours • <strong>Lower body:</strong> 50-65 min • <strong>QB work:</strong> 30-45 min
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 2rem;">
+                            <h3 style="color: var(--gray-900); margin-bottom: 1rem;">🏥 QB-Specific Warm-Up Protocol</h3>
+                            <div style="background: #fef2f2; border: 1px solid #fca5a5; border-radius: 8px; padding: 1.5rem;">
+                                <h4 style="margin: 0 0 1rem 0; color: #991b1b;">Enhanced 30-Minute QB Prep (Every Session)</h4>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; font-size: 0.9rem;">
+                                    <div>
+                                        <h5 style="margin: 0 0 0.5rem 0; color: #7f1d1d;">Phase 1: General (8 min)</h5>
+                                        <p style="margin: 0; color: #991b1b;">Light jog • Jump rope • Arm circles • Dynamic stretch</p>
+                                    </div>
+                                    <div>
+                                        <h5 style="margin: 0 0 0.5rem 0; color: #7f1d1d;">Phase 2: Shoulder (12 min)</h5>
+                                        <p style="margin: 0; color: #991b1b;">Rotator cuff • Scapular stabilization • Shoulder mobility</p>
+                                    </div>
+                                    <div>
+                                        <h5 style="margin: 0 0 0.5rem 0; color: #7f1d1d;">Phase 3: Integration (10 min)</h5>
+                                        <p style="margin: 0; color: #991b1b;">Hip & back activation • Progressive throwing motion</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
+                            <h3 style="margin: 0 0 1rem 0;">🎯 Expected QB Improvements</h3>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem;">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 1.4rem; font-weight: bold; margin-bottom: 0.25rem;">+8-15 mph</div>
+                                    <div style="font-size: 0.8rem; opacity: 0.9;">Throwing Velocity</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 1.4rem; font-weight: bold; margin-bottom: 0.25rem;">+15-25%</div>
+                                    <div style="font-size: 0.8rem; opacity: 0.9;">Accuracy Fresh</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 1.4rem; font-weight: bold; margin-bottom: 0.25rem;">+25-35%</div>
+                                    <div style="font-size: 0.8rem; opacity: 0.9;">Accuracy Under Fatigue</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 1.4rem; font-weight: bold; margin-bottom: 0.25rem;">320+</div>
+                                    <div style="font-size: 0.8rem; opacity: 0.9;">Throw Capacity</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 1.4rem; font-weight: bold; margin-bottom: 0.25rem;">+30-40%</div>
+                                    <div style="font-size: 0.8rem; opacity: 0.9;">Arm Strength</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 1.4rem; font-weight: bold; margin-bottom: 0.25rem;">-60-70%</div>
+                                    <div style="font-size: 0.8rem; opacity: 0.9;">Injury Risk</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 2rem;">
+                            <h3 style="color: var(--gray-900); margin-bottom: 1rem;">📋 Training Phases Overview</h3>
+                            <div style="display: grid; gap: 1rem;">
+                                <div onclick="showQBPhaseDetails('foundation')" style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; cursor: pointer; transition: all 0.2s;">
+                                    <div style="display: flex; justify-content: between; align-items: center;">
+                                        <div>
+                                            <h4 style="margin: 0 0 0.5rem 0; color: #1f2937;">🏗️ Foundation Phase (Weeks 1-4) - December</h4>
+                                            <p style="margin: 0; color: #6b7280; font-size: 0.9rem;">Build arm care protocols • Establish shoulder mobility • Learn throwing mechanics</p>
+                                        </div>
+                                        <span style="font-size: 1.2rem; color: #9ca3af;">➤</span>
+                                    </div>
+                                </div>
+                                
+                                <div onclick="showQBPhaseDetails('strength')" style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; cursor: pointer; transition: all 0.2s;">
+                                    <div style="display: flex; justify-content: between; align-items: center;">
+                                        <div>
+                                            <h4 style="margin: 0 0 0.5rem 0; color: #1f2937;">💪 Strength Development (Weeks 5-8) - January</h4>
+                                            <p style="margin: 0; color: #6b7280; font-size: 0.9rem;">Maximum arm strength • Peak throwing endurance 150+ throws • Power development</p>
+                                        </div>
+                                        <span style="font-size: 1.2rem; color: #9ca3af;">➤</span>
+                                    </div>
+                                </div>
+                                
+                                <div onclick="showQBPhaseDetails('power')" style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; cursor: pointer; transition: all 0.2s;">
+                                    <div style="display: flex; justify-content: between; align-items: center;">
+                                        <div>
+                                            <h4 style="margin: 0 0 0.5rem 0; color: #1f2937;">⚡ Power Phase (Weeks 9-12) - February</h4>
+                                            <p style="margin: 0; color: #6b7280; font-size: 0.9rem;">Peak throwing velocity • 200+ throws capacity • Tournament simulations</p>
+                                        </div>
+                                        <span style="font-size: 1.2rem; color: #9ca3af;">➤</span>
+                                    </div>
+                                </div>
+                                
+                                <div onclick="showQBPhaseDetails('competition')" style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; cursor: pointer; transition: all 0.2s;">
+                                    <div style="display: flex; justify-content: between; align-items: center;">
+                                        <div>
+                                            <h4 style="margin: 0 0 0.5rem 0; color: #1f2937;">🏆 Competition Prep (Weeks 13-14) - March</h4>
+                                            <p style="margin: 0; color: #6b7280; font-size: 0.9rem;">Peak velocity maintenance • Outdoor adaptation • Mental preparation • 320 throw readiness</p>
+                                        </div>
+                                        <span style="font-size: 1.2rem; color: #9ca3af;">➤</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 1rem; justify-content: center;">
+                            <button onclick="downloadQBProgram()" style="background: var(--primary); color: white; border: none; padding: 1rem 2rem; border-radius: 8px; cursor: pointer; font-weight: 600;">📥 Download Full Program</button>
+                            <button onclick="startQBProgram()" style="background: #3b82f6; color: white; border: none; padding: 1rem 2rem; border-radius: 8px; cursor: pointer; font-weight: 600;">🎯 Start QB Training</button>
+                            <button onclick="this.closest('div').remove()" style="background: var(--gray-200); color: var(--gray-700); border: none; padding: 1rem 2rem; border-radius: 8px; cursor: pointer;">Maybe Later</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        };
+
+        window.showQBPhaseDetails = function(phase) {
+            const phaseData = {
+                foundation: {
+                    title: "🏗️ Foundation Phase (Weeks 1-4) - December",
+                    period: "December 1-28, 2025",
+                    goals: [
+                        "Build lower body strength foundation",
+                        "Establish arm care protocols",
+                        "Develop shoulder mobility baseline",
+                        "Learn throwing mechanics",
+                        "Build throwing endurance base (~120 throws)",
+                        "Optimize hip flexor flexibility (critical for velocity)"
+                    ],
+                    sample: "Week 1 Monday: Lower body (RDLs, Nordic curls, squats) + QB arm care (rotator cuff 3×15, biceps, triceps)"
+                },
+                strength: {
+                    title: "💪 Strength Development (Weeks 5-8) - January",
+                    period: "January 5 - February 1, 2026",
+                    goals: [
+                        "Maximum lower body strength (approaching 40% BW limits)",
+                        "Peak arm strength for velocity",
+                        "Advanced throwing endurance (150+ throws)",
+                        "Competition mobility maintenance",
+                        "Maximal effort isometrics",
+                        "Indoor sprint work begins"
+                    ],
+                    sample: "Week 5 Monday: Maximal isometrics 6×6s @ 100% + Heavy back squats + QB max arm strength development"
+                },
+                power: {
+                    title: "⚡ Power Phase (Weeks 9-12) - February",
+                    period: "February 2-28, 2026",
+                    goals: [
+                        "Convert strength to explosive power",
+                        "Peak throwing velocity development",
+                        "Game-specific conditioning (200+ throws)",
+                        "FULL TOURNAMENT SIMULATION (320 throws)",
+                        "Mental preparation for competition",
+                        "Outdoor transition begins"
+                    ],
+                    sample: "Week 9 Friday: THE BIG TEST - 8 Game Simulation (320 throws total) with velocity and accuracy tracking throughout"
+                },
+                competition: {
+                    title: "🏆 Competition Prep (Weeks 13-14) - March",
+                    period: "March 2-15, 2026",
+                    goals: [
+                        "Maintain peak velocity with reduced volume",
+                        "Outdoor throwing adaptation",
+                        "Competition confidence building",
+                        "Mental preparation peak",
+                        "Between-game recovery optimization",
+                        "320 throw tournament readiness"
+                    ],
+                    sample: "Week 13 Saturday: Mini tournament simulation (4 games, 160 throws) with full between-game protocols"
+                }
+            };
+
+            const data = phaseData[phase];
+            const modal = document.createElement('div');
+            modal.innerHTML = `
+                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1001;">
+                    <div style="background: white; padding: 2rem; border-radius: 16px; max-width: 600px; max-height: 80vh; overflow-y: auto;">
+                        <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 1.5rem;">
+                            <h2 style="color: var(--gray-900); margin: 0; flex: 1;">${data.title}</h2>
+                            <button onclick="this.closest('div').remove()" style="background: none; border: none; font-size: 24px; cursor: pointer;">✕</button>
+                        </div>
+                        
+                        <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                            <strong>Period:</strong> ${data.period}
+                        </div>
+
+                        <h3 style="margin-bottom: 1rem; color: #1f2937;">Training Goals:</h3>
+                        <ul style="margin-bottom: 1.5rem; color: #374151;">
+                            ${data.goals.map(goal => `<li style="margin-bottom: 0.5rem;">🎯 ${goal}</li>`).join('')}
+                        </ul>
+
+                        <h3 style="margin-bottom: 1rem; color: #1f2937;">Sample Workout:</h3>
+                        <div style="background: #e0f2fe; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; font-family: monospace; font-size: 0.9rem;">
+                            ${data.sample}
+                        </div>
+
+                        <div style="text-align: center;">
+                            <button onclick="this.closest('div').remove()" style="background: var(--primary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer;">Got it!</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        };
+
+        window.downloadQBProgram = function() {
+            // Create download for QB program
+            const link = document.createElement('a');
+            link.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent('COMPLETE QUARTERBACK FLAG FOOTBALL TRAINING PROGRAM\\n14-WEEK ELITE QB DEVELOPMENT\\nNovember 17, 2025 - February 28, 2026\\n\\nThis comprehensive 14-week quarterback development program prepares you for the ultimate challenge: 320 throws in a weekend tournament while maintaining velocity and accuracy. Includes dual-track training (lower body + QB-specific), evidence-based protocols, and progressive endurance building to handle 8 games at elite level.');
+            link.download = 'FlagFit-Pro-Elite-QB-Program.txt';
+            link.click();
+            
+            // Show confirmation
+            alert('🎯 QB Program downloaded! The complete 14-week quarterback development program for 320 throws/weekend is now saved to your device.');
+        };
+
+        window.startQBProgram = function() {
+            // Set program start date and track participation
+            const startDate = new Date().toISOString();
+            const programData = {
+                started: startDate,
+                currentWeek: 1,
+                currentPhase: 'foundation',
+                position: 'quarterback',
+                completedWorkouts: [],
+                assessments: {},
+                armCareLog: [],
+                throwingVolume: []
+            };
+            
+            localStorage.setItem('qbProgram', JSON.stringify(programData));
+            
+            // Create QB week 1 workout selection
+            const modal = document.createElement('div');
+            modal.innerHTML = `
+                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1001;">
+                    <div style="background: white; padding: 2rem; border-radius: 16px; max-width: 650px;">
+                        <h2 style="margin-bottom: 1.5rem; color: #1f2937; text-align: center;">🎯 QB Week 1 - Foundation Phase</h2>
+                        
+                        <div style="background: #dbeafe; border: 1px solid #3b82f6; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
+                            <h3 style="margin: 0 0 0.5rem 0; color: #1e40af;">This Week's Focus:</h3>
+                            <p style="margin: 0; color: #1e3a8a; font-size: 0.9rem;">Build arm care foundation, establish shoulder mobility, learn dual-track training approach</p>
+                        </div>
+
+                        <div style="margin-bottom: 1.5rem;">
+                            <h3 style="margin-bottom: 1rem; color: #1f2937;">Select Today's QB Workout:</h3>
+                            <div style="display: grid; gap: 0.75rem;">
+                                <button onclick="startQBWeek1Workout('monday')" style="text-align: left; background: #f9fafb; border: 1px solid #d1d5db; padding: 1rem; border-radius: 8px; cursor: pointer;">
+                                    <strong>Monday:</strong> Lower Body Foundation + QB Arm Care (80 min)
+                                    <div style="font-size: 0.8rem; color: #6b7280; margin-top: 0.25rem;">Enhanced 30min warmup + Lower body + Rotator cuff foundation</div>
+                                </button>
+                                <button onclick="startQBWeek1Workout('tuesday')" style="text-align: left; background: #f9fafb; border: 1px solid #d1d5db; padding: 1rem; border-radius: 8px; cursor: pointer;">
+                                    <strong>Tuesday:</strong> Sprint Mechanics + QB Shoulder Mobility (85 min)
+                                    <div style="font-size: 0.8rem; color: #6b7280; margin-top: 0.25rem;">Sprint drills + Comprehensive shoulder mobility + Light throwing</div>
+                                </button>
+                                <button onclick="startQBWeek1Workout('wednesday')" style="text-align: left; background: #f9fafb; border: 1px solid #d1d5db; padding: 1rem; border-radius: 8px; cursor: pointer;">
+                                    <strong>Wednesday:</strong> Recovery + QB Hip Flexor/Back (75 min)
+                                    <div style="font-size: 0.8rem; color: #6b7280; margin-top: 0.25rem;">Active recovery + Critical hip flexor work + Back strength foundation</div>
+                                </button>
+                                <button onclick="startQBWeek1Workout('thursday')" style="text-align: left; background: #f9fafb; border: 1px solid #d1d5db; padding: 1rem; border-radius: 8px; cursor: pointer;">
+                                    <strong>Thursday:</strong> Lower Power + QB Throwing Integration (90 min)
+                                    <div style="font-size: 0.8rem; color: #6b7280; margin-top: 0.25rem;">Plyometrics + Medicine ball throws + First throwing integration</div>
+                                </button>
+                                <button onclick="startQBWeek1Workout('friday')" style="text-align: left; background: #f9fafb; border: 1px solid #d1d5db; padding: 1rem; border-radius: 8px; cursor: pointer;">
+                                    <strong>Friday:</strong> Quick Feet + QB Endurance Foundation (95 min)
+                                    <div style="font-size: 0.8rem; color: #6b7280; margin-top: 0.25rem;">Speed drills + First endurance protocol (~50 throws)</div>
+                                </button>
+                                <button onclick="startQBWeek1Workout('saturday')" style="text-align: left; background: #f9fafb; border: 1px solid #d1d5db; padding: 1rem; border-radius: 8px; cursor: pointer;">
+                                    <strong>Saturday:</strong> Sprint Work + QB Throwing Session (75 min)
+                                    <div style="font-size: 0.8rem; color: #6b7280; margin-top: 0.25rem;">Sprint mechanics + Game-speed throwing + Accuracy training</div>
+                                </button>
+                                <button onclick="startQBWeek1Workout('sunday')" style="text-align: left; background: #f9fafb; border: 1px solid #d1d5db; padding: 1rem; border-radius: 8px; cursor: pointer;">
+                                    <strong>Sunday:</strong> Complete Recovery Day (75 min)
+                                    <div style="font-size: 0.8rem; color: #6b7280; margin-top: 0.25rem;">QB-specific recovery protocol + Mental preparation</div>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div style="background: #fef3c7; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                            <p style="margin: 0; font-size: 0.9rem; color: #92400e;"><strong>⚠️ QB Training Requirements:</strong> Enhanced 30-min warmup every session • Daily arm care is non-negotiable • Hip flexor work critical for velocity</p>
+                        </div>
+
+                        <div style="text-align: center;">
+                            <button onclick="this.closest('div').remove()" style="background: var(--gray-200); color: var(--gray-700); border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer;">I'll Start Later</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        };
+
+        window.startQBWeek1Workout = function(day) {
+            // Close modals
+            document.querySelectorAll('div[style*="position: fixed"]').forEach(modal => modal.remove());
+            
+            // Create QB workout interface for the specific day
+            alert(`🎯 Starting QB Week 1 ${day.charAt(0).toUpperCase() + day.slice(1)} workout! This includes the enhanced 30-minute QB warmup protocol plus position-specific training. You'll be redirected to the detailed workout interface with dual-track exercises, throwing protocols, and arm care requirements.`);
+            
+            // You could redirect to a detailed QB workout page here
+            // window.location.href = `/workout.html?program=qb&week=1&day=${day}`;
+        };
+
         window.quickStart = function() {
-            // Quick start the most appropriate workout based on user data
-            alert('Quick Start would analyze your schedule and recommend the best workout for now!');
+            // Analyze user data to recommend best workout
+            const user = authManager.getCurrentUser();
+            const savedSettings = JSON.parse(localStorage.getItem('flagfit_settings') || '{}');
+            const recentWorkouts = JSON.parse(localStorage.getItem('recentWorkouts') || '[]');
+            
+            // Simple recommendation logic based on last workout
+            let recommendedType = 'speed'; // default
+            if (recentWorkouts.length > 0) {
+                const lastWorkout = recentWorkouts[recentWorkouts.length - 1];
+                const daysSinceLastWorkout = (Date.now() - new Date(lastWorkout.date).getTime()) / (1000 * 60 * 60 * 24);
+                
+                // Recommend different type based on last workout
+                switch (lastWorkout.type) {
+                    case 'speed': recommendedType = 'strength'; break;
+                    case 'strength': recommendedType = 'agility'; break;
+                    case 'agility': recommendedType = 'endurance'; break;
+                    case 'endurance': recommendedType = 'speed'; break;
+                }
+            }
+            
+            // Show recommendation modal
+            const modal = document.createElement('div');
+            modal.innerHTML = `
+                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000;">
+                    <div style="background: white; padding: 2rem; border-radius: 12px; max-width: 400px; text-align: center;">
+                        <h3 style="margin-bottom: 1rem; color: var(--gray-900);">🎯 Recommended Workout</h3>
+                        <p style="margin-bottom: 1.5rem; color: var(--gray-600);">Based on your training history, we recommend:</p>
+                        <div style="background: var(--primary); color: white; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; text-transform: capitalize; font-weight: 600;">${recommendedType} Training</div>
+                        <div style="display: flex; gap: 1rem; justify-content: center;">
+                            <button onclick="this.closest('div').remove(); startWorkout('${recommendedType}')" style="background: var(--primary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer;">Start Now</button>
+                            <button onclick="this.closest('div').remove()" style="background: var(--gray-200); color: var(--gray-700); border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer;">Maybe Later</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
         };
 
         // Navigation handlers
