@@ -6,8 +6,8 @@
     <title>FlagFit Pro - Training Hub</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./src/modern-design-system.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./src/ui-design-system.css">
     <style>
         /* Training-specific styles */
         .dashboard-container {
@@ -97,29 +97,166 @@
             background: var(--bg-secondary);
         }
 
-        .page-header {
+        .top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: var(--space-8);
         }
 
-        .page-title-section h1 {
-            font-size: var(--text-3xl);
+        .welcome-section h1 {
+            font-family: var(--font-heading);
+            font-size: var(--text-h1);
             font-weight: var(--font-bold);
-            color: var(--gray-900);
-            margin-bottom: var(--space-2);
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+            color: var(--dark-gray);
+            margin-bottom: var(--space-md);
         }
 
-        .page-title-section p {
-            font-size: var(--text-lg);
-            color: var(--gray-500);
+        .welcome-section p {
+            font-family: var(--font-body);
+            font-size: var(--text-h3);
+            font-weight: var(--font-regular);
+            color: var(--text-gray);
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+
+        .search-box {
+            position: relative;
+            width: 320px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: var(--space-3) var(--space-3) var(--space-3) 40px;
+            border: 1px solid var(--border-medium);
+            border-radius: var(--radius-lg);
+            font-size: var(--text-sm);
+            background: var(--white);
+            transition: all var(--transition-fast);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-400);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            cursor: pointer;
+            padding: var(--space-2);
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+        }
+
+        .user-menu:hover {
+            background: var(--gray-50);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: var(--font-semibold);
+        }
+
+        /* Stats Grid - matching dashboard */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-6);
+            margin-bottom: var(--space-8);
+        }
+
+        .stat-card {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition-normal);
+        }
+
+        .stat-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-4px);
+            border-color: var(--primary);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-4);
+        }
+
+        .stat-title {
+            font-family: var(--font-body);
+            font-size: var(--text-small);
+            font-weight: var(--font-medium);
+            color: var(--medium-gray);
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .stat-value {
+            font-family: var(--font-heading);
+            font-size: var(--text-h1);
+            font-weight: var(--font-bold);
+            color: var(--dark-gray);
+            margin-bottom: var(--space-md);
+        }
+
+        .stat-change {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+        }
+
+        .stat-change.positive {
+            color: var(--success);
         }
 
         .training-grid {
             display: grid;
             grid-template-columns: 2fr 1fr;
             gap: var(--space-6);
+        }
+
+        .full-width-section {
+            grid-column: 1 / -1;
         }
 
         .workouts-section {
@@ -341,13 +478,22 @@
         }
 
         @media (max-width: 768px) {
-            .page-header {
+            .top-bar {
                 flex-direction: column;
                 gap: var(--space-4);
                 align-items: flex-start;
             }
 
-            .progress-stats {
+            .top-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .stats-grid {
                 grid-template-columns: 1fr;
             }
 
@@ -411,17 +557,90 @@
 
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Page Header -->
-            <div class="page-header">
-                <div class="page-title-section">
-                    <h1>Training Hub</h1>
-                    <p>Track your progress and start new workouts</p>
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <div class="welcome-section">
+                    <h1>Welcome back, Alex!</h1>
+                    <p>Ready to dominate today?</p>
                 </div>
                 
-                <button class="btn btn-primary">
-                    <span>⚡</span>
-                    Quick Start
-                </button>
+                <div class="top-actions">
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" class="search-input" placeholder="Search workouts, exercises, videos...">
+                    </div>
+                    
+                    <div style="position: relative; margin-right: var(--space-4);">
+                        <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--gray-100); display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; transition: all var(--transition-fast);" 
+                             onmouseover="this.style.background='var(--gray-200)'" 
+                             onmouseout="this.style.background='var(--gray-100)'">
+                            🔔
+                        </div>
+                        <div style="position: absolute; top: -2px; right: -2px; width: 16px; height: 16px; background: var(--error); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: var(--font-bold);">2</div>
+                    </div>
+                    
+                    <div class="user-menu">
+                        <div class="user-avatar">JD</div>
+                        <div>
+                            <div style="font-size: var(--text-sm); font-weight: var(--font-medium); color: var(--gray-900);">John Doe</div>
+                            <div style="font-size: var(--text-xs); color: var(--gray-500);">Player View</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Training Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">This Week</span>
+                        <div class="stat-icon" style="background: var(--success-bg); color: var(--success);">⚡</div>
+                    </div>
+                    <div class="stat-value">4<span style="font-size: var(--text-lg); color: var(--gray-500);">/6</span></div>
+                    <div style="width: 100%; height: 6px; background: var(--gray-200); border-radius: 3px; margin: var(--space-2) 0;">
+                        <div style="width: 67%; height: 100%; background: linear-gradient(90deg, var(--success), #34d399); border-radius: 3px; transition: width 0.5s ease;"></div>
+                    </div>
+                    <div class="stat-change positive">
+                        <span>🔥</span>
+                        <span>Sessions Completed</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">Current Streak</span>
+                        <div class="stat-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--accent);">🎯</div>
+                    </div>
+                    <div class="stat-value">12<span style="font-size: var(--text-lg); color: var(--gray-500);"> days</span></div>
+                    <div class="stat-change positive">
+                        <span>📈</span>
+                        <span>Personal best streak!</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">Total Hours</span>
+                        <div class="stat-icon" style="background: rgba(99, 102, 241, 0.1); color: var(--primary);">⏱️</div>
+                    </div>
+                    <div class="stat-value">28.5<span style="font-size: var(--text-lg); color: var(--gray-500);">h</span></div>
+                    <div class="stat-change positive">
+                        <span>⬆️</span>
+                        <span>+4.2h this week</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">Next Session</span>
+                        <div class="stat-icon" style="background: rgba(236, 72, 153, 0.1); color: #ec4899;">🏃</div>
+                    </div>
+                    <div class="stat-value" style="font-size: var(--text-lg);">Olympic Prep</div>
+                    <div class="stat-change" style="color: var(--gray-600);">
+                        <span>📅</span>
+                        <span>Today at 3:00 PM</span>
+                    </div>
+                </div>
             </div>
 
             <!-- Training Grid -->
@@ -529,6 +748,11 @@
                     </div>
                 </div>
 
+                <!-- Training Videos Section -->
+                <div class="full-width-section">
+                    <div id="training-videos-container"></div>
+                </div>
+
                 <!-- Progress & Achievements -->
                 <div>
                     <!-- Progress Section -->
@@ -616,6 +840,7 @@
 
     <script type="module">
         import { authManager } from './src/auth-manager.js';
+        import TrainingVideoComponent from './src/training-video-component.js';
 
         // Initialize training page
         document.addEventListener('DOMContentLoaded', async function() {
@@ -627,7 +852,34 @@
 
             // Load user progress data
             loadProgressData();
+            
+            // Initialize YouTube training videos
+            initializeTrainingVideos();
         });
+
+        // Initialize YouTube Training Videos Component
+        function initializeTrainingVideos() {
+            try {
+                console.log('🎥 Initializing YouTube training videos...');
+                const videoComponent = new TrainingVideoComponent('training-videos-container');
+                console.log('✅ Training videos component initialized');
+            } catch (error) {
+                console.error('❌ Error initializing training videos:', error);
+                // Show fallback message
+                const container = document.getElementById('training-videos-container');
+                if (container) {
+                    container.innerHTML = `
+                        <div style="background: var(--white); border-radius: var(--radius-xl); padding: var(--space-6); border: 1px solid var(--border-light); text-align: center;">
+                            <h3 style="color: var(--gray-700); margin-bottom: var(--space-3);">📺 Training Videos</h3>
+                            <p style="color: var(--gray-500); margin-bottom: var(--space-4);">Training videos are temporarily unavailable.</p>
+                            <a href="https://www.youtube.com/results?search_query=flag+football+training+drills" target="_blank" class="btn btn-primary">
+                                Search YouTube Manually
+                            </a>
+                        </div>
+                    `;
+                }
+            }
+        }
 
         function loadProgressData() {
             // Helper function to get workout exercises based on type

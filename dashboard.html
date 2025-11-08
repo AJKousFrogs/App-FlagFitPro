@@ -665,39 +665,30 @@
 
                     <div class="upcoming-card">
                         <div class="upcoming-header">
-                            <h3 style="font-size: var(--text-lg); font-weight: var(--font-semibold); color: var(--gray-900);">Weekly Schedule</h3>
+                            <h3 style="font-size: var(--text-lg); font-weight: var(--font-semibold); color: var(--gray-900);">Weekly Training Schedule</h3>
+                            <div style="display: flex; gap: var(--space-2);">
+                                <button id="prev-week" style="background: none; border: 1px solid var(--border-light); border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all var(--transition-fast);">
+                                    ←
+                                </button>
+                                <button id="next-week" style="background: none; border: 1px solid var(--border-light); border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all var(--transition-fast);">
+                                    →
+                                </button>
+                            </div>
                         </div>
                         
-                        <div class="upcoming-item">
-                            <div class="upcoming-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">✅</div>
-                            <div class="upcoming-content">
-                                <div class="upcoming-title">Speed & Agility</div>
-                                <div class="upcoming-time">Monday - Completed</div>
-                            </div>
+                        <div id="week-display" style="font-size: var(--text-sm); color: var(--gray-500); margin-bottom: var(--space-4); text-align: center;">
+                            <!-- Week dates will be dynamically inserted here -->
                         </div>
 
-                        <div class="upcoming-item">
-                            <div class="upcoming-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">✅</div>
-                            <div class="upcoming-content">
-                                <div class="upcoming-title">Route Running</div>
-                                <div class="upcoming-time">Tuesday - Completed</div>
-                            </div>
+                        <div id="weekly-schedule">
+                            <!-- Dynamic schedule will be loaded here -->
                         </div>
-
-                        <div class="upcoming-item">
-                            <div class="upcoming-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">✅</div>
-                            <div class="upcoming-content">
-                                <div class="upcoming-title">Strength Training</div>
-                                <div class="upcoming-time">Wednesday - Completed</div>
-                            </div>
-                        </div>
-
-                        <div class="upcoming-item">
-                            <div class="upcoming-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--accent);">📅</div>
-                            <div class="upcoming-content">
-                                <div class="upcoming-title">Recovery</div>
-                                <div class="upcoming-time">Saturday - Scheduled</div>
-                            </div>
+                        
+                        <div style="margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px solid var(--border-light);">
+                            <button id="add-training" class="btn btn-secondary" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: var(--space-2);">
+                                <span>➕</span>
+                                Schedule New Training
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -743,6 +734,9 @@
 
             // Initialize performance chart with real data
             initPerformanceChart();
+            
+            // Initialize training schedule
+            initializeTrainingSchedule();
         });
 
         // Load real dashboard data from Supabase
@@ -833,9 +827,344 @@
             });
         }
 
+        // Training schedule management
+        let currentWeekOffset = 0;
+        let trainingSchedule = {};
+
+        // Sample training data - in production this would come from database
+        const sampleTrainingData = {
+            0: { // Current week
+                'monday': { type: 'Speed & Agility', time: '6:00 AM', duration: '60 min', status: 'completed', coach: 'Coach Martinez' },
+                'tuesday': { type: 'Route Running', time: '7:00 PM', duration: '90 min', status: 'completed', coach: 'Coach Johnson' },
+                'wednesday': { type: 'Strength Training', time: '5:30 PM', duration: '75 min', status: 'completed', coach: 'Coach Davis' },
+                'thursday': { type: 'Olympic Prep', time: '3:00 PM', duration: '120 min', status: 'scheduled', coach: 'Coach Elite' },
+                'friday': { type: 'Flag Technique', time: '6:30 PM', duration: '90 min', status: 'scheduled', coach: 'Coach Martinez' },
+                'saturday': { type: 'Recovery & Film', time: '10:00 AM', duration: '60 min', status: 'scheduled', coach: 'Coach Johnson' }
+            },
+            1: { // Next week
+                'monday': { type: 'Speed Endurance', time: '6:00 AM', duration: '60 min', status: 'scheduled', coach: 'Coach Martinez' },
+                'tuesday': { type: 'Game Simulation', time: '7:00 PM', duration: '120 min', status: 'scheduled', coach: 'Coach Johnson' },
+                'wednesday': { type: 'Plyometrics', time: '5:30 PM', duration: '75 min', status: 'scheduled', coach: 'Coach Davis' },
+                'thursday': { type: 'Olympic Qualifying', time: '3:00 PM', duration: '150 min', status: 'scheduled', coach: 'Coach Elite' },
+                'friday': { type: 'Mental Training', time: '6:30 PM', duration: '60 min', status: 'scheduled', coach: 'Coach Mindset' },
+                'saturday': { type: 'Competition Prep', time: '10:00 AM', duration: '90 min', status: 'scheduled', coach: 'Coach Johnson' }
+            },
+            '-1': { // Last week
+                'monday': { type: 'Foundation Building', time: '6:00 AM', duration: '60 min', status: 'completed', coach: 'Coach Martinez' },
+                'tuesday': { type: 'Basic Routes', time: '7:00 PM', duration: '90 min', status: 'completed', coach: 'Coach Johnson' },
+                'wednesday': { type: 'Strength Base', time: '5:30 PM', duration: '75 min', status: 'completed', coach: 'Coach Davis' },
+                'thursday': { type: 'Technique Focus', time: '3:00 PM', duration: '120 min', status: 'completed', coach: 'Coach Elite' },
+                'friday': { type: 'Flag Fundamentals', time: '6:30 PM', duration: '90 min', status: 'completed', coach: 'Coach Martinez' },
+                'saturday': { type: 'Recovery Session', time: '10:00 AM', duration: '60 min', status: 'completed', coach: 'Coach Johnson' }
+            }
+        };
+
+        function initializeTrainingSchedule() {
+            // Load sample data (in production, this would be an API call)
+            trainingSchedule = sampleTrainingData;
+            
+            // Initialize current week display
+            updateWeekDisplay();
+            renderWeeklySchedule();
+            
+            // Set up navigation handlers
+            document.getElementById('prev-week').addEventListener('click', () => {
+                currentWeekOffset--;
+                updateWeekDisplay();
+                renderWeeklySchedule();
+            });
+            
+            document.getElementById('next-week').addEventListener('click', () => {
+                currentWeekOffset++;
+                updateWeekDisplay();
+                renderWeeklySchedule();
+            });
+            
+            document.getElementById('add-training').addEventListener('click', () => {
+                showAddTrainingModal();
+            });
+        }
+
+        function updateWeekDisplay() {
+            const today = new Date();
+            const currentDate = new Date(today);
+            currentDate.setDate(today.getDate() + (currentWeekOffset * 7));
+            
+            // Get Monday of the current week
+            const dayOfWeek = currentDate.getDay();
+            const diff = currentDate.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
+            const monday = new Date(currentDate.setDate(diff));
+            
+            // Get Sunday of the current week
+            const sunday = new Date(monday);
+            sunday.setDate(monday.getDate() + 6);
+            
+            const weekDisplay = document.getElementById('week-display');
+            const options = { month: 'short', day: 'numeric' };
+            
+            let weekText = '';
+            if (currentWeekOffset === 0) {
+                weekText = 'This Week';
+            } else if (currentWeekOffset === -1) {
+                weekText = 'Last Week';
+            } else if (currentWeekOffset === 1) {
+                weekText = 'Next Week';
+            } else {
+                weekText = currentWeekOffset > 0 ? `${currentWeekOffset} weeks ahead` : `${Math.abs(currentWeekOffset)} weeks ago`;
+            }
+            
+            weekDisplay.innerHTML = `
+                <strong>${weekText}</strong><br>
+                ${monday.toLocaleDateString('en-US', options)} - ${sunday.toLocaleDateString('en-US', options)}, ${sunday.getFullYear()}
+            `;
+        }
+
+        function renderWeeklySchedule() {
+            const scheduleContainer = document.getElementById('weekly-schedule');
+            const weekData = trainingSchedule[currentWeekOffset] || {};
+            
+            const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+            const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+            
+            let scheduleHTML = '';
+            
+            days.forEach((day, index) => {
+                const dayData = weekData[day];
+                const today = new Date();
+                const currentDate = new Date(today);
+                currentDate.setDate(today.getDate() + (currentWeekOffset * 7));
+                const dayOfWeek = currentDate.getDay();
+                const diff = currentDate.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1) + index;
+                const dayDate = new Date(currentDate.setDate(diff));
+                const isToday = dayDate.toDateString() === today.toDateString();
+                
+                if (dayData) {
+                    const statusIcon = getStatusIcon(dayData.status);
+                    const statusColor = getStatusColor(dayData.status);
+                    
+                    scheduleHTML += `
+                        <div class="upcoming-item" style="${isToday ? 'border-left: 4px solid var(--primary); background: rgba(99, 102, 241, 0.05);' : ''}">
+                            <div class="upcoming-icon" style="background: ${statusColor.bg}; color: ${statusColor.text};">
+                                ${statusIcon}
+                            </div>
+                            <div class="upcoming-content" style="flex: 1;">
+                                <div class="upcoming-title" style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span>${dayData.type}</span>
+                                    ${isToday ? '<span style="background: var(--primary); color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold;">TODAY</span>' : ''}
+                                </div>
+                                <div class="upcoming-time">
+                                    ${dayNames[index]} at ${dayData.time} • ${dayData.duration}
+                                </div>
+                                <div style="font-size: var(--text-xs); color: var(--gray-400); margin-top: 2px;">
+                                    with ${dayData.coach}
+                                </div>
+                            </div>
+                            <div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-end;">
+                                ${getActionButton(dayData, day)}
+                            </div>
+                        </div>
+                    `;
+                } else if (day !== 'sunday') { // Skip Sunday for flag football (typically rest day)
+                    scheduleHTML += `
+                        <div class="upcoming-item" style="opacity: 0.5; border: 1px dashed var(--border-light);">
+                            <div class="upcoming-icon" style="background: var(--gray-100); color: var(--gray-400);">
+                                📅
+                            </div>
+                            <div class="upcoming-content">
+                                <div class="upcoming-title">${dayNames[index]} - Rest Day</div>
+                                <div class="upcoming-time">No training scheduled</div>
+                            </div>
+                            <button onclick="scheduleTraining('${day}')" style="background: var(--gray-100); border: 1px solid var(--border-light); border-radius: 6px; padding: 4px 8px; font-size: 12px; cursor: pointer;">
+                                + Add
+                            </button>
+                        </div>
+                    `;
+                }
+            });
+            
+            scheduleContainer.innerHTML = scheduleHTML;
+        }
+
+        function getStatusIcon(status) {
+            switch(status) {
+                case 'completed': return '✅';
+                case 'scheduled': return '📅';
+                case 'in_progress': return '⏳';
+                case 'cancelled': return '❌';
+                default: return '📅';
+            }
+        }
+
+        function getStatusColor(status) {
+            switch(status) {
+                case 'completed': 
+                    return { bg: 'rgba(16, 185, 129, 0.1)', text: 'var(--success)' };
+                case 'scheduled': 
+                    return { bg: 'rgba(99, 102, 241, 0.1)', text: 'var(--primary)' };
+                case 'in_progress': 
+                    return { bg: 'rgba(245, 158, 11, 0.1)', text: 'var(--accent)' };
+                case 'cancelled': 
+                    return { bg: 'rgba(239, 68, 68, 0.1)', text: 'var(--error)' };
+                default: 
+                    return { bg: 'var(--gray-100)', text: 'var(--gray-500)' };
+            }
+        }
+
+        function getActionButton(dayData, day) {
+            if (dayData.status === 'completed') {
+                return `<button onclick="viewTrainingDetails('${day}')" style="background: var(--success); color: white; border: none; border-radius: 4px; padding: 4px 8px; font-size: 11px; cursor: pointer;">View</button>`;
+            } else if (dayData.status === 'scheduled') {
+                const today = new Date();
+                const isToday = isTrainingToday(day);
+                if (isToday) {
+                    return `<button onclick="startTraining('${day}')" style="background: var(--primary); color: white; border: none; border-radius: 4px; padding: 6px 12px; font-size: 12px; cursor: pointer; font-weight: bold;">Start Now</button>`;
+                } else {
+                    return `
+                        <button onclick="rescheduleTraining('${day}')" style="background: var(--gray-100); border: 1px solid var(--border-light); border-radius: 4px; padding: 4px 8px; font-size: 11px; cursor: pointer; margin-bottom: 2px;">Reschedule</button>
+                        <button onclick="cancelTraining('${day}')" style="background: var(--error-bg); color: var(--error); border: 1px solid var(--error); border-radius: 4px; padding: 4px 8px; font-size: 11px; cursor: pointer;">Cancel</button>
+                    `;
+                }
+            }
+            return '';
+        }
+
+        function isTrainingToday(day) {
+            if (currentWeekOffset !== 0) return false;
+            const today = new Date();
+            const dayIndex = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'][today.getDay()];
+            return dayIndex === day;
+        }
+
+        // Training action handlers
+        window.startTraining = function(day) {
+            const dayData = trainingSchedule[currentWeekOffset][day];
+            if (dayData) {
+                alert(`Starting ${dayData.type} training session!\n\nTime: ${dayData.time}\nDuration: ${dayData.duration}\nCoach: ${dayData.coach}\n\nRedirecting to training interface...`);
+                // In production, this would redirect to the training page with session data
+                window.location.href = '/training.html?session=' + day;
+            }
+        };
+
+        window.viewTrainingDetails = function(day) {
+            const dayData = trainingSchedule[currentWeekOffset][day];
+            if (dayData) {
+                alert(`Training Session Details:\n\n${dayData.type}\nCompleted on ${day}\nDuration: ${dayData.duration}\nCoach: ${dayData.coach}\n\nStatus: ✅ Completed`);
+                // In production, this would open a detailed view modal
+            }
+        };
+
+        window.rescheduleTraining = function(day) {
+            const dayData = trainingSchedule[currentWeekOffset][day];
+            if (dayData) {
+                const newTime = prompt(`Reschedule ${dayData.type}:\n\nCurrent time: ${dayData.time}\nEnter new time:`, dayData.time);
+                if (newTime && newTime !== dayData.time) {
+                    dayData.time = newTime;
+                    renderWeeklySchedule();
+                    alert(`Training rescheduled to ${newTime}!`);
+                }
+            }
+        };
+
+        window.cancelTraining = function(day) {
+            const dayData = trainingSchedule[currentWeekOffset][day];
+            if (dayData && confirm(`Cancel ${dayData.type} training on ${day}?`)) {
+                dayData.status = 'cancelled';
+                renderWeeklySchedule();
+                alert('Training session cancelled.');
+            }
+        };
+
+        window.scheduleTraining = function(day) {
+            showAddTrainingModal(day);
+        };
+
+        function showAddTrainingModal(preselectedDay = null) {
+            const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+            const dayOptions = days.map(d => `<option value="${d}" ${d === preselectedDay ? 'selected' : ''}>${d.charAt(0).toUpperCase() + d.slice(1)}</option>`).join('');
+            
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+                background: rgba(0,0,0,0.5); display: flex; align-items: center; 
+                justify-content: center; z-index: 1000;
+            `;
+            
+            modal.innerHTML = `
+                <div style="background: white; padding: 2rem; border-radius: 12px; width: 90%; max-width: 400px;">
+                    <h3 style="margin-bottom: 1rem;">Schedule New Training</h3>
+                    <form id="training-form">
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Training Type:</label>
+                            <select id="training-type" style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 6px;">
+                                <option value="Speed & Agility">Speed & Agility</option>
+                                <option value="Route Running">Route Running</option>
+                                <option value="Strength Training">Strength Training</option>
+                                <option value="Olympic Prep">Olympic Prep</option>
+                                <option value="Flag Technique">Flag Technique</option>
+                                <option value="Recovery">Recovery</option>
+                                <option value="Game Simulation">Game Simulation</option>
+                            </select>
+                        </div>
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Day:</label>
+                            <select id="training-day" style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 6px;">
+                                ${dayOptions}
+                            </select>
+                        </div>
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Time:</label>
+                            <input type="time" id="training-time" value="18:00" style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 6px;">
+                        </div>
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Duration (minutes):</label>
+                            <input type="number" id="training-duration" value="60" min="30" max="180" style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 6px;">
+                        </div>
+                        <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                            <button type="button" onclick="this.closest('div[style*=\"position: fixed\"]').remove()" style="background: #f3f4f6; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer;">Cancel</button>
+                            <button type="submit" style="background: var(--primary); color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer;">Schedule</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            
+            modal.querySelector('#training-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const type = document.getElementById('training-type').value;
+                const day = document.getElementById('training-day').value;
+                const time = document.getElementById('training-time').value;
+                const duration = document.getElementById('training-duration').value;
+                
+                // Convert time to display format
+                const timeObj = new Date('2000-01-01 ' + time);
+                const displayTime = timeObj.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+                
+                // Add to schedule
+                if (!trainingSchedule[currentWeekOffset]) {
+                    trainingSchedule[currentWeekOffset] = {};
+                }
+                
+                trainingSchedule[currentWeekOffset][day] = {
+                    type: type,
+                    time: displayTime,
+                    duration: duration + ' min',
+                    status: 'scheduled',
+                    coach: 'Coach TBD'
+                };
+                
+                renderWeeklySchedule();
+                modal.remove();
+                alert(`${type} scheduled for ${day} at ${displayTime}!`);
+            });
+            
+            document.body.appendChild(modal);
+        }
+
         // Update training calendar with real data
         function updateTrainingCalendar(calendarData) {
-            // This would update the upcoming sessions section
+            if (calendarData && calendarData.schedule) {
+                trainingSchedule = calendarData.schedule;
+                renderWeeklySchedule();
+            }
             console.log('📅 Training calendar data:', calendarData);
         }
 
