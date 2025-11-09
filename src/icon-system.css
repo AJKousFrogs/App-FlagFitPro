@@ -1,0 +1,627 @@
+/* ====================================================================
+   FLAGFIT PRO - ICON SYSTEM GUIDELINES
+   Comprehensive Icon Design & Implementation System
+   ==================================================================== */
+
+/* ================================================================
+   ICON FOUNDATION TOKENS
+   ================================================================ */
+
+:root {
+  /* Icon Sizes */
+  --icon-size-xs: 12px;
+  --icon-size-sm: 16px;
+  --icon-size-md: 20px;
+  --icon-size-lg: 24px;
+  --icon-size-xl: 32px;
+  --icon-size-2xl: 48px;
+  
+  /* Icon Stroke Weights */
+  --icon-stroke-thin: 1;
+  --icon-stroke-regular: 1.5;
+  --icon-stroke-medium: 2;
+  --icon-stroke-bold: 2.5;
+  
+  /* Icon Colors */
+  --icon-color-primary: var(--color-text-primary);
+  --icon-color-secondary: var(--color-text-secondary);
+  --icon-color-tertiary: var(--color-text-tertiary);
+  --icon-color-disabled: var(--color-text-disabled);
+  --icon-color-inverse: var(--color-text-inverse);
+  --icon-color-interactive: var(--color-interactive-primary);
+  --icon-color-success: var(--color-status-success);
+  --icon-color-warning: var(--color-status-warning);
+  --icon-color-error: var(--color-status-error);
+  --icon-color-info: var(--color-status-info);
+}
+
+/* ================================================================
+   BASE ICON CLASSES
+   ================================================================ */
+
+.icon {
+  display: inline-block;
+  width: var(--icon-size-md);
+  height: var(--icon-size-md);
+  stroke: currentColor;
+  fill: none;
+  stroke-width: var(--icon-stroke-regular);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+/* Icon Sizes */
+.icon-xs {
+  width: var(--icon-size-xs);
+  height: var(--icon-size-xs);
+}
+
+.icon-sm {
+  width: var(--icon-size-sm);
+  height: var(--icon-size-sm);
+}
+
+.icon-md {
+  width: var(--icon-size-md);
+  height: var(--icon-size-md);
+}
+
+.icon-lg {
+  width: var(--icon-size-lg);
+  height: var(--icon-size-lg);
+}
+
+.icon-xl {
+  width: var(--icon-size-xl);
+  height: var(--icon-size-xl);
+}
+
+.icon-2xl {
+  width: var(--icon-size-2xl);
+  height: var(--icon-size-2xl);
+}
+
+/* Icon Stroke Weights */
+.icon-thin {
+  stroke-width: var(--icon-stroke-thin);
+}
+
+.icon-regular {
+  stroke-width: var(--icon-stroke-regular);
+}
+
+.icon-medium {
+  stroke-width: var(--icon-stroke-medium);
+}
+
+.icon-bold {
+  stroke-width: var(--icon-stroke-bold);
+}
+
+/* Icon Colors */
+.icon-primary {
+  color: var(--icon-color-primary);
+}
+
+.icon-secondary {
+  color: var(--icon-color-secondary);
+}
+
+.icon-tertiary {
+  color: var(--icon-color-tertiary);
+}
+
+.icon-disabled {
+  color: var(--icon-color-disabled);
+}
+
+.icon-inverse {
+  color: var(--icon-color-inverse);
+}
+
+.icon-interactive {
+  color: var(--icon-color-interactive);
+}
+
+.icon-success {
+  color: var(--icon-color-success);
+}
+
+.icon-warning {
+  color: var(--icon-color-warning);
+}
+
+.icon-error {
+  color: var(--icon-color-error);
+}
+
+.icon-info {
+  color: var(--icon-color-info);
+}
+
+/* ================================================================
+   ICON BUTTON COMPONENTS
+   ================================================================ */
+
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: var(--radius-component-md);
+  transition: background-color var(--motion-duration-fast) var(--motion-easing-productive);
+  position: relative;
+}
+
+.icon-button:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 1px;
+}
+
+.icon-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Icon Button Sizes */
+.icon-button-xs {
+  width: 24px;
+  height: 24px;
+  padding: 4px;
+}
+
+.icon-button-xs .icon {
+  width: var(--icon-size-xs);
+  height: var(--icon-size-xs);
+}
+
+.icon-button-sm {
+  width: 32px;
+  height: 32px;
+  padding: 6px;
+}
+
+.icon-button-sm .icon {
+  width: var(--icon-size-sm);
+  height: var(--icon-size-sm);
+}
+
+.icon-button-md {
+  width: 40px;
+  height: 40px;
+  padding: 8px;
+}
+
+.icon-button-md .icon {
+  width: var(--icon-size-lg);
+  height: var(--icon-size-lg);
+}
+
+.icon-button-lg {
+  width: 48px;
+  height: 48px;
+  padding: 10px;
+}
+
+.icon-button-lg .icon {
+  width: var(--icon-size-xl);
+  height: var(--icon-size-xl);
+}
+
+/* Icon Button Variants */
+.icon-button:hover:not(:disabled) {
+  background-color: var(--color-interactive-secondary-hover);
+}
+
+.icon-button:active:not(:disabled) {
+  background-color: var(--color-interactive-secondary-active);
+}
+
+.icon-button-primary {
+  background-color: var(--color-interactive-primary);
+  color: var(--color-text-on-primary);
+}
+
+.icon-button-primary:hover:not(:disabled) {
+  background-color: var(--color-interactive-primary-hover);
+}
+
+.icon-button-primary:active:not(:disabled) {
+  background-color: var(--color-interactive-primary-active);
+}
+
+/* ================================================================
+   SPORT-SPECIFIC ICON LIBRARY
+   ================================================================ */
+
+/* Football Icons */
+.icon-football::before {
+  content: "🏈";
+  font-style: normal;
+}
+
+.icon-field::before {
+  content: "🏟️";
+  font-style: normal;
+}
+
+.icon-whistle::before {
+  content: "🎯";
+  font-style: normal;
+}
+
+.icon-trophy::before {
+  content: "🏆";
+  font-style: normal;
+}
+
+.icon-medal::before {
+  content: "🥇";
+  font-style: normal;
+}
+
+.icon-timer::before {
+  content: "⏱️";
+  font-style: normal;
+}
+
+.icon-dashboard::before {
+  content: "📊";
+  font-style: normal;
+}
+
+.icon-analytics::before {
+  content: "📈";
+  font-style: normal;
+}
+
+.icon-team::before {
+  content: "👥";
+  font-style: normal;
+}
+
+.icon-player::before {
+  content: "🏃‍♂️";
+  font-style: normal;
+}
+
+.icon-training::before {
+  content: "⚡";
+  font-style: normal;
+}
+
+.icon-performance::before {
+  content: "💪";
+  font-style: normal;
+}
+
+/* Navigation Icons */
+.icon-home::before {
+  content: "🏠";
+  font-style: normal;
+}
+
+.icon-menu::before {
+  content: "☰";
+  font-style: normal;
+}
+
+.icon-search::before {
+  content: "🔍";
+  font-style: normal;
+}
+
+.icon-settings::before {
+  content: "⚙️";
+  font-style: normal;
+}
+
+.icon-profile::before {
+  content: "👤";
+  font-style: normal;
+}
+
+.icon-notifications::before {
+  content: "🔔";
+  font-style: normal;
+}
+
+/* Action Icons */
+.icon-add::before {
+  content: "+";
+  font-style: normal;
+  font-weight: bold;
+}
+
+.icon-edit::before {
+  content: "✏️";
+  font-style: normal;
+}
+
+.icon-delete::before {
+  content: "🗑️";
+  font-style: normal;
+}
+
+.icon-save::before {
+  content: "💾";
+  font-style: normal;
+}
+
+.icon-download::before {
+  content: "⬇️";
+  font-style: normal;
+}
+
+.icon-upload::before {
+  content: "⬆️";
+  font-style: normal;
+}
+
+.icon-share::before {
+  content: "🔗";
+  font-style: normal;
+}
+
+.icon-copy::before {
+  content: "📋";
+  font-style: normal;
+}
+
+/* Status Icons */
+.icon-check::before {
+  content: "✓";
+  font-style: normal;
+  font-weight: bold;
+  color: var(--color-status-success);
+}
+
+.icon-close::before {
+  content: "✕";
+  font-style: normal;
+  font-weight: bold;
+}
+
+.icon-warning::before {
+  content: "⚠️";
+  font-style: normal;
+}
+
+.icon-error::before {
+  content: "❌";
+  font-style: normal;
+}
+
+.icon-info::before {
+  content: "ℹ️";
+  font-style: normal;
+}
+
+.icon-loading::before {
+  content: "⟳";
+  font-style: normal;
+  animation: spin 1s linear infinite;
+}
+
+/* Arrow Icons */
+.icon-arrow-up::before {
+  content: "↑";
+  font-style: normal;
+}
+
+.icon-arrow-down::before {
+  content: "↓";
+  font-style: normal;
+}
+
+.icon-arrow-left::before {
+  content: "←";
+  font-style: normal;
+}
+
+.icon-arrow-right::before {
+  content: "→";
+  font-style: normal;
+}
+
+.icon-chevron-up::before {
+  content: "⌃";
+  font-style: normal;
+}
+
+.icon-chevron-down::before {
+  content: "⌄";
+  font-style: normal;
+}
+
+.icon-chevron-left::before {
+  content: "⌃";
+  font-style: normal;
+  transform: rotate(-90deg);
+}
+
+.icon-chevron-right::before {
+  content: "⌃";
+  font-style: normal;
+  transform: rotate(90deg);
+}
+
+/* ================================================================
+   SVG ICON DEFINITIONS
+   ================================================================ */
+
+/* For production, these would be actual SVG sprites */
+.icon-svg {
+  display: inline-block;
+  width: var(--icon-size-md);
+  height: var(--icon-size-md);
+  fill: currentColor;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+/* ================================================================
+   ICON ANIMATIONS
+   ================================================================ */
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.icon-spin {
+  animation: spin 1s linear infinite;
+}
+
+.icon-pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.icon-bounce {
+  animation: bounce 1s ease-in-out infinite;
+}
+
+/* ================================================================
+   ICON ACCESSIBILITY
+   ================================================================ */
+
+/* Screen reader only text for decorative icons */
+.icon[aria-hidden="true"] {
+  speak: none;
+}
+
+/* Icon with accessible label */
+.icon-with-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--primitive-space-8);
+}
+
+/* ================================================================
+   RESPONSIVE ICON BEHAVIOR
+   ================================================================ */
+
+@media (max-width: 640px) {
+  .icon-responsive {
+    width: var(--icon-size-sm);
+    height: var(--icon-size-sm);
+  }
+  
+  .icon-button-responsive {
+    width: 36px;
+    height: 36px;
+    padding: 6px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .icon-responsive {
+    width: var(--icon-size-lg);
+    height: var(--icon-size-lg);
+  }
+  
+  .icon-button-responsive {
+    width: 44px;
+    height: 44px;
+    padding: 10px;
+  }
+}
+
+/* ================================================================
+   ICON USAGE GUIDELINES (as CSS comments for documentation)
+   ================================================================ */
+
+/*
+
+ICON SYSTEM USAGE GUIDELINES:
+
+1. SIZE GUIDELINES:
+   - xs (12px): For compact UI elements, badges, tiny indicators
+   - sm (16px): For inline text, small buttons, form inputs
+   - md (20px): Default size for most UI icons
+   - lg (24px): For prominent actions, navigation
+   - xl (32px): For headers, important actions
+   - 2xl (48px): For hero sections, large displays
+
+2. STROKE WEIGHT GUIDELINES:
+   - thin (1px): For delicate, subtle icons
+   - regular (1.5px): Default stroke weight
+   - medium (2px): For emphasis, better visibility
+   - bold (2.5px): For strong emphasis, accessibility
+
+3. COLOR USAGE:
+   - primary: Main content icons
+   - secondary: Supporting content icons
+   - tertiary: Subtle, less important icons
+   - interactive: Clickable icons, links
+   - status colors: Success, warning, error, info states
+
+4. ACCESSIBILITY:
+   - Always provide alt text for meaningful icons
+   - Use aria-hidden="true" for decorative icons
+   - Ensure sufficient color contrast (4.5:1 minimum)
+   - Consider icon + text labels for clarity
+   - Test with screen readers
+
+5. CONSISTENCY RULES:
+   - Use same stroke weight throughout a interface section
+   - Maintain consistent visual style (outlined vs filled)
+   - Use consistent sizing within component contexts
+   - Follow established metaphors and conventions
+
+6. PERFORMANCE:
+   - Use SVG sprites for production
+   - Optimize SVG code for smaller file sizes
+   - Consider icon fonts for very large icon sets
+   - Implement lazy loading for large icon libraries
+
+7. NAMING CONVENTIONS:
+   - Use descriptive, consistent names
+   - Group by category (navigation-, action-, status-)
+   - Use standard icon names when possible
+   - Document custom icon meanings
+
+Example HTML Usage:
+
+<button class="icon-button icon-button-md">
+  <svg class="icon icon-md" aria-hidden="true">
+    <!-- SVG path data -->
+  </svg>
+  <span class="sr-only">Close dialog</span>
+</button>
+
+<div class="icon-with-label">
+  <svg class="icon icon-sm icon-success" aria-hidden="true">
+    <!-- SVG path data -->
+  </svg>
+  <span>Task completed successfully</span>
+</div>
+
+*/

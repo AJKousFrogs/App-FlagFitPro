@@ -7,80 +7,38 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./src/ui-design-system.css">
     <link rel="stylesheet" href="./src/hover-effects.css">
+    <link rel="stylesheet" href="./src/dark-theme.css">
+    <link rel="stylesheet" href="./src/light-theme.css" id="light-theme" disabled>
+    <!-- Lucide Icons - Modern icon library similar to Radix UI -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="./src/icon-helper.js"></script>
+    <script src="./src/theme-switcher.js"></script>
     <style>
         .dashboard-container {
             display: flex;
             min-height: 100vh;
-            background: var(--bg-secondary);
+            background: var(--dark-bg-primary);
         }
 
-        .sidebar {
-            width: 280px;
-            background: var(--white);
-            border-right: 1px solid var(--border-light);
-            height: 100vh;
-            position: fixed;
-            left: 0;
-            top: 0;
-            overflow-y: auto;
-            z-index: 40;
-        }
+        
 
-        .sidebar-header {
-            padding: var(--space-6);
-            border-bottom: 1px solid var(--border-light);
-        }
+        
 
-        .sidebar-brand {
-            display: flex;
-            align-items: center;
-            gap: var(--space-3);
-            font-size: var(--text-xl);
-            font-weight: var(--font-bold);
-            color: var(--gray-900);
-            text-decoration: none;
-        }
+        
 
         .sidebar-nav {
             padding: var(--space-6);
         }
 
-        .nav-section {
-            margin-bottom: var(--space-6);
-        }
+        
 
-        .nav-section-title {
-            font-size: var(--text-xs);
-            font-weight: var(--font-semibold);
-            color: var(--gray-400);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: var(--space-3);
-        }
+        
 
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: var(--space-3);
-            padding: var(--space-3);
-            color: var(--gray-600);
-            text-decoration: none;
-            border-radius: var(--radius-lg);
-            transition: all var(--transition-fast);
-            margin-bottom: var(--space-1);
-            font-weight: var(--font-medium);
-            font-size: var(--text-sm);
-        }
+        
 
-        .nav-item:hover {
-            background: var(--gray-50);
-            color: var(--gray-900);
-        }
+        
 
-        .nav-item.active {
-            background: var(--primary);
-            color: var(--white);
-        }
+        
 
         .nav-icon {
             width: 20px;
@@ -89,30 +47,31 @@
         }
 
         .main-content {
-            margin-left: 280px;
+            margin-left: 64px;
+            margin-top: 70px;
             flex: 1;
-            padding: var(--space-6);
-            min-height: 100vh;
+            padding: 32px;
+            background: var(--dark-bg-primary);
         }
 
         .header-section {
-            background: var(--white);
+            background: var(--dark-card-bg);
             padding: var(--space-6);
             border-radius: var(--radius-xl);
             margin-bottom: var(--space-6);
-            border: 1px solid var(--border-light);
+            border: 1px solid var(--dark-border);
         }
 
         .header-section h1 {
             font-size: var(--text-h1);
             font-weight: var(--font-bold);
-            color: var(--gray-900);
+            color: var(--dark-text-primary);
             margin-bottom: var(--space-2);
         }
 
         .program-overview {
             background: linear-gradient(135deg, var(--primary), var(--accent));
-            color: var(--white);
+            color: var(--var(--dark-text-primary));
             padding: var(--space-6);
             border-radius: var(--radius-xl);
             margin-bottom: var(--space-6);
@@ -156,11 +115,11 @@
         }
 
         .phase-selector {
-            background: var(--white);
+            background: var(--dark-card-bg);
             padding: var(--space-6);
             border-radius: var(--radius-xl);
             margin-bottom: var(--space-6);
-            border: 1px solid var(--border-light);
+            border: 1px solid var(--dark-border);
         }
 
         .phase-tabs {
@@ -172,9 +131,9 @@
         .phase-tab {
             padding: var(--space-3) var(--space-4);
             border-radius: var(--radius-lg);
-            border: 2px solid var(--border-light);
-            background: var(--white);
-            color: var(--gray-600);
+            border: 1px solid var(--dark-border);
+            background: var(--dark-card-bg);
+            color: var(--dark-text-secondary);
             cursor: pointer;
             transition: all var(--transition-fast);
             font-weight: var(--font-medium);
@@ -183,7 +142,7 @@
         .phase-tab.active {
             border-color: var(--primary);
             background: var(--primary);
-            color: var(--white);
+            color: var(--var(--dark-text-primary));
         }
 
         .phase-tab:hover:not(.active) {
@@ -192,7 +151,7 @@
         }
 
         .phase-info {
-            background: var(--bg-secondary);
+            background: var(--dark-bg-primary);
             padding: var(--space-4);
             border-radius: var(--radius-lg);
             margin-bottom: var(--space-4);
@@ -216,22 +175,22 @@
         }
 
         .phase-goals li:before {
-            content: "✅";
+            content: "<i data-lucide="check-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>";
             position: absolute;
             left: 0;
         }
 
         .weekly-schedule {
-            background: var(--white);
+            background: var(--dark-card-bg);
             border-radius: var(--radius-xl);
-            border: 1px solid var(--border-light);
+            border: 1px solid var(--dark-border);
             overflow: hidden;
         }
 
         .schedule-header {
             background: var(--gray-50);
             padding: var(--space-4) var(--space-6);
-            border-bottom: 1px solid var(--border-light);
+            border: 1px solid var(--dark-border);
         }
 
         .week-selector {
@@ -248,8 +207,8 @@
 
         .week-nav-btn {
             padding: var(--space-2) var(--space-3);
-            border: 1px solid var(--border-light);
-            background: var(--white);
+            border: 1px solid var(--dark-border);
+            background: var(--dark-card-bg);
             border-radius: var(--radius-md);
             cursor: pointer;
             transition: all var(--transition-fast);
@@ -267,11 +226,11 @@
         .current-week {
             font-size: var(--text-lg);
             font-weight: var(--font-bold);
-            color: var(--gray-900);
+            color: var(--dark-text-primary);
         }
 
         .week-dates {
-            color: var(--gray-600);
+            color: var(--dark-text-secondary);
             font-size: var(--text-sm);
         }
 
@@ -286,7 +245,7 @@
         }
 
         .day-card {
-            border: 1px solid var(--border-light);
+            border: 1px solid var(--dark-border);
             border-radius: var(--radius-lg);
             overflow: hidden;
             transition: all var(--transition-fast);
@@ -300,19 +259,19 @@
         .day-header {
             padding: var(--space-4);
             background: var(--gray-50);
-            border-bottom: 1px solid var(--border-light);
+            border: 1px solid var(--dark-border);
         }
 
         .day-name {
             font-size: var(--text-lg);
             font-weight: var(--font-bold);
-            color: var(--gray-900);
+            color: var(--dark-text-primary);
             margin-bottom: var(--space-1);
         }
 
         .workout-title {
             font-size: var(--text-sm);
-            color: var(--gray-600);
+            color: var(--dark-text-secondary);
             margin-bottom: var(--space-2);
         }
 
@@ -326,12 +285,12 @@
         }
 
         .workout-type.strength {
-            background: #e3f2fd;
-            color: #1976d2;
+            background: var(--primary-50);
+            color: var(--primary-600);
         }
 
         .workout-type.sprint {
-            background: #fff3e0;
+            background: var(--dark-card-bg);
             color: #f57c00;
         }
 
@@ -354,7 +313,7 @@
             align-items: center;
             gap: var(--space-2);
             margin-bottom: var(--space-3);
-            color: var(--gray-600);
+            color: var(--dark-text-secondary);
         }
 
         .exercise-blocks {
@@ -368,7 +327,7 @@
         .block-title {
             font-size: var(--text-sm);
             font-weight: var(--font-semibold);
-            color: var(--gray-900);
+            color: var(--dark-text-primary);
             margin-bottom: var(--space-2);
         }
 
@@ -379,7 +338,7 @@
 
         .exercise-item {
             padding: var(--space-2);
-            background: var(--bg-secondary);
+            background: var(--dark-bg-primary);
             border-radius: var(--radius-md);
             margin-bottom: var(--space-2);
             font-size: var(--text-sm);
@@ -387,11 +346,11 @@
 
         .exercise-name {
             font-weight: var(--font-medium);
-            color: var(--gray-900);
+            color: var(--dark-text-primary);
         }
 
         .exercise-details {
-            color: var(--gray-600);
+            color: var(--dark-text-secondary);
             font-size: var(--text-xs);
             margin-top: var(--space-1);
         }
@@ -400,7 +359,7 @@
             width: 100%;
             padding: var(--space-3);
             background: var(--primary);
-            color: var(--white);
+            color: var(--var(--dark-text-primary));
             border: none;
             border-radius: var(--radius-lg);
             font-weight: var(--font-semibold);
@@ -423,7 +382,7 @@
         .rest-day {
             text-align: center;
             padding: var(--space-6);
-            color: var(--gray-500);
+            color: var(--dark-text-muted);
         }
 
         .rest-day-icon {
@@ -432,11 +391,11 @@
         }
 
         .protocols-section {
-            background: var(--white);
+            background: var(--dark-card-bg);
             padding: var(--space-6);
             border-radius: var(--radius-xl);
             margin-bottom: var(--space-6);
-            border: 1px solid var(--border-light);
+            border: 1px solid var(--dark-border);
         }
 
         .protocols-title {
@@ -452,7 +411,7 @@
         }
 
         .protocol-card {
-            border: 1px solid var(--border-light);
+            border: 1px solid var(--dark-border);
             border-radius: var(--radius-lg);
             padding: var(--space-4);
             transition: all var(--transition-fast);
@@ -469,7 +428,7 @@
         }
 
         .protocol-duration {
-            color: var(--gray-600);
+            color: var(--dark-text-secondary);
             font-size: var(--text-sm);
             margin-bottom: var(--space-3);
         }
@@ -480,13 +439,13 @@
             gap: var(--space-2);
             margin-top: var(--space-3);
             padding: var(--space-2);
-            background: var(--bg-secondary);
+            background: var(--dark-bg-primary);
             border-radius: var(--radius-md);
         }
 
         .progress-text {
             font-size: var(--text-sm);
-            color: var(--gray-600);
+            color: var(--dark-text-secondary);
         }
 
         .phase-progress {
@@ -527,60 +486,69 @@
 </head>
 <body>
     <div class="dashboard-container">
-        <!-- Sidebar -->
+        <!-- Sidebar - Icon Only -->
         <div class="sidebar">
-            <div class="sidebar-header">
-                <a href="/dashboard.html" class="sidebar-brand">
-                    <span>🏈</span>
-                    <span>FlagFit Pro</span>
-                </a>
+            <div class="sidebar-logo" onclick="window.location.href='/dashboard.html'" title="FlagFit Pro">
+                <i data-lucide="football" style="width: 20px;  height: 20px ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
             </div>
-            
-            <nav class="sidebar-nav">
-                <div class="nav-section">
-                    <div class="nav-section-title">Main</div>
-                    <a href="/dashboard.html" class="nav-item hover-lift-small">
-                        <span class="nav-icon">📊</span>
-                        Dashboard
-                    </a>
-                    <a href="/roster.html" class="nav-item hover-lift-small">
-                        <span class="nav-icon">👥</span>
-                        Team Roster
-                    </a>
-                    <a href="/training.html" class="nav-item hover-lift-small">
-                        <span class="nav-icon">⚡</span>
-                        Training
-                    </a>
-                    <a href="/training-schedule.html" class="nav-item active">
-                        <span class="nav-icon">📅</span>
-                        Training Schedule
-                    </a>
-                    <a href="/tournaments.html" class="nav-item hover-lift-small">
-                        <span class="nav-icon">🏆</span>
-                        Tournaments
-                    </a>
-                    <a href="/community.html" class="nav-item hover-lift-small">
-                        <span class="nav-icon">👥</span>
-                        Community
-                    </a>
-                </div>
-                
-                <div class="nav-section">
-                    <div class="nav-section-title">Analytics</div>
-                    <a href="/analytics.html" class="nav-item hover-lift-small">
-                        <span class="nav-icon">📈</span>
-                        Analytics
-                    </a>
-                    <a href="/settings.html" class="nav-item hover-lift-small">
-                        <span class="nav-icon">⚙️</span>
-                        Settings
-                    </a>
-                </div>
-            </nav>
+            <a href="/dashboard.html" class="sidebar-icon " title="Dashboard">
+                <i data-lucide="layout-dashboard" style="width: 20px;  height: 20px  ; ; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
+            </a>
+            <a href="/roster.html" class="sidebar-icon " title="Team Roster">
+                <i data-lucide="users" style="width: 20px;  height: 20px  ; ; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
+            </a>
+            <a href="/training.html" class="sidebar-icon " title="Training">
+                <i data-lucide="zap" style="width: 20px;  height: 20px  ; ; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
+            </a>
+            <a href="/tournaments.html" class="sidebar-icon " title="Tournaments">
+                <i data-lucide="trophy" style="width: 20px;  height: 20px  ; ; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
+            </a>
+            <a href="/analytics.html" class="sidebar-icon " title="Analytics">
+                <i data-lucide="bar-chart-3" style="width: 20px;  height: 20px  ; ; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
+            </a>
+            <a href="/community.html" class="sidebar-icon " title="Community">
+                <i data-lucide="message-circle" style="width: 20px;  height: 20px  ; ; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
+            </a>
+            <a href="/settings.html" class="sidebar-icon " title="Settings">
+                <i data-lucide="settings" style="width: 20px;  height: 20px  ; ; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
+            </a>
         </div>
 
-        <!-- Main Content -->
-        <main class="main-content">
+                    <!-- Top Bar -->
+            <div class="top-bar">
+                <div class="header-left">
+                    <div class="search-box">
+                        <span class="search-icon"><i data-lucide="search" style="width: 16px;  height: 16px; ; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span>
+                        <input type="text" id="global-search" class="search-input" placeholder="Search for players, teams & more" oninput="if(typeof performGlobalSearch === 'function') performGlobalSearch(this.value)">
+                        <div id="search-results" class="search-results" style="display: none;"></div>
+                    </div>
+                </div>
+                
+                <div class="header-right">
+                    <div style="position: relative;">
+                        <div id="notification-bell" class="header-icon" onclick="if(typeof toggleNotifications === 'function') toggleNotifications()">
+                            <i data-lucide="bell" style="width: 18px;  height: 18px ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
+                        </div>
+                        <div id="notification-badge" style="position: absolute; top: -4px; right: -4px; width: 20px; height: 20px; background: var(--error-500); color: var(--dark-text-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; border: 2px solid var(--dark-bg-secondary); display: none;">3</div>
+                    </div>
+                    <div class="header-icon">
+                        <i data-lucide="settings" style="width: 18px;  height: 18px; ; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
+                    </div>
+                    
+                    <div class="theme-toggle-container">
+                        <label class="theme-toggle-label">
+                            <input type="checkbox" id="theme-toggle" class="theme-toggle-input" checked>
+                            <span class="theme-toggle-slider"></span>
+                            <span class="theme-toggle-text">Dark</span>
+                        </label>
+                    </div>
+                    <div class="user-menu">
+                        <div class="user-avatar" id="user-avatar">U</div>
+                    </div>
+                </div>
+            </div>
+
+<main class="main-content">
             <!-- Program Overview -->
             <div class="program-overview">
                 <div class="program-title" id="programTitle">COMPLETE FLAG FOOTBALL OFFSEASON TRAINING PROGRAM</div>
@@ -638,7 +606,7 @@
 
             <!-- Daily Protocols -->
             <div class="protocols-section">
-                <h2 class="protocols-title">📏 Daily Protocols</h2>
+                <h2 class="protocols-title"><i data-lucide="ruler" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Daily Protocols</h2>
                 <div class="protocol-grid">
                     <div class="protocol-card">
                         <div class="protocol-title">🌅 Morning Mobility</div>
@@ -653,7 +621,7 @@
                         <button class="start-workout-btn">View Warm-Up</button>
                     </div>
                     <div class="protocol-card">
-                        <div class="protocol-title">🧘 Sunday Recovery</div>
+                        <div class="protocol-title"><i data-lucide="heart-pulse" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Sunday Recovery</div>
                         <div class="protocol-duration">45-60 minutes • Weekly</div>
                         <p>Complete recovery protocol with stretching, foam rolling, and light activity.</p>
                         <button class="start-workout-btn">View Protocol</button>
@@ -666,8 +634,8 @@
                 <div class="schedule-header">
                     <div class="week-selector">
                         <div class="week-nav">
-                            <button class="week-nav-btn" id="prevWeek">← Previous</button>
-                            <button class="week-nav-btn" id="nextWeek">Next →</button>
+                            <button class="week-nav-btn" id="prevWeek"><i data-lucide="chevron-left" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Previous</button>
+                            <button class="week-nav-btn" id="nextWeek">Next <i data-lucide="chevron-right" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></button>
                         </div>
                         <div class="current-week" id="currentWeek">Week 1 - Foundation Phase</div>
                     </div>
@@ -702,16 +670,20 @@
 
         // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🏈 Training Schedule page loading...');
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+            console.log('<i data-lucide="football" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Training Schedule page loading...');
             
             // Check authentication
             if (!authManager.isAuthenticated()) {
-                console.log('❌ User not authenticated, redirecting to login');
+                console.log('<i data-lucide="x-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> User not authenticated, redirecting to login');
                 window.location.href = '/login.html';
                 return;
             }
 
-            console.log('✅ User authenticated, loading training schedule');
+            console.log('<i data-lucide="check-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> User authenticated, loading training schedule');
             
             initializeTrainingSchedule();
         });
@@ -720,7 +692,7 @@
         let currentWeek = 1;
         
         function initializeTrainingSchedule() {
-            console.log('📅 Initializing training schedule...');
+            console.log('<i data-lucide="calendar" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Initializing training schedule...');
             
             setupPhaseSelector();
             setupWeekNavigation();
@@ -829,7 +801,7 @@
         }
 
         function loadWeeklySchedule(weekNumber) {
-            console.log(`📋 Loading week ${weekNumber} schedule...`);
+            console.log(`<i data-lucide="clipboard-list" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Loading week ${weekNumber} schedule...`);
             
             // Update week display
             const currentWeekEl = document.getElementById('currentWeek');
@@ -872,7 +844,7 @@
                                 <span class="workout-type recovery">Recovery</span>
                             </div>
                             <div class="rest-day">
-                                <div class="rest-day-icon">🧘</div>
+                                <div class="rest-day-icon"><i data-lucide="heart-pulse" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></div>
                                 <h3>Recovery Day</h3>
                                 <p>Complete recovery protocol</p>
                                 <div style="margin-top: var(--space-3);">
@@ -978,17 +950,17 @@
                 </div>
                 
                 ${dayData.blocks.map((block, index) => `
-                    <div style="margin-bottom: var(--space-4); padding: var(--space-4); background: var(--bg-secondary); border-radius: var(--radius-lg);">
+                    <div style="margin-bottom: var(--space-4); padding: var(--space-4); background: var(--dark-bg-primary); border-radius: var(--radius-lg);">
                         <h4>${block.title}</h4>
                         <p><strong>Duration:</strong> ${block.duration} minutes</p>
                         
                         <div style="margin-top: var(--space-3);">
                             ${block.exercises.map((exercise, exIndex) => `
-                                <div style="margin-bottom: var(--space-3); padding: var(--space-3); background: var(--white); border-radius: var(--radius-md);">
+                                <div style="margin-bottom: var(--space-3); padding: var(--space-3); background: var(--dark-card-bg); border-radius: var(--radius-md);">
                                     <div style="font-weight: var(--font-semibold); margin-bottom: var(--space-1);">
                                         ${exIndex + 1}. ${exercise.name}
                                     </div>
-                                    <div style="font-size: var(--text-sm); color: var(--gray-600);">
+                                    <div style="font-size: var(--text-sm); color: var(--dark-text-secondary);">
                                         ${exercise.sets ? `${exercise.sets} sets` : ''} 
                                         ${exercise.reps ? `× ${exercise.reps}` : ''} 
                                         ${exercise.duration ? `× ${exercise.duration}` : ''}
@@ -996,7 +968,7 @@
                                         ${exercise.rest ? ` • Rest: ${exercise.rest}` : ''}
                                         ${exercise.load ? ` • Load: ${exercise.load}` : ''}
                                     </div>
-                                    ${exercise.notes ? `<div style="font-size: var(--text-sm); color: var(--gray-500); margin-top: var(--space-1); font-style: italic;">${exercise.notes}</div>` : ''}
+                                    ${exercise.notes ? `<div style="font-size: var(--text-sm); color: var(--dark-text-muted); margin-top: var(--space-1); font-style: italic;">${exercise.notes}</div>` : ''}
                                 </div>
                             `).join('')}
                         </div>
@@ -1004,7 +976,7 @@
                 `).join('')}
                 
                 ${dayData.equipment ? `
-                    <div style="margin-top: var(--space-4); padding: var(--space-3); background: #fff3cd; border-radius: var(--radius-lg);">
+                    <div style="margin-top: var(--space-4); padding: var(--space-3); background: var(--dark-card-bg); border-radius: var(--radius-lg);">
                         <h4>Equipment Needed:</h4>
                         <ul style="margin: var(--space-2) 0; padding-left: var(--space-4);">
                             ${dayData.equipment.map(item => `<li>${item}</li>`).join('')}
@@ -1033,7 +1005,7 @@
         }
 
         window.startWorkoutTracking = function(day, week) {
-            console.log(`🎯 Starting workout tracking: Week ${week}, ${day}`);
+            console.log(`<i data-lucide="target" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Starting workout tracking: Week ${week}, ${day}`);
             
             // Close modal
             document.getElementById('workoutModal').style.display = 'none';
@@ -1062,7 +1034,7 @@
             }
             
             .modal-content {
-                background-color: var(--white);
+                background-color: var(--var(--dark-text-primary));
                 margin: 5% auto;
                 padding: 0;
                 border-radius: var(--radius-xl);
@@ -1074,7 +1046,7 @@
             
             .modal-header {
                 padding: var(--space-6);
-                border-bottom: 1px solid var(--border-light);
+                border: 1px solid var(--dark-border);
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
@@ -1085,11 +1057,11 @@
                 border: none;
                 font-size: 1.5rem;
                 cursor: pointer;
-                color: var(--gray-500);
+                color: var(--dark-text-muted);
             }
             
             .modal-close:hover {
-                color: var(--gray-900);
+                color: var(--dark-text-primary);
             }
             
             .modal-body {

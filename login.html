@@ -4,8 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FlagFit Pro - Login</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./src/hover-effects.css">
+    <!-- Lucide Icons - Modern icon library similar to Radix UI -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="./src/icon-helper.js"></script>
     <style>
         * {
             margin: 0;
@@ -15,7 +20,7 @@
 
         body {
             font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #10c96b 0%, #0ab85a 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -24,7 +29,7 @@
         }
 
         .login-container {
-            background: white;
+            background: var(--dark-text-primary);
             border-radius: 20px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             padding: 40px;
@@ -70,8 +75,8 @@
 
         .form-group input:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #10c96b;
+            box-shadow: 0 0 0 3px rgba(16, 201, 107, 0.1);
         }
 
         .form-options {
@@ -94,7 +99,7 @@
         }
 
         .forgot-password {
-            color: #667eea;
+            color: #10c96b;
             text-decoration: none;
             font-weight: 500;
         }
@@ -106,8 +111,8 @@
         .login-btn {
             width: 100%;
             padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: linear-gradient(135deg, #10c96b 0%, #0ab85a 100%);
+            color: var(--dark-text-primary);
             border: none;
             border-radius: 10px;
             font-size: 1rem;
@@ -151,7 +156,7 @@
         }
 
         .create-account {
-            color: #667eea;
+            color: #10c96b;
             text-decoration: none;
             font-weight: 500;
         }
@@ -186,17 +191,17 @@
             padding: 8px 16px;
             border: 1px solid #e1e5e9;
             border-radius: 20px;
-            background: #f8f9fa;
+            background: var(--dark-bg-secondary);
         }
 
         .demo-note {
-            background: #e3f2fd;
-            border: 1px solid #2196f3;
+            background: var(--primary-50);
+            border: 1px solid var(--primary-500);
             border-radius: 8px;
             padding: 15px;
             margin-bottom: 20px;
             font-size: 0.85rem;
-            color: #1976d2;
+            color: var(--primary-600);
         }
 
         .demo-note strong {
@@ -238,7 +243,7 @@
 </head>
 <body>
     <div class="login-container">
-        <div class="logo">🏈</div>
+        <div class="logo"><i data-lucide="football" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle;"></i></div>
         <h1 class="title">Sign in to FlagFit Pro</h1>
         
         <div class="demo-note" id="demoNote" style="display: none;">
@@ -249,10 +254,10 @@
         <div class="success-message" id="successMessage"></div>
         
         <!-- Manual redirect button (backup) -->
-        <div id="manualRedirect" style="display: none; margin: 20px 0; padding: 15px; background: #e3f2fd; border-radius: 8px; border-left: 4px solid #2196f3;">
-            <p style="margin: 0 0 10px 0; color: #1976d2; font-weight: 500;">✅ Login successful!</p>
-            <button type="button" id="goDashboard" style="background: #2196f3; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 500;">
-                Go to Dashboard →
+        <div id="manualRedirect" style="display: none; margin: 20px 0; padding: 15px; background: var(--primary-50); border-radius: 8px; border-left: 4px solid var(--primary-500);">
+            <p style="margin: 0 0 10px 0; color: var(--primary-600); font-weight: 500;"><i data-lucide="check-circle" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle;"></i> Login successful!</p>
+            <button type="button" id="goDashboard" style="background: var(--primary-500); color: var(--dark-text-primary); border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 500;">
+                Go to Dashboard <i data-lucide="chevron-right" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle;"></i>
             </button>
         </div>
 
@@ -331,10 +336,10 @@
             try {
                 const result = await authManager.login(email, password);
                 
-                console.log('📋 Login result:', result);
+                console.log('<i data-lucide="clipboard-list" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle;"></i> Login result:', result);
                 
                 if (result.success) {
-                    console.log('✅ Login successful! Auth manager will handle redirect...');
+                    console.log('<i data-lucide="check-circle" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle;"></i> Login successful! Auth manager will handle redirect...');
                     
                     // Show manual redirect button as backup after 3 seconds
                     setTimeout(() => {
@@ -345,30 +350,34 @@
                     // Note: authManager.login() already handles the redirect internally
                     // No need to call redirectToDashboard() here again
                 } else {
-                    console.error('❌ Login failed:', result.error);
+                    console.error('<i data-lucide="x-circle" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle;"></i> Login failed:', result.error);
                 }
             } catch (error) {
-                console.error('❌ Login error:', error);
+                console.error('<i data-lucide="x-circle" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle;"></i> Login error:', error);
             }
         });
 
         // Manual redirect button event listener
         document.getElementById('goDashboard').addEventListener('click', function() {
             console.log('🔘 Manual redirect button clicked');
-            console.log('🔍 Auth state check:');
+            console.log('<i data-lucide="search" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle;"></i> Auth state check:');
             console.log('   - Is authenticated:', authManager.isAuthenticated());
             console.log('   - Current user:', authManager.getCurrentUser());
             
             if (authManager.isAuthenticated()) {
                 authManager.redirectToDashboard();
             } else {
-                console.error('❌ Not authenticated, cannot redirect');
+                console.error('<i data-lucide="x-circle" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle;"></i> Not authenticated, cannot redirect');
                 alert('Please log in first');
             }
         });
 
         // Initialize login page
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
             // Check if we're in demo mode (localhost or development)
             const isDemoMode = window.location.hostname === 'localhost' || 
                               window.location.hostname === '127.0.0.1' ||
@@ -381,7 +390,7 @@
                 document.getElementById('password').value = 'demo123';
             }
             
-            console.log('🔍 Page loaded, checking for existing auth...');
+            console.log('<i data-lucide="search" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle;"></i> Page loaded, checking for existing auth...');
             if (authManager.isAuthenticated()) {
                 console.log('👤 User already logged in, redirecting to dashboard...');
                 authManager.redirectToDashboard();

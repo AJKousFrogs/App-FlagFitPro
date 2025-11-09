@@ -9,6 +9,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./src/ui-design-system.css">
     <link rel="stylesheet" href="./src/hover-effects.css">
+    <link rel="stylesheet" href="./src/dark-theme.css">
+    <link rel="stylesheet" href="./src/light-theme.css" id="light-theme" disabled>
+    <!-- Lucide Icons - Modern icon library similar to Radix UI -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="./src/icon-helper.js"></script>
+    <script src="./src/theme-switcher.js"></script>
     <style>
         * {
             margin: 0;
@@ -18,7 +24,7 @@
 
         body {
             font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: #f8fafc;
+            background: var(--dark-bg-primary);
             min-height: 100vh;
         }
 
@@ -26,76 +32,28 @@
         .dashboard-container {
             display: flex;
             min-height: 100vh;
-            background: var(--bg-secondary);
+            background: var(--dark-bg-primary);
         }
 
-        .sidebar {
-            width: 280px;
-            background: var(--white);
-            border-right: 1px solid var(--border-light);
-            height: 100vh;
-            position: fixed;
-            left: 0;
-            top: 0;
-            overflow-y: auto;
-            z-index: 40;
-        }
+        
 
-        .sidebar-header {
-            padding: var(--space-6);
-            border-bottom: 1px solid var(--border-light);
-        }
+        
 
-        .sidebar-brand {
-            display: flex;
-            align-items: center;
-            gap: var(--space-3);
-            font-size: var(--text-xl);
-            font-weight: var(--font-bold);
-            color: var(--gray-900);
-            text-decoration: none;
-        }
+        
 
         .sidebar-nav {
             padding: var(--space-6);
         }
 
-        .nav-section {
-            margin-bottom: var(--space-6);
-        }
+        
 
-        .nav-section-title {
-            font-size: var(--text-xs);
-            font-weight: var(--font-semibold);
-            color: var(--gray-400);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: var(--space-3);
-        }
+        
 
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: var(--space-3);
-            padding: var(--space-3);
-            color: var(--gray-600);
-            text-decoration: none;
-            border-radius: var(--radius-lg);
-            transition: all var(--transition-fast);
-            margin-bottom: var(--space-1);
-            font-weight: var(--font-medium);
-            font-size: var(--text-sm);
-        }
+        
 
-        .nav-item:hover {
-            background: var(--gray-50);
-            color: var(--gray-900);
-        }
+        
 
-        .nav-item.active {
-            background: var(--primary);
-            color: var(--white);
-        }
+        
 
         .nav-icon {
             width: 20px;
@@ -104,14 +62,15 @@
         }
 
         .main-content {
-            margin-left: 280px;
+            margin-left: 64px;
+            margin-top: 70px;
             flex: 1;
-            padding: var(--space-8);
-            background: var(--bg-secondary);
+            padding: 32px;
+            background: var(--dark-bg-primary);
         }
 
         .header {
-            background: white;
+            background: var(--dark-text-primary);
             padding: 20px 30px;
             border-radius: 12px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
@@ -129,7 +88,7 @@
 
         .tab-btn {
             padding: 12px 24px;
-            background: white;
+            background: var(--dark-text-primary);
             border: 2px solid #e2e8f0;
             border-radius: 8px;
             cursor: pointer;
@@ -138,9 +97,9 @@
         }
 
         .tab-btn.active {
-            background: #667eea;
-            color: white;
-            border-color: #667eea;
+            background: var(--primary-500);
+            color: var(--dark-text-primary);
+            border-color: var(--primary-500);
         }
 
         .tournaments-grid {
@@ -151,7 +110,7 @@
         }
 
         .tournament-card {
-            background: white;
+            background: var(--dark-text-primary);
             border-radius: 15px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             overflow: hidden;
@@ -164,8 +123,8 @@
         }
 
         .tournament-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+            color: var(--dark-text-primary);
             padding: 20px;
             position: relative;
         }
@@ -175,7 +134,7 @@
             top: 15px;
             right: 15px;
             background: rgba(255, 255, 255, 0.2);
-            color: white;
+            color: var(--dark-text-primary);
             padding: 5px 12px;
             border-radius: 20px;
             font-size: 0.8rem;
@@ -222,8 +181,8 @@
         }
 
         .info-icon.date {
-            background: #e3f2fd;
-            color: #1976d2;
+            background: var(--primary-50);
+            color: var(--primary-600);
         }
 
         .info-icon.location {
@@ -232,7 +191,7 @@
         }
 
         .info-icon.prize {
-            background: #fff3e0;
+            background: var(--dark-card-bg);
             color: #f57c00;
         }
 
@@ -250,7 +209,7 @@
             justify-content: space-between;
             margin-bottom: 8px;
             font-size: 0.9rem;
-            color: #666;
+            color: var(--dark-text-secondary);
         }
 
         .progress-bar {
@@ -263,7 +222,7 @@
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(90deg, var(--primary-500) 0%, var(--primary-600) 100%);
             transition: width 0.3s ease;
         }
 
@@ -283,8 +242,8 @@
         }
 
         .action-btn.primary {
-            background: #667eea;
-            color: white;
+            background: var(--primary-500);
+            color: var(--dark-text-primary);
         }
 
         .action-btn.primary:hover {
@@ -293,7 +252,7 @@
 
         .action-btn.secondary {
             background: #f1f5f9;
-            color: #64748b;
+            color: var(--dark-text-muted);
             border: 2px solid #e2e8f0;
         }
 
@@ -302,7 +261,7 @@
         }
 
         .bracket-container {
-            background: white;
+            background: var(--dark-text-primary);
             border-radius: 12px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             padding: 30px;
@@ -312,7 +271,7 @@
         .bracket-title {
             font-size: 1.5rem;
             font-weight: 600;
-            color: #333;
+            color: var(--dark-text-primary);
             margin-bottom: 25px;
             text-align: center;
         }
@@ -335,13 +294,13 @@
         .round-title {
             text-align: center;
             font-weight: 600;
-            color: #666;
+            color: var(--dark-text-secondary);
             margin-bottom: 15px;
             font-size: 0.9rem;
         }
 
         .match {
-            background: white;
+            background: var(--dark-text-primary);
             border: 2px solid #e2e8f0;
             border-radius: 8px;
             padding: 15px;
@@ -349,11 +308,11 @@
         }
 
         .match.completed {
-            border-color: #10b981;
+            border-color: var(--primary-500);
         }
 
         .match.upcoming {
-            border-color: #667eea;
+            border-color: var(--primary-500);
         }
 
         .team {
@@ -370,7 +329,7 @@
 
         .team.winner {
             font-weight: 600;
-            color: #10b981;
+            color: var(--primary-500);
         }
 
         .team-name {
@@ -384,7 +343,7 @@
         }
 
         .leaderboard {
-            background: white;
+            background: var(--dark-text-primary);
             border-radius: 12px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             padding: 30px;
@@ -393,7 +352,7 @@
         .leaderboard-title {
             font-size: 1.3rem;
             font-weight: 600;
-            color: #333;
+            color: var(--dark-text-primary);
             margin-bottom: 25px;
         }
 
@@ -417,7 +376,7 @@
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            color: white;
+            color: var(--dark-text-primary);
         }
 
         .rank.first {
@@ -425,16 +384,16 @@
         }
 
         .rank.second {
-            background: linear-gradient(135deg, #c0c0c0 0%, #a0a0a0 100%);
+            background: linear-gradient(135deg, var(--dark-text-muted) 0%, var(--dark-text-muted) 100%);
         }
 
         .rank.third {
-            background: linear-gradient(135deg, #cd7f32 0%, #b87333 100%);
+            background: linear-gradient(135deg, var(--tertiary-600) 0%, var(--tertiary-700) 100%);
         }
 
         .rank.other {
             background: #e2e8f0;
-            color: #64748b;
+            color: var(--dark-text-muted);
         }
 
         .team-info {
@@ -443,19 +402,19 @@
 
         .team-name-lb {
             font-weight: 600;
-            color: #333;
+            color: var(--dark-text-primary);
         }
 
         .team-stats {
             font-size: 0.8rem;
-            color: #666;
+            color: var(--dark-text-secondary);
             margin-top: 2px;
         }
 
         .points {
             font-size: 1.1rem;
             font-weight: 700;
-            color: #667eea;
+            color: var(--primary-500);
         }
 
         @media (max-width: 768px) {
@@ -530,7 +489,7 @@
             }
             
             .filter-tab {
-                white-space: nowrap;
+                var(--dark-text-primary)-space: nowrap;
                 min-width: 80px;
             }
             
@@ -547,59 +506,73 @@
 </head>
 <body>
     <div class="dashboard-container">
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <a href="/dashboard.html" class="sidebar-brand">
-                <span>🏈</span>
-                FlagFit Pro
+    <!-- Sidebar - Icon Only -->
+        <div class="sidebar">
+            <div class="sidebar-logo" onclick="window.location.href='/dashboard.html'" title="FlagFit Pro">
+                <i data-lucide="football" style="width: 20px;  height: 20px ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
+            </div>
+            <a href="/dashboard.html" class="sidebar-icon " title="Dashboard">
+                <i data-lucide="layout-dashboard" style="width: 20px;  height: 20px  ; ; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
+            </a>
+            <a href="/roster.html" class="sidebar-icon " title="Team Roster">
+                <i data-lucide="users" style="width: 20px;  height: 20px  ; ; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
+            </a>
+            <a href="/training.html" class="sidebar-icon " title="Training">
+                <i data-lucide="zap" style="width: 20px;  height: 20px  ; ; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
+            </a>
+            <a href="/tournaments.html" class="sidebar-icon active" title="Tournaments">
+                <i data-lucide="trophy" style="width: 20px;  height: 20px  ; ; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
+            </a>
+            <a href="/analytics.html" class="sidebar-icon " title="Analytics">
+                <i data-lucide="bar-chart-3" style="width: 20px;  height: 20px  ; ; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
+            </a>
+            <a href="/community.html" class="sidebar-icon " title="Community">
+                <i data-lucide="message-circle" style="width: 20px;  height: 20px  ; ; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
+            </a>
+            <a href="/settings.html" class="sidebar-icon " title="Settings">
+                <i data-lucide="settings" style="width: 20px;  height: 20px  ; ; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
             </a>
         </div>
-        
-        <nav class="sidebar-nav">
-            <div class="nav-section">
-                <div class="nav-section-title">Main</div>
-                <a href="/dashboard.html" class="nav-item hover-lift-small">
-                    <span class="nav-icon">📊</span>
-                    Dashboard
-                </a>
-                <a href="/training.html" class="nav-item hover-lift-small">
-                    <span class="nav-icon">⚡</span>
-                    Training
-                </a>
-                <a href="/tournaments.html" class="nav-item active">
-                    <span class="nav-icon">🏆</span>
-                    Tournaments
-                </a>
-                <a href="/community.html" class="nav-item hover-lift-small">
-                    <span class="nav-icon">👥</span>
-                    Community
-                </a>
-                <a href="/coach.html" class="nav-item hover-lift-small">
-                    <span class="nav-icon">📋</span>
-                    Coach
-                </a>
-            </div>
-            
-            <div class="nav-section">
-                <div class="nav-section-title">Analytics</div>
-                <a href="/analytics.html" class="nav-item hover-lift-small">
-                    <span class="nav-icon">📈</span>
-                    Analytics
-                </a>
-                <a href="/settings.html" class="nav-item hover-lift-small">
-                    <span class="nav-icon">⚙️</span>
-                    Settings
-                </a>
-            </div>
-        </nav>
-    </div>
 
-    <main class="main-content">
+                    <!-- Top Bar -->
+            <div class="top-bar">
+                <div class="header-left">
+                    <div class="search-box">
+                        <span class="search-icon"><i data-lucide="search" style="width: 16px;  height: 16px; ; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span>
+                        <input type="text" id="global-search" class="search-input" placeholder="Search for players, teams & more" oninput="if(typeof performGlobalSearch === 'function') performGlobalSearch(this.value)">
+                        <div id="search-results" class="search-results" style="display: none;"></div>
+                    </div>
+                </div>
+                
+                <div class="header-right">
+                    <div style="position: relative;">
+                        <div id="notification-bell" class="header-icon" onclick="if(typeof toggleNotifications === 'function') toggleNotifications()">
+                            <i data-lucide="bell" style="width: 18px;  height: 18px ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
+                        </div>
+                        <div id="notification-badge" style="position: absolute; top: -4px; right: -4px; width: 20px; height: 20px; background: var(--error-500); color: var(--dark-text-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; border: 2px solid var(--dark-bg-secondary); display: none;">3</div>
+                    </div>
+                    <div class="header-icon">
+                        <i data-lucide="settings" style="width: 18px;  height: 18px; ; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
+                    </div>
+                    
+                    <div class="theme-toggle-container">
+                        <label class="theme-toggle-label">
+                            <input type="checkbox" id="theme-toggle" class="theme-toggle-input" checked>
+                            <span class="theme-toggle-slider"></span>
+                            <span class="theme-toggle-text">Dark</span>
+                        </label>
+                    </div>
+                    <div class="user-menu">
+                        <div class="user-avatar" id="user-avatar">U</div>
+                    </div>
+                </div>
+            </div>
+
+<main class="main-content">
         <header class="header">
             <div>
-                <h1 style="font-size: 1.5rem; font-weight: 600; color: #333;">Official Tournament Schedule 2026-2027 🏆</h1>
-                <p style="color: #666; margin-top: 5px;">International Flag Football Season featuring 7 major tournaments across Europe</p>
+                <h1 style="font-size: 1.5rem; font-weight: 600; color: var(--dark-text-primary);">Official Tournament Schedule 2026-2027 <i data-lucide="trophy" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></h1>
+                <p style="color: var(--dark-text-secondary); margin-top: 5px;">International Flag Football Season featuring 7 major tournaments across Europe</p>
             </div>
             <div>
                 <button class="btn btn-primary hover-lift" id="nextTournamentBtn">Next Tournament</button>
@@ -617,7 +590,7 @@
             <!-- Tournament cards will be populated by JavaScript -->
                             <div>
                                 <div>16 teams</div>
-                                <div style="font-size: 0.8rem; color: #666;">Competing</div>
+                                <div style="font-size: 0.8rem; color: var(--dark-text-secondary);">Competing</div>
                             </div>
                         </div>
                     </div>
@@ -646,31 +619,31 @@
                 <div class="tournament-body">
                     <div class="tournament-info">
                         <div class="info-item">
-                            <div class="info-icon date">📅</div>
+                            <div class="info-icon date"><i data-lucide="calendar" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></div>
                             <div>
                                 <div>Dec 1-15</div>
-                                <div style="font-size: 0.8rem; color: #666;">2 weeks</div>
+                                <div style="font-size: 0.8rem; color: var(--dark-text-secondary);">2 weeks</div>
                             </div>
                         </div>
                         <div class="info-item">
                             <div class="info-icon location">📍</div>
                             <div>
                                 <div>Indoor Arena</div>
-                                <div style="font-size: 0.8rem; color: #666;">Chicago</div>
+                                <div style="font-size: 0.8rem; color: var(--dark-text-secondary);">Chicago</div>
                             </div>
                         </div>
                         <div class="info-item">
                             <div class="info-icon prize">💰</div>
                             <div>
                                 <div>$7,500</div>
-                                <div style="font-size: 0.8rem; color: #666;">Prize pool</div>
+                                <div style="font-size: 0.8rem; color: var(--dark-text-secondary);">Prize pool</div>
                             </div>
                         </div>
                         <div class="info-item">
-                            <div class="info-icon teams">👥</div>
+                            <div class="info-icon teams"><i data-lucide="users" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></div>
                             <div>
                                 <div>0/24 teams</div>
-                                <div style="font-size: 0.8rem; color: #666;">Registered</div>
+                                <div style="font-size: 0.8rem; color: var(--dark-text-secondary);">Registered</div>
                             </div>
                         </div>
                     </div>
@@ -955,31 +928,31 @@
                     <div class="tournament-body">
                         <div class="tournament-info">
                             <div class="info-item">
-                                <div class="info-icon date">📅</div>
+                                <div class="info-icon date"><i data-lucide="calendar" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></div>
                                 <div>
                                     <div>${formatTournamentDate(tournament)}</div>
-                                    <div style="font-size: 0.8rem; color: #666;">${daysUntil !== null ? `${daysUntil} days away` : 'Date TBD'}</div>
+                                    <div style="font-size: 0.8rem; color: var(--dark-text-secondary);">${daysUntil !== null ? `${daysUntil} days away` : 'Date TBD'}</div>
                                 </div>
                             </div>
                             <div class="info-item">
                                 <div class="info-icon location">📍</div>
                                 <div>
                                     <div>${tournament.location}</div>
-                                    <div style="font-size: 0.8rem; color: #666;">${tournament.venue || 'Venue TBD'}</div>
+                                    <div style="font-size: 0.8rem; color: var(--dark-text-secondary);">${tournament.venue || 'Venue TBD'}</div>
                                 </div>
                             </div>
                             <div class="info-item">
                                 <div class="info-icon prize">💰</div>
                                 <div>
                                     <div>${tournament.prizePool === 'TBD' ? 'TBD' : tournament.prizePool}</div>
-                                    <div style="font-size: 0.8rem; color: #666;">Prize pool</div>
+                                    <div style="font-size: 0.8rem; color: var(--dark-text-secondary);">Prize pool</div>
                                 </div>
                             </div>
                             <div class="info-item">
-                                <div class="info-icon teams">👥</div>
+                                <div class="info-icon teams"><i data-lucide="users" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></div>
                                 <div>
                                     <div>${tournament.expectedTeams === 'TBD' ? 'TBD' : tournament.expectedTeams + ' teams'}</div>
-                                    <div style="font-size: 0.8rem; color: #666;">${tournament.isInvitationOnly ? 'Invitation Only' : 'Expected'}</div>
+                                    <div style="font-size: 0.8rem; color: var(--dark-text-secondary);">${tournament.isInvitationOnly ? 'Invitation Only' : 'Expected'}</div>
                                 </div>
                             </div>
                         </div>
@@ -988,9 +961,9 @@
                                 <span>Preparation: ${preparation.phase.replace('_', ' ')}</span>
                                 <span>${tournament.qualificationPoints === 'TBD' ? 'Points TBD' : tournament.qualificationPoints + ' pts'}</span>
                             </div>
-                            <div style="background: var(--bg-secondary); padding: var(--space-3); border-radius: var(--radius-lg); margin-top: var(--space-3);">
-                                <div style="font-size: 0.8rem; color: var(--gray-600); margin-bottom: var(--space-2);">${preparation.description}</div>
-                                ${preparation.tasks.slice(0, 2).map(task => `<div style="font-size: 0.75rem; color: var(--gray-500);">• ${task}</div>`).join('')}
+                            <div style="background: var(--dark-bg-primary); padding: var(--space-3); border-radius: var(--radius-lg); margin-top: var(--space-3);">
+                                <div style="font-size: 0.8rem; color: var(--dark-text-secondary); margin-bottom: var(--space-2);">${preparation.description}</div>
+                                ${preparation.tasks.slice(0, 2).map(task => `<div style="font-size: 0.75rem; color: var(--dark-text-muted);">• ${task}</div>`).join('')}
                             </div>
                         </div>
                         <div class="tournament-actions">
@@ -1023,9 +996,9 @@
         function getStatusColor(status) {
             const colors = {
                 'Registration Open': 'rgba(102, 126, 234, 0.8)',
-                'Live Now': '#10b981',
-                'Coming Soon': '#f59e0b',
-                'Completed': '#6b7280'
+                'Live Now': 'var(--primary-500)',
+                'Coming Soon': 'var(--tertiary-500)',
+                'Completed': 'var(--dark-text-muted)'
             };
             return colors[status] || 'rgba(102, 126, 234, 0.8)';
         }

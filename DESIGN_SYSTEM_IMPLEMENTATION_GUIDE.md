@@ -171,11 +171,18 @@ In any HTML file, replace your current CSS:
 
 ## **📱 Responsive Design**
 
-### **Breakpoints**
-- `1024px+` - Desktop with visible sidebar
-- `768px-1024px` - Tablet with collapsible sidebar  
-- `480px-768px` - Mobile with stacked layout
-- `<480px` - Small mobile with reduced spacing
+### **Breakpoints** (Updated November 9, 2025)
+- **Mobile Small** (320px - 480px): iPhone SE, Small Android - Collapsed sidebar, full-width buttons
+- **Mobile Medium** (481px - 768px): iPhone 12/13/14, Samsung Galaxy - Collapsed sidebar
+- **Tablet Portrait** (769px - 1024px): iPad, iPad Mini - 64px icon-only sidebar
+- **Tablet Landscape** (1025px - 1280px): iPad Pro landscape - Full sidebar
+- **Large Desktop** (1281px+): Desktop monitors - Full feature set
+
+### **Touch Optimizations**
+- Minimum 44px touch targets for all interactive elements
+- 16px font size on inputs (prevents iOS zoom on focus)
+- Touch-specific media queries for hover effects
+- Landscape orientation support
 
 ### **Mobile Menu Implementation**
 ```html

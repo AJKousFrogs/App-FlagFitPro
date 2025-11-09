@@ -4,12 +4,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  /* PRIMARY BRAND COLORS */
-  --primary: #6366F1;           /* Primary Purple */
-  --primary-light: #818CF8;
-  --primary-dark: #4F46E5;
-  --primary-hover: #4F46E5;
-  --primary-active: #4338CA;
+  /* PRIMARY BRAND COLORS - Green Theme */
+  --primary: #10c96b;           /* Primary Green */
+  --primary-light: #40ccaf;
+  --primary-dark: #089949;
+  --primary-hover: #0ab85a;
+  --primary-active: #089949;
   
   /* SECONDARY COLORS */
   --success: #10B981;           /* Success Green */
@@ -45,7 +45,7 @@
   /* STATUS COLORS */
   --error: #EF4444;
   --warning: #F59E0B;
-  --info: #6366F1;
+  --info: #10c96b;  /* Green theme info color */
   
   /* BACKGROUND COLORS */
   --bg-primary: #FFFFFF;

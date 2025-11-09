@@ -9,28 +9,34 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./src/ui-design-system.css">
     <link rel="stylesheet" href="./src/hover-effects.css">
+    <link rel="stylesheet" href="./src/dark-theme.css">
+    <link rel="stylesheet" href="./src/light-theme.css" id="light-theme" disabled>
+    <!-- Lucide Icons - Modern icon library similar to Radix UI -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="./src/icon-helper.js"></script>
+    <script src="./src/theme-switcher.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js" defer></script>
     <style>
         .coach-dashboard {
-            background: var(--bg-secondary);
+            background: var(--dark-bg-primary);
             min-height: 100vh;
         }
 
         .coach-header {
-            background: var(--white);
-            border-bottom: 1px solid var(--border-light);
+            background: var(--dark-card-bg);
+            border: 1px solid var(--dark-border);
             padding: var(--space-6);
         }
 
         .coach-title {
             font-size: var(--text-h1);
             font-weight: var(--font-bold);
-            color: var(--gray-900);
+            color: var(--dark-text-primary);
             margin-bottom: var(--space-2);
         }
 
         .coach-subtitle {
-            color: var(--gray-600);
+            color: var(--dark-text-secondary);
             font-size: var(--text-lg);
         }
 
@@ -48,10 +54,10 @@
         }
 
         .athlete-card {
-            background: var(--white);
+            background: var(--dark-card-bg);
             border-radius: var(--radius-xl);
             padding: var(--space-6);
-            border: 1px solid var(--border-light);
+            border: 1px solid var(--dark-border);
             position: relative;
             overflow: hidden;
         }
@@ -71,19 +77,19 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--white);
+            color: var(--var(--dark-text-primary));
             font-weight: var(--font-bold);
             font-size: var(--text-xl);
         }
 
         .athlete-info h3 {
             font-weight: var(--font-semibold);
-            color: var(--gray-900);
+            color: var(--dark-text-primary);
             margin-bottom: var(--space-1);
         }
 
         .athlete-position {
-            color: var(--gray-600);
+            color: var(--dark-text-secondary);
             font-size: var(--text-sm);
         }
 
@@ -104,12 +110,12 @@
         .indicator-value {
             font-size: var(--text-xl);
             font-weight: var(--font-bold);
-            color: var(--gray-900);
+            color: var(--dark-text-primary);
         }
 
         .indicator-label {
             font-size: var(--text-xs);
-            color: var(--gray-600);
+            color: var(--dark-text-secondary);
             margin-top: var(--space-1);
         }
 
@@ -138,7 +144,7 @@
         .wellness-score {
             font-size: var(--text-lg);
             font-weight: var(--font-semibold);
-            color: var(--gray-900);
+            color: var(--dark-text-primary);
         }
 
         .alert-indicator {
@@ -162,7 +168,7 @@
             padding: var(--space-2);
             border: 1px solid var(--border-medium);
             border-radius: var(--radius-md);
-            background: var(--white);
+            background: var(--dark-card-bg);
             color: var(--gray-700);
             font-size: var(--text-sm);
             cursor: pointer;
@@ -182,10 +188,10 @@
         }
 
         .team-stats {
-            background: var(--white);
+            background: var(--dark-card-bg);
             border-radius: var(--radius-xl);
             padding: var(--space-6);
-            border: 1px solid var(--border-light);
+            border: 1px solid var(--dark-border);
         }
 
         .stats-grid {
@@ -210,14 +216,14 @@
 
         .stat-label {
             font-size: var(--text-sm);
-            color: var(--gray-600);
+            color: var(--dark-text-secondary);
         }
 
         .alerts-panel {
-            background: var(--white);
+            background: var(--dark-card-bg);
             border-radius: var(--radius-xl);
             padding: var(--space-6);
-            border: 1px solid var(--border-light);
+            border: 1px solid var(--dark-border);
         }
 
         .alert-item {
@@ -240,10 +246,10 @@
         }
 
         .performance-comparison {
-            background: var(--white);
+            background: var(--dark-card-bg);
             border-radius: var(--radius-xl);
             padding: var(--space-6);
-            border: 1px solid var(--border-light);
+            border: 1px solid var(--dark-border);
             margin-bottom: var(--space-8);
         }
 
@@ -257,9 +263,9 @@
             gap: var(--space-4);
             margin-bottom: var(--space-6);
             padding: var(--space-4);
-            background: var(--white);
+            background: var(--dark-card-bg);
             border-radius: var(--radius-lg);
-            border: 1px solid var(--border-light);
+            border: 1px solid var(--dark-border);
         }
 
         .filter-group {
@@ -279,7 +285,7 @@
             border: 1px solid var(--border-medium);
             border-radius: var(--radius-md);
             font-size: var(--text-sm);
-            background: var(--white);
+            background: var(--dark-card-bg);
         }
 
         @media (max-width: 768px) {
@@ -307,18 +313,18 @@
         <header class="coach-header">
             <div style="max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
                 <div>
-                    <h1 class="coach-title">🏈 Coach Dashboard</h1>
+                    <h1 class="coach-title"><i data-lucide="football" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Coach Dashboard</h1>
                     <p class="coach-subtitle">Monitor your team's performance and wellness</p>
                 </div>
                 <div style="display: flex; gap: var(--space-3); align-items: center;">
                     <button class="btn btn-secondary hover-lift" onclick="exportTeamReport()">
-                        📊 Export Report
+                        <i data-lucide="bar-chart-3" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Export Report
                     </button>
                     <button class="btn btn-primary hover-lift" onclick="scheduleTeamMeeting()">
-                        📅 Schedule Meeting
+                        <i data-lucide="calendar" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Schedule Meeting
                     </button>
                     <a href="/dashboard.html" class="btn btn-ghost hover-lift">
-                        ← Back to Dashboard
+                        <i data-lucide="chevron-left" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Back to Dashboard
                     </a>
                 </div>
             </div>
@@ -359,14 +365,14 @@
             <!-- Team Overview -->
             <div class="team-overview">
                 <div class="team-stats card hover-lift">
-                    <h3 style="font-size: var(--text-xl); font-weight: var(--font-semibold); margin-bottom: var(--space-4); color: var(--gray-900);">Team Performance Overview</h3>
+                    <h3 style="font-size: var(--text-xl); font-weight: var(--font-semibold); margin-bottom: var(--space-4); color: var(--dark-text-primary);">Team Performance Overview</h3>
                     <div class="stats-grid" id="teamStatsGrid">
                         <!-- Will be populated by JavaScript -->
                     </div>
                 </div>
 
                 <div class="alerts-panel card hover-lift">
-                    <h3 style="font-size: var(--text-xl); font-weight: var(--font-semibold); margin-bottom: var(--space-4); color: var(--gray-900);">⚠️ Active Alerts</h3>
+                    <h3 style="font-size: var(--text-xl); font-weight: var(--font-semibold); margin-bottom: var(--space-4); color: var(--dark-text-primary);">⚠️ Active Alerts</h3>
                     <div id="alertsList">
                         <!-- Will be populated by JavaScript -->
                     </div>
@@ -375,14 +381,14 @@
 
             <!-- Performance Comparison Chart -->
             <div class="performance-comparison card hover-lift">
-                <h3 style="font-size: var(--text-xl); font-weight: var(--font-semibold); margin-bottom: var(--space-4); color: var(--gray-900);">Team Performance Comparison</h3>
+                <h3 style="font-size: var(--text-xl); font-weight: var(--font-semibold); margin-bottom: var(--space-4); color: var(--dark-text-primary);">Team Performance Comparison</h3>
                 <div class="comparison-chart">
                     <canvas id="teamComparisonChart"></canvas>
                 </div>
             </div>
 
             <!-- Athletes Grid -->
-            <h2 style="font-size: var(--text-h2); font-weight: var(--font-bold); color: var(--gray-900); margin-bottom: var(--space-6);">Team Members</h2>
+            <h2 style="font-size: var(--text-h2); font-weight: var(--font-bold); color: var(--dark-text-primary); margin-bottom: var(--space-6);">Team Members</h2>
             <div class="athlete-grid" id="athleteGrid">
                 <!-- Will be populated by JavaScript -->
             </div>
@@ -507,7 +513,11 @@
 
         // Initialize coach dashboard
         document.addEventListener('DOMContentLoaded', async function() {
-            console.log('🏈 Coach Dashboard loading...');
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+            console.log('<i data-lucide="football" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Coach Dashboard loading...');
 
             // Check authentication
             if (!authManager.isAuthenticated()) {
@@ -532,9 +542,9 @@
                 // Initialize performance comparison chart
                 await initializeComparisonChart();
                 
-                console.log('✅ Coach dashboard initialized successfully');
+                console.log('<i data-lucide="check-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Coach dashboard initialized successfully');
             } catch (error) {
-                console.error('❌ Failed to initialize coach dashboard:', error);
+                console.error('<i data-lucide="x-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Failed to initialize coach dashboard:', error);
             }
         }
 
@@ -568,8 +578,8 @@
             
             if (alerts.length === 0) {
                 container.innerHTML = `
-                    <div style="text-align: center; color: var(--gray-500); padding: var(--space-4);">
-                        ✅ No active alerts
+                    <div style="text-align: center; color: var(--dark-text-muted); padding: var(--space-4);">
+                        <i data-lucide="check-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> No active alerts
                     </div>
                 `;
                 return;
@@ -579,8 +589,8 @@
                 <div class="alert-item ${alert.level}-priority hover-lift-small">
                     <div style="flex: 1;">
                         <div style="font-weight: var(--font-medium); margin-bottom: var(--space-1);">${alert.athlete}</div>
-                        <div style="font-size: var(--text-sm); color: var(--gray-600);">${alert.message}</div>
-                        <div style="font-size: var(--text-xs); color: var(--gray-500); margin-top: var(--space-1);">
+                        <div style="font-size: var(--text-sm); color: var(--dark-text-secondary);">${alert.message}</div>
+                        <div style="font-size: var(--text-xs); color: var(--dark-text-muted); margin-top: var(--space-1);">
                             ${new Date(alert.timestamp).toLocaleDateString()} ${new Date(alert.timestamp).toLocaleTimeString()}
                         </div>
                     </div>
@@ -656,15 +666,15 @@
                                 label: 'Team Average',
                                 data: [78, 82, 75, 80, 78, 85],
                                 backgroundColor: 'rgba(102, 126, 234, 0.2)',
-                                borderColor: '#667eea',
-                                pointBackgroundColor: '#667eea'
+                                borderColor: 'var(--primary-500)',
+                                pointBackgroundColor: 'var(--primary-500)'
                             },
                             {
                                 label: 'Top Performer',
                                 data: [95, 90, 88, 92, 85, 90],
                                 backgroundColor: 'rgba(16, 185, 129, 0.2)',
-                                borderColor: '#10b981',
-                                pointBackgroundColor: '#10b981'
+                                borderColor: 'var(--primary-500)',
+                                pointBackgroundColor: 'var(--primary-500)'
                             }
                         ]
                     },
@@ -700,19 +710,19 @@
                     }
                 });
                 
-                console.log('📈 Team comparison chart initialized');
+                console.log('<i data-lucide="bar-chart-3" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Team comparison chart initialized');
             } catch (error) {
-                console.error('❌ Failed to initialize comparison chart:', error);
+                console.error('<i data-lucide="x-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Failed to initialize comparison chart:', error);
             }
         }
 
         // Helper functions
         function getTrendIcon(trend) {
             switch (trend) {
-                case 'up': return '↗️';
-                case 'down': return '↘️';
-                case 'stable': return '→';
-                default: return '→';
+                case 'up': return '<i data-lucide="trending-up" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>️';
+                case 'down': return '<i data-lucide="trending-down" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>️';
+                case 'stable': return '<i data-lucide="chevron-right" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>';
+                default: return '<i data-lucide="chevron-right" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>';
             }
         }
 
@@ -769,7 +779,7 @@
         };
 
         window.messageAthlete = function(athleteId) {
-            console.log('💬 Messaging athlete:', athleteId);
+            console.log('<i data-lucide="message-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Messaging athlete:', athleteId);
             const athlete = MOCK_TEAM_DATA.athletes.find(a => a.id === athleteId);
             if (athlete) {
                 authManager.showInfo(`Opening messaging interface for ${athlete.name}. This would integrate with team communication tools.`);
@@ -777,12 +787,12 @@
         };
 
         window.exportTeamReport = function() {
-            console.log('📊 Exporting team report...');
+            console.log('<i data-lucide="bar-chart-3" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Exporting team report...');
             authManager.showSuccess('Team performance report would be generated and exported as PDF/Excel format with comprehensive analytics.');
         };
 
         window.scheduleTeamMeeting = function() {
-            console.log('📅 Scheduling team meeting...');
+            console.log('<i data-lucide="calendar" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Scheduling team meeting...');
             authManager.showInfo('Integration with calendar system would open here to schedule team meetings and training sessions.');
         };
     </script>

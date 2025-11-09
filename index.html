@@ -6,14 +6,18 @@
     <title>FlagFit Pro - Welcome</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./src/hover-effects.css">
+    <!-- Lucide Icons - Modern icon library similar to Radix UI -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="./src/icon-helper.js"></script>
+    <script src="./src/theme-switcher.js"></script>
     <style>
         body {
             font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             margin: 0;
             padding: 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #10c96b 0%, #0ab85a 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -21,7 +25,7 @@
         }
         .container {
             max-width: 600px;
-            background: white;
+            background: var(--dark-text-primary);
             padding: 50px;
             border-radius: 20px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
@@ -45,8 +49,8 @@
         }
         .cta-button {
             display: inline-block;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: linear-gradient(135deg, #10c96b 0%, #0ab85a 100%);
+            color: var(--dark-text-primary);
             padding: 15px 40px;
             text-decoration: none;
             border-radius: 10px;
@@ -90,41 +94,41 @@
         }
         .loading {
             display: none;
-            color: #667eea;
+            color: #10c96b;
             font-weight: 500;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="logo">🏈</div>
+        <div class="logo"><i data-lucide="football" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle;"></i></div>
         <h1>Welcome to FlagFit Pro</h1>
         <p>The ultimate flag football training and competition platform. Track your progress, join tournaments, and connect with the community.</p>
         
         <div class="features">
             <div class="feature">
-                <div class="feature-icon">📊</div>
+                <div class="feature-icon"><i data-lucide="bar-chart-3" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle;"></i></div>
                 <div class="feature-text">
                     <div class="feature-title">Performance Analytics</div>
                     <div class="feature-desc">Track your training sessions and game statistics</div>
                 </div>
             </div>
             <div class="feature">
-                <div class="feature-icon">🏆</div>
+                <div class="feature-icon"><i data-lucide="trophy" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle;"></i></div>
                 <div class="feature-text">
                     <div class="feature-title">Tournament System</div>
                     <div class="feature-desc">Join competitions and climb the leaderboards</div>
                 </div>
             </div>
             <div class="feature">
-                <div class="feature-icon">👥</div>
+                <div class="feature-icon"><i data-lucide="users" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle;"></i></div>
                 <div class="feature-text">
                     <div class="feature-title">Community Hub</div>
                     <div class="feature-desc">Connect with players, coaches, and teams</div>
                 </div>
             </div>
             <div class="feature">
-                <div class="feature-icon">⚡</div>
+                <div class="feature-icon"><i data-lucide="zap" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle;"></i></div>
                 <div class="feature-text">
                     <div class="feature-title">Training Programs</div>
                     <div class="feature-desc">Structured workouts and skill development</div>
@@ -136,12 +140,16 @@
         
         <div id="actionButtons">
             <a href="/login.html" class="cta-button">🔐 Sign In</a>
-            <a href="/register.html" class="cta-button" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">📝 Create Account</a>
+            <a href="/register.html" class="cta-button" style="background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);">📝 Create Account</a>
         </div>
     </div>
 
     <script type="module">
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
             // Skip authentication check and show login buttons immediately
             document.getElementById('loadingText').style.display = 'none';
             document.getElementById('actionButtons').style.display = 'block';

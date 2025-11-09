@@ -1,22 +1,31 @@
 # FlagFit Pro Design System Summary
 
 ## Overview
-This document provides a concise summary of the FlagFit Pro design system, which uses the **Radix Colors palette** and **Poppins typography** to create a modern, accessible, and consistent user interface.
+This document provides a concise summary of the FlagFit Pro design system, which uses a **Green Theme palette** and **Poppins/Inter typography** to create a modern, accessible, and consistent user interface.
+
+**Last Updated**: November 9, 2025
 
 ## 🎨 Color System
 
-### Radix Colors Palette
-The design system uses a comprehensive 12-step color scale for both light and dark themes:
+### Green Theme Palette
+The design system uses a comprehensive green-themed color scale for both light and dark themes:
+
+#### Primary Colors (Green Theme)
+- **Primary Green**: `#10c96b` (--primary-500) - Main brand color
+- **Primary Green Hover**: `#0ab85a` (--primary-600) - Hover states
+- **Primary Green Dark**: `#089949` (--primary-700) - Active states
+- **Secondary Lime**: `#89c300` (--secondary-500) - Secondary accents
+- **Tertiary Gold**: `#cc9610` (--tertiary-500) - Warm accents
 
 #### Light Theme
-- **Primary Accent**: `#5271FF` (Blue) - Main brand color
-- **Primary Gray**: `#111111` (Black) - Main text color  
-- **Primary Background**: `#FFFFFF` (White) - Main background
+- **Primary Accent**: `#10c96b` (Green) - Main brand color
+- **Text Primary**: `#1a1a1a` (Dark) - Main text color  
+- **Background**: `#ffffff` (White) - Main background
 
 #### Dark Theme
-- **Primary Accent**: `#FFFFFF` (White) - Main brand color
-- **Primary Gray**: `#5271FF` (Blue) - Main text color
-- **Primary Background**: `#111111` (Black) - Main background
+- **Primary Accent**: `#10c96b` (Green) - Main brand color
+- **Text Primary**: `#ffffff` (White) - Main text color
+- **Background**: `#0f0f0f` (Dark) - Main background
 
 ### Color Usage
 - **Accent colors**: Interactive elements, CTAs, brand elements
@@ -148,16 +157,16 @@ function toggleTheme() {
 ```css
 /* Light Theme (default) */
 :root {
-  --primary-accent: #5271FF;
-  --primary-gray: #111111;
+  --primary-accent: #10c96b; /* Green theme */
+  --primary-gray: #1a1a1a;
   --primary-background: #ffffff;
 }
 
 /* Dark Theme */
 [data-theme="dark"] {
-  --primary-accent: #ffffff;
-  --primary-gray: #5271FF;
-  --primary-background: #111111;
+  --primary-accent: #10c96b; /* Green theme */
+  --primary-gray: #ffffff;
+  --primary-background: #0f0f0f;
 }
 ```
 

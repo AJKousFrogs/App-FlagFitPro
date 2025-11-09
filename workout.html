@@ -8,9 +8,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./src/ui-design-system.css">
+    <link rel="stylesheet" href="./src/dark-theme.css">
+    <link rel="stylesheet" href="./src/light-theme.css" id="light-theme" disabled>
     <style>
         body {
-            background: var(--bg-secondary);
+            background: var(--dark-bg-primary);
             font-family: var(--font-body);
             margin: 0;
             padding: var(--space-4);
@@ -19,7 +21,7 @@
         .workout-container {
             max-width: 800px;
             margin: 0 auto;
-            background: var(--white);
+            background: var(--dark-card-bg);
             border-radius: var(--radius-xl);
             padding: var(--space-8);
             box-shadow: var(--shadow-lg);
@@ -29,13 +31,13 @@
             text-align: center;
             margin-bottom: var(--space-8);
             padding-bottom: var(--space-4);
-            border-bottom: 1px solid var(--border-light);
+            border: 1px solid var(--dark-border);
         }
 
         .workout-title {
             font-size: var(--text-3xl);
             font-weight: var(--font-bold);
-            color: var(--gray-900);
+            color: var(--dark-text-primary);
             margin-bottom: var(--space-2);
             text-transform: capitalize;
         }
@@ -56,7 +58,7 @@
             justify-content: space-between;
             align-items: center;
             padding: var(--space-4);
-            border: 1px solid var(--border-light);
+            border: 1px solid var(--dark-border);
             border-radius: var(--radius-lg);
             margin-bottom: var(--space-3);
             transition: all var(--transition-fast);
@@ -75,13 +77,13 @@
         .exercise-info h3 {
             font-size: var(--text-lg);
             font-weight: var(--font-semibold);
-            color: var(--gray-900);
+            color: var(--dark-text-primary);
             margin-bottom: var(--space-1);
         }
 
         .exercise-info p {
             font-size: var(--text-sm);
-            color: var(--gray-500);
+            color: var(--dark-text-muted);
         }
 
         .exercise-actions {
@@ -115,22 +117,22 @@
 
         .btn-start {
             background: var(--success);
-            color: white;
+            color: var(--dark-text-primary);
         }
 
         .btn-pause {
             background: var(--warning);
-            color: white;
+            color: var(--dark-text-primary);
         }
 
         .btn-stop {
             background: var(--error);
-            color: white;
+            color: var(--dark-text-primary);
         }
 
         .btn-complete {
             background: var(--primary);
-            color: white;
+            color: var(--dark-text-primary);
         }
 
         .progress-bar {
@@ -166,11 +168,13 @@
             color: var(--primary-dark);
         }
     </style>
+    <script src="./src/theme-switcher.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
     <div class="back-nav">
         <a href="/training.html" class="back-link">
-            <span>←</span>
+            <span><i data-lucide="chevron-left" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span>
             Back to Training
         </a>
     </div>
@@ -208,6 +212,10 @@
 
         // Initialize workout page
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
             // Check authentication
             if (!authManager.isAuthenticated()) {
                 window.location.href = '/login.html';

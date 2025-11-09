@@ -9,81 +9,39 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./src/ui-design-system.css">
     <link rel="stylesheet" href="./src/hover-effects.css">
+    <link rel="stylesheet" href="./src/dark-theme.css">
+    <link rel="stylesheet" href="./src/light-theme.css" id="light-theme" disabled>
+    <!-- Lucide Icons - Modern icon library similar to Radix UI -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="./src/icon-helper.js"></script>
+    <script src="./src/theme-switcher.js"></script>
     <style>
         /* Training-specific styles */
         .dashboard-container {
             display: flex;
             min-height: 100vh;
-            background: var(--bg-secondary);
+            background: var(--dark-bg-primary);
         }
 
-        .sidebar {
-            width: 280px;
-            background: var(--white);
-            border-right: 1px solid var(--border-light);
-            height: 100vh;
-            position: fixed;
-            left: 0;
-            top: 0;
-            overflow-y: auto;
-            z-index: 40;
-        }
+        
 
-        .sidebar-header {
-            padding: var(--space-6);
-            border-bottom: 1px solid var(--border-light);
-        }
+        
 
-        .sidebar-brand {
-            display: flex;
-            align-items: center;
-            gap: var(--space-3);
-            font-size: var(--text-xl);
-            font-weight: var(--font-bold);
-            color: var(--gray-900);
-            text-decoration: none;
-        }
+        
 
         .sidebar-nav {
             padding: var(--space-6);
         }
 
-        .nav-section {
-            margin-bottom: var(--space-6);
-        }
+        
 
-        .nav-section-title {
-            font-size: var(--text-xs);
-            font-weight: var(--font-semibold);
-            color: var(--gray-400);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: var(--space-3);
-        }
+        
 
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: var(--space-3);
-            padding: var(--space-3);
-            color: var(--gray-600);
-            text-decoration: none;
-            border-radius: var(--radius-lg);
-            transition: all var(--transition-fast);
-            margin-bottom: var(--space-1);
-            font-weight: var(--font-medium);
-            font-size: var(--text-sm);
-        }
+        
 
-        .nav-item:hover {
-            background: var(--gray-50);
-            color: var(--gray-900);
-        }
+        
 
-        .nav-item.active {
-            background: var(--primary);
-            color: var(--white);
-        }
+        
 
         .nav-icon {
             width: 20px;
@@ -92,18 +50,14 @@
         }
 
         .main-content {
-            margin-left: 280px;
+            margin-left: 64px;
+            margin-top: 70px;
             flex: 1;
-            padding: var(--space-8);
-            background: var(--bg-secondary);
+            padding: 32px;
+            background: var(--dark-bg-primary);
         }
 
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--space-8);
-        }
+        
 
         .welcome-section h1 {
             font-family: var(--font-heading);
@@ -139,14 +93,14 @@
             border: 1px solid var(--border-medium);
             border-radius: var(--radius-lg);
             font-size: var(--text-sm);
-            background: var(--white);
+            background: var(--dark-card-bg);
             transition: all var(--transition-fast);
         }
 
         .search-input:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            box-shadow: 0 0 0 3px rgba(16, 201, 107, 0.1);
         }
 
         .search-icon {
@@ -179,7 +133,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--white);
+            color: var(--var(--dark-text-primary));
             font-weight: var(--font-semibold);
         }
 
@@ -192,10 +146,10 @@
         }
 
         .stat-card {
-            background: var(--white);
+            background: var(--dark-card-bg);
             border-radius: var(--radius-xl);
             padding: var(--space-6);
-            border: 1px solid var(--border-light);
+            border: 1px solid var(--dark-border);
             box-shadow: var(--shadow-sm);
             transition: all var(--transition-normal);
         }
@@ -261,10 +215,10 @@
         }
 
         .workouts-section {
-            background: var(--white);
+            background: var(--dark-card-bg);
             border-radius: var(--radius-xl);
             padding: var(--space-6);
-            border: 1px solid var(--border-light);
+            border: 1px solid var(--dark-border);
             box-shadow: var(--shadow-sm);
         }
 
@@ -278,7 +232,7 @@
         .section-title {
             font-size: var(--text-xl);
             font-weight: var(--font-semibold);
-            color: var(--gray-900);
+            color: var(--dark-text-primary);
         }
 
         .workout-card {
@@ -286,7 +240,7 @@
             align-items: center;
             gap: var(--space-4);
             padding: var(--space-5);
-            border: 1px solid var(--border-light);
+            border: 1px solid var(--dark-border);
             border-radius: var(--radius-lg);
             margin-bottom: var(--space-4);
             transition: all var(--transition-normal);
@@ -307,7 +261,7 @@
             align-items: center;
             justify-content: center;
             font-size: 24px;
-            color: white;
+            color: var(--dark-text-primary);
         }
 
         .workout-content {
@@ -317,13 +271,13 @@
         .workout-title {
             font-size: var(--text-lg);
             font-weight: var(--font-semibold);
-            color: var(--gray-900);
+            color: var(--dark-text-primary);
             margin-bottom: var(--space-1);
         }
 
         .workout-description {
             font-size: var(--text-sm);
-            color: var(--gray-500);
+            color: var(--dark-text-muted);
             margin-bottom: var(--space-2);
         }
 
@@ -335,10 +289,10 @@
         }
 
         .progress-section {
-            background: var(--white);
+            background: var(--dark-card-bg);
             border-radius: var(--radius-xl);
             padding: var(--space-6);
-            border: 1px solid var(--border-light);
+            border: 1px solid var(--dark-border);
             box-shadow: var(--shadow-sm);
             margin-bottom: var(--space-6);
         }
@@ -360,13 +314,13 @@
         .progress-stat-value {
             font-size: var(--text-2xl);
             font-weight: var(--font-bold);
-            color: var(--gray-900);
+            color: var(--dark-text-primary);
             margin-bottom: var(--space-1);
         }
 
         .progress-stat-label {
             font-size: var(--text-xs);
-            color: var(--gray-500);
+            color: var(--dark-text-muted);
             font-weight: var(--font-medium);
         }
 
@@ -381,10 +335,10 @@
         }
 
         .achievements-section {
-            background: var(--white);
+            background: var(--dark-card-bg);
             border-radius: var(--radius-xl);
             padding: var(--space-6);
-            border: 1px solid var(--border-light);
+            border: 1px solid var(--dark-border);
             box-shadow: var(--shadow-sm);
         }
 
@@ -419,13 +373,13 @@
         .achievement-title {
             font-size: var(--text-sm);
             font-weight: var(--font-semibold);
-            color: var(--gray-900);
+            color: var(--dark-text-primary);
             margin-bottom: var(--space-1);
         }
 
         .achievement-description {
             font-size: var(--text-xs);
-            color: var(--gray-500);
+            color: var(--dark-text-muted);
         }
 
         .achievement-badge {
@@ -434,7 +388,7 @@
             padding: var(--space-1) var(--space-2);
             border-radius: var(--radius-sm);
             background: var(--success);
-            color: white;
+            color: var(--dark-text-primary);
         }
 
         .quick-start-btn {
@@ -444,7 +398,7 @@
             width: 64px;
             height: 64px;
             background: var(--primary);
-            color: white;
+            color: var(--dark-text-primary);
             border: none;
             border-radius: 50%;
             font-size: 24px;
@@ -508,55 +462,34 @@
 </head>
 <body>
     <div class="dashboard-container">
-        <!-- Sidebar -->
+        <!-- Sidebar - Icon Only -->
         <div class="sidebar">
-            <div class="sidebar-header">
-                <a href="/dashboard.html" class="sidebar-brand">
-                    <span>🏈</span>
-                    FlagFit Pro
-                </a>
+            <div class="sidebar-logo" onclick="window.location.href='/dashboard.html'" title="FlagFit Pro">
+                <i data-lucide="football" style="width: 20px;  height: 20px ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
             </div>
-            
-            <nav class="sidebar-nav">
-                <div class="nav-section">
-                    <div class="nav-section-title">Main</div>
-                    <a href="/dashboard.html" class="nav-item hover-lift-small">
-                        <span class="nav-icon">📊</span>
-                        Dashboard
-                    </a>
-                    <a href="/training.html" class="nav-item active">
-                        <span class="nav-icon">⚡</span>
-                        Training
-                    </a>
-                    <a href="/tournaments.html" class="nav-item hover-lift-small">
-                        <span class="nav-icon">🏆</span>
-                        Tournaments
-                    </a>
-                    <a href="/community.html" class="nav-item hover-lift-small">
-                        <span class="nav-icon">👥</span>
-                        Community
-                    </a>
-                    <a href="/coach.html" class="nav-item hover-lift-small">
-                        <span class="nav-icon">📋</span>
-                        Coach
-                    </a>
-                </div>
-                
-                <div class="nav-section">
-                    <div class="nav-section-title">Analytics</div>
-                    <a href="/analytics.html" class="nav-item hover-lift-small">
-                        <span class="nav-icon">📈</span>
-                        Analytics
-                    </a>
-                    <a href="/settings.html" class="nav-item hover-lift-small">
-                        <span class="nav-icon">⚙️</span>
-                        Settings
-                    </a>
-                </div>
-            </nav>
+            <a href="/dashboard.html" class="sidebar-icon " title="Dashboard">
+                <i data-lucide="layout-dashboard" style="width: 20px;  height: 20px  ; ; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
+            </a>
+            <a href="/roster.html" class="sidebar-icon " title="Team Roster">
+                <i data-lucide="users" style="width: 20px;  height: 20px  ; ; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
+            </a>
+            <a href="/training.html" class="sidebar-icon active" title="Training">
+                <i data-lucide="zap" style="width: 20px;  height: 20px  ; ; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
+            </a>
+            <a href="/tournaments.html" class="sidebar-icon " title="Tournaments">
+                <i data-lucide="trophy" style="width: 20px;  height: 20px  ; ; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
+            </a>
+            <a href="/analytics.html" class="sidebar-icon " title="Analytics">
+                <i data-lucide="bar-chart-3" style="width: 20px;  height: 20px  ; ; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
+            </a>
+            <a href="/community.html" class="sidebar-icon " title="Community">
+                <i data-lucide="message-circle" style="width: 20px;  height: 20px  ; ; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
+            </a>
+            <a href="/settings.html" class="sidebar-icon " title="Settings">
+                <i data-lucide="settings" style="width: 20px;  height: 20px  ; ; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
+            </a>
         </div>
 
-        <!-- Main Content -->
         <main class="main-content">
             <!-- Top Bar -->
             <div class="top-bar">
@@ -567,7 +500,7 @@
                 
                 <div class="top-actions">
                     <div class="search-box">
-                        <span class="search-icon">🔍</span>
+                        <span class="search-icon"><i data-lucide="search" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle; ; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span>
                         <input type="text" class="search-input" placeholder="Search workouts, exercises, videos...">
                     </div>
                     
@@ -575,16 +508,16 @@
                         <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--gray-100); display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; transition: all var(--transition-fast);" 
                              onmouseover="this.style.background='var(--gray-200)'" 
                              onmouseout="this.style.background='var(--gray-100)'">
-                            🔔
+                            <i data-lucide="bell" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
                         </div>
-                        <div style="position: absolute; top: -2px; right: -2px; width: 16px; height: 16px; background: var(--error); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: var(--font-bold);">2</div>
+                        <div style="position: absolute; top: -2px; right: -2px; width: 16px; height: 16px; background: var(--error); color: var(--dark-text-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: var(--font-bold);">2</div>
                     </div>
                     
                     <div class="user-menu">
                         <div class="user-avatar">JD</div>
                         <div>
-                            <div style="font-size: var(--text-sm); font-weight: var(--font-medium); color: var(--gray-900);" id="user-display-name-training">Loading...</div>
-                            <div style="font-size: var(--text-xs); color: var(--gray-500);">Player View</div>
+                            <div style="font-size: var(--text-sm); font-weight: var(--font-medium); color: var(--dark-text-primary);" id="user-display-name-training">Loading...</div>
+                            <div style="font-size: var(--text-xs); color: var(--dark-text-muted);">Player View</div>
                         </div>
                     </div>
                 </div>
@@ -595,11 +528,11 @@
                 <div class="stat-card">
                     <div class="stat-header">
                         <span class="stat-title">This Week</span>
-                        <div class="stat-icon" style="background: var(--success-bg); color: var(--success);">⚡</div>
+                        <div class="stat-icon" style="background: var(--success-bg); color: var(--success);"><i data-lucide="zap" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></div>
                     </div>
-                    <div class="stat-value">4<span style="font-size: var(--text-lg); color: var(--gray-500);">/6</span></div>
+                    <div class="stat-value">4<span style="font-size: var(--text-lg); color: var(--dark-text-muted);">/6</span></div>
                     <div style="width: 100%; height: 6px; background: var(--gray-200); border-radius: 3px; margin: var(--space-2) 0;">
-                        <div style="width: 67%; height: 100%; background: linear-gradient(90deg, var(--success), #34d399); border-radius: 3px; transition: width 0.5s ease;"></div>
+                        <div style="width: 67%; height: 100%; background: linear-gradient(90deg, var(--success), var(--success-400)); border-radius: 3px; transition: width 0.5s ease;"></div>
                     </div>
                     <div class="stat-change positive">
                         <span>🔥</span>
@@ -610,11 +543,11 @@
                 <div class="stat-card">
                     <div class="stat-header">
                         <span class="stat-title">Current Streak</span>
-                        <div class="stat-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--accent);">🎯</div>
+                        <div class="stat-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--accent);"><i data-lucide="target" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></div>
                     </div>
-                    <div class="stat-value">12<span style="font-size: var(--text-lg); color: var(--gray-500);"> days</span></div>
+                    <div class="stat-value">12<span style="font-size: var(--text-lg); color: var(--dark-text-muted);"> days</span></div>
                     <div class="stat-change positive">
-                        <span>📈</span>
+                        <span><i data-lucide="bar-chart-3" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span>
                         <span>Personal best streak!</span>
                     </div>
                 </div>
@@ -622,9 +555,9 @@
                 <div class="stat-card">
                     <div class="stat-header">
                         <span class="stat-title">Total Hours</span>
-                        <div class="stat-icon" style="background: rgba(99, 102, 241, 0.1); color: var(--primary);">⏱️</div>
+                        <div class="stat-icon" style="background: rgba(16, 201, 107, 0.1); color: var(--primary);">⏱️</div>
                     </div>
-                    <div class="stat-value">28.5<span style="font-size: var(--text-lg); color: var(--gray-500);">h</span></div>
+                    <div class="stat-value">28.5<span style="font-size: var(--text-lg); color: var(--dark-text-muted);">h</span></div>
                     <div class="stat-change positive">
                         <span>⬆️</span>
                         <span>+4.2h this week</span>
@@ -634,11 +567,11 @@
                 <div class="stat-card">
                     <div class="stat-header">
                         <span class="stat-title">Next Session</span>
-                        <div class="stat-icon" style="background: rgba(236, 72, 153, 0.1); color: #ec4899;">🏃</div>
+                        <div class="stat-icon" style="background: rgba(137, 195, 0, 0.1); color: var(--secondary-500);">🏃</div>
                     </div>
                     <div class="stat-value" style="font-size: var(--text-lg);">Olympic Prep</div>
-                    <div class="stat-change" style="color: var(--gray-600);">
-                        <span>📅</span>
+                    <div class="stat-change" style="color: var(--dark-text-secondary);">
+                        <span><i data-lucide="calendar" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span>
                         <span>Today at 3:00 PM</span>
                     </div>
                 </div>
@@ -649,11 +582,11 @@
                 <!-- Workouts Section -->
                 <div class="workouts-section">
                     <div class="section-header">
-                        <h2 class="section-title">⚡ Available Workouts</h2>
+                        <h2 class="section-title"><i data-lucide="zap" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Available Workouts</h2>
                     </div>
 
                     <div class="workout-card" onclick="startWorkout('speed')" style="cursor: pointer;">
-                        <div class="workout-icon" style="background: var(--speed-training); color: white;">
+                        <div class="workout-icon" style="background: var(--speed-training); color: var(--dark-text-primary);">
                             🏃
                         </div>
                         <div class="workout-content">
@@ -669,8 +602,8 @@
                     </div>
 
                     <div class="workout-card" onclick="startWorkout('strength')" style="cursor: pointer;">
-                        <div class="workout-icon" style="background: var(--strength-training); color: white;">
-                            💪
+                        <div class="workout-icon" style="background: var(--strength-training); color: var(--dark-text-primary);">
+                            <i data-lucide="dumbbell" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
                         </div>
                         <div class="workout-content">
                             <h3 class="workout-title">Strength Training</h3>
@@ -685,7 +618,7 @@
                     </div>
 
                     <div class="workout-card" onclick="startWorkout('agility')" style="cursor: pointer;">
-                        <div class="workout-icon" style="background: var(--agility-training); color: white;">
+                        <div class="workout-icon" style="background: var(--agility-training); color: var(--dark-text-primary);">
                             🤸
                         </div>
                         <div class="workout-content">
@@ -701,7 +634,7 @@
                     </div>
 
                     <div class="workout-card" onclick="startWorkout('endurance')" style="cursor: pointer;">
-                        <div class="workout-icon" style="background: var(--endurance-training); color: white;">
+                        <div class="workout-icon" style="background: var(--endurance-training); color: var(--dark-text-primary);">
                             ❤️
                         </div>
                         <div class="workout-content">
@@ -716,33 +649,33 @@
                         <button class="btn btn-primary">Start</button>
                     </div>
 
-                    <div class="workout-card" onclick="openOffseasonProgram()" style="cursor: pointer; border: 2px solid #10b981;">
-                        <div class="workout-icon" style="background: linear-gradient(135deg, #10b981, #059669); color: white;">
-                            🏆
+                    <div class="workout-card" onclick="openOffseasonProgram()" style="cursor: pointer; border: 2px solid var(--primary-500);">
+                        <div class="workout-icon" style="background: linear-gradient(135deg, var(--primary-500), var(--primary-600)); color: var(--dark-text-primary);">
+                            <i data-lucide="trophy" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
                         </div>
                         <div class="workout-content">
                             <h3 class="workout-title">14-Week WR/DB Program</h3>
                             <p class="workout-description">Complete WR/DB performance optimization program</p>
                             <div class="workout-meta">
-                                <span>📅 14 weeks</span>
-                                <span>🎯 Olympic-level training</span>
-                                <span>⚡ Nov 2025 - Feb 2026</span>
+                                <span><i data-lucide="calendar" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> 14 weeks</span>
+                                <span><i data-lucide="target" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Olympic-level training</span>
+                                <span><i data-lucide="zap" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Nov 2025 - Feb 2026</span>
                             </div>
                         </div>
                         <button class="btn btn-primary">View Program</button>
                     </div>
 
-                    <div class="workout-card" onclick="openQBProgram()" style="cursor: pointer; border: 2px solid #3b82f6;">
-                        <div class="workout-icon" style="background: linear-gradient(135deg, #3b82f6, #1e40af); color: white;">
-                            🎯
+                    <div class="workout-card" onclick="openQBProgram()" style="cursor: pointer; border: 2px solid var(--primary-500);">
+                        <div class="workout-icon" style="background: linear-gradient(135deg, var(--primary-500), var(--primary-700)); color: var(--dark-text-primary);">
+                            <i data-lucide="target" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
                         </div>
                         <div class="workout-content">
                             <h3 class="workout-title">14-Week Elite QB Program</h3>
                             <p class="workout-description">Complete quarterback development for 320 throws/weekend</p>
                             <div class="workout-meta">
-                                <span>📅 14 weeks</span>
-                                <span>🎯 320 throws capacity</span>
-                                <span>⚡ Dual-track training</span>
+                                <span><i data-lucide="calendar" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> 14 weeks</span>
+                                <span><i data-lucide="target" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> 320 throws capacity</span>
+                                <span><i data-lucide="zap" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Dual-track training</span>
                             </div>
                         </div>
                         <button class="btn btn-primary">View Program</button>
@@ -759,7 +692,7 @@
                     <!-- Progress Section -->
                     <div class="progress-section">
                         <div class="section-header">
-                            <h2 class="section-title">📊 Training Progress</h2>
+                            <h2 class="section-title"><i data-lucide="bar-chart-3" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Training Progress</h2>
                         </div>
 
                         <div class="progress-stats">
@@ -785,11 +718,11 @@
                     <!-- Achievements Section -->
                     <div class="achievements-section">
                         <div class="section-header">
-                            <h2 class="section-title">🏆 Recent Achievements</h2>
+                            <h2 class="section-title"><i data-lucide="trophy" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Recent Achievements</h2>
                         </div>
 
                         <div class="achievement-item">
-                            <div class="achievement-icon" style="background: linear-gradient(135deg, #fbbf24, #f59e0b);">
+                            <div class="achievement-icon" style="background: linear-gradient(135deg, var(--tertiary-400), var(--tertiary-500));">
                                 🏃
                             </div>
                             <div class="achievement-content">
@@ -800,8 +733,8 @@
                         </div>
 
                         <div class="achievement-item">
-                            <div class="achievement-icon" style="background: linear-gradient(135deg, #34d399, #10b981);">
-                                💪
+                            <div class="achievement-icon" style="background: linear-gradient(135deg, var(--success-400), var(--primary-500));">
+                                <i data-lucide="dumbbell" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
                             </div>
                             <div class="achievement-content">
                                 <div class="achievement-title">Strength Builder</div>
@@ -810,8 +743,8 @@
                         </div>
 
                         <div class="achievement-item">
-                            <div class="achievement-icon" style="background: linear-gradient(135deg, #a78bfa, #8b5cf6);">
-                                🎯
+                            <div class="achievement-icon" style="background: linear-gradient(135deg, var(--primary-400), var(--primary-600));">
+                                <i data-lucide="target" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
                             </div>
                             <div class="achievement-content">
                                 <div class="achievement-title">Consistency King</div>
@@ -820,7 +753,7 @@
                         </div>
 
                         <div class="achievement-item">
-                            <div class="achievement-icon" style="background: linear-gradient(135deg, #fb7185, #f43f5e);">
+                            <div class="achievement-icon" style="background: linear-gradient(135deg, var(--secondary-400), var(--secondary-600));">
                                 🔥
                             </div>
                             <div class="achievement-content">
@@ -836,7 +769,7 @@
 
     <!-- Quick Start Button -->
     <button class="quick-start-btn" onclick="quickStart()">
-        ⚡
+        <i data-lucide="zap" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
     </button>
 
     <script type="module">
@@ -846,6 +779,10 @@
 
         // Initialize training page
         document.addEventListener('DOMContentLoaded', async function() {
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
             // Check authentication
             if (!authManager.isAuthenticated()) {
                 window.location.href = '/login.html';
@@ -883,16 +820,16 @@
             try {
                 console.log('🎥 Initializing YouTube training videos...');
                 const videoComponent = new TrainingVideoComponent('training-videos-container');
-                console.log('✅ Training videos component initialized');
+                console.log('<i data-lucide="check-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Training videos component initialized');
             } catch (error) {
-                console.error('❌ Error initializing training videos:', error);
+                console.error('<i data-lucide="x-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Error initializing training videos:', error);
                 // Show fallback message
                 const container = document.getElementById('training-videos-container');
                 if (container) {
                     container.innerHTML = `
-                        <div style="background: var(--white); border-radius: var(--radius-xl); padding: var(--space-6); border: 1px solid var(--border-light); text-align: center;">
+                        <div style="background: var(--dark-card-bg); border: 1px solid var(--dark-border); text-align: center;">
                             <h3 style="color: var(--gray-700); margin-bottom: var(--space-3);">📺 Training Videos</h3>
-                            <p style="color: var(--gray-500); margin-bottom: var(--space-4);">Training videos are temporarily unavailable.</p>
+                            <p style="color: var(--dark-text-muted); margin-bottom: var(--space-4);">Training videos are temporarily unavailable.</p>
                             <a href="https://www.youtube.com/results?search_query=flag+football+training+drills" target="_blank" class="btn btn-primary">
                                 Search YouTube Manually
                             </a>
@@ -993,119 +930,119 @@
             const modal = document.createElement('div');
             modal.innerHTML = `
                 <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000; overflow-y: auto;">
-                    <div style="background: white; padding: 2rem; border-radius: 16px; max-width: 800px; max-height: 90vh; overflow-y: auto; margin: 2rem;">
+                    <div style="background: var(--dark-text-primary); padding: 2rem; border-radius: 16px; max-width: 800px; max-height: 90vh; overflow-y: auto; margin: 2rem;">
                         <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 2rem;">
-                            <h2 style="color: var(--gray-900); margin: 0; flex: 1;">🏆 14-Week Flag Football Offseason Program</h2>
-                            <button onclick="this.closest('div').remove()" style="background: none; border: none; font-size: 24px; cursor: pointer; padding: 0.5rem;">✕</button>
+                            <h2 style="color: var(--dark-text-primary); margin: 0; flex: 1;"><i data-lucide="trophy" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> 14-Week Flag Football Offseason Program</h2>
+                            <button onclick="this.closest('div').remove()" style="background: none; border: none; font-size: 24px; cursor: pointer; padding: 0.5rem;"><i data-lucide="x" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></button>
                         </div>
                         
-                        <div style="background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
+                        <div style="background: linear-gradient(135deg, var(--primary-500), var(--primary-600)); color: var(--dark-text-primary); padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
                             <h3 style="margin: 0 0 1rem 0;">WR/DB PERFORMANCE OPTIMIZATION</h3>
                             <p style="margin: 0; opacity: 0.9;">November 17, 2025 - February 28, 2026 (14 Weeks)</p>
                         </div>
 
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
-                            <div style="background: #f8fafc; padding: 1.5rem; border-radius: 12px; text-align: center;">
-                                <div style="font-size: 2rem; font-weight: bold; color: #10b981; margin-bottom: 0.5rem;">5-6</div>
-                                <div style="color: #6b7280; font-size: 0.9rem;">Days/Week</div>
+                            <div style="background: var(--dark-bg-primary); padding: 1.5rem; border-radius: 12px; text-align: center;">
+                                <div style="font-size: 2rem; font-weight: bold; color: var(--primary-500); margin-bottom: 0.5rem;">5-6</div>
+                                <div style="color: var(--dark-text-muted); font-size: 0.9rem;">Days/Week</div>
                             </div>
-                            <div style="background: #f8fafc; padding: 1.5rem; border-radius: 12px; text-align: center;">
-                                <div style="font-size: 2rem; font-weight: bold; color: #3b82f6; margin-bottom: 0.5rem;">60-90</div>
-                                <div style="color: #6b7280; font-size: 0.9rem;">Minutes/Session</div>
+                            <div style="background: var(--dark-bg-primary); padding: 1.5rem; border-radius: 12px; text-align: center;">
+                                <div style="font-size: 2rem; font-weight: bold; color: var(--primary-500); margin-bottom: 0.5rem;">60-90</div>
+                                <div style="color: var(--dark-text-muted); font-size: 0.9rem;">Minutes/Session</div>
                             </div>
-                            <div style="background: #f8fafc; padding: 1.5rem; border-radius: 12px; text-align: center;">
-                                <div style="font-size: 2rem; font-weight: bold; color: #f59e0b; margin-bottom: 0.5rem;">40%</div>
-                                <div style="color: #6b7280; font-size: 0.9rem;">Max Load (BW)</div>
+                            <div style="background: var(--dark-bg-primary); padding: 1.5rem; border-radius: 12px; text-align: center;">
+                                <div style="font-size: 2rem; font-weight: bold; color: var(--tertiary-500); margin-bottom: 0.5rem;">40%</div>
+                                <div style="color: var(--dark-text-muted); font-size: 0.9rem;">Max Load (BW)</div>
                             </div>
                         </div>
 
                         <div style="margin-bottom: 2rem;">
-                            <h3 style="color: var(--gray-900); margin-bottom: 1rem;">📋 Training Phases</h3>
+                            <h3 style="color: var(--dark-text-primary); margin-bottom: 1rem;"><i data-lucide="clipboard-list" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Training Phases</h3>
                             <div style="display: grid; gap: 1rem;">
-                                <div onclick="showPhaseDetails('foundation')" style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; cursor: pointer; transition: all 0.2s;">
+                                <div onclick="showPhaseDetails('foundation')" style="border: 1px solid var(--dark-border); border-radius: 8px; padding: 1rem; cursor: pointer; transition: all 0.2s;">
                                     <div style="display: flex; justify-content: between; align-items: center;">
                                         <div>
-                                            <h4 style="margin: 0 0 0.5rem 0; color: #1f2937;">🏗️ Foundation Phase (Weeks 1-4)</h4>
-                                            <p style="margin: 0; color: #6b7280; font-size: 0.9rem;">December 1-28, 2025 • Movement quality, structural strength, base conditioning</p>
+                                            <h4 style="margin: 0 0 0.5rem 0; color: var(--dark-text-primary);">🏗️ Foundation Phase (Weeks 1-4)</h4>
+                                            <p style="margin: 0; color: var(--dark-text-muted); font-size: 0.9rem;">December 1-28, 2025 • Movement quality, structural strength, base conditioning</p>
                                         </div>
-                                        <span style="font-size: 1.2rem; color: #9ca3af;">➤</span>
+                                        <span style="font-size: 1.2rem; color: var(--dark-text-muted);">➤</span>
                                     </div>
                                 </div>
                                 
-                                <div onclick="showPhaseDetails('strength')" style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; cursor: pointer; transition: all 0.2s;">
+                                <div onclick="showPhaseDetails('strength')" style="border: 1px solid var(--dark-border); border-radius: 8px; padding: 1rem; cursor: pointer; transition: all 0.2s;">
                                     <div style="display: flex; justify-content: between; align-items: center;">
                                         <div>
-                                            <h4 style="margin: 0 0 0.5rem 0; color: #1f2937;">💪 Strength Development (Weeks 5-8)</h4>
-                                            <p style="margin: 0; color: #6b7280; font-size: 0.9rem;">January 5 - February 1, 2026 • Maximum strength, power introduction, increased sprint volume</p>
+                                            <h4 style="margin: 0 0 0.5rem 0; color: var(--dark-text-primary);"><i data-lucide="dumbbell" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Strength Development (Weeks 5-8)</h4>
+                                            <p style="margin: 0; color: var(--dark-text-muted); font-size: 0.9rem;">January 5 - February 1, 2026 • Maximum strength, power introduction, increased sprint volume</p>
                                         </div>
-                                        <span style="font-size: 1.2rem; color: #9ca3af;">➤</span>
+                                        <span style="font-size: 1.2rem; color: var(--dark-text-muted);">➤</span>
                                     </div>
                                 </div>
                                 
-                                <div onclick="showPhaseDetails('power')" style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; cursor: pointer; transition: all 0.2s;">
+                                <div onclick="showPhaseDetails('power')" style="border: 1px solid var(--dark-border); border-radius: 8px; padding: 1rem; cursor: pointer; transition: all 0.2s;">
                                     <div style="display: flex; justify-content: between; align-items: center;">
                                         <div>
-                                            <h4 style="margin: 0 0 0.5rem 0; color: #1f2937;">⚡ Power Phase (Weeks 9-12)</h4>
-                                            <p style="margin: 0; color: #6b7280; font-size: 0.9rem;">February 2-28, 2026 • Explosive power, reactive abilities, game-specific conditioning</p>
+                                            <h4 style="margin: 0 0 0.5rem 0; color: var(--dark-text-primary);"><i data-lucide="zap" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Power Phase (Weeks 9-12)</h4>
+                                            <p style="margin: 0; color: var(--dark-text-muted); font-size: 0.9rem;">February 2-28, 2026 • Explosive power, reactive abilities, game-specific conditioning</p>
                                         </div>
-                                        <span style="font-size: 1.2rem; color: #9ca3af;">➤</span>
+                                        <span style="font-size: 1.2rem; color: var(--dark-text-muted);">➤</span>
                                     </div>
                                 </div>
                                 
-                                <div onclick="showPhaseDetails('competition')" style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; cursor: pointer; transition: all 0.2s;">
+                                <div onclick="showPhaseDetails('competition')" style="border: 1px solid var(--dark-border); border-radius: 8px; padding: 1rem; cursor: pointer; transition: all 0.2s;">
                                     <div style="display: flex; justify-content: between; align-items: center;">
                                         <div>
-                                            <h4 style="margin: 0 0 0.5rem 0; color: #1f2937;">🏆 Competition Prep (Weeks 13-14)</h4>
-                                            <p style="margin: 0; color: #6b7280; font-size: 0.9rem;">March 2-15, 2026 • Peak performance, outdoor transition, taper</p>
+                                            <h4 style="margin: 0 0 0.5rem 0; color: var(--dark-text-primary);"><i data-lucide="trophy" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Competition Prep (Weeks 13-14)</h4>
+                                            <p style="margin: 0; color: var(--dark-text-muted); font-size: 0.9rem;">March 2-15, 2026 • Peak performance, outdoor transition, taper</p>
                                         </div>
-                                        <span style="font-size: 1.2rem; color: #9ca3af;">➤</span>
+                                        <span style="font-size: 1.2rem; color: var(--dark-text-muted);">➤</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <div style="margin-bottom: 2rem;">
-                            <h3 style="color: var(--gray-900); margin-bottom: 1rem;">🎯 Training Priorities</h3>
+                            <h3 style="color: var(--dark-text-primary); margin-bottom: 1rem;"><i data-lucide="target" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Training Priorities</h3>
                             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
-                                <div style="background: #fef3c7; padding: 1rem; border-radius: 8px; border-left: 4px solid #f59e0b;">
-                                    <h4 style="margin: 0 0 0.5rem 0; color: #92400e;">✅ Posterior Chain Strength</h4>
-                                    <p style="margin: 0; font-size: 0.9rem; color: #78350f;">Nordic curls, RDLs, hip thrusts (injury prevention + power)</p>
+                                <div style="background: var(--tertiary-100); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--tertiary-500);">
+                                    <h4 style="margin: 0 0 0.5rem 0; color: var(--tertiary-700);"><i data-lucide="check-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Posterior Chain Strength</h4>
+                                    <p style="margin: 0; font-size: 0.9rem; color: var(--tertiary-800);">Nordic curls, RDLs, hip thrusts (injury prevention + power)</p>
                                 </div>
-                                <div style="background: #dbeafe; padding: 1rem; border-radius: 8px; border-left: 4px solid #3b82f6;">
-                                    <h4 style="margin: 0 0 0.5rem 0; color: #1e40af;">⚡ Sprint Development</h4>
-                                    <p style="margin: 0; font-size: 0.9rem; color: #1e3a8a;">Evidence-based track & field research methods</p>
+                                <div style="background: var(--primary-100); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--primary-500);">
+                                    <h4 style="margin: 0 0 0.5rem 0; color: var(--primary-700);"><i data-lucide="zap" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Sprint Development</h4>
+                                    <p style="margin: 0; font-size: 0.9rem; color: var(--primary-700);">Evidence-based track & field research methods</p>
                                 </div>
-                                <div style="background: #d1fae5; padding: 1rem; border-radius: 8px; border-left: 4px solid #10b981;">
-                                    <h4 style="margin: 0 0 0.5rem 0; color: #047857;">🏃 Game Conditioning</h4>
-                                    <p style="margin: 0; font-size: 0.9rem; color: #065f46;">40+ sprints per game capacity (RSA training)</p>
+                                <div style="background: var(--success-100); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--primary-500);">
+                                    <h4 style="margin: 0 0 0.5rem 0; color: var(--primary-700);">🏃 Game Conditioning</h4>
+                                    <p style="margin: 0; font-size: 0.9rem; color: var(--primary-800);">40+ sprints per game capacity (RSA training)</p>
                                 </div>
-                                <div style="background: #fce7f3; padding: 1rem; border-radius: 8px; border-left: 4px solid #ec4899;">
-                                    <h4 style="margin: 0 0 0.5rem 0; color: #be185d;">🏥 Lower Body Chain</h4>
-                                    <p style="margin: 0; font-size: 0.9rem; color: #9d174d;">Ankle/knee/hip/quad optimization & health</p>
+                                <div style="background: var(--secondary-100); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--secondary-500);">
+                                    <h4 style="margin: 0 0 0.5rem 0; color: var(--secondary-500);">🏥 Lower Body Chain</h4>
+                                    <p style="margin: 0; font-size: 0.9rem; color: var(--secondary-600);">Ankle/knee/hip/quad optimization & health</p>
                                 </div>
                             </div>
                         </div>
 
-                        <div style="background: #f8fafc; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
-                            <h3 style="margin: 0 0 1rem 0; color: #1f2937;">📏 Daily Protocols</h3>
+                        <div style="background: var(--dark-bg-primary); padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
+                            <h3 style="margin: 0 0 1rem 0; color: var(--dark-text-primary);"><i data-lucide="ruler" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Daily Protocols</h3>
                             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
                                 <div>
-                                    <h4 style="margin: 0 0 0.5rem 0; color: #374151; font-size: 0.9rem;">🌅 Every Morning</h4>
-                                    <p style="margin: 0; font-size: 0.8rem; color: #6b7280;">15min Full Body Mobility Routine</p>
+                                    <h4 style="margin: 0 0 0.5rem 0; color: var(--dark-text-secondary); font-size: 0.9rem;">🌅 Every Morning</h4>
+                                    <p style="margin: 0; font-size: 0.8rem; color: var(--dark-text-muted);">15min Full Body Mobility Routine</p>
                                 </div>
                                 <div>
-                                    <h4 style="margin: 0 0 0.5rem 0; color: #374151; font-size: 0.9rem;">🏃 Every Session</h4>
-                                    <p style="margin: 0; font-size: 0.8rem; color: #6b7280;">Universal Warm-Up (15-20min)</p>
+                                    <h4 style="margin: 0 0 0.5rem 0; color: var(--dark-text-secondary); font-size: 0.9rem;">🏃 Every Session</h4>
+                                    <p style="margin: 0; font-size: 0.8rem; color: var(--dark-text-muted);">Universal Warm-Up (15-20min)</p>
                                 </div>
                                 <div>
-                                    <h4 style="margin: 0 0 0.5rem 0; color: #374151; font-size: 0.9rem;">🧘 Sundays</h4>
-                                    <p style="margin: 0; font-size: 0.8rem; color: #6b7280;">Recovery Protocol (45-60min)</p>
+                                    <h4 style="margin: 0 0 0.5rem 0; color: var(--dark-text-secondary); font-size: 0.9rem;"><i data-lucide="heart-pulse" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Sundays</h4>
+                                    <p style="margin: 0; font-size: 0.8rem; color: var(--dark-text-muted);">Recovery Protocol (45-60min)</p>
                                 </div>
                             </div>
                         </div>
 
-                        <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
-                            <h3 style="margin: 0 0 1rem 0;">🎯 Expected Results (Week 14)</h3>
+                        <div style="background: linear-gradient(135deg, var(--primary-500), var(--primary-600)); color: var(--dark-text-primary); padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
+                            <h3 style="margin: 0 0 1rem 0;"><i data-lucide="target" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Expected Results (Week 14)</h3>
                             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
                                 <div style="text-align: center;">
                                     <div style="font-size: 1.5rem; font-weight: bold; margin-bottom: 0.25rem;">0.15-0.35s</div>
@@ -1127,8 +1064,8 @@
                         </div>
 
                         <div style="display: flex; gap: 1rem; justify-content: center;">
-                            <button onclick="downloadProgram()" style="background: var(--primary); color: white; border: none; padding: 1rem 2rem; border-radius: 8px; cursor: pointer; font-weight: 600;">📥 Download Full Program</button>
-                            <button onclick="startProgram()" style="background: #10b981; color: white; border: none; padding: 1rem 2rem; border-radius: 8px; cursor: pointer; font-weight: 600;">🚀 Start Week 1</button>
+                            <button onclick="downloadProgram()" style="background: var(--primary); color: var(--dark-text-primary); border: none; padding: 1rem 2rem; border-radius: 8px; cursor: pointer; font-weight: 600;">📥 Download Full Program</button>
+                            <button onclick="startProgram()" style="background: var(--primary-500); color: var(--dark-text-primary); border: none; padding: 1rem 2rem; border-radius: 8px; cursor: pointer; font-weight: 600;">🚀 Start Week 1</button>
                             <button onclick="this.closest('div').remove()" style="background: var(--gray-200); color: var(--gray-700); border: none; padding: 1rem 2rem; border-radius: 8px; cursor: pointer;">Maybe Later</button>
                         </div>
                     </div>
@@ -1153,7 +1090,7 @@
                     sample: "Week 1 Monday: RDLs 4×10, Nordic Curls 3×AMRAP, Hip Thrusts 3×12, Goblet Squats 3×10"
                 },
                 strength: {
-                    title: "💪 Strength Development (Weeks 5-8)", 
+                    title: "<i data-lucide="dumbbell" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Strength Development (Weeks 5-8)", 
                     period: "January 5 - February 1, 2026",
                     goals: [
                         "Build maximum strength (heavy loads)",
@@ -1166,7 +1103,7 @@
                     sample: "Week 5 Monday: Isometric Squat Push 6×6s @ 100%, Back Squats 5×5 @ 80-85%, Nordic Curls 5×6-8"
                 },
                 power: {
-                    title: "⚡ Power Phase (Weeks 9-12)",
+                    title: "<i data-lucide="zap" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Power Phase (Weeks 9-12)",
                     period: "February 2-28, 2026", 
                     goals: [
                         "Convert strength to explosive power",
@@ -1179,7 +1116,7 @@
                     sample: "Week 9 Monday: Box Jumps 6×2 (max height), Depth Jumps 6×3, Broad Jumps 5×2 (max distance)"
                 },
                 competition: {
-                    title: "🏆 Competition Prep (Weeks 13-14)",
+                    title: "<i data-lucide="trophy" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Competition Prep (Weeks 13-14)",
                     period: "March 2-15, 2026",
                     goals: [
                         "Outdoor transition complete",
@@ -1197,28 +1134,28 @@
             const modal = document.createElement('div');
             modal.innerHTML = `
                 <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1001;">
-                    <div style="background: white; padding: 2rem; border-radius: 16px; max-width: 600px; max-height: 80vh; overflow-y: auto;">
+                    <div style="background: var(--dark-text-primary); padding: 2rem; border-radius: 16px; max-width: 600px; max-height: 80vh; overflow-y: auto;">
                         <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 1.5rem;">
-                            <h2 style="color: var(--gray-900); margin: 0; flex: 1;">${data.title}</h2>
-                            <button onclick="this.closest('div').remove()" style="background: none; border: none; font-size: 24px; cursor: pointer;">✕</button>
+                            <h2 style="color: var(--dark-text-primary); margin: 0; flex: 1;">${data.title}</h2>
+                            <button onclick="this.closest('div').remove()" style="background: none; border: none; font-size: 24px; cursor: pointer;"><i data-lucide="x" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></button>
                         </div>
                         
-                        <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <div style="background: var(--dark-bg-primary); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
                             <strong>Period:</strong> ${data.period}
                         </div>
 
-                        <h3 style="margin-bottom: 1rem; color: #1f2937;">Training Goals:</h3>
-                        <ul style="margin-bottom: 1.5rem; color: #374151;">
-                            ${data.goals.map(goal => `<li style="margin-bottom: 0.5rem;">✅ ${goal}</li>`).join('')}
+                        <h3 style="margin-bottom: 1rem; color: var(--dark-text-primary);">Training Goals:</h3>
+                        <ul style="margin-bottom: 1.5rem; color: var(--dark-text-secondary);">
+                            ${data.goals.map(goal => `<li style="margin-bottom: 0.5rem;"><i data-lucide="check-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> ${goal}</li>`).join('')}
                         </ul>
 
-                        <h3 style="margin-bottom: 1rem; color: #1f2937;">Sample Workout:</h3>
-                        <div style="background: #e0f2fe; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; font-family: monospace; font-size: 0.9rem;">
+                        <h3 style="margin-bottom: 1rem; color: var(--dark-text-primary);">Sample Workout:</h3>
+                        <div style="background: var(--primary-50); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; font-family: monospace; font-size: 0.9rem;">
                             ${data.sample}
                         </div>
 
                         <div style="text-align: center;">
-                            <button onclick="this.closest('div').remove()" style="background: var(--primary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer;">Got it!</button>
+                            <button onclick="this.closest('div').remove()" style="background: var(--primary); color: var(--dark-text-primary); border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer;">Got it!</button>
                         </div>
                     </div>
                 </div>
@@ -1254,36 +1191,36 @@
             const modal = document.createElement('div');
             modal.innerHTML = `
                 <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1001;">
-                    <div style="background: white; padding: 2rem; border-radius: 16px; max-width: 600px;">
-                        <h2 style="margin-bottom: 1.5rem; color: #1f2937; text-align: center;">🚀 Week 1 - Foundation Phase</h2>
+                    <div style="background: var(--dark-text-primary); padding: 2rem; border-radius: 16px; max-width: 600px;">
+                        <h2 style="margin-bottom: 1.5rem; color: var(--dark-text-primary); text-align: center;">🚀 Week 1 - Foundation Phase</h2>
                         
-                        <div style="background: #f0fdf4; border: 1px solid #10b981; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
-                            <h3 style="margin: 0 0 0.5rem 0; color: #047857;">This Week's Focus:</h3>
-                            <p style="margin: 0; color: #065f46; font-size: 0.9rem;">Build structural strength, learn movement patterns, establish posterior chain foundation</p>
+                        <div style="background: var(--success-50); border: 1px solid var(--primary-500); border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
+                            <h3 style="margin: 0 0 0.5rem 0; color: var(--primary-700);">This Week's Focus:</h3>
+                            <p style="margin: 0; color: var(--primary-800); font-size: 0.9rem;">Build structural strength, learn movement patterns, establish posterior chain foundation</p>
                         </div>
 
                         <div style="margin-bottom: 1.5rem;">
-                            <h3 style="margin-bottom: 1rem; color: #1f2937;">Select Today's Workout:</h3>
+                            <h3 style="margin-bottom: 1rem; color: var(--dark-text-primary);">Select Today's Workout:</h3>
                             <div style="display: grid; gap: 0.75rem;">
-                                <button onclick="startWeek1Workout('monday')" style="text-align: left; background: #f9fafb; border: 1px solid #d1d5db; padding: 1rem; border-radius: 8px; cursor: pointer;">
+                                <button onclick="startWeek1Workout('monday')" style="text-align: left; background: #f9fafb; border: 1px solid var(--dark-border); padding: 1rem; border-radius: 8px; cursor: pointer;">
                                     <strong>Monday:</strong> Lower Body Foundation + Posterior Chain Introduction (50 min)
                                 </button>
-                                <button onclick="startWeek1Workout('tuesday')" style="text-align: left; background: #f9fafb; border: 1px solid #d1d5db; padding: 1rem; border-radius: 8px; cursor: pointer;">
+                                <button onclick="startWeek1Workout('tuesday')" style="text-align: left; background: #f9fafb; border: 1px solid var(--dark-border); padding: 1rem; border-radius: 8px; cursor: pointer;">
                                     <strong>Tuesday:</strong> Sprint Mechanics + Conditioning Introduction (50 min)
                                 </button>
-                                <button onclick="startWeek1Workout('wednesday')" style="text-align: left; background: #f9fafb; border: 1px solid #d1d5db; padding: 1rem; border-radius: 8px; cursor: pointer;">
+                                <button onclick="startWeek1Workout('wednesday')" style="text-align: left; background: #f9fafb; border: 1px solid var(--dark-border); padding: 1rem; border-radius: 8px; cursor: pointer;">
                                     <strong>Wednesday:</strong> Active Recovery + Mobility (40 min)
                                 </button>
-                                <button onclick="startWeek1Workout('thursday')" style="text-align: left; background: #f9fafb; border: 1px solid #d1d5db; padding: 1rem; border-radius: 8px; cursor: pointer;">
+                                <button onclick="startWeek1Workout('thursday')" style="text-align: left; background: #f9fafb; border: 1px solid var(--dark-border); padding: 1rem; border-radius: 8px; cursor: pointer;">
                                     <strong>Thursday:</strong> Lower Body Strength + Plyometric Introduction (50 min)
                                 </button>
-                                <button onclick="startWeek1Workout('friday')" style="text-align: left; background: #f9fafb; border: 1px solid #d1d5db; padding: 1rem; border-radius: 8px; cursor: pointer;">
+                                <button onclick="startWeek1Workout('friday')" style="text-align: left; background: #f9fafb; border: 1px solid var(--dark-border); padding: 1rem; border-radius: 8px; cursor: pointer;">
                                     <strong>Friday:</strong> Power Introduction + Quick Feet (50 min)
                                 </button>
-                                <button onclick="startWeek1Workout('saturday')" style="text-align: left; background: #f9fafb; border: 1px solid #d1d5db; padding: 1rem; border-radius: 8px; cursor: pointer;">
+                                <button onclick="startWeek1Workout('saturday')" style="text-align: left; background: #f9fafb; border: 1px solid var(--dark-border); padding: 1rem; border-radius: 8px; cursor: pointer;">
                                     <strong>Saturday:</strong> Sprint Work (Indoor/Outdoor Options) (45 min)
                                 </button>
-                                <button onclick="startWeek1Workout('sunday')" style="text-align: left; background: #f9fafb; border: 1px solid #d1d5db; padding: 1rem; border-radius: 8px; cursor: pointer;">
+                                <button onclick="startWeek1Workout('sunday')" style="text-align: left; background: #f9fafb; border: 1px solid var(--dark-border); padding: 1rem; border-radius: 8px; cursor: pointer;">
                                     <strong>Sunday:</strong> Recovery Day (45 min)
                                 </button>
                             </div>
@@ -1314,20 +1251,20 @@
             const modal = document.createElement('div');
             modal.innerHTML = `
                 <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000; overflow-y: auto;">
-                    <div style="background: white; padding: 2rem; border-radius: 16px; max-width: 900px; max-height: 90vh; overflow-y: auto; margin: 2rem;">
+                    <div style="background: var(--dark-text-primary); padding: 2rem; border-radius: 16px; max-width: 900px; max-height: 90vh; overflow-y: auto; margin: 2rem;">
                         <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 2rem;">
-                            <h2 style="color: var(--gray-900); margin: 0; flex: 1;">🎯 14-Week Elite Quarterback Program</h2>
-                            <button onclick="this.closest('div').remove()" style="background: none; border: none; font-size: 24px; cursor: pointer; padding: 0.5rem;">✕</button>
+                            <h2 style="color: var(--dark-text-primary); margin: 0; flex: 1;"><i data-lucide="target" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> 14-Week Elite Quarterback Program</h2>
+                            <button onclick="this.closest('div').remove()" style="background: none; border: none; font-size: 24px; cursor: pointer; padding: 0.5rem;"><i data-lucide="x" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></button>
                         </div>
                         
-                        <div style="background: linear-gradient(135deg, #3b82f6, #1e40af); color: white; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
+                        <div style="background: linear-gradient(135deg, var(--primary-500), var(--primary-700)); color: var(--dark-text-primary); padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
                             <h3 style="margin: 0 0 1rem 0;">ELITE QB DEVELOPMENT</h3>
                             <p style="margin: 0; opacity: 0.9;">November 17, 2025 - February 28, 2026 • Prepare for 320 throws/weekend</p>
                         </div>
 
-                        <div style="background: #fee2e2; border: 2px solid #ef4444; border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem;">
-                            <h3 style="margin: 0 0 1rem 0; color: #991b1b;">🚨 The QB Challenge: 320 Throws in a Weekend</h3>
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; color: #7f1d1d;">
+                        <div style="background: var(--error-100); border: 2px solid var(--error-500); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem;">
+                            <h3 style="margin: 0 0 1rem 0; color: var(--error-800);">🚨 The QB Challenge: 320 Throws in a Weekend</h3>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; color: var(--error-900);">
                                 <div style="text-align: center;">
                                     <div style="font-size: 1.5rem; font-weight: bold;">8</div>
                                     <div style="font-size: 0.8rem;">Games/Weekend</div>
@@ -1345,15 +1282,15 @@
                                     <div style="font-size: 0.8rem;">Between Games</div>
                                 </div>
                             </div>
-                            <p style="margin: 1rem 0 0 0; font-size: 0.9rem; color: #7f1d1d; text-align: center;"><strong>This requires EXTREME preparation - sustained accuracy under fatigue</strong></p>
+                            <p style="margin: 1rem 0 0 0; font-size: 0.9rem; color: var(--error-900); text-align: center;"><strong>This requires EXTREME preparation - sustained accuracy under fatigue</strong></p>
                         </div>
 
                         <div style="margin-bottom: 2rem;">
-                            <h3 style="color: var(--gray-900); margin-bottom: 1rem;">🏋️ Dual-Track Training Approach</h3>
+                            <h3 style="color: var(--dark-text-primary); margin-bottom: 1rem;">🏋️ Dual-Track Training Approach</h3>
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
-                                <div style="background: #f0fdf4; border: 2px solid #10b981; border-radius: 12px; padding: 1.5rem;">
-                                    <h4 style="margin: 0 0 1rem 0; color: #047857;">💪 Track 1: Lower Body (Same as WR/DB)</h4>
-                                    <ul style="margin: 0; color: #065f46; font-size: 0.9rem; padding-left: 1rem;">
+                                <div style="background: var(--success-50); border: 2px solid var(--primary-500); border-radius: 12px; padding: 1.5rem;">
+                                    <h4 style="margin: 0 0 1rem 0; color: var(--primary-700);"><i data-lucide="dumbbell" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Track 1: Lower Body (Same as WR/DB)</h4>
+                                    <ul style="margin: 0; color: var(--primary-800); font-size: 0.9rem; padding-left: 1rem;">
                                         <li>Sprint speed and acceleration</li>
                                         <li>Explosive power development</li>
                                         <li>Posterior chain strength</li>
@@ -1361,9 +1298,9 @@
                                         <li>Game conditioning</li>
                                     </ul>
                                 </div>
-                                <div style="background: #eff6ff; border: 2px solid #3b82f6; border-radius: 12px; padding: 1.5rem;">
-                                    <h4 style="margin: 0 0 1rem 0; color: #1e40af;">🎯 Track 2: Upper Body (QB-Specific)</h4>
-                                    <ul style="margin: 0; color: #1e3a8a; font-size: 0.9rem; padding-left: 1rem;">
+                                <div style="background: var(--primary-50); border: 2px solid var(--primary-500); border-radius: 12px; padding: 1.5rem;">
+                                    <h4 style="margin: 0 0 1rem 0; color: var(--primary-700);"><i data-lucide="target" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Track 2: Upper Body (QB-Specific)</h4>
+                                    <ul style="margin: 0; color: var(--primary-700); font-size: 0.9rem; padding-left: 1rem;">
                                         <li>Arm strength and velocity</li>
                                         <li>Shoulder mobility and health</li>
                                         <li>Throwing endurance (320+ throws)</li>
@@ -1375,82 +1312,82 @@
                         </div>
 
                         <div style="margin-bottom: 2rem;">
-                            <h3 style="color: var(--gray-900); margin-bottom: 1rem;">📊 Evidence-Based QB Research</h3>
+                            <h3 style="color: var(--dark-text-primary); margin-bottom: 1rem;"><i data-lucide="bar-chart-3" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Evidence-Based QB Research</h3>
                             <div style="display: grid; gap: 1rem;">
-                                <div style="background: #fef3c7; padding: 1rem; border-radius: 8px; border-left: 4px solid #f59e0b;">
-                                    <h4 style="margin: 0 0 0.5rem 0; color: #92400e;">💪 Arm Strength & Velocity</h4>
-                                    <p style="margin: 0; font-size: 0.9rem; color: #78350f;">Rotator cuff strength correlates with velocity (r=0.72) • Posterior deltoid = primary velocity generator • Triceps contribute 23% of ball velocity</p>
+                                <div style="background: var(--tertiary-100); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--tertiary-500);">
+                                    <h4 style="margin: 0 0 0.5rem 0; color: var(--tertiary-700);"><i data-lucide="dumbbell" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Arm Strength & Velocity</h4>
+                                    <p style="margin: 0; font-size: 0.9rem; color: var(--tertiary-800);">Rotator cuff strength correlates with velocity (r=0.72) • Posterior deltoid = primary velocity generator • Triceps contribute 23% of ball velocity</p>
                                 </div>
-                                <div style="background: #dbeafe; padding: 1rem; border-radius: 8px; border-left: 4px solid #3b82f6;">
-                                    <h4 style="margin: 0 0 0.5rem 0; color: #1e40af;">🦵 Hip Flexor Critical</h4>
-                                    <p style="margin: 0; font-size: 0.9rem; color: #1e3a8a;">Hip flexibility increases stride length 8-12% • Tight hip flexors reduce velocity 15-20% • NON-NEGOTIABLE for QBs</p>
+                                <div style="background: var(--primary-100); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--primary-500);">
+                                    <h4 style="margin: 0 0 0.5rem 0; color: var(--primary-700);">🦵 Hip Flexor Critical</h4>
+                                    <p style="margin: 0; font-size: 0.9rem; color: var(--primary-700);">Hip flexibility increases stride length 8-12% • Tight hip flexors reduce velocity 15-20% • NON-NEGOTIABLE for QBs</p>
                                 </div>
-                                <div style="background: #dcfce7; padding: 1rem; border-radius: 8px; border-left: 4px solid #16a34a;">
-                                    <h4 style="margin: 0 0 0.5rem 0; color: #15803d;">📏 Shoulder Mobility</h4>
-                                    <p style="margin: 0; font-size: 0.9rem; color: #14532d;">External rotation: 110-130° optimal • Limited mobility increases injury risk 340% • Daily mobility mandatory</p>
+                                <div style="background: var(--success-100); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--success-600);">
+                                    <h4 style="margin: 0 0 0.5rem 0; color: var(--success-700);"><i data-lucide="ruler" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Shoulder Mobility</h4>
+                                    <p style="margin: 0; font-size: 0.9rem; color: var(--success-900);">External rotation: 110-130° optimal • Limited mobility increases injury risk 340% • Daily mobility mandatory</p>
                                 </div>
-                                <div style="background: #fce7f3; padding: 1rem; border-radius: 8px; border-left: 4px solid #ec4899;">
-                                    <h4 style="margin: 0 0 0.5rem 0; color: #be185d;">💥 Back Strength Integration</h4>
-                                    <p style="margin: 0; font-size: 0.9rem; color: #9d174d;">Lats provide 18% of throwing power • Thoracic extension adds 8-12 mph • Back training = throwing power</p>
+                                <div style="background: var(--secondary-100); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--secondary-500);">
+                                    <h4 style="margin: 0 0 0.5rem 0; color: var(--secondary-500);">💥 Back Strength Integration</h4>
+                                    <p style="margin: 0; font-size: 0.9rem; color: var(--secondary-600);">Lats provide 18% of throwing power • Thoracic extension adds 8-12 mph • Back training = throwing power</p>
                                 </div>
                             </div>
                         </div>
 
                         <div style="margin-bottom: 2rem;">
-                            <h3 style="color: var(--gray-900); margin-bottom: 1rem;">⏰ Weekly Training Schedule</h3>
-                            <div style="background: #f8fafc; padding: 1.5rem; border-radius: 12px;">
+                            <h3 style="color: var(--dark-text-primary); margin-bottom: 1rem;">⏰ Weekly Training Schedule</h3>
+                            <div style="background: var(--dark-bg-primary); padding: 1.5rem; border-radius: 12px;">
                                 <div style="display: grid; gap: 0.75rem; font-size: 0.9rem;">
-                                    <div style="display: flex; justify-content: space-between; padding: 0.5rem; background: white; border-radius: 6px;">
+                                    <div style="display: flex; justify-content: space-between; padding: 0.5rem; background: var(--dark-text-primary); border-radius: 6px;">
                                         <strong>MONDAY:</strong> <span>Lower body strength + QB arm strength</span>
                                     </div>
-                                    <div style="display: flex; justify-content: space-between; padding: 0.5rem; background: white; border-radius: 6px;">
+                                    <div style="display: flex; justify-content: space-between; padding: 0.5rem; background: var(--dark-text-primary); border-radius: 6px;">
                                         <strong>TUESDAY:</strong> <span>Sprint/bounds + QB shoulder mobility</span>
                                     </div>
-                                    <div style="display: flex; justify-content: space-between; padding: 0.5rem; background: white; border-radius: 6px;">
+                                    <div style="display: flex; justify-content: space-between; padding: 0.5rem; background: var(--dark-text-primary); border-radius: 6px;">
                                         <strong>WEDNESDAY:</strong> <span>Recovery + QB hip flexor/back work</span>
                                     </div>
-                                    <div style="display: flex; justify-content: space-between; padding: 0.5rem; background: white; border-radius: 6px;">
+                                    <div style="display: flex; justify-content: space-between; padding: 0.5rem; background: var(--dark-text-primary); border-radius: 6px;">
                                         <strong>THURSDAY:</strong> <span>Lower power + QB throwing integration</span>
                                     </div>
-                                    <div style="display: flex; justify-content: space-between; padding: 0.5rem; background: white; border-radius: 6px;">
+                                    <div style="display: flex; justify-content: space-between; padding: 0.5rem; background: var(--dark-text-primary); border-radius: 6px;">
                                         <strong>FRIDAY:</strong> <span>Speed/RSA + QB endurance training</span>
                                     </div>
-                                    <div style="display: flex; justify-content: space-between; padding: 0.5rem; background: white; border-radius: 6px;">
+                                    <div style="display: flex; justify-content: space-between; padding: 0.5rem; background: var(--dark-text-primary); border-radius: 6px;">
                                         <strong>SATURDAY:</strong> <span>Sprint work + QB throwing session</span>
                                     </div>
-                                    <div style="display: flex; justify-content: space-between; padding: 0.5rem; background: white; border-radius: 6px;">
+                                    <div style="display: flex; justify-content: space-between; padding: 0.5rem; background: var(--dark-text-primary); border-radius: 6px;">
                                         <strong>SUNDAY:</strong> <span>Complete recovery (lower + upper body)</span>
                                     </div>
                                 </div>
-                                <div style="text-align: center; margin-top: 1rem; font-size: 0.9rem; color: #6b7280;">
+                                <div style="text-align: center; margin-top: 1rem; font-size: 0.9rem; color: var(--dark-text-muted);">
                                     <strong>Total Weekly Time:</strong> 7-9 hours • <strong>Lower body:</strong> 50-65 min • <strong>QB work:</strong> 30-45 min
                                 </div>
                             </div>
                         </div>
 
                         <div style="margin-bottom: 2rem;">
-                            <h3 style="color: var(--gray-900); margin-bottom: 1rem;">🏥 QB-Specific Warm-Up Protocol</h3>
-                            <div style="background: #fef2f2; border: 1px solid #fca5a5; border-radius: 8px; padding: 1.5rem;">
-                                <h4 style="margin: 0 0 1rem 0; color: #991b1b;">Enhanced 30-Minute QB Prep (Every Session)</h4>
+                            <h3 style="color: var(--dark-text-primary); margin-bottom: 1rem;">🏥 QB-Specific Warm-Up Protocol</h3>
+                            <div style="background: var(--error-50); border: 1px solid var(--error-300); border-radius: 8px; padding: 1.5rem;">
+                                <h4 style="margin: 0 0 1rem 0; color: var(--error-800);">Enhanced 30-Minute QB Prep (Every Session)</h4>
                                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; font-size: 0.9rem;">
                                     <div>
-                                        <h5 style="margin: 0 0 0.5rem 0; color: #7f1d1d;">Phase 1: General (8 min)</h5>
-                                        <p style="margin: 0; color: #991b1b;">Light jog • Jump rope • Arm circles • Dynamic stretch</p>
+                                        <h5 style="margin: 0 0 0.5rem 0; color: var(--error-900);">Phase 1: General (8 min)</h5>
+                                        <p style="margin: 0; color: var(--error-800);">Light jog • Jump rope • Arm circles • Dynamic stretch</p>
                                     </div>
                                     <div>
-                                        <h5 style="margin: 0 0 0.5rem 0; color: #7f1d1d;">Phase 2: Shoulder (12 min)</h5>
-                                        <p style="margin: 0; color: #991b1b;">Rotator cuff • Scapular stabilization • Shoulder mobility</p>
+                                        <h5 style="margin: 0 0 0.5rem 0; color: var(--error-900);">Phase 2: Shoulder (12 min)</h5>
+                                        <p style="margin: 0; color: var(--error-800);">Rotator cuff • Scapular stabilization • Shoulder mobility</p>
                                     </div>
                                     <div>
-                                        <h5 style="margin: 0 0 0.5rem 0; color: #7f1d1d;">Phase 3: Integration (10 min)</h5>
-                                        <p style="margin: 0; color: #991b1b;">Hip & back activation • Progressive throwing motion</p>
+                                        <h5 style="margin: 0 0 0.5rem 0; color: var(--error-900);">Phase 3: Integration (10 min)</h5>
+                                        <p style="margin: 0; color: var(--error-800);">Hip & back activation • Progressive throwing motion</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
-                            <h3 style="margin: 0 0 1rem 0;">🎯 Expected QB Improvements</h3>
+                        <div style="background: linear-gradient(135deg, var(--primary-500), var(--primary-600)); color: var(--dark-text-primary); padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
+                            <h3 style="margin: 0 0 1rem 0;"><i data-lucide="target" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Expected QB Improvements</h3>
                             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem;">
                                 <div style="text-align: center;">
                                     <div style="font-size: 1.4rem; font-weight: bold; margin-bottom: 0.25rem;">+8-15 mph</div>
@@ -1480,53 +1417,53 @@
                         </div>
 
                         <div style="margin-bottom: 2rem;">
-                            <h3 style="color: var(--gray-900); margin-bottom: 1rem;">📋 Training Phases Overview</h3>
+                            <h3 style="color: var(--dark-text-primary); margin-bottom: 1rem;"><i data-lucide="clipboard-list" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Training Phases Overview</h3>
                             <div style="display: grid; gap: 1rem;">
-                                <div onclick="showQBPhaseDetails('foundation')" style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; cursor: pointer; transition: all 0.2s;">
+                                <div onclick="showQBPhaseDetails('foundation')" style="border: 1px solid var(--dark-border); border-radius: 8px; padding: 1rem; cursor: pointer; transition: all 0.2s;">
                                     <div style="display: flex; justify-content: between; align-items: center;">
                                         <div>
-                                            <h4 style="margin: 0 0 0.5rem 0; color: #1f2937;">🏗️ Foundation Phase (Weeks 1-4) - December</h4>
-                                            <p style="margin: 0; color: #6b7280; font-size: 0.9rem;">Build arm care protocols • Establish shoulder mobility • Learn throwing mechanics</p>
+                                            <h4 style="margin: 0 0 0.5rem 0; color: var(--dark-text-primary);">🏗️ Foundation Phase (Weeks 1-4) - December</h4>
+                                            <p style="margin: 0; color: var(--dark-text-muted); font-size: 0.9rem;">Build arm care protocols • Establish shoulder mobility • Learn throwing mechanics</p>
                                         </div>
-                                        <span style="font-size: 1.2rem; color: #9ca3af;">➤</span>
+                                        <span style="font-size: 1.2rem; color: var(--dark-text-muted);">➤</span>
                                     </div>
                                 </div>
                                 
-                                <div onclick="showQBPhaseDetails('strength')" style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; cursor: pointer; transition: all 0.2s;">
+                                <div onclick="showQBPhaseDetails('strength')" style="border: 1px solid var(--dark-border); border-radius: 8px; padding: 1rem; cursor: pointer; transition: all 0.2s;">
                                     <div style="display: flex; justify-content: between; align-items: center;">
                                         <div>
-                                            <h4 style="margin: 0 0 0.5rem 0; color: #1f2937;">💪 Strength Development (Weeks 5-8) - January</h4>
-                                            <p style="margin: 0; color: #6b7280; font-size: 0.9rem;">Maximum arm strength • Peak throwing endurance 150+ throws • Power development</p>
+                                            <h4 style="margin: 0 0 0.5rem 0; color: var(--dark-text-primary);"><i data-lucide="dumbbell" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Strength Development (Weeks 5-8) - January</h4>
+                                            <p style="margin: 0; color: var(--dark-text-muted); font-size: 0.9rem;">Maximum arm strength • Peak throwing endurance 150+ throws • Power development</p>
                                         </div>
-                                        <span style="font-size: 1.2rem; color: #9ca3af;">➤</span>
+                                        <span style="font-size: 1.2rem; color: var(--dark-text-muted);">➤</span>
                                     </div>
                                 </div>
                                 
-                                <div onclick="showQBPhaseDetails('power')" style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; cursor: pointer; transition: all 0.2s;">
+                                <div onclick="showQBPhaseDetails('power')" style="border: 1px solid var(--dark-border); border-radius: 8px; padding: 1rem; cursor: pointer; transition: all 0.2s;">
                                     <div style="display: flex; justify-content: between; align-items: center;">
                                         <div>
-                                            <h4 style="margin: 0 0 0.5rem 0; color: #1f2937;">⚡ Power Phase (Weeks 9-12) - February</h4>
-                                            <p style="margin: 0; color: #6b7280; font-size: 0.9rem;">Peak throwing velocity • 200+ throws capacity • Tournament simulations</p>
+                                            <h4 style="margin: 0 0 0.5rem 0; color: var(--dark-text-primary);"><i data-lucide="zap" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Power Phase (Weeks 9-12) - February</h4>
+                                            <p style="margin: 0; color: var(--dark-text-muted); font-size: 0.9rem;">Peak throwing velocity • 200+ throws capacity • Tournament simulations</p>
                                         </div>
-                                        <span style="font-size: 1.2rem; color: #9ca3af;">➤</span>
+                                        <span style="font-size: 1.2rem; color: var(--dark-text-muted);">➤</span>
                                     </div>
                                 </div>
                                 
-                                <div onclick="showQBPhaseDetails('competition')" style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; cursor: pointer; transition: all 0.2s;">
+                                <div onclick="showQBPhaseDetails('competition')" style="border: 1px solid var(--dark-border); border-radius: 8px; padding: 1rem; cursor: pointer; transition: all 0.2s;">
                                     <div style="display: flex; justify-content: between; align-items: center;">
                                         <div>
-                                            <h4 style="margin: 0 0 0.5rem 0; color: #1f2937;">🏆 Competition Prep (Weeks 13-14) - March</h4>
-                                            <p style="margin: 0; color: #6b7280; font-size: 0.9rem;">Peak velocity maintenance • Outdoor adaptation • Mental preparation • 320 throw readiness</p>
+                                            <h4 style="margin: 0 0 0.5rem 0; color: var(--dark-text-primary);"><i data-lucide="trophy" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Competition Prep (Weeks 13-14) - March</h4>
+                                            <p style="margin: 0; color: var(--dark-text-muted); font-size: 0.9rem;">Peak velocity maintenance • Outdoor adaptation • Mental preparation • 320 throw readiness</p>
                                         </div>
-                                        <span style="font-size: 1.2rem; color: #9ca3af;">➤</span>
+                                        <span style="font-size: 1.2rem; color: var(--dark-text-muted);">➤</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <div style="display: flex; gap: 1rem; justify-content: center;">
-                            <button onclick="downloadQBProgram()" style="background: var(--primary); color: white; border: none; padding: 1rem 2rem; border-radius: 8px; cursor: pointer; font-weight: 600;">📥 Download Full Program</button>
-                            <button onclick="startQBProgram()" style="background: #3b82f6; color: white; border: none; padding: 1rem 2rem; border-radius: 8px; cursor: pointer; font-weight: 600;">🎯 Start QB Training</button>
+                            <button onclick="downloadQBProgram()" style="background: var(--primary); color: var(--dark-text-primary); border: none; padding: 1rem 2rem; border-radius: 8px; cursor: pointer; font-weight: 600;">📥 Download Full Program</button>
+                            <button onclick="startQBProgram()" style="background: var(--primary-500); color: var(--dark-text-primary); border: none; padding: 1rem 2rem; border-radius: 8px; cursor: pointer; font-weight: 600;"><i data-lucide="target" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Start QB Training</button>
                             <button onclick="this.closest('div').remove()" style="background: var(--gray-200); color: var(--gray-700); border: none; padding: 1rem 2rem; border-radius: 8px; cursor: pointer;">Maybe Later</button>
                         </div>
                     </div>
@@ -1551,7 +1488,7 @@
                     sample: "Week 1 Monday: Lower body (RDLs, Nordic curls, squats) + QB arm care (rotator cuff 3×15, biceps, triceps)"
                 },
                 strength: {
-                    title: "💪 Strength Development (Weeks 5-8) - January",
+                    title: "<i data-lucide="dumbbell" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Strength Development (Weeks 5-8) - January",
                     period: "January 5 - February 1, 2026",
                     goals: [
                         "Maximum lower body strength (approaching 40% BW limits)",
@@ -1564,7 +1501,7 @@
                     sample: "Week 5 Monday: Maximal isometrics 6×6s @ 100% + Heavy back squats + QB max arm strength development"
                 },
                 power: {
-                    title: "⚡ Power Phase (Weeks 9-12) - February",
+                    title: "<i data-lucide="zap" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Power Phase (Weeks 9-12) - February",
                     period: "February 2-28, 2026",
                     goals: [
                         "Convert strength to explosive power",
@@ -1577,7 +1514,7 @@
                     sample: "Week 9 Friday: THE BIG TEST - 8 Game Simulation (320 throws total) with velocity and accuracy tracking throughout"
                 },
                 competition: {
-                    title: "🏆 Competition Prep (Weeks 13-14) - March",
+                    title: "<i data-lucide="trophy" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Competition Prep (Weeks 13-14) - March",
                     period: "March 2-15, 2026",
                     goals: [
                         "Maintain peak velocity with reduced volume",
@@ -1595,28 +1532,28 @@
             const modal = document.createElement('div');
             modal.innerHTML = `
                 <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1001;">
-                    <div style="background: white; padding: 2rem; border-radius: 16px; max-width: 600px; max-height: 80vh; overflow-y: auto;">
+                    <div style="background: var(--dark-text-primary); padding: 2rem; border-radius: 16px; max-width: 600px; max-height: 80vh; overflow-y: auto;">
                         <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 1.5rem;">
-                            <h2 style="color: var(--gray-900); margin: 0; flex: 1;">${data.title}</h2>
-                            <button onclick="this.closest('div').remove()" style="background: none; border: none; font-size: 24px; cursor: pointer;">✕</button>
+                            <h2 style="color: var(--dark-text-primary); margin: 0; flex: 1;">${data.title}</h2>
+                            <button onclick="this.closest('div').remove()" style="background: none; border: none; font-size: 24px; cursor: pointer;"><i data-lucide="x" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></button>
                         </div>
                         
-                        <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <div style="background: var(--dark-bg-primary); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
                             <strong>Period:</strong> ${data.period}
                         </div>
 
-                        <h3 style="margin-bottom: 1rem; color: #1f2937;">Training Goals:</h3>
-                        <ul style="margin-bottom: 1.5rem; color: #374151;">
-                            ${data.goals.map(goal => `<li style="margin-bottom: 0.5rem;">🎯 ${goal}</li>`).join('')}
+                        <h3 style="margin-bottom: 1rem; color: var(--dark-text-primary);">Training Goals:</h3>
+                        <ul style="margin-bottom: 1.5rem; color: var(--dark-text-secondary);">
+                            ${data.goals.map(goal => `<li style="margin-bottom: 0.5rem;"><i data-lucide="target" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> ${goal}</li>`).join('')}
                         </ul>
 
-                        <h3 style="margin-bottom: 1rem; color: #1f2937;">Sample Workout:</h3>
-                        <div style="background: #e0f2fe; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; font-family: monospace; font-size: 0.9rem;">
+                        <h3 style="margin-bottom: 1rem; color: var(--dark-text-primary);">Sample Workout:</h3>
+                        <div style="background: var(--primary-50); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; font-family: monospace; font-size: 0.9rem;">
                             ${data.sample}
                         </div>
 
                         <div style="text-align: center;">
-                            <button onclick="this.closest('div').remove()" style="background: var(--primary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer;">Got it!</button>
+                            <button onclick="this.closest('div').remove()" style="background: var(--primary); color: var(--dark-text-primary); border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer;">Got it!</button>
                         </div>
                     </div>
                 </div>
@@ -1632,7 +1569,7 @@
             link.click();
             
             // Show confirmation
-            alert('🎯 QB Program downloaded! The complete 14-week quarterback development program for 320 throws/weekend is now saved to your device.');
+            alert('<i data-lucide="target" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> QB Program downloaded! The complete 14-week quarterback development program for 320 throws/weekend is now saved to your device.');
         };
 
         window.startQBProgram = function() {
@@ -1655,50 +1592,50 @@
             const modal = document.createElement('div');
             modal.innerHTML = `
                 <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1001;">
-                    <div style="background: white; padding: 2rem; border-radius: 16px; max-width: 650px;">
-                        <h2 style="margin-bottom: 1.5rem; color: #1f2937; text-align: center;">🎯 QB Week 1 - Foundation Phase</h2>
+                    <div style="background: var(--dark-text-primary); padding: 2rem; border-radius: 16px; max-width: 650px;">
+                        <h2 style="margin-bottom: 1.5rem; color: var(--dark-text-primary); text-align: center;"><i data-lucide="target" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> QB Week 1 - Foundation Phase</h2>
                         
-                        <div style="background: #dbeafe; border: 1px solid #3b82f6; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
-                            <h3 style="margin: 0 0 0.5rem 0; color: #1e40af;">This Week's Focus:</h3>
-                            <p style="margin: 0; color: #1e3a8a; font-size: 0.9rem;">Build arm care foundation, establish shoulder mobility, learn dual-track training approach</p>
+                        <div style="background: var(--primary-100); border: 1px solid var(--primary-500); border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
+                            <h3 style="margin: 0 0 0.5rem 0; color: var(--primary-700);">This Week's Focus:</h3>
+                            <p style="margin: 0; color: var(--primary-700); font-size: 0.9rem;">Build arm care foundation, establish shoulder mobility, learn dual-track training approach</p>
                         </div>
 
                         <div style="margin-bottom: 1.5rem;">
-                            <h3 style="margin-bottom: 1rem; color: #1f2937;">Select Today's QB Workout:</h3>
+                            <h3 style="margin-bottom: 1rem; color: var(--dark-text-primary);">Select Today's QB Workout:</h3>
                             <div style="display: grid; gap: 0.75rem;">
-                                <button onclick="startQBWeek1Workout('monday')" style="text-align: left; background: #f9fafb; border: 1px solid #d1d5db; padding: 1rem; border-radius: 8px; cursor: pointer;">
+                                <button onclick="startQBWeek1Workout('monday')" style="text-align: left; background: #f9fafb; border: 1px solid var(--dark-border); padding: 1rem; border-radius: 8px; cursor: pointer;">
                                     <strong>Monday:</strong> Lower Body Foundation + QB Arm Care (80 min)
-                                    <div style="font-size: 0.8rem; color: #6b7280; margin-top: 0.25rem;">Enhanced 30min warmup + Lower body + Rotator cuff foundation</div>
+                                    <div style="font-size: 0.8rem; color: var(--dark-text-muted); margin-top: 0.25rem;">Enhanced 30min warmup + Lower body + Rotator cuff foundation</div>
                                 </button>
-                                <button onclick="startQBWeek1Workout('tuesday')" style="text-align: left; background: #f9fafb; border: 1px solid #d1d5db; padding: 1rem; border-radius: 8px; cursor: pointer;">
+                                <button onclick="startQBWeek1Workout('tuesday')" style="text-align: left; background: #f9fafb; border: 1px solid var(--dark-border); padding: 1rem; border-radius: 8px; cursor: pointer;">
                                     <strong>Tuesday:</strong> Sprint Mechanics + QB Shoulder Mobility (85 min)
-                                    <div style="font-size: 0.8rem; color: #6b7280; margin-top: 0.25rem;">Sprint drills + Comprehensive shoulder mobility + Light throwing</div>
+                                    <div style="font-size: 0.8rem; color: var(--dark-text-muted); margin-top: 0.25rem;">Sprint drills + Comprehensive shoulder mobility + Light throwing</div>
                                 </button>
-                                <button onclick="startQBWeek1Workout('wednesday')" style="text-align: left; background: #f9fafb; border: 1px solid #d1d5db; padding: 1rem; border-radius: 8px; cursor: pointer;">
+                                <button onclick="startQBWeek1Workout('wednesday')" style="text-align: left; background: #f9fafb; border: 1px solid var(--dark-border); padding: 1rem; border-radius: 8px; cursor: pointer;">
                                     <strong>Wednesday:</strong> Recovery + QB Hip Flexor/Back (75 min)
-                                    <div style="font-size: 0.8rem; color: #6b7280; margin-top: 0.25rem;">Active recovery + Critical hip flexor work + Back strength foundation</div>
+                                    <div style="font-size: 0.8rem; color: var(--dark-text-muted); margin-top: 0.25rem;">Active recovery + Critical hip flexor work + Back strength foundation</div>
                                 </button>
-                                <button onclick="startQBWeek1Workout('thursday')" style="text-align: left; background: #f9fafb; border: 1px solid #d1d5db; padding: 1rem; border-radius: 8px; cursor: pointer;">
+                                <button onclick="startQBWeek1Workout('thursday')" style="text-align: left; background: #f9fafb; border: 1px solid var(--dark-border); padding: 1rem; border-radius: 8px; cursor: pointer;">
                                     <strong>Thursday:</strong> Lower Power + QB Throwing Integration (90 min)
-                                    <div style="font-size: 0.8rem; color: #6b7280; margin-top: 0.25rem;">Plyometrics + Medicine ball throws + First throwing integration</div>
+                                    <div style="font-size: 0.8rem; color: var(--dark-text-muted); margin-top: 0.25rem;">Plyometrics + Medicine ball throws + First throwing integration</div>
                                 </button>
-                                <button onclick="startQBWeek1Workout('friday')" style="text-align: left; background: #f9fafb; border: 1px solid #d1d5db; padding: 1rem; border-radius: 8px; cursor: pointer;">
+                                <button onclick="startQBWeek1Workout('friday')" style="text-align: left; background: #f9fafb; border: 1px solid var(--dark-border); padding: 1rem; border-radius: 8px; cursor: pointer;">
                                     <strong>Friday:</strong> Quick Feet + QB Endurance Foundation (95 min)
-                                    <div style="font-size: 0.8rem; color: #6b7280; margin-top: 0.25rem;">Speed drills + First endurance protocol (~50 throws)</div>
+                                    <div style="font-size: 0.8rem; color: var(--dark-text-muted); margin-top: 0.25rem;">Speed drills + First endurance protocol (~50 throws)</div>
                                 </button>
-                                <button onclick="startQBWeek1Workout('saturday')" style="text-align: left; background: #f9fafb; border: 1px solid #d1d5db; padding: 1rem; border-radius: 8px; cursor: pointer;">
+                                <button onclick="startQBWeek1Workout('saturday')" style="text-align: left; background: #f9fafb; border: 1px solid var(--dark-border); padding: 1rem; border-radius: 8px; cursor: pointer;">
                                     <strong>Saturday:</strong> Sprint Work + QB Throwing Session (75 min)
-                                    <div style="font-size: 0.8rem; color: #6b7280; margin-top: 0.25rem;">Sprint mechanics + Game-speed throwing + Accuracy training</div>
+                                    <div style="font-size: 0.8rem; color: var(--dark-text-muted); margin-top: 0.25rem;">Sprint mechanics + Game-speed throwing + Accuracy training</div>
                                 </button>
-                                <button onclick="startQBWeek1Workout('sunday')" style="text-align: left; background: #f9fafb; border: 1px solid #d1d5db; padding: 1rem; border-radius: 8px; cursor: pointer;">
+                                <button onclick="startQBWeek1Workout('sunday')" style="text-align: left; background: #f9fafb; border: 1px solid var(--dark-border); padding: 1rem; border-radius: 8px; cursor: pointer;">
                                     <strong>Sunday:</strong> Complete Recovery Day (75 min)
-                                    <div style="font-size: 0.8rem; color: #6b7280; margin-top: 0.25rem;">QB-specific recovery protocol + Mental preparation</div>
+                                    <div style="font-size: 0.8rem; color: var(--dark-text-muted); margin-top: 0.25rem;">QB-specific recovery protocol + Mental preparation</div>
                                 </button>
                             </div>
                         </div>
 
-                        <div style="background: #fef3c7; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                            <p style="margin: 0; font-size: 0.9rem; color: #92400e;"><strong>⚠️ QB Training Requirements:</strong> Enhanced 30-min warmup every session • Daily arm care is non-negotiable • Hip flexor work critical for velocity</p>
+                        <div style="background: var(--tertiary-100); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                            <p style="margin: 0; font-size: 0.9rem; color: var(--tertiary-700);"><strong>⚠️ QB Training Requirements:</strong> Enhanced 30-min warmup every session • Daily arm care is non-negotiable • Hip flexor work critical for velocity</p>
                         </div>
 
                         <div style="text-align: center;">
@@ -1715,7 +1652,7 @@
             document.querySelectorAll('div[style*="position: fixed"]').forEach(modal => modal.remove());
             
             // Create QB workout interface for the specific day
-            alert(`🎯 Starting QB Week 1 ${day.charAt(0).toUpperCase() + day.slice(1)} workout! This includes the enhanced 30-minute QB warmup protocol plus position-specific training. You'll be redirected to the detailed workout interface with dual-track exercises, throwing protocols, and arm care requirements.`);
+            alert(`<i data-lucide="target" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Starting QB Week 1 ${day.charAt(0).toUpperCase() + day.slice(1)} workout! This includes the enhanced 30-minute QB warmup protocol plus position-specific training. You'll be redirected to the detailed workout interface with dual-track exercises, throwing protocols, and arm care requirements.`);
             
             // You could redirect to a detailed QB workout page here
             // window.location.href = `/workout.html?program=qb&week=1&day=${day}`;
@@ -1746,12 +1683,12 @@
             const modal = document.createElement('div');
             modal.innerHTML = `
                 <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000;">
-                    <div style="background: white; padding: 2rem; border-radius: 12px; max-width: 400px; text-align: center;">
-                        <h3 style="margin-bottom: 1rem; color: var(--gray-900);">🎯 Recommended Workout</h3>
-                        <p style="margin-bottom: 1.5rem; color: var(--gray-600);">Based on your training history, we recommend:</p>
-                        <div style="background: var(--primary); color: white; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; text-transform: capitalize; font-weight: 600;">${recommendedType} Training</div>
+                    <div style="background: var(--dark-text-primary); padding: 2rem; border-radius: 12px; max-width: 400px; text-align: center;">
+                        <h3 style="margin-bottom: 1rem; color: var(--dark-text-primary);"><i data-lucide="target" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Recommended Workout</h3>
+                        <p style="margin-bottom: 1.5rem; color: var(--dark-text-secondary);">Based on your training history, we recommend:</p>
+                        <div style="background: var(--primary); color: var(--dark-text-primary); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; text-transform: capitalize; font-weight: 600;">${recommendedType} Training</div>
                         <div style="display: flex; gap: 1rem; justify-content: center;">
-                            <button onclick="this.closest('div').remove(); startWorkout('${recommendedType}')" style="background: var(--primary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer;">Start Now</button>
+                            <button onclick="this.closest('div').remove(); startWorkout('${recommendedType}')" style="background: var(--primary); color: var(--dark-text-primary); border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer;">Start Now</button>
                             <button onclick="this.closest('div').remove()" style="background: var(--gray-200); color: var(--gray-700); border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer;">Maybe Later</button>
                         </div>
                     </div>
