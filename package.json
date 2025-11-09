@@ -9,7 +9,7 @@
     "dev": "node server.js",
     "dev:frontend": "node simple-server.js",
     "dev:netlify": "netlify dev",
-    "dev:hot": "nodemon dev-server.cjs --watch . --ext js,json,html,css --ignore node_modules/ --ignore *.backup",
+    "dev:hot": "nodemon dev-server.cjs --watch . --ext js,json,html,css --ignore node_modules/ --ignore *.backup --ignore tests/",
     "dev:api": "nodemon server.js --watch . --ext js,json --ignore node_modules/ --ignore *.backup",
     "dev:full": "concurrently \"npm run dev:api\" \"npm run dev:hot\"",
     "seed": "node scripts/seedDashboardData.js",
@@ -83,20 +83,20 @@
   "author": "FlagFit Pro Team",
   "license": "MIT",
   "devDependencies": {
+    "@playwright/test": "^1.42.1",
+    "@testing-library/dom": "^9.3.4",
+    "@testing-library/jest-dom": "^6.4.2",
     "autoprefixer": "^10.4.21",
     "chokidar": "^3.5.3",
     "concurrently": "^8.2.2",
+    "jsdom": "^24.0.0",
     "netlify-cli": "^17.0.0",
     "nodemon": "^3.1.10",
-    "postcss": "^8.5.6",
-    "tailwindcss": "^4.1.12",
-    "ws": "^8.14.2",
-    "vitest": "^1.6.0",
-    "@testing-library/dom": "^9.3.4",
-    "@testing-library/jest-dom": "^6.4.2",
-    "jsdom": "^24.0.0",
-    "supertest": "^6.3.4",
     "playwright": "^1.42.1",
-    "@playwright/test": "^1.42.1"
+    "postcss": "^8.5.6",
+    "supertest": "^6.3.4",
+    "tailwindcss": "^4.1.12",
+    "vitest": "^1.6.0",
+    "ws": "^8.14.2"
   }
 }

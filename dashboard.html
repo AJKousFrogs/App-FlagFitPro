@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./src/ui-design-system.css">
+    <link rel="stylesheet" href="./src/hover-effects.css">
     <!-- Chart.js with multiple CDN fallbacks -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js" defer></script>
     <script>
@@ -178,6 +179,379 @@
             top: 50%;
             transform: translateY(-50%);
             color: var(--gray-400);
+        }
+
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--white);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            margin-top: 4px;
+        }
+
+        .search-result-item {
+            padding: var(--space-3);
+            border-bottom: 1px solid var(--border-light);
+            cursor: pointer;
+            transition: var(--hover-transition);
+        }
+
+        .search-result-item:hover {
+            background: var(--gray-50);
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .search-result-title {
+            font-weight: var(--font-medium);
+            color: var(--gray-900);
+            margin-bottom: var(--space-1);
+        }
+
+        .search-result-subtitle {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+        }
+
+        .notification-panel {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            width: 380px;
+            background: var(--white);
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            z-index: 1000;
+            display: none;
+            animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(20px);
+            overflow: hidden;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .notification-header {
+            padding: 20px 24px 16px 24px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: var(--white);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .notification-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        }
+
+        .notification-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .notification-header button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: var(--white);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--hover-transition);
+        }
+
+        .notification-header button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: var(--hover-scale-small);
+        }
+
+        .notification-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .notification-item {
+            padding: 20px 24px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            transition: var(--hover-transition);
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+
+        .notification-item:hover {
+            background: linear-gradient(135deg, var(--gray-50) 0%, rgba(102, 126, 234, 0.02) 100%);
+            transform: translateX(4px);
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-item.unread {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.03) 0%, rgba(118, 75, 162, 0.02) 100%);
+        }
+
+        .notification-item.unread::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+        }
+
+        .notification-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .notification-icon.reminder {
+            background: linear-gradient(135deg, #ff9500, #ff6b35);
+        }
+
+        .notification-icon.achievement {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .notification-icon.tournament {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+
+        .notification-icon.alert {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        .notification-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 4px;
+            font-size: 15px;
+            line-height: 1.4;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .notification-message {
+            font-size: 14px;
+            color: var(--gray-600);
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .notification-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .notification-time {
+            font-size: 12px;
+            color: var(--gray-500);
+            font-weight: 500;
+        }
+
+        .notification-unread-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--primary);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+        }
+
+        .notification-empty {
+            padding: 40px 24px;
+            text-align: center;
+            color: var(--gray-500);
+        }
+
+        .notification-empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .notification-actions {
+            padding: 16px 24px;
+            background: var(--gray-50);
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .notification-action-btn {
+            width: 100%;
+            padding: 10px;
+            background: none;
+            border: 1px solid var(--border-medium);
+            border-radius: 8px;
+            color: var(--gray-700);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--hover-transition);
+        }
+
+        .notification-action-btn:hover {
+            background: var(--white);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Mobile responsive notifications */
+        @media (max-width: 480px) {
+            .notification-panel {
+                right: 10px;
+                left: 10px;
+                width: auto;
+                top: 70px;
+            }
+
+            .notification-header {
+                padding: 16px 20px 12px 20px;
+            }
+
+            .notification-item {
+                padding: 16px 20px;
+            }
+
+            .notification-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+            }
+
+            .notification-title {
+                font-size: 14px;
+            }
+
+            .notification-message {
+                font-size: 13px;
+            }
+        }
+
+        .chatbot-container {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            border: 1px solid var(--border-light);
+            margin-top: var(--space-6);
+        }
+
+        .chatbot-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: var(--space-4);
+        }
+
+        .chatbot-messages {
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            margin-bottom: var(--space-4);
+            background: var(--bg-secondary);
+        }
+
+        .chat-message {
+            margin-bottom: var(--space-3);
+            padding: var(--space-3);
+            border-radius: var(--radius-lg);
+            max-width: 80%;
+        }
+
+        .chat-message.user {
+            background: var(--primary);
+            color: var(--white);
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .chat-message.bot {
+            background: var(--white);
+            color: var(--gray-900);
+            border: 1px solid var(--border-light);
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: var(--space-3);
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: var(--space-3);
+            border: 1px solid var(--border-medium);
+            border-radius: var(--radius-lg);
+            font-size: var(--text-sm);
+        }
+
+        .chat-send-btn {
+            padding: var(--space-3) var(--space-4);
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: var(--hover-transition);
+        }
+
+        .chat-send-btn:hover {
+            background: var(--primary-dark);
         }
 
         .user-menu {
@@ -488,35 +862,39 @@
             <nav class="sidebar-nav">
                 <div class="nav-section">
                     <div class="nav-section-title">Main</div>
-                    <a href="/dashboard.html" class="nav-item active">
+                    <a href="/dashboard.html" class="nav-item active hover-lift-small">
                         <span class="nav-icon">📊</span>
                         Dashboard
                     </a>
-                    <a href="/training.html" class="nav-item">
+                    <a href="/roster.html" class="nav-item hover-lift-small">
+                        <span class="nav-icon">👥</span>
+                        Team Roster
+                    </a>
+                    <a href="/training.html" class="nav-item hover-lift-small">
                         <span class="nav-icon">⚡</span>
                         Training
                     </a>
-                    <a href="/tournaments.html" class="nav-item">
+                    <a href="/tournaments.html" class="nav-item hover-lift-small">
                         <span class="nav-icon">🏆</span>
                         Tournaments
                     </a>
-                    <a href="/community.html" class="nav-item">
+                    <a href="/community.html" class="nav-item hover-lift-small">
                         <span class="nav-icon">👥</span>
                         Community
                     </a>
-                    <a href="/coach.html" class="nav-item">
+                    <a href="/coach-dashboard.html" class="nav-item hover-lift-small">
                         <span class="nav-icon">📋</span>
-                        Coach
+                        Coach Dashboard
                     </a>
                 </div>
                 
                 <div class="nav-section">
                     <div class="nav-section-title">Analytics</div>
-                    <a href="/analytics.html" class="nav-item">
+                    <a href="/analytics.html" class="nav-item hover-lift-small">
                         <span class="nav-icon">📈</span>
                         Analytics
                     </a>
-                    <a href="/settings.html" class="nav-item">
+                    <a href="/settings.html" class="nav-item hover-lift-small">
                         <span class="nav-icon">⚙️</span>
                         Settings
                     </a>
@@ -536,22 +914,26 @@
                 <div class="top-actions">
                     <div class="search-box">
                         <span class="search-icon">🔍</span>
-                        <input type="text" class="search-input" placeholder="Search training, athletes, stats...">
+                        <input type="text" id="global-search" class="search-input hover-lift-small" placeholder="Search training, athletes, stats..." oninput="performGlobalSearch(this.value)">
+                        <div id="search-results" class="search-results" style="display: none;">
+                            <!-- Search results will appear here -->
+                        </div>
                     </div>
                     
                     <div style="position: relative; margin-right: var(--space-4);">
-                        <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--gray-100); display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; transition: all var(--transition-fast);" 
-                             onmouseover="this.style.background='var(--gray-200)'" 
-                             onmouseout="this.style.background='var(--gray-100)'">
+                        <div id="notification-bell" class="hover-lift-small" style="width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, var(--white) 0%, var(--gray-50) 100%); display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; transition: all var(--transition-fast); border: 1px solid var(--border-light); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);" 
+                             onclick="toggleNotifications()"
+                             onmouseover="this.style.background='linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%)'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(102, 126, 234, 0.2)'" 
+                             onmouseout="this.style.background='linear-gradient(135deg, var(--white) 0%, var(--gray-50) 100%)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0, 0, 0, 0.04)'">
                             🔔
                         </div>
-                        <div style="position: absolute; top: -2px; right: -2px; width: 16px; height: 16px; background: var(--error); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: var(--font-bold);">3</div>
+                        <div id="notification-badge" style="position: absolute; top: -4px; right: -4px; width: 20px; height: 20px; background: linear-gradient(135deg, var(--error) 0%, #dc2626 100%); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; border: 2px solid var(--white); box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);">3</div>
                     </div>
                     
-                    <div class="user-menu">
-                        <div class="user-avatar">JD</div>
+                    <div class="user-menu hover-scale">
+                        <div class="user-avatar hover-glow">JD</div>
                         <div>
-                            <div style="font-size: var(--text-sm); font-weight: var(--font-medium); color: var(--gray-900);">John Doe</div>
+                            <div style="font-size: var(--text-sm); font-weight: var(--font-medium); color: var(--gray-900);" id="user-display-name">Loading...</div>
                             <div style="font-size: var(--text-xs); color: var(--gray-500);">Player View</div>
                         </div>
                     </div>
@@ -560,7 +942,7 @@
 
             <!-- Stats Grid -->
             <div class="stats-grid">
-                <div class="stat-card">
+                <div class="stat-card hover-lift glow-hover">
                     <div class="stat-header">
                         <span class="stat-title">Training Progress</span>
                         <div class="stat-icon" style="background: var(--success-bg); color: var(--success);">💪</div>
@@ -575,7 +957,7 @@
                     </div>
                 </div>
 
-                <div class="stat-card">
+                <div class="stat-card hover-lift glow-hover">
                     <div class="stat-header">
                         <span class="stat-title">Performance Score</span>
                         <div class="stat-icon" style="background: rgba(99, 102, 241, 0.1); color: var(--primary);">⚡</div>
@@ -593,7 +975,7 @@
                     </div>
                 </div>
 
-                <div class="stat-card">
+                <div class="stat-card hover-lift glow-hover">
                     <div class="stat-header">
                         <span class="stat-title">Weekly Goals</span>
                         <div class="stat-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--accent);">🎯</div>
@@ -608,7 +990,7 @@
                     </div>
                 </div>
 
-                <div class="stat-card">
+                <div class="stat-card hover-lift glow-hover">
                     <div class="stat-header">
                         <span class="stat-title">Team Chemistry</span>
                         <div class="stat-icon" style="background: rgba(236, 72, 153, 0.1); color: #ec4899;">🤝</div>
@@ -647,19 +1029,11 @@
                             <span style="font-size: var(--text-sm); color: var(--gray-500);">Today</span>
                         </div>
                         
-                        <div class="upcoming-item">
-                            <div class="upcoming-icon" style="background: rgba(99, 102, 241, 0.1); color: var(--primary);">🏃</div>
-                            <div class="upcoming-content">
-                                <div class="upcoming-title">Olympic Prep</div>
-                                <div class="upcoming-time">Today at 3:00 PM</div>
+                        <div id="next-session-content">
+                            <!-- Will be populated by real training data -->
+                            <div class="upcoming-item" style="text-align: center; color: var(--gray-500); padding: 20px;">
+                                <div>Loading training data...</div>
                             </div>
-                            <button class="btn btn-primary" style="position: relative; overflow: hidden;" 
-                                    onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='var(--shadow-lg)'"
-                                    onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'"
-                                    onclick="startTraining(this)">
-                                <span>🚀</span>
-                                Start
-                            </button>
                         </div>
                     </div>
 
@@ -693,7 +1067,167 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Athletic Performance Section -->
+            <div class="performance-section" style="margin-top: var(--space-8);">
+                <h2 style="font-size: var(--text-xl); font-weight: var(--font-bold); color: var(--gray-900); margin-bottom: var(--space-6);">Athletic Performance Tracking</h2>
+                
+                <!-- Performance Trend Charts -->
+                <div class="performance-charts-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6); margin-bottom: var(--space-8);">
+                    <div class="chart-container card hover-lift" style="background: var(--white); border-radius: var(--radius-xl); padding: var(--space-6); border: 1px solid var(--border-light);">
+                        <div class="chart-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4);">
+                            <h3 style="font-weight: var(--font-semibold); color: var(--gray-900);">Performance Trends</h3>
+                            <select id="performance-timeframe" class="form-select hover-lift-small" style="border: 1px solid var(--border-medium); border-radius: var(--radius-md); padding: var(--space-1) var(--space-2); font-size: var(--text-sm);" onchange="updatePerformanceChart(this.value)">
+                                <option value="3m">3 Months</option>
+                                <option value="6m" selected>6 Months</option>
+                                <option value="12m">12 Months</option>
+                            </select>
+                        </div>
+                        <div style="height: 300px; position: relative;">
+                            <canvas id="performance-trends-chart"></canvas>
+                        </div>
+                        <div style="margin-top: var(--space-4); display: flex; gap: var(--space-2);">
+                            <button onclick="recordPerformanceTest()" class="btn-primary" style="font-size: var(--text-xs); padding: var(--space-1) var(--space-3);">📊 Record Test</button>
+                            <button onclick="getPerformanceRecommendations()" class="btn-secondary" style="font-size: var(--text-xs); padding: var(--space-1) var(--space-3);">💡 Get Tips</button>
+                        </div>
+                    </div>
+
+                    <div class="chart-container card hover-lift" style="background: var(--white); border-radius: var(--radius-xl); padding: var(--space-6); border: 1px solid var(--border-light);">
+                        <div class="chart-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4);">
+                            <h3 style="font-weight: var(--font-semibold); color: var(--gray-900);">Wellness Tracking</h3>
+                            <select id="wellness-timeframe" class="form-select hover-lift-small" style="border: 1px solid var(--border-medium); border-radius: var(--radius-md); padding: var(--space-1) var(--space-2); font-size: var(--text-sm);" onchange="updateWellnessChart(this.value)">
+                                <option value="7d">7 Days</option>
+                                <option value="30d" selected>30 Days</option>
+                                <option value="90d">90 Days</option>
+                            </select>
+                        </div>
+                        <div style="height: 300px; position: relative;">
+                            <canvas id="wellness-trends-chart"></canvas>
+                        </div>
+                        <div style="margin-top: var(--space-4); display: flex; gap: var(--space-2);">
+                            <button onclick="recordWellnessData()" class="btn-primary" style="font-size: var(--text-xs); padding: var(--space-1) var(--space-3);">💚 Log Wellness</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="performance-charts-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6); margin-bottom: var(--space-8);">
+                    <div class="chart-container card hover-lift" style="background: var(--white); border-radius: var(--radius-xl); padding: var(--space-6); border: 1px solid var(--border-light);">
+                        <div class="chart-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4);">
+                            <h3 style="font-weight: var(--font-semibold); color: var(--gray-900);">Body Composition</h3>
+                            <div class="chart-legend" style="font-size: var(--text-xs); color: var(--gray-500);">Weight & Body Fat</div>
+                        </div>
+                        <div style="height: 300px; position: relative;">
+                            <canvas id="body-composition-chart"></canvas>
+                        </div>
+                        <div style="margin-top: var(--space-4); display: flex; gap: var(--space-2);">
+                            <button onclick="recordBodyComposition()" class="btn-primary" style="font-size: var(--text-xs); padding: var(--space-1) var(--space-3);">⚖️ Record Weight</button>
+                        </div>
+                    </div>
+
+                    <div class="chart-container card hover-lift" style="background: var(--white); border-radius: var(--radius-xl); padding: var(--space-6); border: 1px solid var(--border-light);">
+                        <div class="chart-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4);">
+                            <h3 style="font-weight: var(--font-semibold); color: var(--gray-900);">Performance Overview</h3>
+                            <div class="chart-legend" style="font-size: var(--text-xs); color: var(--gray-500);">Current Scores</div>
+                        </div>
+                        <div style="height: 300px; position: relative;">
+                            <canvas id="performance-overview-chart"></canvas>
+                        </div>
+                        <div style="margin-top: var(--space-4); display: flex; gap: var(--space-2);">
+                            <button onclick="exportPerformanceData()" class="btn-secondary" style="font-size: var(--text-xs); padding: var(--space-1) var(--space-3);">📊 Export Data</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Physical Measurements -->
+                <div class="measurements-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-4); margin-bottom: var(--space-6);">
+                    <div class="measurement-card card hover-lift glow-hover" style="background: var(--white); border-radius: var(--radius-xl); padding: var(--space-6); border: 1px solid var(--border-light);">
+                        <h3 style="font-size: var(--text-lg); font-weight: var(--font-semibold); color: var(--gray-900); margin-bottom: var(--space-4);">📏 Physical Measurements</h3>
+                        <div id="physicalMeasurements">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <div class="wellness-card card hover-lift glow-hover" style="background: var(--white); border-radius: var(--radius-xl); padding: var(--space-6); border: 1px solid var(--border-light);">
+                        <h3 style="font-size: var(--text-lg); font-weight: var(--font-semibold); color: var(--gray-900); margin-bottom: var(--space-4);">🧘‍♂️ Daily Wellness</h3>
+                        <div id="wellnessMetrics">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance Tests -->
+                <div class="performance-tests-card card hover-lift glow-hover" style="background: var(--white); border-radius: var(--radius-xl); padding: var(--space-6); border: 1px solid var(--border-light); margin-bottom: var(--space-6);">
+                    <h3 style="font-size: var(--text-xl); font-weight: var(--font-semibold); color: var(--gray-900); margin-bottom: var(--space-4);">⚡ Performance Tests</h3>
+                    <div id="performanceTests" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-4);">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Supplement & Nutrition Guide -->
+                <div class="nutrition-section" style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6); margin-bottom: var(--space-6);">
+                    <div class="supplements-card card hover-lift glow-hover" style="background: var(--white); border-radius: var(--radius-xl); padding: var(--space-6); border: 1px solid var(--border-light);">
+                        <h3 style="font-size: var(--text-lg); font-weight: var(--font-semibold); color: var(--gray-900); margin-bottom: var(--space-4);">💊 Supplement Schedule</h3>
+                        <div id="supplementSchedule">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                        <button id="viewSupplementGuide" class="btn btn-secondary hover-lift-small" style="margin-top: var(--space-4); width: 100%;">
+                            View Full Supplement Guide
+                        </button>
+                    </div>
+
+                    <div class="injury-tracking-card card hover-lift glow-hover" style="background: var(--white); border-radius: var(--radius-xl); padding: var(--space-6); border: 1px solid var(--border-light);">
+                        <h3 style="font-size: var(--text-lg); font-weight: var(--font-semibold); color: var(--gray-900); margin-bottom: var(--space-4);">🩹 Injury & Recovery</h3>
+                        <div id="injuryTracking">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                        <button id="logInjury" class="btn btn-secondary hover-lift-small" style="margin-top: var(--space-4); width: 100%;">
+                            Log New Issue
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Training Assistant Chatbot -->
+            <div class="chatbot-container card hover-lift">
+                <div class="chatbot-header">
+                    <h3 style="font-size: var(--text-xl); font-weight: var(--font-semibold); color: var(--gray-900); margin: 0; display: flex; align-items: center; gap: var(--space-2);">
+                        🤖 AI Training Assistant
+                        <span style="font-size: var(--text-sm); color: var(--success); background: rgba(16, 185, 129, 0.1); padding: 2px 8px; border-radius: var(--radius-md);">Online</span>
+                    </h3>
+                    <div style="font-size: var(--text-sm); color: var(--gray-600);">Ask me about training, nutrition, or performance tips!</div>
+                </div>
+                
+                <div id="chatbot-messages" class="chatbot-messages">
+                    <div class="chat-message bot">
+                        <strong>AI Assistant:</strong> Hi! I'm your personal training assistant. I can help you with workout plans, nutrition advice, performance analysis, and answer questions about flag football training. What would you like to know?
+                    </div>
+                </div>
+                
+                <div class="chat-input-container">
+                    <input type="text" id="chat-input" class="chat-input hover-lift-small" placeholder="Ask about training, nutrition, performance..." onkeypress="handleChatKeyPress(event)">
+                    <button class="chat-send-btn hover-lift" onclick="sendChatMessage()">
+                        <span>💬 Send</span>
+                    </button>
+                </div>
+            </div>
+
         </main>
+    </div>
+
+    <!-- Notification Panel -->
+    <div id="notification-panel" class="notification-panel">
+        <div class="notification-header">
+            <h3>🔔 Notifications</h3>
+            <button onclick="toggleNotifications()">✕</button>
+        </div>
+        <div id="notification-list" class="notification-list">
+            <!-- Notifications will be populated by JavaScript -->
+        </div>
+        <div class="notification-actions">
+            <button class="notification-action-btn" onclick="markAllAsRead()">
+                Mark all as read
+            </button>
+        </div>
     </div>
 
     <script type="module">
@@ -701,14 +1235,45 @@
         import { apiClient, dashboard } from './src/api-config.js';
         import { PerformanceUtils } from './src/performance-utils.js';
         import { AccessibilityUtils } from './src/accessibility-utils.js';
+        import { REAL_TEAM_DATA, getAllPlayers, getStaffMember } from './src/real-team-data.js';
+        import { performanceCharts } from './src/performance-charts.js';
+        import { performanceAPI } from './src/performance-api.js';
+        import { 
+            SUPPLEMENT_GUIDE, 
+            PERFORMANCE_TESTS, 
+            WELLNESS_TRACKING, 
+            MOCK_ATHLETE_DATA,
+            getPerformanceGrade,
+            calculatePerformanceImprovement,
+            getWellnessColor,
+            getSupplementReminders,
+            calculateBMI,
+            getBMICategory
+        } from './src/athlete-performance-data.js';
+        // Import training program modules
+        import { TRAINING_PROGRAM, WEEKLY_SCHEDULES } from './src/training-program-data.js';
+        import { QB_TRAINING_PROGRAM } from './src/qb-training-program-data.js';
+        import { trainingEngine } from './src/training-program-engine.js';
+        import { qbTrainingEngine } from './src/qb-training-engine.js';
+        // Import performance analytics
+        import { performanceAnalytics, PerformanceCalculations } from './src/performance-analytics.js';
 
         // Initialize dashboard
         document.addEventListener('DOMContentLoaded', async function() {
-            // Check authentication
+            console.log('📊 Dashboard loading...');
+            
+            // Wait for auth manager to fully initialize
+            await authManager.waitForInit();
+            console.log('✅ Auth manager initialized, checking authentication...');
+            
+            // Check authentication after initialization
             if (!authManager.isAuthenticated()) {
+                console.log('❌ Not authenticated, redirecting to login...');
                 window.location.href = '/login.html';
                 return;
             }
+            
+            console.log('✅ User authenticated, loading dashboard...');
 
             // Load user data
             const user = authManager.getCurrentUser();
@@ -719,13 +1284,20 @@
                     welcomeSection.textContent = `Welcome back, ${user.name || user.email.split('@')[0]}!`;
                 }
 
-                // Update user avatar
+                // Update user avatar with real player data
                 const userAvatar = document.querySelector('.user-avatar');
-                const userName = document.querySelector('.user-menu div div:first-child');
+                const userName = document.getElementById('user-display-name');
                 if (userAvatar && userName) {
-                    const initials = (user.name || user.email.split('@')[0]).split(' ').map(n => n[0]).join('').toUpperCase();
+                    // Get a random real player for demo
+                    const allPlayers = getAllPlayers();
+                    const randomPlayer = allPlayers[Math.floor(Math.random() * allPlayers.length)];
+                    
+                    const displayName = randomPlayer.name;
+                    const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase();
+                    
                     userAvatar.textContent = initials;
-                    userName.textContent = user.name || user.email.split('@')[0];
+                    userName.textContent = `${displayName} ${randomPlayer.nationality}`;
+                    userName.title = `Jersey #${randomPlayer.jersey} - ${randomPlayer.position}`;
                 }
 
                 // Load real dashboard data
@@ -735,8 +1307,12 @@
             // Initialize performance chart with real data
             initPerformanceChart();
             
-            // Initialize training schedule
+            // Initialize training schedule and next session
             initializeTrainingSchedule();
+            updateNextSession();
+
+            // Initialize athlete performance tracking
+            await initializeAthletePerformance();
         });
 
         // Load real dashboard data from Supabase
@@ -831,37 +1407,510 @@
         let currentWeekOffset = 0;
         let trainingSchedule = {};
 
-        // Sample training data - in production this would come from database
-        const sampleTrainingData = {
-            0: { // Current week
-                'monday': { type: 'Speed & Agility', time: '6:00 AM', duration: '60 min', status: 'completed', coach: 'Coach Martinez' },
-                'tuesday': { type: 'Route Running', time: '7:00 PM', duration: '90 min', status: 'completed', coach: 'Coach Johnson' },
-                'wednesday': { type: 'Strength Training', time: '5:30 PM', duration: '75 min', status: 'completed', coach: 'Coach Davis' },
-                'thursday': { type: 'Olympic Prep', time: '3:00 PM', duration: '120 min', status: 'scheduled', coach: 'Coach Elite' },
-                'friday': { type: 'Flag Technique', time: '6:30 PM', duration: '90 min', status: 'scheduled', coach: 'Coach Martinez' },
-                'saturday': { type: 'Recovery & Film', time: '10:00 AM', duration: '60 min', status: 'scheduled', coach: 'Coach Johnson' }
-            },
-            1: { // Next week
-                'monday': { type: 'Speed Endurance', time: '6:00 AM', duration: '60 min', status: 'scheduled', coach: 'Coach Martinez' },
-                'tuesday': { type: 'Game Simulation', time: '7:00 PM', duration: '120 min', status: 'scheduled', coach: 'Coach Johnson' },
-                'wednesday': { type: 'Plyometrics', time: '5:30 PM', duration: '75 min', status: 'scheduled', coach: 'Coach Davis' },
-                'thursday': { type: 'Olympic Qualifying', time: '3:00 PM', duration: '150 min', status: 'scheduled', coach: 'Coach Elite' },
-                'friday': { type: 'Mental Training', time: '6:30 PM', duration: '60 min', status: 'scheduled', coach: 'Coach Mindset' },
-                'saturday': { type: 'Competition Prep', time: '10:00 AM', duration: '90 min', status: 'scheduled', coach: 'Coach Johnson' }
-            },
-            '-1': { // Last week
-                'monday': { type: 'Foundation Building', time: '6:00 AM', duration: '60 min', status: 'completed', coach: 'Coach Martinez' },
-                'tuesday': { type: 'Basic Routes', time: '7:00 PM', duration: '90 min', status: 'completed', coach: 'Coach Johnson' },
-                'wednesday': { type: 'Strength Base', time: '5:30 PM', duration: '75 min', status: 'completed', coach: 'Coach Davis' },
-                'thursday': { type: 'Technique Focus', time: '3:00 PM', duration: '120 min', status: 'completed', coach: 'Coach Elite' },
-                'friday': { type: 'Flag Fundamentals', time: '6:30 PM', duration: '90 min', status: 'completed', coach: 'Coach Martinez' },
-                'saturday': { type: 'Recovery Session', time: '10:00 AM', duration: '60 min', status: 'completed', coach: 'Coach Johnson' }
+        // Real training data with actual coaching staff
+        // Training program state
+        let userProgram = getUserProgram(); // 'wr-db', 'qb', or null
+        let programStarted = checkProgramStarted();
+        let currentTrainingWeek = getCurrentTrainingWeek();
+
+        function getUserProgram() {
+            return localStorage.getItem('flagfit_user_program') || null;
+        }
+
+        function checkProgramStarted() {
+            const startDate = localStorage.getItem('flagfit_program_start_date');
+            return !!startDate;
+        }
+
+        function getCurrentTrainingWeek() {
+            const startDate = localStorage.getItem('flagfit_program_start_date');
+            if (!startDate) return 1;
+
+            const start = new Date(startDate);
+            const now = new Date();
+            const daysDiff = Math.floor((now - start) / (1000 * 60 * 60 * 24));
+            return Math.max(1, Math.min(14, Math.floor(daysDiff / 7) + 1));
+        }
+
+        function getRealTrainingData(weekOffset = 0) {
+            if (!programStarted) {
+                return null; // No program selected
             }
+
+            const targetWeek = Math.max(1, Math.min(14, currentTrainingWeek + weekOffset));
+            
+            // Generate varied training program based on week number
+            return generateVariedTrainingWeek(targetWeek);
+        }
+
+        function generateVariedTrainingWeek(weekNumber) {
+            const phase = getPhaseForWeek(weekNumber);
+            const weekInPhase = getWeekInPhase(weekNumber);
+            
+            const trainingTemplates = {
+                1: { // Week 1
+                    monday: { type: "Lower Body Foundation + Posterior Chain Introduction", time: "6:00 AM", duration: 65, focus: "Foundation building", coach: "Alex Zakšek" },
+                    tuesday: { type: "Sprint Mechanics + Conditioning Introduction", time: "7:00 PM", duration: 65, focus: "Speed development", coach: "FlagFit Pro" },
+                    wednesday: { type: "Active Recovery + Mobility", time: "5:30 PM", duration: 50, focus: "Recovery", coach: "FlagFit Pro" },
+                    thursday: { type: "Lower Body Strength + Plyometric Introduction", time: "3:00 PM", duration: 65, focus: "Power development", coach: "Tomáž Štimec" },
+                    friday: { type: "Power Introduction + Quick Feet", time: "6:30 PM", duration: 65, focus: "Explosiveness", coach: "Oscar DeLuna" },
+                    saturday: { type: "Sprint Work", time: "10:00 AM", duration: 45, focus: "Speed", coach: "FlagFit Pro" },
+                    sunday: { type: "Rest Day", time: "", duration: 0, focus: "Recovery", isRestDay: true }
+                },
+                2: { // Week 2
+                    monday: { type: "Posterior Chain Development + Core Stability", time: "6:00 AM", duration: 70, focus: "Foundation", coach: "Alex Zakšek" },
+                    tuesday: { type: "Acceleration Training + Route Running Drills", time: "7:00 PM", duration: 70, focus: "Sport-specific", coach: "FlagFit Pro" },
+                    wednesday: { type: "Upper Body Strength + Conditioning", time: "5:30 PM", duration: 60, focus: "Strength", coach: "Tomáž Štimec" },
+                    thursday: { type: "Lower Body Power + Agility Complex", time: "3:00 PM", duration: 70, focus: "Power", coach: "FlagFit Pro" },
+                    friday: { type: "Change of Direction + Reactive Agility", time: "6:30 PM", duration: 60, focus: "Agility", coach: "Oscar DeLuna" },
+                    saturday: { type: "Tempo Runs + Flag-Specific Conditioning", time: "10:00 AM", duration: 50, focus: "Endurance", coach: "FlagFit Pro" },
+                    sunday: { type: "Rest Day", time: "", duration: 0, focus: "Recovery", isRestDay: true }
+                },
+                3: { // Week 3
+                    monday: { type: "Nordic Curl Progression + RDL Advancement", time: "6:00 AM", duration: 75, focus: "Strength", coach: "Alex Zakšek" },
+                    tuesday: { type: "Max Velocity Training + Sprint Mechanics", time: "7:00 PM", duration: 70, focus: "Speed", coach: "FlagFit Pro" },
+                    wednesday: { type: "Recovery Training + Soft Tissue Work", time: "5:30 PM", duration: 45, focus: "Recovery", coach: "FlagFit Pro" },
+                    thursday: { type: "Plyometric Progression + Lower Body Strength", time: "3:00 PM", duration: 75, focus: "Power", coach: "Tomáž Štimec" },
+                    friday: { type: "Game Speed Movements + Position Drills", time: "6:30 PM", duration: 70, focus: "Sport-specific", coach: "Oscar DeLuna" },
+                    saturday: { type: "Competition Preparation + Speed Work", time: "10:00 AM", duration: 55, focus: "Competition prep", coach: "FlagFit Pro" },
+                    sunday: { type: "Rest Day", time: "", duration: 0, focus: "Recovery", isRestDay: true }
+                },
+                4: { // Week 4 - Deload
+                    monday: { type: "Light Movement + Mobility Focus", time: "6:00 AM", duration: 45, focus: "Deload", coach: "Alex Zakšek" },
+                    tuesday: { type: "Technical Speed Work + Movement Quality", time: "7:00 PM", duration: 50, focus: "Technique", coach: "FlagFit Pro" },
+                    wednesday: { type: "Active Recovery + Stretching", time: "5:30 PM", duration: 40, focus: "Recovery", coach: "FlagFit Pro" },
+                    thursday: { type: "Light Strength + Movement Assessment", time: "3:00 PM", duration: 45, focus: "Assessment", coach: "Tomáž Štimec" },
+                    friday: { type: "Fun Training + Skills Work", time: "6:30 PM", duration: 50, focus: "Skills", coach: "Oscar DeLuna" },
+                    saturday: { type: "Light Conditioning + Game Activities", time: "10:00 AM", duration: 40, focus: "Active recovery", coach: "FlagFit Pro" },
+                    sunday: { type: "Complete Rest", time: "", duration: 0, focus: "Recovery", isRestDay: true }
+                },
+                5: { // Week 5 - Strength Phase Begins
+                    monday: { type: "Maximum Strength Development + Posterior Chain", time: "6:00 AM", duration: 80, focus: "Max strength", coach: "Alex Zakšek" },
+                    tuesday: { type: "High-Intensity Sprint Training", time: "7:00 PM", duration: 75, focus: "Speed power", coach: "FlagFit Pro" },
+                    wednesday: { type: "Upper Body Strength + Core Power", time: "5:30 PM", duration: 65, focus: "Strength", coach: "Tomáž Štimec" },
+                    thursday: { type: "Advanced Plyometrics + Lower Body Power", time: "3:00 PM", duration: 80, focus: "Explosive power", coach: "FlagFit Pro" },
+                    friday: { type: "Repeated Sprint Training + Agility Complex", time: "6:30 PM", duration: 70, focus: "Speed endurance", coach: "Oscar DeLuna" },
+                    saturday: { type: "Position-Specific Training + Competition Drills", time: "10:00 AM", duration: 60, focus: "Sport-specific", coach: "FlagFit Pro" },
+                    sunday: { type: "Rest Day", time: "", duration: 0, focus: "Recovery", isRestDay: true }
+                },
+                6: { // Week 6
+                    monday: { type: "Heavy Strength Training + Isometric Holds", time: "6:00 AM", duration: 85, focus: "Peak strength", coach: "Alex Zakšek" },
+                    tuesday: { type: "Acceleration + Top Speed Development", time: "7:00 PM", duration: 80, focus: "Speed", coach: "FlagFit Pro" },
+                    wednesday: { type: "Strength Endurance + Conditioning", time: "5:30 PM", duration: 70, focus: "Work capacity", coach: "Tomáž Štimec" },
+                    thursday: { type: "Depth Jumps + Reactive Plyometrics", time: "3:00 PM", duration: 75, focus: "Reactive power", coach: "FlagFit Pro" },
+                    friday: { type: "Advanced Agility + Multi-Directional Speed", time: "6:30 PM", duration: 75, focus: "Change of direction", coach: "Oscar DeLuna" },
+                    saturday: { type: "Flag Football Scrimmage + Conditioning", time: "10:00 AM", duration: 90, focus: "Game preparation", coach: "FlagFit Pro" },
+                    sunday: { type: "Active Recovery + Film Study", time: "2:00 PM", duration: 60, focus: "Mental preparation", coach: "FlagFit Pro" }
+                }
+            };
+
+            // Generate more weeks by cycling and progressing the patterns
+            let weekData = trainingTemplates[weekNumber];
+            if (!weekData) {
+                // Generate data for weeks beyond our templates by cycling with progression
+                const baseWeek = ((weekNumber - 1) % 6) + 1;
+                weekData = JSON.parse(JSON.stringify(trainingTemplates[baseWeek]));
+                
+                // Apply progression modifications
+                Object.keys(weekData).forEach(day => {
+                    if (weekData[day].duration > 0) {
+                        // Increase duration and intensity for later weeks
+                        const progressionFactor = Math.floor((weekNumber - 1) / 6);
+                        weekData[day].duration += progressionFactor * 5;
+                        weekData[day].type = `Advanced ${weekData[day].type}`;
+                    }
+                });
+            }
+
+            // Convert to dashboard format
+            const dashboardFormat = {};
+            const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+            
+            days.forEach(day => {
+                const workout = weekData[day];
+                if (workout) {
+                    dashboardFormat[day] = {
+                        type: workout.type,
+                        time: workout.time,
+                        duration: `${workout.duration} min`,
+                        status: getWorkoutStatus(weekNumber, day),
+                        coach: workout.coach || 'FlagFit Pro',
+                        flag: '🏈',
+                        isRestDay: workout.isRestDay || false,
+                        description: workout.focus || 'Flag football training'
+                    };
+                }
+            });
+
+            return dashboardFormat;
+        }
+
+        function getPhaseForWeek(week) {
+            if (week <= 4) return 'foundation';
+            if (week <= 8) return 'strength';
+            if (week <= 12) return 'power';
+            return 'competition';
+        }
+
+        function getWeekInPhase(weekNumber) {
+            const phaseStartWeeks = {
+                foundation: 1,
+                strength: 5,
+                power: 9,
+                competition: 13
+            };
+            const phase = getPhaseForWeek(weekNumber);
+            return weekNumber - phaseStartWeeks[phase] + 1;
+        }
+
+        function getWorkoutTitle(workout) {
+            if (workout.type === 'rest') return 'Rest Day';
+            if (workout.title) return workout.title;
+            if (workout.qbWork?.type === 'throwing') return 'QB Throwing Session';
+            if (workout.focus?.includes('posterior chain')) return 'Posterior Chain Strength';
+            if (workout.focus?.includes('sprint')) return 'Sprint Development';
+            if (workout.focus?.includes('power')) return 'Power Training';
+            if (workout.focus?.includes('recovery')) return 'Recovery & Mobility';
+            if (workout.type === 'strength') return 'Strength Training';
+            if (workout.type === 'speed') return 'Speed & Agility';
+            return 'Training Session';
+        }
+
+        function getWorkoutTime(day) {
+            const times = {
+                monday: '6:00 AM',
+                tuesday: '7:00 PM', 
+                wednesday: '5:30 PM',
+                thursday: '3:00 PM',
+                friday: '6:30 PM',
+                saturday: '10:00 AM',
+                sunday: '10:00 AM'
+            };
+            return times[day] || '6:00 PM';
+        }
+
+        function getWorkoutStatus(week, day) {
+            const completedWorkouts = JSON.parse(localStorage.getItem('flagfit_completed_workouts') || '{}');
+            const isCompleted = !!completedWorkouts[`week${week}_${day}`];
+            const currentWeek = getCurrentTrainingWeek();
+            
+            if (week < currentWeek) return 'completed';
+            if (week === currentWeek && isCompleted) return 'completed';
+            return 'scheduled';
+        }
+
+        function getWorkoutDescription(workout) {
+            if (workout.description) return workout.description;
+            if (workout.qbWork) return 'Training blocks + QB specific work';
+            return `${workout.blocks?.length || 2} training blocks`;
+        }
+
+        function showProgramSelection() {
+            // Update next session area
+            const nextSessionContent = document.getElementById('next-session-content');
+            nextSessionContent.innerHTML = `
+                <div style="text-align: center; padding: 30px;">
+                    <h4 style="color: var(--gray-900); margin-bottom: 15px;">🚀 Ready to Start Your Training?</h4>
+                    <p style="color: var(--gray-600); margin-bottom: 25px;">Choose your training program to begin your flag football journey</p>
+                    <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                        <button class="btn btn-primary" onclick="startProgram('wr-db')" style="padding: 12px 20px;">
+                            🏃‍♂️ Start WR/DB Program
+                        </button>
+                        <button class="btn" onclick="startProgram('qb')" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; padding: 12px 20px;">
+                            🎯 Start QB Program
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            // Update weekly schedule area
+            const weeklyScheduleContent = document.getElementById('weekly-schedule');
+            weeklyScheduleContent.innerHTML = `
+                <div style="text-align: center; padding: 30px; color: var(--gray-500);">
+                    <h4 style="margin-bottom: 10px;">No training scheduled</h4>
+                    <p>Select a program above to see your weekly training schedule</p>
+                </div>
+            `;
+        }
+
+        function updateNextSession() {
+            if (!programStarted) {
+                showProgramSelection();
+                return;
+            }
+
+            const today = new Date();
+            const dayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday, etc.
+            const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+            const currentDay = dayNames[dayOfWeek];
+
+            const todaysData = getRealTrainingData(0);
+            if (!todaysData) {
+                showNoTrainingMessage();
+                return;
+            }
+
+            const todaysWorkout = todaysData[currentDay];
+            const nextSessionContent = document.getElementById('next-session-content');
+
+            if (!todaysWorkout || todaysWorkout.isRestDay) {
+                // Look for next training day
+                const nextTrainingDay = findNextTrainingDay(todaysData, dayOfWeek);
+                if (nextTrainingDay) {
+                    nextSessionContent.innerHTML = createSessionCard(nextTrainingDay.workout, nextTrainingDay.day, false);
+                } else {
+                    showNoTrainingMessage();
+                }
+            } else {
+                nextSessionContent.innerHTML = createSessionCard(todaysWorkout, currentDay, true);
+            }
+        }
+
+        function findNextTrainingDay(weekData, currentDayIndex) {
+            const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+            
+            // Check remaining days of current week
+            for (let i = currentDayIndex + 1; i < 7; i++) {
+                const dayName = dayNames[i];
+                const workout = weekData[dayName];
+                if (workout && !workout.isRestDay) {
+                    return { workout, day: dayName };
+                }
+            }
+
+            // Check next week if available
+            const nextWeekData = getRealTrainingData(1);
+            if (nextWeekData) {
+                for (let i = 0; i < 7; i++) {
+                    const dayName = dayNames[i];
+                    const workout = nextWeekData[dayName];
+                    if (workout && !workout.isRestDay) {
+                        return { workout, day: dayName };
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        function createSessionCard(workout, day, isToday) {
+            const dayDisplayNames = {
+                monday: 'Monday', tuesday: 'Tuesday', wednesday: 'Wednesday',
+                thursday: 'Thursday', friday: 'Friday', saturday: 'Saturday', sunday: 'Sunday'
+            };
+
+            const timeDisplay = isToday ? 'Today' : dayDisplayNames[day];
+            const icon = getWorkoutIcon(workout);
+
+            return `
+                <div class="upcoming-item">
+                    <div class="upcoming-icon" style="background: rgba(99, 102, 241, 0.1); color: var(--primary);">${icon}</div>
+                    <div class="upcoming-content">
+                        <div class="upcoming-title">${workout.type}</div>
+                        <div class="upcoming-time">${timeDisplay} at ${workout.time}</div>
+                        <div style="font-size: var(--text-xs); color: var(--gray-500); margin-top: 2px;">${workout.description}</div>
+                    </div>
+                    <button class="btn btn-primary" onclick="startWorkout('${day}')" style="position: relative; overflow: hidden;">
+                        <span>🚀</span>
+                        Start
+                    </button>
+                </div>
+            `;
+        }
+
+        function getWorkoutIcon(workout) {
+            if (workout.isRestDay) return '🛌';
+            if (workout.type.includes('QB')) return '🎯';
+            if (workout.type.includes('Strength')) return '💪';
+            if (workout.type.includes('Speed')) return '⚡';
+            if (workout.type.includes('Power')) return '🚀';
+            if (workout.type.includes('Recovery')) return '🧘‍♂️';
+            return '🏃‍♂️';
+        }
+
+        function showNoTrainingMessage() {
+            const nextSessionContent = document.getElementById('next-session-content');
+            nextSessionContent.innerHTML = `
+                <div style="text-align: center; padding: 30px; color: var(--gray-500);">
+                    <div style="font-size: 2rem; margin-bottom: 10px;">🛌</div>
+                    <h4 style="margin-bottom: 5px;">Rest Period</h4>
+                    <p>No training scheduled - enjoy your recovery time!</p>
+                </div>
+            `;
+        }
+
+        // Global functions for program selection
+        window.startProgram = function(program) {
+            localStorage.setItem('flagfit_user_program', program);
+            localStorage.setItem('flagfit_program_start_date', new Date().toISOString());
+            userProgram = program;
+            programStarted = true;
+            currentTrainingWeek = 1;
+            
+            // Reinitialize with new program
+            initializeTrainingSchedule();
+            updateNextSession();
+        };
+
+        window.startWorkout = function(day) {
+            // Get today's workout data
+            const weekData = getRealTrainingData(0);
+            const workout = weekData ? weekData[day] : null;
+            
+            if (!workout) {
+                alert('No workout scheduled for this day.');
+                return;
+            }
+            
+            // Show workout interface instead of redirecting to avoid auth issues
+            showWorkoutInterface(workout, day);
+        };
+
+        function showWorkoutInterface(workout, day) {
+            const dayNames = {
+                monday: 'Monday', tuesday: 'Tuesday', wednesday: 'Wednesday',
+                thursday: 'Thursday', friday: 'Friday', saturday: 'Saturday', sunday: 'Sunday'
+            };
+            
+            // Create modal overlay
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+                background: rgba(0,0,0,0.5); display: flex; align-items: center; 
+                justify-content: center; z-index: 1000; backdrop-filter: blur(4px);
+            `;
+            
+            modal.innerHTML = `
+                <div style="
+                    background: white; border-radius: 20px; max-width: 600px; width: 90%; 
+                    max-height: 80vh; overflow-y: auto; position: relative;
+                    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+                ">
+                    <div style="
+                        padding: 30px; border-bottom: 1px solid #e5e7eb;
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        color: white; border-radius: 20px 20px 0 0;
+                    ">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h2 style="margin: 0; font-size: 24px; font-weight: 700;">${workout.type}</h2>
+                                <p style="margin: 8px 0 0 0; opacity: 0.9;">${dayNames[day]} • ${workout.duration} • ${workout.description}</p>
+                            </div>
+                            <button onclick="this.closest('.modal').remove()" style="
+                                background: rgba(255,255,255,0.2); border: none; border-radius: 50%;
+                                width: 40px; height: 40px; color: white; font-size: 20px; cursor: pointer;
+                                display: flex; align-items: center; justify-content: center;
+                            ">×</button>
+                        </div>
+                    </div>
+                    
+                    <div style="padding: 30px;">
+                        <div style="text-align: center; margin-bottom: 30px;">
+                            <div style="
+                                width: 80px; height: 80px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                                border-radius: 50%; display: flex; align-items: center; justify-content: center;
+                                font-size: 32px; margin: 0 auto 15px; color: white;
+                            ">🏃‍♂️</div>
+                            <h3 style="margin: 0; color: #333;">Ready to Start Your Workout?</h3>
+                        </div>
+                        
+                        <div style="background: #f8fafc; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+                            <h4 style="margin: 0 0 15px 0; color: #333;">Workout Overview:</h4>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                <div>
+                                    <div style="font-weight: 600; color: #6b7280;">Duration</div>
+                                    <div style="color: #333; font-size: 18px;">${workout.duration}</div>
+                                </div>
+                                <div>
+                                    <div style="font-weight: 600; color: #6b7280;">Focus</div>
+                                    <div style="color: #333; font-size: 18px;">${workout.description}</div>
+                                </div>
+                                <div>
+                                    <div style="font-weight: 600; color: #6b7280;">Coach</div>
+                                    <div style="color: #333; font-size: 18px;">${workout.coach}</div>
+                                </div>
+                                <div>
+                                    <div style="font-weight: 600; color: #6b7280;">Time</div>
+                                    <div style="color: #333; font-size: 18px;">${workout.time}</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="background: #e0f2fe; border-left: 4px solid #0284c7; padding: 15px; border-radius: 8px; margin-bottom: 25px;">
+                            <h4 style="margin: 0 0 8px 0; color: #0c4a6e;">Pre-Workout Checklist:</h4>
+                            <ul style="margin: 0; padding-left: 20px; color: #0c4a6e;">
+                                <li>Complete 10-15 minute dynamic warm-up</li>
+                                <li>Ensure proper hydration (500ml water 2 hours prior)</li>
+                                <li>Have adequate space and equipment ready</li>
+                                <li>Review technique videos if needed</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="display: flex; gap: 15px; justify-content: center;">
+                            <button onclick="startActualWorkout('${day}')" style="
+                                background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                                color: white; border: none; padding: 15px 30px; border-radius: 10px;
+                                font-size: 16px; font-weight: 600; cursor: pointer;
+                                display: flex; align-items: center; gap: 10px; min-width: 160px; justify-content: center;
+                            ">
+                                🚀 Start Training
+                            </button>
+                            <button onclick="this.closest('.modal').remove()" style="
+                                background: #f3f4f6; color: #374151; border: 1px solid #d1d5db;
+                                padding: 15px 30px; border-radius: 10px; font-size: 16px; font-weight: 600;
+                                cursor: pointer; min-width: 120px;
+                            ">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            modal.className = 'modal';
+            document.body.appendChild(modal);
+            
+            // Add click outside to close
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
+        }
+
+        window.startActualWorkout = function(day) {
+            // Close modal
+            document.querySelector('.modal')?.remove();
+            
+            // Show success message and redirect to training interface
+            authManager.showSuccess('🚀 Workout started! In a real app, this would open the training interface with timer, exercise guides, and progress tracking.');
+            
+            // In a real implementation, this would open the actual workout interface
+            // For demo purposes, we'll show some feedback
+            setTimeout(() => {
+                alert(`Training session in progress...\n\n✅ Warm-up complete\n✅ Main workout blocks\n✅ Cool-down and recovery\n\nWorkout completed! Great job! 💪`);
+            }, 2000);
         };
 
         function initializeTrainingSchedule() {
-            // Load sample data (in production, this would be an API call)
-            trainingSchedule = sampleTrainingData;
+            // Auto-start demo program if none selected (for demonstration purposes)
+            if (!programStarted) {
+                localStorage.setItem('flagfit_user_program', 'wr-db');
+                localStorage.setItem('flagfit_program_start_date', new Date().toISOString());
+                userProgram = 'wr-db';
+                programStarted = true;
+                currentTrainingWeek = 1;
+            }
+            
+            // Load real training data or handle no program case
+            if (!programStarted) {
+                showProgramSelection();
+                return;
+            }
+            
+            trainingSchedule = {
+                [currentWeekOffset]: getRealTrainingData(currentWeekOffset)
+            };
             
             // Initialize current week display
             updateWeekDisplay();
@@ -921,7 +1970,27 @@
 
         function renderWeeklySchedule() {
             const scheduleContainer = document.getElementById('weekly-schedule');
-            const weekData = trainingSchedule[currentWeekOffset] || {};
+            
+            if (!programStarted) {
+                scheduleContainer.innerHTML = `
+                    <div style="text-align: center; padding: 30px; color: var(--gray-500);">
+                        <h4 style="margin-bottom: 10px;">No training scheduled</h4>
+                        <p>Select a program above to see your weekly training schedule</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const weekData = getRealTrainingData(currentWeekOffset);
+            if (!weekData) {
+                scheduleContainer.innerHTML = `
+                    <div style="text-align: center; padding: 30px; color: var(--gray-500);">
+                        <h4 style="margin-bottom: 10px;">No training this week</h4>
+                        <p>This appears to be a rest week or the program data is not available</p>
+                    </div>
+                `;
+                return;
+            }
             
             const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
             const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -956,7 +2025,7 @@
                                     ${dayNames[index]} at ${dayData.time} • ${dayData.duration}
                                 </div>
                                 <div style="font-size: var(--text-xs); color: var(--gray-400); margin-top: 2px;">
-                                    with ${dayData.coach}
+                                    with ${dayData.coach} ${dayData.flag || ''}
                                 </div>
                             </div>
                             <div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-end;">
@@ -1037,12 +2106,16 @@
 
         // Training action handlers
         window.startTraining = function(day) {
-            const dayData = trainingSchedule[currentWeekOffset][day];
-            if (dayData) {
-                alert(`Starting ${dayData.type} training session!\n\nTime: ${dayData.time}\nDuration: ${dayData.duration}\nCoach: ${dayData.coach}\n\nRedirecting to training interface...`);
-                // In production, this would redirect to the training page with session data
-                window.location.href = '/training.html?session=' + day;
+            // Use the same workout interface as startWorkout
+            const weekData = getRealTrainingData(currentWeekOffset);
+            const workout = weekData ? weekData[day] : null;
+            
+            if (!workout) {
+                alert('No workout scheduled for this day.');
+                return;
             }
+            
+            showWorkoutInterface(workout, day);
         };
 
         window.viewTrainingDetails = function(day) {
@@ -1261,24 +2334,6 @@
             });
         });
 
-        // Training session starter
-        window.startTraining = function(button) {
-            // Add loading state
-            button.innerHTML = '<span>⏳</span> Starting...';
-            button.disabled = true;
-            
-            // Simulate training start
-            setTimeout(() => {
-                button.innerHTML = '<span>✅</span> Started!';
-                button.style.background = 'var(--success)';
-                
-                setTimeout(() => {
-                    button.innerHTML = '<span>🚀</span> Start';
-                    button.style.background = 'var(--primary)';
-                    button.disabled = false;
-                }, 2000);
-            }, 1500);
-        };
 
         // Mobile sidebar toggle (if needed)
         function toggleSidebar() {
@@ -1292,6 +2347,1548 @@
             statCards.forEach((card, index) => {
                 card.style.animationDelay = `${index * 0.1}s`;
                 card.classList.add('fade-in');
+            });
+
+            // Athlete Performance Functions
+            async function initializeAthletePerformance() {
+                loadPhysicalMeasurements();
+                loadPerformanceTests();
+                loadWellnessMetrics();
+                loadSupplementSchedule();
+                loadInjuryTracking();
+                setupPerformanceEventListeners();
+                
+                // Initialize performance trend charts with real analytics
+                console.log('📈 Initializing performance charts with real analytics...');
+                try {
+                    // Initialize all four performance charts with real data
+                    performanceAnalytics.createPerformanceTrendChart('performance-trends-chart', '6m');
+                    performanceAnalytics.createWellnessChart('wellness-trends-chart', '30d');
+                    performanceAnalytics.createBodyCompositionChart('body-composition-chart');
+                    performanceAnalytics.createPerformanceOverviewChart('performance-overview-chart');
+                    console.log('✅ Performance analytics charts initialized successfully');
+                } catch (error) {
+                    console.error('❌ Failed to initialize performance analytics charts:', error);
+                }
+
+                // Update dashboard stats with real performance data
+                updateDashboardStatsWithRealData();
+            }
+
+            function loadPhysicalMeasurements() {
+                const container = document.getElementById('physicalMeasurements');
+                const data = MOCK_ATHLETE_DATA.currentMeasurements;
+                const bmi = calculateBMI(data.weight, data.height);
+                
+                container.innerHTML = `
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); margin-bottom: var(--space-4);">
+                        <div class="measurement-item">
+                            <div style="font-size: var(--text-xs); color: var(--gray-500); margin-bottom: var(--space-1);">Height</div>
+                            <div style="font-size: var(--text-lg); font-weight: var(--font-semibold); color: var(--gray-900);">${data.height} cm</div>
+                        </div>
+                        <div class="measurement-item">
+                            <div style="font-size: var(--text-xs); color: var(--gray-500); margin-bottom: var(--space-1);">Weight</div>
+                            <div style="font-size: var(--text-lg); font-weight: var(--font-semibold); color: var(--gray-900);">${data.weight} kg</div>
+                        </div>
+                        <div class="measurement-item">
+                            <div style="font-size: var(--text-xs); color: var(--gray-500); margin-bottom: var(--space-1);">Body Fat %</div>
+                            <div style="font-size: var(--text-lg); font-weight: var(--font-semibold); color: var(--success);">${data.bodyFat}%</div>
+                        </div>
+                        <div class="measurement-item">
+                            <div style="font-size: var(--text-xs); color: var(--gray-500); margin-bottom: var(--space-1);">BMI</div>
+                            <div style="font-size: var(--text-lg); font-weight: var(--font-semibold); color: var(--primary);">${bmi}</div>
+                        </div>
+                    </div>
+                    <div style="padding: var(--space-3); background: var(--bg-secondary); border-radius: var(--radius-lg);">
+                        <div style="font-size: var(--text-xs); color: var(--gray-600);">Last updated: ${data.lastUpdated}</div>
+                    </div>
+                `;
+            }
+
+            function loadPerformanceTests() {
+                const container = document.getElementById('performanceTests');
+                const tests = MOCK_ATHLETE_DATA.performanceTests;
+                
+                container.innerHTML = Object.entries(tests).map(([testName, data]) => {
+                    const improvement = calculatePerformanceImprovement(data.current, data.previous);
+                    const improvementColor = improvement > 0 ? 'var(--success)' : 'var(--error)';
+                    const improvementIcon = improvement > 0 ? '↗' : '↘';
+                    
+                    return `
+                        <div class="performance-test-card hover-lift-small" style="background: var(--white); border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: var(--space-4);">
+                            <div style="font-size: var(--text-sm); font-weight: var(--font-semibold); color: var(--gray-900); margin-bottom: var(--space-2);">${testName.replace(/([A-Z])/g, ' $1').trim()}</div>
+                            <div style="font-size: var(--text-xl); font-weight: var(--font-bold); color: var(--primary); margin-bottom: var(--space-2);">${data.current}</div>
+                            <div style="font-size: var(--text-xs); color: ${improvementColor}; margin-bottom: var(--space-1);">
+                                <span>${improvementIcon}</span>
+                                <span>${Math.abs(improvement)}% vs last test</span>
+                            </div>
+                            <div style="font-size: var(--text-xs); color: var(--gray-500);">Target: ${data.target} | Best: ${data.best}</div>
+                            <div style="width: 100%; height: 4px; background: var(--gray-200); border-radius: 2px; margin-top: var(--space-2);">
+                                <div style="width: ${(data.best / data.target) * 100}%; height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); border-radius: 2px;"></div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            function loadWellnessMetrics() {
+                const container = document.getElementById('wellnessMetrics');
+                const latestWellness = MOCK_ATHLETE_DATA.recentWellness[0];
+                
+                container.innerHTML = `
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3);">
+                        ${Object.entries(latestWellness).filter(([key]) => key !== 'date' && key !== 'injuries').map(([metric, value]) => `
+                            <div class="wellness-metric">
+                                <div style="font-size: var(--text-xs); color: var(--gray-500); margin-bottom: var(--space-1); text-transform: capitalize;">${metric.replace(/([A-Z])/g, ' $1').trim()}</div>
+                                <div style="display: flex; align-items: center; gap: var(--space-2);">
+                                    <div style="font-size: var(--text-lg); font-weight: var(--font-semibold); color: ${getWellnessColor(value)};">${value}/10</div>
+                                    <div style="flex: 1; height: 8px; background: var(--gray-200); border-radius: 4px;">
+                                        <div style="width: ${value * 10}%; height: 100%; background: ${getWellnessColor(value)}; border-radius: 4px; transition: width 0.3s ease;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div style="margin-top: var(--space-4); padding: var(--space-3); background: var(--bg-secondary); border-radius: var(--radius-lg);">
+                        <div style="font-size: var(--text-xs); color: var(--gray-600);">Today's wellness check - ${latestWellness.date}</div>
+                    </div>
+                `;
+            }
+
+            function loadSupplementSchedule() {
+                const container = document.getElementById('supplementSchedule');
+                const schedule = MOCK_ATHLETE_DATA.supplementSchedule;
+                const reminders = getSupplementReminders(schedule);
+                
+                container.innerHTML = `
+                    ${reminders.length > 0 ? `
+                        <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid var(--accent); border-radius: var(--radius-lg); padding: var(--space-3); margin-bottom: var(--space-4);">
+                            <div style="font-size: var(--text-sm); font-weight: var(--font-semibold); color: var(--accent); margin-bottom: var(--space-2);">⏰ Upcoming Reminders</div>
+                            ${reminders.map(item => `
+                                <div style="font-size: var(--text-xs); color: var(--gray-700);">• ${item.supplement} at ${item.time}</div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                    <div class="supplement-list">
+                        ${schedule.map(item => `
+                            <div class="supplement-item" style="display: flex; align-items: center; justify-content: space-between; padding: var(--space-2); border-radius: var(--radius-lg); margin-bottom: var(--space-2); ${item.taken ? 'background: rgba(16, 185, 129, 0.05);' : 'background: var(--bg-secondary);'}">
+                                <div>
+                                    <div style="font-size: var(--text-sm); font-weight: var(--font-medium); color: var(--gray-900);">${item.supplement}</div>
+                                    <div style="font-size: var(--text-xs); color: var(--gray-500);">${item.time}</div>
+                                </div>
+                                <div style="font-size: var(--text-lg);">${item.taken ? '✅' : '⏰'}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            function loadInjuryTracking() {
+                const container = document.getElementById('injuryTracking');
+                const recentInjuries = MOCK_ATHLETE_DATA.recentWellness[1].injuries;
+                
+                if (recentInjuries.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: var(--space-6);">
+                            <div style="font-size: var(--text-2xl); margin-bottom: var(--space-2);">✅</div>
+                            <div style="font-size: var(--text-sm); font-weight: var(--font-medium); color: var(--success);">No current injuries</div>
+                            <div style="font-size: var(--text-xs); color: var(--gray-500); margin-top: var(--space-1);">Keep up the great recovery work!</div>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = `
+                        <div class="injury-list">
+                            ${recentInjuries.map(injury => `
+                                <div class="injury-item" style="background: rgba(239, 68, 68, 0.05); border: 1px solid var(--error); border-radius: var(--radius-lg); padding: var(--space-3); margin-bottom: var(--space-2);">
+                                    <div style="display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-2);">
+                                        <div style="font-size: var(--text-sm); font-weight: var(--font-semibold); color: var(--error);">${injury.bodyPart}</div>
+                                        <div style="background: var(--error); color: var(--white); padding: 2px 6px; border-radius: var(--radius-sm); font-size: 10px;">Severity ${injury.severity}/5</div>
+                                    </div>
+                                    <div style="font-size: var(--text-xs); color: var(--gray-700); margin-bottom: var(--space-1);">${injury.category}</div>
+                                    <div style="font-size: var(--text-xs); color: var(--gray-600);">${injury.notes}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+            }
+
+            function setupPerformanceEventListeners() {
+                document.getElementById('viewSupplementGuide')?.addEventListener('click', () => {
+                    showSupplementGuide();
+                });
+                
+                document.getElementById('logInjury')?.addEventListener('click', () => {
+                    showInjuryLoggingForm();
+                });
+            }
+
+            function showSupplementGuide() {
+                showSupplementGuideModal();
+            }
+
+            function showSupplementGuideModal() {
+                const modal = document.createElement('div');
+                modal.style.cssText = `
+                    position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+                    background: rgba(0,0,0,0.5); display: flex; align-items: center; 
+                    justify-content: center; z-index: 1000; backdrop-filter: blur(4px);
+                `;
+                
+                modal.innerHTML = `
+                    <div style="
+                        background: white; border-radius: 20px; max-width: 700px; width: 90%; 
+                        max-height: 85vh; overflow-y: auto; position: relative;
+                        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+                    ">
+                        <div style="
+                            padding: 25px; border-bottom: 1px solid #e5e7eb;
+                            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+                            color: white; border-radius: 20px 20px 0 0; position: sticky; top: 0;
+                        ">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <h2 style="margin: 0; font-size: 24px; font-weight: 700;">💊 Complete Supplement Guide</h2>
+                                    <p style="margin: 8px 0 0 0; opacity: 0.9;">Flag Football Performance Optimization</p>
+                                </div>
+                                <button onclick="this.closest('.modal').remove()" style="
+                                    background: rgba(255,255,255,0.2); border: none; border-radius: 50%;
+                                    width: 40px; height: 40px; color: white; font-size: 20px; cursor: pointer;
+                                    display: flex; align-items: center; justify-content: center;
+                                ">×</button>
+                            </div>
+                        </div>
+                        
+                        <div style="padding: 25px;">
+                            <!-- Core Supplements -->
+                            <div style="margin-bottom: 25px;">
+                                <h3 style="color: #1f2937; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                                    🏆 Core Performance Supplements
+                                </h3>
+                                
+                                <div style="display: grid; gap: 15px;">
+                                    <div style="border: 2px solid #10b981; border-radius: 12px; padding: 15px;">
+                                        <div style="font-weight: 700; color: #10b981; margin-bottom: 8px;">🧲 Magnesium (400-600mg daily)</div>
+                                        <div style="margin-bottom: 8px;"><strong>Timing:</strong> 200-300mg with dinner + 200-300mg 30-60min pre-training</div>
+                                        <div style="margin-bottom: 8px;"><strong>Benefits:</strong> Prevents cramps, improves muscle function, enhances sleep quality</div>
+                                        <div><strong>Form:</strong> Magnesium Glycinate or Citrate for better absorption</div>
+                                    </div>
+                                    
+                                    <div style="border: 2px solid #3b82f6; border-radius: 12px; padding: 15px;">
+                                        <div style="font-weight: 700; color: #3b82f6; margin-bottom: 8px;">💪 Creatine Monohydrate (5g daily)</div>
+                                        <div style="margin-bottom: 8px;"><strong>Timing:</strong> Post-workout, no loading phase needed</div>
+                                        <div style="margin-bottom: 8px;"><strong>Benefits:</strong> Improves sprint performance, power output, recovery between plays</div>
+                                        <div><strong>Note:</strong> Stay well hydrated when using creatine</div>
+                                    </div>
+                                    
+                                    <div style="border: 2px solid #8b5cf6; border-radius: 12px; padding: 15px;">
+                                        <div style="font-weight: 700; color: #8b5cf6; margin-bottom: 8px;">🥛 Whey Protein (20-30g post-workout)</div>
+                                        <div style="margin-bottom: 8px;"><strong>Timing:</strong> Within 30 minutes post-training</div>
+                                        <div style="margin-bottom: 8px;"><strong>Benefits:</strong> Muscle protein synthesis, recovery, lean mass maintenance</div>
+                                        <div><strong>Alternative:</strong> Casein protein (20g before bed) for overnight recovery</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Performance Enhancing -->
+                            <div style="margin-bottom: 25px;">
+                                <h3 style="color: #1f2937; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                                    ⚡ Performance Enhancing
+                                </h3>
+                                
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                    <div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 15px;">
+                                        <div style="font-weight: 600; color: #ef4444; margin-bottom: 5px;">☕ Caffeine</div>
+                                        <div style="font-size: 14px; color: #6b7280;">200-400mg, 30-45min pre-training</div>
+                                        <div style="font-size: 12px; color: #9ca3af; margin-top: 5px;">Improves focus, power output</div>
+                                    </div>
+                                    
+                                    <div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 15px;">
+                                        <div style="font-weight: 600; color: #f59e0b; margin-bottom: 5px;">🍊 Beta-Alanine</div>
+                                        <div style="font-size: 14px; color: #6b7280;">3-5g daily, split doses</div>
+                                        <div style="font-size: 12px; color: #9ca3af; margin-top: 5px;">Reduces muscle fatigue</div>
+                                    </div>
+                                    
+                                    <div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 15px;">
+                                        <div style="font-weight: 600; color: #10b981; margin-bottom: 5px;">🌿 Citrulline</div>
+                                        <div style="font-size: 14px; color: #6b7280;">6-8g, 30min pre-training</div>
+                                        <div style="font-size: 12px; color: #9ca3af; margin-top: 5px;">Improves blood flow, endurance</div>
+                                    </div>
+                                    
+                                    <div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 15px;">
+                                        <div style="font-weight: 600; color: #8b5cf6; margin-bottom: 5px;">🧠 Tyrosine</div>
+                                        <div style="font-size: 14px; color: #6b7280;">500-2000mg, pre-training</div>
+                                        <div style="font-size: 12px; color: #9ca3af; margin-top: 5px;">Enhances focus under stress</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Recovery & Health -->
+                            <div style="margin-bottom: 25px;">
+                                <h3 style="color: #1f2937; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                                    🧘‍♂️ Recovery & Health
+                                </h3>
+                                
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                    <div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 15px;">
+                                        <div style="font-weight: 600; color: #06b6d4; margin-bottom: 5px;">🐟 Fish Oil</div>
+                                        <div style="font-size: 14px; color: #6b7280;">2-3g EPA/DHA daily</div>
+                                        <div style="font-size: 12px; color: #9ca3af; margin-top: 5px;">Reduces inflammation</div>
+                                    </div>
+                                    
+                                    <div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 15px;">
+                                        <div style="font-weight: 600; color: #f59e0b; margin-bottom: 5px;">☀️ Vitamin D3</div>
+                                        <div style="font-size: 14px; color: #6b7280;">2000-4000 IU daily</div>
+                                        <div style="font-size: 12px; color: #9ca3af; margin-top: 5px;">Bone health, immune function</div>
+                                    </div>
+                                    
+                                    <div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 15px;">
+                                        <div style="font-weight: 600; color: #84cc16; margin-bottom: 5px;">🌿 ZMA</div>
+                                        <div style="font-size: 14px; color: #6b7280;">Zinc + Magnesium + B6</div>
+                                        <div style="font-size: 12px; color: #9ca3af; margin-top: 5px;">Sleep quality, recovery</div>
+                                    </div>
+                                    
+                                    <div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 15px;">
+                                        <div style="font-weight: 600; color: #ec4899; margin-bottom: 5px;">🍒 Tart Cherry</div>
+                                        <div style="font-size: 14px; color: #6b7280;">480mg extract or 8oz juice</div>
+                                        <div style="font-size: 12px; color: #9ca3af; margin-top: 5px;">Natural melatonin, recovery</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Daily Schedule -->
+                            <div style="background: #f8fafc; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+                                <h3 style="color: #1f2937; margin-bottom: 15px;">⏰ Daily Supplement Schedule</h3>
+                                
+                                <div style="display: grid; gap: 12px;">
+                                    <div><strong>🌅 Morning:</strong> Vitamin D3, Fish Oil, Multivitamin</div>
+                                    <div><strong>🥤 Pre-Training (30-60min):</strong> Magnesium (200-300mg), Caffeine, Citrulline, Beta-Alanine</div>
+                                    <div><strong>🏃‍♂️ Post-Training:</strong> Whey Protein, Creatine</div>
+                                    <div><strong>🍽️ With Dinner:</strong> Magnesium (200-300mg), Fish Oil</div>
+                                    <div><strong>🛌 Before Bed:</strong> ZMA, Casein Protein, Tart Cherry</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Warning -->
+                            <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; border-radius: 8px;">
+                                <div style="font-weight: 600; color: #92400e; margin-bottom: 5px;">⚠️ Important Notes</div>
+                                <ul style="margin: 0; padding-left: 20px; color: #92400e; font-size: 14px;">
+                                    <li>Consult with a healthcare provider before starting any supplement regimen</li>
+                                    <li>Start with lower doses to assess tolerance</li>
+                                    <li>Focus on whole foods first - supplements complement, don't replace good nutrition</li>
+                                    <li>Stay hydrated, especially when using creatine and caffeine</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                modal.className = 'modal';
+                document.body.appendChild(modal);
+                
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        modal.remove();
+                    }
+                });
+            }
+
+            function showInjuryLoggingForm() {
+                showInjuryLoggingModal();
+            }
+
+            function showInjuryLoggingModal() {
+                const modal = document.createElement('div');
+                modal.style.cssText = `
+                    position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+                    background: rgba(0,0,0,0.5); display: flex; align-items: center; 
+                    justify-content: center; z-index: 1000; backdrop-filter: blur(4px);
+                `;
+                
+                modal.innerHTML = `
+                    <div style="
+                        background: white; border-radius: 20px; max-width: 600px; width: 90%; 
+                        position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+                    ">
+                        <div style="
+                            padding: 25px; border-bottom: 1px solid #e5e7eb;
+                            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+                            color: white; border-radius: 20px 20px 0 0;
+                        ">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <h2 style="margin: 0; font-size: 22px; font-weight: 700;">🩹 Log Injury or Recovery Issue</h2>
+                                    <p style="margin: 8px 0 0 0; opacity: 0.9;">Track injuries and monitor recovery progress</p>
+                                </div>
+                                <button onclick="this.closest('.modal').remove()" style="
+                                    background: rgba(255,255,255,0.2); border: none; border-radius: 50%;
+                                    width: 35px; height: 35px; color: white; font-size: 18px; cursor: pointer;
+                                    display: flex; align-items: center; justify-content: center;
+                                ">×</button>
+                            </div>
+                        </div>
+                        
+                        <div style="padding: 25px;">
+                            <form id="injuryForm">
+                                <div style="margin-bottom: 20px;">
+                                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px;">
+                                        Issue Type
+                                    </label>
+                                    <select id="injuryType" style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 16px;" required>
+                                        <option value="">Select issue type...</option>
+                                        <option value="acute_injury">🚨 Acute Injury</option>
+                                        <option value="chronic_pain">⚠️ Chronic Pain</option>
+                                        <option value="muscle_soreness">💪 Muscle Soreness</option>
+                                        <option value="joint_stiffness">🦴 Joint Stiffness</option>
+                                        <option value="fatigue">😴 Unusual Fatigue</option>
+                                        <option value="other">❓ Other</option>
+                                    </select>
+                                </div>
+                                
+                                <div style="margin-bottom: 20px;">
+                                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px;">
+                                        Affected Area
+                                    </label>
+                                    <select id="bodyPart" style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 16px;" required>
+                                        <option value="">Select body part...</option>
+                                        <option value="ankle">🦵 Ankle</option>
+                                        <option value="knee">🦵 Knee</option>
+                                        <option value="hip">🦵 Hip/Groin</option>
+                                        <option value="hamstring">🦵 Hamstring</option>
+                                        <option value="quad">🦵 Quadriceps</option>
+                                        <option value="calf">🦵 Calf</option>
+                                        <option value="shoulder">💪 Shoulder</option>
+                                        <option value="elbow">💪 Elbow</option>
+                                        <option value="wrist">💪 Wrist/Hand</option>
+                                        <option value="back">🏃‍♂️ Lower Back</option>
+                                        <option value="neck">🏃‍♂️ Neck</option>
+                                        <option value="other">❓ Other</option>
+                                    </select>
+                                </div>
+                                
+                                <div style="margin-bottom: 20px;">
+                                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px;">
+                                        Pain Level (1-10)
+                                    </label>
+                                    <input type="range" id="painLevel" min="1" max="10" value="1" 
+                                        style="width: 100%; margin-bottom: 8px;" 
+                                        oninput="updatePainLevel(this.value)" />
+                                    <div style="display: flex; justify-content: space-between; font-size: 12px; color: #6b7280;">
+                                        <span>1 - Minimal</span>
+                                        <span id="painLevelDisplay" style="font-weight: 600; color: #10b981;">1</span>
+                                        <span>10 - Severe</span>
+                                    </div>
+                                </div>
+                                
+                                <div style="margin-bottom: 20px;">
+                                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px;">
+                                        Description & Symptoms
+                                    </label>
+                                    <textarea id="injuryDescription" placeholder="Describe when it happened, what movements trigger pain, any other symptoms..."
+                                        style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 16px; min-height: 80px; resize: vertical;" required></textarea>
+                                </div>
+                                
+                                <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                                    <div style="font-weight: 600; color: #92400e; margin-bottom: 5px;">⚠️ Important</div>
+                                    <div style="font-size: 14px; color: #92400e;">
+                                        For serious injuries or severe pain (7+), please consult a healthcare professional immediately. 
+                                        This tracking is for monitoring and should not replace professional medical advice.
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                                    <button type="button" onclick="this.closest('.modal').remove()" style="
+                                        background: #f3f4f6; color: #374151; border: 1px solid #d1d5db;
+                                        padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 600;
+                                        cursor: pointer;
+                                    ">
+                                        Cancel
+                                    </button>
+                                    <button type="submit" style="
+                                        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+                                        color: white; border: none; padding: 12px 24px; border-radius: 8px;
+                                        font-size: 14px; font-weight: 600; cursor: pointer;
+                                    ">
+                                        🩹 Log Issue
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                `;
+                
+                modal.className = 'modal';
+                document.body.appendChild(modal);
+                
+                // Add form submission handler
+                document.getElementById('injuryForm').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    saveInjuryData();
+                });
+                
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        modal.remove();
+                    }
+                });
+            }
+
+            window.updatePainLevel = function(value) {
+                const display = document.getElementById('painLevelDisplay');
+                const slider = document.getElementById('painLevel');
+                
+                display.textContent = value;
+                
+                // Update color based on pain level
+                if (value <= 3) {
+                    display.style.color = '#10b981'; // Green
+                    slider.style.background = '#10b981';
+                } else if (value <= 6) {
+                    display.style.color = '#f59e0b'; // Yellow
+                    slider.style.background = '#f59e0b';
+                } else {
+                    display.style.color = '#ef4444'; // Red
+                    slider.style.background = '#ef4444';
+                }
+            };
+
+            function saveInjuryData() {
+                const injuryType = document.getElementById('injuryType').value;
+                const bodyPart = document.getElementById('bodyPart').value;
+                const painLevel = document.getElementById('painLevel').value;
+                const description = document.getElementById('injuryDescription').value;
+                
+                if (!injuryType || !bodyPart || !description) {
+                    authManager.showError('Please fill in all required fields.');
+                    return;
+                }
+                
+                const injuryData = {
+                    type: injuryType,
+                    bodyPart: bodyPart,
+                    painLevel: parseInt(painLevel),
+                    description: description,
+                    date: new Date().toISOString(),
+                    status: 'active'
+                };
+                
+                // Save to localStorage (in a real app, this would go to a backend)
+                let injuryHistory = JSON.parse(localStorage.getItem('flagfit_injury_history') || '[]');
+                injuryHistory.push(injuryData);
+                localStorage.setItem('flagfit_injury_history', JSON.stringify(injuryHistory));
+                
+                // Close modal and show success
+                document.querySelector('.modal').remove();
+                
+                const severity = painLevel <= 3 ? 'mild' : painLevel <= 6 ? 'moderate' : 'severe';
+                authManager.showSuccess(`Injury logged: ${severity} ${injuryType.replace('_', ' ')} in ${bodyPart}. ${painLevel >= 7 ? 'Please consult a healthcare professional.' : 'Monitor progress and modify training as needed.'}`);
+                
+                // Refresh injury tracking display
+                loadInjuryTracking();
+            }
+
+            // Global functions for chart timeframe updates
+            window.updatePerformanceChart = function(timeframe) {
+                console.log('📈 Updating performance chart timeframe:', timeframe);
+                try {
+                    performanceAnalytics.createPerformanceTrendChart('performance-trends-chart', timeframe);
+                } catch (error) {
+                    console.error('Failed to update performance chart:', error);
+                }
+            };
+
+            window.updateWellnessChart = function(timeframe) {
+                console.log('🧘‍♂️ Updating wellness chart timeframe:', timeframe);
+                try {
+                    performanceAnalytics.createWellnessChart('wellness-trends-chart', timeframe);
+                } catch (error) {
+                    console.error('Failed to update wellness chart:', error);
+                }
+            };
+
+            function updateDashboardStatsWithRealData() {
+                console.log('📊 Updating dashboard stats with real performance data...');
+                try {
+                    const currentScores = performanceAnalytics.performanceData.currentScores;
+                    const wellnessSummary = performanceAnalytics.getWellnessSummary(7);
+                    const trainingAnalysis = performanceAnalytics.getTrainingLoadAnalysis();
+                    
+                    // Update Performance Score
+                    const performanceCard = document.querySelector('.stat-card:nth-child(2) .stat-value');
+                    if (performanceCard) {
+                        performanceCard.innerHTML = `${currentScores.overall}<span style="font-size: var(--text-lg); color: var(--gray-500);">/100</span>`;
+                    }
+                    
+                    // Update Training Progress based on weekly sessions
+                    const trainingCard = document.querySelector('.stat-card:nth-child(1) .stat-value');
+                    const trainingBar = document.querySelector('.stat-card:nth-child(1) div[style*="width: 87%"]');
+                    if (trainingCard && trainingBar) {
+                        const weeklyTarget = 5; // Target sessions per week
+                        const weeklyCompleted = Math.min(trainingAnalysis.weeklyVolume / 60, weeklyTarget); // Convert minutes to rough sessions
+                        const progressPercent = Math.round((weeklyCompleted / weeklyTarget) * 100);
+                        trainingCard.textContent = `${progressPercent}%`;
+                        trainingBar.style.width = `${progressPercent}%`;
+                    }
+                    
+                    // Update Weekly Sessions
+                    const sessionsCard = document.querySelector('.stat-card:nth-child(3) .stat-value');
+                    if (sessionsCard) {
+                        const completedSessions = Math.floor(trainingAnalysis.weeklyVolume / 60);
+                        sessionsCard.innerHTML = `${completedSessions}<span style="font-size: var(--text-lg); color: var(--gray-500);">/5</span>`;
+                    }
+                    
+                    // Update Wellness Score based on average wellness metrics
+                    const wellnessCard = document.querySelector('.stat-card:nth-child(4) .stat-value');
+                    if (wellnessCard) {
+                        const averageWellness = Math.round(
+                            (wellnessSummary.energy.average + 
+                             (10 - wellnessSummary.soreness.average) + 
+                             (10 - wellnessSummary.stress.average / 0.8)) / 3
+                        );
+                        wellnessCard.textContent = `${averageWellness}%`;
+                    }
+                    
+                    console.log('✅ Dashboard stats updated with real performance data');
+                } catch (error) {
+                    console.error('❌ Failed to update dashboard stats:', error);
+                }
+            }
+
+            // Functions to record new performance data
+            window.recordWellnessData = function() {
+                showWellnessDataModal();
+            };
+
+            function showWellnessDataModal() {
+                const modal = document.createElement('div');
+                modal.style.cssText = `
+                    position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+                    background: rgba(0,0,0,0.5); display: flex; align-items: center; 
+                    justify-content: center; z-index: 1000; backdrop-filter: blur(4px);
+                `;
+                
+                modal.innerHTML = `
+                    <div style="
+                        background: white; border-radius: 20px; max-width: 500px; width: 90%; 
+                        position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+                    ">
+                        <div style="
+                            padding: 25px; border-bottom: 1px solid #e5e7eb;
+                            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+                            color: white; border-radius: 20px 20px 0 0;
+                        ">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <h2 style="margin: 0; font-size: 22px; font-weight: 700;">💚 Log Daily Wellness</h2>
+                                    <p style="margin: 8px 0 0 0; opacity: 0.9;">Track your daily health metrics</p>
+                                </div>
+                                <button onclick="this.closest('.modal').remove()" style="
+                                    background: rgba(255,255,255,0.2); border: none; border-radius: 50%;
+                                    width: 35px; height: 35px; color: white; font-size: 18px; cursor: pointer;
+                                    display: flex; align-items: center; justify-content: center;
+                                ">×</button>
+                            </div>
+                        </div>
+                        
+                        <div style="padding: 25px;">
+                            <form id="wellnessForm">
+                                <div style="display: grid; gap: 20px;">
+                                    <div>
+                                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px;">😴 Sleep Quality (hours)</label>
+                                        <input type="number" id="sleepHours" step="0.5" min="3" max="12" value="8" 
+                                               style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px;" />
+                                    </div>
+                                    
+                                    <div>
+                                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px;">⚡ Energy Level (1-10)</label>
+                                        <input type="range" id="energyLevel" min="1" max="10" value="8" 
+                                               style="width: 100%;" oninput="updateWellnessValue('energy', this.value)" />
+                                        <div style="text-align: center; margin-top: 5px; font-weight: 600;" id="energyDisplay">8</div>
+                                    </div>
+                                    
+                                    <div>
+                                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px;">💪 Muscle Soreness (1-5)</label>
+                                        <input type="range" id="sorenessLevel" min="1" max="5" value="2" 
+                                               style="width: 100%;" oninput="updateWellnessValue('soreness', this.value)" />
+                                        <div style="text-align: center; margin-top: 5px; font-weight: 600;" id="sorenessDisplay">2</div>
+                                    </div>
+                                    
+                                    <div>
+                                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px;">😰 Stress Level (1-10)</label>
+                                        <input type="range" id="stressLevel" min="1" max="10" value="3" 
+                                               style="width: 100%;" oninput="updateWellnessValue('stress', this.value)" />
+                                        <div style="text-align: center; margin-top: 5px; font-weight: 600;" id="stressDisplay">3</div>
+                                    </div>
+                                    
+                                    <div>
+                                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px;">🍎 Nutrition Quality (1-10)</label>
+                                        <input type="range" id="nutritionLevel" min="1" max="10" value="8" 
+                                               style="width: 100%;" oninput="updateWellnessValue('nutrition', this.value)" />
+                                        <div style="text-align: center; margin-top: 5px; font-weight: 600;" id="nutritionDisplay">8</div>
+                                    </div>
+                                    
+                                    <div>
+                                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px;">💧 Hydration (1-10)</label>
+                                        <input type="range" id="hydrationLevel" min="1" max="10" value="9" 
+                                               style="width: 100%;" oninput="updateWellnessValue('hydration', this.value)" />
+                                        <div style="text-align: center; margin-top: 5px; font-weight: 600;" id="hydrationDisplay">9</div>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 25px;">
+                                    <button type="button" onclick="this.closest('.modal').remove()" style="
+                                        background: #f3f4f6; color: #374151; border: 1px solid #d1d5db;
+                                        padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 600;
+                                        cursor: pointer;
+                                    ">Cancel</button>
+                                    <button type="submit" style="
+                                        background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+                                        color: white; border: none; padding: 12px 24px; border-radius: 8px;
+                                        font-size: 14px; font-weight: 600; cursor: pointer;
+                                    ">💚 Log Wellness</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                `;
+                
+                modal.className = 'modal';
+                document.body.appendChild(modal);
+                
+                document.getElementById('wellnessForm').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    saveWellnessData();
+                });
+                
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        modal.remove();
+                    }
+                });
+            }
+
+            window.updateWellnessValue = function(type, value) {
+                document.getElementById(type + 'Display').textContent = value;
+            };
+
+            function saveWellnessData() {
+                const wellnessData = {
+                    sleep: parseFloat(document.getElementById('sleepHours').value),
+                    energy: parseFloat(document.getElementById('energyLevel').value),
+                    soreness: parseFloat(document.getElementById('sorenessLevel').value),
+                    stress: parseFloat(document.getElementById('stressLevel').value),
+                    nutrition: parseFloat(document.getElementById('nutritionLevel').value),
+                    hydration: parseFloat(document.getElementById('hydrationLevel').value)
+                };
+                
+                performanceAnalytics.recordWellnessData(wellnessData);
+                updateDashboardStatsWithRealData();
+                performanceAnalytics.createWellnessChart('wellness-trends-chart', '30d');
+                
+                document.querySelector('.modal').remove();
+                authManager.showSuccess('Wellness data recorded successfully!');
+            }
+
+            window.recordPerformanceTest = function() {
+                const testType = prompt('Test type (fortyYardDash, verticalJump, benchPress, squat):');
+                const value = parseFloat(prompt(`${testType} result:`));
+                
+                if (testType && !isNaN(value)) {
+                    performanceAnalytics.recordPerformanceTest(testType, value);
+                    updateDashboardStatsWithRealData();
+                    performanceAnalytics.createPerformanceTrendChart('performance-trends-chart', '6m');
+                    performanceAnalytics.createPerformanceOverviewChart('performance-overview-chart');
+                    authManager.showSuccess('Performance test recorded successfully!');
+                } else {
+                    authManager.showError('Invalid test data entered.');
+                }
+            };
+
+            window.recordBodyComposition = function() {
+                showBodyCompositionModal();
+            };
+
+            function showBodyCompositionModal() {
+                const modal = document.createElement('div');
+                modal.style.cssText = `
+                    position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+                    background: rgba(0,0,0,0.5); display: flex; align-items: center; 
+                    justify-content: center; z-index: 1000; backdrop-filter: blur(4px);
+                `;
+                
+                modal.innerHTML = `
+                    <div style="
+                        background: white; border-radius: 20px; max-width: 500px; width: 90%; 
+                        position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+                    ">
+                        <div style="
+                            padding: 25px; border-bottom: 1px solid #e5e7eb;
+                            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                            color: white; border-radius: 20px 20px 0 0;
+                        ">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <h2 style="margin: 0; font-size: 22px; font-weight: 700;">⚖️ Record Body Composition</h2>
+                                    <p style="margin: 8px 0 0 0; opacity: 0.9;">Track your weight and body fat percentage</p>
+                                </div>
+                                <button onclick="this.closest('.modal').remove()" style="
+                                    background: rgba(255,255,255,0.2); border: none; border-radius: 50%;
+                                    width: 35px; height: 35px; color: white; font-size: 18px; cursor: pointer;
+                                    display: flex; align-items: center; justify-content: center;
+                                ">×</button>
+                            </div>
+                        </div>
+                        
+                        <div style="padding: 25px;">
+                            <form id="bodyCompositionForm">
+                                <div style="margin-bottom: 20px;">
+                                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px;">
+                                        Weight
+                                    </label>
+                                    <div style="display: flex; gap: 10px;">
+                                        <div style="flex: 1;">
+                                            <input type="number" id="weightLbs" placeholder="e.g. 175" 
+                                                style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 16px;"
+                                                step="0.1" min="50" max="400" oninput="convertWeight('lbs')" />
+                                            <div style="font-size: 12px; color: #6b7280; margin-top: 4px;">Pounds (lbs)</div>
+                                        </div>
+                                        <div style="flex: 1;">
+                                            <input type="number" id="weightKg" placeholder="e.g. 79.4" 
+                                                style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 16px;"
+                                                step="0.1" min="20" max="180" oninput="convertWeight('kg')" />
+                                            <div style="font-size: 12px; color: #6b7280; margin-top: 4px;">Kilograms (kg)</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div style="margin-bottom: 20px;">
+                                    <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 8px;">
+                                        Body Fat Percentage (optional)
+                                    </label>
+                                    <input type="number" id="bodyFat" placeholder="e.g. 12.5" 
+                                        style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 16px;"
+                                        step="0.1" min="3" max="50" />
+                                    <div style="font-size: 12px; color: #6b7280; margin-top: 4px;">Measured via DEXA scan, calipers, or body composition scale</div>
+                                </div>
+                                
+                                <div style="background: #f0f9ff; border-left: 4px solid #0284c7; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                                    <div style="font-weight: 600; color: #0c4a6e; margin-bottom: 5px;">💡 Pro Tip</div>
+                                    <div style="font-size: 14px; color: #0c4a6e;">
+                                        Weigh yourself at the same time each day, preferably first thing in the morning after using the bathroom. 
+                                        Daily fluctuations are normal due to hydration, food intake, and other factors.
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                                    <button type="button" onclick="this.closest('.modal').remove()" style="
+                                        background: #f3f4f6; color: #374151; border: 1px solid #d1d5db;
+                                        padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 600;
+                                        cursor: pointer;
+                                    ">
+                                        Cancel
+                                    </button>
+                                    <button type="submit" style="
+                                        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                                        color: white; border: none; padding: 12px 24px; border-radius: 8px;
+                                        font-size: 14px; font-weight: 600; cursor: pointer;
+                                    ">
+                                        📊 Record Data
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                `;
+                
+                modal.className = 'modal';
+                document.body.appendChild(modal);
+                
+                // Add form submission handler
+                document.getElementById('bodyCompositionForm').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    saveBodyCompositionData();
+                });
+                
+                // Add click outside to close
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        modal.remove();
+                    }
+                });
+            }
+
+            window.convertWeight = function(fromUnit) {
+                const lbsInput = document.getElementById('weightLbs');
+                const kgInput = document.getElementById('weightKg');
+                
+                if (fromUnit === 'lbs') {
+                    const lbs = parseFloat(lbsInput.value);
+                    if (!isNaN(lbs)) {
+                        const kg = (lbs / 2.20462).toFixed(1);
+                        kgInput.value = kg;
+                    } else {
+                        kgInput.value = '';
+                    }
+                } else if (fromUnit === 'kg') {
+                    const kg = parseFloat(kgInput.value);
+                    if (!isNaN(kg)) {
+                        const lbs = (kg * 2.20462).toFixed(1);
+                        lbsInput.value = lbs;
+                    } else {
+                        lbsInput.value = '';
+                    }
+                }
+            };
+
+            function saveBodyCompositionData() {
+                const weightLbs = parseFloat(document.getElementById('weightLbs').value);
+                const weightKg = parseFloat(document.getElementById('weightKg').value);
+                const bodyFat = parseFloat(document.getElementById('bodyFat').value) || null;
+                
+                if (isNaN(weightLbs) || isNaN(weightKg)) {
+                    authManager.showError('Please enter a valid weight.');
+                    return;
+                }
+                
+                const today = new Date().toISOString().split('T')[0];
+                const bodyComposition = performanceAnalytics.performanceData.bodyComposition;
+                
+                // Add new data point
+                bodyComposition.dates.push(today);
+                bodyComposition.weight.push(weightLbs); // Store in lbs as primary unit
+                
+                if (bodyFat !== null) {
+                    bodyComposition.bodyFat.push(bodyFat);
+                    bodyComposition.muscle.push(100 - bodyFat);
+                } else {
+                    // If no body fat provided, maintain arrays but add null/estimated values
+                    bodyComposition.bodyFat.push(bodyComposition.bodyFat[bodyComposition.bodyFat.length - 1] || 15);
+                    bodyComposition.muscle.push(bodyComposition.muscle[bodyComposition.muscle.length - 1] || 85);
+                }
+                
+                // Save data and update chart
+                performanceAnalytics.savePerformanceData();
+                performanceAnalytics.createBodyCompositionChart('body-composition-chart');
+                
+                // Close modal and show success
+                document.querySelector('.modal').remove();
+                
+                const message = bodyFat !== null 
+                    ? `Body composition recorded: ${weightLbs} lbs (${weightKg} kg), ${bodyFat}% body fat`
+                    : `Weight recorded: ${weightLbs} lbs (${weightKg} kg)`;
+                authManager.showSuccess(message);
+            }
+
+            window.exportPerformanceData = async function() {
+                console.log('📊 Exporting performance data...');
+                try {
+                    const performanceData = performanceAnalytics.performanceData;
+                    const csvContent = generateCSVFromData(performanceData);
+                    downloadCSV(csvContent, 'performance_data.csv');
+                    authManager.showSuccess('Performance data exported successfully!');
+                } catch (error) {
+                    console.error('Export failed:', error);
+                    authManager.showError('Failed to export performance data.');
+                }
+            };
+
+            function generateCSVFromData(data) {
+                let csv = 'Date,Performance_Overall,Speed,Agility,Strength,Endurance,Sleep,Energy,Soreness,Stress,Weight,BodyFat\n';
+                
+                // Get the longest date array to iterate through
+                const maxLength = Math.max(
+                    data.performanceTrends.dates.length,
+                    data.wellness.dates.length,
+                    data.bodyComposition.dates.length
+                );
+                
+                for (let i = 0; i < maxLength; i++) {
+                    const perfDate = data.performanceTrends.dates[i] || '';
+                    const wellDate = data.wellness.dates[i] || '';
+                    const bodyDate = data.bodyComposition.dates[i] || '';
+                    
+                    const row = [
+                        perfDate || wellDate || bodyDate,
+                        data.performanceTrends.overall[i] || '',
+                        data.performanceTrends.speed[i] || '',
+                        data.performanceTrends.agility[i] || '',
+                        data.performanceTrends.strength[i] || '',
+                        data.performanceTrends.endurance[i] || '',
+                        data.wellness.sleep[i] || '',
+                        data.wellness.energy[i] || '',
+                        data.wellness.soreness[i] || '',
+                        data.wellness.stress[i] || '',
+                        data.bodyComposition.weight[i] || '',
+                        data.bodyComposition.bodyFat[i] || ''
+                    ];
+                    csv += row.join(',') + '\n';
+                }
+                
+                return csv;
+            }
+
+            function downloadCSV(csvContent, filename) {
+                const blob = new Blob([csvContent], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+            }
+
+            window.getPerformanceRecommendations = function() {
+                const recommendation = performanceAnalytics.getTrainingRecommendation();
+                const improvements = performanceAnalytics.calculateImprovements('30d');
+                
+                let message = `Training Recommendation: ${recommendation.message}\n\n`;
+                message += 'Recent Performance Changes:\n';
+                
+                Object.keys(improvements).forEach(test => {
+                    if (improvements[test].improved) {
+                        message += `✅ ${test}: Improved by ${improvements[test].change.toFixed(2)}\n`;
+                    } else {
+                        message += `⚠️ ${test}: Declined by ${Math.abs(improvements[test].change).toFixed(2)}\n`;
+                    }
+                });
+                
+                alert(message);
+            };
+
+            window.oldExportFunction = async function() {
+                console.log('📊 Exporting performance data...');
+                try {
+                    const csvData = await performanceAPI.exportPerformanceData('csv', '12m');
+                    
+                    // Create and download CSV file
+                    const blob = new Blob([csvData], { type: 'text/csv' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `performance-data-${new Date().toISOString().split('T')[0]}.csv`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                    
+                    console.log('✅ Performance data exported successfully');
+                    
+                } catch (error) {
+                    console.error('❌ Failed to export performance data:', error);
+                }
+            };
+
+            window.addNewMeasurement = function() {
+                console.log('➕ Opening add measurement modal...');
+                authManager.showInfo('Measurement input form would open here. This connects to the backend for data storage.');
+            };
+
+            // Search functionality
+            let searchTimeout;
+            const searchData = {
+                players: getAllPlayers().map(p => ({
+                    title: `${p.name} #${p.jersey}`,
+                    subtitle: `${p.position} • ${p.country}`,
+                    type: 'player',
+                    url: '/roster.html'
+                })),
+                training: [
+                    { title: 'Speed & Agility Training', subtitle: 'Monday 6:00 AM', type: 'training', url: '/training.html' },
+                    { title: 'Strength Training', subtitle: 'Wednesday 5:30 PM', type: 'training', url: '/training.html' },
+                    { title: 'Olympic Prep', subtitle: 'Thursday 3:00 PM', type: 'training', url: '/training.html' }
+                ],
+                tournaments: [
+                    { title: 'Adria Bowl', subtitle: 'Poreč, Croatia • April 2026', type: 'tournament', url: '/tournaments.html' },
+                    { title: 'Copenhagen Bowl', subtitle: 'Denmark • May 2026', type: 'tournament', url: '/tournaments.html' },
+                    { title: 'Big Bowl', subtitle: 'Frankfurt, Germany • June 2026', type: 'tournament', url: '/tournaments.html' }
+                ],
+                stats: [
+                    { title: 'Performance Trends', subtitle: 'View your progress', type: 'stats', url: '#performance-trends' },
+                    { title: 'Wellness Tracking', subtitle: 'Monitor daily wellness', type: 'stats', url: '#wellness-tracking' },
+                    { title: 'Team Statistics', subtitle: 'Overall team performance', type: 'stats', url: '/analytics.html' }
+                ]
+            };
+
+            window.performGlobalSearch = function(query) {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    const resultsContainer = document.getElementById('search-results');
+                    
+                    if (!query || query.length < 2) {
+                        resultsContainer.style.display = 'none';
+                        return;
+                    }
+                    
+                    const allResults = [...searchData.players, ...searchData.training, ...searchData.tournaments, ...searchData.stats];
+                    const filteredResults = allResults.filter(item => 
+                        item.title.toLowerCase().includes(query.toLowerCase()) ||
+                        item.subtitle.toLowerCase().includes(query.toLowerCase())
+                    ).slice(0, 8);
+                    
+                    if (filteredResults.length > 0) {
+                        resultsContainer.innerHTML = filteredResults.map(item => `
+                            <div class="search-result-item" onclick="navigateToResult('${item.url}')">
+                                <div class="search-result-title">${getSearchIcon(item.type)} ${item.title}</div>
+                                <div class="search-result-subtitle">${item.subtitle}</div>
+                            </div>
+                        `).join('');
+                        resultsContainer.style.display = 'block';
+                    } else {
+                        resultsContainer.innerHTML = `
+                            <div class="search-result-item">
+                                <div class="search-result-title">🔍 No results found</div>
+                                <div class="search-result-subtitle">Try searching for players, training, or tournaments</div>
+                            </div>
+                        `;
+                        resultsContainer.style.display = 'block';
+                    }
+                }, 300);
+            };
+
+            function getSearchIcon(type) {
+                switch(type) {
+                    case 'player': return '👤';
+                    case 'training': return '⚡';
+                    case 'tournament': return '🏆';
+                    case 'stats': return '📊';
+                    default: return '🔍';
+                }
+            }
+
+            window.navigateToResult = function(url) {
+                document.getElementById('search-results').style.display = 'none';
+                document.getElementById('global-search').value = '';
+                
+                if (url.startsWith('#')) {
+                    const element = document.querySelector(url);
+                    if (element) {
+                        element.scrollIntoView({ behavior: 'smooth' });
+                    }
+                } else {
+                    window.location.href = url;
+                }
+            };
+
+            // Hide search results when clicking outside
+            document.addEventListener('click', function(event) {
+                const searchBox = document.querySelector('.search-box');
+                if (!searchBox.contains(event.target)) {
+                    document.getElementById('search-results').style.display = 'none';
+                }
+            });
+
+            // Notification system
+            const notifications = [
+                {
+                    id: 1,
+                    title: 'Training Reminder',
+                    message: 'Olympic Prep session starts in 2 hours',
+                    time: '2 hours ago',
+                    type: 'reminder',
+                    unread: true
+                },
+                {
+                    id: 2,
+                    title: 'Performance Update',
+                    message: 'Your 40-yard dash time improved by 0.3 seconds!',
+                    time: '1 day ago',
+                    type: 'achievement',
+                    unread: true
+                },
+                {
+                    id: 3,
+                    title: 'Tournament Registration',
+                    message: 'Adria Bowl registration deadline in 5 days',
+                    time: '2 days ago',
+                    type: 'tournament',
+                    unread: false
+                }
+            ];
+
+            window.toggleNotifications = function() {
+                const panel = document.getElementById('notification-panel');
+                const isVisible = panel.style.display === 'block';
+                
+                if (isVisible) {
+                    panel.style.display = 'none';
+                } else {
+                    loadNotifications();
+                    panel.style.display = 'block';
+                }
+            };
+
+            function loadNotifications() {
+                const notificationList = document.getElementById('notification-list');
+                const unreadCount = notifications.filter(n => n.unread).length;
+                
+                // Update badge
+                const badge = document.getElementById('notification-badge');
+                if (unreadCount > 0) {
+                    badge.textContent = unreadCount;
+                    badge.style.display = 'flex';
+                } else {
+                    badge.style.display = 'none';
+                }
+                
+                if (notifications.length === 0) {
+                    notificationList.innerHTML = `
+                        <div class="notification-empty">
+                            <div class="notification-empty-icon">🔔</div>
+                            <div style="font-weight: 500; margin-bottom: 8px;">No notifications</div>
+                            <div style="font-size: 14px;">You're all caught up!</div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                notificationList.innerHTML = notifications.map(notification => `
+                    <div class="notification-item ${notification.unread ? 'unread' : ''}" onclick="markAsRead(${notification.id})">
+                        <div class="notification-icon ${notification.type}">
+                            ${getNotificationEmoji(notification.type)}
+                        </div>
+                        <div class="notification-content">
+                            <div class="notification-title">
+                                ${notification.title}
+                                ${notification.unread ? '<div class="notification-unread-dot"></div>' : ''}
+                            </div>
+                            <div class="notification-message">${notification.message}</div>
+                            <div class="notification-meta">
+                                <div class="notification-time">${notification.time}</div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            function getNotificationIcon(type) {
+                switch(type) {
+                    case 'reminder': return '⏰';
+                    case 'achievement': return '🎉';
+                    case 'tournament': return '🏆';
+                    case 'alert': return '⚠️';
+                    default: return '📢';
+                }
+            }
+
+            function getNotificationEmoji(type) {
+                switch(type) {
+                    case 'reminder': return '⏰';
+                    case 'achievement': return '🎉';
+                    case 'tournament': return '🏆';
+                    case 'alert': return '⚠️';
+                    default: return '📢';
+                }
+            }
+
+            window.markAsRead = function(notificationId) {
+                const notification = notifications.find(n => n.id === notificationId);
+                if (notification) {
+                    notification.unread = false;
+                    loadNotifications();
+                }
+            };
+
+            window.markAllAsRead = function() {
+                notifications.forEach(notification => {
+                    notification.unread = false;
+                });
+                loadNotifications();
+                
+                // Show feedback
+                const toast = document.createElement('div');
+                toast.innerHTML = '✅ All notifications marked as read';
+                toast.style.cssText = `
+                    position: fixed;
+                    bottom: 20px;
+                    right: 20px;
+                    background: var(--success);
+                    color: white;
+                    padding: 12px 20px;
+                    border-radius: 8px;
+                    z-index: 1001;
+                    font-weight: 500;
+                    animation: slideUp 0.3s ease;
+                `;
+                
+                const style = document.createElement('style');
+                style.textContent = `
+                    @keyframes slideUp {
+                        from { opacity: 0; transform: translateY(20px); }
+                        to { opacity: 1; transform: translateY(0); }
+                    }
+                `;
+                document.head.appendChild(style);
+                document.body.appendChild(toast);
+                
+                setTimeout(() => {
+                    toast.remove();
+                    style.remove();
+                }, 3000);
+            };
+
+            // Initialize notifications on page load
+            loadNotifications();
+
+            // Chatbot functionality
+            const chatResponses = {
+                training: [
+                    "For flag football, focus on acceleration and change of direction drills. Sprint-backpedal-sprint patterns, 5-10-5 shuttles, and cone drills are essential.",
+                    "Plyometric training is crucial for flag football explosiveness. Box jumps, lateral bounds, and reactive jumps improve your game performance significantly.",
+                    "Proper warm-up prevents injury and improves performance. Start with dynamic stretching, leg swings, high knees, and build up to sport-specific movements.",
+                    "Train your energy systems! Flag football uses the ATP-PCr system primarily. Short, high-intensity intervals with complete recovery mimic game demands.",
+                    "Position-specific training matters. Wide receivers focus on route-running precision, while defenders work on backpedaling and angle pursuit drills."
+                ],
+                nutrition: [
+                    "Magnesium is essential for muscle function. Take 400-600mg daily: half with dinner for sleep/recovery, half 30-60 minutes pre-training for performance.",
+                    "Post-workout nutrition window: Consume 20-30g protein + 30-60g carbs within 30 minutes. Chocolate milk, protein shakes, or Greek yogurt with fruit work well.",
+                    "Hydration strategy: 500ml water 2-3 hours pre-training, 150-200ml every 15-20 minutes during training, and 150% of fluid lost afterward.",
+                    "Protein needs for flag football: 1.6-2.2g per kg body weight daily. Spread across meals for optimal muscle protein synthesis and recovery.",
+                    "Carb timing matters! 5-7g per kg body weight daily, with most carbs around training sessions for fuel and glycogen replenishment."
+                ],
+                performance: [
+                    "Track key metrics: 40-yard dash, pro-agility, vertical jump, and sport-specific movements. Small improvements in these translate to better game performance.",
+                    "Break plateaus with periodization: alternate between strength, power, and speed phases. Your body adapts to consistent stimuli, so vary your training.",
+                    "Recovery metrics predict performance: monitor sleep quality, resting heart rate, and subjective wellness scores. Poor recovery = poor performance.",
+                    "Game speed vs. training speed: practice at 100% intensity to develop the neuromuscular patterns needed for competition.",
+                    "Mental performance is physical performance. Confidence, focus, and preparation directly impact your athletic output on the field."
+                ],
+                recovery: [
+                    "Sleep is your secret weapon: 7-9 hours nightly in a cool (65-68°F), dark room. This is when growth hormone peaks and muscle repair occurs.",
+                    "Active recovery accelerates adaptation: 20-30 minutes of light movement, stretching, or foam rolling on off days maintains blood flow and reduces soreness.",
+                    "Cold therapy benefits: 10-15 minutes in 50-59°F water post-training reduces inflammation and speeds recovery. Contrast showers work too!",
+                    "Foam rolling technique: Slow rolls (1 inch per second), 30-60 seconds on tight spots. Focus on IT bands, quads, hamstrings, and glutes.",
+                    "Stress management impacts recovery: chronic stress elevates cortisol, impairs sleep, and slows adaptation. Practice relaxation techniques daily."
+                ],
+                mental: [
+                    "Visualization works: 10 minutes daily of mental rehearsal improves performance by 13-16%. See yourself executing perfect routes and catches.",
+                    "Pre-game routines create consistency: develop a 15-20 minute routine that gets you in the optimal arousal state for competition.",
+                    "Process goals > outcome goals: Focus on technical execution rather than just results. Perfect technique leads to better outcomes naturally.",
+                    "Confidence comes from preparation: the more thoroughly you prepare physically, technically, and mentally, the more confident you'll feel in games.",
+                    "Pressure is privilege: reframe nerves as excitement. Your body is preparing for peak performance - use that energy positively!"
+                ]
+            };
+
+            const commonQuestions = {
+                'how': 'training',
+                'train': 'training',
+                'workout': 'training',
+                'exercise': 'training',
+                'drill': 'training',
+                'agility': 'training',
+                'speed': 'training',
+                'conditioning': 'training',
+                'eat': 'nutrition',
+                'nutrition': 'nutrition',
+                'supplement': 'nutrition',
+                'food': 'nutrition',
+                'protein': 'nutrition',
+                'carbs': 'nutrition',
+                'hydration': 'nutrition',
+                'magnesium': 'nutrition',
+                'creatine': 'nutrition',
+                'vitamins': 'nutrition',
+                'diet': 'nutrition',
+                'improve': 'performance',
+                'performance': 'performance',
+                'faster': 'performance',
+                'better': 'performance',
+                'stronger': 'performance',
+                'stats': 'performance',
+                'progress': 'performance',
+                'recover': 'recovery',
+                'rest': 'recovery',
+                'sleep': 'recovery',
+                'tired': 'recovery',
+                'sore': 'recovery',
+                'fatigue': 'recovery',
+                'foam': 'recovery',
+                'stretch': 'recovery',
+                'mental': 'mental',
+                'focus': 'mental',
+                'confidence': 'mental',
+                'nervous': 'mental',
+                'mindset': 'mental',
+                'visualization': 'mental',
+                'pressure': 'mental'
+            };
+
+            window.sendChatMessage = function() {
+                const input = document.getElementById('chat-input');
+                const message = input.value.trim();
+                
+                if (!message) return;
+                
+                // Add user message
+                addChatMessage(message, 'user');
+                
+                // Clear input
+                input.value = '';
+                
+                // Generate bot response
+                setTimeout(() => {
+                    const response = generateBotResponse(message);
+                    addChatMessage(response, 'bot');
+                }, 1000);
+            };
+
+            window.handleChatKeyPress = function(event) {
+                if (event.key === 'Enter') {
+                    sendChatMessage();
+                }
+            };
+
+            function addChatMessage(message, sender) {
+                const messagesContainer = document.getElementById('chatbot-messages');
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `chat-message ${sender}`;
+                
+                if (sender === 'user') {
+                    messageDiv.innerHTML = `<strong>You:</strong> ${message}`;
+                } else {
+                    messageDiv.innerHTML = `<strong>AI Assistant:</strong> ${message}`;
+                }
+                
+                messagesContainer.appendChild(messageDiv);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+
+            function generateBotResponse(message) {
+                const lowerMessage = message.toLowerCase();
+                
+                // Specific nutrition and supplement questions
+                if (lowerMessage.includes('magnesium')) {
+                    if (lowerMessage.includes('how much') || lowerMessage.includes('daily') || lowerMessage.includes('dosage')) {
+                        return "For athletes, I recommend 400-600mg of magnesium daily. Take 200-300mg with dinner and 200-300mg 30-60 minutes before training for optimal muscle function and recovery. Choose magnesium glycinate or citrate for better absorption.";
+                    } else if (lowerMessage.includes('when') || lowerMessage.includes('time')) {
+                        return "Take magnesium in split doses: 200-300mg with dinner for better sleep and recovery, plus 200-300mg 30-60 minutes before training to prevent muscle cramps and enhance performance.";
+                    } else if (lowerMessage.includes('benefits') || lowerMessage.includes('why')) {
+                        return "Magnesium is crucial for muscle function, energy production, and recovery. It helps prevent cramps, supports protein synthesis, improves sleep quality, and reduces inflammation. Essential for flag football players!";
+                    } else {
+                        return "Magnesium is one of the most important supplements for athletes. It supports muscle function, prevents cramps, and aids recovery. Take 400-600mg daily, split between pre-training and evening doses.";
+                    }
+                }
+                
+                if (lowerMessage.includes('protein')) {
+                    if (lowerMessage.includes('how much') || lowerMessage.includes('daily')) {
+                        return "Flag football players need 1.6-2.2g of protein per kg of body weight daily. For a 70kg athlete, that's 112-154g daily. Spread across 4-5 meals with 20-30g per meal for optimal absorption.";
+                    } else if (lowerMessage.includes('when') || lowerMessage.includes('timing')) {
+                        return "Protein timing matters! Have 20-30g within 30 minutes post-training, include protein in every meal, and consider 20g of casein protein before bed for overnight recovery.";
+                    } else {
+                        return "Prioritize lean protein sources: chicken, fish, eggs, Greek yogurt, and legumes. For convenience, whey protein post-workout and casein before bed work well for flag football training.";
+                    }
+                }
+                
+                if (lowerMessage.includes('creatine')) {
+                    return "Creatine monohydrate is excellent for flag football! Take 5g daily (no loading needed), preferably post-workout. It improves sprint performance, power output, and recovery between plays. Stay well hydrated when using creatine.";
+                }
+                
+                if (lowerMessage.includes('hydration') || lowerMessage.includes('water')) {
+                    return "Hydration is critical! Drink 500ml of water 2-3 hours before training, 150-200ml every 15-20 minutes during training, and 150% of fluid lost post-training. Monitor urine color - aim for light yellow.";
+                }
+                
+                if (lowerMessage.includes('pre workout') || lowerMessage.includes('pre-workout')) {
+                    return "Pre-workout nutrition: Eat carbs + moderate protein 2-3 hours before training. Try: banana with peanut butter, oatmeal with berries, or whole grain toast with turkey. Avoid high fat/fiber foods close to training.";
+                }
+                
+                if (lowerMessage.includes('post workout') || lowerMessage.includes('post-workout')) {
+                    return "Post-workout is crucial! Within 30 minutes: combine protein (20-30g) + carbs (30-60g). Great options: chocolate milk, protein shake with banana, Greek yogurt with berries, or tuna sandwich.";
+                }
+                
+                if (lowerMessage.includes('carbs') || lowerMessage.includes('carbohydrates')) {
+                    return "Carbs are your primary fuel! Aim for 5-7g per kg body weight daily. Focus on complex carbs: oats, quinoa, sweet potatoes, brown rice. Save simple carbs (fruits) for pre/post-training fuel.";
+                }
+                
+                // Training-specific questions
+                if (lowerMessage.includes('40 yard') || lowerMessage.includes('40-yard') || lowerMessage.includes('speed')) {
+                    return "To improve 40-yard dash: Focus on acceleration drills, proper start mechanics, and explosive strength. Key exercises: A-skips, wall drives, sled pushes, and plyometrics. Train 2-3x/week with full recovery between sessions.";
+                }
+                
+                if (lowerMessage.includes('agility')) {
+                    return "Flag football agility training: Ladder drills, cone drills, shuttle runs, and reactive agility work. Focus on quick feet, proper cutting mechanics, and body control. Pro-agility and 5-10-5 drills are sport-specific.";
+                }
+                
+                if (lowerMessage.includes('routes') || lowerMessage.includes('route running')) {
+                    return "Sharp route running tips: Practice stem technique, use proper footwork for cuts, maintain eye contact with QB, and work on route timing. Focus on explosion out of breaks and consistent hand positioning.";
+                }
+                
+                if (lowerMessage.includes('flag pulling') || lowerMessage.includes('defense')) {
+                    return "Flag pulling technique: Stay low, keep eyes on hips (not feet), use proper hand positioning, and maintain good body control. Practice angle pursuit and prediction drills to improve reaction time.";
+                }
+                
+                if (lowerMessage.includes('conditioning') || lowerMessage.includes('endurance')) {
+                    return "Flag football conditioning: Mix high-intensity intervals with sport-specific movements. Try 30-second sprints with 90-second rest, shuttle runs, and position-specific drills. Train energy systems used in games.";
+                }
+                
+                // Recovery and wellness
+                if (lowerMessage.includes('sleep')) {
+                    return "Sleep is when you grow stronger! Aim for 7-9 hours nightly. Create a sleep routine: dark room, cool temperature (65-68°F), no screens 1 hour before bed, and consistent sleep/wake times.";
+                }
+                
+                if (lowerMessage.includes('recovery')) {
+                    return "Active recovery accelerates adaptation: light walking, stretching, foam rolling, and mobility work. Also prioritize sleep, proper nutrition, stress management, and consider cold therapy or contrast showers.";
+                }
+                
+                if (lowerMessage.includes('foam rolling') || lowerMessage.includes('mobility')) {
+                    return "Foam rolling helps muscle recovery and mobility. Focus on IT bands, quads, hamstrings, and calves. Roll slowly (1 inch per second) and spend 30-60 seconds on tight spots. Do this post-training and on recovery days.";
+                }
+                
+                // Performance analysis using real data
+                if (lowerMessage.includes('stats') || lowerMessage.includes('progress')) {
+                    const scores = performanceAnalytics.performanceData.currentScores;
+                    const improvements = performanceAnalytics.calculateImprovements('30d');
+                    return `Your current performance: Overall ${scores.overall}/100, Speed ${scores.speed}/100, Agility ${scores.agility}/100, Strength ${scores.strength}/100. Recent improvements show great progress! Check the charts above for detailed trends.`;
+                }
+                
+                if (lowerMessage.includes('recommendation') || lowerMessage.includes('advice')) {
+                    const recommendation = performanceAnalytics.getTrainingRecommendation();
+                    return `Based on your current data: ${recommendation.message} Your wellness metrics suggest focusing on ${recommendation.type} intensity training today.`;
+                }
+                
+                // Schedule and general questions  
+                if (lowerMessage.includes('schedule') || lowerMessage.includes('when')) {
+                    return "Your next training session is Olympic Prep on Thursday at 3:00 PM. Check the dashboard for your full schedule! Remember to warm up properly before each session.";
+                }
+                
+                if (lowerMessage.includes('tournament') || lowerMessage.includes('competition')) {
+                    return "Your next tournament is the Adria Bowl in Poreč, Croatia on April 11-12, 2026. Make sure to register soon! Focus on sport-specific training and mental preparation.";
+                }
+                
+                if (lowerMessage.includes('injury') || lowerMessage.includes('hurt') || lowerMessage.includes('pain')) {
+                    return "If you're experiencing pain or injury, please log it in the injury tracking section and consult with our medical team. Never train through pain! Focus on proper recovery and rehabilitation.";
+                }
+                
+                if (lowerMessage.includes('weight gain') || lowerMessage.includes('muscle')) {
+                    return "For healthy weight/muscle gain: Eat in a 300-500 calorie surplus, prioritize protein (1.6-2.2g/kg), strength train 3-4x/week, and ensure adequate recovery. Gain 0.5-1lb per week for quality muscle growth.";
+                }
+                
+                if (lowerMessage.includes('fat loss') || lowerMessage.includes('cutting')) {
+                    return "For fat loss while maintaining performance: Create a moderate deficit (300-500 calories), keep protein high, maintain strength training, and time carbs around workouts. Aim for 0.5-1lb loss per week.";
+                }
+                
+                // Find matching category for general responses
+                let category = 'training'; // default
+                for (const [keyword, cat] of Object.entries(commonQuestions)) {
+                    if (lowerMessage.includes(keyword)) {
+                        category = cat;
+                        break;
+                    }
+                }
+                
+                // Return random response from category
+                const responses = chatResponses[category];
+                return responses[Math.floor(Math.random() * responses.length)];
+            }
+
+            // Hide notification panel when clicking outside
+            document.addEventListener('click', function(event) {
+                const panel = document.getElementById('notification-panel');
+                const bell = document.getElementById('notification-bell');
+                
+                if (!panel.contains(event.target) && !bell.contains(event.target)) {
+                    panel.style.display = 'none';
+                }
             });
         });
     </script>

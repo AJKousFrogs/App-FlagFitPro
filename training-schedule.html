@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlagFit Pro - Training Schedule</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./src/ui-design-system.css">
+    <link rel="stylesheet" href="./src/hover-effects.css">
+    <style>
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+            background: var(--bg-secondary);
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--white);
+            border-right: 1px solid var(--border-light);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            overflow-y: auto;
+            z-index: 40;
+        }
+
+        .sidebar-header {
+            padding: var(--space-6);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            font-size: var(--text-xl);
+            font-weight: var(--font-bold);
+            color: var(--gray-900);
+            text-decoration: none;
+        }
+
+        .sidebar-nav {
+            padding: var(--space-6);
+        }
+
+        .nav-section {
+            margin-bottom: var(--space-6);
+        }
+
+        .nav-section-title {
+            font-size: var(--text-xs);
+            font-weight: var(--font-semibold);
+            color: var(--gray-400);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: var(--space-3);
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-3);
+            color: var(--gray-600);
+            text-decoration: none;
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+            margin-bottom: var(--space-1);
+            font-weight: var(--font-medium);
+            font-size: var(--text-sm);
+        }
+
+        .nav-item:hover {
+            background: var(--gray-50);
+            color: var(--gray-900);
+        }
+
+        .nav-item.active {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            opacity: 0.8;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            flex: 1;
+            padding: var(--space-6);
+            min-height: 100vh;
+        }
+
+        .header-section {
+            background: var(--white);
+            padding: var(--space-6);
+            border-radius: var(--radius-xl);
+            margin-bottom: var(--space-6);
+            border: 1px solid var(--border-light);
+        }
+
+        .header-section h1 {
+            font-size: var(--text-h1);
+            font-weight: var(--font-bold);
+            color: var(--gray-900);
+            margin-bottom: var(--space-2);
+        }
+
+        .program-overview {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: var(--white);
+            padding: var(--space-6);
+            border-radius: var(--radius-xl);
+            margin-bottom: var(--space-6);
+        }
+
+        .program-title {
+            font-size: var(--text-2xl);
+            font-weight: var(--font-bold);
+            margin-bottom: var(--space-2);
+        }
+
+        .program-subtitle {
+            font-size: var(--text-lg);
+            opacity: 0.9;
+            margin-bottom: var(--space-4);
+        }
+
+        .program-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--space-4);
+            margin-top: var(--space-4);
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: var(--space-4);
+            border-radius: var(--radius-lg);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: var(--text-xl);
+            font-weight: var(--font-bold);
+            margin-bottom: var(--space-1);
+        }
+
+        .stat-label {
+            font-size: var(--text-sm);
+            opacity: 0.8;
+        }
+
+        .phase-selector {
+            background: var(--white);
+            padding: var(--space-6);
+            border-radius: var(--radius-xl);
+            margin-bottom: var(--space-6);
+            border: 1px solid var(--border-light);
+        }
+
+        .phase-tabs {
+            display: flex;
+            gap: var(--space-2);
+            margin-bottom: var(--space-4);
+        }
+
+        .phase-tab {
+            padding: var(--space-3) var(--space-4);
+            border-radius: var(--radius-lg);
+            border: 2px solid var(--border-light);
+            background: var(--white);
+            color: var(--gray-600);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            font-weight: var(--font-medium);
+        }
+
+        .phase-tab.active {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .phase-tab:hover:not(.active) {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .phase-info {
+            background: var(--bg-secondary);
+            padding: var(--space-4);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-4);
+        }
+
+        .phase-title {
+            font-size: var(--text-lg);
+            font-weight: var(--font-bold);
+            margin-bottom: var(--space-2);
+        }
+
+        .phase-goals {
+            list-style: none;
+            padding: 0;
+        }
+
+        .phase-goals li {
+            padding: var(--space-1) 0;
+            position: relative;
+            padding-left: var(--space-4);
+        }
+
+        .phase-goals li:before {
+            content: "✅";
+            position: absolute;
+            left: 0;
+        }
+
+        .weekly-schedule {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-light);
+            overflow: hidden;
+        }
+
+        .schedule-header {
+            background: var(--gray-50);
+            padding: var(--space-4) var(--space-6);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .week-selector {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            margin-bottom: var(--space-3);
+        }
+
+        .week-nav {
+            display: flex;
+            gap: var(--space-2);
+        }
+
+        .week-nav-btn {
+            padding: var(--space-2) var(--space-3);
+            border: 1px solid var(--border-light);
+            background: var(--white);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .week-nav-btn:hover {
+            background: var(--gray-100);
+        }
+
+        .week-nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .current-week {
+            font-size: var(--text-lg);
+            font-weight: var(--font-bold);
+            color: var(--gray-900);
+        }
+
+        .week-dates {
+            color: var(--gray-600);
+            font-size: var(--text-sm);
+        }
+
+        .daily-schedule {
+            padding: var(--space-6);
+        }
+
+        .day-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-4);
+        }
+
+        .day-card {
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            transition: all var(--transition-fast);
+        }
+
+        .day-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .day-header {
+            padding: var(--space-4);
+            background: var(--gray-50);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .day-name {
+            font-size: var(--text-lg);
+            font-weight: var(--font-bold);
+            color: var(--gray-900);
+            margin-bottom: var(--space-1);
+        }
+
+        .workout-title {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+            margin-bottom: var(--space-2);
+        }
+
+        .workout-type {
+            display: inline-block;
+            padding: var(--space-1) var(--space-2);
+            border-radius: var(--radius-sm);
+            font-size: var(--text-xs);
+            font-weight: var(--font-semibold);
+            text-transform: uppercase;
+        }
+
+        .workout-type.strength {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .workout-type.sprint {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .workout-type.power {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .workout-type.recovery {
+            background: #e8f5e8;
+            color: #388e3c;
+        }
+
+        .day-content {
+            padding: var(--space-4);
+        }
+
+        .workout-duration {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            margin-bottom: var(--space-3);
+            color: var(--gray-600);
+        }
+
+        .exercise-blocks {
+            space-y: var(--space-3);
+        }
+
+        .exercise-block {
+            margin-bottom: var(--space-3);
+        }
+
+        .block-title {
+            font-size: var(--text-sm);
+            font-weight: var(--font-semibold);
+            color: var(--gray-900);
+            margin-bottom: var(--space-2);
+        }
+
+        .exercise-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .exercise-item {
+            padding: var(--space-2);
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-2);
+            font-size: var(--text-sm);
+        }
+
+        .exercise-name {
+            font-weight: var(--font-medium);
+            color: var(--gray-900);
+        }
+
+        .exercise-details {
+            color: var(--gray-600);
+            font-size: var(--text-xs);
+            margin-top: var(--space-1);
+        }
+
+        .start-workout-btn {
+            width: 100%;
+            padding: var(--space-3);
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: var(--radius-lg);
+            font-weight: var(--font-semibold);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            margin-top: var(--space-3);
+        }
+
+        .start-workout-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .start-workout-btn:disabled {
+            background: var(--gray-300);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .rest-day {
+            text-align: center;
+            padding: var(--space-6);
+            color: var(--gray-500);
+        }
+
+        .rest-day-icon {
+            font-size: 3rem;
+            margin-bottom: var(--space-3);
+        }
+
+        .protocols-section {
+            background: var(--white);
+            padding: var(--space-6);
+            border-radius: var(--radius-xl);
+            margin-bottom: var(--space-6);
+            border: 1px solid var(--border-light);
+        }
+
+        .protocols-title {
+            font-size: var(--text-xl);
+            font-weight: var(--font-bold);
+            margin-bottom: var(--space-4);
+        }
+
+        .protocol-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-4);
+        }
+
+        .protocol-card {
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            transition: all var(--transition-fast);
+        }
+
+        .protocol-card:hover {
+            border-color: var(--primary);
+        }
+
+        .protocol-title {
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            margin-bottom: var(--space-2);
+        }
+
+        .protocol-duration {
+            color: var(--gray-600);
+            font-size: var(--text-sm);
+            margin-bottom: var(--space-3);
+        }
+
+        .progress-indicator {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            margin-top: var(--space-3);
+            padding: var(--space-2);
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+        }
+
+        .progress-text {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+        }
+
+        .phase-progress {
+            width: 100%;
+            height: 8px;
+            background: var(--gray-200);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+            margin-bottom: var(--space-2);
+        }
+
+        .phase-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: width 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                position: relative;
+                height: auto;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .phase-tabs {
+                flex-wrap: wrap;
+            }
+            
+            .day-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <a href="/dashboard.html" class="sidebar-brand">
+                    <span>🏈</span>
+                    <span>FlagFit Pro</span>
+                </a>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a href="/dashboard.html" class="nav-item hover-lift-small">
+                        <span class="nav-icon">📊</span>
+                        Dashboard
+                    </a>
+                    <a href="/roster.html" class="nav-item hover-lift-small">
+                        <span class="nav-icon">👥</span>
+                        Team Roster
+                    </a>
+                    <a href="/training.html" class="nav-item hover-lift-small">
+                        <span class="nav-icon">⚡</span>
+                        Training
+                    </a>
+                    <a href="/training-schedule.html" class="nav-item active">
+                        <span class="nav-icon">📅</span>
+                        Training Schedule
+                    </a>
+                    <a href="/tournaments.html" class="nav-item hover-lift-small">
+                        <span class="nav-icon">🏆</span>
+                        Tournaments
+                    </a>
+                    <a href="/community.html" class="nav-item hover-lift-small">
+                        <span class="nav-icon">👥</span>
+                        Community
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Analytics</div>
+                    <a href="/analytics.html" class="nav-item hover-lift-small">
+                        <span class="nav-icon">📈</span>
+                        Analytics
+                    </a>
+                    <a href="/settings.html" class="nav-item hover-lift-small">
+                        <span class="nav-icon">⚙️</span>
+                        Settings
+                    </a>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Program Overview -->
+            <div class="program-overview">
+                <div class="program-title" id="programTitle">COMPLETE FLAG FOOTBALL OFFSEASON TRAINING PROGRAM</div>
+                <div class="program-subtitle" id="programSubtitle">WR/DB PERFORMANCE OPTIMIZATION</div>
+                
+                <div class="program-stats">
+                    <div class="stat-item">
+                        <div class="stat-value">14 Weeks</div>
+                        <div class="stat-label">Duration</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">5-6 Days</div>
+                        <div class="stat-label">Per Week</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">60-90 Min</div>
+                        <div class="stat-label">Per Session</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">40% BW</div>
+                        <div class="stat-label">Max Load</div>
+                    </div>
+                </div>
+
+                <div class="progress-indicator">
+                    <span class="progress-text">Program Progress:</span>
+                    <div class="phase-progress">
+                        <div class="phase-progress-fill" id="programProgress" style="width: 0%"></div>
+                    </div>
+                    <span id="progressText">0% Complete</span>
+                </div>
+            </div>
+
+            <!-- Phase Selector -->
+            <div class="phase-selector">
+                <div class="phase-tabs">
+                    <button class="phase-tab active" data-phase="foundation">
+                        Foundation (Weeks 1-4)
+                    </button>
+                    <button class="phase-tab" data-phase="strength">
+                        Strength (Weeks 5-8)
+                    </button>
+                    <button class="phase-tab" data-phase="power">
+                        Power (Weeks 9-12)
+                    </button>
+                    <button class="phase-tab" data-phase="competition">
+                        Competition (Weeks 13-14)
+                    </button>
+                </div>
+
+                <div class="phase-info" id="phaseInfo">
+                    <!-- Phase info will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Daily Protocols -->
+            <div class="protocols-section">
+                <h2 class="protocols-title">📏 Daily Protocols</h2>
+                <div class="protocol-grid">
+                    <div class="protocol-card">
+                        <div class="protocol-title">🌅 Morning Mobility</div>
+                        <div class="protocol-duration">15 minutes • Every day</div>
+                        <p>Full body mobility routine to prepare your body for training. Focus on ankle, knee, hip, and quad health.</p>
+                        <button class="start-workout-btn">View Routine</button>
+                    </div>
+                    <div class="protocol-card">
+                        <div class="protocol-title">🔥 Universal Warm-Up</div>
+                        <div class="protocol-duration">15-20 minutes • Before every session</div>
+                        <p>Comprehensive warm-up including general activation, lower body chain prep, and sprint drills.</p>
+                        <button class="start-workout-btn">View Warm-Up</button>
+                    </div>
+                    <div class="protocol-card">
+                        <div class="protocol-title">🧘 Sunday Recovery</div>
+                        <div class="protocol-duration">45-60 minutes • Weekly</div>
+                        <p>Complete recovery protocol with stretching, foam rolling, and light activity.</p>
+                        <button class="start-workout-btn">View Protocol</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weekly Schedule -->
+            <div class="weekly-schedule">
+                <div class="schedule-header">
+                    <div class="week-selector">
+                        <div class="week-nav">
+                            <button class="week-nav-btn" id="prevWeek">← Previous</button>
+                            <button class="week-nav-btn" id="nextWeek">Next →</button>
+                        </div>
+                        <div class="current-week" id="currentWeek">Week 1 - Foundation Phase</div>
+                    </div>
+                    <div class="week-dates" id="weekDates">December 1-7, 2025</div>
+                </div>
+
+                <div class="daily-schedule">
+                    <div class="day-grid" id="dayGrid">
+                        <!-- Daily workouts will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Workout Detail Modal -->
+    <div id="workoutModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle"></h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Workout details will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { authManager } from './src/auth-manager.js';
+        import { TRAINING_PROGRAM, WEEKLY_SCHEDULES } from './src/training-program-data.js';
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🏈 Training Schedule page loading...');
+            
+            // Check authentication
+            if (!authManager.isAuthenticated()) {
+                console.log('❌ User not authenticated, redirecting to login');
+                window.location.href = '/login.html';
+                return;
+            }
+
+            console.log('✅ User authenticated, loading training schedule');
+            
+            initializeTrainingSchedule();
+        });
+
+        let currentPhase = 'foundation';
+        let currentWeek = 1;
+        
+        function initializeTrainingSchedule() {
+            console.log('📅 Initializing training schedule...');
+            
+            setupPhaseSelector();
+            setupWeekNavigation();
+            loadPhaseInfo(currentPhase);
+            loadWeeklySchedule(currentWeek);
+            updateProgramProgress();
+        }
+
+        function setupPhaseSelector() {
+            const phaseTabs = document.querySelectorAll('.phase-tab');
+            
+            phaseTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Remove active class from all tabs
+                    phaseTabs.forEach(t => t.classList.remove('active'));
+                    
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+                    
+                    // Update current phase
+                    currentPhase = this.dataset.phase;
+                    
+                    // Load phase info
+                    loadPhaseInfo(currentPhase);
+                    
+                    // Update week based on phase
+                    updateWeekForPhase(currentPhase);
+                });
+            });
+        }
+
+        function setupWeekNavigation() {
+            const prevBtn = document.getElementById('prevWeek');
+            const nextBtn = document.getElementById('nextWeek');
+            
+            prevBtn.addEventListener('click', function() {
+                if (currentWeek > 1) {
+                    currentWeek--;
+                    loadWeeklySchedule(currentWeek);
+                    updatePhaseForWeek(currentWeek);
+                }
+            });
+            
+            nextBtn.addEventListener('click', function() {
+                if (currentWeek < 14) {
+                    currentWeek++;
+                    loadWeeklySchedule(currentWeek);
+                    updatePhaseForWeek(currentWeek);
+                }
+            });
+        }
+
+        function loadPhaseInfo(phase) {
+            const phaseData = TRAINING_PROGRAM.phases[phase];
+            const phaseInfoEl = document.getElementById('phaseInfo');
+            
+            phaseInfoEl.innerHTML = `
+                <div class="phase-title">${phaseData.title}</div>
+                <div style="margin-bottom: var(--space-3);">
+                    <strong>Weeks ${phaseData.weeks}</strong> • ${phaseData.dateRange}
+                </div>
+                <div style="margin-bottom: var(--space-3);">
+                    <strong>Goals:</strong>
+                    <ul class="phase-goals">
+                        ${phaseData.goals.map(goal => `<li>${goal}</li>`).join('')}
+                    </ul>
+                </div>
+                <div>
+                    <strong>Training Priorities:</strong>
+                    <ul class="phase-goals">
+                        ${phaseData.priorities.map(priority => `<li>${priority}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+        }
+
+        function updateWeekForPhase(phase) {
+            const weekMap = {
+                foundation: 1,
+                strength: 5,
+                power: 9,
+                competition: 13
+            };
+            
+            currentWeek = weekMap[phase];
+            loadWeeklySchedule(currentWeek);
+        }
+
+        function updatePhaseForWeek(week) {
+            let phase;
+            if (week <= 4) phase = 'foundation';
+            else if (week <= 8) phase = 'strength';
+            else if (week <= 12) phase = 'power';
+            else phase = 'competition';
+            
+            if (phase !== currentPhase) {
+                currentPhase = phase;
+                
+                // Update active tab
+                document.querySelectorAll('.phase-tab').forEach(tab => {
+                    tab.classList.toggle('active', tab.dataset.phase === phase);
+                });
+                
+                loadPhaseInfo(phase);
+            }
+        }
+
+        function loadWeeklySchedule(weekNumber) {
+            console.log(`📋 Loading week ${weekNumber} schedule...`);
+            
+            // Update week display
+            const currentWeekEl = document.getElementById('currentWeek');
+            const weekDatesEl = document.getElementById('weekDates');
+            const dayGridEl = document.getElementById('dayGrid');
+            
+            // Get phase for week
+            let phase;
+            if (weekNumber <= 4) phase = 'foundation';
+            else if (weekNumber <= 8) phase = 'strength';
+            else if (weekNumber <= 12) phase = 'power';
+            else phase = 'competition';
+            
+            const phaseTitle = TRAINING_PROGRAM.phases[phase].title;
+            currentWeekEl.textContent = `Week ${weekNumber} - ${phaseTitle}`;
+            
+            // Calculate dates (starting from Dec 1, 2025)
+            const startDate = new Date('2025-12-01');
+            startDate.setDate(startDate.getDate() + (weekNumber - 1) * 7);
+            const endDate = new Date(startDate);
+            endDate.setDate(endDate.getDate() + 6);
+            
+            weekDatesEl.textContent = `${startDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })} - ${endDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`;
+            
+            // Load week data (for now, use Week 1 as template)
+            const weekData = WEEKLY_SCHEDULES.foundation.week1;
+            
+            // Generate daily cards
+            const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+            const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+            
+            dayGridEl.innerHTML = days.map((day, index) => {
+                const dayData = weekData.days[day];
+                
+                if (day === 'sunday' || dayData.type === 'recovery') {
+                    return `
+                        <div class="day-card">
+                            <div class="day-header">
+                                <div class="day-name">${dayNames[index]}</div>
+                                <span class="workout-type recovery">Recovery</span>
+                            </div>
+                            <div class="rest-day">
+                                <div class="rest-day-icon">🧘</div>
+                                <h3>Recovery Day</h3>
+                                <p>Complete recovery protocol</p>
+                                <div style="margin-top: var(--space-3);">
+                                    ${dayData.activities ? dayData.activities.map(activity => 
+                                        `<div style="font-size: var(--text-sm); margin: var(--space-1) 0;">• ${activity.name} (${activity.duration})</div>`
+                                    ).join('') : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                return `
+                    <div class="day-card">
+                        <div class="day-header">
+                            <div class="day-name">${dayNames[index]}</div>
+                            <div class="workout-title">${dayData.title}</div>
+                            <span class="workout-type ${dayData.type}">${dayData.type}</span>
+                        </div>
+                        <div class="day-content">
+                            <div class="workout-duration">
+                                <span>⏱️</span>
+                                <span>${dayData.duration} minutes</span>
+                            </div>
+                            
+                            <div class="exercise-blocks">
+                                ${dayData.blocks.slice(0, 2).map(block => `
+                                    <div class="exercise-block">
+                                        <div class="block-title">${block.title}</div>
+                                        <ul class="exercise-list">
+                                            ${block.exercises.slice(0, 3).map(exercise => `
+                                                <li class="exercise-item">
+                                                    <div class="exercise-name">${exercise.name}</div>
+                                                    <div class="exercise-details">
+                                                        ${exercise.sets ? `${exercise.sets} sets` : ''} 
+                                                        ${exercise.reps ? `× ${exercise.reps}` : ''} 
+                                                        ${exercise.duration ? `× ${exercise.duration}` : ''}
+                                                        ${exercise.distance ? `× ${exercise.distance}` : ''}
+                                                        ${exercise.rest ? ` • Rest: ${exercise.rest}` : ''}
+                                                    </div>
+                                                </li>
+                                            `).join('')}
+                                            ${block.exercises.length > 3 ? `<li class="exercise-item" style="font-style: italic; opacity: 0.7;">+ ${block.exercises.length - 3} more exercises</li>` : ''}
+                                        </ul>
+                                    </div>
+                                `).join('')}
+                                ${dayData.blocks.length > 2 ? `<div style="font-style: italic; opacity: 0.7; text-align: center; margin-top: var(--space-2);">+ ${dayData.blocks.length - 2} more blocks</div>` : ''}
+                            </div>
+                            
+                            <button class="start-workout-btn" onclick="startWorkout('${day}', ${weekNumber})">
+                                Start Workout
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            // Update navigation buttons
+            document.getElementById('prevWeek').disabled = weekNumber <= 1;
+            document.getElementById('nextWeek').disabled = weekNumber >= 14;
+            
+            updateProgramProgress();
+        }
+
+        function updateProgramProgress() {
+            const progressPercentage = Math.round((currentWeek / 14) * 100);
+            const progressFill = document.getElementById('programProgress');
+            const progressText = document.getElementById('progressText');
+            
+            progressFill.style.width = progressPercentage + '%';
+            progressText.textContent = progressPercentage + '% Complete';
+        }
+
+        // Global function for starting workouts
+        window.startWorkout = function(day, week) {
+            console.log(`🏋️ Starting workout: Week ${week}, ${day}`);
+            
+            // Get workout data
+            const weekData = WEEKLY_SCHEDULES.foundation.week1;
+            const dayData = weekData.days[day];
+            
+            // Show detailed workout modal
+            showWorkoutModal(dayData, day, week);
+        };
+
+        function showWorkoutModal(dayData, day, week) {
+            const modal = document.getElementById('workoutModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            
+            modalTitle.textContent = `${day.charAt(0).toUpperCase() + day.slice(1)} - Week ${week}`;
+            
+            modalBody.innerHTML = `
+                <div style="margin-bottom: var(--space-4);">
+                    <h3>${dayData.title}</h3>
+                    <p><strong>Duration:</strong> ${dayData.duration} minutes</p>
+                    <p><strong>Type:</strong> ${dayData.type}</p>
+                </div>
+                
+                <div style="margin-bottom: var(--space-4);">
+                    <h4>Warm-Up</h4>
+                    <p>${dayData.warmup}</p>
+                </div>
+                
+                ${dayData.blocks.map((block, index) => `
+                    <div style="margin-bottom: var(--space-4); padding: var(--space-4); background: var(--bg-secondary); border-radius: var(--radius-lg);">
+                        <h4>${block.title}</h4>
+                        <p><strong>Duration:</strong> ${block.duration} minutes</p>
+                        
+                        <div style="margin-top: var(--space-3);">
+                            ${block.exercises.map((exercise, exIndex) => `
+                                <div style="margin-bottom: var(--space-3); padding: var(--space-3); background: var(--white); border-radius: var(--radius-md);">
+                                    <div style="font-weight: var(--font-semibold); margin-bottom: var(--space-1);">
+                                        ${exIndex + 1}. ${exercise.name}
+                                    </div>
+                                    <div style="font-size: var(--text-sm); color: var(--gray-600);">
+                                        ${exercise.sets ? `${exercise.sets} sets` : ''} 
+                                        ${exercise.reps ? `× ${exercise.reps}` : ''} 
+                                        ${exercise.duration ? `× ${exercise.duration}` : ''}
+                                        ${exercise.distance ? `× ${exercise.distance}` : ''}
+                                        ${exercise.rest ? ` • Rest: ${exercise.rest}` : ''}
+                                        ${exercise.load ? ` • Load: ${exercise.load}` : ''}
+                                    </div>
+                                    ${exercise.notes ? `<div style="font-size: var(--text-sm); color: var(--gray-500); margin-top: var(--space-1); font-style: italic;">${exercise.notes}</div>` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `).join('')}
+                
+                ${dayData.equipment ? `
+                    <div style="margin-top: var(--space-4); padding: var(--space-3); background: #fff3cd; border-radius: var(--radius-lg);">
+                        <h4>Equipment Needed:</h4>
+                        <ul style="margin: var(--space-2) 0; padding-left: var(--space-4);">
+                            ${dayData.equipment.map(item => `<li>${item}</li>`).join('')}
+                        </ul>
+                    </div>
+                ` : ''}
+                
+                <div style="margin-top: var(--space-6); text-align: center;">
+                    <button class="start-workout-btn" style="width: auto; padding: var(--space-3) var(--space-6);" onclick="startWorkoutTracking('${day}', ${week})">
+                        🚀 Begin Workout
+                    </button>
+                </div>
+            `;
+            
+            modal.style.display = 'block';
+            
+            // Close modal functionality
+            const closeBtn = modal.querySelector('.modal-close');
+            closeBtn.onclick = () => modal.style.display = 'none';
+            
+            window.onclick = (event) => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            };
+        }
+
+        window.startWorkoutTracking = function(day, week) {
+            console.log(`🎯 Starting workout tracking: Week ${week}, ${day}`);
+            
+            // Close modal
+            document.getElementById('workoutModal').style.display = 'none';
+            
+            // In a real implementation, this would:
+            // 1. Start workout timer
+            // 2. Track exercise completion
+            // 3. Record weights/reps/times
+            // 4. Save progress data
+            // 5. Show post-workout summary
+            
+            alert(`Workout tracking started for Week ${week} ${day}!\n\nFeatures coming soon:\n• Exercise timer\n• Rep/weight tracking\n• Rest period alerts\n• Progress recording\n• Workout analytics`);
+        };
+
+        // Add modal styles
+        const modalStyles = `
+            .modal {
+                position: fixed;
+                z-index: 1000;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0,0,0,0.5);
+                overflow: auto;
+            }
+            
+            .modal-content {
+                background-color: var(--white);
+                margin: 5% auto;
+                padding: 0;
+                border-radius: var(--radius-xl);
+                width: 90%;
+                max-width: 800px;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+            
+            .modal-header {
+                padding: var(--space-6);
+                border-bottom: 1px solid var(--border-light);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            
+            .modal-close {
+                background: none;
+                border: none;
+                font-size: 1.5rem;
+                cursor: pointer;
+                color: var(--gray-500);
+            }
+            
+            .modal-close:hover {
+                color: var(--gray-900);
+            }
+            
+            .modal-body {
+                padding: var(--space-6);
+            }
+        `;
+        
+        const styleSheet = document.createElement('style');
+        styleSheet.textContent = modalStyles;
+        document.head.appendChild(styleSheet);
+    </script>
+</body>
+</html>

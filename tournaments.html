@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FlagFit Pro - Tournaments</title>
+    <title>FlagFit Pro - Official Tournament Schedule 2026-2027</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./src/ui-design-system.css">
+    <link rel="stylesheet" href="./src/hover-effects.css">
     <style>
         * {
             margin: 0;
@@ -558,11 +559,11 @@
         <nav class="sidebar-nav">
             <div class="nav-section">
                 <div class="nav-section-title">Main</div>
-                <a href="/dashboard.html" class="nav-item">
+                <a href="/dashboard.html" class="nav-item hover-lift-small">
                     <span class="nav-icon">📊</span>
                     Dashboard
                 </a>
-                <a href="/training.html" class="nav-item">
+                <a href="/training.html" class="nav-item hover-lift-small">
                     <span class="nav-icon">⚡</span>
                     Training
                 </a>
@@ -570,11 +571,11 @@
                     <span class="nav-icon">🏆</span>
                     Tournaments
                 </a>
-                <a href="/community.html" class="nav-item">
+                <a href="/community.html" class="nav-item hover-lift-small">
                     <span class="nav-icon">👥</span>
                     Community
                 </a>
-                <a href="/coach.html" class="nav-item">
+                <a href="/coach.html" class="nav-item hover-lift-small">
                     <span class="nav-icon">📋</span>
                     Coach
                 </a>
@@ -582,11 +583,11 @@
             
             <div class="nav-section">
                 <div class="nav-section-title">Analytics</div>
-                <a href="/analytics.html" class="nav-item">
+                <a href="/analytics.html" class="nav-item hover-lift-small">
                     <span class="nav-icon">📈</span>
                     Analytics
                 </a>
-                <a href="/settings.html" class="nav-item">
+                <a href="/settings.html" class="nav-item hover-lift-small">
                     <span class="nav-icon">⚙️</span>
                     Settings
                 </a>
@@ -597,106 +598,23 @@
     <main class="main-content">
         <header class="header">
             <div>
-                <h1 style="font-size: 1.5rem; font-weight: 600; color: #333;">Tournament Hub</h1>
-                <p style="color: #666; margin-top: 5px;">Join competitions and track your progress</p>
+                <h1 style="font-size: 1.5rem; font-weight: 600; color: #333;">Official Tournament Schedule 2026-2027 🏆</h1>
+                <p style="color: #666; margin-top: 5px;">International Flag Football Season featuring 7 major tournaments across Europe</p>
             </div>
             <div>
-                <button class="btn btn-primary" onclick="showCreateTournament()">Create Tournament</button>
+                <button class="btn btn-primary hover-lift" id="nextTournamentBtn">Next Tournament</button>
             </div>
         </header>
 
         <div class="tournament-tabs">
-            <button class="btn btn-ghost active" onclick="switchTab('upcoming')">Upcoming</button>
-            <button class="btn btn-ghost" onclick="switchTab('live')">Live</button>
-            <button class="btn btn-ghost" onclick="switchTab('completed')">Completed</button>
-            <button class="btn btn-ghost" onclick="switchTab('my-tournaments')">My Tournaments</button>
+            <button class="btn btn-ghost active" onclick="switchTab('2026')">2026 Season</button>
+            <button class="btn btn-ghost" onclick="switchTab('2027')">2027 Season</button>
+            <button class="btn btn-ghost" onclick="switchTab('all')">All Tournaments</button>
+            <button class="btn btn-ghost" onclick="switchTab('preparation')">Preparation</button>
         </div>
 
         <section class="tournaments-grid" id="tournamentsGrid">
-            <div class="tournament-card">
-                <div class="tournament-header">
-                    <div class="tournament-status">Registration Open</div>
-                    <div class="tournament-title">Fall Championship</div>
-                    <div class="tournament-subtitle">Regional Flag Football League</div>
-                </div>
-                <div class="tournament-body">
-                    <div class="tournament-info">
-                        <div class="info-item">
-                            <div class="info-icon date">📅</div>
-                            <div>
-                                <div>Oct 15-17</div>
-                                <div style="font-size: 0.8rem; color: #666;">3 days</div>
-                            </div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-icon location">📍</div>
-                            <div>
-                                <div>Central Park</div>
-                                <div style="font-size: 0.8rem; color: #666;">New York</div>
-                            </div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-icon prize">💰</div>
-                            <div>
-                                <div>$5,000</div>
-                                <div style="font-size: 0.8rem; color: #666;">Prize pool</div>
-                            </div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-icon teams">👥</div>
-                            <div>
-                                <div>24/32 teams</div>
-                                <div style="font-size: 0.8rem; color: #666;">Registered</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="tournament-progress">
-                        <div class="progress-label">
-                            <span>Registration Progress</span>
-                            <span>75%</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 75%"></div>
-                        </div>
-                    </div>
-                    <div class="tournament-actions">
-                        <button class="btn btn-primary">Register Team</button>
-                        <button class="btn btn-secondary">View Details</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="tournament-card">
-                <div class="tournament-header">
-                    <div class="tournament-status" style="background: #10b981;">Live Now</div>
-                    <div class="tournament-title">Summer Slam</div>
-                    <div class="tournament-subtitle">Elite Division Tournament</div>
-                </div>
-                <div class="tournament-body">
-                    <div class="tournament-info">
-                        <div class="info-item">
-                            <div class="info-icon date">📅</div>
-                            <div>
-                                <div>Today</div>
-                                <div style="font-size: 0.8rem; color: #666;">Round 2</div>
-                            </div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-icon location">📍</div>
-                            <div>
-                                <div>Sports Complex</div>
-                                <div style="font-size: 0.8rem; color: #666;">LA</div>
-                            </div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-icon prize">💰</div>
-                            <div>
-                                <div>$10,000</div>
-                                <div style="font-size: 0.8rem; color: #666;">Prize pool</div>
-                            </div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-icon teams">👥</div>
+            <!-- Tournament cards will be populated by JavaScript -->
                             <div>
                                 <div>16 teams</div>
                                 <div style="font-size: 0.8rem; color: #666;">Competing</div>
@@ -713,13 +631,13 @@
                         </div>
                     </div>
                     <div class="tournament-actions">
-                        <button class="btn btn-primary">Watch Live</button>
-                        <button class="btn btn-secondary">View Bracket</button>
+                        <button class="btn btn-primary hover-lift">Watch Live</button>
+                        <button class="btn btn-secondary hover-lift-small">View Bracket</button>
                     </div>
                 </div>
             </div>
 
-            <div class="tournament-card">
+            <div class="tournament-card hover-lift glow-hover">
                 <div class="tournament-header">
                     <div class="tournament-status">Coming Soon</div>
                     <div class="tournament-title">Winter League</div>
@@ -766,8 +684,8 @@
                         </div>
                     </div>
                     <div class="tournament-actions">
-                        <button class="btn btn-secondary">Set Reminder</button>
-                        <button class="btn btn-secondary">View Details</button>
+                        <button class="btn btn-secondary hover-lift-small">Set Reminder</button>
+                        <button class="btn btn-secondary hover-lift-small">View Details</button>
                     </div>
                 </div>
             </div>
@@ -913,9 +831,25 @@
         import { apiClient } from './src/api-config.js';
         import { PerformanceUtils } from './src/performance-utils.js';
         import { AccessibilityUtils } from './src/accessibility-utils.js';
+        import { 
+            TOURNAMENT_SCHEDULE, 
+            getAllTournaments, 
+            getTournamentsByYear,
+            getNextTournament,
+            getDaysUntilTournament,
+            formatTournamentDate,
+            getTournamentTypeInfo,
+            getTournamentPreparation
+        } from './src/tournament-schedule.js';
 
         async function initTournamentsPage() {
             if (!authManager.requireAuth()) return;
+            
+            // Load real tournament data
+            loadRealTournamentData();
+            
+            // Initialize next tournament button
+            initNextTournamentButton();
 
             // Use performance monitoring for page load
             await PerformanceUtils.measureAsyncPerformance('Tournament Page Load', async () => {
@@ -971,14 +905,51 @@
             }
         }
 
+        // Load real tournament data
+        function loadRealTournamentData() {
+            // Default to 2026 season
+            switchTab('2026');
+        }
+        
+        function initNextTournamentButton() {
+            const nextTournament = getNextTournament();
+            const btn = document.getElementById('nextTournamentBtn');
+            
+            if (nextTournament) {
+                const daysUntil = getDaysUntilTournament(nextTournament);
+                if (daysUntil !== null) {
+                    btn.textContent = `Next: ${nextTournament.name} (${daysUntil} days)`;
+                } else {
+                    btn.textContent = `Next: ${nextTournament.name} (${nextTournament.month})`;
+                }
+                btn.onclick = () => scrollToTournament(nextTournament.id);
+            } else {
+                btn.textContent = 'Season Complete';
+                btn.disabled = true;
+            }
+        }
+        
+        function scrollToTournament(tournamentId) {
+            const card = document.querySelector(`[data-tournament-id="${tournamentId}"]`);
+            if (card) {
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                card.style.animation = 'highlight 2s ease-in-out';
+            }
+        }
+
         function updateTournamentsGrid(tournaments) {
             const grid = document.getElementById('tournamentsGrid');
             
-            grid.innerHTML = tournaments.map(tournament => `
-                <div class="tournament-card">
+            grid.innerHTML = tournaments.map(tournament => {
+                const typeInfo = getTournamentTypeInfo(tournament.type);
+                const daysUntil = getDaysUntilTournament(tournament);
+                const preparation = getTournamentPreparation(tournament);
+                
+                return `
+                <div class="tournament-card hover-lift glow-hover" data-tournament-id="${tournament.id}">
                     <div class="tournament-header">
-                        <div class="tournament-status" style="background: ${getStatusColor(tournament.status)};">${tournament.status}</div>
-                        <div class="tournament-title">${tournament.name}</div>
+                        <div class="tournament-status" style="background: ${typeInfo.color};">${tournament.type}</div>
+                        <div class="tournament-title">${tournament.name} ${tournament.flag}</div>
                         <div class="tournament-subtitle">${tournament.description}</div>
                     </div>
                     <div class="tournament-body">
@@ -986,48 +957,52 @@
                             <div class="info-item">
                                 <div class="info-icon date">📅</div>
                                 <div>
-                                    <div>${tournament.date}</div>
-                                    <div style="font-size: 0.8rem; color: #666;">${tournament.duration}</div>
+                                    <div>${formatTournamentDate(tournament)}</div>
+                                    <div style="font-size: 0.8rem; color: #666;">${daysUntil !== null ? `${daysUntil} days away` : 'Date TBD'}</div>
                                 </div>
                             </div>
                             <div class="info-item">
                                 <div class="info-icon location">📍</div>
                                 <div>
                                     <div>${tournament.location}</div>
-                                    <div style="font-size: 0.8rem; color: #666;">${tournament.city}</div>
+                                    <div style="font-size: 0.8rem; color: #666;">${tournament.venue || 'Venue TBD'}</div>
                                 </div>
                             </div>
                             <div class="info-item">
                                 <div class="info-icon prize">💰</div>
                                 <div>
-                                    <div>$${tournament.prizePool.toLocaleString()}</div>
+                                    <div>${tournament.prizePool === 'TBD' ? 'TBD' : tournament.prizePool}</div>
                                     <div style="font-size: 0.8rem; color: #666;">Prize pool</div>
                                 </div>
                             </div>
                             <div class="info-item">
                                 <div class="info-icon teams">👥</div>
                                 <div>
-                                    <div>${tournament.registeredTeams}/${tournament.maxTeams} teams</div>
-                                    <div style="font-size: 0.8rem; color: #666;">Registered</div>
+                                    <div>${tournament.expectedTeams === 'TBD' ? 'TBD' : tournament.expectedTeams + ' teams'}</div>
+                                    <div style="font-size: 0.8rem; color: #666;">${tournament.isInvitationOnly ? 'Invitation Only' : 'Expected'}</div>
                                 </div>
                             </div>
                         </div>
                         <div class="tournament-progress">
                             <div class="progress-label">
-                                <span>${tournament.progressLabel}</span>
-                                <span>${tournament.progressPercent}%</span>
+                                <span>Preparation: ${preparation.phase.replace('_', ' ')}</span>
+                                <span>${tournament.qualificationPoints === 'TBD' ? 'Points TBD' : tournament.qualificationPoints + ' pts'}</span>
                             </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${tournament.progressPercent}%"></div>
+                            <div style="background: var(--bg-secondary); padding: var(--space-3); border-radius: var(--radius-lg); margin-top: var(--space-3);">
+                                <div style="font-size: 0.8rem; color: var(--gray-600); margin-bottom: var(--space-2);">${preparation.description}</div>
+                                ${preparation.tasks.slice(0, 2).map(task => `<div style="font-size: 0.75rem; color: var(--gray-500);">• ${task}</div>`).join('')}
                             </div>
                         </div>
                         <div class="tournament-actions">
-                            <button class="btn btn-primary" onclick="handleTournamentAction('${tournament.id}', '${tournament.primaryAction}')">${tournament.primaryActionText}</button>
-                            <button class="btn btn-secondary" onclick="viewTournamentDetails('${tournament.id}')">View Details</button>
+                            ${tournament.isInvitationOnly ? 
+                                '<button class="btn btn-secondary hover-lift-small" disabled>Invitation Only</button>' :
+                                `<button class="btn btn-primary hover-lift" onclick="viewTournamentDetails('${tournament.id}')">Register Interest</button>`
+                            }
+                            <button class="btn btn-secondary hover-lift-small" onclick="viewTournamentDetails('${tournament.id}')">View Details</button>
                         </div>
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
         }
 
         function updateLeaderboard(teams) {
@@ -1068,6 +1043,31 @@
             
             // Add active class to clicked tab
             event.target.classList.add('active');
+            
+            // Load tournaments based on tab
+            let tournaments = [];
+            
+            switch(tab) {
+                case '2026':
+                    tournaments = getTournamentsByYear('2026');
+                    break;
+                case '2027':
+                    tournaments = getTournamentsByYear('2027');
+                    break;
+                case 'all':
+                    tournaments = getAllTournaments();
+                    break;
+                case 'preparation':
+                    tournaments = getAllTournaments().filter(t => {
+                        const prep = getTournamentPreparation(t);
+                        return prep.phase === 'intensive_training' || prep.phase === 'final_preparation';
+                    });
+                    break;
+                default:
+                    tournaments = getTournamentsByYear('2026');
+            }
+            
+            updateTournamentsGrid(tournaments);
             
             // Load tournaments for selected tab
             loadTournamentsByType(tab);

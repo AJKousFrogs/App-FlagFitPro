@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlagFit Pro - Team Roster</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./src/ui-design-system.css">
+    <link rel="stylesheet" href="./src/hover-effects.css">
+    <style>
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+            background: var(--bg-secondary);
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--white);
+            border-right: 1px solid var(--border-light);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            overflow-y: auto;
+            z-index: 40;
+        }
+
+        .sidebar-header {
+            padding: var(--space-6);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            font-size: var(--text-xl);
+            font-weight: var(--font-bold);
+            color: var(--gray-900);
+            text-decoration: none;
+        }
+
+        .sidebar-nav {
+            padding: var(--space-6);
+        }
+
+        .nav-section {
+            margin-bottom: var(--space-6);
+        }
+
+        .nav-section-title {
+            font-size: var(--text-xs);
+            font-weight: var(--font-semibold);
+            color: var(--gray-400);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: var(--space-3);
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-3);
+            color: var(--gray-600);
+            text-decoration: none;
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+            margin-bottom: var(--space-1);
+            font-weight: var(--font-medium);
+            font-size: var(--text-sm);
+        }
+
+        .nav-item:hover {
+            background: var(--gray-50);
+            color: var(--gray-900);
+        }
+
+        .nav-item.active {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            opacity: 0.8;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            flex: 1;
+            padding: var(--space-6);
+            min-height: 100vh;
+            background: var(--bg-secondary);
+        }
+
+        .header-section {
+            background: var(--white);
+            padding: var(--space-6);
+            border-radius: var(--radius-xl);
+            margin-bottom: var(--space-6);
+            border: 1px solid var(--border-light);
+        }
+
+        .header-section h1 {
+            font-size: var(--text-h1);
+            font-weight: var(--font-bold);
+            color: var(--gray-900);
+            margin-bottom: var(--space-2);
+        }
+
+        .header-section p {
+            color: var(--gray-600);
+            font-size: var(--text-lg);
+        }
+
+        .roster-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: var(--space-4);
+            margin-top: var(--space-6);
+        }
+
+        .player-card {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            border: 1px solid var(--border-light);
+            transition: all var(--transition-fast);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .player-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary);
+        }
+
+        .player-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            margin-bottom: var(--space-4);
+        }
+
+        .player-jersey {
+            width: 50px;
+            height: 50px;
+            border-radius: var(--radius-full);
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: var(--font-bold);
+            font-size: var(--text-lg);
+        }
+
+        .player-info h3 {
+            margin: 0;
+            color: var(--gray-900);
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+        }
+
+        .player-position {
+            color: var(--gray-600);
+            font-size: var(--text-sm);
+            margin: var(--space-1) 0;
+        }
+
+        .player-nationality {
+            font-size: var(--text-lg);
+            margin-top: var(--space-1);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-3);
+            margin-top: var(--space-4);
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: var(--space-3);
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+        }
+
+        .stat-value {
+            font-weight: var(--font-bold);
+            font-size: var(--text-lg);
+            color: var(--primary);
+            margin-bottom: var(--space-1);
+        }
+
+        .stat-label {
+            font-size: var(--text-xs);
+            color: var(--gray-600);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .position-section {
+            margin-bottom: var(--space-8);
+        }
+
+        .position-title {
+            font-size: var(--text-2xl);
+            font-weight: var(--font-bold);
+            color: var(--gray-900);
+            margin-bottom: var(--space-4);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .staff-card {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: var(--white);
+        }
+
+        .staff-card .player-jersey {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .team-stats {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            margin-bottom: var(--space-6);
+            border: 1px solid var(--border-light);
+        }
+
+        .team-stats h2 {
+            margin: 0 0 var(--space-4) 0;
+            color: var(--gray-900);
+        }
+
+        .team-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-4);
+        }
+
+        .overview-item {
+            text-align: center;
+            padding: var(--space-4);
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+        }
+
+        .overview-value {
+            font-size: var(--text-2xl);
+            font-weight: var(--font-bold);
+            color: var(--primary);
+            margin-bottom: var(--space-2);
+        }
+
+        .overview-label {
+            color: var(--gray-600);
+            font-size: var(--text-sm);
+        }
+
+        .position-icon {
+            font-size: var(--text-xl);
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <a href="/dashboard.html" class="sidebar-brand">
+                    <span>🏈</span>
+                    <span>FlagFit Pro</span>
+                </a>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a href="/dashboard.html" class="nav-item hover-lift-small">
+                        <span class="nav-icon">📊</span>
+                        Dashboard
+                    </a>
+                    <a href="/roster.html" class="nav-item active">
+                        <span class="nav-icon">👥</span>
+                        Team Roster
+                    </a>
+                    <a href="/training.html" class="nav-item hover-lift-small">
+                        <span class="nav-icon">⚡</span>
+                        Training
+                    </a>
+                    <a href="/tournaments.html" class="nav-item hover-lift-small">
+                        <span class="nav-icon">🏆</span>
+                        Tournaments
+                    </a>
+                    <a href="/community.html" class="nav-item hover-lift-small">
+                        <span class="nav-icon">👥</span>
+                        Community
+                    </a>
+                    <a href="/coach-dashboard.html" class="nav-item hover-lift-small">
+                        <span class="nav-icon">📋</span>
+                        Coach Dashboard
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Analytics</div>
+                    <a href="/analytics.html" class="nav-item hover-lift-small">
+                        <span class="nav-icon">📈</span>
+                        Analytics
+                    </a>
+                    <a href="/settings.html" class="nav-item hover-lift-small">
+                        <span class="nav-icon">⚙️</span>
+                        Settings
+                    </a>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="header-section">
+                <h1>International Flag Football Team</h1>
+                <p>Meet our world-class athletes and coaching staff representing 12 countries</p>
+            </div>
+
+            <!-- Team Overview Stats -->
+            <div class="team-stats">
+                <h2>🏆 Team Overview</h2>
+                <div class="team-overview" id="team-overview">
+                    <!-- Stats will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Coaching Staff -->
+            <div class="position-section">
+                <h2 class="position-title">
+                    <span class="position-icon">👔</span>
+                    Coaching Staff & Support
+                </h2>
+                <div class="roster-grid" id="coaching-staff">
+                    <!-- Staff cards will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Players by Position -->
+            <div id="players-by-position">
+                <!-- Position sections will be populated by JavaScript -->
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { authManager } from './src/auth-manager.js';
+        import { 
+            REAL_TEAM_DATA, 
+            getAllPlayers, 
+            getPlayersByPosition, 
+            getStaffMember,
+            getCountryStats 
+        } from './src/real-team-data.js';
+
+        // Initialize roster page
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('🏈 Team Roster page loading...');
+            
+            // Check authentication
+            if (!authManager.isAuthenticated()) {
+                console.log('❌ User not authenticated, redirecting to login');
+                window.location.href = '/login.html';
+                return;
+            }
+
+            console.log('✅ User authenticated, loading roster data');
+            console.log('📊 Real team data:', REAL_TEAM_DATA);
+
+            try {
+                // Load team data
+                loadTeamOverview();
+                loadCoachingStaff();
+                loadPlayersByPosition();
+                console.log('✅ Roster data loaded successfully');
+            } catch (error) {
+                console.error('❌ Error loading roster data:', error);
+            }
+        });
+
+        function loadTeamOverview() {
+            console.log('📊 Loading team overview...');
+            const overviewContainer = document.getElementById('team-overview');
+            
+            if (!overviewContainer) {
+                console.error('❌ Team overview container not found');
+                return;
+            }
+
+            const teamStats = REAL_TEAM_DATA.teamStats;
+            console.log('📈 Team stats:', teamStats);
+            
+            if (!teamStats) {
+                console.error('❌ Team stats not available');
+                overviewContainer.innerHTML = '<div>Team statistics unavailable</div>';
+                return;
+            }
+
+            overviewContainer.innerHTML = `
+                <div class="overview-item">
+                    <div class="overview-value">${teamStats.totalPlayers || '20'}</div>
+                    <div class="overview-label">Total Players</div>
+                </div>
+                <div class="overview-item">
+                    <div class="overview-value">${teamStats.countries || '12'}</div>
+                    <div class="overview-label">Countries Represented</div>
+                </div>
+                <div class="overview-item">
+                    <div class="overview-value">${teamStats.averageAge || '26'}</div>
+                    <div class="overview-label">Average Age</div>
+                </div>
+                <div class="overview-item">
+                    <div class="overview-value">${teamStats.winLossRecord || '15-3'}</div>
+                    <div class="overview-label">Win-Loss Record</div>
+                </div>
+                <div class="overview-item">
+                    <div class="overview-value">${teamStats.olympicQualificationScore || '8.7'}</div>
+                    <div class="overview-label">Olympic Qualification Score</div>
+                </div>
+            `;
+            console.log('✅ Team overview loaded');
+        }
+
+        function loadCoachingStaff() {
+            console.log('👔 Loading coaching staff...');
+            const staffContainer = document.getElementById('coaching-staff');
+            
+            if (!staffContainer) {
+                console.error('❌ Coaching staff container not found');
+                return;
+            }
+
+            const staff = Object.values(REAL_TEAM_DATA.staff || {});
+            console.log('👨‍💼 Coaching staff:', staff);
+            
+            if (!staff || staff.length === 0) {
+                console.error('❌ No coaching staff data available');
+                staffContainer.innerHTML = '<div>Coaching staff data unavailable</div>';
+                return;
+            }
+            
+            staffContainer.innerHTML = staff.map(member => `
+                <div class="player-card staff-card">
+                    <div class="player-header">
+                        <div class="player-jersey">
+                            ${member.name.split(' ').map(n => n[0]).join('')}
+                        </div>
+                        <div class="player-info">
+                            <h3>${member.name} ${member.nationality}</h3>
+                            <div class="player-position">${member.position}</div>
+                            <div class="player-nationality">🇬🇧 ${member.experience} experience</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-value">${member.experience.split(' ')[0]}</div>
+                            <div class="stat-label">Years</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">${member.country}</div>
+                            <div class="stat-label">Country</div>
+                        </div>
+                    </div>
+                    
+                    ${member.achievements ? `
+                        <div style="margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px solid rgba(255,255,255,0.2);">
+                            <div style="font-size: var(--text-xs); color: rgba(255,255,255,0.8); margin-bottom: var(--space-2);">Key Achievements:</div>
+                            ${member.achievements.slice(0, 2).map(achievement => 
+                                `<div style="font-size: var(--text-xs); color: rgba(255,255,255,0.9); margin-bottom: var(--space-1);">• ${achievement}</div>`
+                            ).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+            console.log('✅ Coaching staff loaded');
+        }
+
+        function loadPlayersByPosition() {
+            console.log('🏈 Loading players by position...');
+            const container = document.getElementById('players-by-position');
+            
+            if (!container) {
+                console.error('❌ Players container not found');
+                return;
+            }
+
+            const positions = [
+                { key: 'quarterback', title: 'Quarterbacks', icon: '🎯' },
+                { key: 'center', title: 'Centers', icon: '⚡' },
+                { key: 'wideReceivers', title: 'Wide Receivers', icon: '🏃‍♂️' },
+                { key: 'defensive', title: 'Defensive Players', icon: '🛡️' }
+            ];
+            
+            let html = '';
+            let totalPlayersLoaded = 0;
+            
+            positions.forEach(position => {
+                const players = REAL_TEAM_DATA.players[position.key];
+                console.log(`📋 ${position.title}:`, players);
+                
+                if (players && players.length > 0) {
+                    totalPlayersLoaded += players.length;
+                    html += `
+                        <div class="position-section">
+                            <h2 class="position-title">
+                                <span class="position-icon">${position.icon}</span>
+                                ${position.title} (${players.length})
+                            </h2>
+                            <div class="roster-grid">
+                                ${players.map(player => createPlayerCard(player)).join('')}
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    console.warn(`⚠️ No players found for position: ${position.title}`);
+                }
+            });
+            
+            if (html === '') {
+                html = '<div style="text-align: center; padding: 2rem; color: var(--gray-500);">No player data available</div>';
+                console.error('❌ No players loaded');
+            } else {
+                console.log(`✅ ${totalPlayersLoaded} players loaded across ${positions.length} positions`);
+            }
+            
+            container.innerHTML = html;
+        }
+
+        function createPlayerCard(player) {
+            const primaryStat = getPlayerPrimaryStat(player);
+            const secondaryStat = getPlayerSecondaryStat(player);
+            
+            return `
+                <div class="player-card hover-lift glow-hover">
+                    <div class="player-header">
+                        <div class="player-jersey">${player.jersey}</div>
+                        <div class="player-info">
+                            <h3>${player.name} ${player.nationality}</h3>
+                            <div class="player-position">${player.position}</div>
+                            <div class="player-nationality">${player.country}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-value">${primaryStat.value}</div>
+                            <div class="stat-label">${primaryStat.label}</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">${secondaryStat.value}</div>
+                            <div class="stat-label">${secondaryStat.label}</div>
+                        </div>
+                    </div>
+                    
+                    ${player.isPrimary ? `
+                        <div style="position: absolute; top: var(--space-3); right: var(--space-3); background: var(--accent); color: var(--white); padding: 2px 6px; border-radius: var(--radius-sm); font-size: 10px; font-weight: bold;">
+                            STARTER
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        function getPlayerPrimaryStat(player) {
+            const stats = player.stats;
+            
+            if (stats.completionPercentage) {
+                return { value: `${stats.completionPercentage}%`, label: 'Completion' };
+            } else if (stats.receptions) {
+                return { value: stats.receptions, label: 'Receptions' };
+            } else if (stats.interceptions) {
+                return { value: stats.interceptions, label: 'Interceptions' };
+            } else if (stats.snapAccuracy) {
+                return { value: `${stats.snapAccuracy}%`, label: 'Snap Accuracy' };
+            } else if (stats.sacks) {
+                return { value: stats.sacks, label: 'Sacks' };
+            }
+            
+            return { value: '—', label: 'Primary Stat' };
+        }
+
+        function getPlayerSecondaryStat(player) {
+            const stats = player.stats;
+            
+            if (stats.touchdownPasses) {
+                return { value: stats.touchdownPasses, label: 'TD Passes' };
+            } else if (stats.receivingYards) {
+                return { value: stats.receivingYards, label: 'Rec Yards' };
+            } else if (stats.tackles) {
+                return { value: stats.tackles, label: 'Tackles' };
+            } else if (stats.protectionRating) {
+                return { value: stats.protectionRating, label: 'Protection' };
+            } else if (stats.touchdowns) {
+                return { value: stats.touchdowns, label: 'Touchdowns' };
+            }
+            
+            return { value: '—', label: 'Secondary Stat' };
+        }
+    </script>
+</body>
+</html>

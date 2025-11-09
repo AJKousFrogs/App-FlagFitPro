@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlagFit Pro - Exercise Library</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./src/ui-design-system.css">
+    <link rel="stylesheet" href="./src/hover-effects.css">
+    <style>
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+            background: var(--bg-secondary);
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--white);
+            border-right: 1px solid var(--border-light);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            overflow-y: auto;
+            z-index: 40;
+        }
+
+        .sidebar-header {
+            padding: var(--space-6);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            font-size: var(--text-xl);
+            font-weight: var(--font-bold);
+            color: var(--gray-900);
+            text-decoration: none;
+        }
+
+        .sidebar-nav {
+            padding: var(--space-6);
+        }
+
+        .nav-section {
+            margin-bottom: var(--space-6);
+        }
+
+        .nav-section-title {
+            font-size: var(--text-xs);
+            font-weight: var(--font-semibold);
+            color: var(--gray-400);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: var(--space-3);
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-3);
+            color: var(--gray-600);
+            text-decoration: none;
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-fast);
+            margin-bottom: var(--space-1);
+            font-weight: var(--font-medium);
+            font-size: var(--text-sm);
+        }
+
+        .nav-item:hover {
+            background: var(--gray-50);
+            color: var(--gray-900);
+        }
+
+        .nav-item.active {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            opacity: 0.8;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            flex: 1;
+            padding: var(--space-6);
+            min-height: 100vh;
+        }
+
+        .header-section {
+            background: var(--white);
+            padding: var(--space-6);
+            border-radius: var(--radius-xl);
+            margin-bottom: var(--space-6);
+            border: 1px solid var(--border-light);
+        }
+
+        .header-section h1 {
+            font-size: var(--text-h1);
+            font-weight: var(--font-bold);
+            color: var(--gray-900);
+            margin-bottom: var(--space-2);
+        }
+
+        .search-filter-section {
+            background: var(--white);
+            padding: var(--space-6);
+            border-radius: var(--radius-xl);
+            margin-bottom: var(--space-6);
+            border: 1px solid var(--border-light);
+        }
+
+        .search-bar {
+            position: relative;
+            margin-bottom: var(--space-4);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: var(--space-4);
+            padding-left: var(--space-12);
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            font-size: var(--text-base);
+            transition: all var(--transition-fast);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: var(--space-4);
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-400);
+            font-size: var(--text-lg);
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: var(--space-2);
+            flex-wrap: wrap;
+        }
+
+        .filter-tab {
+            padding: var(--space-2) var(--space-4);
+            border: 2px solid var(--border-light);
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            color: var(--gray-600);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            font-weight: var(--font-medium);
+        }
+
+        .filter-tab.active {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .filter-tab:hover:not(.active) {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .exercise-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: var(--space-6);
+        }
+
+        .exercise-card {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-light);
+            overflow: hidden;
+            transition: all var(--transition-fast);
+            cursor: pointer;
+        }
+
+        .exercise-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary);
+        }
+
+        .exercise-video {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, var(--gray-100), var(--gray-200));
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-500);
+            font-size: 3rem;
+        }
+
+        .exercise-content {
+            padding: var(--space-6);
+        }
+
+        .exercise-header {
+            margin-bottom: var(--space-4);
+        }
+
+        .exercise-title {
+            font-size: var(--text-xl);
+            font-weight: var(--font-bold);
+            color: var(--gray-900);
+            margin-bottom: var(--space-2);
+        }
+
+        .exercise-category {
+            display: inline-block;
+            padding: var(--space-1) var(--space-3);
+            background: var(--primary);
+            color: var(--white);
+            border-radius: var(--radius-full);
+            font-size: var(--text-xs);
+            font-weight: var(--font-semibold);
+            text-transform: uppercase;
+            margin-bottom: var(--space-2);
+        }
+
+        .muscle-tags {
+            display: flex;
+            gap: var(--space-2);
+            flex-wrap: wrap;
+            margin-bottom: var(--space-4);
+        }
+
+        .muscle-tag {
+            padding: var(--space-1) var(--space-2);
+            background: var(--bg-secondary);
+            border-radius: var(--radius-sm);
+            font-size: var(--text-xs);
+            color: var(--gray-600);
+        }
+
+        .muscle-tag.primary {
+            background: var(--accent);
+            color: var(--white);
+        }
+
+        .exercise-description {
+            color: var(--gray-600);
+            font-size: var(--text-sm);
+            line-height: 1.6;
+            margin-bottom: var(--space-4);
+        }
+
+        .exercise-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: var(--space-4);
+            border-top: 1px solid var(--border-light);
+        }
+
+        .difficulty-badge {
+            padding: var(--space-1) var(--space-3);
+            border-radius: var(--radius-full);
+            font-size: var(--text-xs);
+            font-weight: var(--font-semibold);
+        }
+
+        .difficulty-beginner {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .difficulty-intermediate {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .difficulty-advanced {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .equipment-list {
+            font-size: var(--text-xs);
+            color: var(--gray-500);
+        }
+
+        .exercise-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .modal-content {
+            background: var(--white);
+            margin: 2rem auto;
+            max-width: 800px;
+            border-radius: var(--radius-xl);
+            position: relative;
+        }
+
+        .modal-header {
+            padding: var(--space-6);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray-500);
+            padding: var(--space-2);
+        }
+
+        .modal-close:hover {
+            color: var(--gray-900);
+        }
+
+        .modal-body {
+            padding: var(--space-6);
+        }
+
+        .instruction-section {
+            margin-bottom: var(--space-6);
+        }
+
+        .instruction-title {
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            color: var(--gray-900);
+            margin-bottom: var(--space-3);
+        }
+
+        .instruction-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .instruction-list li {
+            padding: var(--space-2) 0;
+            border-bottom: 1px solid var(--border-light);
+            position: relative;
+            padding-left: var(--space-8);
+        }
+
+        .instruction-list li:before {
+            content: counter(step);
+            counter-increment: step;
+            position: absolute;
+            left: 0;
+            top: var(--space-2);
+            background: var(--primary);
+            color: var(--white);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-xs);
+            font-weight: var(--font-bold);
+        }
+
+        .instruction-list {
+            counter-reset: step;
+        }
+
+        .progressions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-4);
+        }
+
+        .progression-card {
+            padding: var(--space-4);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            text-align: center;
+        }
+
+        .progression-level {
+            font-weight: var(--font-semibold);
+            color: var(--primary);
+            margin-bottom: var(--space-2);
+        }
+
+        .safety-notes {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            margin-top: var(--space-4);
+        }
+
+        .safety-title {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            color: #dc2626;
+            font-weight: var(--font-semibold);
+            margin-bottom: var(--space-2);
+        }
+
+        .coaching-tips {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            margin-top: var(--space-4);
+        }
+
+        .coaching-title {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            color: #0369a1;
+            font-weight: var(--font-semibold);
+            margin-bottom: var(--space-2);
+        }
+
+        .stats-section {
+            background: var(--white);
+            padding: var(--space-6);
+            border-radius: var(--radius-xl);
+            margin-bottom: var(--space-6);
+            border: 1px solid var(--border-light);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-4);
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: var(--space-4);
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+        }
+
+        .stat-number {
+            font-size: var(--text-2xl);
+            font-weight: var(--font-bold);
+            color: var(--primary);
+            margin-bottom: var(--space-1);
+        }
+
+        .stat-label {
+            color: var(--gray-600);
+            font-size: var(--text-sm);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                position: relative;
+                height: auto;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .exercise-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-tabs {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <a href="/dashboard.html" class="sidebar-brand">
+                    <span>🏈</span>
+                    <span>FlagFit Pro</span>
+                </a>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a href="/dashboard.html" class="nav-item hover-lift-small">
+                        <span class="nav-icon">📊</span>
+                        Dashboard
+                    </a>
+                    <a href="/roster.html" class="nav-item hover-lift-small">
+                        <span class="nav-icon">👥</span>
+                        Team Roster
+                    </a>
+                    <a href="/training.html" class="nav-item hover-lift-small">
+                        <span class="nav-icon">⚡</span>
+                        Training
+                    </a>
+                    <a href="/training-schedule.html" class="nav-item hover-lift-small">
+                        <span class="nav-icon">📅</span>
+                        Training Schedule
+                    </a>
+                    <a href="/exercise-library.html" class="nav-item active">
+                        <span class="nav-icon">📚</span>
+                        Exercise Library
+                    </a>
+                    <a href="/tournaments.html" class="nav-item hover-lift-small">
+                        <span class="nav-icon">🏆</span>
+                        Tournaments
+                    </a>
+                    <a href="/community.html" class="nav-item hover-lift-small">
+                        <span class="nav-icon">👥</span>
+                        Community
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Analytics</div>
+                    <a href="/analytics.html" class="nav-item hover-lift-small">
+                        <span class="nav-icon">📈</span>
+                        Analytics
+                    </a>
+                    <a href="/settings.html" class="nav-item hover-lift-small">
+                        <span class="nav-icon">⚙️</span>
+                        Settings
+                    </a>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <div class="header-section">
+                <h1>📚 Exercise Library</h1>
+                <p>Comprehensive guide to all exercises in your training program with detailed instructions, progressions, and safety notes.</p>
+            </div>
+
+            <!-- Stats Section -->
+            <div class="stats-section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalExercises">47</div>
+                        <div class="stat-label">Total Exercises</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="categoriesCount">8</div>
+                        <div class="stat-label">Categories</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="progressionsCount">156</div>
+                        <div class="stat-label">Progressions</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="safetyNotesCount">89</div>
+                        <div class="stat-label">Safety Notes</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search and Filter -->
+            <div class="search-filter-section">
+                <div class="search-bar">
+                    <span class="search-icon">🔍</span>
+                    <input 
+                        type="text" 
+                        class="search-input" 
+                        placeholder="Search exercises by name, muscle, or equipment..."
+                        id="exerciseSearch"
+                    >
+                </div>
+                
+                <div class="filter-tabs">
+                    <button class="filter-tab active" data-filter="all">All Exercises</button>
+                    <button class="filter-tab" data-filter="Posterior Chain">Posterior Chain</button>
+                    <button class="filter-tab" data-filter="Plyometric">Plyometric</button>
+                    <button class="filter-tab" data-filter="Sprint">Sprint</button>
+                    <button class="filter-tab" data-filter="Strength">Strength</button>
+                    <button class="filter-tab" data-filter="Core">Core</button>
+                    <button class="filter-tab" data-filter="Recovery">Recovery</button>
+                    <button class="filter-tab" data-filter="Agility">Agility</button>
+                </div>
+            </div>
+
+            <!-- Exercise Grid -->
+            <div class="exercise-grid" id="exerciseGrid">
+                <!-- Exercises will be populated by JavaScript -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Exercise Detail Modal -->
+    <div class="exercise-modal" id="exerciseModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <h2 id="modalExerciseTitle"></h2>
+                    <div id="modalExerciseCategory"></div>
+                </div>
+                <button class="modal-close" id="modalClose">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Exercise details will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { authManager } from './src/auth-manager.js';
+        import { EXERCISE_LIBRARY } from './src/training-program-data.js';
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('📚 Exercise Library page loading...');
+            
+            // Check authentication
+            if (!authManager.isAuthenticated()) {
+                console.log('❌ User not authenticated, redirecting to login');
+                window.location.href = '/login.html';
+                return;
+            }
+
+            console.log('✅ User authenticated, loading exercise library');
+            
+            initializeExerciseLibrary();
+        });
+
+        // Extended exercise library with all program exercises
+        const COMPLETE_EXERCISE_LIBRARY = {
+            ...EXERCISE_LIBRARY,
+            
+            "Hip Thrusts": {
+                category: "Posterior Chain",
+                primaryMuscles: ["Glutes"],
+                secondaryMuscles: ["Hamstrings", "Core"],
+                equipment: ["Bench", "Barbell/Dumbbells (optional)"],
+                difficulty: "intermediate",
+                setup: "Upper back against bench, feet flat on floor",
+                execution: [
+                    "Sit with upper back against bench",
+                    "Place feet flat, knees bent 90 degrees", 
+                    "Drive through heels to lift hips",
+                    "Squeeze glutes at top",
+                    "Lower with control"
+                ],
+                coaching: [
+                    "Full hip extension at top",
+                    "Squeeze glutes hard",
+                    "Don't hyperextend back",
+                    "Drive through heels"
+                ],
+                progressions: [
+                    "Bodyweight hip thrust",
+                    "Single-leg hip thrust", 
+                    "Loaded hip thrust",
+                    "Banded hip thrust"
+                ],
+                safetyNotes: [
+                    "Keep core engaged",
+                    "Don't arch back excessively",
+                    "Control the movement"
+                ]
+            },
+
+            "Box Jumps": {
+                category: "Plyometric",
+                primaryMuscles: ["Quadriceps", "Glutes"],
+                secondaryMuscles: ["Calves", "Core"],
+                equipment: ["Plyo box", "Stable platform"],
+                difficulty: "intermediate",
+                setup: "Stand 2-3 feet from box, arms at sides",
+                execution: [
+                    "Start in athletic position",
+                    "Swing arms back while squatting slightly",
+                    "Explosively jump onto box",
+                    "Land softly with both feet",
+                    "Step down, don't jump down"
+                ],
+                coaching: [
+                    "Focus on landing mechanics",
+                    "Use arms for momentum",
+                    "Land quietly",
+                    "Full hip extension at takeoff"
+                ],
+                progressions: [
+                    "Step-ups (6 inch box)",
+                    "Box jumps (12 inch)",
+                    "Box jumps (18 inch)",
+                    "Box jumps (24+ inch)"
+                ],
+                safetyNotes: [
+                    "Always step down, never jump down",
+                    "Ensure box is stable",
+                    "Start with lower heights"
+                ]
+            },
+
+            "A-Skip": {
+                category: "Sprint",
+                primaryMuscles: ["Hip Flexors", "Calves"],
+                secondaryMuscles: ["Core", "Glutes"],
+                equipment: ["Open space"],
+                difficulty: "beginner",
+                setup: "Standing tall in athletic position",
+                execution: [
+                    "March in place with high knees",
+                    "Progress to skipping motion",
+                    "Drive knee up, toe up (dorsiflexed)",
+                    "Maintain tall posture",
+                    "Use opposite arm action"
+                ],
+                coaching: [
+                    "Knee drive to waist height",
+                    "Dorsiflexed ankle",
+                    "Tall posture throughout",
+                    "Quick ground contact"
+                ],
+                progressions: [
+                    "A-March in place",
+                    "A-March moving",
+                    "A-Skip stationary",
+                    "A-Skip moving"
+                ],
+                safetyNotes: [
+                    "Start slowly",
+                    "Focus on form over speed",
+                    "Stop if you feel tight"
+                ]
+            },
+
+            "Broad Jumps": {
+                category: "Plyometric",
+                primaryMuscles: ["Quadriceps", "Glutes"],
+                secondaryMuscles: ["Hamstrings", "Calves"],
+                equipment: ["Open space", "Measuring tape"],
+                difficulty: "intermediate",
+                setup: "Feet shoulder-width apart, arms back",
+                execution: [
+                    "Start in semi-squat position",
+                    "Swing arms forward explosively",
+                    "Jump as far forward as possible",
+                    "Land on both feet simultaneously", 
+                    "Stick the landing"
+                ],
+                coaching: [
+                    "Use arms for momentum",
+                    "Drive through ground",
+                    "Land balanced",
+                    "Focus on distance, not height"
+                ],
+                progressions: [
+                    "Standing long jump (focus on form)",
+                    "Broad jump for distance",
+                    "Multiple broad jumps",
+                    "Weighted broad jumps"
+                ],
+                safetyNotes: [
+                    "Clear landing area",
+                    "Land with knees bent",
+                    "Don't fall backward"
+                ]
+            },
+
+            "Sprint Drills": {
+                category: "Sprint",
+                primaryMuscles: ["Full body"],
+                secondaryMuscles: ["Core", "Stabilizers"],
+                equipment: ["Open space", "Cones"],
+                difficulty: "beginner",
+                setup: "Clear 20-30 meter space",
+                execution: [
+                    "Complete drill sequence",
+                    "Focus on proper mechanics",
+                    "Maintain consistent rhythm",
+                    "Progressive intensity"
+                ],
+                coaching: [
+                    "Quality over quantity",
+                    "Master each drill",
+                    "Consistent practice",
+                    "Build muscle memory"
+                ],
+                progressions: [
+                    "Walking drills",
+                    "Marching drills",
+                    "Skipping drills",
+                    "Running drills"
+                ],
+                safetyNotes: [
+                    "Proper warm-up essential",
+                    "Start slow",
+                    "Listen to your body"
+                ]
+            },
+
+            "Goblet Squats": {
+                category: "Strength",
+                primaryMuscles: ["Quadriceps", "Glutes"],
+                secondaryMuscles: ["Core", "Calves"],
+                equipment: ["Dumbbell", "Kettlebell"],
+                difficulty: "beginner",
+                setup: "Hold weight at chest level",
+                execution: [
+                    "Hold weight against chest",
+                    "Feet shoulder-width apart",
+                    "Squat down keeping chest up",
+                    "Go below parallel if able",
+                    "Drive through heels to stand"
+                ],
+                coaching: [
+                    "Chest up throughout",
+                    "Knees track over toes",
+                    "Full depth if mobile",
+                    "Control the descent"
+                ],
+                progressions: [
+                    "Bodyweight squat",
+                    "Light goblet squat",
+                    "Heavy goblet squat",
+                    "Pause goblet squat"
+                ],
+                safetyNotes: [
+                    "Don't let knees cave",
+                    "Keep weight secure",
+                    "Stop if lower back rounds"
+                ]
+            },
+
+            "Tempo Runs": {
+                category: "Sprint",
+                primaryMuscles: ["Full body"],
+                secondaryMuscles: ["Cardiovascular"],
+                equipment: ["Track", "Open space"],
+                difficulty: "intermediate", 
+                setup: "Mark distance, prepare timing",
+                execution: [
+                    "Run at 70-75% effort",
+                    "Focus on relaxed mechanics",
+                    "Consistent pace",
+                    "Controlled breathing"
+                ],
+                coaching: [
+                    "Relaxed but controlled",
+                    "Build aerobic base",
+                    "Consistent effort",
+                    "Focus on form"
+                ],
+                progressions: [
+                    "Short tempo (100m)",
+                    "Medium tempo (200m)",
+                    "Long tempo (400m)",
+                    "Extensive tempo"
+                ],
+                safetyNotes: [
+                    "Not maximum effort",
+                    "Monitor fatigue",
+                    "Proper recovery"
+                ]
+            }
+        };
+
+        let currentFilter = 'all';
+        let searchTerm = '';
+
+        function initializeExerciseLibrary() {
+            console.log('📚 Initializing exercise library...');
+            
+            setupSearchAndFilter();
+            displayExercises();
+            updateStats();
+        }
+
+        function setupSearchAndFilter() {
+            // Search functionality
+            const searchInput = document.getElementById('exerciseSearch');
+            searchInput.addEventListener('input', function(e) {
+                searchTerm = e.target.value.toLowerCase();
+                displayExercises();
+            });
+
+            // Filter functionality
+            const filterTabs = document.querySelectorAll('.filter-tab');
+            filterTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Remove active class from all tabs
+                    filterTabs.forEach(t => t.classList.remove('active'));
+                    
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+                    
+                    // Update filter
+                    currentFilter = this.dataset.filter;
+                    
+                    // Display filtered exercises
+                    displayExercises();
+                });
+            });
+        }
+
+        function displayExercises() {
+            const exerciseGrid = document.getElementById('exerciseGrid');
+            const exercises = Object.entries(COMPLETE_EXERCISE_LIBRARY);
+            
+            // Filter exercises
+            let filteredExercises = exercises.filter(([name, exercise]) => {
+                // Apply category filter
+                const categoryMatch = currentFilter === 'all' || exercise.category === currentFilter;
+                
+                // Apply search filter
+                const searchMatch = !searchTerm || 
+                    name.toLowerCase().includes(searchTerm) ||
+                    exercise.category.toLowerCase().includes(searchTerm) ||
+                    exercise.primaryMuscles.some(muscle => muscle.toLowerCase().includes(searchTerm)) ||
+                    exercise.equipment.some(equip => equip.toLowerCase().includes(searchTerm));
+                
+                return categoryMatch && searchMatch;
+            });
+
+            if (filteredExercises.length === 0) {
+                exerciseGrid.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: var(--space-12); color: var(--gray-500);">
+                        <div style="font-size: 3rem; margin-bottom: var(--space-4);">🔍</div>
+                        <h3>No exercises found</h3>
+                        <p>Try adjusting your search terms or filters</p>
+                    </div>
+                `;
+                return;
+            }
+
+            exerciseGrid.innerHTML = filteredExercises.map(([name, exercise]) => `
+                <div class="exercise-card hover-lift" onclick="openExerciseModal('${name}')">
+                    <div class="exercise-video">
+                        ${getExerciseIcon(exercise.category)}
+                    </div>
+                    <div class="exercise-content">
+                        <div class="exercise-header">
+                            <div class="exercise-category">${exercise.category}</div>
+                            <h3 class="exercise-title">${name}</h3>
+                        </div>
+                        
+                        <div class="muscle-tags">
+                            ${exercise.primaryMuscles.map(muscle => 
+                                `<span class="muscle-tag primary">${muscle}</span>`
+                            ).join('')}
+                            ${exercise.secondaryMuscles.map(muscle => 
+                                `<span class="muscle-tag">${muscle}</span>`
+                            ).join('')}
+                        </div>
+                        
+                        <p class="exercise-description">
+                            ${exercise.setup}
+                        </p>
+                        
+                        <div class="exercise-meta">
+                            <span class="difficulty-badge difficulty-${exercise.difficulty}">
+                                ${exercise.difficulty.charAt(0).toUpperCase() + exercise.difficulty.slice(1)}
+                            </span>
+                            <div class="equipment-list">
+                                ${exercise.equipment.slice(0, 2).join(', ')}${exercise.equipment.length > 2 ? '...' : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getExerciseIcon(category) {
+            const icons = {
+                'Posterior Chain': '🦵',
+                'Plyometric': '⚡',
+                'Sprint': '🏃‍♂️',
+                'Strength': '💪',
+                'Core': '🎯',
+                'Recovery': '🧘',
+                'Agility': '🏈'
+            };
+            return icons[category] || '🏋️‍♂️';
+        }
+
+        function updateStats() {
+            const exercises = Object.entries(COMPLETE_EXERCISE_LIBRARY);
+            const categories = [...new Set(exercises.map(([_, ex]) => ex.category))];
+            const totalProgressions = exercises.reduce((total, [_, ex]) => total + (ex.progressions?.length || 0), 0);
+            const totalSafetyNotes = exercises.reduce((total, [_, ex]) => total + (ex.safetyNotes?.length || 0), 0);
+
+            document.getElementById('totalExercises').textContent = exercises.length;
+            document.getElementById('categoriesCount').textContent = categories.length;
+            document.getElementById('progressionsCount').textContent = totalProgressions;
+            document.getElementById('safetyNotesCount').textContent = totalSafetyNotes;
+        }
+
+        // Global function for opening exercise modal
+        window.openExerciseModal = function(exerciseName) {
+            const exercise = COMPLETE_EXERCISE_LIBRARY[exerciseName];
+            if (!exercise) return;
+
+            const modal = document.getElementById('exerciseModal');
+            const modalTitle = document.getElementById('modalExerciseTitle');
+            const modalCategory = document.getElementById('modalExerciseCategory');
+            const modalBody = document.getElementById('modalBody');
+
+            modalTitle.textContent = exerciseName;
+            modalCategory.innerHTML = `<span class="exercise-category">${exercise.category}</span>`;
+
+            modalBody.innerHTML = `
+                <!-- Exercise Video/Animation Placeholder -->
+                <div class="exercise-video" style="margin-bottom: var(--space-6);">
+                    ${getExerciseIcon(exercise.category)}
+                    <div style="position: absolute; bottom: var(--space-2); right: var(--space-2); background: rgba(0,0,0,0.7); color: white; padding: var(--space-1) var(--space-2); border-radius: var(--radius-sm); font-size: var(--text-xs);">
+                        Video Coming Soon
+                    </div>
+                </div>
+
+                <!-- Muscles & Equipment -->
+                <div style="margin-bottom: var(--space-6);">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4);">
+                        <div>
+                            <h4 style="margin-bottom: var(--space-2);">Primary Muscles</h4>
+                            <div class="muscle-tags">
+                                ${exercise.primaryMuscles.map(muscle => 
+                                    `<span class="muscle-tag primary">${muscle}</span>`
+                                ).join('')}
+                            </div>
+                        </div>
+                        <div>
+                            <h4 style="margin-bottom: var(--space-2);">Equipment Needed</h4>
+                            <ul style="list-style: none; padding: 0;">
+                                ${exercise.equipment.map(item => `<li>• ${item}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Setup -->
+                <div class="instruction-section">
+                    <h3 class="instruction-title">🎯 Setup</h3>
+                    <p>${exercise.setup}</p>
+                </div>
+
+                <!-- Execution -->
+                <div class="instruction-section">
+                    <h3 class="instruction-title">⚡ Execution</h3>
+                    <ol class="instruction-list">
+                        ${exercise.execution.map(step => `<li>${step}</li>`).join('')}
+                    </ol>
+                </div>
+
+                <!-- Coaching Cues -->
+                <div class="coaching-tips">
+                    <div class="coaching-title">
+                        <span>🎯</span>
+                        <span>Coaching Cues</span>
+                    </div>
+                    <ul style="margin: 0; padding-left: var(--space-4);">
+                        ${exercise.coaching.map(cue => `<li>${cue}</li>`).join('')}
+                    </ul>
+                </div>
+
+                <!-- Progressions -->
+                ${exercise.progressions ? `
+                    <div class="instruction-section">
+                        <h3 class="instruction-title">📈 Progressions</h3>
+                        <div class="progressions-grid">
+                            ${exercise.progressions.map((progression, index) => `
+                                <div class="progression-card">
+                                    <div class="progression-level">Level ${index + 1}</div>
+                                    <div>${progression}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+
+                <!-- Safety Notes -->
+                ${exercise.safetyNotes ? `
+                    <div class="safety-notes">
+                        <div class="safety-title">
+                            <span>⚠️</span>
+                            <span>Safety Notes</span>
+                        </div>
+                        <ul style="margin: 0; padding-left: var(--space-4);">
+                            ${exercise.safetyNotes.map(note => `<li>${note}</li>`).join('')}
+                        </ul>
+                    </div>
+                ` : ''}
+
+                <!-- Secondary Muscles -->
+                ${exercise.secondaryMuscles.length > 0 ? `
+                    <div style="margin-top: var(--space-6);">
+                        <h4>Secondary Muscles</h4>
+                        <div class="muscle-tags">
+                            ${exercise.secondaryMuscles.map(muscle => 
+                                `<span class="muscle-tag">${muscle}</span>`
+                            ).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+            `;
+
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        };
+
+        // Modal close functionality
+        document.getElementById('modalClose').addEventListener('click', function() {
+            closeModal();
+        });
+
+        document.getElementById('exerciseModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        function closeModal() {
+            document.getElementById('exerciseModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

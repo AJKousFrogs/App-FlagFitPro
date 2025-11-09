@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QB Assessment & Testing Tools - FlagFit Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .readiness-banner {
+            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .readiness-score {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .assessment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .assessment-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .assessment-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.5rem;
+        }
+
+        .velocity-icon { background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%); }
+        .mobility-icon { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .endurance-icon { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        .strength-icon { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .card-subtitle {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .metric-display {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 15px 0;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .metric-label {
+            font-weight: 500;
+        }
+
+        .metric-value {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+        }
+
+        .assessment-history {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .history-table th,
+        .history-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .history-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+
+        .status-excellent { color: #28a745; font-weight: 600; }
+        .status-good { color: #17a2b8; font-weight: 600; }
+        .status-needs-work { color: #ffc107; font-weight: 600; }
+        .status-poor { color: #dc3545; font-weight: 600; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        .form-input:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+
+        .tournament-simulation {
+            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .simulation-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .simulation-stat {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+        }
+
+        .nav-links {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            padding: 10px 20px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.1);
+            transition: background 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .assessment-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 QB Assessment & Testing</h1>
+            <p>Comprehensive performance evaluation and tournament readiness assessment</p>
+        </div>
+
+        <div class="readiness-banner">
+            <div class="readiness-score" id="tournamentReadinessScore">87%</div>
+            <h3>Tournament Readiness</h3>
+            <p>Elite Level - Competition Ready for 320-throw challenge</p>
+        </div>
+
+        <div class="assessment-grid">
+            <!-- Throwing Velocity Assessment -->
+            <div class="assessment-card">
+                <div class="card-header">
+                    <div class="card-icon velocity-icon">🚀</div>
+                    <div>
+                        <div class="card-title">Throwing Velocity</div>
+                        <div class="card-subtitle">Peak velocity development tracking</div>
+                    </div>
+                </div>
+                
+                <div class="metric-display">
+                    <span class="metric-label">Current Max Velocity</span>
+                    <span class="metric-value" id="currentVelocity">--</span>
+                </div>
+                
+                <div class="metric-display">
+                    <span class="metric-label">Velocity Gain</span>
+                    <span class="metric-value" id="velocityGain">--</span>
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" id="velocityProgress" style="width: 0%"></div>
+                </div>
+                
+                <button class="btn" onclick="openVelocityTest()">Conduct Velocity Test</button>
+                <button class="btn btn-secondary" onclick="viewVelocityHistory()">View History</button>
+            </div>
+
+            <!-- Shoulder Mobility Assessment -->
+            <div class="assessment-card">
+                <div class="card-header">
+                    <div class="card-icon mobility-icon">🏃‍♂️</div>
+                    <div>
+                        <div class="card-title">Shoulder Mobility</div>
+                        <div class="card-subtitle">Critical range of motion assessment</div>
+                    </div>
+                </div>
+                
+                <div class="metric-display">
+                    <span class="metric-label">External Rotation</span>
+                    <span class="metric-value" id="externalRotation">--</span>
+                </div>
+                
+                <div class="metric-display">
+                    <span class="metric-label">Internal Rotation</span>
+                    <span class="metric-value" id="internalRotation">--</span>
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" id="mobilityProgress" style="width: 0%"></div>
+                </div>
+                
+                <button class="btn" onclick="openMobilityTest()">Assess Mobility</button>
+                <button class="btn btn-secondary" onclick="viewMobilityProtocols()">View Protocols</button>
+            </div>
+
+            <!-- Throwing Endurance -->
+            <div class="assessment-card">
+                <div class="card-header">
+                    <div class="card-icon endurance-icon">💪</div>
+                    <div>
+                        <div class="card-title">Throwing Endurance</div>
+                        <div class="card-subtitle">320-throw tournament preparation</div>
+                    </div>
+                </div>
+                
+                <div class="metric-display">
+                    <span class="metric-label">Max Throwing Volume</span>
+                    <span class="metric-value" id="maxVolume">--</span>
+                </div>
+                
+                <div class="metric-display">
+                    <span class="metric-label">Accuracy Maintenance</span>
+                    <span class="metric-value" id="accuracyMaintenance">--</span>
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" id="enduranceProgress" style="width: 0%"></div>
+                </div>
+                
+                <button class="btn" onclick="openEnduranceTest()">Start Endurance Test</button>
+                <button class="btn btn-secondary" onclick="viewEnduranceHistory()">View History</button>
+            </div>
+
+            <!-- Rotator Cuff Strength -->
+            <div class="assessment-card">
+                <div class="card-header">
+                    <div class="card-icon strength-icon">💪</div>
+                    <div>
+                        <div class="card-title">Rotator Cuff Strength</div>
+                        <div class="card-subtitle">Injury prevention assessment</div>
+                    </div>
+                </div>
+                
+                <div class="metric-display">
+                    <span class="metric-label">External Rotation Strength</span>
+                    <span class="metric-value" id="rotatorCuffStrength">--</span>
+                </div>
+                
+                <div class="metric-display">
+                    <span class="metric-label">Bilateral Balance</span>
+                    <span class="metric-value" id="bilateralBalance">--</span>
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" id="strengthProgress" style="width: 0%"></div>
+                </div>
+                
+                <button class="btn" onclick="openStrengthTest()">Test Strength</button>
+                <button class="btn btn-secondary" onclick="viewStrengthProtocols()">View Protocols</button>
+            </div>
+        </div>
+
+        <!-- Tournament Simulation -->
+        <div class="tournament-simulation">
+            <h3>🏆 Tournament Simulation (320 Throws)</h3>
+            <p>8-game simulation to assess competition readiness</p>
+            
+            <div class="simulation-stats">
+                <div class="simulation-stat">
+                    <div style="font-size: 2rem; font-weight: 700;" id="simGames">0</div>
+                    <div>Games Completed</div>
+                </div>
+                <div class="simulation-stat">
+                    <div style="font-size: 2rem; font-weight: 700;" id="simThrows">0</div>
+                    <div>Total Throws</div>
+                </div>
+                <div class="simulation-stat">
+                    <div style="font-size: 2rem; font-weight: 700;" id="simAccuracy">--%</div>
+                    <div>Overall Accuracy</div>
+                </div>
+                <div class="simulation-stat">
+                    <div style="font-size: 2rem; font-weight: 700;" id="simVelocity">--</div>
+                    <div>Avg Velocity</div>
+                </div>
+            </div>
+            
+            <button class="btn" style="background: white; color: #ff6b35; margin-top: 20px;" onclick="startTournamentSim()">
+                Start Tournament Simulation
+            </button>
+        </div>
+
+        <!-- Assessment History -->
+        <div class="assessment-history">
+            <h3>📊 Assessment History</h3>
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Assessment Type</th>
+                        <th>Score</th>
+                        <th>Status</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody id="assessmentHistoryBody">
+                    <tr>
+                        <td>2025-11-01</td>
+                        <td>Velocity Test</td>
+                        <td>52 mph</td>
+                        <td class="status-good">Good</td>
+                        <td>+3 mph from baseline</td>
+                    </tr>
+                    <tr>
+                        <td>2025-10-28</td>
+                        <td>Mobility Assessment</td>
+                        <td>115°</td>
+                        <td class="status-excellent">Excellent</td>
+                        <td>Optimal range achieved</td>
+                    </tr>
+                    <tr>
+                        <td>2025-10-25</td>
+                        <td>Endurance Test</td>
+                        <td>180 throws</td>
+                        <td class="status-needs-work">Needs Work</td>
+                        <td>Accuracy dropped after 150 throws</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav-links">
+            <a href="qb-training-schedule.html">← Back to Training</a>
+            <a href="training-schedule.html">WR/DB Training</a>
+            <a href="exercise-library.html">Exercise Library</a>
+            <a href="index.html">Dashboard</a>
+        </div>
+    </div>
+
+    <!-- Velocity Test Modal -->
+    <div id="velocityModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('velocityModal')">&times;</span>
+            <h2>🚀 Throwing Velocity Assessment</h2>
+            <p>Complete throwing warmup before beginning velocity assessment.</p>
+            
+            <div class="form-group">
+                <label class="form-label">Current Week</label>
+                <input type="number" class="form-input" id="testWeek" value="8" min="1" max="14">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Radar Gun Reading 1 (mph)</label>
+                <input type="number" class="form-input" id="velocity1" placeholder="Enter velocity">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Radar Gun Reading 2 (mph)</label>
+                <input type="number" class="form-input" id="velocity2" placeholder="Enter velocity">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Radar Gun Reading 3 (mph)</label>
+                <input type="number" class="form-input" id="velocity3" placeholder="Enter velocity">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Best Reading (mph)</label>
+                <input type="number" class="form-input" id="bestVelocity" placeholder="Best velocity">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Notes</label>
+                <textarea class="form-input" id="velocityNotes" rows="3" placeholder="Conditions, observations, etc."></textarea>
+            </div>
+            
+            <button class="btn" onclick="saveVelocityTest()">Save Assessment</button>
+        </div>
+    </div>
+
+    <!-- Mobility Test Modal -->
+    <div id="mobilityModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('mobilityModal')">&times;</span>
+            <h2>🏃‍♂️ Shoulder Mobility Assessment</h2>
+            <p>Assess key mobility markers for throwing performance.</p>
+            
+            <div class="form-group">
+                <label class="form-label">External Rotation (degrees)</label>
+                <input type="number" class="form-input" id="extRotation" placeholder="Degrees (110-130° optimal)">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Internal Rotation (degrees)</label>
+                <input type="number" class="form-input" id="intRotation" placeholder="Degrees">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Horizontal Abduction (degrees)</label>
+                <input type="number" class="form-input" id="horAbduction" placeholder="Degrees (45-55° optimal)">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Sleeper Stretch Comfort</label>
+                <select class="form-input" id="sleeperComfort">
+                    <option value="">Select comfort level</option>
+                    <option value="excellent">Excellent - No restriction</option>
+                    <option value="good">Good - Slight tightness</option>
+                    <option value="fair">Fair - Moderate tightness</option>
+                    <option value="poor">Poor - Significant restriction</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Notes</label>
+                <textarea class="form-input" id="mobilityNotes" rows="3" placeholder="Any restrictions or observations"></textarea>
+            </div>
+            
+            <button class="btn" onclick="saveMobilityTest()">Save Assessment</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { QB_TRAINING_PROGRAM, QB_ASSESSMENTS } from './src/qb-training-program-data.js';
+        import { qbTrainingEngine } from './src/qb-training-engine.js';
+        
+        // Assessment data storage
+        let assessmentData = loadAssessmentData();
+        
+        function loadAssessmentData() {
+            const saved = localStorage.getItem('flagfit_qb_assessments');
+            return saved ? JSON.parse(saved) : {
+                velocity: [],
+                mobility: [],
+                endurance: [],
+                strength: [],
+                tournamentSimulations: []
+            };
+        }
+        
+        function saveAssessmentData() {
+            localStorage.setItem('flagfit_qb_assessments', JSON.stringify(assessmentData));
+        }
+        
+        // Initialize dashboard
+        function initializeDashboard() {
+            updateTournamentReadiness();
+            updateMetricDisplays();
+            loadAssessmentHistory();
+        }
+        
+        function updateTournamentReadiness() {
+            const readiness = qbTrainingEngine.assessTournamentReadiness();
+            document.getElementById('tournamentReadinessScore').textContent = readiness.score + '%';
+        }
+        
+        function updateMetricDisplays() {
+            // Update current metrics
+            const latestVelocity = getLatestAssessment('velocity');
+            const latestMobility = getLatestAssessment('mobility');
+            const latestEndurance = getLatestAssessment('endurance');
+            const latestStrength = getLatestAssessment('strength');
+            
+            // Update velocity display
+            if (latestVelocity) {
+                document.getElementById('currentVelocity').textContent = latestVelocity.bestVelocity + ' mph';
+                document.getElementById('velocityGain').textContent = '+' + latestVelocity.gain + ' mph';
+                document.getElementById('velocityProgress').style.width = (latestVelocity.percentile || 0) + '%';
+            }
+            
+            // Update mobility display
+            if (latestMobility) {
+                document.getElementById('externalRotation').textContent = latestMobility.extRotation + '°';
+                document.getElementById('internalRotation').textContent = latestMobility.intRotation + '°';
+                document.getElementById('mobilityProgress').style.width = (latestMobility.score || 0) + '%';
+            }
+            
+            // Update endurance display
+            if (latestEndurance) {
+                document.getElementById('maxVolume').textContent = latestEndurance.maxVolume + ' throws';
+                document.getElementById('accuracyMaintenance').textContent = latestEndurance.accuracyMaintenance + '%';
+                document.getElementById('enduranceProgress').style.width = (latestEndurance.tournamentReadiness || 0) + '%';
+            }
+        }
+        
+        function getLatestAssessment(type) {
+            const assessments = assessmentData[type];
+            return assessments.length > 0 ? assessments[assessments.length - 1] : null;
+        }
+        
+        function loadAssessmentHistory() {
+            const tbody = document.getElementById('assessmentHistoryBody');
+            tbody.innerHTML = '';
+            
+            // Combine all assessments and sort by date
+            const allAssessments = [];
+            
+            Object.keys(assessmentData).forEach(type => {
+                assessmentData[type].forEach(assessment => {
+                    allAssessments.push({
+                        ...assessment,
+                        type: type
+                    });
+                });
+            });
+            
+            allAssessments.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            allAssessments.slice(0, 10).forEach(assessment => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${new Date(assessment.date).toLocaleDateString()}</td>
+                    <td>${formatAssessmentType(assessment.type)}</td>
+                    <td>${formatAssessmentScore(assessment, assessment.type)}</td>
+                    <td class="status-${getScoreStatus(assessment, assessment.type)}">${getStatusText(assessment, assessment.type)}</td>
+                    <td>${assessment.notes || '-'}</td>
+                `;
+            });
+        }
+        
+        function formatAssessmentType(type) {
+            const types = {
+                velocity: 'Velocity Test',
+                mobility: 'Mobility Assessment',
+                endurance: 'Endurance Test',
+                strength: 'Strength Test'
+            };
+            return types[type] || type;
+        }
+        
+        function formatAssessmentScore(assessment, type) {
+            switch(type) {
+                case 'velocity':
+                    return assessment.bestVelocity + ' mph';
+                case 'mobility':
+                    return assessment.extRotation + '°';
+                case 'endurance':
+                    return assessment.maxVolume + ' throws';
+                case 'strength':
+                    return assessment.maxReps + ' reps';
+                default:
+                    return '-';
+            }
+        }
+        
+        function getScoreStatus(assessment, type) {
+            // Simplified scoring logic
+            switch(type) {
+                case 'velocity':
+                    if (assessment.bestVelocity >= 55) return 'excellent';
+                    if (assessment.bestVelocity >= 50) return 'good';
+                    if (assessment.bestVelocity >= 45) return 'needs-work';
+                    return 'poor';
+                case 'mobility':
+                    if (assessment.extRotation >= 110) return 'excellent';
+                    if (assessment.extRotation >= 100) return 'good';
+                    if (assessment.extRotation >= 90) return 'needs-work';
+                    return 'poor';
+                default:
+                    return 'good';
+            }
+        }
+        
+        function getStatusText(assessment, type) {
+            const status = getScoreStatus(assessment, type);
+            return status.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
+        }
+        
+        // Modal functions
+        window.openVelocityTest = function() {
+            document.getElementById('velocityModal').style.display = 'block';
+        }
+        
+        window.openMobilityTest = function() {
+            document.getElementById('mobilityModal').style.display = 'block';
+        }
+        
+        window.closeModal = function(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        
+        // Assessment functions
+        window.saveVelocityTest = function() {
+            const velocity1 = parseFloat(document.getElementById('velocity1').value) || 0;
+            const velocity2 = parseFloat(document.getElementById('velocity2').value) || 0;
+            const velocity3 = parseFloat(document.getElementById('velocity3').value) || 0;
+            const bestVelocity = Math.max(velocity1, velocity2, velocity3);
+            const averageVelocity = (velocity1 + velocity2 + velocity3) / 3;
+            const notes = document.getElementById('velocityNotes').value;
+            const week = parseInt(document.getElementById('testWeek').value);
+            
+            const assessment = {
+                date: new Date().toISOString(),
+                week: week,
+                velocity1: velocity1,
+                velocity2: velocity2,
+                velocity3: velocity3,
+                bestVelocity: bestVelocity,
+                averageVelocity: averageVelocity,
+                gain: calculateVelocityGain(bestVelocity),
+                percentile: calculateVelocityPercentile(bestVelocity),
+                notes: notes
+            };
+            
+            assessmentData.velocity.push(assessment);
+            saveAssessmentData();
+            updateMetricDisplays();
+            loadAssessmentHistory();
+            closeModal('velocityModal');
+            
+            alert('Velocity assessment saved successfully!');
+        }
+        
+        window.saveMobilityTest = function() {
+            const extRotation = parseFloat(document.getElementById('extRotation').value) || 0;
+            const intRotation = parseFloat(document.getElementById('intRotation').value) || 0;
+            const horAbduction = parseFloat(document.getElementById('horAbduction').value) || 0;
+            const sleeperComfort = document.getElementById('sleeperComfort').value;
+            const notes = document.getElementById('mobilityNotes').value;
+            
+            const assessment = {
+                date: new Date().toISOString(),
+                extRotation: extRotation,
+                intRotation: intRotation,
+                horAbduction: horAbduction,
+                sleeperComfort: sleeperComfort,
+                score: calculateMobilityScore(extRotation, intRotation, horAbduction),
+                notes: notes
+            };
+            
+            assessmentData.mobility.push(assessment);
+            saveAssessmentData();
+            updateMetricDisplays();
+            loadAssessmentHistory();
+            closeModal('mobilityModal');
+            
+            alert('Mobility assessment saved successfully!');
+        }
+        
+        function calculateVelocityGain(currentVelocity) {
+            const baseline = 45; // Default baseline
+            return Math.max(0, currentVelocity - baseline);
+        }
+        
+        function calculateVelocityPercentile(velocity) {
+            // Simplified percentile calculation
+            return Math.min(100, Math.max(0, (velocity - 35) * 2.5));
+        }
+        
+        function calculateMobilityScore(extRot, intRot, horAbd) {
+            let score = 0;
+            if (extRot >= 110) score += 40;
+            else if (extRot >= 100) score += 30;
+            else if (extRot >= 90) score += 20;
+            
+            if (intRot >= 60) score += 30;
+            else if (intRot >= 50) score += 20;
+            
+            if (horAbd >= 45) score += 30;
+            else if (horAbd >= 40) score += 20;
+            
+            return Math.min(100, score);
+        }
+        
+        // Tournament simulation
+        window.startTournamentSim = function() {
+            alert('Tournament simulation will be implemented in the next phase. This will simulate 8 games with 40 throws each, tracking velocity maintenance and accuracy decline.');
+        }
+        
+        // Additional view functions
+        window.viewVelocityHistory = function() {
+            alert('Velocity history detailed view coming soon!');
+        }
+        
+        window.viewMobilityProtocols = function() {
+            alert('Redirecting to mobility protocol page...');
+        }
+        
+        window.openEnduranceTest = function() {
+            alert('Endurance test module coming soon!');
+        }
+        
+        window.openStrengthTest = function() {
+            alert('Strength test module coming soon!');
+        }
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initializeDashboard);
+        
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>

@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./src/ui-design-system.css">
+    <link rel="stylesheet" href="./src/hover-effects.css">
     <style>
         .dashboard-container {
             display: flex;
@@ -297,23 +298,23 @@
             <nav class="sidebar-nav">
                 <div class="nav-section">
                     <div class="nav-section-title">Main</div>
-                    <a href="/dashboard.html" class="nav-item">
+                    <a href="/dashboard.html" class="nav-item hover-lift-small">
                         <span class="nav-icon">📊</span>
                         Dashboard
                     </a>
-                    <a href="/training.html" class="nav-item">
+                    <a href="/training.html" class="nav-item hover-lift-small">
                         <span class="nav-icon">⚡</span>
                         Training
                     </a>
-                    <a href="/tournaments.html" class="nav-item">
+                    <a href="/tournaments.html" class="nav-item hover-lift-small">
                         <span class="nav-icon">🏆</span>
                         Tournaments
                     </a>
-                    <a href="/community.html" class="nav-item">
+                    <a href="/community.html" class="nav-item hover-lift-small">
                         <span class="nav-icon">👥</span>
                         Community
                     </a>
-                    <a href="/coach.html" class="nav-item">
+                    <a href="/coach.html" class="nav-item hover-lift-small">
                         <span class="nav-icon">📋</span>
                         Coach
                     </a>
@@ -321,7 +322,7 @@
                 
                 <div class="nav-section">
                     <div class="nav-section-title">Analytics</div>
-                    <a href="/analytics.html" class="nav-item">
+                    <a href="/analytics.html" class="nav-item hover-lift-small">
                         <span class="nav-icon">📈</span>
                         Analytics
                     </a>
@@ -359,7 +360,7 @@
 
                     <div class="form-group">
                         <label for="displayName">Display Name</label>
-                        <input type="text" id="displayName" class="form-input" value="John Doe" placeholder="Enter your display name">
+                        <input type="text" id="displayName" class="form-input" value="" placeholder="Enter your display name">
                     </div>
 
                     <div class="form-group">
@@ -540,6 +541,7 @@
 
     <script type="module">
         import { authManager } from './src/auth-manager.js';
+        import { REAL_TEAM_DATA, getAllPlayers } from './src/real-team-data.js';
 
         // Initialize settings page
         document.addEventListener('DOMContentLoaded', async function() {
@@ -551,6 +553,9 @@
 
             // Load user settings
             loadUserSettings();
+            
+            // Initialize with real player data
+            initializeWithRealPlayerData();
         });
 
         function loadUserSettings() {
@@ -578,6 +583,30 @@
                 if (savedSettings.timezone) {
                     document.getElementById('timezone').value = savedSettings.timezone;
                 }
+            }
+        }
+
+        function initializeWithRealPlayerData() {
+            // Get a random real player to demonstrate with their data
+            const allPlayers = getAllPlayers();
+            const randomPlayer = allPlayers[Math.floor(Math.random() * allPlayers.length)];
+            
+            // Pre-fill some fields with real player data if they're empty
+            const displayNameField = document.getElementById('displayName');
+            const teamField = document.getElementById('team');
+            const positionField = document.getElementById('position');
+            
+            if (!displayNameField.value) {
+                displayNameField.value = randomPlayer.name;
+                displayNameField.placeholder = `e.g., ${randomPlayer.name} ${randomPlayer.nationality}`;
+            }
+            
+            if (teamField && !teamField.value) {
+                teamField.value = `International Team - Jersey #${randomPlayer.jersey}`;
+            }
+            
+            if (positionField && !positionField.value) {
+                positionField.value = randomPlayer.position;
             }
         }
 

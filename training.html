@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./src/ui-design-system.css">
+    <link rel="stylesheet" href="./src/hover-effects.css">
     <style>
         /* Training-specific styles */
         .dashboard-container {
@@ -519,7 +520,7 @@
             <nav class="sidebar-nav">
                 <div class="nav-section">
                     <div class="nav-section-title">Main</div>
-                    <a href="/dashboard.html" class="nav-item">
+                    <a href="/dashboard.html" class="nav-item hover-lift-small">
                         <span class="nav-icon">📊</span>
                         Dashboard
                     </a>
@@ -527,15 +528,15 @@
                         <span class="nav-icon">⚡</span>
                         Training
                     </a>
-                    <a href="/tournaments.html" class="nav-item">
+                    <a href="/tournaments.html" class="nav-item hover-lift-small">
                         <span class="nav-icon">🏆</span>
                         Tournaments
                     </a>
-                    <a href="/community.html" class="nav-item">
+                    <a href="/community.html" class="nav-item hover-lift-small">
                         <span class="nav-icon">👥</span>
                         Community
                     </a>
-                    <a href="/coach.html" class="nav-item">
+                    <a href="/coach.html" class="nav-item hover-lift-small">
                         <span class="nav-icon">📋</span>
                         Coach
                     </a>
@@ -543,11 +544,11 @@
                 
                 <div class="nav-section">
                     <div class="nav-section-title">Analytics</div>
-                    <a href="/analytics.html" class="nav-item">
+                    <a href="/analytics.html" class="nav-item hover-lift-small">
                         <span class="nav-icon">📈</span>
                         Analytics
                     </a>
-                    <a href="/settings.html" class="nav-item">
+                    <a href="/settings.html" class="nav-item hover-lift-small">
                         <span class="nav-icon">⚙️</span>
                         Settings
                     </a>
@@ -582,7 +583,7 @@
                     <div class="user-menu">
                         <div class="user-avatar">JD</div>
                         <div>
-                            <div style="font-size: var(--text-sm); font-weight: var(--font-medium); color: var(--gray-900);">John Doe</div>
+                            <div style="font-size: var(--text-sm); font-weight: var(--font-medium); color: var(--gray-900);" id="user-display-name-training">Loading...</div>
                             <div style="font-size: var(--text-xs); color: var(--gray-500);">Player View</div>
                         </div>
                     </div>
@@ -840,6 +841,7 @@
 
     <script type="module">
         import { authManager } from './src/auth-manager.js';
+        import { REAL_TEAM_DATA, getAllPlayers, getStaffMember } from './src/real-team-data.js';
         import TrainingVideoComponent from './src/training-video-component.js';
 
         // Initialize training page
@@ -848,6 +850,25 @@
             if (!authManager.isAuthenticated()) {
                 window.location.href = '/login.html';
                 return;
+            }
+
+            // Update user display with real player data
+            const user = authManager.getCurrentUser();
+            if (user) {
+                const userAvatar = document.querySelector('.user-avatar');
+                const userName = document.getElementById('user-display-name-training');
+                if (userAvatar && userName) {
+                    // Get a random real player for demo
+                    const allPlayers = getAllPlayers();
+                    const randomPlayer = allPlayers[Math.floor(Math.random() * allPlayers.length)];
+                    
+                    const displayName = randomPlayer.name;
+                    const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase();
+                    
+                    userAvatar.textContent = initials;
+                    userName.textContent = `${displayName} ${randomPlayer.nationality}`;
+                    userName.title = `Jersey #${randomPlayer.jersey} - ${randomPlayer.position}`;
+                }
             }
 
             // Load user progress data

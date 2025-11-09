@@ -95,6 +95,12 @@ class AuthManager {
       return;
     }
     
+    // Skip check if still initializing - let individual pages handle it
+    if (this.isInitializing) {
+      if (isLocalDev) console.log('⏳ Still initializing, deferring auth check to page logic');
+      return;
+    }
+    
     if (this.isAuthenticated()) {
       if (isLocalDev) {
         console.log('✅ User is already authenticated');
@@ -265,13 +271,29 @@ class AuthManager {
             console.log('🔍 Final auth check before redirect:');
             console.log('   - Token exists:', !!this.token);
             console.log('   - User exists:', !!this.user);
+            console.log('   - Token value:', this.token);
+            console.log('   - User value:', this.user);
+            console.log('   - LocalStorage token:', localStorage.getItem('authToken'));
+            console.log('   - LocalStorage user:', localStorage.getItem('userData'));
             console.log('   - Is authenticated:', this.isAuthenticated());
             
+            // Double-check auth state with a brief delay
             if (this.isAuthenticated()) {
+              console.log('✅ Authentication confirmed, proceeding with redirect');
               this.redirectToDashboard();
             } else {
               console.error('❌ Auth state invalid at redirect time');
-              this.showError('Authentication state lost. Please try logging in again.');
+              console.log('🔄 Attempting to restore auth from localStorage...');
+              this.loadStoredAuth();
+              
+              // Try again after loading
+              if (this.isAuthenticated()) {
+                console.log('✅ Auth restored from storage, proceeding with redirect');
+                this.redirectToDashboard();
+              } else {
+                console.error('❌ Unable to restore authentication');
+                this.showError('Authentication state lost. Please try logging in again.');
+              }
             }
           }, 1500); // Increased delay to ensure everything is saved
           

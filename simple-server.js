@@ -33,18 +33,7 @@ const server = http.createServer((req, res) => {
   const parsedUrl = url.parse(req.url);
   let pathname = parsedUrl.pathname;
   
-  // Default to index.html for root
-  if (pathname === '/') {
-    pathname = '/index.html';
-  }
-  
-  // Build file path
-  const filePath = path.join(__dirname, pathname);
-  
-  // Get file extension
-  const ext = path.extname(filePath).toLowerCase();
-  
-  // Set CORS headers
+  // Set CORS headers for all requests
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -55,6 +44,43 @@ const server = http.createServer((req, res) => {
     res.end();
     return;
   }
+  
+  // Proxy API requests to backend server
+  if (pathname.startsWith('/api/')) {
+    const apiUrl = `http://localhost:3001${req.url}`;
+    console.log(`🔄 Proxying API request: ${req.method} ${apiUrl}`);
+    
+    const options = {
+      method: req.method,
+      headers: req.headers,
+      timeout: 10000
+    };
+    
+    const apiReq = http.request(apiUrl, options, (apiRes) => {
+      res.writeHead(apiRes.statusCode, apiRes.headers);
+      apiRes.pipe(res);
+    });
+    
+    apiReq.on('error', (err) => {
+      console.error(`❌ API proxy error: ${err.message}`);
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Backend API unavailable', details: err.message }));
+    });
+    
+    req.pipe(apiReq);
+    return;
+  }
+  
+  // Default to index.html for root
+  if (pathname === '/') {
+    pathname = '/index.html';
+  }
+  
+  // Build file path
+  const filePath = path.join(__dirname, pathname);
+  
+  // Get file extension
+  const ext = path.extname(filePath).toLowerCase();
   
   // Check if file exists
   fs.access(filePath, fs.constants.F_OK, (err) => {
@@ -86,10 +112,39 @@ const server = http.createServer((req, res) => {
   });
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`🏈 Flag Football App - Simple Server running on http://localhost:${PORT}`);
   console.log(`📁 Serving static files from: ${__dirname}`);
   console.log(`🎯 Open: http://localhost:${PORT}/index.html`);
+  console.log(`🔗 Also accessible via: http://127.0.0.1:${PORT}/index.html`);
+});
+
+// Enhanced error handling
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`❌ Port ${PORT} is already in use. Try a different port or kill the existing process.`);
+    console.error(`💡 Run: lsof -ti:${PORT} | xargs kill -9`);
+  } else {
+    console.error(`❌ Server error:`, err.message);
+  }
+  process.exit(1);
+});
+
+// Graceful shutdown
+process.on('SIGINT', () => {
+  console.log('\n🛑 Shutting down server gracefully...');
+  server.close(() => {
+    console.log('✅ Server stopped');
+    process.exit(0);
+  });
+});
+
+process.on('SIGTERM', () => {
+  console.log('\n🛑 Received SIGTERM, shutting down gracefully...');
+  server.close(() => {
+    console.log('✅ Server stopped');
+    process.exit(0);
+  });
 });
 
 export default server;
