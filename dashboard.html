@@ -7,10 +7,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./src/ui-design-system.css">
+    <link rel="stylesheet" href="./src/comprehensive-design-system.css">
     <link rel="stylesheet" href="./src/hover-effects.css">
-    <link rel="stylesheet" href="./src/dark-theme.css">
-    <link rel="stylesheet" href="./src/light-theme.css" id="light-theme" disabled>
     <!-- Lucide Icons - Modern icon library similar to Radix UI -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="./src/icon-helper.js"></script>
@@ -18,8 +16,9 @@
     <!-- Chart.js with multiple CDN fallbacks -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js" defer></script>
     <script>
-        // Fallback if primary CDN fails
+        // Fallback system for external dependencies
         window.addEventListener('load', function() {
+            // Chart.js fallback
             if (typeof Chart === 'undefined') {
                 console.log('Loading Chart.js fallback...');
                 const fallbackScript = document.createElement('script');
@@ -37,206 +36,125 @@
                 console.log('Chart.js loaded successfully');
                 if (window.initDashboardCharts) window.initDashboardCharts();
             }
+            
+            // Lucide Icons fallback
+            setTimeout(function() {
+                if (typeof lucide === 'undefined') {
+                    console.log('Loading Lucide fallback...');
+                    const lucideFallback = document.createElement('script');
+                    lucideFallback.src = 'https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js';
+                    lucideFallback.onload = function() {
+                        console.log('Lucide fallback loaded successfully');
+                        if (window.lucide) window.lucide.createIcons();
+                    };
+                    lucideFallback.onerror = function() {
+                        console.warn('Lucide fallback failed, using emoji fallbacks');
+                        // Replace icons with emoji fallbacks
+                        document.querySelectorAll('[data-lucide]').forEach(function(icon) {
+                            const iconName = icon.getAttribute('data-lucide');
+                            const emoji = {
+                                'football': '🏈',
+                                'bar-chart-3': '📊',
+                                'trophy': '🏆',
+                                'users': '👥',
+                                'settings': '⚙️',
+                                'bell': '🔔',
+                                'user': '👤',
+                                'home': '🏠',
+                                'calendar': '📅',
+                                'activity': '⚡'
+                            }[iconName] || '●';
+                            icon.textContent = emoji;
+                            icon.style.fontSize = '16px';
+                        });
+                    };
+                    document.head.appendChild(lucideFallback);
+                }
+            }, 100);
         });
     </script>
     <style>
-        /* Kraken-Inspired Dark Theme Dashboard */
-        :root {
-            --dark-bg-primary: #0f0f0f;
-            --dark-bg-secondary: #1a1a1a;
-            --dark-bg-tertiary: #2a2a2a;
-            --dark-text-primary: var(--dark-card-bg);
-            --dark-text-secondary: var(--dark-text-muted);
-            --dark-text-muted: #6b6b6b;
-            --dark-border: #2a2a2a;
-            --dark-card-bg: #1a1a1a;
+        /* Dashboard-specific minimal overrides */
+        body {
+            background: var(--surface-inverse);
+            color: var(--color-text-inverse);
         }
-
-        /* Dashboard-specific styles */
-        .dashboard-container {
-            display: flex;
-            min-height: 100vh;
-            background: var(--dark-bg-primary);
-        }
-
-        .sidebar {
+        
+        .dashboard-sidebar {
             width: 64px;
-            background: var(--dark-bg-secondary);
-            border-right: 1px solid var(--dark-border);
+            background: var(--surface-secondary);
+            border-right: 1px solid var(--color-border-primary);
             height: 100vh;
             position: fixed;
             left: 0;
             top: 0;
-            overflow-y: auto;
-            z-index: 40;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px 0;
+            padding: var(--spacing-component-lg) 0;
+            z-index: var(--z-index-sticky);
         }
-
-        .sidebar-logo {
+        
+        .dashboard-logo {
             width: 32px;
             height: 32px;
-            background: linear-gradient(135deg, #10c96b 0%, #0ab85a 100%);
-            border-radius: 8px;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-component-md);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
-            margin-bottom: 32px;
+            font-size: var(--typography-heading-sm-size);
+            margin-bottom: var(--spacing-component-xl);
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: var(--motion-easing-productive);
         }
-
-        .sidebar-logo:hover {
+        
+        .dashboard-logo:hover {
             transform: scale(1.1);
         }
-
-        .sidebar-icon {
+        
+        .dashboard-nav-item {
             width: 40px;
             height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 8px;
-            margin-bottom: 8px;
+            border-radius: var(--radius-component-md);
+            margin-bottom: var(--spacing-component-xs);
             cursor: pointer;
-            transition: all 0.2s;
-            color: var(--dark-text-muted);
-            font-size: 20px;
+            transition: var(--motion-duration-fast);
+            color: var(--color-text-tertiary);
             text-decoration: none;
         }
-
-        .sidebar-icon:hover {
-            background: var(--dark-bg-tertiary);
-            color: var(--dark-text-primary);
-        }
-
-        .sidebar-icon.active {
-            background: rgba(16, 201, 107, 0.1);
-            color: #10c96b;
-        }
-
-
         
-
-        .sidebar-nav {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
+        .dashboard-nav-item:hover {
+            background: var(--surface-tertiary);
+            color: var(--color-text-primary);
         }
-
         
-
-        .main-content {
+        .dashboard-nav-item.active {
+            background: var(--color-brand-primary-light);
+            color: var(--color-brand-primary);
+        }
+        
+        .dashboard-main {
             margin-left: 64px;
-            margin-top: 70px;
-            flex: 1;
-            padding: 32px;
-            background: var(--dark-bg-primary);
+            padding: var(--spacing-layout-md);
+            min-height: 100vh;
         }
-
-        /* Top Header - Kraken Style */
         
-
-        
-
-        
-
-        
-
-        .top-actions {
+        .dashboard-header {
             display: flex;
-            align-items: center;
-            gap: 24px;
-            width: 100%;
             justify-content: space-between;
-        }
-
-        .header-left {
-            display: flex;
             align-items: center;
-            gap: 24px;
+            margin-bottom: var(--spacing-layout-md);
+            padding-bottom: var(--spacing-component-lg);
+            border-bottom: 1px solid var(--color-border-secondary);
         }
-
-
-        .search-box {
-            position: relative;
-            width: 400px;
-        }
-
-        .search-input {
+        
+        .dashboard-search {
+            max-width: 400px;
             width: 100%;
-            padding: 10px 16px 10px 40px;
-            border: 1px solid var(--dark-border);
-            border-radius: 8px;
-            font-size: 14px;
-            background: var(--dark-bg-tertiary);
-            color: var(--dark-text-primary);
-            transition: all 0.2s;
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: #10c96b;
-            box-shadow: 0 0 0 3px rgba(16, 201, 107, 0.1);
-        }
-
-        .search-input::placeholder {
-            color: var(--dark-text-muted);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--dark-text-muted);
-            font-size: 16px;
-        }
-
-        .search-results {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: var(--dark-card-bg);
-            border: 1px solid var(--dark-border);
-            border-radius: 12px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
-            max-height: 300px;
-            overflow-y: auto;
-            z-index: 1000;
-            margin-top: 4px;
-        }
-
-        .search-result-item {
-            padding: var(--space-3);
-            border-bottom: 1px solid var(--dark-border);
-            cursor: pointer;
-            transition: var(--hover-transition);
-            color: var(--dark-text-primary);
-        }
-
-        .search-result-item:hover {
-            background: var(--dark-bg-tertiary);
-        }
-
-        .search-result-item:last-child {
-            border-bottom: none;
-        }
-
-        .search-result-title {
-            font-weight: var(--font-medium);
-            color: var(--dark-text-primary);
-            margin-bottom: var(--space-1);
-        }
-
-        .search-result-subtitle {
-            font-size: var(--text-sm);
-            color: var(--dark-text-secondary);
         }
 
         .header-right {

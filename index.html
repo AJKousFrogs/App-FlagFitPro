@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./src/comprehensive-design-system.css">
     <link rel="stylesheet" href="./src/hover-effects.css">
     <!-- Lucide Icons - Modern icon library similar to Radix UI -->
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -14,133 +15,122 @@
     <script src="./src/theme-switcher.js"></script>
     <style>
         body {
-            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(135deg, #10c96b 0%, #0ab85a 100%);
+            background: var(--gradient-primary);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
         }
-        .container {
+        .welcome-container {
             max-width: 600px;
-            background: var(--dark-text-primary);
-            padding: 50px;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            background: var(--surface-primary);
+            padding: var(--spacing-layout-xl);
+            border-radius: var(--radius-component-xl);
+            box-shadow: var(--elevation-highest);
             text-align: center;
         }
-        .logo {
-            font-size: 4rem;
-            margin-bottom: 20px;
+        .welcome-logo {
+            font-size: var(--typography-display-lg-size);
+            margin-bottom: var(--spacing-component-lg);
+            color: var(--color-brand-primary);
         }
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 2.5rem;
-            font-weight: 700;
-        }
-        p {
-            color: #666;
-            line-height: 1.6;
-            margin-bottom: 30px;
-            font-size: 1.1rem;
-        }
-        .cta-button {
-            display: inline-block;
-            background: linear-gradient(135deg, #10c96b 0%, #0ab85a 100%);
-            color: var(--dark-text-primary);
-            padding: 15px 40px;
-            text-decoration: none;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            margin: 10px;
-        }
-        .cta-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-        .features {
-            margin: 40px 0;
+        .welcome-features {
+            margin: var(--spacing-layout-lg) 0;
             text-align: left;
         }
-        .feature {
+        .welcome-feature {
             display: flex;
             align-items: center;
-            margin: 15px 0;
-            padding: 15px;
-            background: #f8fafc;
-            border-radius: 10px;
+            margin: var(--spacing-component-md) 0;
+            padding: var(--spacing-component-md);
+            background: var(--surface-secondary);
+            border-radius: var(--radius-component-lg);
         }
-        .feature-icon {
-            font-size: 2rem;
-            margin-right: 15px;
+        .welcome-feature-icon {
+            font-size: var(--typography-heading-xl-size);
+            margin-right: var(--spacing-component-md);
             width: 50px;
+            color: var(--color-brand-primary);
         }
-        .feature-text {
+        .welcome-feature-text {
             flex: 1;
         }
-        .feature-title {
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 5px;
+        .welcome-feature-title {
+            font-weight: var(--typography-heading-sm-weight);
+            color: var(--color-text-primary);
+            margin-bottom: var(--spacing-component-xs);
+            font-size: var(--typography-heading-sm-size);
         }
-        .feature-desc {
-            color: #666;
-            font-size: 0.9rem;
+        .welcome-feature-desc {
+            color: var(--color-text-secondary);
+            font-size: var(--typography-body-sm-size);
         }
-        .loading {
-            display: none;
-            color: #10c96b;
-            font-weight: 500;
+        .welcome-actions {
+            display: flex;
+            gap: var(--spacing-component-md);
+            justify-content: center;
+            flex-wrap: wrap;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="logo"><i data-lucide="football" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle;"></i></div>
-        <h1>Welcome to FlagFit Pro</h1>
-        <p>The ultimate flag football training and competition platform. Track your progress, join tournaments, and connect with the community.</p>
+    <div class="welcome-container">
+        <div class="welcome-logo">
+            <i data-lucide="football"></i>
+        </div>
+        <h1 class="text-display-md">Welcome to FlagFit Pro</h1>
+        <p class="text-body-lg">The ultimate flag football training and competition platform. Track your progress, join tournaments, and connect with the community.</p>
         
-        <div class="features">
-            <div class="feature">
-                <div class="feature-icon"><i data-lucide="bar-chart-3" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle;"></i></div>
-                <div class="feature-text">
-                    <div class="feature-title">Performance Analytics</div>
-                    <div class="feature-desc">Track your training sessions and game statistics</div>
+        <div class="welcome-features">
+            <div class="welcome-feature">
+                <div class="welcome-feature-icon">
+                    <i data-lucide="bar-chart-3"></i>
+                </div>
+                <div class="welcome-feature-text">
+                    <div class="welcome-feature-title">Performance Analytics</div>
+                    <div class="welcome-feature-desc">Track your training sessions and game statistics</div>
                 </div>
             </div>
-            <div class="feature">
-                <div class="feature-icon"><i data-lucide="trophy" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle;"></i></div>
-                <div class="feature-text">
-                    <div class="feature-title">Tournament System</div>
-                    <div class="feature-desc">Join competitions and climb the leaderboards</div>
+            <div class="welcome-feature">
+                <div class="welcome-feature-icon">
+                    <i data-lucide="trophy"></i>
+                </div>
+                <div class="welcome-feature-text">
+                    <div class="welcome-feature-title">Tournament System</div>
+                    <div class="welcome-feature-desc">Join competitions and climb the leaderboards</div>
                 </div>
             </div>
-            <div class="feature">
-                <div class="feature-icon"><i data-lucide="users" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle;"></i></div>
-                <div class="feature-text">
-                    <div class="feature-title">Community Hub</div>
-                    <div class="feature-desc">Connect with players, coaches, and teams</div>
+            <div class="welcome-feature">
+                <div class="welcome-feature-icon">
+                    <i data-lucide="users"></i>
+                </div>
+                <div class="welcome-feature-text">
+                    <div class="welcome-feature-title">Community Hub</div>
+                    <div class="welcome-feature-desc">Connect with players, coaches, and teams</div>
                 </div>
             </div>
-            <div class="feature">
-                <div class="feature-icon"><i data-lucide="zap" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle;"></i></div>
-                <div class="feature-text">
-                    <div class="feature-title">Training Programs</div>
-                    <div class="feature-desc">Structured workouts and skill development</div>
+            <div class="welcome-feature">
+                <div class="welcome-feature-icon">
+                    <i data-lucide="zap"></i>
+                </div>
+                <div class="welcome-feature-text">
+                    <div class="welcome-feature-title">Training Programs</div>
+                    <div class="welcome-feature-desc">Structured workouts and skill development</div>
                 </div>
             </div>
         </div>
         
-        <div id="loadingText" class="loading">Checking authentication...</div>
+        <div id="loadingText" style="display: none;" class="text-primary font-medium">Checking authentication...</div>
         
-        <div id="actionButtons">
-            <a href="/login.html" class="cta-button">🔐 Sign In</a>
-            <a href="/register.html" class="cta-button" style="background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);">📝 Create Account</a>
+        <div id="actionButtons" class="welcome-actions">
+            <a href="/login.html" class="btn btn-secondary btn-lg">
+                <i data-lucide="log-in"></i>
+                Sign In
+            </a>
+            <a href="/register.html" class="btn btn-primary btn-lg">
+                <i data-lucide="user-plus"></i>
+                Create Account
+            </a>
         </div>
     </div>
 

@@ -8,17 +8,31 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./src/ui-design-system.css">
-    <link rel="stylesheet" href="./src/dark-theme.css">
-    <link rel="stylesheet" href="./src/light-theme.css" id="light-theme" disabled>
+    <link rel="stylesheet" href="./src/comprehensive-design-system.css">
     
-    <!-- Chart.js with fallback for older browsers -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+    <!-- Chart.js with multiple CDN fallbacks -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js" defer></script>
     <script>
-        // Fallback for older browsers that don't support ES modules
-        if (typeof Chart === 'undefined') {
-            document.write('<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"><\/script>');
-        }
+        // Improved fallback system
+        window.addEventListener('load', function() {
+            if (typeof Chart === 'undefined') {
+                console.log('Loading Chart.js fallback...');
+                const fallbackScript = document.createElement('script');
+                fallbackScript.src = 'https://unpkg.com/chart.js@4.4.1/dist/chart.umd.js';
+                fallbackScript.onload = function() {
+                    console.log('Chart.js fallback loaded successfully');
+                    if (window.initAnalyticsCharts) window.initAnalyticsCharts();
+                };
+                fallbackScript.onerror = function() {
+                    console.warn('Chart.js fallback also failed, using mock charts');
+                    if (window.initMockCharts) window.initMockCharts();
+                };
+                document.head.appendChild(fallbackScript);
+            } else {
+                console.log('Chart.js loaded successfully');
+                if (window.initAnalyticsCharts) window.initAnalyticsCharts();
+            }
+        });
     </script>
     
     <!-- Date adapter with fallback -->

@@ -7,15 +7,33 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./src/ui-design-system.css">
+    <link rel="stylesheet" href="./src/comprehensive-design-system.css">
     <link rel="stylesheet" href="./src/hover-effects.css">
-    <link rel="stylesheet" href="./src/dark-theme.css">
-    <link rel="stylesheet" href="./src/light-theme.css" id="light-theme" disabled>
     <!-- Lucide Icons - Modern icon library similar to Radix UI -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="./src/icon-helper.js"></script>
     <script src="./src/theme-switcher.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js" defer></script>
+    <script>
+        // Chart.js fallback system
+        window.addEventListener('load', function() {
+            if (typeof Chart === 'undefined') {
+                console.log('Loading Chart.js fallback...');
+                const fallbackScript = document.createElement('script');
+                fallbackScript.src = 'https://unpkg.com/chart.js@4.4.1/dist/chart.umd.js';
+                fallbackScript.onload = function() {
+                    console.log('Chart.js fallback loaded successfully');
+                    if (window.initializeComparisonChart) window.initializeComparisonChart();
+                };
+                fallbackScript.onerror = function() {
+                    console.warn('Chart.js fallback also failed, using mock charts');
+                    // Fallback to text-based display
+                    document.getElementById('teamComparisonChart').innerHTML = '<p style="text-align: center; padding: 40px;">Chart data will be displayed here when online</p>';
+                };
+                document.head.appendChild(fallbackScript);
+            }
+        });
+    </script>
     <style>
         .coach-dashboard {
             background: var(--dark-bg-primary);
