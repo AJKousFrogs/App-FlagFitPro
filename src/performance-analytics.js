@@ -402,8 +402,36 @@ export class PerformanceAnalytics {
         }
     }
 
-    // Create performance trend chart
+    // Create performance trend chart with enhanced configuration
     createPerformanceTrendChart(canvasId, timeframe = '6m') {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas || typeof Chart === 'undefined') return;
+
+        // Import enhanced chart config dynamically
+        import('./enhanced-chart-config.js').then(({ enhancedChartConfig }) => {
+            enhancedChartConfig.updateTheme();
+            const stats = this.getPerformanceStats(timeframe);
+            const data = stats.performanceTrends;
+
+            if (this.chartInstances[canvasId]) {
+                this.chartInstances[canvasId].destroy();
+            }
+
+            const config = enhancedChartConfig.getPerformanceTrendsConfig(data, timeframe);
+            this.chartInstances[canvasId] = new Chart(canvas, config);
+
+            // Create custom interactive legend
+            setTimeout(() => {
+                enhancedChartConfig.createCustomLegend(this.chartInstances[canvasId], 'performance-legend-container');
+            }, 100);
+        }).catch(() => {
+            // Fallback to basic chart if enhanced config fails to load
+            this.createBasicPerformanceChart(canvasId, timeframe);
+        });
+    }
+
+    // Fallback basic chart creation
+    createBasicPerformanceChart(canvasId, timeframe = '6m') {
         const canvas = document.getElementById(canvasId);
         if (!canvas || typeof Chart === 'undefined') return;
 
@@ -425,35 +453,40 @@ export class PerformanceAnalytics {
                         borderColor: 'rgb(99, 102, 241)',
                         backgroundColor: 'rgba(99, 102, 241, 0.1)',
                         borderWidth: 3,
-                        fill: true
+                        fill: true,
+                        tension: 0.4
                     },
                     {
                         label: 'Speed',
                         data: data.speed,
                         borderColor: 'rgb(239, 68, 68)',
                         backgroundColor: 'transparent',
-                        borderWidth: 2
+                        borderWidth: 2,
+                        tension: 0.4
                     },
                     {
                         label: 'Agility',
                         data: data.agility,
                         borderColor: 'rgb(245, 158, 11)',
                         backgroundColor: 'transparent',
-                        borderWidth: 2
+                        borderWidth: 2,
+                        tension: 0.4
                     },
                     {
                         label: 'Strength',
                         data: data.strength,
                         borderColor: 'rgb(16, 185, 129)',
                         backgroundColor: 'transparent',
-                        borderWidth: 2
+                        borderWidth: 2,
+                        tension: 0.4
                     },
                     {
                         label: 'Endurance',
                         data: data.endurance,
                         borderColor: 'rgb(139, 92, 246)',
                         backgroundColor: 'transparent',
-                        borderWidth: 2
+                        borderWidth: 2,
+                        tension: 0.4
                     }
                 ]
             },
@@ -467,6 +500,10 @@ export class PerformanceAnalytics {
                             usePointStyle: true,
                             padding: 20
                         }
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
                     }
                 },
                 scales: {
@@ -491,8 +528,36 @@ export class PerformanceAnalytics {
         });
     }
 
-    // Create wellness chart
+    // Create wellness chart with enhanced configuration
     createWellnessChart(canvasId, timeframe = '30d') {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas || typeof Chart === 'undefined') return;
+
+        // Import enhanced chart config dynamically
+        import('./enhanced-chart-config.js').then(({ enhancedChartConfig }) => {
+            enhancedChartConfig.updateTheme();
+            const stats = this.getPerformanceStats(timeframe);
+            const data = stats.wellness;
+
+            if (this.chartInstances[canvasId]) {
+                this.chartInstances[canvasId].destroy();
+            }
+
+            const config = enhancedChartConfig.getWellnessChartConfig(data, timeframe);
+            this.chartInstances[canvasId] = new Chart(canvas, config);
+
+            // Create custom interactive legend
+            setTimeout(() => {
+                enhancedChartConfig.createCustomLegend(this.chartInstances[canvasId], 'wellness-legend-container');
+            }, 100);
+        }).catch(() => {
+            // Fallback to basic chart if enhanced config fails to load
+            this.createBasicWellnessChart(canvasId, timeframe);
+        });
+    }
+
+    // Fallback basic wellness chart
+    createBasicWellnessChart(canvasId, timeframe = '30d') {
         const canvas = document.getElementById(canvasId);
         if (!canvas || typeof Chart === 'undefined') return;
 
@@ -514,7 +579,8 @@ export class PerformanceAnalytics {
                         borderColor: 'rgb(99, 102, 241)',
                         backgroundColor: 'transparent',
                         borderWidth: 2,
-                        yAxisID: 'y'
+                        yAxisID: 'y',
+                        tension: 0.4
                     },
                     {
                         label: 'Energy (1-10)',
@@ -522,7 +588,8 @@ export class PerformanceAnalytics {
                         borderColor: 'rgb(245, 158, 11)',
                         backgroundColor: 'transparent',
                         borderWidth: 2,
-                        yAxisID: 'y1'
+                        yAxisID: 'y1',
+                        tension: 0.4
                     },
                     {
                         label: 'Soreness (1-5)',
@@ -530,7 +597,8 @@ export class PerformanceAnalytics {
                         borderColor: 'rgb(239, 68, 68)',
                         backgroundColor: 'transparent',
                         borderWidth: 2,
-                        yAxisID: 'y1'
+                        yAxisID: 'y1',
+                        tension: 0.4
                     }
                 ]
             },
@@ -544,6 +612,10 @@ export class PerformanceAnalytics {
                             usePointStyle: true,
                             padding: 20
                         }
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
                     }
                 },
                 scales: {

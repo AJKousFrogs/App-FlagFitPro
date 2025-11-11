@@ -73,10 +73,15 @@ class ThemeSwitcher {
     }
 
     applyTheme(theme) {
-        // Set data-theme attribute on html and body
+        console.log('🎨 Applying theme:', theme);
+        
+        // Set data-theme attribute on html FIRST - this updates CSS variables
         document.documentElement.setAttribute('data-theme', theme);
+        
+        // Then set on body - this applies element-specific styles
         document.body.setAttribute('data-theme', theme);
         
+<<<<<<< HEAD
         // Add/remove theme classes for compatibility
         if (theme === 'dark') {
             document.documentElement.classList.add('dark');
@@ -92,31 +97,31 @@ class ThemeSwitcher {
         
         // Toggle dark-theme.css (always enabled, but light-theme.css overrides)
         const darkThemeLink = document.querySelector('link[href*="dark-theme.css"]');
+=======
+        // Verify it was set
+        console.log('✅ data-theme set on html:', document.documentElement.getAttribute('data-theme'));
+        console.log('✅ data-theme set on body:', document.body.getAttribute('data-theme'));
+>>>>>>> d21046437e19fa2ae5aafb63c176a06dee1d2c94
         
-        // Toggle light-theme.css
-        let lightThemeLink = document.querySelector('link[href*="light-theme.css"]');
-        if (theme === 'light') {
-            if (!lightThemeLink) {
-                lightThemeLink = document.createElement('link');
-                lightThemeLink.rel = 'stylesheet';
-                lightThemeLink.href = './src/light-theme.css';
-                lightThemeLink.id = 'light-theme';
-                document.head.appendChild(lightThemeLink);
-            } else {
-                lightThemeLink.disabled = false;
-            }
-        } else {
-            if (lightThemeLink) {
-                lightThemeLink.disabled = true;
-            }
-        }
+        // Force CSS variable recalculation by accessing computed styles
+        const htmlStyles = window.getComputedStyle(document.documentElement);
+        const bodyStyles = window.getComputedStyle(document.body);
+        void htmlStyles.getPropertyValue('--surface-primary');
+        void bodyStyles.backgroundColor;
+        
+        // Note: Theme styles are applied via CSS selectors [data-theme="dark"] and [data-theme="light"]
+        // in dashboard.html and comprehensive-design-system.css. CSS variables are overridden in
+        // html[data-theme] selectors to ensure they update when theme changes.
 
         // Update toggle state - check both possible toggle IDs
         const toggle = document.getElementById('theme-toggle');
         if (toggle) {
+            // Toggle checked = dark theme, unchecked = light theme
             toggle.checked = theme === 'dark';
+            console.log('✅ Toggle state updated:', toggle.checked, 'for theme:', theme);
         }
         
+<<<<<<< HEAD
         // Also update header-theme-toggle if it exists (for dashboard.html)
         const headerToggle = document.getElementById('header-theme-toggle');
         if (headerToggle) {
@@ -140,6 +145,13 @@ class ThemeSwitcher {
                 }
             }
         }
+=======
+        // Update text to match toggle state
+        this.updateToggleText(theme);
+        
+        // Force a style recalculation to ensure CSS updates
+        void document.body.offsetHeight;
+>>>>>>> d21046437e19fa2ae5aafb63c176a06dee1d2c94
         
         // Force re-render of icons if Lucide is loaded
         if (typeof lucide !== 'undefined') {
@@ -147,9 +159,18 @@ class ThemeSwitcher {
                 lucide.createIcons();
             }, 100);
         }
+        
+        // Log computed styles for debugging
+        setTimeout(() => {
+            const computedBg = window.getComputedStyle(document.body).backgroundColor;
+            const computedColor = window.getComputedStyle(document.body).color;
+            console.log('✅ Computed body background:', computedBg);
+            console.log('✅ Computed body color:', computedColor);
+        }, 10);
     }
 
     updateToggleText(theme) {
+<<<<<<< HEAD
         // Update all theme toggle text elements
         const textElements = document.querySelectorAll('.theme-toggle-text');
         textElements.forEach(textElement => {
@@ -161,6 +182,13 @@ class ThemeSwitcher {
                 textElement.textContent = theme === 'dark' ? 'Dark' : 'Light';
             }
         });
+=======
+        const textElement = document.querySelector('.theme-toggle-text');
+        if (textElement) {
+            // Update text label: "Dark" for dark theme, "Light" for light theme
+            textElement.textContent = theme === 'dark' ? 'Dark' : 'Light';
+        }
+>>>>>>> d21046437e19fa2ae5aafb63c176a06dee1d2c94
     }
 }
 

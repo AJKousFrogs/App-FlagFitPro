@@ -138,10 +138,10 @@ export class ErrorHandler {
       transform: translateX(100%);
       transition: transform 0.3s ease;
       line-height: 1.4;
-      ${type === 'error' ? 'background: #ef4444; border-left: 4px solid #dc2626;' : ''}
-      ${type === 'success' ? 'background: #10b981; border-left: 4px solid #059669;' : ''}
-      ${type === 'warning' ? 'background: #f59e0b; border-left: 4px solid #d97706;' : ''}
-      ${type === 'info' ? 'background: #3b82f6; border-left: 4px solid #2563eb;' : ''}
+      ${type === 'error' ? 'background: #ef4444; border-left: 4px solid #dc2626;' : ''}  /* Red for alerts */
+      ${type === 'success' ? 'background: #10c96b; border-left: 4px solid #0ab85a;' : ''}  /* Green for actions */
+      ${type === 'warning' ? 'background: #fbbf24; border-left: 4px solid #f59e0b;' : ''}  /* Yellow for warnings */
+      ${type === 'info' ? 'background: #fbbf24; border-left: 4px solid #f59e0b;' : ''}  /* Yellow for info */
     `;
     
     const icon = {
