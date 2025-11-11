@@ -26,8 +26,8 @@ class ThemeSwitcher {
     }
 
     createToggleSwitch() {
-        // Check if toggle already exists
-        if (document.getElementById('theme-toggle')) {
+        // Check if toggle already exists (either theme-toggle or header-theme-toggle)
+        if (document.getElementById('theme-toggle') || document.getElementById('header-theme-toggle')) {
             return;
         }
 
@@ -77,6 +77,19 @@ class ThemeSwitcher {
         document.documentElement.setAttribute('data-theme', theme);
         document.body.setAttribute('data-theme', theme);
         
+        // Add/remove theme classes for compatibility
+        if (theme === 'dark') {
+            document.documentElement.classList.add('dark');
+            document.documentElement.classList.remove('light');
+            document.body.classList.add('dark');
+            document.body.classList.remove('light');
+        } else {
+            document.documentElement.classList.add('light');
+            document.documentElement.classList.remove('dark');
+            document.body.classList.add('light');
+            document.body.classList.remove('dark');
+        }
+        
         // Toggle dark-theme.css (always enabled, but light-theme.css overrides)
         const darkThemeLink = document.querySelector('link[href*="dark-theme.css"]');
         
@@ -98,10 +111,34 @@ class ThemeSwitcher {
             }
         }
 
-        // Update toggle state
+        // Update toggle state - check both possible toggle IDs
         const toggle = document.getElementById('theme-toggle');
         if (toggle) {
             toggle.checked = theme === 'dark';
+        }
+        
+        // Also update header-theme-toggle if it exists (for dashboard.html)
+        const headerToggle = document.getElementById('header-theme-toggle');
+        if (headerToggle) {
+            headerToggle.checked = theme === 'dark';
+            // Update the visual toggle dot and text within the header toggle container
+            const toggleContainer = headerToggle.closest('.theme-toggle-container');
+            if (toggleContainer) {
+                const toggleDot = toggleContainer.querySelector('#theme-toggle-dot');
+                const toggleText = toggleContainer.querySelector('.theme-toggle-text');
+                const toggleSlider = toggleContainer.querySelector('.theme-toggle-slider');
+                if (toggleDot && toggleText && toggleSlider) {
+                    if (theme === 'dark') {
+                        toggleDot.style.transform = 'translateX(26px)';
+                        toggleSlider.style.background = '#10c96b';
+                        toggleText.textContent = '🌙 Dark';
+                    } else {
+                        toggleDot.style.transform = 'translateX(0px)';
+                        toggleSlider.style.background = '#e2e8f0';
+                        toggleText.textContent = '☀️ Light';
+                    }
+                }
+            }
         }
         
         // Force re-render of icons if Lucide is loaded
@@ -113,10 +150,17 @@ class ThemeSwitcher {
     }
 
     updateToggleText(theme) {
-        const textElement = document.querySelector('.theme-toggle-text');
-        if (textElement) {
-            textElement.textContent = theme === 'dark' ? 'Dark' : 'Light';
-        }
+        // Update all theme toggle text elements
+        const textElements = document.querySelectorAll('.theme-toggle-text');
+        textElements.forEach(textElement => {
+            // Check if it's the header toggle (has emoji)
+            const container = textElement.closest('.theme-toggle-container');
+            if (container && container.querySelector('#header-theme-toggle')) {
+                textElement.textContent = theme === 'dark' ? '🌙 Dark' : '☀️ Light';
+            } else {
+                textElement.textContent = theme === 'dark' ? 'Dark' : 'Light';
+            }
+        });
     }
 }
 
@@ -125,6 +169,8 @@ let themeSwitcher;
 if (typeof window !== 'undefined') {
     document.addEventListener('DOMContentLoaded', () => {
         themeSwitcher = new ThemeSwitcher();
+        // Make instance available globally for other scripts
+        window.themeSwitcher = themeSwitcher;
     });
 }
 
@@ -133,6 +179,6 @@ if (typeof module !== 'undefined' && module.exports) {
     module.exports = ThemeSwitcher;
 }
 
-// Make available globally
+// Make class available globally
 window.ThemeSwitcher = ThemeSwitcher;
 

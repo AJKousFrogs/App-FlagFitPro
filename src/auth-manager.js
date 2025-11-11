@@ -56,16 +56,24 @@ class AuthManager {
 
   // Initialize auth manager
   async init() {
-    if (window.location.hostname === 'localhost') console.log('🚀 Initializing authentication manager...');
+    const isDevelopment = window.location.hostname === 'localhost';
+    if (isDevelopment) console.log('🚀 Initializing authentication manager...');
+    
     this.isInitializing = true;
+    
+    // Add session timeout management
+    this.setupSessionTimeout();
+    
     await initMockAuth();
     this.loadStoredAuth();
     this.setupTokenRefresh();
     await this.validateStoredToken();
     this.checkAuthStateOnLoad();
+    
     this.isInitializing = false;
     this.isInitialized = true;
-    if (window.location.hostname === 'localhost') console.log('✅ Authentication manager initialized');
+    
+    if (isDevelopment) console.log('✅ Authentication manager initialized');
   }
 
   // Wait for authentication to be fully initialized
@@ -86,23 +94,23 @@ class AuthManager {
 
   // Check authentication state on page load
   checkAuthStateOnLoad() {
-    const isLocalDev = window.location.hostname === 'localhost';
-    if (isLocalDev) console.log('🔍 Checking authentication state on page load...');
+    const isDevelopment = window.location.hostname === 'localhost';
+    if (isDevelopment) console.log('🔍 Checking authentication state on page load...');
     
     // Prevent redirect loops by checking if we're already redirecting
     if (this.isRedirecting) {
-      if (isLocalDev) console.log('🔄 Already redirecting, skipping auth check');
+      if (isDevelopment) console.log('🔄 Already redirecting, skipping auth check');
       return;
     }
     
     // Skip check if still initializing - let individual pages handle it
     if (this.isInitializing) {
-      if (isLocalDev) console.log('⏳ Still initializing, deferring auth check to page logic');
+      if (isDevelopment) console.log('⏳ Still initializing, deferring auth check to page logic');
       return;
     }
     
     if (this.isAuthenticated()) {
-      if (isLocalDev) {
+      if (isDevelopment) {
         console.log('✅ User is already authenticated');
         console.log('👤 Current user:', this.user?.email || 'Unknown');
         console.log('🎫 Current token:', this.token ? 'Present' : 'Missing');
@@ -110,7 +118,7 @@ class AuthManager {
       
       // For demo tokens or local development, skip server validation to prevent loops
       if (this.token && this.token.startsWith('demo-token-')) {
-        console.log('🎭 Demo token detected, skipping server validation');
+        if (isDevelopment) console.log('🎭 Demo token detected, skipping server validation');
         this.notifyLoginCallbacks();
         return;
       }
@@ -118,23 +126,24 @@ class AuthManager {
       // Verify token is still valid by making a test request
       this.validateStoredToken().then(isValid => {
         if (isValid) {
-          console.log('✅ Token validation successful');
+          if (isDevelopment) console.log('✅ Token validation successful');
           this.notifyLoginCallbacks();
         } else {
-          console.log('❌ Token validation failed, redirecting to login');
+          if (isDevelopment) console.log('❌ Token validation failed, redirecting to login');
           this.redirectToLogin();
         }
       }).catch(error => {
-        console.error('❌ Token validation error:', error);
-        // On validation error, stay on current page and use demo mode
-        console.log('🎭 Falling back to demo mode to prevent redirect loop');
+        if (isDevelopment) {
+          console.error('❌ Token validation error:', error);
+          console.log('🎭 Falling back to demo mode to prevent redirect loop');
+        }
         this.notifyLoginCallbacks();
       });
     } else {
-      console.log('❌ No valid authentication found on page load');
+      if (isDevelopment) console.log('❌ No valid authentication found on page load');
       // Check if we're on a protected page
       if (this.isProtectedPage()) {
-        console.log('🔒 Protected page detected, redirecting to login');
+        if (isDevelopment) console.log('🔒 Protected page detected, redirecting to login');
         this.redirectToLogin();
       }
     }
@@ -149,32 +158,37 @@ class AuthManager {
 
   // Load authentication data from localStorage
   loadStoredAuth() {
-    console.log('📂 Loading stored authentication data...');
+    const isDevelopment = window.location.hostname === 'localhost';
+    if (isDevelopment) console.log('📂 Loading stored authentication data...');
     
     try {
       this.token = localStorage.getItem('authToken');
       const userData = localStorage.getItem('userData');
       
-      console.log('🎫 Stored token:', this.token ? 'Present' : 'Missing');
-      console.log('👤 Stored user data:', userData ? 'Present' : 'Missing');
+      if (isDevelopment) {
+        console.log('🎫 Stored token:', this.token ? 'Present' : 'Missing');
+        console.log('👤 Stored user data:', userData ? 'Present' : 'Missing');
+      }
       
       if (userData) {
         this.user = JSON.parse(userData);
-        console.log('👤 Loaded user:', this.user);
+        if (isDevelopment) console.log('👤 Loaded user:', this.user);
       }
       
       if (this.token) {
         apiClient.setAuthToken(this.token);
-        console.log('🔗 Token set in API client');
+        if (isDevelopment) console.log('🔗 Token set in API client');
       }
       
-      if (this.token && this.user) {
-        console.log('✅ Stored auth data loaded successfully');
-      } else {
-        console.log('❌ No complete stored auth data found');
+      if (isDevelopment) {
+        if (this.token && this.user) {
+          console.log('✅ Stored auth data loaded successfully');
+        } else {
+          console.log('❌ No complete stored auth data found');
+        }
       }
     } catch (error) {
-      console.error('❌ Error loading stored auth:', error);
+      if (isDevelopment) console.error('❌ Error loading stored auth:', error);
       this.clearAuth();
     }
   }
@@ -472,24 +486,31 @@ class AuthManager {
 
   // Check if user is authenticated
   isAuthenticated() {
-    console.log('🔍 Checking authentication state...');
-    console.log('🎫 Token exists:', !!this.token);
-    console.log('👤 User exists:', !!this.user);
+    const isDevelopment = window.location.hostname === 'localhost';
+    if (isDevelopment) {
+      console.log('🔍 Checking authentication state...');
+      console.log('🎫 Token exists:', !!this.token);
+      console.log('👤 User exists:', !!this.user);
+    }
     
     if (this.token && this.user) {
       // Check if it's a demo token (starts with "demo-token-") - only allow in development
       if (this.token.startsWith('demo-token-')) {
-        const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        const isDevelopment = window.location.hostname === 'localhost' || 
+                            window.location.hostname === '127.0.0.1' ||
+                            window.location.hostname.includes('localhost');
         if (isDevelopment) {
+          // Only log in development
           if (window.location.hostname === 'localhost') {
             console.log('🎭 Demo token detected in development, skipping JWT validation');
             console.log('✅ User is authenticated (demo mode)');
           }
           return true;
         } else {
-          // Demo tokens not allowed in production
-          console.error('❌ Demo token detected in production environment - security violation');
-          this.logout();
+          // Demo tokens strictly forbidden in production
+          console.error('❌ SECURITY VIOLATION: Demo token detected in production environment');
+          this.clearAuth();
+          this.showError('Security violation detected. Please contact support.');
           return false;
         }
       }
@@ -500,32 +521,51 @@ class AuthManager {
         const payload = JSON.parse(atob(this.token.split('.')[1]));
         const now = Math.floor(Date.now() / 1000);
         
-        console.log('⏰ Token expires at:', new Date(payload.exp * 1000));
-        console.log('⏰ Current time:', new Date(now * 1000));
-        console.log('⏰ Token valid:', payload.exp > now);
+        // Only log token details in development
+        const isDevelopment = window.location.hostname === 'localhost';
+        if (isDevelopment) {
+          console.log('⏰ Token expires at:', new Date(payload.exp * 1000));
+          console.log('⏰ Current time:', new Date(now * 1000));
+          console.log('⏰ Token valid:', payload.exp > now);
+        }
         
         if (payload.exp && payload.exp > now) {
-          console.log('✅ User is authenticated (JWT valid)');
+          if (isDevelopment) {
+            console.log('✅ User is authenticated (JWT valid)');
+          }
           return true;
         } else {
-          console.log('❌ Token expired, clearing auth');
+          if (isDevelopment) {
+            console.log('❌ Token expired, clearing auth');
+          }
           this.clearAuth();
           return false;
         }
       } catch (error) {
-        console.error('❌ JWT token validation failed:', error);
-        console.log('🔄 Treating as demo token fallback');
-        // If JWT parsing fails but we have token and user, treat as valid for demo
-        if (this.token && this.user) {
-          console.log('✅ User is authenticated (fallback mode)');
+        const isDevelopment = window.location.hostname === 'localhost';
+        if (isDevelopment) {
+          console.error('❌ JWT token validation failed:', error);
+          console.log('🔄 Treating as demo token fallback');
+        }
+        
+        // If JWT parsing fails but we have token and user, only allow in development
+        if (this.token && this.user && isDevelopment) {
+          if (isDevelopment) {
+            console.log('✅ User is authenticated (fallback mode)');
+          }
           return true;
         }
+        
+        // In production, JWT parsing failure means invalid token
         this.clearAuth();
         return false;
       }
     }
     
-    console.log('❌ No valid authentication found');
+    const isDevelopment = window.location.hostname === 'localhost';
+    if (isDevelopment) {
+      console.log('❌ No valid authentication found');
+    }
     return false;
   }
 
@@ -557,6 +597,66 @@ class AuthManager {
         this.validateStoredToken();
       }
     }, 23 * 60 * 60 * 1000);
+  }
+
+  // Setup session timeout management
+  setupSessionTimeout() {
+    const SESSION_TIMEOUT = 2 * 60 * 60 * 1000; // 2 hours
+    const WARNING_TIME = 5 * 60 * 1000; // 5 minutes before timeout
+    
+    let sessionTimer;
+    let warningTimer;
+    let lastActivity = Date.now();
+    
+    const resetSessionTimer = () => {
+      lastActivity = Date.now();
+      
+      // Clear existing timers
+      if (sessionTimer) clearTimeout(sessionTimer);
+      if (warningTimer) clearTimeout(warningTimer);
+      
+      // Set warning timer
+      warningTimer = setTimeout(() => {
+        if (this.isAuthenticated()) {
+          this.showWarning('Your session will expire in 5 minutes due to inactivity.');
+        }
+      }, SESSION_TIMEOUT - WARNING_TIME);
+      
+      // Set logout timer
+      sessionTimer = setTimeout(() => {
+        if (this.isAuthenticated()) {
+          this.showError('Session expired due to inactivity.');
+          this.logout();
+        }
+      }, SESSION_TIMEOUT);
+    };
+    
+    // Track user activity
+    const activityEvents = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
+    
+    activityEvents.forEach(event => {
+      document.addEventListener(event, () => {
+        if (this.isAuthenticated() && Date.now() - lastActivity > 60000) { // Reset every minute
+          resetSessionTimer();
+        }
+      }, true);
+    });
+    
+    // Initialize session timer
+    if (this.isAuthenticated()) {
+      resetSessionTimer();
+    }
+    
+    // Reset timer on login
+    this.onLogin(() => {
+      resetSessionTimer();
+    });
+    
+    // Clear timers on logout
+    this.onLogout(() => {
+      if (sessionTimer) clearTimeout(sessionTimer);
+      if (warningTimer) clearTimeout(warningTimer);
+    });
   }
 
   // Add login callback

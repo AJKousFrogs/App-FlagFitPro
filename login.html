@@ -98,6 +98,11 @@
         .login-create-link:hover {
             text-decoration: underline;
         }
+        
+        .password-strength {
+            margin-top: var(--spacing-component-xs);
+            font-size: var(--typography-body-sm-size);
+        }
 
         .login-sponsors {
             margin-top: var(--spacing-layout-lg);
@@ -164,14 +169,18 @@
         </div>
 
         <form id="loginForm">
+            <!-- CSRF Protection -->
+            <input type="hidden" id="csrfToken" name="_token" value="" />
+            
             <div class="form-group">
                 <label for="email" class="form-label">Email</label>
-                <input type="email" id="email" class="form-input" name="email" placeholder="Enter your email" required>
+                <input type="email" id="email" class="form-input" name="email" placeholder="Enter your email" required autocomplete="email">
             </div>
 
             <div class="form-group">
                 <label for="password" class="form-label">Password</label>
-                <input type="password" id="password" class="form-input" name="password" placeholder="Enter your password" required>
+                <input type="password" id="password" class="form-input" name="password" placeholder="Enter your password" required autocomplete="current-password">
+                <div id="passwordStrength" class="password-strength" style="display: none;"></div>
             </div>
 
             <div class="login-form-options">
@@ -235,27 +244,62 @@
                 console.log('🔑 Password length:', password ? password.length : 0);
             }
             
+            // Validate CSRF token
+            const storedToken = sessionStorage.getItem('csrfToken');
+            const formToken = document.getElementById('csrfToken').value;
+            
+            if (!storedToken || storedToken !== formToken) {
+                showMessage('errorMessage', 'Security validation failed. Please refresh the page.');
+                submitButton.innerHTML = originalText;
+                submitButton.disabled = false;
+                return;
+            }
+            
+            // Check rate limiting
+            if (loginAttempts >= 3) {
+                showMessage('errorMessage', 'Too many failed attempts. Please wait before trying again.');
+                submitButton.innerHTML = originalText;
+                submitButton.disabled = false;
+                return;
+            }
+            
             try {
                 const result = await authManager.login(email, password);
                 
-                console.log('<i data-lucide="clipboard-list" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle;"></i> Login result:', result);
+                // Only log in development mode
+                const isDevelopment = window.location.hostname === 'localhost';
+                if (isDevelopment) {
+                    console.log('📋 Login result:', result.success ? 'Success' : 'Failed');
+                }
                 
                 if (result.success) {
-                    console.log('<i data-lucide="check-circle" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle;"></i> Login successful! Auth manager will handle redirect...');
+                    recordLoginAttempt(true);
+                    
+                    if (isDevelopment) {
+                        console.log('✅ Login successful! Redirecting...');
+                    }
                     
                     // Show manual redirect button as backup after 3 seconds
                     setTimeout(() => {
-                        console.log('⏰ Showing manual redirect button as backup...');
                         document.getElementById('manualRedirect').style.display = 'block';
                     }, 3000);
-                    
-                    // Note: authManager.login() already handles the redirect internally
-                    // No need to call redirectToDashboard() here again
                 } else {
-                    console.error('<i data-lucide="x-circle" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle;"></i> Login failed:', result.error);
+                    recordLoginAttempt(false);
+                    showMessage('errorMessage', 'Invalid email or password.');
+                    submitButton.innerHTML = originalText;
+                    submitButton.disabled = false;
                 }
             } catch (error) {
-                console.error('<i data-lucide="x-circle" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle;"></i> Login error:', error);
+                recordLoginAttempt(false);
+                showMessage('errorMessage', 'Login failed. Please try again.');
+                submitButton.innerHTML = originalText;
+                submitButton.disabled = false;
+                
+                // Only log detailed errors in development
+                const isDevelopment = window.location.hostname === 'localhost';
+                if (isDevelopment) {
+                    console.error('❌ Login error:', error.message);
+                }
             }
         });
 
@@ -280,6 +324,13 @@
             if (typeof lucide !== 'undefined') {
                 lucide.createIcons();
             }
+            
+            // Generate CSRF token
+            generateCSRFToken();
+            
+            // Initialize rate limiting
+            initializeRateLimiting();
+            
             // Check if we're in demo mode (localhost or development)
             const isDemoMode = window.location.hostname === 'localhost' || 
                               window.location.hostname === '127.0.0.1' ||
@@ -289,12 +340,21 @@
                 // Show demo note and pre-fill credentials for development
                 document.getElementById('demoNote').style.display = 'block';
                 document.getElementById('email').value = 'test@flagfitpro.com';
-                document.getElementById('password').value = 'demo123';
+                document.getElementById('password').value = 'TestDemo123!';
             }
             
-            console.log('<i data-lucide="search" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle;"></i> Page loaded, checking for existing auth...');
+            // Add password strength indicator
+            document.getElementById('password').addEventListener('input', checkPasswordStrength);
+            
+            // Only log in development mode
+            if (isDemoMode) {
+                console.log('🔍 Page loaded, checking for existing auth...');
+            }
+            
             if (authManager.isAuthenticated()) {
-                console.log('👤 User already logged in, redirecting to dashboard...');
+                if (isDemoMode) {
+                    console.log('👤 User already logged in, redirecting to dashboard...');
+                }
                 authManager.redirectToDashboard();
             }
         });
@@ -319,8 +379,15 @@
                 return false;
             }
             
-            if (password.length < 6) {
-                showMessage('errorMessage', 'Password must be at least 6 characters long.');
+            if (password.length < 8) {
+                showMessage('errorMessage', 'Password must be at least 8 characters long.');
+                return false;
+            }
+            
+            // Enhanced password complexity validation
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            if (!passwordRegex.test(password)) {
+                showMessage('errorMessage', 'Password must contain uppercase, lowercase, number, and special character.');
                 return false;
             }
             
@@ -341,6 +408,101 @@
         function hideMessage(elementId) {
             const element = document.getElementById(elementId);
             element.style.display = 'none';
+        }
+        
+        // CSRF Token Generation
+        function generateCSRFToken() {
+            const token = Array.from(crypto.getRandomValues(new Uint8Array(32)))
+                .map(b => b.toString(16).padStart(2, '0')).join('');
+            document.getElementById('csrfToken').value = token;
+            sessionStorage.setItem('csrfToken', token);
+        }
+        
+        // Rate Limiting Implementation
+        let loginAttempts = parseInt(localStorage.getItem('loginAttempts') || '0');
+        let lastAttempt = parseInt(localStorage.getItem('lastLoginAttempt') || '0');
+        
+        function initializeRateLimiting() {
+            // Reset attempts after 15 minutes
+            const fifteenMinutes = 15 * 60 * 1000;
+            if (Date.now() - lastAttempt > fifteenMinutes) {
+                loginAttempts = 0;
+                localStorage.removeItem('loginAttempts');
+                localStorage.removeItem('lastLoginAttempt');
+            }
+            
+            // Show rate limit warning if too many attempts
+            if (loginAttempts >= 3) {
+                const timeLeft = Math.ceil((fifteenMinutes - (Date.now() - lastAttempt)) / 1000 / 60);
+                if (timeLeft > 0) {
+                    showMessage('errorMessage', `Too many login attempts. Please wait ${timeLeft} minutes before trying again.`);
+                    document.querySelector('button[type="submit"]').disabled = true;
+                }
+            }
+        }
+        
+        function recordLoginAttempt(success = false) {
+            if (success) {
+                // Reset on successful login
+                loginAttempts = 0;
+                localStorage.removeItem('loginAttempts');
+                localStorage.removeItem('lastLoginAttempt');
+            } else {
+                // Increment failed attempts
+                loginAttempts++;
+                lastAttempt = Date.now();
+                localStorage.setItem('loginAttempts', loginAttempts.toString());
+                localStorage.setItem('lastLoginAttempt', lastAttempt.toString());
+                
+                if (loginAttempts >= 3) {
+                    showMessage('errorMessage', 'Too many failed attempts. Account temporarily locked for 15 minutes.');
+                    document.querySelector('button[type="submit"]').disabled = true;
+                }
+            }
+        }
+        
+        // Password Strength Indicator
+        function checkPasswordStrength() {
+            const password = document.getElementById('password').value;
+            const strengthDiv = document.getElementById('passwordStrength');
+            
+            if (password.length === 0) {
+                strengthDiv.style.display = 'none';
+                return;
+            }
+            
+            let strength = 0;
+            let feedback = [];
+            
+            // Length check
+            if (password.length >= 8) strength++;
+            else feedback.push('At least 8 characters');
+            
+            // Uppercase check
+            if (/[A-Z]/.test(password)) strength++;
+            else feedback.push('Uppercase letter');
+            
+            // Lowercase check  
+            if (/[a-z]/.test(password)) strength++;
+            else feedback.push('Lowercase letter');
+            
+            // Number check
+            if (/\d/.test(password)) strength++;
+            else feedback.push('Number');
+            
+            // Special character check
+            if (/[@$!%*?&]/.test(password)) strength++;
+            else feedback.push('Special character (@$!%*?&)');
+            
+            strengthDiv.style.display = 'block';
+            
+            if (strength <= 2) {
+                strengthDiv.innerHTML = `<span style="color: var(--error);">Weak: Missing ${feedback.join(', ')}</span>`;
+            } else if (strength <= 4) {
+                strengthDiv.innerHTML = `<span style="color: var(--warning);">Medium: Missing ${feedback.join(', ')}</span>`;
+            } else {
+                strengthDiv.innerHTML = `<span style="color: var(--success);">Strong password!</span>`;
+            }
         }
     </script>
 </body>
