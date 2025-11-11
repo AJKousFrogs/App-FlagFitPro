@@ -51,7 +51,7 @@ const iconMap = {
     'performance': 'Gauge',
     
     // Sports
-    'football': 'Football',
+    'football': 'Activity', // Lucide doesn't have Football icon, using Activity instead
     'flag': 'Flag',
     
     // Other

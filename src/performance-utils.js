@@ -250,22 +250,30 @@ export class PerformanceUtils {
       this.clearExpiredCache();
     }, 5 * 60 * 1000); // Every 5 minutes
     
-    // Preload critical resources
+    // Preload critical resources with proper 'as' attributes
     this.preloadResources([
-      { url: '/src/auth-manager.js', type: 'script' },
-      { url: '/src/api-config.js', type: 'script' },
-      { url: '/src/error-handler.js', type: 'script' },
-      { url: 'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap', type: 'style' }
+      { url: '/src/auth-manager.js', type: 'script', as: 'script' },
+      { url: '/src/api-config.js', type: 'script', as: 'script' },
+      { url: '/src/error-handler.js', type: 'script', as: 'script' },
+      { url: 'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap', type: 'style', as: 'style' }
     ]);
     
     // Monitor page load performance
     window.addEventListener('load', () => {
       setTimeout(() => {
         const perfData = performance.getEntriesByType('navigation')[0];
-        console.log('📊 Page Load Performance:');
-        console.log(`  DOM Content Loaded: ${perfData.domContentLoadedEventEnd - perfData.domContentLoadedEventStart}ms`);
-        console.log(`  Load Complete: ${perfData.loadEventEnd - perfData.loadEventStart}ms`);
-        console.log(`  Total Load Time: ${perfData.loadEventEnd - perfData.navigationStart}ms`);
+        if (perfData) {
+          console.log('📊 Page Load Performance:');
+          const domContentLoaded = perfData.domContentLoadedEventEnd - perfData.domContentLoadedEventStart;
+          const loadComplete = perfData.loadEventEnd - perfData.loadEventStart;
+          const totalLoadTime = perfData.loadEventEnd && perfData.navigationStart 
+            ? perfData.loadEventEnd - perfData.navigationStart 
+            : (domContentLoaded + loadComplete);
+          
+          console.log(`  DOM Content Loaded: ${domContentLoaded}ms`);
+          console.log(`  Load Complete: ${loadComplete}ms`);
+          console.log(`  Total Load Time: ${totalLoadTime}ms`);
+        }
       }, 100);
     });
     
