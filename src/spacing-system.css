@@ -1,0 +1,255 @@
+/* ================================================================
+   COMPREHENSIVE SPACING SYSTEM
+   Applies consistent, breathable spacing across the entire app
+   ================================================================ */
+
+/* ================================================================
+   ENHANCED SPACING TOKENS
+   ================================================================ */
+:root {
+  /* Enhanced Component Spacing - More breathable */
+  --spacing-component-xs: var(--primitive-space-12);    /* 12px - was 8px */
+  --spacing-component-sm: var(--primitive-space-16);   /* 16px - was 12px */
+  --spacing-component-md: var(--primitive-space-24);   /* 24px - was 16px */
+  --spacing-component-lg: var(--primitive-space-32);   /* 32px - was 24px */
+  --spacing-component-xl: var(--primitive-space-40);   /* 40px - was 32px */
+  --spacing-component-2xl: var(--primitive-space-48);  /* 48px */
+  --spacing-component-3xl: var(--primitive-space-56);  /* 56px */
+  
+  /* Enhanced Layout Spacing - More generous */
+  --spacing-layout-xs: var(--primitive-space-24);      /* 24px - was 16px */
+  --spacing-layout-sm: var(--primitive-space-32);       /* 32px - was 24px */
+  --spacing-layout-md: var(--primitive-space-40);       /* 40px - was 32px */
+  --spacing-layout-lg: var(--primitive-space-56);       /* 56px - was 48px */
+  --spacing-layout-xl: var(--primitive-space-64);       /* 64px */
+  --spacing-layout-2xl: var(--primitive-space-80);      /* 80px */
+  
+  /* Card Spacing - Standardized - More breathable */
+  --card-padding-sm: var(--primitive-space-24);         /* 24px - increased from 20px */
+  --card-padding-md: var(--primitive-space-32);          /* 32px - increased from 28px */
+  --card-padding-lg: var(--primitive-space-40);         /* 40px - increased from 36px */
+  --card-padding-xl: var(--primitive-space-48);         /* 48px - increased from 40px */
+  
+  /* Grid Spacing - Standardized - More breathable */
+  --grid-gap-sm: var(--primitive-space-24);            /* 24px - increased from 20px */
+  --grid-gap-md: var(--primitive-space-32);             /* 32px - increased from 28px */
+  --grid-gap-lg: var(--primitive-space-40);             /* 40px - increased from 32px */
+  --grid-gap-xl: var(--primitive-space-48);              /* 48px - increased from 40px */
+  
+  /* Section Spacing - Standardized - More breathable */
+  --section-spacing-sm: var(--primitive-space-40);     /* 40px - increased from 32px */
+  --section-spacing-md: var(--primitive-space-48);      /* 48px - increased from 40px */
+  --section-spacing-lg: var(--primitive-space-56);      /* 56px - increased from 48px */
+  --section-spacing-xl: var(--primitive-space-80);      /* 80px - increased from 64px */
+  
+  /* Button Spacing - Standardized */
+  --button-padding-sm: var(--primitive-space-12) var(--primitive-space-20);
+  --button-padding-md: var(--primitive-space-16) var(--primitive-space-28);
+  --button-padding-lg: var(--primitive-space-20) var(--primitive-space-32);
+  --button-gap: var(--primitive-space-16);              /* 16px */
+  --button-gap-lg: var(--primitive-space-20);           /* 20px */
+}
+
+/* ================================================================
+   GLOBAL CARD SYSTEM - Applied to all cards
+   Higher specificity to override inline styles
+   ================================================================ */
+.card,
+.stat-card,
+.chart-card,
+.upcoming-card,
+.metric-card,
+.section-card,
+.section-card-panel,
+.dashboard-container .card,
+.dashboard-container .stat-card,
+.dashboard-container .chart-card,
+.dashboard-container .upcoming-card {
+  padding: var(--card-padding-md) !important;
+  margin-bottom: var(--section-spacing-md) !important;
+  border-radius: var(--radius-component-lg);
+}
+
+/* Desktop: More padding for larger screens */
+@media (min-width: 1200px) {
+  .card,
+  .stat-card,
+  .chart-card,
+  .upcoming-card,
+  .metric-card,
+  .section-card,
+  .section-card-panel {
+    padding: var(--card-padding-lg);
+    margin-bottom: var(--section-spacing-lg);
+  }
+}
+
+/* Mobile: Less padding for smaller screens */
+@media (max-width: 768px) {
+  .card,
+  .stat-card,
+  .chart-card,
+  .upcoming-card,
+  .metric-card,
+  .section-card,
+  .section-card-panel {
+    padding: var(--card-padding-sm);
+    margin-bottom: var(--section-spacing-sm);
+  }
+}
+
+/* ================================================================
+   GLOBAL GRID SYSTEM - Applied to all grids
+   Higher specificity to override inline styles
+   ================================================================ */
+.stats-grid,
+.main-grid,
+.metric-grid,
+.dashboard-grid,
+.performance-charts-grid,
+.grid,
+.dashboard-container .stats-grid,
+.dashboard-container .main-grid {
+  gap: var(--grid-gap-md) !important;
+  margin-bottom: var(--section-spacing-md) !important;
+}
+
+/* Desktop: More spacing */
+@media (min-width: 1200px) {
+  .stats-grid,
+  .main-grid,
+  .metric-grid,
+  .dashboard-grid,
+  .performance-charts-grid,
+  .grid {
+    gap: var(--grid-gap-lg);
+    margin-bottom: var(--section-spacing-lg);
+  }
+}
+
+/* Mobile: Less spacing */
+@media (max-width: 768px) {
+  .stats-grid,
+  .main-grid,
+  .metric-grid,
+  .dashboard-grid,
+  .performance-charts-grid,
+  .grid {
+    gap: var(--grid-gap-sm);
+    margin-bottom: var(--section-spacing-sm);
+  }
+}
+
+/* ================================================================
+   GLOBAL BUTTON SYSTEM - Applied to all buttons
+   ================================================================ */
+.btn,
+button[class*="btn"],
+.performance-trends-footer,
+.card-footer-section,
+.button-group {
+  gap: var(--button-gap);
+  padding-top: var(--spacing-component-md);
+}
+
+/* Desktop: More spacing */
+@media (min-width: 1200px) {
+  .btn,
+  button[class*="btn"],
+  .performance-trends-footer,
+  .card-footer-section,
+  .button-group {
+    gap: var(--button-gap-lg);
+    padding-top: var(--spacing-component-lg);
+  }
+}
+
+/* Button padding */
+.btn-primary,
+.btn-secondary,
+.btn-tertiary,
+.btn-record-test,
+.btn-get-tips {
+  padding: var(--button-padding-md);
+  min-height: 52px;
+}
+
+/* ================================================================
+   GLOBAL MAIN CONTENT SPACING
+   ================================================================ */
+.main-content,
+.dashboard-container > main,
+.content-area {
+  padding: var(--spacing-layout-md) var(--spacing-layout-lg);
+}
+
+/* Desktop: More generous padding */
+@media (min-width: 1200px) {
+  .main-content,
+  .dashboard-container > main,
+  .content-area {
+    padding: var(--spacing-layout-lg) var(--spacing-layout-xl);
+  }
+}
+
+/* Tablet: Balanced padding */
+@media (min-width: 768px) and (max-width: 1199px) {
+  .main-content,
+  .dashboard-container > main,
+  .content-area {
+    padding: var(--spacing-layout-sm) var(--spacing-layout-md);
+  }
+}
+
+/* Mobile: Compact padding */
+@media (max-width: 767px) {
+  .main-content,
+  .dashboard-container > main,
+  .content-area {
+    padding: var(--spacing-layout-xs) var(--spacing-component-lg);
+  }
+}
+
+/* ================================================================
+   SECTION SPACING - Applied to all sections
+   ================================================================ */
+section,
+.section,
+.performance-section,
+.content-section {
+  margin-top: var(--section-spacing-md);
+  margin-bottom: var(--section-spacing-md);
+}
+
+/* Desktop: More spacing between sections */
+@media (min-width: 1200px) {
+  section,
+  .section,
+  .performance-section,
+  .content-section {
+    margin-top: var(--section-spacing-lg);
+    margin-bottom: var(--section-spacing-lg);
+  }
+}
+
+/* ================================================================
+   UTILITY CLASSES - For fine-tuning
+   ================================================================ */
+.spacing-xs { margin: var(--spacing-component-xs); }
+.spacing-sm { margin: var(--spacing-component-sm); }
+.spacing-md { margin: var(--spacing-component-md); }
+.spacing-lg { margin: var(--spacing-component-lg); }
+.spacing-xl { margin: var(--spacing-component-xl); }
+
+.padding-xs { padding: var(--spacing-component-xs); }
+.padding-sm { padding: var(--spacing-component-sm); }
+.padding-md { padding: var(--spacing-component-md); }
+.padding-lg { padding: var(--spacing-component-lg); }
+.padding-xl { padding: var(--spacing-component-xl); }
+
+.gap-xs { gap: var(--spacing-component-xs); }
+.gap-sm { gap: var(--spacing-component-sm); }
+.gap-md { gap: var(--spacing-component-md); }
+.gap-lg { gap: var(--spacing-component-lg); }
+.gap-xl { gap: var(--spacing-component-xl); }
+

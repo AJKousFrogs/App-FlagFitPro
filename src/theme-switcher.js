@@ -81,27 +81,9 @@ class ThemeSwitcher {
         // Then set on body - this applies element-specific styles
         document.body.setAttribute('data-theme', theme);
         
-<<<<<<< HEAD
-        // Add/remove theme classes for compatibility
-        if (theme === 'dark') {
-            document.documentElement.classList.add('dark');
-            document.documentElement.classList.remove('light');
-            document.body.classList.add('dark');
-            document.body.classList.remove('light');
-        } else {
-            document.documentElement.classList.add('light');
-            document.documentElement.classList.remove('dark');
-            document.body.classList.add('light');
-            document.body.classList.remove('dark');
-        }
-        
-        // Toggle dark-theme.css (always enabled, but light-theme.css overrides)
-        const darkThemeLink = document.querySelector('link[href*="dark-theme.css"]');
-=======
         // Verify it was set
         console.log('✅ data-theme set on html:', document.documentElement.getAttribute('data-theme'));
         console.log('✅ data-theme set on body:', document.body.getAttribute('data-theme'));
->>>>>>> d21046437e19fa2ae5aafb63c176a06dee1d2c94
         
         // Force CSS variable recalculation by accessing computed styles
         const htmlStyles = window.getComputedStyle(document.documentElement);
@@ -121,7 +103,6 @@ class ThemeSwitcher {
             console.log('✅ Toggle state updated:', toggle.checked, 'for theme:', theme);
         }
         
-<<<<<<< HEAD
         // Also update header-theme-toggle if it exists (for dashboard.html)
         const headerToggle = document.getElementById('header-theme-toggle');
         if (headerToggle) {
@@ -145,13 +126,12 @@ class ThemeSwitcher {
                 }
             }
         }
-=======
+        
         // Update text to match toggle state
         this.updateToggleText(theme);
         
         // Force a style recalculation to ensure CSS updates
         void document.body.offsetHeight;
->>>>>>> d21046437e19fa2ae5aafb63c176a06dee1d2c94
         
         // Force re-render of icons if Lucide is loaded
         if (typeof lucide !== 'undefined') {
@@ -170,7 +150,6 @@ class ThemeSwitcher {
     }
 
     updateToggleText(theme) {
-<<<<<<< HEAD
         // Update all theme toggle text elements
         const textElements = document.querySelectorAll('.theme-toggle-text');
         textElements.forEach(textElement => {
@@ -182,13 +161,6 @@ class ThemeSwitcher {
                 textElement.textContent = theme === 'dark' ? 'Dark' : 'Light';
             }
         });
-=======
-        const textElement = document.querySelector('.theme-toggle-text');
-        if (textElement) {
-            // Update text label: "Dark" for dark theme, "Light" for light theme
-            textElement.textContent = theme === 'dark' ? 'Dark' : 'Light';
-        }
->>>>>>> d21046437e19fa2ae5aafb63c176a06dee1d2c94
     }
 }
 

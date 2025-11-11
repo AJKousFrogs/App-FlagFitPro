@@ -5,176 +5,7 @@
    ================================ */
 
 :root {
-<<<<<<< HEAD
-
-  /* Color primitives */
-
-  --brand-green: #10c96b;
-
-  --brand-green-hover: #0ab85a;
-
-  --brand-green-dark: #089949;
-
-
-
-  --surface-primary: #ffffff;      /* Card, main app bg (light) */
-
-  --surface-secondary: #f8f9fa;   /* Light side panels, sidebar (light) */
-
-  --surface-tertiary: #e9ecef;    /* Input backgrounds (light) */
-
-
-
-  --text-primary: #1a1a1a;
-
-  --text-secondary: #404040;
-
-  --text-muted: #6b6b6b;
-
-
-
-  --border-strong: #cccccc;
-
-  --border-medium: #e0e0e0;
-
-
-
-  /* Semantic colors */
-
-  --color-success: #22c55e;
-
-  --color-error: #ef4444;
-
-  --color-warning: #f59e0b;
-
-  --color-info: #0ea5e9;
-
-
-
-  /* Neutral color scale for flexibility */
-
-  --neutral-50: #f8f8f8;
-
-  --neutral-100: #f0f0f0;
-
-  --neutral-200: #e8e8e8;
-
-  --neutral-700: #404040;
-
-  --neutral-900: #1a1a1a;
-
-  --neutral-950: #0f0f0f;
-
-
-
-  /* Chart colors */
-
-  --chart-bar-fill: var(--brand-green);
-
-  --chart-bar-bg: var(--surface-tertiary);
-
-
-
-  /* Typography scaled tokens */
-
-  --font-family-heading: 'Poppins', Helvetica, Arial, sans-serif;
-
-  --font-family-body: 'Inter', Helvetica, Arial, sans-serif;
-
-  --font-family-mono: 'Courier New', monospace;
-
-
-
-  --font-size-h1: 3.5rem; /* 56px */
-
-  --font-size-h2: 3rem;   /* 48px */
-
-  --font-size-h3: 2.25rem;/* 36px */
-
-  --font-size-h4: 1.75rem;/* 28px */
-
-  --font-size-h5: 1.5rem; /* 24px */
-
-  --font-size-h6: 1.25rem;/* 20px */
-
-
-
-  --font-size-lg: 1.125rem; /* 18px */
-
-  --font-size-base: 1rem;   /* 16px */
-
-  --font-size-sm: 0.875rem; /* 14px */
-
-  --font-size-xs: 0.75rem;  /* 12px */
-
-
-
-  --font-weight-bold: 700;
-
-  --font-weight-semibold: 600;
-
-  --font-weight-medium: 500;
-
-  --font-weight-normal: 400;
-
-
-
-  --line-height-tight: 1.2;
-
-  --line-height-normal: 1.5;
-
-  --line-height-relaxed: 1.75;
-
-
-
-  /* Spacing - 8px grid */
-
-  --space-100: 8px;
-
-  --space-200: 16px;
-
-  --space-300: 24px;
-
-  --space-400: 32px;
-
-  --space-500: 40px;
-
-  --space-600: 48px;
-
-  --space-800: 64px;
-
-
-
-  /* Border radius */
-
-  --radius-base: 8px;
-
-  --radius-lg: 12px;
-
-  --radius-full: 9999px;
-
-
-
-  /* Shadows */
-
-  --shadow-base: 0 1px 3px rgba(0,0,0,0.12);
-
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.15);
-
-
-
-  /* Focus */
-
-  --focus-outline: 2px solid var(--brand-green);
-
-
-
-  /* Transition */
-
-  --transition-base: 0.15s cubic-bezier(0.4,0,0.2,1);
-
-=======
-  /* ================================================================
+/* ================================================================
      PRIMITIVE TOKENS (Global Values)
      ================================================================ */
   
@@ -658,9 +489,7 @@
   --icon-color-secondary: var(--color-text-secondary);
   --icon-color-tertiary: var(--color-text-tertiary);
   --icon-color-disabled: var(--color-text-disabled);
-  --icon-color-on-primary: var(--color-text-on-primary);
->>>>>>> d21046437e19fa2ae5aafb63c176a06dee1d2c94
-}
+  --icon-color-on-primary: var(--color-text-on-primary);}
 
 
 
@@ -702,20 +531,7 @@ html.dark {
 
 /* System preference (only if no manual theme is set) */
 @media (prefers-color-scheme: dark) {
-<<<<<<< HEAD
-  :root:not([data-theme]):not(.light) {
-    --surface-primary: #181820;
-    --surface-secondary: #232336;
-    --surface-tertiary: #2c2c47;
-    --text-primary: #f8f8f8;
-    --text-secondary: #cccccc;
-    --text-muted: #888888;
-    --border-strong: #50506b;
-    --border-medium: #2c2c47;
-    --chart-bar-fill: var(--brand-green);
-    --chart-bar-bg: #232336;
-=======
-  :root {
+:root {
     /* Surface Colors - Dark Mode */
     --surface-primary: var(--primitive-neutral-900);
     --surface-secondary: var(--primitive-neutral-800);
@@ -746,9 +562,7 @@ html.dark {
     /* Primary colors for dark mode - use darker variants */
     --color-brand-primary: var(--primitive-primary-600);
     --color-brand-primary-hover: var(--primitive-primary-500);
-    --color-brand-primary-active: var(--primitive-primary-400);
->>>>>>> d21046437e19fa2ae5aafb63c176a06dee1d2c94
-  }
+    --color-brand-primary-active: var(--primitive-primary-400);  }
 }
 
 
@@ -814,20 +628,7 @@ html.light {
    ========================= */
 
 body {
-<<<<<<< HEAD
-
-  background: var(--surface-secondary);
-
-  color: var(--text-primary);
-
-  font-family: var(--font-family-body);
-
-  font-size: var(--font-size-base);
-
-  transition: background var(--transition-base), color var(--transition-base);
-
-=======
-  font-family: var(--primitive-font-sans);
+font-family: var(--primitive-font-sans);
   font-size: var(--typography-body-md-size);
   line-height: var(--typography-body-md-line-height);
   font-weight: var(--typography-body-md-weight);
@@ -836,9 +637,7 @@ body {
   text-rendering: optimizeSpeed;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  letter-spacing: -0.01em;  /* Slight letter spacing for modern feel */
->>>>>>> d21046437e19fa2ae5aafb63c176a06dee1d2c94
-}
+  letter-spacing: -0.01em;  /* Slight letter spacing for modern feel */}
 
 
 
@@ -868,9 +667,6 @@ h5, .h5 { font-size: var(--font-size-h5); font-weight: var(--font-weight-medium)
 
 h6, .h6 { font-size: var(--font-size-h6); font-weight: var(--font-weight-medium); margin-bottom: var(--space-100); }
 
-<<<<<<< HEAD
-
-=======
 /* Base Heading Styles */
 h1 {
   font-family: var(--primitive-font-display);
@@ -891,8 +687,6 @@ h2 {
   color: var(--color-text-primary);
   margin: 0 0 var(--spacing-component-lg) 0;  /* Increased margin */
 }
->>>>>>> d21046437e19fa2ae5aafb63c176a06dee1d2c94
-
 .text-primary    { color: var(--text-primary); }
 
 .text-secondary  { color: var(--text-secondary); }
@@ -917,81 +711,6 @@ h2 {
 
    ====================== */
 
-<<<<<<< HEAD
-.btn {
-
-  display: inline-flex; align-items: center; justify-content: center;
-
-  padding: var(--space-200) var(--space-400);
-
-  border-radius: var(--radius-base); border: none;
-
-  font-size: var(--font-size-base); font-family: var(--font-family-heading);
-
-  font-weight: var(--font-weight-semibold);
-
-  cursor: pointer; transition: background var(--transition-base);
-
-  outline: none;
-
-}
-
-.btn-primary {
-
-  background: var(--brand-green);
-
-  color: #fff;
-
-  border: 1px solid var(--brand-green);
-
-}
-
-.btn-primary:hover {
-
-  background: var(--brand-green-hover);
-
-  border-color: var(--brand-green-hover);
-
-}
-
-.btn-secondary {
-
-  background: var(--surface-tertiary);
-
-  color: var(--text-primary);
-
-  border: 1px solid var(--border-strong);
-
-}
-
-.btn-secondary:hover {
-
-  background: var(--surface-primary);
-
-  border-color: var(--brand-green);
-
-  color: var(--brand-green);
-
-}
-
-.btn:focus-visible {
-
-  outline: var(--focus-outline);
-
-  outline-offset: 2px;
-
-}
-
-.btn:disabled {
-
-  opacity: 0.5;
-
-  cursor: not-allowed;
-
-}
-
-
-=======
 .text-heading-sm {
   font-size: var(--typography-heading-sm-size);
   font-weight: var(--typography-heading-sm-weight);
@@ -1274,46 +993,12 @@ h2 {
 .btn-tertiary:active:not(:disabled)::after {
   width: 100%;
 }
->>>>>>> d21046437e19fa2ae5aafb63c176a06dee1d2c94
-
 /* ======================
 
    CARDS & LAYOUT
 
    ====================== */
 
-<<<<<<< HEAD
-.card {
-
-  background: var(--surface-primary);
-
-  color: var(--text-primary);
-
-  border-radius: var(--radius-lg);
-
-  box-shadow: var(--shadow-base);
-
-  border: 1px solid var(--border-medium);
-
-  padding: var(--space-300);
-
-  margin: var(--space-200);
-
-  transition: box-shadow var(--transition-base), border var(--transition-base);
-
-}
-
-.card:hover {
-
-  box-shadow: var(--shadow-md);
-
-  border-color: var(--brand-green);
-
-}
-
-
-
-=======
 /* Status Button Variants */
 .btn-success {
   background-color: var(--color-status-success);
@@ -1775,9 +1460,7 @@ h2 {
   max-width: 1536px;
 }
 
-/* Grid System */
->>>>>>> d21046437e19fa2ae5aafb63c176a06dee1d2c94
-.grid {
+/* Grid System */.grid {
 
   display: grid;
 

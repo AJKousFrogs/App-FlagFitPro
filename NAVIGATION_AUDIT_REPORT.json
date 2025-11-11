@@ -1,0 +1,65 @@
+{
+  "timestamp": "2025-11-11T18:19:06.404Z",
+  "issues": {
+    "missingSidebar": [
+      "workout.html"
+    ],
+    "inconsistentStructure": [
+      {
+        "file": "analytics.html",
+        "type": "dashboard-style"
+      },
+      {
+        "file": "training.html",
+        "type": "dashboard-style"
+      },
+      {
+        "file": "roster.html",
+        "type": "dashboard-style"
+      },
+      {
+        "file": "tournaments.html",
+        "type": "dashboard-style"
+      },
+      {
+        "file": "settings.html",
+        "type": "dashboard-style"
+      },
+      {
+        "file": "community.html",
+        "type": "dashboard-style"
+      },
+      {
+        "file": "coach.html",
+        "type": "dashboard-style"
+      },
+      {
+        "file": "chat.html",
+        "type": "dashboard-style"
+      },
+      {
+        "file": "training-schedule.html",
+        "type": "dashboard-style"
+      },
+      {
+        "file": "qb-training-schedule.html",
+        "type": "dashboard-style"
+      },
+      {
+        "file": "exercise-library.html",
+        "type": "dashboard-style"
+      }
+    ],
+    "missingDashboardContainer": [
+      "workout.html"
+    ],
+    "layoutIssues": [
+      {
+        "file": "workout.html",
+        "issue": "missing main-content"
+      }
+    ]
+  },
+  "totalFiles": 16,
+  "filesWithIssues": 14
+}

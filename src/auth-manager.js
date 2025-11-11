@@ -56,7 +56,7 @@ class AuthManager {
 
   // Initialize auth manager
   async init() {
-    const isDevelopment = window.location.hostname === 'localhost';
+    const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     if (isDevelopment) console.log('🚀 Initializing authentication manager...');
     
     this.isInitializing = true;
@@ -94,7 +94,7 @@ class AuthManager {
 
   // Check authentication state on page load
   checkAuthStateOnLoad() {
-    const isDevelopment = window.location.hostname === 'localhost';
+    const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     if (isDevelopment) console.log('🔍 Checking authentication state on page load...');
     
     // Prevent redirect loops by checking if we're already redirecting
@@ -158,7 +158,7 @@ class AuthManager {
 
   // Load authentication data from localStorage
   loadStoredAuth() {
-    const isDevelopment = window.location.hostname === 'localhost';
+    const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     if (isDevelopment) console.log('📂 Loading stored authentication data...');
     
     try {
@@ -486,7 +486,7 @@ class AuthManager {
 
   // Check if user is authenticated
   isAuthenticated() {
-    const isDevelopment = window.location.hostname === 'localhost';
+    const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     if (isDevelopment) {
       console.log('🔍 Checking authentication state...');
       console.log('🎫 Token exists:', !!this.token);
@@ -496,9 +496,6 @@ class AuthManager {
     if (this.token && this.user) {
       // Check if it's a demo token (starts with "demo-token-") - only allow in development
       if (this.token.startsWith('demo-token-')) {
-        const isDevelopment = window.location.hostname === 'localhost' || 
-                            window.location.hostname === '127.0.0.1' ||
-                            window.location.hostname.includes('localhost');
         if (isDevelopment) {
           // Only log in development
           if (window.location.hostname === 'localhost') {
@@ -522,7 +519,6 @@ class AuthManager {
         const now = Math.floor(Date.now() / 1000);
         
         // Only log token details in development
-        const isDevelopment = window.location.hostname === 'localhost';
         if (isDevelopment) {
           console.log('⏰ Token expires at:', new Date(payload.exp * 1000));
           console.log('⏰ Current time:', new Date(now * 1000));
@@ -542,7 +538,6 @@ class AuthManager {
           return false;
         }
       } catch (error) {
-        const isDevelopment = window.location.hostname === 'localhost';
         if (isDevelopment) {
           console.error('❌ JWT token validation failed:', error);
           console.log('🔄 Treating as demo token fallback');
@@ -562,7 +557,6 @@ class AuthManager {
       }
     }
     
-    const isDevelopment = window.location.hostname === 'localhost';
     if (isDevelopment) {
       console.log('❌ No valid authentication found');
     }
