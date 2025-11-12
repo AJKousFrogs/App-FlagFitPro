@@ -8,10 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./src/comprehensive-design-system.css">
-    <link rel="stylesheet" href="./src/spacing-system.css">
-    <link rel="stylesheet" href="./src/modern-dashboard-redesign.css">
-    <link rel="stylesheet" href="./src/hover-effects.css">
+    <!-- New Modular CSS Architecture -->
+    <link rel="stylesheet" href="./src/css/main.css">
     <!-- Module preload hints for critical ES6 modules -->
     <link rel="modulepreload" href="./src/auth-manager.js">
     <link rel="modulepreload" href="./src/api-config.js">
@@ -334,6 +332,127 @@
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
         }
         
+        /* Hero Section - Today's Focus */
+        .hero-section {
+            margin-left: 250px;
+            padding: var(--spacing-layout-md) var(--spacing-layout-lg);
+            margin-bottom: var(--spacing-section-md);
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: var(--grid-gap-md);
+        }
+
+        @media (max-width: 1024px) {
+            .hero-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .hero-card {
+            background: linear-gradient(135deg, rgba(16, 201, 107, 0.1) 0%, rgba(10, 184, 90, 0.05) 100%);
+            border: 2px solid rgba(16, 201, 107, 0.2);
+            border-radius: var(--radius-component-xl);
+            padding: var(--spacing-layout-md);
+            box-shadow: var(--elevation-highest);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #10c96b 0%, #0ab85a 100%);
+        }
+
+        body[data-theme="dark"] .hero-card,
+        html[data-theme="dark"] .hero-card {
+            background: linear-gradient(135deg, rgba(16, 201, 107, 0.15) 0%, rgba(10, 184, 90, 0.08) 100%);
+            border-color: rgba(16, 201, 107, 0.3);
+        }
+
+        body[data-theme="light"] .hero-card,
+        html[data-theme="light"] .hero-card {
+            background: linear-gradient(135deg, rgba(16, 201, 107, 0.08) 0%, rgba(10, 184, 90, 0.03) 100%);
+            border-color: rgba(16, 201, 107, 0.2);
+        }
+
+        .hero-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--primitive-primary-600);
+            margin-bottom: var(--spacing-component-sm);
+        }
+
+        .hero-main-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin-bottom: var(--spacing-component-md);
+            letter-spacing: -0.02em;
+        }
+
+        /* Collapsible Section */
+        .collapsible-section {
+            margin-left: 250px;
+            padding: 0 var(--spacing-layout-lg);
+            margin-bottom: var(--spacing-section-md);
+        }
+
+        .section-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-component-lg);
+            background: var(--surface-secondary);
+            border: 1px solid var(--color-border-primary);
+            border-radius: var(--radius-component-lg);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: var(--spacing-component-md);
+        }
+
+        .section-toggle:hover {
+            background: var(--surface-tertiary);
+            border-color: var(--primitive-primary-500);
+        }
+
+        .section-toggle h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-component-sm);
+        }
+
+        .section-toggle-icon {
+            transition: transform 0.3s ease;
+            color: var(--color-text-secondary);
+        }
+
+        .section-toggle[aria-expanded="true"] .section-toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .section-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        .section-content.expanded {
+            max-height: 5000px;
+            opacity: 1;
+        }
+
         .header-left {
             flex: 1;
             max-width: 600px;
@@ -658,18 +777,10 @@
         }
 
         /* Main Content Area */
+        /* Page-specific styles that can't be replaced with utilities */
         .main-content {
             margin-left: 250px; /* Matches sidebar width */
-            padding: var(--spacing-layout-md, 40px) var(--spacing-layout-lg, 48px);
-            min-height: 100vh;
-            flex: 1;
-            min-width: 0; /* Prevents flex item from overflowing */
-            width: 100%;
             max-width: calc(100vw - 250px); /* Prevents horizontal overflow */
-            transition: background-color 0.3s ease;
-            box-sizing: border-box;
-            overflow-x: hidden; /* Prevents horizontal scrolling */
-            overflow-y: auto; /* Allows vertical scrolling if needed */
         }
 
         /* Mobile-first: Remove sidebar margin and use smaller padding */
@@ -5458,9 +5569,56 @@
                 </div>
             </div>
 
+            <!-- Hero Section - Today's Focus -->
+            <div class="hero-section">
+                <!-- Hero Card: Next Session (Most Important) -->
+                <div class="hero-card">
+                    <div class="hero-title">Today's Focus</div>
+                    <h2 class="hero-main-title">
+                        <i data-lucide="calendar" style="width: 28px; height: 28px; display: inline-block; vertical-align: middle; margin-right: 12px; color: var(--primitive-primary-500);"></i>
+                        Next Session
+                    </h2>
+                    <div id="next-session-content">
+                        <!-- Will be populated by real training data -->
+                        <div class="upcoming-item" style="text-align: center; color: var(--color-text-secondary); padding: 20px;">
+                            <div>Loading training data...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hero Card: Training Progress Summary -->
+                <div class="hero-card">
+                    <div class="hero-title">Weekly Progress</div>
+                    <h2 class="hero-main-title">Training Progress</h2>
+                    <div class="progress-ring-container" style="margin: var(--spacing-component-md) auto;">
+                        <svg class="progress-ring" width="100" height="100">
+                            <defs>
+                                <linearGradient id="heroTrainingGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:var(--primitive-primary-500);stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:var(--primitive-success-500);stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <circle class="progress-ring-circle progress-ring-bg" cx="50" cy="50" r="40" stroke-width="8"></circle>
+                            <circle class="progress-ring-circle progress-ring-progress" cx="50" cy="50" r="40" 
+                                    stroke="url(#heroTrainingGradient)" 
+                                    stroke-width="8"
+                                    stroke-linecap="round"
+                                    stroke-dasharray="251" 
+                                    stroke-dashoffset="63"
+                                    transform="rotate(-90 50 50)"></circle>
+                        </svg>
+                        <div class="progress-ring-value" style="font-size: 1.5rem; font-weight: 700;" id="hero-training-progress-value" aria-live="polite">75%</div>
+                    </div>
+                    <div class="stat-change positive" style="justify-content: center;">
+                        <span><i data-lucide="trending-up" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle;"></i></span>
+                        <span>+12% <span class="trend-period">from last week</span></span>
+                    </div>
+                </div>
+            </div>
+
             <!-- Main Dashboard Layout: Left = Stats, Right = Actions -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--grid-gap-lg); margin-bottom: var(--section-spacing-lg);">
-                <!-- Left Column: Training Progress Card -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--grid-gap-md); margin-bottom: var(--section-spacing-md); margin-left: 250px; padding: 0 var(--spacing-layout-lg);">
+                <!-- Left Column: Training Progress Card (Detailed) -->
                 <div class="stat-card" data-type="training" role="article" aria-label="Training Progress">
                     <div class="stat-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-component-md);">
                         <span class="stat-title">
@@ -5500,29 +5658,8 @@
                     </div>
                 </div>
 
-                <!-- Right Column: Next Session + Weekly Schedule -->
+                <!-- Right Column: Weekly Schedule -->
                 <div style="display: flex; flex-direction: column; gap: var(--grid-gap-md);">
-                    <!-- Next Session Card -->
-                    <div class="upcoming-card">
-                        <div class="upcoming-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-component-lg);">
-                            <div style="display: flex; align-items: center; gap: var(--spacing-component-sm);">
-                                <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--color-text-primary); letter-spacing: -0.02em;">
-                                    <i data-lucide="calendar" style="width: 20px; height: 20px; display: inline-block; vertical-align: middle; margin-right: 8px;"></i>
-                                    Next Session
-                                </h3>
-                                <span class="live-indicator"></span>
-                            </div>
-                            <span style="font-size: 0.875rem; color: var(--primitive-primary-600); font-weight: 600; background: rgba(16, 201, 107, 0.1); padding: 6px 12px; border-radius: 12px; border: 1px solid rgba(16, 201, 107, 0.2);">Today</span>
-                        </div>
-                        
-                        <div id="next-session-content">
-                            <!-- Will be populated by real training data -->
-                            <div class="upcoming-item" style="text-align: center; color: var(--color-text-secondary); padding: 20px;">
-                                <div>Loading training data...</div>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Weekly Training Schedule Card -->
                     <div class="upcoming-card">
                         <div class="upcoming-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-component-md);">
@@ -5558,6 +5695,16 @@
                 </div>
             </div>
 
+            <!-- Collapsible Analytics Section -->
+            <div class="collapsible-section">
+                <button class="section-toggle" aria-expanded="false" onclick="toggleSection(this, 'analytics-content')">
+                    <h2>
+                        <i data-lucide="bar-chart-3" style="width: 20px; height: 20px;"></i>
+                        Performance Analytics
+                    </h2>
+                    <i data-lucide="chevron-down" class="section-toggle-icon" style="width: 20px; height: 20px;"></i>
+                </button>
+                <div id="analytics-content" class="section-content">
             <!-- Athletic Performance Section -->
             <div class="performance-section" style="margin-top: var(--space-8);">
                 <!-- Performance Trend Charts - Enhanced Layout -->
@@ -5735,9 +5882,21 @@
                         </div>
                     </div>
                 </div>
+                </div>
+            </div>
 
+            <!-- Collapsible Resources Section -->
+            <div class="collapsible-section">
+                <button class="section-toggle" aria-expanded="false" onclick="toggleSection(this, 'resources-content')">
+                    <h2>
+                        <i data-lucide="book-open" style="width: 20px; height: 20px;"></i>
+                        Resources & Tools
+                    </h2>
+                    <i data-lucide="chevron-down" class="section-toggle-icon" style="width: 20px; height: 20px;"></i>
+                </button>
+                <div id="resources-content" class="section-content">
                 <!-- Supplements & Injury Tracking Grid -->
-                <div class="section-cards-grid">
+                <div class="section-cards-grid" style="margin-left: 0;">
                     <!-- Supplements Section -->
                     <div class="section-card-panel chart-card">
                         <div class="section-card-header">
@@ -5786,8 +5945,8 @@
                                 <span>Log New Issue</span>
                             </button>
                         </div>
+                    </div>
                 </div>
-            </div>                </div>
                 
             <!-- AI Training Assistant Chat Section -->
             <div class="section-card-panel chart-card">
@@ -5839,6 +5998,7 @@
                             <span>Send</span>
                     </button>
                     </div>
+                </div>
                 </div>
             </div>
 
@@ -7426,6 +7586,24 @@
 
 
         // Mobile sidebar toggle (if needed)
+        // Toggle collapsible sections
+        function toggleSection(button, contentId) {
+            const content = document.getElementById(contentId);
+            const isExpanded = button.getAttribute('aria-expanded') === 'true';
+            
+            if (isExpanded) {
+                content.classList.remove('expanded');
+                button.setAttribute('aria-expanded', 'false');
+            } else {
+                content.classList.add('expanded');
+                button.setAttribute('aria-expanded', 'true');
+                // Initialize icons when section expands
+                if (typeof lucide !== 'undefined') {
+                    setTimeout(() => lucide.createIcons(), 100);
+                }
+            }
+        }
+
         function toggleSidebar() {
             const sidebar = document.querySelector('.sidebar');
             sidebar.classList.toggle('open');

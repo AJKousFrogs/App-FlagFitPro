@@ -8,10 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./src/comprehensive-design-system.css">
-    <link rel="stylesheet" href="./src/spacing-system.css">
-    <link rel="stylesheet" href="./src/modern-dashboard-redesign.css">
-    <link rel="stylesheet" href="./src/hover-effects.css">
+    <!-- New Modular CSS Architecture -->
+    <link rel="stylesheet" href="./src/css/main.css">
     <!-- Chart.js with multiple CDN fallbacks -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js" defer></script>
     <script>
@@ -272,32 +270,15 @@
             color: var(--primitive-primary-500);
         }
 
+        /* Page-specific styles that can't be replaced with utilities */
         .main-content {
             margin-left: 250px;
-            flex: 1;
-            min-width: 0;
             max-width: calc(100vw - 250px);
-            overflow-x: hidden;
-            overflow-y: auto;
-            padding: var(--spacing-component-lg);
-            background: var(--dark-bg-primary);
         }
-        
         .analytics-container {
             max-width: 1400px;
-            margin: 0 auto;
         }
-
-        .dashboard-header {
-            text-align: center;
-            margin-bottom: 3rem;
-            color: var(--dark-text-primary);
-        }
-
         .dashboard-title {
-            font-size: 3rem;
-            font-weight: 800;
-            margin-bottom: 1rem;
             text-shadow: 0 4px 8px rgba(0,0,0,0.3);
             /* Fallback for older browsers */
             text-shadow: 0 4px 8px rgba(0,0,0,0.3);
@@ -866,12 +847,12 @@
             </nav>
         </div>
 
-        <main class="main-content" id="main-content">
-            <div class="analytics-container">
+        <main class="main-content u-flex-1 u-min-width-0 u-overflow-x-hidden u-overflow-y-auto u-padding-24 u-bg-primary" id="main-content">
+            <div class="analytics-container u-margin-y-auto">
         <!-- Dashboard Header -->
-        <div class="dashboard-header">
-            <h1 class="dashboard-title"><i data-lucide="football" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> FlagFit Pro Analytics</h1>
-            <p class="dashboard-subtitle">Advanced Performance Analytics & Team Insights</p>
+        <div class="dashboard-header u-text-center u-margin-bottom-48 u-text-primary">
+            <h1 class="dashboard-title u-text-display-xl u-font-weight-800 u-margin-bottom-16"><i data-lucide="football" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> FlagFit Pro Analytics</h1>
+            <p class="dashboard-subtitle u-text-heading-md u-text-secondary">Advanced Performance Analytics & Team Insights</p>
         </div>
 
         <!-- Key Metrics Overview -->

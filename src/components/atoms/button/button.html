@@ -1,0 +1,71 @@
+<!-- 
+    Button Component - FlagFit Pro
+    
+    Usage: Copy this entire snippet into your page, adjust classes as needed
+    
+    Variants: btn-primary, btn-secondary, btn-tertiary
+    Sizes: btn-xs, btn-sm, btn-md (default), btn-lg, btn-xl
+    States: disabled, loading
+    
+    Accessibility: 
+    - Focus indicator included via :focus-visible
+    - Icon size must be explicitly set (16px, 18px, 20px, etc.)
+    - Button text should be clear and action-oriented
+-->
+
+<!-- Primary Button -->
+<button class="btn btn-primary btn-md">
+    Start Training
+</button>
+
+<!-- Primary Button with Icon -->
+<button class="btn btn-primary btn-md">
+    <i data-lucide="play" style="width: 18px; height: 18px;"></i>
+    Start Training
+</button>
+
+<!-- Secondary Button -->
+<button class="btn btn-secondary btn-md">
+    Cancel
+</button>
+
+<!-- Tertiary Button -->
+<button class="btn btn-tertiary btn-md">
+    Learn More
+</button>
+
+<!-- Button Group (Multiple Related Actions) -->
+<div class="btn-group" style="display: flex; gap: var(--spacing-component-sm);">
+    <button class="btn btn-primary btn-md">Save</button>
+    <button class="btn btn-secondary btn-md">Cancel</button>
+    <button class="btn btn-tertiary btn-md">Delete</button>
+</div>
+
+<!-- Loading State -->
+<button class="btn btn-primary btn-md" disabled>
+    <span class="spinner-mini"></span>
+    Processing...
+</button>
+
+<!-- Disabled State -->
+<button class="btn btn-primary btn-md" disabled>
+    Disabled
+</button>
+
+<!-- All Sizes -->
+<button class="btn btn-primary btn-xs">Extra Small</button>
+<button class="btn btn-primary btn-sm">Small</button>
+<button class="btn btn-primary btn-md">Medium</button>
+<button class="btn btn-primary btn-lg">Large</button>
+<button class="btn btn-primary btn-xl">Extra Large</button>
+
+<!-- All Variants -->
+<button class="btn btn-primary btn-md">Primary</button>
+<button class="btn btn-secondary btn-md">Secondary</button>
+<button class="btn btn-tertiary btn-md">Tertiary</button>
+
+<!-- Status Variants -->
+<button class="btn btn-success btn-md">Success</button>
+<button class="btn btn-warning btn-md">Warning</button>
+<button class="btn btn-error btn-md">Error</button>
+

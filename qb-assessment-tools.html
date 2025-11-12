@@ -7,312 +7,78 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./src/comprehensive-design-system.css">
-    <link rel="stylesheet" href="./src/spacing-system.css">
-    <link rel="stylesheet" href="./src/hover-effects.css">
+    <!-- New Modular CSS Architecture -->
+    <link rel="stylesheet" href="./src/css/main.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        /* Page-specific styles that can't be replaced with utilities */
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+            background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%);
             min-height: 100vh;
-            color: var(--dark-text-primary);
+            color: var(--color-text-primary);
         }
-
         .container {
             max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
         }
-
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            color: var(--dark-text-primary);
-        }
-
-        .header h1 {
-            font-size: 2.8rem;
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
-
-        .header p {
-            font-size: 1.2rem;
-            opacity: 0.9;
-            margin-bottom: 20px;
-        }
-
         .readiness-banner {
-            background: linear-gradient(135deg, var(--tertiary-500) 0%, #f7931e 100%);
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 30px;
-            text-align: center;
-            color: var(--dark-text-primary);
+            background: linear-gradient(135deg, var(--color-brand-tertiary) 0%, #f7931e 100%);
         }
-
-        .readiness-score {
-            font-size: 3rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-
-        .assessment-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
         .assessment-card {
-            background: var(--dark-text-primary);
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            background: var(--surface-primary);
+            box-shadow: var(--elevation-medium);
             transition: transform 0.3s ease;
         }
-
         .assessment-card:hover {
             transform: translateY(-5px);
         }
-
-        .card-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
         .card-icon {
             width: 50px;
             height: 50px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
             font-size: 1.5rem;
         }
-
-        .velocity-icon { background: linear-gradient(135deg, var(--tertiary-500) 0%, #f7931e 100%); }
+        .velocity-icon { background: linear-gradient(135deg, var(--color-brand-tertiary) 0%, #f7931e 100%); }
         .mobility-icon { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
         .endurance-icon { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
         .strength-icon { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
-
-        .card-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: var(--dark-text-primary);
-        }
-
-        .card-subtitle {
-            color: var(--dark-text-secondary);
-            font-size: 0.9rem;
-        }
-
-        .metric-display {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 15px 0;
-            padding: 12px;
-            background: var(--dark-bg-secondary);
-            border-radius: 8px;
-        }
-
-        .metric-label {
-            font-weight: 500;
-        }
-
-        .metric-value {
-            font-weight: 700;
-            font-size: 1.1rem;
-        }
-
         .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: #e9ecef;
-            border-radius: 4px;
-            margin: 10px 0;
-            overflow: hidden;
+            background: var(--color-border-secondary);
         }
-
         .progress-fill {
-            height: 100%;
-            background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
-            border-radius: 4px;
-            transition: width 0.3s ease;
+            background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%);
         }
-
         .btn {
-            background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
-            color: var(--dark-text-primary);
-            border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            width: 100%;
-            margin-top: 15px;
+            background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%);
+            color: var(--surface-primary);
         }
-
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
-
         .btn-secondary {
-            background: #6c757d;
+            background: var(--color-text-tertiary);
         }
-
-        .btn-danger {
-            background: linear-gradient(135deg, var(--tertiary-500) 0%, #f7931e 100%);
+        .tournament-simulation {
+            background: linear-gradient(135deg, var(--color-brand-tertiary) 0%, #f7931e 100%);
         }
-
-        .assessment-history {
-            background: var(--dark-text-primary);
-            border-radius: 12px;
-            padding: 25px;
-            margin-top: 20px;
+        .simulation-stat {
+            background: rgba(255,255,255,0.1);
         }
-
-        .history-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-
-        .history-table th,
-        .history-table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #e9ecef;
-        }
-
-        .history-table th {
-            background: var(--dark-bg-secondary);
-            font-weight: 600;
-        }
-
-        .status-excellent { color: #28a745; font-weight: 600; }
-        .status-good { color: #17a2b8; font-weight: 600; }
-        .status-needs-work { color: #ffc107; font-weight: 600; }
-        .status-poor { color: #dc3545; font-weight: 600; }
-
         .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
             background-color: rgba(0,0,0,0.5);
         }
-
         .modal-content {
-            background-color: var(--dark-text-primary);
-            margin: 5% auto;
-            padding: 30px;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 600px;
-            max-height: 80vh;
-            overflow-y: auto;
+            background-color: var(--surface-primary);
         }
-
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
+        .history-table th {
+            background: var(--surface-secondary);
         }
-
-        .close:hover {
-            color: var(--dark-text-primary);
+        .history-table th,
+        .history-table td {
+            border-bottom: 1px solid var(--color-border-secondary);
         }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #e9ecef;
-            border-radius: 6px;
-            font-size: 1rem;
-        }
-
-        .form-input:focus {
-            border-color: var(--primary-500);
-            outline: none;
-        }
-
-        .tournament-simulation {
-            background: linear-gradient(135deg, var(--tertiary-500) 0%, #f7931e 100%);
-            color: var(--dark-text-primary);
-            border-radius: 12px;
-            padding: 25px;
-            margin-top: 20px;
-        }
-
-        .simulation-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .simulation-stat {
-            text-align: center;
-            padding: 15px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 8px;
-        }
-
-        .nav-links {
-            text-align: center;
-            margin-top: 30px;
-        }
-
-        .nav-links a {
-            color: var(--dark-text-primary);
-            text-decoration: none;
-            margin: 0 15px;
-            padding: 10px 20px;
-            border-radius: 8px;
-            background: rgba(255,255,255,0.1);
-            transition: background 0.3s ease;
-        }
-
-        .nav-links a:hover {
-            background: rgba(255,255,255,0.2);
-        }
-
+        .status-excellent { color: var(--color-status-success); }
+        .status-good { color: var(--color-status-info); }
+        .status-needs-work { color: var(--color-status-warning); }
+        .status-poor { color: var(--color-status-error); }
         @media (max-width: 768px) {
-            .header h1 {
-                font-size: 2rem;
-            }
-            
-            .assessment-grid {
-                grid-template-columns: 1fr;
-            }
-            
             .container {
                 padding: 15px;
             }
@@ -322,164 +88,164 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1><i data-lucide="target" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> QB Assessment & Testing</h1>
-            <p>Comprehensive performance evaluation and tournament readiness assessment</p>
+    <div class="container l-container u-margin-x-auto u-padding-20">
+        <div class="header u-text-center u-margin-bottom-30 u-text-primary">
+            <h1 class="u-text-heading-xl u-font-weight-700 u-margin-bottom-10"><i data-lucide="target" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> QB Assessment & Testing</h1>
+            <p class="u-text-body-lg u-margin-bottom-20" style="opacity: 0.9;">Comprehensive performance evaluation and tournament readiness assessment</p>
         </div>
 
-        <div class="readiness-banner">
-            <div class="readiness-score" id="tournamentReadinessScore">87%</div>
-            <h3>Tournament Readiness</h3>
-            <p>Elite Level - Competition Ready for 320-throw challenge</p>
+        <div class="readiness-banner u-padding-20 u-radius-lg u-margin-bottom-30 u-text-center u-text-primary">
+            <div class="readiness-score u-text-display-xl u-font-weight-700 u-margin-bottom-10" id="tournamentReadinessScore">87%</div>
+            <h3 class="u-text-heading-md">Tournament Readiness</h3>
+            <p class="u-text-body-md">Elite Level - Competition Ready for 320-throw challenge</p>
         </div>
 
-        <div class="assessment-grid">
+        <div class="assessment-grid u-display-grid u-gap-20 u-margin-bottom-30" style="grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));">
             <!-- Throwing Velocity Assessment -->
-            <div class="assessment-card">
-                <div class="card-header">
-                    <div class="card-icon velocity-icon">🚀</div>
+            <div class="assessment-card u-radius-lg u-padding-24">
+                <div class="card-header u-display-flex u-align-center u-margin-bottom-20">
+                    <div class="card-icon velocity-icon u-display-flex u-align-center u-justify-center u-margin-right-16 u-radius-md">🚀</div>
                     <div>
-                        <div class="card-title">Throwing Velocity</div>
-                        <div class="card-subtitle">Peak velocity development tracking</div>
+                        <div class="card-title u-text-heading-md u-font-weight-600 u-text-primary">Throwing Velocity</div>
+                        <div class="card-subtitle u-text-body-sm u-text-secondary">Peak velocity development tracking</div>
                     </div>
                 </div>
                 
-                <div class="metric-display">
-                    <span class="metric-label">Current Max Velocity</span>
-                    <span class="metric-value" id="currentVelocity">--</span>
+                <div class="metric-display u-display-flex u-justify-between u-align-center u-margin-y-16 u-padding-12 u-bg-secondary u-radius-md">
+                    <span class="metric-label u-font-weight-500">Current Max Velocity</span>
+                    <span class="metric-value u-font-weight-700 u-text-heading-sm" id="currentVelocity">--</span>
                 </div>
                 
-                <div class="metric-display">
-                    <span class="metric-label">Velocity Gain</span>
-                    <span class="metric-value" id="velocityGain">--</span>
+                <div class="metric-display u-display-flex u-justify-between u-align-center u-margin-y-16 u-padding-12 u-bg-secondary u-radius-md">
+                    <span class="metric-label u-font-weight-500">Velocity Gain</span>
+                    <span class="metric-value u-font-weight-700 u-text-heading-sm" id="velocityGain">--</span>
                 </div>
                 
-                <div class="progress-bar">
-                    <div class="progress-fill" id="velocityProgress" style="width: 0%"></div>
+                <div class="progress-bar u-width-full u-margin-y-10 u-radius-sm u-overflow-hidden" style="height: 8px;">
+                    <div class="progress-fill u-height-full u-radius-sm" id="velocityProgress" style="width: 0%; transition: width 0.3s ease;"></div>
                 </div>
                 
-                <button class="btn" onclick="openVelocityTest()">Conduct Velocity Test</button>
-                <button class="btn btn-secondary" onclick="viewVelocityHistory()">View History</button>
+                <button class="btn u-width-full u-padding-y-12 u-padding-x-20 u-radius-md u-font-weight-600 u-margin-top-16" onclick="openVelocityTest()" style="transition: all 0.3s ease; cursor: pointer;">Conduct Velocity Test</button>
+                <button class="btn btn-secondary u-width-full u-padding-y-12 u-padding-x-20 u-radius-md u-font-weight-600 u-margin-top-16" onclick="viewVelocityHistory()" style="transition: all 0.3s ease; cursor: pointer;">View History</button>
             </div>
 
             <!-- Shoulder Mobility Assessment -->
-            <div class="assessment-card">
-                <div class="card-header">
-                    <div class="card-icon mobility-icon">🏃‍♂️</div>
+            <div class="assessment-card u-radius-lg u-padding-24">
+                <div class="card-header u-display-flex u-align-center u-margin-bottom-20">
+                    <div class="card-icon mobility-icon u-display-flex u-align-center u-justify-center u-margin-right-16 u-radius-md">🏃‍♂️</div>
                     <div>
-                        <div class="card-title">Shoulder Mobility</div>
-                        <div class="card-subtitle">Critical range of motion assessment</div>
+                        <div class="card-title u-text-heading-md u-font-weight-600 u-text-primary">Shoulder Mobility</div>
+                        <div class="card-subtitle u-text-body-sm u-text-secondary">Critical range of motion assessment</div>
                     </div>
                 </div>
                 
-                <div class="metric-display">
-                    <span class="metric-label">External Rotation</span>
-                    <span class="metric-value" id="externalRotation">--</span>
+                <div class="metric-display u-display-flex u-justify-between u-align-center u-margin-y-16 u-padding-12 u-bg-secondary u-radius-md">
+                    <span class="metric-label u-font-weight-500">External Rotation</span>
+                    <span class="metric-value u-font-weight-700 u-text-heading-sm" id="externalRotation">--</span>
                 </div>
                 
-                <div class="metric-display">
-                    <span class="metric-label">Internal Rotation</span>
-                    <span class="metric-value" id="internalRotation">--</span>
+                <div class="metric-display u-display-flex u-justify-between u-align-center u-margin-y-16 u-padding-12 u-bg-secondary u-radius-md">
+                    <span class="metric-label u-font-weight-500">Internal Rotation</span>
+                    <span class="metric-value u-font-weight-700 u-text-heading-sm" id="internalRotation">--</span>
                 </div>
                 
-                <div class="progress-bar">
-                    <div class="progress-fill" id="mobilityProgress" style="width: 0%"></div>
+                <div class="progress-bar u-width-full u-margin-y-10 u-radius-sm u-overflow-hidden" style="height: 8px;">
+                    <div class="progress-fill u-height-full u-radius-sm" id="mobilityProgress" style="width: 0%; transition: width 0.3s ease;"></div>
                 </div>
                 
-                <button class="btn" onclick="openMobilityTest()">Assess Mobility</button>
-                <button class="btn btn-secondary" onclick="viewMobilityProtocols()">View Protocols</button>
+                <button class="btn u-width-full u-padding-y-12 u-padding-x-20 u-radius-md u-font-weight-600 u-margin-top-16" onclick="openMobilityTest()" style="transition: all 0.3s ease; cursor: pointer;">Assess Mobility</button>
+                <button class="btn btn-secondary u-width-full u-padding-y-12 u-padding-x-20 u-radius-md u-font-weight-600 u-margin-top-16" onclick="viewMobilityProtocols()" style="transition: all 0.3s ease; cursor: pointer;">View Protocols</button>
             </div>
 
             <!-- Throwing Endurance -->
-            <div class="assessment-card">
-                <div class="card-header">
-                    <div class="card-icon endurance-icon"><i data-lucide="dumbbell" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></div>
+            <div class="assessment-card u-radius-lg u-padding-24">
+                <div class="card-header u-display-flex u-align-center u-margin-bottom-20">
+                    <div class="card-icon endurance-icon u-display-flex u-align-center u-justify-center u-margin-right-16 u-radius-md"><i data-lucide="dumbbell" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></div>
                     <div>
-                        <div class="card-title">Throwing Endurance</div>
-                        <div class="card-subtitle">320-throw tournament preparation</div>
+                        <div class="card-title u-text-heading-md u-font-weight-600 u-text-primary">Throwing Endurance</div>
+                        <div class="card-subtitle u-text-body-sm u-text-secondary">320-throw tournament preparation</div>
                     </div>
                 </div>
                 
-                <div class="metric-display">
-                    <span class="metric-label">Max Throwing Volume</span>
-                    <span class="metric-value" id="maxVolume">--</span>
+                <div class="metric-display u-display-flex u-justify-between u-align-center u-margin-y-16 u-padding-12 u-bg-secondary u-radius-md">
+                    <span class="metric-label u-font-weight-500">Max Throwing Volume</span>
+                    <span class="metric-value u-font-weight-700 u-text-heading-sm" id="maxVolume">--</span>
                 </div>
                 
-                <div class="metric-display">
-                    <span class="metric-label">Accuracy Maintenance</span>
-                    <span class="metric-value" id="accuracyMaintenance">--</span>
+                <div class="metric-display u-display-flex u-justify-between u-align-center u-margin-y-16 u-padding-12 u-bg-secondary u-radius-md">
+                    <span class="metric-label u-font-weight-500">Accuracy Maintenance</span>
+                    <span class="metric-value u-font-weight-700 u-text-heading-sm" id="accuracyMaintenance">--</span>
                 </div>
                 
-                <div class="progress-bar">
-                    <div class="progress-fill" id="enduranceProgress" style="width: 0%"></div>
+                <div class="progress-bar u-width-full u-margin-y-10 u-radius-sm u-overflow-hidden" style="height: 8px;">
+                    <div class="progress-fill u-height-full u-radius-sm" id="enduranceProgress" style="width: 0%; transition: width 0.3s ease;"></div>
                 </div>
                 
-                <button class="btn" onclick="openEnduranceTest()">Start Endurance Test</button>
-                <button class="btn btn-secondary" onclick="viewEnduranceHistory()">View History</button>
+                <button class="btn u-width-full u-padding-y-12 u-padding-x-20 u-radius-md u-font-weight-600 u-margin-top-16" onclick="openEnduranceTest()" style="transition: all 0.3s ease; cursor: pointer;">Start Endurance Test</button>
+                <button class="btn btn-secondary u-width-full u-padding-y-12 u-padding-x-20 u-radius-md u-font-weight-600 u-margin-top-16" onclick="viewEnduranceHistory()" style="transition: all 0.3s ease; cursor: pointer;">View History</button>
             </div>
 
             <!-- Rotator Cuff Strength -->
-            <div class="assessment-card">
-                <div class="card-header">
-                    <div class="card-icon strength-icon"><i data-lucide="dumbbell" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></div>
+            <div class="assessment-card u-radius-lg u-padding-24">
+                <div class="card-header u-display-flex u-align-center u-margin-bottom-20">
+                    <div class="card-icon strength-icon u-display-flex u-align-center u-justify-center u-margin-right-16 u-radius-md"><i data-lucide="dumbbell" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></div>
                     <div>
-                        <div class="card-title">Rotator Cuff Strength</div>
-                        <div class="card-subtitle">Injury prevention assessment</div>
+                        <div class="card-title u-text-heading-md u-font-weight-600 u-text-primary">Rotator Cuff Strength</div>
+                        <div class="card-subtitle u-text-body-sm u-text-secondary">Injury prevention assessment</div>
                     </div>
                 </div>
                 
-                <div class="metric-display">
-                    <span class="metric-label">External Rotation Strength</span>
-                    <span class="metric-value" id="rotatorCuffStrength">--</span>
+                <div class="metric-display u-display-flex u-justify-between u-align-center u-margin-y-16 u-padding-12 u-bg-secondary u-radius-md">
+                    <span class="metric-label u-font-weight-500">External Rotation Strength</span>
+                    <span class="metric-value u-font-weight-700 u-text-heading-sm" id="rotatorCuffStrength">--</span>
                 </div>
                 
-                <div class="metric-display">
-                    <span class="metric-label">Bilateral Balance</span>
-                    <span class="metric-value" id="bilateralBalance">--</span>
+                <div class="metric-display u-display-flex u-justify-between u-align-center u-margin-y-16 u-padding-12 u-bg-secondary u-radius-md">
+                    <span class="metric-label u-font-weight-500">Bilateral Balance</span>
+                    <span class="metric-value u-font-weight-700 u-text-heading-sm" id="bilateralBalance">--</span>
                 </div>
                 
-                <div class="progress-bar">
-                    <div class="progress-fill" id="strengthProgress" style="width: 0%"></div>
+                <div class="progress-bar u-width-full u-margin-y-10 u-radius-sm u-overflow-hidden" style="height: 8px;">
+                    <div class="progress-fill u-height-full u-radius-sm" id="strengthProgress" style="width: 0%; transition: width 0.3s ease;"></div>
                 </div>
                 
-                <button class="btn" onclick="openStrengthTest()">Test Strength</button>
-                <button class="btn btn-secondary" onclick="viewStrengthProtocols()">View Protocols</button>
+                <button class="btn u-width-full u-padding-y-12 u-padding-x-20 u-radius-md u-font-weight-600 u-margin-top-16" onclick="openStrengthTest()" style="transition: all 0.3s ease; cursor: pointer;">Test Strength</button>
+                <button class="btn btn-secondary u-width-full u-padding-y-12 u-padding-x-20 u-radius-md u-font-weight-600 u-margin-top-16" onclick="viewStrengthProtocols()" style="transition: all 0.3s ease; cursor: pointer;">View Protocols</button>
             </div>
         </div>
 
         <!-- Tournament Simulation -->
-        <div class="tournament-simulation">
-            <h3><i data-lucide="trophy" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Tournament Simulation (320 Throws)</h3>
-            <p>8-game simulation to assess competition readiness</p>
+        <div class="tournament-simulation u-radius-lg u-padding-24 u-margin-top-20 u-text-primary">
+            <h3 class="u-text-heading-md u-margin-bottom-12"><i data-lucide="trophy" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Tournament Simulation (320 Throws)</h3>
+            <p class="u-text-body-md u-margin-bottom-16">8-game simulation to assess competition readiness</p>
             
-            <div class="simulation-stats">
-                <div class="simulation-stat">
-                    <div style="font-size: 2rem; font-weight: 700;" id="simGames">0</div>
-                    <div>Games Completed</div>
+            <div class="simulation-stats u-display-grid u-gap-16 u-margin-top-16" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));">
+                <div class="simulation-stat u-text-center u-padding-16 u-radius-md">
+                    <div class="u-text-heading-xl u-font-weight-700" id="simGames">0</div>
+                    <div class="u-text-body-sm">Games Completed</div>
                 </div>
-                <div class="simulation-stat">
-                    <div style="font-size: 2rem; font-weight: 700;" id="simThrows">0</div>
-                    <div>Total Throws</div>
+                <div class="simulation-stat u-text-center u-padding-16 u-radius-md">
+                    <div class="u-text-heading-xl u-font-weight-700" id="simThrows">0</div>
+                    <div class="u-text-body-sm">Total Throws</div>
                 </div>
-                <div class="simulation-stat">
-                    <div style="font-size: 2rem; font-weight: 700;" id="simAccuracy">--%</div>
-                    <div>Overall Accuracy</div>
+                <div class="simulation-stat u-text-center u-padding-16 u-radius-md">
+                    <div class="u-text-heading-xl u-font-weight-700" id="simAccuracy">--%</div>
+                    <div class="u-text-body-sm">Overall Accuracy</div>
                 </div>
-                <div class="simulation-stat">
-                    <div style="font-size: 2rem; font-weight: 700;" id="simVelocity">--</div>
-                    <div>Avg Velocity</div>
+                <div class="simulation-stat u-text-center u-padding-16 u-radius-md">
+                    <div class="u-text-heading-xl u-font-weight-700" id="simVelocity">--</div>
+                    <div class="u-text-body-sm">Avg Velocity</div>
                 </div>
             </div>
             
-            <button class="btn" style="background: var(--dark-text-primary); color: var(--tertiary-500); margin-top: 20px;" onclick="startTournamentSim()">
+            <button class="btn u-width-full u-padding-y-12 u-padding-x-20 u-radius-md u-font-weight-600 u-margin-top-20" style="background: var(--surface-primary); color: var(--color-brand-tertiary); transition: all 0.3s ease; cursor: pointer;" onclick="startTournamentSim()">
                 Start Tournament Simulation
             </button>
         </div>
 
         <!-- Assessment History -->
-        <div class="assessment-history">
-            <h3><i data-lucide="bar-chart-3" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Assessment History</h3>
+        <div class="assessment-history u-bg-primary u-radius-lg u-padding-24 u-margin-top-20">
+            <h3 class="u-text-heading-md u-margin-bottom-16"><i data-lucide="bar-chart-3" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Assessment History</h3>
             <table class="history-table">
                 <thead>
                     <tr>
@@ -517,80 +283,80 @@
         </div>
 
         <!-- Navigation -->
-        <div class="nav-links">
-            <a href="qb-training-schedule.html"><i data-lucide="chevron-left" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Back to Training</a>
-            <a href="training-schedule.html">WR/DB Training</a>
-            <a href="exercise-library.html">Exercise Library</a>
-            <a href="index.html">Dashboard</a>
+        <div class="nav-links u-text-center u-margin-top-30">
+            <a href="qb-training-schedule.html" class="u-text-primary u-margin-x-16 u-padding-y-10 u-padding-x-20 u-radius-md" style="text-decoration: none; background: rgba(255,255,255,0.1); transition: background 0.3s ease;"><i data-lucide="chevron-left" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Back to Training</a>
+            <a href="training-schedule.html" class="u-text-primary u-margin-x-16 u-padding-y-10 u-padding-x-20 u-radius-md" style="text-decoration: none; background: rgba(255,255,255,0.1); transition: background 0.3s ease;">WR/DB Training</a>
+            <a href="exercise-library.html" class="u-text-primary u-margin-x-16 u-padding-y-10 u-padding-x-20 u-radius-md" style="text-decoration: none; background: rgba(255,255,255,0.1); transition: background 0.3s ease;">Exercise Library</a>
+            <a href="index.html" class="u-text-primary u-margin-x-16 u-padding-y-10 u-padding-x-20 u-radius-md" style="text-decoration: none; background: rgba(255,255,255,0.1); transition: background 0.3s ease;">Dashboard</a>
         </div>
     </div>
 
     <!-- Velocity Test Modal -->
-    <div id="velocityModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('velocityModal')">&times;</span>
-            <h2>🚀 Throwing Velocity Assessment</h2>
-            <p>Complete throwing warmup before beginning velocity assessment.</p>
+    <div id="velocityModal" class="modal u-position-fixed u-display-none" style="z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;">
+        <div class="modal-content u-bg-primary u-padding-30 u-radius-lg u-width-full" style="margin: 5% auto; max-width: 600px; max-height: 80vh; overflow-y: auto;">
+            <span class="close u-text-tertiary u-text-heading-xl u-font-weight-700" onclick="closeModal('velocityModal')" style="float: right; font-size: 28px; cursor: pointer;">&times;</span>
+            <h2 class="u-text-heading-lg u-margin-bottom-12">🚀 Throwing Velocity Assessment</h2>
+            <p class="u-text-body-md u-margin-bottom-24">Complete throwing warmup before beginning velocity assessment.</p>
             
-            <div class="form-group">
-                <label class="form-label">Current Week</label>
-                <input type="number" class="form-input" id="testWeek" value="8" min="1" max="14">
+            <div class="form-group u-margin-bottom-20">
+                <label class="form-label u-display-block u-margin-bottom-4 u-font-weight-600">Current Week</label>
+                <input type="number" class="form-input u-width-full u-padding-10 u-radius-md u-text-body-md" id="testWeek" value="8" min="1" max="14" style="border: 2px solid var(--color-border-secondary);">
             </div>
             
-            <div class="form-group">
-                <label class="form-label">Radar Gun Reading 1 (mph)</label>
-                <input type="number" class="form-input" id="velocity1" placeholder="Enter velocity">
+            <div class="form-group u-margin-bottom-20">
+                <label class="form-label u-display-block u-margin-bottom-4 u-font-weight-600">Radar Gun Reading 1 (mph)</label>
+                <input type="number" class="form-input u-width-full u-padding-10 u-radius-md u-text-body-md" id="velocity1" placeholder="Enter velocity" style="border: 2px solid var(--color-border-secondary);">
             </div>
             
-            <div class="form-group">
-                <label class="form-label">Radar Gun Reading 2 (mph)</label>
-                <input type="number" class="form-input" id="velocity2" placeholder="Enter velocity">
+            <div class="form-group u-margin-bottom-20">
+                <label class="form-label u-display-block u-margin-bottom-4 u-font-weight-600">Radar Gun Reading 2 (mph)</label>
+                <input type="number" class="form-input u-width-full u-padding-10 u-radius-md u-text-body-md" id="velocity2" placeholder="Enter velocity" style="border: 2px solid var(--color-border-secondary);">
             </div>
             
-            <div class="form-group">
-                <label class="form-label">Radar Gun Reading 3 (mph)</label>
-                <input type="number" class="form-input" id="velocity3" placeholder="Enter velocity">
+            <div class="form-group u-margin-bottom-20">
+                <label class="form-label u-display-block u-margin-bottom-4 u-font-weight-600">Radar Gun Reading 3 (mph)</label>
+                <input type="number" class="form-input u-width-full u-padding-10 u-radius-md u-text-body-md" id="velocity3" placeholder="Enter velocity" style="border: 2px solid var(--color-border-secondary);">
             </div>
             
-            <div class="form-group">
-                <label class="form-label">Best Reading (mph)</label>
-                <input type="number" class="form-input" id="bestVelocity" placeholder="Best velocity">
+            <div class="form-group u-margin-bottom-20">
+                <label class="form-label u-display-block u-margin-bottom-4 u-font-weight-600">Best Reading (mph)</label>
+                <input type="number" class="form-input u-width-full u-padding-10 u-radius-md u-text-body-md" id="bestVelocity" placeholder="Best velocity" style="border: 2px solid var(--color-border-secondary);">
             </div>
             
-            <div class="form-group">
-                <label class="form-label">Notes</label>
-                <textarea class="form-input" id="velocityNotes" rows="3" placeholder="Conditions, observations, etc."></textarea>
+            <div class="form-group u-margin-bottom-20">
+                <label class="form-label u-display-block u-margin-bottom-4 u-font-weight-600">Notes</label>
+                <textarea class="form-input u-width-full u-padding-10 u-radius-md u-text-body-md" id="velocityNotes" rows="3" placeholder="Conditions, observations, etc." style="border: 2px solid var(--color-border-secondary);"></textarea>
             </div>
             
-            <button class="btn" onclick="saveVelocityTest()">Save Assessment</button>
+            <button class="btn u-width-full u-padding-y-12 u-padding-x-20 u-radius-md u-font-weight-600 u-margin-top-16" onclick="saveVelocityTest()" style="transition: all 0.3s ease; cursor: pointer;">Save Assessment</button>
         </div>
     </div>
 
     <!-- Mobility Test Modal -->
-    <div id="mobilityModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('mobilityModal')">&times;</span>
-            <h2>🏃‍♂️ Shoulder Mobility Assessment</h2>
-            <p>Assess key mobility markers for throwing performance.</p>
+    <div id="mobilityModal" class="modal u-position-fixed u-display-none" style="z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;">
+        <div class="modal-content u-bg-primary u-padding-30 u-radius-lg u-width-full" style="margin: 5% auto; max-width: 600px; max-height: 80vh; overflow-y: auto;">
+            <span class="close u-text-tertiary u-text-heading-xl u-font-weight-700" onclick="closeModal('mobilityModal')" style="float: right; font-size: 28px; cursor: pointer;">&times;</span>
+            <h2 class="u-text-heading-lg u-margin-bottom-12">🏃‍♂️ Shoulder Mobility Assessment</h2>
+            <p class="u-text-body-md u-margin-bottom-24">Assess key mobility markers for throwing performance.</p>
             
-            <div class="form-group">
-                <label class="form-label">External Rotation (degrees)</label>
-                <input type="number" class="form-input" id="extRotation" placeholder="Degrees (110-130° optimal)">
+            <div class="form-group u-margin-bottom-20">
+                <label class="form-label u-display-block u-margin-bottom-4 u-font-weight-600">External Rotation (degrees)</label>
+                <input type="number" class="form-input u-width-full u-padding-10 u-radius-md u-text-body-md" id="extRotation" placeholder="Degrees (110-130° optimal)" style="border: 2px solid var(--color-border-secondary);">
             </div>
             
-            <div class="form-group">
-                <label class="form-label">Internal Rotation (degrees)</label>
-                <input type="number" class="form-input" id="intRotation" placeholder="Degrees">
+            <div class="form-group u-margin-bottom-20">
+                <label class="form-label u-display-block u-margin-bottom-4 u-font-weight-600">Internal Rotation (degrees)</label>
+                <input type="number" class="form-input u-width-full u-padding-10 u-radius-md u-text-body-md" id="intRotation" placeholder="Degrees" style="border: 2px solid var(--color-border-secondary);">
             </div>
             
-            <div class="form-group">
-                <label class="form-label">Horizontal Abduction (degrees)</label>
-                <input type="number" class="form-input" id="horAbduction" placeholder="Degrees (45-55° optimal)">
+            <div class="form-group u-margin-bottom-20">
+                <label class="form-label u-display-block u-margin-bottom-4 u-font-weight-600">Horizontal Abduction (degrees)</label>
+                <input type="number" class="form-input u-width-full u-padding-10 u-radius-md u-text-body-md" id="horAbduction" placeholder="Degrees (45-55° optimal)" style="border: 2px solid var(--color-border-secondary);">
             </div>
             
-            <div class="form-group">
-                <label class="form-label">Sleeper Stretch Comfort</label>
-                <select class="form-input" id="sleeperComfort">
+            <div class="form-group u-margin-bottom-20">
+                <label class="form-label u-display-block u-margin-bottom-4 u-font-weight-600">Sleeper Stretch Comfort</label>
+                <select class="form-input u-width-full u-padding-10 u-radius-md u-text-body-md" id="sleeperComfort" style="border: 2px solid var(--color-border-secondary);">
                     <option value="">Select comfort level</option>
                     <option value="excellent">Excellent - No restriction</option>
                     <option value="good">Good - Slight tightness</option>
@@ -599,12 +365,12 @@
                 </select>
             </div>
             
-            <div class="form-group">
-                <label class="form-label">Notes</label>
-                <textarea class="form-input" id="mobilityNotes" rows="3" placeholder="Any restrictions or observations"></textarea>
+            <div class="form-group u-margin-bottom-20">
+                <label class="form-label u-display-block u-margin-bottom-4 u-font-weight-600">Notes</label>
+                <textarea class="form-input u-width-full u-padding-10 u-radius-md u-text-body-md" id="mobilityNotes" rows="3" placeholder="Any restrictions or observations" style="border: 2px solid var(--color-border-secondary);"></textarea>
             </div>
             
-            <button class="btn" onclick="saveMobilityTest()">Save Assessment</button>
+            <button class="btn u-width-full u-padding-y-12 u-padding-x-20 u-radius-md u-font-weight-600 u-margin-top-16" onclick="saveMobilityTest()" style="transition: all 0.3s ease; cursor: pointer;">Save Assessment</button>
         </div>
     </div>
 

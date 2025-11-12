@@ -1,0 +1,156 @@
+/* ================================================================
+   JAVASCRIPT HOOKS - FlagFit Pro
+   Non-styled classes for JavaScript targeting
+   Prefix: .js-* (JavaScript hooks - NO STYLES)
+   ================================================================ */
+
+/* ================================================================
+   IMPORTANT: These classes have NO styles
+   They exist solely for JavaScript to target elements
+   ================================================================ */
+
+/* Modal hooks */
+.js-modal-trigger {
+  /* No styles - JavaScript will handle behavior */
+}
+
+.js-modal-close {
+  /* No styles - JavaScript will handle behavior */
+}
+
+.js-modal-backdrop {
+  /* No styles - JavaScript will handle behavior */
+}
+
+/* Dropdown hooks */
+.js-dropdown-trigger {
+  /* No styles - JavaScript will handle behavior */
+}
+
+.js-dropdown-menu {
+  /* No styles - JavaScript will handle behavior */
+}
+
+.js-dropdown-item {
+  /* No styles - JavaScript will handle behavior */
+}
+
+/* Accordion hooks */
+.js-accordion-trigger {
+  /* No styles - JavaScript will handle behavior */
+}
+
+.js-accordion-panel {
+  /* No styles - JavaScript will handle behavior */
+}
+
+/* Tabs hooks */
+.js-tab-trigger {
+  /* No styles - JavaScript will handle behavior */
+}
+
+.js-tab-panel {
+  /* No styles - JavaScript will handle behavior */
+}
+
+/* Tooltip hooks */
+.js-tooltip-trigger {
+  /* No styles - JavaScript will handle behavior */
+}
+
+.js-tooltip-content {
+  /* No styles - JavaScript will handle behavior */
+}
+
+/* Animation hooks */
+.js-animation-trigger {
+  /* No styles - JavaScript will handle behavior */
+}
+
+.js-animation-target {
+  /* No styles - JavaScript will handle behavior */
+}
+
+/* Form hooks */
+.js-form-submit {
+  /* No styles - JavaScript will handle behavior */
+}
+
+.js-form-reset {
+  /* No styles - JavaScript will handle behavior */
+}
+
+.js-form-validation {
+  /* No styles - JavaScript will handle behavior */
+}
+
+/* Navigation hooks */
+.js-nav-toggle {
+  /* No styles - JavaScript will handle behavior */
+}
+
+.js-nav-link {
+  /* No styles - JavaScript will handle behavior */
+}
+
+.js-nav-menu {
+  /* No styles - JavaScript will handle behavior */
+}
+
+/* Theme hooks */
+.js-theme-toggle {
+  /* No styles - JavaScript will handle behavior */
+}
+
+.js-theme-light {
+  /* No styles - JavaScript will handle behavior */
+}
+
+.js-theme-dark {
+  /* No styles - JavaScript will handle behavior */
+}
+
+/* Scroll hooks */
+.js-scroll-to {
+  /* No styles - JavaScript will handle behavior */
+}
+
+.js-scroll-spy {
+  /* No styles - JavaScript will handle behavior */
+}
+
+/* Lazy load hooks */
+.js-lazy-load {
+  /* No styles - JavaScript will handle behavior */
+}
+
+.js-lazy-image {
+  /* No styles - JavaScript will handle behavior */
+}
+
+/* Copy to clipboard hooks */
+.js-copy-trigger {
+  /* No styles - JavaScript will handle behavior */
+}
+
+.js-copy-target {
+  /* No styles - JavaScript will handle behavior */
+}
+
+/* ================================================================
+   USAGE EXAMPLE:
+   
+   HTML:
+   <button class="btn btn-primary js-modal-trigger" data-modal="example">
+     Open Modal
+   </button>
+   
+   JavaScript:
+   document.querySelectorAll('.js-modal-trigger').forEach(trigger => {
+     trigger.addEventListener('click', () => {
+       const modalId = trigger.dataset.modal;
+       // Open modal logic
+     });
+   });
+   ================================================================ */
+

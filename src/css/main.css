@@ -1,0 +1,144 @@
+/* ================================================================
+   MAIN CSS ENTRY POINT - FlagFit Pro
+   Uses CSS Cascade Layers (@layer) for explicit specificity control
+   ================================================================ */
+
+/* ================================================================
+   CASCADE LAYERS - Explicit priority order
+   Lower layers have lower specificity priority
+   ================================================================ */
+
+@layer reset, base, tokens, breakpoints, theme, layout, components, state, animations, utilities, hooks;
+
+/* ================================================================
+   LAYER 1: BASE (includes reset)
+   Base element styles, resets, typography defaults
+   ================================================================ */
+@import url('./base.css') layer(base);
+
+/* ================================================================
+   LAYER 3: TOKENS
+   Design tokens (CSS variables) - foundation for everything
+   ================================================================ */
+@import url('./tokens.css') layer(tokens);
+
+/* ================================================================
+   LAYER 4: BREAKPOINTS
+   Centralized breakpoint definitions
+   ================================================================ */
+@import url('./breakpoints.css') layer(breakpoints);
+
+/* ================================================================
+   LAYER 5: THEME
+   Theme overrides (light, dark, high-contrast)
+   ================================================================ */
+@import url('./themes/light.css') layer(theme);
+@import url('./themes/dark.css') layer(theme);
+@import url('./themes/high-contrast.css') layer(theme);
+
+/* ================================================================
+   LAYER 6: LAYOUT
+   Page structure and grid systems
+   ================================================================ */
+@import url('./layout.css') layer(layout);
+
+/* ================================================================
+   LAYER 7: COMPONENTS
+   Component-specific styles
+   ================================================================ */
+@import url('./components/button.css') layer(components);
+@import url('./components/card.css') layer(components);
+@import url('./components/badge.css') layer(components);
+@import url('./components/form.css') layer(components);
+@import url('./components/modal.css') layer(components);
+@import url('./components/alert.css') layer(components);
+
+/* ================================================================
+   LAYER 8: STATE
+   Dynamic states (.is-*, .has-*)
+   ================================================================ */
+@import url('./state.css') layer(state);
+
+/* ================================================================
+   LAYER 9: ANIMATIONS
+   Keyframes and transition utilities
+   ================================================================ */
+@import url('./animations.css') layer(animations);
+
+/* ================================================================
+   LAYER 10: UTILITIES
+   Helper classes (.u-*) - highest specificity
+   ================================================================ */
+@import url('./utilities.css') layer(utilities);
+
+/* ================================================================
+   LAYER 11: HOOKS
+   JavaScript hooks (.js-*) - no styles
+   ================================================================ */
+@import url('./hooks.css') layer(hooks);
+
+/* ================================================================
+   LEGACY COMPATIBILITY
+   Backward compatibility classes (moved to layout.css but kept here for migration)
+   ================================================================ */
+
+/* Legacy container classes - use .l-container instead */
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-layout-md);
+}
+
+.container-sm {
+  max-width: 640px;
+}
+
+.container-md {
+  max-width: 768px;
+}
+
+.container-lg {
+  max-width: 1024px;
+}
+
+.container-xl {
+  max-width: 1280px;
+}
+
+.container-2xl {
+  max-width: 1536px;
+}
+
+/* Legacy grid class - use .l-grid instead */
+.grid {
+  display: grid;
+  gap: var(--spacing-component-md);
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+/* Icon Styles */
+i[data-lucide], svg.lucide {
+  vertical-align: middle;
+  color: var(--color-brand-primary);
+  width: 1.5em;
+  height: 1.5em;
+}
+
+/* Chart Styles */
+.chart-bar {
+  background: var(--chart-bar-bg);
+  border-radius: var(--radius-component-lg);
+  height: 24px;
+  margin-bottom: var(--spacing-component-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+.chart-bar-fill {
+  background: var(--chart-bar-fill);
+  height: 100%;
+  border-radius: var(--radius-component-lg);
+  transition: width var(--motion-duration-normal) var(--motion-easing-productive);
+}
+

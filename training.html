@@ -7,10 +7,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./src/comprehensive-design-system.css">
-    <link rel="stylesheet" href="./src/spacing-system.css">
-    <link rel="stylesheet" href="./src/modern-dashboard-redesign.css">
-    <link rel="stylesheet" href="./src/hover-effects.css">
+    <!-- New Modular CSS Architecture -->
+    <link rel="stylesheet" href="./src/css/main.css">
     <!-- Lucide Icons - Modern icon library similar to Radix UI -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="./src/icon-helper.js"></script>
@@ -203,147 +201,25 @@
             color: var(--primitive-primary-500);
         }
 
+        /* Page-specific styles that can't be replaced with utilities */
         .main-content {
             margin-left: 250px;
-            flex: 1;
-            min-width: 0;
             max-width: calc(100vw - 250px);
-            overflow-x: hidden;
-            overflow-y: auto;
-            padding: var(--spacing-component-lg);
-            background: var(--dark-bg-primary);
         }
-
-        
-
-        .welcome-section h1 {
-            font-family: var(--font-heading);
-            font-size: var(--text-h1);
-            font-weight: var(--font-bold);
-            line-height: 1.2;
-            letter-spacing: -0.02em;
-            color: var(--dark-gray);
-            margin-bottom: var(--space-md);
-        }
-
-        .welcome-section p {
-            font-family: var(--font-body);
-            font-size: var(--text-h3);
-            font-weight: var(--font-regular);
-            color: var(--text-gray);
-        }
-
-        .top-actions {
-            display: flex;
-            align-items: center;
-            gap: var(--space-4);
-        }
-
-        .search-box {
-            position: relative;
-            width: 320px;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: var(--space-3) var(--space-3) var(--space-3) 40px;
-            border: 1px solid var(--border-medium);
-            border-radius: var(--radius-lg);
-            font-size: var(--text-sm);
-            background: var(--dark-card-bg);
-            transition: all var(--transition-fast);
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(16, 201, 107, 0.1);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--gray-400);
-        }
-
-        .user-menu {
-            display: flex;
-            align-items: center;
-            gap: var(--space-3);
-            cursor: pointer;
-            padding: var(--space-2);
-            border-radius: var(--radius-lg);
-            transition: all var(--transition-fast);
-        }
-
-        .user-menu:hover {
-            background: var(--gray-50);
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--var(--dark-text-primary));
-            font-weight: var(--font-semibold);
-        }
-
-        /* Stats Grid - matching dashboard */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: var(--space-6);
-            margin-bottom: var(--space-8);
-        }
-
         .stat-card {
-            background: var(--dark-card-bg);
-            border-radius: var(--radius-xl);
-            padding: var(--space-6);
-            border: 1px solid var(--dark-border);
-            box-shadow: var(--shadow-sm);
-            transition: all var(--transition-normal);
+            background: var(--surface-primary);
+            border: 1px solid var(--color-border-secondary);
+            transition: all var(--motion-duration-normal) var(--motion-easing-productive);
         }
-
         .stat-card:hover {
-            box-shadow: var(--shadow-lg);
             transform: translateY(-4px);
-            border-color: var(--primary);
+            border-color: var(--color-brand-primary);
         }
-
-        .stat-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--space-4);
-        }
-
-        .stat-title {
-            font-family: var(--font-body);
-            font-size: var(--text-small);
-            font-weight: var(--font-medium);
-            color: var(--medium-gray);
-        }
-
         .stat-icon {
             width: 40px;
             height: 40px;
-            border-radius: var(--radius-lg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
         }
-
         .stat-value {
-            font-family: var(--font-heading);
-            font-size: var(--text-h1);
             font-weight: var(--font-bold);
             color: var(--dark-gray);
             margin-bottom: var(--space-md);
@@ -693,87 +569,87 @@
             </nav>
         </div>
 
-        <main class="main-content">
+        <main class="main-content u-flex-1 u-min-width-0 u-overflow-x-hidden u-overflow-y-auto u-padding-24 u-bg-primary">
             <!-- Top Bar -->
-            <div class="top-bar">
+            <div class="top-bar u-display-flex u-justify-between u-align-center u-margin-bottom-32">
                 <div class="welcome-section">
-                    <h1>Welcome back, Alex!</h1>
-                    <p>Ready to dominate today?</p>
+                    <h1 class="u-text-display-lg u-font-weight-700 u-text-primary u-margin-bottom-16" style="line-height: 1.2; letter-spacing: -0.02em;">Welcome back, Alex!</h1>
+                    <p class="u-text-heading-md u-text-secondary">Ready to dominate today?</p>
                 </div>
                 
-                <div class="top-actions">
-                    <div class="search-box">
-                        <span class="search-icon"><i data-lucide="search" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle; ; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span>
-                        <input type="text" class="search-input" placeholder="Search workouts, exercises, videos...">
+                <div class="top-actions u-display-flex u-align-center u-gap-16">
+                    <div class="search-box u-position-relative" style="width: 320px;">
+                        <span class="search-icon u-position-absolute" style="left: 12px; top: 50%; transform: translateY(-50%);"><i data-lucide="search" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle; ; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span>
+                        <input type="text" class="search-input u-width-full u-padding-y-12 u-padding-x-12 u-padding-left-40 u-radius-lg u-text-body-sm u-bg-primary u-border-secondary" placeholder="Search workouts, exercises, videos..." style="border: 1px solid var(--color-border-secondary); transition: all var(--motion-duration-fast);">
                     </div>
                     
-                    <div style="position: relative; margin-right: var(--space-4);">
-                        <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--gray-100); display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; transition: all var(--transition-fast);" 
-                             onmouseover="this.style.background='var(--gray-200)'" 
-                             onmouseout="this.style.background='var(--gray-100)'">
+                    <div class="u-position-relative u-margin-right-16">
+                        <div class="u-width-40 u-height-40 u-radius-full u-bg-secondary u-display-flex u-align-center u-justify-center" style="font-size: 18px; cursor: pointer; transition: all var(--motion-duration-fast);" 
+                             onmouseover="this.style.background='var(--surface-secondary)'" 
+                             onmouseout="this.style.background='var(--surface-secondary)'">
                             <i data-lucide="bell" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
                         </div>
-                        <div style="position: absolute; top: -2px; right: -2px; width: 16px; height: 16px; background: var(--error); color: var(--dark-text-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: var(--font-bold);">2</div>
+                        <div class="u-position-absolute u-width-16 u-height-16 u-bg-error u-text-primary u-radius-full u-display-flex u-align-center u-justify-center u-text-caption u-font-weight-700" style="top: -2px; right: -2px;">2</div>
                     </div>
                     
-                    <div class="user-menu">
-                        <div class="user-avatar">JD</div>
+                    <div class="user-menu u-display-flex u-align-center u-gap-12 u-padding-8 u-radius-lg" style="cursor: pointer; transition: all var(--motion-duration-fast);">
+                        <div class="user-avatar u-width-40 u-height-40 u-radius-full u-bg-brand u-display-flex u-align-center u-justify-center u-text-primary u-font-weight-600">JD</div>
                         <div>
-                            <div style="font-size: var(--text-sm); font-weight: var(--font-medium); color: var(--dark-text-primary);" id="user-display-name-training">Loading...</div>
-                            <div style="font-size: var(--text-xs); color: var(--dark-text-muted);">Player View</div>
+                            <div class="u-text-body-sm u-font-weight-500 u-text-primary" id="user-display-name-training">Loading...</div>
+                            <div class="u-text-caption u-text-secondary">Player View</div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Training Stats Grid -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <span class="stat-title">This Week</span>
-                        <div class="stat-icon" style="background: var(--success-bg); color: var(--success);"><i data-lucide="zap" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></div>
+            <div class="stats-grid u-display-grid u-gap-24 u-margin-bottom-64" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+                <div class="stat-card u-radius-xl u-padding-24 u-shadow-sm">
+                    <div class="stat-header u-display-flex u-justify-between u-align-center u-margin-bottom-16">
+                        <span class="stat-title u-text-body-sm u-font-weight-500 u-text-secondary">This Week</span>
+                        <div class="stat-icon u-radius-lg u-display-flex u-align-center u-justify-center" style="background: var(--color-success-subtle); color: var(--color-success);"><i data-lucide="zap" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></div>
                     </div>
-                    <div class="stat-value">4<span style="font-size: var(--text-lg); color: var(--dark-text-muted);">/6</span></div>
-                    <div style="width: 100%; height: 6px; background: var(--gray-200); border-radius: 3px; margin: var(--space-2) 0;">
-                        <div style="width: 67%; height: 100%; background: linear-gradient(90deg, var(--success), var(--success-400)); border-radius: 3px; transition: width 0.5s ease;"></div>
+                    <div class="stat-value u-text-display-lg u-font-weight-700 u-text-primary u-margin-bottom-8">4<span class="u-text-body-lg u-text-secondary">/6</span></div>
+                    <div class="u-width-full u-height-6 u-bg-secondary u-radius-sm u-margin-y-8">
+                        <div class="u-height-full u-radius-sm" style="width: 67%; background: linear-gradient(90deg, var(--color-success), var(--color-success-400)); transition: width 0.5s ease;"></div>
                     </div>
-                    <div class="stat-change positive">
+                    <div class="stat-change positive u-display-flex u-align-center u-gap-4 u-text-body-sm u-text-success">
                         <span>🔥</span>
                         <span>Sessions Completed</span>
                     </div>
                 </div>
 
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <span class="stat-title">Current Streak</span>
-                        <div class="stat-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--accent);"><i data-lucide="target" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></div>
+                <div class="stat-card u-radius-xl u-padding-24 u-shadow-sm">
+                    <div class="stat-header u-display-flex u-justify-between u-align-center u-margin-bottom-16">
+                        <span class="stat-title u-text-body-sm u-font-weight-500 u-text-secondary">Current Streak</span>
+                        <div class="stat-icon u-radius-lg u-display-flex u-align-center u-justify-center" style="background: rgba(245, 158, 11, 0.1); color: var(--color-brand-secondary);"><i data-lucide="target" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></div>
                     </div>
-                    <div class="stat-value">12<span style="font-size: var(--text-lg); color: var(--dark-text-muted);"> days</span></div>
-                    <div class="stat-change positive">
+                    <div class="stat-value u-text-display-lg u-font-weight-700 u-text-primary u-margin-bottom-8">12<span class="u-text-body-lg u-text-secondary"> days</span></div>
+                    <div class="stat-change positive u-display-flex u-align-center u-gap-4 u-text-body-sm u-text-success">
                         <span><i data-lucide="bar-chart-3" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span>
                         <span>Personal best streak!</span>
                     </div>
                 </div>
 
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <span class="stat-title">Total Hours</span>
-                        <div class="stat-icon" style="background: rgba(16, 201, 107, 0.1); color: var(--primary);">⏱️</div>
+                <div class="stat-card u-radius-xl u-padding-24 u-shadow-sm">
+                    <div class="stat-header u-display-flex u-justify-between u-align-center u-margin-bottom-16">
+                        <span class="stat-title u-text-body-sm u-font-weight-500 u-text-secondary">Total Hours</span>
+                        <div class="stat-icon u-radius-lg u-display-flex u-align-center u-justify-center" style="background: rgba(16, 201, 107, 0.1); color: var(--color-brand-primary);">⏱️</div>
                     </div>
-                    <div class="stat-value">28.5<span style="font-size: var(--text-lg); color: var(--dark-text-muted);">h</span></div>
-                    <div class="stat-change positive">
+                    <div class="stat-value u-text-display-lg u-font-weight-700 u-text-primary u-margin-bottom-8">28.5<span class="u-text-body-lg u-text-secondary">h</span></div>
+                    <div class="stat-change positive u-display-flex u-align-center u-gap-4 u-text-body-sm u-text-success">
                         <span>⬆️</span>
                         <span>+4.2h this week</span>
                     </div>
                 </div>
 
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <span class="stat-title">Next Session</span>
-                        <div class="stat-icon" style="background: rgba(137, 195, 0, 0.1); color: var(--secondary-500);">🏃</div>
+                <div class="stat-card u-radius-xl u-padding-24 u-shadow-sm">
+                    <div class="stat-header u-display-flex u-justify-between u-align-center u-margin-bottom-16">
+                        <span class="stat-title u-text-body-sm u-font-weight-500 u-text-secondary">Next Session</span>
+                        <div class="stat-icon u-radius-lg u-display-flex u-align-center u-justify-center" style="background: rgba(137, 195, 0, 0.1); color: var(--color-brand-secondary);">🏃</div>
                     </div>
-                    <div class="stat-value" style="font-size: var(--text-lg);">Olympic Prep</div>
-                    <div class="stat-change" style="color: var(--dark-text-secondary);">
+                    <div class="stat-value u-text-body-lg u-font-weight-700 u-text-primary u-margin-bottom-8">Olympic Prep</div>
+                    <div class="stat-change u-display-flex u-align-center u-gap-4 u-text-body-sm u-text-secondary">
                         <span><i data-lucide="calendar" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span>
                         <span>Today at 3:00 PM</span>
                     </div>
@@ -781,21 +657,21 @@
             </div>
 
             <!-- Training Grid -->
-            <div class="training-grid">
+            <div class="training-grid u-display-grid u-gap-24" style="grid-template-columns: 1fr 1fr;">
                 <!-- Workouts Section -->
                 <div class="workouts-section">
-                    <div class="section-header">
-                        <h2 class="section-title"><i data-lucide="zap" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Available Workouts</h2>
+                    <div class="section-header u-margin-bottom-24">
+                        <h2 class="section-title u-text-heading-lg u-font-weight-700 u-text-primary"><i data-lucide="zap" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Available Workouts</h2>
                     </div>
 
-                    <div class="workout-card" onclick="startWorkout('speed')" style="cursor: pointer;">
-                        <div class="workout-icon" style="background: var(--speed-training); color: var(--dark-text-primary);">
+                    <div class="workout-card u-display-flex u-align-center u-gap-16 u-padding-20 u-bg-primary u-radius-lg u-border-secondary u-margin-bottom-16" onclick="startWorkout('speed')" style="cursor: pointer; border: 1px solid var(--color-border-secondary); transition: all var(--motion-duration-normal);">
+                        <div class="workout-icon u-width-56 u-height-56 u-radius-lg u-display-flex u-align-center u-justify-center" style="background: var(--speed-training); color: var(--color-text-primary); font-size: 24px;">
                             🏃
                         </div>
-                        <div class="workout-content">
-                            <h3 class="workout-title">Speed Training</h3>
-                            <p class="workout-description">Sprint intervals and agility drills</p>
-                            <div class="workout-meta">
+                        <div class="workout-content u-flex-1">
+                            <h3 class="workout-title u-text-heading-md u-font-weight-600 u-text-primary u-margin-bottom-4">Speed Training</h3>
+                            <p class="workout-description u-text-body-sm u-text-secondary u-margin-bottom-8">Sprint intervals and agility drills</p>
+                            <div class="workout-meta u-display-flex u-gap-16 u-text-caption u-text-secondary">
                                 <span>⏱️ 45 min</span>
                                 <span>🔥 High intensity</span>
                                 <span>📍 Track required</span>
@@ -804,14 +680,14 @@
                         <button class="btn btn-primary">Start</button>
                     </div>
 
-                    <div class="workout-card" onclick="startWorkout('strength')" style="cursor: pointer;">
-                        <div class="workout-icon" style="background: var(--strength-training); color: var(--dark-text-primary);">
+                    <div class="workout-card u-display-flex u-align-center u-gap-16 u-padding-20 u-bg-primary u-radius-lg u-border-secondary u-margin-bottom-16" onclick="startWorkout('strength')" style="cursor: pointer; border: 1px solid var(--color-border-secondary); transition: all var(--motion-duration-normal);">
+                        <div class="workout-icon u-width-56 u-height-56 u-radius-lg u-display-flex u-align-center u-justify-center" style="background: var(--strength-training); color: var(--color-text-primary); font-size: 24px;">
                             <i data-lucide="dumbbell" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
                         </div>
-                        <div class="workout-content">
-                            <h3 class="workout-title">Strength Training</h3>
-                            <p class="workout-description">Core and functional strength</p>
-                            <div class="workout-meta">
+                        <div class="workout-content u-flex-1">
+                            <h3 class="workout-title u-text-heading-md u-font-weight-600 u-text-primary u-margin-bottom-4">Strength Training</h3>
+                            <p class="workout-description u-text-body-sm u-text-secondary u-margin-bottom-8">Core and functional strength</p>
+                            <div class="workout-meta u-display-flex u-gap-16 u-text-caption u-text-secondary">
                                 <span>⏱️ 60 min</span>
                                 <span>🔥 Medium intensity</span>
                                 <span>🏋️ Gym access</span>
@@ -820,14 +696,14 @@
                         <button class="btn btn-primary">Start</button>
                     </div>
 
-                    <div class="workout-card" onclick="startWorkout('agility')" style="cursor: pointer;">
-                        <div class="workout-icon" style="background: var(--agility-training); color: var(--dark-text-primary);">
+                    <div class="workout-card u-display-flex u-align-center u-gap-16 u-padding-20 u-bg-primary u-radius-lg u-border-secondary u-margin-bottom-16" onclick="startWorkout('agility')" style="cursor: pointer; border: 1px solid var(--color-border-secondary); transition: all var(--motion-duration-normal);">
+                        <div class="workout-icon u-width-56 u-height-56 u-radius-lg u-display-flex u-align-center u-justify-center" style="background: var(--agility-training); color: var(--color-text-primary); font-size: 24px;">
                             🤸
                         </div>
-                        <div class="workout-content">
-                            <h3 class="workout-title">Agility Training</h3>
-                            <p class="workout-description">Cone drills and quick movements</p>
-                            <div class="workout-meta">
+                        <div class="workout-content u-flex-1">
+                            <h3 class="workout-title u-text-heading-md u-font-weight-600 u-text-primary u-margin-bottom-4">Agility Training</h3>
+                            <p class="workout-description u-text-body-sm u-text-secondary u-margin-bottom-8">Cone drills and quick movements</p>
+                            <div class="workout-meta u-display-flex u-gap-16 u-text-caption u-text-secondary">
                                 <span>⏱️ 30 min</span>
                                 <span>🔥 Medium intensity</span>
                                 <span>⚽ Field access</span>
@@ -836,14 +712,14 @@
                         <button class="btn btn-primary">Start</button>
                     </div>
 
-                    <div class="workout-card" onclick="startWorkout('endurance')" style="cursor: pointer;">
-                        <div class="workout-icon" style="background: var(--endurance-training); color: var(--dark-text-primary);">
+                    <div class="workout-card u-display-flex u-align-center u-gap-16 u-padding-20 u-bg-primary u-radius-lg u-border-secondary u-margin-bottom-16" onclick="startWorkout('endurance')" style="cursor: pointer; border: 1px solid var(--color-border-secondary); transition: all var(--motion-duration-normal);">
+                        <div class="workout-icon u-width-56 u-height-56 u-radius-lg u-display-flex u-align-center u-justify-center" style="background: var(--endurance-training); color: var(--color-text-primary); font-size: 24px;">
                             ❤️
                         </div>
-                        <div class="workout-content">
-                            <h3 class="workout-title">Endurance Training</h3>
-                            <p class="workout-description">Cardio and stamina building</p>
-                            <div class="workout-meta">
+                        <div class="workout-content u-flex-1">
+                            <h3 class="workout-title u-text-heading-md u-font-weight-600 u-text-primary u-margin-bottom-4">Endurance Training</h3>
+                            <p class="workout-description u-text-body-sm u-text-secondary u-margin-bottom-8">Cardio and stamina building</p>
+                            <div class="workout-meta u-display-flex u-gap-16 u-text-caption u-text-secondary">
                                 <span>⏱️ 50 min</span>
                                 <span>🔥 Low intensity</span>
                                 <span>🏃 Anywhere</span>

@@ -1,0 +1,102 @@
+<!-- 
+    Modal Component - FlagFit Pro
+    
+    Usage: Copy this snippet for dialog boxes and overlays
+    CSS: src/css/components/modal.css
+    Requires JavaScript to toggle .open class on .modal-overlay
+-->
+
+<!-- Basic Modal -->
+<div class="modal-overlay" id="modal-basic" role="dialog" aria-modal="true" aria-labelledby="modal-title-basic">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modal-title-basic" class="modal-title">Modal Title</h2>
+            <button type="button" class="modal-close" aria-label="Close modal" onclick="document.getElementById('modal-basic').classList.remove('open')">
+                <i data-lucide="x" style="width: 24px; height: 24px;"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p>Modal content goes here. This is a basic modal dialog.</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary btn-md" onclick="document.getElementById('modal-basic').classList.remove('open')">Cancel</button>
+            <button type="button" class="btn btn-primary btn-md">Confirm</button>
+        </div>
+    </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div class="modal-overlay" id="modal-confirm" role="dialog" aria-modal="true" aria-labelledby="modal-title-confirm">
+    <div class="modal-content" style="max-width: 400px;">
+        <div class="modal-header">
+            <h2 id="modal-title-confirm" class="modal-title">Confirm Action</h2>
+            <button type="button" class="modal-close" aria-label="Close modal" onclick="document.getElementById('modal-confirm').classList.remove('open')">
+                <i data-lucide="x" style="width: 24px; height: 24px;"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to perform this action? This cannot be undone.</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary btn-md" onclick="document.getElementById('modal-confirm').classList.remove('open')">Cancel</button>
+            <button type="button" class="btn btn-error btn-md">Delete</button>
+        </div>
+    </div>
+</div>
+
+<!-- Form Modal -->
+<div class="modal-overlay" id="modal-form" role="dialog" aria-modal="true" aria-labelledby="modal-title-form">
+    <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-header">
+            <h2 id="modal-title-form" class="modal-title">Add New Item</h2>
+            <button type="button" class="modal-close" aria-label="Close modal" onclick="document.getElementById('modal-form').classList.remove('open')">
+                <i data-lucide="x" style="width: 24px; height: 24px;"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form>
+                <div class="form-group">
+                    <label for="modal-name" class="form-label">Name</label>
+                    <input type="text" id="modal-name" name="name" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label for="modal-description" class="form-label">Description</label>
+                    <textarea id="modal-description" name="description" class="form-input" rows="4"></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary btn-md" onclick="document.getElementById('modal-form').classList.remove('open')">Cancel</button>
+            <button type="submit" class="btn btn-primary btn-md">Save</button>
+        </div>
+    </div>
+</div>
+
+<!-- Trigger Button Example -->
+<button type="button" class="btn btn-primary btn-md" onclick="document.getElementById('modal-basic').classList.add('open')">
+    Open Modal
+</button>
+
+<script>
+// Modal initialization - add to your page
+document.addEventListener('DOMContentLoaded', function() {
+    // Close modal on overlay click
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+        overlay.addEventListener('click', function(e) {
+            if (e.target === overlay) {
+                overlay.classList.remove('open');
+            }
+        });
+    });
+    
+    // Close modal on Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.modal-overlay.open').forEach(overlay => {
+                overlay.classList.remove('open');
+            });
+        }
+    });
+});
+</script>
+

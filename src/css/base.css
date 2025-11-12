@@ -1,0 +1,369 @@
+/* ================================================================
+   BASE STYLES - FlagFit Pro
+   Resets, base element styles, and typography defaults
+   ================================================================ */
+
+/* ================================================================
+   CSS RESET & NORMALIZATION
+   ================================================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--primitive-font-sans);
+  font-size: var(--typography-body-md-size);
+  line-height: var(--typography-body-md-line-height);
+  font-weight: var(--typography-body-md-weight);
+  color: var(--color-text-on-surface);
+  background-color: var(--surface-primary);
+  text-rendering: optimizeSpeed;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.01em;
+  min-height: 100vh;
+}
+
+/* ================================================================
+   TYPOGRAPHY - HEADINGS
+   ================================================================ */
+
+h1, .h1 {
+  font-family: var(--primitive-font-display);
+  font-size: var(--typography-display-md-size);
+  font-weight: var(--typography-display-md-weight);
+  line-height: var(--typography-display-md-line-height);
+  letter-spacing: var(--typography-display-md-letter-spacing);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--spacing-component-lg) 0;
+}
+
+h2, .h2 {
+  font-family: var(--primitive-font-display);
+  font-size: var(--typography-heading-xl-size);
+  font-weight: var(--typography-heading-xl-weight);
+  line-height: var(--typography-heading-xl-line-height);
+  letter-spacing: var(--typography-heading-xl-letter-spacing);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--spacing-component-lg) 0;
+}
+
+h3, .h3 {
+  font-size: var(--typography-heading-lg-size);
+  font-weight: var(--typography-heading-lg-weight);
+  line-height: var(--typography-heading-lg-line-height);
+  letter-spacing: var(--typography-heading-lg-letter-spacing);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--spacing-component-md) 0;
+}
+
+h4, .h4 {
+  font-size: var(--typography-heading-md-size);
+  font-weight: var(--typography-heading-md-weight);
+  line-height: var(--typography-heading-md-line-height);
+  letter-spacing: var(--typography-heading-md-letter-spacing);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--spacing-component-md) 0;
+}
+
+h5, .h5 {
+  font-size: var(--typography-heading-sm-size);
+  font-weight: var(--typography-heading-sm-weight);
+  line-height: var(--typography-heading-sm-line-height);
+  letter-spacing: var(--typography-heading-sm-letter-spacing);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--spacing-component-sm) 0;
+}
+
+h6, .h6 {
+  font-size: var(--typography-heading-xs-size);
+  font-weight: var(--typography-heading-xs-weight);
+  line-height: var(--typography-heading-xs-line-height);
+  letter-spacing: var(--typography-heading-xs-letter-spacing);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--spacing-component-sm) 0;
+}
+
+/* ================================================================
+   TYPOGRAPHY - BODY TEXT
+   ================================================================ */
+
+p {
+  margin: 0 0 var(--spacing-component-md) 0;
+  font-size: var(--typography-body-md-size);
+  line-height: var(--typography-body-md-line-height);
+  color: var(--color-text-primary);
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+/* ================================================================
+   LINKS
+   ================================================================ */
+
+a {
+  color: var(--color-brand-primary);
+  text-decoration: underline;
+  transition: color var(--motion-duration-normal) var(--motion-easing-productive);
+}
+
+a:hover {
+  color: var(--color-brand-primary-hover);
+}
+
+a:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-component-sm);
+}
+
+a:visited {
+  color: var(--color-brand-primary);
+}
+
+/* ================================================================
+   LISTS
+   ================================================================ */
+
+ul, ol {
+  margin: 0 0 var(--spacing-component-md) 0;
+  padding-left: var(--spacing-component-lg);
+}
+
+li {
+  margin-bottom: var(--spacing-component-xs);
+  line-height: var(--typography-body-md-line-height);
+}
+
+ul {
+  list-style-type: disc;
+}
+
+ol {
+  list-style-type: decimal;
+}
+
+/* ================================================================
+   MEDIA ELEMENTS
+   ================================================================ */
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+img {
+  border-style: none;
+}
+
+/* ================================================================
+   FORM ELEMENTS (Base styles - detailed in form.css)
+   ================================================================ */
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+/* ================================================================
+   ACCESSIBILITY
+   ================================================================ */
+
+/* Skip link for keyboard navigation */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--color-brand-primary);
+  color: var(--color-text-on-primary);
+  padding: var(--spacing-component-sm) var(--spacing-component-md);
+  text-decoration: none;
+  z-index: var(--z-index-skiplink);
+  border-radius: var(--radius-component-md);
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* Focus visible styles */
+:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+}
+
+/* ================================================================
+   ACCESSIBILITY ENHANCEMENTS
+   ================================================================ */
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  :root {
+    --color-border-primary: var(--primitive-neutral-600);
+    --color-border-secondary: var(--primitive-neutral-500);
+    --color-border-focus: #0000ff;
+  }
+  
+  /* Ensure sufficient contrast */
+  .btn,
+  .card,
+  .form-input {
+    border-width: 2px;
+  }
+}
+
+/* Forced colors mode (Windows High Contrast) */
+@media (forced-colors: active) {
+  .btn,
+  .card {
+    forced-color-adjust: none;
+  }
+  
+  /* Ensure visibility in forced colors mode */
+  * {
+    border-color: ButtonBorder;
+  }
+  
+  .btn-primary {
+    background-color: ButtonFace;
+    color: ButtonText;
+  }
+}
+
+/* Focus management - distinct from hover */
+:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-component-sm);
+}
+
+/* Remove focus outline for mouse users */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ARIA attribute styling */
+[aria-hidden="true"] {
+  display: none !important;
+}
+
+[aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+[aria-busy="true"] {
+  position: relative;
+}
+
+[aria-busy="true"]::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid var(--color-border-primary);
+  border-top-color: var(--color-brand-primary);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+[aria-expanded="true"] {
+  /* Expanded state styling */
+}
+
+[aria-expanded="false"] {
+  /* Collapsed state styling */
+}
+
+/* Skip link styling */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--color-brand-primary);
+  color: var(--color-text-on-primary);
+  padding: var(--spacing-component-sm) var(--spacing-component-md);
+  text-decoration: none;
+  z-index: var(--z-index-skiplink);
+  border-radius: var(--radius-component-md);
+  font-weight: var(--primitive-font-weight-600);
+}
+
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--color-text-on-primary);
+  outline-offset: 2px;
+}
+
+/* Screen reader only content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.sr-only-focusable:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: inherit;
+  margin: inherit;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+

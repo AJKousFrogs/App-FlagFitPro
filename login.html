@@ -7,77 +7,20 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./src/comprehensive-design-system.css">
-    <link rel="stylesheet" href="./src/spacing-system.css">
-    <link rel="stylesheet" href="./src/hover-effects.css">
+    <!-- New Modular CSS Architecture -->
+    <link rel="stylesheet" href="./src/css/main.css">
     <!-- Lucide Icons - Modern icon library similar to Radix UI -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="./src/icon-helper.js"></script>
     <style>
+        /* Page-specific styles that can't be replaced with utilities */
         body {
             background: var(--gradient-primary);
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: var(--spacing-component-lg);
         }
-
         .login-container {
-            background: var(--surface-primary);
-            border-radius: var(--radius-component-xl);
-            box-shadow: var(--elevation-highest);
-            padding: var(--spacing-layout-lg);
-            width: 100%;
             max-width: 400px;
-            text-align: center;
         }
-
-        .login-logo {
-            font-size: var(--typography-display-sm-size);
-            margin-bottom: var(--spacing-component-sm);
-            color: var(--color-brand-primary);
-        }
-
-        .login-title {
-            font-size: var(--typography-heading-xl-size);
-            font-weight: var(--typography-heading-xl-weight);
-            color: var(--color-text-primary);
-            margin-bottom: var(--spacing-component-xl);
-        }
-
-        .login-form-options {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--spacing-component-xl);
-            font-size: var(--typography-body-sm-size);
-        }
-        
-        .login-checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-component-xs);
-        }
-        
-        .login-forgot-link {
-            color: var(--color-brand-primary);
-            text-decoration: none;
-            font-weight: var(--typography-label-md-weight);
-        }
-        
-        .login-forgot-link:hover {
-            text-decoration: underline;
-        }
-
-        .login-divider {
-            margin: var(--spacing-component-xl) 0;
-            display: flex;
-            align-items: center;
-            color: var(--color-text-muted);
-            font-size: var(--typography-body-sm-size);
-        }
-        
         .login-divider::before,
         .login-divider::after {
             content: '';
@@ -85,72 +28,23 @@
             height: 1px;
             background: var(--color-border-secondary);
         }
-        
-        .login-divider span {
-            padding: 0 var(--spacing-component-md);
+        #loginForm button[type="submit"] i[data-lucide] {
+            width: 18px;
+            height: 18px;
         }
-
-        .login-create-link {
-            color: var(--color-brand-primary);
-            text-decoration: none;
-            font-weight: var(--typography-label-md-weight);
-        }
-        
-        .login-create-link:hover {
-            text-decoration: underline;
-        }
-        
-        .password-strength {
-            margin-top: var(--spacing-component-xs);
-            font-size: var(--typography-body-sm-size);
-        }
-
-        .login-sponsors {
-            margin-top: var(--spacing-layout-lg);
-            padding-top: var(--spacing-component-xl);
-            border-top: 1px solid var(--color-border-secondary);
-        }
-        
-        .login-sponsors-title {
-            font-size: var(--typography-body-sm-size);
-            color: var(--color-text-muted);
-            margin-bottom: var(--spacing-component-lg);
-        }
-        
-        .login-sponsor-logos {
-            display: flex;
-            justify-content: center;
-            gap: var(--spacing-component-lg);
-            flex-wrap: wrap;
-        }
-        
-        .login-sponsor-logo {
-            font-size: var(--typography-caption-size);
-            font-weight: var(--typography-caption-weight);
-            color: var(--color-text-tertiary);
-            padding: var(--spacing-component-xs) var(--spacing-component-md);
-            border: 1px solid var(--color-border-secondary);
-            border-radius: var(--radius-component-full);
-            background: var(--surface-secondary);
-        }
-
         @media (max-width: 480px) {
             .login-container {
                 padding: var(--spacing-component-xl) var(--spacing-component-lg);
             }
-            
-            .login-title {
-                font-size: var(--typography-heading-lg-size);
-            }
         }
     </style>
 </head>
-<body>
-    <div class="login-container">
-        <div class="login-logo">
+<body class="u-display-flex u-align-center u-justify-center u-padding-24">
+    <div class="login-container u-bg-primary u-radius-xl u-shadow-xl u-padding-48 u-width-full u-text-center">
+        <div class="login-logo u-text-display-sm u-margin-bottom-12 u-text-brand">
             <i data-lucide="football"></i>
         </div>
-        <h1 class="login-title">Sign in to FlagFit Pro</h1>
+        <h1 class="login-title u-text-heading-xl u-text-primary u-margin-bottom-40">Sign in to FlagFit Pro</h1>
         
         <div class="alert alert-info" id="demoNote" style="display: none;">
             <strong>Demo Mode:</strong> This login accepts any email and password for testing purposes.
@@ -161,7 +55,7 @@
         
         <!-- Manual redirect button (backup) -->
         <div class="alert alert-success" id="manualRedirect" style="display: none;">
-            <p class="mb-3">
+            <p class="u-margin-bottom-12">
                 <i data-lucide="check-circle"></i> Login successful!
             </p>
             <button type="button" id="goDashboard" class="btn btn-primary btn-sm">
@@ -181,35 +75,35 @@
             <div class="form-group">
                 <label for="password" class="form-label">Password</label>
                 <input type="password" id="password" class="form-input" name="password" placeholder="Enter your password" required autocomplete="current-password">
-                <div id="passwordStrength" class="password-strength" style="display: none;"></div>
+                <div id="passwordStrength" class="password-strength u-margin-top-4 u-text-body-sm" style="display: none;"></div>
             </div>
 
-            <div class="login-form-options">
-                <div class="login-checkbox-group">
+            <div class="login-form-options u-display-flex u-justify-between u-align-center u-margin-bottom-40 u-text-body-sm">
+                <div class="login-checkbox-group u-display-flex u-align-center u-gap-4">
                     <input type="checkbox" id="remember" name="remember">
                     <label for="remember">Remember me</label>
                 </div>
-                <a href="/reset-password.html" class="login-forgot-link">Forgot your password?</a>
+                <a href="/reset-password.html" class="login-forgot-link u-text-brand u-text-label-md" style="text-decoration: none;">Forgot your password?</a>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-lg btn-block">
+            <button type="submit" class="btn btn-primary btn-lg btn-block u-display-flex u-align-center u-justify-center u-gap-4 u-width-full">
                 <i data-lucide="lock"></i>
                 Sign in
             </button>
         </form>
 
-        <div class="login-divider">
-            <span>Or</span>
+        <div class="login-divider u-margin-y-40 u-display-flex u-align-center u-text-body-sm" style="color: var(--color-text-muted);">
+            <span class="u-padding-x-16">Or</span>
         </div>
 
-        <a href="/register.html" class="login-create-link">create a new account</a>
+        <a href="/register.html" class="login-create-link u-text-brand u-text-label-md" style="text-decoration: none;">create a new account</a>
 
-        <div class="login-sponsors">
-            <div class="login-sponsors-title">Proudly sponsored by</div>
-            <div class="login-sponsor-logos">
-                <div class="login-sponsor-logo">LA PRIMAFIT</div>
-                <div class="login-sponsor-logo">Chemius</div>
-                <div class="login-sponsor-logo">GEAR XPRO</div>
+        <div class="login-sponsors u-margin-top-48 u-padding-top-40" style="border-top: 1px solid var(--color-border-secondary);">
+            <div class="login-sponsors-title u-text-body-sm u-text-tertiary u-margin-bottom-24">Proudly sponsored by</div>
+            <div class="login-sponsor-logos u-display-flex u-justify-center u-gap-24 u-flex-wrap">
+                <div class="login-sponsor-logo u-text-caption u-text-tertiary u-padding-y-4 u-padding-x-16 u-radius-full u-bg-secondary" style="border: 1px solid var(--color-border-secondary);">LA PRIMAFIT</div>
+                <div class="login-sponsor-logo u-text-caption u-text-tertiary u-padding-y-4 u-padding-x-16 u-radius-full u-bg-secondary" style="border: 1px solid var(--color-border-secondary);">Chemius</div>
+                <div class="login-sponsor-logo u-text-caption u-text-tertiary u-padding-y-4 u-padding-x-16 u-radius-full u-bg-secondary" style="border: 1px solid var(--color-border-secondary);">GEAR XPRO</div>
             </div>
         </div>
     </div>

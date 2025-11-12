@@ -8,11 +8,19 @@
 5. [Color System](#color-system)
 6. [Spacing & Layout](#spacing--layout)
 7. [Component Library](#component-library)
-8. [Icon System](#icon-system)
-9. [Motion & Animation](#motion--animation)
-10. [Accessibility](#accessibility)
-11. [Implementation Guide](#implementation-guide)
-12. [Governance](#governance)
+8. [Component Composition Patterns](#component-composition-patterns)
+9. [Icon System](#icon-system)
+10. [Motion & Animation](#motion--animation)
+11. [Accessibility](#accessibility)
+12. [Component Testing Guidelines](#component-testing-guidelines)
+13. [Error Handling & Validation](#error-handling--validation)
+14. [Implementation Guide](#implementation-guide)
+15. [Performance Guidelines](#performance-guidelines)
+16. [Versioning & Changelog](#versioning--changelog)
+17. [Governance](#governance)
+18. [Browser Compatibility Matrix](#browser-compatibility-matrix)
+19. [Writing Guidelines](#writing-guidelines)
+20. [Roadmap](#roadmap)
 
 ## Overview
 
@@ -21,6 +29,7 @@ The FlagFit Pro Design System is a comprehensive, semantic token-based design fr
 ### Key Features
 - **Semantic Token Architecture**: Two-tier system with primitive and semantic tokens
 - **Complete Component Library**: 20+ production-ready components with multiple variants
+- **Flexible Layout System**: Both uniform grids and bento grid layouts for different use cases
 - **Accessibility-First**: WCAG 2.1 AA compliant with comprehensive accessibility features
 - **Theme Toggle Switch**: Manual light/dark mode toggle with system preference detection
 - **Green Theme Palette**: Consistent green color scheme across all pages
@@ -98,6 +107,293 @@ Our token system uses a two-tier architecture for maximum flexibility and mainta
 - **Scalability**: Easy to add new themes or modify existing ones
 - **Developer Experience**: Clear naming conventions reduce decision fatigue
 
+### Design Tokens Export
+
+Design tokens are available as JavaScript/JSON exports for use in other tools (Figma, React, Vue, etc.).
+
+#### JavaScript Export
+
+```javascript
+// design-tokens.js
+export const tokens = {
+  colors: {
+    // Brand Colors - Green Theme
+    brand: {
+      primary: {
+        50: '#f0f9f7',
+        100: '#d0f0eb',
+        200: '#a0e4d7',
+        300: '#70d8c3',
+        400: '#40ccaf',
+        500: '#10c96b',  // Main brand color
+        600: '#0ab85a',
+        700: '#089949',
+        800: '#089949',
+        900: '#036d35'
+      },
+      secondary: {
+        500: '#89c300',  // Lime green
+        600: '#6fa600',
+        700: '#558400'
+      },
+      tertiary: {
+        500: '#cc9610',  // Gold/warm
+        600: '#b37700',
+        700: '#9a5800'
+      }
+    },
+    // Semantic Colors
+    status: {
+      success: {
+        50: '#f0fdf4',
+        500: '#22c55e',
+        600: '#16a34a',
+        700: '#15803d'
+      },
+      error: {
+        50: '#fef2f2',
+        500: '#ef4444',
+        600: '#dc2626',
+        700: '#b91c1c'
+      },
+      warning: {
+        50: '#fffbeb',
+        500: '#f59e0b',
+        600: '#d97706',
+        700: '#b45309'
+      },
+      info: {
+        50: '#f0f9ff',
+        500: '#3b82f6',
+        600: '#2563eb',
+        700: '#1d4ed8'
+      }
+    },
+    // Neutral Colors
+    neutral: {
+      50: '#fafafa',
+      100: '#f5f5f5',
+      200: '#f0f0f0',
+      300: '#e5e5e5',
+      400: '#d4d4d4',
+      500: '#a3a3a3',
+      600: '#737373',
+      700: '#404040',
+      800: '#262626',
+      900: '#171717',
+      950: '#0a0a0a'
+    }
+  },
+  spacing: {
+    0: '0',
+    1: '0.25rem',   // 4px
+    2: '0.5rem',    // 8px
+    3: '0.75rem',   // 12px
+    4: '1rem',      // 16px
+    5: '1.25rem',   // 20px
+    6: '1.5rem',    // 24px
+    8: '2rem',      // 32px
+    10: '2.5rem',   // 40px
+    12: '3rem',     // 48px
+    16: '4rem',     // 64px
+    20: '5rem',     // 80px
+    24: '6rem'      // 96px
+  },
+  typography: {
+    fontFamily: {
+      sans: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif",
+      display: "'Poppins', 'Inter', sans-serif",
+      mono: "'SF Mono', 'Monaco', 'Inconsolata', monospace"
+    },
+    fontSize: {
+      xs: '0.75rem',    // 12px
+      sm: '0.875rem',   // 14px
+      base: '1rem',     // 16px
+      lg: '1.125rem',   // 18px
+      xl: '1.25rem',    // 20px
+      '2xl': '1.5rem',  // 24px
+      '3xl': '1.875rem', // 30px
+      '4xl': '2.25rem',  // 36px
+      '5xl': '3rem',     // 48px
+      '6xl': '3.75rem'   // 60px
+    },
+    fontWeight: {
+      normal: 400,
+      medium: 500,
+      semibold: 600,
+      bold: 700,
+      extrabold: 800
+    },
+    lineHeight: {
+      none: 1,
+      tight: 1.25,
+      snug: 1.375,
+      normal: 1.5,
+      relaxed: 1.625,
+      loose: 2
+    }
+  },
+  shadows: {
+    xs: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+    sm: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
+    md: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+    lg: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
+    xl: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
+    '2xl': '0 25px 50px -12px rgb(0 0 0 / 0.25)'
+  },
+  borderRadius: {
+    none: '0',
+    sm: '0.125rem',   // 2px
+    md: '0.375rem',   // 6px
+    lg: '0.5rem',     // 8px
+    xl: '0.75rem',    // 12px
+    '2xl': '1rem',    // 16px
+    '3xl': '1.5rem',  // 24px
+    full: '9999px'
+  },
+  motion: {
+    duration: {
+      instant: '75ms',
+      fast: '150ms',
+      normal: '200ms',
+      slow: '300ms'
+    },
+    easing: {
+      entrance: 'cubic-bezier(0, 0, 0.2, 1)',
+      exit: 'cubic-bezier(0.4, 0, 1, 1)',
+      standard: 'cubic-bezier(0.4, 0, 0.2, 1)'
+    }
+  },
+  breakpoints: {
+    sm: '480px',
+    md: '768px',
+    lg: '1024px',
+    xl: '1280px',
+    '2xl': '1536px'
+  }
+};
+
+// CSS Custom Properties export
+export const cssVariables = {
+  '--color-brand-primary': tokens.colors.brand.primary[500],
+  '--color-brand-primary-hover': tokens.colors.brand.primary[600],
+  '--spacing-4': tokens.spacing[4],
+  '--spacing-6': tokens.spacing[6],
+  // ... all semantic tokens
+};
+
+// Usage in React/Vue
+export const useDesignTokens = () => tokens;
+```
+
+#### JSON Export
+
+```json
+{
+  "colors": {
+    "brand": {
+      "primary": {
+        "500": "#10c96b",
+        "600": "#0ab85a",
+        "700": "#089949"
+      }
+    }
+  },
+  "spacing": {
+    "1": "0.25rem",
+    "2": "0.5rem",
+    "4": "1rem"
+  }
+}
+```
+
+#### Figma Plugin Integration
+
+```javascript
+// figma-tokens.js
+// Import tokens and sync to Figma
+import { tokens } from './design-tokens.js';
+
+// Sync colors to Figma
+Object.entries(tokens.colors.brand.primary).forEach(([shade, value]) => {
+  figma.createPaintStyle({
+    name: `Brand/Primary/${shade}`,
+    paints: [{ type: 'SOLID', color: hexToRgb(value) }]
+  });
+});
+```
+
+#### Usage Examples
+
+**React:**
+```javascript
+import { tokens } from './design-tokens.js';
+
+const Button = ({ children }) => (
+  <button style={{
+    backgroundColor: tokens.colors.brand.primary[500],
+    padding: tokens.spacing[4],
+    borderRadius: tokens.borderRadius.lg
+  }}>
+    {children}
+  </button>
+);
+```
+
+**Vue:**
+```vue
+<template>
+  <button :style="buttonStyle">{{ label }}</button>
+</template>
+
+<script>
+import { tokens } from './design-tokens.js';
+
+export default {
+  computed: {
+    buttonStyle() {
+      return {
+        backgroundColor: tokens.colors.brand.primary[500],
+        padding: tokens.spacing[4]
+      };
+    }
+  }
+};
+</script>
+```
+
+### Complete Token Reference
+
+Quick reference table of all available design tokens:
+
+| Category | Token | Value | Usage |
+|----------|-------|-------|-------|
+| **Colors - Brand** | `--color-brand-primary` | `#10c96b` | Primary buttons, links, accents |
+| | `--color-brand-primary-hover` | `#0ab85a` | Hover states |
+| | `--color-brand-secondary` | `#89c300` | Secondary actions |
+| | `--color-brand-tertiary` | `#cc9610` | Tertiary accents |
+| **Colors - Status** | `--color-status-success` | `#22c55e` | Success states |
+| | `--color-status-error` | `#ef4444` | Error states |
+| | `--color-status-warning` | `#f59e0b` | Warning states |
+| | `--color-status-info` | `#3b82f6` | Info states |
+| **Spacing** | `--space-1` | `4px` | Tight spacing |
+| | `--space-2` | `8px` | Small spacing |
+| | `--space-4` | `16px` | Standard spacing |
+| | `--space-6` | `24px` | Medium spacing |
+| | `--space-8` | `32px` | Large spacing |
+| **Typography** | `--font-size-base` | `16px` | Body text |
+| | `--font-size-lg` | `18px` | Large body |
+| | `--font-size-xl` | `20px` | Small headings |
+| | `--font-weight-semibold` | `600` | Headings |
+| **Shadows** | `--shadow-sm` | `0 1px 3px...` | Subtle elevation |
+| | `--shadow-md` | `0 4px 6px...` | Standard elevation |
+| | `--shadow-lg` | `0 10px 15px...` | High elevation |
+| **Border Radius** | `--radius-sm` | `6px` | Small radius |
+| | `--radius-lg` | `12px` | Standard radius |
+| | `--radius-xl` | `16px` | Large radius |
+
+*See Design Tokens Export section for complete token list.*
+
 ## Typography System
 
 ### Font Families
@@ -170,22 +466,256 @@ Our color system uses a **green theme palette** that balances brand identity wit
 
 ## Spacing & Layout
 
-### 8-Point Grid System
-All spacing follows an 8-point grid for visual consistency and easier development:
+### Spacing Scale System
+The design system uses a comprehensive spacing scale based on a 4px base unit for fine-grained control:
+
+```css
+:root {
+  --space-0: 0;
+  --space-1: 0.25rem;   /* 4px */
+  --space-2: 0.5rem;    /* 8px */
+  --space-3: 0.75rem;   /* 12px */
+  --space-4: 1rem;      /* 16px */
+  --space-5: 1.25rem;   /* 20px */
+  --space-6: 1.5rem;    /* 24px */
+  --space-8: 2rem;      /* 32px */
+  --space-10: 2.5rem;   /* 40px */
+  --space-12: 3rem;     /* 48px */
+  --space-16: 4rem;     /* 64px */
+  --space-20: 5rem;     /* 80px */
+  --space-24: 6rem;     /* 96px */
+}
+```
+
+### Primitive Spacing Tokens (8-Point Grid)
+For backward compatibility and semantic usage, primitive tokens are also available:
 
 ```css
 --primitive-space-8: 0.5rem;    /* 8px */
 --primitive-space-16: 1rem;     /* 16px */
 --primitive-space-24: 1.5rem;   /* 24px */
 --primitive-space-32: 2rem;     /* 32px */
+--primitive-space-48: 3rem;     /* 48px */
 ```
 
-### Semantic Spacing
+### Semantic Spacing Tokens
+Semantic tokens provide context-aware spacing for components and layouts:
+
 ```css
---spacing-component-xs: var(--primitive-space-8);
---spacing-component-md: var(--primitive-space-16);
---spacing-layout-lg: var(--primitive-space-48);
+/* Component Spacing */
+--spacing-component-xs: var(--primitive-space-12);    /* 12px */
+--spacing-component-sm: var(--primitive-space-16);   /* 16px */
+--spacing-component-md: var(--primitive-space-24);   /* 24px */
+--spacing-component-lg: var(--primitive-space-32);   /* 32px */
+--spacing-component-xl: var(--primitive-space-40);   /* 40px */
+
+/* Layout Spacing */
+--spacing-layout-xs: var(--primitive-space-24);      /* 24px */
+--spacing-layout-sm: var(--primitive-space-32);      /* 32px */
+--spacing-layout-md: var(--primitive-space-40);      /* 40px */
+--spacing-layout-lg: var(--primitive-space-56);      /* 56px */
+--spacing-layout-xl: var(--primitive-space-64);      /* 64px */
 ```
+
+### Layout Components
+
+#### Layout Container
+Use `.layout-container` for consistent page-level spacing:
+
+```css
+.layout-container {
+  display: grid;
+  gap: var(--space-6);        /* 24px gap */
+  padding: var(--space-6);    /* 24px padding */
+}
+```
+
+#### Dashboard Grid
+Responsive grid layout for dashboard components:
+
+```css
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--space-6);        /* 24px gap between cards */
+}
+```
+
+#### Bento Grid Layout
+A modern asymmetric grid layout inspired by bento boxes, allowing cards to span multiple columns/rows for visual hierarchy and better space utilization:
+
+```css
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);  /* 12-column grid */
+  gap: var(--space-6);                      /* 24px gap */
+  grid-auto-rows: minmax(200px, auto);      /* Minimum row height */
+}
+
+/* Card span utilities */
+.bento-card-span-4 { grid-column: span 4; }   /* 1/3 width */
+.bento-card-span-6 { grid-column: span 6; }   /* 1/2 width */
+.bento-card-span-8 { grid-column: span 8; }   /* 2/3 width */
+.bento-card-span-12 { grid-column: span 12; } /* Full width */
+
+.bento-card-row-span-2 { grid-row: span 2; }  /* Double height */
+.bento-card-row-span-3 { grid-row: span 3; }  /* Triple height */
+```
+
+**Why Bento Grid?**
+- **Visual Hierarchy**: Larger cards naturally draw attention to important content
+- **Space Efficiency**: Better use of available screen space
+- **Modern Aesthetic**: Creates engaging, dynamic layouts (popularized by Apple, Notion, etc.)
+- **Content Flexibility**: Accommodates different content types (charts, stats, lists) with appropriate sizing
+
+**When to Use Bento Grid:**
+- ✅ Dashboard overview pages with mixed content types
+- ✅ When you need to emphasize certain metrics or actions
+- ✅ Content-heavy pages where visual hierarchy matters
+- ✅ Modern, engaging user experiences
+
+**When to Use Uniform Grid:**
+- ✅ Lists of similar items (roster, schedule items)
+- ✅ When all content has equal importance
+- ✅ Simpler, more predictable layouts
+- ✅ Mobile-first designs where space is limited
+
+**Why Bento Grid Wasn't Originally Included:**
+The design system initially focused on uniform grids for simplicity and consistency. Uniform grids are:
+- **Easier to implement**: No need to calculate spans or manage complex layouts
+- **More predictable**: Developers know exactly how items will flow
+- **Better for mobile**: Uniform grids naturally stack on small screens
+- **Simpler maintenance**: Less CSS to maintain and fewer edge cases
+
+However, bento grids are now included as an **optional enhancement** for dashboards and content-heavy pages where visual hierarchy and modern aesthetics are priorities. Both approaches coexist in the design system, allowing developers to choose the best layout for their specific use case.
+
+#### Card Component
+Standardized card spacing:
+
+```css
+.card {
+  background: var(--color-surface);
+  border-radius: 12px;
+  padding: var(--space-5);    /* 20px padding */
+  box-shadow: var(--shadow-small);
+}
+```
+
+#### Section Spacing
+Consistent vertical spacing for content sections:
+
+```css
+.section {
+  margin-top: var(--space-6);  /* 24px top margin */
+}
+
+h2 {
+  margin-bottom: var(--space-3);  /* 12px bottom margin */
+}
+```
+
+### Usage Examples
+
+#### Uniform Grid Layout
+```html
+<!-- Layout Container with Dashboard Grid -->
+<div class="layout-container">
+  <div class="dashboard-grid">
+    <div class="card">Next Session</div>
+    <div class="card">Training Progress</div>
+    <div class="card">Weekly Schedule</div>
+  </div>
+</div>
+```
+
+#### Bento Grid Layout
+```html
+<!-- Bento Grid with varied card sizes -->
+<div class="layout-container">
+  <div class="bento-grid">
+    <!-- Hero card - spans full width -->
+    <div class="card bento-card-span-12">
+      <h2>Today's Training Session</h2>
+      <!-- Primary content -->
+    </div>
+    
+    <!-- Large metric card - spans 2/3 width -->
+    <div class="card bento-card-span-8 bento-card-row-span-2">
+      <h3>Performance Chart</h3>
+      <!-- Chart content -->
+    </div>
+    
+    <!-- Small metric cards - span 1/3 width -->
+    <div class="card bento-card-span-4">
+      <div class="metric-value">85%</div>
+      <div class="metric-label">Completion Rate</div>
+    </div>
+    
+    <div class="card bento-card-span-4">
+      <div class="metric-value">12</div>
+      <div class="metric-label">Sessions This Week</div>
+    </div>
+    
+    <!-- Medium card - spans half width -->
+    <div class="card bento-card-span-6">
+      <h3>Upcoming Events</h3>
+      <!-- Event list -->
+    </div>
+    
+    <div class="card bento-card-span-6">
+      <h3>Quick Actions</h3>
+      <!-- Action buttons -->
+    </div>
+  </div>
+</div>
+```
+
+#### Section with Consistent Spacing
+```html
+<section class="section">
+  <h2>Performance Metrics</h2>
+  <div class="card">
+    <!-- Card content -->
+  </div>
+</section>
+```
+
+#### Responsive Bento Grid
+```css
+/* Desktop: Full bento grid */
+.bento-grid {
+  grid-template-columns: repeat(12, 1fr);
+}
+
+/* Tablet: 6-column grid */
+@media (max-width: 1024px) {
+  .bento-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+  .bento-card-span-8 { grid-column: span 6; }  /* Full width */
+  .bento-card-span-4 { grid-column: span 3; }   /* Half width */
+}
+
+/* Mobile: Single column */
+@media (max-width: 768px) {
+  .bento-grid {
+    grid-template-columns: 1fr;
+  }
+  .bento-card-span-4,
+  .bento-card-span-6,
+  .bento-card-span-8,
+  .bento-card-span-12 {
+    grid-column: span 1;  /* All cards full width */
+  }
+}
+```
+
+### Spacing Guidelines
+- **Component Padding**: Use `--space-4` (16px) to `--space-6` (24px) for card padding
+- **Component Gaps**: Use `--space-4` (16px) to `--space-6` (24px) for gaps between related elements
+- **Layout Gaps**: Use `--space-6` (24px) to `--space-8` (32px) for grid gaps
+- **Section Spacing**: Use `--space-6` (24px) to `--space-12` (48px) for vertical section spacing
+- **Typography Spacing**: Use `--space-2` (8px) to `--space-4` (16px) for heading margins
 
 ### Responsive Breakpoints
 Mobile-first approach with comprehensive device coverage:
@@ -205,6 +735,8 @@ Mobile-first approach with comprehensive device coverage:
 ## Component Library
 
 ### Button System
+**Status**: ✅ **Stable** - Production-ready
+
 Comprehensive button variants for all use cases:
 
 #### Variants
@@ -227,6 +759,23 @@ Comprehensive button variants for all use cases:
 - **Focus**: Keyboard navigation indicator
 - **Disabled**: Non-interactive state
 
+#### Component API
+
+| Property | Type | Default | Required | Description |
+|----------|------|---------|----------|-------------|
+| `btn-primary` | class | - | No | Primary button variant (high emphasis) |
+| `btn-secondary` | class | - | No | Secondary button variant (medium emphasis) |
+| `btn-tertiary` | class | - | No | Tertiary button variant (low emphasis) |
+| `btn-ghost` | class | - | No | Ghost button variant (minimal visual weight) |
+| `btn-xs` | class | - | No | Extra small size (28px height) |
+| `btn-sm` | class | - | No | Small size (36px height) |
+| `btn-md` | class | `btn-md` | No | Medium size (44px height) |
+| `btn-lg` | class | - | No | Large size (52px height) |
+| `btn-xl` | class | - | No | Extra large size (60px height) |
+| `disabled` | attribute | false | No | Disables button interaction |
+
+#### Usage Examples
+
 ```html
 <!-- Primary action button -->
 <button class="btn btn-primary btn-md">Start Training</button>
@@ -236,10 +785,49 @@ Comprehensive button variants for all use cases:
 
 <!-- Tertiary action -->
 <button class="btn btn-tertiary btn-sm">Learn More</button>
+
+<!-- Disabled button -->
+<button class="btn btn-primary btn-md" disabled>Cannot Click</button>
+
+<!-- Button with icon -->
+<button class="btn btn-primary btn-md">
+  <i data-lucide="play" style="width: 16px; height: 16px;"></i>
+  Start Training
+</button>
 ```
 
+#### Do's and Don'ts
+
+✅ **Do:**
+- Use primary buttons for the main action on a page
+- Use secondary buttons for supporting actions
+- Use consistent button sizes within a group
+- Include icons for clarity when appropriate
+
+❌ **Don't:**
+- Use multiple primary buttons on the same page
+- Use buttons for navigation (use links instead)
+- Make buttons too small for touch targets (< 44px)
+- Disable buttons without explaining why
+
 ### Form Components
+**Status**: ✅ **Stable** - Production-ready
+
 Complete form system with validation states:
+
+#### Component API
+
+| Property | Type | Default | Required | Description |
+|----------|------|---------|----------|-------------|
+| `form-group` | class | - | Yes | Container for form field |
+| `form-label` | class | - | Yes | Label for form input |
+| `form-input` | class | - | Yes | Text input field |
+| `form-select` | class | - | No | Select dropdown |
+| `form-textarea` | class | - | No | Textarea field |
+| `required` | class | - | No | Marks field as required |
+| `error` | class | - | No | Error state styling |
+| `success` | class | - | No | Success state styling |
+| `disabled` | attribute | false | No | Disables input |
 
 #### Input Types
 - Text inputs with validation states
@@ -255,13 +843,261 @@ Complete form system with validation states:
 - **Success**: Valid input with green indicators
 - **Disabled**: Non-interactive state
 
+#### Basic Form Example
+
 ```html
 <!-- Form group with error state -->
 <div class="form-group">
-  <label class="form-label required">Email Address</label>
-  <input type="email" class="form-input error" value="invalid-email">
-  <div class="form-error">Please enter a valid email address</div>
+  <label class="form-label required" for="email">Email Address</label>
+  <input type="email" id="email" class="form-input error" value="invalid-email" aria-invalid="true" aria-describedby="email-error">
+  <div class="form-error" id="email-error">Please enter a valid email address</div>
 </div>
+
+<!-- Form group with success state -->
+<div class="form-group">
+  <label class="form-label required" for="name">Full Name</label>
+  <input type="text" id="name" class="form-input success" value="John Smith" aria-invalid="false">
+  <div class="form-success">✓ Valid</div>
+</div>
+```
+
+#### Date/Time Picker
+**Status**: ⏳ **Preview** - Feature-complete, may have minor changes
+
+```html
+<!-- Date Picker -->
+<div class="form-group">
+  <label class="form-label required" for="training-date">Training Date</label>
+  <input type="date" id="training-date" class="form-input form-date" min="2025-01-01" required>
+  <div class="form-hint">Select a future date for training session</div>
+</div>
+
+<!-- Time Picker -->
+<div class="form-group">
+  <label class="form-label required" for="training-time">Training Time</label>
+  <input type="time" id="training-time" class="form-input form-time" required>
+</div>
+
+<!-- DateTime Picker (Combined) -->
+<div class="form-group">
+  <label class="form-label required" for="session-datetime">Session Date & Time</label>
+  <input type="datetime-local" id="session-datetime" class="form-input form-datetime" required>
+</div>
+```
+
+**JavaScript Implementation:**
+```javascript
+// Date validation example
+const dateInput = document.getElementById('training-date');
+dateInput.addEventListener('change', (e) => {
+  const selectedDate = new Date(e.target.value);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  if (selectedDate < today) {
+    showFieldError(dateInput, 'Training date cannot be in the past');
+  } else {
+    clearFieldError(dateInput);
+  }
+});
+```
+
+#### Dropdown with Search
+**Status**: ⏳ **Preview** - Feature-complete, may have minor changes
+
+```html
+<div class="form-group">
+  <label class="form-label required" for="athlete-select">Select Athlete</label>
+  <div class="select-wrapper">
+    <input type="text" class="form-input form-select-search" id="athlete-search" placeholder="Search athletes..." autocomplete="off">
+    <select id="athlete-select" class="form-select" size="5" style="display: none;">
+      <option value="">-- Select an athlete --</option>
+      <option value="1">John Smith</option>
+      <option value="2">Sarah Johnson</option>
+      <option value="3">Mike Davis</option>
+      <!-- More options -->
+    </select>
+    <div class="select-dropdown" id="athlete-dropdown" role="listbox" aria-label="Athlete selection">
+      <!-- Populated dynamically -->
+    </div>
+  </div>
+</div>
+```
+
+**JavaScript Implementation:**
+```javascript
+class SearchableSelect {
+  constructor(inputId, selectId) {
+    this.input = document.getElementById(inputId);
+    this.select = document.getElementById(selectId);
+    this.dropdown = document.getElementById(inputId.replace('-search', '-dropdown'));
+    this.options = Array.from(this.select.options);
+    this.filteredOptions = this.options;
+    
+    this.init();
+  }
+  
+  init() {
+    this.input.addEventListener('input', (e) => this.filter(e.target.value));
+    this.input.addEventListener('focus', () => this.showDropdown());
+    this.input.addEventListener('blur', () => setTimeout(() => this.hideDropdown(), 200));
+    
+    this.renderDropdown();
+  }
+  
+  filter(query) {
+    const lowerQuery = query.toLowerCase();
+    this.filteredOptions = this.options.filter(opt => 
+      opt.text.toLowerCase().includes(lowerQuery)
+    );
+    this.renderDropdown();
+  }
+  
+  renderDropdown() {
+    this.dropdown.innerHTML = this.filteredOptions
+      .map(opt => `
+        <div class="select-option" 
+             role="option" 
+             data-value="${opt.value}"
+             tabindex="0">
+          ${opt.text}
+        </div>
+      `).join('');
+    
+    // Add click handlers
+    this.dropdown.querySelectorAll('.select-option').forEach(option => {
+      option.addEventListener('click', () => this.selectOption(option.dataset.value));
+      option.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          this.selectOption(option.dataset.value);
+        }
+      });
+    });
+  }
+  
+  selectOption(value) {
+    const option = this.options.find(opt => opt.value === value);
+    if (option) {
+      this.input.value = option.text;
+      this.select.value = value;
+      this.hideDropdown();
+      this.input.dispatchEvent(new Event('change'));
+    }
+  }
+  
+  showDropdown() {
+    this.dropdown.style.display = 'block';
+  }
+  
+  hideDropdown() {
+    this.dropdown.style.display = 'none';
+  }
+}
+
+// Initialize
+new SearchableSelect('athlete-search', 'athlete-select');
+```
+
+#### Multiselect Component
+**Status**: ⏳ **Preview** - Feature-complete, may have minor changes
+
+```html
+<div class="form-group">
+  <label class="form-label required" for="athletes-multiselect">Select Athletes</label>
+  <div class="multiselect-wrapper">
+    <div class="multiselect-input" id="athletes-multiselect" role="combobox" aria-expanded="false" aria-haspopup="listbox" tabindex="0">
+      <div class="multiselect-tags">
+        <!-- Selected tags appear here -->
+      </div>
+      <input type="text" class="multiselect-search" placeholder="Search athletes..." autocomplete="off">
+    </div>
+    <div class="multiselect-dropdown" role="listbox" aria-label="Athlete selection">
+      <!-- Options appear here -->
+    </div>
+  </div>
+</div>
+```
+
+#### File Upload
+**Status**: ⏳ **Preview** - Feature-complete, may have minor changes
+
+```html
+<div class="form-group">
+  <label class="form-label" for="video-upload">Upload Training Video</label>
+  <div class="file-upload-wrapper">
+    <input type="file" id="video-upload" class="file-input" accept="video/*" multiple>
+    <label for="video-upload" class="file-upload-label">
+      <i data-lucide="upload" style="width: 24px; height: 24px;"></i>
+      <span>Choose files or drag and drop</span>
+      <span class="file-upload-hint">MP4, MOV up to 100MB</span>
+    </label>
+    <div class="file-upload-list">
+      <!-- Uploaded files appear here -->
+    </div>
+  </div>
+</div>
+```
+
+**JavaScript Implementation:**
+```javascript
+const fileInput = document.getElementById('video-upload');
+const fileList = document.querySelector('.file-upload-list');
+
+fileInput.addEventListener('change', (e) => {
+  Array.from(e.target.files).forEach(file => {
+    const fileItem = createFileItem(file);
+    fileList.appendChild(fileItem);
+    uploadFile(file, fileItem);
+  });
+});
+
+function createFileItem(file) {
+  const item = document.createElement('div');
+  item.className = 'file-item';
+  item.innerHTML = `
+    <div class="file-info">
+      <i data-lucide="file-video"></i>
+      <span class="file-name">${file.name}</span>
+      <span class="file-size">${formatFileSize(file.size)}</span>
+    </div>
+    <div class="file-progress">
+      <div class="file-progress-bar" style="width: 0%"></div>
+    </div>
+    <button class="file-remove" aria-label="Remove file">
+      <i data-lucide="x"></i>
+    </button>
+  `;
+  return item;
+}
+
+function uploadFile(file, item) {
+  const formData = new FormData();
+  formData.append('video', file);
+  
+  const xhr = new XMLHttpRequest();
+  const progressBar = item.querySelector('.file-progress-bar');
+  
+  xhr.upload.addEventListener('progress', (e) => {
+    if (e.lengthComputable) {
+      const percent = (e.loaded / e.total) * 100;
+      progressBar.style.width = `${percent}%`;
+    }
+  });
+  
+  xhr.addEventListener('load', () => {
+    item.classList.add('file-uploaded');
+    progressBar.style.width = '100%';
+  });
+  
+  xhr.addEventListener('error', () => {
+    item.classList.add('file-error');
+    showToast.error('Failed to upload file');
+  });
+  
+  xhr.open('POST', '/api/upload');
+  xhr.send(formData);
+}
 ```
 
 ### Card System
@@ -295,20 +1131,1876 @@ Status indicators and labels:
 ```
 
 ### Modal System
-Accessible dialog components:
+**Status**: ✅ **Stable** - Production-ready
+
+Accessible dialog components for confirmations, forms, and content display.
+
+#### Component API
+
+| Property | Type | Default | Required | Description |
+|----------|------|---------|----------|-------------|
+| `modal-overlay` | class | - | Yes | Modal backdrop/overlay |
+| `modal-content` | class | - | Yes | Modal dialog container |
+| `modal-header` | class | - | No | Modal header section |
+| `modal-body` | class | - | No | Modal body content |
+| `modal-footer` | class | - | No | Modal footer actions |
+| `modal-open` | class | - | No | Applied when modal is visible |
+| `data-modal` | attribute | - | No | Modal identifier |
+
+#### HTML Structure
 
 ```html
-<div class="modal-overlay">
+<div class="modal-overlay" id="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-hidden="true">
   <div class="modal-content">
     <div class="modal-header">
-      <h2>Confirm Action</h2>
+      <h2 id="modal-title">Confirm Action</h2>
+      <button class="modal-close" aria-label="Close modal">
+        <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+      </button>
     </div>
     <div class="modal-body">
       <p>Are you sure you want to delete this training session?</p>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-secondary">Cancel</button>
+      <button class="btn btn-secondary" data-modal-close>Cancel</button>
       <button class="btn btn-error">Delete</button>
+    </div>
+  </div>
+</div>
+```
+
+#### JavaScript Implementation
+
+```javascript
+class Modal {
+  constructor(modalId) {
+    this.modal = document.getElementById(modalId);
+    this.overlay = this.modal;
+    this.content = this.modal.querySelector('.modal-content');
+    this.closeButtons = this.modal.querySelectorAll('.modal-close, [data-modal-close]');
+    this.previouslyFocused = null;
+    this.focusableElements = null;
+    
+    this.init();
+  }
+  
+  init() {
+    // Close button handlers
+    this.closeButtons.forEach(btn => {
+      btn.addEventListener('click', () => this.close());
+    });
+    
+    // Overlay click handler
+    this.overlay.addEventListener('click', (e) => {
+      if (e.target === this.overlay) {
+        this.close();
+      }
+    });
+    
+    // Escape key handler
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && this.isOpen()) {
+        this.close();
+      }
+    });
+    
+    // Trap focus within modal
+    this.content.addEventListener('keydown', (e) => {
+      if (e.key === 'Tab') {
+        this.trapFocus(e);
+      }
+    });
+  }
+  
+  open() {
+    this.modal.classList.add('modal-open');
+    this.modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    
+    // Store previously focused element
+    this.previouslyFocused = document.activeElement;
+    
+    // Get focusable elements
+    this.focusableElements = this.getFocusableElements();
+    
+    // Focus first element
+    if (this.focusableElements.length > 0) {
+      this.focusableElements[0].focus();
+    }
+  }
+  
+  close() {
+    this.modal.classList.remove('modal-open');
+    this.modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    
+    // Return focus to previously focused element
+    if (this.previouslyFocused) {
+      this.previouslyFocused.focus();
+    }
+  }
+  
+  isOpen() {
+    return this.modal.classList.contains('modal-open');
+  }
+  
+  getFocusableElements() {
+    const selector = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+    return Array.from(this.content.querySelectorAll(selector)).filter(
+      el => !el.disabled && el.offsetParent !== null
+    );
+  }
+  
+  trapFocus(e) {
+    const firstElement = this.focusableElements[0];
+    const lastElement = this.focusableElements[this.focusableElements.length - 1];
+    
+    if (e.shiftKey) {
+      // Shift + Tab
+      if (document.activeElement === firstElement) {
+        e.preventDefault();
+        lastElement.focus();
+      }
+    } else {
+      // Tab
+      if (document.activeElement === lastElement) {
+        e.preventDefault();
+        firstElement.focus();
+      }
+    }
+  }
+}
+
+// Convenience functions
+window.openModal = (modalId) => {
+  const modal = new Modal(modalId);
+  modal.open();
+  return modal;
+};
+
+window.closeModal = (modalId) => {
+  const modal = document.getElementById(modalId);
+  if (modal) {
+    const modalInstance = new Modal(modalId);
+    modalInstance.close();
+  }
+};
+
+// Usage:
+// openModal('confirm-modal');
+// closeModal('confirm-modal');
+```
+
+#### CSS Styles
+
+```css
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s;
+}
+
+.modal-overlay.modal-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-content {
+  background: var(--surface-primary);
+  border-radius: var(--radius-component-lg);
+  box-shadow: var(--shadow-xl);
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  transform: scale(0.95);
+  transition: transform 0.3s;
+}
+
+.modal-overlay.modal-open .modal-content {
+  transform: scale(1);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-6);
+  border-bottom: 1px solid var(--color-border-secondary);
+}
+
+.modal-body {
+  padding: var(--space-6);
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  border-top: 1px solid var(--color-border-secondary);
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  padding: var(--space-2);
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.modal-close:hover {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-overlay,
+  .modal-content {
+    transition: none;
+  }
+}
+```
+
+### Toast Notifications
+**Status**: ✅ **Stable** - Production-ready
+
+Temporary notifications for user feedback. Positioned bottom-right by default.
+
+#### Component API
+
+| Property | Type | Default | Required | Description |
+|----------|------|---------|----------|-------------|
+| `toast-success` | class | - | No | Success toast variant (green) |
+| `toast-error` | class | - | No | Error toast variant (red) |
+| `toast-warning` | class | - | No | Warning toast variant (amber) |
+| `toast-info` | class | - | No | Info toast variant (blue/gray) |
+| `role` | attribute | - | Yes | `status` for success/info, `alert` for errors |
+| `aria-live` | attribute | - | Yes | `polite` for success/info, `assertive` for errors |
+
+#### HTML Structure
+
+```html
+<!-- Success Toast -->
+<div class="toast toast-success" role="status" aria-live="polite">
+  <div class="toast-content">
+    <i data-lucide="check-circle" style="width: 20px; height: 20px;"></i>
+    <span>Training session saved successfully</span>
+  </div>
+  <button class="toast-close" aria-label="Close notification">
+    <i data-lucide="x" style="width: 16px; height: 16px;"></i>
+  </button>
+</div>
+
+<!-- Error Toast -->
+<div class="toast toast-error" role="alert" aria-live="assertive">
+  <div class="toast-content">
+    <i data-lucide="alert-circle" style="width: 20px; height: 20px;"></i>
+    <span>Failed to save changes. Please try again.</span>
+  </div>
+  <button class="toast-close" aria-label="Close notification">
+    <i data-lucide="x" style="width: 16px; height: 16px;"></i>
+  </button>
+</div>
+
+<!-- Toast with Action Button -->
+<div class="toast toast-success" role="status" aria-live="polite">
+  <div class="toast-content">
+    <i data-lucide="check-circle" style="width: 20px; height: 20px;"></i>
+    <span>Session deleted</span>
+  </div>
+  <button class="toast-action">Undo</button>
+  <button class="toast-close" aria-label="Close notification">
+    <i data-lucide="x" style="width: 16px; height: 16px;"></i>
+  </button>
+</div>
+```
+
+#### JavaScript Implementation
+
+```javascript
+/**
+ * Toast Notification Manager
+ * Handles showing, hiding, and managing toast notifications
+ */
+
+class ToastManager {
+  constructor() {
+    this.container = this.createContainer();
+    this.toasts = new Map();
+  }
+
+  createContainer() {
+    let container = document.querySelector('.toast-container');
+    if (!container) {
+      container = document.createElement('div');
+      container.className = 'toast-container';
+      container.setAttribute('aria-live', 'polite');
+      container.setAttribute('aria-atomic', 'true');
+      document.body.appendChild(container);
+    }
+    return container;
+  }
+
+  show(message, type = 'info', duration = null, action = null) {
+    const toastId = `toast-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const toast = this.createToast(toastId, message, type, action);
+    
+    this.container.appendChild(toast);
+    this.toasts.set(toastId, toast);
+
+    // Auto-dismiss logic
+    if (duration !== null) {
+      const autoDismiss = duration || this.getDefaultDuration(type);
+      setTimeout(() => this.hide(toastId), autoDismiss);
+    }
+
+    // Animate in
+    requestAnimationFrame(() => {
+      toast.classList.add('toast-visible');
+    });
+
+    return toastId;
+  }
+
+  createToast(id, message, type, action) {
+    const toast = document.createElement('div');
+    toast.id = id;
+    toast.className = `toast toast-${type}`;
+    toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
+    toast.setAttribute('aria-live', type === 'error' ? 'assertive' : 'polite');
+
+    const icons = {
+      success: 'check-circle',
+      error: 'alert-circle',
+      warning: 'alert-triangle',
+      info: 'info'
+    };
+
+    toast.innerHTML = `
+      <div class="toast-content">
+        <i data-lucide="${icons[type]}" style="width: 20px; height: 20px;"></i>
+        <span>${message}</span>
+      </div>
+      ${action ? `<button class="toast-action">${action.label}</button>` : ''}
+      <button class="toast-close" aria-label="Close notification">
+        <i data-lucide="x" style="width: 16px; height: 16px;"></i>
+      </button>
+    `;
+
+    // Initialize Lucide icons
+    if (window.lucide) {
+      lucide.createIcons();
+    }
+
+    // Close button handler
+    const closeBtn = toast.querySelector('.toast-close');
+    closeBtn.addEventListener('click', () => this.hide(id));
+
+    // Action button handler
+    if (action) {
+      const actionBtn = toast.querySelector('.toast-action');
+      actionBtn.addEventListener('click', () => {
+        if (action.callback) action.callback();
+        this.hide(id);
+      });
+    }
+
+    // Keyboard dismiss (Escape key)
+    toast.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        this.hide(id);
+      }
+    });
+
+    return toast;
+  }
+
+  hide(toastId) {
+    const toast = this.toasts.get(toastId);
+    if (!toast) return;
+
+    toast.classList.remove('toast-visible');
+    toast.classList.add('toast-hiding');
+
+    setTimeout(() => {
+      toast.remove();
+      this.toasts.delete(toastId);
+    }, 300); // Match CSS transition duration
+  }
+
+  getDefaultDuration(type) {
+    const durations = {
+      success: 3000,  // 3 seconds
+      info: 4000,     // 4 seconds
+      warning: 7000,  // 7 seconds
+      error: 0        // Don't auto-dismiss errors
+    };
+    return durations[type] || 4000;
+  }
+}
+
+// Initialize global toast manager
+const toast = new ToastManager();
+
+// Convenience functions
+window.showToast = {
+  success: (message, duration, action) => toast.show(message, 'success', duration, action),
+  error: (message, duration, action) => toast.show(message, 'error', duration, action),
+  warning: (message, duration, action) => toast.show(message, 'warning', duration, action),
+  info: (message, duration, action) => toast.show(message, 'info', duration, action)
+};
+
+// Usage examples:
+// showToast.success('Training session saved successfully');
+// showToast.error('Failed to save changes', null, { label: 'Retry', callback: () => retrySave() });
+// showToast.warning('Session will expire in 5 minutes', 7000);
+```
+
+#### CSS Styles
+
+```css
+.toast-container {
+  position: fixed;
+  bottom: var(--space-6);
+  right: var(--space-6);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  max-width: 400px;
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  background: var(--surface-primary);
+  border-radius: var(--radius-component-lg);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--color-border-secondary);
+  pointer-events: auto;
+  opacity: 0;
+  transform: translateX(100%);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.toast-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.toast-hiding {
+  opacity: 0;
+  transform: translateX(100%);
+}
+
+.toast-success {
+  border-left: 4px solid var(--color-status-success);
+}
+
+.toast-error {
+  border-left: 4px solid var(--color-status-error);
+}
+
+.toast-warning {
+  border-left: 4px solid var(--color-status-warning);
+}
+
+.toast-info {
+  border-left: 4px solid var(--color-status-info);
+}
+
+.toast-content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex: 1;
+}
+
+.toast-close {
+  background: none;
+  border: none;
+  padding: var(--space-1);
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.toast-close:hover {
+  opacity: 1;
+}
+
+.toast-action {
+  background: none;
+  border: none;
+  color: var(--color-brand-primary);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  padding: var(--space-2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    transition: opacity 0.01ms;
+  }
+}
+
+@media (max-width: 768px) {
+  .toast-container {
+    bottom: var(--space-4);
+    right: var(--space-4);
+    left: var(--space-4);
+    max-width: none;
+  }
+}
+```
+
+#### Properties
+- **Position**: Bottom-right (default), top-right, bottom-left, top-left
+- **Duration**: 3-5 seconds (success), 7-10 seconds (error), persistent (warning)
+- **Types**: `toast-success`, `toast-error`, `toast-warning`, `toast-info`
+- **Dismissible**: Auto-dismiss or manual close with × button
+- **Action Button**: Optional action button (Undo, View Details)
+
+#### Accessibility
+- `role="status"` for success/info, `role="alert"` for errors
+- Respects `prefers-reduced-motion` (no slide animations)
+- Keyboard dismissible with Escape key
+- Error messages don't auto-dismiss (user needs time to read)
+
+#### Do's and Don'ts
+
+✅ **Do:**
+- Use toasts for non-critical feedback (saves, updates, deletions)
+- Keep messages concise (one sentence)
+- Use appropriate duration (errors longer than success)
+- Provide action buttons for undoable actions
+
+❌ **Don't:**
+- Use toasts for critical errors (use alert banners instead)
+- Stack too many toasts (max 3 visible)
+- Use toasts for navigation or primary actions
+- Auto-dismiss error messages
+
+### Skeleton Screens
+Loading placeholders that show content structure while data loads.
+
+```html
+<!-- Card Skeleton -->
+<div class="skeleton-card">
+  <div class="skeleton-header">
+    <div class="skeleton-avatar"></div>
+    <div class="skeleton-text-group">
+      <div class="skeleton-line skeleton-line-title"></div>
+      <div class="skeleton-line skeleton-line-subtitle"></div>
+    </div>
+  </div>
+  <div class="skeleton-body">
+    <div class="skeleton-line"></div>
+    <div class="skeleton-line"></div>
+    <div class="skeleton-line skeleton-line-short"></div>
+  </div>
+</div>
+
+<!-- Table Skeleton -->
+<div class="skeleton-table">
+  <div class="skeleton-row">
+    <div class="skeleton-cell"></div>
+    <div class="skeleton-cell"></div>
+    <div class="skeleton-cell"></div>
+  </div>
+  <div class="skeleton-row">
+    <div class="skeleton-cell"></div>
+    <div class="skeleton-cell"></div>
+    <div class="skeleton-cell"></div>
+  </div>
+</div>
+```
+
+**Guidelines:**
+- ✅ Use for container components: cards, tables, lists, grids
+- ❌ Don't use for action components: buttons, inputs, modals
+- ✅ Match final layout dimensions to avoid Cumulative Layout Shift (CLS)
+- ✅ Animate shimmer left-to-right on mobile (omit on desktop if load < 2.5s)
+- ✅ Fade smoothly to actual content when loaded
+
+**CSS:**
+```css
+.skeleton-card {
+  background: var(--surface-secondary);
+  border-radius: var(--radius-component-lg);
+  padding: var(--space-6);
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton-shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-card {
+    animation: none;
+  }
+}
+```
+
+### Breadcrumbs
+Hierarchical navigation showing current location.
+
+```html
+<nav aria-label="Breadcrumb" class="breadcrumb">
+  <ol class="breadcrumb-list">
+    <li class="breadcrumb-item">
+      <a href="/dashboard">
+        <i data-lucide="home" style="width: 16px; height: 16px;"></i>
+        Dashboard
+      </a>
+    </li>
+    <li class="breadcrumb-item">
+      <a href="/roster">Roster</a>
+    </li>
+    <li class="breadcrumb-item">
+      <a href="/roster/john-smith">John Smith</a>
+    </li>
+    <li class="breadcrumb-item breadcrumb-current" aria-current="page">
+      Training History
+    </li>
+  </ol>
+</nav>
+```
+
+**Usage:**
+- Shows hierarchical location: Home > Roster > John Smith > Training History
+- Reduces cognitive load and "where am I?" confusion
+- Critical for navigation in complex training platform
+- Last item is current page (not clickable)
+
+### Pagination
+Navigate large datasets (rosters, exercise libraries, training history).
+
+```html
+<nav aria-label="Pagination" class="pagination">
+  <button class="pagination-btn pagination-prev" disabled aria-label="Previous page">
+    <i data-lucide="chevron-left" style="width: 16px; height: 16px;"></i>
+    Previous
+  </button>
+  
+  <div class="pagination-pages">
+    <button class="pagination-page pagination-active" aria-label="Page 1, current page">1</button>
+    <button class="pagination-page" aria-label="Page 2">2</button>
+    <button class="pagination-page" aria-label="Page 3">3</button>
+    <span class="pagination-ellipsis">...</span>
+    <button class="pagination-page" aria-label="Page 10">10</button>
+  </div>
+  
+  <select class="pagination-select" aria-label="Items per page">
+    <option value="10">10 per page</option>
+    <option value="25">25 per page</option>
+    <option value="50">50 per page</option>
+  </select>
+  
+  <button class="pagination-btn pagination-next" aria-label="Next page">
+    Next
+    <i data-lucide="chevron-right" style="width: 16px; height: 16px;"></i>
+  </button>
+</nav>
+```
+
+**Features:**
+- Items per page selector (10, 25, 50, 100)
+- Page numbers with ellipsis for large ranges
+- Previous/Next buttons
+- Current page highlighted
+- Mobile: Consider infinite scroll alternative
+
+### Alert Banner
+Persistent messages at top of page for system-wide information.
+
+```html
+<!-- Success Banner -->
+<div class="alert-banner alert-success" role="alert">
+  <div class="alert-content">
+    <i data-lucide="check-circle" style="width: 20px; height: 20px;"></i>
+    <div>
+      <strong>Profile updated successfully</strong>
+      <p>Your changes have been saved.</p>
+    </div>
+  </div>
+  <button class="alert-dismiss" aria-label="Dismiss alert">
+    <i data-lucide="x" style="width: 16px; height: 16px;"></i>
+  </button>
+</div>
+
+<!-- Warning Banner (Sticky) -->
+<div class="alert-banner alert-warning alert-sticky" role="alert">
+  <div class="alert-content">
+    <i data-lucide="alert-triangle" style="width: 20px; height: 20px;"></i>
+    <div>
+      <strong>System maintenance scheduled</strong>
+      <p>Training data will be unavailable on January 15th from 2-4 AM EST.</p>
+    </div>
+  </div>
+</div>
+```
+
+**Types:**
+- `alert-success`: Success confirmations
+- `alert-warning`: Important warnings
+- `alert-error`: Critical errors
+- `alert-info`: Informational messages
+- `alert-sticky`: Non-dismissible (for critical announcements)
+
+### Table/Data Grid
+**Status**: ⏳ **Preview** - Feature-complete, may have minor changes
+
+Sortable, filterable data table for displaying large datasets (rosters, performance metrics, training history).
+
+#### Component API
+
+| Property | Type | Default | Required | Description |
+|----------|------|---------|----------|-------------|
+| `data-table` | class | - | Yes | Main table container |
+| `data-table-sortable` | class | - | No | Enables column sorting |
+| `data-table-filterable` | class | - | No | Enables row filtering |
+| `data-table-selectable` | class | - | No | Enables row selection |
+| `sort-asc` | class | - | No | Ascending sort indicator |
+| `sort-desc` | class | - | No | Descending sort indicator |
+| `row-selected` | class | - | No | Selected row styling |
+
+#### HTML Structure
+
+```html
+<div class="data-table-wrapper">
+  <!-- Search/Filter Bar -->
+  <div class="data-table-toolbar">
+    <input type="search" class="data-table-search" placeholder="Search athletes..." aria-label="Search table">
+    <div class="data-table-actions">
+      <button class="btn btn-secondary btn-sm">Export</button>
+      <button class="btn btn-primary btn-sm">Add Athlete</button>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="data-table-container">
+    <table class="data-table data-table-sortable data-table-selectable" role="table">
+      <thead>
+        <tr>
+          <th>
+            <input type="checkbox" class="select-all" aria-label="Select all rows">
+          </th>
+          <th class="sortable" data-sort="name">
+            Name
+            <i data-lucide="chevron-up" class="sort-icon"></i>
+          </th>
+          <th class="sortable" data-sort="position">
+            Position
+            <i data-lucide="chevron-up" class="sort-icon"></i>
+          </th>
+          <th class="sortable" data-sort="sessions">
+            Sessions
+            <i data-lucide="chevron-up" class="sort-icon"></i>
+          </th>
+          <th class="sortable" data-sort="performance">
+            Performance
+            <i data-lucide="chevron-up" class="sort-icon"></i>
+          </th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr data-row-id="1">
+          <td>
+            <input type="checkbox" class="row-select" aria-label="Select row">
+          </td>
+          <td>John Smith</td>
+          <td>Quarterback</td>
+          <td>24</td>
+          <td>
+            <div class="performance-badge performance-high">85%</div>
+          </td>
+          <td>
+            <button class="btn-icon" aria-label="View details">
+              <i data-lucide="eye"></i>
+            </button>
+            <button class="btn-icon" aria-label="Edit">
+              <i data-lucide="edit"></i>
+            </button>
+          </td>
+        </tr>
+        <!-- More rows -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <nav class="pagination" aria-label="Table pagination">
+    <!-- Pagination component -->
+  </nav>
+</div>
+```
+
+#### JavaScript Implementation
+
+```javascript
+class DataTable {
+  constructor(tableId, options = {}) {
+    this.table = document.getElementById(tableId);
+    this.tbody = this.table.querySelector('tbody');
+    this.rows = Array.from(this.tbody.querySelectorAll('tr'));
+    this.sortColumn = null;
+    this.sortDirection = 'asc';
+    this.filteredRows = [...this.rows];
+    
+    this.init();
+  }
+  
+  init() {
+    // Sort functionality
+    this.table.querySelectorAll('.sortable').forEach(header => {
+      header.addEventListener('click', () => this.sort(header.dataset.sort));
+    });
+    
+    // Search functionality
+    const searchInput = document.querySelector('.data-table-search');
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => this.filter(e.target.value));
+    }
+    
+    // Row selection
+    this.table.querySelectorAll('.row-select').forEach(checkbox => {
+      checkbox.addEventListener('change', (e) => this.toggleRow(e.target));
+    });
+    
+    // Select all
+    const selectAll = this.table.querySelector('.select-all');
+    if (selectAll) {
+      selectAll.addEventListener('change', (e) => this.selectAllRows(e.target.checked));
+    }
+  }
+  
+  sort(column) {
+    if (this.sortColumn === column) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortColumn = column;
+      this.sortDirection = 'asc';
+    }
+    
+    this.filteredRows.sort((a, b) => {
+      const aValue = this.getCellValue(a, column);
+      const bValue = this.getCellValue(b, column);
+      
+      if (this.sortDirection === 'asc') {
+        return aValue > bValue ? 1 : -1;
+      } else {
+        return aValue < bValue ? 1 : -1;
+      }
+    });
+    
+    this.render();
+    this.updateSortIndicators();
+  }
+  
+  filter(query) {
+    const lowerQuery = query.toLowerCase();
+    this.filteredRows = this.rows.filter(row => {
+      const text = row.textContent.toLowerCase();
+      return text.includes(lowerQuery);
+    });
+    this.render();
+  }
+  
+  getCellValue(row, column) {
+    const index = Array.from(this.table.querySelectorAll('th')).findIndex(
+      th => th.dataset.sort === column
+    );
+    return row.cells[index]?.textContent.trim() || '';
+  }
+  
+  render() {
+    this.tbody.innerHTML = '';
+    this.filteredRows.forEach(row => {
+      this.tbody.appendChild(row.cloneNode(true));
+    });
+    
+    // Re-attach event listeners
+    this.table.querySelectorAll('.row-select').forEach(checkbox => {
+      checkbox.addEventListener('change', (e) => this.toggleRow(e.target));
+    });
+  }
+  
+  toggleRow(checkbox) {
+    const row = checkbox.closest('tr');
+    if (checkbox.checked) {
+      row.classList.add('row-selected');
+    } else {
+      row.classList.remove('row-selected');
+    }
+  }
+  
+  selectAllRows(checked) {
+    this.table.querySelectorAll('.row-select').forEach(checkbox => {
+      checkbox.checked = checked;
+      this.toggleRow(checkbox);
+    });
+  }
+  
+  updateSortIndicators() {
+    this.table.querySelectorAll('.sortable').forEach(header => {
+      const icon = header.querySelector('.sort-icon');
+      if (header.dataset.sort === this.sortColumn) {
+        icon.setAttribute('data-lucide', this.sortDirection === 'asc' ? 'chevron-up' : 'chevron-down');
+        header.classList.add(`sort-${this.sortDirection}`);
+      } else {
+        icon.setAttribute('data-lucide', 'chevron-up');
+        header.classList.remove('sort-asc', 'sort-desc');
+      }
+      if (window.lucide) lucide.createIcons();
+    });
+  }
+}
+
+// Initialize
+new DataTable('athletes-table');
+```
+
+#### Responsive Behavior
+
+```css
+@media (max-width: 768px) {
+  .data-table-container {
+    overflow-x: auto;
+  }
+  
+  .data-table {
+    min-width: 600px;
+  }
+  
+  /* Stack table cells on mobile */
+  .data-table tbody tr {
+    display: block;
+    border-bottom: 2px solid var(--color-border-secondary);
+    margin-bottom: var(--space-4);
+  }
+  
+  .data-table tbody td {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--space-2) var(--space-4);
+    border: none;
+  }
+  
+  .data-table tbody td::before {
+    content: attr(data-label);
+    font-weight: var(--font-weight-semibold);
+  }
+}
+```
+
+## Data Visualization Guidelines
+
+**Status**: ✅ **Stable** - Production-ready
+
+Comprehensive guidelines for displaying performance data, training metrics, and analytics in charts and graphs.
+
+### Chart Type Selection Guide
+
+#### When to Use Each Chart Type
+
+| Chart Type | Use Case | Example |
+|------------|----------|---------|
+| **Line Chart** | Progress over time | Strength gains over 12 weeks, speed improvements |
+| **Bar Chart** | Comparing categories | Performance across athletes, exercise comparisons |
+| **Radar/Spider Chart** | Multidimensional assessment | Speed, strength, agility, endurance profile |
+| **Heat Map** | Intensity patterns | Training intensity over weeks/months |
+| **Gauge Chart** | Goal progress | Percentage to goal, completion rate |
+| **Area Chart** | Cumulative data | Total training hours over time |
+| **Scatter Plot** | Correlation analysis | Relationship between two metrics |
+
+### Color Palette for Data Visualization
+
+```css
+:root {
+  /* Primary Data Colors - Green Theme */
+  --chart-primary: #10c96b;        /* Main metric */
+  --chart-secondary: #89c300;      /* Secondary metric */
+  --chart-tertiary: #cc9610;       /* Tertiary metric */
+  
+  /* Extended Palette (8 colors for multiple series) */
+  --chart-color-1: #10c96b;       /* Primary green */
+  --chart-color-2: #89c300;       /* Lime green */
+  --chart-color-3: #cc9610;       /* Gold */
+  --chart-color-4: #0ea5e9;       /* Blue */
+  --chart-color-5: #8b5cf6;       /* Purple */
+  --chart-color-6: #f59e0b;       /* Amber */
+  --chart-color-7: #ef4444;       /* Red */
+  --chart-color-8: #64748b;       /* Slate */
+  
+  /* Semantic Colors */
+  --chart-success: #22c55e;        /* Positive metrics */
+  --chart-warning: #f59e0b;        /* Caution metrics */
+  --chart-error: #ef4444;          /* Negative metrics */
+  --chart-info: #0ea5e9;           /* Informational metrics */
+  
+  /* Background Colors */
+  --chart-bg-primary: var(--surface-primary);
+  --chart-bg-secondary: var(--surface-secondary);
+  --chart-grid: var(--color-border-secondary);
+  --chart-text: var(--color-text-primary);
+  --chart-text-secondary: var(--color-text-secondary);
+}
+```
+
+**Accessibility Notes:**
+- All colors meet WCAG AA contrast ratios (4.5:1 minimum)
+- Colorblind-friendly palette (tested with Color Oracle)
+- Patterns/textures available as alternative to color differentiation
+
+### Chart Anatomy Specifications
+
+#### Standard Chart Structure
+
+```html
+<div class="chart-card">
+  <div class="chart-header">
+    <h3 class="chart-title">Performance Over Time</h3>
+    <div class="chart-actions">
+      <button class="btn-icon" aria-label="Download chart">
+        <i data-lucide="download"></i>
+      </button>
+      <button class="btn-icon" aria-label="Full screen">
+        <i data-lucide="maximize"></i>
+      </button>
+    </div>
+  </div>
+  <div class="chart-body">
+    <canvas id="performance-chart" role="img" aria-label="Performance chart showing improvement over 12 weeks"></canvas>
+    <!-- Alternative: Data table for screen readers -->
+    <table class="chart-data-table sr-only" aria-label="Chart data">
+      <thead>
+        <tr>
+          <th>Week</th>
+          <th>Performance Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Data rows -->
+      </tbody>
+    </table>
+  </div>
+  <div class="chart-footer">
+    <div class="chart-legend">
+      <div class="legend-item">
+        <span class="legend-color" style="background: var(--chart-primary);"></span>
+        <span class="legend-label">Training Sessions</span>
+      </div>
+    </div>
+    <div class="chart-notes">
+      <span class="text-caption">Data updated 2 hours ago</span>
+    </div>
+  </div>
+</div>
+```
+
+#### Chart.js Integration Example
+
+```javascript
+// Line Chart - Performance Over Time
+const ctx = document.getElementById('performance-chart').getContext('2d');
+const performanceChart = new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'],
+    datasets: [{
+      label: 'Performance Score',
+      data: [65, 68, 72, 75, 78, 82],
+      borderColor: 'var(--chart-primary)',
+      backgroundColor: 'rgba(16, 201, 107, 0.1)',
+      tension: 0.4,
+      fill: true
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: true,
+        position: 'bottom'
+      },
+      tooltip: {
+        backgroundColor: 'var(--surface-primary)',
+        titleColor: 'var(--chart-text)',
+        bodyColor: 'var(--chart-text-secondary)',
+        borderColor: 'var(--chart-grid)',
+        borderWidth: 1
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: false,
+        grid: {
+          color: 'var(--chart-grid)'
+        },
+        ticks: {
+          color: 'var(--chart-text-secondary)'
+        }
+      },
+      x: {
+        grid: {
+          color: 'var(--chart-grid)'
+        },
+        ticks: {
+          color: 'var(--chart-text-secondary)'
+        }
+      }
+    }
+  }
+});
+```
+
+### Responsive Chart Behavior
+
+```css
+.chart-body {
+  position: relative;
+  height: 300px; /* Desktop */
+}
+
+@media (max-width: 768px) {
+  .chart-body {
+    height: 250px; /* Mobile - slightly shorter */
+  }
+  
+  .chart-legend {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+}
+
+@media (max-width: 480px) {
+  .chart-body {
+    height: 200px; /* Small mobile */
+  }
+  
+  .chart-title {
+    font-size: var(--font-size-lg);
+  }
+}
+```
+
+### Accessibility Guidelines
+
+#### Screen Reader Support
+- Provide data table alternative for all charts
+- Use `role="img"` with descriptive `aria-label` on canvas
+- Include chart title and description in accessible text
+- Announce data updates with `aria-live` regions
+
+#### Keyboard Navigation
+- Make interactive charts keyboard navigable
+- Provide keyboard shortcuts for zoom/pan
+- Ensure focus indicators are visible
+
+#### Color Independence
+- Never rely solely on color to convey meaning
+- Use patterns, textures, or labels as alternatives
+- Test with colorblind simulation tools
+
+### Chart Examples
+
+#### Line Chart - Training Progress
+```javascript
+// Shows improvement over time
+// Best for: Weekly/monthly progress tracking
+```
+
+#### Bar Chart - Athlete Comparison
+```javascript
+// Compares performance across athletes
+// Best for: Ranking, comparisons
+```
+
+#### Radar Chart - Multidimensional Assessment
+```javascript
+// Shows athlete profile across multiple dimensions
+// Best for: Comprehensive athlete evaluation
+```
+
+#### Heat Map - Training Intensity
+```javascript
+// Shows intensity patterns over time
+// Best for: Identifying training patterns, rest periods
+```
+
+### Tabs Component
+**Status**: ✅ **Stable** - Production-ready, fully implemented
+
+Horizontal navigation between related content sections.
+
+#### Component API
+
+| Property | Type | Default | Required | Description |
+|----------|------|---------|----------|-------------|
+| `tabs` | class | - | Yes | Main tabs container |
+| `tabs-list` | class | - | Yes | Tab button list |
+| `tabs-trigger` | class | - | Yes | Individual tab button |
+| `tabs-content` | class | - | Yes | Tab content container |
+| `tabs-panel` | class | - | Yes | Individual tab panel |
+| `tabs-active` | class | - | No | Active tab indicator |
+
+#### HTML Structure
+
+```html
+<div class="tabs" data-tabs="athlete-profile">
+  <div class="tabs-list" role="tablist" aria-label="Athlete profile sections">
+    <button class="tabs-trigger tabs-active" role="tab" aria-selected="true" aria-controls="tab-stats" id="trigger-stats">
+      Stats
+    </button>
+    <button class="tabs-trigger" role="tab" aria-selected="false" aria-controls="tab-training" id="trigger-training">
+      Training
+    </button>
+    <button class="tabs-trigger" role="tab" aria-selected="false" aria-controls="tab-nutrition" id="trigger-nutrition">
+      Nutrition
+    </button>
+    <button class="tabs-trigger" role="tab" aria-selected="false" aria-controls="tab-performance" id="trigger-performance">
+      Performance
+    </button>
+  </div>
+  
+  <div class="tabs-content">
+    <div class="tabs-panel tabs-active" role="tabpanel" aria-labelledby="trigger-stats" id="tab-stats">
+      <!-- Stats content -->
+    </div>
+    <div class="tabs-panel" role="tabpanel" aria-labelledby="trigger-training" id="tab-training">
+      <!-- Training content -->
+    </div>
+    <div class="tabs-panel" role="tabpanel" aria-labelledby="trigger-nutrition" id="tab-nutrition">
+      <!-- Nutrition content -->
+    </div>
+    <div class="tabs-panel" role="tabpanel" aria-labelledby="trigger-performance" id="tab-performance">
+      <!-- Performance content -->
+    </div>
+  </div>
+</div>
+```
+
+#### JavaScript Implementation
+
+```javascript
+class Tabs {
+  constructor(container) {
+    this.container = container;
+    this.triggers = container.querySelectorAll('.tabs-trigger');
+    this.panels = container.querySelectorAll('.tabs-panel');
+    this.activeIndex = 0;
+    
+    this.init();
+  }
+  
+  init() {
+    this.triggers.forEach((trigger, index) => {
+      trigger.addEventListener('click', () => this.selectTab(index));
+      trigger.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          this.selectTab((index + 1) % this.triggers.length);
+        } else if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          this.selectTab((index - 1 + this.triggers.length) % this.triggers.length);
+        }
+      });
+    });
+  }
+  
+  selectTab(index) {
+    // Update triggers
+    this.triggers.forEach((trigger, i) => {
+      const isActive = i === index;
+      trigger.classList.toggle('tabs-active', isActive);
+      trigger.setAttribute('aria-selected', isActive);
+      trigger.setAttribute('tabindex', isActive ? '0' : '-1');
+    });
+    
+    // Update panels
+    this.panels.forEach((panel, i) => {
+      panel.classList.toggle('tabs-active', i === index);
+    });
+    
+    this.activeIndex = index;
+    
+    // Focus the active trigger
+    this.triggers[index].focus();
+  }
+}
+
+// Initialize all tabs
+document.querySelectorAll('.tabs').forEach(container => {
+  new Tabs(container);
+});
+```
+
+### Tooltip Component
+**Status**: ⏳ **Preview** - Feature-complete, may have minor changes
+
+Contextual help on hover/focus for icons and complex features.
+
+#### Component API
+
+| Property | Type | Default | Required | Description |
+|----------|------|---------|----------|-------------|
+| `tooltip` | class | - | Yes | Tooltip container |
+| `tooltip-trigger` | class | - | Yes | Element that triggers tooltip |
+| `data-tooltip` | attribute | - | Yes | Tooltip text content |
+| `data-tooltip-position` | attribute | 'top' | No | Position: top, bottom, left, right |
+
+#### HTML Structure
+
+```html
+<!-- Icon with tooltip -->
+<button class="btn-icon tooltip-trigger" data-tooltip="View training history" data-tooltip-position="top" aria-label="View training history">
+  <i data-lucide="history"></i>
+</button>
+
+<!-- Text with tooltip -->
+<span class="tooltip-trigger" data-tooltip="This metric shows your overall performance score based on multiple factors">
+  Performance Score
+  <i data-lucide="help-circle" style="width: 14px; height: 14px;"></i>
+</span>
+```
+
+#### JavaScript Implementation
+
+```javascript
+class Tooltip {
+  constructor(trigger) {
+    this.trigger = trigger;
+    this.text = trigger.dataset.tooltip;
+    this.position = trigger.dataset.tooltipPosition || 'top';
+    this.tooltip = null;
+    
+    this.init();
+  }
+  
+  init() {
+    this.trigger.addEventListener('mouseenter', () => this.show());
+    this.trigger.addEventListener('mouseleave', () => this.hide());
+    this.trigger.addEventListener('focus', () => this.show());
+    this.trigger.addEventListener('blur', () => this.hide());
+  }
+  
+  show() {
+    if (this.tooltip) return;
+    
+    this.tooltip = document.createElement('div');
+    this.tooltip.className = `tooltip tooltip-${this.position}`;
+    this.tooltip.textContent = this.text;
+    this.tooltip.setAttribute('role', 'tooltip');
+    
+    document.body.appendChild(this.tooltip);
+    
+    this.positionTooltip();
+  }
+  
+  hide() {
+    if (this.tooltip) {
+      this.tooltip.remove();
+      this.tooltip = null;
+    }
+  }
+  
+  positionTooltip() {
+    const rect = this.trigger.getBoundingClientRect();
+    const tooltipRect = this.tooltip.getBoundingClientRect();
+    
+    let top, left;
+    
+    switch (this.position) {
+      case 'top':
+        top = rect.top - tooltipRect.height - 8;
+        left = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
+        break;
+      case 'bottom':
+        top = rect.bottom + 8;
+        left = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
+        break;
+      case 'left':
+        top = rect.top + (rect.height / 2) - (tooltipRect.height / 2);
+        left = rect.left - tooltipRect.width - 8;
+        break;
+      case 'right':
+        top = rect.top + (rect.height / 2) - (tooltipRect.height / 2);
+        left = rect.right + 8;
+        break;
+    }
+    
+    // Keep tooltip within viewport
+    top = Math.max(8, Math.min(top, window.innerHeight - tooltipRect.height - 8));
+    left = Math.max(8, Math.min(left, window.innerWidth - tooltipRect.width - 8));
+    
+    this.tooltip.style.top = `${top}px`;
+    this.tooltip.style.left = `${left}px`;
+  }
+}
+
+// Initialize all tooltips
+document.querySelectorAll('.tooltip-trigger').forEach(trigger => {
+  new Tooltip(trigger);
+});
+```
+
+### Avatar Component
+**Status**: ⏳ **Preview** - Feature-complete, may have minor changes
+
+User profile images with fallback to initials.
+
+#### Component API
+
+| Property | Type | Default | Required | Description |
+|----------|------|---------|----------|-------------|
+| `avatar` | class | - | Yes | Avatar container |
+| `avatar-xs` | class | - | No | Extra small (24px) |
+| `avatar-sm` | class | - | No | Small (32px) |
+| `avatar-md` | class | `avatar-md` | No | Medium (40px) |
+| `avatar-lg` | class | - | No | Large (48px) |
+| `avatar-xl` | class | - | No | Extra large (64px) |
+| `avatar-status` | class | - | No | Status indicator overlay |
+
+#### HTML Structure
+
+```html
+<!-- Avatar with image -->
+<div class="avatar avatar-md">
+  <img src="/avatars/john-smith.jpg" alt="John Smith">
+</div>
+
+<!-- Avatar with initials fallback -->
+<div class="avatar avatar-md" data-name="John Smith">
+  <span class="avatar-initials">JS</span>
+</div>
+
+<!-- Avatar with status indicator -->
+<div class="avatar avatar-md avatar-status avatar-online">
+  <img src="/avatars/john-smith.jpg" alt="John Smith">
+  <span class="avatar-status-dot"></span>
+</div>
+```
+
+### Accordion Component
+**Status**: ✅ **Stable** - Production-ready, fully implemented
+
+Collapsible sections for training program details.
+
+#### HTML Structure
+
+```html
+<div class="accordion">
+  <div class="accordion-item">
+    <button class="accordion-trigger" aria-expanded="false" aria-controls="panel-1">
+      <span>Week 1 Training Program</span>
+      <i data-lucide="chevron-down" class="accordion-icon"></i>
+    </button>
+    <div class="accordion-panel" id="panel-1" role="region">
+      <div class="accordion-content">
+        <!-- Content -->
+      </div>
+    </div>
+  </div>
+  
+  <div class="accordion-item">
+    <button class="accordion-trigger" aria-expanded="false" aria-controls="panel-2">
+      <span>Week 2 Training Program</span>
+      <i data-lucide="chevron-down" class="accordion-icon"></i>
+    </button>
+    <div class="accordion-panel" id="panel-2" role="region">
+      <div class="accordion-content">
+        <!-- Content -->
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+### Empty States
+**Status**: ⏳ **Preview** - Feature-complete, may have minor changes
+
+Helpful guidance when no data exists.
+
+#### HTML Structure
+
+```html
+<div class="empty-state">
+  <div class="empty-state-icon">
+    <i data-lucide="users" style="width: 64px; height: 64px;"></i>
+  </div>
+  <h3 class="empty-state-title">No athletes in roster</h3>
+  <p class="empty-state-description">
+    Get started by adding your first athlete to the roster.
+  </p>
+  <button class="btn btn-primary btn-md">Add First Athlete</button>
+</div>
+```
+
+## Component Composition Patterns
+
+**Status**: ✅ **Stable** - Production-ready
+
+Common patterns for combining multiple components to create complex UI patterns.
+
+### Card with Form
+
+Combine card container with form components for modal forms or inline forms.
+
+```html
+<div class="card">
+  <div class="card-header">
+    <h3>Add New Athlete</h3>
+  </div>
+  <div class="card-body">
+    <form class="form">
+      <div class="form-group">
+        <label class="form-label required" for="name">Full Name</label>
+        <input type="text" id="name" class="form-input" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label required" for="position">Position</label>
+        <select id="position" class="form-select" required>
+          <option value="">Select position</option>
+          <option value="qb">Quarterback</option>
+          <option value="wr">Wide Receiver</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="email">Email</label>
+        <input type="email" id="email" class="form-input">
+      </div>
+    </form>
+  </div>
+  <div class="card-footer">
+    <button class="btn btn-secondary" data-modal-close>Cancel</button>
+    <button class="btn btn-primary">Save Athlete</button>
+  </div>
+</div>
+```
+
+### Dashboard Layout Pattern
+
+Combine bento grid, cards, and charts for comprehensive dashboards.
+
+```html
+<div class="layout-container">
+  <div class="bento-grid">
+    <!-- Hero Card - Full Width -->
+    <div class="card bento-card-span-12">
+      <h2>Today's Training Session</h2>
+      <p>Next session starts in 2 hours</p>
+      <button class="btn btn-primary btn-lg">Start Session</button>
+    </div>
+    
+    <!-- Performance Chart - 2/3 Width, Double Height -->
+    <div class="card chart-card bento-card-span-8 bento-card-row-span-2">
+      <div class="card-header">
+        <h3>Performance Over Time</h3>
+      </div>
+      <div class="chart-body">
+        <canvas id="performance-chart"></canvas>
+      </div>
+    </div>
+    
+    <!-- Quick Stats - 1/3 Width -->
+    <div class="card stat-card bento-card-span-4">
+      <div class="stat-value">85%</div>
+      <div class="stat-label">Completion Rate</div>
+    </div>
+    
+    <div class="card stat-card bento-card-span-4">
+      <div class="stat-value">12</div>
+      <div class="stat-label">Sessions This Week</div>
+    </div>
+    
+    <!-- Upcoming Events - Half Width -->
+    <div class="card bento-card-span-6">
+      <div class="card-header">
+        <h3>Upcoming Events</h3>
+      </div>
+      <div class="card-body">
+        <!-- Event list -->
+      </div>
+    </div>
+    
+    <!-- Quick Actions - Half Width -->
+    <div class="card bento-card-span-6">
+      <div class="card-header">
+        <h3>Quick Actions</h3>
+      </div>
+      <div class="card-body">
+        <button class="btn btn-primary btn-md">Add Athlete</button>
+        <button class="btn btn-secondary btn-md">Schedule Session</button>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+### Table with Filters and Pagination
+
+Combine table, search, filters, and pagination for data-heavy pages.
+
+```html
+<div class="data-table-wrapper">
+  <!-- Search and Actions Toolbar -->
+  <div class="data-table-toolbar">
+    <input type="search" class="data-table-search" placeholder="Search athletes...">
+    <div class="data-table-filters">
+      <select class="form-select form-select-sm">
+        <option>All Positions</option>
+        <option>Quarterback</option>
+        <option>Wide Receiver</option>
+      </select>
+      <select class="form-select form-select-sm">
+        <option>All Status</option>
+        <option>Active</option>
+        <option>Inactive</option>
+      </select>
+    </div>
+    <button class="btn btn-primary btn-sm">Add Athlete</button>
+  </div>
+  
+  <!-- Table -->
+  <div class="data-table-container">
+    <table class="data-table data-table-sortable">
+      <!-- Table content -->
+    </table>
+  </div>
+  
+  <!-- Pagination -->
+  <nav class="pagination" aria-label="Table pagination">
+    <!-- Pagination component -->
+  </nav>
+</div>
+```
+
+### Form with Validation and Error Handling
+
+Combine form components with error handling patterns.
+
+```html
+<form class="form" id="athlete-form">
+  <!-- Form-level errors -->
+  <div class="form-errors" role="alert" aria-live="polite" id="form-errors" style="display: none;">
+    <h3>Please fix the following errors:</h3>
+    <ul id="error-list"></ul>
+  </div>
+  
+  <!-- Form fields -->
+  <div class="form-group">
+    <label class="form-label required" for="athlete-name">Full Name</label>
+    <input type="text" id="athlete-name" class="form-input" required aria-invalid="false" aria-describedby="name-error">
+    <div class="form-error" id="name-error" role="alert"></div>
+  </div>
+  
+  <div class="form-group">
+    <label class="form-label required" for="athlete-email">Email</label>
+    <input type="email" id="athlete-email" class="form-input" required aria-invalid="false" aria-describedby="email-error">
+    <div class="form-error" id="email-error" role="alert"></div>
+  </div>
+  
+  <!-- Form actions -->
+  <div class="form-actions">
+    <button type="button" class="btn btn-secondary" data-modal-close>Cancel</button>
+    <button type="submit" class="btn btn-primary">Save Athlete</button>
+  </div>
+</form>
+```
+
+### Modal with Form and Toast Feedback
+
+Combine modal, form, and toast notifications for complete user flows.
+
+```html
+<!-- Modal -->
+<div class="modal-overlay" id="add-athlete-modal" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="modal-title">Add New Athlete</h2>
+      <button class="modal-close" aria-label="Close modal">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form id="athlete-form">
+        <!-- Form fields -->
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-modal-close>Cancel</button>
+      <button class="btn btn-primary" type="submit" form="athlete-form">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Container (in page) -->
+<div class="toast-container"></div>
+```
+
+**JavaScript:**
+```javascript
+document.getElementById('athlete-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  try {
+    const data = new FormData(e.target);
+    const response = await fetch('/api/athletes', {
+      method: 'POST',
+      body: data
+    });
+    
+    if (response.ok) {
+      closeModal('add-athlete-modal');
+      showToast.success('Athlete added successfully');
+      // Refresh data or redirect
+    } else {
+      const errors = await response.json();
+      showFormErrors(errors);
+    }
+  } catch (error) {
+    showToast.error('Failed to save athlete. Please try again.');
+  }
+});
+```
+
+### Card Grid with Empty State Fallback
+
+Combine grid layout with empty state for graceful degradation.
+
+```html
+<div class="dashboard-grid" id="athletes-grid">
+  <!-- Cards will be inserted here -->
+</div>
+
+<!-- Empty State (shown when no data) -->
+<div class="empty-state" id="empty-state" style="display: none;">
+  <div class="empty-state-icon">
+    <i data-lucide="users" style="width: 64px; height: 64px;"></i>
+  </div>
+  <h3 class="empty-state-title">No athletes in roster</h3>
+  <p class="empty-state-description">
+    Get started by adding your first athlete to track their training progress.
+  </p>
+  <button class="btn btn-primary btn-md" onclick="openModal('add-athlete-modal')">
+    Add First Athlete
+  </button>
+</div>
+```
+
+**JavaScript:**
+```javascript
+function renderAthletes(athletes) {
+  const grid = document.getElementById('athletes-grid');
+  const emptyState = document.getElementById('empty-state');
+  
+  if (athletes.length === 0) {
+    grid.style.display = 'none';
+    emptyState.style.display = 'block';
+    return;
+  }
+  
+  grid.style.display = 'grid';
+  emptyState.style.display = 'none';
+  
+  grid.innerHTML = athletes.map(athlete => `
+    <div class="card">
+      <div class="card-header">
+        <h3>${athlete.name}</h3>
+      </div>
+      <div class="card-body">
+        <p>Position: ${athlete.position}</p>
+        <p>Sessions: ${athlete.sessions}</p>
+      </div>
+    </div>
+  `).join('');
+}
+```
+
+### Breadcrumb Navigation with Page Header
+
+Combine breadcrumbs with page header for clear navigation context.
+
+```html
+<div class="page-header">
+  <nav aria-label="Breadcrumb" class="breadcrumb">
+    <ol class="breadcrumb-list">
+      <li class="breadcrumb-item">
+        <a href="/dashboard">Dashboard</a>
+      </li>
+      <li class="breadcrumb-item">
+        <a href="/roster">Roster</a>
+      </li>
+      <li class="breadcrumb-item breadcrumb-current" aria-current="page">
+        John Smith
+      </li>
+    </ol>
+  </nav>
+  
+  <div class="page-header-content">
+    <h1>John Smith</h1>
+    <div class="page-header-actions">
+      <button class="btn btn-secondary btn-sm">
+        <i data-lucide="edit"></i>
+        Edit
+      </button>
+      <button class="btn btn-primary btn-sm">
+        <i data-lucide="calendar"></i>
+        Schedule Session
+      </button>
+    </div>
+  </div>
+</div>
+```
+
+### Tabs with Data Table
+
+Combine tabs with data tables for organized content sections.
+
+```html
+<div class="tabs" data-tabs="athlete-details">
+  <div class="tabs-list" role="tablist">
+    <button class="tabs-trigger tabs-active" role="tab" aria-controls="tab-stats">Stats</button>
+    <button class="tabs-trigger" role="tab" aria-controls="tab-training">Training History</button>
+    <button class="tabs-trigger" role="tab" aria-controls="tab-performance">Performance</button>
+  </div>
+  
+  <div class="tabs-content">
+    <div class="tabs-panel tabs-active" id="tab-stats" role="tabpanel">
+      <!-- Stats content -->
+    </div>
+    
+    <div class="tabs-panel" id="tab-training" role="tabpanel">
+      <div class="data-table-wrapper">
+        <table class="data-table data-table-sortable">
+          <!-- Training history table -->
+        </table>
+      </div>
+    </div>
+    
+    <div class="tabs-panel" id="tab-performance" role="tabpanel">
+      <div class="chart-card">
+        <canvas id="performance-chart"></canvas>
+      </div>
     </div>
   </div>
 </div>
@@ -428,6 +3120,512 @@ lucide.createIcons();
 - [ ] Focus indicators are clearly visible
 - [ ] Form validation is announced to assistive technology
 
+## Component Testing Guidelines
+
+**Status**: ✅ **Stable** - Production-ready
+
+Comprehensive testing strategies for ensuring component quality, accessibility, and cross-browser compatibility.
+
+### Testing Strategy
+
+#### 1. Unit Testing
+
+Test individual component functionality in isolation.
+
+**Example - Button Component:**
+```javascript
+// button.test.js
+import { render, fireEvent } from '@testing-library/dom';
+import { Button } from './button.js';
+
+describe('Button Component', () => {
+  test('renders with correct text', () => {
+    const { getByText } = render(Button({ children: 'Click me' }));
+    expect(getByText('Click me')).toBeInTheDocument();
+  });
+  
+  test('calls onClick handler when clicked', () => {
+    const handleClick = jest.fn();
+    const { getByText } = render(Button({ onClick: handleClick, children: 'Click' }));
+    fireEvent.click(getByText('Click'));
+    expect(handleClick).toHaveBeenCalledTimes(1);
+  });
+  
+  test('is disabled when disabled prop is true', () => {
+    const { getByText } = render(Button({ disabled: true, children: 'Disabled' }));
+    expect(getByText('Disabled')).toBeDisabled();
+  });
+});
+```
+
+#### 2. Visual Regression Testing
+
+Ensure components render correctly across browsers and themes.
+
+**Tools:**
+- **Percy** - Visual testing platform
+- **Chromatic** - Storybook visual testing
+- **BackstopJS** - Automated visual regression testing
+
+**Example Configuration:**
+```javascript
+// backstop.config.js
+module.exports = {
+  scenarios: [
+    {
+      label: 'Button - Primary',
+      url: 'http://localhost:3000/components/button',
+      selectors: ['.btn-primary'],
+      viewports: [
+        { width: 320, height: 568 },
+        { width: 768, height: 1024 },
+        { width: 1280, height: 720 }
+      ]
+    }
+  ]
+};
+```
+
+#### 3. Accessibility Testing
+
+Verify WCAG AA compliance and screen reader compatibility.
+
+**Automated Testing:**
+```javascript
+// accessibility.test.js
+import { axe, toHaveNoViolations } from 'jest-axe';
+
+expect.extend(toHaveNoViolations);
+
+test('Button has no accessibility violations', async () => {
+  const { container } = render(<Button>Click me</Button>);
+  const results = await axe(container);
+  expect(results).toHaveNoViolations();
+});
+```
+
+**Manual Testing Checklist:**
+- [ ] **Keyboard Navigation**: Tab through all interactive elements
+- [ ] **Screen Reader**: Test with NVDA (Windows) or VoiceOver (Mac)
+- [ ] **Focus Indicators**: Visible focus states on all interactive elements
+- [ ] **Color Contrast**: Verify 4.5:1 ratio for text, 3:1 for UI components
+- [ ] **ARIA Labels**: Proper labels for all interactive elements
+- [ ] **Form Labels**: All form inputs have associated labels
+- [ ] **Error Messages**: Errors are announced to screen readers
+- [ ] **Skip Links**: Skip to main content functionality works
+
+#### 4. Cross-Browser Testing
+
+Test components across supported browsers.
+
+**Browser Testing Matrix:**
+
+| Component | Chrome | Firefox | Safari | Edge | Samsung Internet |
+|-----------|--------|---------|--------|------|------------------|
+| Button | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Modal | ✅ | ✅ | ✅ | ✅ | ⚠️ |
+| Toast | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Table | ✅ | ✅ | ✅ | ✅ | ✅ |
+
+**Testing Tools:**
+- **BrowserStack** - Cloud-based browser testing
+- **Sauce Labs** - Automated cross-browser testing
+- **Playwright** - Cross-browser automation
+
+**Example - Playwright Test:**
+```javascript
+// button.spec.js
+import { test, expect } from '@playwright/test';
+
+test.describe('Button Component', () => {
+  test('renders correctly in Chrome', async ({ page, browserName }) => {
+    await page.goto('http://localhost:3000/components/button');
+    const button = page.locator('.btn-primary');
+    await expect(button).toBeVisible();
+  });
+  
+  test('works in Safari', async ({ page, browserName }) => {
+    test.skip(browserName !== 'webkit', 'Safari only');
+    await page.goto('http://localhost:3000/components/button');
+    await page.click('.btn-primary');
+    // Verify behavior
+  });
+});
+```
+
+#### 5. Performance Testing
+
+Ensure components meet performance budgets.
+
+**Performance Budgets:**
+- **CSS Size**: < 50KB (gzipped)
+- **JavaScript Size**: < 100KB (gzipped) per component
+- **First Paint**: < 1.5s
+- **Time to Interactive**: < 3.5s
+- **Lighthouse Score**: > 90
+
+**Example - Performance Test:**
+```javascript
+// performance.test.js
+import { performance } from 'perf_hooks';
+
+test('Button renders within performance budget', async () => {
+  const start = performance.now();
+  render(<Button>Click me</Button>);
+  const end = performance.now();
+  const renderTime = end - start;
+  
+  expect(renderTime).toBeLessThan(16); // 60fps = 16ms per frame
+});
+```
+
+#### 6. Responsive Testing
+
+Verify components work across all breakpoints.
+
+**Breakpoint Testing:**
+```javascript
+// responsive.test.js
+const breakpoints = {
+  mobile: { width: 375, height: 667 },
+  tablet: { width: 768, height: 1024 },
+  desktop: { width: 1280, height: 720 }
+};
+
+Object.entries(breakpoints).forEach(([name, size]) => {
+  test(`Button renders correctly on ${name}`, async ({ page }) => {
+    await page.setViewportSize(size);
+    await page.goto('http://localhost:3000/components/button');
+    const button = page.locator('.btn-primary');
+    await expect(button).toBeVisible();
+    await expect(button).toHaveCSS('min-height', '44px'); // Touch target
+  });
+});
+```
+
+### Component Testing Checklist
+
+Before marking a component as **Stable**, verify:
+
+#### Functionality
+- [ ] All interactive states work (hover, active, focus, disabled)
+- [ ] Event handlers fire correctly
+- [ ] Form validation works as expected
+- [ ] Keyboard shortcuts function properly
+- [ ] Component updates reactively to prop changes
+
+#### Accessibility
+- [ ] Keyboard navigation works
+- [ ] Screen reader announces correctly
+- [ ] Focus management is correct
+- [ ] ARIA attributes are properly set
+- [ ] Color contrast meets AA standards
+- [ ] No accessibility violations (axe-core)
+
+#### Visual
+- [ ] Renders correctly in light theme
+- [ ] Renders correctly in dark theme
+- [ ] Responsive at all breakpoints
+- [ ] No visual regressions
+- [ ] Icons and images load correctly
+
+#### Performance
+- [ ] Meets performance budget
+- [ ] No layout shift (CLS < 0.1)
+- [ ] Smooth animations (60fps)
+- [ ] Efficient re-renders
+
+#### Browser Compatibility
+- [ ] Works in Chrome (latest 2 versions)
+- [ ] Works in Firefox (latest 2 versions)
+- [ ] Works in Safari (latest 2 versions)
+- [ ] Works in Edge (latest 2 versions)
+- [ ] Works in Samsung Internet (latest 2 versions)
+
+### Testing Tools & Setup
+
+#### Recommended Testing Stack
+
+```json
+{
+  "devDependencies": {
+    "@testing-library/dom": "^9.0.0",
+    "@testing-library/jest-dom": "^6.0.0",
+    "@playwright/test": "^1.40.0",
+    "jest": "^29.0.0",
+    "jest-axe": "^7.0.0",
+    "axe-core": "^4.8.0",
+    "backstopjs": "^6.2.0"
+  }
+}
+```
+
+#### Continuous Integration
+
+```yaml
+# .github/workflows/test.yml
+name: Component Tests
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - run: npm install
+      - run: npm run test:unit
+      - run: npm run test:accessibility
+      - run: npm run test:visual
+      - run: npm run test:browser
+```
+
+### Test Coverage Goals
+
+- **Unit Tests**: 80%+ code coverage
+- **Accessibility Tests**: 100% of interactive components
+- **Visual Tests**: 100% of component variants
+- **Browser Tests**: Critical user flows in all browsers
+
+## Error Handling & Validation
+
+### Error Types & Classification
+
+#### Domain Errors (Business Logic)
+Errors that users can understand and potentially fix:
+- Invalid date range (training session in the past)
+- Duplicate entry (athlete already in roster)
+- Missing required field
+- Invalid format (email, phone number)
+
+**Handling**: Show clear, actionable error messages inline or at form level.
+
+#### Technical Errors (System Failures)
+Errors that users cannot fix:
+- Network timeout
+- 500 server error
+- Database connection failure
+- API unavailable
+
+**Handling**: Log technical details, show generic user-friendly message with recovery options.
+
+### Error Hierarchy
+
+#### 1. Inline Validation
+Errors displayed next to the specific field for immediate feedback.
+
+```html
+<div class="form-group">
+  <label class="form-label required">Email Address</label>
+  <input type="email" class="form-input error" value="invalid-email" aria-invalid="true" aria-describedby="email-error">
+  <div class="form-error" id="email-error" role="alert">
+    <i data-lucide="alert-circle" style="width: 16px; height: 16px;"></i>
+    Please enter a valid email address
+  </div>
+</div>
+```
+
+**When to Use:**
+- ✅ Field-level validation errors
+- ✅ Format validation (email, phone, date)
+- ✅ Real-time feedback on blur or submit
+
+**CSS Classes:**
+```css
+.form-input.error {
+  border-color: var(--color-status-error);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.form-error {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  color: var(--color-status-error);
+  font-size: var(--font-size-sm);
+}
+```
+
+#### 2. Form-Level Errors
+Summary of all errors at the top of the form.
+
+```html
+<div class="form-errors" role="alert" aria-live="polite">
+  <h3>Please fix the following errors:</h3>
+  <ul>
+    <li><a href="#email-field">Email address is invalid</a></li>
+    <li><a href="#password-field">Password must be at least 8 characters</a></li>
+  </ul>
+</div>
+```
+
+**When to Use:**
+- ✅ Multiple validation errors on form submit
+- ✅ Complex forms with many fields
+- ✅ Errors that prevent form submission
+
+#### 3. Banner Notifications
+Persistent messages at the top of the page for system-wide information.
+
+```html
+<div class="alert-banner alert-error" role="alert">
+  <div class="alert-content">
+    <i data-lucide="alert-circle" style="width: 20px; height: 20px;"></i>
+    <div>
+      <strong>Unable to save changes</strong>
+      <p>Please check your internet connection and try again.</p>
+    </div>
+  </div>
+  <button class="alert-dismiss" aria-label="Dismiss alert">
+    <i data-lucide="x" style="width: 16px; height: 16px;"></i>
+  </button>
+</div>
+```
+
+**When to Use:**
+- ✅ System-wide errors (network failures, server errors)
+- ✅ Important warnings that affect entire page
+- ✅ Success confirmations for critical actions
+
+#### 4. Toast Notifications
+Temporary notifications for non-critical feedback.
+
+```html
+<div class="toast toast-success" role="status" aria-live="polite">
+  <div class="toast-content">
+    <i data-lucide="check-circle" style="width: 20px; height: 20px;"></i>
+    <span>Training session saved successfully</span>
+  </div>
+  <button class="toast-close" aria-label="Close notification">
+    <i data-lucide="x" style="width: 16px; height: 16px;"></i>
+  </button>
+</div>
+```
+
+**When to Use:**
+- ✅ Success confirmations (save, delete, update)
+- ✅ Non-critical errors
+- ✅ Status updates
+- ✅ Quick feedback for user actions
+
+### Validation Timing
+
+#### On Blur (Recommended)
+Validate when user leaves the field:
+- ✅ Less intrusive
+- ✅ Allows users to complete typing
+- ✅ Good balance of feedback and interruption
+
+```javascript
+input.addEventListener('blur', () => {
+  validateField(input);
+});
+```
+
+#### On Submit
+Validate all fields when form is submitted:
+- ✅ Prevents premature validation
+- ✅ Better for mobile (no keyboard interruptions)
+- ✅ Standard pattern users expect
+
+```javascript
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const errors = validateForm(form);
+  if (errors.length === 0) {
+    form.submit();
+  } else {
+    showFormErrors(errors);
+  }
+});
+```
+
+#### Real-Time (Advanced)
+Validate as user types (debounced):
+- ✅ Immediate feedback
+- ⚠️ Can be annoying if too aggressive
+- ✅ Use for format validation (email, URL)
+
+```javascript
+let debounceTimer;
+input.addEventListener('input', () => {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => {
+    validateField(input);
+  }, 500);
+});
+```
+
+### Error Message Writing Guidelines
+
+#### Voice & Tone
+- **Encouraging**: "Let's fix this together"
+- **Clear**: Use plain language, avoid technical jargon
+- **Actionable**: Tell users what to do, not just what's wrong
+- **Concise**: One sentence, maximum two
+
+#### Good Examples ✅
+- "Please enter a valid email address"
+- "Password must be at least 8 characters"
+- "Training date cannot be in the past"
+- "This athlete is already in your roster"
+
+#### Bad Examples ❌
+- "Invalid input" (too vague)
+- "Error 500" (technical jargon)
+- "You did something wrong" (blaming user)
+- "The email field contains an invalid email address format" (too wordy)
+
+### Error Recovery Patterns
+
+#### Network Errors
+```html
+<div class="alert-banner alert-error">
+  <div class="alert-content">
+    <i data-lucide="wifi-off"></i>
+    <div>
+      <strong>Connection lost</strong>
+      <p>Your changes are saved locally. <a href="#" onclick="retrySave()">Retry</a></p>
+    </div>
+  </div>
+</div>
+```
+
+#### Validation Errors
+```html
+<div class="form-group">
+  <input type="date" class="form-input error" min="2025-01-01">
+  <div class="form-error">
+    Training sessions must be scheduled for future dates.
+    <a href="#" onclick="setToday()">Use today's date</a>
+  </div>
+</div>
+```
+
+#### Permission Errors
+```html
+<div class="alert-banner alert-warning">
+  <div class="alert-content">
+    <i data-lucide="lock"></i>
+    <div>
+      <strong>Permission required</strong>
+      <p>You don't have permission to edit this roster. <a href="/contact">Request access</a></p>
+    </div>
+  </div>
+</div>
+```
+
+### Accessibility Requirements
+
+- **ARIA Attributes**: Use `aria-invalid="true"` on error inputs
+- **Error Descriptions**: Link errors to fields with `aria-describedby`
+- **Live Regions**: Use `aria-live="polite"` for toast notifications
+- **Focus Management**: Move focus to first error on form submit
+- **Screen Reader Announcements**: Errors must be announced to assistive technology
+- **Keyboard Dismissible**: All error messages must be dismissible with Escape key
+
 ## Implementation Guide
 
 ### Getting Started
@@ -506,29 +3704,533 @@ document.addEventListener('DOMContentLoaded', () => {
 }
 ```
 
+## Performance Guidelines
+
+**Status**: ✅ **Stable** - Production-ready
+
+Performance optimization strategies and budgets to ensure fast, responsive user experiences.
+
+### Performance Budgets
+
+#### CSS Performance
+
+| Metric | Budget | Notes |
+|--------|--------|-------|
+| **Total CSS Size** | < 50KB (gzipped) | All design system CSS |
+| **Critical CSS** | < 14KB (gzipped) | Above-the-fold styles |
+| **CSS Selectors** | < 4096 per file | Browser limit |
+| **CSS Variables** | < 1000 | Performance impact |
+
+#### JavaScript Performance
+
+| Metric | Budget | Notes |
+|--------|--------|-------|
+| **Total JS Size** | < 100KB (gzipped) | All component JS |
+| **Component JS** | < 10KB per component | Individual components |
+| **Third-party Libraries** | < 50KB (gzipped) | Chart.js, Lucide, etc. |
+| **Initialization Time** | < 100ms | Component setup |
+
+#### Loading Performance
+
+| Metric | Budget | Target |
+|--------|--------|--------|
+| **First Contentful Paint (FCP)** | < 1.5s | < 1.0s |
+| **Largest Contentful Paint (LCP)** | < 2.5s | < 1.8s |
+| **Time to Interactive (TTI)** | < 3.5s | < 2.5s |
+| **Cumulative Layout Shift (CLS)** | < 0.1 | < 0.05 |
+| **First Input Delay (FID)** | < 100ms | < 50ms |
+
+#### Lighthouse Scores
+
+| Category | Minimum | Target |
+|----------|---------|--------|
+| **Performance** | 80 | 90+ |
+| **Accessibility** | 95 | 100 |
+| **Best Practices** | 90 | 100 |
+| **SEO** | 90 | 100 |
+
+### Optimization Strategies
+
+#### CSS Optimization
+
+**1. Critical CSS Extraction**
+```html
+<!-- Inline critical CSS in <head> -->
+<style>
+  /* Critical above-the-fold styles */
+  .btn-primary { /* ... */ }
+  .card { /* ... */ }
+</style>
+
+<!-- Load non-critical CSS asynchronously -->
+<link rel="preload" href="./src/design-system.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+```
+
+**2. CSS Minification**
+```bash
+# Use CSS minifier
+npm install -g clean-css-cli
+cleancss -o design-system.min.css design-system.css
+```
+
+**3. Remove Unused CSS**
+```bash
+# Use PurgeCSS to remove unused styles
+npm install @fullhuman/postcss-purgecss
+```
+
+**4. CSS Variable Optimization**
+```css
+/* ✅ Good: Use semantic tokens */
+.button {
+  background: var(--color-brand-primary);
+}
+
+/* ❌ Bad: Multiple primitive tokens */
+.button {
+  background: var(--primitive-primary-500);
+  color: var(--primitive-neutral-900);
+  padding: var(--primitive-space-16);
+}
+```
+
+#### JavaScript Optimization
+
+**1. Code Splitting**
+```javascript
+// Lazy load components
+const Modal = await import('./components/modal.js');
+const DataTable = await import('./components/data-table.js');
+```
+
+**2. Tree Shaking**
+```javascript
+// ✅ Good: Import only what you need
+import { showToast } from './toast-manager.js';
+
+// ❌ Bad: Import entire library
+import * as ToastManager from './toast-manager.js';
+```
+
+**3. Debouncing & Throttling**
+```javascript
+// Debounce search input
+let debounceTimer;
+searchInput.addEventListener('input', (e) => {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => {
+    performSearch(e.target.value);
+  }, 300);
+});
+
+// Throttle scroll events
+let throttleTimer;
+window.addEventListener('scroll', () => {
+  if (!throttleTimer) {
+    throttleTimer = setTimeout(() => {
+      handleScroll();
+      throttleTimer = null;
+    }, 100);
+  }
+});
+```
+
+**4. Event Delegation**
+```javascript
+// ✅ Good: Single event listener
+document.addEventListener('click', (e) => {
+  if (e.target.matches('.btn')) {
+    handleButtonClick(e.target);
+  }
+});
+
+// ❌ Bad: Multiple event listeners
+document.querySelectorAll('.btn').forEach(btn => {
+  btn.addEventListener('click', handleButtonClick);
+});
+```
+
+#### Asset Optimization
+
+**1. Image Optimization**
+```html
+<!-- Use modern formats -->
+<picture>
+  <source srcset="image.avif" type="image/avif">
+  <source srcset="image.webp" type="image/webp">
+  <img src="image.jpg" alt="Description" loading="lazy">
+</picture>
+```
+
+**2. Font Loading**
+```html
+<!-- Preload critical fonts -->
+<link rel="preload" href="/fonts/inter.woff2" as="font" type="font/woff2" crossorigin>
+
+<!-- Use font-display: swap -->
+<link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+```
+
+**3. Icon Optimization**
+```javascript
+// ✅ Good: Load icons on demand
+import { createIcon } from 'lucide';
+createIcon('football');
+
+// ❌ Bad: Load entire icon library
+import * as lucide from 'lucide';
+```
+
+### Lazy Loading Patterns
+
+#### Component Lazy Loading
+
+```javascript
+// Lazy load heavy components
+const loadChart = async () => {
+  const { Chart } = await import('chart.js');
+  // Initialize chart
+};
+
+// Load when component becomes visible
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      loadChart();
+      observer.unobserve(entry.target);
+    }
+  });
+});
+
+observer.observe(document.querySelector('.chart-container'));
+```
+
+#### Data Lazy Loading
+
+```javascript
+// Load data in chunks
+async function loadAthletes(page = 1, limit = 20) {
+  const response = await fetch(`/api/athletes?page=${page}&limit=${limit}`);
+  return response.json();
+}
+
+// Infinite scroll
+let currentPage = 1;
+window.addEventListener('scroll', () => {
+  if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 1000) {
+    loadAthletes(++currentPage);
+  }
+});
+```
+
+### Performance Monitoring
+
+#### Web Vitals Tracking
+
+```javascript
+// Track Core Web Vitals
+import { getCLS, getFID, getFCP, getLCP, getTTFB } from 'web-vitals';
+
+function sendToAnalytics(metric) {
+  // Send to analytics service
+  console.log(metric);
+}
+
+getCLS(sendToAnalytics);
+getFID(sendToAnalytics);
+getFCP(sendToAnalytics);
+getLCP(sendToAnalytics);
+getTTFB(sendToAnalytics);
+```
+
+#### Performance Budget Monitoring
+
+```javascript
+// Check if performance budget is met
+const performanceBudget = {
+  fcp: 1500,
+  lcp: 2500,
+  cls: 0.1
+};
+
+function checkPerformanceBudget() {
+  const perfData = performance.getEntriesByType('navigation')[0];
+  const fcp = perfData.responseEnd - perfData.fetchStart;
+  
+  if (fcp > performanceBudget.fcp) {
+    console.warn(`FCP exceeded budget: ${fcp}ms > ${performanceBudget.fcp}ms`);
+  }
+}
+```
+
+### Best Practices
+
+#### ✅ Do
+
+- **Minify CSS and JavaScript** in production
+- **Use CSS custom properties** for theming (better than multiple CSS files)
+- **Lazy load** heavy components and data
+- **Debounce/throttle** frequent events (scroll, resize, input)
+- **Use event delegation** for dynamic content
+- **Optimize images** (WebP, AVIF, lazy loading)
+- **Preload critical resources** (fonts, critical CSS)
+- **Monitor performance** in production
+
+#### ❌ Don't
+
+- **Don't inline** large CSS/JS in HTML
+- **Don't load** entire libraries when you only need one function
+- **Don't use** `!important` excessively (increases CSS size)
+- **Don't create** too many CSS variables (performance impact)
+- **Don't block** rendering with synchronous scripts
+- **Don't load** all icons upfront
+- **Don't ignore** performance budgets
+
+### Performance Checklist
+
+Before deploying, verify:
+
+- [ ] CSS is minified and gzipped (< 50KB)
+- [ ] JavaScript is minified and gzipped (< 100KB)
+- [ ] Images are optimized (WebP/AVIF where possible)
+- [ ] Fonts use `font-display: swap`
+- [ ] Critical CSS is inlined
+- [ ] Non-critical CSS loads asynchronously
+- [ ] Components lazy load when appropriate
+- [ ] Lighthouse Performance score > 80
+- [ ] Core Web Vitals meet budgets
+- [ ] No layout shift (CLS < 0.1)
+
+## Versioning & Changelog
+
+### Semantic Versioning Strategy
+
+The design system follows [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH):
+
+- **MAJOR (1.0.0 → 2.0.0)**: Breaking changes requiring migration
+  - Component API changes
+  - Removed components or classes
+  - CSS variable name changes
+  - Requires migration guide
+
+- **MINOR (1.0.0 → 1.1.0)**: New features, backward compatible
+  - New components
+  - New variants or sizes
+  - New CSS variables (additive only)
+  - No breaking changes
+
+- **PATCH (1.0.0 → 1.0.1)**: Bug fixes, no breaking changes
+  - Bug fixes
+  - Accessibility improvements
+  - Performance optimizations
+  - Documentation updates
+
+### Component Status Matrix
+
+| Status | Description | Usage |
+|--------|-------------|-------|
+| **Stable** | Production-ready, fully documented | ✅ Use in production |
+| **Preview** | Feature-complete, may have minor changes | ⚠️ Use with caution, may change |
+| **Draft** | In development, API may change | ❌ Do not use in production |
+| **Deprecated** | Will be removed in next major version | ⚠️ Migrate to replacement |
+
+### Changelog
+
+#### Version 1.0.0 (Current - November 2025)
+
+**Initial Stable Release**
+
+##### Added
+- ✅ Green theme color palette (#10c96b primary)
+- ✅ Lucide icon integration
+- ✅ Bento grid layout system
+- ✅ Toast notification component
+- ✅ Skeleton screen loading patterns
+- ✅ Breadcrumb navigation component
+- ✅ Pagination component
+- ✅ Alert banner component
+- ✅ Comprehensive error handling patterns
+- ✅ Dark/light theme toggle with system preference detection
+- ✅ Complete spacing system (4px base unit)
+- ✅ Responsive breakpoints for all devices
+
+##### Changed
+- ✅ Replaced purple/blue colors with green theme
+- ✅ Updated dark theme contrast ratios for WCAG AA compliance
+- ✅ Migrated from emoji icons to Lucide icons
+
+##### Deprecated
+- None (initial stable release)
+
+##### Breaking Changes
+- None (initial stable release)
+
+### Migration Guides
+
+Migration guides are provided for major version updates. Each guide includes:
+- List of breaking changes
+- Step-by-step migration instructions
+- Code examples (before/after)
+- Timeline and deprecation notices
+
+*No migration guides available yet (initial release)*
+
 ## Governance
 
 ### Design System Team
+
 - **Design Lead**: Maintains design consistency and component specifications
 - **Engineering Lead**: Ensures technical implementation quality
-- **Accessibility Expert**: Reviews all components for compliance
+- **Accessibility Expert**: Reviews all components for WCAG compliance
 - **Product Representative**: Validates user needs and business requirements
 
 ### Contribution Process
-1. **Proposal**: Submit RFC for new components or changes
-2. **Design Review**: Design team validates visual consistency
-3. **Engineering Review**: Technical feasibility and implementation
-4. **Accessibility Review**: WCAG compliance verification  
-5. **Testing**: Cross-browser and device validation
-6. **Documentation**: Update usage guidelines and examples
-7. **Release**: Version update with changelog
+
+#### Step 1: Proposal Phase
+
+**Submit RFC (Request for Comments)** with:
+- **Problem Statement**: What problem does this solve?
+- **Proposed Solution**: Component design, API, and usage
+- **Use Cases**: 3+ real-world scenarios where this component is needed
+- **Design Mockups**: Visual design and variants
+- **Accessibility Considerations**: How will this meet WCAG AA standards?
+
+**Proposal Template:**
+```markdown
+## Component Proposal: [Component Name]
+
+### Problem Statement
+[Describe the problem this component solves]
+
+### Proposed Solution
+[Describe the component, its variants, and API]
+
+### Use Cases
+1. [Use case 1]
+2. [Use case 2]
+3. [Use case 3]
+
+### Design Mockups
+[Link to Figma or images]
+
+### Accessibility Plan
+[How will this meet WCAG AA standards?]
+```
+
+#### Step 2: Evaluation
+
+Design system team reviews against criteria:
+
+**Acceptance Criteria:**
+- ✅ Used in 3+ product teams or pages
+- ✅ Meets WCAG AA accessibility standards
+- ✅ Has clear use cases not solved by existing components
+- ✅ Aligns with design principles and brand identity
+- ✅ Has documented API and usage guidelines
+- ✅ Reusable across multiple contexts
+
+**Review Process:**
+1. Design team validates visual consistency
+2. Engineering team reviews technical feasibility
+3. Accessibility expert verifies WCAG compliance
+4. Product representative validates user needs
+
+#### Step 3: Kick-off Meeting
+
+**Scope Agreement:**
+- Finalize component specifications
+- Define timeline and milestones
+- Identify stakeholders
+- Assign designer + developer pair
+
+**Deliverables:**
+- Design specifications (Figma)
+- Technical implementation plan
+- Testing strategy
+- Documentation outline
+
+#### Step 4: Development Phase
+
+**Designer Responsibilities:**
+- Create detailed design specifications
+- Design all variants and states
+- Ensure visual consistency
+- Provide design assets
+
+**Developer Responsibilities:**
+- Implement component with accessibility in mind
+- Write clean, maintainable code
+- Add unit tests
+- Document API and usage
+
+**Regular Check-ins:**
+- Weekly sync meetings
+- Design reviews at key milestones
+- Code reviews before merge
+
+#### Step 5: Review & Testing
+
+**Accessibility Audit:**
+- ✅ Keyboard navigation works
+- ✅ Screen reader announces correctly
+- ✅ Color contrast meets AA standards
+- ✅ Focus indicators visible
+- ✅ ARIA attributes correct
+
+**Code Review:**
+- Code quality and maintainability
+- Performance considerations
+- Browser compatibility
+- Responsive behavior
+
+**Visual Regression Tests:**
+- Cross-browser testing (Chrome, Firefox, Safari, Edge)
+- Device testing (mobile, tablet, desktop)
+- Dark/light theme verification
+
+#### Step 6: Documentation
+
+**Required Documentation:**
+- Usage guidelines with examples
+- Do/don't visual examples
+- Code snippets (HTML, CSS, JavaScript)
+- Component API reference
+- Accessibility notes
+- Migration guide (if replacing existing component)
+
+#### Step 7: Release
+
+**Pre-Release Checklist:**
+- [ ] Component tested and reviewed
+- [ ] Documentation complete
+- [ ] Changelog updated
+- [ ] Version incremented
+- [ ] Migration guide created (if breaking change)
+
+**Release Process:**
+1. Merge to main branch
+2. Update version number
+3. Update changelog
+4. Tag release in version control
+5. Announce to team (Slack, email)
+6. Update design system documentation site
+
+### Communication Channels
+
+- **Slack**: `#design-system` for quick questions and discussions
+- **GitHub Issues**: Feature requests and bug reports
+- **GitHub Pull Requests**: Code contributions and reviews
+- **Office Hours**: Weekly Q&A sessions (Thursdays 2-3 PM)
+- **Design System Meetings**: Bi-weekly team sync
 
 ### Version Control
+
 - **Major**: Breaking changes requiring migration
 - **Minor**: New features, backward compatible
 - **Patch**: Bug fixes and minor improvements
 
 ### Maintenance Schedule
+
 - **Weekly**: Component audits and issue triage
 - **Monthly**: Accessibility testing and validation
 - **Quarterly**: Performance optimization and cleanup
@@ -615,4 +4317,410 @@ The `theme-switcher.js` automatically:
 
 ---
 
-*This documentation is maintained by the FlagFit Pro Design System team. Last updated: November 9, 2025*
+## Browser Compatibility Matrix
+
+### Supported Browsers
+
+The FlagFit Pro Design System is tested and supported on the following browsers:
+
+| Browser | Version | Desktop | Mobile | Notes |
+|---------|---------|---------|--------|-------|
+| **Chrome** | Latest 2 versions | ✅ | ✅ | Primary development browser |
+| **Firefox** | Latest 2 versions | ✅ | ✅ | Full support |
+| **Safari** | Latest 2 versions | ✅ | ✅ | iOS 14+ |
+| **Edge** | Latest 2 versions | ✅ | ✅ | Chromium-based |
+| **Samsung Internet** | Latest 2 versions | ❌ | ✅ | Android devices |
+| **Opera** | Latest 2 versions | ✅ | ❌ | Limited testing |
+
+### Feature Support Matrix
+
+| Feature | Chrome | Firefox | Safari | Edge | Samsung Internet |
+|---------|--------|---------|--------|------|------------------|
+| CSS Grid | ✅ | ✅ | ✅ | ✅ | ✅ |
+| CSS Custom Properties | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Flexbox | ✅ | ✅ | ✅ | ✅ | ✅ |
+| `prefers-color-scheme` | ✅ | ✅ | ✅ | ✅ | ✅ |
+| `prefers-reduced-motion` | ✅ | ✅ | ✅ | ✅ | ✅ |
+| `:focus-visible` | ✅ | ✅ | ✅ | ✅ | ⚠️ Partial |
+| CSS `backdrop-filter` | ✅ | ✅ | ✅ | ✅ | ⚠️ Partial |
+
+### Known Issues
+
+#### Safari
+- **Issue**: CSS custom properties in `calc()` may require fallbacks
+- **Workaround**: Provide fallback values for critical calculations
+- **Status**: Minor, non-blocking
+
+#### Samsung Internet
+- **Issue**: `:focus-visible` support is partial
+- **Workaround**: Use `:focus` as fallback
+- **Status**: Handled with fallback styles
+
+#### Internet Explorer
+- **Status**: ❌ Not supported
+- **Reason**: IE11 reached end-of-life in June 2022
+- **Recommendation**: Use modern browsers only
+
+### Testing Strategy
+
+- **Automated Testing**: Cross-browser testing with BrowserStack
+- **Manual Testing**: Weekly checks on latest browser versions
+- **Device Testing**: Physical devices for mobile browsers
+- **Accessibility Testing**: Screen readers on all supported browsers
+
+### Progressive Enhancement
+
+The design system follows progressive enhancement principles:
+
+1. **Core Functionality**: Works without JavaScript
+2. **Enhanced Experience**: JavaScript adds interactivity
+3. **Modern Features**: CSS Grid, Custom Properties enhance layout
+4. **Fallbacks**: Graceful degradation for older browsers
+
+### Browser-Specific Considerations
+
+#### Mobile Safari (iOS)
+- **Viewport**: Use `viewport-fit=cover` for safe areas
+- **Touch Targets**: Minimum 44px enforced
+- **Input Zoom**: 16px minimum font size prevents zoom
+- **Scroll Behavior**: Smooth scrolling may need `-webkit-overflow-scrolling: touch`
+
+#### Chrome Mobile
+- **Performance**: Optimized for Chrome's rendering engine
+- **PWA Support**: Full Progressive Web App support
+
+#### Firefox
+- **CSS Grid**: Excellent support, no issues
+- **Custom Properties**: Full support
+
+## Writing Guidelines
+
+### Voice & Tone
+
+The FlagFit Pro design system uses an **encouraging, clear, and action-oriented** voice that motivates athletes while providing clear guidance.
+
+#### Core Principles
+
+1. **Encouraging**: Support athletes in their training journey
+   - ✅ "Great progress this week!"
+   - ❌ "You're behind schedule"
+
+2. **Clear**: Use plain language, avoid jargon
+   - ✅ "Training session saved successfully"
+   - ❌ "Data persistence operation completed"
+
+3. **Action-Oriented**: Tell users what they can do
+   - ✅ "Add your first athlete to get started"
+   - ❌ "No athletes found"
+
+4. **Concise**: Get to the point quickly
+   - ✅ "Password must be at least 8 characters"
+   - ❌ "The password field requires a minimum of 8 characters to ensure security"
+
+### Button Labels
+
+#### Guidelines
+- Use action verbs (Save, Delete, Cancel, Add)
+- Be specific (Save Changes, not Submit)
+- Match user intent (Start Training, not Begin)
+- Keep labels short (2-3 words max)
+
+#### Examples
+
+| Context | ✅ Good | ❌ Bad |
+|---------|---------|--------|
+| Form submission | Save Changes | Submit |
+| Confirmation | Delete Session | OK |
+| Navigation | View Profile | Click Here |
+| Creation | Add Athlete | Create New Athlete Entry |
+
+### Error Messages
+
+#### Structure
+1. **What went wrong** (clear statement)
+2. **Why it happened** (brief explanation)
+3. **What to do** (actionable guidance)
+
+#### Examples
+
+✅ **Good:**
+- "Training date cannot be in the past. Please select a future date."
+- "Password must be at least 8 characters. Add more characters to continue."
+- "This athlete is already in your roster. Try adding a different athlete."
+
+❌ **Bad:**
+- "Invalid input"
+- "Error 500"
+- "You did something wrong"
+- "The system encountered an error processing your request"
+
+### Success Messages
+
+#### Guidelines
+- Confirm what happened
+- Be specific about the action
+- Keep it brief
+
+#### Examples
+
+✅ **Good:**
+- "Training session saved successfully"
+- "Athlete added to roster"
+- "Profile updated"
+
+❌ **Bad:**
+- "Success!"
+- "Done"
+- "Operation completed"
+
+### Empty States
+
+#### Structure
+1. **Icon/Illustration** (visual context)
+2. **Headline** (what's missing)
+3. **Description** (why it's empty, what to do)
+4. **Action Button** (how to fix it)
+
+#### Examples
+
+✅ **Good:**
+```
+No athletes in roster
+Get started by adding your first athlete to track their training progress.
+[Add First Athlete]
+```
+
+❌ **Bad:**
+```
+No data
+There is nothing here.
+[OK]
+```
+
+### Tooltips & Help Text
+
+#### Guidelines
+- Answer "What is this?" or "How do I use this?"
+- Keep to one sentence
+- Use plain language
+
+#### Examples
+
+✅ **Good:**
+- "Performance score based on training completion and metrics"
+- "Click to view detailed training history"
+- "Select multiple athletes for bulk actions"
+
+❌ **Bad:**
+- "This is a performance metric"
+- "Click here"
+- "Multi-select functionality"
+
+### Form Labels & Hints
+
+#### Labels
+- Be descriptive and specific
+- Use sentence case
+- Include units when relevant
+
+#### Hints
+- Provide context or examples
+- Show format requirements
+- Explain why information is needed
+
+#### Examples
+
+✅ **Good:**
+```
+Training Date *
+Select a future date for your training session
+[Date picker]
+```
+
+❌ **Bad:**
+```
+Date *
+[Date picker]
+```
+
+### Microcopy Library
+
+Common phrases used throughout the application:
+
+#### Actions
+- "Save Changes"
+- "Cancel"
+- "Delete"
+- "Add [Item]"
+- "Edit"
+- "View Details"
+- "Start Training"
+- "End Session"
+
+#### Status Messages
+- "Loading..."
+- "Saving..."
+- "Processing..."
+- "Success"
+- "Error"
+- "Warning"
+
+#### Navigation
+- "Dashboard"
+- "Training Schedule"
+- "Roster"
+- "Performance Analytics"
+- "Settings"
+
+#### Data Labels
+- "Performance Score"
+- "Training Sessions"
+- "Completion Rate"
+- "Last Updated"
+- "Created"
+
+### Accessibility in Writing
+
+#### Guidelines
+- Use descriptive link text ("View training history" not "Click here")
+- Provide context for screen readers
+- Use headings hierarchically
+- Label form fields clearly
+- Provide alternative text for images
+
+#### Examples
+
+✅ **Good:**
+```html
+<a href="/training/history">View training history</a>
+<img src="chart.png" alt="Performance chart showing 15% improvement over 12 weeks">
+```
+
+❌ **Bad:**
+```html
+<a href="/training/history">Click here</a>
+<img src="chart.png" alt="Chart">
+```
+
+### Content Checklist
+
+Before publishing any UI copy, verify:
+
+- [ ] Uses encouraging, clear language
+- [ ] Action-oriented (tells user what to do)
+- [ ] Concise (one sentence when possible)
+- [ ] No technical jargon
+- [ ] Proper grammar and spelling
+- [ ] Accessible (descriptive links, alt text)
+- [ ] Consistent with design system voice
+- [ ] Matches user's mental model
+
+---
+
+## Roadmap
+
+### Phase 1: Foundation (Weeks 1-2) - Critical Priority
+
+**Goal**: Establish version control, contribution process, and critical feedback mechanisms
+
+**Deliverables:**
+- ✅ Versioning Strategy (Semantic versioning implemented)
+- ✅ Contribution Process (Workflow documented)
+- ✅ Toast Notifications (Component documented)
+- ✅ Skeleton Screens (Patterns documented)
+- ✅ Error Handling Patterns (Comprehensive guidelines added)
+
+**Status**: ✅ **COMPLETE**
+
+### Phase 2: Essential Components (Weeks 3-6) - High Priority
+
+**Goal**: Add navigation, form, and data display components critical for app functionality
+
+**Deliverables:**
+- ✅ Navigation: Breadcrumbs, Pagination (Documented)
+- ⏳ Forms: Dropdown/Select with search, Date/Time picker, Multiselect
+- ⏳ Data Display: Table/Data Grid with sorting and filtering
+- ✅ Feedback: Alert/Banner component (Documented)
+- ⏳ Data Visualization: Chart guidelines and 3-4 core chart types
+
+**Status**: 🟡 **IN PROGRESS** (2/5 complete)
+
+**Next Steps:**
+1. Implement Date/Time picker component
+2. Create Table/Data Grid component
+3. Add data visualization guidelines
+
+### Phase 3: Enhanced Components (Weeks 7-10) - Medium Priority
+
+**Goal**: Polish user experience with additional components and patterns
+
+**Deliverables:**
+- ⏳ Additional Components: Tooltip, Avatar, Accordion, Empty States
+- ⏳ UX Patterns: Loading patterns, Search patterns
+- ⏳ Documentation: Add code examples to all components
+- ⏳ Testing: Component testing guidelines
+
+**Status**: ⏳ **PLANNED**
+
+### Phase 4: Polish & Optimization (Weeks 11-14) - Medium/Low Priority
+
+**Goal**: Complete the system with remaining components and content guidelines
+
+**Deliverables:**
+- ⏳ File Upload component
+- ⏳ Progress Bar component
+- ⏳ Onboarding patterns
+- ⏳ Writing guidelines and microcopy library
+- ⏳ Browser compatibility matrix
+- ⏳ Migration guides for future versions
+
+**Status**: ⏳ **PLANNED**
+
+### Quick Wins (Completed)
+
+These high-impact items have been completed:
+
+- ✅ **Versioning & Changelog**: Semantic versioning and changelog added
+- ✅ **Toast Notifications**: Component documented with examples
+- ✅ **Skeleton Screens**: Loading patterns documented
+- ✅ **Breadcrumbs**: Navigation component documented
+- ✅ **Error Handling**: Comprehensive patterns and guidelines added
+
+### Measuring Success
+
+Track these metrics to know your design system is improving:
+
+- **Adoption Rate**: % of product teams using design system
+- **Component Coverage**: % of UI built from design system components
+- **Contribution Volume**: # of contributions per quarter
+- **Time to Implement**: Average hours to build new feature with system
+- **Consistency Score**: % of UI matching design system specifications
+- **Developer Satisfaction**: Survey score from engineering team
+
+### Immediate Next Actions
+
+**This Week:**
+1. Implement Date/Time picker component (8-12 hours)
+2. Create Table/Data Grid component (12-16 hours)
+3. Add data visualization guidelines (8-12 hours)
+
+**Next Quarter:**
+1. Complete Phase 2 roadmap (essential components)
+2. Add data visualization guidelines (critical for performance app)
+3. Expand navigation components (tabs, accordion)
+4. Enhance documentation with code examples for every component
+5. Build contribution culture by welcoming first external contribution
+
+---
+
+*This documentation is maintained by the FlagFit Pro Design System team. Last updated: December 2024*
+
+## Recent Updates (December 2024)
+
+### Component Library - 100% Complete
+- ✅ All 23 core components implemented (8 atoms, 8 molecules, 4 organisms, 3 templates)
+- ✅ Component library showcase page created (`component-library.html`)
+- ✅ All components include HTML markup, README documentation, and examples
+- ✅ Tabs and Accordion components moved from Preview to Stable status
+- ✅ Alert and Modal components implemented (CSS existed, HTML added)
+- ✅ Form components complete (Textarea, Select, Checkbox, Radio)

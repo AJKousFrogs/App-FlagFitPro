@@ -7,99 +7,27 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./src/comprehensive-design-system.css">
-    <link rel="stylesheet" href="./src/spacing-system.css">
-    <link rel="stylesheet" href="./src/hover-effects.css">
+    <!-- New Modular CSS Architecture -->
+    <link rel="stylesheet" href="./src/css/main.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        /* Page-specific styles that can't be replaced with utilities */
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+            background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%);
             min-height: 100vh;
-            color: var(--dark-text-primary);
+            color: var(--color-text-primary);
         }
-
         .container {
             max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
         }
-
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            color: var(--dark-text-primary);
-        }
-
-        .header h1 {
-            font-size: 2.8rem;
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
-
-        .header p {
-            font-size: 1.2rem;
-            opacity: 0.9;
-        }
-
         .progress-banner {
-            background: linear-gradient(135deg, var(--tertiary-500) 0%, #f7931e 100%);
-            padding: 25px;
-            border-radius: 12px;
-            margin-bottom: 30px;
-            color: var(--dark-text-primary);
+            background: linear-gradient(135deg, var(--color-brand-tertiary) 0%, #f7931e 100%);
         }
-
-        .banner-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-top: 15px;
-        }
-
         .banner-stat {
-            text-align: center;
-            padding: 15px;
             background: rgba(255,255,255,0.1);
-            border-radius: 8px;
         }
-
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
         .tracking-card {
-            background: var(--dark-text-primary);
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-        }
-
-        .card-title {
-            font-size: 1.4rem;
-            font-weight: 600;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
+            background: var(--surface-primary);
+            box-shadow: var(--elevation-medium);
         }
 
         .card-icon {
@@ -332,10 +260,10 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1><i data-lucide="bar-chart-3" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Throwing Volume & Velocity Tracker</h1>
-            <p>Track your progress toward the 320-throw tournament challenge</p>
+    <div class="container l-container u-margin-x-auto u-padding-20">
+        <div class="header u-text-center u-margin-bottom-30 u-text-primary">
+            <h1 class="u-text-heading-xl u-font-weight-700 u-margin-bottom-10"><i data-lucide="bar-chart-3" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Throwing Volume & Velocity Tracker</h1>
+            <p class="u-text-body-lg" style="opacity: 0.9;">Track your progress toward the 320-throw tournament challenge</p>
         </div>
 
         <div class="progress-banner">
@@ -491,9 +419,9 @@
 
         <div class="dashboard-grid">
             <!-- Volume Tracking -->
-            <div class="tracking-card">
-                <div class="card-title">
-                    <div class="card-icon volume-icon"><i data-lucide="bar-chart-3" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></div>
+            <div class="tracking-card u-radius-lg u-padding-24">
+                <div class="card-title u-display-flex u-align-center u-text-heading-md u-font-weight-600 u-margin-bottom-20">
+                    <div class="card-icon volume-icon u-display-flex u-align-center u-justify-center u-margin-right-16 u-radius-md" style="width: 40px; height: 40px; font-size: 1.2rem;"><i data-lucide="bar-chart-3" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></div>
                     Volume Tracking
                 </div>
                 <div class="chart-placeholder" id="volumeChart">
@@ -510,9 +438,9 @@
             </div>
 
             <!-- Velocity Tracking -->
-            <div class="tracking-card">
-                <div class="card-title">
-                    <div class="card-icon velocity-icon">🚀</div>
+            <div class="tracking-card u-radius-lg u-padding-24">
+                <div class="card-title u-display-flex u-align-center u-text-heading-md u-font-weight-600 u-margin-bottom-20">
+                    <div class="card-icon velocity-icon u-display-flex u-align-center u-justify-center u-margin-right-16 u-radius-md" style="width: 40px; height: 40px; font-size: 1.2rem;">🚀</div>
                     Velocity Progression
                 </div>
                 <div class="chart-placeholder" id="velocityChart">

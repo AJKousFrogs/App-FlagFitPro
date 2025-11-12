@@ -1,0 +1,85 @@
+<!-- 
+    Performance Chart Component - FlagFit Pro
+    
+    Usage: Copy this snippet for performance data visualization
+    Uses Chart.js library
+-->
+
+<div class="performance-chart-card card">
+    <div class="card-header">
+        <h3>Performance Trends</h3>
+        <div class="chart-controls">
+            <button class="btn btn-tertiary btn-xs" data-period="7d">7D</button>
+            <button class="btn btn-tertiary btn-xs active" data-period="30d">30D</button>
+            <button class="btn btn-tertiary btn-xs" data-period="90d">90D</button>
+        </div>
+    </div>
+    <div class="card-body">
+        <canvas id="performance-chart" width="400" height="200"></canvas>
+    </div>
+    <div class="card-footer">
+        <div class="chart-legend">
+            <div class="legend-item">
+                <span class="legend-color" style="background: var(--color-brand-primary);"></span>
+                <span>Training Sessions</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-color" style="background: var(--color-brand-secondary);"></span>
+                <span>Performance Score</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Chart.js initialization
+// Requires Chart.js library to be loaded
+if (typeof Chart !== 'undefined') {
+    const ctx = document.getElementById('performance-chart');
+    if (ctx) {
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                datasets: [{
+                    label: 'Training Sessions',
+                    data: [12, 19, 15, 25],
+                    borderColor: 'var(--color-brand-primary)',
+                    backgroundColor: 'rgba(16, 201, 107, 0.1)',
+                    tension: 0.4
+                }, {
+                    label: 'Performance Score',
+                    data: [85, 90, 88, 95],
+                    borderColor: 'var(--color-brand-secondary)',
+                    backgroundColor: 'rgba(137, 195, 0, 0.1)',
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+}
+</script>
+
+<!-- 
+    CSS Classes Required:
+    - .performance-chart-card - Card wrapper
+    - .chart-controls - Period selector buttons
+    - .chart-legend - Legend container
+    - .legend-item - Legend item
+    - .legend-color - Color indicator
+-->
+

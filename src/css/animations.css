@@ -1,0 +1,317 @@
+/* ================================================================
+   ANIMATIONS MODULE - FlagFit Pro
+   Keyframes, transitions, and motion-related utilities
+   ================================================================ */
+
+/* ================================================================
+   KEYFRAME ANIMATIONS
+   ================================================================ */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutUp {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+}
+
+@keyframes slideOutDown {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes scaleOut {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-10px);
+  }
+  75% {
+    transform: translateX(10px);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+/* ================================================================
+   ANIMATION UTILITY CLASSES
+   ================================================================ */
+
+.u-animate-fade-in {
+  animation: fadeIn var(--motion-duration-normal) var(--motion-easing-entrance);
+}
+
+.u-animate-fade-out {
+  animation: fadeOut var(--motion-duration-normal) var(--motion-easing-exit);
+}
+
+.u-animate-slide-in-up {
+  animation: slideInUp var(--motion-duration-normal) var(--motion-easing-entrance);
+}
+
+.u-animate-slide-in-down {
+  animation: slideInDown var(--motion-duration-normal) var(--motion-easing-entrance);
+}
+
+.u-animate-slide-in-left {
+  animation: slideInLeft var(--motion-duration-normal) var(--motion-easing-entrance);
+}
+
+.u-animate-slide-in-right {
+  animation: slideInRight var(--motion-duration-normal) var(--motion-easing-entrance);
+}
+
+.u-animate-scale-in {
+  animation: scaleIn var(--motion-duration-normal) var(--motion-easing-expressive);
+}
+
+.u-animate-pulse {
+  animation: pulse 2s var(--motion-easing-expressive) infinite;
+}
+
+.u-animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+.u-animate-bounce {
+  animation: bounce 1s var(--motion-easing-expressive) infinite;
+}
+
+.u-animate-shake {
+  animation: shake 0.5s var(--motion-easing-expressive);
+}
+
+/* ================================================================
+   TRANSITION UTILITY CLASSES
+   ================================================================ */
+
+.u-transition-all {
+  transition: all var(--motion-duration-normal) var(--motion-easing-productive);
+}
+
+.u-transition-colors {
+  transition: color var(--motion-duration-fast) var(--motion-easing-productive),
+              background-color var(--motion-duration-fast) var(--motion-easing-productive),
+              border-color var(--motion-duration-fast) var(--motion-easing-productive);
+}
+
+.u-transition-opacity {
+  transition: opacity var(--motion-duration-fast) var(--motion-easing-productive);
+}
+
+.u-transition-transform {
+  transition: transform var(--motion-duration-normal) var(--motion-easing-productive);
+}
+
+.u-transition-shadow {
+  transition: box-shadow var(--motion-duration-normal) var(--motion-easing-productive);
+}
+
+.u-transition-none {
+  transition: none;
+}
+
+/* ================================================================
+   DURATION UTILITIES
+   ================================================================ */
+
+.u-duration-instant {
+  transition-duration: var(--motion-duration-instant);
+}
+
+.u-duration-fast {
+  transition-duration: var(--motion-duration-fast);
+}
+
+.u-duration-normal {
+  transition-duration: var(--motion-duration-normal);
+}
+
+.u-duration-slow {
+  transition-duration: var(--motion-duration-slow);
+}
+
+.u-duration-slower {
+  transition-duration: var(--motion-duration-slower);
+}
+
+/* ================================================================
+   EASING UTILITIES
+   ================================================================ */
+
+.u-easing-linear {
+  transition-timing-function: var(--primitive-easing-linear);
+}
+
+.u-easing-productive {
+  transition-timing-function: var(--motion-easing-productive);
+}
+
+.u-easing-expressive {
+  transition-timing-function: var(--motion-easing-expressive);
+}
+
+.u-easing-entrance {
+  transition-timing-function: var(--motion-easing-entrance);
+}
+
+.u-easing-exit {
+  transition-timing-function: var(--motion-easing-exit);
+}
+
+/* ================================================================
+   REDUCED MOTION SUPPORT
+   ================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .u-animate-fade-in,
+  .u-animate-fade-out,
+  .u-animate-slide-in-up,
+  .u-animate-slide-in-down,
+  .u-animate-slide-in-left,
+  .u-animate-slide-in-right,
+  .u-animate-scale-in,
+  .u-animate-pulse,
+  .u-animate-spin,
+  .u-animate-bounce,
+  .u-animate-shake {
+    animation: none !important;
+  }
+  
+  .u-transition-all,
+  .u-transition-colors,
+  .u-transition-opacity,
+  .u-transition-transform,
+  .u-transition-shadow {
+    transition: none !important;
+  }
+}
+

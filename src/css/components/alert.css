@@ -1,0 +1,37 @@
+/* ================================================================
+   ALERT COMPONENT - FlagFit Pro
+   ================================================================ */
+
+.alert {
+  padding: var(--spacing-component-md);
+  border-radius: var(--radius-component-md);
+  border-left: 4px solid;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--primitive-space-12);
+}
+
+.alert-info {
+  background-color: var(--color-status-info-subtle);
+  border-color: var(--color-status-info);
+  color: var(--color-status-info);
+}
+
+.alert-success {
+  background-color: var(--color-status-success-subtle);
+  border-color: var(--color-status-success);
+  color: var(--color-status-success);
+}
+
+.alert-warning {
+  background-color: var(--color-status-warning-subtle);
+  border-color: var(--color-status-warning);
+  color: var(--color-status-warning);
+}
+
+.alert-error {
+  background-color: var(--color-status-error-subtle);
+  border-color: var(--color-status-error);
+  color: var(--color-status-error);
+}
+

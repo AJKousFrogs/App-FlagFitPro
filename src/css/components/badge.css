@@ -1,0 +1,48 @@
+/* ================================================================
+   BADGE COMPONENT - FlagFit Pro
+   ================================================================ */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--primitive-space-4);
+  padding: var(--primitive-space-2) var(--primitive-space-8);
+  border-radius: var(--radius-component-sm);
+  font-size: var(--typography-caption-size);
+  font-weight: var(--typography-caption-weight);
+  line-height: var(--typography-caption-line-height);
+  letter-spacing: var(--typography-caption-letter-spacing);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.badge-primary {
+  background-color: var(--color-brand-primary-light);
+  color: var(--color-brand-primary);
+}
+
+.badge-secondary {
+  background-color: var(--surface-tertiary);
+  color: var(--color-text-secondary);
+}
+
+.badge-success {
+  background-color: var(--color-status-success-light);
+  color: var(--color-status-success);
+}
+
+.badge-warning {
+  background-color: var(--color-status-warning-light);
+  color: var(--color-status-warning);
+}
+
+.badge-error {
+  background-color: var(--color-status-error-light);
+  color: var(--color-status-error);
+}
+
+.badge-info {
+  background-color: var(--color-status-info-light);
+  color: var(--color-status-info);
+}
+

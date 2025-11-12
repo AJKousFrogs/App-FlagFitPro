@@ -1,0 +1,50 @@
+/* ================================================================
+   LIGHT THEME - FlagFit Pro
+   ================================================================ */
+
+/* Manual theme switching via data-theme attribute */
+[data-theme="light"],
+html[data-theme="light"] {
+  --surface-primary: #ffffff;
+  --surface-secondary: #f8f9fa;
+  --surface-tertiary: #e9ecef;
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #404040;
+  --color-text-tertiary: #6b6b6b;
+  --color-border-strong: #cccccc;
+  --color-border-medium: #e0e0e0;
+  --chart-bar-fill: var(--color-brand-primary);
+  --chart-bar-bg: #e9ecef;
+}
+
+/* Class-based theme switching */
+.light,
+html.light {
+  --surface-primary: #ffffff;
+  --surface-secondary: #f8f9fa;
+  --surface-tertiary: #e9ecef;
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #404040;
+  --color-text-tertiary: #6b6b6b;
+  --color-border-strong: #cccccc;
+  --color-border-medium: #e0e0e0;
+  --chart-bar-fill: var(--color-brand-primary);
+  --chart-bar-bg: #e9ecef;
+}
+
+/* System preference (only if no manual theme is set) */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]):not(.dark) {
+    --surface-primary: #ffffff;
+    --surface-secondary: #f8f9fa;
+    --surface-tertiary: #e9ecef;
+    --color-text-primary: #1a1a1a;
+    --color-text-secondary: #404040;
+    --color-text-tertiary: #6b6b6b;
+    --color-border-strong: #cccccc;
+    --color-border-medium: #e0e0e0;
+    --chart-bar-fill: var(--color-brand-primary);
+    --chart-bar-bg: #e9ecef;
+  }
+}
+

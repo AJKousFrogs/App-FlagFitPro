@@ -1,0 +1,90 @@
+<!-- 
+    Select/Dropdown Component - FlagFit Pro
+    
+    Usage: Copy this snippet for dropdown selections
+    States: default, focus, error, success, disabled
+    Accessibility:
+    - Always include <label> with matching id
+    - Error messages have role="alert"
+-->
+
+<!-- Basic Select -->
+<select id="select-basic" name="select-basic" class="form-input form-select">
+    <option value="">Choose an option</option>
+    <option value="option1">Option 1</option>
+    <option value="option2">Option 2</option>
+    <option value="option3">Option 3</option>
+</select>
+
+<!-- Select with Label -->
+<div class="form-group">
+    <label for="select-label" class="form-label">Position</label>
+    <select id="select-label" name="position" class="form-input form-select">
+        <option value="">Select position</option>
+        <option value="qb">Quarterback</option>
+        <option value="wr">Wide Receiver</option>
+        <option value="rb">Running Back</option>
+        <option value="te">Tight End</option>
+        <option value="ol">Offensive Line</option>
+    </select>
+</div>
+
+<!-- Select with Error -->
+<div class="form-group">
+    <label for="select-error" class="form-label required">Team</label>
+    <select id="select-error" name="team" class="form-input form-select error">
+        <option value="">Please select a team</option>
+        <option value="team1">Team 1</option>
+        <option value="team2">Team 2</option>
+    </select>
+    <div class="form-error" role="alert">Please select a team</div>
+</div>
+
+<!-- Select with Success -->
+<div class="form-group">
+    <label for="select-success" class="form-label">Status</label>
+    <select id="select-success" name="status" class="form-input form-select success">
+        <option value="active" selected>Active</option>
+        <option value="inactive">Inactive</option>
+        <option value="pending">Pending</option>
+    </select>
+    <small class="form-success">✓ Valid</small>
+</div>
+
+<!-- Disabled Select -->
+<div class="form-group">
+    <label for="select-disabled" class="form-label">Disabled Field</label>
+    <select id="select-disabled" name="disabled" class="form-input form-select" disabled>
+        <option value="option1" selected>Cannot change</option>
+        <option value="option2">Option 2</option>
+    </select>
+</div>
+
+<!-- Multiple Select -->
+<div class="form-group">
+    <label for="select-multiple" class="form-label">Select Multiple</label>
+    <select id="select-multiple" name="multiple" class="form-input form-select" multiple size="4">
+        <option value="option1">Option 1</option>
+        <option value="option2">Option 2</option>
+        <option value="option3">Option 3</option>
+        <option value="option4">Option 4</option>
+    </select>
+    <small class="form-hint">Hold Ctrl (Cmd on Mac) to select multiple</small>
+</div>
+
+<!-- Select with Groups -->
+<div class="form-group">
+    <label for="select-group" class="form-label">Category</label>
+    <select id="select-group" name="category" class="form-input form-select">
+        <option value="">Select category</option>
+        <optgroup label="Offense">
+            <option value="qb">Quarterback</option>
+            <option value="wr">Wide Receiver</option>
+        </optgroup>
+        <optgroup label="Defense">
+            <option value="db">Defensive Back</option>
+            <option value="lb">Linebacker</option>
+        </optgroup>
+    </select>
+</div>
+
