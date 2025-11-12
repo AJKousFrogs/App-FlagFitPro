@@ -483,7 +483,8 @@
             </p>
           </div>
           <div>
-            <button class="post-btn" onclick="scrollToCreatePost()">
+            <button class="btn btn-primary btn-md" onclick="scrollToCreatePost()">
+              <i data-lucide="plus" style="width: 18px; height: 18px"></i>
               Create Post
             </button>
           </div>
@@ -499,25 +500,21 @@
               ></textarea>
               <div class="post-actions">
                 <div class="post-options">
-                  <button class="post-option">📷 Photo</button>
-                  <button class="post-option">🎥 Video</button>
                   <button class="post-option">
-                    <i
-                      data-lucide="bar-chart-3"
-                      style="
-                        width: 16px;
-                        height: 16px;
-                        display: inline-block;
-                        vertical-align: middle;
-                        color: var(--icon-color-primary);
-                        stroke: var(--icon-color-primary);
-                      "
-                    ></i>
+                    <i data-lucide="image" style="width: 16px; height: 16px"></i>
+                    Photo
+                  </button>
+                  <button class="post-option">
+                    <i data-lucide="video" style="width: 16px; height: 16px"></i>
+                    Video
+                  </button>
+                  <button class="post-option">
+                    <i data-lucide="bar-chart-3" style="width: 16px; height: 16px"></i>
                     Poll
                   </button>
                 </div>
                 <button
-                  class="post-btn"
+                  class="btn btn-primary btn-md"
                   id="submitPost"
                   disabled
                   onclick="createPost()"
@@ -567,50 +564,26 @@
                 </div>
                 <div class="post-engagement">
                   <div class="engagement-stats">
-                    <span>👍 24 likes</span>
-                    <span
-                      ><i
-                        data-lucide="message-circle"
-                        style="
-                          width: 16px;
-                          height: 16px;
-                          display: inline-block;
-                          vertical-align: middle;
-                          color: var(--icon-color-primary);
-                          stroke: var(--icon-color-primary);
-                        "
-                      ></i>
-                      8 comments</span
-                    >
-                    <span>🔄 3 shares</span>
+                    <span><i data-lucide="thumbs-up" style="width: 14px; height: 14px"></i> 24 likes</span>
+                    <span><i data-lucide="message-circle" style="width: 14px; height: 14px"></i> 8 comments</span>
+                    <span><i data-lucide="share-2" style="width: 14px; height: 14px"></i> 3 shares</span>
                   </div>
                   <div class="engagement-actions">
                     <button
                       class="action-btn"
                       onclick="toggleLike(this, 'post1')"
                     >
-                      <span>👍</span> Like
+                      <i data-lucide="thumbs-up" style="width: 16px; height: 16px"></i> Like
                     </button>
                     <button
                       class="action-btn"
                       onclick="toggleComments('post1')"
                     >
-                      <span
-                        ><i
-                          data-lucide="message-circle"
-                          style="
-                            width: 16px;
-                            height: 16px;
-                            display: inline-block;
-                            vertical-align: middle;
-                            color: var(--icon-color-primary);
-                            stroke: var(--icon-color-primary);
-                          "
-                        ></i
-                      ></span>
-                      Comment
+                      <i data-lucide="message-circle" style="width: 16px; height: 16px"></i> Comment
                     </button>
-                    <button class="action-btn"><span>🔄</span> Share</button>
+                    <button class="action-btn">
+                      <i data-lucide="share-2" style="width: 16px; height: 16px"></i> Share
+                    </button>
                   </div>
                 </div>
                 <div class="comments-section" id="comments-post1">
@@ -683,50 +656,26 @@
                 </div>
                 <div class="post-engagement">
                   <div class="engagement-stats">
-                    <span>👍 87 likes</span>
-                    <span
-                      ><i
-                        data-lucide="message-circle"
-                        style="
-                          width: 16px;
-                          height: 16px;
-                          display: inline-block;
-                          vertical-align: middle;
-                          color: var(--icon-color-primary);
-                          stroke: var(--icon-color-primary);
-                        "
-                      ></i>
-                      23 comments</span
-                    >
-                    <span>🔄 12 shares</span>
+                    <span><i data-lucide="thumbs-up" style="width: 14px; height: 14px"></i> 87 likes</span>
+                    <span><i data-lucide="message-circle" style="width: 14px; height: 14px"></i> 23 comments</span>
+                    <span><i data-lucide="share-2" style="width: 14px; height: 14px"></i> 12 shares</span>
                   </div>
                   <div class="engagement-actions">
                     <button
                       class="action-btn liked"
                       onclick="toggleLike(this, 'post2')"
                     >
-                      <span>❤️</span> Loved
+                      <i data-lucide="heart" style="width: 16px; height: 16px"></i> Loved
                     </button>
                     <button
                       class="action-btn"
                       onclick="toggleComments('post2')"
                     >
-                      <span
-                        ><i
-                          data-lucide="message-circle"
-                          style="
-                            width: 16px;
-                            height: 16px;
-                            display: inline-block;
-                            vertical-align: middle;
-                            color: var(--icon-color-primary);
-                            stroke: var(--icon-color-primary);
-                          "
-                        ></i
-                      ></span>
-                      Comment
+                      <i data-lucide="message-circle" style="width: 16px; height: 16px"></i> Comment
                     </button>
-                    <button class="action-btn"><span>🔄</span> Share</button>
+                    <button class="action-btn">
+                      <i data-lucide="share-2" style="width: 16px; height: 16px"></i> Share
+                    </button>
                   </div>
                 </div>
                 <div class="comments-section" id="comments-post2">
@@ -785,50 +734,26 @@
                 </div>
                 <div class="post-engagement">
                   <div class="engagement-stats">
-                    <span>👍 42 likes</span>
-                    <span
-                      ><i
-                        data-lucide="message-circle"
-                        style="
-                          width: 16px;
-                          height: 16px;
-                          display: inline-block;
-                          vertical-align: middle;
-                          color: var(--icon-color-primary);
-                          stroke: var(--icon-color-primary);
-                        "
-                      ></i>
-                      15 comments</span
-                    >
-                    <span>🔄 8 shares</span>
+                    <span><i data-lucide="thumbs-up" style="width: 14px; height: 14px"></i> 42 likes</span>
+                    <span><i data-lucide="message-circle" style="width: 14px; height: 14px"></i> 15 comments</span>
+                    <span><i data-lucide="share-2" style="width: 14px; height: 14px"></i> 8 shares</span>
                   </div>
                   <div class="engagement-actions">
                     <button
                       class="action-btn"
                       onclick="toggleLike(this, 'post3')"
                     >
-                      <span>👍</span> Like
+                      <i data-lucide="thumbs-up" style="width: 16px; height: 16px"></i> Like
                     </button>
                     <button
                       class="action-btn"
                       onclick="toggleComments('post3')"
                     >
-                      <span
-                        ><i
-                          data-lucide="message-circle"
-                          style="
-                            width: 16px;
-                            height: 16px;
-                            display: inline-block;
-                            vertical-align: middle;
-                            color: var(--icon-color-primary);
-                            stroke: var(--icon-color-primary);
-                          "
-                        ></i
-                      ></span>
-                      Comment
+                      <i data-lucide="message-circle" style="width: 16px; height: 16px"></i> Comment
                     </button>
-                    <button class="action-btn"><span>🔄</span> Share</button>
+                    <button class="action-btn">
+                      <i data-lucide="share-2" style="width: 16px; height: 16px"></i> Share
+                    </button>
                   </div>
                 </div>
                 <div class="comments-section" id="comments-post3"></div>
@@ -1115,19 +1040,19 @@
                     </div>
                     <div class="post-engagement">
                         <div class="engagement-stats">
-                            <span>👍 ${post.likes || 0} likes</span>
-                            <span><i data-lucide="message-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> ${post.comments || 0} comments</span>
-                            <span>🔄 ${post.shares || 0} shares</span>
+                            <span><i data-lucide="thumbs-up" style="width: 14px; height: 14px"></i> ${post.likes || 0} likes</span>
+                            <span><i data-lucide="message-circle" style="width: 14px; height: 14px"></i> ${post.comments || 0} comments</span>
+                            <span><i data-lucide="share-2" style="width: 14px; height: 14px"></i> ${post.shares || 0} shares</span>
                         </div>
                         <div class="engagement-actions">
                             <button class="action-btn ${post.isLiked ? "liked" : ""}" onclick="toggleLike(this, '${post.id}')">
-                                <span>${post.isLiked ? "❤️" : "👍"}</span> ${post.isLiked ? "Loved" : "Like"}
+                                <i data-lucide="${post.isLiked ? "heart" : "thumbs-up"}" style="width: 16px; height: 16px"></i> ${post.isLiked ? "Loved" : "Like"}
                             </button>
                             <button class="action-btn" onclick="toggleComments('${post.id}')">
-                                <span><i data-lucide="message-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span> Comment
+                                <i data-lucide="message-circle" style="width: 16px; height: 16px"></i> Comment
                             </button>
                             <button class="action-btn">
-                                <span>🔄</span> Share
+                                <i data-lucide="share-2" style="width: 16px; height: 16px"></i> Share
                             </button>
                         </div>
                     </div>
@@ -1227,9 +1152,11 @@
             button.classList.toggle("liked");
 
             if (button.classList.contains("liked")) {
-              button.innerHTML = "<span>❤️</span> Loved";
+              button.innerHTML = '<i data-lucide="heart" style="width: 16px; height: 16px"></i> Loved';
+              lucide.createIcons();
             } else {
-              button.innerHTML = "<span>👍</span> Like";
+              button.innerHTML = '<i data-lucide="thumbs-up" style="width: 16px; height: 16px"></i> Like';
+              lucide.createIcons();
             }
 
             // Update like count in stats
@@ -1239,7 +1166,8 @@
             const likeSpan = stats.children[0];
             const currentLikes = parseInt(likeSpan.textContent.match(/\d+/)[0]);
             const newLikes = isLiked ? currentLikes - 1 : currentLikes + 1;
-            likeSpan.textContent = `👍 ${newLikes} likes`;
+            likeSpan.innerHTML = `<i data-lucide="thumbs-up" style="width: 14px; height: 14px"></i> ${newLikes} likes`;
+            lucide.createIcons();
           }
         } catch (error) {
           console.error("Failed to toggle like:", error);

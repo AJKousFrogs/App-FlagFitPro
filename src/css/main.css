@@ -61,6 +61,7 @@
 @import url("./components/alert.css") layer(components);
 @import url("./components/header.css") layer(components);
 @import url("./components/sidebar.css") layer(components);
+@import url("./components/community.css") layer(components);
 
 /* ================================================================
    LAYER 7.5: COMPONENTS MODERN

@@ -15,6 +15,30 @@
   padding: 0;
 }
 
+/* Prevent horizontal scrolling on mobile */
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* Mobile: Ensure all elements respect viewport width */
+@media (max-width: 480px) {
+  * {
+    max-width: 100vw;
+  }
+  
+  .l-container,
+  .l-container-sm,
+  .l-container-md,
+  .l-container-lg,
+  .l-container-xl {
+    max-width: 100%;
+    padding-left: var(--spacing-component-md);
+    padding-right: var(--spacing-component-md);
+  }
+}
+
 html {
   -webkit-text-size-adjust: 100%;
   -moz-text-size-adjust: 100%;
@@ -54,10 +78,10 @@ h1,
 h2,
 .h2 {
   font-family: var(--primitive-font-display);
-  font-size: var(--typography-heading-xl-size);
-  font-weight: var(--typography-heading-xl-weight);
-  line-height: var(--typography-heading-xl-line-height);
-  letter-spacing: var(--typography-heading-xl-letter-spacing);
+  font-size: var(--typography-heading-lg-size);
+  font-weight: var(--typography-heading-lg-weight);
+  line-height: var(--typography-heading-lg-line-height);
+  letter-spacing: var(--typography-heading-lg-letter-spacing);
   color: var(--color-text-primary);
   margin: 0 0 var(--spacing-component-lg) 0;
 }
@@ -115,6 +139,40 @@ p {
 
 p:last-child {
   margin-bottom: 0;
+}
+
+/* Mobile: Ensure minimum readable font sizes */
+@media (max-width: 480px) {
+  body,
+  p,
+  .u-text-body-sm {
+    font-size: max(16px, var(--typography-body-md-size, 1rem));
+  }
+  
+  .form-help,
+  .form-error,
+  .form-success,
+  .form-hint {
+    font-size: max(14px, var(--typography-body-sm-size, 0.875rem));
+  }
+  
+  /* Ensure small text is still readable */
+  .u-text-body-sm,
+  .text-sm {
+    font-size: max(14px, var(--typography-body-sm-size, 0.875rem));
+  }
+}
+
+/* Desktop: Optimal reading width for text content */
+@media (min-width: 769px) {
+  p,
+  .text-content {
+    max-width: 65ch; /* Optimal reading width */
+  }
+  
+  h1, h2, h3 {
+    max-width: 70ch;
+  }
 }
 
 /* ================================================================
@@ -181,6 +239,26 @@ svg {
 
 img {
   border-style: none;
+}
+
+/* Ensure images scale appropriately on all devices */
+@media (min-width: 481px) and (max-width: 768px) {
+  img,
+  picture img,
+  video,
+  canvas {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+  
+  /* Card and hero images should cover appropriately */
+  .card img,
+  .hero-card img {
+    object-fit: cover;
+    width: 100%;
+    height: auto;
+  }
 }
 
 /* ================================================================

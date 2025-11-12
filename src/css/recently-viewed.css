@@ -125,7 +125,7 @@
   }
 
   .recently-viewed-item {
-    padding: 10px;
+    padding: var(--primitive-space-12);
   }
 
   .recently-viewed-title {

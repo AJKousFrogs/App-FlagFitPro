@@ -55,22 +55,28 @@
             <form id="playerForm">
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label required">Player Name</label>
-                        <input type="text" id="playerName" class="form-input" placeholder="First Last" required>
+                        <label for="playerName" class="form-label required">Player Name</label>
+                        <input type="text" id="playerName" name="playerName" class="form-input" placeholder="First Last" required aria-describedby="playerName-error playerName-success" aria-invalid="false">
+                        <div id="playerName-error" class="form-error" role="alert" style="display: none;"></div>
+                        <small id="playerName-success" class="form-success" style="display: none;">Valid name</small>
                     </div>
                     <div class="form-group">
-                        <label class="form-label required">Jersey Number</label>
-                        <input type="number" id="jerseyNumber" class="form-input" min="0" max="99" required>
+                        <label for="jerseyNumber" class="form-label required">Jersey Number</label>
+                        <input type="number" id="jerseyNumber" name="jerseyNumber" class="form-input" min="0" max="99" required aria-describedby="jerseyNumber-error jerseyNumber-success" aria-invalid="false">
+                        <div id="jerseyNumber-error" class="form-error" role="alert" style="display: none;"></div>
+                        <small id="jerseyNumber-success" class="form-success" style="display: none;">Valid jersey number</small>
                     </div>
                     <div class="form-group">
-                        <label class="form-label required">Position</label>
-                        <select id="position" class="form-select" required>
+                        <label for="position" class="form-label required">Position</label>
+                        <select id="position" name="position" class="form-input form-select" required aria-describedby="position-error position-success" aria-invalid="false">
                             <option value="">Select Position</option>
                             <option value="QB">Quarterback (QB)</option>
                             <option value="RB">Running Back (RB)</option>
                             <option value="WR">Wide Receiver (WR)</option>
                             <option value="DB">Defensive Back (DB)</option>
                         </select>
+                        <div id="position-error" class="form-error" role="alert" style="display: none;"></div>
+                        <small id="position-success" class="form-success" style="display: none;">Position selected</small>
                     </div>
                 </div>
                 <div class="form-row">
@@ -138,6 +144,115 @@
             { name: "Enter Player Name", number: 1, position: "QB", height: "6'0\"", weight: "180 lbs", class: "Senior" }
         ];
         
+        // Helper functions for inline validation
+        function showFieldError(fieldId, message) {
+            const field = document.getElementById(fieldId);
+            const errorDiv = document.getElementById(`${fieldId}-error`);
+            const successDiv = document.getElementById(`${fieldId}-success`);
+            
+            if (field) {
+                field.classList.remove("success");
+                field.classList.add("error");
+                field.setAttribute("aria-invalid", "true");
+            }
+            
+            if (errorDiv) {
+                errorDiv.textContent = message;
+                errorDiv.style.display = "flex";
+            }
+            
+            if (successDiv) {
+                successDiv.style.display = "none";
+            }
+        }
+
+        function showFieldSuccess(fieldId) {
+            const field = document.getElementById(fieldId);
+            const errorDiv = document.getElementById(`${fieldId}-error`);
+            const successDiv = document.getElementById(`${fieldId}-success`);
+            
+            if (field) {
+                field.classList.remove("error");
+                field.classList.add("success");
+                field.setAttribute("aria-invalid", "false");
+            }
+            
+            if (errorDiv) {
+                errorDiv.style.display = "none";
+            }
+            
+            if (successDiv) {
+                successDiv.style.display = "flex";
+            }
+        }
+
+        function clearFieldState(fieldId) {
+            const field = document.getElementById(fieldId);
+            const errorDiv = document.getElementById(`${fieldId}-error`);
+            const successDiv = document.getElementById(`${fieldId}-success`);
+            
+            if (field) {
+                field.classList.remove("error", "success");
+                field.setAttribute("aria-invalid", "false");
+            }
+            
+            if (errorDiv) {
+                errorDiv.style.display = "none";
+            }
+            
+            if (successDiv) {
+                successDiv.style.display = "none";
+            }
+        }
+
+        // Real-time validation functions
+        function validatePlayerName(name) {
+            if (!name || name.trim() === "") {
+                clearFieldState("playerName");
+                return false;
+            }
+
+            if (name.trim().length < 2) {
+                showFieldError("playerName", "Name must be at least 2 characters long.");
+                return false;
+            }
+
+            showFieldSuccess("playerName");
+            return true;
+        }
+
+        function validateJerseyNumber(number) {
+            if (!number || number === "") {
+                clearFieldState("jerseyNumber");
+                return false;
+            }
+
+            const num = parseInt(number);
+            if (isNaN(num) || num < 0 || num > 99) {
+                showFieldError("jerseyNumber", "Jersey number must be between 0 and 99.");
+                return false;
+            }
+
+            // Check for duplicate jersey numbers
+            if (teamRoster.find(p => p.number === num)) {
+                showFieldError("jerseyNumber", "Jersey number already exists. Please choose a different number.");
+                return false;
+            }
+
+            showFieldSuccess("jerseyNumber");
+            return true;
+        }
+
+        function validatePosition(position) {
+            if (!position || position === "") {
+                clearFieldState("position");
+                return false;
+            }
+
+            showFieldSuccess("position");
+            return true;
+        }
+        
         // Form submission
         document.getElementById('playerForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -155,14 +270,34 @@
             const hometown = document.getElementById('hometown').value || "City, State";
             const isStarter = document.getElementById('isStarter').checked;
             
-            if (!name || !number || !position) {
-                alert('Please fill in required fields: Name, Jersey Number, and Position');
-                return;
+            let isValid = true;
+
+            // Validate required fields
+            if (!name || name.trim().length < 2) {
+                showFieldError("playerName", "Please enter a valid player name (at least 2 characters).");
+                isValid = false;
+            } else {
+                showFieldSuccess("playerName");
             }
-            
-            // Check for duplicate jersey numbers
-            if (teamRoster.find(p => p.number === number)) {
-                alert('Jersey number already exists. Please choose a different number.');
+
+            if (!number || isNaN(number) || number < 0 || number > 99) {
+                showFieldError("jerseyNumber", "Please enter a valid jersey number (0-99).");
+                isValid = false;
+            } else if (teamRoster.find(p => p.number === number)) {
+                showFieldError("jerseyNumber", "Jersey number already exists. Please choose a different number.");
+                isValid = false;
+            } else {
+                showFieldSuccess("jerseyNumber");
+            }
+
+            if (!position || position === "") {
+                showFieldError("position", "Please select a position.");
+                isValid = false;
+            } else {
+                showFieldSuccess("position");
+            }
+
+            if (!isValid) {
                 return;
             }
             
@@ -249,6 +384,19 @@ const teamInfo = {
         
         // Initialize display
         updateRosterDisplay();
+
+        // Add real-time validation
+        document.getElementById('playerName').addEventListener('input', function() {
+            validatePlayerName(this.value);
+        });
+
+        document.getElementById('jerseyNumber').addEventListener('input', function() {
+            validateJerseyNumber(this.value);
+        });
+
+        document.getElementById('position').addEventListener('change', function() {
+            validatePosition(this.value);
+        });
     </script>
 </body>
 </html>

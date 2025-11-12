@@ -27,88 +27,88 @@
 
 @keyframes slideInUp {
   from {
-    transform: translateY(20px);
+    transform: translate3d(0, 20px, 0);
     opacity: 0;
   }
   to {
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
     opacity: 1;
   }
 }
 
 @keyframes slideInDown {
   from {
-    transform: translateY(-20px);
+    transform: translate3d(0, -20px, 0);
     opacity: 0;
   }
   to {
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
     opacity: 1;
   }
 }
 
 @keyframes slideInLeft {
   from {
-    transform: translateX(-20px);
+    transform: translate3d(-20px, 0, 0);
     opacity: 0;
   }
   to {
-    transform: translateX(0);
+    transform: translate3d(0, 0, 0);
     opacity: 1;
   }
 }
 
 @keyframes slideInRight {
   from {
-    transform: translateX(20px);
+    transform: translate3d(20px, 0, 0);
     opacity: 0;
   }
   to {
-    transform: translateX(0);
+    transform: translate3d(0, 0, 0);
     opacity: 1;
   }
 }
 
 @keyframes slideOutUp {
   from {
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
     opacity: 1;
   }
   to {
-    transform: translateY(-20px);
+    transform: translate3d(0, -20px, 0);
     opacity: 0;
   }
 }
 
 @keyframes slideOutDown {
   from {
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
     opacity: 1;
   }
   to {
-    transform: translateY(20px);
+    transform: translate3d(0, 20px, 0);
     opacity: 0;
   }
 }
 
 @keyframes scaleIn {
   from {
-    transform: scale(0.95);
+    transform: translate3d(0, 0, 0) scale(0.95);
     opacity: 0;
   }
   to {
-    transform: scale(1);
+    transform: translate3d(0, 0, 0) scale(1);
     opacity: 1;
   }
 }
 
 @keyframes scaleOut {
   from {
-    transform: scale(1);
+    transform: translate3d(0, 0, 0) scale(1);
     opacity: 1;
   }
   to {
-    transform: scale(0.95);
+    transform: translate3d(0, 0, 0) scale(0.95);
     opacity: 0;
   }
 }
@@ -135,23 +135,23 @@
 @keyframes bounce {
   0%,
   100% {
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
   50% {
-    transform: translateY(-10px);
+    transform: translate3d(0, -10px, 0);
   }
 }
 
 @keyframes shake {
   0%,
   100% {
-    transform: translateX(0);
+    transform: translate3d(0, 0, 0);
   }
   25% {
-    transform: translateX(-10px);
+    transform: translate3d(-10px, 0, 0);
   }
   75% {
-    transform: translateX(10px);
+    transform: translate3d(10px, 0, 0);
   }
 }
 
@@ -167,11 +167,11 @@
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translate3d(0, 10px, 0);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
@@ -187,11 +187,11 @@
 
 @keyframes slideInFromRight {
   from {
-    transform: translateX(100%);
+    transform: translate3d(100%, 0, 0);
     opacity: 0;
   }
   to {
-    transform: translateX(0);
+    transform: translate3d(0, 0, 0);
     opacity: 1;
   }
 }
@@ -201,51 +201,62 @@
    ================================================================ */
 
 .u-animate-fade-in {
+  will-change: opacity;
   animation: fadeIn var(--motion-duration-normal) var(--motion-easing-entrance);
 }
 
 .u-animate-fade-out {
+  will-change: opacity;
   animation: fadeOut var(--motion-duration-normal) var(--motion-easing-exit);
 }
 
 .u-animate-slide-in-up {
+  will-change: transform, opacity;
   animation: slideInUp var(--motion-duration-normal)
     var(--motion-easing-entrance);
 }
 
 .u-animate-slide-in-down {
+  will-change: transform, opacity;
   animation: slideInDown var(--motion-duration-normal)
     var(--motion-easing-entrance);
 }
 
 .u-animate-slide-in-left {
+  will-change: transform, opacity;
   animation: slideInLeft var(--motion-duration-normal)
     var(--motion-easing-entrance);
 }
 
 .u-animate-slide-in-right {
+  will-change: transform, opacity;
   animation: slideInRight var(--motion-duration-normal)
     var(--motion-easing-entrance);
 }
 
 .u-animate-scale-in {
+  will-change: transform, opacity;
   animation: scaleIn var(--motion-duration-normal)
     var(--motion-easing-expressive);
 }
 
 .u-animate-pulse {
+  will-change: opacity;
   animation: pulse 2s var(--motion-easing-expressive) infinite;
 }
 
 .u-animate-spin {
+  will-change: transform;
   animation: spin 1s linear infinite;
 }
 
 .u-animate-bounce {
+  will-change: transform;
   animation: bounce 1s var(--motion-easing-expressive) infinite;
 }
 
 .u-animate-shake {
+  will-change: transform;
   animation: shake 0.5s var(--motion-easing-expressive);
 }
 
@@ -270,6 +281,7 @@
 }
 
 .u-transition-transform {
+  will-change: transform;
   transition: transform var(--motion-duration-normal)
     var(--motion-easing-productive);
 }
@@ -336,14 +348,17 @@
    ================================================================ */
 
 .u-animate-fade-in-up {
+  will-change: transform, opacity;
   animation: fadeInUp var(--transition-base) var(--motion-easing-entrance);
 }
 
 .u-animate-glow {
+  will-change: box-shadow;
   animation: glow 2s var(--motion-easing-expressive) infinite;
 }
 
 .u-animate-slide-in-right {
+  will-change: transform, opacity;
   animation: slideInFromRight var(--transition-base)
     var(--motion-easing-entrance);
 }

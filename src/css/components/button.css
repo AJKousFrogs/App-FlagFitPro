@@ -92,6 +92,15 @@
   min-height: 36px;
 }
 
+/* Mobile: Ensure minimum touch targets */
+@media (max-width: 480px) {
+  .btn-xs,
+  .btn-sm {
+    min-height: 44px;
+    padding: var(--primitive-space-12) var(--primitive-space-16);
+  }
+}
+
 .btn-md {
   padding: var(--primitive-space-12) var(--primitive-space-20);
   font-size: var(--typography-label-md-size);
@@ -269,4 +278,44 @@
 .btn-error:hover:not(:disabled) {
   background-color: var(--primitive-red-700);
   border-color: var(--primitive-red-700);
+}
+
+/* ================================================================
+   TOUCH DEVICE SUPPORT
+   Disable hover effects on touch devices to prevent sticky states
+   ================================================================ */
+
+/* Only apply hover effects on devices that support hover */
+@media (hover: hover) and (pointer: fine) {
+  .btn-primary:hover:not(:disabled),
+  .btn-secondary:hover:not(:disabled),
+  .btn-tertiary:hover:not(:disabled),
+  .btn-success:hover:not(:disabled),
+  .btn-warning:hover:not(:disabled),
+  .btn-error:hover:not(:disabled) {
+    /* Hover effects already defined above */
+  }
+}
+
+/* Disable hover effects on touch devices */
+@media (hover: none) {
+  .btn-primary:hover:not(:disabled),
+  .btn-secondary:hover:not(:disabled),
+  .btn-tertiary:hover:not(:disabled),
+  .btn-success:hover:not(:disabled),
+  .btn-warning:hover:not(:disabled),
+  .btn-error:hover:not(:disabled) {
+    transform: none;
+    box-shadow: inherit;
+    background: inherit;
+    border-color: inherit;
+  }
+  
+  /* Use active states for touch feedback instead */
+  .btn-primary:active:not(:disabled),
+  .btn-secondary:active:not(:disabled),
+  .btn-tertiary:active:not(:disabled) {
+    transform: scale(0.98);
+    opacity: 0.9;
+  }
 }

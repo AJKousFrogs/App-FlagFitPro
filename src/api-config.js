@@ -168,8 +168,19 @@ export class ApiClient {
     return localStorage.getItem("authToken");
   }
 
-  // Make HTTP request
+  // Make HTTP request with cancellation support
   async request(endpoint, options = {}) {
+    // Create AbortController for cancellation
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    // Store controller for cancellation
+    if (!this.activeRequests) {
+      this.activeRequests = new Map();
+    }
+    const requestId = `${endpoint}_${Date.now()}`;
+    this.activeRequests.set(requestId, controller);
+
     // Use mock API if in static deployment mode
     if (this.baseUrl === "mock://api") {
       if (!this.mockApi) {
@@ -194,6 +205,7 @@ export class ApiClient {
     const config = {
       headers: { ...this.defaultHeaders },
       ...options,
+      signal, // Add abort signal
     };
 
     // Add auth token if available
@@ -211,8 +223,19 @@ export class ApiClient {
         throw new Error(errorData.error || `HTTP ${response.status}`);
       }
 
-      return await response.json();
+      const result = await response.json();
+      this.activeRequests.delete(requestId);
+      return result;
     } catch (error) {
+      // Remove from active requests
+      this.activeRequests.delete(requestId);
+
+      // Handle abort error
+      if (error.name === 'AbortError') {
+        console.log(`Request cancelled: ${endpoint}`);
+        throw new Error('Request cancelled');
+      }
+
       console.error(`API request failed: ${endpoint}`, error);
 
       // Fallback to mock data in development if real API fails
@@ -232,6 +255,22 @@ export class ApiClient {
       }
 
       throw error;
+    }
+  }
+
+  // Cancel a specific request
+  cancelRequest(requestId) {
+    if (this.activeRequests && this.activeRequests.has(requestId)) {
+      this.activeRequests.get(requestId).abort();
+      this.activeRequests.delete(requestId);
+    }
+  }
+
+  // Cancel all active requests
+  cancelAllRequests() {
+    if (this.activeRequests) {
+      this.activeRequests.forEach((controller) => controller.abort());
+      this.activeRequests.clear();
     }
   }
 

@@ -252,7 +252,39 @@
   }
 }
 
-/* Tablet: 2 columns */
+/* Tablet Portrait: 2 columns where appropriate */
+@media (min-width: 481px) and (max-width: 768px) {
+  .l-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .l-grid-3,
+  .l-grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Tablet Portrait Landscape: Optimize for horizontal space */
+@media (min-width: 481px) and (max-width: 768px) and (orientation: landscape) {
+  .l-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .l-grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .l-grid-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  
+  /* Reduce vertical spacing */
+  .l-grid {
+    gap: var(--spacing-component-sm);
+  }
+}
+
+/* Tablet Landscape: 2-3 columns */
 @media (min-width: var(--bp-tablet)) and (max-width: calc(var(--bp-desktop) - 1px)) {
   .l-grid-3,
   .l-grid-4 {
@@ -275,13 +307,36 @@
   }
 }
 
+/* Desktop: Balanced spacing */
+@media (min-width: 769px) {
+  .l-grid {
+    gap: var(--spacing-component-md);
+  }
+}
+
 /* Wide: More spacing */
 @media (min-width: var(--bp-wide)) {
   .l-container {
+    max-width: 1400px;
     padding: 0 var(--spacing-layout-lg);
   }
 
   .l-grid {
     gap: var(--spacing-component-lg);
+  }
+  
+  .l-page-sidebar .l-main {
+    padding: var(--spacing-layout-lg);
+  }
+}
+
+/* Ultra-wide: Maximum content width */
+@media (min-width: 1920px) {
+  .l-container {
+    max-width: 1600px;
+  }
+  
+  .l-grid {
+    gap: var(--spacing-component-xl);
   }
 }

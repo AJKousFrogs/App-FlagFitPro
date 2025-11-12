@@ -90,7 +90,7 @@
         <input type="hidden" id="csrfToken" name="_token" value="" />
 
         <div class="form-group">
-          <label for="email" class="form-label">Email</label>
+          <label for="email" class="form-label required">Email</label>
           <input
             type="email"
             id="email"
@@ -99,11 +99,15 @@
             placeholder="Enter your email"
             required
             autocomplete="email"
+            aria-describedby="email-error email-success"
+            aria-invalid="false"
           />
+          <div id="email-error" class="form-error" role="alert" style="display: none;"></div>
+          <small id="email-success" class="form-success" style="display: none;">Valid email</small>
         </div>
 
         <div class="form-group">
-          <label for="password" class="form-label">Password</label>
+          <label for="password" class="form-label required">Password</label>
           <input
             type="password"
             id="password"
@@ -112,8 +116,11 @@
             placeholder="Enter your password"
             required
             autocomplete="current-password"
-            aria-describedby="password-requirements password-strength"
+            aria-describedby="password-error password-success password-requirements password-strength"
+            aria-invalid="false"
           />
+          <div id="password-error" class="form-error" role="alert" style="display: none;"></div>
+          <small id="password-success" class="form-success" style="display: none;">Password is valid</small>
           <div
             id="password-requirements"
             class="password-requirements u-margin-top-4 u-text-body-sm u-text-tertiary"
@@ -229,7 +236,7 @@
           // Show loading state
           const submitButton = this.querySelector('button[type="submit"]');
           const originalText = submitButton.innerHTML;
-          submitButton.innerHTML = "<span>⏳</span> Signing in...";
+          submitButton.innerHTML = '<span class="spinner-mini" style="display: inline-block; margin-right: 8px;"></span> Signing in...';
           submitButton.disabled = true;
 
           if (window.location.hostname === "localhost") {
@@ -353,10 +360,19 @@
           document.getElementById("password").value = "TestDemo123!";
         }
 
-        // Add password strength indicator
+        // Add real-time validation
+        document
+          .getElementById("email")
+          .addEventListener("input", function() {
+            validateEmailField(this.value);
+          });
+
         document
           .getElementById("password")
-          .addEventListener("input", checkPasswordStrength);
+          .addEventListener("input", function() {
+            validatePasswordField(this.value);
+            checkPasswordStrength();
+          });
 
         // Only log in development mode
         if (isDemoMode) {
@@ -373,46 +389,149 @@
         }
       });
 
-      // Form validation functions
-      function validateLoginForm(email, password) {
-        // Email validation
+      // Helper functions for inline validation
+      function showFieldError(fieldId, message) {
+        const field = document.getElementById(fieldId);
+        const errorDiv = document.getElementById(`${fieldId}-error`);
+        const successDiv = document.getElementById(`${fieldId}-success`);
+        
+        if (field) {
+          field.classList.remove("success");
+          field.classList.add("error");
+          field.setAttribute("aria-invalid", "true");
+        }
+        
+        if (errorDiv) {
+          errorDiv.textContent = message;
+          errorDiv.style.display = "flex";
+        }
+        
+        if (successDiv) {
+          successDiv.style.display = "none";
+        }
+      }
+
+      function showFieldSuccess(fieldId) {
+        const field = document.getElementById(fieldId);
+        const errorDiv = document.getElementById(`${fieldId}-error`);
+        const successDiv = document.getElementById(`${fieldId}-success`);
+        
+        if (field) {
+          field.classList.remove("error");
+          field.classList.add("success");
+          field.setAttribute("aria-invalid", "false");
+        }
+        
+        if (errorDiv) {
+          errorDiv.style.display = "none";
+        }
+        
+        if (successDiv) {
+          successDiv.style.display = "flex";
+        }
+      }
+
+      function clearFieldState(fieldId) {
+        const field = document.getElementById(fieldId);
+        const errorDiv = document.getElementById(`${fieldId}-error`);
+        const successDiv = document.getElementById(`${fieldId}-success`);
+        
+        if (field) {
+          field.classList.remove("error", "success");
+          field.setAttribute("aria-invalid", "false");
+        }
+        
+        if (errorDiv) {
+          errorDiv.style.display = "none";
+        }
+        
+        if (successDiv) {
+          successDiv.style.display = "none";
+        }
+      }
+
+      // Real-time email validation
+      function validateEmailField(email) {
         if (!email || email.trim() === "") {
-          showMessage("errorMessage", "Please enter your email address.");
+          clearFieldState("email");
           return false;
         }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-          showMessage("errorMessage", "Please enter a valid email address.");
+        if (emailRegex.test(email)) {
+          showFieldSuccess("email");
+          return true;
+        } else {
+          showFieldError("email", "Please enter a valid email address (e.g., user@example.com)");
           return false;
         }
+      }
 
-        // Password validation
+      // Real-time password validation
+      function validatePasswordField(password) {
         if (!password || password.trim() === "") {
-          showMessage("errorMessage", "Please enter your password.");
+          clearFieldState("password");
           return false;
         }
 
         if (password.length < 8) {
-          showMessage(
-            "errorMessage",
-            "Password must be at least 8 characters long.",
-          );
+          showFieldError("password", "Password must be at least 8 characters long.");
           return false;
         }
 
-        // Enhanced password complexity validation
         const passwordRegex =
           /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-        if (!passwordRegex.test(password)) {
-          showMessage(
-            "errorMessage",
-            "Password must contain uppercase, lowercase, number, and special character.",
-          );
+        if (passwordRegex.test(password)) {
+          showFieldSuccess("password");
+          return true;
+        } else {
+          showFieldError("password", "Password must contain uppercase, lowercase, number, and special character (@$!%*?&).");
           return false;
         }
+      }
 
-        return true;
+      // Form validation functions
+      function validateLoginForm(email, password) {
+        let isValid = true;
+
+        // Email validation
+        if (!email || email.trim() === "") {
+          showFieldError("email", "Please enter your email address.");
+          showMessage("errorMessage", "Please enter your email address.");
+          isValid = false;
+        } else {
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(email)) {
+            showFieldError("email", "Please enter a valid email address (e.g., user@example.com)");
+            showMessage("errorMessage", "Please enter a valid email address.");
+            isValid = false;
+          } else {
+            showFieldSuccess("email");
+          }
+        }
+
+        // Password validation
+        if (!password || password.trim() === "") {
+          showFieldError("password", "Please enter your password.");
+          showMessage("errorMessage", "Please enter your password.");
+          isValid = false;
+        } else if (password.length < 8) {
+          showFieldError("password", "Password must be at least 8 characters long.");
+          showMessage("errorMessage", "Password must be at least 8 characters long.");
+          isValid = false;
+        } else {
+          const passwordRegex =
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+          if (!passwordRegex.test(password)) {
+            showFieldError("password", "Password must contain uppercase, lowercase, number, and special character (@$!%*?&).");
+            showMessage("errorMessage", "Password must contain uppercase, lowercase, number, and special character.");
+            isValid = false;
+          } else {
+            showFieldSuccess("password");
+          }
+        }
+
+        return isValid;
       }
 
       function showMessage(elementId, message) {

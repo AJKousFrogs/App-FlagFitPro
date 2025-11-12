@@ -58,8 +58,10 @@
     "start:api": "node server.js",
     "deploy:staging": "echo 'Deploy to staging environment'",
     "health:check": "node scripts/comprehensive-health-check.js",
-    "build": "echo 'Static site build completed'",
-    "clean": "echo 'Clean completed'",
+    "build": "node scripts/build.js",
+    "build:css": "echo 'CSS build - configure PostCSS for minification'",
+    "build:js": "echo 'JS build - configure esbuild for minification'",
+    "clean": "rm -rf dist",
     "deploy": "./deploy-to-netlify.sh"
   },
   "dependencies": {

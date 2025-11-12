@@ -153,6 +153,81 @@ export class ErrorHandler {
   }
 
   // Notification display system
+  // Show error notification with retry option
+  static showErrorWithRetry(message, retryCallback, duration = 10000) {
+    const notification = document.createElement("div");
+    notification.className = "error-notification";
+    notification.setAttribute("role", "alert");
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #ef4444;
+      color: white;
+      padding: 1rem 1.25rem;
+      border-radius: 8px;
+      border-left: 4px solid #dc2626;
+      font-weight: 500;
+      font-size: 0.875rem;
+      font-family: 'Inter', 'Poppins', sans-serif;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 10000;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+      line-height: 1.4;
+      max-width: 400px;
+    `;
+
+    notification.innerHTML = `
+      <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
+        <span style="flex-shrink: 0; font-size: 1rem;">❌</span>
+        <div style="flex: 1;">
+          <div style="margin-bottom: 0.5rem;">${message}</div>
+          <button onclick="this.closest('.error-notification').querySelector('.retry-btn').click()" 
+                  class="retry-btn"
+                  style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); 
+                         color: white; padding: 0.25rem 0.75rem; border-radius: 4px; cursor: pointer; 
+                         font-size: 0.75rem; font-weight: 500; margin-top: 0.5rem;"
+                  onmouseover="this.style.background='rgba(255,255,255,0.3)'" 
+                  onmouseout="this.style.background='rgba(255,255,255,0.2)'">Retry</button>
+        </div>
+        <button onclick="this.closest('.error-notification').remove()" 
+                style="background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; 
+                       opacity: 0.8; padding: 0; margin: 0; line-height: 1; flex-shrink: 0;"
+                onmouseover="this.style.opacity='1'" 
+                onmouseout="this.style.opacity='0.8'">×</button>
+      </div>
+    `;
+
+    document.body.appendChild(notification);
+
+    // Animate in
+    setTimeout(() => {
+      notification.style.transform = "translateX(0)";
+    }, 100);
+
+    // Setup retry button
+    const retryBtn = notification.querySelector('.retry-btn');
+    retryBtn.addEventListener('click', () => {
+      notification.remove();
+      if (retryCallback) {
+        retryCallback();
+      }
+    });
+
+    // Auto-remove after duration
+    if (duration > 0) {
+      setTimeout(() => {
+        if (document.body.contains(notification)) {
+          notification.style.transform = "translateX(100%)";
+          setTimeout(() => notification.remove(), 300);
+        }
+      }, duration);
+    }
+
+    return notification;
+  }
+
   static showNotification(message, type = "info", duration = 5000) {
     // Remove any existing notifications of the same type
     const existing = document.querySelector(`.error-notification.${type}`);

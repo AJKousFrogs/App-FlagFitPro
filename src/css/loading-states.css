@@ -20,7 +20,7 @@
   width: 48px;
   height: 48px;
   border: 4px solid rgba(255, 255, 255, 0.2);
-  border-top-color: #10c96b;
+  border-top-color: var(--color-brand-primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
   margin-bottom: 16px;
@@ -100,7 +100,7 @@
 
 .progress-bar {
   height: 100%;
-  background: linear-gradient(90deg, #10c96b, #0ab85a);
+  background: linear-gradient(90deg, var(--color-brand-primary), var(--color-brand-primary-hover));
   border-radius: 4px;
   transition: width 0.3s ease;
 }
@@ -124,6 +124,82 @@
 
 .saving-indicator i {
   animation: spin 0.8s linear infinite;
+}
+
+/* Spinner Size Variants */
+.spinner-mini {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  vertical-align: middle;
+}
+
+.spinner-sm {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  vertical-align: middle;
+}
+
+.spinner-md {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  vertical-align: middle;
+}
+
+.spinner-lg {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  vertical-align: middle;
+}
+
+/* Default spinner (medium size) */
+.spinner {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  vertical-align: middle;
+}
+
+/* Theme-aware spinner colors */
+[data-theme="dark"] .spinner,
+[data-theme="dark"] .spinner-mini,
+[data-theme="dark"] .spinner-sm,
+[data-theme="dark"] .spinner-md,
+[data-theme="dark"] .spinner-lg {
+  border-color: rgba(255, 255, 255, 0.2);
+  border-top-color: var(--color-brand-primary, #10c96b);
+}
+
+[data-theme="light"] .spinner,
+[data-theme="light"] .spinner-mini,
+[data-theme="light"] .spinner-sm,
+[data-theme="light"] .spinner-md,
+[data-theme="light"] .spinner-lg {
+  border-color: rgba(0, 0, 0, 0.1);
+  border-top-color: var(--color-brand-primary, #10c96b);
 }
 
 @keyframes spin {
@@ -171,7 +247,7 @@
   border-radius: 16px;
   max-width: 400px;
   width: 90%;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--elevation-highest);
   animation: slideUp 0.3s ease;
   z-index: 1;
 }
@@ -224,7 +300,7 @@
   color: var(--color-text-on-primary, #fff);
   border-radius: 8px;
   padding: 12px 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--elevation-medium);
   display: flex;
   align-items: center;
   gap: 16px;
@@ -260,14 +336,14 @@
   border: 1px solid var(--color-border-primary, rgba(0, 0, 0, 0.1));
   border-radius: 8px;
   padding: 12px 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--elevation-medium);
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
 .success-notification-content i {
-  color: #10c96b;
+  color: var(--color-brand-primary);
   flex-shrink: 0;
 }
 
@@ -303,7 +379,7 @@
   max-width: 600px;
   width: 90%;
   max-height: 70vh;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--elevation-highest);
   animation: slideDown 0.2s ease;
   z-index: 1;
   overflow: hidden;

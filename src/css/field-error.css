@@ -6,10 +6,10 @@
   gap: 8px;
   margin-top: 8px;
   padding: 8px 12px;
-  background: var(--color-status-error-subtle, rgba(239, 68, 68, 0.1));
-  border: 1px solid var(--color-status-error, #ef4444);
-  border-radius: 6px;
-  color: var(--color-status-error, #ef4444);
+  background: var(--color-status-error-subtle);
+  border: 1px solid var(--color-status-error);
+  border-radius: var(--radius-component-md);
+  color: var(--color-status-error);
   font-size: 14px;
   line-height: 1.5;
 }
@@ -29,9 +29,9 @@
   line-height: 1.5;
   margin-top: 8px;
   padding: 8px 12px;
-  background: var(--surface-secondary, #f5f5f5);
+  background: var(--surface-secondary);
   border-radius: 6px;
-  border-left: 3px solid var(--color-brand-primary, #10c96b);
+  border-left: 3px solid var(--color-brand-primary);
 }
 
 [data-theme="dark"] .password-requirements {

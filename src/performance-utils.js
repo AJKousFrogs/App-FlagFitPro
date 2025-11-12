@@ -250,9 +250,38 @@ export class PerformanceUtils {
     }
   }
 
+  // Clean up will-change after animation completes
+  static setupWillChangeCleanup() {
+    // Remove will-change after animation completes
+    document.addEventListener('animationend', (e) => {
+      const target = e.target;
+      if (target.classList.contains('u-animate-fade-in') ||
+          target.classList.contains('u-animate-fade-out') ||
+          target.classList.contains('u-animate-slide-in-up') ||
+          target.classList.contains('u-animate-slide-in-down') ||
+          target.classList.contains('u-animate-slide-in-left') ||
+          target.classList.contains('u-animate-slide-in-right') ||
+          target.classList.contains('u-animate-scale-in') ||
+          target.classList.contains('u-animate-shake') ||
+          target.classList.contains('u-animate-fade-in-up') ||
+          target.classList.contains('u-animate-slide-in-right')) {
+        target.style.willChange = 'auto';
+      }
+    });
+
+    // Remove will-change after transition completes
+    document.addEventListener('transitionend', (e) => {
+      const target = e.target;
+      if (target.classList.contains('u-transition-transform')) {
+        target.style.willChange = 'auto';
+      }
+    });
+  }
+
   // Initialize all performance optimizations
   static init() {
     console.log("🚀 Initializing performance optimizations...");
+    this.setupWillChangeCleanup();
 
     // Setup lazy loading
     this.setupLazyLoading();

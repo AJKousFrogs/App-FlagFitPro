@@ -31,7 +31,7 @@
   width: 90%;
   max-height: 90vh;
   overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--elevation-highest);
   animation: slideUp 0.3s ease;
   z-index: 1;
 }
@@ -64,7 +64,7 @@
 
 .onboarding-progress-bar {
   height: 100%;
-  background: linear-gradient(90deg, #10c96b, #0ab85a);
+  background: linear-gradient(90deg, var(--color-brand-primary), var(--color-brand-primary-hover));
   border-radius: 2px;
   transition: width 0.3s ease;
 }
@@ -136,7 +136,7 @@
 }
 
 .onboarding-dot.active {
-  background: #10c96b;
+  background: var(--color-brand-primary);
   width: 24px;
   border-radius: 4px;
 }
@@ -167,7 +167,7 @@
   border: 1px solid var(--color-border-primary, rgba(0, 0, 0, 0.1));
   border-radius: 12px;
   padding: 16px 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--elevation-medium);
   display: flex;
   align-items: center;
   gap: 12px;
@@ -180,7 +180,7 @@
 }
 
 .onboarding-welcome-content i {
-  color: #10c96b;
+  color: var(--color-brand-primary);
   flex-shrink: 0;
 }
 

@@ -175,7 +175,7 @@
 .search-input:focus {
   outline: none;
   box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3);
-  border-color: #10b981;
+  border-color: var(--color-brand-primary-hover);
 }
 
 .top-bar .search-input:focus-visible {
@@ -578,14 +578,41 @@
     gap: var(--primitive-space-4);
   }
   
-  /* Hide some icons on very small screens if needed */
+  /* Search box should adapt to available space */
   .top-bar .search-box {
-    min-width: 120px; /* ✅ Minimum usable width */
+    min-width: 0;
+    flex: 1;
   }
   
   /* Ensure text doesn't get too small */
   .top-bar .search-input::placeholder {
     font-size: 14px;
+  }
+  
+  /* Ensure search input remains usable */
+  .top-bar .search-input {
+    font-size: 16px; /* Prevent iOS zoom */
+    min-height: 44px; /* Touch target */
+  }
+}
+
+/* Landscape orientation optimizations */
+@media (min-width: 481px) and (max-width: 768px) and (orientation: landscape) {
+  .top-bar {
+    height: 48px;
+    padding: var(--primitive-space-8) var(--primitive-space-16);
+  }
+  
+  .hero-section {
+    grid-template-columns: repeat(2, 1fr);
+    padding: var(--spacing-layout-sm);
+    gap: var(--primitive-space-16);
+  }
+  
+  /* Reduce vertical spacing in landscape */
+  .l-main {
+    padding-top: var(--spacing-component-md);
+    padding-bottom: var(--spacing-component-md);
   }
 }
 

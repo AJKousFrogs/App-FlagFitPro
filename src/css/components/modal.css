@@ -9,7 +9,8 @@
   right: 0;
   bottom: 0;
   background-color: var(--surface-overlay);
-  backdrop-filter: blur(4px);
+  /* Fallback for browsers without backdrop-filter support */
+  background-color: rgba(0, 0, 0, 0.7);
   z-index: var(--z-index-modal);
   display: flex;
   align-items: center;
@@ -19,6 +20,15 @@
   transition:
     opacity var(--motion-duration-normal) var(--motion-easing-expressive),
     visibility var(--motion-duration-normal) var(--motion-easing-expressive);
+}
+
+/* Enhanced backdrop blur for supported browsers */
+@supports (backdrop-filter: blur(4px)) {
+  .modal-overlay {
+    background-color: var(--surface-overlay);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
 }
 
 .modal-overlay.open {

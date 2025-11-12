@@ -6,8 +6,8 @@ export class LoadingManager {
     this.activeLoaders = new Map();
   }
 
-  // Show loading overlay
-  showLoading(message = 'Loading...', id = null) {
+  // Show loading overlay with optional cancellation
+  showLoading(message = 'Loading...', id = null, cancellable = false, onCancel = null) {
     const loaderId = id || `loader-${Date.now()}`;
     
     const overlay = document.createElement('div');
@@ -17,10 +17,35 @@ export class LoadingManager {
     overlay.setAttribute('aria-live', 'polite');
     overlay.setAttribute('aria-label', message);
 
+    const cancelButton = cancellable ? `
+      <button class="loading-cancel-btn" aria-label="Cancel loading" style="
+        margin-top: 1rem;
+        padding: 0.5rem 1rem;
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.875rem;
+      ">Cancel</button>
+    ` : '';
+
     overlay.innerHTML = `
       <div class="loading-spinner"></div>
       <div class="loading-message">${message}</div>
+      ${cancelButton}
     `;
+
+    // Add cancel handler
+    if (cancellable && onCancel) {
+      const cancelBtn = overlay.querySelector('.loading-cancel-btn');
+      if (cancelBtn) {
+        cancelBtn.addEventListener('click', () => {
+          if (onCancel) onCancel();
+          this.hideLoading(loaderId);
+        });
+      }
+    }
 
     document.body.appendChild(overlay);
     this.activeLoaders.set(loaderId, overlay);

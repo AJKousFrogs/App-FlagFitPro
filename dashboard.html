@@ -10,8 +10,9 @@
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Optimized font loading - only used weights -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Roboto:wght@300;400;500;700;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <!-- New Modular CSS Architecture -->
@@ -23,12 +24,12 @@
     <link rel="modulepreload" href="./src/api-config.js" />
     <link rel="modulepreload" href="./src/error-handler.js" />
     <!-- Lucide Icons - Modern icon library similar to Radix UI -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="./src/icon-helper.js"></script>
-    <script src="./src/icon-accessibility-fix.js"></script>
-    <script src="./src/theme-switcher.js"></script>
-    <script src="./src/nav-highlight.js"></script>
-    <script src="./src/components/organisms/top-bar/top-bar.js"></script>
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+    <script src="./src/icon-helper.js" defer></script>
+    <script src="./src/icon-accessibility-fix.js" defer></script>
+    <script src="./src/theme-switcher.js" defer></script>
+    <script src="./src/nav-highlight.js" defer></script>
+    <script src="./src/components/organisms/top-bar/top-bar.js" defer></script>
     <!-- Chart.js with multiple CDN fallbacks -->
     <script
       src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"
@@ -71,9 +72,14 @@
           if (window.initDashboardCharts) window.initDashboardCharts();
         }
 
-        // Lucide Icons fallback and initialization
-        setTimeout(function () {
-          if (typeof lucide === "undefined") {
+        // Lucide Icons initialization (deferred scripts)
+        function initLucideIcons() {
+          if (typeof lucide !== "undefined") {
+            lucide.createIcons();
+            // Re-initialize after DOM updates
+            setTimeout(() => lucide.createIcons(), 300);
+          } else {
+            // Fallback: try loading Lucide
             console.log("Loading Lucide fallback...");
             const lucideFallback = document.createElement("script");
             lucideFallback.src =
@@ -82,7 +88,6 @@
               console.log("✅ Lucide fallback loaded successfully");
               if (window.lucide) {
                 window.lucide.createIcons();
-                // Re-initialize after DOM updates
                 setTimeout(() => window.lucide.createIcons(), 300);
               }
             };
@@ -111,12 +116,16 @@
                 });
             };
             document.head.appendChild(lucideFallback);
-          } else {
-            // Lucide is already loaded, initialize icons
-            lucide.createIcons();
-            setTimeout(() => lucide.createIcons(), 300);
           }
-        }, 100);
+        }
+
+        // Initialize icons when DOM and scripts are ready
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', initLucideIcons);
+        } else {
+          // DOM already loaded, wait for scripts
+          setTimeout(initLucideIcons, 100);
+        }
       });
     </script>
     <style>
@@ -171,91 +180,7 @@
         color: var(--color-text-primary, #1a1a1a);
       }
 
-      /* Modern Sidebar - Enhanced Design */
-      .sidebar {
-        width: 250px;
-        height: 100vh;
-        position: fixed;
-        left: 0;
-        top: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 24px;
-        z-index: var(--z-index-dropdown, 1000);
-        gap: 12px;
-        transition: all 0.2s ease;
-      }
-
-      /* Dark Theme Sidebar */
-      body[data-theme="dark"] .sidebar,
-      html[data-theme="dark"] .sidebar {
-        background: #1a1a1a;
-        border-right: 1px solid rgba(255, 255, 255, 0.1);
-        box-shadow:
-          4px 0 24px rgba(0, 0, 0, 0.3),
-          inset -1px 0 0 rgba(255, 255, 255, 0.05);
-      }
-
-      /* Light Theme Sidebar */
-      body[data-theme="light"] .sidebar,
-      html[data-theme="light"] .sidebar {
-        background: #ffffff;
-        border-right: 1px solid rgba(0, 0, 0, 0.08);
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-      }
-
-      .sidebar-logo {
-        width: 48px;
-        height: 48px;
-        border-radius: 16px;
-        background: linear-gradient(
-          135deg,
-          #10c96b 0%,
-          #0ab85a 50%,
-          #089949 100%
-        );
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        margin-bottom: 8px;
-        box-shadow:
-          0 4px 16px rgba(16, 201, 107, 0.35),
-          0 2px 8px rgba(16, 201, 107, 0.25),
-          inset 0 1px 0 rgba(255, 255, 255, 0.2);
-        position: relative;
-        overflow: hidden;
-      }
-
-      .sidebar-logo::before {
-        content: "";
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(
-          circle,
-          rgba(255, 255, 255, 0.3) 0%,
-          transparent 70%
-        );
-        opacity: 0;
-        transition: opacity 0.4s ease;
-      }
-
-      .sidebar-logo:hover {
-        transform: scale(1.08) rotate(5deg);
-        box-shadow:
-          0 8px 24px rgba(16, 201, 107, 0.45),
-          0 4px 12px rgba(16, 201, 107, 0.3),
-          inset 0 1px 0 rgba(255, 255, 255, 0.3);
-      }
-
-      .sidebar-logo:hover::before {
-        opacity: 1;
-      }
+      /* Navigation sidebar styles are now in src/css/components/sidebar.css */
 
       .sidebar-icon {
         width: 48px;
@@ -1431,83 +1356,7 @@
         flex-shrink: 0;
       }
 
-      .nav-section {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-200);
-      }
-
-      .nav-item {
-        display: flex;
-        align-items: center;
-        gap: var(--space-300);
-        padding: var(--space-300);
-        border-radius: var(--radius-xl);
-        color: var(--text-muted);
-        text-decoration: none;
-        transition: all var(--transition-base);
-        position: relative;
-        width: 100%;
-        justify-content: flex-start;
-        min-height: 48px;
-      }
-
-      .nav-item::before {
-        content: "";
-        position: absolute;
-        left: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 3px;
-        height: 0;
-        background: var(--brand-green);
-        border-radius: 0 2px 2px 0;
-        transition: height var(--transition-base);
-      }
-
-      .nav-item:hover {
-        background: rgba(255, 255, 255, 0.08);
-        color: var(--text-primary);
-        transform: translateX(4px);
-      }
-
-      .nav-item:hover::before {
-        height: 60%;
-      }
-
-      .nav-item.active {
-        background: rgba(255, 255, 255, 0.08);
-        color: var(--brand-green);
-      }
-
-      .nav-item.active::before {
-        height: 80%;
-      }
-
-      .nav-item.active .nav-item-icon {
-        background: rgba(16, 201, 107, 0.15);
-        color: var(--brand-green);
-      }
-
-      .nav-item-icon {
-        width: 24px;
-        height: 24px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-        transition: all 0.3s ease;
-      }
-
-      .nav-item-label {
-        opacity: 1; /* Always visible with 250px sidebar */
-        transform: translateX(0); /* No transform needed */
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        white-space: nowrap;
-        font-weight: var(--font-weight-medium, 500);
-        font-size: var(--font-size-sm);
-      }
+      /* Navigation item styles are now in src/css/components/sidebar.css */
 
       .dashboard-logo {
         width: 32px;

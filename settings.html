@@ -494,7 +494,11 @@
                 class="form-input"
                 value=""
                 placeholder="Enter your display name"
+                aria-describedby="displayName-error displayName-success"
+                aria-invalid="false"
               />
+              <div id="displayName-error" class="form-error" role="alert" style="display: none;"></div>
+              <small id="displayName-success" class="form-success" style="display: none;">Valid name</small>
             </div>
 
             <div class="form-group">
@@ -505,12 +509,16 @@
                 class="form-input"
                 value="john.doe@example.com"
                 placeholder="Enter your email"
+                aria-describedby="email-error email-success"
+                aria-invalid="false"
               />
+              <div id="email-error" class="form-error" role="alert" style="display: none;"></div>
+              <small id="email-success" class="form-success" style="display: none;">Valid email</small>
             </div>
 
             <div class="form-group">
               <label for="position">Playing Position</label>
-              <select id="position" class="select-input">
+              <select id="position" class="form-input form-select">
                 <option>Wide Receiver</option>
                 <option>Quarterback</option>
                 <option>Running Back</option>
@@ -527,7 +535,11 @@
                 class="form-input"
                 value="Lightning Bolts"
                 placeholder="Enter your team name"
+                aria-describedby="team-error team-success"
+                aria-invalid="false"
               />
+              <div id="team-error" class="form-error" role="alert" style="display: none;"></div>
+              <small id="team-success" class="form-success" style="display: none;">Valid team name</small>
             </div>
           </div>
 
@@ -636,7 +648,11 @@
                 id="currentPassword"
                 class="form-input"
                 placeholder="Enter current password"
+                aria-describedby="currentPassword-error currentPassword-success"
+                aria-invalid="false"
               />
+              <div id="currentPassword-error" class="form-error" role="alert" style="display: none;"></div>
+              <small id="currentPassword-success" class="form-success" style="display: none;">Password entered</small>
             </div>
 
             <div class="form-group">
@@ -646,7 +662,12 @@
                 id="newPassword"
                 class="form-input"
                 placeholder="Enter new password"
+                aria-describedby="newPassword-error newPassword-success"
+                aria-invalid="false"
               />
+              <div id="newPassword-error" class="form-error" role="alert" style="display: none;"></div>
+              <small id="newPassword-success" class="form-success" style="display: none;">Password is valid</small>
+              <small class="form-hint">Password must be at least 8 characters and include uppercase, lowercase, number, and special character.</small>
             </div>
           </div>
 
@@ -750,6 +771,19 @@
 
         // Initialize with real player data
         initializeWithRealPlayerData();
+
+        // Add real-time validation
+        document.getElementById("displayName")?.addEventListener("input", function() {
+          validateNameField(this.value);
+        });
+
+        document.getElementById("email")?.addEventListener("input", function() {
+          validateEmailField(this.value);
+        });
+
+        document.getElementById("newPassword")?.addEventListener("input", function() {
+          validatePasswordField(this.value);
+        });
       });
 
       function loadUserSettings() {
@@ -805,6 +839,121 @@
         if (positionField && !positionField.value) {
           positionField.value = randomPlayer.position;
         }
+      }
+
+      // Helper functions for inline validation
+      function showFieldError(fieldId, message) {
+        const field = document.getElementById(fieldId);
+        const errorDiv = document.getElementById(`${fieldId}-error`);
+        const successDiv = document.getElementById(`${fieldId}-success`);
+        
+        if (field) {
+          field.classList.remove("success");
+          field.classList.add("error");
+          field.setAttribute("aria-invalid", "true");
+        }
+        
+        if (errorDiv) {
+          errorDiv.textContent = message;
+          errorDiv.style.display = "flex";
+        }
+        
+        if (successDiv) {
+          successDiv.style.display = "none";
+        }
+      }
+
+      function showFieldSuccess(fieldId) {
+        const field = document.getElementById(fieldId);
+        const errorDiv = document.getElementById(`${fieldId}-error`);
+        const successDiv = document.getElementById(`${fieldId}-success`);
+        
+        if (field) {
+          field.classList.remove("error");
+          field.classList.add("success");
+          field.setAttribute("aria-invalid", "false");
+        }
+        
+        if (errorDiv) {
+          errorDiv.style.display = "none";
+        }
+        
+        if (successDiv) {
+          successDiv.style.display = "flex";
+        }
+      }
+
+      function clearFieldState(fieldId) {
+        const field = document.getElementById(fieldId);
+        const errorDiv = document.getElementById(`${fieldId}-error`);
+        const successDiv = document.getElementById(`${fieldId}-success`);
+        
+        if (field) {
+          field.classList.remove("error", "success");
+          field.setAttribute("aria-invalid", "false");
+        }
+        
+        if (errorDiv) {
+          errorDiv.style.display = "none";
+        }
+        
+        if (successDiv) {
+          successDiv.style.display = "none";
+        }
+      }
+
+      // Real-time validation functions
+      function validateEmailField(email) {
+        if (!email || email.trim() === "") {
+          clearFieldState("email");
+          return false;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (emailRegex.test(email)) {
+          showFieldSuccess("email");
+          return true;
+        } else {
+          showFieldError("email", "Please enter a valid email address (e.g., user@example.com)");
+          return false;
+        }
+      }
+
+      function validatePasswordField(password) {
+        if (!password || password.trim() === "") {
+          clearFieldState("newPassword");
+          return false;
+        }
+
+        if (password.length < 8) {
+          showFieldError("newPassword", "Password must be at least 8 characters long.");
+          return false;
+        }
+
+        const passwordRegex =
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        if (!passwordRegex.test(password)) {
+          showFieldError("newPassword", "Password must contain uppercase, lowercase, number, and special character (@$!%*?&).");
+          return false;
+        }
+
+        showFieldSuccess("newPassword");
+        return true;
+      }
+
+      function validateNameField(name) {
+        if (!name || name.trim() === "") {
+          clearFieldState("displayName");
+          return false;
+        }
+
+        if (name.trim().length < 2) {
+          showFieldError("displayName", "Name must be at least 2 characters long.");
+          return false;
+        }
+
+        showFieldSuccess("displayName");
+        return true;
       }
 
       window.toggleSetting = function (element) {

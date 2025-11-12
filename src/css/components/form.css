@@ -9,9 +9,11 @@
 .form-label {
   display: block;
   margin-bottom: var(--primitive-space-8);
-  font-size: var(--typography-label-md-size);
-  font-weight: var(--typography-label-md-weight);
-  line-height: var(--typography-label-md-line-height);
+  font-size: var(--typography-label-sm-size);
+  font-weight: var(--typography-label-sm-weight);
+  line-height: var(--typography-label-sm-line-height);
+  letter-spacing: var(--typography-label-sm-letter-spacing);
+  text-transform: uppercase;
   color: var(--color-text-primary);
 }
 
@@ -59,8 +61,8 @@
   background: var(--surface-primary);
   box-shadow:
     0 0 0 3px var(--color-brand-primary-light),
-    0 6px 16px rgba(16, 201, 107, 0.2),
-    0 3px 8px rgba(16, 201, 107, 0.15),
+    0 6px 16px rgba(var(--primitive-primary-rgb), 0.2),
+    0 3px 8px rgba(var(--primitive-primary-rgb), 0.15),
     inset 0 1px 0 rgba(255, 255, 255, 1);
   transform: translateY(-1px);
 }
@@ -80,6 +82,16 @@
 .form-input.error:focus {
   border-color: var(--color-border-error);
   box-shadow: 0 0 0 3px var(--color-status-error-light);
+}
+
+.form-input.success {
+  border-color: var(--color-status-success);
+  background: var(--surface-primary);
+}
+
+.form-input.success:focus {
+  border-color: var(--color-status-success);
+  box-shadow: 0 0 0 3px var(--color-status-success-light);
 }
 
 .form-textarea {
@@ -108,4 +120,31 @@
   font-size: var(--typography-body-sm-size);
   line-height: var(--typography-body-sm-line-height);
   color: var(--color-status-error);
+  display: flex;
+  align-items: center;
+  gap: var(--primitive-space-4);
+}
+
+.form-success {
+  margin-top: var(--primitive-space-6);
+  font-size: var(--typography-body-sm-size);
+  line-height: var(--typography-body-sm-line-height);
+  color: var(--color-status-success);
+  display: flex;
+  align-items: center;
+  gap: var(--primitive-space-4);
+}
+
+.form-success::before {
+  content: "✓";
+  color: var(--color-status-success);
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.form-hint {
+  margin-top: var(--primitive-space-6);
+  font-size: var(--typography-body-sm-size);
+  line-height: var(--typography-body-sm-line-height);
+  color: var(--color-text-tertiary);
 }

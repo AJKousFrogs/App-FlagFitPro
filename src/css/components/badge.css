@@ -31,9 +31,9 @@
 
 /* Badge variants with modern styling */
 .badge-primary {
-  background: rgba(16, 201, 107, 0.15);
+  background: rgba(var(--primitive-primary-rgb), 0.15);
   color: var(--color-brand-primary);
-  border-color: rgba(16, 201, 107, 0.3);
+  border-color: rgba(var(--primitive-primary-rgb), 0.3);
 }
 
 .badge-primary i,
@@ -48,9 +48,9 @@
 }
 
 .badge-success {
-  background: rgba(16, 201, 107, 0.15);
+  background: rgba(var(--primitive-primary-rgb), 0.15);
   color: var(--color-status-success);
-  border-color: rgba(16, 201, 107, 0.3);
+  border-color: rgba(var(--primitive-primary-rgb), 0.3);
 }
 
 .badge-success i,
@@ -59,20 +59,20 @@
 }
 
 .badge-warning {
-  background: rgba(245, 158, 11, 0.15);
-  color: #f59e0b;
-  border-color: rgba(245, 158, 11, 0.3);
+  background: var(--color-status-warning-subtle);
+  color: var(--color-status-warning);
+  border-color: rgba(var(--primitive-warning-500-rgb, 245, 158, 11), 0.3);
 }
 
 .badge-warning i,
 .badge-warning svg {
-  color: #f59e0b;
+  color: var(--color-status-warning);
 }
 
 .badge-error {
-  background: rgba(239, 68, 68, 0.15);
+  background: var(--color-status-error-subtle);
   color: var(--color-status-error);
-  border-color: rgba(239, 68, 68, 0.3);
+  border-color: rgba(var(--primitive-error-500-rgb, 239, 68, 68), 0.3);
 }
 
 .badge-error i,
@@ -81,14 +81,14 @@
 }
 
 .badge-info {
-  background: rgba(59, 130, 246, 0.15);
-  color: #3b82f6;
-  border-color: rgba(59, 130, 246, 0.3);
+  background: var(--color-status-info-subtle);
+  color: var(--color-status-info);
+  border-color: rgba(var(--primitive-info-500-rgb, 14, 165, 233), 0.3);
 }
 
 .badge-info i,
 .badge-info svg {
-  color: #3b82f6;
+  color: var(--color-status-info);
 }
 
 /* Badge hover effect */
@@ -149,8 +149,8 @@
 /* Dark mode badges */
 @media (prefers-color-scheme: dark) {
   .badge-primary {
-    background: rgba(16, 201, 107, 0.2);
-    border-color: rgba(16, 201, 107, 0.4);
+    background: rgba(var(--primitive-primary-rgb), 0.2);
+    border-color: rgba(var(--primitive-primary-rgb), 0.4);
   }
 
   .badge-secondary {
@@ -160,8 +160,8 @@
 }
 
 [data-theme="dark"] .badge-primary {
-  background: rgba(16, 201, 107, 0.2);
-  border-color: rgba(16, 201, 107, 0.4);
+  background: rgba(var(--primitive-primary-rgb), 0.2);
+  border-color: rgba(var(--primitive-primary-rgb), 0.4);
 }
 
 [data-theme="dark"] .badge-secondary {
