@@ -1,36 +1,37 @@
 // Netlify Function: Get Current User
 // Returns current user information from JWT token using Supabase
 
-const jwt = require('jsonwebtoken');
-const { db, checkEnvVars } = require('./supabase-client.cjs');
+const jwt = require("jsonwebtoken");
+const { db, checkEnvVars } = require("./supabase-client.cjs");
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production';
+const JWT_SECRET =
+  process.env.JWT_SECRET || "your-super-secret-jwt-key-change-in-production";
 
 exports.handler = async (event, context) => {
   // Handle CORS preflight
-  if (event.httpMethod === 'OPTIONS') {
+  if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
       headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-        'Access-Control-Allow-Methods': 'GET, OPTIONS'
-      }
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+      },
     };
   }
 
   // Only allow GET requests
-  if (event.httpMethod !== 'GET') {
+  if (event.httpMethod !== "GET") {
     return {
       statusCode: 405,
       headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'application/json'
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         success: false,
-        error: 'Method not allowed'
-      })
+        error: "Method not allowed",
+      }),
     };
   }
 
@@ -39,19 +40,20 @@ exports.handler = async (event, context) => {
     checkEnvVars();
 
     // Get authorization header
-    const authHeader = event.headers.authorization || event.headers.Authorization;
-    
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    const authHeader =
+      event.headers.authorization || event.headers.Authorization;
+
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return {
         statusCode: 401,
         headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Content-Type': 'application/json'
+          "Access-Control-Allow-Origin": "*",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           success: false,
-          error: 'No token provided'
-        })
+          error: "No token provided",
+        }),
       };
     }
 
@@ -66,13 +68,13 @@ exports.handler = async (event, context) => {
       return {
         statusCode: 401,
         headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Content-Type': 'application/json'
+          "Access-Control-Allow-Origin": "*",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           success: false,
-          error: 'Invalid or expired token'
-        })
+          error: "Invalid or expired token",
+        }),
       };
     }
 
@@ -82,44 +84,43 @@ exports.handler = async (event, context) => {
       return {
         statusCode: 404,
         headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Content-Type': 'application/json'
+          "Access-Control-Allow-Origin": "*",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           success: false,
-          error: 'User not found'
-        })
+          error: "User not found",
+        }),
       };
     }
 
     // Return user data (exclude password)
     const { password: _, ...safeUser } = user;
-    
+
     return {
       statusCode: 200,
       headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'application/json'
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         success: true,
-        user: safeUser
-      })
+        user: safeUser,
+      }),
     };
-
   } catch (error) {
-    console.error('Get user error:', error);
-    
+    console.error("Get user error:", error);
+
     return {
       statusCode: 500,
       headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'application/json'
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         success: false,
-        error: 'Internal server error'
-      })
+        error: "Internal server error",
+      }),
     };
   }
 };

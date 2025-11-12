@@ -7,9 +7,11 @@ Full page layout templates that combine organisms, molecules, and atoms into com
 ## Available Templates
 
 ### Dashboard Layout
+
 **File:** `dashboard-layout.html`
 
 Complete dashboard page structure with:
+
 - Navigation sidebar
 - Dashboard header
 - Stats grid
@@ -19,9 +21,11 @@ Complete dashboard page structure with:
 **Usage:** Copy for dashboard, analytics, and main app pages.
 
 ### Auth Layout
+
 **File:** `auth-layout.html`
 
 Centered authentication page structure with:
+
 - Logo and branding
 - Auth form card
 - Footer links
@@ -29,9 +33,11 @@ Centered authentication page structure with:
 **Usage:** Copy for login, register, and password reset pages.
 
 ### Admin Layout
+
 **File:** `admin-layout.html`
 
 Admin panel structure with:
+
 - Admin navigation sidebar
 - Admin header
 - Content area for admin features
@@ -51,14 +57,14 @@ All templates follow this general structure:
 
 ```html
 <div class="[layout]-container">
-    <!-- Navigation/Sidebar -->
-    <nav class="sidebar">...</nav>
-    
-    <!-- Main Content -->
-    <main class="main-content">
-        <header class="dashboard-header">...</header>
-        <div class="content-area">...</div>
-    </main>
+  <!-- Navigation/Sidebar -->
+  <nav class="sidebar">...</nav>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <header class="dashboard-header">...</header>
+    <div class="content-area">...</div>
+  </main>
 </div>
 ```
 
@@ -75,4 +81,3 @@ All templates follow this general structure:
 - All components are included via HTML snippets
 - JavaScript initialization is included
 - Accessibility features are built-in
-

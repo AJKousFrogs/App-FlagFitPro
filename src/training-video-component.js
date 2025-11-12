@@ -1,29 +1,29 @@
 // Training Video Component
 // Displays YouTube training videos integrated with training sessions
 
-import { youTubeTrainingService } from './youtube-training-service.js';
+import { youTubeTrainingService } from "./youtube-training-service.js";
 
 class TrainingVideoComponent {
-    constructor(containerId) {
-        this.container = document.getElementById(containerId);
-        this.currentCategory = null;
-        this.currentVideos = [];
-        this.selectedVideo = null;
-        this.init();
+  constructor(containerId) {
+    this.container = document.getElementById(containerId);
+    this.currentCategory = null;
+    this.currentVideos = [];
+    this.selectedVideo = null;
+    this.init();
+  }
+
+  init() {
+    if (!this.container) {
+      console.error("Training video container not found");
+      return;
     }
 
-    init() {
-        if (!this.container) {
-            console.error('Training video container not found');
-            return;
-        }
+    this.render();
+    this.attachEventListeners();
+  }
 
-        this.render();
-        this.attachEventListeners();
-    }
-
-    render() {
-        this.container.innerHTML = `
+  render() {
+    this.container.innerHTML = `
             <div class="training-video-component">
                 <div class="video-header">
                     <h3 class="video-title">Training Videos</h3>
@@ -402,87 +402,93 @@ class TrainingVideoComponent {
                 }
             </style>
         `;
+  }
+
+  attachEventListeners() {
+    // Category selection
+    const categorySelect = document.getElementById("video-category-select");
+    categorySelect?.addEventListener("change", (e) => {
+      if (e.target.value) {
+        this.loadVideoCategory(e.target.value);
+      } else {
+        this.clearVideoGrid();
+      }
+    });
+
+    // Custom search
+    const searchBtn = document.getElementById("search-custom-btn");
+    searchBtn?.addEventListener("click", () => {
+      this.showCustomSearchModal();
+    });
+
+    // Playlist buttons
+    const playlistBtns = document.querySelectorAll(".playlist-btn");
+    playlistBtns.forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        const playlistType = e.target.dataset.playlist;
+        this.loadTrainingPlaylist(playlistType);
+      });
+    });
+
+    // Retry button
+    const retryBtn = document.getElementById("retry-btn");
+    retryBtn?.addEventListener("click", () => {
+      if (this.currentCategory) {
+        this.loadVideoCategory(this.currentCategory);
+      }
+    });
+  }
+
+  async loadVideoCategory(category) {
+    this.currentCategory = category;
+    this.showLoading();
+
+    try {
+      console.log(`📺 Loading ${category} videos...`);
+      const videos = await youTubeTrainingService.getTrainingVideos(
+        category,
+        12,
+      );
+      this.currentVideos = videos;
+      this.renderVideoGrid(videos);
+      this.hideLoading();
+    } catch (error) {
+      console.error("Error loading videos:", error);
+      this.showError();
     }
+  }
 
-    attachEventListeners() {
-        // Category selection
-        const categorySelect = document.getElementById('video-category-select');
-        categorySelect?.addEventListener('change', (e) => {
-            if (e.target.value) {
-                this.loadVideoCategory(e.target.value);
-            } else {
-                this.clearVideoGrid();
-            }
-        });
+  async loadTrainingPlaylist(playlistType) {
+    this.showLoading();
 
-        // Custom search
-        const searchBtn = document.getElementById('search-custom-btn');
-        searchBtn?.addEventListener('click', () => {
-            this.showCustomSearchModal();
-        });
-
-        // Playlist buttons
-        const playlistBtns = document.querySelectorAll('.playlist-btn');
-        playlistBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const playlistType = e.target.dataset.playlist;
-                this.loadTrainingPlaylist(playlistType);
-            });
-        });
-
-        // Retry button
-        const retryBtn = document.getElementById('retry-btn');
-        retryBtn?.addEventListener('click', () => {
-            if (this.currentCategory) {
-                this.loadVideoCategory(this.currentCategory);
-            }
-        });
+    try {
+      console.log(`📺 Loading ${playlistType} playlist...`);
+      const playlist =
+        await youTubeTrainingService.getTrainingPlaylist(playlistType);
+      this.renderPlaylist(playlist);
+      this.hideLoading();
+    } catch (error) {
+      console.error("Error loading playlist:", error);
+      this.showError();
     }
+  }
 
-    async loadVideoCategory(category) {
-        this.currentCategory = category;
-        this.showLoading();
+  renderVideoGrid(videos) {
+    const videoGrid = document.getElementById("video-grid");
 
-        try {
-            console.log(`📺 Loading ${category} videos...`);
-            const videos = await youTubeTrainingService.getTrainingVideos(category, 12);
-            this.currentVideos = videos;
-            this.renderVideoGrid(videos);
-            this.hideLoading();
-        } catch (error) {
-            console.error('Error loading videos:', error);
-            this.showError();
-        }
-    }
-
-    async loadTrainingPlaylist(playlistType) {
-        this.showLoading();
-
-        try {
-            console.log(`📺 Loading ${playlistType} playlist...`);
-            const playlist = await youTubeTrainingService.getTrainingPlaylist(playlistType);
-            this.renderPlaylist(playlist);
-            this.hideLoading();
-        } catch (error) {
-            console.error('Error loading playlist:', error);
-            this.showError();
-        }
-    }
-
-    renderVideoGrid(videos) {
-        const videoGrid = document.getElementById('video-grid');
-        
-        if (videos.length === 0) {
-            videoGrid.innerHTML = `
+    if (videos.length === 0) {
+      videoGrid.innerHTML = `
                 <div class="no-videos">
                     <span style="font-size: 2rem;">📺</span>
                     <p>No videos found for this category</p>
                 </div>
             `;
-            return;
-        }
+      return;
+    }
 
-        videoGrid.innerHTML = videos.map(video => `
+    videoGrid.innerHTML = videos
+      .map(
+        (video) => `
             <div class="video-card" data-video-id="${video.id}">
                 <img src="${video.thumbnail}" alt="${video.title}" class="video-thumbnail" 
                      onerror="this.src='data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"320\" height=\"180\" viewBox=\"0 0 320 180\"><rect width=\"320\" height=\"180\" fill=\"%23f3f4f6\"/><text x=\"160\" y=\"90\" text-anchor=\"middle\" dy=\".3em\" fill=\"%236b7280\">📺</text></svg>'">
@@ -491,30 +497,34 @@ class TrainingVideoComponent {
                     <p class="video-card-channel">${video.channelTitle}</p>
                 </div>
             </div>
-        `).join('');
+        `,
+      )
+      .join("");
 
-        // Add click handlers to video cards
-        videoGrid.querySelectorAll('.video-card').forEach(card => {
-            card.addEventListener('click', () => {
-                const videoId = card.dataset.videoId;
-                const video = videos.find(v => v.id === videoId);
-                if (video) {
-                    this.selectVideo(video);
-                }
-            });
-        });
-    }
+    // Add click handlers to video cards
+    videoGrid.querySelectorAll(".video-card").forEach((card) => {
+      card.addEventListener("click", () => {
+        const videoId = card.dataset.videoId;
+        const video = videos.find((v) => v.id === videoId);
+        if (video) {
+          this.selectVideo(video);
+        }
+      });
+    });
+  }
 
-    renderPlaylist(playlist) {
-        const videoGrid = document.getElementById('video-grid');
-        
-        let playlistHTML = '';
-        playlist.forEach(section => {
-            playlistHTML += `
+  renderPlaylist(playlist) {
+    const videoGrid = document.getElementById("video-grid");
+
+    let playlistHTML = "";
+    playlist.forEach((section) => {
+      playlistHTML += `
                 <div class="playlist-section">
                     <h5 class="playlist-section-title">${section.categoryName}</h5>
                     <div class="playlist-videos">
-                        ${section.videos.map(video => `
+                        ${section.videos
+                          .map(
+                            (video) => `
                             <div class="video-card playlist-video" data-video-id="${video.id}">
                                 <img src="${video.thumbnail}" alt="${video.title}" class="video-thumbnail">
                                 <div class="video-card-content">
@@ -522,50 +532,54 @@ class TrainingVideoComponent {
                                     <p class="video-card-channel">${video.channelTitle}</p>
                                 </div>
                             </div>
-                        `).join('')}
+                        `,
+                          )
+                          .join("")}
                     </div>
                 </div>
             `;
+    });
+
+    videoGrid.innerHTML = playlistHTML;
+
+    // Add click handlers
+    videoGrid.querySelectorAll(".video-card").forEach((card) => {
+      card.addEventListener("click", () => {
+        const videoId = card.dataset.videoId;
+        let video = null;
+        playlist.forEach((section) => {
+          const found = section.videos.find((v) => v.id === videoId);
+          if (found) video = found;
         });
+        if (video) {
+          this.selectVideo(video);
+        }
+      });
+    });
+  }
 
-        videoGrid.innerHTML = playlistHTML;
+  selectVideo(video) {
+    // Remove previous selection
+    document.querySelectorAll(".video-card").forEach((card) => {
+      card.classList.remove("selected");
+    });
 
-        // Add click handlers
-        videoGrid.querySelectorAll('.video-card').forEach(card => {
-            card.addEventListener('click', () => {
-                const videoId = card.dataset.videoId;
-                let video = null;
-                playlist.forEach(section => {
-                    const found = section.videos.find(v => v.id === videoId);
-                    if (found) video = found;
-                });
-                if (video) {
-                    this.selectVideo(video);
-                }
-            });
-        });
-    }
+    // Select current video
+    document
+      .querySelector(`[data-video-id="${video.id}"]`)
+      ?.classList.add("selected");
 
-    selectVideo(video) {
-        // Remove previous selection
-        document.querySelectorAll('.video-card').forEach(card => {
-            card.classList.remove('selected');
-        });
+    this.selectedVideo = video;
+    this.renderVideoPlayer(video);
+  }
 
-        // Select current video
-        document.querySelector(`[data-video-id="${video.id}"]`)?.classList.add('selected');
+  renderVideoPlayer(video) {
+    const videoPlayer = document.getElementById("video-player");
+    const videoInfo = document.getElementById("video-info");
 
-        this.selectedVideo = video;
-        this.renderVideoPlayer(video);
-    }
-
-    renderVideoPlayer(video) {
-        const videoPlayer = document.getElementById('video-player');
-        const videoInfo = document.getElementById('video-info');
-
-        if (video.fallback) {
-            // Show placeholder for fallback videos
-            videoPlayer.innerHTML = `
+    if (video.fallback) {
+      // Show placeholder for fallback videos
+      videoPlayer.innerHTML = `
                 <div class="video-placeholder">
                     <div class="placeholder-content">
                         <span class="placeholder-icon">📺</span>
@@ -576,9 +590,9 @@ class TrainingVideoComponent {
                     </div>
                 </div>
             `;
-        } else {
-            // Embed real video
-            videoPlayer.innerHTML = `
+    } else {
+      // Embed real video
+      videoPlayer.innerHTML = `
                 <iframe 
                     src="${video.embedUrl}?autoplay=0&rel=0&modestbranding=1"
                     frameborder="0" 
@@ -586,32 +600,33 @@ class TrainingVideoComponent {
                     style="width: 100%; height: 100%;">
                 </iframe>
             `;
-        }
-
-        // Update video info
-        document.getElementById('current-video-title').textContent = video.title;
-        document.getElementById('current-video-description').textContent = 
-            video.description.length > 200 ? 
-            video.description.substring(0, 200) + '...' : 
-            video.description;
-        document.getElementById('video-channel').textContent = video.channelTitle;
-        document.getElementById('video-duration').textContent = video.duration || '';
-        
-        const youtubeLink = document.getElementById('video-youtube-link');
-        youtubeLink.href = video.url;
-
-        videoInfo.classList.remove('hidden');
     }
 
-    showCustomSearchModal() {
-        const modal = document.createElement('div');
-        modal.style.cssText = `
+    // Update video info
+    document.getElementById("current-video-title").textContent = video.title;
+    document.getElementById("current-video-description").textContent =
+      video.description.length > 200
+        ? video.description.substring(0, 200) + "..."
+        : video.description;
+    document.getElementById("video-channel").textContent = video.channelTitle;
+    document.getElementById("video-duration").textContent =
+      video.duration || "";
+
+    const youtubeLink = document.getElementById("video-youtube-link");
+    youtubeLink.href = video.url;
+
+    videoInfo.classList.remove("hidden");
+  }
+
+  showCustomSearchModal() {
+    const modal = document.createElement("div");
+    modal.style.cssText = `
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0,0,0,0.5); display: flex; align-items: center;
             justify-content: center; z-index: 1000;
         `;
 
-        modal.innerHTML = `
+    modal.innerHTML = `
             <div style="background: white; padding: 2rem; border-radius: 12px; width: 90%; max-width: 400px;">
                 <h3 style="margin-bottom: 1rem;">Search Training Exercise</h3>
                 <form id="exercise-search-form">
@@ -635,59 +650,65 @@ class TrainingVideoComponent {
             </div>
         `;
 
-        modal.querySelector('#exercise-search-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const searchTerm = document.getElementById('exercise-search').value.trim();
-            if (searchTerm) {
-                modal.remove();
-                await this.searchCustomExercise(searchTerm);
-            }
-        });
-
-        document.body.appendChild(modal);
-        document.getElementById('exercise-search').focus();
-    }
-
-    async searchCustomExercise(searchTerm) {
-        this.showLoading();
-
-        try {
-            console.log(`📺 Searching for: ${searchTerm}`);
-            const videos = await youTubeTrainingService.searchSpecificExercise(searchTerm, 8);
-            this.currentVideos = videos;
-            this.renderVideoGrid(videos);
-            this.hideLoading();
-
-            // Update category select to show custom search
-            const categorySelect = document.getElementById('video-category-select');
-            categorySelect.value = '';
-            
-        } catch (error) {
-            console.error('Error searching exercise:', error);
-            this.showError();
+    modal
+      .querySelector("#exercise-search-form")
+      .addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const searchTerm = document
+          .getElementById("exercise-search")
+          .value.trim();
+        if (searchTerm) {
+          modal.remove();
+          await this.searchCustomExercise(searchTerm);
         }
-    }
+      });
 
-    showLoading() {
-        document.getElementById('video-loading').classList.remove('hidden');
-        document.getElementById('video-grid').style.opacity = '0.3';
-        document.getElementById('video-error').classList.add('hidden');
-    }
+    document.body.appendChild(modal);
+    document.getElementById("exercise-search").focus();
+  }
 
-    hideLoading() {
-        document.getElementById('video-loading').classList.add('hidden');
-        document.getElementById('video-grid').style.opacity = '1';
-    }
+  async searchCustomExercise(searchTerm) {
+    this.showLoading();
 
-    showError() {
-        this.hideLoading();
-        document.getElementById('video-error').classList.remove('hidden');
-        document.getElementById('video-grid').innerHTML = '';
-    }
+    try {
+      console.log(`📺 Searching for: ${searchTerm}`);
+      const videos = await youTubeTrainingService.searchSpecificExercise(
+        searchTerm,
+        8,
+      );
+      this.currentVideos = videos;
+      this.renderVideoGrid(videos);
+      this.hideLoading();
 
-    clearVideoGrid() {
-        document.getElementById('video-grid').innerHTML = '';
-        document.getElementById('video-player').innerHTML = `
+      // Update category select to show custom search
+      const categorySelect = document.getElementById("video-category-select");
+      categorySelect.value = "";
+    } catch (error) {
+      console.error("Error searching exercise:", error);
+      this.showError();
+    }
+  }
+
+  showLoading() {
+    document.getElementById("video-loading").classList.remove("hidden");
+    document.getElementById("video-grid").style.opacity = "0.3";
+    document.getElementById("video-error").classList.add("hidden");
+  }
+
+  hideLoading() {
+    document.getElementById("video-loading").classList.add("hidden");
+    document.getElementById("video-grid").style.opacity = "1";
+  }
+
+  showError() {
+    this.hideLoading();
+    document.getElementById("video-error").classList.remove("hidden");
+    document.getElementById("video-grid").innerHTML = "";
+  }
+
+  clearVideoGrid() {
+    document.getElementById("video-grid").innerHTML = "";
+    document.getElementById("video-player").innerHTML = `
             <div class="video-placeholder">
                 <div class="placeholder-content">
                     <span class="placeholder-icon">📺</span>
@@ -696,8 +717,8 @@ class TrainingVideoComponent {
                 </div>
             </div>
         `;
-        document.getElementById('video-info').classList.add('hidden');
-    }
+    document.getElementById("video-info").classList.add("hidden");
+  }
 }
 
 export default TrainingVideoComponent;

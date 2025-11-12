@@ -12,23 +12,45 @@ Copy the HTML from `tabs.html` into your page. Includes JavaScript for functiona
 
 ```html
 <div class="tabs" data-tabs="unique-id">
-    <div class="tabs-list" role="tablist">
-        <button class="tabs-trigger tabs-active" role="tab" aria-selected="true" aria-controls="panel-1" id="trigger-1">
-            Tab 1
-        </button>
-        <button class="tabs-trigger" role="tab" aria-selected="false" aria-controls="panel-2" id="trigger-2">
-            Tab 2
-        </button>
+  <div class="tabs-list" role="tablist">
+    <button
+      class="tabs-trigger tabs-active"
+      role="tab"
+      aria-selected="true"
+      aria-controls="panel-1"
+      id="trigger-1"
+    >
+      Tab 1
+    </button>
+    <button
+      class="tabs-trigger"
+      role="tab"
+      aria-selected="false"
+      aria-controls="panel-2"
+      id="trigger-2"
+    >
+      Tab 2
+    </button>
+  </div>
+
+  <div class="tabs-content">
+    <div
+      class="tabs-panel tabs-active"
+      role="tabpanel"
+      aria-labelledby="trigger-1"
+      id="panel-1"
+    >
+      Content 1
     </div>
-    
-    <div class="tabs-content">
-        <div class="tabs-panel tabs-active" role="tabpanel" aria-labelledby="trigger-1" id="panel-1">
-            Content 1
-        </div>
-        <div class="tabs-panel" role="tabpanel" aria-labelledby="trigger-2" id="panel-2">
-            Content 2
-        </div>
+    <div
+      class="tabs-panel"
+      role="tabpanel"
+      aria-labelledby="trigger-2"
+      id="panel-2"
+    >
+      Content 2
     </div>
+  </div>
 </div>
 ```
 
@@ -64,14 +86,15 @@ Copy the HTML from `tabs.html` into your page. Includes JavaScript for functiona
 
 ```html
 <button class="tabs-trigger">
-    <i data-lucide="home" style="width: 18px; height: 18px;"></i>
-    <span>Home</span>
+  <i data-lucide="home" style="width: 18px; height: 18px;"></i>
+  <span>Home</span>
 </button>
 ```
 
 ## JavaScript
 
 The component includes JavaScript for:
+
 - Tab switching
 - Keyboard navigation
 - ARIA attribute updates
@@ -84,4 +107,3 @@ The component includes JavaScript for:
 - Panels are hidden by default
 - Only active panel is visible
 - Test with keyboard navigation
-

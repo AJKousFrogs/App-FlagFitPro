@@ -1,6 +1,7 @@
 # FlagFit Pro - Comprehensive Design System Documentation
 
 ## Table of Contents
+
 1. [Overview](#overview)
 2. [Design Principles](#design-principles)
 3. [Design Token Architecture](#design-token-architecture)
@@ -27,6 +28,7 @@
 The FlagFit Pro Design System is a comprehensive, semantic token-based design framework built for Olympic-level flag football training applications. It provides a scalable, accessible, and maintainable foundation for creating consistent user experiences across all touchpoints.
 
 ### Key Features
+
 - **Semantic Token Architecture**: Two-tier system with primitive and semantic tokens
 - **Complete Component Library**: 20+ production-ready components with multiple variants
 - **Flexible Layout System**: Both uniform grids and bento grid layouts for different use cases
@@ -42,21 +44,25 @@ The FlagFit Pro Design System is a comprehensive, semantic token-based design fr
 Our design system is built on four foundational principles:
 
 ### 1. **Clarity & Simplicity**
+
 - Information hierarchy is immediately apparent
 - Visual noise is minimized to focus on essential content
 - Complex data is broken down into digestible components
 
 ### 2. **Accessibility & Inclusion**
+
 - Meets WCAG 2.1 AA standards across all components
 - Supports assistive technologies and diverse user needs
 - Color-blind friendly with redundant indicators
 
 ### 3. **Athletic Performance Focus**
+
 - Data visualization emphasizes performance metrics
 - Quick recognition of status and progress indicators
 - Optimized for rapid decision-making during training
 
 ### 4. **Scalable Architecture**
+
 - Component-based approach enables rapid development
 - Semantic tokens allow global theming changes
 - Modular system grows with product needs
@@ -66,6 +72,7 @@ Our design system is built on four foundational principles:
 Our token system uses a two-tier architecture for maximum flexibility and maintainability.
 
 ### Primitive Tokens (Global Values)
+
 ```css
 /* Color Primitives - Green Theme */
 --primitive-primary-500: #10c96b;
@@ -85,6 +92,7 @@ Our token system uses a two-tier architecture for maximum flexibility and mainta
 ```
 
 ### Semantic Tokens (Contextual Values)
+
 ```css
 /* Brand Colors - Green Theme */
 --color-brand-primary: var(--primitive-primary-500); /* #10c96b */
@@ -102,6 +110,7 @@ Our token system uses a two-tier architecture for maximum flexibility and mainta
 ```
 
 ### Benefits of This Architecture
+
 - **Maintainability**: Change primitive values to update entire themes
 - **Consistency**: Semantic tokens ensure appropriate color usage
 - **Scalability**: Easy to add new themes or modify existing ones
@@ -120,109 +129,109 @@ export const tokens = {
     // Brand Colors - Green Theme
     brand: {
       primary: {
-        50: '#f0f9f7',
-        100: '#d0f0eb',
-        200: '#a0e4d7',
-        300: '#70d8c3',
-        400: '#40ccaf',
-        500: '#10c96b',  // Main brand color
-        600: '#0ab85a',
-        700: '#089949',
-        800: '#089949',
-        900: '#036d35'
+        50: "#f0f9f7",
+        100: "#d0f0eb",
+        200: "#a0e4d7",
+        300: "#70d8c3",
+        400: "#40ccaf",
+        500: "#10c96b", // Main brand color
+        600: "#0ab85a",
+        700: "#089949",
+        800: "#089949",
+        900: "#036d35",
       },
       secondary: {
-        500: '#89c300',  // Lime green
-        600: '#6fa600',
-        700: '#558400'
+        500: "#89c300", // Lime green
+        600: "#6fa600",
+        700: "#558400",
       },
       tertiary: {
-        500: '#cc9610',  // Gold/warm
-        600: '#b37700',
-        700: '#9a5800'
-      }
+        500: "#cc9610", // Gold/warm
+        600: "#b37700",
+        700: "#9a5800",
+      },
     },
     // Semantic Colors
     status: {
       success: {
-        50: '#f0fdf4',
-        500: '#22c55e',
-        600: '#16a34a',
-        700: '#15803d'
+        50: "#f0fdf4",
+        500: "#22c55e",
+        600: "#16a34a",
+        700: "#15803d",
       },
       error: {
-        50: '#fef2f2',
-        500: '#ef4444',
-        600: '#dc2626',
-        700: '#b91c1c'
+        50: "#fef2f2",
+        500: "#ef4444",
+        600: "#dc2626",
+        700: "#b91c1c",
       },
       warning: {
-        50: '#fffbeb',
-        500: '#f59e0b',
-        600: '#d97706',
-        700: '#b45309'
+        50: "#fffbeb",
+        500: "#f59e0b",
+        600: "#d97706",
+        700: "#b45309",
       },
       info: {
-        50: '#f0f9ff',
-        500: '#3b82f6',
-        600: '#2563eb',
-        700: '#1d4ed8'
-      }
+        50: "#f0f9ff",
+        500: "#3b82f6",
+        600: "#2563eb",
+        700: "#1d4ed8",
+      },
     },
     // Neutral Colors
     neutral: {
-      50: '#fafafa',
-      100: '#f5f5f5',
-      200: '#f0f0f0',
-      300: '#e5e5e5',
-      400: '#d4d4d4',
-      500: '#a3a3a3',
-      600: '#737373',
-      700: '#404040',
-      800: '#262626',
-      900: '#171717',
-      950: '#0a0a0a'
-    }
+      50: "#fafafa",
+      100: "#f5f5f5",
+      200: "#f0f0f0",
+      300: "#e5e5e5",
+      400: "#d4d4d4",
+      500: "#a3a3a3",
+      600: "#737373",
+      700: "#404040",
+      800: "#262626",
+      900: "#171717",
+      950: "#0a0a0a",
+    },
   },
   spacing: {
-    0: '0',
-    1: '0.25rem',   // 4px
-    2: '0.5rem',    // 8px
-    3: '0.75rem',   // 12px
-    4: '1rem',      // 16px
-    5: '1.25rem',   // 20px
-    6: '1.5rem',    // 24px
-    8: '2rem',      // 32px
-    10: '2.5rem',   // 40px
-    12: '3rem',     // 48px
-    16: '4rem',     // 64px
-    20: '5rem',     // 80px
-    24: '6rem'      // 96px
+    0: "0",
+    1: "0.25rem", // 4px
+    2: "0.5rem", // 8px
+    3: "0.75rem", // 12px
+    4: "1rem", // 16px
+    5: "1.25rem", // 20px
+    6: "1.5rem", // 24px
+    8: "2rem", // 32px
+    10: "2.5rem", // 40px
+    12: "3rem", // 48px
+    16: "4rem", // 64px
+    20: "5rem", // 80px
+    24: "6rem", // 96px
   },
   typography: {
     fontFamily: {
       sans: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif",
       display: "'Poppins', 'Inter', sans-serif",
-      mono: "'SF Mono', 'Monaco', 'Inconsolata', monospace"
+      mono: "'SF Mono', 'Monaco', 'Inconsolata', monospace",
     },
     fontSize: {
-      xs: '0.75rem',    // 12px
-      sm: '0.875rem',   // 14px
-      base: '1rem',     // 16px
-      lg: '1.125rem',   // 18px
-      xl: '1.25rem',    // 20px
-      '2xl': '1.5rem',  // 24px
-      '3xl': '1.875rem', // 30px
-      '4xl': '2.25rem',  // 36px
-      '5xl': '3rem',     // 48px
-      '6xl': '3.75rem'   // 60px
+      xs: "0.75rem", // 12px
+      sm: "0.875rem", // 14px
+      base: "1rem", // 16px
+      lg: "1.125rem", // 18px
+      xl: "1.25rem", // 20px
+      "2xl": "1.5rem", // 24px
+      "3xl": "1.875rem", // 30px
+      "4xl": "2.25rem", // 36px
+      "5xl": "3rem", // 48px
+      "6xl": "3.75rem", // 60px
     },
     fontWeight: {
       normal: 400,
       medium: 500,
       semibold: 600,
       bold: 700,
-      extrabold: 800
+      extrabold: 800,
     },
     lineHeight: {
       none: 1,
@@ -230,55 +239,55 @@ export const tokens = {
       snug: 1.375,
       normal: 1.5,
       relaxed: 1.625,
-      loose: 2
-    }
+      loose: 2,
+    },
   },
   shadows: {
-    xs: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
-    sm: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
-    md: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
-    lg: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
-    xl: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
-    '2xl': '0 25px 50px -12px rgb(0 0 0 / 0.25)'
+    xs: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+    sm: "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
+    md: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+    lg: "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
+    xl: "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)",
+    "2xl": "0 25px 50px -12px rgb(0 0 0 / 0.25)",
   },
   borderRadius: {
-    none: '0',
-    sm: '0.125rem',   // 2px
-    md: '0.375rem',   // 6px
-    lg: '0.5rem',     // 8px
-    xl: '0.75rem',    // 12px
-    '2xl': '1rem',    // 16px
-    '3xl': '1.5rem',  // 24px
-    full: '9999px'
+    none: "0",
+    sm: "0.125rem", // 2px
+    md: "0.375rem", // 6px
+    lg: "0.5rem", // 8px
+    xl: "0.75rem", // 12px
+    "2xl": "1rem", // 16px
+    "3xl": "1.5rem", // 24px
+    full: "9999px",
   },
   motion: {
     duration: {
-      instant: '75ms',
-      fast: '150ms',
-      normal: '200ms',
-      slow: '300ms'
+      instant: "75ms",
+      fast: "150ms",
+      normal: "200ms",
+      slow: "300ms",
     },
     easing: {
-      entrance: 'cubic-bezier(0, 0, 0.2, 1)',
-      exit: 'cubic-bezier(0.4, 0, 1, 1)',
-      standard: 'cubic-bezier(0.4, 0, 0.2, 1)'
-    }
+      entrance: "cubic-bezier(0, 0, 0.2, 1)",
+      exit: "cubic-bezier(0.4, 0, 1, 1)",
+      standard: "cubic-bezier(0.4, 0, 0.2, 1)",
+    },
   },
   breakpoints: {
-    sm: '480px',
-    md: '768px',
-    lg: '1024px',
-    xl: '1280px',
-    '2xl': '1536px'
-  }
+    sm: "480px",
+    md: "768px",
+    lg: "1024px",
+    xl: "1280px",
+    "2xl": "1536px",
+  },
 };
 
 // CSS Custom Properties export
 export const cssVariables = {
-  '--color-brand-primary': tokens.colors.brand.primary[500],
-  '--color-brand-primary-hover': tokens.colors.brand.primary[600],
-  '--spacing-4': tokens.spacing[4],
-  '--spacing-6': tokens.spacing[6],
+  "--color-brand-primary": tokens.colors.brand.primary[500],
+  "--color-brand-primary-hover": tokens.colors.brand.primary[600],
+  "--spacing-4": tokens.spacing[4],
+  "--spacing-6": tokens.spacing[6],
   // ... all semantic tokens
 };
 
@@ -312,13 +321,13 @@ export const useDesignTokens = () => tokens;
 ```javascript
 // figma-tokens.js
 // Import tokens and sync to Figma
-import { tokens } from './design-tokens.js';
+import { tokens } from "./design-tokens.js";
 
 // Sync colors to Figma
 Object.entries(tokens.colors.brand.primary).forEach(([shade, value]) => {
   figma.createPaintStyle({
     name: `Brand/Primary/${shade}`,
-    paints: [{ type: 'SOLID', color: hexToRgb(value) }]
+    paints: [{ type: "SOLID", color: hexToRgb(value) }],
   });
 });
 ```
@@ -326,38 +335,42 @@ Object.entries(tokens.colors.brand.primary).forEach(([shade, value]) => {
 #### Usage Examples
 
 **React:**
+
 ```javascript
-import { tokens } from './design-tokens.js';
+import { tokens } from "./design-tokens.js";
 
 const Button = ({ children }) => (
-  <button style={{
-    backgroundColor: tokens.colors.brand.primary[500],
-    padding: tokens.spacing[4],
-    borderRadius: tokens.borderRadius.lg
-  }}>
+  <button
+    style={{
+      backgroundColor: tokens.colors.brand.primary[500],
+      padding: tokens.spacing[4],
+      borderRadius: tokens.borderRadius.lg,
+    }}
+  >
     {children}
   </button>
 );
 ```
 
 **Vue:**
+
 ```vue
 <template>
   <button :style="buttonStyle">{{ label }}</button>
 </template>
 
 <script>
-import { tokens } from './design-tokens.js';
+import { tokens } from "./design-tokens.js";
 
 export default {
   computed: {
     buttonStyle() {
       return {
         backgroundColor: tokens.colors.brand.primary[500],
-        padding: tokens.spacing[4]
+        padding: tokens.spacing[4],
       };
-    }
-  }
+    },
+  },
 };
 </script>
 ```
@@ -366,57 +379,60 @@ export default {
 
 Quick reference table of all available design tokens:
 
-| Category | Token | Value | Usage |
-|----------|-------|-------|-------|
-| **Colors - Brand** | `--color-brand-primary` | `#10c96b` | Primary buttons, links, accents |
-| | `--color-brand-primary-hover` | `#0ab85a` | Hover states |
-| | `--color-brand-secondary` | `#89c300` | Secondary actions |
-| | `--color-brand-tertiary` | `#cc9610` | Tertiary accents |
-| **Colors - Status** | `--color-status-success` | `#22c55e` | Success states |
-| | `--color-status-error` | `#ef4444` | Error states |
-| | `--color-status-warning` | `#f59e0b` | Warning states |
-| | `--color-status-info` | `#3b82f6` | Info states |
-| **Spacing** | `--space-1` | `4px` | Tight spacing |
-| | `--space-2` | `8px` | Small spacing |
-| | `--space-4` | `16px` | Standard spacing |
-| | `--space-6` | `24px` | Medium spacing |
-| | `--space-8` | `32px` | Large spacing |
-| **Typography** | `--font-size-base` | `16px` | Body text |
-| | `--font-size-lg` | `18px` | Large body |
-| | `--font-size-xl` | `20px` | Small headings |
-| | `--font-weight-semibold` | `600` | Headings |
-| **Shadows** | `--shadow-sm` | `0 1px 3px...` | Subtle elevation |
-| | `--shadow-md` | `0 4px 6px...` | Standard elevation |
-| | `--shadow-lg` | `0 10px 15px...` | High elevation |
-| **Border Radius** | `--radius-sm` | `6px` | Small radius |
-| | `--radius-lg` | `12px` | Standard radius |
-| | `--radius-xl` | `16px` | Large radius |
+| Category            | Token                         | Value            | Usage                           |
+| ------------------- | ----------------------------- | ---------------- | ------------------------------- |
+| **Colors - Brand**  | `--color-brand-primary`       | `#10c96b`        | Primary buttons, links, accents |
+|                     | `--color-brand-primary-hover` | `#0ab85a`        | Hover states                    |
+|                     | `--color-brand-secondary`     | `#89c300`        | Secondary actions               |
+|                     | `--color-brand-tertiary`      | `#cc9610`        | Tertiary accents                |
+| **Colors - Status** | `--color-status-success`      | `#22c55e`        | Success states                  |
+|                     | `--color-status-error`        | `#ef4444`        | Error states                    |
+|                     | `--color-status-warning`      | `#f59e0b`        | Warning states                  |
+|                     | `--color-status-info`         | `#3b82f6`        | Info states                     |
+| **Spacing**         | `--space-1`                   | `4px`            | Tight spacing                   |
+|                     | `--space-2`                   | `8px`            | Small spacing                   |
+|                     | `--space-4`                   | `16px`           | Standard spacing                |
+|                     | `--space-6`                   | `24px`           | Medium spacing                  |
+|                     | `--space-8`                   | `32px`           | Large spacing                   |
+| **Typography**      | `--font-size-base`            | `16px`           | Body text                       |
+|                     | `--font-size-lg`              | `18px`           | Large body                      |
+|                     | `--font-size-xl`              | `20px`           | Small headings                  |
+|                     | `--font-weight-semibold`      | `600`            | Headings                        |
+| **Shadows**         | `--shadow-sm`                 | `0 1px 3px...`   | Subtle elevation                |
+|                     | `--shadow-md`                 | `0 4px 6px...`   | Standard elevation              |
+|                     | `--shadow-lg`                 | `0 10px 15px...` | High elevation                  |
+| **Border Radius**   | `--radius-sm`                 | `6px`            | Small radius                    |
+|                     | `--radius-lg`                 | `12px`           | Standard radius                 |
+|                     | `--radius-xl`                 | `16px`           | Large radius                    |
 
-*See Design Tokens Export section for complete token list.*
+_See Design Tokens Export section for complete token list._
 
 ## Typography System
 
 ### Font Families
+
 - **Primary**: `'Inter'` - Optimized for UI text, excellent readability at small sizes
 - **Display**: `'Poppins'` - Used for headings and hero text
 - **Monospace**: `'SF Mono'` - Code snippets and data tables
 
 ### Typography Scale
+
 Our typography system uses semantic sizing that adapts to context:
 
-| Size | Use Case | Font Size | Line Height |
-|------|----------|-----------|-------------|
-| `display-2xl` | Hero sections | 72px | 1.0 |
-| `display-xl` | Page headers | 60px | 1.0 |
-| `heading-xl` | Section headers | 30px | 1.25 |
-| `heading-lg` | Subsection headers | 24px | 1.25 |
-| `heading-md` | Component titles | 20px | 1.375 |
-| `body-lg` | Large body text | 18px | 1.625 |
-| `body-md` | Standard body text | 16px | 1.5 |
-| `body-sm` | Supporting text | 14px | 1.5 |
-| `caption` | Small details | 12px | 1.375 |
+| Size          | Use Case           | Font Size | Line Height |
+| ------------- | ------------------ | --------- | ----------- |
+| `display-2xl` | Hero sections      | 72px      | 1.0         |
+| `display-xl`  | Page headers       | 60px      | 1.0         |
+| `heading-xl`  | Section headers    | 30px      | 1.25        |
+| `heading-lg`  | Subsection headers | 24px      | 1.25        |
+| `heading-md`  | Component titles   | 20px      | 1.375       |
+| `body-lg`     | Large body text    | 18px      | 1.625       |
+| `body-md`     | Standard body text | 16px      | 1.5         |
+| `body-sm`     | Supporting text    | 14px      | 1.5         |
+| `caption`     | Small details      | 12px      | 1.375       |
 
 ### Usage Guidelines
+
 ```html
 <!-- Page Hero -->
 <h1 class="text-display-xl">Performance Analytics</h1>
@@ -434,9 +450,11 @@ Our typography system uses semantic sizing that adapts to context:
 ## Color System
 
 ### Color Philosophy
+
 Our color system uses a **green theme palette** that balances brand identity with functional clarity, using color to convey meaning and establish hierarchy without overwhelming users.
 
 ### Primary Palette - Green Theme
+
 - **Primary Green** (`#10c96b`): Main brand color, used for interactive elements, buttons, links
 - **Secondary Lime** (`#89c300`): Supporting actions, secondary accents
 - **Tertiary Gold** (`#cc9610`): Warm accents, highlights, achievements
@@ -446,6 +464,7 @@ Our color system uses a **green theme palette** that balances brand identity wit
 - **Neutral Gray**: Text, borders, neutral backgrounds
 
 ### Semantic Color Mapping
+
 ```css
 /* Status Colors */
 --color-status-success: var(--primitive-success-600);
@@ -460,6 +479,7 @@ Our color system uses a **green theme palette** that balances brand identity wit
 ```
 
 ### Accessibility Standards
+
 - **AA Compliance**: 4.5:1 contrast ratio for normal text
 - **AAA Support**: 7:1 contrast ratio available for critical elements
 - **Color Independence**: Never rely solely on color to convey meaning
@@ -467,114 +487,135 @@ Our color system uses a **green theme palette** that balances brand identity wit
 ## Spacing & Layout
 
 ### Spacing Scale System
+
 The design system uses a comprehensive spacing scale based on a 4px base unit for fine-grained control:
 
 ```css
 :root {
   --space-0: 0;
-  --space-1: 0.25rem;   /* 4px */
-  --space-2: 0.5rem;    /* 8px */
-  --space-3: 0.75rem;   /* 12px */
-  --space-4: 1rem;      /* 16px */
-  --space-5: 1.25rem;   /* 20px */
-  --space-6: 1.5rem;    /* 24px */
-  --space-8: 2rem;      /* 32px */
-  --space-10: 2.5rem;   /* 40px */
-  --space-12: 3rem;     /* 48px */
-  --space-16: 4rem;     /* 64px */
-  --space-20: 5rem;     /* 80px */
-  --space-24: 6rem;     /* 96px */
+  --space-1: 0.25rem; /* 4px */
+  --space-2: 0.5rem; /* 8px */
+  --space-3: 0.75rem; /* 12px */
+  --space-4: 1rem; /* 16px */
+  --space-5: 1.25rem; /* 20px */
+  --space-6: 1.5rem; /* 24px */
+  --space-8: 2rem; /* 32px */
+  --space-10: 2.5rem; /* 40px */
+  --space-12: 3rem; /* 48px */
+  --space-16: 4rem; /* 64px */
+  --space-20: 5rem; /* 80px */
+  --space-24: 6rem; /* 96px */
 }
 ```
 
 ### Primitive Spacing Tokens (8-Point Grid)
+
 For backward compatibility and semantic usage, primitive tokens are also available:
 
 ```css
---primitive-space-8: 0.5rem;    /* 8px */
---primitive-space-16: 1rem;     /* 16px */
---primitive-space-24: 1.5rem;   /* 24px */
---primitive-space-32: 2rem;     /* 32px */
---primitive-space-48: 3rem;     /* 48px */
+--primitive-space-8: 0.5rem; /* 8px */
+--primitive-space-16: 1rem; /* 16px */
+--primitive-space-24: 1.5rem; /* 24px */
+--primitive-space-32: 2rem; /* 32px */
+--primitive-space-48: 3rem; /* 48px */
 ```
 
 ### Semantic Spacing Tokens
+
 Semantic tokens provide context-aware spacing for components and layouts:
 
 ```css
 /* Component Spacing */
---spacing-component-xs: var(--primitive-space-12);    /* 12px */
---spacing-component-sm: var(--primitive-space-16);   /* 16px */
---spacing-component-md: var(--primitive-space-24);   /* 24px */
---spacing-component-lg: var(--primitive-space-32);   /* 32px */
---spacing-component-xl: var(--primitive-space-40);   /* 40px */
+--spacing-component-xs: var(--primitive-space-12); /* 12px */
+--spacing-component-sm: var(--primitive-space-16); /* 16px */
+--spacing-component-md: var(--primitive-space-24); /* 24px */
+--spacing-component-lg: var(--primitive-space-32); /* 32px */
+--spacing-component-xl: var(--primitive-space-40); /* 40px */
 
 /* Layout Spacing */
---spacing-layout-xs: var(--primitive-space-24);      /* 24px */
---spacing-layout-sm: var(--primitive-space-32);      /* 32px */
---spacing-layout-md: var(--primitive-space-40);      /* 40px */
---spacing-layout-lg: var(--primitive-space-56);      /* 56px */
---spacing-layout-xl: var(--primitive-space-64);      /* 64px */
+--spacing-layout-xs: var(--primitive-space-24); /* 24px */
+--spacing-layout-sm: var(--primitive-space-32); /* 32px */
+--spacing-layout-md: var(--primitive-space-40); /* 40px */
+--spacing-layout-lg: var(--primitive-space-56); /* 56px */
+--spacing-layout-xl: var(--primitive-space-64); /* 64px */
 ```
 
 ### Layout Components
 
 #### Layout Container
+
 Use `.layout-container` for consistent page-level spacing:
 
 ```css
 .layout-container {
   display: grid;
-  gap: var(--space-6);        /* 24px gap */
-  padding: var(--space-6);    /* 24px padding */
+  gap: var(--space-6); /* 24px gap */
+  padding: var(--space-6); /* 24px padding */
 }
 ```
 
 #### Dashboard Grid
+
 Responsive grid layout for dashboard components:
 
 ```css
 .dashboard-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: var(--space-6);        /* 24px gap between cards */
+  gap: var(--space-6); /* 24px gap between cards */
 }
 ```
 
 #### Bento Grid Layout
+
 A modern asymmetric grid layout inspired by bento boxes, allowing cards to span multiple columns/rows for visual hierarchy and better space utilization:
 
 ```css
 .bento-grid {
   display: grid;
-  grid-template-columns: repeat(12, 1fr);  /* 12-column grid */
-  gap: var(--space-6);                      /* 24px gap */
-  grid-auto-rows: minmax(200px, auto);      /* Minimum row height */
+  grid-template-columns: repeat(12, 1fr); /* 12-column grid */
+  gap: var(--space-6); /* 24px gap */
+  grid-auto-rows: minmax(200px, auto); /* Minimum row height */
 }
 
 /* Card span utilities */
-.bento-card-span-4 { grid-column: span 4; }   /* 1/3 width */
-.bento-card-span-6 { grid-column: span 6; }   /* 1/2 width */
-.bento-card-span-8 { grid-column: span 8; }   /* 2/3 width */
-.bento-card-span-12 { grid-column: span 12; } /* Full width */
+.bento-card-span-4 {
+  grid-column: span 4;
+} /* 1/3 width */
+.bento-card-span-6 {
+  grid-column: span 6;
+} /* 1/2 width */
+.bento-card-span-8 {
+  grid-column: span 8;
+} /* 2/3 width */
+.bento-card-span-12 {
+  grid-column: span 12;
+} /* Full width */
 
-.bento-card-row-span-2 { grid-row: span 2; }  /* Double height */
-.bento-card-row-span-3 { grid-row: span 3; }  /* Triple height */
+.bento-card-row-span-2 {
+  grid-row: span 2;
+} /* Double height */
+.bento-card-row-span-3 {
+  grid-row: span 3;
+} /* Triple height */
 ```
 
 **Why Bento Grid?**
+
 - **Visual Hierarchy**: Larger cards naturally draw attention to important content
 - **Space Efficiency**: Better use of available screen space
 - **Modern Aesthetic**: Creates engaging, dynamic layouts (popularized by Apple, Notion, etc.)
 - **Content Flexibility**: Accommodates different content types (charts, stats, lists) with appropriate sizing
 
 **When to Use Bento Grid:**
+
 - ✅ Dashboard overview pages with mixed content types
 - ✅ When you need to emphasize certain metrics or actions
 - ✅ Content-heavy pages where visual hierarchy matters
 - ✅ Modern, engaging user experiences
 
 **When to Use Uniform Grid:**
+
 - ✅ Lists of similar items (roster, schedule items)
 - ✅ When all content has equal importance
 - ✅ Simpler, more predictable layouts
@@ -582,6 +623,7 @@ A modern asymmetric grid layout inspired by bento boxes, allowing cards to span 
 
 **Why Bento Grid Wasn't Originally Included:**
 The design system initially focused on uniform grids for simplicity and consistency. Uniform grids are:
+
 - **Easier to implement**: No need to calculate spans or manage complex layouts
 - **More predictable**: Developers know exactly how items will flow
 - **Better for mobile**: Uniform grids naturally stack on small screens
@@ -590,33 +632,36 @@ The design system initially focused on uniform grids for simplicity and consiste
 However, bento grids are now included as an **optional enhancement** for dashboards and content-heavy pages where visual hierarchy and modern aesthetics are priorities. Both approaches coexist in the design system, allowing developers to choose the best layout for their specific use case.
 
 #### Card Component
+
 Standardized card spacing:
 
 ```css
 .card {
   background: var(--color-surface);
   border-radius: 12px;
-  padding: var(--space-5);    /* 20px padding */
+  padding: var(--space-5); /* 20px padding */
   box-shadow: var(--shadow-small);
 }
 ```
 
 #### Section Spacing
+
 Consistent vertical spacing for content sections:
 
 ```css
 .section {
-  margin-top: var(--space-6);  /* 24px top margin */
+  margin-top: var(--space-6); /* 24px top margin */
 }
 
 h2 {
-  margin-bottom: var(--space-3);  /* 12px bottom margin */
+  margin-bottom: var(--space-3); /* 12px bottom margin */
 }
 ```
 
 ### Usage Examples
 
 #### Uniform Grid Layout
+
 ```html
 <!-- Layout Container with Dashboard Grid -->
 <div class="layout-container">
@@ -629,6 +674,7 @@ h2 {
 ```
 
 #### Bento Grid Layout
+
 ```html
 <!-- Bento Grid with varied card sizes -->
 <div class="layout-container">
@@ -638,30 +684,30 @@ h2 {
       <h2>Today's Training Session</h2>
       <!-- Primary content -->
     </div>
-    
+
     <!-- Large metric card - spans 2/3 width -->
     <div class="card bento-card-span-8 bento-card-row-span-2">
       <h3>Performance Chart</h3>
       <!-- Chart content -->
     </div>
-    
+
     <!-- Small metric cards - span 1/3 width -->
     <div class="card bento-card-span-4">
       <div class="metric-value">85%</div>
       <div class="metric-label">Completion Rate</div>
     </div>
-    
+
     <div class="card bento-card-span-4">
       <div class="metric-value">12</div>
       <div class="metric-label">Sessions This Week</div>
     </div>
-    
+
     <!-- Medium card - spans half width -->
     <div class="card bento-card-span-6">
       <h3>Upcoming Events</h3>
       <!-- Event list -->
     </div>
-    
+
     <div class="card bento-card-span-6">
       <h3>Quick Actions</h3>
       <!-- Action buttons -->
@@ -671,6 +717,7 @@ h2 {
 ```
 
 #### Section with Consistent Spacing
+
 ```html
 <section class="section">
   <h2>Performance Metrics</h2>
@@ -681,6 +728,7 @@ h2 {
 ```
 
 #### Responsive Bento Grid
+
 ```css
 /* Desktop: Full bento grid */
 .bento-grid {
@@ -692,8 +740,12 @@ h2 {
   .bento-grid {
     grid-template-columns: repeat(6, 1fr);
   }
-  .bento-card-span-8 { grid-column: span 6; }  /* Full width */
-  .bento-card-span-4 { grid-column: span 3; }   /* Half width */
+  .bento-card-span-8 {
+    grid-column: span 6;
+  } /* Full width */
+  .bento-card-span-4 {
+    grid-column: span 3;
+  } /* Half width */
 }
 
 /* Mobile: Single column */
@@ -705,12 +757,13 @@ h2 {
   .bento-card-span-6,
   .bento-card-span-8,
   .bento-card-span-12 {
-    grid-column: span 1;  /* All cards full width */
+    grid-column: span 1; /* All cards full width */
   }
 }
 ```
 
 ### Spacing Guidelines
+
 - **Component Padding**: Use `--space-4` (16px) to `--space-6` (24px) for card padding
 - **Component Gaps**: Use `--space-4` (16px) to `--space-6` (24px) for gaps between related elements
 - **Layout Gaps**: Use `--space-6` (24px) to `--space-8` (32px) for grid gaps
@@ -718,6 +771,7 @@ h2 {
 - **Typography Spacing**: Use `--space-2` (8px) to `--space-4` (16px) for heading margins
 
 ### Responsive Breakpoints
+
 Mobile-first approach with comprehensive device coverage:
 
 - **Mobile Small**: 320px - 480px (iPhone SE, Small Android)
@@ -727,6 +781,7 @@ Mobile-first approach with comprehensive device coverage:
 - **Large Desktop**: 1281px+ (Desktop monitors)
 
 ### Touch Device Optimizations
+
 - Minimum 44px touch targets for all interactive elements
 - 16px font size on inputs (prevents iOS zoom)
 - Touch-specific media queries: `@media (hover: none) and (pointer: coarse)`
@@ -735,17 +790,20 @@ Mobile-first approach with comprehensive device coverage:
 ## Component Library
 
 ### Button System
+
 **Status**: ✅ **Stable** - Production-ready
 
 Comprehensive button variants for all use cases:
 
 #### Variants
+
 - **Primary**: Main actions, high emphasis
-- **Secondary**: Supporting actions, medium emphasis  
+- **Secondary**: Supporting actions, medium emphasis
 - **Tertiary**: Low emphasis actions
 - **Ghost**: Minimal visual weight
 
 #### Sizes
+
 - **XS**: 28px height, compact spaces
 - **SM**: 36px height, dense layouts
 - **MD**: 44px height, standard size
@@ -753,6 +811,7 @@ Comprehensive button variants for all use cases:
 - **XL**: 60px height, hero sections
 
 #### States
+
 - **Default**: Base appearance
 - **Hover**: Visual feedback on interaction
 - **Active**: Pressed state
@@ -761,18 +820,18 @@ Comprehensive button variants for all use cases:
 
 #### Component API
 
-| Property | Type | Default | Required | Description |
-|----------|------|---------|----------|-------------|
-| `btn-primary` | class | - | No | Primary button variant (high emphasis) |
-| `btn-secondary` | class | - | No | Secondary button variant (medium emphasis) |
-| `btn-tertiary` | class | - | No | Tertiary button variant (low emphasis) |
-| `btn-ghost` | class | - | No | Ghost button variant (minimal visual weight) |
-| `btn-xs` | class | - | No | Extra small size (28px height) |
-| `btn-sm` | class | - | No | Small size (36px height) |
-| `btn-md` | class | `btn-md` | No | Medium size (44px height) |
-| `btn-lg` | class | - | No | Large size (52px height) |
-| `btn-xl` | class | - | No | Extra large size (60px height) |
-| `disabled` | attribute | false | No | Disables button interaction |
+| Property        | Type      | Default  | Required | Description                                  |
+| --------------- | --------- | -------- | -------- | -------------------------------------------- |
+| `btn-primary`   | class     | -        | No       | Primary button variant (high emphasis)       |
+| `btn-secondary` | class     | -        | No       | Secondary button variant (medium emphasis)   |
+| `btn-tertiary`  | class     | -        | No       | Tertiary button variant (low emphasis)       |
+| `btn-ghost`     | class     | -        | No       | Ghost button variant (minimal visual weight) |
+| `btn-xs`        | class     | -        | No       | Extra small size (28px height)               |
+| `btn-sm`        | class     | -        | No       | Small size (36px height)                     |
+| `btn-md`        | class     | `btn-md` | No       | Medium size (44px height)                    |
+| `btn-lg`        | class     | -        | No       | Large size (52px height)                     |
+| `btn-xl`        | class     | -        | No       | Extra large size (60px height)               |
+| `disabled`      | attribute | false    | No       | Disables button interaction                  |
 
 #### Usage Examples
 
@@ -799,37 +858,41 @@ Comprehensive button variants for all use cases:
 #### Do's and Don'ts
 
 ✅ **Do:**
+
 - Use primary buttons for the main action on a page
 - Use secondary buttons for supporting actions
 - Use consistent button sizes within a group
 - Include icons for clarity when appropriate
 
 ❌ **Don't:**
+
 - Use multiple primary buttons on the same page
 - Use buttons for navigation (use links instead)
 - Make buttons too small for touch targets (< 44px)
 - Disable buttons without explaining why
 
 ### Form Components
+
 **Status**: ✅ **Stable** - Production-ready
 
 Complete form system with validation states:
 
 #### Component API
 
-| Property | Type | Default | Required | Description |
-|----------|------|---------|----------|-------------|
-| `form-group` | class | - | Yes | Container for form field |
-| `form-label` | class | - | Yes | Label for form input |
-| `form-input` | class | - | Yes | Text input field |
-| `form-select` | class | - | No | Select dropdown |
-| `form-textarea` | class | - | No | Textarea field |
-| `required` | class | - | No | Marks field as required |
-| `error` | class | - | No | Error state styling |
-| `success` | class | - | No | Success state styling |
-| `disabled` | attribute | false | No | Disables input |
+| Property        | Type      | Default | Required | Description              |
+| --------------- | --------- | ------- | -------- | ------------------------ |
+| `form-group`    | class     | -       | Yes      | Container for form field |
+| `form-label`    | class     | -       | Yes      | Label for form input     |
+| `form-input`    | class     | -       | Yes      | Text input field         |
+| `form-select`   | class     | -       | No       | Select dropdown          |
+| `form-textarea` | class     | -       | No       | Textarea field           |
+| `required`      | class     | -       | No       | Marks field as required  |
+| `error`         | class     | -       | No       | Error state styling      |
+| `success`       | class     | -       | No       | Success state styling    |
+| `disabled`      | attribute | false   | No       | Disables input           |
 
 #### Input Types
+
 - Text inputs with validation states
 - Select dropdowns with custom styling
 - Textareas with resize controls
@@ -837,6 +900,7 @@ Complete form system with validation states:
 - Toggle switches
 
 #### Validation States
+
 - **Default**: Neutral state
 - **Focus**: Active interaction
 - **Error**: Invalid input with red indicators
@@ -849,53 +913,83 @@ Complete form system with validation states:
 <!-- Form group with error state -->
 <div class="form-group">
   <label class="form-label required" for="email">Email Address</label>
-  <input type="email" id="email" class="form-input error" value="invalid-email" aria-invalid="true" aria-describedby="email-error">
-  <div class="form-error" id="email-error">Please enter a valid email address</div>
+  <input
+    type="email"
+    id="email"
+    class="form-input error"
+    value="invalid-email"
+    aria-invalid="true"
+    aria-describedby="email-error"
+  />
+  <div class="form-error" id="email-error">
+    Please enter a valid email address
+  </div>
 </div>
 
 <!-- Form group with success state -->
 <div class="form-group">
   <label class="form-label required" for="name">Full Name</label>
-  <input type="text" id="name" class="form-input success" value="John Smith" aria-invalid="false">
+  <input
+    type="text"
+    id="name"
+    class="form-input success"
+    value="John Smith"
+    aria-invalid="false"
+  />
   <div class="form-success">✓ Valid</div>
 </div>
 ```
 
 #### Date/Time Picker
+
 **Status**: ⏳ **Preview** - Feature-complete, may have minor changes
 
 ```html
 <!-- Date Picker -->
 <div class="form-group">
   <label class="form-label required" for="training-date">Training Date</label>
-  <input type="date" id="training-date" class="form-input form-date" min="2025-01-01" required>
+  <input
+    type="date"
+    id="training-date"
+    class="form-input form-date"
+    min="2025-01-01"
+    required
+  />
   <div class="form-hint">Select a future date for training session</div>
 </div>
 
 <!-- Time Picker -->
 <div class="form-group">
   <label class="form-label required" for="training-time">Training Time</label>
-  <input type="time" id="training-time" class="form-input form-time" required>
+  <input type="time" id="training-time" class="form-input form-time" required />
 </div>
 
 <!-- DateTime Picker (Combined) -->
 <div class="form-group">
-  <label class="form-label required" for="session-datetime">Session Date & Time</label>
-  <input type="datetime-local" id="session-datetime" class="form-input form-datetime" required>
+  <label class="form-label required" for="session-datetime"
+    >Session Date & Time</label
+  >
+  <input
+    type="datetime-local"
+    id="session-datetime"
+    class="form-input form-datetime"
+    required
+  />
 </div>
 ```
 
 **JavaScript Implementation:**
+
 ```javascript
 // Date validation example
-const dateInput = document.getElementById('training-date');
-dateInput.addEventListener('change', (e) => {
+const dateInput = document.getElementById("training-date");
+dateInput.addEventListener("change", (e) => {
   const selectedDate = new Date(e.target.value);
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  
+
   if (selectedDate < today) {
-    showFieldError(dateInput, 'Training date cannot be in the past');
+    showFieldError(dateInput, "Training date cannot be in the past");
   } else {
     clearFieldError(dateInput);
   }
@@ -903,21 +997,38 @@ dateInput.addEventListener('change', (e) => {
 ```
 
 #### Dropdown with Search
+
 **Status**: ⏳ **Preview** - Feature-complete, may have minor changes
 
 ```html
 <div class="form-group">
   <label class="form-label required" for="athlete-select">Select Athlete</label>
   <div class="select-wrapper">
-    <input type="text" class="form-input form-select-search" id="athlete-search" placeholder="Search athletes..." autocomplete="off">
-    <select id="athlete-select" class="form-select" size="5" style="display: none;">
+    <input
+      type="text"
+      class="form-input form-select-search"
+      id="athlete-search"
+      placeholder="Search athletes..."
+      autocomplete="off"
+    />
+    <select
+      id="athlete-select"
+      class="form-select"
+      size="5"
+      style="display: none;"
+    >
       <option value="">-- Select an athlete --</option>
       <option value="1">John Smith</option>
       <option value="2">Sarah Johnson</option>
       <option value="3">Mike Davis</option>
       <!-- More options -->
     </select>
-    <div class="select-dropdown" id="athlete-dropdown" role="listbox" aria-label="Athlete selection">
+    <div
+      class="select-dropdown"
+      id="athlete-dropdown"
+      role="listbox"
+      aria-label="Athlete selection"
+    >
       <!-- Populated dynamically -->
     </div>
   </div>
@@ -925,94 +1036,123 @@ dateInput.addEventListener('change', (e) => {
 ```
 
 **JavaScript Implementation:**
+
 ```javascript
 class SearchableSelect {
   constructor(inputId, selectId) {
     this.input = document.getElementById(inputId);
     this.select = document.getElementById(selectId);
-    this.dropdown = document.getElementById(inputId.replace('-search', '-dropdown'));
+    this.dropdown = document.getElementById(
+      inputId.replace("-search", "-dropdown"),
+    );
     this.options = Array.from(this.select.options);
     this.filteredOptions = this.options;
-    
+
     this.init();
   }
-  
+
   init() {
-    this.input.addEventListener('input', (e) => this.filter(e.target.value));
-    this.input.addEventListener('focus', () => this.showDropdown());
-    this.input.addEventListener('blur', () => setTimeout(() => this.hideDropdown(), 200));
-    
+    this.input.addEventListener("input", (e) => this.filter(e.target.value));
+    this.input.addEventListener("focus", () => this.showDropdown());
+    this.input.addEventListener("blur", () =>
+      setTimeout(() => this.hideDropdown(), 200),
+    );
+
     this.renderDropdown();
   }
-  
+
   filter(query) {
     const lowerQuery = query.toLowerCase();
-    this.filteredOptions = this.options.filter(opt => 
-      opt.text.toLowerCase().includes(lowerQuery)
+    this.filteredOptions = this.options.filter((opt) =>
+      opt.text.toLowerCase().includes(lowerQuery),
     );
     this.renderDropdown();
   }
-  
+
   renderDropdown() {
     this.dropdown.innerHTML = this.filteredOptions
-      .map(opt => `
+      .map(
+        (opt) => `
         <div class="select-option" 
              role="option" 
              data-value="${opt.value}"
              tabindex="0">
           ${opt.text}
         </div>
-      `).join('');
-    
+      `,
+      )
+      .join("");
+
     // Add click handlers
-    this.dropdown.querySelectorAll('.select-option').forEach(option => {
-      option.addEventListener('click', () => this.selectOption(option.dataset.value));
-      option.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
+    this.dropdown.querySelectorAll(".select-option").forEach((option) => {
+      option.addEventListener("click", () =>
+        this.selectOption(option.dataset.value),
+      );
+      option.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
           this.selectOption(option.dataset.value);
         }
       });
     });
   }
-  
+
   selectOption(value) {
-    const option = this.options.find(opt => opt.value === value);
+    const option = this.options.find((opt) => opt.value === value);
     if (option) {
       this.input.value = option.text;
       this.select.value = value;
       this.hideDropdown();
-      this.input.dispatchEvent(new Event('change'));
+      this.input.dispatchEvent(new Event("change"));
     }
   }
-  
+
   showDropdown() {
-    this.dropdown.style.display = 'block';
+    this.dropdown.style.display = "block";
   }
-  
+
   hideDropdown() {
-    this.dropdown.style.display = 'none';
+    this.dropdown.style.display = "none";
   }
 }
 
 // Initialize
-new SearchableSelect('athlete-search', 'athlete-select');
+new SearchableSelect("athlete-search", "athlete-select");
 ```
 
 #### Multiselect Component
+
 **Status**: ⏳ **Preview** - Feature-complete, may have minor changes
 
 ```html
 <div class="form-group">
-  <label class="form-label required" for="athletes-multiselect">Select Athletes</label>
+  <label class="form-label required" for="athletes-multiselect"
+    >Select Athletes</label
+  >
   <div class="multiselect-wrapper">
-    <div class="multiselect-input" id="athletes-multiselect" role="combobox" aria-expanded="false" aria-haspopup="listbox" tabindex="0">
+    <div
+      class="multiselect-input"
+      id="athletes-multiselect"
+      role="combobox"
+      aria-expanded="false"
+      aria-haspopup="listbox"
+      tabindex="0"
+    >
       <div class="multiselect-tags">
         <!-- Selected tags appear here -->
       </div>
-      <input type="text" class="multiselect-search" placeholder="Search athletes..." autocomplete="off">
+      <input
+        type="text"
+        class="multiselect-search"
+        placeholder="Search athletes..."
+        autocomplete="off"
+      />
     </div>
-    <div class="multiselect-dropdown" role="listbox" aria-label="Athlete selection">
+    <div
+      class="multiselect-dropdown"
+      role="listbox"
+      aria-label="Athlete selection"
+    >
       <!-- Options appear here -->
     </div>
   </div>
@@ -1020,13 +1160,20 @@ new SearchableSelect('athlete-search', 'athlete-select');
 ```
 
 #### File Upload
+
 **Status**: ⏳ **Preview** - Feature-complete, may have minor changes
 
 ```html
 <div class="form-group">
   <label class="form-label" for="video-upload">Upload Training Video</label>
   <div class="file-upload-wrapper">
-    <input type="file" id="video-upload" class="file-input" accept="video/*" multiple>
+    <input
+      type="file"
+      id="video-upload"
+      class="file-input"
+      accept="video/*"
+      multiple
+    />
     <label for="video-upload" class="file-upload-label">
       <i data-lucide="upload" style="width: 24px; height: 24px;"></i>
       <span>Choose files or drag and drop</span>
@@ -1040,12 +1187,13 @@ new SearchableSelect('athlete-search', 'athlete-select');
 ```
 
 **JavaScript Implementation:**
-```javascript
-const fileInput = document.getElementById('video-upload');
-const fileList = document.querySelector('.file-upload-list');
 
-fileInput.addEventListener('change', (e) => {
-  Array.from(e.target.files).forEach(file => {
+```javascript
+const fileInput = document.getElementById("video-upload");
+const fileList = document.querySelector(".file-upload-list");
+
+fileInput.addEventListener("change", (e) => {
+  Array.from(e.target.files).forEach((file) => {
     const fileItem = createFileItem(file);
     fileList.appendChild(fileItem);
     uploadFile(file, fileItem);
@@ -1053,8 +1201,8 @@ fileInput.addEventListener('change', (e) => {
 });
 
 function createFileItem(file) {
-  const item = document.createElement('div');
-  item.className = 'file-item';
+  const item = document.createElement("div");
+  item.className = "file-item";
   item.innerHTML = `
     <div class="file-info">
       <i data-lucide="file-video"></i>
@@ -1073,34 +1221,35 @@ function createFileItem(file) {
 
 function uploadFile(file, item) {
   const formData = new FormData();
-  formData.append('video', file);
-  
+  formData.append("video", file);
+
   const xhr = new XMLHttpRequest();
-  const progressBar = item.querySelector('.file-progress-bar');
-  
-  xhr.upload.addEventListener('progress', (e) => {
+  const progressBar = item.querySelector(".file-progress-bar");
+
+  xhr.upload.addEventListener("progress", (e) => {
     if (e.lengthComputable) {
       const percent = (e.loaded / e.total) * 100;
       progressBar.style.width = `${percent}%`;
     }
   });
-  
-  xhr.addEventListener('load', () => {
-    item.classList.add('file-uploaded');
-    progressBar.style.width = '100%';
+
+  xhr.addEventListener("load", () => {
+    item.classList.add("file-uploaded");
+    progressBar.style.width = "100%";
   });
-  
-  xhr.addEventListener('error', () => {
-    item.classList.add('file-error');
-    showToast.error('Failed to upload file');
+
+  xhr.addEventListener("error", () => {
+    item.classList.add("file-error");
+    showToast.error("Failed to upload file");
   });
-  
-  xhr.open('POST', '/api/upload');
+
+  xhr.open("POST", "/api/upload");
   xhr.send(formData);
 }
 ```
 
 ### Card System
+
 Flexible container component with multiple variants:
 
 ```html
@@ -1121,6 +1270,7 @@ Flexible container component with multiple variants:
 ```
 
 ### Badge System
+
 Status indicators and labels:
 
 ```html
@@ -1131,26 +1281,34 @@ Status indicators and labels:
 ```
 
 ### Modal System
+
 **Status**: ✅ **Stable** - Production-ready
 
 Accessible dialog components for confirmations, forms, and content display.
 
 #### Component API
 
-| Property | Type | Default | Required | Description |
-|----------|------|---------|----------|-------------|
-| `modal-overlay` | class | - | Yes | Modal backdrop/overlay |
-| `modal-content` | class | - | Yes | Modal dialog container |
-| `modal-header` | class | - | No | Modal header section |
-| `modal-body` | class | - | No | Modal body content |
-| `modal-footer` | class | - | No | Modal footer actions |
-| `modal-open` | class | - | No | Applied when modal is visible |
-| `data-modal` | attribute | - | No | Modal identifier |
+| Property        | Type      | Default | Required | Description                   |
+| --------------- | --------- | ------- | -------- | ----------------------------- |
+| `modal-overlay` | class     | -       | Yes      | Modal backdrop/overlay        |
+| `modal-content` | class     | -       | Yes      | Modal dialog container        |
+| `modal-header`  | class     | -       | No       | Modal header section          |
+| `modal-body`    | class     | -       | No       | Modal body content            |
+| `modal-footer`  | class     | -       | No       | Modal footer actions          |
+| `modal-open`    | class     | -       | No       | Applied when modal is visible |
+| `data-modal`    | attribute | -       | No       | Modal identifier              |
 
 #### HTML Structure
 
 ```html
-<div class="modal-overlay" id="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-hidden="true">
+<div
+  class="modal-overlay"
+  id="confirm-modal"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="modal-title"
+  aria-hidden="true"
+>
   <div class="modal-content">
     <div class="modal-header">
       <h2 id="modal-title">Confirm Action</h2>
@@ -1176,85 +1334,89 @@ class Modal {
   constructor(modalId) {
     this.modal = document.getElementById(modalId);
     this.overlay = this.modal;
-    this.content = this.modal.querySelector('.modal-content');
-    this.closeButtons = this.modal.querySelectorAll('.modal-close, [data-modal-close]');
+    this.content = this.modal.querySelector(".modal-content");
+    this.closeButtons = this.modal.querySelectorAll(
+      ".modal-close, [data-modal-close]",
+    );
     this.previouslyFocused = null;
     this.focusableElements = null;
-    
+
     this.init();
   }
-  
+
   init() {
     // Close button handlers
-    this.closeButtons.forEach(btn => {
-      btn.addEventListener('click', () => this.close());
+    this.closeButtons.forEach((btn) => {
+      btn.addEventListener("click", () => this.close());
     });
-    
+
     // Overlay click handler
-    this.overlay.addEventListener('click', (e) => {
+    this.overlay.addEventListener("click", (e) => {
       if (e.target === this.overlay) {
         this.close();
       }
     });
-    
+
     // Escape key handler
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && this.isOpen()) {
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && this.isOpen()) {
         this.close();
       }
     });
-    
+
     // Trap focus within modal
-    this.content.addEventListener('keydown', (e) => {
-      if (e.key === 'Tab') {
+    this.content.addEventListener("keydown", (e) => {
+      if (e.key === "Tab") {
         this.trapFocus(e);
       }
     });
   }
-  
+
   open() {
-    this.modal.classList.add('modal-open');
-    this.modal.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
-    
+    this.modal.classList.add("modal-open");
+    this.modal.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+
     // Store previously focused element
     this.previouslyFocused = document.activeElement;
-    
+
     // Get focusable elements
     this.focusableElements = this.getFocusableElements();
-    
+
     // Focus first element
     if (this.focusableElements.length > 0) {
       this.focusableElements[0].focus();
     }
   }
-  
+
   close() {
-    this.modal.classList.remove('modal-open');
-    this.modal.setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = '';
-    
+    this.modal.classList.remove("modal-open");
+    this.modal.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+
     // Return focus to previously focused element
     if (this.previouslyFocused) {
       this.previouslyFocused.focus();
     }
   }
-  
+
   isOpen() {
-    return this.modal.classList.contains('modal-open');
+    return this.modal.classList.contains("modal-open");
   }
-  
+
   getFocusableElements() {
-    const selector = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+    const selector =
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
     return Array.from(this.content.querySelectorAll(selector)).filter(
-      el => !el.disabled && el.offsetParent !== null
+      (el) => !el.disabled && el.offsetParent !== null,
     );
   }
-  
+
   trapFocus(e) {
     const firstElement = this.focusableElements[0];
-    const lastElement = this.focusableElements[this.focusableElements.length - 1];
-    
+    const lastElement =
+      this.focusableElements[this.focusableElements.length - 1];
+
     if (e.shiftKey) {
       // Shift + Tab
       if (document.activeElement === firstElement) {
@@ -1307,7 +1469,9 @@ window.closeModal = (modalId) => {
   z-index: 1000;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.3s, visibility 0.3s;
+  transition:
+    opacity 0.3s,
+    visibility 0.3s;
 }
 
 .modal-overlay.modal-open {
@@ -1373,20 +1537,21 @@ window.closeModal = (modalId) => {
 ```
 
 ### Toast Notifications
+
 **Status**: ✅ **Stable** - Production-ready
 
 Temporary notifications for user feedback. Positioned bottom-right by default.
 
 #### Component API
 
-| Property | Type | Default | Required | Description |
-|----------|------|---------|----------|-------------|
-| `toast-success` | class | - | No | Success toast variant (green) |
-| `toast-error` | class | - | No | Error toast variant (red) |
-| `toast-warning` | class | - | No | Warning toast variant (amber) |
-| `toast-info` | class | - | No | Info toast variant (blue/gray) |
-| `role` | attribute | - | Yes | `status` for success/info, `alert` for errors |
-| `aria-live` | attribute | - | Yes | `polite` for success/info, `assertive` for errors |
+| Property        | Type      | Default | Required | Description                                       |
+| --------------- | --------- | ------- | -------- | ------------------------------------------------- |
+| `toast-success` | class     | -       | No       | Success toast variant (green)                     |
+| `toast-error`   | class     | -       | No       | Error toast variant (red)                         |
+| `toast-warning` | class     | -       | No       | Warning toast variant (amber)                     |
+| `toast-info`    | class     | -       | No       | Info toast variant (blue/gray)                    |
+| `role`          | attribute | -       | Yes      | `status` for success/info, `alert` for errors     |
+| `aria-live`     | attribute | -       | Yes      | `polite` for success/info, `assertive` for errors |
 
 #### HTML Structure
 
@@ -1441,21 +1606,21 @@ class ToastManager {
   }
 
   createContainer() {
-    let container = document.querySelector('.toast-container');
+    let container = document.querySelector(".toast-container");
     if (!container) {
-      container = document.createElement('div');
-      container.className = 'toast-container';
-      container.setAttribute('aria-live', 'polite');
-      container.setAttribute('aria-atomic', 'true');
+      container = document.createElement("div");
+      container.className = "toast-container";
+      container.setAttribute("aria-live", "polite");
+      container.setAttribute("aria-atomic", "true");
       document.body.appendChild(container);
     }
     return container;
   }
 
-  show(message, type = 'info', duration = null, action = null) {
+  show(message, type = "info", duration = null, action = null) {
     const toastId = `toast-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     const toast = this.createToast(toastId, message, type, action);
-    
+
     this.container.appendChild(toast);
     this.toasts.set(toastId, toast);
 
@@ -1467,24 +1632,24 @@ class ToastManager {
 
     // Animate in
     requestAnimationFrame(() => {
-      toast.classList.add('toast-visible');
+      toast.classList.add("toast-visible");
     });
 
     return toastId;
   }
 
   createToast(id, message, type, action) {
-    const toast = document.createElement('div');
+    const toast = document.createElement("div");
     toast.id = id;
     toast.className = `toast toast-${type}`;
-    toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
-    toast.setAttribute('aria-live', type === 'error' ? 'assertive' : 'polite');
+    toast.setAttribute("role", type === "error" ? "alert" : "status");
+    toast.setAttribute("aria-live", type === "error" ? "assertive" : "polite");
 
     const icons = {
-      success: 'check-circle',
-      error: 'alert-circle',
-      warning: 'alert-triangle',
-      info: 'info'
+      success: "check-circle",
+      error: "alert-circle",
+      warning: "alert-triangle",
+      info: "info",
     };
 
     toast.innerHTML = `
@@ -1492,7 +1657,7 @@ class ToastManager {
         <i data-lucide="${icons[type]}" style="width: 20px; height: 20px;"></i>
         <span>${message}</span>
       </div>
-      ${action ? `<button class="toast-action">${action.label}</button>` : ''}
+      ${action ? `<button class="toast-action">${action.label}</button>` : ""}
       <button class="toast-close" aria-label="Close notification">
         <i data-lucide="x" style="width: 16px; height: 16px;"></i>
       </button>
@@ -1504,21 +1669,21 @@ class ToastManager {
     }
 
     // Close button handler
-    const closeBtn = toast.querySelector('.toast-close');
-    closeBtn.addEventListener('click', () => this.hide(id));
+    const closeBtn = toast.querySelector(".toast-close");
+    closeBtn.addEventListener("click", () => this.hide(id));
 
     // Action button handler
     if (action) {
-      const actionBtn = toast.querySelector('.toast-action');
-      actionBtn.addEventListener('click', () => {
+      const actionBtn = toast.querySelector(".toast-action");
+      actionBtn.addEventListener("click", () => {
         if (action.callback) action.callback();
         this.hide(id);
       });
     }
 
     // Keyboard dismiss (Escape key)
-    toast.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
+    toast.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
         this.hide(id);
       }
     });
@@ -1530,8 +1695,8 @@ class ToastManager {
     const toast = this.toasts.get(toastId);
     if (!toast) return;
 
-    toast.classList.remove('toast-visible');
-    toast.classList.add('toast-hiding');
+    toast.classList.remove("toast-visible");
+    toast.classList.add("toast-hiding");
 
     setTimeout(() => {
       toast.remove();
@@ -1541,10 +1706,10 @@ class ToastManager {
 
   getDefaultDuration(type) {
     const durations = {
-      success: 3000,  // 3 seconds
-      info: 4000,     // 4 seconds
-      warning: 7000,  // 7 seconds
-      error: 0        // Don't auto-dismiss errors
+      success: 3000, // 3 seconds
+      info: 4000, // 4 seconds
+      warning: 7000, // 7 seconds
+      error: 0, // Don't auto-dismiss errors
     };
     return durations[type] || 4000;
   }
@@ -1555,10 +1720,14 @@ const toast = new ToastManager();
 
 // Convenience functions
 window.showToast = {
-  success: (message, duration, action) => toast.show(message, 'success', duration, action),
-  error: (message, duration, action) => toast.show(message, 'error', duration, action),
-  warning: (message, duration, action) => toast.show(message, 'warning', duration, action),
-  info: (message, duration, action) => toast.show(message, 'info', duration, action)
+  success: (message, duration, action) =>
+    toast.show(message, "success", duration, action),
+  error: (message, duration, action) =>
+    toast.show(message, "error", duration, action),
+  warning: (message, duration, action) =>
+    toast.show(message, "warning", duration, action),
+  info: (message, duration, action) =>
+    toast.show(message, "info", duration, action),
 };
 
 // Usage examples:
@@ -1669,6 +1838,7 @@ window.showToast = {
 ```
 
 #### Properties
+
 - **Position**: Bottom-right (default), top-right, bottom-left, top-left
 - **Duration**: 3-5 seconds (success), 7-10 seconds (error), persistent (warning)
 - **Types**: `toast-success`, `toast-error`, `toast-warning`, `toast-info`
@@ -1676,6 +1846,7 @@ window.showToast = {
 - **Action Button**: Optional action button (Undo, View Details)
 
 #### Accessibility
+
 - `role="status"` for success/info, `role="alert"` for errors
 - Respects `prefers-reduced-motion` (no slide animations)
 - Keyboard dismissible with Escape key
@@ -1684,18 +1855,21 @@ window.showToast = {
 #### Do's and Don'ts
 
 ✅ **Do:**
+
 - Use toasts for non-critical feedback (saves, updates, deletions)
 - Keep messages concise (one sentence)
 - Use appropriate duration (errors longer than success)
 - Provide action buttons for undoable actions
 
 ❌ **Don't:**
+
 - Use toasts for critical errors (use alert banners instead)
 - Stack too many toasts (max 3 visible)
 - Use toasts for navigation or primary actions
 - Auto-dismiss error messages
 
 ### Skeleton Screens
+
 Loading placeholders that show content structure while data loads.
 
 ```html
@@ -1731,6 +1905,7 @@ Loading placeholders that show content structure while data loads.
 ```
 
 **Guidelines:**
+
 - ✅ Use for container components: cards, tables, lists, grids
 - ❌ Don't use for action components: buttons, inputs, modals
 - ✅ Match final layout dimensions to avoid Cumulative Layout Shift (CLS)
@@ -1738,6 +1913,7 @@ Loading placeholders that show content structure while data loads.
 - ✅ Fade smoothly to actual content when loaded
 
 **CSS:**
+
 ```css
 .skeleton-card {
   background: var(--surface-secondary);
@@ -1747,8 +1923,12 @@ Loading placeholders that show content structure while data loads.
 }
 
 @keyframes skeleton-shimmer {
-  0% { background-position: -1000px 0; }
-  100% { background-position: 1000px 0; }
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1759,6 +1939,7 @@ Loading placeholders that show content structure while data loads.
 ```
 
 ### Breadcrumbs
+
 Hierarchical navigation showing current location.
 
 ```html
@@ -1784,35 +1965,46 @@ Hierarchical navigation showing current location.
 ```
 
 **Usage:**
+
 - Shows hierarchical location: Home > Roster > John Smith > Training History
 - Reduces cognitive load and "where am I?" confusion
 - Critical for navigation in complex training platform
 - Last item is current page (not clickable)
 
 ### Pagination
+
 Navigate large datasets (rosters, exercise libraries, training history).
 
 ```html
 <nav aria-label="Pagination" class="pagination">
-  <button class="pagination-btn pagination-prev" disabled aria-label="Previous page">
+  <button
+    class="pagination-btn pagination-prev"
+    disabled
+    aria-label="Previous page"
+  >
     <i data-lucide="chevron-left" style="width: 16px; height: 16px;"></i>
     Previous
   </button>
-  
+
   <div class="pagination-pages">
-    <button class="pagination-page pagination-active" aria-label="Page 1, current page">1</button>
+    <button
+      class="pagination-page pagination-active"
+      aria-label="Page 1, current page"
+    >
+      1
+    </button>
     <button class="pagination-page" aria-label="Page 2">2</button>
     <button class="pagination-page" aria-label="Page 3">3</button>
     <span class="pagination-ellipsis">...</span>
     <button class="pagination-page" aria-label="Page 10">10</button>
   </div>
-  
+
   <select class="pagination-select" aria-label="Items per page">
     <option value="10">10 per page</option>
     <option value="25">25 per page</option>
     <option value="50">50 per page</option>
   </select>
-  
+
   <button class="pagination-btn pagination-next" aria-label="Next page">
     Next
     <i data-lucide="chevron-right" style="width: 16px; height: 16px;"></i>
@@ -1821,6 +2013,7 @@ Navigate large datasets (rosters, exercise libraries, training history).
 ```
 
 **Features:**
+
 - Items per page selector (10, 25, 50, 100)
 - Page numbers with ellipsis for large ranges
 - Previous/Next buttons
@@ -1828,6 +2021,7 @@ Navigate large datasets (rosters, exercise libraries, training history).
 - Mobile: Consider infinite scroll alternative
 
 ### Alert Banner
+
 Persistent messages at top of page for system-wide information.
 
 ```html
@@ -1858,6 +2052,7 @@ Persistent messages at top of page for system-wide information.
 ```
 
 **Types:**
+
 - `alert-success`: Success confirmations
 - `alert-warning`: Important warnings
 - `alert-error`: Critical errors
@@ -1865,21 +2060,22 @@ Persistent messages at top of page for system-wide information.
 - `alert-sticky`: Non-dismissible (for critical announcements)
 
 ### Table/Data Grid
+
 **Status**: ⏳ **Preview** - Feature-complete, may have minor changes
 
 Sortable, filterable data table for displaying large datasets (rosters, performance metrics, training history).
 
 #### Component API
 
-| Property | Type | Default | Required | Description |
-|----------|------|---------|----------|-------------|
-| `data-table` | class | - | Yes | Main table container |
-| `data-table-sortable` | class | - | No | Enables column sorting |
-| `data-table-filterable` | class | - | No | Enables row filtering |
-| `data-table-selectable` | class | - | No | Enables row selection |
-| `sort-asc` | class | - | No | Ascending sort indicator |
-| `sort-desc` | class | - | No | Descending sort indicator |
-| `row-selected` | class | - | No | Selected row styling |
+| Property                | Type  | Default | Required | Description               |
+| ----------------------- | ----- | ------- | -------- | ------------------------- |
+| `data-table`            | class | -       | Yes      | Main table container      |
+| `data-table-sortable`   | class | -       | No       | Enables column sorting    |
+| `data-table-filterable` | class | -       | No       | Enables row filtering     |
+| `data-table-selectable` | class | -       | No       | Enables row selection     |
+| `sort-asc`              | class | -       | No       | Ascending sort indicator  |
+| `sort-desc`             | class | -       | No       | Descending sort indicator |
+| `row-selected`          | class | -       | No       | Selected row styling      |
 
 #### HTML Structure
 
@@ -1887,7 +2083,12 @@ Sortable, filterable data table for displaying large datasets (rosters, performa
 <div class="data-table-wrapper">
   <!-- Search/Filter Bar -->
   <div class="data-table-toolbar">
-    <input type="search" class="data-table-search" placeholder="Search athletes..." aria-label="Search table">
+    <input
+      type="search"
+      class="data-table-search"
+      placeholder="Search athletes..."
+      aria-label="Search table"
+    />
     <div class="data-table-actions">
       <button class="btn btn-secondary btn-sm">Export</button>
       <button class="btn btn-primary btn-sm">Add Athlete</button>
@@ -1896,11 +2097,18 @@ Sortable, filterable data table for displaying large datasets (rosters, performa
 
   <!-- Table -->
   <div class="data-table-container">
-    <table class="data-table data-table-sortable data-table-selectable" role="table">
+    <table
+      class="data-table data-table-sortable data-table-selectable"
+      role="table"
+    >
       <thead>
         <tr>
           <th>
-            <input type="checkbox" class="select-all" aria-label="Select all rows">
+            <input
+              type="checkbox"
+              class="select-all"
+              aria-label="Select all rows"
+            />
           </th>
           <th class="sortable" data-sort="name">
             Name
@@ -1924,7 +2132,7 @@ Sortable, filterable data table for displaying large datasets (rosters, performa
       <tbody>
         <tr data-row-id="1">
           <td>
-            <input type="checkbox" class="row-select" aria-label="Select row">
+            <input type="checkbox" class="row-select" aria-label="Select row" />
           </td>
           <td>John Smith</td>
           <td>Quarterback</td>
@@ -1959,115 +2167,120 @@ Sortable, filterable data table for displaying large datasets (rosters, performa
 class DataTable {
   constructor(tableId, options = {}) {
     this.table = document.getElementById(tableId);
-    this.tbody = this.table.querySelector('tbody');
-    this.rows = Array.from(this.tbody.querySelectorAll('tr'));
+    this.tbody = this.table.querySelector("tbody");
+    this.rows = Array.from(this.tbody.querySelectorAll("tr"));
     this.sortColumn = null;
-    this.sortDirection = 'asc';
+    this.sortDirection = "asc";
     this.filteredRows = [...this.rows];
-    
+
     this.init();
   }
-  
+
   init() {
     // Sort functionality
-    this.table.querySelectorAll('.sortable').forEach(header => {
-      header.addEventListener('click', () => this.sort(header.dataset.sort));
+    this.table.querySelectorAll(".sortable").forEach((header) => {
+      header.addEventListener("click", () => this.sort(header.dataset.sort));
     });
-    
+
     // Search functionality
-    const searchInput = document.querySelector('.data-table-search');
+    const searchInput = document.querySelector(".data-table-search");
     if (searchInput) {
-      searchInput.addEventListener('input', (e) => this.filter(e.target.value));
+      searchInput.addEventListener("input", (e) => this.filter(e.target.value));
     }
-    
+
     // Row selection
-    this.table.querySelectorAll('.row-select').forEach(checkbox => {
-      checkbox.addEventListener('change', (e) => this.toggleRow(e.target));
+    this.table.querySelectorAll(".row-select").forEach((checkbox) => {
+      checkbox.addEventListener("change", (e) => this.toggleRow(e.target));
     });
-    
+
     // Select all
-    const selectAll = this.table.querySelector('.select-all');
+    const selectAll = this.table.querySelector(".select-all");
     if (selectAll) {
-      selectAll.addEventListener('change', (e) => this.selectAllRows(e.target.checked));
+      selectAll.addEventListener("change", (e) =>
+        this.selectAllRows(e.target.checked),
+      );
     }
   }
-  
+
   sort(column) {
     if (this.sortColumn === column) {
-      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+      this.sortDirection = this.sortDirection === "asc" ? "desc" : "asc";
     } else {
       this.sortColumn = column;
-      this.sortDirection = 'asc';
+      this.sortDirection = "asc";
     }
-    
+
     this.filteredRows.sort((a, b) => {
       const aValue = this.getCellValue(a, column);
       const bValue = this.getCellValue(b, column);
-      
-      if (this.sortDirection === 'asc') {
+
+      if (this.sortDirection === "asc") {
         return aValue > bValue ? 1 : -1;
       } else {
         return aValue < bValue ? 1 : -1;
       }
     });
-    
+
     this.render();
     this.updateSortIndicators();
   }
-  
+
   filter(query) {
     const lowerQuery = query.toLowerCase();
-    this.filteredRows = this.rows.filter(row => {
+    this.filteredRows = this.rows.filter((row) => {
       const text = row.textContent.toLowerCase();
       return text.includes(lowerQuery);
     });
     this.render();
   }
-  
+
   getCellValue(row, column) {
-    const index = Array.from(this.table.querySelectorAll('th')).findIndex(
-      th => th.dataset.sort === column
+    const index = Array.from(this.table.querySelectorAll("th")).findIndex(
+      (th) => th.dataset.sort === column,
     );
-    return row.cells[index]?.textContent.trim() || '';
+    return row.cells[index]?.textContent.trim() || "";
   }
-  
+
   render() {
-    this.tbody.innerHTML = '';
-    this.filteredRows.forEach(row => {
+    this.tbody.innerHTML = "";
+    this.filteredRows.forEach((row) => {
       this.tbody.appendChild(row.cloneNode(true));
     });
-    
+
     // Re-attach event listeners
-    this.table.querySelectorAll('.row-select').forEach(checkbox => {
-      checkbox.addEventListener('change', (e) => this.toggleRow(e.target));
+    this.table.querySelectorAll(".row-select").forEach((checkbox) => {
+      checkbox.addEventListener("change", (e) => this.toggleRow(e.target));
     });
   }
-  
+
   toggleRow(checkbox) {
-    const row = checkbox.closest('tr');
+    const row = checkbox.closest("tr");
     if (checkbox.checked) {
-      row.classList.add('row-selected');
+      row.classList.add("row-selected");
     } else {
-      row.classList.remove('row-selected');
+      row.classList.remove("row-selected");
     }
   }
-  
+
   selectAllRows(checked) {
-    this.table.querySelectorAll('.row-select').forEach(checkbox => {
+    this.table.querySelectorAll(".row-select").forEach((checkbox) => {
       checkbox.checked = checked;
       this.toggleRow(checkbox);
     });
   }
-  
+
   updateSortIndicators() {
-    this.table.querySelectorAll('.sortable').forEach(header => {
-      const icon = header.querySelector('.sort-icon');
+    this.table.querySelectorAll(".sortable").forEach((header) => {
+      const icon = header.querySelector(".sort-icon");
       if (header.dataset.sort === this.sortColumn) {
-        icon.setAttribute('data-lucide', this.sortDirection === 'asc' ? 'chevron-up' : 'chevron-down');
+        icon.setAttribute(
+          "data-lucide",
+          this.sortDirection === "asc" ? "chevron-up" : "chevron-down",
+        );
         header.classList.add(`sort-${this.sortDirection}`);
       } else {
-        icon.setAttribute('data-lucide', 'chevron-up');
-        header.classList.remove('sort-asc', 'sort-desc');
+        icon.setAttribute("data-lucide", "chevron-up");
+        header.classList.remove("sort-asc", "sort-desc");
       }
       if (window.lucide) lucide.createIcons();
     });
@@ -2075,7 +2288,7 @@ class DataTable {
 }
 
 // Initialize
-new DataTable('athletes-table');
+new DataTable("athletes-table");
 ```
 
 #### Responsive Behavior
@@ -2085,25 +2298,25 @@ new DataTable('athletes-table');
   .data-table-container {
     overflow-x: auto;
   }
-  
+
   .data-table {
     min-width: 600px;
   }
-  
+
   /* Stack table cells on mobile */
   .data-table tbody tr {
     display: block;
     border-bottom: 2px solid var(--color-border-secondary);
     margin-bottom: var(--space-4);
   }
-  
+
   .data-table tbody td {
     display: flex;
     justify-content: space-between;
     padding: var(--space-2) var(--space-4);
     border: none;
   }
-  
+
   .data-table tbody td::before {
     content: attr(data-label);
     font-weight: var(--font-weight-semibold);
@@ -2121,41 +2334,41 @@ Comprehensive guidelines for displaying performance data, training metrics, and 
 
 #### When to Use Each Chart Type
 
-| Chart Type | Use Case | Example |
-|------------|----------|---------|
-| **Line Chart** | Progress over time | Strength gains over 12 weeks, speed improvements |
-| **Bar Chart** | Comparing categories | Performance across athletes, exercise comparisons |
-| **Radar/Spider Chart** | Multidimensional assessment | Speed, strength, agility, endurance profile |
-| **Heat Map** | Intensity patterns | Training intensity over weeks/months |
-| **Gauge Chart** | Goal progress | Percentage to goal, completion rate |
-| **Area Chart** | Cumulative data | Total training hours over time |
-| **Scatter Plot** | Correlation analysis | Relationship between two metrics |
+| Chart Type             | Use Case                    | Example                                           |
+| ---------------------- | --------------------------- | ------------------------------------------------- |
+| **Line Chart**         | Progress over time          | Strength gains over 12 weeks, speed improvements  |
+| **Bar Chart**          | Comparing categories        | Performance across athletes, exercise comparisons |
+| **Radar/Spider Chart** | Multidimensional assessment | Speed, strength, agility, endurance profile       |
+| **Heat Map**           | Intensity patterns          | Training intensity over weeks/months              |
+| **Gauge Chart**        | Goal progress               | Percentage to goal, completion rate               |
+| **Area Chart**         | Cumulative data             | Total training hours over time                    |
+| **Scatter Plot**       | Correlation analysis        | Relationship between two metrics                  |
 
 ### Color Palette for Data Visualization
 
 ```css
 :root {
   /* Primary Data Colors - Green Theme */
-  --chart-primary: #10c96b;        /* Main metric */
-  --chart-secondary: #89c300;      /* Secondary metric */
-  --chart-tertiary: #cc9610;       /* Tertiary metric */
-  
+  --chart-primary: #10c96b; /* Main metric */
+  --chart-secondary: #89c300; /* Secondary metric */
+  --chart-tertiary: #cc9610; /* Tertiary metric */
+
   /* Extended Palette (8 colors for multiple series) */
-  --chart-color-1: #10c96b;       /* Primary green */
-  --chart-color-2: #89c300;       /* Lime green */
-  --chart-color-3: #cc9610;       /* Gold */
-  --chart-color-4: #0ea5e9;       /* Blue */
-  --chart-color-5: #8b5cf6;       /* Purple */
-  --chart-color-6: #f59e0b;       /* Amber */
-  --chart-color-7: #ef4444;       /* Red */
-  --chart-color-8: #64748b;       /* Slate */
-  
+  --chart-color-1: #10c96b; /* Primary green */
+  --chart-color-2: #89c300; /* Lime green */
+  --chart-color-3: #cc9610; /* Gold */
+  --chart-color-4: #0ea5e9; /* Blue */
+  --chart-color-5: #8b5cf6; /* Purple */
+  --chart-color-6: #f59e0b; /* Amber */
+  --chart-color-7: #ef4444; /* Red */
+  --chart-color-8: #64748b; /* Slate */
+
   /* Semantic Colors */
-  --chart-success: #22c55e;        /* Positive metrics */
-  --chart-warning: #f59e0b;        /* Caution metrics */
-  --chart-error: #ef4444;          /* Negative metrics */
-  --chart-info: #0ea5e9;           /* Informational metrics */
-  
+  --chart-success: #22c55e; /* Positive metrics */
+  --chart-warning: #f59e0b; /* Caution metrics */
+  --chart-error: #ef4444; /* Negative metrics */
+  --chart-info: #0ea5e9; /* Informational metrics */
+
   /* Background Colors */
   --chart-bg-primary: var(--surface-primary);
   --chart-bg-secondary: var(--surface-secondary);
@@ -2166,6 +2379,7 @@ Comprehensive guidelines for displaying performance data, training metrics, and 
 ```
 
 **Accessibility Notes:**
+
 - All colors meet WCAG AA contrast ratios (4.5:1 minimum)
 - Colorblind-friendly palette (tested with Color Oracle)
 - Patterns/textures available as alternative to color differentiation
@@ -2188,7 +2402,11 @@ Comprehensive guidelines for displaying performance data, training metrics, and 
     </div>
   </div>
   <div class="chart-body">
-    <canvas id="performance-chart" role="img" aria-label="Performance chart showing improvement over 12 weeks"></canvas>
+    <canvas
+      id="performance-chart"
+      role="img"
+      aria-label="Performance chart showing improvement over 12 weeks"
+    ></canvas>
     <!-- Alternative: Data table for screen readers -->
     <table class="chart-data-table sr-only" aria-label="Chart data">
       <thead>
@@ -2205,7 +2423,10 @@ Comprehensive guidelines for displaying performance data, training metrics, and 
   <div class="chart-footer">
     <div class="chart-legend">
       <div class="legend-item">
-        <span class="legend-color" style="background: var(--chart-primary);"></span>
+        <span
+          class="legend-color"
+          style="background: var(--chart-primary);"
+        ></span>
         <span class="legend-label">Training Sessions</span>
       </div>
     </div>
@@ -2220,19 +2441,21 @@ Comprehensive guidelines for displaying performance data, training metrics, and 
 
 ```javascript
 // Line Chart - Performance Over Time
-const ctx = document.getElementById('performance-chart').getContext('2d');
+const ctx = document.getElementById("performance-chart").getContext("2d");
 const performanceChart = new Chart(ctx, {
-  type: 'line',
+  type: "line",
   data: {
-    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'],
-    datasets: [{
-      label: 'Performance Score',
-      data: [65, 68, 72, 75, 78, 82],
-      borderColor: 'var(--chart-primary)',
-      backgroundColor: 'rgba(16, 201, 107, 0.1)',
-      tension: 0.4,
-      fill: true
-    }]
+    labels: ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6"],
+    datasets: [
+      {
+        label: "Performance Score",
+        data: [65, 68, 72, 75, 78, 82],
+        borderColor: "var(--chart-primary)",
+        backgroundColor: "rgba(16, 201, 107, 0.1)",
+        tension: 0.4,
+        fill: true,
+      },
+    ],
   },
   options: {
     responsive: true,
@@ -2240,36 +2463,36 @@ const performanceChart = new Chart(ctx, {
     plugins: {
       legend: {
         display: true,
-        position: 'bottom'
+        position: "bottom",
       },
       tooltip: {
-        backgroundColor: 'var(--surface-primary)',
-        titleColor: 'var(--chart-text)',
-        bodyColor: 'var(--chart-text-secondary)',
-        borderColor: 'var(--chart-grid)',
-        borderWidth: 1
-      }
+        backgroundColor: "var(--surface-primary)",
+        titleColor: "var(--chart-text)",
+        bodyColor: "var(--chart-text-secondary)",
+        borderColor: "var(--chart-grid)",
+        borderWidth: 1,
+      },
     },
     scales: {
       y: {
         beginAtZero: false,
         grid: {
-          color: 'var(--chart-grid)'
+          color: "var(--chart-grid)",
         },
         ticks: {
-          color: 'var(--chart-text-secondary)'
-        }
+          color: "var(--chart-text-secondary)",
+        },
       },
       x: {
         grid: {
-          color: 'var(--chart-grid)'
+          color: "var(--chart-grid)",
         },
         ticks: {
-          color: 'var(--chart-text-secondary)'
-        }
-      }
-    }
-  }
+          color: "var(--chart-text-secondary)",
+        },
+      },
+    },
+  },
 });
 ```
 
@@ -2285,7 +2508,7 @@ const performanceChart = new Chart(ctx, {
   .chart-body {
     height: 250px; /* Mobile - slightly shorter */
   }
-  
+
   .chart-legend {
     flex-direction: column;
     gap: var(--space-2);
@@ -2296,7 +2519,7 @@ const performanceChart = new Chart(ctx, {
   .chart-body {
     height: 200px; /* Small mobile */
   }
-  
+
   .chart-title {
     font-size: var(--font-size-lg);
   }
@@ -2306,17 +2529,20 @@ const performanceChart = new Chart(ctx, {
 ### Accessibility Guidelines
 
 #### Screen Reader Support
+
 - Provide data table alternative for all charts
 - Use `role="img"` with descriptive `aria-label` on canvas
 - Include chart title and description in accessible text
 - Announce data updates with `aria-live` regions
 
 #### Keyboard Navigation
+
 - Make interactive charts keyboard navigable
 - Provide keyboard shortcuts for zoom/pan
 - Ensure focus indicators are visible
 
 #### Color Independence
+
 - Never rely solely on color to convey meaning
 - Use patterns, textures, or labels as alternatives
 - Test with colorblind simulation tools
@@ -2324,75 +2550,124 @@ const performanceChart = new Chart(ctx, {
 ### Chart Examples
 
 #### Line Chart - Training Progress
+
 ```javascript
 // Shows improvement over time
 // Best for: Weekly/monthly progress tracking
 ```
 
 #### Bar Chart - Athlete Comparison
+
 ```javascript
 // Compares performance across athletes
 // Best for: Ranking, comparisons
 ```
 
 #### Radar Chart - Multidimensional Assessment
+
 ```javascript
 // Shows athlete profile across multiple dimensions
 // Best for: Comprehensive athlete evaluation
 ```
 
 #### Heat Map - Training Intensity
+
 ```javascript
 // Shows intensity patterns over time
 // Best for: Identifying training patterns, rest periods
 ```
 
 ### Tabs Component
+
 **Status**: ✅ **Stable** - Production-ready, fully implemented
 
 Horizontal navigation between related content sections.
 
 #### Component API
 
-| Property | Type | Default | Required | Description |
-|----------|------|---------|----------|-------------|
-| `tabs` | class | - | Yes | Main tabs container |
-| `tabs-list` | class | - | Yes | Tab button list |
-| `tabs-trigger` | class | - | Yes | Individual tab button |
-| `tabs-content` | class | - | Yes | Tab content container |
-| `tabs-panel` | class | - | Yes | Individual tab panel |
-| `tabs-active` | class | - | No | Active tab indicator |
+| Property       | Type  | Default | Required | Description           |
+| -------------- | ----- | ------- | -------- | --------------------- |
+| `tabs`         | class | -       | Yes      | Main tabs container   |
+| `tabs-list`    | class | -       | Yes      | Tab button list       |
+| `tabs-trigger` | class | -       | Yes      | Individual tab button |
+| `tabs-content` | class | -       | Yes      | Tab content container |
+| `tabs-panel`   | class | -       | Yes      | Individual tab panel  |
+| `tabs-active`  | class | -       | No       | Active tab indicator  |
 
 #### HTML Structure
 
 ```html
 <div class="tabs" data-tabs="athlete-profile">
   <div class="tabs-list" role="tablist" aria-label="Athlete profile sections">
-    <button class="tabs-trigger tabs-active" role="tab" aria-selected="true" aria-controls="tab-stats" id="trigger-stats">
+    <button
+      class="tabs-trigger tabs-active"
+      role="tab"
+      aria-selected="true"
+      aria-controls="tab-stats"
+      id="trigger-stats"
+    >
       Stats
     </button>
-    <button class="tabs-trigger" role="tab" aria-selected="false" aria-controls="tab-training" id="trigger-training">
+    <button
+      class="tabs-trigger"
+      role="tab"
+      aria-selected="false"
+      aria-controls="tab-training"
+      id="trigger-training"
+    >
       Training
     </button>
-    <button class="tabs-trigger" role="tab" aria-selected="false" aria-controls="tab-nutrition" id="trigger-nutrition">
+    <button
+      class="tabs-trigger"
+      role="tab"
+      aria-selected="false"
+      aria-controls="tab-nutrition"
+      id="trigger-nutrition"
+    >
       Nutrition
     </button>
-    <button class="tabs-trigger" role="tab" aria-selected="false" aria-controls="tab-performance" id="trigger-performance">
+    <button
+      class="tabs-trigger"
+      role="tab"
+      aria-selected="false"
+      aria-controls="tab-performance"
+      id="trigger-performance"
+    >
       Performance
     </button>
   </div>
-  
+
   <div class="tabs-content">
-    <div class="tabs-panel tabs-active" role="tabpanel" aria-labelledby="trigger-stats" id="tab-stats">
+    <div
+      class="tabs-panel tabs-active"
+      role="tabpanel"
+      aria-labelledby="trigger-stats"
+      id="tab-stats"
+    >
       <!-- Stats content -->
     </div>
-    <div class="tabs-panel" role="tabpanel" aria-labelledby="trigger-training" id="tab-training">
+    <div
+      class="tabs-panel"
+      role="tabpanel"
+      aria-labelledby="trigger-training"
+      id="tab-training"
+    >
       <!-- Training content -->
     </div>
-    <div class="tabs-panel" role="tabpanel" aria-labelledby="trigger-nutrition" id="tab-nutrition">
+    <div
+      class="tabs-panel"
+      role="tabpanel"
+      aria-labelledby="trigger-nutrition"
+      id="tab-nutrition"
+    >
       <!-- Nutrition content -->
     </div>
-    <div class="tabs-panel" role="tabpanel" aria-labelledby="trigger-performance" id="tab-performance">
+    <div
+      class="tabs-panel"
+      role="tabpanel"
+      aria-labelledby="trigger-performance"
+      id="tab-performance"
+    >
       <!-- Performance content -->
     </div>
   </div>
@@ -2405,79 +2680,90 @@ Horizontal navigation between related content sections.
 class Tabs {
   constructor(container) {
     this.container = container;
-    this.triggers = container.querySelectorAll('.tabs-trigger');
-    this.panels = container.querySelectorAll('.tabs-panel');
+    this.triggers = container.querySelectorAll(".tabs-trigger");
+    this.panels = container.querySelectorAll(".tabs-panel");
     this.activeIndex = 0;
-    
+
     this.init();
   }
-  
+
   init() {
     this.triggers.forEach((trigger, index) => {
-      trigger.addEventListener('click', () => this.selectTab(index));
-      trigger.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowRight') {
+      trigger.addEventListener("click", () => this.selectTab(index));
+      trigger.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight") {
           e.preventDefault();
           this.selectTab((index + 1) % this.triggers.length);
-        } else if (e.key === 'ArrowLeft') {
+        } else if (e.key === "ArrowLeft") {
           e.preventDefault();
-          this.selectTab((index - 1 + this.triggers.length) % this.triggers.length);
+          this.selectTab(
+            (index - 1 + this.triggers.length) % this.triggers.length,
+          );
         }
       });
     });
   }
-  
+
   selectTab(index) {
     // Update triggers
     this.triggers.forEach((trigger, i) => {
       const isActive = i === index;
-      trigger.classList.toggle('tabs-active', isActive);
-      trigger.setAttribute('aria-selected', isActive);
-      trigger.setAttribute('tabindex', isActive ? '0' : '-1');
+      trigger.classList.toggle("tabs-active", isActive);
+      trigger.setAttribute("aria-selected", isActive);
+      trigger.setAttribute("tabindex", isActive ? "0" : "-1");
     });
-    
+
     // Update panels
     this.panels.forEach((panel, i) => {
-      panel.classList.toggle('tabs-active', i === index);
+      panel.classList.toggle("tabs-active", i === index);
     });
-    
+
     this.activeIndex = index;
-    
+
     // Focus the active trigger
     this.triggers[index].focus();
   }
 }
 
 // Initialize all tabs
-document.querySelectorAll('.tabs').forEach(container => {
+document.querySelectorAll(".tabs").forEach((container) => {
   new Tabs(container);
 });
 ```
 
 ### Tooltip Component
+
 **Status**: ⏳ **Preview** - Feature-complete, may have minor changes
 
 Contextual help on hover/focus for icons and complex features.
 
 #### Component API
 
-| Property | Type | Default | Required | Description |
-|----------|------|---------|----------|-------------|
-| `tooltip` | class | - | Yes | Tooltip container |
-| `tooltip-trigger` | class | - | Yes | Element that triggers tooltip |
-| `data-tooltip` | attribute | - | Yes | Tooltip text content |
-| `data-tooltip-position` | attribute | 'top' | No | Position: top, bottom, left, right |
+| Property                | Type      | Default | Required | Description                        |
+| ----------------------- | --------- | ------- | -------- | ---------------------------------- |
+| `tooltip`               | class     | -       | Yes      | Tooltip container                  |
+| `tooltip-trigger`       | class     | -       | Yes      | Element that triggers tooltip      |
+| `data-tooltip`          | attribute | -       | Yes      | Tooltip text content               |
+| `data-tooltip-position` | attribute | 'top'   | No       | Position: top, bottom, left, right |
 
 #### HTML Structure
 
 ```html
 <!-- Icon with tooltip -->
-<button class="btn-icon tooltip-trigger" data-tooltip="View training history" data-tooltip-position="top" aria-label="View training history">
+<button
+  class="btn-icon tooltip-trigger"
+  data-tooltip="View training history"
+  data-tooltip-position="top"
+  aria-label="View training history"
+>
   <i data-lucide="history"></i>
 </button>
 
 <!-- Text with tooltip -->
-<span class="tooltip-trigger" data-tooltip="This metric shows your overall performance score based on multiple factors">
+<span
+  class="tooltip-trigger"
+  data-tooltip="This metric shows your overall performance score based on multiple factors"
+>
   Performance Score
   <i data-lucide="help-circle" style="width: 14px; height: 14px;"></i>
 </span>
@@ -2490,102 +2776,109 @@ class Tooltip {
   constructor(trigger) {
     this.trigger = trigger;
     this.text = trigger.dataset.tooltip;
-    this.position = trigger.dataset.tooltipPosition || 'top';
+    this.position = trigger.dataset.tooltipPosition || "top";
     this.tooltip = null;
-    
+
     this.init();
   }
-  
+
   init() {
-    this.trigger.addEventListener('mouseenter', () => this.show());
-    this.trigger.addEventListener('mouseleave', () => this.hide());
-    this.trigger.addEventListener('focus', () => this.show());
-    this.trigger.addEventListener('blur', () => this.hide());
+    this.trigger.addEventListener("mouseenter", () => this.show());
+    this.trigger.addEventListener("mouseleave", () => this.hide());
+    this.trigger.addEventListener("focus", () => this.show());
+    this.trigger.addEventListener("blur", () => this.hide());
   }
-  
+
   show() {
     if (this.tooltip) return;
-    
-    this.tooltip = document.createElement('div');
+
+    this.tooltip = document.createElement("div");
     this.tooltip.className = `tooltip tooltip-${this.position}`;
     this.tooltip.textContent = this.text;
-    this.tooltip.setAttribute('role', 'tooltip');
-    
+    this.tooltip.setAttribute("role", "tooltip");
+
     document.body.appendChild(this.tooltip);
-    
+
     this.positionTooltip();
   }
-  
+
   hide() {
     if (this.tooltip) {
       this.tooltip.remove();
       this.tooltip = null;
     }
   }
-  
+
   positionTooltip() {
     const rect = this.trigger.getBoundingClientRect();
     const tooltipRect = this.tooltip.getBoundingClientRect();
-    
+
     let top, left;
-    
+
     switch (this.position) {
-      case 'top':
+      case "top":
         top = rect.top - tooltipRect.height - 8;
-        left = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
+        left = rect.left + rect.width / 2 - tooltipRect.width / 2;
         break;
-      case 'bottom':
+      case "bottom":
         top = rect.bottom + 8;
-        left = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
+        left = rect.left + rect.width / 2 - tooltipRect.width / 2;
         break;
-      case 'left':
-        top = rect.top + (rect.height / 2) - (tooltipRect.height / 2);
+      case "left":
+        top = rect.top + rect.height / 2 - tooltipRect.height / 2;
         left = rect.left - tooltipRect.width - 8;
         break;
-      case 'right':
-        top = rect.top + (rect.height / 2) - (tooltipRect.height / 2);
+      case "right":
+        top = rect.top + rect.height / 2 - tooltipRect.height / 2;
         left = rect.right + 8;
         break;
     }
-    
+
     // Keep tooltip within viewport
-    top = Math.max(8, Math.min(top, window.innerHeight - tooltipRect.height - 8));
-    left = Math.max(8, Math.min(left, window.innerWidth - tooltipRect.width - 8));
-    
+    top = Math.max(
+      8,
+      Math.min(top, window.innerHeight - tooltipRect.height - 8),
+    );
+    left = Math.max(
+      8,
+      Math.min(left, window.innerWidth - tooltipRect.width - 8),
+    );
+
     this.tooltip.style.top = `${top}px`;
     this.tooltip.style.left = `${left}px`;
   }
 }
 
 // Initialize all tooltips
-document.querySelectorAll('.tooltip-trigger').forEach(trigger => {
+document.querySelectorAll(".tooltip-trigger").forEach((trigger) => {
   new Tooltip(trigger);
 });
 ```
 
 ### Avatar Component
+
 **Status**: ⏳ **Preview** - Feature-complete, may have minor changes
 
 User profile images with fallback to initials.
 
 #### Component API
 
-| Property | Type | Default | Required | Description |
-|----------|------|---------|----------|-------------|
-| `avatar` | class | - | Yes | Avatar container |
-| `avatar-xs` | class | - | No | Extra small (24px) |
-| `avatar-sm` | class | - | No | Small (32px) |
-| `avatar-md` | class | `avatar-md` | No | Medium (40px) |
-| `avatar-lg` | class | - | No | Large (48px) |
-| `avatar-xl` | class | - | No | Extra large (64px) |
-| `avatar-status` | class | - | No | Status indicator overlay |
+| Property        | Type  | Default     | Required | Description              |
+| --------------- | ----- | ----------- | -------- | ------------------------ |
+| `avatar`        | class | -           | Yes      | Avatar container         |
+| `avatar-xs`     | class | -           | No       | Extra small (24px)       |
+| `avatar-sm`     | class | -           | No       | Small (32px)             |
+| `avatar-md`     | class | `avatar-md` | No       | Medium (40px)            |
+| `avatar-lg`     | class | -           | No       | Large (48px)             |
+| `avatar-xl`     | class | -           | No       | Extra large (64px)       |
+| `avatar-status` | class | -           | No       | Status indicator overlay |
 
 #### HTML Structure
 
 ```html
 <!-- Avatar with image -->
 <div class="avatar avatar-md">
-  <img src="/avatars/john-smith.jpg" alt="John Smith">
+  <img src="/avatars/john-smith.jpg" alt="John Smith" />
 </div>
 
 <!-- Avatar with initials fallback -->
@@ -2595,12 +2888,13 @@ User profile images with fallback to initials.
 
 <!-- Avatar with status indicator -->
 <div class="avatar avatar-md avatar-status avatar-online">
-  <img src="/avatars/john-smith.jpg" alt="John Smith">
+  <img src="/avatars/john-smith.jpg" alt="John Smith" />
   <span class="avatar-status-dot"></span>
 </div>
 ```
 
 ### Accordion Component
+
 **Status**: ✅ **Stable** - Production-ready, fully implemented
 
 Collapsible sections for training program details.
@@ -2610,7 +2904,11 @@ Collapsible sections for training program details.
 ```html
 <div class="accordion">
   <div class="accordion-item">
-    <button class="accordion-trigger" aria-expanded="false" aria-controls="panel-1">
+    <button
+      class="accordion-trigger"
+      aria-expanded="false"
+      aria-controls="panel-1"
+    >
       <span>Week 1 Training Program</span>
       <i data-lucide="chevron-down" class="accordion-icon"></i>
     </button>
@@ -2620,9 +2918,13 @@ Collapsible sections for training program details.
       </div>
     </div>
   </div>
-  
+
   <div class="accordion-item">
-    <button class="accordion-trigger" aria-expanded="false" aria-controls="panel-2">
+    <button
+      class="accordion-trigger"
+      aria-expanded="false"
+      aria-controls="panel-2"
+    >
       <span>Week 2 Training Program</span>
       <i data-lucide="chevron-down" class="accordion-icon"></i>
     </button>
@@ -2636,6 +2938,7 @@ Collapsible sections for training program details.
 ```
 
 ### Empty States
+
 **Status**: ⏳ **Preview** - Feature-complete, may have minor changes
 
 Helpful guidance when no data exists.
@@ -2674,7 +2977,7 @@ Combine card container with form components for modal forms or inline forms.
     <form class="form">
       <div class="form-group">
         <label class="form-label required" for="name">Full Name</label>
-        <input type="text" id="name" class="form-input" required>
+        <input type="text" id="name" class="form-input" required />
       </div>
       <div class="form-group">
         <label class="form-label required" for="position">Position</label>
@@ -2686,7 +2989,7 @@ Combine card container with form components for modal forms or inline forms.
       </div>
       <div class="form-group">
         <label class="form-label" for="email">Email</label>
-        <input type="email" id="email" class="form-input">
+        <input type="email" id="email" class="form-input" />
       </div>
     </form>
   </div>
@@ -2710,7 +3013,7 @@ Combine bento grid, cards, and charts for comprehensive dashboards.
       <p>Next session starts in 2 hours</p>
       <button class="btn btn-primary btn-lg">Start Session</button>
     </div>
-    
+
     <!-- Performance Chart - 2/3 Width, Double Height -->
     <div class="card chart-card bento-card-span-8 bento-card-row-span-2">
       <div class="card-header">
@@ -2720,18 +3023,18 @@ Combine bento grid, cards, and charts for comprehensive dashboards.
         <canvas id="performance-chart"></canvas>
       </div>
     </div>
-    
+
     <!-- Quick Stats - 1/3 Width -->
     <div class="card stat-card bento-card-span-4">
       <div class="stat-value">85%</div>
       <div class="stat-label">Completion Rate</div>
     </div>
-    
+
     <div class="card stat-card bento-card-span-4">
       <div class="stat-value">12</div>
       <div class="stat-label">Sessions This Week</div>
     </div>
-    
+
     <!-- Upcoming Events - Half Width -->
     <div class="card bento-card-span-6">
       <div class="card-header">
@@ -2741,7 +3044,7 @@ Combine bento grid, cards, and charts for comprehensive dashboards.
         <!-- Event list -->
       </div>
     </div>
-    
+
     <!-- Quick Actions - Half Width -->
     <div class="card bento-card-span-6">
       <div class="card-header">
@@ -2764,7 +3067,11 @@ Combine table, search, filters, and pagination for data-heavy pages.
 <div class="data-table-wrapper">
   <!-- Search and Actions Toolbar -->
   <div class="data-table-toolbar">
-    <input type="search" class="data-table-search" placeholder="Search athletes...">
+    <input
+      type="search"
+      class="data-table-search"
+      placeholder="Search athletes..."
+    />
     <div class="data-table-filters">
       <select class="form-select form-select-sm">
         <option>All Positions</option>
@@ -2779,14 +3086,14 @@ Combine table, search, filters, and pagination for data-heavy pages.
     </div>
     <button class="btn btn-primary btn-sm">Add Athlete</button>
   </div>
-  
+
   <!-- Table -->
   <div class="data-table-container">
     <table class="data-table data-table-sortable">
       <!-- Table content -->
     </table>
   </div>
-  
+
   <!-- Pagination -->
   <nav class="pagination" aria-label="Table pagination">
     <!-- Pagination component -->
@@ -2801,27 +3108,49 @@ Combine form components with error handling patterns.
 ```html
 <form class="form" id="athlete-form">
   <!-- Form-level errors -->
-  <div class="form-errors" role="alert" aria-live="polite" id="form-errors" style="display: none;">
+  <div
+    class="form-errors"
+    role="alert"
+    aria-live="polite"
+    id="form-errors"
+    style="display: none;"
+  >
     <h3>Please fix the following errors:</h3>
     <ul id="error-list"></ul>
   </div>
-  
+
   <!-- Form fields -->
   <div class="form-group">
     <label class="form-label required" for="athlete-name">Full Name</label>
-    <input type="text" id="athlete-name" class="form-input" required aria-invalid="false" aria-describedby="name-error">
+    <input
+      type="text"
+      id="athlete-name"
+      class="form-input"
+      required
+      aria-invalid="false"
+      aria-describedby="name-error"
+    />
     <div class="form-error" id="name-error" role="alert"></div>
   </div>
-  
+
   <div class="form-group">
     <label class="form-label required" for="athlete-email">Email</label>
-    <input type="email" id="athlete-email" class="form-input" required aria-invalid="false" aria-describedby="email-error">
+    <input
+      type="email"
+      id="athlete-email"
+      class="form-input"
+      required
+      aria-invalid="false"
+      aria-describedby="email-error"
+    />
     <div class="form-error" id="email-error" role="alert"></div>
   </div>
-  
+
   <!-- Form actions -->
   <div class="form-actions">
-    <button type="button" class="btn btn-secondary" data-modal-close>Cancel</button>
+    <button type="button" class="btn btn-secondary" data-modal-close>
+      Cancel
+    </button>
     <button type="submit" class="btn btn-primary">Save Athlete</button>
   </div>
 </form>
@@ -2833,7 +3162,13 @@ Combine modal, form, and toast notifications for complete user flows.
 
 ```html
 <!-- Modal -->
-<div class="modal-overlay" id="add-athlete-modal" role="dialog" aria-modal="true" aria-hidden="true">
+<div
+  class="modal-overlay"
+  id="add-athlete-modal"
+  role="dialog"
+  aria-modal="true"
+  aria-hidden="true"
+>
   <div class="modal-content">
     <div class="modal-header">
       <h2 id="modal-title">Add New Athlete</h2>
@@ -2848,7 +3183,9 @@ Combine modal, form, and toast notifications for complete user flows.
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" data-modal-close>Cancel</button>
-      <button class="btn btn-primary" type="submit" form="athlete-form">Save</button>
+      <button class="btn btn-primary" type="submit" form="athlete-form">
+        Save
+      </button>
     </div>
   </div>
 </div>
@@ -2858,29 +3195,32 @@ Combine modal, form, and toast notifications for complete user flows.
 ```
 
 **JavaScript:**
+
 ```javascript
-document.getElementById('athlete-form').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  
-  try {
-    const data = new FormData(e.target);
-    const response = await fetch('/api/athletes', {
-      method: 'POST',
-      body: data
-    });
-    
-    if (response.ok) {
-      closeModal('add-athlete-modal');
-      showToast.success('Athlete added successfully');
-      // Refresh data or redirect
-    } else {
-      const errors = await response.json();
-      showFormErrors(errors);
+document
+  .getElementById("athlete-form")
+  .addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    try {
+      const data = new FormData(e.target);
+      const response = await fetch("/api/athletes", {
+        method: "POST",
+        body: data,
+      });
+
+      if (response.ok) {
+        closeModal("add-athlete-modal");
+        showToast.success("Athlete added successfully");
+        // Refresh data or redirect
+      } else {
+        const errors = await response.json();
+        showFormErrors(errors);
+      }
+    } catch (error) {
+      showToast.error("Failed to save athlete. Please try again.");
     }
-  } catch (error) {
-    showToast.error('Failed to save athlete. Please try again.');
-  }
-});
+  });
 ```
 
 ### Card Grid with Empty State Fallback
@@ -2901,28 +3241,34 @@ Combine grid layout with empty state for graceful degradation.
   <p class="empty-state-description">
     Get started by adding your first athlete to track their training progress.
   </p>
-  <button class="btn btn-primary btn-md" onclick="openModal('add-athlete-modal')">
+  <button
+    class="btn btn-primary btn-md"
+    onclick="openModal('add-athlete-modal')"
+  >
     Add First Athlete
   </button>
 </div>
 ```
 
 **JavaScript:**
+
 ```javascript
 function renderAthletes(athletes) {
-  const grid = document.getElementById('athletes-grid');
-  const emptyState = document.getElementById('empty-state');
-  
+  const grid = document.getElementById("athletes-grid");
+  const emptyState = document.getElementById("empty-state");
+
   if (athletes.length === 0) {
-    grid.style.display = 'none';
-    emptyState.style.display = 'block';
+    grid.style.display = "none";
+    emptyState.style.display = "block";
     return;
   }
-  
-  grid.style.display = 'grid';
-  emptyState.style.display = 'none';
-  
-  grid.innerHTML = athletes.map(athlete => `
+
+  grid.style.display = "grid";
+  emptyState.style.display = "none";
+
+  grid.innerHTML = athletes
+    .map(
+      (athlete) => `
     <div class="card">
       <div class="card-header">
         <h3>${athlete.name}</h3>
@@ -2932,7 +3278,9 @@ function renderAthletes(athletes) {
         <p>Sessions: ${athlete.sessions}</p>
       </div>
     </div>
-  `).join('');
+  `,
+    )
+    .join("");
 }
 ```
 
@@ -2955,7 +3303,7 @@ Combine breadcrumbs with page header for clear navigation context.
       </li>
     </ol>
   </nav>
-  
+
   <div class="page-header-content">
     <h1>John Smith</h1>
     <div class="page-header-actions">
@@ -2979,16 +3327,26 @@ Combine tabs with data tables for organized content sections.
 ```html
 <div class="tabs" data-tabs="athlete-details">
   <div class="tabs-list" role="tablist">
-    <button class="tabs-trigger tabs-active" role="tab" aria-controls="tab-stats">Stats</button>
-    <button class="tabs-trigger" role="tab" aria-controls="tab-training">Training History</button>
-    <button class="tabs-trigger" role="tab" aria-controls="tab-performance">Performance</button>
+    <button
+      class="tabs-trigger tabs-active"
+      role="tab"
+      aria-controls="tab-stats"
+    >
+      Stats
+    </button>
+    <button class="tabs-trigger" role="tab" aria-controls="tab-training">
+      Training History
+    </button>
+    <button class="tabs-trigger" role="tab" aria-controls="tab-performance">
+      Performance
+    </button>
   </div>
-  
+
   <div class="tabs-content">
     <div class="tabs-panel tabs-active" id="tab-stats" role="tabpanel">
       <!-- Stats content -->
     </div>
-    
+
     <div class="tabs-panel" id="tab-training" role="tabpanel">
       <div class="data-table-wrapper">
         <table class="data-table data-table-sortable">
@@ -2996,7 +3354,7 @@ Combine tabs with data tables for organized content sections.
         </table>
       </div>
     </div>
-    
+
     <div class="tabs-panel" id="tab-performance" role="tabpanel">
       <div class="chart-card">
         <canvas id="performance-chart"></canvas>
@@ -3009,32 +3367,37 @@ Combine tabs with data tables for organized content sections.
 ## Icon System
 
 ### Icon Library: Lucide Icons
+
 We use **Lucide Icons** (modern icon library similar to Radix UI) for consistent, professional iconography across the application.
 
 ### Icon Guidelines
+
 - **Consistent sizing**: 16px, 20px, 24px standard sizes
 - **Stroke weight**: 2px for standard icons
 - **Color inheritance**: Icons inherit color from parent context
 - **Accessibility**: Proper ARIA labels and semantic HTML
 
 ### Icon Colors (Dark Mode)
+
 ```css
---icon-color-primary: #ffffff;      /* White - default */
---icon-color-secondary: #a0a0a0;    /* Light gray - secondary */
---icon-color-muted: #6b6b6b;        /* Muted gray - inactive */
---icon-color-accent: #10c96b;       /* Green - active/hover */
+--icon-color-primary: #ffffff; /* White - default */
+--icon-color-secondary: #a0a0a0; /* Light gray - secondary */
+--icon-color-muted: #6b6b6b; /* Muted gray - inactive */
+--icon-color-accent: #10c96b; /* Green - active/hover */
 ```
 
 ### Icon Sizes
+
 ```css
---icon-size-xs: 12px;  /* Compact UI */
---icon-size-sm: 16px;  /* Inline text */
---icon-size-md: 20px;  /* Standard UI */
---icon-size-lg: 24px;  /* Prominent actions */
---icon-size-xl: 32px;  /* Headers */
+--icon-size-xs: 12px; /* Compact UI */
+--icon-size-sm: 16px; /* Inline text */
+--icon-size-md: 20px; /* Standard UI */
+--icon-size-lg: 24px; /* Prominent actions */
+--icon-size-xl: 32px; /* Headers */
 ```
 
 ### Usage Examples
+
 ```html
 <!-- Lucide Icon -->
 <i data-lucide="football"></i>
@@ -3053,6 +3416,7 @@ We use **Lucide Icons** (modern icon library similar to Radix UI) for consistent
 ```
 
 ### Icon Initialization
+
 ```javascript
 // Initialize Lucide icons (included in all pages)
 lucide.createIcons();
@@ -3061,27 +3425,36 @@ lucide.createIcons();
 ## Motion & Animation
 
 ### Motion Principles
+
 1. **Purposeful**: Every animation serves a functional purpose
 2. **Subtle**: Enhances without distracting from content
 3. **Fast**: Quick transitions maintain perceived performance
 4. **Accessible**: Respects `prefers-reduced-motion` preference
 
 ### Duration Scale
+
 ```css
---motion-duration-instant: 75ms;   /* State changes */
---motion-duration-fast: 150ms;     /* Hover effects */
---motion-duration-normal: 200ms;   /* Component transitions */
---motion-duration-slow: 300ms;     /* Layout changes */
+--motion-duration-instant: 75ms; /* State changes */
+--motion-duration-fast: 150ms; /* Hover effects */
+--motion-duration-normal: 200ms; /* Component transitions */
+--motion-duration-slow: 300ms; /* Layout changes */
 ```
 
 ### Easing Functions
+
 ```css
---motion-easing-entrance: cubic-bezier(0, 0, 0.2, 1);     /* Elements entering */
---motion-easing-exit: cubic-bezier(0.4, 0, 1, 1);        /* Elements exiting */
---motion-easing-standard: cubic-bezier(0.4, 0, 0.2, 1);  /* General transitions */
+--motion-easing-entrance: cubic-bezier(0, 0, 0.2, 1); /* Elements entering */
+--motion-easing-exit: cubic-bezier(0.4, 0, 1, 1); /* Elements exiting */
+--motion-easing-standard: cubic-bezier(
+  0.4,
+  0,
+  0.2,
+  1
+); /* General transitions */
 ```
 
 ### Reduced Motion Support
+
 ```css
 @media (prefers-reduced-motion: reduce) {
   * {
@@ -3094,6 +3467,7 @@ lucide.createIcons();
 ## Accessibility
 
 ### WCAG 2.1 AA Compliance
+
 - **Color Contrast**: All colors verified and documented
   - White on dark: 14:1 (AAA)
   - Light gray on dark: 8:1 (AA)
@@ -3104,6 +3478,7 @@ lucide.createIcons();
 - **Screen Reader Support**: Proper ARIA labels and semantic HTML
 
 ### Accessibility Features
+
 - **High Contrast Mode**: Enhanced borders and contrast for `prefers-contrast: more`
 - **Reduced Motion**: Respects `prefers-reduced-motion` preference
 - **System Preference**: Auto-detects light/dark mode via `prefers-color-scheme`
@@ -3114,6 +3489,7 @@ lucide.createIcons();
 - **Alternative Text**: Required for all meaningful images and icons
 
 ### Testing Checklist
+
 - [ ] Keyboard navigation works for all interactive elements
 - [ ] Screen reader announces all content correctly
 - [ ] Color contrast meets AA standards
@@ -3133,27 +3509,32 @@ Comprehensive testing strategies for ensuring component quality, accessibility, 
 Test individual component functionality in isolation.
 
 **Example - Button Component:**
+
 ```javascript
 // button.test.js
-import { render, fireEvent } from '@testing-library/dom';
-import { Button } from './button.js';
+import { render, fireEvent } from "@testing-library/dom";
+import { Button } from "./button.js";
 
-describe('Button Component', () => {
-  test('renders with correct text', () => {
-    const { getByText } = render(Button({ children: 'Click me' }));
-    expect(getByText('Click me')).toBeInTheDocument();
+describe("Button Component", () => {
+  test("renders with correct text", () => {
+    const { getByText } = render(Button({ children: "Click me" }));
+    expect(getByText("Click me")).toBeInTheDocument();
   });
-  
-  test('calls onClick handler when clicked', () => {
+
+  test("calls onClick handler when clicked", () => {
     const handleClick = jest.fn();
-    const { getByText } = render(Button({ onClick: handleClick, children: 'Click' }));
-    fireEvent.click(getByText('Click'));
+    const { getByText } = render(
+      Button({ onClick: handleClick, children: "Click" }),
+    );
+    fireEvent.click(getByText("Click"));
     expect(handleClick).toHaveBeenCalledTimes(1);
   });
-  
-  test('is disabled when disabled prop is true', () => {
-    const { getByText } = render(Button({ disabled: true, children: 'Disabled' }));
-    expect(getByText('Disabled')).toBeDisabled();
+
+  test("is disabled when disabled prop is true", () => {
+    const { getByText } = render(
+      Button({ disabled: true, children: "Disabled" }),
+    );
+    expect(getByText("Disabled")).toBeDisabled();
   });
 });
 ```
@@ -3163,26 +3544,28 @@ describe('Button Component', () => {
 Ensure components render correctly across browsers and themes.
 
 **Tools:**
+
 - **Percy** - Visual testing platform
 - **Chromatic** - Storybook visual testing
 - **BackstopJS** - Automated visual regression testing
 
 **Example Configuration:**
+
 ```javascript
 // backstop.config.js
 module.exports = {
   scenarios: [
     {
-      label: 'Button - Primary',
-      url: 'http://localhost:3000/components/button',
-      selectors: ['.btn-primary'],
+      label: "Button - Primary",
+      url: "http://localhost:3000/components/button",
+      selectors: [".btn-primary"],
       viewports: [
         { width: 320, height: 568 },
         { width: 768, height: 1024 },
-        { width: 1280, height: 720 }
-      ]
-    }
-  ]
+        { width: 1280, height: 720 },
+      ],
+    },
+  ],
 };
 ```
 
@@ -3191,13 +3574,14 @@ module.exports = {
 Verify WCAG AA compliance and screen reader compatibility.
 
 **Automated Testing:**
+
 ```javascript
 // accessibility.test.js
-import { axe, toHaveNoViolations } from 'jest-axe';
+import { axe, toHaveNoViolations } from "jest-axe";
 
 expect.extend(toHaveNoViolations);
 
-test('Button has no accessibility violations', async () => {
+test("Button has no accessibility violations", async () => {
   const { container } = render(<Button>Click me</Button>);
   const results = await axe(container);
   expect(results).toHaveNoViolations();
@@ -3205,6 +3589,7 @@ test('Button has no accessibility violations', async () => {
 ```
 
 **Manual Testing Checklist:**
+
 - [ ] **Keyboard Navigation**: Tab through all interactive elements
 - [ ] **Screen Reader**: Test with NVDA (Windows) or VoiceOver (Mac)
 - [ ] **Focus Indicators**: Visible focus states on all interactive elements
@@ -3221,33 +3606,35 @@ Test components across supported browsers.
 **Browser Testing Matrix:**
 
 | Component | Chrome | Firefox | Safari | Edge | Samsung Internet |
-|-----------|--------|---------|--------|------|------------------|
-| Button | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Modal | ✅ | ✅ | ✅ | ✅ | ⚠️ |
-| Toast | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Table | ✅ | ✅ | ✅ | ✅ | ✅ |
+| --------- | ------ | ------- | ------ | ---- | ---------------- |
+| Button    | ✅     | ✅      | ✅     | ✅   | ✅               |
+| Modal     | ✅     | ✅      | ✅     | ✅   | ⚠️               |
+| Toast     | ✅     | ✅      | ✅     | ✅   | ✅               |
+| Table     | ✅     | ✅      | ✅     | ✅   | ✅               |
 
 **Testing Tools:**
+
 - **BrowserStack** - Cloud-based browser testing
 - **Sauce Labs** - Automated cross-browser testing
 - **Playwright** - Cross-browser automation
 
 **Example - Playwright Test:**
+
 ```javascript
 // button.spec.js
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
 
-test.describe('Button Component', () => {
-  test('renders correctly in Chrome', async ({ page, browserName }) => {
-    await page.goto('http://localhost:3000/components/button');
-    const button = page.locator('.btn-primary');
+test.describe("Button Component", () => {
+  test("renders correctly in Chrome", async ({ page, browserName }) => {
+    await page.goto("http://localhost:3000/components/button");
+    const button = page.locator(".btn-primary");
     await expect(button).toBeVisible();
   });
-  
-  test('works in Safari', async ({ page, browserName }) => {
-    test.skip(browserName !== 'webkit', 'Safari only');
-    await page.goto('http://localhost:3000/components/button');
-    await page.click('.btn-primary');
+
+  test("works in Safari", async ({ page, browserName }) => {
+    test.skip(browserName !== "webkit", "Safari only");
+    await page.goto("http://localhost:3000/components/button");
+    await page.click(".btn-primary");
     // Verify behavior
   });
 });
@@ -3258,6 +3645,7 @@ test.describe('Button Component', () => {
 Ensure components meet performance budgets.
 
 **Performance Budgets:**
+
 - **CSS Size**: < 50KB (gzipped)
 - **JavaScript Size**: < 100KB (gzipped) per component
 - **First Paint**: < 1.5s
@@ -3265,16 +3653,17 @@ Ensure components meet performance budgets.
 - **Lighthouse Score**: > 90
 
 **Example - Performance Test:**
+
 ```javascript
 // performance.test.js
-import { performance } from 'perf_hooks';
+import { performance } from "perf_hooks";
 
-test('Button renders within performance budget', async () => {
+test("Button renders within performance budget", async () => {
   const start = performance.now();
   render(<Button>Click me</Button>);
   const end = performance.now();
   const renderTime = end - start;
-  
+
   expect(renderTime).toBeLessThan(16); // 60fps = 16ms per frame
 });
 ```
@@ -3284,21 +3673,22 @@ test('Button renders within performance budget', async () => {
 Verify components work across all breakpoints.
 
 **Breakpoint Testing:**
+
 ```javascript
 // responsive.test.js
 const breakpoints = {
   mobile: { width: 375, height: 667 },
   tablet: { width: 768, height: 1024 },
-  desktop: { width: 1280, height: 720 }
+  desktop: { width: 1280, height: 720 },
 };
 
 Object.entries(breakpoints).forEach(([name, size]) => {
   test(`Button renders correctly on ${name}`, async ({ page }) => {
     await page.setViewportSize(size);
-    await page.goto('http://localhost:3000/components/button');
-    const button = page.locator('.btn-primary');
+    await page.goto("http://localhost:3000/components/button");
+    const button = page.locator(".btn-primary");
     await expect(button).toBeVisible();
-    await expect(button).toHaveCSS('min-height', '44px'); // Touch target
+    await expect(button).toHaveCSS("min-height", "44px"); // Touch target
   });
 });
 ```
@@ -3308,6 +3698,7 @@ Object.entries(breakpoints).forEach(([name, size]) => {
 Before marking a component as **Stable**, verify:
 
 #### Functionality
+
 - [ ] All interactive states work (hover, active, focus, disabled)
 - [ ] Event handlers fire correctly
 - [ ] Form validation works as expected
@@ -3315,6 +3706,7 @@ Before marking a component as **Stable**, verify:
 - [ ] Component updates reactively to prop changes
 
 #### Accessibility
+
 - [ ] Keyboard navigation works
 - [ ] Screen reader announces correctly
 - [ ] Focus management is correct
@@ -3323,6 +3715,7 @@ Before marking a component as **Stable**, verify:
 - [ ] No accessibility violations (axe-core)
 
 #### Visual
+
 - [ ] Renders correctly in light theme
 - [ ] Renders correctly in dark theme
 - [ ] Responsive at all breakpoints
@@ -3330,12 +3723,14 @@ Before marking a component as **Stable**, verify:
 - [ ] Icons and images load correctly
 
 #### Performance
+
 - [ ] Meets performance budget
 - [ ] No layout shift (CLS < 0.1)
 - [ ] Smooth animations (60fps)
 - [ ] Efficient re-renders
 
 #### Browser Compatibility
+
 - [ ] Works in Chrome (latest 2 versions)
 - [ ] Works in Firefox (latest 2 versions)
 - [ ] Works in Safari (latest 2 versions)
@@ -3393,7 +3788,9 @@ jobs:
 ### Error Types & Classification
 
 #### Domain Errors (Business Logic)
+
 Errors that users can understand and potentially fix:
+
 - Invalid date range (training session in the past)
 - Duplicate entry (athlete already in roster)
 - Missing required field
@@ -3402,7 +3799,9 @@ Errors that users can understand and potentially fix:
 **Handling**: Show clear, actionable error messages inline or at form level.
 
 #### Technical Errors (System Failures)
+
 Errors that users cannot fix:
+
 - Network timeout
 - 500 server error
 - Database connection failure
@@ -3413,12 +3812,19 @@ Errors that users cannot fix:
 ### Error Hierarchy
 
 #### 1. Inline Validation
+
 Errors displayed next to the specific field for immediate feedback.
 
 ```html
 <div class="form-group">
   <label class="form-label required">Email Address</label>
-  <input type="email" class="form-input error" value="invalid-email" aria-invalid="true" aria-describedby="email-error">
+  <input
+    type="email"
+    class="form-input error"
+    value="invalid-email"
+    aria-invalid="true"
+    aria-describedby="email-error"
+  />
   <div class="form-error" id="email-error" role="alert">
     <i data-lucide="alert-circle" style="width: 16px; height: 16px;"></i>
     Please enter a valid email address
@@ -3427,11 +3833,13 @@ Errors displayed next to the specific field for immediate feedback.
 ```
 
 **When to Use:**
+
 - ✅ Field-level validation errors
 - ✅ Format validation (email, phone, date)
 - ✅ Real-time feedback on blur or submit
 
 **CSS Classes:**
+
 ```css
 .form-input.error {
   border-color: var(--color-status-error);
@@ -3449,6 +3857,7 @@ Errors displayed next to the specific field for immediate feedback.
 ```
 
 #### 2. Form-Level Errors
+
 Summary of all errors at the top of the form.
 
 ```html
@@ -3456,17 +3865,21 @@ Summary of all errors at the top of the form.
   <h3>Please fix the following errors:</h3>
   <ul>
     <li><a href="#email-field">Email address is invalid</a></li>
-    <li><a href="#password-field">Password must be at least 8 characters</a></li>
+    <li>
+      <a href="#password-field">Password must be at least 8 characters</a>
+    </li>
   </ul>
 </div>
 ```
 
 **When to Use:**
+
 - ✅ Multiple validation errors on form submit
 - ✅ Complex forms with many fields
 - ✅ Errors that prevent form submission
 
 #### 3. Banner Notifications
+
 Persistent messages at the top of the page for system-wide information.
 
 ```html
@@ -3485,11 +3898,13 @@ Persistent messages at the top of the page for system-wide information.
 ```
 
 **When to Use:**
+
 - ✅ System-wide errors (network failures, server errors)
 - ✅ Important warnings that affect entire page
 - ✅ Success confirmations for critical actions
 
 #### 4. Toast Notifications
+
 Temporary notifications for non-critical feedback.
 
 ```html
@@ -3505,6 +3920,7 @@ Temporary notifications for non-critical feedback.
 ```
 
 **When to Use:**
+
 - ✅ Success confirmations (save, delete, update)
 - ✅ Non-critical errors
 - ✅ Status updates
@@ -3513,25 +3929,29 @@ Temporary notifications for non-critical feedback.
 ### Validation Timing
 
 #### On Blur (Recommended)
+
 Validate when user leaves the field:
+
 - ✅ Less intrusive
 - ✅ Allows users to complete typing
 - ✅ Good balance of feedback and interruption
 
 ```javascript
-input.addEventListener('blur', () => {
+input.addEventListener("blur", () => {
   validateField(input);
 });
 ```
 
 #### On Submit
+
 Validate all fields when form is submitted:
+
 - ✅ Prevents premature validation
 - ✅ Better for mobile (no keyboard interruptions)
 - ✅ Standard pattern users expect
 
 ```javascript
-form.addEventListener('submit', (e) => {
+form.addEventListener("submit", (e) => {
   e.preventDefault();
   const errors = validateForm(form);
   if (errors.length === 0) {
@@ -3543,14 +3963,16 @@ form.addEventListener('submit', (e) => {
 ```
 
 #### Real-Time (Advanced)
+
 Validate as user types (debounced):
+
 - ✅ Immediate feedback
 - ⚠️ Can be annoying if too aggressive
 - ✅ Use for format validation (email, URL)
 
 ```javascript
 let debounceTimer;
-input.addEventListener('input', () => {
+input.addEventListener("input", () => {
   clearTimeout(debounceTimer);
   debounceTimer = setTimeout(() => {
     validateField(input);
@@ -3561,18 +3983,21 @@ input.addEventListener('input', () => {
 ### Error Message Writing Guidelines
 
 #### Voice & Tone
+
 - **Encouraging**: "Let's fix this together"
 - **Clear**: Use plain language, avoid technical jargon
 - **Actionable**: Tell users what to do, not just what's wrong
 - **Concise**: One sentence, maximum two
 
 #### Good Examples ✅
+
 - "Please enter a valid email address"
 - "Password must be at least 8 characters"
 - "Training date cannot be in the past"
 - "This athlete is already in your roster"
 
 #### Bad Examples ❌
+
 - "Invalid input" (too vague)
 - "Error 500" (technical jargon)
 - "You did something wrong" (blaming user)
@@ -3581,22 +4006,27 @@ input.addEventListener('input', () => {
 ### Error Recovery Patterns
 
 #### Network Errors
+
 ```html
 <div class="alert-banner alert-error">
   <div class="alert-content">
     <i data-lucide="wifi-off"></i>
     <div>
       <strong>Connection lost</strong>
-      <p>Your changes are saved locally. <a href="#" onclick="retrySave()">Retry</a></p>
+      <p>
+        Your changes are saved locally.
+        <a href="#" onclick="retrySave()">Retry</a>
+      </p>
     </div>
   </div>
 </div>
 ```
 
 #### Validation Errors
+
 ```html
 <div class="form-group">
-  <input type="date" class="form-input error" min="2025-01-01">
+  <input type="date" class="form-input error" min="2025-01-01" />
   <div class="form-error">
     Training sessions must be scheduled for future dates.
     <a href="#" onclick="setToday()">Use today's date</a>
@@ -3605,13 +4035,17 @@ input.addEventListener('input', () => {
 ```
 
 #### Permission Errors
+
 ```html
 <div class="alert-banner alert-warning">
   <div class="alert-content">
     <i data-lucide="lock"></i>
     <div>
       <strong>Permission required</strong>
-      <p>You don't have permission to edit this roster. <a href="/contact">Request access</a></p>
+      <p>
+        You don't have permission to edit this roster.
+        <a href="/contact">Request access</a>
+      </p>
     </div>
   </div>
 </div>
@@ -3631,21 +4065,27 @@ input.addEventListener('input', () => {
 ### Getting Started
 
 1. **Include the CSS files**:
+
 ```html
-<link rel="stylesheet" href="./src/ui-design-system.css">
-<link rel="stylesheet" href="./src/dark-theme.css">
-<link rel="stylesheet" href="./src/light-theme.css" id="light-theme" disabled>
-<link rel="stylesheet" href="./src/hover-effects.css">
+<link rel="stylesheet" href="./src/ui-design-system.css" />
+<link rel="stylesheet" href="./src/dark-theme.css" />
+<link rel="stylesheet" href="./src/light-theme.css" id="light-theme" disabled />
+<link rel="stylesheet" href="./src/hover-effects.css" />
 ```
 
 2. **Add font imports**:
+
 ```html
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800&display=swap"
+  rel="stylesheet"
+/>
 ```
 
 3. **Add Lucide Icons and Theme Switcher**:
+
 ```html
 <script src="https://unpkg.com/lucide@latest"></script>
 <script src="./src/icon-helper.js"></script>
@@ -3653,13 +4093,15 @@ input.addEventListener('input', () => {
 ```
 
 4. **Initialize icons** (in your JavaScript):
+
 ```javascript
-document.addEventListener('DOMContentLoaded', () => {
-    lucide.createIcons();
+document.addEventListener("DOMContentLoaded", () => {
+  lucide.createIcons();
 });
 ```
 
 5. **Use semantic HTML**:
+
 ```html
 <button class="btn btn-primary btn-md">
   <i data-lucide="play" style="width: 16px; height: 16px;"></i>
@@ -3670,6 +4112,7 @@ document.addEventListener('DOMContentLoaded', () => {
 ### Best Practices
 
 #### Do ✅
+
 - Use semantic tokens instead of primitive values
 - Follow established component patterns
 - Test with keyboard navigation and screen readers
@@ -3677,6 +4120,7 @@ document.addEventListener('DOMContentLoaded', () => {
 - Use consistent spacing from the 8-point grid
 
 #### Don't ❌
+
 - Override component styles with !important
 - Use primitive tokens directly in components
 - Rely solely on color to convey meaning
@@ -3686,6 +4130,7 @@ document.addEventListener('DOMContentLoaded', () => {
 ### Customization
 
 #### Creating Custom Themes
+
 ```css
 :root {
   /* Override semantic tokens for custom themes */
@@ -3695,6 +4140,7 @@ document.addEventListener('DOMContentLoaded', () => {
 ```
 
 #### Extending Components
+
 ```css
 .btn-custom {
   /* Extend existing button styles */
@@ -3714,59 +4160,70 @@ Performance optimization strategies and budgets to ensure fast, responsive user 
 
 #### CSS Performance
 
-| Metric | Budget | Notes |
-|--------|--------|-------|
+| Metric             | Budget           | Notes                 |
+| ------------------ | ---------------- | --------------------- |
 | **Total CSS Size** | < 50KB (gzipped) | All design system CSS |
-| **Critical CSS** | < 14KB (gzipped) | Above-the-fold styles |
-| **CSS Selectors** | < 4096 per file | Browser limit |
-| **CSS Variables** | < 1000 | Performance impact |
+| **Critical CSS**   | < 14KB (gzipped) | Above-the-fold styles |
+| **CSS Selectors**  | < 4096 per file  | Browser limit         |
+| **CSS Variables**  | < 1000           | Performance impact    |
 
 #### JavaScript Performance
 
-| Metric | Budget | Notes |
-|--------|--------|-------|
-| **Total JS Size** | < 100KB (gzipped) | All component JS |
-| **Component JS** | < 10KB per component | Individual components |
-| **Third-party Libraries** | < 50KB (gzipped) | Chart.js, Lucide, etc. |
-| **Initialization Time** | < 100ms | Component setup |
+| Metric                    | Budget               | Notes                  |
+| ------------------------- | -------------------- | ---------------------- |
+| **Total JS Size**         | < 100KB (gzipped)    | All component JS       |
+| **Component JS**          | < 10KB per component | Individual components  |
+| **Third-party Libraries** | < 50KB (gzipped)     | Chart.js, Lucide, etc. |
+| **Initialization Time**   | < 100ms              | Component setup        |
 
 #### Loading Performance
 
-| Metric | Budget | Target |
-|--------|--------|--------|
-| **First Contentful Paint (FCP)** | < 1.5s | < 1.0s |
-| **Largest Contentful Paint (LCP)** | < 2.5s | < 1.8s |
-| **Time to Interactive (TTI)** | < 3.5s | < 2.5s |
-| **Cumulative Layout Shift (CLS)** | < 0.1 | < 0.05 |
-| **First Input Delay (FID)** | < 100ms | < 50ms |
+| Metric                             | Budget  | Target |
+| ---------------------------------- | ------- | ------ |
+| **First Contentful Paint (FCP)**   | < 1.5s  | < 1.0s |
+| **Largest Contentful Paint (LCP)** | < 2.5s  | < 1.8s |
+| **Time to Interactive (TTI)**      | < 3.5s  | < 2.5s |
+| **Cumulative Layout Shift (CLS)**  | < 0.1   | < 0.05 |
+| **First Input Delay (FID)**        | < 100ms | < 50ms |
 
 #### Lighthouse Scores
 
-| Category | Minimum | Target |
-|----------|---------|--------|
-| **Performance** | 80 | 90+ |
-| **Accessibility** | 95 | 100 |
-| **Best Practices** | 90 | 100 |
-| **SEO** | 90 | 100 |
+| Category           | Minimum | Target |
+| ------------------ | ------- | ------ |
+| **Performance**    | 80      | 90+    |
+| **Accessibility**  | 95      | 100    |
+| **Best Practices** | 90      | 100    |
+| **SEO**            | 90      | 100    |
 
 ### Optimization Strategies
 
 #### CSS Optimization
 
 **1. Critical CSS Extraction**
+
 ```html
 <!-- Inline critical CSS in <head> -->
 <style>
   /* Critical above-the-fold styles */
-  .btn-primary { /* ... */ }
-  .card { /* ... */ }
+  .btn-primary {
+    /* ... */
+  }
+  .card {
+    /* ... */
+  }
 </style>
 
 <!-- Load non-critical CSS asynchronously -->
-<link rel="preload" href="./src/design-system.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link
+  rel="preload"
+  href="./src/design-system.css"
+  as="style"
+  onload="this.onload=null;this.rel='stylesheet'"
+/>
 ```
 
 **2. CSS Minification**
+
 ```bash
 # Use CSS minifier
 npm install -g clean-css-cli
@@ -3774,12 +4231,14 @@ cleancss -o design-system.min.css design-system.css
 ```
 
 **3. Remove Unused CSS**
+
 ```bash
 # Use PurgeCSS to remove unused styles
 npm install @fullhuman/postcss-purgecss
 ```
 
 **4. CSS Variable Optimization**
+
 ```css
 /* ✅ Good: Use semantic tokens */
 .button {
@@ -3797,26 +4256,29 @@ npm install @fullhuman/postcss-purgecss
 #### JavaScript Optimization
 
 **1. Code Splitting**
+
 ```javascript
 // Lazy load components
-const Modal = await import('./components/modal.js');
-const DataTable = await import('./components/data-table.js');
+const Modal = await import("./components/modal.js");
+const DataTable = await import("./components/data-table.js");
 ```
 
 **2. Tree Shaking**
+
 ```javascript
 // ✅ Good: Import only what you need
-import { showToast } from './toast-manager.js';
+import { showToast } from "./toast-manager.js";
 
 // ❌ Bad: Import entire library
-import * as ToastManager from './toast-manager.js';
+import * as ToastManager from "./toast-manager.js";
 ```
 
 **3. Debouncing & Throttling**
+
 ```javascript
 // Debounce search input
 let debounceTimer;
-searchInput.addEventListener('input', (e) => {
+searchInput.addEventListener("input", (e) => {
   clearTimeout(debounceTimer);
   debounceTimer = setTimeout(() => {
     performSearch(e.target.value);
@@ -3825,7 +4287,7 @@ searchInput.addEventListener('input', (e) => {
 
 // Throttle scroll events
 let throttleTimer;
-window.addEventListener('scroll', () => {
+window.addEventListener("scroll", () => {
   if (!throttleTimer) {
     throttleTimer = setTimeout(() => {
       handleScroll();
@@ -3836,49 +4298,62 @@ window.addEventListener('scroll', () => {
 ```
 
 **4. Event Delegation**
+
 ```javascript
 // ✅ Good: Single event listener
-document.addEventListener('click', (e) => {
-  if (e.target.matches('.btn')) {
+document.addEventListener("click", (e) => {
+  if (e.target.matches(".btn")) {
     handleButtonClick(e.target);
   }
 });
 
 // ❌ Bad: Multiple event listeners
-document.querySelectorAll('.btn').forEach(btn => {
-  btn.addEventListener('click', handleButtonClick);
+document.querySelectorAll(".btn").forEach((btn) => {
+  btn.addEventListener("click", handleButtonClick);
 });
 ```
 
 #### Asset Optimization
 
 **1. Image Optimization**
+
 ```html
 <!-- Use modern formats -->
 <picture>
-  <source srcset="image.avif" type="image/avif">
-  <source srcset="image.webp" type="image/webp">
-  <img src="image.jpg" alt="Description" loading="lazy">
+  <source srcset="image.avif" type="image/avif" />
+  <source srcset="image.webp" type="image/webp" />
+  <img src="image.jpg" alt="Description" loading="lazy" />
 </picture>
 ```
 
 **2. Font Loading**
+
 ```html
 <!-- Preload critical fonts -->
-<link rel="preload" href="/fonts/inter.woff2" as="font" type="font/woff2" crossorigin>
+<link
+  rel="preload"
+  href="/fonts/inter.woff2"
+  as="font"
+  type="font/woff2"
+  crossorigin
+/>
 
 <!-- Use font-display: swap -->
-<link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+<link
+  href="https://fonts.googleapis.com/css2?family=Inter&display=swap"
+  rel="stylesheet"
+/>
 ```
 
 **3. Icon Optimization**
+
 ```javascript
 // ✅ Good: Load icons on demand
-import { createIcon } from 'lucide';
-createIcon('football');
+import { createIcon } from "lucide";
+createIcon("football");
 
 // ❌ Bad: Load entire icon library
-import * as lucide from 'lucide';
+import * as lucide from "lucide";
 ```
 
 ### Lazy Loading Patterns
@@ -3888,13 +4363,13 @@ import * as lucide from 'lucide';
 ```javascript
 // Lazy load heavy components
 const loadChart = async () => {
-  const { Chart } = await import('chart.js');
+  const { Chart } = await import("chart.js");
   // Initialize chart
 };
 
 // Load when component becomes visible
 const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
+  entries.forEach((entry) => {
     if (entry.isIntersecting) {
       loadChart();
       observer.unobserve(entry.target);
@@ -3902,7 +4377,7 @@ const observer = new IntersectionObserver((entries) => {
   });
 });
 
-observer.observe(document.querySelector('.chart-container'));
+observer.observe(document.querySelector(".chart-container"));
 ```
 
 #### Data Lazy Loading
@@ -3916,8 +4391,11 @@ async function loadAthletes(page = 1, limit = 20) {
 
 // Infinite scroll
 let currentPage = 1;
-window.addEventListener('scroll', () => {
-  if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 1000) {
+window.addEventListener("scroll", () => {
+  if (
+    window.innerHeight + window.scrollY >=
+    document.body.offsetHeight - 1000
+  ) {
     loadAthletes(++currentPage);
   }
 });
@@ -3929,7 +4407,7 @@ window.addEventListener('scroll', () => {
 
 ```javascript
 // Track Core Web Vitals
-import { getCLS, getFID, getFCP, getLCP, getTTFB } from 'web-vitals';
+import { getCLS, getFID, getFCP, getLCP, getTTFB } from "web-vitals";
 
 function sendToAnalytics(metric) {
   // Send to analytics service
@@ -3950,13 +4428,13 @@ getTTFB(sendToAnalytics);
 const performanceBudget = {
   fcp: 1500,
   lcp: 2500,
-  cls: 0.1
+  cls: 0.1,
 };
 
 function checkPerformanceBudget() {
-  const perfData = performance.getEntriesByType('navigation')[0];
+  const perfData = performance.getEntriesByType("navigation")[0];
   const fcp = perfData.responseEnd - perfData.fetchStart;
-  
+
   if (fcp > performanceBudget.fcp) {
     console.warn(`FCP exceeded budget: ${fcp}ms > ${performanceBudget.fcp}ms`);
   }
@@ -4027,12 +4505,12 @@ The design system follows [Semantic Versioning](https://semver.org/) (MAJOR.MINO
 
 ### Component Status Matrix
 
-| Status | Description | Usage |
-|--------|-------------|-------|
-| **Stable** | Production-ready, fully documented | ✅ Use in production |
-| **Preview** | Feature-complete, may have minor changes | ⚠️ Use with caution, may change |
-| **Draft** | In development, API may change | ❌ Do not use in production |
-| **Deprecated** | Will be removed in next major version | ⚠️ Migrate to replacement |
+| Status         | Description                              | Usage                           |
+| -------------- | ---------------------------------------- | ------------------------------- |
+| **Stable**     | Production-ready, fully documented       | ✅ Use in production            |
+| **Preview**    | Feature-complete, may have minor changes | ⚠️ Use with caution, may change |
+| **Draft**      | In development, API may change           | ❌ Do not use in production     |
+| **Deprecated** | Will be removed in next major version    | ⚠️ Migrate to replacement       |
 
 ### Changelog
 
@@ -4041,6 +4519,7 @@ The design system follows [Semantic Versioning](https://semver.org/) (MAJOR.MINO
 **Initial Stable Release**
 
 ##### Added
+
 - ✅ Green theme color palette (#10c96b primary)
 - ✅ Lucide icon integration
 - ✅ Bento grid layout system
@@ -4055,25 +4534,29 @@ The design system follows [Semantic Versioning](https://semver.org/) (MAJOR.MINO
 - ✅ Responsive breakpoints for all devices
 
 ##### Changed
+
 - ✅ Replaced purple/blue colors with green theme
 - ✅ Updated dark theme contrast ratios for WCAG AA compliance
 - ✅ Migrated from emoji icons to Lucide icons
 
 ##### Deprecated
+
 - None (initial stable release)
 
 ##### Breaking Changes
+
 - None (initial stable release)
 
 ### Migration Guides
 
 Migration guides are provided for major version updates. Each guide includes:
+
 - List of breaking changes
 - Step-by-step migration instructions
 - Code examples (before/after)
 - Timeline and deprecation notices
 
-*No migration guides available yet (initial release)*
+_No migration guides available yet (initial release)_
 
 ## Governance
 
@@ -4089,6 +4572,7 @@ Migration guides are provided for major version updates. Each guide includes:
 #### Step 1: Proposal Phase
 
 **Submit RFC (Request for Comments)** with:
+
 - **Problem Statement**: What problem does this solve?
 - **Proposed Solution**: Component design, API, and usage
 - **Use Cases**: 3+ real-world scenarios where this component is needed
@@ -4096,24 +4580,30 @@ Migration guides are provided for major version updates. Each guide includes:
 - **Accessibility Considerations**: How will this meet WCAG AA standards?
 
 **Proposal Template:**
+
 ```markdown
 ## Component Proposal: [Component Name]
 
 ### Problem Statement
+
 [Describe the problem this component solves]
 
 ### Proposed Solution
+
 [Describe the component, its variants, and API]
 
 ### Use Cases
+
 1. [Use case 1]
 2. [Use case 2]
 3. [Use case 3]
 
 ### Design Mockups
+
 [Link to Figma or images]
 
 ### Accessibility Plan
+
 [How will this meet WCAG AA standards?]
 ```
 
@@ -4122,6 +4612,7 @@ Migration guides are provided for major version updates. Each guide includes:
 Design system team reviews against criteria:
 
 **Acceptance Criteria:**
+
 - ✅ Used in 3+ product teams or pages
 - ✅ Meets WCAG AA accessibility standards
 - ✅ Has clear use cases not solved by existing components
@@ -4130,6 +4621,7 @@ Design system team reviews against criteria:
 - ✅ Reusable across multiple contexts
 
 **Review Process:**
+
 1. Design team validates visual consistency
 2. Engineering team reviews technical feasibility
 3. Accessibility expert verifies WCAG compliance
@@ -4138,12 +4630,14 @@ Design system team reviews against criteria:
 #### Step 3: Kick-off Meeting
 
 **Scope Agreement:**
+
 - Finalize component specifications
 - Define timeline and milestones
 - Identify stakeholders
 - Assign designer + developer pair
 
 **Deliverables:**
+
 - Design specifications (Figma)
 - Technical implementation plan
 - Testing strategy
@@ -4152,18 +4646,21 @@ Design system team reviews against criteria:
 #### Step 4: Development Phase
 
 **Designer Responsibilities:**
+
 - Create detailed design specifications
 - Design all variants and states
 - Ensure visual consistency
 - Provide design assets
 
 **Developer Responsibilities:**
+
 - Implement component with accessibility in mind
 - Write clean, maintainable code
 - Add unit tests
 - Document API and usage
 
 **Regular Check-ins:**
+
 - Weekly sync meetings
 - Design reviews at key milestones
 - Code reviews before merge
@@ -4171,6 +4668,7 @@ Design system team reviews against criteria:
 #### Step 5: Review & Testing
 
 **Accessibility Audit:**
+
 - ✅ Keyboard navigation works
 - ✅ Screen reader announces correctly
 - ✅ Color contrast meets AA standards
@@ -4178,12 +4676,14 @@ Design system team reviews against criteria:
 - ✅ ARIA attributes correct
 
 **Code Review:**
+
 - Code quality and maintainability
 - Performance considerations
 - Browser compatibility
 - Responsive behavior
 
 **Visual Regression Tests:**
+
 - Cross-browser testing (Chrome, Firefox, Safari, Edge)
 - Device testing (mobile, tablet, desktop)
 - Dark/light theme verification
@@ -4191,6 +4691,7 @@ Design system team reviews against criteria:
 #### Step 6: Documentation
 
 **Required Documentation:**
+
 - Usage guidelines with examples
 - Do/don't visual examples
 - Code snippets (HTML, CSS, JavaScript)
@@ -4201,6 +4702,7 @@ Design system team reviews against criteria:
 #### Step 7: Release
 
 **Pre-Release Checklist:**
+
 - [ ] Component tested and reviewed
 - [ ] Documentation complete
 - [ ] Changelog updated
@@ -4208,6 +4710,7 @@ Design system team reviews against criteria:
 - [ ] Migration guide created (if breaking change)
 
 **Release Process:**
+
 1. Merge to main branch
 2. Update version number
 3. Update changelog
@@ -4239,41 +4742,53 @@ Design system team reviews against criteria:
 ## Support & Resources
 
 ### Getting Help
+
 - **Slack**: #design-system for quick questions
 - **GitHub**: Issues and feature requests
 - **Documentation Site**: Comprehensive guides and examples
 - **Office Hours**: Weekly Q&A sessions
 
 ### Additional Resources
+
 - **Figma Library**: Design components and tokens
-- **Storybook**: Interactive component documentation  
+- **Storybook**: Interactive component documentation
 - **Code Examples**: GitHub repository with implementation examples
 - **Video Tutorials**: Step-by-step implementation guides
 
 ## Theme Toggle Switch
 
 ### Implementation
+
 The theme toggle switch allows users to manually switch between light and dark modes, with preference persistence via localStorage.
 
 ### HTML Structure
+
 ```html
 <div class="theme-toggle-container">
-    <label class="theme-toggle-label" title="Toggle Light/Dark Mode">
-        <input type="checkbox" id="theme-toggle" class="theme-toggle-input" checked>
-        <span class="theme-toggle-slider"></span>
-        <span class="theme-toggle-text">Dark</span>
-    </label>
+  <label class="theme-toggle-label" title="Toggle Light/Dark Mode">
+    <input
+      type="checkbox"
+      id="theme-toggle"
+      class="theme-toggle-input"
+      checked
+    />
+    <span class="theme-toggle-slider"></span>
+    <span class="theme-toggle-text">Dark</span>
+  </label>
 </div>
 ```
 
 ### JavaScript Integration
+
 The `theme-switcher.js` automatically:
+
 - Detects system preference on first visit
 - Saves user preference to localStorage
 - Applies theme across all pages
 - Updates toggle state and text
 
 ### Theme Files
+
 - `dark-theme.css` - Dark mode styles (always loaded)
 - `light-theme.css` - Light mode styles (loaded when needed)
 - Both themes are WCAG AA compliant with verified contrast ratios
@@ -4281,6 +4796,7 @@ The `theme-switcher.js` automatically:
 ## Recent Updates (November 9, 2025)
 
 ### ✅ Completed Today
+
 1. **Green Theme Implementation**: All colors migrated from purple/blue to green theme
 2. **Theme Toggle Switch**: Manual light/dark mode toggle added to all pages
 3. **Lucide Icons**: Replaced all emoji icons with modern Lucide icons
@@ -4291,6 +4807,7 @@ The `theme-switcher.js` automatically:
 8. **Touch Optimization**: 44px minimum touch targets, 16px input fonts
 
 ### 🎨 Color System Updates
+
 - **Primary**: Green (`#10c96b`) instead of Indigo/Purple
 - **Secondary**: Lime Green (`#89c300`)
 - **Tertiary**: Gold/Warm (`#cc9610`)
@@ -4298,6 +4815,7 @@ The `theme-switcher.js` automatically:
 - All colors use CSS variables for maintainability
 
 ### 📱 Responsive Design
+
 - **Mobile Small** (320px - 480px): iPhone SE, Small Android
 - **Mobile Medium** (481px - 768px): iPhone 12/13/14, Samsung Galaxy
 - **Tablet Portrait** (769px - 1024px): iPad, iPad Mini
@@ -4307,6 +4825,7 @@ The `theme-switcher.js` automatically:
 - Landscape orientation support
 
 ### ♿ Accessibility Improvements
+
 - WCAG AA compliant contrast ratios (all verified)
 - `:focus-visible` states on all interactive elements
 - `prefers-reduced-motion` support
@@ -4323,40 +4842,43 @@ The `theme-switcher.js` automatically:
 
 The FlagFit Pro Design System is tested and supported on the following browsers:
 
-| Browser | Version | Desktop | Mobile | Notes |
-|---------|---------|---------|--------|-------|
-| **Chrome** | Latest 2 versions | ✅ | ✅ | Primary development browser |
-| **Firefox** | Latest 2 versions | ✅ | ✅ | Full support |
-| **Safari** | Latest 2 versions | ✅ | ✅ | iOS 14+ |
-| **Edge** | Latest 2 versions | ✅ | ✅ | Chromium-based |
-| **Samsung Internet** | Latest 2 versions | ❌ | ✅ | Android devices |
-| **Opera** | Latest 2 versions | ✅ | ❌ | Limited testing |
+| Browser              | Version           | Desktop | Mobile | Notes                       |
+| -------------------- | ----------------- | ------- | ------ | --------------------------- |
+| **Chrome**           | Latest 2 versions | ✅      | ✅     | Primary development browser |
+| **Firefox**          | Latest 2 versions | ✅      | ✅     | Full support                |
+| **Safari**           | Latest 2 versions | ✅      | ✅     | iOS 14+                     |
+| **Edge**             | Latest 2 versions | ✅      | ✅     | Chromium-based              |
+| **Samsung Internet** | Latest 2 versions | ❌      | ✅     | Android devices             |
+| **Opera**            | Latest 2 versions | ✅      | ❌     | Limited testing             |
 
 ### Feature Support Matrix
 
-| Feature | Chrome | Firefox | Safari | Edge | Samsung Internet |
-|---------|--------|---------|--------|------|------------------|
-| CSS Grid | ✅ | ✅ | ✅ | ✅ | ✅ |
-| CSS Custom Properties | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Flexbox | ✅ | ✅ | ✅ | ✅ | ✅ |
-| `prefers-color-scheme` | ✅ | ✅ | ✅ | ✅ | ✅ |
-| `prefers-reduced-motion` | ✅ | ✅ | ✅ | ✅ | ✅ |
-| `:focus-visible` | ✅ | ✅ | ✅ | ✅ | ⚠️ Partial |
-| CSS `backdrop-filter` | ✅ | ✅ | ✅ | ✅ | ⚠️ Partial |
+| Feature                  | Chrome | Firefox | Safari | Edge | Samsung Internet |
+| ------------------------ | ------ | ------- | ------ | ---- | ---------------- |
+| CSS Grid                 | ✅     | ✅      | ✅     | ✅   | ✅               |
+| CSS Custom Properties    | ✅     | ✅      | ✅     | ✅   | ✅               |
+| Flexbox                  | ✅     | ✅      | ✅     | ✅   | ✅               |
+| `prefers-color-scheme`   | ✅     | ✅      | ✅     | ✅   | ✅               |
+| `prefers-reduced-motion` | ✅     | ✅      | ✅     | ✅   | ✅               |
+| `:focus-visible`         | ✅     | ✅      | ✅     | ✅   | ⚠️ Partial       |
+| CSS `backdrop-filter`    | ✅     | ✅      | ✅     | ✅   | ⚠️ Partial       |
 
 ### Known Issues
 
 #### Safari
+
 - **Issue**: CSS custom properties in `calc()` may require fallbacks
 - **Workaround**: Provide fallback values for critical calculations
 - **Status**: Minor, non-blocking
 
 #### Samsung Internet
+
 - **Issue**: `:focus-visible` support is partial
 - **Workaround**: Use `:focus` as fallback
 - **Status**: Handled with fallback styles
 
 #### Internet Explorer
+
 - **Status**: ❌ Not supported
 - **Reason**: IE11 reached end-of-life in June 2022
 - **Recommendation**: Use modern browsers only
@@ -4380,16 +4902,19 @@ The design system follows progressive enhancement principles:
 ### Browser-Specific Considerations
 
 #### Mobile Safari (iOS)
+
 - **Viewport**: Use `viewport-fit=cover` for safe areas
 - **Touch Targets**: Minimum 44px enforced
 - **Input Zoom**: 16px minimum font size prevents zoom
 - **Scroll Behavior**: Smooth scrolling may need `-webkit-overflow-scrolling: touch`
 
 #### Chrome Mobile
+
 - **Performance**: Optimized for Chrome's rendering engine
 - **PWA Support**: Full Progressive Web App support
 
 #### Firefox
+
 - **CSS Grid**: Excellent support, no issues
 - **Custom Properties**: Full support
 
@@ -4420,6 +4945,7 @@ The FlagFit Pro design system uses an **encouraging, clear, and action-oriented*
 ### Button Labels
 
 #### Guidelines
+
 - Use action verbs (Save, Delete, Cancel, Add)
 - Be specific (Save Changes, not Submit)
 - Match user intent (Start Training, not Begin)
@@ -4427,16 +4953,17 @@ The FlagFit Pro design system uses an **encouraging, clear, and action-oriented*
 
 #### Examples
 
-| Context | ✅ Good | ❌ Bad |
-|---------|---------|--------|
-| Form submission | Save Changes | Submit |
-| Confirmation | Delete Session | OK |
-| Navigation | View Profile | Click Here |
-| Creation | Add Athlete | Create New Athlete Entry |
+| Context         | ✅ Good        | ❌ Bad                   |
+| --------------- | -------------- | ------------------------ |
+| Form submission | Save Changes   | Submit                   |
+| Confirmation    | Delete Session | OK                       |
+| Navigation      | View Profile   | Click Here               |
+| Creation        | Add Athlete    | Create New Athlete Entry |
 
 ### Error Messages
 
 #### Structure
+
 1. **What went wrong** (clear statement)
 2. **Why it happened** (brief explanation)
 3. **What to do** (actionable guidance)
@@ -4444,11 +4971,13 @@ The FlagFit Pro design system uses an **encouraging, clear, and action-oriented*
 #### Examples
 
 ✅ **Good:**
+
 - "Training date cannot be in the past. Please select a future date."
 - "Password must be at least 8 characters. Add more characters to continue."
 - "This athlete is already in your roster. Try adding a different athlete."
 
 ❌ **Bad:**
+
 - "Invalid input"
 - "Error 500"
 - "You did something wrong"
@@ -4457,6 +4986,7 @@ The FlagFit Pro design system uses an **encouraging, clear, and action-oriented*
 ### Success Messages
 
 #### Guidelines
+
 - Confirm what happened
 - Be specific about the action
 - Keep it brief
@@ -4464,11 +4994,13 @@ The FlagFit Pro design system uses an **encouraging, clear, and action-oriented*
 #### Examples
 
 ✅ **Good:**
+
 - "Training session saved successfully"
 - "Athlete added to roster"
 - "Profile updated"
 
 ❌ **Bad:**
+
 - "Success!"
 - "Done"
 - "Operation completed"
@@ -4476,6 +5008,7 @@ The FlagFit Pro design system uses an **encouraging, clear, and action-oriented*
 ### Empty States
 
 #### Structure
+
 1. **Icon/Illustration** (visual context)
 2. **Headline** (what's missing)
 3. **Description** (why it's empty, what to do)
@@ -4484,6 +5017,7 @@ The FlagFit Pro design system uses an **encouraging, clear, and action-oriented*
 #### Examples
 
 ✅ **Good:**
+
 ```
 No athletes in roster
 Get started by adding your first athlete to track their training progress.
@@ -4491,6 +5025,7 @@ Get started by adding your first athlete to track their training progress.
 ```
 
 ❌ **Bad:**
+
 ```
 No data
 There is nothing here.
@@ -4500,6 +5035,7 @@ There is nothing here.
 ### Tooltips & Help Text
 
 #### Guidelines
+
 - Answer "What is this?" or "How do I use this?"
 - Keep to one sentence
 - Use plain language
@@ -4507,11 +5043,13 @@ There is nothing here.
 #### Examples
 
 ✅ **Good:**
+
 - "Performance score based on training completion and metrics"
 - "Click to view detailed training history"
 - "Select multiple athletes for bulk actions"
 
 ❌ **Bad:**
+
 - "This is a performance metric"
 - "Click here"
 - "Multi-select functionality"
@@ -4519,11 +5057,13 @@ There is nothing here.
 ### Form Labels & Hints
 
 #### Labels
+
 - Be descriptive and specific
 - Use sentence case
 - Include units when relevant
 
 #### Hints
+
 - Provide context or examples
 - Show format requirements
 - Explain why information is needed
@@ -4531,6 +5071,7 @@ There is nothing here.
 #### Examples
 
 ✅ **Good:**
+
 ```
 Training Date *
 Select a future date for your training session
@@ -4538,6 +5079,7 @@ Select a future date for your training session
 ```
 
 ❌ **Bad:**
+
 ```
 Date *
 [Date picker]
@@ -4548,6 +5090,7 @@ Date *
 Common phrases used throughout the application:
 
 #### Actions
+
 - "Save Changes"
 - "Cancel"
 - "Delete"
@@ -4558,6 +5101,7 @@ Common phrases used throughout the application:
 - "End Session"
 
 #### Status Messages
+
 - "Loading..."
 - "Saving..."
 - "Processing..."
@@ -4566,6 +5110,7 @@ Common phrases used throughout the application:
 - "Warning"
 
 #### Navigation
+
 - "Dashboard"
 - "Training Schedule"
 - "Roster"
@@ -4573,6 +5118,7 @@ Common phrases used throughout the application:
 - "Settings"
 
 #### Data Labels
+
 - "Performance Score"
 - "Training Sessions"
 - "Completion Rate"
@@ -4582,6 +5128,7 @@ Common phrases used throughout the application:
 ### Accessibility in Writing
 
 #### Guidelines
+
 - Use descriptive link text ("View training history" not "Click here")
 - Provide context for screen readers
 - Use headings hierarchically
@@ -4591,15 +5138,19 @@ Common phrases used throughout the application:
 #### Examples
 
 ✅ **Good:**
+
 ```html
 <a href="/training/history">View training history</a>
-<img src="chart.png" alt="Performance chart showing 15% improvement over 12 weeks">
+<img
+  src="chart.png"
+  alt="Performance chart showing 15% improvement over 12 weeks"
+/>
 ```
 
 ❌ **Bad:**
+
 ```html
-<a href="/training/history">Click here</a>
-<img src="chart.png" alt="Chart">
+<a href="/training/history">Click here</a> <img src="chart.png" alt="Chart" />
 ```
 
 ### Content Checklist
@@ -4624,6 +5175,7 @@ Before publishing any UI copy, verify:
 **Goal**: Establish version control, contribution process, and critical feedback mechanisms
 
 **Deliverables:**
+
 - ✅ Versioning Strategy (Semantic versioning implemented)
 - ✅ Contribution Process (Workflow documented)
 - ✅ Toast Notifications (Component documented)
@@ -4637,6 +5189,7 @@ Before publishing any UI copy, verify:
 **Goal**: Add navigation, form, and data display components critical for app functionality
 
 **Deliverables:**
+
 - ✅ Navigation: Breadcrumbs, Pagination (Documented)
 - ⏳ Forms: Dropdown/Select with search, Date/Time picker, Multiselect
 - ⏳ Data Display: Table/Data Grid with sorting and filtering
@@ -4646,6 +5199,7 @@ Before publishing any UI copy, verify:
 **Status**: 🟡 **IN PROGRESS** (2/5 complete)
 
 **Next Steps:**
+
 1. Implement Date/Time picker component
 2. Create Table/Data Grid component
 3. Add data visualization guidelines
@@ -4655,6 +5209,7 @@ Before publishing any UI copy, verify:
 **Goal**: Polish user experience with additional components and patterns
 
 **Deliverables:**
+
 - ⏳ Additional Components: Tooltip, Avatar, Accordion, Empty States
 - ⏳ UX Patterns: Loading patterns, Search patterns
 - ⏳ Documentation: Add code examples to all components
@@ -4667,6 +5222,7 @@ Before publishing any UI copy, verify:
 **Goal**: Complete the system with remaining components and content guidelines
 
 **Deliverables:**
+
 - ⏳ File Upload component
 - ⏳ Progress Bar component
 - ⏳ Onboarding patterns
@@ -4700,11 +5256,13 @@ Track these metrics to know your design system is improving:
 ### Immediate Next Actions
 
 **This Week:**
+
 1. Implement Date/Time picker component (8-12 hours)
 2. Create Table/Data Grid component (12-16 hours)
 3. Add data visualization guidelines (8-12 hours)
 
 **Next Quarter:**
+
 1. Complete Phase 2 roadmap (essential components)
 2. Add data visualization guidelines (critical for performance app)
 3. Expand navigation components (tabs, accordion)
@@ -4713,11 +5271,12 @@ Track these metrics to know your design system is improving:
 
 ---
 
-*This documentation is maintained by the FlagFit Pro Design System team. Last updated: December 2024*
+_This documentation is maintained by the FlagFit Pro Design System team. Last updated: December 2024_
 
 ## Recent Updates (December 2024)
 
 ### Component Library - 100% Complete
+
 - ✅ All 23 core components implemented (8 atoms, 8 molecules, 4 organisms, 3 templates)
 - ✅ Component library showcase page created (`component-library.html`)
 - ✅ All components include HTML markup, README documentation, and examples

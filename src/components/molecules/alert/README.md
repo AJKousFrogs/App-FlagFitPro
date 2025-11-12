@@ -19,11 +19,11 @@ Copy the HTML from `alert.html` into your page. Alerts use the CSS from `src/css
 
 ```html
 <div class="alert alert-info" role="alert">
-    <i data-lucide="info" style="width: 20px; height: 20px;"></i>
-    <div>
-        <strong>Title</strong>
-        <p>Message content</p>
-    </div>
+  <i data-lucide="info" style="width: 20px; height: 20px;"></i>
+  <div>
+    <strong>Title</strong>
+    <p>Message content</p>
+  </div>
 </div>
 ```
 
@@ -42,10 +42,15 @@ Add a close button for dismissible alerts:
 
 ```html
 <div class="alert alert-info" role="alert">
-    <div>Message content</div>
-    <button type="button" class="alert-close" aria-label="Close alert" onclick="this.parentElement.remove()">
-        <i data-lucide="x" style="width: 18px; height: 18px;"></i>
-    </button>
+  <div>Message content</div>
+  <button
+    type="button"
+    class="alert-close"
+    aria-label="Close alert"
+    onclick="this.parentElement.remove()"
+  >
+    <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+  </button>
 </div>
 ```
 
@@ -62,4 +67,3 @@ Add a close button for dismissible alerts:
 - Use appropriate variant for message type
 - Icons are optional but recommended
 - Dismissible alerts require JavaScript
-

@@ -68,18 +68,18 @@ curl http://localhost:3001/api/health
 
 ### Authentication Endpoints
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/auth/register` | Register a new user |
-| POST | `/api/auth/login` | Login user |
-| GET | `/api/auth/me` | Get current user |
-| POST | `/api/auth/logout` | Logout user |
+| Method | Endpoint             | Description         |
+| ------ | -------------------- | ------------------- |
+| POST   | `/api/auth/register` | Register a new user |
+| POST   | `/api/auth/login`    | Login user          |
+| GET    | `/api/auth/me`       | Get current user    |
+| POST   | `/api/auth/logout`   | Logout user         |
 
 ### Health Check
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/health` | API health check |
+| Method | Endpoint      | Description      |
+| ------ | ------------- | ---------------- |
+| GET    | `/api/health` | API health check |
 
 ## Database Schema
 
@@ -113,6 +113,7 @@ npm run dev:full
 ```
 
 This will start:
+
 - Frontend: `http://localhost:3000` (or 5173)
 - Backend: `http://localhost:3001`
 
@@ -157,6 +158,7 @@ NODE_ENV=development
 For production deployment:
 
 1. **Environment Variables**:
+
    ```env
    NODE_ENV=production
    DATABASE_URL=your-production-neon-connection-string
@@ -183,4 +185,4 @@ For production deployment:
 4. **Set up monitoring and logging**
 5. **Deploy to production**
 
-Your authentication system is now ready to use with your Neon PostgreSQL database! 
+Your authentication system is now ready to use with your Neon PostgreSQL database!

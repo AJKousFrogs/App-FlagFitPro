@@ -1,5 +1,6 @@
 # Wireframe Component Library
-*Complete Component Catalog & Implementation Reference*
+
+_Complete Component Catalog & Implementation Reference_
 
 ## 🎯 **Overview**
 
@@ -8,6 +9,7 @@ This document provides a **comprehensive component library** for all wireframe e
 ## 🧱 **Component Categories**
 
 ### **Component Hierarchy**
+
 ```
 1. Foundation Components (Buttons, Inputs, Cards)
 2. Navigation Components (Headers, Menus, Breadcrumbs)
@@ -23,11 +25,10 @@ This document provides a **comprehensive component library** for all wireframe e
 ### **Button Component System**
 
 #### **Base Button**
+
 ```html
 <!-- Basic Wireframe Button -->
-<button class="wireframe-button" type="button">
-  Button Text
-</button>
+<button class="wireframe-button" type="button">Button Text</button>
 ```
 
 ```css
@@ -60,6 +61,7 @@ This document provides a **comprehensive component library** for all wireframe e
 ```
 
 #### **Button Variations**
+
 ```html
 <!-- Primary Button (Training Actions) -->
 <button class="wireframe-button wireframe-button--primary">
@@ -87,9 +89,7 @@ This document provides a **comprehensive component library** for all wireframe e
 </button>
 
 <!-- Disabled Button -->
-<button class="wireframe-button" disabled>
-  Unavailable Action
-</button>
+<button class="wireframe-button" disabled>Unavailable Action</button>
 ```
 
 ```css
@@ -137,17 +137,18 @@ This document provides a **comprehensive component library** for all wireframe e
 ### **Input Component System**
 
 #### **Base Input**
+
 ```html
 <!-- Text Input -->
 <div class="wireframe-input-group">
   <label for="sprint-time" class="wireframe-label">10-Yard Sprint Time</label>
-  <input 
-    id="sprint-time" 
-    type="text" 
+  <input
+    id="sprint-time"
+    type="text"
     class="wireframe-input"
     placeholder="1.65 seconds"
     aria-describedby="sprint-help"
-  >
+  />
   <div id="sprint-help" class="wireframe-help-text">
     Target: Under 1.60 seconds (based on research)
   </div>
@@ -190,6 +191,7 @@ This document provides a **comprehensive component library** for all wireframe e
 ```
 
 #### **Input Variations**
+
 ```html
 <!-- Select Dropdown -->
 <select class="wireframe-select">
@@ -200,17 +202,17 @@ This document provides a **comprehensive component library** for all wireframe e
 </select>
 
 <!-- Number Input (Performance Metrics) -->
-<input 
-  type="number" 
+<input
+  type="number"
   class="wireframe-input wireframe-input--number"
   placeholder="1.65"
   step="0.01"
   min="0"
   max="10"
->
+/>
 
 <!-- Textarea (Training Notes) -->
-<textarea 
+<textarea
   class="wireframe-textarea"
   placeholder="Training session notes..."
   rows="4"
@@ -218,7 +220,7 @@ This document provides a **comprehensive component library** for all wireframe e
 
 <!-- Checkbox (Goal Selection) -->
 <div class="wireframe-checkbox-group">
-  <input type="checkbox" id="olympics" class="wireframe-checkbox">
+  <input type="checkbox" id="olympics" class="wireframe-checkbox" />
   <label for="olympics" class="wireframe-checkbox-label">
     LA28 Olympics Preparation
   </label>
@@ -227,11 +229,11 @@ This document provides a **comprehensive component library** for all wireframe e
 <!-- Radio Group (Training Intensity) -->
 <div class="wireframe-radio-group">
   <div class="wireframe-radio-item">
-    <input type="radio" id="low" name="intensity" class="wireframe-radio">
+    <input type="radio" id="low" name="intensity" class="wireframe-radio" />
     <label for="low" class="wireframe-radio-label">Low Intensity</label>
   </div>
   <div class="wireframe-radio-item">
-    <input type="radio" id="high" name="intensity" class="wireframe-radio">
+    <input type="radio" id="high" name="intensity" class="wireframe-radio" />
     <label for="high" class="wireframe-radio-label">High Intensity</label>
   </div>
 </div>
@@ -240,6 +242,7 @@ This document provides a **comprehensive component library** for all wireframe e
 ### **Card Component System**
 
 #### **Base Card**
+
 ```html
 <div class="wireframe-card">
   <div class="wireframe-card-header">
@@ -248,11 +251,11 @@ This document provides a **comprehensive component library** for all wireframe e
       <button class="wireframe-button wireframe-button--icon">[...]</button>
     </div>
   </div>
-  
+
   <div class="wireframe-card-body">
     <p>Your sprint times have improved by 0.08 seconds this week.</p>
   </div>
-  
+
   <div class="wireframe-card-footer">
     <span class="wireframe-card-meta">Updated 2 hours ago</span>
   </div>
@@ -301,6 +304,7 @@ This document provides a **comprehensive component library** for all wireframe e
 ## 🧭 **Navigation Components**
 
 ### **Main Navigation Header**
+
 ```html
 <header class="wireframe-header">
   <nav class="wireframe-navigation">
@@ -311,37 +315,32 @@ This document provides a **comprehensive component library** for all wireframe e
       </div>
       <span class="wireframe-app-name">Flag Football Training</span>
     </div>
-    
+
     <!-- Primary Navigation -->
     <div class="wireframe-nav-menu">
-      <a href="/dashboard" class="wireframe-nav-link wireframe-nav-link--active">
+      <a
+        href="/dashboard"
+        class="wireframe-nav-link wireframe-nav-link--active"
+      >
         Dashboard
       </a>
-      <a href="/training" class="wireframe-nav-link">
-        Training
-      </a>
-      <a href="/tournaments" class="wireframe-nav-link">
-        Tournaments
-      </a>
-      <a href="/community" class="wireframe-nav-link">
-        Community
-      </a>
-      <a href="/profile" class="wireframe-nav-link">
-        Profile
-      </a>
+      <a href="/training" class="wireframe-nav-link"> Training </a>
+      <a href="/tournaments" class="wireframe-nav-link"> Tournaments </a>
+      <a href="/community" class="wireframe-nav-link"> Community </a>
+      <a href="/profile" class="wireframe-nav-link"> Profile </a>
     </div>
-    
+
     <!-- Action Items -->
     <div class="wireframe-nav-actions">
       <button class="wireframe-nav-button" aria-label="Search">
         <span class="nav-icon">[🔍]</span>
       </button>
-      
+
       <button class="wireframe-nav-button" aria-label="Notifications">
         <span class="nav-icon">[🔔]</span>
         <span class="notification-badge">3</span>
       </button>
-      
+
       <div class="wireframe-user-avatar">
         <button class="avatar-button" aria-label="User menu">
           <span class="avatar-icon">[👤]</span>
@@ -443,6 +442,7 @@ This document provides a **comprehensive component library** for all wireframe e
 ```
 
 ### **Breadcrumb Navigation**
+
 ```html
 <nav class="wireframe-breadcrumb" aria-label="Breadcrumb">
   <ol class="wireframe-breadcrumb-list">
@@ -464,6 +464,7 @@ This document provides a **comprehensive component library** for all wireframe e
 ## 📊 **Data Display Components**
 
 ### **Performance Metrics Component**
+
 ```html
 <div class="wireframe-metrics-grid">
   <!-- Primary Metric -->
@@ -472,36 +473,36 @@ This document provides a **comprehensive component library** for all wireframe e
       <span class="wireframe-metric-label">10-Yard Sprint</span>
       <span class="wireframe-metric-trend">↗ +5%</span>
     </div>
-    
+
     <div class="wireframe-metric-value">
       <span class="metric-number">1.65</span>
       <span class="metric-unit">seconds</span>
     </div>
-    
+
     <div class="wireframe-metric-context">
       <span class="metric-target">Target: 1.60s</span>
       <span class="metric-percentile">78th percentile</span>
     </div>
-    
+
     <div class="wireframe-metric-research">
       <span class="research-badge">Research-Backed</span>
       <span class="research-note">Based on 156 studies</span>
     </div>
   </div>
-  
+
   <!-- Secondary Metrics -->
   <div class="wireframe-metric">
     <span class="wireframe-metric-label">Route Precision</span>
     <span class="wireframe-metric-value">87%</span>
     <span class="wireframe-metric-context">89% skill transfer rate</span>
   </div>
-  
+
   <div class="wireframe-metric">
     <span class="wireframe-metric-label">Game Readiness</span>
     <span class="wireframe-metric-value">85%</span>
     <span class="wireframe-metric-context">Competition Ready</span>
   </div>
-  
+
   <div class="wireframe-metric">
     <span class="wireframe-metric-label">Injury Risk</span>
     <span class="wireframe-metric-value">18%</span>
@@ -589,6 +590,7 @@ This document provides a **comprehensive component library** for all wireframe e
 ```
 
 ### **Progress Bar Component**
+
 ```html
 <!-- Simple Progress Bar -->
 <div class="wireframe-progress-bar">
@@ -675,6 +677,7 @@ This document provides a **comprehensive component library** for all wireframe e
 ## 🏈 **Flag Football Specific Components**
 
 ### **AI Coach Message Component**
+
 ```html
 <div class="wireframe-ai-coach">
   <div class="ai-coach-header">
@@ -689,11 +692,15 @@ This document provides a **comprehensive component library** for all wireframe e
       <span class="confidence-badge">91% Confidence</span>
     </div>
   </div>
-  
+
   <div class="ai-coach-message">
-    <p>"Based on your performance data, focus on route precision today. Your sprint times are excellent, but route running accuracy can improve by 12%."</p>
+    <p>
+      "Based on your performance data, focus on route precision today. Your
+      sprint times are excellent, but route running accuracy can improve by
+      12%."
+    </p>
   </div>
-  
+
   <div class="ai-coach-evidence">
     <div class="evidence-item">
       <span class="evidence-label">Prediction Based On:</span>
@@ -704,17 +711,13 @@ This document provides a **comprehensive component library** for all wireframe e
       <span class="evidence-value">73% agility focus optimization</span>
     </div>
   </div>
-  
+
   <div class="ai-coach-actions">
     <button class="wireframe-button wireframe-button--primary">
       Accept Recommendation
     </button>
-    <button class="wireframe-button">
-      View Research
-    </button>
-    <button class="wireframe-button">
-      Customize Plan
-    </button>
+    <button class="wireframe-button">View Research</button>
+    <button class="wireframe-button">Customize Plan</button>
   </div>
 </div>
 ```
@@ -808,6 +811,7 @@ This document provides a **comprehensive component library** for all wireframe e
 ```
 
 ### **Training Session Component**
+
 ```html
 <div class="wireframe-training-session">
   <div class="training-session-header">
@@ -816,13 +820,13 @@ This document provides a **comprehensive component library** for all wireframe e
       <span class="session-duration">45 minutes</span>
       <span class="session-type">Flag Football Specific</span>
     </div>
-    
+
     <div class="session-status">
       <span class="status-badge status-badge--active">In Progress</span>
       <span class="session-timer">00:23:45</span>
     </div>
   </div>
-  
+
   <div class="training-session-content">
     <!-- Live Metrics -->
     <div class="live-metrics">
@@ -831,46 +835,48 @@ This document provides a **comprehensive component library** for all wireframe e
         <span class="metric-value">1.67s</span>
         <span class="metric-target">Target: 1.60s</span>
       </div>
-      
+
       <div class="live-metric">
         <span class="metric-label">Heart Rate</span>
         <span class="metric-value">148 bpm</span>
         <span class="metric-zone">Zone 4</span>
       </div>
-      
+
       <div class="live-metric">
         <span class="metric-label">Reps Completed</span>
         <span class="metric-value">8/12</span>
         <span class="metric-progress">67% Complete</span>
       </div>
     </div>
-    
+
     <!-- Drill Instructions -->
     <div class="drill-instructions">
       <h4>Current Drill: 10-Yard Sprint</h4>
-      <p>Focus on explosive start and maintaining form through the finish line. 73% more agility emphasis for flag football optimization.</p>
-      
+      <p>
+        Focus on explosive start and maintaining form through the finish line.
+        73% more agility emphasis for flag football optimization.
+      </p>
+
       <div class="drill-research">
-        <span class="research-note">Research shows 91% of game sprints are 10-25 yards</span>
+        <span class="research-note"
+          >Research shows 91% of game sprints are 10-25 yards</span
+        >
       </div>
     </div>
   </div>
-  
+
   <div class="training-session-actions">
     <button class="wireframe-button wireframe-button--primary">
       Complete Rep
     </button>
-    <button class="wireframe-button">
-      Skip Drill
-    </button>
-    <button class="wireframe-button">
-      End Session
-    </button>
+    <button class="wireframe-button">Skip Drill</button>
+    <button class="wireframe-button">End Session</button>
   </div>
 </div>
 ```
 
 ### **Olympics Tracker Component**
+
 ```html
 <div class="wireframe-olympics-tracker">
   <div class="olympics-header">
@@ -885,27 +891,27 @@ This document provides a **comprehensive component library** for all wireframe e
       <span class="status-indicator status-indicator--on-track">On Track</span>
     </div>
   </div>
-  
+
   <div class="olympics-metrics">
     <div class="olympics-metric">
       <span class="metric-label">Current Trajectory</span>
       <span class="metric-value">Qualification Likely</span>
       <span class="metric-confidence">82% probability</span>
     </div>
-    
+
     <div class="olympics-metric">
       <span class="metric-label">Performance Gap</span>
       <span class="metric-value">-0.12s to Standard</span>
       <span class="metric-timeline">Estimated: June 2027</span>
     </div>
-    
+
     <div class="olympics-metric">
       <span class="metric-label">Training Progress</span>
       <span class="metric-value">68% Complete</span>
       <span class="metric-phase">Development Phase</span>
     </div>
   </div>
-  
+
   <div class="olympics-roadmap">
     <h4>Qualification Roadmap</h4>
     <div class="roadmap-milestones">
@@ -914,19 +920,19 @@ This document provides a **comprehensive component library** for all wireframe e
         <span class="milestone-title">Training Foundation</span>
         <span class="milestone-status">✓ Complete</span>
       </div>
-      
+
       <div class="milestone milestone--current">
         <span class="milestone-date">2025</span>
         <span class="milestone-title">Performance Development</span>
         <span class="milestone-status">→ In Progress</span>
       </div>
-      
+
       <div class="milestone milestone--upcoming">
         <span class="milestone-date">2026-2027</span>
         <span class="milestone-title">Competition Preparation</span>
         <span class="milestone-status">○ Upcoming</span>
       </div>
-      
+
       <div class="milestone milestone--target">
         <span class="milestone-date">2028</span>
         <span class="milestone-title">LA28 Olympics</span>
@@ -1030,6 +1036,7 @@ This document provides a **comprehensive component library** for all wireframe e
 ## 🔬 **Research Integration Components**
 
 ### **Research Citation Component**
+
 ```html
 <div class="wireframe-research-citation">
   <div class="citation-header">
@@ -1037,28 +1044,31 @@ This document provides a **comprehensive component library** for all wireframe e
     <span class="citation-title">Evidence-Based Recommendation</span>
     <span class="citation-confidence">87.4% Accuracy</span>
   </div>
-  
+
   <div class="citation-content">
-    <p>Flag football athletes should increase agility training by 73% compared to traditional football players for optimal performance.</p>
+    <p>
+      Flag football athletes should increase agility training by 73% compared to
+      traditional football players for optimal performance.
+    </p>
   </div>
-  
+
   <div class="citation-meta">
     <div class="meta-item">
       <span class="meta-label">Research Base:</span>
       <span class="meta-value">156 studies, 3,847 participants</span>
     </div>
-    
+
     <div class="meta-item">
       <span class="meta-label">Study Period:</span>
       <span class="meta-value">2024-2025 Meta-analysis</span>
     </div>
-    
+
     <div class="meta-item">
       <span class="meta-label">Confidence Interval:</span>
       <span class="meta-value">CI: 68-78% (95% confidence)</span>
     </div>
   </div>
-  
+
   <div class="citation-actions">
     <button class="wireframe-button wireframe-button--small">
       View Full Study
@@ -1146,6 +1156,7 @@ This document provides a **comprehensive component library** for all wireframe e
 ## 📱 **Mobile-Specific Components**
 
 ### **Mobile Quick Actions Grid**
+
 ```html
 <div class="mobile-quick-actions">
   <button class="mobile-action-card mobile-action-card--primary">
@@ -1153,19 +1164,19 @@ This document provides a **comprehensive component library** for all wireframe e
     <span class="action-title">Start Training</span>
     <span class="action-subtitle">AI Recommended</span>
   </button>
-  
+
   <button class="mobile-action-card">
     <div class="action-icon-large">[📊]</div>
     <span class="action-title">View Progress</span>
     <span class="action-subtitle">87% This Week</span>
   </button>
-  
+
   <button class="mobile-action-card">
     <div class="action-icon-large">[🏆]</div>
     <span class="action-title">Tournaments</span>
     <span class="action-subtitle">3 Upcoming</span>
   </button>
-  
+
   <button class="mobile-action-card">
     <div class="action-icon-large">[👥]</div>
     <span class="action-title">Team Chat</span>

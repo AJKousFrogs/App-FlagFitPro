@@ -1,225 +1,265 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Email Service Test - FlagFit Pro</title>
     <!-- New Modular CSS Architecture -->
-    <link rel="stylesheet" href="./src/css/main.css">
+    <link rel="stylesheet" href="./src/css/main.css" />
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        body {
-            background: var(--gradient-primary);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
+      body {
+        background: var(--gradient-primary);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
 
-        .test-container {
-            background: var(--surface-primary);
-            border-radius: var(--radius-component-xl);
-            box-shadow: var(--elevation-highest);
-            padding: 40px;
-            width: 100%;
-            max-width: 500px;
-            text-align: center;
-        }
+      .test-container {
+        background: var(--surface-primary);
+        border-radius: var(--radius-component-xl);
+        box-shadow: var(--elevation-highest);
+        padding: 40px;
+        width: 100%;
+        max-width: 500px;
+        text-align: center;
+      }
 
-        .status-indicator {
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-            font-size: 14px;
-        }
+      .status-indicator {
+        padding: 15px;
+        border-radius: 8px;
+        margin: 20px 0;
+        font-size: 14px;
+      }
 
-        .status-success {
-            background: #e8f5e8;
-            border: 1px solid #4caf50;
-            color: #2e7d32;
-        }
+      .status-success {
+        background: #e8f5e8;
+        border: 1px solid #4caf50;
+        color: #2e7d32;
+      }
 
-        .status-error {
-            background: #ffebee;
-            border: 1px solid #f44336;
-            color: #c62828;
-        }
+      .status-error {
+        background: #ffebee;
+        border: 1px solid #f44336;
+        color: #c62828;
+      }
 
-        .status-warning {
-            background: #fff3cd;
-            border: 1px solid #ffc107;
-            color: #856404;
-        }
+      .status-warning {
+        background: #fff3cd;
+        border: 1px solid #ffc107;
+        color: #856404;
+      }
 
-        .status-info {
-            background: #e3f2fd;
-            border: 1px solid #2196f3;
-            color: #1565c0;
-        }
+      .status-info {
+        background: #e3f2fd;
+        border: 1px solid #2196f3;
+        color: #1565c0;
+      }
 
-        .test-results {
-            text-align: left;
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-        }
+      .test-results {
+        text-align: left;
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="test-container">
-        <div style="font-size: 2rem; margin-bottom: 10px;">📧</div>
-        <h1 style="font-size: 1.8rem; font-weight: 700; color: var(--color-text-primary); margin-bottom: 10px;">
-            Email Service Test
-        </h1>
-        <p style="color: var(--color-text-secondary); margin-bottom: 30px;">
-            Test your email configuration and send a test email to verify everything is working.
-        </p>
+      <div style="font-size: 2rem; margin-bottom: 10px">📧</div>
+      <h1
+        style="
+          font-size: 1.8rem;
+          font-weight: 700;
+          color: var(--color-text-primary);
+          margin-bottom: 10px;
+        "
+      >
+        Email Service Test
+      </h1>
+      <p style="color: var(--color-text-secondary); margin-bottom: 30px">
+        Test your email configuration and send a test email to verify everything
+        is working.
+      </p>
 
-        <div id="statusIndicator" class="status-indicator status-info" style="display: none;"></div>
+      <div
+        id="statusIndicator"
+        class="status-indicator status-info"
+        style="display: none"
+      ></div>
 
-        <form id="testForm">
-            <div class="form-group">
-                <label for="testEmail" class="form-label">Test Email Address</label>
-                <input type="email" id="testEmail" class="form-input" placeholder="your.email@example.com" required>
-            </div>
-
-            <button type="submit" class="btn btn-primary btn-lg btn-block" id="testBtn">
-                <i data-lucide="send"></i>
-                Send Test Email
-            </button>
-        </form>
-
-        <div id="testResults" class="test-results" style="display: none;"></div>
-
-        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--color-border-secondary);">
-            <a href="/reset-password.html" class="btn btn-secondary" style="margin-right: 10px;">
-                <i data-lucide="key"></i>
-                Test Password Reset
-            </a>
-            <a href="/dashboard.html" class="btn btn-ghost">
-                <i data-lucide="home"></i>
-                Back to Dashboard
-            </a>
+      <form id="testForm">
+        <div class="form-group">
+          <label for="testEmail" class="form-label">Test Email Address</label>
+          <input
+            type="email"
+            id="testEmail"
+            class="form-input"
+            placeholder="your.email@example.com"
+            required
+          />
         </div>
+
+        <button
+          type="submit"
+          class="btn btn-primary btn-lg btn-block"
+          id="testBtn"
+        >
+          <i data-lucide="send"></i>
+          Send Test Email
+        </button>
+      </form>
+
+      <div id="testResults" class="test-results" style="display: none"></div>
+
+      <div
+        style="
+          margin-top: 30px;
+          padding-top: 20px;
+          border-top: 1px solid var(--color-border-secondary);
+        "
+      >
+        <a
+          href="/reset-password.html"
+          class="btn btn-secondary"
+          style="margin-right: 10px"
+        >
+          <i data-lucide="key"></i>
+          Test Password Reset
+        </a>
+        <a href="/dashboard.html" class="btn btn-ghost">
+          <i data-lucide="home"></i>
+          Back to Dashboard
+        </a>
+      </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize Lucide icons
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
-
-            // Auto-fill with a reasonable test email
-            const testEmailInput = document.getElementById('testEmail');
-            if (!testEmailInput.value) {
-                testEmailInput.value = 'test@flagfitpro.com';
-            }
-        });
-
-        document.getElementById('testForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const email = document.getElementById('testEmail').value;
-            const testBtn = document.getElementById('testBtn');
-            const statusIndicator = document.getElementById('statusIndicator');
-            const testResults = document.getElementById('testResults');
-            const originalText = testBtn.innerHTML;
-            
-            if (!email) {
-                showStatus('Please enter a valid email address.', 'error');
-                return;
-            }
-            
-            // Show loading state
-            testBtn.innerHTML = '<span>⏳</span> Sending Test Email...';
-            testBtn.disabled = true;
-            showStatus('Sending test email...', 'info');
-            
-            try {
-                const response = await fetch('/.netlify/functions/test-email', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ email })
-                });
-                
-                const result = await response.json();
-                
-                if (response.ok) {
-                    if (result.success) {
-                        showStatus(`✅ Test email sent successfully via ${result.provider}! Check your inbox.`, 'success');
-                        showResults(result);
-                    } else if (result.configured === false) {
-                        showStatus('⚠️ Email service not configured.', 'warning');
-                        showConfigHelp(result);
-                    } else {
-                        showStatus(`❌ ${result.message}`, 'error');
-                        showResults(result);
-                    }
-                } else {
-                    showStatus(`❌ Failed to send test email: ${result.error || 'Unknown error'}`, 'error');
-                    showResults(result);
-                }
-            } catch (error) {
-                console.error('Test email error:', error);
-                showStatus('❌ Network error. Check console for details.', 'error');
-                showResults({ error: error.message });
-            } finally {
-                testBtn.innerHTML = originalText;
-                testBtn.disabled = false;
-                
-                // Re-initialize icons
-                if (typeof lucide !== 'undefined') {
-                    lucide.createIcons();
-                }
-            }
-        });
-
-        function showStatus(message, type) {
-            const statusIndicator = document.getElementById('statusIndicator');
-            statusIndicator.textContent = message;
-            statusIndicator.className = `status-indicator status-${type}`;
-            statusIndicator.style.display = 'block';
+      document.addEventListener("DOMContentLoaded", function () {
+        // Initialize Lucide icons
+        if (typeof lucide !== "undefined") {
+          lucide.createIcons();
         }
 
-        function showResults(result) {
-            const testResults = document.getElementById('testResults');
-            
-            let html = '<h4>Test Results:</h4>';
-            
-            if (result.success) {
-                html += `
+        // Auto-fill with a reasonable test email
+        const testEmailInput = document.getElementById("testEmail");
+        if (!testEmailInput.value) {
+          testEmailInput.value = "test@flagfitpro.com";
+        }
+      });
+
+      document
+        .getElementById("testForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          const email = document.getElementById("testEmail").value;
+          const testBtn = document.getElementById("testBtn");
+          const statusIndicator = document.getElementById("statusIndicator");
+          const testResults = document.getElementById("testResults");
+          const originalText = testBtn.innerHTML;
+
+          if (!email) {
+            showStatus("Please enter a valid email address.", "error");
+            return;
+          }
+
+          // Show loading state
+          testBtn.innerHTML = "<span>⏳</span> Sending Test Email...";
+          testBtn.disabled = true;
+          showStatus("Sending test email...", "info");
+
+          try {
+            const response = await fetch("/.netlify/functions/test-email", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ email }),
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+              if (result.success) {
+                showStatus(
+                  `✅ Test email sent successfully via ${result.provider}! Check your inbox.`,
+                  "success",
+                );
+                showResults(result);
+              } else if (result.configured === false) {
+                showStatus("⚠️ Email service not configured.", "warning");
+                showConfigHelp(result);
+              } else {
+                showStatus(`❌ ${result.message}`, "error");
+                showResults(result);
+              }
+            } else {
+              showStatus(
+                `❌ Failed to send test email: ${result.error || "Unknown error"}`,
+                "error",
+              );
+              showResults(result);
+            }
+          } catch (error) {
+            console.error("Test email error:", error);
+            showStatus("❌ Network error. Check console for details.", "error");
+            showResults({ error: error.message });
+          } finally {
+            testBtn.innerHTML = originalText;
+            testBtn.disabled = false;
+
+            // Re-initialize icons
+            if (typeof lucide !== "undefined") {
+              lucide.createIcons();
+            }
+          }
+        });
+
+      function showStatus(message, type) {
+        const statusIndicator = document.getElementById("statusIndicator");
+        statusIndicator.textContent = message;
+        statusIndicator.className = `status-indicator status-${type}`;
+        statusIndicator.style.display = "block";
+      }
+
+      function showResults(result) {
+        const testResults = document.getElementById("testResults");
+
+        let html = "<h4>Test Results:</h4>";
+
+        if (result.success) {
+          html += `
                     <p><strong>Status:</strong> ✅ Success</p>
                     <p><strong>Provider:</strong> ${result.provider}</p>
-                    <p><strong>Message ID:</strong> <code>${result.messageId || 'N/A'}</code></p>
+                    <p><strong>Message ID:</strong> <code>${result.messageId || "N/A"}</code></p>
                     <p><strong>Test Email:</strong> ${result.testEmail}</p>
                 `;
-            } else if (result.configured === false) {
-                html += `
+        } else if (result.configured === false) {
+          html += `
                     <p><strong>Status:</strong> ⚠️ Not Configured</p>
                     <p><strong>Issue:</strong> ${result.message}</p>
-                    ${result.instructions ? `<p><strong>Instructions:</strong> ${result.instructions}</p>` : ''}
+                    ${result.instructions ? `<p><strong>Instructions:</strong> ${result.instructions}</p>` : ""}
                 `;
-            } else if (result.error) {
-                html += `
+        } else if (result.error) {
+          html += `
                     <p><strong>Status:</strong> ❌ Error</p>
                     <p><strong>Error:</strong> ${result.error}</p>
-                    ${result.message ? `<p><strong>Details:</strong> ${result.message}</p>` : ''}
+                    ${result.message ? `<p><strong>Details:</strong> ${result.message}</p>` : ""}
                 `;
-            }
-            
-            testResults.innerHTML = html;
-            testResults.style.display = 'block';
         }
 
-        function showConfigHelp(result) {
-            const testResults = document.getElementById('testResults');
-            
-            let html = `
+        testResults.innerHTML = html;
+        testResults.style.display = "block";
+      }
+
+      function showConfigHelp(result) {
+        const testResults = document.getElementById("testResults");
+
+        let html = `
                 <h4>Email Configuration Help:</h4>
                 <p><strong>Status:</strong> Email service not configured</p>
                 
@@ -240,10 +280,10 @@ APP_URL=http://localhost:4000</pre>
                 
                 <p><strong>📖 Full Guide:</strong> <a href="./EMAIL_SETUP_GUIDE.md" target="_blank">EMAIL_SETUP_GUIDE.md</a></p>
             `;
-            
-            testResults.innerHTML = html;
-            testResults.style.display = 'block';
-        }
+
+        testResults.innerHTML = html;
+        testResults.style.display = "block";
+      }
     </script>
-</body>
+  </body>
 </html>

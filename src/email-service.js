@@ -1,8 +1,8 @@
 // Email Service for FlagFit Pro
 // Supports multiple email providers and templates
 
-import nodemailer from 'nodemailer';
-import { randomBytes } from 'crypto';
+import nodemailer from "nodemailer";
+import { randomBytes } from "crypto";
 
 class EmailService {
   constructor() {
@@ -12,29 +12,29 @@ class EmailService {
   }
 
   // Initialize email service with preferred provider
-  async initialize(provider = 'smtp') {
+  async initialize(provider = "smtp") {
     try {
       switch (provider) {
-        case 'gmail':
+        case "gmail":
           await this.initializeGmail();
           break;
-        case 'sendgrid':
+        case "sendgrid":
           await this.initializeSendGrid();
           break;
-        case 'mailgun':
+        case "mailgun":
           await this.initializeMailgun();
           break;
-        case 'smtp':
+        case "smtp":
         default:
           await this.initializeSMTP();
           break;
       }
-      
+
       this.isInitialized = true;
       console.log(`✅ Email service initialized with ${provider}`);
       return true;
     } catch (error) {
-      console.error('❌ Failed to initialize email service:', error);
+      console.error("❌ Failed to initialize email service:", error);
       return false;
     }
   }
@@ -42,64 +42,67 @@ class EmailService {
   // Gmail configuration
   async initializeGmail() {
     this.transporter = nodemailer.createTransporter({
-      service: 'gmail',
+      service: "gmail",
       auth: {
         user: process.env.GMAIL_EMAIL,
-        pass: process.env.GMAIL_APP_PASSWORD // App password, not regular password
-      }
+        pass: process.env.GMAIL_APP_PASSWORD, // App password, not regular password
+      },
     });
   }
 
   // SendGrid configuration
   async initializeSendGrid() {
     this.transporter = nodemailer.createTransporter({
-      service: 'SendGrid',
+      service: "SendGrid",
       auth: {
-        user: 'apikey',
-        pass: process.env.SENDGRID_API_KEY
-      }
+        user: "apikey",
+        pass: process.env.SENDGRID_API_KEY,
+      },
     });
   }
 
   // Mailgun configuration
   async initializeMailgun() {
     this.transporter = nodemailer.createTransporter({
-      service: 'Mailgun',
+      service: "Mailgun",
       auth: {
         user: process.env.MAILGUN_USERNAME,
-        pass: process.env.MAILGUN_PASSWORD
-      }
+        pass: process.env.MAILGUN_PASSWORD,
+      },
     });
   }
 
   // Generic SMTP configuration
   async initializeSMTP() {
     this.transporter = nodemailer.createTransporter({
-      host: process.env.SMTP_HOST || 'smtp.gmail.com',
+      host: process.env.SMTP_HOST || "smtp.gmail.com",
       port: parseInt(process.env.SMTP_PORT) || 587,
-      secure: process.env.SMTP_SECURE === 'true' || false,
+      secure: process.env.SMTP_SECURE === "true" || false,
       auth: {
         user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS
-      }
+        pass: process.env.SMTP_PASS,
+      },
     });
   }
 
   // Generate password reset token
   generateResetToken(email) {
-    const token = randomBytes(32).toString('hex');
+    const token = randomBytes(32).toString("hex");
     const expiry = new Date(Date.now() + 60 * 60 * 1000); // 1 hour from now
-    
+
     this.resetTokens.set(token, {
       email,
       expiry,
-      used: false
+      used: false,
     });
 
     // Clean up expired tokens
-    setTimeout(() => {
-      this.resetTokens.delete(token);
-    }, 60 * 60 * 1000);
+    setTimeout(
+      () => {
+        this.resetTokens.delete(token);
+      },
+      60 * 60 * 1000,
+    );
 
     return token;
   }
@@ -107,18 +110,18 @@ class EmailService {
   // Verify reset token
   verifyResetToken(token) {
     const tokenData = this.resetTokens.get(token);
-    
+
     if (!tokenData) {
-      return { valid: false, error: 'Invalid token' };
+      return { valid: false, error: "Invalid token" };
     }
 
     if (tokenData.used) {
-      return { valid: false, error: 'Token already used' };
+      return { valid: false, error: "Token already used" };
     }
 
     if (new Date() > tokenData.expiry) {
       this.resetTokens.delete(token);
-      return { valid: false, error: 'Token expired' };
+      return { valid: false, error: "Token expired" };
     }
 
     return { valid: true, email: tokenData.email };
@@ -135,7 +138,7 @@ class EmailService {
   // Send password reset email
   async sendPasswordReset(email, resetUrl) {
     if (!this.isInitialized) {
-      throw new Error('Email service not initialized');
+      throw new Error("Email service not initialized");
     }
 
     const token = this.generateResetToken(email);
@@ -143,13 +146,16 @@ class EmailService {
 
     const mailOptions = {
       from: {
-        name: 'FlagFit Pro',
-        address: process.env.FROM_EMAIL || process.env.SMTP_USER || process.env.GMAIL_EMAIL
+        name: "FlagFit Pro",
+        address:
+          process.env.FROM_EMAIL ||
+          process.env.SMTP_USER ||
+          process.env.GMAIL_EMAIL,
       },
       to: email,
-      subject: 'Reset Your FlagFit Pro Password',
+      subject: "Reset Your FlagFit Pro Password",
       html: this.getPasswordResetTemplate(email, fullResetUrl, token),
-      text: this.getPasswordResetTextTemplate(email, fullResetUrl)
+      text: this.getPasswordResetTextTemplate(email, fullResetUrl),
     };
 
     try {
@@ -157,7 +163,7 @@ class EmailService {
       console.log(`✅ Password reset email sent to ${email}`);
       return { success: true, messageId: result.messageId, token };
     } catch (error) {
-      console.error('❌ Failed to send password reset email:', error);
+      console.error("❌ Failed to send password reset email:", error);
       throw error;
     }
   }
@@ -165,18 +171,21 @@ class EmailService {
   // Send welcome email
   async sendWelcomeEmail(email, name) {
     if (!this.isInitialized) {
-      throw new Error('Email service not initialized');
+      throw new Error("Email service not initialized");
     }
 
     const mailOptions = {
       from: {
-        name: 'FlagFit Pro',
-        address: process.env.FROM_EMAIL || process.env.SMTP_USER || process.env.GMAIL_EMAIL
+        name: "FlagFit Pro",
+        address:
+          process.env.FROM_EMAIL ||
+          process.env.SMTP_USER ||
+          process.env.GMAIL_EMAIL,
       },
       to: email,
-      subject: 'Welcome to FlagFit Pro!',
+      subject: "Welcome to FlagFit Pro!",
       html: this.getWelcomeTemplate(name),
-      text: this.getWelcomeTextTemplate(name)
+      text: this.getWelcomeTextTemplate(name),
     };
 
     try {
@@ -184,13 +193,13 @@ class EmailService {
       console.log(`✅ Welcome email sent to ${email}`);
       return { success: true, messageId: result.messageId };
     } catch (error) {
-      console.error('❌ Failed to send welcome email:', error);
+      console.error("❌ Failed to send welcome email:", error);
       throw error;
     }
   }
 
   // HTML template for password reset
-  getPasswordResetTemplate(email, resetUrl, token) {
+  getPasswordResetTemplate(email, resetUrl, _token) {
     return `
 <!DOCTYPE html>
 <html lang="en">
@@ -321,7 +330,7 @@ The FlagFit Pro Team
             </div>
             
             <p style="text-align: center;">
-                <a href="${process.env.APP_URL || 'http://localhost:4000'}/dashboard.html" class="button">Get Started</a>
+                <a href="${process.env.APP_URL || "http://localhost:4000"}/dashboard.html" class="button">Get Started</a>
             </p>
             
             <p>If you have any questions, our support team is here to help at support@flagfitpro.com</p>
@@ -356,7 +365,7 @@ Access personalized training programs designed by professional coaches.
 📊 Progress Analytics
 Track your improvement over time with detailed performance metrics and insights.
 
-Get started: ${process.env.APP_URL || 'http://localhost:4000'}/dashboard.html
+Get started: ${process.env.APP_URL || "http://localhost:4000"}/dashboard.html
 
 If you have any questions, our support team is here to help at support@flagfitpro.com
 
@@ -370,15 +379,15 @@ The FlagFit Pro Team
   // Test email connectivity
   async testConnection() {
     if (!this.transporter) {
-      throw new Error('Email service not initialized');
+      throw new Error("Email service not initialized");
     }
 
     try {
       await this.transporter.verify();
-      console.log('✅ Email service connection verified');
+      console.log("✅ Email service connection verified");
       return true;
     } catch (error) {
-      console.error('❌ Email service connection failed:', error);
+      console.error("❌ Email service connection failed:", error);
       return false;
     }
   }

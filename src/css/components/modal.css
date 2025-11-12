@@ -16,8 +16,9 @@
   justify-content: center;
   opacity: 0;
   visibility: hidden;
-  transition: opacity var(--motion-duration-normal) var(--motion-easing-expressive),
-              visibility var(--motion-duration-normal) var(--motion-easing-expressive);
+  transition:
+    opacity var(--motion-duration-normal) var(--motion-easing-expressive),
+    visibility var(--motion-duration-normal) var(--motion-easing-expressive);
 }
 
 .modal-overlay.open {
@@ -33,7 +34,8 @@
   max-height: 90vh;
   overflow: hidden;
   transform: scale(0.95);
-  transition: transform var(--motion-duration-normal) var(--motion-easing-expressive);
+  transition: transform var(--motion-duration-normal)
+    var(--motion-easing-expressive);
 }
 
 .modal-overlay.open .modal-content {
@@ -60,4 +62,3 @@
   gap: var(--primitive-space-12);
   justify-content: flex-end;
 }
-

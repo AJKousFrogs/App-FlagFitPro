@@ -2,16 +2,16 @@ name: Comprehensive Testing Pipeline
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, develop]
   schedule:
     # Run daily performance tests at 2 AM UTC
-    - cron: '0 2 * * *'
+    - cron: "0 2 * * *"
 
 env:
-  NODE_VERSION: '18'
-  POSTGRES_VERSION: '14'
+  NODE_VERSION: "18"
+  POSTGRES_VERSION: "14"
   PLAYWRIGHT_BROWSERS_PATH: 0
 
 jobs:
@@ -22,28 +22,28 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          
+          cache: "npm"
+
       - name: Install dependencies
         run: npm ci
-        
+
       - name: Run ESLint
         run: npm run lint:js || true
-        
+
       - name: Run Prettier
         run: npm run lint:format || true
-        
+
       - name: Run TypeScript checking
         run: npm run type-check || true
-        
+
       - name: Security audit
         run: npm audit --audit-level high
-        
+
       - name: Upload code quality results
         uses: actions/upload-artifact@v3
         if: always()
@@ -64,26 +64,26 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
+
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-          
+          cache: "npm"
+
       - name: Install dependencies
         run: npm ci
-        
+
       - name: Run unit tests
         run: npm run test:unit -- --coverage --reporter=verbose
-        
+
       - name: Upload coverage reports
         uses: codecov/codecov-action@v3
         with:
           files: ./coverage/lcov.info
           flags: unit-tests
           name: unit-tests-node-${{ matrix.node-version }}
-          
+
       - name: Upload test results
         uses: actions/upload-artifact@v3
         if: always()
@@ -110,7 +110,7 @@ jobs:
           --health-retries 5
         ports:
           - 5432:5432
-          
+
       redis:
         image: redis:7-alpine
         options: >-
@@ -120,20 +120,20 @@ jobs:
           --health-retries 5
         ports:
           - 6379:6379
-          
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          
+          cache: "npm"
+
       - name: Install dependencies
         run: npm ci
-        
+
       - name: Setup test database
         run: |
           npm run db:migrate:test
@@ -141,14 +141,14 @@ jobs:
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/flagfit_test
           REDIS_URL: redis://localhost:6379
-          
+
       - name: Run integration tests
         run: npm run test:integration -- --coverage
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/flagfit_test
           REDIS_URL: redis://localhost:6379
           NODE_ENV: test
-          
+
       - name: Upload integration test results
         uses: actions/upload-artifact@v3
         if: always()
@@ -169,19 +169,19 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          
+          cache: "npm"
+
       - name: Install dependencies
         run: npm ci
-        
+
       - name: Install Playwright browsers
         run: npx playwright install ${{ matrix.browser }} --with-deps
-        
+
       - name: Start application
         run: |
           npm run build
@@ -189,12 +189,12 @@ jobs:
           npx wait-on http://localhost:4000 --timeout 60000
         env:
           NODE_ENV: test
-          
+
       - name: Run E2E tests
         run: npx playwright test --project=${{ matrix.browser }}-${{ matrix.device }} --reporter=html
         env:
           PLAYWRIGHT_HTML_REPORT: playwright-report-${{ matrix.browser }}-${{ matrix.device }}
-          
+
       - name: Upload E2E test results
         uses: actions/upload-artifact@v3
         if: always()
@@ -212,16 +212,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          
+          cache: "npm"
+
       - name: Install dependencies
         run: npm ci
-        
+
       - name: Start application
         run: |
           npm run build
@@ -229,22 +229,22 @@ jobs:
           npx wait-on http://localhost:4000 --timeout 60000
         env:
           NODE_ENV: production
-          
+
       - name: Run performance tests
         run: npm run test:performance
         env:
           PERFORMANCE_TEST_DURATION: 300 # 5 minutes for CI
-          
+
       - name: Run load tests
         run: npm run test:load
         env:
           MAX_VIRTUAL_USERS: 100 # Limited for CI environment
-          
+
       - name: Generate performance report
         run: |
           npm run performance:report
           npm run performance:compare # Compare with baseline
-          
+
       - name: Upload performance results
         uses: actions/upload-artifact@v3
         if: always()
@@ -262,35 +262,35 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          
+          cache: "npm"
+
       - name: Install dependencies
         run: npm ci
-        
+
       - name: Run security audit
         run: npm run audit:security
-        
+
       - name: Run dependency check
         run: npm run security:dependency-check
-        
+
       - name: Run SAST scan
         run: npm run security:sast-scan || true
-        
+
       - name: Start application for DAST
         run: |
           npm start &
           npx wait-on http://localhost:4000 --timeout 60000
         env:
           NODE_ENV: test
-          
+
       - name: Run DAST scan
         run: npm run security:dast-scan || true
-        
+
       - name: Upload security results
         uses: actions/upload-artifact@v3
         if: always()
@@ -307,29 +307,29 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          
+          cache: "npm"
+
       - name: Install dependencies
         run: npm ci
-        
+
       - name: Start application
         run: |
           npm start &
           npx wait-on http://localhost:4000 --timeout 60000
         env:
           NODE_ENV: test
-          
+
       - name: Run accessibility tests
         run: npm run test:a11y
-        
+
       - name: Run WCAG compliance check
         run: npm run a11y:wcag-check
-        
+
       - name: Upload accessibility results
         uses: actions/upload-artifact@v3
         if: always()
@@ -359,27 +359,27 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          
+          cache: "npm"
+
       - name: Install dependencies
         run: npm ci
-        
+
       - name: Setup browser environment
         run: npm run browser:setup:${{ matrix.browser }}
-        
+
       - name: Start application
         run: |
           npm start &
           npx wait-on http://localhost:4000 --timeout 60000
-        
+
       - name: Run cross-browser tests
         run: npm run test:cross-browser -- --browser=${{ matrix.browser }}
-        
+
       - name: Upload cross-browser results
         uses: actions/upload-artifact@v3
         if: always()
@@ -397,27 +397,27 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          
+          cache: "npm"
+
       - name: Install dependencies
         run: npm ci
-        
+
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
-        
+
       - name: Start application
         run: |
           npm start &
           npx wait-on http://localhost:4000 --timeout 60000
-          
+
       - name: Run mobile tests
         run: npx playwright test --project=${{ matrix.device }}
-        
+
       - name: Upload mobile test results
         uses: actions/upload-artifact@v3
         if: always()
@@ -447,23 +447,23 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          
+          cache: "npm"
+
       - name: Install dependencies
         run: npm ci
-        
+
       - name: Setup test database
         run: |
           npm run db:migrate:test
           npm run db:seed:test
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/flagfit_test
-          
+
       - name: Start API server
         run: |
           npm run start:api &
@@ -471,13 +471,13 @@ jobs:
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/flagfit_test
           NODE_ENV: test
-          
+
       - name: Run API tests
         run: npm run test:api
-        
+
       - name: Run API contract tests
         run: npm run test:api:contracts
-        
+
       - name: Upload API test results
         uses: actions/upload-artifact@v3
         if: always()
@@ -491,56 +491,57 @@ jobs:
   test-summary:
     name: Test Results Summary
     runs-on: ubuntu-latest
-    needs: [
-      code-quality,
-      unit-tests,
-      integration-tests,
-      e2e-tests,
-      api-tests,
-      accessibility-tests
-    ]
+    needs:
+      [
+        code-quality,
+        unit-tests,
+        integration-tests,
+        e2e-tests,
+        api-tests,
+        accessibility-tests,
+      ]
     if: always()
     steps:
       - name: Download all test artifacts
         uses: actions/download-artifact@v3
-        
+
       - name: Generate test summary
         run: |
           echo "# Test Results Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          
+
           # Count test results
           UNIT_TESTS=$(find . -name "unit-test-results*" -type d | wc -l)
           INTEGRATION_TESTS=$(find . -name "integration-test-results*" -type d | wc -l)
           E2E_TESTS=$(find . -name "e2e-results*" -type d | wc -l)
-          
+
           echo "## Test Coverage" >> $GITHUB_STEP_SUMMARY
           echo "- Unit Tests: $UNIT_TESTS node versions tested" >> $GITHUB_STEP_SUMMARY
           echo "- Integration Tests: $INTEGRATION_TESTS test suites" >> $GITHUB_STEP_SUMMARY
           echo "- E2E Tests: $E2E_TESTS browser/device combinations" >> $GITHUB_STEP_SUMMARY
-          
+
           # Check for failures
           if [ "${{ needs.unit-tests.result }}" = "failure" ]; then
             echo "❌ Unit tests failed" >> $GITHUB_STEP_SUMMARY
           else
             echo "✅ Unit tests passed" >> $GITHUB_STEP_SUMMARY
           fi
-          
+
           if [ "${{ needs.integration-tests.result }}" = "failure" ]; then
             echo "❌ Integration tests failed" >> $GITHUB_STEP_SUMMARY
           else
             echo "✅ Integration tests passed" >> $GITHUB_STEP_SUMMARY
           fi
-          
+
           if [ "${{ needs.e2e-tests.result }}" = "failure" ]; then
             echo "❌ E2E tests failed" >> $GITHUB_STEP_SUMMARY
           else
             echo "✅ E2E tests passed" >> $GITHUB_STEP_SUMMARY
           fi
-          
+
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "## Deployment Status" >> $GITHUB_STEP_SUMMARY
-          
+
           if [ "${{ needs.unit-tests.result }}" = "success" ] && [ "${{ needs.integration-tests.result }}" = "success" ] && [ "${{ needs.e2e-tests.result }}" = "success" ]; then
             echo "🚀 Ready for deployment" >> $GITHUB_STEP_SUMMARY
           else
@@ -557,32 +558,32 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          
+          cache: "npm"
+
       - name: Install dependencies
         run: npm ci
-        
+
       - name: Build application
         run: npm run build
         env:
           NODE_ENV: production
-          
+
       - name: Deploy to staging
         run: npm run deploy:staging
         env:
           NETLIFY_TOKEN: ${{ secrets.NETLIFY_TOKEN }}
           STAGING_SITE_ID: ${{ secrets.NETLIFY_STAGING_SITE_ID }}
-          
+
       - name: Run smoke tests on staging
         run: npm run test:smoke -- --baseURL=${{ env.STAGING_URL }}
         env:
           STAGING_URL: ${{ secrets.STAGING_URL }}
-          
+
       - name: Notify deployment success
         uses: 8398a7/action-slack@v3
         with:
@@ -591,18 +592,19 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
-# Workflow notifications
+  # Workflow notifications
   notify-failure:
     name: Notify on Failure
     runs-on: ubuntu-latest
-    needs: [
-      code-quality,
-      unit-tests,
-      integration-tests,
-      e2e-tests,
-      api-tests,
-      accessibility-tests
-    ]
+    needs:
+      [
+        code-quality,
+        unit-tests,
+        integration-tests,
+        e2e-tests,
+        api-tests,
+        accessibility-tests,
+      ]
     if: failure()
     steps:
       - name: Notify team of test failures

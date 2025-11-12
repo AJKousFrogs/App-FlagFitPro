@@ -1,6 +1,7 @@
 # Community Page Wireframe Documentation
 
 ## Page Overview
+
 The Community page serves as the social hub of the FlagFit Pro Training App, providing team communication, training session coordination, knowledge sharing, and player networking features. Updated to support team-based communication, chemistry ratings integration, position-specific chat rooms, and coach-player interactions.
 
 ## Current Implementation Status: 🚧 UPDATING FOR COMPREHENSIVE DASHBOARD
@@ -203,28 +204,33 @@ The Community page serves as the social hub of the FlagFit Pro Training App, pro
 ## Key Updates Made
 
 ### **1. Team Overview Integration**
+
 - **Team Name**: Hawks team identification
 - **Active Players**: 23 team members
 - **Team Chemistry Average**: 7.8/10 (Good)
 - **Next Game**: vs Eagles tomorrow
 
 ### **2. Position-Specific Chat Rooms**
+
 - **Main Team Chat**: All 23 members
 - **QB/WR Squad**: 8 members (position-specific)
 - **Defense Unit**: 10 members (position-specific)
 - **Coach's Corner**: 5 coaches only
 
 ### **3. Chemistry Ratings Integration**
+
 - **Individual Chemistry**: Shown for each teammate in chat
 - **Chemistry Indicators**: 🟢 Good (7.5+), 🟡 Fair (6.0-7.4), 🔴 Poor (<6.0)
 - **AI Suggestions**: Chemistry improvement recommendations
 
 ### **4. Team Training Sessions**
+
 - **Session Types**: Team practice, position-specific drills
 - **Attendance Tracking**: RSVP system with attendee counts
 - **Focus Areas**: Game preparation, chemistry building
 
 ### **5. Coach-Player Interaction**
+
 - **Coach Announcements**: Official team communications
 - **Coach's Corner**: Dedicated coach chat room
 - **Resource Sharing**: Coaches can share playbooks and analysis
@@ -234,17 +240,20 @@ The Community page serves as the social hub of the FlagFit Pro Training App, pro
 ## Technical Implementation Notes
 
 ### **Database Integration**
+
 - Team memberships and chat room assignments
 - Chemistry ratings with teammate relationships
 - Training session coordination
 - Resource library management
 
 ### **Access Control**
+
 - Position-based chat room access
 - Coach-only communication channels
 - Team resource sharing permissions
 
 ### **Real-time Features**
+
 - Live chat messaging
 - Session attendance updates
 - Chemistry rating changes
@@ -254,18 +263,21 @@ The Community page serves as the social hub of the FlagFit Pro Training App, pro
 ## User Experience Features
 
 ### **Team Communication**
+
 - **Multi-room Chat**: Position-specific and team-wide channels
 - **Chemistry Indicators**: Visual relationship status
 - **File Sharing**: Resource upload and download
 - **Reaction System**: Emoji reactions to messages
 
 ### **Training Coordination**
+
 - **Session Creation**: Team and position-specific practices
 - **RSVP System**: Attendance tracking and planning
 - **Location Management**: Field assignments and directions
 - **Focus Areas**: Session objectives and preparation
 
 ### **Knowledge Management**
+
 - **Resource Library**: Team playbooks and analysis
 - **File Upload**: Easy sharing of training materials
 - **Version Control**: Updated resource tracking
@@ -276,16 +288,19 @@ The Community page serves as the social hub of the FlagFit Pro Training App, pro
 ## Integration Points
 
 ### **Dashboard Connection**
+
 - Team chemistry data feeds dashboard insights
 - Training session attendance affects progress tracking
 - Chat activity influences team cohesion metrics
 
 ### **Profile Integration**
+
 - Individual chemistry ratings from profile
 - Position-specific chat room access
 - Team membership status
 
 ### **Training System**
+
 - Session coordination with training calendar
 - Position-specific drill recommendations
 - Team chemistry building activities
@@ -301,4 +316,4 @@ The Community page serves as the social hub of the FlagFit Pro Training App, pro
 - [ ] **Integration**: Social media sharing
 - [ ] **Analytics**: Team communication insights
 - [ ] **Mobile Push**: Real-time notifications
-- [ ] **Offline Mode**: Message queuing for connectivity 
+- [ ] **Offline Mode**: Message queuing for connectivity

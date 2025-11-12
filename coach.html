@@ -1,403 +1,805 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FlagFit Pro - Coach</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Roboto:wght@300;400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
     <!-- New Modular CSS Architecture -->
-    <link rel="stylesheet" href="./src/css/main.css">
+    <link rel="stylesheet" href="./src/css/main.css" />
     <script src="./src/theme-switcher.js"></script>
     <script src="./src/nav-highlight.js"></script>
+    <script src="./src/components/organisms/top-bar/top-bar.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-</head>
-<body>
+  </head>
+  <body>
     <!-- Mobile Menu Toggle -->
     <button class="mobile-menu-toggle" onclick="toggleSidebar()">
-        <span>☰</span>
+      <span>☰</span>
     </button>
-    
+
     <div class="dashboard-container">
-        <!-- Unified Sidebar Navigation -->
-        <div class="sidebar">
-            <div class="sidebar-logo" onclick="window.location.href='/dashboard.html'" title="FlagFit Pro">
-                <i data-lucide="activity" style="width: 20px; height: 20px; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
-            </div>
-            
-            <nav class="nav-section" aria-label="Dashboard navigation">
-                <a href="/dashboard.html" class="nav-item" aria-label="Dashboard Overview" id="nav-dashboard">
-                    <span class="nav-item-icon">
-                        <i data-lucide="layout-dashboard" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Overview</span>
-                </a>
-                <a href="/analytics.html" class="nav-item" aria-label="Analytics" id="nav-analytics">
-                    <span class="nav-item-icon">
-                        <i data-lucide="bar-chart-3" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Analytics</span>
-                </a>
-            </nav>
-            
-            <nav class="nav-section" aria-label="Team navigation">
-                <a href="/roster.html" class="nav-item" aria-label="Team Roster" id="nav-roster">
-                    <span class="nav-item-icon">
-                        <i data-lucide="users" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Roster</span>
-                </a>
-                <a href="/training.html" class="nav-item" aria-label="Training" id="nav-training">
-                    <span class="nav-item-icon">
-                        <i data-lucide="zap" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Training</span>
-                </a>
-                <a href="/tournaments.html" class="nav-item" aria-label="Tournaments" id="nav-tournaments">
-                    <span class="nav-item-icon">
-                        <i data-lucide="trophy" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Tournaments</span>
-                </a>
-            </nav>
-            
-            <nav class="nav-section" aria-label="Community navigation">
-                <a href="/community.html" class="nav-item" aria-label="Community" id="nav-community">
-                    <span class="nav-item-icon">
-                        <i data-lucide="message-circle" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Community</span>
-                </a>
-                <a href="/chat.html" class="nav-item" aria-label="Chat" id="nav-chat">
-                    <span class="nav-item-icon">
-                        <i data-lucide="message-square" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Chat</span>
-                </a>
-            </nav>
-            
-            <nav class="nav-section" aria-label="Personal navigation">
-                <a href="/settings.html" class="nav-item" aria-label="Settings" id="nav-settings">
-                    <span class="nav-item-icon">
-                        <i data-lucide="settings" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Settings</span>
-                </a>
-                <a href="/profile.html" class="nav-item" aria-label="Profile" id="nav-profile">
-                    <span class="nav-item-icon">
-                        <i data-lucide="user" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Profile</span>
-                </a>
-            </nav>
+      <!-- Unified Sidebar Navigation -->
+      <div class="sidebar">
+        <div
+          class="sidebar-logo"
+          onclick="window.location.href='/dashboard.html'"
+          title="FlagFit Pro"
+        >
+          <i
+            data-lucide="activity"
+            style="
+              width: 20px;
+              height: 20px;
+              color: var(--icon-color-primary);
+              stroke: var(--icon-color-primary);
+            "
+          ></i>
         </div>
 
-<main class="main-content">
-            <!-- Top Bar -->
-            <div class="top-bar">
-                <div class="welcome-section">
-                    <h1>Team Management Dashboard</h1>
-                    <p>Manage your team roster, track chemistry, and optimize Olympic readiness</p>
-                </div>
-                
-                <div class="top-actions">
-                    <div class="search-box">
-                        <span class="search-icon"><i data-lucide="search" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle; ; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span>
-                        <input type="text" class="search-input" placeholder="Search players, stats, reports...">
-                    </div>
-                    
-                    <div style="position: relative; margin-right: var(--space-4);">
-                        <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--gray-100); display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; transition: all var(--transition-fast);" 
-                             onmouseover="this.style.background='var(--gray-200)'" 
-                             onmouseout="this.style.background='var(--gray-100)'">
-                            <i data-lucide="bell" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
-                        </div>
-                        <div style="position: absolute; top: -2px; right: -2px; width: 16px; height: 16px; background: var(--error); color: var(--dark-text-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: var(--font-bold);">3</div>
-                    </div>
-                    
-                    <div class="user-menu">
-                        <div class="user-avatar" id="coachAvatar">CW</div>
-                        <div>
-                            <div style="font-size: var(--text-sm); font-weight: var(--font-medium); color: var(--dark-text-primary);" id="coachName">Coach Williams</div>
-                            <div style="font-size: var(--text-xs); color: var(--dark-text-muted);">Head Coach</div>
-                        </div>
-                    </div>
-                </div>
+        <nav class="nav-section" aria-label="Dashboard navigation">
+          <a
+            href="/dashboard.html"
+            class="nav-item"
+            aria-label="Dashboard Overview"
+            id="nav-dashboard"
+          >
+            <span class="nav-item-icon">
+              <i
+                data-lucide="layout-dashboard"
+                style="width: 24px; height: 24px"
+              ></i>
+            </span>
+            <span class="nav-item-label">Overview</span>
+          </a>
+          <a
+            href="/analytics.html"
+            class="nav-item"
+            aria-label="Analytics"
+            id="nav-analytics"
+          >
+            <span class="nav-item-icon">
+              <i
+                data-lucide="bar-chart-3"
+                style="width: 24px; height: 24px"
+              ></i>
+            </span>
+            <span class="nav-item-label">Analytics</span>
+          </a>
+        </nav>
+
+        <nav class="nav-section" aria-label="Team navigation">
+          <a
+            href="/roster.html"
+            class="nav-item"
+            aria-label="Team Roster"
+            id="nav-roster"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="users" style="width: 24px; height: 24px"></i>
+            </span>
+            <span class="nav-item-label">Roster</span>
+          </a>
+          <a
+            href="/training.html"
+            class="nav-item"
+            aria-label="Training"
+            id="nav-training"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="zap" style="width: 24px; height: 24px"></i>
+            </span>
+            <span class="nav-item-label">Training</span>
+          </a>
+          <a
+            href="/tournaments.html"
+            class="nav-item"
+            aria-label="Tournaments"
+            id="nav-tournaments"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="trophy" style="width: 24px; height: 24px"></i>
+            </span>
+            <span class="nav-item-label">Tournaments</span>
+          </a>
+        </nav>
+
+        <nav class="nav-section" aria-label="Community navigation">
+          <a
+            href="/community.html"
+            class="nav-item"
+            aria-label="Community"
+            id="nav-community"
+          >
+            <span class="nav-item-icon">
+              <i
+                data-lucide="message-circle"
+                style="width: 24px; height: 24px"
+              ></i>
+            </span>
+            <span class="nav-item-label">Community</span>
+          </a>
+          <a href="/chat.html" class="nav-item" aria-label="Chat" id="nav-chat">
+            <span class="nav-item-icon">
+              <i
+                data-lucide="message-square"
+                style="width: 24px; height: 24px"
+              ></i>
+            </span>
+            <span class="nav-item-label">Chat</span>
+          </a>
+        </nav>
+
+        <nav class="nav-section" aria-label="Personal navigation">
+          <a
+            href="/settings.html"
+            class="nav-item"
+            aria-label="Settings"
+            id="nav-settings"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="settings" style="width: 24px; height: 24px"></i>
+            </span>
+            <span class="nav-item-label">Settings</span>
+          </a>
+          <a
+            href="/profile.html"
+            class="nav-item"
+            aria-label="Profile"
+            id="nav-profile"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="user" style="width: 24px; height: 24px"></i>
+            </span>
+            <span class="nav-item-label">Profile</span>
+          </a>
+        </nav>
+      </div>
+
+      <main class="main-content">
+        <!-- Top Bar -->
+        <div class="top-bar" role="banner">
+          <div class="header-left">
+            <!-- Global Search (combobox pattern) -->
+            <div class="search-box">
+              <label for="global-search" class="sr-only"
+                >Search players, stats, reports</label
+              >
+              <span class="search-icon" aria-hidden="true">
+                <i data-lucide="search" class="icon-16"></i>
+              </span>
+
+              <input
+                id="global-search"
+                class="search-input"
+                type="text"
+                placeholder="Search players, stats, reports..."
+                role="combobox"
+                aria-autocomplete="list"
+                aria-haspopup="listbox"
+                aria-expanded="false"
+                aria-owns="search-results"
+                aria-controls="search-results"
+                aria-activedescendant=""
+                autocomplete="off"
+                inputmode="search"
+              />
+
+              <div id="search-status" class="sr-only" aria-live="polite"></div>
+
+              <div
+                id="search-results"
+                class="search-results"
+                role="listbox"
+                hidden
+              ></div>
             </div>
-            <!-- Team Overview Cards -->
+          </div>
+
+          <div class="header-right">
+            <!-- Notifications -->
+            <div class="header-icon-wrap">
+              <button
+                id="notification-bell"
+                class="header-icon"
+                type="button"
+                aria-label="Notifications"
+                aria-controls="notification-panel"
+                aria-expanded="false"
+              >
+                <i data-lucide="bell" class="icon-18"></i>
+                <span id="notification-badge" class="badge" hidden>3</span>
+              </button>
+              <span
+                id="notification-live"
+                class="sr-only"
+                aria-live="polite"
+              ></span>
+            </div>
+
+            <!-- Settings -->
+            <button class="header-icon" type="button" aria-label="Settings">
+              <i data-lucide="settings" class="icon-18"></i>
+            </button>
+
+            <!-- Theme Toggle -->
+            <div class="theme-toggle-container" aria-label="Theme toggle">
+              <!-- JS inserts switch; fallback below -->
+              <button
+                class="theme-toggle-fallback"
+                type="button"
+                data-theme-toggle
+                hidden
+              >
+                Theme
+              </button>
+            </div>
+
+            <!-- User Menu -->
+            <button
+              id="user-menu-button"
+              class="user-menu"
+              type="button"
+              aria-label="User menu"
+              aria-haspopup="menu"
+              aria-controls="user-menu"
+              aria-expanded="false"
+            >
+              <div class="user-avatar" id="user-avatar" aria-hidden="true">
+                CW
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Page Title Section (Hero) -->
+        <div
+          class="hero-section"
+          style="margin-bottom: var(--spacing-layout-md)"
+        >
+          <div class="hero-card">
+            <h1
+              class="hero-main-title"
+              style="margin-bottom: var(--primitive-space-8)"
+            >
+              Team Management Dashboard
+            </h1>
+            <p style="margin: 0; color: var(--color-text-secondary)">
+              Manage your team roster, track chemistry, and optimize Olympic
+              readiness
+            </p>
+          </div>
+        </div>
+        <!-- Team Overview Cards -->
         <div class="coach-overview">
-            <div class="overview-card">
-                <div class="card-header">
-                    <span class="card-title">Active Players</span>
-                    <div class="card-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--accent-green);"><i data-lucide="users" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></div>
-                </div>
-                <div class="card-metric" id="activePlayersCount">12</div>
-                <p class="card-description">Full roster strength</p>
-                <div class="card-trend positive">
-                    <span><i data-lucide="check-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span>
-                    <span id="availableToday">10/12 available today</span>
-                </div>
+          <div class="overview-card">
+            <div class="card-header">
+              <span class="card-title">Active Players</span>
+              <div
+                class="card-icon"
+                style="
+                  background: rgba(16, 185, 129, 0.1);
+                  color: var(--accent-green);
+                "
+              >
+                <i
+                  data-lucide="users"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    color: var(--icon-color-primary);
+                    stroke: var(--icon-color-primary);
+                  "
+                ></i>
+              </div>
             </div>
+            <div class="card-metric" id="activePlayersCount">12</div>
+            <p class="card-description">Full roster strength</p>
+            <div class="card-trend positive">
+              <span
+                ><i
+                  data-lucide="check-circle"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    color: var(--icon-color-primary);
+                    stroke: var(--icon-color-primary);
+                  "
+                ></i
+              ></span>
+              <span id="availableToday">10/12 available today</span>
+            </div>
+          </div>
 
-            <div class="overview-card">
-                <div class="card-header">
-                    <span class="card-title">Team Chemistry</span>
-                    <div class="card-icon" style="background: rgba(16, 201, 107, 0.1); color: var(--primary-solid);"><i data-lucide="users" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></div>
-                </div>
-                <div class="card-metric" id="teamChemistryScore">8.4<span style="font-size: var(--font-size-lg); color: var(--text-muted);">/10</span></div>
-                <p class="card-description">Overall cohesion rating</p>
-                <div class="card-trend positive">
-                    <span><i data-lucide="bar-chart-3" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span>
-                    <span>+0.3 this week</span>
-                </div>
+          <div class="overview-card">
+            <div class="card-header">
+              <span class="card-title">Team Chemistry</span>
+              <div
+                class="card-icon"
+                style="
+                  background: rgba(16, 201, 107, 0.1);
+                  color: var(--primary-solid);
+                "
+              >
+                <i
+                  data-lucide="users"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    color: var(--icon-color-primary);
+                    stroke: var(--icon-color-primary);
+                  "
+                ></i>
+              </div>
             </div>
+            <div class="card-metric" id="teamChemistryScore">
+              8.4<span
+                style="font-size: var(--font-size-lg); color: var(--text-muted)"
+                >/10</span
+              >
+            </div>
+            <p class="card-description">Overall cohesion rating</p>
+            <div class="card-trend positive">
+              <span
+                ><i
+                  data-lucide="bar-chart-3"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    color: var(--icon-color-primary);
+                    stroke: var(--icon-color-primary);
+                  "
+                ></i
+              ></span>
+              <span>+0.3 this week</span>
+            </div>
+          </div>
 
-            <div class="overview-card">
-                <div class="card-header">
-                    <span class="card-title">Olympic Readiness</span>
-                    <div class="card-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--warning-yellow);"><i data-lucide="trophy" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></div>
-                </div>
-                <div class="card-metric" id="olympicReadiness">78%</div>
-                <p class="card-description">LA28 preparation level</p>
-                <div class="card-trend positive">
-                    <span><i data-lucide="target" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span>
-                    <span>Target: 85% by Dec</span>
-                </div>
+          <div class="overview-card">
+            <div class="card-header">
+              <span class="card-title">Olympic Readiness</span>
+              <div
+                class="card-icon"
+                style="
+                  background: rgba(245, 158, 11, 0.1);
+                  color: var(--warning-yellow);
+                "
+              >
+                <i
+                  data-lucide="trophy"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    color: var(--icon-color-primary);
+                    stroke: var(--icon-color-primary);
+                  "
+                ></i>
+              </div>
             </div>
+            <div class="card-metric" id="olympicReadiness">78%</div>
+            <p class="card-description">LA28 preparation level</p>
+            <div class="card-trend positive">
+              <span
+                ><i
+                  data-lucide="target"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    color: var(--icon-color-primary);
+                    stroke: var(--icon-color-primary);
+                  "
+                ></i
+              ></span>
+              <span>Target: 85% by Dec</span>
+            </div>
+          </div>
 
-            <div class="overview-card">
-                <div class="card-header">
-                    <span class="card-title">World Ranking</span>
-                    <div class="card-icon" style="background: rgba(137, 195, 0, 0.1); color: var(--secondary-500);">🌍</div>
-                </div>
-                <div class="card-metric" id="worldRanking">#6</div>
-                <p class="card-description">Current global position</p>
-                <div class="card-trend positive">
-                    <span>⬆️</span>
-                    <span>Up from #8</span>
-                </div>
+          <div class="overview-card">
+            <div class="card-header">
+              <span class="card-title">World Ranking</span>
+              <div
+                class="card-icon"
+                style="
+                  background: rgba(137, 195, 0, 0.1);
+                  color: var(--secondary-500);
+                "
+              >
+                🌍
+              </div>
             </div>
+            <div class="card-metric" id="worldRanking">#6</div>
+            <p class="card-description">Current global position</p>
+            <div class="card-trend positive">
+              <span>⬆️</span>
+              <span>Up from #8</span>
+            </div>
+          </div>
         </div>
 
         <!-- Player Management Section -->
         <div class="team-section">
-            <div class="section-header">
-                <h2 class="section-title">
-                    <span><i data-lucide="users" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span>
-                    Player Roster Management
-                </h2>
-                <button class="btn btn-primary" onclick="addPlayer()">Add Player</button>
-            </div>
+          <div class="section-header">
+            <h2 class="section-title">
+              <span
+                ><i
+                  data-lucide="users"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    color: var(--icon-color-primary);
+                    stroke: var(--icon-color-primary);
+                  "
+                ></i
+              ></span>
+              Player Roster Management
+            </h2>
+            <button class="btn btn-primary" onclick="addPlayer()">
+              Add Player
+            </button>
+          </div>
 
-            <div class="players-grid" id="playersGrid">
-                <!-- Players will be dynamically loaded here -->
-            </div>
+          <div class="players-grid" id="playersGrid">
+            <!-- Players will be dynamically loaded here -->
+          </div>
         </div>
 
         <!-- Team Chemistry Analysis -->
         <div class="team-section chemistry-section">
-            <div class="section-header">
-                <h2 class="section-title">
-                    <span><i data-lucide="users" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span>
-                    Team Chemistry Management
-                </h2>
-                <button class="btn btn-primary" onclick="runAIAnalysis()">AI Analysis</button>
+          <div class="section-header">
+            <h2 class="section-title">
+              <span
+                ><i
+                  data-lucide="users"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    color: var(--icon-color-primary);
+                    stroke: var(--icon-color-primary);
+                  "
+                ></i
+              ></span>
+              Team Chemistry Management
+            </h2>
+            <button class="btn btn-primary" onclick="runAIAnalysis()">
+              AI Analysis
+            </button>
+          </div>
+
+          <div class="chemistry-grid">
+            <div class="chemistry-card">
+              <span class="chemistry-score">9.1/10</span>
+              <div class="chemistry-label">Communication</div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 91%"></div>
+              </div>
+              <div class="chemistry-trend">
+                <span
+                  ><i
+                    data-lucide="bar-chart-3"
+                    style="
+                      width: 16px;
+                      height: 16px;
+                      display: inline-block;
+                      vertical-align: middle;
+                      color: var(--icon-color-primary);
+                      stroke: var(--icon-color-primary);
+                    "
+                  ></i
+                ></span>
+                <span>Excellent</span>
+              </div>
             </div>
 
-            <div class="chemistry-grid">
-                <div class="chemistry-card">
-                    <span class="chemistry-score">9.1/10</span>
-                    <div class="chemistry-label">Communication</div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 91%"></div>
-                    </div>
-                    <div class="chemistry-trend">
-                        <span><i data-lucide="bar-chart-3" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span>
-                        <span>Excellent</span>
-                    </div>
-                </div>
-
-                <div class="chemistry-card">
-                    <span class="chemistry-score">8.7/10</span>
-                    <div class="chemistry-label">Trust</div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 87%"></div>
-                    </div>
-                    <div class="chemistry-trend">
-                        <span><i data-lucide="users" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span>
-                        <span>Strong</span>
-                    </div>
-                </div>
-
-                <div class="chemistry-card">
-                    <span class="chemistry-score">7.9/10</span>
-                    <div class="chemistry-label">Coordination</div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 79%"></div>
-                    </div>
-                    <div class="chemistry-trend">
-                        <span><i data-lucide="zap" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span>
-                        <span>Good</span>
-                    </div>
-                </div>
-
-                <div class="chemistry-card">
-                    <span class="chemistry-score">8.2/10</span>
-                    <div class="chemistry-label">Leadership</div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 82%"></div>
-                    </div>
-                    <div class="chemistry-trend">
-                        <span>👑</span>
-                        <span>Solid</span>
-                    </div>
-                </div>
+            <div class="chemistry-card">
+              <span class="chemistry-score">8.7/10</span>
+              <div class="chemistry-label">Trust</div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 87%"></div>
+              </div>
+              <div class="chemistry-trend">
+                <span
+                  ><i
+                    data-lucide="users"
+                    style="
+                      width: 16px;
+                      height: 16px;
+                      display: inline-block;
+                      vertical-align: middle;
+                      color: var(--icon-color-primary);
+                      stroke: var(--icon-color-primary);
+                    "
+                  ></i
+                ></span>
+                <span>Strong</span>
+              </div>
             </div>
 
-            <h4><i data-lucide="bot" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> AI Team Building Recommendations</h4>
-            <div class="feature-list">
-                <div class="feature-item">
-                    <span class="feature-icon"><i data-lucide="check-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span>
-                    <span>Team chemistry is healthy - no immediate intervention needed</span>
-                </div>
-                <div class="feature-item">
-                    <span class="feature-icon"><i data-lucide="lightbulb" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span>
-                    <span>Suggestion: Pair Marcus Johnson with newer players for mentorship</span>
-                </div>
-                <div class="feature-item">
-                    <span class="feature-icon"><i data-lucide="target" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span>
-                    <span>Focus area: Improve coordination through specialized drills</span>
-                </div>
-                <div class="feature-item">
-                    <span class="feature-icon"><i data-lucide="bar-chart-3" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span>
-                    <span>Next analysis: Scheduled for next Monday</span>
-                </div>
+            <div class="chemistry-card">
+              <span class="chemistry-score">7.9/10</span>
+              <div class="chemistry-label">Coordination</div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 79%"></div>
+              </div>
+              <div class="chemistry-trend">
+                <span
+                  ><i
+                    data-lucide="zap"
+                    style="
+                      width: 16px;
+                      height: 16px;
+                      display: inline-block;
+                      vertical-align: middle;
+                      color: var(--icon-color-primary);
+                      stroke: var(--icon-color-primary);
+                    "
+                  ></i
+                ></span>
+                <span>Good</span>
+              </div>
             </div>
+
+            <div class="chemistry-card">
+              <span class="chemistry-score">8.2/10</span>
+              <div class="chemistry-label">Leadership</div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 82%"></div>
+              </div>
+              <div class="chemistry-trend">
+                <span>👑</span>
+                <span>Solid</span>
+              </div>
             </div>
-        </main>
+          </div>
+
+          <h4>
+            <i
+              data-lucide="bot"
+              style="
+                width: 16px;
+                height: 16px;
+                display: inline-block;
+                vertical-align: middle;
+                color: var(--icon-color-primary);
+                stroke: var(--icon-color-primary);
+              "
+            ></i>
+            AI Team Building Recommendations
+          </h4>
+          <div class="feature-list">
+            <div class="feature-item">
+              <span class="feature-icon"
+                ><i
+                  data-lucide="check-circle"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    color: var(--icon-color-primary);
+                    stroke: var(--icon-color-primary);
+                  "
+                ></i
+              ></span>
+              <span
+                >Team chemistry is healthy - no immediate intervention
+                needed</span
+              >
+            </div>
+            <div class="feature-item">
+              <span class="feature-icon"
+                ><i
+                  data-lucide="lightbulb"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    color: var(--icon-color-primary);
+                    stroke: var(--icon-color-primary);
+                  "
+                ></i
+              ></span>
+              <span
+                >Suggestion: Pair Marcus Johnson with newer players for
+                mentorship</span
+              >
+            </div>
+            <div class="feature-item">
+              <span class="feature-icon"
+                ><i
+                  data-lucide="target"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    color: var(--icon-color-primary);
+                    stroke: var(--icon-color-primary);
+                  "
+                ></i
+              ></span>
+              <span
+                >Focus area: Improve coordination through specialized
+                drills</span
+              >
+            </div>
+            <div class="feature-item">
+              <span class="feature-icon"
+                ><i
+                  data-lucide="bar-chart-3"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    color: var(--icon-color-primary);
+                    stroke: var(--icon-color-primary);
+                  "
+                ></i
+              ></span>
+              <span>Next analysis: Scheduled for next Monday</span>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
 
     <script type="module">
-        import { authManager } from './src/auth-manager.js';
-        import { apiClient } from './src/api-config.js';
+      import { authManager } from "./src/auth-manager.js";
+      import { apiClient } from "./src/api-config.js";
 
-        // Sample player data
-        const playersData = [
-            {
-                id: 1,
-                name: "Marcus Johnson",
-                position: "Quarterback",
-                number: 12,
-                status: "active",
-                olympicScore: 92,
-                accuracy: "89%",
-                fortyYard: "4.45s",
-                games: 47
-            },
-            {
-                id: 2,
-                name: "Vince Machi",
-                position: "Wide Receiver",
-                number: 84,
-                status: "active",
-                olympicScore: 88,
-                accuracy: "94%",
-                fortyYard: "4.38s",
-                games: 44
-            },
-            {
-                id: 3,
-                name: "Sarah Thompson",
-                position: "Defensive Back",
-                number: 21,
-                status: "injured",
-                olympicScore: 85,
-                accuracy: "12",
-                fortyYard: "4.52s",
-                games: 39
-            },
-            {
-                id: 4,
-                name: "David Martinez",
-                position: "Linebacker",
-                number: 55,
-                status: "rest",
-                olympicScore: 83,
-                accuracy: "87",
-                fortyYard: "4.61s",
-                games: 41
-            },
-            {
-                id: 5,
-                name: "Emily Chen",
-                position: "Wide Receiver",
-                number: 18,
-                status: "active",
-                olympicScore: 90,
-                accuracy: "91%",
-                fortyYard: "4.41s",
-                games: 35
-            },
-            {
-                id: 6,
-                name: "Jason Williams",
-                position: "Running Back",
-                number: 28,
-                status: "active",
-                olympicScore: 86,
-                accuracy: "78%",
-                fortyYard: "4.35s",
-                games: 42
-            }
-        ];
+      // Sample player data
+      const playersData = [
+        {
+          id: 1,
+          name: "Marcus Johnson",
+          position: "Quarterback",
+          number: 12,
+          status: "active",
+          olympicScore: 92,
+          accuracy: "89%",
+          fortyYard: "4.45s",
+          games: 47,
+        },
+        {
+          id: 2,
+          name: "Vince Machi",
+          position: "Wide Receiver",
+          number: 84,
+          status: "active",
+          olympicScore: 88,
+          accuracy: "94%",
+          fortyYard: "4.38s",
+          games: 44,
+        },
+        {
+          id: 3,
+          name: "Sarah Thompson",
+          position: "Defensive Back",
+          number: 21,
+          status: "injured",
+          olympicScore: 85,
+          accuracy: "12",
+          fortyYard: "4.52s",
+          games: 39,
+        },
+        {
+          id: 4,
+          name: "David Martinez",
+          position: "Linebacker",
+          number: 55,
+          status: "rest",
+          olympicScore: 83,
+          accuracy: "87",
+          fortyYard: "4.61s",
+          games: 41,
+        },
+        {
+          id: 5,
+          name: "Emily Chen",
+          position: "Wide Receiver",
+          number: 18,
+          status: "active",
+          olympicScore: 90,
+          accuracy: "91%",
+          fortyYard: "4.41s",
+          games: 35,
+        },
+        {
+          id: 6,
+          name: "Jason Williams",
+          position: "Running Back",
+          number: 28,
+          status: "active",
+          olympicScore: 86,
+          accuracy: "78%",
+          fortyYard: "4.35s",
+          games: 42,
+        },
+      ];
 
-        async function initCoachDashboard() {
-            if (!authManager.isAuthenticated()) {
-                window.location.href = '/login.html';
-                return;
-            }
-
-            // Update coach profile
-            const user = authManager.getCurrentUser();
-            if (user) {
-                const initials = (user.name || user.email || 'CW').split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
-                document.getElementById('coachAvatar').textContent = initials;
-                document.getElementById('coachName').textContent = user.name || 'Coach ' + user.email?.split('@')[0] || 'Coach Williams';
-            }
-
-            loadPlayers();
-            updateTeamStats();
+      async function initCoachDashboard() {
+        if (!authManager.isAuthenticated()) {
+          window.location.href = "/login.html";
+          return;
         }
 
-        function loadPlayers() {
-            const playersGrid = document.getElementById('playersGrid');
-            playersGrid.innerHTML = playersData.map(player => createPlayerCard(player)).join('');
+        // Update coach profile
+        const user = authManager.getCurrentUser();
+        if (user) {
+          const initials = (user.name || user.email || "CW")
+            .split(" ")
+            .map((n) => n[0])
+            .join("")
+            .toUpperCase()
+            .slice(0, 2);
+          document.getElementById("coachAvatar").textContent = initials;
+          document.getElementById("coachName").textContent =
+            user.name ||
+            "Coach " + user.email?.split("@")[0] ||
+            "Coach Williams";
         }
 
-        function createPlayerCard(player) {
-            const initials = player.name.split(' ').map(n => n[0]).join('').toUpperCase();
-            const statusClass = `status-${player.status}`;
-            const statusText = player.status.charAt(0).toUpperCase() + player.status.slice(1);
-            
-            // Determine the second stat based on position
-            let secondStat = '';
-            let secondStatLabel = '';
-            if (player.position.includes('Quarterback')) {
-                secondStat = player.accuracy;
-                secondStatLabel = 'Accuracy';
-            } else if (player.position.includes('Receiver')) {
-                secondStat = player.accuracy;
-                secondStatLabel = 'Catch Rate';
-            } else if (player.position.includes('Defensive')) {
-                secondStat = player.accuracy;
-                secondStatLabel = 'Interceptions';
-            } else {
-                secondStat = player.accuracy;
-                secondStatLabel = 'Tackles';
-            }
+        loadPlayers();
+        updateTeamStats();
+      }
 
-            return `
+      function loadPlayers() {
+        const playersGrid = document.getElementById("playersGrid");
+        playersGrid.innerHTML = playersData
+          .map((player) => createPlayerCard(player))
+          .join("");
+      }
+
+      function createPlayerCard(player) {
+        const initials = player.name
+          .split(" ")
+          .map((n) => n[0])
+          .join("")
+          .toUpperCase();
+        const statusClass = `status-${player.status}`;
+        const statusText =
+          player.status.charAt(0).toUpperCase() + player.status.slice(1);
+
+        // Determine the second stat based on position
+        let secondStat = "";
+        let secondStatLabel = "";
+        if (player.position.includes("Quarterback")) {
+          secondStat = player.accuracy;
+          secondStatLabel = "Accuracy";
+        } else if (player.position.includes("Receiver")) {
+          secondStat = player.accuracy;
+          secondStatLabel = "Catch Rate";
+        } else if (player.position.includes("Defensive")) {
+          secondStat = player.accuracy;
+          secondStatLabel = "Interceptions";
+        } else {
+          secondStat = player.accuracy;
+          secondStatLabel = "Tackles";
+        }
+
+        return `
                 <div class="player-card">
                     <div class="player-header">
                         <div class="player-avatar">${initials}</div>
@@ -430,66 +832,76 @@
                     <div class="player-actions">
                         <button class="action-btn" onclick="viewPlayerProfile(${player.id})">View Profile</button>
                         <button class="action-btn" onclick="editPlayer(${player.id})">Edit</button>
-                        <button class="action-btn" onclick="viewPlayerStats(${player.id})">${player.status === 'injured' ? 'Injury Report' : 'Stats'}</button>
+                        <button class="action-btn" onclick="viewPlayerStats(${player.id})">${player.status === "injured" ? "Injury Report" : "Stats"}</button>
                     </div>
                 </div>
             `;
-        }
+      }
 
-        function updateTeamStats() {
-            const activeCount = playersData.filter(p => p.status === 'active').length;
-            const availableCount = playersData.filter(p => p.status === 'active' || p.status === 'rest').length;
-            
-            document.getElementById('activePlayersCount').textContent = playersData.length;
-            document.getElementById('availableToday').textContent = `${availableCount}/${playersData.length} available today`;
-        }
+      function updateTeamStats() {
+        const activeCount = playersData.filter(
+          (p) => p.status === "active",
+        ).length;
+        const availableCount = playersData.filter(
+          (p) => p.status === "active" || p.status === "rest",
+        ).length;
 
-        // Tab switching functionality
-        window.switchTab = function(tab) {
-            document.querySelectorAll('.coach-tab').forEach(t => t.classList.remove('active'));
-            document.querySelector(`[onclick="switchTab('${tab}')"]`).classList.add('active');
-            
-            // Here you would implement actual tab switching logic
-            console.log('Switched to tab:', tab);
-        }
+        document.getElementById("activePlayersCount").textContent =
+          playersData.length;
+        document.getElementById("availableToday").textContent =
+          `${availableCount}/${playersData.length} available today`;
+      }
 
-        // Player management functions
-        window.addPlayer = function() {
-            showPlayerModal('add');
-        }
+      // Tab switching functionality
+      window.switchTab = function (tab) {
+        document
+          .querySelectorAll(".coach-tab")
+          .forEach((t) => t.classList.remove("active"));
+        document
+          .querySelector(`[onclick="switchTab('${tab}')"]`)
+          .classList.add("active");
 
-        window.viewPlayerProfile = function(playerId) {
-            const player = playersData.find(p => p.id === playerId);
-            showPlayerModal('view', player);
-        }
+        // Here you would implement actual tab switching logic
+        console.log("Switched to tab:", tab);
+      };
 
-        window.editPlayer = function(playerId) {
-            const player = playersData.find(p => p.id === playerId);
-            showPlayerModal('edit', player);
-        }
+      // Player management functions
+      window.addPlayer = function () {
+        showPlayerModal("add");
+      };
 
-        window.viewPlayerStats = function(playerId) {
-            const player = playersData.find(p => p.id === playerId);
-            showPlayerStatsModal(player);
-        }
+      window.viewPlayerProfile = function (playerId) {
+        const player = playersData.find((p) => p.id === playerId);
+        showPlayerModal("view", player);
+      };
 
-        window.runAIAnalysis = function() {
-            showAIAnalysisModal();
-        }
+      window.editPlayer = function (playerId) {
+        const player = playersData.find((p) => p.id === playerId);
+        showPlayerModal("edit", player);
+      };
 
-        // Modal functions for player management
-        function showPlayerModal(mode, player = null) {
-            const modal = document.createElement('div');
-            modal.style.cssText = `
+      window.viewPlayerStats = function (playerId) {
+        const player = playersData.find((p) => p.id === playerId);
+        showPlayerStatsModal(player);
+      };
+
+      window.runAIAnalysis = function () {
+        showAIAnalysisModal();
+      };
+
+      // Modal functions for player management
+      function showPlayerModal(mode, player = null) {
+        const modal = document.createElement("div");
+        modal.style.cssText = `
                 position: fixed; top: 0; left: 0; width: 100%; height: 100%;
                 background: rgba(0,0,0,0.5); display: flex; align-items: center;
-                justify-content: center; z-index: 1000;
+                justify-content: center; z-index: var(--z-index-modal, 1400);
             `;
-            
-            let modalContent = '';
-            
-            if (mode === 'add') {
-                modalContent = `
+
+        let modalContent = "";
+
+        if (mode === "add") {
+          modalContent = `
                     <div class="card" style="max-width: 500px; width: 90%;">
                         <h3 class="text-primary">Add New Player</h3>
                         <form onsubmit="handleAddPlayer(event)">
@@ -519,8 +931,8 @@
                         </form>
                     </div>
                 `;
-            } else if (mode === 'view' && player) {
-                modalContent = `
+        } else if (mode === "view" && player) {
+          modalContent = `
                     <div style="background: var(--dark-text-primary); padding: 2rem; border-radius: 12px; max-width: 500px; width: 90%;">
                         <h3 style="margin-bottom: 1rem; color: var(--dark-text-primary);">${player.name} - Profile</h3>
                         <div style="margin-bottom: 1rem;">
@@ -540,27 +952,27 @@
                         </div>
                     </div>
                 `;
-            } else if (mode === 'edit' && player) {
-                modalContent = `
+        } else if (mode === "edit" && player) {
+          modalContent = `
                     <div style="background: var(--dark-text-primary); padding: 2rem; border-radius: 12px; max-width: 500px; width: 90%;">
                         <h3 style="margin-bottom: 1rem; color: var(--dark-text-primary);">Edit ${player.name}</h3>
                         <form onsubmit="handleEditPlayer(event, ${player.id})">
                             <div style="margin-bottom: 1rem;">
-                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Full Name</label>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: var(--font-weight-medium, 500);">Full Name</label>
                                 <input type="text" id="editPlayerName" value="${player.name}" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--dark-border); border-radius: 6px;">
                             </div>
                             <div style="margin-bottom: 1rem;">
-                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Position</label>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: var(--font-weight-medium, 500);">Position</label>
                                 <select id="editPlayerPosition" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--dark-border); border-radius: 6px;">
-                                    <option value="QB" ${player.position === 'QB' ? 'selected' : ''}>Quarterback</option>
-                                    <option value="WR" ${player.position === 'WR' ? 'selected' : ''}>Wide Receiver</option>
-                                    <option value="RB" ${player.position === 'RB' ? 'selected' : ''}>Running Back</option>
-                                    <option value="C" ${player.position === 'C' ? 'selected' : ''}>Center</option>
-                                    <option value="DE" ${player.position === 'DE' ? 'selected' : ''}>Defensive End</option>
+                                    <option value="QB" ${player.position === "QB" ? "selected" : ""}>Quarterback</option>
+                                    <option value="WR" ${player.position === "WR" ? "selected" : ""}>Wide Receiver</option>
+                                    <option value="RB" ${player.position === "RB" ? "selected" : ""}>Running Back</option>
+                                    <option value="C" ${player.position === "C" ? "selected" : ""}>Center</option>
+                                    <option value="DE" ${player.position === "DE" ? "selected" : ""}>Defensive End</option>
                                 </select>
                             </div>
                             <div style="margin-bottom: 1rem;">
-                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Jersey Number</label>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: var(--font-weight-medium, 500);">Jersey Number</label>
                                 <input type="number" id="editPlayerNumber" value="${player.number}" min="1" max="99" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--dark-border); border-radius: 6px;">
                             </div>
                             <div style="display: flex; gap: 1rem; justify-content: flex-end;">
@@ -570,21 +982,21 @@
                         </form>
                     </div>
                 `;
-            }
-            
-            modal.innerHTML = modalContent;
-            document.body.appendChild(modal);
         }
-        
-        function showPlayerStatsModal(player) {
-            const modal = document.createElement('div');
-            modal.style.cssText = `
+
+        modal.innerHTML = modalContent;
+        document.body.appendChild(modal);
+      }
+
+      function showPlayerStatsModal(player) {
+        const modal = document.createElement("div");
+        modal.style.cssText = `
                 position: fixed; top: 0; left: 0; width: 100%; height: 100%;
                 background: rgba(0,0,0,0.5); display: flex; align-items: center;
-                justify-content: center; z-index: 1000;
+                justify-content: center; z-index: var(--z-index-modal, 1400);
             `;
-            
-            modal.innerHTML = `
+
+        modal.innerHTML = `
                 <div style="background: var(--dark-text-primary); padding: 2rem; border-radius: 12px; max-width: 600px; width: 90%;">
                     <h3 style="margin-bottom: 1rem; color: var(--dark-text-primary);">${player.name} - Performance Stats</h3>
                     <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 2rem;">
@@ -614,19 +1026,19 @@
                     </div>
                 </div>
             `;
-            
-            document.body.appendChild(modal);
-        }
-        
-        function showAIAnalysisModal() {
-            const modal = document.createElement('div');
-            modal.style.cssText = `
+
+        document.body.appendChild(modal);
+      }
+
+      function showAIAnalysisModal() {
+        const modal = document.createElement("div");
+        modal.style.cssText = `
                 position: fixed; top: 0; left: 0; width: 100%; height: 100%;
                 background: rgba(0,0,0,0.5); display: flex; align-items: center;
-                justify-content: center; z-index: 1000;
+                justify-content: center; z-index: var(--z-index-modal, 1400);
             `;
-            
-            modal.innerHTML = `
+
+        modal.innerHTML = `
                 <div style="background: var(--dark-text-primary); padding: 2rem; border-radius: 12px; max-width: 700px; width: 90%;">
                     <h3 style="margin-bottom: 1rem; color: var(--dark-text-primary);"><i data-lucide="bot" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> AI Team Chemistry Analysis</h3>
                     <div style="margin-bottom: 1rem; padding: 1rem; background: var(--primary-50); border-radius: 8px; border-left: 4px solid var(--primary);">
@@ -655,83 +1067,91 @@
                     </div>
                 </div>
             `;
-            
-            document.body.appendChild(modal);
-        }
-        
-        // Form handlers for player management
-        window.handleAddPlayer = function(event) {
-            event.preventDefault();
-            const name = document.getElementById('playerName').value;
-            const position = document.getElementById('playerPosition').value;
-            const number = parseInt(document.getElementById('playerNumber').value);
-            
-            // Check if number is already taken
-            const numberTaken = playersData.some(p => p.number === number);
-            if (numberTaken) {
-                alert(`Jersey number ${number} is already taken. Please choose another number.`);
-                return;
-            }
-            
-            // Add player to data
-            const newPlayer = {
-                id: Date.now(),
-                name: name,
-                position: position,
-                number: number,
-                status: 'Active'
-            };
-            
-            playersData.push(newPlayer);
-            renderPlayersTable();
-            
-            // Close modal
-            event.target.closest('div').closest('div').remove();
-            
-            // Show success message
-            alert(`${name} has been added to the team successfully!`);
-        }
-        
-        window.handleEditPlayer = function(event, playerId) {
-            event.preventDefault();
-            const name = document.getElementById('editPlayerName').value;
-            const position = document.getElementById('editPlayerPosition').value;
-            const number = parseInt(document.getElementById('editPlayerNumber').value);
-            
-            // Check if number is already taken by another player
-            const numberTaken = playersData.some(p => p.number === number && p.id !== playerId);
-            if (numberTaken) {
-                alert(`Jersey number ${number} is already taken. Please choose another number.`);
-                return;
-            }
-            
-            // Update player data
-            const playerIndex = playersData.findIndex(p => p.id === playerId);
-            if (playerIndex !== -1) {
-                playersData[playerIndex] = {
-                    ...playersData[playerIndex],
-                    name: name,
-                    position: position,
-                    number: number
-                };
-            }
-            
-            renderPlayersTable();
-            
-            // Close modal
-            event.target.closest('div').closest('div').remove();
-            
-            // Show success message
-            alert(`${name}'s information has been updated successfully!`);
+
+        document.body.appendChild(modal);
+      }
+
+      // Form handlers for player management
+      window.handleAddPlayer = function (event) {
+        event.preventDefault();
+        const name = document.getElementById("playerName").value;
+        const position = document.getElementById("playerPosition").value;
+        const number = parseInt(document.getElementById("playerNumber").value);
+
+        // Check if number is already taken
+        const numberTaken = playersData.some((p) => p.number === number);
+        if (numberTaken) {
+          alert(
+            `Jersey number ${number} is already taken. Please choose another number.`,
+          );
+          return;
         }
 
-        // Mobile sidebar toggle
-        function toggleSidebar() {
-            const sidebar = document.querySelector('.sidebar');
-            sidebar.classList.toggle('open');
+        // Add player to data
+        const newPlayer = {
+          id: Date.now(),
+          name: name,
+          position: position,
+          number: number,
+          status: "Active",
+        };
+
+        playersData.push(newPlayer);
+        renderPlayersTable();
+
+        // Close modal
+        event.target.closest("div").closest("div").remove();
+
+        // Show success message
+        alert(`${name} has been added to the team successfully!`);
+      };
+
+      window.handleEditPlayer = function (event, playerId) {
+        event.preventDefault();
+        const name = document.getElementById("editPlayerName").value;
+        const position = document.getElementById("editPlayerPosition").value;
+        const number = parseInt(
+          document.getElementById("editPlayerNumber").value,
+        );
+
+        // Check if number is already taken by another player
+        const numberTaken = playersData.some(
+          (p) => p.number === number && p.id !== playerId,
+        );
+        if (numberTaken) {
+          alert(
+            `Jersey number ${number} is already taken. Please choose another number.`,
+          );
+          return;
         }
 
-        document.addEventListener('DOMContentLoaded', initCoachDashboard);
+        // Update player data
+        const playerIndex = playersData.findIndex((p) => p.id === playerId);
+        if (playerIndex !== -1) {
+          playersData[playerIndex] = {
+            ...playersData[playerIndex],
+            name: name,
+            position: position,
+            number: number,
+          };
+        }
+
+        renderPlayersTable();
+
+        // Close modal
+        event.target.closest("div").closest("div").remove();
+
+        // Show success message
+        alert(`${name}'s information has been updated successfully!`);
+      };
+
+      // Mobile sidebar toggle
+      function toggleSidebar() {
+        const sidebar = document.querySelector(".sidebar");
+        sidebar.classList.toggle("open");
+      }
+
+      document.addEventListener("DOMContentLoaded", initCoachDashboard);
     </script>
-</body>
+  </body>
 </html>

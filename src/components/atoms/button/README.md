@@ -27,28 +27,26 @@ Copy the HTML from `button.html` into your page. All buttons use the design syst
 
 ## States
 
-| State | Usage |
-|-------|-------|
-| Default | Normal interactive state |
-| Hover | Automatic via CSS |
-| Active | Automatic via CSS |
-| Disabled | Add `disabled` attribute |
-| Focus | Automatic focus-visible indicator |
+| State    | Usage                             |
+| -------- | --------------------------------- |
+| Default  | Normal interactive state          |
+| Hover    | Automatic via CSS                 |
+| Active   | Automatic via CSS                 |
+| Disabled | Add `disabled` attribute          |
+| Focus    | Automatic focus-visible indicator |
 
 ## HTML Structure
 
 ```html
-<button class="btn btn-primary btn-md">
-    Button Text
-</button>
+<button class="btn btn-primary btn-md">Button Text</button>
 ```
 
 ## With Icons
 
 ```html
 <button class="btn btn-primary btn-md">
-    <i data-lucide="icon-name" style="width: 18px; height: 18px;"></i>
-    Button Text
+  <i data-lucide="icon-name" style="width: 18px; height: 18px;"></i>
+  Button Text
 </button>
 ```
 
@@ -82,4 +80,3 @@ See `button-examples.html` for real-world usage examples.
 - Icon size should match button size context
 - Test focus states with keyboard (Tab key)
 - Ensure sufficient color contrast (WCAG AA)
-

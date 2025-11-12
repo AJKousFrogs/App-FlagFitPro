@@ -1,6 +1,7 @@
 # Mobile Dashboard Wireframes Documentation
 
 ## Page Overview
+
 Mobile-optimized dashboard layouts with card-based design, touch-friendly interactions, and gesture-based navigation for both player and coach views.
 
 ## **Mobile Player Dashboard**

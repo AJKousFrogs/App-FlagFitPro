@@ -12,15 +12,15 @@ Copy the HTML from `navigation-sidebar.html` into your page. The sidebar is typi
 
 ```html
 <nav class="sidebar" role="navigation" aria-label="Main navigation">
-    <div class="sidebar-header">
-        <!-- Logo and brand -->
-    </div>
-    <ul class="sidebar-nav">
-        <!-- Navigation links -->
-    </ul>
-    <div class="sidebar-footer">
-        <!-- User section -->
-    </div>
+  <div class="sidebar-header">
+    <!-- Logo and brand -->
+  </div>
+  <ul class="sidebar-nav">
+    <!-- Navigation links -->
+  </ul>
+  <div class="sidebar-footer">
+    <!-- User section -->
+  </div>
 </nav>
 ```
 
@@ -38,6 +38,7 @@ Copy the HTML from `navigation-sidebar.html` into your page. The sidebar is typi
 ## Navigation Links
 
 Each navigation link includes:
+
 - Icon (Lucide icon)
 - Text label
 - `aria-current="page"` for active link
@@ -53,6 +54,7 @@ Each navigation link includes:
 ## Responsive Behavior
 
 On mobile, the sidebar typically:
+
 - Collapses to icon-only mode
 - Can be toggled with a hamburger menu
 - Overlays content when open
@@ -63,4 +65,3 @@ On mobile, the sidebar typically:
 - Active link should be highlighted
 - Icons should be consistent size (20px)
 - Ensure sufficient contrast for readability
-

@@ -114,7 +114,8 @@
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
@@ -132,7 +133,8 @@
 }
 
 @keyframes bounce {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
@@ -141,7 +143,8 @@
 }
 
 @keyframes shake {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateX(0);
   }
   25% {
@@ -161,6 +164,38 @@
   }
 }
 
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(16, 201, 107, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(16, 201, 107, 0.5);
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
 /* ================================================================
    ANIMATION UTILITY CLASSES
    ================================================================ */
@@ -174,23 +209,28 @@
 }
 
 .u-animate-slide-in-up {
-  animation: slideInUp var(--motion-duration-normal) var(--motion-easing-entrance);
+  animation: slideInUp var(--motion-duration-normal)
+    var(--motion-easing-entrance);
 }
 
 .u-animate-slide-in-down {
-  animation: slideInDown var(--motion-duration-normal) var(--motion-easing-entrance);
+  animation: slideInDown var(--motion-duration-normal)
+    var(--motion-easing-entrance);
 }
 
 .u-animate-slide-in-left {
-  animation: slideInLeft var(--motion-duration-normal) var(--motion-easing-entrance);
+  animation: slideInLeft var(--motion-duration-normal)
+    var(--motion-easing-entrance);
 }
 
 .u-animate-slide-in-right {
-  animation: slideInRight var(--motion-duration-normal) var(--motion-easing-entrance);
+  animation: slideInRight var(--motion-duration-normal)
+    var(--motion-easing-entrance);
 }
 
 .u-animate-scale-in {
-  animation: scaleIn var(--motion-duration-normal) var(--motion-easing-expressive);
+  animation: scaleIn var(--motion-duration-normal)
+    var(--motion-easing-expressive);
 }
 
 .u-animate-pulse {
@@ -218,21 +258,25 @@
 }
 
 .u-transition-colors {
-  transition: color var(--motion-duration-fast) var(--motion-easing-productive),
-              background-color var(--motion-duration-fast) var(--motion-easing-productive),
-              border-color var(--motion-duration-fast) var(--motion-easing-productive);
+  transition:
+    color var(--motion-duration-fast) var(--motion-easing-productive),
+    background-color var(--motion-duration-fast) var(--motion-easing-productive),
+    border-color var(--motion-duration-fast) var(--motion-easing-productive);
 }
 
 .u-transition-opacity {
-  transition: opacity var(--motion-duration-fast) var(--motion-easing-productive);
+  transition: opacity var(--motion-duration-fast)
+    var(--motion-easing-productive);
 }
 
 .u-transition-transform {
-  transition: transform var(--motion-duration-normal) var(--motion-easing-productive);
+  transition: transform var(--motion-duration-normal)
+    var(--motion-easing-productive);
 }
 
 .u-transition-shadow {
-  transition: box-shadow var(--motion-duration-normal) var(--motion-easing-productive);
+  transition: box-shadow var(--motion-duration-normal)
+    var(--motion-easing-productive);
 }
 
 .u-transition-none {
@@ -288,6 +332,77 @@
 }
 
 /* ================================================================
+   MODERN ANIMATION UTILITIES
+   ================================================================ */
+
+.u-animate-fade-in-up {
+  animation: fadeInUp var(--transition-base) var(--motion-easing-entrance);
+}
+
+.u-animate-glow {
+  animation: glow 2s var(--motion-easing-expressive) infinite;
+}
+
+.u-animate-slide-in-right {
+  animation: slideInFromRight var(--transition-base)
+    var(--motion-easing-entrance);
+}
+
+/* Loading skeleton shimmer */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--surface-tertiary) 0%,
+    var(--surface-secondary) 50%,
+    var(--surface-tertiary) 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+  border-radius: var(--radius-component-md);
+}
+
+.skeleton-text {
+  height: 1em;
+  margin-bottom: var(--space-2);
+}
+
+.skeleton-title {
+  height: 1.5em;
+  width: 60%;
+  margin-bottom: var(--space-4);
+}
+
+.skeleton-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+}
+
+.skeleton-card {
+  height: 200px;
+  border-radius: var(--radius-component-xl);
+}
+
+/* Smooth transitions for modern components */
+.card,
+.btn,
+.badge {
+  transition: all var(--transition-base);
+}
+
+.card:hover {
+  transition: all var(--transition-base);
+}
+
+.btn:hover {
+  transition: all var(--transition-fast);
+}
+
+.badge:hover {
+  transition: all var(--transition-fast);
+}
+
+/* ================================================================
    REDUCED MOTION SUPPORT
    ================================================================ */
 
@@ -302,10 +417,13 @@
   .u-animate-pulse,
   .u-animate-spin,
   .u-animate-bounce,
-  .u-animate-shake {
+  .u-animate-shake,
+  .u-animate-fade-in-up,
+  .u-animate-glow,
+  .u-animate-slide-in-right {
     animation: none !important;
   }
-  
+
   .u-transition-all,
   .u-transition-colors,
   .u-transition-opacity,
@@ -313,5 +431,14 @@
   .u-transition-shadow {
     transition: none !important;
   }
-}
 
+  .skeleton {
+    animation: none !important;
+  }
+
+  .card,
+  .btn,
+  .badge {
+    transition: none !important;
+  }
+}

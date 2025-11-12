@@ -40,7 +40,8 @@ body {
    TYPOGRAPHY - HEADINGS
    ================================================================ */
 
-h1, .h1 {
+h1,
+.h1 {
   font-family: var(--primitive-font-display);
   font-size: var(--typography-display-md-size);
   font-weight: var(--typography-display-md-weight);
@@ -50,7 +51,8 @@ h1, .h1 {
   margin: 0 0 var(--spacing-component-lg) 0;
 }
 
-h2, .h2 {
+h2,
+.h2 {
   font-family: var(--primitive-font-display);
   font-size: var(--typography-heading-xl-size);
   font-weight: var(--typography-heading-xl-weight);
@@ -60,7 +62,8 @@ h2, .h2 {
   margin: 0 0 var(--spacing-component-lg) 0;
 }
 
-h3, .h3 {
+h3,
+.h3 {
   font-size: var(--typography-heading-lg-size);
   font-weight: var(--typography-heading-lg-weight);
   line-height: var(--typography-heading-lg-line-height);
@@ -69,7 +72,8 @@ h3, .h3 {
   margin: 0 0 var(--spacing-component-md) 0;
 }
 
-h4, .h4 {
+h4,
+.h4 {
   font-size: var(--typography-heading-md-size);
   font-weight: var(--typography-heading-md-weight);
   line-height: var(--typography-heading-md-line-height);
@@ -78,7 +82,8 @@ h4, .h4 {
   margin: 0 0 var(--spacing-component-md) 0;
 }
 
-h5, .h5 {
+h5,
+.h5 {
   font-size: var(--typography-heading-sm-size);
   font-weight: var(--typography-heading-sm-weight);
   line-height: var(--typography-heading-sm-line-height);
@@ -87,7 +92,8 @@ h5, .h5 {
   margin: 0 0 var(--spacing-component-sm) 0;
 }
 
-h6, .h6 {
+h6,
+.h6 {
   font-size: var(--typography-heading-xs-size);
   font-weight: var(--typography-heading-xs-weight);
   line-height: var(--typography-heading-xs-line-height);
@@ -118,7 +124,8 @@ p:last-child {
 a {
   color: var(--color-brand-primary);
   text-decoration: underline;
-  transition: color var(--motion-duration-normal) var(--motion-easing-productive);
+  transition: color var(--motion-duration-normal)
+    var(--motion-easing-productive);
 }
 
 a:hover {
@@ -139,7 +146,8 @@ a:visited {
    LISTS
    ================================================================ */
 
-ul, ol {
+ul,
+ol {
   margin: 0 0 var(--spacing-component-md) 0;
   padding-left: var(--spacing-component-lg);
 }
@@ -247,7 +255,7 @@ button:disabled {
     --color-border-secondary: var(--primitive-neutral-500);
     --color-border-focus: #0000ff;
   }
-  
+
   /* Ensure sufficient contrast */
   .btn,
   .card,
@@ -262,12 +270,12 @@ button:disabled {
   .card {
     forced-color-adjust: none;
   }
-  
+
   /* Ensure visibility in forced colors mode */
   * {
     border-color: ButtonBorder;
   }
-  
+
   .btn-primary {
     background-color: ButtonFace;
     color: ButtonText;
@@ -283,7 +291,8 @@ button:disabled {
 
 /* Remove focus outline for mouse users */
 :focus:not(:focus-visible) {
-  outline: none;
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
 }
 
 /* ARIA attribute styling */
@@ -302,7 +311,7 @@ button:disabled {
 }
 
 [aria-busy="true"]::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -366,4 +375,3 @@ button:disabled {
   clip: auto;
   white-space: normal;
 }
-

@@ -7,24 +7,29 @@ The Flag Football App includes a comprehensive health check system that monitors
 ## 📋 Health Check Types
 
 ### 1. **Service Health Check** (`health:check`)
+
 Monitors localhost services and port availability to prevent conflicts.
 
 **Features:**
+
 - Port availability checking (4000, 4001, 4002, 3000, 3001, etc.)
 - Service status monitoring (Vite, Database, MCP services)
 - Response time measurement
 - Port conflict detection
 
 **Usage:**
+
 ```bash
 npm run health:check          # Single check
 npm run health:monitor        # Continuous monitoring
 ```
 
 ### 2. **Database Health Check** (`db:health`)
+
 Validates Neon PostgreSQL connectivity, schema integrity, and performance.
 
 **Features:**
+
 - Database connectivity testing
 - Schema completeness validation
 - Data integrity checks
@@ -32,15 +37,18 @@ Validates Neon PostgreSQL connectivity, schema integrity, and performance.
 - Backup system verification
 
 **Usage:**
+
 ```bash
 npm run db:health             # Single check
 npm run db:health:monitor     # Continuous monitoring
 ```
 
 ### 3. **Application Performance Check** (`perf:check`)
+
 Monitors React app performance, bundle size, and runtime metrics.
 
 **Features:**
+
 - Build performance analysis
 - Bundle size monitoring
 - Runtime performance checks
@@ -48,15 +56,18 @@ Monitors React app performance, bundle size, and runtime metrics.
 - Dependency analysis
 
 **Usage:**
+
 ```bash
 npm run perf:check            # Single check
 npm run perf:monitor          # Continuous monitoring
 ```
 
 ### 4. **Comprehensive Health Check** (`health:comprehensive`)
+
 Integrates all health check systems into one unified monitoring solution.
 
 **Features:**
+
 - All-in-one health monitoring
 - Unified reporting
 - Critical issue detection
@@ -64,6 +75,7 @@ Integrates all health check systems into one unified monitoring solution.
 - JSON export capability
 
 **Usage:**
+
 ```bash
 npm run health:comprehensive          # Single comprehensive check
 npm run health:comprehensive:monitor  # Continuous comprehensive monitoring
@@ -73,6 +85,7 @@ npm run health:comprehensive:json     # JSON format output
 ## 🔧 Available Commands
 
 ### Quick Health Checks
+
 ```bash
 # Basic service health
 npm run health:check
@@ -88,6 +101,7 @@ npm run health:comprehensive
 ```
 
 ### Continuous Monitoring
+
 ```bash
 # Monitor services
 npm run health:monitor
@@ -103,6 +117,7 @@ npm run health:comprehensive:monitor
 ```
 
 ### Specialized Checks
+
 ```bash
 # Development environment check
 npm run doctor
@@ -117,6 +132,7 @@ npm run health:comprehensive:json
 ## 📊 Health Check Reports
 
 ### Service Health Report
+
 ```
 🔌 Service Health:
    Status: ✅ Healthy
@@ -126,6 +142,7 @@ npm run health:comprehensive:json
 ```
 
 ### Database Health Report
+
 ```
 🗄️ Database Health:
    Connection: ✅ Connected (45ms)
@@ -138,6 +155,7 @@ npm run health:comprehensive:json
 ```
 
 ### Performance Health Report
+
 ```
 ⚡ Performance Health:
    Build Size: 2.4 MB
@@ -147,6 +165,7 @@ npm run health:comprehensive:json
 ```
 
 ### Comprehensive Health Report
+
 ```
 🏥 COMPREHENSIVE HEALTH REPORT
 ==============================
@@ -168,18 +187,21 @@ npm run health:comprehensive:json
 The health check system automatically detects and reports critical issues:
 
 ### Database Issues
+
 - Connection failures
 - Missing required tables
 - Schema inconsistencies
 - Performance problems
 
 ### Service Issues
+
 - Port conflicts
 - Service unavailability
 - High response times
 - Resource exhaustion
 
 ### Performance Issues
+
 - Build failures
 - Large bundle sizes
 - Memory leaks
@@ -190,18 +212,21 @@ The health check system automatically detects and reports critical issues:
 The health check system provides actionable recommendations:
 
 ### Database Recommendations
+
 - Run migrations: `npm run db:migrate`
 - Seed data: `npm run db:seed`
 - Check connection string
 - Optimize queries
 
 ### Service Recommendations
+
 - Clear port conflicts
 - Restart services
 - Check firewall settings
 - Verify network connectivity
 
 ### Performance Recommendations
+
 - Optimize bundle size
 - Enable code splitting
 - Update dependencies
@@ -210,12 +235,14 @@ The health check system provides actionable recommendations:
 ## 🔄 Continuous Monitoring
 
 ### Monitoring Intervals
+
 - **Service Health**: 30 seconds
 - **Database Health**: 60 seconds
 - **Performance Health**: 5 minutes
 - **Comprehensive Health**: 2 minutes
 
 ### Monitoring Features
+
 - Real-time status updates
 - Trend analysis
 - Alert thresholds
@@ -224,6 +251,7 @@ The health check system provides actionable recommendations:
 ## 📈 Success Metrics
 
 ### Health Score Calculation
+
 ```
 Success Rate = (Passed Checks / Total Checks) × 100
 
@@ -235,6 +263,7 @@ Health Levels:
 ```
 
 ### Key Performance Indicators
+
 - **Database Response Time**: <100ms
 - **Build Time**: <2 minutes
 - **Bundle Size**: <5MB
@@ -246,6 +275,7 @@ Health Levels:
 ### Common Issues
 
 #### Database Connection Failed
+
 ```bash
 # Check environment variables
 npm run env:validate
@@ -258,6 +288,7 @@ echo $DATABASE_URL
 ```
 
 #### Port Conflicts
+
 ```bash
 # Check port usage
 npm run port:info
@@ -270,6 +301,7 @@ npm run port:release-all
 ```
 
 #### Build Performance Issues
+
 ```bash
 # Clear build cache
 npm run clean:cache
@@ -282,6 +314,7 @@ npm run perf:check
 ```
 
 ### Debug Commands
+
 ```bash
 # Full environment check
 npm run doctor
@@ -296,6 +329,7 @@ npm run troubleshoot
 ## 🔧 Integration with CI/CD
 
 ### Automated Health Checks
+
 ```yaml
 # Example GitHub Actions workflow
 - name: Health Check
@@ -306,9 +340,10 @@ npm run troubleshoot
 ```
 
 ### Health Check API
+
 ```javascript
 // Programmatic health check
-import ComprehensiveHealthChecker from './scripts/comprehensive-health-check.js';
+import ComprehensiveHealthChecker from "./scripts/comprehensive-health-check.js";
 
 const checker = new ComprehensiveHealthChecker();
 const results = await checker.runAllChecks();
@@ -318,18 +353,21 @@ console.log(results.getOverallStatus());
 ## 📚 Best Practices
 
 ### Development Workflow
+
 1. **Before Development**: Run `npm run health:check`
 2. **During Development**: Use `npm run health:monitor`
 3. **Before Committing**: Run `npm run health:comprehensive`
 4. **Before Deploying**: Run `npm run pre-flight`
 
 ### Production Monitoring
+
 1. **Regular Checks**: Schedule comprehensive health checks
 2. **Alerting**: Set up alerts for critical issues
 3. **Logging**: Monitor health check logs
 4. **Trends**: Track health metrics over time
 
 ### Performance Optimization
+
 1. **Bundle Analysis**: Regular bundle size monitoring
 2. **Memory Profiling**: Track memory usage patterns
 3. **Database Optimization**: Monitor query performance
@@ -338,18 +376,21 @@ console.log(results.getOverallStatus());
 ## 🎯 Health Check Checklist
 
 ### Daily Development
+
 - [ ] Run `npm run health:check` before starting
 - [ ] Monitor `npm run health:monitor` during development
 - [ ] Check `npm run perf:check` for performance issues
 - [ ] Verify `npm run db:health` for database status
 
 ### Weekly Maintenance
+
 - [ ] Run `npm run health:comprehensive` for full assessment
 - [ ] Review health check logs and trends
 - [ ] Update dependencies if needed
 - [ ] Optimize performance based on metrics
 
 ### Monthly Review
+
 - [ ] Analyze health check trends
 - [ ] Review and update health check thresholds
 - [ ] Optimize monitoring intervals
@@ -368,4 +409,4 @@ For health check issues or questions:
 
 **Last Updated**: December 2024  
 **Version**: 1.0  
-**Maintained By**: Development Team 
+**Maintained By**: Development Team

@@ -12,24 +12,24 @@ Copy the HTML from `roster-table.html` into your page. The table displays athlet
 
 ```html
 <div class="roster-table-card card">
-    <div class="card-header">
-        <h3>Table Title</h3>
-        <div class="table-actions">
-            <!-- Action buttons -->
-        </div>
+  <div class="card-header">
+    <h3>Table Title</h3>
+    <div class="table-actions">
+      <!-- Action buttons -->
     </div>
-    <div class="card-body">
-        <div class="table-wrapper">
-            <table class="roster-table">
-                <!-- Table content -->
-            </table>
-        </div>
+  </div>
+  <div class="card-body">
+    <div class="table-wrapper">
+      <table class="roster-table">
+        <!-- Table content -->
+      </table>
     </div>
-    <div class="card-footer">
-        <div class="table-pagination">
-            <!-- Pagination controls -->
-        </div>
+  </div>
+  <div class="card-footer">
+    <div class="table-pagination">
+      <!-- Pagination controls -->
     </div>
+  </div>
 </div>
 ```
 
@@ -62,6 +62,7 @@ Copy the HTML from `roster-table.html` into your page. The table displays athlet
 ## Responsive Behavior
 
 On mobile:
+
 - Table may scroll horizontally
 - Columns may stack
 - Actions may move to overflow menu
@@ -74,4 +75,3 @@ On mobile:
 - Avatar images should have alt text
 - Consider adding search/filter functionality
 - Ensure sufficient contrast for readability
-

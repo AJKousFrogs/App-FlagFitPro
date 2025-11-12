@@ -26,13 +26,17 @@
   padding: var(--primitive-space-12) var(--primitive-space-16);
   border: 1.5px solid var(--color-border-primary);
   border-radius: var(--radius-component-xl);
-  background: linear-gradient(135deg, var(--surface-primary) 0%, var(--surface-secondary) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--surface-primary) 0%,
+    var(--surface-secondary) 100%
+  );
   color: var(--color-text-on-surface);
   font-size: var(--typography-body-md-size);
   line-height: var(--typography-body-md-line-height);
   transition: all var(--motion-duration-normal) var(--motion-easing-productive);
   min-height: 48px;
-  box-shadow: 
+  box-shadow:
     0 4px 12px rgba(0, 0, 0, 0.12),
     0 2px 6px rgba(0, 0, 0, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.9);
@@ -41,7 +45,7 @@
 
 .form-input:hover:not(:disabled):not(:focus) {
   border-color: var(--color-border-strong);
-  box-shadow: 
+  box-shadow:
     0 6px 16px rgba(0, 0, 0, 0.15),
     0 3px 8px rgba(0, 0, 0, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 1);
@@ -49,10 +53,11 @@
 }
 
 .form-input:focus {
-  outline: none;
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
   border-color: var(--color-border-focus);
   background: var(--surface-primary);
-  box-shadow: 
+  box-shadow:
     0 0 0 3px var(--color-brand-primary-light),
     0 6px 16px rgba(16, 201, 107, 0.2),
     0 3px 8px rgba(16, 201, 107, 0.15),
@@ -104,4 +109,3 @@
   line-height: var(--typography-body-sm-line-height);
   color: var(--color-status-error);
 }
-

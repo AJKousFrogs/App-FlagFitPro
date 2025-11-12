@@ -1,10 +1,11 @@
 // Netlify Function: Training Statistics
 // Returns user training data and progress using Supabase
 
-const jwt = require('jsonwebtoken');
-const { db, checkEnvVars } = require('./supabase-client.cjs');
+const jwt = require("jsonwebtoken");
+const { db, checkEnvVars } = require("./supabase-client.cjs");
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production';
+const JWT_SECRET =
+  process.env.JWT_SECRET || "your-super-secret-jwt-key-change-in-production";
 
 // Get real training data from Supabase database
 const getTrainingStats = async (userId) => {
@@ -12,90 +13,121 @@ const getTrainingStats = async (userId) => {
     // Get all training sessions for user
     const trainingSessions = await db.training.getUserStats(userId);
     const recentSessions = await db.training.getRecentSessions(userId, 4);
-    
+
     // Calculate statistics from real data
     const totalSessions = trainingSessions.length;
-    const totalHours = trainingSessions.reduce((sum, session) => sum + (session.duration || 0), 0) / 60;
-    const averageScore = totalSessions > 0 ? 
-      Math.round(trainingSessions.reduce((sum, session) => sum + (session.score || 0), 0) / totalSessions) : 0;
-    
+    const totalHours =
+      trainingSessions.reduce(
+        (sum, session) => sum + (session.duration || 0),
+        0,
+      ) / 60;
+    const averageScore =
+      totalSessions > 0
+        ? Math.round(
+            trainingSessions.reduce(
+              (sum, session) => sum + (session.score || 0),
+              0,
+            ) / totalSessions,
+          )
+        : 0;
+
     // Calculate weekly hours
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-    const thisWeekSessions = trainingSessions.filter(session => 
-      new Date(session.completed_at) >= oneWeekAgo
+    const thisWeekSessions = trainingSessions.filter(
+      (session) => new Date(session.completed_at) >= oneWeekAgo,
     );
-    const weeklyHours = Math.round(thisWeekSessions.reduce((sum, session) => sum + (session.duration || 0), 0) / 60);
-    
+    const weeklyHours = Math.round(
+      thisWeekSessions.reduce(
+        (sum, session) => sum + (session.duration || 0),
+        0,
+      ) / 60,
+    );
+
     // Calculate current streak (consecutive days with training)
     let currentStreak = 0;
     const today = new Date();
     for (let i = 0; i < 30; i++) {
       const checkDate = new Date(today);
       checkDate.setDate(today.getDate() - i);
-      const dateStr = checkDate.toISOString().split('T')[0];
-      
-      const hasSessionOnDate = trainingSessions.some(session => 
-        session.completed_at && session.completed_at.split('T')[0] === dateStr
+      const dateStr = checkDate.toISOString().split("T")[0];
+
+      const hasSessionOnDate = trainingSessions.some(
+        (session) =>
+          session.completed_at &&
+          session.completed_at.split("T")[0] === dateStr,
       );
-      
+
       if (hasSessionOnDate) {
         currentStreak++;
-      } else if (i > 0) { // Don't break streak on first day (today) if no session yet
+      } else if (i > 0) {
+        // Don't break streak on first day (today) if no session yet
         break;
       }
     }
-    
+
     // Format recent sessions
-    const formattedRecentSessions = recentSessions.map(session => ({
+    const formattedRecentSessions = recentSessions.map((session) => ({
       id: session.id,
       name: formatWorkoutName(session.workout_type),
       duration: `${session.duration || 30} minutes`,
       timeAgo: getTimeAgo(new Date(session.completed_at)),
       score: session.score || 80,
-      type: session.workout_type
+      type: session.workout_type,
     }));
-    
+
     // Generate progress data for last 7 days
     const last7Days = Array.from({ length: 7 }, (_, i) => {
       const date = new Date();
       date.setDate(date.getDate() - (6 - i));
-      return date.toISOString().split('T')[0];
+      return date.toISOString().split("T")[0];
     });
-    
-    const progressValues = last7Days.map(date => {
-      const sessionsOnDate = trainingSessions.filter(session => 
-        session.completed_at && session.completed_at.split('T')[0] === date
+
+    const progressValues = last7Days.map((date) => {
+      const sessionsOnDate = trainingSessions.filter(
+        (session) =>
+          session.completed_at && session.completed_at.split("T")[0] === date,
       );
-      return sessionsOnDate.length > 0 ? 
-        Math.round(sessionsOnDate.reduce((sum, s) => sum + (s.score || 75), 0) / sessionsOnDate.length) : 
-        0;
+      return sessionsOnDate.length > 0
+        ? Math.round(
+            sessionsOnDate.reduce((sum, s) => sum + (s.score || 75), 0) /
+              sessionsOnDate.length,
+          )
+        : 0;
     });
-    
+
     // Group sessions by workout type
     const workoutTypes = {};
-    ['speed', 'strength', 'agility', 'endurance'].forEach(type => {
-      const typeSessions = trainingSessions.filter(session => session.workout_type === type);
+    ["speed", "strength", "agility", "endurance"].forEach((type) => {
+      const typeSessions = trainingSessions.filter(
+        (session) => session.workout_type === type,
+      );
       workoutTypes[type] = {
         completed: typeSessions.length,
-        totalTime: typeSessions.reduce((sum, session) => sum + (session.duration || 0), 0)
+        totalTime: typeSessions.reduce(
+          (sum, session) => sum + (session.duration || 0),
+          0,
+        ),
       };
     });
-    
+
     return {
       weeklyHours: weeklyHours || 0,
       totalSessions: totalSessions,
       averageScore: averageScore || 0,
       currentStreak: currentStreak,
-      recentSessions: formattedRecentSessions.length > 0 ? formattedRecentSessions : getFallbackSessions(),
+      recentSessions:
+        formattedRecentSessions.length > 0
+          ? formattedRecentSessions
+          : getFallbackSessions(),
       progressData: {
-        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-        values: progressValues
+        labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+        values: progressValues,
       },
-      workoutTypes: workoutTypes
+      workoutTypes: workoutTypes,
     };
   } catch (error) {
-    console.error('Database error in getTrainingStats:', error);
+    console.error("Database error in getTrainingStats:", error);
     return getFallbackTrainingStats();
   }
 };
@@ -109,46 +141,49 @@ const getFallbackTrainingStats = () => {
     currentStreak: 5,
     recentSessions: getFallbackSessions(),
     progressData: {
-      labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-      values: [88, 85, 92, 78, 90, 87, 95]
+      labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+      values: [88, 85, 92, 78, 90, 87, 95],
     },
     workoutTypes: {
       speed: { completed: 8, totalTime: 360 },
       strength: { completed: 6, totalTime: 420 },
       agility: { completed: 10, totalTime: 300 },
-      endurance: { completed: 4, totalTime: 240 }
-    }
+      endurance: { completed: 4, totalTime: 240 },
+    },
   };
 };
 
 const getFallbackSessions = () => [
   {
-    id: '1',
-    name: 'Speed Training',
-    duration: '45 minutes',
-    timeAgo: '2 hours ago',
+    id: "1",
+    name: "Speed Training",
+    duration: "45 minutes",
+    timeAgo: "2 hours ago",
     score: 88,
-    type: 'speed'
+    type: "speed",
   },
   {
-    id: '2',
-    name: 'Agility Drills',
-    duration: '30 minutes',
-    timeAgo: 'Yesterday',
+    id: "2",
+    name: "Agility Drills",
+    duration: "30 minutes",
+    timeAgo: "Yesterday",
     score: 85,
-    type: 'agility'
-  }
+    type: "agility",
+  },
 ];
 
 // Helper functions
 const formatWorkoutName = (workoutType) => {
   const names = {
-    speed: 'Speed Training',
-    strength: 'Strength Circuit',
-    agility: 'Agility Drills',
-    endurance: 'Endurance Training'
+    speed: "Speed Training",
+    strength: "Strength Circuit",
+    agility: "Agility Drills",
+    endurance: "Endurance Training",
   };
-  return names[workoutType] || workoutType.charAt(0).toUpperCase() + workoutType.slice(1) + ' Training';
+  return (
+    names[workoutType] ||
+    workoutType.charAt(0).toUpperCase() + workoutType.slice(1) + " Training"
+  );
 };
 
 const getTimeAgo = (date) => {
@@ -156,62 +191,63 @@ const getTimeAgo = (date) => {
   const diffMs = now - date;
   const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
   const diffDays = Math.floor(diffHours / 24);
-  
-  if (diffHours < 1) return 'Just now';
-  if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
-  if (diffDays === 1) return 'Yesterday';
-  if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
-  return `${Math.floor(diffDays / 7)} week${Math.floor(diffDays / 7) > 1 ? 's' : ''} ago`;
+
+  if (diffHours < 1) return "Just now";
+  if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
+  if (diffDays === 1) return "Yesterday";
+  if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
+  return `${Math.floor(diffDays / 7)} week${Math.floor(diffDays / 7) > 1 ? "s" : ""} ago`;
 };
 
 exports.handler = async (event, context) => {
   // Handle CORS preflight
-  if (event.httpMethod === 'OPTIONS') {
+  if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
       headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
-      }
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+      },
     };
   }
 
   try {
     // Get authorization header
-    const authHeader = event.headers.authorization || event.headers.Authorization;
-    
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    const authHeader =
+      event.headers.authorization || event.headers.Authorization;
+
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return {
         statusCode: 401,
         headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Content-Type': 'application/json'
+          "Access-Control-Allow-Origin": "*",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           success: false,
-          error: 'No token provided'
-        })
+          error: "No token provided",
+        }),
       };
     }
 
     // Extract and verify token
     const token = authHeader.substring(7);
     let decoded;
-    
+
     try {
       decoded = jwt.verify(token, JWT_SECRET);
     } catch (jwtError) {
       return {
         statusCode: 401,
         headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Content-Type': 'application/json'
+          "Access-Control-Allow-Origin": "*",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           success: false,
-          error: 'Invalid or expired token'
-        })
+          error: "Invalid or expired token",
+        }),
       };
     }
 
@@ -219,24 +255,24 @@ exports.handler = async (event, context) => {
     checkEnvVars();
 
     // Handle GET request - return training stats
-    if (event.httpMethod === 'GET') {
+    if (event.httpMethod === "GET") {
       const trainingStats = await getTrainingStats(decoded.userId);
 
       return {
         statusCode: 200,
         headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Content-Type': 'application/json'
+          "Access-Control-Allow-Origin": "*",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           success: true,
-          data: trainingStats
-        })
+          data: trainingStats,
+        }),
       };
     }
 
     // Handle POST request - complete training session
-    if (event.httpMethod === 'POST') {
+    if (event.httpMethod === "POST") {
       const { workoutType, duration, score } = JSON.parse(event.body);
 
       // Validate input
@@ -244,13 +280,13 @@ exports.handler = async (event, context) => {
         return {
           statusCode: 400,
           headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Content-Type': 'application/json'
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             success: false,
-            error: 'Workout type and duration are required'
-          })
+            error: "Workout type and duration are required",
+          }),
         };
       }
 
@@ -259,20 +295,20 @@ exports.handler = async (event, context) => {
         user_id: decoded.userId,
         workout_type: workoutType,
         duration: parseInt(duration),
-        score: score || Math.floor(Math.random() * 20) + 80
+        score: score || Math.floor(Math.random() * 20) + 80,
       });
 
       return {
         statusCode: 201,
         headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Content-Type': 'application/json'
+          "Access-Control-Allow-Origin": "*",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           success: true,
           data: sessionData,
-          message: 'Training session completed successfully'
-        })
+          message: "Training session completed successfully",
+        }),
       };
     }
 
@@ -280,28 +316,27 @@ exports.handler = async (event, context) => {
     return {
       statusCode: 405,
       headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'application/json'
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         success: false,
-        error: 'Method not allowed'
-      })
+        error: "Method not allowed",
+      }),
     };
-
   } catch (error) {
-    console.error('Training stats error:', error);
-    
+    console.error("Training stats error:", error);
+
     return {
       statusCode: 500,
       headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'application/json'
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         success: false,
-        error: 'Internal server error'
-      })
+        error: "Internal server error",
+      }),
     };
   }
 };

@@ -1,6 +1,7 @@
 # Mobile Sliders & Gesture Controls Wireframes
 
 ## Page Overview
+
 Comprehensive mobile slider interfaces, gesture controls, and touch interactions for training parameters, timer adjustments, performance metrics, and nutrition tracking.
 
 ## **Slider Control Interfaces**

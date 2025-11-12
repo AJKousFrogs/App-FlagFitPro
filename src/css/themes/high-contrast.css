@@ -15,10 +15,10 @@ html[data-theme="high-contrast"] {
   --color-border-primary: #000000;
   --color-border-secondary: #333333;
   --color-border-strong: #000000;
-  
+
   /* Stronger focus indicators */
   --color-border-focus: #0000ff;
-  
+
   /* Higher contrast for status colors */
   --color-status-success: #006600;
   --color-status-error: #cc0000;
@@ -34,4 +34,3 @@ html[data-theme="high-contrast"] {
     --color-border-focus: #0000ff;
   }
 }
-

@@ -10,37 +10,37 @@ Copy the HTML from `input.html` into your page. Always pair with a `<label>` ele
 
 ## States
 
-| State | Class | Usage |
-|-------|-------|-------|
-| Default | (none) | Normal input state |
-| Error | `.error` | Validation error (red border) |
-| Success | `.success` | Valid input (green border) |
-| Disabled | `disabled` attribute | Non-interactive state |
-| Focus | (automatic) | Keyboard/mouse interaction |
+| State    | Class                | Usage                         |
+| -------- | -------------------- | ----------------------------- |
+| Default  | (none)               | Normal input state            |
+| Error    | `.error`             | Validation error (red border) |
+| Success  | `.success`           | Valid input (green border)    |
+| Disabled | `disabled` attribute | Non-interactive state         |
+| Focus    | (automatic)          | Keyboard/mouse interaction    |
 
 ## HTML Structure
 
 ```html
-<input 
-    type="text" 
-    id="input-id" 
-    name="input-name"
-    class="form-input"
-    placeholder="Enter text..."
->
+<input
+  type="text"
+  id="input-id"
+  name="input-name"
+  class="form-input"
+  placeholder="Enter text..."
+/>
 ```
 
 ## With Label (Required)
 
 ```html
 <label for="input-id" class="form-label">Label Text</label>
-<input 
-    type="text" 
-    id="input-id" 
-    name="input-name"
-    class="form-input"
-    placeholder="Enter text..."
->
+<input
+  type="text"
+  id="input-id"
+  name="input-name"
+  class="form-input"
+  placeholder="Enter text..."
+/>
 ```
 
 ## CSS Classes
@@ -52,6 +52,7 @@ Copy the HTML from `input.html` into your page. Always pair with a `<label>` ele
 ## Input Types
 
 All standard HTML5 input types are supported:
+
 - `text` - Text input
 - `email` - Email address
 - `password` - Password (masked)
@@ -73,16 +74,16 @@ All standard HTML5 input types are supported:
 
 ```html
 <div class="form-group">
-    <label for="password" class="form-label">Password</label>
-    <input 
-        type="password" 
-        id="password" 
-        name="password"
-        class="form-input error"
-    >
-    <div class="form-error" role="alert">
-        Password must be at least 8 characters
-    </div>
+  <label for="password" class="form-label">Password</label>
+  <input
+    type="password"
+    id="password"
+    name="password"
+    class="form-input error"
+  />
+  <div class="form-error" role="alert">
+    Password must be at least 8 characters
+  </div>
 </div>
 ```
 
@@ -93,4 +94,3 @@ All standard HTML5 input types are supported:
 - Test focus states with keyboard (Tab key)
 - Test on mobile to ensure 16px font size is honored
 - Use appropriate `type` attribute for better mobile keyboards
-

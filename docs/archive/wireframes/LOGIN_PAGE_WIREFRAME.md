@@ -3,9 +3,11 @@
 ## Status: 🚧 UPDATING FOR COMPREHENSIVE DASHBOARD
 
 ## Page Overview
+
 The login page provides secure authentication for both players and coaches, with enhanced UX features including password recovery, social login options, biometric authentication, and sponsor logo visibility.
 
 ## Layout Structure
+
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │ [Logo] MERLINS PLAYBOOK [Theme Toggle] [Avatar Menu]                        │
@@ -81,12 +83,14 @@ The login page provides secure authentication for both players and coaches, with
 ## Key Updates Made
 
 ### Critical Missing Elements Addressed
+
 1. **Password Recovery System**: Added "Forgot Password?" link prominently below password field
 2. **Enhanced Authentication Options**: Added social login (Google, Apple, Facebook) and biometric authentication
 3. **Password Visibility Toggle**: Added eye icon to show/hide password
 4. **Password Strength Indicator**: Real-time password strength visualization
 
 ### UX Improvements Implemented
+
 1. **Personalized Welcome Message**: Dynamic greeting based on user role and team
 2. **Role Auto-Detection**: Smart detection of user role with manual override option
 3. **Quick Stats Preview**: Shows relevant user data without requiring full login
@@ -95,6 +99,7 @@ The login page provides secure authentication for both players and coaches, with
 6. **Biometric Authentication**: Touch ID/Face ID for mobile users
 
 ### Enhanced Security Features
+
 1. **Password Strength Validation**: Real-time feedback on password security
 2. **Multi-Factor Authentication Ready**: Framework for future 2FA implementation
 3. **Session Management**: Secure remember me functionality
@@ -103,6 +108,7 @@ The login page provides secure authentication for both players and coaches, with
 ## Technical Implementation Notes
 
 ### Authentication Flow
+
 ```javascript
 // Enhanced login flow with multiple authentication methods
 const loginMethods = {
@@ -120,11 +126,12 @@ const loginMethods = {
     // Biometric authentication
     const user = await authService.biometricLogin();
     return user;
-  }
+  },
 };
 ```
 
 ### Password Recovery Integration
+
 ```javascript
 // Password recovery flow
 const handleForgotPassword = async (email) => {
@@ -134,6 +141,7 @@ const handleForgotPassword = async (email) => {
 ```
 
 ### Role Detection Logic
+
 ```javascript
 // Smart role detection based on email/previous sessions
 const detectUserRole = (email) => {
@@ -142,7 +150,7 @@ const detectUserRole = (email) => {
     return {
       role: user.role,
       position: user.primaryPosition,
-      team: user.team
+      team: user.team,
     };
   }
   return null;
@@ -152,17 +160,20 @@ const detectUserRole = (email) => {
 ## User Experience Features
 
 ### Progressive Enhancement
+
 - **Primary**: Email/password login (works everywhere)
 - **Secondary**: Social login (faster for returning users)
 - **Tertiary**: Biometric login (convenient for mobile)
 
 ### Accessibility Features
+
 - High contrast mode support
 - Screen reader compatibility
 - Keyboard navigation support
 - Voice input capabilities
 
 ### Error Handling
+
 - Clear error messages for invalid credentials
 - Account lockout prevention
 - Rate limiting for security
@@ -171,6 +182,7 @@ const detectUserRole = (email) => {
 ## Integration Points
 
 ### Database Schema Updates
+
 ```sql
 -- Enhanced user authentication table
 ALTER TABLE users ADD COLUMN auth_method VARCHAR(20) DEFAULT 'email';
@@ -182,6 +194,7 @@ ALTER TABLE users ADD COLUMN login_streak INTEGER DEFAULT 0;
 ```
 
 ### Service Layer Integration
+
 - `authService.login()` - Enhanced with multiple methods
 - `authService.socialLogin()` - OAuth integration
 - `authService.biometricLogin()` - Biometric authentication
@@ -189,6 +202,7 @@ ALTER TABLE users ADD COLUMN login_streak INTEGER DEFAULT 0;
 - `userService.getQuickStats()` - Pre-login stats preview
 
 ### Context Integration
+
 - `AuthContext` - Enhanced with role detection
 - `ThemeContext` - Dark/light mode toggle
 - `AnalyticsContext` - Login method tracking
@@ -196,12 +210,14 @@ ALTER TABLE users ADD COLUMN login_streak INTEGER DEFAULT 0;
 ## Security Considerations
 
 ### Data Protection
+
 - All passwords hashed with bcrypt
 - Social login tokens encrypted
 - Biometric data never stored (device-only)
 - Session tokens with expiration
 
 ### Privacy Compliance
+
 - GDPR-compliant data collection
 - Clear privacy policy links
 - User consent for biometric data
@@ -210,13 +226,15 @@ ALTER TABLE users ADD COLUMN login_streak INTEGER DEFAULT 0;
 ## Performance Optimizations
 
 ### Loading States
+
 - Skeleton loading for stats preview
 - Progressive image loading
 - Lazy loading of social login buttons
 - Cached role detection
 
 ### Offline Support
+
 - Basic login form works offline
 - Cached authentication state
 - Offline biometric authentication
-- Graceful degradation for social login 
+- Graceful degradation for social login

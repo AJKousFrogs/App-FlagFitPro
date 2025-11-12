@@ -273,7 +273,23 @@
         /* Page-specific styles that can't be replaced with utilities */
         .main-content {
             margin-left: 250px;
-            max-width: calc(100vw - 250px);
+            width: calc(100% - 250px); /* ✅ Use width instead of max-width */
+            padding: var(--spacing-layout-md, 32px) var(--spacing-layout-lg, 40px);
+            box-sizing: border-box;
+        }
+        
+        @media (max-width: 1024px) {
+            .main-content {
+                margin-left: 0;
+                width: 100%; /* ✅ Full width on mobile */
+                padding: var(--spacing-layout-xs, 20px) var(--spacing-component-lg, 24px);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .main-content {
+                padding: var(--spacing-layout-xs, 16px) var(--spacing-component-md, 16px);
+            }
         }
         .analytics-container {
             max-width: 1400px;
@@ -450,16 +466,16 @@
         }
 
         .metric-value {
-            font-size: 2rem;
-            font-weight: 800;
+            font-size: var(--font-size-2xl, 2rem);
+            font-weight: var(--font-weight-extrabold, 800);
             color: var(--dark-text-primary);
             margin-bottom: 0.5rem;
         }
 
         .metric-label {
-            font-size: 1rem;
+            font-size: var(--font-size-base, 1rem);
             color: var(--dark-text-muted);
-            font-weight: 500;
+            font-weight: var(--font-weight-medium, 500);
         }
 
         .metric-trend {
@@ -574,7 +590,7 @@
             }
             
             .dashboard-title {
-                font-size: 2rem;
+                font-size: var(--font-size-2xl, 2rem);
             }
             
             .metrics-grid {
@@ -619,7 +635,7 @@
             }
             
             .dashboard-subtitle {
-                font-size: 1rem;
+                font-size: var(--font-size-base, 1rem);
             }
             
             .chart-title {
@@ -758,7 +774,7 @@
             color: var(--dark-text-primary);
             padding: 8px;
             text-decoration: none;
-            z-index: 1000;
+            z-index: var(--z-index-skiplink, 1600);
         }
 
         .skip-link:focus {
@@ -766,6 +782,7 @@
         }
     </style>
     <script src="./src/theme-switcher.js"></script>
+    <script src="./src/components/organisms/top-bar/top-bar.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="./src/nav-highlight.js"></script>
 </head>
@@ -774,6 +791,9 @@
     <a href="#main-content" class="skip-link">Skip to main content</a>
     
     <div class="dashboard-container">
+        <!-- Mobile Overlay/Scrim (for closing sidebar on mobile) -->
+        <div class="menu-scrim" aria-hidden="true" onclick="closeMenu()"></div>
+        
         <!-- Unified Sidebar Navigation -->
         <div class="sidebar">
             <div class="sidebar-logo" onclick="window.location.href='/dashboard.html'" title="FlagFit Pro">
@@ -848,12 +868,62 @@
         </div>
 
         <main class="main-content u-flex-1 u-min-width-0 u-overflow-x-hidden u-overflow-y-auto u-padding-24 u-bg-primary" id="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar" role="banner">
+                <div class="header-left">
+                    <div class="page-title-section">
+                        <h1 class="page-title">
+                            <i data-lucide="football" class="icon-18" style="display: inline-block; vertical-align: middle; margin-right: var(--primitive-space-8);"></i>
+                            FlagFit Pro Analytics
+                        </h1>
+                        <p class="page-subtitle">Advanced Performance Analytics & Team Insights</p>
+                    </div>
+                </div>
+                
+                <div class="header-right">
+                    <!-- Notifications -->
+                    <div class="header-icon-wrap">
+                        <button
+                            id="notification-bell"
+                            class="header-icon"
+                            type="button"
+                            aria-label="Notifications"
+                            aria-controls="notification-panel"
+                            aria-expanded="false"
+                        >
+                            <i data-lucide="bell" class="icon-18"></i>
+                            <span id="notification-badge" class="badge" hidden>3</span>
+                        </button>
+                        <span id="notification-live" class="sr-only" aria-live="polite"></span>
+                    </div>
+
+                    <!-- Settings -->
+                    <button class="header-icon" type="button" aria-label="Settings">
+                        <i data-lucide="settings" class="icon-18"></i>
+                    </button>
+
+                    <!-- Theme Toggle -->
+                    <div class="theme-toggle-container" aria-label="Theme toggle">
+                        <!-- JS inserts switch; fallback below -->
+                        <button class="theme-toggle-fallback" type="button" data-theme-toggle hidden>Theme</button>
+                    </div>
+
+                    <!-- User Menu -->
+                    <button
+                        id="user-menu-button"
+                        class="user-menu"
+                        type="button"
+                        aria-label="User menu"
+                        aria-haspopup="menu"
+                        aria-controls="user-menu"
+                        aria-expanded="false"
+                    >
+                        <div class="user-avatar" id="user-avatar" aria-hidden="true">U</div>
+                    </button>
+                </div>
+            </div>
+            
             <div class="analytics-container u-margin-y-auto">
-        <!-- Dashboard Header -->
-        <div class="dashboard-header u-text-center u-margin-bottom-48 u-text-primary">
-            <h1 class="dashboard-title u-text-display-xl u-font-weight-800 u-margin-bottom-16"><i data-lucide="football" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> FlagFit Pro Analytics</h1>
-            <p class="dashboard-subtitle u-text-heading-md u-text-secondary">Advanced Performance Analytics & Team Insights</p>
-        </div>
 
         <!-- Key Metrics Overview -->
         <div class="metrics-grid">
@@ -1144,7 +1214,6 @@
                         <div class="insight-label">Dashboard Engagement</div>
                     </div>
                 </div>
-            </div>
             </div>
         </div>
         </main>

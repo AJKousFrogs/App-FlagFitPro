@@ -5,14 +5,14 @@
 
 :root {
   /* Content-based breakpoints (not device-specific) */
-  --bp-mobile: 320px;      /* Small mobile devices */
-  --bp-mobile-lg: 480px;   /* Large mobile devices */
-  --bp-tablet: 768px;      /* Tablet portrait */
+  --bp-mobile: 320px; /* Small mobile devices */
+  --bp-mobile-lg: 480px; /* Large mobile devices */
+  --bp-tablet: 768px; /* Tablet portrait */
   --bp-tablet-lg: 1024px; /* Tablet landscape / small desktop */
-  --bp-desktop: 1280px;    /* Standard desktop */
-  --bp-wide: 1440px;       /* Wide desktop */
-  --bp-ultrawide: 1920px;  /* Ultra-wide displays */
-  
+  --bp-desktop: 1280px; /* Standard desktop */
+  --bp-wide: 1440px; /* Wide desktop */
+  --bp-ultrawide: 1920px; /* Ultra-wide displays */
+
   /* Breakpoint aliases for semantic use */
   --bp-sm: var(--bp-mobile);
   --bp-md: var(--bp-tablet);
@@ -31,4 +31,3 @@
    @media (max-width: calc(var(--bp-desktop) - 1px)) { ... }
    @media (min-width: var(--bp-tablet)) and (max-width: calc(var(--bp-desktop) - 1px)) { ... }
 */
-

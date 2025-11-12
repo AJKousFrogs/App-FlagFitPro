@@ -1,576 +1,715 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FlagFit Pro - Coach Dashboard</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
     <!-- New Modular CSS Architecture -->
-    <link rel="stylesheet" href="./src/css/main.css">
+    <link rel="stylesheet" href="./src/css/main.css" />
     <!-- Lucide Icons - Modern icon library similar to Radix UI -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="./src/icon-helper.js"></script>
     <script src="./src/theme-switcher.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js" defer></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"
+      defer
+    ></script>
     <script>
-        // Chart.js fallback system
-        window.addEventListener('load', function() {
-            if (typeof Chart === 'undefined') {
-                console.log('Loading Chart.js fallback...');
-                const fallbackScript = document.createElement('script');
-                fallbackScript.src = 'https://unpkg.com/chart.js@4.4.1/dist/chart.umd.js';
-                fallbackScript.onload = function() {
-                    console.log('Chart.js fallback loaded successfully');
-                    if (window.initializeComparisonChart) window.initializeComparisonChart();
-                };
-                fallbackScript.onerror = function() {
-                    console.warn('Chart.js fallback also failed, using mock charts');
-                    // Fallback to text-based display
-                    document.getElementById('teamComparisonChart').innerHTML = '<p style="text-align: center; padding: 40px;">Chart data will be displayed here when online</p>';
-                };
-                document.head.appendChild(fallbackScript);
-            }
-        });
+      // Chart.js fallback system
+      window.addEventListener("load", function () {
+        if (typeof Chart === "undefined") {
+          console.log("Loading Chart.js fallback...");
+          const fallbackScript = document.createElement("script");
+          fallbackScript.src =
+            "https://unpkg.com/chart.js@4.4.1/dist/chart.umd.js";
+          fallbackScript.onload = function () {
+            console.log("Chart.js fallback loaded successfully");
+            if (window.initializeComparisonChart)
+              window.initializeComparisonChart();
+          };
+          fallbackScript.onerror = function () {
+            console.warn("Chart.js fallback also failed, using mock charts");
+            // Fallback to text-based display
+            document.getElementById("teamComparisonChart").innerHTML =
+              '<p style="text-align: center; padding: 40px;">Chart data will be displayed here when online</p>';
+          };
+          document.head.appendChild(fallbackScript);
+        }
+      });
     </script>
     <style>
-        .coach-dashboard {
-            background: var(--dark-bg-primary);
-            min-height: 100vh;
-        }
+      .coach-dashboard {
+        background: var(--dark-bg-primary);
+        min-height: 100vh;
+      }
 
-        .coach-header {
-            background: var(--dark-card-bg);
-            border: 1px solid var(--dark-border);
-            padding: var(--space-6);
-        }
+      .coach-header {
+        background: var(--dark-card-bg);
+        border: 1px solid var(--dark-border);
+        padding: var(--space-6);
+      }
 
-        .coach-title {
-            font-size: var(--text-h1);
-            font-weight: var(--font-bold);
-            color: var(--dark-text-primary);
-            margin-bottom: var(--space-2);
-        }
+      .coach-title {
+        font-size: var(--text-h1);
+        font-weight: var(--font-bold);
+        color: var(--dark-text-primary);
+        margin-bottom: var(--space-2);
+      }
 
-        .coach-subtitle {
-            color: var(--dark-text-secondary);
-            font-size: var(--text-lg);
-        }
+      .coach-subtitle {
+        color: var(--dark-text-secondary);
+        font-size: var(--text-lg);
+      }
 
+      .coach-content {
+        padding: var(--space-8);
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      .athlete-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: var(--space-6);
+        margin-bottom: var(--space-8);
+      }
+
+      .athlete-card {
+        background: var(--dark-card-bg);
+        border-radius: var(--radius-xl);
+        padding: var(--space-6);
+        border: 1px solid var(--dark-border);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .athlete-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        margin-bottom: var(--space-4);
+      }
+
+      .athlete-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: var(--radius-full);
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--var(--dark-text-primary));
+        font-weight: var(--font-bold);
+        font-size: var(--text-xl);
+      }
+
+      .athlete-info h3 {
+        font-weight: var(--font-semibold);
+        color: var(--dark-text-primary);
+        margin-bottom: var(--space-1);
+      }
+
+      .athlete-position {
+        color: var(--dark-text-secondary);
+        font-size: var(--text-sm);
+      }
+
+      .performance-indicators {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-3);
+        margin-bottom: var(--space-4);
+      }
+
+      .indicator {
+        text-align: center;
+        padding: var(--space-3);
+        background: var(--gray-50);
+        border-radius: var(--radius-lg);
+      }
+
+      .indicator-value {
+        font-size: var(--text-xl);
+        font-weight: var(--font-bold);
+        color: var(--dark-text-primary);
+      }
+
+      .indicator-label {
+        font-size: var(--text-xs);
+        color: var(--dark-text-secondary);
+        margin-top: var(--space-1);
+      }
+
+      .trend-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 2px;
+        margin-left: var(--space-1);
+        font-size: var(--text-xs);
+      }
+
+      .trend-up {
+        color: var(--success);
+      }
+      .trend-down {
+        color: var(--error);
+      }
+      .trend-stable {
+        color: var(--warning);
+      }
+
+      .wellness-status {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--space-3);
+        background: var(--gray-50);
+        border-radius: var(--radius-lg);
+        margin-bottom: var(--space-4);
+      }
+
+      .wellness-score {
+        font-size: var(--text-lg);
+        font-weight: var(--font-semibold);
+        color: var(--dark-text-primary);
+      }
+
+      .alert-indicator {
+        width: 12px;
+        height: 12px;
+        border-radius: var(--radius-full);
+        margin-left: var(--space-2);
+      }
+
+      .alert-green {
+        background: var(--success);
+      }
+      .alert-yellow {
+        background: var(--warning);
+      }
+      .alert-red {
+        background: var(--error);
+      }
+
+      .athlete-actions {
+        display: flex;
+        gap: var(--space-2);
+      }
+
+      .action-btn {
+        flex: 1;
+        padding: var(--space-2);
+        border: 1px solid var(--border-medium);
+        border-radius: var(--radius-md);
+        background: var(--dark-card-bg);
+        color: var(--gray-700);
+        font-size: var(--text-sm);
+        cursor: pointer;
+        transition: var(--hover-transition);
+      }
+
+      .action-btn:hover {
+        background: var(--gray-50);
+        border-color: var(--primary);
+      }
+
+      .team-overview {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: var(--space-8);
+        margin-bottom: var(--space-8);
+      }
+
+      .team-stats {
+        background: var(--dark-card-bg);
+        border-radius: var(--radius-xl);
+        padding: var(--space-6);
+        border: 1px solid var(--dark-border);
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--space-4);
+      }
+
+      .stat-item {
+        text-align: center;
+        padding: var(--space-4);
+        background: var(--gray-50);
+        border-radius: var(--radius-lg);
+      }
+
+      .stat-value {
+        font-size: var(--text-h2);
+        font-weight: var(--font-bold);
+        color: var(--primary);
+        margin-bottom: var(--space-1);
+      }
+
+      .stat-label {
+        font-size: var(--text-sm);
+        color: var(--dark-text-secondary);
+      }
+
+      .alerts-panel {
+        background: var(--dark-card-bg);
+        border-radius: var(--radius-xl);
+        padding: var(--space-6);
+        border: 1px solid var(--dark-border);
+      }
+
+      .alert-item {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        padding: var(--space-3);
+        margin-bottom: var(--space-3);
+        background: var(--gray-50);
+        border-radius: var(--radius-lg);
+        border-left: 4px solid var(--warning);
+      }
+
+      .alert-item.high-priority {
+        border-left-color: var(--error);
+      }
+
+      .alert-item.low-priority {
+        border-left-color: var(--success);
+      }
+
+      .performance-comparison {
+        background: var(--dark-card-bg);
+        border-radius: var(--radius-xl);
+        padding: var(--space-6);
+        border: 1px solid var(--dark-border);
+        margin-bottom: var(--space-8);
+      }
+
+      .comparison-chart {
+        height: 400px;
+        margin-top: var(--space-4);
+      }
+
+      .filter-controls {
+        display: flex;
+        gap: var(--space-4);
+        margin-bottom: var(--space-6);
+        padding: var(--space-4);
+        background: var(--dark-card-bg);
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--dark-border);
+      }
+
+      .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-1);
+      }
+
+      .filter-label {
+        font-size: var(--text-sm);
+        font-weight: var(--font-medium);
+        color: var(--gray-700);
+      }
+
+      .filter-select {
+        padding: var(--space-2);
+        border: 1px solid var(--border-medium);
+        border-radius: var(--radius-md);
+        font-size: var(--text-sm);
+        background: var(--dark-card-bg);
+      }
+
+      @media (max-width: 768px) {
         .coach-content {
-            padding: var(--space-8);
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .athlete-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: var(--space-6);
-            margin-bottom: var(--space-8);
-        }
-
-        .athlete-card {
-            background: var(--dark-card-bg);
-            border-radius: var(--radius-xl);
-            padding: var(--space-6);
-            border: 1px solid var(--dark-border);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .athlete-header {
-            display: flex;
-            align-items: center;
-            gap: var(--space-3);
-            margin-bottom: var(--space-4);
-        }
-
-        .athlete-avatar {
-            width: 60px;
-            height: 60px;
-            border-radius: var(--radius-full);
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--var(--dark-text-primary));
-            font-weight: var(--font-bold);
-            font-size: var(--text-xl);
-        }
-
-        .athlete-info h3 {
-            font-weight: var(--font-semibold);
-            color: var(--dark-text-primary);
-            margin-bottom: var(--space-1);
-        }
-
-        .athlete-position {
-            color: var(--dark-text-secondary);
-            font-size: var(--text-sm);
-        }
-
-        .performance-indicators {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: var(--space-3);
-            margin-bottom: var(--space-4);
-        }
-
-        .indicator {
-            text-align: center;
-            padding: var(--space-3);
-            background: var(--gray-50);
-            border-radius: var(--radius-lg);
-        }
-
-        .indicator-value {
-            font-size: var(--text-xl);
-            font-weight: var(--font-bold);
-            color: var(--dark-text-primary);
-        }
-
-        .indicator-label {
-            font-size: var(--text-xs);
-            color: var(--dark-text-secondary);
-            margin-top: var(--space-1);
-        }
-
-        .trend-indicator {
-            display: inline-flex;
-            align-items: center;
-            gap: 2px;
-            margin-left: var(--space-1);
-            font-size: var(--text-xs);
-        }
-
-        .trend-up { color: var(--success); }
-        .trend-down { color: var(--error); }
-        .trend-stable { color: var(--warning); }
-
-        .wellness-status {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: var(--space-3);
-            background: var(--gray-50);
-            border-radius: var(--radius-lg);
-            margin-bottom: var(--space-4);
-        }
-
-        .wellness-score {
-            font-size: var(--text-lg);
-            font-weight: var(--font-semibold);
-            color: var(--dark-text-primary);
-        }
-
-        .alert-indicator {
-            width: 12px;
-            height: 12px;
-            border-radius: var(--radius-full);
-            margin-left: var(--space-2);
-        }
-
-        .alert-green { background: var(--success); }
-        .alert-yellow { background: var(--warning); }
-        .alert-red { background: var(--error); }
-
-        .athlete-actions {
-            display: flex;
-            gap: var(--space-2);
-        }
-
-        .action-btn {
-            flex: 1;
-            padding: var(--space-2);
-            border: 1px solid var(--border-medium);
-            border-radius: var(--radius-md);
-            background: var(--dark-card-bg);
-            color: var(--gray-700);
-            font-size: var(--text-sm);
-            cursor: pointer;
-            transition: var(--hover-transition);
-        }
-
-        .action-btn:hover {
-            background: var(--gray-50);
-            border-color: var(--primary);
+          padding: var(--space-4);
         }
 
         .team-overview {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: var(--space-8);
-            margin-bottom: var(--space-8);
-        }
-
-        .team-stats {
-            background: var(--dark-card-bg);
-            border-radius: var(--radius-xl);
-            padding: var(--space-6);
-            border: 1px solid var(--dark-border);
+          grid-template-columns: 1fr;
         }
 
         .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: var(--space-4);
-        }
-
-        .stat-item {
-            text-align: center;
-            padding: var(--space-4);
-            background: var(--gray-50);
-            border-radius: var(--radius-lg);
-        }
-
-        .stat-value {
-            font-size: var(--text-h2);
-            font-weight: var(--font-bold);
-            color: var(--primary);
-            margin-bottom: var(--space-1);
-        }
-
-        .stat-label {
-            font-size: var(--text-sm);
-            color: var(--dark-text-secondary);
-        }
-
-        .alerts-panel {
-            background: var(--dark-card-bg);
-            border-radius: var(--radius-xl);
-            padding: var(--space-6);
-            border: 1px solid var(--dark-border);
-        }
-
-        .alert-item {
-            display: flex;
-            align-items: center;
-            gap: var(--space-3);
-            padding: var(--space-3);
-            margin-bottom: var(--space-3);
-            background: var(--gray-50);
-            border-radius: var(--radius-lg);
-            border-left: 4px solid var(--warning);
-        }
-
-        .alert-item.high-priority {
-            border-left-color: var(--error);
-        }
-
-        .alert-item.low-priority {
-            border-left-color: var(--success);
-        }
-
-        .performance-comparison {
-            background: var(--dark-card-bg);
-            border-radius: var(--radius-xl);
-            padding: var(--space-6);
-            border: 1px solid var(--dark-border);
-            margin-bottom: var(--space-8);
-        }
-
-        .comparison-chart {
-            height: 400px;
-            margin-top: var(--space-4);
+          grid-template-columns: repeat(2, 1fr);
         }
 
         .filter-controls {
-            display: flex;
-            gap: var(--space-4);
-            margin-bottom: var(--space-6);
-            padding: var(--space-4);
-            background: var(--dark-card-bg);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--dark-border);
+          flex-direction: column;
         }
-
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-1);
-        }
-
-        .filter-label {
-            font-size: var(--text-sm);
-            font-weight: var(--font-medium);
-            color: var(--gray-700);
-        }
-
-        .filter-select {
-            padding: var(--space-2);
-            border: 1px solid var(--border-medium);
-            border-radius: var(--radius-md);
-            font-size: var(--text-sm);
-            background: var(--dark-card-bg);
-        }
-
-        @media (max-width: 768px) {
-            .coach-content {
-                padding: var(--space-4);
-            }
-
-            .team-overview {
-                grid-template-columns: 1fr;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .filter-controls {
-                flex-direction: column;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="coach-dashboard">
-        <!-- Header -->
-        <header class="coach-header">
-            <div style="max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <h1 class="coach-title"><i data-lucide="football" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Coach Dashboard</h1>
-                    <p class="coach-subtitle">Monitor your team's performance and wellness</p>
-                </div>
-                <div style="display: flex; gap: var(--space-3); align-items: center;">
-                    <button class="btn btn-secondary hover-lift" onclick="exportTeamReport()">
-                        <i data-lucide="bar-chart-3" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Export Report
-                    </button>
-                    <button class="btn btn-primary hover-lift" onclick="scheduleTeamMeeting()">
-                        <i data-lucide="calendar" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Schedule Meeting
-                    </button>
-                    <a href="/dashboard.html" class="btn btn-ghost hover-lift">
-                        <i data-lucide="chevron-left" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Back to Dashboard
-                    </a>
-                </div>
-            </div>
-        </header>
+      <!-- Header -->
+      <header class="coach-header">
+        <div
+          style="
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
+          <div>
+            <h1 class="coach-title">
+              <i
+                data-lucide="football"
+                style="
+                  width: 16px;
+                  height: 16px;
+                  display: inline-block;
+                  vertical-align: middle;
+                  color: var(--icon-color-primary);
+                  stroke: var(--icon-color-primary);
+                "
+              ></i>
+              Coach Dashboard
+            </h1>
+            <p class="coach-subtitle">
+              Monitor your team's performance and wellness
+            </p>
+          </div>
+          <div style="display: flex; gap: var(--space-3); align-items: center">
+            <button
+              class="btn btn-secondary hover-lift"
+              onclick="exportTeamReport()"
+            >
+              <i
+                data-lucide="bar-chart-3"
+                style="
+                  width: 16px;
+                  height: 16px;
+                  display: inline-block;
+                  vertical-align: middle;
+                  color: var(--icon-color-primary);
+                  stroke: var(--icon-color-primary);
+                "
+              ></i>
+              Export Report
+            </button>
+            <button
+              class="btn btn-primary hover-lift"
+              onclick="scheduleTeamMeeting()"
+            >
+              <i
+                data-lucide="calendar"
+                style="
+                  width: 16px;
+                  height: 16px;
+                  display: inline-block;
+                  vertical-align: middle;
+                  color: var(--icon-color-primary);
+                  stroke: var(--icon-color-primary);
+                "
+              ></i>
+              Schedule Meeting
+            </button>
+            <a href="/dashboard.html" class="btn btn-ghost hover-lift">
+              <i
+                data-lucide="chevron-left"
+                style="
+                  width: 16px;
+                  height: 16px;
+                  display: inline-block;
+                  vertical-align: middle;
+                  color: var(--icon-color-primary);
+                  stroke: var(--icon-color-primary);
+                "
+              ></i>
+              Back to Dashboard
+            </a>
+          </div>
+        </div>
+      </header>
 
-        <main class="coach-content">
-            <!-- Filter Controls -->
-            <div class="filter-controls">
-                <div class="filter-group">
-                    <label class="filter-label">Position Filter</label>
-                    <select id="position-filter" class="filter-select hover-lift-small" onchange="filterAthletes()">
-                        <option value="all">All Positions</option>
-                        <option value="quarterback">Quarterback</option>
-                        <option value="receiver">Receiver</option>
-                        <option value="rusher">Rusher</option>
-                        <option value="defense">Defense</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label class="filter-label">Performance Period</label>
-                    <select id="period-filter" class="filter-select hover-lift-small" onchange="updateTeamStats()">
-                        <option value="7d">Last 7 Days</option>
-                        <option value="30d" selected>Last 30 Days</option>
-                        <option value="90d">Last 3 Months</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label class="filter-label">Alert Level</label>
-                    <select id="alert-filter" class="filter-select hover-lift-small" onchange="filterAlerts()">
-                        <option value="all">All Alerts</option>
-                        <option value="high">High Priority</option>
-                        <option value="medium">Medium Priority</option>
-                        <option value="low">Low Priority</option>
-                    </select>
-                </div>
-            </div>
+      <main class="coach-content">
+        <!-- Filter Controls -->
+        <div class="filter-controls">
+          <div class="filter-group">
+            <label class="filter-label">Position Filter</label>
+            <select
+              id="position-filter"
+              class="filter-select hover-lift-small"
+              onchange="filterAthletes()"
+            >
+              <option value="all">All Positions</option>
+              <option value="quarterback">Quarterback</option>
+              <option value="receiver">Receiver</option>
+              <option value="rusher">Rusher</option>
+              <option value="defense">Defense</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label class="filter-label">Performance Period</label>
+            <select
+              id="period-filter"
+              class="filter-select hover-lift-small"
+              onchange="updateTeamStats()"
+            >
+              <option value="7d">Last 7 Days</option>
+              <option value="30d" selected>Last 30 Days</option>
+              <option value="90d">Last 3 Months</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label class="filter-label">Alert Level</label>
+            <select
+              id="alert-filter"
+              class="filter-select hover-lift-small"
+              onchange="filterAlerts()"
+            >
+              <option value="all">All Alerts</option>
+              <option value="high">High Priority</option>
+              <option value="medium">Medium Priority</option>
+              <option value="low">Low Priority</option>
+            </select>
+          </div>
+        </div>
 
-            <!-- Team Overview -->
-            <div class="team-overview">
-                <div class="team-stats card hover-lift">
-                    <h3 style="font-size: var(--text-xl); font-weight: var(--font-semibold); margin-bottom: var(--space-4); color: var(--dark-text-primary);">Team Performance Overview</h3>
-                    <div class="stats-grid" id="teamStatsGrid">
-                        <!-- Will be populated by JavaScript -->
-                    </div>
-                </div>
-
-                <div class="alerts-panel card hover-lift">
-                    <h3 style="font-size: var(--text-xl); font-weight: var(--font-semibold); margin-bottom: var(--space-4); color: var(--dark-text-primary);">⚠️ Active Alerts</h3>
-                    <div id="alertsList">
-                        <!-- Will be populated by JavaScript -->
-                    </div>
-                </div>
+        <!-- Team Overview -->
+        <div class="team-overview">
+          <div class="team-stats card hover-lift">
+            <h3
+              style="
+                font-size: var(--text-xl);
+                font-weight: var(--font-semibold);
+                margin-bottom: var(--space-4);
+                color: var(--dark-text-primary);
+              "
+            >
+              Team Performance Overview
+            </h3>
+            <div class="stats-grid" id="teamStatsGrid">
+              <!-- Will be populated by JavaScript -->
             </div>
+          </div>
 
-            <!-- Performance Comparison Chart -->
-            <div class="performance-comparison card hover-lift">
-                <h3 style="font-size: var(--text-xl); font-weight: var(--font-semibold); margin-bottom: var(--space-4); color: var(--dark-text-primary);">Team Performance Comparison</h3>
-                <div class="comparison-chart">
-                    <canvas id="teamComparisonChart"></canvas>
-                </div>
+          <div class="alerts-panel card hover-lift">
+            <h3
+              style="
+                font-size: var(--text-xl);
+                font-weight: var(--font-semibold);
+                margin-bottom: var(--space-4);
+                color: var(--dark-text-primary);
+              "
+            >
+              ⚠️ Active Alerts
+            </h3>
+            <div id="alertsList">
+              <!-- Will be populated by JavaScript -->
             </div>
+          </div>
+        </div>
 
-            <!-- Athletes Grid -->
-            <h2 style="font-size: var(--text-h2); font-weight: var(--font-bold); color: var(--dark-text-primary); margin-bottom: var(--space-6);">Team Members</h2>
-            <div class="athlete-grid" id="athleteGrid">
-                <!-- Will be populated by JavaScript -->
-            </div>
-        </main>
+        <!-- Performance Comparison Chart -->
+        <div class="performance-comparison card hover-lift">
+          <h3
+            style="
+              font-size: var(--text-xl);
+              font-weight: var(--font-semibold);
+              margin-bottom: var(--space-4);
+              color: var(--dark-text-primary);
+            "
+          >
+            Team Performance Comparison
+          </h3>
+          <div class="comparison-chart">
+            <canvas id="teamComparisonChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Athletes Grid -->
+        <h2
+          style="
+            font-size: var(--text-h2);
+            font-weight: var(--font-bold);
+            color: var(--dark-text-primary);
+            margin-bottom: var(--space-6);
+          "
+        >
+          Team Members
+        </h2>
+        <div class="athlete-grid" id="athleteGrid">
+          <!-- Will be populated by JavaScript -->
+        </div>
+      </main>
     </div>
 
     <script type="module">
-        import { REAL_TEAM_DATA } from './src/real-team-data.js';
-        import { performanceCharts } from './src/performance-charts.js';
-        import { performanceAPI } from './src/performance-api.js';
-        import { authManager } from './src/auth-manager.js';
+      import { REAL_TEAM_DATA } from "./src/real-team-data.js";
+      import { performanceCharts } from "./src/performance-charts.js";
+      import { performanceAPI } from "./src/performance-api.js";
+      import { authManager } from "./src/auth-manager.js";
 
-        // Mock coach data for demonstration
-        const MOCK_TEAM_DATA = {
-            teamStats: {
-                averagePerformance: 78.5,
-                totalAthletes: 20,
-                activeAlerts: 5,
-                overallWellness: 7.8
+      // Mock coach data for demonstration
+      const MOCK_TEAM_DATA = {
+        teamStats: {
+          averagePerformance: 78.5,
+          totalAthletes: 20,
+          activeAlerts: 5,
+          overallWellness: 7.8,
+        },
+        athletes: [
+          {
+            id: "vince_machi",
+            name: "Vince Machi",
+            position: "QB",
+            jersey: 10,
+            avatar: "VM",
+            performance: {
+              overall: 85,
+              trend: "up",
+              change: "+3.2%",
             },
-            athletes: [
-                {
-                    id: 'vince_machi',
-                    name: 'Vince Machi',
-                    position: 'QB',
-                    jersey: 10,
-                    avatar: 'VM',
-                    performance: {
-                        overall: 85,
-                        trend: 'up',
-                        change: '+3.2%'
-                    },
-                    wellness: {
-                        score: 8.2,
-                        status: 'good' // good, warning, concern
-                    },
-                    lastActive: '2024-11-08',
-                    alerts: []
-                },
-                {
-                    id: 'harry_pickup',
-                    name: 'Harry Pickup',
-                    position: 'WR',
-                    jersey: 21,
-                    avatar: 'HP',
-                    performance: {
-                        overall: 78,
-                        trend: 'stable',
-                        change: '+0.8%'
-                    },
-                    wellness: {
-                        score: 6.5,
-                        status: 'warning'
-                    },
-                    lastActive: '2024-11-07',
-                    alerts: ['Low sleep quality reported']
-                },
-                {
-                    id: 'liam_obrien',
-                    name: 'Liam O\'Brien',
-                    position: 'RB',
-                    jersey: 33,
-                    avatar: 'LO',
-                    performance: {
-                        overall: 82,
-                        trend: 'up',
-                        change: '+5.1%'
-                    },
-                    wellness: {
-                        score: 7.9,
-                        status: 'good'
-                    },
-                    lastActive: '2024-11-08',
-                    alerts: []
-                },
-                {
-                    id: 'alex_johnson',
-                    name: 'Alex Johnson',
-                    position: 'WR',
-                    jersey: 15,
-                    avatar: 'AJ',
-                    performance: {
-                        overall: 74,
-                        trend: 'down',
-                        change: '-2.3%'
-                    },
-                    wellness: {
-                        score: 5.8,
-                        status: 'concern'
-                    },
-                    lastActive: '2024-11-06',
-                    alerts: ['Declining performance', 'Missed training session']
-                }
-            ],
-            alerts: [
-                {
-                    id: 1,
-                    athlete: 'Alex Johnson',
-                    type: 'performance',
-                    level: 'high',
-                    message: 'Performance decline detected - 40-yard dash time increased',
-                    timestamp: '2024-11-08T10:30:00Z'
-                },
-                {
-                    id: 2,
-                    athlete: 'Harry Pickup',
-                    type: 'wellness',
-                    level: 'medium',
-                    message: 'Sleep quality below optimal for 3 consecutive days',
-                    timestamp: '2024-11-08T09:15:00Z'
-                },
-                {
-                    id: 3,
-                    athlete: 'Alex Johnson',
-                    type: 'attendance',
-                    level: 'medium',
-                    message: 'Missed scheduled training session',
-                    timestamp: '2024-11-07T16:00:00Z'
-                }
-            ]
-        };
+            wellness: {
+              score: 8.2,
+              status: "good", // good, warning, concern
+            },
+            lastActive: "2024-11-08",
+            alerts: [],
+          },
+          {
+            id: "harry_pickup",
+            name: "Harry Pickup",
+            position: "WR",
+            jersey: 21,
+            avatar: "HP",
+            performance: {
+              overall: 78,
+              trend: "stable",
+              change: "+0.8%",
+            },
+            wellness: {
+              score: 6.5,
+              status: "warning",
+            },
+            lastActive: "2024-11-07",
+            alerts: ["Low sleep quality reported"],
+          },
+          {
+            id: "liam_obrien",
+            name: "Liam O'Brien",
+            position: "RB",
+            jersey: 33,
+            avatar: "LO",
+            performance: {
+              overall: 82,
+              trend: "up",
+              change: "+5.1%",
+            },
+            wellness: {
+              score: 7.9,
+              status: "good",
+            },
+            lastActive: "2024-11-08",
+            alerts: [],
+          },
+          {
+            id: "alex_johnson",
+            name: "Alex Johnson",
+            position: "WR",
+            jersey: 15,
+            avatar: "AJ",
+            performance: {
+              overall: 74,
+              trend: "down",
+              change: "-2.3%",
+            },
+            wellness: {
+              score: 5.8,
+              status: "concern",
+            },
+            lastActive: "2024-11-06",
+            alerts: ["Declining performance", "Missed training session"],
+          },
+        ],
+        alerts: [
+          {
+            id: 1,
+            athlete: "Alex Johnson",
+            type: "performance",
+            level: "high",
+            message:
+              "Performance decline detected - 40-yard dash time increased",
+            timestamp: "2024-11-08T10:30:00Z",
+          },
+          {
+            id: 2,
+            athlete: "Harry Pickup",
+            type: "wellness",
+            level: "medium",
+            message: "Sleep quality below optimal for 3 consecutive days",
+            timestamp: "2024-11-08T09:15:00Z",
+          },
+          {
+            id: 3,
+            athlete: "Alex Johnson",
+            type: "attendance",
+            level: "medium",
+            message: "Missed scheduled training session",
+            timestamp: "2024-11-07T16:00:00Z",
+          },
+        ],
+      };
 
-        // Initialize coach dashboard
-        document.addEventListener('DOMContentLoaded', async function() {
-            // Initialize Lucide icons
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
-            console.log('<i data-lucide="football" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Coach Dashboard loading...');
+      // Initialize coach dashboard
+      document.addEventListener("DOMContentLoaded", async function () {
+        // Initialize Lucide icons
+        if (typeof lucide !== "undefined") {
+          lucide.createIcons();
+        }
+        console.log(
+          '<i data-lucide="football" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Coach Dashboard loading...',
+        );
 
-            // Check authentication
-            if (!authManager.isAuthenticated()) {
-                window.location.href = '/login.html';
-                return;
-            }
-
-            await initializeCoachDashboard();
-        });
-
-        async function initializeCoachDashboard() {
-            try {
-                // Load team statistics
-                loadTeamStats();
-                
-                // Load active alerts
-                loadAlerts();
-                
-                // Load athletes grid
-                loadAthletes();
-                
-                // Initialize performance comparison chart
-                await initializeComparisonChart();
-                
-                console.log('<i data-lucide="check-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Coach dashboard initialized successfully');
-            } catch (error) {
-                console.error('<i data-lucide="x-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Failed to initialize coach dashboard:', error);
-            }
+        // Check authentication
+        if (!authManager.isAuthenticated()) {
+          window.location.href = "/login.html";
+          return;
         }
 
-        function loadTeamStats() {
-            const container = document.getElementById('teamStatsGrid');
-            const stats = MOCK_TEAM_DATA.teamStats;
-            
-            container.innerHTML = `
+        await initializeCoachDashboard();
+      });
+
+      async function initializeCoachDashboard() {
+        try {
+          // Load team statistics
+          loadTeamStats();
+
+          // Load active alerts
+          loadAlerts();
+
+          // Load athletes grid
+          loadAthletes();
+
+          // Initialize performance comparison chart
+          await initializeComparisonChart();
+
+          console.log(
+            '<i data-lucide="check-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Coach dashboard initialized successfully',
+          );
+        } catch (error) {
+          console.error(
+            '<i data-lucide="x-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Failed to initialize coach dashboard:',
+            error,
+          );
+        }
+      }
+
+      function loadTeamStats() {
+        const container = document.getElementById("teamStatsGrid");
+        const stats = MOCK_TEAM_DATA.teamStats;
+
+        container.innerHTML = `
                 <div class="stat-item hover-lift-small">
                     <div class="stat-value">${stats.totalAthletes}</div>
                     <div class="stat-label">Athletes</div>
@@ -588,22 +727,24 @@
                     <div class="stat-label">Active Alerts</div>
                 </div>
             `;
-        }
+      }
 
-        function loadAlerts() {
-            const container = document.getElementById('alertsList');
-            const alerts = MOCK_TEAM_DATA.alerts;
-            
-            if (alerts.length === 0) {
-                container.innerHTML = `
+      function loadAlerts() {
+        const container = document.getElementById("alertsList");
+        const alerts = MOCK_TEAM_DATA.alerts;
+
+        if (alerts.length === 0) {
+          container.innerHTML = `
                     <div style="text-align: center; color: var(--dark-text-muted); padding: var(--space-4);">
                         <i data-lucide="check-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> No active alerts
                     </div>
                 `;
-                return;
-            }
-            
-            container.innerHTML = alerts.map(alert => `
+          return;
+        }
+
+        container.innerHTML = alerts
+          .map(
+            (alert) => `
                 <div class="alert-item ${alert.level}-priority hover-lift-small">
                     <div style="flex: 1;">
                         <div style="font-weight: var(--font-medium); margin-bottom: var(--space-1);">${alert.athlete}</div>
@@ -614,14 +755,18 @@
                     </div>
                     <div class="alert-indicator ${getAlertColor(alert.level)}"></div>
                 </div>
-            `).join('');
-        }
+            `,
+          )
+          .join("");
+      }
 
-        function loadAthletes() {
-            const container = document.getElementById('athleteGrid');
-            const athletes = MOCK_TEAM_DATA.athletes;
-            
-            container.innerHTML = athletes.map(athlete => `
+      function loadAthletes() {
+        const container = document.getElementById("athleteGrid");
+        const athletes = MOCK_TEAM_DATA.athletes;
+
+        container.innerHTML = athletes
+          .map(
+            (athlete) => `
                 <div class="athlete-card hover-lift" data-position="${athlete.position.toLowerCase()}">
                     <div class="athlete-header">
                         <div class="athlete-avatar">${athlete.avatar}</div>
@@ -653,7 +798,7 @@
                     
                     <div class="wellness-status">
                         <span class="wellness-score">Last active: ${new Date(athlete.lastActive).toLocaleDateString()}</span>
-                        ${athlete.alerts.length > 0 ? `<span style="color: var(--error); font-size: var(--text-sm);">${athlete.alerts.length} alert(s)</span>` : ''}
+                        ${athlete.alerts.length > 0 ? `<span style="color: var(--error); font-size: var(--text-sm);">${athlete.alerts.length} alert(s)</span>` : ""}
                     </div>
                     
                     <div class="athlete-actions">
@@ -665,154 +810,195 @@
                         </button>
                     </div>
                 </div>
-            `).join('');
-        }
+            `,
+          )
+          .join("");
+      }
 
-        async function initializeComparisonChart() {
-            try {
-                await performanceCharts.loadChartJS();
-                
-                const canvas = document.getElementById('teamComparisonChart');
-                const ctx = canvas.getContext('2d');
-                
-                const chart = new Chart(ctx, {
-                    type: 'radar',
-                    data: {
-                        labels: ['Speed', 'Agility', 'Power', 'Endurance', 'Wellness', 'Consistency'],
-                        datasets: [
-                            {
-                                label: 'Team Average',
-                                data: [78, 82, 75, 80, 78, 85],
-                                backgroundColor: 'rgba(102, 126, 234, 0.2)',
-                                borderColor: 'var(--primary-500)',
-                                pointBackgroundColor: 'var(--primary-500)'
-                            },
-                            {
-                                label: 'Top Performer',
-                                data: [95, 90, 88, 92, 85, 90],
-                                backgroundColor: 'rgba(16, 185, 129, 0.2)',
-                                borderColor: 'var(--primary-500)',
-                                pointBackgroundColor: 'var(--primary-500)'
-                            }
-                        ]
+      async function initializeComparisonChart() {
+        try {
+          await performanceCharts.loadChartJS();
+
+          const canvas = document.getElementById("teamComparisonChart");
+          const ctx = canvas.getContext("2d");
+
+          const chart = new Chart(ctx, {
+            type: "radar",
+            data: {
+              labels: [
+                "Speed",
+                "Agility",
+                "Power",
+                "Endurance",
+                "Wellness",
+                "Consistency",
+              ],
+              datasets: [
+                {
+                  label: "Team Average",
+                  data: [78, 82, 75, 80, 78, 85],
+                  backgroundColor: "rgba(102, 126, 234, 0.2)",
+                  borderColor: "var(--primary-500)",
+                  pointBackgroundColor: "var(--primary-500)",
+                },
+                {
+                  label: "Top Performer",
+                  data: [95, 90, 88, 92, 85, 90],
+                  backgroundColor: "rgba(16, 185, 129, 0.2)",
+                  borderColor: "var(--primary-500)",
+                  pointBackgroundColor: "var(--primary-500)",
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: {
+                r: {
+                  beginAtZero: true,
+                  max: 100,
+                  grid: {
+                    color: "rgba(0, 0, 0, 0.1)",
+                  },
+                  angleLines: {
+                    color: "rgba(0, 0, 0, 0.1)",
+                  },
+                  pointLabels: {
+                    font: {
+                      size: 12,
                     },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            r: {
-                                beginAtZero: true,
-                                max: 100,
-                                grid: {
-                                    color: 'rgba(0, 0, 0, 0.1)'
-                                },
-                                angleLines: {
-                                    color: 'rgba(0, 0, 0, 0.1)'
-                                },
-                                pointLabels: {
-                                    font: {
-                                        size: 12
-                                    }
-                                }
-                            }
-                        },
-                        plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: {
-                                    padding: 20,
-                                    usePointStyle: true
-                                }
-                            }
-                        }
-                    }
-                });
-                
-                console.log('<i data-lucide="bar-chart-3" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Team comparison chart initialized');
-            } catch (error) {
-                console.error('<i data-lucide="x-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Failed to initialize comparison chart:', error);
-            }
+                  },
+                },
+              },
+              plugins: {
+                legend: {
+                  position: "bottom",
+                  labels: {
+                    padding: 20,
+                    usePointStyle: true,
+                  },
+                },
+              },
+            },
+          });
+
+          console.log(
+            '<i data-lucide="bar-chart-3" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Team comparison chart initialized',
+          );
+        } catch (error) {
+          console.error(
+            '<i data-lucide="x-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Failed to initialize comparison chart:',
+            error,
+          );
         }
+      }
 
-        // Helper functions
-        function getTrendIcon(trend) {
-            switch (trend) {
-                case 'up': return '<i data-lucide="trending-up" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>️';
-                case 'down': return '<i data-lucide="trending-down" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>️';
-                case 'stable': return '<i data-lucide="chevron-right" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>';
-                default: return '<i data-lucide="chevron-right" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>';
-            }
+      // Helper functions
+      function getTrendIcon(trend) {
+        switch (trend) {
+          case "up":
+            return '<i data-lucide="trending-up" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>️';
+          case "down":
+            return '<i data-lucide="trending-down" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>️';
+          case "stable":
+            return '<i data-lucide="chevron-right" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>';
+          default:
+            return '<i data-lucide="chevron-right" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>';
         }
+      }
 
-        function getAlertColor(level) {
-            switch (level) {
-                case 'high': return 'alert-red';
-                case 'medium': return 'alert-yellow';
-                case 'low': return 'alert-green';
-                default: return 'alert-yellow';
-            }
+      function getAlertColor(level) {
+        switch (level) {
+          case "high":
+            return "alert-red";
+          case "medium":
+            return "alert-yellow";
+          case "low":
+            return "alert-green";
+          default:
+            return "alert-yellow";
         }
+      }
 
-        function getWellnessColor(status) {
-            switch (status) {
-                case 'good': return 'alert-green';
-                case 'warning': return 'alert-yellow';
-                case 'concern': return 'alert-red';
-                default: return 'alert-yellow';
-            }
+      function getWellnessColor(status) {
+        switch (status) {
+          case "good":
+            return "alert-green";
+          case "warning":
+            return "alert-yellow";
+          case "concern":
+            return "alert-red";
+          default:
+            return "alert-yellow";
         }
+      }
 
-        // Global functions for UI interactions
-        window.filterAthletes = function() {
-            const filter = document.getElementById('position-filter').value;
-            const cards = document.querySelectorAll('.athlete-card');
-            
-            cards.forEach(card => {
-                if (filter === 'all' || card.dataset.position === filter) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        };
+      // Global functions for UI interactions
+      window.filterAthletes = function () {
+        const filter = document.getElementById("position-filter").value;
+        const cards = document.querySelectorAll(".athlete-card");
 
-        window.filterAlerts = function() {
-            console.log('Filtering alerts...');
-            // Implementation would filter alerts based on priority level
-        };
+        cards.forEach((card) => {
+          if (filter === "all" || card.dataset.position === filter) {
+            card.style.display = "block";
+          } else {
+            card.style.display = "none";
+          }
+        });
+      };
 
-        window.updateTeamStats = function() {
-            const period = document.getElementById('period-filter').value;
-            console.log('Updating team stats for period:', period);
-            // Implementation would fetch data for different time periods
-        };
+      window.filterAlerts = function () {
+        console.log("Filtering alerts...");
+        // Implementation would filter alerts based on priority level
+      };
 
-        window.viewAthleteDetails = function(athleteId) {
-            console.log('👤 Viewing details for athlete:', athleteId);
-            // This would open a detailed view modal or navigate to athlete detail page
-            const athlete = MOCK_TEAM_DATA.athletes.find(a => a.id === athleteId);
-            if (athlete) {
-                authManager.showInfo(`Opening detailed view for ${athlete.name}. This would show comprehensive performance history, wellness trends, and training recommendations.`);
-            }
-        };
+      window.updateTeamStats = function () {
+        const period = document.getElementById("period-filter").value;
+        console.log("Updating team stats for period:", period);
+        // Implementation would fetch data for different time periods
+      };
 
-        window.messageAthlete = function(athleteId) {
-            console.log('<i data-lucide="message-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Messaging athlete:', athleteId);
-            const athlete = MOCK_TEAM_DATA.athletes.find(a => a.id === athleteId);
-            if (athlete) {
-                authManager.showInfo(`Opening messaging interface for ${athlete.name}. This would integrate with team communication tools.`);
-            }
-        };
+      window.viewAthleteDetails = function (athleteId) {
+        console.log("👤 Viewing details for athlete:", athleteId);
+        // This would open a detailed view modal or navigate to athlete detail page
+        const athlete = MOCK_TEAM_DATA.athletes.find((a) => a.id === athleteId);
+        if (athlete) {
+          authManager.showInfo(
+            `Opening detailed view for ${athlete.name}. This would show comprehensive performance history, wellness trends, and training recommendations.`,
+          );
+        }
+      };
 
-        window.exportTeamReport = function() {
-            console.log('<i data-lucide="bar-chart-3" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Exporting team report...');
-            authManager.showSuccess('Team performance report would be generated and exported as PDF/Excel format with comprehensive analytics.');
-        };
+      window.messageAthlete = function (athleteId) {
+        console.log(
+          '<i data-lucide="message-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Messaging athlete:',
+          athleteId,
+        );
+        const athlete = MOCK_TEAM_DATA.athletes.find((a) => a.id === athleteId);
+        if (athlete) {
+          authManager.showInfo(
+            `Opening messaging interface for ${athlete.name}. This would integrate with team communication tools.`,
+          );
+        }
+      };
 
-        window.scheduleTeamMeeting = function() {
-            console.log('<i data-lucide="calendar" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Scheduling team meeting...');
-            authManager.showInfo('Integration with calendar system would open here to schedule team meetings and training sessions.');
-        };
+      window.exportTeamReport = function () {
+        console.log(
+          '<i data-lucide="bar-chart-3" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Exporting team report...',
+        );
+        authManager.showSuccess(
+          "Team performance report would be generated and exported as PDF/Excel format with comprehensive analytics.",
+        );
+      };
+
+      window.scheduleTeamMeeting = function () {
+        console.log(
+          '<i data-lucide="calendar" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Scheduling team meeting...',
+        );
+        authManager.showInfo(
+          "Integration with calendar system would open here to schedule team meetings and training sessions.",
+        );
+      };
     </script>
-</body>
+  </body>
 </html>

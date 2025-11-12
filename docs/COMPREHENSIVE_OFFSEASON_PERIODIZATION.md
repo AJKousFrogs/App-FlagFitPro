@@ -1,7 +1,9 @@
 # Comprehensive Offseason Periodization Plan
+
 ## Flag Football Strength & Conditioning System
 
 ### Overview
+
 This document outlines a scientifically-based periodization approach for flag football athletes during the offseason, specifically designed for quarterbacks, wide receivers, defensive backs, and blitzers/rushers.
 
 ---
@@ -9,6 +11,7 @@ This document outlines a scientifically-based periodization approach for flag fo
 ## 🎯 Periodization Philosophy
 
 ### Core Principles
+
 1. **Progressive Overload**: Systematic increase in training demands
 2. **Specificity**: Position-specific adaptations
 3. **Recovery Integration**: Planned recovery to prevent overtraining
@@ -17,18 +20,22 @@ This document outlines a scientifically-based periodization approach for flag fo
 ### Training Goals by Position
 
 #### Quarterbacks
+
 - **Primary**: Arm strength, pocket mobility, decision-making speed
 - **Secondary**: Core stability, lower body power, mental processing
 
-#### Wide Receivers  
+#### Wide Receivers
+
 - **Primary**: Linear speed, route precision, catching ability
 - **Secondary**: Agility, acceleration, hand-eye coordination
 
 #### Defensive Backs
+
 - **Primary**: Backpedal technique, hip mobility, coverage skills
 - **Secondary**: Reactive ability, direction changes, ball skills
 
 #### Blitzers/Rushers
+
 - **Primary**: First-step explosion, rush moves, finishing power
 - **Secondary**: Hand fighting, acceleration, motor coordination
 
@@ -37,10 +44,12 @@ This document outlines a scientifically-based periodization approach for flag fo
 ## 📅 Macrocycle Structure (22-Week Program)
 
 ### Phase 1: Foundation Building (Weeks 1-8)
+
 **Duration**: December - January  
 **Primary Focus**: Movement quality, base strength, injury prevention
 
 #### Training Distribution
+
 - **Strength Training**: 40%
 - **Movement Quality**: 25%
 - **Position Skills**: 20%
@@ -49,34 +58,40 @@ This document outlines a scientifically-based periodization approach for flag fo
 #### Week-by-Week Progression
 
 **Weeks 1-2: Movement Foundation**
+
 - Focus: Establish movement patterns
 - Volume: Low-Moderate
 - Intensity: 60-70% max effort
 - Sessions: 4 per week
 
 **Weeks 3-4: Base Building**
+
 - Focus: Increase training volume
 - Volume: Moderate
 - Intensity: 65-75% max effort
 - Sessions: 5 per week
 
 **Weeks 5-6: Strength Development**
+
 - Focus: Build foundational strength
 - Volume: Moderate-High
 - Intensity: 70-80% max effort
 - Sessions: 5 per week
 
 **Weeks 7-8: Integration**
+
 - Focus: Combine strength with movement
 - Volume: High
 - Intensity: 75-85% max effort
 - Sessions: 6 per week
 
 ### Phase 2: Development (Weeks 9-16)
+
 **Duration**: February - March  
 **Primary Focus**: Power development, speed enhancement, skill refinement
 
 #### Training Distribution
+
 - **Power Development**: 35%
 - **Speed/Agility**: 30%
 - **Position Skills**: 25%
@@ -85,34 +100,40 @@ This document outlines a scientifically-based periodization approach for flag fo
 #### Week-by-Week Progression
 
 **Weeks 9-10: Power Introduction**
+
 - Focus: Introduce plyometric training
 - Volume: Moderate
 - Intensity: 80-85% max effort
 - Sessions: 5 per week
 
 **Weeks 11-12: Speed Development**
+
 - Focus: Linear and multidirectional speed
 - Volume: Moderate-High
 - Intensity: 85-90% max effort
 - Sessions: 6 per week
 
 **Weeks 13-14: Skill Integration**
+
 - Focus: Combine physical and technical
 - Volume: High
 - Intensity: 90-95% max effort
 - Sessions: 6 per week
 
 **Weeks 15-16: Competition Preparation**
+
 - Focus: Game-like conditions
 - Volume: Moderate
 - Intensity: 95-100% max effort
 - Sessions: 5 per week
 
 ### Phase 3: Peak Performance (Weeks 17-22)
+
 **Duration**: April - May  
 **Primary Focus**: Sport-specific preparation, competition readiness
 
 #### Training Distribution
+
 - **Sport-Specific**: 50%
 - **Maintenance**: 25%
 - **Recovery/Tapering**: 25%
@@ -120,18 +141,21 @@ This document outlines a scientifically-based periodization approach for flag fo
 #### Week-by-Week Progression
 
 **Weeks 17-18: Competition Simulation**
+
 - Focus: Game-speed training
 - Volume: Moderate
 - Intensity: 100% game speed
 - Sessions: 4-5 per week
 
 **Weeks 19-20: Peak Performance**
+
 - Focus: Maximum output preparation
 - Volume: Low-Moderate
 - Intensity: Maximum
 - Sessions: 4 per week
 
 **Weeks 21-22: Pre-Season Transition**
+
 - Focus: Maintain fitness, prevent injury
 - Volume: Low
 - Intensity: Variable
@@ -144,7 +168,9 @@ This document outlines a scientifically-based periodization approach for flag fo
 ### Quarterback Development Blocks
 
 #### Block 1: Foundation (Weeks 1-8)
+
 **Monday - Upper Body Power & Arm Care**
+
 ```
 Dynamic Warm-up (15 min)
 - Arm circles and shoulder mobility
@@ -165,6 +191,7 @@ Cool-down (15 min)
 ```
 
 **Tuesday - Pocket Mobility & Footwork**
+
 ```
 Movement Prep (10 min)
 - Hip circles and leg swings
@@ -184,6 +211,7 @@ Recovery (10 min)
 ```
 
 **Wednesday - Recovery/Flexibility**
+
 ```
 Full Recovery Session (45 min)
 - Foam rolling routine: 15 min
@@ -195,6 +223,7 @@ Full Recovery Session (45 min)
 ```
 
 **Thursday - Lower Body Power**
+
 ```
 Dynamic Warm-up (15 min)
 
@@ -210,6 +239,7 @@ Flexibility (10 min)
 ```
 
 **Friday - Throwing Mechanics & Conditioning**
+
 ```
 Throwing Prep (15 min)
 - Progressive throwing warm-up
@@ -227,15 +257,19 @@ Conditioning (20 min)
 ```
 
 #### Block 2: Development (Weeks 9-16)
+
 **Enhanced intensity and complexity added to foundation exercises**
 
 #### Block 3: Peak (Weeks 17-22)
+
 **Game-specific preparation with maximum intensity**
 
 ### Wide Receiver Development Blocks
 
 #### Block 1: Foundation (Weeks 1-8)
+
 **Monday - Linear Speed Development**
+
 ```
 Dynamic Sprint Warm-up (15 min)
 - High knees, butt kicks
@@ -255,6 +289,7 @@ Recovery (15 min)
 ```
 
 **Tuesday - Route Running Precision**
+
 ```
 Movement Prep (10 min)
 - Ball handling while moving
@@ -272,6 +307,7 @@ Cool-down (10 min)
 ```
 
 **Wednesday - Agility & Change of Direction**
+
 ```
 Multi-directional Warm-up (10 min)
 
@@ -289,7 +325,9 @@ Flexibility (15 min)
 ### Defensive Back Development Blocks
 
 #### Block 1: Foundation (Weeks 1-8)
+
 **Monday - Backpedal Development**
+
 ```
 Hip Activation Warm-up (15 min)
 - Hip circles, leg swings
@@ -306,6 +344,7 @@ Hip Flexibility (15 min)
 ```
 
 **Tuesday - Coverage Techniques**
+
 ```
 Movement Prep (10 min)
 
@@ -323,7 +362,9 @@ Recovery (10 min)
 ### Blitzer/Rusher Development Blocks
 
 #### Block 1: Foundation (Weeks 1-8)
+
 **Monday - First Step Development**
+
 ```
 Explosive Warm-up (15 min)
 - Dynamic movements
@@ -340,6 +381,7 @@ Power Recovery (15 min)
 ```
 
 **Tuesday - Rush Move Development**
+
 ```
 Dynamic Prep (10 min)
 
@@ -359,16 +401,19 @@ Cool-down (10 min)
 ## 📊 Testing & Assessment Protocol
 
 ### Baseline Testing (Week 1)
+
 - **Physical**: 40-yard sprint, L-drill, vertical jump, broad jump
 - **Technical**: Position-specific skill assessments
 - **Cognitive**: Reaction time, decision-making tests
 
 ### Progress Testing (Week 8, 16)
+
 - **Repeat baseline tests**
 - **Add sport-specific assessments**
 - **Biomechanical analysis**
 
 ### Peak Testing (Week 20)
+
 - **All previous tests**
 - **Game simulation assessments**
 - **Competition readiness evaluation**
@@ -378,6 +423,7 @@ Cool-down (10 min)
 ## 🎛️ Load Management Strategies
 
 ### Volume Progression
+
 - **Weeks 1-4**: Increase by 5-10% weekly
 - **Weeks 5-8**: Maintain or slight increase
 - **Weeks 9-12**: Focus on intensity over volume
@@ -385,11 +431,13 @@ Cool-down (10 min)
 - **Weeks 17-22**: Tapered volumes
 
 ### Intensity Guidelines
+
 - **Foundation**: 60-80% max effort
-- **Development**: 75-95% max effort  
+- **Development**: 75-95% max effort
 - **Peak**: 90-100% max effort
 
 ### Recovery Integration
+
 - **Daily**: 8-9 hours sleep, proper nutrition
 - **Weekly**: 1-2 complete rest days
 - **Monthly**: Deload week every 4th week
@@ -399,21 +447,25 @@ Cool-down (10 min)
 ## 🏆 Success Metrics
 
 ### Quarterback Metrics
+
 - Throwing velocity increase: 5-8%
 - Pocket mobility time: +15%
 - Decision-making speed: +20%
 
 ### Wide Receiver Metrics
+
 - 40-yard sprint: -0.1 to -0.2 seconds
 - Route precision: +25%
 - Catch rate under pressure: +15%
 
 ### Defensive Back Metrics
+
 - Backpedal speed: +10%
 - Direction change time: -0.15 seconds
 - Coverage effectiveness: +20%
 
 ### Blitzer/Rusher Metrics
+
 - First step quickness: +15%
 - Get-off time: -0.1 seconds
 - Rush move effectiveness: +25%
@@ -423,12 +475,14 @@ Cool-down (10 min)
 ## 🔄 Program Modifications
 
 ### Individual Adaptations
+
 - **Injury History**: Modified exercises and progressions
 - **Experience Level**: Adjusted complexity and volume
 - **Position Transitions**: Blended training approaches
 - **Time Availability**: Condensed or extended phases
 
 ### Environmental Considerations
+
 - **Weather**: Indoor/outdoor alternatives
 - **Equipment**: Bodyweight modifications available
 - **Facility**: Adaptable to various training environments
@@ -438,18 +492,21 @@ Cool-down (10 min)
 ## 📈 Monitoring & Adjustments
 
 ### Weekly Assessments
+
 - Training load tolerance
 - Recovery status
 - Skill development progress
 - Motivation levels
 
 ### Bi-weekly Reviews
+
 - Performance test updates
 - Program adherence
 - Injury prevention check
 - Goal reassessment
 
 ### Monthly Evaluations
+
 - Comprehensive testing battery
 - Program effectiveness analysis
 - Phase transition planning

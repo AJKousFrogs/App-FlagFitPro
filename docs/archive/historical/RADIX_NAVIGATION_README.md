@@ -15,15 +15,18 @@ The new navigation menu is built using [Radix UI Navigation Menu](https://www.ra
 ## Components
 
 ### 1. RadixNavigationMenu.jsx
+
 The main navigation component that implements the Radix UI Navigation Menu.
 
 **Features:**
+
 - React Router integration with active state detection
 - Dropdown menus for Training, Community, Tournaments, and Performance
 - Brand logo and navigation items
 - Custom Link component for proper routing
 
 **Key Sections:**
+
 - **Dashboard**: Main overview page
 - **Training**: Dropdown with Plyometrics, Isometrics, and Recovery
 - **Community**: Dropdown with Forums, Leaderboards, Teams, and Chat
@@ -32,6 +35,7 @@ The main navigation component that implements the Radix UI Navigation Menu.
 - **Profile**: User profile and settings
 
 ### 2. radix-navigation.css
+
 Comprehensive styling for the navigation menu with:
 
 - **Animations**: Smooth enter/exit transitions
@@ -41,6 +45,7 @@ Comprehensive styling for the navigation menu with:
 - **Hover Effects**: Interactive feedback
 
 ### 3. NavigationDemo.jsx
+
 A demonstration page showcasing the navigation menu in action.
 
 ## Usage
@@ -48,7 +53,7 @@ A demonstration page showcasing the navigation menu in action.
 ### Basic Implementation
 
 ```jsx
-import RadixNavigationMenu from './components/RadixNavigationMenu';
+import RadixNavigationMenu from "./components/RadixNavigationMenu";
 
 function App() {
   return (
@@ -64,8 +69,8 @@ function App() {
 The component automatically integrates with React Router and detects active routes:
 
 ```jsx
-import { BrowserRouter as Router } from 'react-router-dom';
-import RadixNavigationMenu from './components/RadixNavigationMenu';
+import { BrowserRouter as Router } from "react-router-dom";
+import RadixNavigationMenu from "./components/RadixNavigationMenu";
 
 function App() {
   return (
@@ -191,4 +196,4 @@ When contributing to the navigation:
 2. Maintain accessibility standards
 3. Test on multiple devices and browsers
 4. Update documentation as needed
-5. Ensure proper TypeScript types if applicable 
+5. Ensure proper TypeScript types if applicable

@@ -1,9 +1,7 @@
 {
   "timestamp": "2025-11-11T18:19:06.404Z",
   "issues": {
-    "missingSidebar": [
-      "workout.html"
-    ],
+    "missingSidebar": ["workout.html"],
     "inconsistentStructure": [
       {
         "file": "analytics.html",
@@ -50,9 +48,7 @@
         "type": "dashboard-style"
       }
     ],
-    "missingDashboardContainer": [
-      "workout.html"
-    ],
+    "missingDashboardContainer": ["workout.html"],
     "layoutIssues": [
       {
         "file": "workout.html",

@@ -32,8 +32,8 @@ Copy the HTML from `badge.html` into your page. Badges are inline elements.
 
 ```html
 <span class="badge badge-primary">
-    <i data-lucide="check" style="width: 14px; height: 14px;"></i>
-    Verified
+  <i data-lucide="check" style="width: 14px; height: 14px;"></i>
+  Verified
 </span>
 ```
 
@@ -65,4 +65,3 @@ Copy the HTML from `badge.html` into your page. Badges are inline elements.
 - Use sparingly to avoid visual clutter
 - Ensure text is readable at small sizes
 - Icon size should be smaller than badge text
-

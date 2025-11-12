@@ -1,5 +1,6 @@
 # Wireframe User Flows
-*Complete User Experience Journey Documentation*
+
+_Complete User Experience Journey Documentation_
 
 ## 🎯 **Overview**
 
@@ -8,12 +9,14 @@ This document consolidates **all user flows and experience journeys** from the F
 ## 🗺️ **Master User Flow Map**
 
 ### **Primary User Types**
+
 1. **Professional Athletes** - Elite flag football players
-2. **Olympic Aspirants** - LA28 Olympics preparation candidates  
+2. **Olympic Aspirants** - LA28 Olympics preparation candidates
 3. **Team Coaches** - Professional coaching staff
 4. **Performance Analysts** - Data scientists and sports analysts
 
 ### **Core User Journeys**
+
 ```
 1. Onboarding & Setup (First-time users)
 2. Daily Training Flow (Regular users)
@@ -26,12 +29,14 @@ This document consolidates **all user flows and experience journeys** from the F
 ## 🚀 **1. Onboarding & Setup Flow**
 
 ### **Entry Points**
+
 - Marketing website referral
 - Coach invitation
 - Team registration
 - Social media discovery
 
 ### **Onboarding Journey**
+
 ```
 Landing Page
     ↓
@@ -57,9 +62,10 @@ Dashboard Welcome Tour
 #### **Detailed Onboarding Steps**
 
 **Step 1: Landing & Registration**
+
 ```
 Wireframe: Login/Registration Page
-User sees: 
+User sees:
 - Professional athlete branding
 - "87.4% prediction accuracy" claim
 - "156 studies, 3,847 participants" research backing
@@ -74,6 +80,7 @@ Next: Position selection
 ```
 
 **Step 2: Position & Role Configuration**
+
 ```
 Wireframe: Onboarding Flow Step 1
 User configures:
@@ -92,6 +99,7 @@ Next: Physical profiling
 ```
 
 **Step 3: Physical Profile & Baseline**
+
 ```
 Wireframe: Profile Setup
 User enters:
@@ -113,6 +121,7 @@ Next: Goal setting
 ```
 
 **Step 4: Goal Setting & Olympic Tracking**
+
 ```
 Wireframe: Goal Configuration
 User sets:
@@ -135,6 +144,7 @@ Next: Team assignment
 ```
 
 **Step 5: Onboarding Completion**
+
 ```
 Wireframe: Dashboard Welcome
 User receives:
@@ -155,6 +165,7 @@ Next: First training session
 ## 🏃 **2. Daily Training Flow**
 
 ### **Training Session Journey**
+
 ```
 Dashboard Check-in
     ↓
@@ -180,6 +191,7 @@ Next Session Recommendations
 #### **Detailed Training Flow**
 
 **Training Session Start**
+
 ```
 Wireframe: Dashboard → Training
 User sees:
@@ -202,6 +214,7 @@ Next: Session planning
 ```
 
 **AI Coach Interaction**
+
 ```
 Wireframe: Training Page - AI Coach Section
 AI Coach provides:
@@ -225,6 +238,7 @@ Next: Drill execution
 ```
 
 **Live Training Execution**
+
 ```
 Wireframe: Real-time Training Interface
 Real-time display:
@@ -247,6 +261,7 @@ Next: Session completion
 ```
 
 **Session Analysis & Next Steps**
+
 ```
 Wireframe: Training Summary
 Post-session display:
@@ -272,6 +287,7 @@ Next: Dashboard update
 ## 🏆 **3. Competition Preparation Flow**
 
 ### **Tournament Preparation Journey**
+
 ```
 Tournament Registration
     ↓
@@ -295,6 +311,7 @@ Post-Competition Analysis
 #### **Competition Flow Details**
 
 **Tournament Discovery & Registration**
+
 ```
 Wireframe: Tournament Page
 User sees:
@@ -318,6 +335,7 @@ Next: Preparation planning
 ```
 
 **Preparation Timeline Creation**
+
 ```
 Wireframe: Tournament Preparation Dashboard
 System generates:
@@ -341,6 +359,7 @@ Next: Training execution
 ```
 
 **Olympic Qualification Tracking**
+
 ```
 Wireframe: LA28 Olympics Tracker
 User sees:
@@ -366,6 +385,7 @@ Next: Continued preparation
 ## 📊 **4. Performance Analysis Flow**
 
 ### **Analytics Deep-Dive Journey**
+
 ```
 Performance Dashboard Access
     ↓
@@ -387,6 +407,7 @@ Sharing & Team Discussion
 #### **Analytics Flow Details**
 
 **Performance Dashboard Entry**
+
 ```
 Wireframe: Advanced Analytics Dashboard
 User sees:
@@ -410,6 +431,7 @@ Next: Detailed analysis
 ```
 
 **Trend Analysis & Research Comparison**
+
 ```
 Wireframe: Performance Trends Page
 Detailed analytics:
@@ -433,6 +455,7 @@ Next: Action planning
 ```
 
 **Improvement Strategy Development**
+
 ```
 Wireframe: Training Optimization
 System recommendations:
@@ -459,6 +482,7 @@ Next: Plan implementation
 ## 👥 **5. Team Management Flow (Coaches)**
 
 ### **Coaching Interface Journey**
+
 ```
 Team Dashboard Access
     ↓
@@ -480,6 +504,7 @@ Team Development Planning
 #### **Coaching Flow Details**
 
 **Team Overview Dashboard**
+
 ```
 Wireframe: Coach Dashboard
 Coach sees:
@@ -503,6 +528,7 @@ Next: Individual player analysis
 ```
 
 **Player Performance Management**
+
 ```
 Wireframe: Individual Player Analysis
 Per-player display:
@@ -529,6 +555,7 @@ Next: Team strategy
 ## 🥇 **6. Olympic Preparation Flow**
 
 ### **Elite Athlete Journey**
+
 ```
 Olympic Aspiration Declaration
     ↓
@@ -550,6 +577,7 @@ Olympic Readiness
 #### **Olympic Flow Details**
 
 **LA28 Olympics Preparation**
+
 ```
 Wireframe: Olympics Tracker
 Elite athlete sees:
@@ -574,6 +602,7 @@ Next: Elite training protocol
 ```
 
 **Olympic-Level Training Protocol**
+
 ```
 Wireframe: Elite Training Interface
 Specialized features:
@@ -600,6 +629,7 @@ Next: Performance validation
 ## 🔄 **Cross-Flow Integration Points**
 
 ### **Universal Navigation Patterns**
+
 ```
 Any Page → Dashboard (Home)
 Any Page → Training (Quick Start)
@@ -609,12 +639,14 @@ Any Page → Tournaments (Competition)
 ```
 
 ### **AI Coach Integration Points**
+
 - **Daily Check-ins**: Personalized recommendations
 - **Performance Alerts**: Significant changes or risks
 - **Recovery Guidance**: Rest vs. training decisions
 - **Goal Adjustments**: Evidence-based modifications
 
 ### **Research Integration Touchpoints**
+
 - **Performance Displays**: Always show research backing
 - **Recommendations**: Include study citations
 - **Predictions**: Display confidence levels
@@ -623,6 +655,7 @@ Any Page → Tournaments (Competition)
 ## 📱 **Mobile-Optimized User Flows**
 
 ### **Mobile-Specific Patterns**
+
 ```
 Mobile Entry → Quick Actions
 - One-tap training start
@@ -644,6 +677,7 @@ Mobile Analytics → Key Metrics Only
 ```
 
 ### **Touch-Optimized Interactions**
+
 - **Swipe gestures**: Navigate between metrics
 - **Tap targets**: Minimum 44px for all controls
 - **Voice integration**: Ready for future implementation
@@ -652,12 +686,14 @@ Mobile Analytics → Key Metrics Only
 ## 🎯 **Success Metrics & Validation**
 
 ### **User Flow Success Indicators**
+
 - **Onboarding completion**: >85% finish rate
 - **Daily engagement**: >3 interactions per training day
 - **Feature adoption**: >70% use advanced analytics
 - **Goal achievement**: Align with research predictions
 
 ### **Research-Backed Optimization**
+
 - **87.4% prediction accuracy** validates flow decisions
 - **156 studies integration** supports recommendation quality
 - **Olympic preparation standards** guide elite user flows

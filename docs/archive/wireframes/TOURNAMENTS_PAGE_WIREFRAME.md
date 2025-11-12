@@ -1,4 +1,5 @@
 # TOURNAMENTS PAGE COMPREHENSIVE WIREFRAME DOCUMENT
+
 ## Flag Football Training App - Enhanced Design Specification
 
 ## **Executive Summary**
@@ -8,6 +9,7 @@ This comprehensive wireframe document outlines the enhanced design and functiona
 ## **1. CURRENT WIREFRAME ANALYSIS**
 
 ### **1.1 Existing Strengths**
+
 - **Multi-dimensional Integration**: Successfully connects tournaments, nutrition, analytics, and financial planning
 - **Position-specific Insights**: QB/WR performance tracking with tailored recommendations
 - **Chemistry Tracking**: Innovative player relationship impact monitoring (+0.2 with Mike Johnson)
@@ -16,6 +18,7 @@ This comprehensive wireframe document outlines the enhanced design and functiona
 - **AI-powered Insights**: Smart recommendations for performance optimization
 
 ### **1.2 Identified Gaps**
+
 - **Mobile-first Design**: Lack of touch-friendly interactions and mobile optimization
 - **Social Features**: Missing team communication and opponent research capabilities
 - **Advanced Tournament Management**: No registration flow or bracket visualization
@@ -27,6 +30,7 @@ This comprehensive wireframe document outlines the enhanced design and functiona
 ### **2.1 Individual-Focused Dietary Interface**
 
 #### **Personal Dietary Profile Dashboard**
+
 ```
 ┌─────────────────────────────────────────────┐
 │ 🏥 MEDICAL RESTRICTIONS (Locked)            │
@@ -49,6 +53,7 @@ This comprehensive wireframe document outlines the enhanced design and functiona
 ```
 
 #### **Medical Restriction Management**
+
 - **Role-based Editing**: Only players and nutritionist staff can modify medical restrictions
 - **Severity Classification**: Critical (medical) vs. Preference-based categories
 - **Professional Validation**: Nutritionist approval required for medical changes
@@ -57,6 +62,7 @@ This comprehensive wireframe document outlines the enhanced design and functiona
 ### **2.2 Complex Tournament Structure Support**
 
 #### **Multi-Pool Tournament Management**
+
 - **8 Pools × 6 Teams**: Comprehensive pool tracking and scheduling
 - **Tournament Format Support**:
   - Day 1: 5 games management with nutrition timing
@@ -65,6 +71,7 @@ This comprehensive wireframe document outlines the enhanced design and functiona
   - Three-Night Events: Friday-Sunday tournament planning
 
 #### **Tournify App Integration**
+
 - **Two-Month Schedule Import**: Automatic tournament schedule synchronization
 - **Real-time Updates**: Schedule change notifications and roster confirmations
 - **Travel Planning**: Multi-day tournament preparation tools
@@ -73,6 +80,7 @@ This comprehensive wireframe document outlines the enhanced design and functiona
 ### **2.3 30-Minute Break Optimization System**
 
 #### **Structured Break Timeline**
+
 ```
 BREAK TIMELINE (30 minutes):
 ┌─────────────────────────────────────────────┐
@@ -85,6 +93,7 @@ BREAK TIMELINE (30 minutes):
 ```
 
 #### **Standard Break Activities Builder**
+
 - **Team Meeting Module**: Customizable meeting templates and timing
 - **Warm-up Protocols**: Position-specific preparation routines
 - **Equipment Check System**: Automated checklists and maintenance reminders
@@ -95,12 +104,14 @@ BREAK TIMELINE (30 minutes):
 ### **3.1 AI Recommendation Engine with Professional Override**
 
 #### **Recommendation Hierarchy**
+
 1. **AI Initial Suggestions**: Based on individual profiles and performance data
 2. **Nutritionist Review**: Professional oversight and modification capabilities
 3. **Player Independence Mode**: Self-management when no nutritionist available
 4. **Emergency Override**: Critical dietary restriction protection
 
 #### **Nutritionist Override Portal**
+
 ```
 ┌─────────────────────────────────────────────┐
 │ NUTRITIONIST DASHBOARD                       │
@@ -125,6 +136,7 @@ BREAK TIMELINE (30 minutes):
 ### **3.2 Nutrition App Integration Hub**
 
 #### **Supported Integrations**
+
 - **MyFitnessPal**: Automatic meal logging and macro tracking
 - **Cronometer**: Micronutrient analysis and deficiency alerts
 - **Lose It!**: Calorie management and weight tracking
@@ -132,6 +144,7 @@ BREAK TIMELINE (30 minutes):
 - **Custom API Support**: Expandable list for additional nutrition apps
 
 #### **Integration Features**
+
 - **Automatic Data Sync**: Real-time nutrition data exchange
 - **Conflict Resolution**: Handle discrepancies between app data
 - **Privacy Controls**: User-controlled data sharing permissions
@@ -140,12 +153,14 @@ BREAK TIMELINE (30 minutes):
 ### **3.3 Cramp Prevention & Monitoring System**
 
 #### **Prevention Protocol**
+
 - **Hydration Tracking**: Individual fluid intake monitoring per game
 - **Electrolyte Balance**: Position-specific mineral requirements
 - **Pre-game Optimization**: Customized nutrition timing for cramp prevention
 - **Environmental Factors**: Weather and venue-based adjustments
 
 #### **Incident Management**
+
 ```
 CRAMP INCIDENT WORKFLOW:
 ┌─────────────────────────────────────────────┐
@@ -171,6 +186,7 @@ CRAMP INCIDENT WORKFLOW:
 ### **4.1 Mobile Player Interface**
 
 #### **Game Day Dashboard**
+
 ```
 ┌─────────────────────────────────────────────┐
 │ 🏆 TOURNAMENT DAY - Pool B                  │
@@ -195,6 +211,7 @@ CRAMP INCIDENT WORKFLOW:
 ```
 
 #### **Break Timer Integration**
+
 - **Automatic 30-minute Countdown**: Visual timer with activity prompts
 - **Activity Notifications**: Timed reminders for each break phase
 - **Quick Logging**: One-tap nutrition and hydration recording
@@ -203,6 +220,7 @@ CRAMP INCIDENT WORKFLOW:
 ### **4.2 Coach Tablet Dashboard**
 
 #### **Team Management Interface**
+
 ```
 ┌─────────────────────────────────────────────┐
 │ COACH DASHBOARD - Tournament Day             │
@@ -226,6 +244,7 @@ CRAMP INCIDENT WORKFLOW:
 ```
 
 #### **Incident Reporting System**
+
 - **Quick Cramp Notation**: Rapid incident logging during games
 - **Performance Correlation**: Track nutrition compliance vs. game results
 - **Emergency Contact**: Direct communication with nutritionist
@@ -236,6 +255,7 @@ CRAMP INCIDENT WORKFLOW:
 ### **5.1 Individual Expense Tracking**
 
 #### **Personal Tournament Budget**
+
 ```
 ┌─────────────────────────────────────────────┐
 │ 💰 PERSONAL TOURNAMENT EXPENSES             │
@@ -259,6 +279,7 @@ CRAMP INCIDENT WORKFLOW:
 ```
 
 #### **Expense Categories**
+
 - **Individual Nutrition**: Personal dietary requirements and supplements
 - **Team Shared Costs**: Equipment and transportation (when applicable)
 - **Accommodation**: Hotel and meal expenses for multi-day tournaments
@@ -267,6 +288,7 @@ CRAMP INCIDENT WORKFLOW:
 ### **5.2 Separate Budget Management**
 
 #### **Budget Isolation**
+
 - **Nutrition Budget**: Completely separate from team operational expenses
 - **Individual Tracking**: Personal financial responsibility and control
 - **Team Cost Splitting**: Optional shared expense management
@@ -277,18 +299,21 @@ CRAMP INCIDENT WORKFLOW:
 ### **6.1 Phase 1: Core Individual Features (Months 1-3)**
 
 #### **Priority 1: Personal Dietary Management**
+
 - Personal dietary profile with medical restriction controls
 - Role-based editing system (players + nutritionist only)
 - Basic nutrition tracking and logging capabilities
 - Individual preference management system
 
 #### **Priority 2: Tournament Integration**
+
 - Tournify app API integration for schedule import
 - Multi-pool tournament structure support
 - Two-month advance schedule planning
 - Basic game day interface for mobile devices
 
 #### **Priority 3: Break Management System**
+
 - 30-minute break timer with structured activities
 - Standard break activity builder
 - Team meeting and warm-up protocol templates
@@ -297,18 +322,21 @@ CRAMP INCIDENT WORKFLOW:
 ### **6.2 Phase 2: Advanced Integration (Months 4-6)**
 
 #### **Nutrition App Ecosystem**
+
 - MyFitnessPal, Cronometer, Lose It! API integrations
 - Photo-based food logging capabilities
 - Automatic data synchronization and conflict resolution
 - Privacy controls and user consent management
 
 #### **Professional Override System**
+
 - Nutritionist dashboard and override portal
 - AI recommendation review and modification tools
 - Emergency dietary protocol management
 - Team-wide nutrition compliance monitoring
 
 #### **Cramp Prevention System**
+
 - Advanced hydration and electrolyte tracking
 - Incident reporting and follow-up protocols
 - Performance correlation analysis
@@ -317,18 +345,21 @@ CRAMP INCIDENT WORKFLOW:
 ### **6.3 Phase 3: Analytics & Optimization (Months 7-9)**
 
 #### **Performance Analytics**
+
 - Nutrition compliance vs. game performance correlation
 - Individual pattern recognition and optimization
 - Tournament-specific performance trend analysis
 - Predictive modeling for performance optimization
 
 #### **Advanced Tournament Features**
+
 - Multi-day tournament comprehensive planning
 - Weather and venue adaptation protocols
 - Travel tournament logistics management
 - Team coordination and communication enhancements
 
 #### **Financial Management Integration**
+
 - Individual expense tracking and budget management
 - Separate fundraising platform connections
 - Cost analysis and optimization recommendations
@@ -339,12 +370,14 @@ CRAMP INCIDENT WORKFLOW:
 ### **7.1 Mobile-First Design Principles**
 
 #### **Touch-Friendly Interface**
+
 - **Minimum Touch Targets**: 44px × 44px for all interactive elements
 - **Thumb-Friendly Navigation**: Primary actions within thumb reach zones
 - **Swipe Gestures**: Intuitive navigation between tournament sections
 - **Quick Actions**: Essential functions accessible within 3 taps maximum
 
 #### **Performance Optimization**
+
 - **Battery Efficiency**: Minimize power consumption during long tournament days
 - **Offline Capability**: Core functions available without internet connectivity
 - **Data Management**: Efficient syncing when connection is restored
@@ -353,6 +386,7 @@ CRAMP INCIDENT WORKFLOW:
 ### **7.2 Information Architecture**
 
 #### **Streamlined Navigation**
+
 ```
 PRIMARY NAVIGATION:
 ├── Overview (Tournament status, next game, alerts)
@@ -363,6 +397,7 @@ PRIMARY NAVIGATION:
 ```
 
 #### **Progressive Disclosure**
+
 - **Summary First**: Essential information prominently displayed
 - **Details on Demand**: Expandable sections for comprehensive data
 - **Contextual Information**: Relevant data based on current tournament status
@@ -371,6 +406,7 @@ PRIMARY NAVIGATION:
 ### **7.3 Accessibility Considerations**
 
 #### **Universal Design**
+
 - **Color Blind Support**: Color-blind friendly palette and iconography
 - **Font Scaling**: Support for iOS and Android system font size preferences
 - **Voice Commands**: Basic voice input for hands-free logging
@@ -381,12 +417,14 @@ PRIMARY NAVIGATION:
 ### **8.1 External System Connections**
 
 #### **Tournify App Integration**
+
 - **API Endpoints**: Schedule import, roster updates, venue information
 - **Real-time Sync**: Automatic updates for schedule changes
 - **Conflict Resolution**: Handle discrepancies between local and remote data
 - **Fallback Systems**: Manual entry when API connections fail
 
 #### **Nutrition App APIs**
+
 - **MyFitnessPal**: Meal logging, macro tracking, food database access
 - **Cronometer**: Micronutrient analysis, supplement tracking
 - **Lose It!**: Calorie management, weight tracking, photo logging
@@ -395,12 +433,14 @@ PRIMARY NAVIGATION:
 ### **8.2 Data Security & Privacy**
 
 #### **Medical Information Protection**
+
 - **HIPAA Compliance**: Secure handling of medical dietary restrictions
 - **Encrypted Storage**: All sensitive dietary and health data encrypted
 - **Access Controls**: Strict role-based access to medical information
 - **Audit Trails**: Complete logging of all medical data modifications
 
 #### **User Consent Management**
+
 - **Granular Permissions**: Individual control over data sharing levels
 - **Consent Tracking**: Record and manage user consent for each integration
 - **Data Portability**: Export capabilities for user data ownership
@@ -411,12 +451,14 @@ PRIMARY NAVIGATION:
 ### **9.1 User Engagement Metrics**
 
 #### **Daily Active Usage**
+
 - **Tournament Day Engagement**: Average session duration during tournaments
 - **Nutrition Compliance Rate**: Percentage of recommendations followed
 - **Break Timer Usage**: Adoption rate of structured break management
 - **Quick Action Utilization**: Frequency of one-tap logging features
 
 #### **Feature Adoption**
+
 - **Dietary Profile Completion**: Percentage of users with complete profiles
 - **App Integration Rate**: Adoption of third-party nutrition app connections
 - **Professional Override Usage**: Frequency of nutritionist interactions
@@ -425,12 +467,14 @@ PRIMARY NAVIGATION:
 ### **9.2 Performance Impact Indicators**
 
 #### **Nutrition Correlation**
+
 - **Performance Improvement**: Game statistics correlation with nutrition compliance
 - **Energy Level Maintenance**: Sustained performance across tournament days
 - **Recovery Effectiveness**: Between-game energy restoration rates
 - **Hydration Optimization**: Reduction in dehydration-related performance issues
 
 #### **Tournament Management Efficiency**
+
 - **Schedule Management**: Accuracy of tournament timeline adherence
 - **Break Optimization**: Effective utilization of 30-minute break periods
 - **Team Coordination**: Improvement in team-wide nutrition compliance
@@ -441,6 +485,7 @@ PRIMARY NAVIGATION:
 This comprehensive wireframe document provides a detailed blueprint for transforming the tournaments page into a sophisticated individual nutrition management system. The design prioritizes personal dietary control while maintaining professional oversight capabilities and supporting complex multi-pool tournament structures.
 
 ### **Immediate Action Items**
+
 1. **Technical Feasibility Assessment**: Evaluate API availability for nutrition app integrations
 2. **User Testing Protocol**: Develop testing scenarios for individual dietary management workflows
 3. **Nutritionist Partnership**: Establish relationships with sports nutrition professionals
@@ -448,9 +493,10 @@ This comprehensive wireframe document provides a detailed blueprint for transfor
 5. **Development Resource Allocation**: Assign development teams to Phase 1 priorities
 
 ### **Long-term Strategic Goals**
+
 - **Market Leadership**: Establish the app as the premier flag football nutrition management platform
 - **Professional Adoption**: Gain adoption among sports nutritionists and coaching professionals
 - **Tournament Integration**: Become the standard nutrition management tool for flag football tournaments
 - **Performance Optimization**: Demonstrate measurable performance improvements through proper nutrition management
 
-The enhanced tournaments page will serve as a comprehensive individual nutrition management hub that adapts to complex tournament schedules while maintaining the flexibility to function with or without professional nutritionist oversight, ultimately improving player performance and tournament experience through optimized nutrition management. 
+The enhanced tournaments page will serve as a comprehensive individual nutrition management hub that adapts to complex tournament schedules while maintaining the flexibility to function with or without professional nutritionist oversight, ultimately improving player performance and tournament experience through optimized nutrition management.

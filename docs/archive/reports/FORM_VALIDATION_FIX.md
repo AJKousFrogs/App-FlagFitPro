@@ -24,10 +24,13 @@ We've implemented a comprehensive solution that includes:
 The `formValidation.js` file provides utility functions that safely handle `setCustomValidity`:
 
 ```javascript
-import { safeSetCustomValidity, safeClearCustomValidity } from '../utils/formValidation';
+import {
+  safeSetCustomValidity,
+  safeClearCustomValidity,
+} from "../utils/formValidation";
 
 // Safely set custom validity
-safeSetCustomValidity(element, 'Error message');
+safeSetCustomValidity(element, "Error message");
 
 // Safely clear custom validity
 safeClearCustomValidity(element);
@@ -36,16 +39,17 @@ safeClearCustomValidity(element);
 ### 2. Safe Input Components
 
 #### SafeInput Component
+
 - Properly forwards refs to the underlying DOM element
 - Exposes safe validation methods
 - Handles validation state automatically
 
 ```javascript
-import SafeInput from '../components/ui/SafeInput';
+import SafeInput from "../components/ui/SafeInput";
 
 const MyComponent = () => {
   const inputRef = useRef(null);
-  
+
   return (
     <SafeInput
       ref={inputRef}
@@ -59,16 +63,17 @@ const MyComponent = () => {
 ```
 
 #### SafePasswordInput Component
+
 - Includes password visibility toggle
 - Properly forwards refs
 - Handles validation state
 
 ```javascript
-import SafePasswordInput from '../components/ui/SafePasswordInput';
+import SafePasswordInput from "../components/ui/SafePasswordInput";
 
 const MyComponent = () => {
   const passwordRef = useRef(null);
-  
+
   return (
     <SafePasswordInput
       ref={passwordRef}
@@ -85,25 +90,22 @@ const MyComponent = () => {
 A custom hook that provides safe form validation utilities:
 
 ```javascript
-import { useSafeFormValidation } from '../utils/formValidation';
+import { useSafeFormValidation } from "../utils/formValidation";
 
 const MyForm = () => {
   const formRef = useRef(null);
-  
-  const { 
-    setFieldValidation, 
-    clearFieldValidation, 
-    clearAllValidation 
-  } = useSafeFormValidation({
-    formRef,
-    onValidationChange: (fieldName, message) => {
-      console.log(`Validation changed for ${fieldName}:`, message);
-    }
-  });
-  
+
+  const { setFieldValidation, clearFieldValidation, clearAllValidation } =
+    useSafeFormValidation({
+      formRef,
+      onValidationChange: (fieldName, message) => {
+        console.log(`Validation changed for ${fieldName}:`, message);
+      },
+    });
+
   // Use the validation functions
-  setFieldValidation('email', 'Invalid email format');
-  clearFieldValidation('email');
+  setFieldValidation("email", "Invalid email format");
+  clearFieldValidation("email");
   clearAllValidation();
 };
 ```
@@ -113,27 +115,27 @@ const MyForm = () => {
 ### Basic Form with Safe Components
 
 ```javascript
-import React, { useRef, useState } from 'react';
-import SafeInput from '../components/ui/SafeInput';
-import SafePasswordInput from '../components/ui/SafePasswordInput';
-import { useSafeFormValidation } from '../utils/formValidation';
+import React, { useRef, useState } from "react";
+import SafeInput from "../components/ui/SafeInput";
+import SafePasswordInput from "../components/ui/SafePasswordInput";
+import { useSafeFormValidation } from "../utils/formValidation";
 
 const LoginForm = () => {
-  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
   const formRef = useRef(null);
-  
+
   const { setFieldValidation, clearAllValidation } = useSafeFormValidation({
-    formRef
+    formRef,
   });
 
   const handleSubmit = (e) => {
     e.preventDefault();
     clearAllValidation();
-    
+
     // Validate and set custom validity safely
     if (!formData.email) {
-      setFieldValidation('email', 'Email is required');
+      setFieldValidation("email", "Email is required");
     }
   };
 
@@ -142,13 +144,17 @@ const LoginForm = () => {
       <SafeInput
         name="email"
         value={formData.email}
-        onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+        onChange={(e) =>
+          setFormData((prev) => ({ ...prev, email: e.target.value }))
+        }
         error={errors.email}
       />
       <SafePasswordInput
         name="password"
         value={formData.password}
-        onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+        onChange={(e) =>
+          setFormData((prev) => ({ ...prev, password: e.target.value }))
+        }
         error={errors.password}
       />
     </form>
@@ -159,33 +165,28 @@ const LoginForm = () => {
 ### Custom Validation with Refs
 
 ```javascript
-import React, { useRef, useEffect } from 'react';
-import SafeInput from '../components/ui/SafeInput';
-import { safeSetCustomValidity } from '../utils/formValidation';
+import React, { useRef, useEffect } from "react";
+import SafeInput from "../components/ui/SafeInput";
+import { safeSetCustomValidity } from "../utils/formValidation";
 
 const CustomValidationExample = () => {
   const inputRef = useRef(null);
-  
+
   useEffect(() => {
     // Safely set custom validity
     if (inputRef.current) {
-      safeSetCustomValidity(inputRef.current, 'Custom validation message');
+      safeSetCustomValidity(inputRef.current, "Custom validation message");
     }
   }, []);
 
-  return (
-    <SafeInput
-      ref={inputRef}
-      name="custom"
-      onChange={handleChange}
-    />
-  );
+  return <SafeInput ref={inputRef} name="custom" onChange={handleChange} />;
 };
 ```
 
 ## Best Practices
 
 ### 1. Always Use Safe Components
+
 Replace standard HTML inputs with safe components when validation is needed:
 
 ```javascript
@@ -197,37 +198,40 @@ Replace standard HTML inputs with safe components when validation is needed:
 ```
 
 ### 2. Use Safe Validation Utilities
+
 Always use the safe validation functions instead of calling `setCustomValidity` directly:
 
 ```javascript
 // ❌ Don't do this
 if (ref.current) {
-  ref.current.setCustomValidity('Error message');
+  ref.current.setCustomValidity("Error message");
 }
 
 // ✅ Do this
-safeSetCustomValidity(ref.current, 'Error message');
+safeSetCustomValidity(ref.current, "Error message");
 ```
 
 ### 3. Handle Ref Forwarding Properly
+
 When creating custom components, always forward refs to the underlying DOM element:
 
 ```javascript
 const MyCustomInput = forwardRef((props, ref) => {
   const inputRef = useRef(null);
-  
+
   useImperativeHandle(ref, () => ({
     setCustomValidity: (message) => {
       safeSetCustomValidity(inputRef.current, message);
     },
     // ... other methods
   }));
-  
+
   return <input ref={inputRef} {...props} />;
 });
 ```
 
 ### 4. Clear Validation on Form Reset
+
 Always clear validation messages when resetting forms:
 
 ```javascript
@@ -241,18 +245,20 @@ const resetForm = () => {
 ## Migration Guide
 
 ### Step 1: Update Imports
+
 Replace standard input imports with safe components:
 
 ```javascript
 // Old
-import { Eye, EyeOff } from '../utils/icons';
+import { Eye, EyeOff } from "../utils/icons";
 
 // New
-import SafeInput from '../components/ui/SafeInput';
-import SafePasswordInput from '../components/ui/SafePasswordInput';
+import SafeInput from "../components/ui/SafeInput";
+import SafePasswordInput from "../components/ui/SafePasswordInput";
 ```
 
 ### Step 2: Replace Input Components
+
 Update your JSX to use safe components:
 
 ```javascript
@@ -275,19 +281,21 @@ Update your JSX to use safe components:
 ```
 
 ### Step 3: Update Validation Logic
+
 Replace direct `setCustomValidity` calls with safe utilities:
 
 ```javascript
 // Old
 if (inputRef.current) {
-  inputRef.current.setCustomValidity('Error message');
+  inputRef.current.setCustomValidity("Error message");
 }
 
 // New
-setFieldValidation('email', 'Error message');
+setFieldValidation("email", "Error message");
 ```
 
 ### Step 4: Add Form Ref
+
 Add a ref to your form element:
 
 ```javascript
@@ -307,7 +315,7 @@ const { setFieldValidation } = useSafeFormValidation({
   formRef,
   onValidationChange: (fieldName, message) => {
     console.log(`Validation changed for ${fieldName}:`, message);
-  }
+  },
 });
 ```
 
@@ -334,4 +342,4 @@ const { setFieldValidation } = useSafeFormValidation({
 3. Ensure form elements have proper `name` attributes
 4. Test validation on different input types (text, email, password, etc.)
 
-This solution provides a robust, type-safe approach to form validation that prevents the `setCustomValidity` error while maintaining all the benefits of the Constraint Validation API. 
+This solution provides a robust, type-safe approach to form validation that prevents the `setCustomValidity` error while maintaining all the benefits of the Constraint Validation API.

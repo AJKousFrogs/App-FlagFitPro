@@ -1,17 +1,20 @@
 # Documentation Cleanup Plan - Reduce 160 → ~50 Files
 
 ## 🎯 Goal
+
 Reduce from **162 MD files** to **~50-55 essential files** by archiving historical documentation.
 
 ## 📊 Current Breakdown
 
 **Total: 162 files**
+
 - Component READMEs: 25 files ✅ **KEEP** (necessary)
 - CSS docs: 3 files ✅ **KEEP** (necessary)
 - Root level: 18 files (some redundant)
 - **docs/ folder: 116 files** ⚠️ **TOO MANY**
 
 ### docs/ Folder Breakdown
+
 - Wireframe docs: 36 files
 - Summary files: 30 files
 - Implementation files: 11 files
@@ -21,6 +24,7 @@ Reduce from **162 MD files** to **~50-55 essential files** by archiving historic
 ## ✅ Essential Files to KEEP (~50-55 files)
 
 ### Core Documentation (5 files)
+
 1. `DESIGN_SYSTEM_DOCUMENTATION.md` - Main design system
 2. `CSS_ARCHITECTURE_GUIDE.md` - CSS architecture
 3. `COMPONENT_LIBRARY_ANALYSIS.md` - Component status
@@ -28,12 +32,15 @@ Reduce from **162 MD files** to **~50-55 essential files** by archiving historic
 5. `docs/WIREFRAME_DOCUMENTATION_INDEX.md` - Wireframe index
 
 ### Component Documentation (25 files)
+
 - All `src/components/**/README.md` files ✅ **KEEP**
 
 ### CSS Documentation (3 files)
+
 - All `src/css/*.md` files ✅ **KEEP**
 
 ### Setup & Deployment (6 files)
+
 - `ENVIRONMENT_SETUP_GUIDE.md`
 - `DEPLOYMENT-CHECKLIST.md`
 - `GITHUB_NETLIFY_SETUP.md`
@@ -42,6 +49,7 @@ Reduce from **162 MD files** to **~50-55 essential files** by archiving historic
 - `youtube-setup-guide.md`
 
 ### API & Database (5 files)
+
 - `docs/API_DOCUMENTATION.md`
 - `docs/DATABASE_SETUP.md`
 - `docs/COMPREHENSIVE_DATABASE_SCHEMA_SUMMARY.md`
@@ -49,15 +57,18 @@ Reduce from **162 MD files** to **~50-55 essential files** by archiving historic
 - `docs/ARCHITECTURE.md`
 
 ### Legal & Compliance (2 files)
+
 - `docs/PRIVACY_POLICY.md`
 - `docs/TERMS_OF_USE.md`
 
 ### Important Reports (3 files)
+
 - `PRODUCTION_READINESS_REPORT.md`
 - `SECURITY_AUDIT_REPORT.md`
 - `SECURITY_FIXES_SUMMARY.md`
 
 ### Project Status (2 files)
+
 - `docs/README.md` - Main project README
 - `docs/PROJECT_STATUS.md` - Current status
 
@@ -66,15 +77,18 @@ Reduce from **162 MD files** to **~50-55 essential files** by archiving historic
 ## 📦 Files to ARCHIVE (Move to docs/archive/)
 
 ### Historical Implementation Summaries (~40 files)
+
 These document **completed work** but aren't needed for **current development**:
 
 **Navigation Summaries (3 files):**
+
 - `docs/NAVIGATION_IMPLEMENTATION_SUMMARY.md`
 - `docs/NAVIGATION_WIREFRAME_IMPLEMENTATION_SUMMARY.md`
 - `docs/NAVIGATION_INTEGRATION_COMPLETE.md`
 - `docs/NAVIGATION_FIXES_SUMMARY.md`
 
 **Feature Summaries (15 files):**
+
 - `docs/AI_COACH_ENHANCEMENTS_SUMMARY.md`
 - `docs/COACH_DASHBOARD_SUMMARY.md`
 - `docs/COACH_WIREFRAMES_COMPLETE_SUMMARY.md`
@@ -92,6 +106,7 @@ These document **completed work** but aren't needed for **current development**:
 - `docs/WELCOME_BACK_PAGE_IMPLEMENTATION.md`
 
 **Integration Summaries (8 files):**
+
 - `docs/BACKEND_INTEGRATION_SUMMARY.md`
 - `docs/BACKEND_FRONTEND_INTEGRATION_COMPLETE.md`
 - `docs/CHART_JS_INTEGRATION.md`
@@ -102,6 +117,7 @@ These document **completed work** but aren't needed for **current development**:
 - `docs/HYDRATION_SYSTEM_IMPLEMENTATION_SUMMARY.md`
 
 **Database Summaries (5 files):**
+
 - `docs/DATABASE_AUDIT_COMPLETE_SUMMARY.md`
 - `docs/DATABASE_COMPLETION_SUMMARY.md`
 - `docs/DATABASE_FIXES_COMPLETE.md`
@@ -109,11 +125,13 @@ These document **completed work** but aren't needed for **current development**:
 - `docs/DETAILED_DATABASE_ANALYSIS.md`
 
 **Research Summaries (3 files):**
+
 - `docs/PLYOMETRICS_RESEARCH_INTEGRATION_SUMMARY.md`
 - `docs/PLYOMETRICS_RESEARCH_DATA_SUMMARY.md`
 - `docs/ISOMETRICS_LIFTING_RESEARCH_SUMMARY.md`
 
 **Wireframe Summaries (6 files):**
+
 - `docs/WIREFRAME_GAPS_FIXED_SUMMARY.md`
 - `docs/WIREFRAME_GAPS_FULLY_RESOLVED_SUMMARY.md`
 - `docs/WIREFRAME_INTEGRATION_README.md`
@@ -122,6 +140,7 @@ These document **completed work** but aren't needed for **current development**:
 - `docs/MOBILE_WIREFRAMES_SUMMARY.md`
 
 ### Individual Wireframe Docs (~25 files)
+
 Page-specific wireframe documentation (keep index, archive individual):
 
 - `docs/LOGIN_PAGE_WIREFRAME.md`
@@ -151,6 +170,7 @@ Page-specific wireframe documentation (keep index, archive individual):
 - `docs/WIREFRAME_COMPONENT_LIBRARY.md` (superseded by component-library.html)
 
 ### Outdated Reports (~15 files)
+
 - `docs/CODEBASE_HEALTH_AUDIT_REPORT.md`
 - `docs/CURRENT_STATE_AUDIT.md`
 - `docs/PRE_FLIGHT_REPORT.md`
@@ -168,6 +188,7 @@ Page-specific wireframe documentation (keep index, archive individual):
 - `docs/COMPREHENSIVE_COMPONENTS_INSTALLATION.md`
 
 ### Redundant/Outdated (~10 files)
+
 - `docs/CLAUDE.md` (if outdated)
 - `docs/@prompt_plan.md` (internal notes)
 - `docs/DEVELOPMENT.md` (if redundant with README)
@@ -185,6 +206,7 @@ Page-specific wireframe documentation (keep index, archive individual):
 ## ❌ Files to DELETE (Truly Redundant)
 
 ### Duplicate/Redundant (~10 files)
+
 - Files that are exact duplicates
 - Files superseded by newer versions
 - Files with no useful content
@@ -222,7 +244,7 @@ docs/
 **Archive, don't delete** - Keep historical context but organize it better.
 
 Would you like me to:
+
 1. **Create archive structure** and move historical files?
 2. **Delete truly redundant** files?
 3. **Both** - Archive historical + delete redundant?
-

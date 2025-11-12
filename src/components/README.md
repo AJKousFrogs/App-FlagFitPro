@@ -32,28 +32,36 @@ src/components/
 ## Atomic Design Principles
 
 ### Atoms
+
 Basic building blocks that cannot be broken down further:
+
 - **Button** - Interactive button element
 - **Input** - Text input field
 - **Badge** - Status indicator
 - **Icon** - Lucide icon component
 
 ### Molecules
+
 Combinations of atoms that form functional units:
+
 - **Form Input** - Input with label and validation
 - **Card** - Content container
 - **Search Bar** - Search input with icon
 - **Form Group** - Form field container
 
 ### Organisms
+
 Complex components combining molecules and atoms:
+
 - **Navigation Sidebar** - Main navigation
 - **Dashboard Header** - Page header with actions
 - **Performance Chart** - Data visualization
 - **Roster Table** - Data table with actions
 
 ### Templates
+
 Full page layouts combining organisms:
+
 - **Dashboard Layout** - Main app layout
 - **Auth Layout** - Login/register pages
 - **Admin Layout** - Admin panel layout
@@ -74,7 +82,7 @@ Each component has an HTML file with the markup:
 All components use the design system CSS:
 
 ```html
-<link rel="stylesheet" href="./src/css/main.css">
+<link rel="stylesheet" href="./src/css/main.css" />
 ```
 
 ### 3. Initialize Icons
@@ -89,6 +97,7 @@ For components with icons, initialize Lucide:
 ### 4. Read Documentation
 
 Each component has a README.md with:
+
 - Usage examples
 - CSS classes
 - Accessibility notes
@@ -101,6 +110,7 @@ View all components in action at `component-library.html` - a living documentati
 ## Design System Integration
 
 All components use:
+
 - **Design Tokens** - CSS variables from `src/css/tokens.css`
 - **Component Styles** - CSS from `src/css/components/`
 - **Utility Classes** - Helpers from `src/css/utilities.css`
@@ -116,6 +126,7 @@ All components use:
 ## Accessibility
 
 All components include:
+
 - ✅ Semantic HTML elements
 - ✅ ARIA attributes where needed
 - ✅ Keyboard navigation support
@@ -144,26 +155,30 @@ When adding new components:
 ### Common Components
 
 **Button:**
+
 ```html
 <button class="btn btn-primary btn-md">Action</button>
 ```
 
 **Card:**
+
 ```html
 <div class="card">
-    <div class="card-body">Content</div>
+  <div class="card-body">Content</div>
 </div>
 ```
 
 **Form Input:**
+
 ```html
 <div class="form-group">
-    <label for="input" class="form-label">Label</label>
-    <input type="text" id="input" class="form-input">
+  <label for="input" class="form-label">Label</label>
+  <input type="text" id="input" class="form-input" />
 </div>
 ```
 
 **Badge:**
+
 ```html
 <span class="badge badge-primary">Status</span>
 ```
@@ -173,4 +188,3 @@ When adding new components:
 - **Design System:** `DESIGN_SYSTEM_DOCUMENTATION.md`
 - **CSS Architecture:** `CSS_ARCHITECTURE_GUIDE.md`
 - **Component Showcase:** `component-library.html`
-

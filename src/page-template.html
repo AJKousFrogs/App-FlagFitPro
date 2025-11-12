@@ -1,146 +1,232 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FlagFit Pro - [Page Name]</title>
-    
+
     <!-- REQUIRED: Fonts (DO NOT CHANGE) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Roboto:wght@300;400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+
     <!-- REQUIRED: CSS Files - New Modular Architecture -->
-    <link rel="stylesheet" href="./src/css/main.css">
-    
+    <link rel="stylesheet" href="./src/css/main.css" />
+
     <!-- REQUIRED: Scripts -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="./src/icon-helper.js"></script>
     <script src="./src/theme-switcher.js"></script>
     <script src="./src/nav-highlight.js"></script>
-    
-    <style>
-        /* Page-specific styles ONLY if absolutely necessary */
-        /* Use CSS variables from design system */
-        /* Support dark/light theme */
-    </style>
-</head>
-<body>
-    <div class="dashboard-container">
-        <!-- REQUIRED: Unified Sidebar Navigation -->
-        <!-- Copy from src/unified-sidebar.html and update active state -->
-        <div class="sidebar">
-            <div class="sidebar-logo" onclick="window.location.href='/dashboard.html'" title="FlagFit Pro">
-                <i data-lucide="activity" style="width: 20px; height: 20px; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
-            </div>
-            
-            <nav class="nav-section" aria-label="Dashboard navigation">
-                <a href="/dashboard.html" class="nav-item" aria-label="Dashboard Overview" id="nav-dashboard">
-                    <span class="nav-item-icon">
-                        <i data-lucide="layout-dashboard" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Overview</span>
-                </a>
-                <a href="/analytics.html" class="nav-item" aria-label="Analytics" id="nav-analytics">
-                    <span class="nav-item-icon">
-                        <i data-lucide="bar-chart-3" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Analytics</span>
-                </a>
-            </nav>
-            
-            <nav class="nav-section" aria-label="Team navigation">
-                <a href="/roster.html" class="nav-item" aria-label="Team Roster" id="nav-roster">
-                    <span class="nav-item-icon">
-                        <i data-lucide="users" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Roster</span>
-                </a>
-                <a href="/training.html" class="nav-item" aria-label="Training" id="nav-training">
-                    <span class="nav-item-icon">
-                        <i data-lucide="zap" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Training</span>
-                </a>
-                <a href="/tournaments.html" class="nav-item" aria-label="Tournaments" id="nav-tournaments">
-                    <span class="nav-item-icon">
-                        <i data-lucide="trophy" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Tournaments</span>
-                </a>
-            </nav>
-            
-            <nav class="nav-section" aria-label="Community navigation">
-                <a href="/community.html" class="nav-item" aria-label="Community" id="nav-community">
-                    <span class="nav-item-icon">
-                        <i data-lucide="message-circle" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Community</span>
-                </a>
-                <a href="/chat.html" class="nav-item" aria-label="Chat" id="nav-chat">
-                    <span class="nav-item-icon">
-                        <i data-lucide="message-square" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Chat</span>
-                </a>
-            </nav>
-            
-            <nav class="nav-section" aria-label="Personal navigation">
-                <a href="/settings.html" class="nav-item" aria-label="Settings" id="nav-settings">
-                    <span class="nav-item-icon">
-                        <i data-lucide="settings" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Settings</span>
-                </a>
-                <a href="/profile.html" class="nav-item" aria-label="Profile" id="nav-profile">
-                    <span class="nav-item-icon">
-                        <i data-lucide="user" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Profile</span>
-                </a>
-            </nav>
-        </div>
-        
-        <!-- REQUIRED: Main Content Area -->
-        <main class="main-content">
-            <!-- Top Bar (Optional - use if needed) -->
-            <div class="top-bar">
-                <div class="header-left">
-                    <h1 style="font-size: var(--text-2xl); font-weight: var(--font-bold); color: var(--color-text-primary);">
-                        [Page Title]
-                    </h1>
-                </div>
-                <div class="header-right">
-                    <!-- Header actions -->
-                </div>
-            </div>
-            
-            <!-- Page Content -->
-            <!-- Use predefined card classes: .stat-card, .chart-card, .metric-card, .upcoming-card -->
-            <div class="stats-grid">
-                <div class="stat-card" data-type="[type]">
-                    <div class="stat-header">
-                        <span class="stat-title">
-                            <i data-lucide="[icon]" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 6px;"></i>
-                            [Title]
-                        </span>
-                    </div>
-                    <div class="stat-value">[Value]</div>
-                    <div class="stat-change positive">
-                        <span><i data-lucide="trending-up" style="width: 16px; height: 16px;"></i></span>
-                        <span>[Change]</span>
-                    </div>
-                    <div class="stat-context">[Context]</div>
-                </div>
-            </div>
-        </main>
-    </div>
-    
-    <script type="module">
-        // Page-specific JavaScript
-        // Use ES6 modules
-        // Import from src/ directory
-    </script>
-</body>
-</html>
 
+    <style>
+      /* Page-specific styles ONLY if absolutely necessary */
+      /* Use CSS variables from design system */
+      /* Support dark/light theme */
+    </style>
+  </head>
+  <body>
+    <div class="dashboard-container">
+      <!-- REQUIRED: Unified Sidebar Navigation -->
+      <!-- Copy from src/unified-sidebar.html and update active state -->
+      <div class="sidebar">
+        <div
+          class="sidebar-logo"
+          onclick="window.location.href='/dashboard.html'"
+          title="FlagFit Pro"
+        >
+          <i
+            data-lucide="activity"
+            style="
+              width: 20px;
+              height: 20px;
+              color: var(--icon-color-primary);
+              stroke: var(--icon-color-primary);
+            "
+          ></i>
+        </div>
+
+        <nav class="nav-section" aria-label="Dashboard navigation">
+          <a
+            href="/dashboard.html"
+            class="nav-item"
+            aria-label="Dashboard Overview"
+            id="nav-dashboard"
+          >
+            <span class="nav-item-icon">
+              <i
+                data-lucide="layout-dashboard"
+                style="width: 24px; height: 24px"
+              ></i>
+            </span>
+            <span class="nav-item-label">Overview</span>
+          </a>
+          <a
+            href="/analytics.html"
+            class="nav-item"
+            aria-label="Analytics"
+            id="nav-analytics"
+          >
+            <span class="nav-item-icon">
+              <i
+                data-lucide="bar-chart-3"
+                style="width: 24px; height: 24px"
+              ></i>
+            </span>
+            <span class="nav-item-label">Analytics</span>
+          </a>
+        </nav>
+
+        <nav class="nav-section" aria-label="Team navigation">
+          <a
+            href="/roster.html"
+            class="nav-item"
+            aria-label="Team Roster"
+            id="nav-roster"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="users" style="width: 24px; height: 24px"></i>
+            </span>
+            <span class="nav-item-label">Roster</span>
+          </a>
+          <a
+            href="/training.html"
+            class="nav-item"
+            aria-label="Training"
+            id="nav-training"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="zap" style="width: 24px; height: 24px"></i>
+            </span>
+            <span class="nav-item-label">Training</span>
+          </a>
+          <a
+            href="/tournaments.html"
+            class="nav-item"
+            aria-label="Tournaments"
+            id="nav-tournaments"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="trophy" style="width: 24px; height: 24px"></i>
+            </span>
+            <span class="nav-item-label">Tournaments</span>
+          </a>
+        </nav>
+
+        <nav class="nav-section" aria-label="Community navigation">
+          <a
+            href="/community.html"
+            class="nav-item"
+            aria-label="Community"
+            id="nav-community"
+          >
+            <span class="nav-item-icon">
+              <i
+                data-lucide="message-circle"
+                style="width: 24px; height: 24px"
+              ></i>
+            </span>
+            <span class="nav-item-label">Community</span>
+          </a>
+          <a href="/chat.html" class="nav-item" aria-label="Chat" id="nav-chat">
+            <span class="nav-item-icon">
+              <i
+                data-lucide="message-square"
+                style="width: 24px; height: 24px"
+              ></i>
+            </span>
+            <span class="nav-item-label">Chat</span>
+          </a>
+        </nav>
+
+        <nav class="nav-section" aria-label="Personal navigation">
+          <a
+            href="/settings.html"
+            class="nav-item"
+            aria-label="Settings"
+            id="nav-settings"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="settings" style="width: 24px; height: 24px"></i>
+            </span>
+            <span class="nav-item-label">Settings</span>
+          </a>
+          <a
+            href="/profile.html"
+            class="nav-item"
+            aria-label="Profile"
+            id="nav-profile"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="user" style="width: 24px; height: 24px"></i>
+            </span>
+            <span class="nav-item-label">Profile</span>
+          </a>
+        </nav>
+      </div>
+
+      <!-- REQUIRED: Main Content Area -->
+      <main class="main-content">
+        <!-- Top Bar (Optional - use if needed) -->
+        <div class="top-bar">
+          <div class="header-left">
+            <h1
+              style="
+                font-size: var(--text-2xl);
+                font-weight: var(--font-bold);
+                color: var(--color-text-primary);
+              "
+            >
+              [Page Title]
+            </h1>
+          </div>
+          <div class="header-right">
+            <!-- Header actions -->
+          </div>
+        </div>
+
+        <!-- Page Content -->
+        <!-- Use predefined card classes: .stat-card, .chart-card, .metric-card, .upcoming-card -->
+        <div class="stats-grid">
+          <div class="stat-card" data-type="[type]">
+            <div class="stat-header">
+              <span class="stat-title">
+                <i
+                  data-lucide="[icon]"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    margin-right: 6px;
+                  "
+                ></i>
+                [Title]
+              </span>
+            </div>
+            <div class="stat-value">[Value]</div>
+            <div class="stat-change positive">
+              <span
+                ><i
+                  data-lucide="trending-up"
+                  style="width: 16px; height: 16px"
+                ></i
+              ></span>
+              <span>[Change]</span>
+            </div>
+            <div class="stat-context">[Context]</div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script type="module">
+      // Page-specific JavaScript
+      // Use ES6 modules
+      // Import from src/ directory
+    </script>
+  </body>
+</html>

@@ -1,5 +1,6 @@
 # Wireframe Mobile Responsive Design
-*Mobile-First Implementation & Touch Optimization*
+
+_Mobile-First Implementation & Touch Optimization_
 
 ## 🎯 **Overview**
 
@@ -8,6 +9,7 @@ This document consolidates **all mobile wireframe specifications** and responsiv
 ## 📱 **Mobile-First Design Philosophy**
 
 ### **Core Principles**
+
 1. **Training-First Mobile** - Optimized for athletes during active training
 2. **One-Handed Operation** - All critical functions accessible with thumb
 3. **Glance-Friendly Data** - Key metrics visible at arm's length
@@ -15,6 +17,7 @@ This document consolidates **all mobile wireframe specifications** and responsiv
 5. **Offline Capability** - Core functions work without connectivity
 
 ### **Target Devices & Contexts**
+
 ```
 Primary: iPhone Pro Max (428×926) / Android Large (411×823)
 Secondary: Standard phones (375×667) / (360×640)
@@ -25,14 +28,15 @@ Conditions: Bright sunlight, moisture, movement, gloves
 ## 📐 **Responsive Breakpoint System**
 
 ### **Breakpoint Definition**
+
 ```css
 /* Mobile-First Breakpoints */
 :root {
-  --breakpoint-xs: 320px;   /* Minimum supported */
-  --breakpoint-sm: 375px;   /* iPhone standard */
-  --breakpoint-md: 411px;   /* Android standard */
-  --breakpoint-lg: 428px;   /* iPhone Pro Max */
-  --breakpoint-xl: 768px;   /* Tablet portrait */
+  --breakpoint-xs: 320px; /* Minimum supported */
+  --breakpoint-sm: 375px; /* iPhone standard */
+  --breakpoint-md: 411px; /* Android standard */
+  --breakpoint-lg: 428px; /* iPhone Pro Max */
+  --breakpoint-xl: 768px; /* Tablet portrait */
 }
 
 /* Progressive Enhancement */
@@ -54,6 +58,7 @@ Conditions: Bright sunlight, moisture, movement, gloves
 ```
 
 ### **Container System**
+
 ```css
 .mobile-container {
   width: 100%;
@@ -73,18 +78,19 @@ Conditions: Bright sunlight, moisture, movement, gloves
 ## 🗂️ **Mobile Navigation System**
 
 ### **Primary Mobile Navigation**
+
 ```html
 <!-- Mobile Header -->
 <header class="mobile-header">
   <button class="hamburger-menu" aria-label="Open menu">
     <span class="hamburger-icon">[≡]</span>
   </button>
-  
+
   <div class="mobile-logo">
     <span class="logo-icon">[🏈]</span>
     <span class="app-name">Flag Football</span>
   </div>
-  
+
   <div class="mobile-actions">
     <button class="notification-btn" aria-label="Notifications">
       <span class="notification-icon">[🔔]</span>
@@ -99,29 +105,29 @@ Conditions: Bright sunlight, moisture, movement, gloves
     <button class="close-menu" aria-label="Close menu">[×]</button>
     <span class="menu-title">Navigation</span>
   </div>
-  
+
   <div class="mobile-menu-content">
     <a href="/dashboard" class="mobile-menu-item">
       <span class="menu-icon">[📊]</span>
       <span class="menu-text">Dashboard</span>
     </a>
-    
+
     <a href="/training" class="mobile-menu-item">
       <span class="menu-icon">[🏃]</span>
       <span class="menu-text">Training</span>
       <span class="menu-badge">AI Ready</span>
     </a>
-    
+
     <a href="/tournaments" class="mobile-menu-item">
       <span class="menu-icon">[🏆]</span>
       <span class="menu-text">Tournaments</span>
     </a>
-    
+
     <a href="/community" class="mobile-menu-item">
       <span class="menu-icon">[👥]</span>
       <span class="menu-text">Team</span>
     </a>
-    
+
     <a href="/profile" class="mobile-menu-item">
       <span class="menu-icon">[👤]</span>
       <span class="menu-text">Profile</span>
@@ -131,6 +137,7 @@ Conditions: Bright sunlight, moisture, movement, gloves
 ```
 
 ### **Mobile Navigation Styling**
+
 ```css
 .mobile-header {
   display: flex;
@@ -191,6 +198,7 @@ Conditions: Bright sunlight, moisture, movement, gloves
 ## 🏠 **Mobile Dashboard Design**
 
 ### **Mobile Dashboard Layout**
+
 ```html
 <div class="mobile-dashboard">
   <!-- Quick Performance Summary -->
@@ -199,14 +207,14 @@ Conditions: Bright sunlight, moisture, movement, gloves
       <h2>Today's Status</h2>
       <span class="readiness-score">87%</span>
     </div>
-    
+
     <div class="key-metrics">
       <div class="metric-item">
         <span class="metric-label">Sprint Time</span>
         <span class="metric-value">1.65s</span>
         <span class="metric-target">Target: 1.60s</span>
       </div>
-      
+
       <div class="metric-item">
         <span class="metric-label">Recovery</span>
         <span class="metric-value">76%</span>
@@ -214,30 +222,30 @@ Conditions: Bright sunlight, moisture, movement, gloves
       </div>
     </div>
   </div>
-  
+
   <!-- Quick Actions Grid -->
   <div class="mobile-quick-actions">
     <button class="quick-action-btn quick-action--primary">
       <span class="action-icon">[▶]</span>
       <span class="action-text">Start Training</span>
     </button>
-    
+
     <button class="quick-action-btn">
       <span class="action-icon">[📊]</span>
       <span class="action-text">View Progress</span>
     </button>
-    
+
     <button class="quick-action-btn">
       <span class="action-icon">[🏆]</span>
       <span class="action-text">Tournaments</span>
     </button>
-    
+
     <button class="quick-action-btn">
       <span class="action-icon">[👥]</span>
       <span class="action-text">Team Chat</span>
     </button>
   </div>
-  
+
   <!-- AI Coach Mobile Summary -->
   <div class="mobile-ai-coach">
     <div class="ai-coach-header">
@@ -245,11 +253,14 @@ Conditions: Bright sunlight, moisture, movement, gloves
       <span class="ai-title">AI Coach</span>
       <span class="confidence-badge">91% Confidence</span>
     </div>
-    
+
     <div class="ai-message">
-      <p>"Focus on route precision today. Sprint times excellent, but route accuracy can improve 12%."</p>
+      <p>
+        "Focus on route precision today. Sprint times excellent, but route
+        accuracy can improve 12%."
+      </p>
     </div>
-    
+
     <div class="ai-research-note">
       <span class="research-text">Based on 156 studies • 87.4% accuracy</span>
     </div>
@@ -258,6 +269,7 @@ Conditions: Bright sunlight, moisture, movement, gloves
 ```
 
 ### **Mobile Dashboard Styling**
+
 ```css
 .mobile-dashboard {
   padding: var(--space-sm);
@@ -341,6 +353,7 @@ Conditions: Bright sunlight, moisture, movement, gloves
 ## 🏃 **Mobile Training Interface**
 
 ### **Training Session Mobile Layout**
+
 ```html
 <div class="mobile-training-session">
   <!-- Training Header -->
@@ -348,17 +361,17 @@ Conditions: Bright sunlight, moisture, movement, gloves
     <button class="back-btn" aria-label="Back to dashboard">
       <span class="back-icon">[←]</span>
     </button>
-    
+
     <div class="session-info">
       <span class="session-type">Speed & Agility</span>
       <span class="session-time">00:12:34</span>
     </div>
-    
+
     <button class="pause-btn" aria-label="Pause session">
       <span class="pause-icon">[⏸]</span>
     </button>
   </div>
-  
+
   <!-- Live Performance Display -->
   <div class="mobile-live-metrics">
     <div class="primary-metric">
@@ -366,48 +379,51 @@ Conditions: Bright sunlight, moisture, movement, gloves
       <span class="metric-value-large">1.67s</span>
       <span class="metric-target">Target: 1.60s</span>
     </div>
-    
+
     <div class="secondary-metrics">
       <div class="mini-metric">
         <span class="mini-label">HR</span>
         <span class="mini-value">148</span>
       </div>
-      
+
       <div class="mini-metric">
         <span class="mini-label">Reps</span>
         <span class="mini-value">8/12</span>
       </div>
-      
+
       <div class="mini-metric">
         <span class="mini-label">Quality</span>
         <span class="mini-value">87%</span>
       </div>
     </div>
   </div>
-  
+
   <!-- AI Coaching Interface -->
   <div class="mobile-ai-coaching">
     <div class="ai-feedback">
       <span class="ai-icon">[🤖]</span>
-      <span class="ai-text">"Excellent acceleration! Focus on maintaining form through finish."</span>
+      <span class="ai-text"
+        >"Excellent acceleration! Focus on maintaining form through
+        finish."</span
+      >
     </div>
-    
+
     <div class="ai-suggestion">
       <span class="suggestion-text">Next: Practice route precision drills</span>
       <span class="confidence">Confidence: 89%</span>
     </div>
   </div>
-  
+
   <!-- Quick Actions -->
   <div class="mobile-training-actions">
     <button class="training-action-btn training-action--primary">
       <span class="action-text">Complete Rep</span>
     </button>
-    
+
     <button class="training-action-btn">
       <span class="action-text">Log Note</span>
     </button>
-    
+
     <button class="training-action-btn training-action--secondary">
       <span class="action-text">End Session</span>
     </button>
@@ -416,6 +432,7 @@ Conditions: Bright sunlight, moisture, movement, gloves
 ```
 
 ### **Mobile Training Styling**
+
 ```css
 .mobile-training-session {
   display: flex;
@@ -510,6 +527,7 @@ Conditions: Bright sunlight, moisture, movement, gloves
 ## 📊 **Mobile Analytics & Performance**
 
 ### **Mobile Performance Dashboard**
+
 ```html
 <div class="mobile-analytics">
   <!-- Performance Summary Cards -->
@@ -519,19 +537,19 @@ Conditions: Bright sunlight, moisture, movement, gloves
         <span class="card-title">This Week</span>
         <span class="card-trend">↗ +8%</span>
       </div>
-      
+
       <div class="card-metrics">
         <div class="primary-stat">
           <span class="stat-value">1.65s</span>
           <span class="stat-label">Average Sprint</span>
         </div>
-        
+
         <div class="stat-grid">
           <div class="stat-item">
             <span class="stat-number">12</span>
             <span class="stat-text">Sessions</span>
           </div>
-          
+
           <div class="stat-item">
             <span class="stat-number">87%</span>
             <span class="stat-text">Quality</span>
@@ -540,27 +558,31 @@ Conditions: Bright sunlight, moisture, movement, gloves
       </div>
     </div>
   </div>
-  
+
   <!-- Research-Backed Insights -->
   <div class="mobile-research-insights">
     <div class="insight-header">
       <span class="insight-icon">[📊]</span>
       <span class="insight-title">Evidence-Based Insights</span>
     </div>
-    
+
     <div class="insight-list">
       <div class="insight-item">
-        <span class="insight-text">Sprint improvement on track (+0.08s in 6 weeks)</span>
+        <span class="insight-text"
+          >Sprint improvement on track (+0.08s in 6 weeks)</span
+        >
         <span class="insight-confidence">91% confidence</span>
       </div>
-      
+
       <div class="insight-item">
-        <span class="insight-text">Route precision can improve 12% with focused drills</span>
+        <span class="insight-text"
+          >Route precision can improve 12% with focused drills</span
+        >
         <span class="insight-research">Based on 156 studies</span>
       </div>
     </div>
   </div>
-  
+
   <!-- Olympic Tracking (Mobile) -->
   <div class="mobile-olympics-tracker">
     <div class="olympics-header">
@@ -568,7 +590,7 @@ Conditions: Bright sunlight, moisture, movement, gloves
       <span class="olympics-title">LA28 Olympics</span>
       <span class="olympics-status">On Track</span>
     </div>
-    
+
     <div class="olympics-progress">
       <div class="progress-bar">
         <div class="progress-fill" style="width: 68%;"></div>
@@ -582,6 +604,7 @@ Conditions: Bright sunlight, moisture, movement, gloves
 ## 🏆 **Mobile Tournament Interface**
 
 ### **Mobile Tournament Management**
+
 ```html
 <div class="mobile-tournaments">
   <!-- Tournament List -->
@@ -591,38 +614,36 @@ Conditions: Bright sunlight, moisture, movement, gloves
         <span class="tournament-title">Regional Championship</span>
         <span class="qualifier-badge">LA28 Qualifier</span>
       </div>
-      
+
       <div class="tournament-details">
         <div class="detail-row">
           <span class="detail-label">Date:</span>
           <span class="detail-value">Mar 15-17, 2025</span>
         </div>
-        
+
         <div class="detail-row">
           <span class="detail-label">Status:</span>
           <span class="detail-value">Registration Open</span>
         </div>
       </div>
-      
+
       <div class="tournament-actions">
         <button class="tournament-btn tournament-btn--primary">
           Register Now
         </button>
-        
-        <button class="tournament-btn">
-          View Details
-        </button>
+
+        <button class="tournament-btn">View Details</button>
       </div>
     </div>
   </div>
-  
+
   <!-- Preparation Status -->
   <div class="mobile-prep-status">
     <div class="prep-header">
       <span class="prep-title">Competition Readiness</span>
       <span class="prep-score">85%</span>
     </div>
-    
+
     <div class="prep-metrics">
       <div class="prep-metric">
         <span class="prep-label">Training</span>
@@ -631,7 +652,7 @@ Conditions: Bright sunlight, moisture, movement, gloves
         </div>
         <span class="prep-value">87%</span>
       </div>
-      
+
       <div class="prep-metric">
         <span class="prep-label">Skills</span>
         <div class="prep-bar">
@@ -639,7 +660,7 @@ Conditions: Bright sunlight, moisture, movement, gloves
         </div>
         <span class="prep-value">84%</span>
       </div>
-      
+
       <div class="prep-metric">
         <span class="prep-label">Mental</span>
         <div class="prep-bar">
@@ -655,6 +676,7 @@ Conditions: Bright sunlight, moisture, movement, gloves
 ## 🤝 **Mobile Team Communication**
 
 ### **Mobile Team Chat Interface**
+
 ```html
 <div class="mobile-team-chat">
   <!-- Chat Header -->
@@ -662,17 +684,17 @@ Conditions: Bright sunlight, moisture, movement, gloves
     <button class="back-btn" aria-label="Back">
       <span class="back-icon">[←]</span>
     </button>
-    
+
     <div class="chat-info">
       <span class="team-name">Elite Flag Football</span>
       <span class="online-count">8 online</span>
     </div>
-    
+
     <button class="chat-options" aria-label="Chat options">
       <span class="options-icon">[⋮]</span>
     </button>
   </div>
-  
+
   <!-- Messages Area -->
   <div class="chat-messages">
     <div class="message message--coach">
@@ -684,7 +706,7 @@ Conditions: Bright sunlight, moisture, movement, gloves
         Great practice today! Focus on route timing for tomorrow's scrimmage.
       </div>
     </div>
-    
+
     <div class="message message--player">
       <div class="message-header">
         <span class="sender-name">Sarah</span>
@@ -694,7 +716,7 @@ Conditions: Bright sunlight, moisture, movement, gloves
         My sprint times improved by 0.1s this week! 🏃‍♀️
       </div>
     </div>
-    
+
     <div class="message message--ai">
       <div class="message-header">
         <span class="sender-name">AI Coach</span>
@@ -702,20 +724,21 @@ Conditions: Bright sunlight, moisture, movement, gloves
         <span class="ai-badge">87.4% Accuracy</span>
       </div>
       <div class="message-content">
-        Team chemistry score improved to 78%. Communication patterns show 82% effectiveness.
+        Team chemistry score improved to 78%. Communication patterns show 82%
+        effectiveness.
       </div>
     </div>
   </div>
-  
+
   <!-- Input Area -->
   <div class="chat-input-area">
-    <input 
-      type="text" 
-      class="chat-input" 
+    <input
+      type="text"
+      class="chat-input"
       placeholder="Type your message..."
       aria-label="Message input"
-    >
-    
+    />
+
     <button class="send-btn" aria-label="Send message">
       <span class="send-icon">[→]</span>
     </button>
@@ -726,6 +749,7 @@ Conditions: Bright sunlight, moisture, movement, gloves
 ## 🎮 **Touch Interaction Guidelines**
 
 ### **Touch Target Standards**
+
 ```css
 /* Minimum Touch Targets */
 .touch-target {
@@ -751,6 +775,7 @@ Conditions: Bright sunlight, moisture, movement, gloves
 ```
 
 ### **Gesture Support**
+
 ```css
 /* Swipe Gestures (Future Implementation) */
 .swipeable {
@@ -773,29 +798,43 @@ Conditions: Bright sunlight, moisture, movement, gloves
 ## 📲 **Progressive Web App Features**
 
 ### **PWA Optimization**
+
 ```html
 <!-- PWA Meta Tags -->
-<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="mobile-web-app-capable" content="yes">
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, user-scalable=no"
+/>
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="mobile-web-app-capable" content="yes" />
 
 <!-- App Icons -->
-<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
-<link rel="manifest" href="/manifest.json">
+<link
+  rel="apple-touch-icon"
+  sizes="180x180"
+  href="/icons/apple-touch-icon.png"
+/>
+<link
+  rel="icon"
+  type="image/png"
+  sizes="32x32"
+  href="/icons/favicon-32x32.png"
+/>
+<link rel="manifest" href="/manifest.json" />
 ```
 
 ### **Offline Functionality**
+
 ```javascript
 // Service Worker for Offline Training
-self.addEventListener('fetch', (event) => {
+self.addEventListener("fetch", (event) => {
   // Cache critical training data
-  if (event.request.url.includes('/training-data/')) {
+  if (event.request.url.includes("/training-data/")) {
     event.respondWith(
       caches.match(event.request).then((response) => {
         return response || fetch(event.request);
-      })
+      }),
     );
   }
 });
@@ -804,6 +843,7 @@ self.addEventListener('fetch', (event) => {
 ## 🔋 **Performance Optimization**
 
 ### **Mobile Performance Standards**
+
 - **Load Time**: <2 seconds on 3G
 - **Touch Response**: <100ms
 - **Animation**: 60fps
@@ -811,6 +851,7 @@ self.addEventListener('fetch', (event) => {
 - **Data Usage**: <1MB per training session
 
 ### **Optimization Techniques**
+
 ```css
 /* Hardware Acceleration */
 .animated-element {
@@ -820,8 +861,12 @@ self.addEventListener('fetch', (event) => {
 
 /* Efficient Animations */
 @keyframes slideIn {
-  from { transform: translateX(-100%); }
-  to { transform: translateX(0); }
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
 }
 
 /* Battery-Friendly Updates */
@@ -837,6 +882,7 @@ self.addEventListener('fetch', (event) => {
 ## 🌐 **Cross-Platform Compatibility**
 
 ### **iOS Optimization**
+
 ```css
 /* iOS Safe Areas */
 .ios-safe-area {
@@ -854,6 +900,7 @@ self.addEventListener('fetch', (event) => {
 ```
 
 ### **Android Optimization**
+
 ```css
 /* Android Material Design Elements */
 .android-ripple {
@@ -862,7 +909,7 @@ self.addEventListener('fetch', (event) => {
 }
 
 .android-ripple::after {
-  content: '';
+  content: "";
   position: absolute;
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.1);

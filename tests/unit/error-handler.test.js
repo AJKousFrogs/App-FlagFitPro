@@ -1,164 +1,164 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { ErrorHandler } from '../../src/error-handler.js'
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { ErrorHandler } from "../../src/error-handler.js";
 
-describe('ErrorHandler', () => {
-  let errorHandler
-  let consoleSpy
+describe("ErrorHandler", () => {
+  let errorHandler;
+  let consoleSpy;
 
   beforeEach(() => {
-    errorHandler = new ErrorHandler()
-    consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
-  })
+    errorHandler = new ErrorHandler();
+    consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+  });
 
   afterEach(() => {
-    consoleSpy.mockRestore()
-  })
+    consoleSpy.mockRestore();
+  });
 
-  describe('handleError', () => {
-    it('should log basic errors', () => {
-      const error = new Error('Test error')
-      
-      errorHandler.handleError(error)
+  describe("handleError", () => {
+    it("should log basic errors", () => {
+      const error = new Error("Test error");
 
-      expect(consoleSpy).toHaveBeenCalledWith('Error:', error)
-    })
+      errorHandler.handleError(error);
 
-    it('should handle network errors', () => {
-      const networkError = new Error('Failed to fetch')
-      networkError.name = 'NetworkError'
+      expect(consoleSpy).toHaveBeenCalledWith("Error:", error);
+    });
 
-      const result = errorHandler.handleError(networkError)
+    it("should handle network errors", () => {
+      const networkError = new Error("Failed to fetch");
+      networkError.name = "NetworkError";
 
-      expect(result.type).toBe('network')
-      expect(result.message).toContain('network')
-    })
+      const result = errorHandler.handleError(networkError);
 
-    it('should handle validation errors', () => {
-      const validationError = new Error('Validation failed')
-      validationError.name = 'ValidationError'
+      expect(result.type).toBe("network");
+      expect(result.message).toContain("network");
+    });
 
-      const result = errorHandler.handleError(validationError)
+    it("should handle validation errors", () => {
+      const validationError = new Error("Validation failed");
+      validationError.name = "ValidationError";
 
-      expect(result.type).toBe('validation')
-      expect(result.message).toContain('validation')
-    })
+      const result = errorHandler.handleError(validationError);
 
-    it('should handle authentication errors', () => {
-      const authError = new Error('Unauthorized')
-      authError.status = 401
+      expect(result.type).toBe("validation");
+      expect(result.message).toContain("validation");
+    });
 
-      const result = errorHandler.handleError(authError)
+    it("should handle authentication errors", () => {
+      const authError = new Error("Unauthorized");
+      authError.status = 401;
 
-      expect(result.type).toBe('auth')
-      expect(result.redirect).toBe('/login.html')
-    })
+      const result = errorHandler.handleError(authError);
 
-    it('should handle 403 forbidden errors', () => {
-      const forbiddenError = new Error('Forbidden')
-      forbiddenError.status = 403
+      expect(result.type).toBe("auth");
+      expect(result.redirect).toBe("/login.html");
+    });
 
-      const result = errorHandler.handleError(forbiddenError)
+    it("should handle 403 forbidden errors", () => {
+      const forbiddenError = new Error("Forbidden");
+      forbiddenError.status = 403;
 
-      expect(result.type).toBe('permission')
-      expect(result.message).toContain('permission')
-    })
+      const result = errorHandler.handleError(forbiddenError);
 
-    it('should handle 404 not found errors', () => {
-      const notFoundError = new Error('Not found')
-      notFoundError.status = 404
+      expect(result.type).toBe("permission");
+      expect(result.message).toContain("permission");
+    });
 
-      const result = errorHandler.handleError(notFoundError)
+    it("should handle 404 not found errors", () => {
+      const notFoundError = new Error("Not found");
+      notFoundError.status = 404;
 
-      expect(result.type).toBe('notFound')
-      expect(result.message).toContain('not found')
-    })
+      const result = errorHandler.handleError(notFoundError);
 
-    it('should handle 500 server errors', () => {
-      const serverError = new Error('Internal server error')
-      serverError.status = 500
+      expect(result.type).toBe("notFound");
+      expect(result.message).toContain("not found");
+    });
 
-      const result = errorHandler.handleError(serverError)
+    it("should handle 500 server errors", () => {
+      const serverError = new Error("Internal server error");
+      serverError.status = 500;
 
-      expect(result.type).toBe('server')
-      expect(result.message).toContain('server')
-    })
-  })
+      const result = errorHandler.handleError(serverError);
 
-  describe('displayError', () => {
-    it('should show error in UI element', () => {
+      expect(result.type).toBe("server");
+      expect(result.message).toContain("server");
+    });
+  });
+
+  describe("displayError", () => {
+    it("should show error in UI element", () => {
       const mockElement = {
-        innerHTML: '',
-        style: { display: 'none' }
-      }
-      document.getElementById = vi.fn().mockReturnValue(mockElement)
+        innerHTML: "",
+        style: { display: "none" },
+      };
+      document.getElementById = vi.fn().mockReturnValue(mockElement);
 
-      errorHandler.displayError('Test error message')
+      errorHandler.displayError("Test error message");
 
-      expect(mockElement.innerHTML).toContain('Test error message')
-      expect(mockElement.style.display).toBe('block')
-    })
+      expect(mockElement.innerHTML).toContain("Test error message");
+      expect(mockElement.style.display).toBe("block");
+    });
 
-    it('should handle missing error container gracefully', () => {
-      document.getElementById = vi.fn().mockReturnValue(null)
+    it("should handle missing error container gracefully", () => {
+      document.getElementById = vi.fn().mockReturnValue(null);
 
-      expect(() => errorHandler.displayError('Test error')).not.toThrow()
-      expect(consoleSpy).toHaveBeenCalledWith('Error container not found')
-    })
-  })
+      expect(() => errorHandler.displayError("Test error")).not.toThrow();
+      expect(consoleSpy).toHaveBeenCalledWith("Error container not found");
+    });
+  });
 
-  describe('clearErrors', () => {
-    it('should hide error container', () => {
+  describe("clearErrors", () => {
+    it("should hide error container", () => {
       const mockElement = {
-        innerHTML: 'Previous error',
-        style: { display: 'block' }
-      }
-      document.getElementById = vi.fn().mockReturnValue(mockElement)
+        innerHTML: "Previous error",
+        style: { display: "block" },
+      };
+      document.getElementById = vi.fn().mockReturnValue(mockElement);
 
-      errorHandler.clearErrors()
+      errorHandler.clearErrors();
 
-      expect(mockElement.innerHTML).toBe('')
-      expect(mockElement.style.display).toBe('none')
-    })
-  })
+      expect(mockElement.innerHTML).toBe("");
+      expect(mockElement.style.display).toBe("none");
+    });
+  });
 
-  describe('logError', () => {
-    it('should log errors with context', () => {
-      const error = new Error('Test error')
-      const context = { userId: 123, action: 'login' }
+  describe("logError", () => {
+    it("should log errors with context", () => {
+      const error = new Error("Test error");
+      const context = { userId: 123, action: "login" };
 
-      errorHandler.logError(error, context)
+      errorHandler.logError(error, context);
 
-      expect(consoleSpy).toHaveBeenCalledWith('Error Context:', context)
-      expect(consoleSpy).toHaveBeenCalledWith('Error:', error)
-    })
-  })
+      expect(consoleSpy).toHaveBeenCalledWith("Error Context:", context);
+      expect(consoleSpy).toHaveBeenCalledWith("Error:", error);
+    });
+  });
 
-  describe('isRetryableError', () => {
-    it('should identify retryable network errors', () => {
-      const networkError = new Error('Failed to fetch')
-      
-      expect(errorHandler.isRetryableError(networkError)).toBe(true)
-    })
+  describe("isRetryableError", () => {
+    it("should identify retryable network errors", () => {
+      const networkError = new Error("Failed to fetch");
 
-    it('should identify non-retryable validation errors', () => {
-      const validationError = new Error('Invalid input')
-      validationError.status = 400
+      expect(errorHandler.isRetryableError(networkError)).toBe(true);
+    });
 
-      expect(errorHandler.isRetryableError(validationError)).toBe(false)
-    })
+    it("should identify non-retryable validation errors", () => {
+      const validationError = new Error("Invalid input");
+      validationError.status = 400;
 
-    it('should identify retryable server errors', () => {
-      const serverError = new Error('Internal error')
-      serverError.status = 500
+      expect(errorHandler.isRetryableError(validationError)).toBe(false);
+    });
 
-      expect(errorHandler.isRetryableError(serverError)).toBe(true)
-    })
+    it("should identify retryable server errors", () => {
+      const serverError = new Error("Internal error");
+      serverError.status = 500;
 
-    it('should identify retryable timeout errors', () => {
-      const timeoutError = new Error('Request timeout')
-      timeoutError.name = 'TimeoutError'
+      expect(errorHandler.isRetryableError(serverError)).toBe(true);
+    });
 
-      expect(errorHandler.isRetryableError(timeoutError)).toBe(true)
-    })
-  })
-})
+    it("should identify retryable timeout errors", () => {
+      const timeoutError = new Error("Request timeout");
+      timeoutError.name = "TimeoutError";
+
+      expect(errorHandler.isRetryableError(timeoutError)).toBe(true);
+    });
+  });
+});

@@ -1,6 +1,7 @@
 # Mobile Navigation Wireframes Documentation
 
 ## Page Overview
+
 Comprehensive mobile navigation patterns for the FlagFit Pro Training App, including hamburger menus, drawer navigation, bottom tabs, and swipe gestures optimized for one-handed operation.
 
 ## Mobile Navigation System
@@ -259,12 +260,14 @@ Auto-scroll behavior:
 ## **Responsive Breakpoints**
 
 ### **Mobile Breakpoints**
+
 - **Small (320px-375px)**: iPhone SE, older Android
 - **Medium (375px-414px)**: iPhone 12/13/14, standard Android
 - **Large (414px-480px)**: iPhone Plus/Max, large Android
 - **Tablet (768px+)**: iPad mini, Android tablets
 
 ### **Navigation Adaptations**
+
 ```css
 /* Small Mobile (320px-375px) */
 .nav-mobile-sm {
@@ -291,12 +294,14 @@ Auto-scroll behavior:
 ## **Accessibility for Mobile**
 
 ### **Touch Targets**
+
 - Minimum 44px × 44px touch targets
 - 8px spacing between interactive elements
 - Visual feedback on touch (ripple effect)
 - Haptic feedback for important actions
 
 ### **Voice Control Integration**
+
 ```
 ┌─────────────────────────────────────┐
 │ 🎤 Voice Commands Active            │
@@ -317,6 +322,7 @@ Auto-scroll behavior:
 ```
 
 ### **Offline Mode**
+
 ```
 ┌─────────────────────────────────────┐
 │ ⚠️ No Internet Connection           │
@@ -340,18 +346,20 @@ Auto-scroll behavior:
 ## **Mobile Animation Patterns**
 
 ### **Page Transitions**
+
 ```javascript
 // Slide transitions for mobile navigation
 const pageTransitions = {
-  slideLeft: 'transform: translateX(-100%)',
-  slideRight: 'transform: translateX(100%)',
-  slideUp: 'transform: translateY(-100%)',
-  slideDown: 'transform: translateY(100%)',
-  fade: 'opacity: 0'
+  slideLeft: "transform: translateX(-100%)",
+  slideRight: "transform: translateX(100%)",
+  slideUp: "transform: translateY(-100%)",
+  slideDown: "transform: translateY(100%)",
+  fade: "opacity: 0",
 };
 ```
 
 ### **Loading States**
+
 ```
 ┌─────────────────────────────────────┐
 │ Loading Training Session...         │

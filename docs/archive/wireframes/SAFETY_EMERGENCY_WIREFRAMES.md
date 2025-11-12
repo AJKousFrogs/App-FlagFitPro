@@ -1,6 +1,7 @@
 # Safety & Emergency System Wireframes
 
 ## Page Overview
+
 Critical safety features including emergency contacts, injury reporting, medical information management, and safety protocol integration for the flag football training app.
 
 ## **Emergency Contact System**

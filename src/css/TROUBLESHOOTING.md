@@ -5,6 +5,7 @@
 ### Issue 1: Styles Not Applying
 
 **Symptoms:**
+
 - CSS variables not working
 - Styles not rendering
 - Specificity conflicts
@@ -12,9 +13,10 @@
 **Solutions:**
 
 1. **Check CSS Import Order**
+
    ```html
    <!-- Correct order -->
-   <link rel="stylesheet" href="./src/css/main.css">
+   <link rel="stylesheet" href="./src/css/main.css" />
    ```
 
 2. **Verify Cascade Layers**
@@ -30,6 +32,7 @@
 ### Issue 2: Theme Switching Not Working
 
 **Symptoms:**
+
 - Dark theme not applying
 - Theme toggle has no effect
 - Colors not changing
@@ -37,11 +40,13 @@
 **Solutions:**
 
 1. **Check Theme Attribute**
+
    ```html
    <!-- Correct -->
    <html data-theme="dark">
-   <!-- or -->
-   <html class="dark">
+     <!-- or -->
+     <html class="dark"></html>
+   </html>
    ```
 
 2. **Verify Theme CSS Loaded**
@@ -57,6 +62,7 @@
 ### Issue 3: Layout Issues
 
 **Symptoms:**
+
 - Grid not working
 - Sidebar not positioning correctly
 - Responsive breakpoints not working
@@ -64,10 +70,12 @@
 **Solutions:**
 
 1. **Check Layout Classes**
+
    ```html
    <!-- Use layout prefix -->
    <div class="l-container">
-     <div class="l-grid l-grid-3">
+     <div class="l-grid l-grid-3"></div>
+   </div>
    ```
 
 2. **Verify Breakpoints**
@@ -87,6 +95,7 @@
 ### Issue 4: State Classes Not Working
 
 **Symptoms:**
+
 - `.is-active` not applying
 - `.has-error` not showing
 - States not toggling
@@ -94,10 +103,11 @@
 **Solutions:**
 
 1. **Check JavaScript Integration**
+
    ```javascript
    // Correct state toggle
-   element.classList.toggle('is-active');
-   element.classList.add('has-error');
+   element.classList.toggle("is-active");
+   element.classList.add("has-error");
    ```
 
 2. **Verify State CSS Loaded**
@@ -113,6 +123,7 @@
 ### Issue 5: Animations Not Working
 
 **Symptoms:**
+
 - Animations not playing
 - Transitions not smooth
 - Reduced motion not respected
@@ -120,10 +131,12 @@
 **Solutions:**
 
 1. **Check Animation Classes**
+
    ```html
    <!-- Correct usage -->
    <div class="u-animate-fade-in">
-   <div class="u-transition-colors">
+     <div class="u-transition-colors"></div>
+   </div>
    ```
 
 2. **Verify Reduced Motion**
@@ -139,6 +152,7 @@
 ### Issue 6: JavaScript Hooks Not Working
 
 **Symptoms:**
+
 - `.js-*` classes not targeting elements
 - Event listeners not attaching
 - Hooks have styles applied
@@ -146,12 +160,14 @@
 **Solutions:**
 
 1. **Verify Hook Classes**
+
    ```html
    <!-- Correct - no styles -->
-   <button class="btn js-modal-trigger">
+   <button class="btn js-modal-trigger"></button>
    ```
 
 2. **Check JavaScript**
+
    ```javascript
    // Correct targeting
    document.querySelectorAll('.js-modal-trigger').forEach(...);
@@ -165,6 +181,7 @@
 ### Issue 7: Specificity Conflicts
 
 **Symptoms:**
+
 - Styles not overriding
 - `!important` needed everywhere
 - Cascade layers not working
@@ -172,10 +189,13 @@
 **Solutions:**
 
 1. **Use Cascade Layers**
+
    ```css
    /* Utilities layer has highest priority */
    @layer utilities {
-     .u-text-primary { color: red !important; }
+     .u-text-primary {
+       color: red !important;
+     }
    }
    ```
 
@@ -192,6 +212,7 @@
 ### Issue 8: Responsive Issues
 
 **Symptoms:**
+
 - Breakpoints not triggering
 - Mobile styles not applying
 - Desktop styles breaking on mobile
@@ -199,14 +220,16 @@
 **Solutions:**
 
 1. **Check Breakpoint Variables**
+
    ```css
    /* Correct usage */
    @media (min-width: var(--bp-tablet)) { ... }
    ```
 
 2. **Verify Viewport Meta**
+
    ```html
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
    ```
 
 3. **Test Breakpoints**
@@ -217,6 +240,7 @@
 ### Issue 9: Accessibility Issues
 
 **Symptoms:**
+
 - Focus indicators not visible
 - Screen reader not working
 - Keyboard navigation broken
@@ -224,6 +248,7 @@
 **Solutions:**
 
 1. **Check Focus Styles**
+
    ```css
    /* Ensure focus-visible is styled */
    :focus-visible {
@@ -232,9 +257,10 @@
    ```
 
 2. **Verify ARIA Attributes**
+
    ```html
    <!-- Correct ARIA usage -->
-   <button aria-expanded="false" aria-controls="menu">
+   <button aria-expanded="false" aria-controls="menu"></button>
    ```
 
 3. **Test Accessibility**
@@ -245,6 +271,7 @@
 ### Issue 10: Performance Issues
 
 **Symptoms:**
+
 - Slow page load
 - CSS blocking render
 - Large file size
@@ -257,6 +284,7 @@
    - Check for unused CSS
 
 2. **Consider Critical CSS**
+
    ```html
    <!-- Inline critical CSS -->
    <style>
@@ -282,8 +310,9 @@
 
 ```javascript
 // In browser console
-getComputedStyle(document.documentElement)
-  .getPropertyValue('--color-brand-primary');
+getComputedStyle(document.documentElement).getPropertyValue(
+  "--color-brand-primary",
+);
 ```
 
 ### 3. Verify Layer Order
@@ -340,4 +369,3 @@ getComputedStyle(document.documentElement)
    - Avoid over-engineering
    - Use existing utilities
    - Follow established patterns
-

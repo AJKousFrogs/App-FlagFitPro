@@ -3,24 +3,22 @@
 // Feature Validation Framework
 // Validates all Olympic-level claims and performance metrics
 
-import { performance } from 'perf_hooks';
-import fs from 'fs/promises';
-import path from 'path';
+import fs from "fs/promises";
 
 class FeatureValidator {
   constructor() {
     this.results = {
       timestamp: new Date().toISOString(),
-      environment: process.env.NODE_ENV || 'development',
+      environment: process.env.NODE_ENV || "development",
       validationResults: {},
       overallScore: 0,
       criticalIssues: [],
-      recommendations: []
+      recommendations: [],
     };
   }
 
   async validateAll() {
-    console.log('🚀 Starting comprehensive feature validation...\n');
+    console.log("🚀 Starting comprehensive feature validation...\n");
 
     try {
       // Core functionality validation
@@ -31,47 +29,55 @@ class FeatureValidator {
       await this.validatePerformanceMetrics();
       await this.validateResearchIntegration();
       await this.validateAccessibility();
-      
+
       // Calculate overall score
       this.calculateOverallScore();
-      
+
       // Generate report
       await this.generateReport();
-      
-      console.log(`\n✅ Validation complete! Overall score: ${this.results.overallScore}/100`);
-      
+
+      console.log(
+        `\n✅ Validation complete! Overall score: ${this.results.overallScore}/100`,
+      );
+
       if (this.results.criticalIssues.length > 0) {
-        console.log(`\n⚠️  Critical issues found: ${this.results.criticalIssues.length}`);
-        this.results.criticalIssues.forEach(issue => console.log(`  - ${issue}`));
+        console.log(
+          `\n⚠️  Critical issues found: ${this.results.criticalIssues.length}`,
+        );
+        this.results.criticalIssues.forEach((issue) =>
+          console.log(`  - ${issue}`),
+        );
       }
-      
+
       return this.results;
     } catch (error) {
-      console.error('❌ Validation failed:', error);
-      this.results.criticalIssues.push(`Validation framework error: ${error.message}`);
+      console.error("❌ Validation failed:", error);
+      this.results.criticalIssues.push(
+        `Validation framework error: ${error.message}`,
+      );
       return this.results;
     }
   }
 
   async validateAuthentication() {
-    console.log('🔐 Validating Authentication System...');
-    
+    console.log("🔐 Validating Authentication System...");
+
     const authResults = {
       score: 0,
       tests: {},
-      issues: []
+      issues: [],
     };
 
     try {
       // Test 1: Auth Manager exists and loads
-      const authManagerPath = './src/auth-manager.js';
+      const authManagerPath = "./src/auth-manager.js";
       try {
         await fs.access(authManagerPath);
         authResults.tests.authManagerExists = true;
         authResults.score += 20;
       } catch {
         authResults.tests.authManagerExists = false;
-        authResults.issues.push('Auth manager file missing');
+        authResults.issues.push("Auth manager file missing");
       }
 
       // Test 2: JWT token validation
@@ -79,7 +85,7 @@ class FeatureValidator {
       if (authResults.tests.jwtValidation) {
         authResults.score += 25;
       } else {
-        authResults.issues.push('JWT validation not properly implemented');
+        authResults.issues.push("JWT validation not properly implemented");
       }
 
       // Test 3: Demo mode security
@@ -87,8 +93,10 @@ class FeatureValidator {
       if (authResults.tests.demoModeSecurity) {
         authResults.score += 20;
       } else {
-        authResults.issues.push('Demo mode security vulnerability');
-        this.results.criticalIssues.push('Security: Demo tokens allowed in production');
+        authResults.issues.push("Demo mode security vulnerability");
+        this.results.criticalIssues.push(
+          "Security: Demo tokens allowed in production",
+        );
       }
 
       // Test 4: Role-based access control
@@ -98,9 +106,10 @@ class FeatureValidator {
       // Test 5: Session management
       authResults.tests.sessionManagement = this.testSessionManagement();
       authResults.score += authResults.tests.sessionManagement ? 10 : 0;
-
     } catch (error) {
-      authResults.issues.push(`Authentication validation error: ${error.message}`);
+      authResults.issues.push(
+        `Authentication validation error: ${error.message}`,
+      );
     }
 
     this.results.validationResults.authentication = authResults;
@@ -108,13 +117,13 @@ class FeatureValidator {
   }
 
   async validateDatabasePerformance() {
-    console.log('🗄️  Validating Database Performance Claims...');
-    
+    console.log("🗄️  Validating Database Performance Claims...");
+
     const dbResults = {
       score: 0,
       tests: {},
       issues: [],
-      metrics: {}
+      metrics: {},
     };
 
     try {
@@ -122,16 +131,22 @@ class FeatureValidator {
       const poolingResult = await this.testConnectionPooling();
       dbResults.tests.connectionPooling = poolingResult.implemented;
       dbResults.metrics.memoryReduction = poolingResult.memoryReduction;
-      
+
       // Validate 93% memory reduction claim
       if (poolingResult.memoryReduction >= 90) {
         dbResults.score += 30;
       } else if (poolingResult.memoryReduction >= 70) {
         dbResults.score += 20;
-        dbResults.issues.push(`Memory reduction only ${poolingResult.memoryReduction}% (claimed 93%)`);
+        dbResults.issues.push(
+          `Memory reduction only ${poolingResult.memoryReduction}% (claimed 93%)`,
+        );
       } else {
-        dbResults.issues.push(`Memory reduction claim unvalidated: ${poolingResult.memoryReduction}%`);
-        this.results.criticalIssues.push('Database: Memory reduction claim not validated');
+        dbResults.issues.push(
+          `Memory reduction claim unvalidated: ${poolingResult.memoryReduction}%`,
+        );
+        this.results.criticalIssues.push(
+          "Database: Memory reduction claim not validated",
+        );
       }
 
       // Test 2: Query performance
@@ -147,7 +162,6 @@ class FeatureValidator {
       // Test 4: Schema integrity
       dbResults.tests.schemaIntegrity = await this.testSchemaIntegrity();
       dbResults.score += dbResults.tests.schemaIntegrity ? 15 : 0;
-
     } catch (error) {
       dbResults.issues.push(`Database validation error: ${error.message}`);
     }
@@ -157,28 +171,34 @@ class FeatureValidator {
   }
 
   async validateAIFeatures() {
-    console.log('🤖 Validating AI Coaching System...');
-    
+    console.log("🤖 Validating AI Coaching System...");
+
     const aiResults = {
       score: 0,
       tests: {},
       issues: [],
-      metrics: {}
+      metrics: {},
     };
 
     try {
       // Test 1: Prediction accuracy claim (87.4%)
       const predictionAccuracy = await this.testPredictionAccuracy();
       aiResults.metrics.predictionAccuracy = predictionAccuracy;
-      
+
       if (predictionAccuracy >= 87) {
         aiResults.score += 40;
       } else if (predictionAccuracy >= 75) {
         aiResults.score += 25;
-        aiResults.issues.push(`Prediction accuracy ${predictionAccuracy}% (claimed 87.4%)`);
+        aiResults.issues.push(
+          `Prediction accuracy ${predictionAccuracy}% (claimed 87.4%)`,
+        );
       } else {
-        aiResults.issues.push(`Prediction accuracy claim unvalidated: ${predictionAccuracy}%`);
-        this.results.criticalIssues.push('AI: Prediction accuracy claim not validated');
+        aiResults.issues.push(
+          `Prediction accuracy claim unvalidated: ${predictionAccuracy}%`,
+        );
+        this.results.criticalIssues.push(
+          "AI: Prediction accuracy claim not validated",
+        );
       }
 
       // Test 2: Model validation framework
@@ -190,9 +210,9 @@ class FeatureValidator {
       aiResults.score += aiResults.tests.realTimeProcessing ? 20 : 0;
 
       // Test 4: Evidence-based recommendations
-      aiResults.tests.evidenceBasedRecommendations = await this.testEvidenceBasedRecommendations();
+      aiResults.tests.evidenceBasedRecommendations =
+        await this.testEvidenceBasedRecommendations();
       aiResults.score += aiResults.tests.evidenceBasedRecommendations ? 20 : 0;
-
     } catch (error) {
       aiResults.issues.push(`AI validation error: ${error.message}`);
     }
@@ -202,12 +222,12 @@ class FeatureValidator {
   }
 
   async validateOlympicFeatures() {
-    console.log('🏅 Validating Olympic Integration...');
-    
+    console.log("🏅 Validating Olympic Integration...");
+
     const olympicResults = {
       score: 0,
       tests: {},
-      issues: []
+      issues: [],
     };
 
     try {
@@ -220,15 +240,19 @@ class FeatureValidator {
       olympicResults.score += olympicResults.tests.la28Timeline ? 25 : 0;
 
       // Test 3: European Championship integration
-      olympicResults.tests.europeanChampionship = await this.testEuropeanChampionship();
-      olympicResults.score += olympicResults.tests.europeanChampionship ? 25 : 0;
+      olympicResults.tests.europeanChampionship =
+        await this.testEuropeanChampionship();
+      olympicResults.score += olympicResults.tests.europeanChampionship
+        ? 25
+        : 0;
 
       // Test 4: World ranking system
       olympicResults.tests.worldRanking = await this.testWorldRanking();
       olympicResults.score += olympicResults.tests.worldRanking ? 20 : 0;
-
     } catch (error) {
-      olympicResults.issues.push(`Olympic features validation error: ${error.message}`);
+      olympicResults.issues.push(
+        `Olympic features validation error: ${error.message}`,
+      );
     }
 
     this.results.validationResults.olympic = olympicResults;
@@ -236,25 +260,27 @@ class FeatureValidator {
   }
 
   async validatePerformanceMetrics() {
-    console.log('⚡ Validating Performance Claims...');
-    
+    console.log("⚡ Validating Performance Claims...");
+
     const perfResults = {
       score: 0,
       tests: {},
       issues: [],
-      metrics: {}
+      metrics: {},
     };
 
     try {
       // Test 1: Page load performance
       const loadTime = await this.measurePageLoadTime();
       perfResults.metrics.pageLoadTime = loadTime;
-      
+
       if (loadTime < 3000) {
         perfResults.score += 25;
       } else if (loadTime < 5000) {
         perfResults.score += 15;
-        perfResults.issues.push(`Page load time ${loadTime}ms (target: <3000ms)`);
+        perfResults.issues.push(
+          `Page load time ${loadTime}ms (target: <3000ms)`,
+        );
       } else {
         perfResults.issues.push(`Page load time too slow: ${loadTime}ms`);
       }
@@ -273,7 +299,6 @@ class FeatureValidator {
       const lighthouseScore = await this.runLighthouseAudit();
       perfResults.metrics.lighthouseScore = lighthouseScore;
       perfResults.score += Math.floor(lighthouseScore * 0.3); // Max 30 points
-
     } catch (error) {
       perfResults.issues.push(`Performance validation error: ${error.message}`);
     }
@@ -283,40 +308,53 @@ class FeatureValidator {
   }
 
   async validateResearchIntegration() {
-    console.log('📚 Validating Research Integration Claims...');
-    
+    console.log("📚 Validating Research Integration Claims...");
+
     const researchResults = {
       score: 0,
       tests: {},
       issues: [],
-      metrics: {}
+      metrics: {},
     };
 
     try {
       // Test 1: Validate 156 studies claim
       const studiesCount = await this.countResearchStudies();
       researchResults.metrics.studiesCount = studiesCount;
-      
+
       if (studiesCount >= 150) {
         researchResults.score += 40;
       } else if (studiesCount >= 100) {
         researchResults.score += 25;
-        researchResults.issues.push(`${studiesCount} studies found (claimed 156)`);
+        researchResults.issues.push(
+          `${studiesCount} studies found (claimed 156)`,
+        );
       } else {
-        researchResults.issues.push(`Research integration claim unvalidated: ${studiesCount} studies`);
-        this.results.criticalIssues.push('Research: Study count claim not validated');
+        researchResults.issues.push(
+          `Research integration claim unvalidated: ${studiesCount} studies`,
+        );
+        this.results.criticalIssues.push(
+          "Research: Study count claim not validated",
+        );
       }
 
       // Test 2: Evidence-based algorithm implementation
-      researchResults.tests.evidenceBasedAlgorithms = await this.testEvidenceBasedAlgorithms();
-      researchResults.score += researchResults.tests.evidenceBasedAlgorithms ? 30 : 0;
+      researchResults.tests.evidenceBasedAlgorithms =
+        await this.testEvidenceBasedAlgorithms();
+      researchResults.score += researchResults.tests.evidenceBasedAlgorithms
+        ? 30
+        : 0;
 
       // Test 3: Flag football specific optimization
-      researchResults.tests.flagFootballOptimization = await this.testFlagFootballOptimization();
-      researchResults.score += researchResults.tests.flagFootballOptimization ? 30 : 0;
-
+      researchResults.tests.flagFootballOptimization =
+        await this.testFlagFootballOptimization();
+      researchResults.score += researchResults.tests.flagFootballOptimization
+        ? 30
+        : 0;
     } catch (error) {
-      researchResults.issues.push(`Research validation error: ${error.message}`);
+      researchResults.issues.push(
+        `Research validation error: ${error.message}`,
+      );
     }
 
     this.results.validationResults.research = researchResults;
@@ -324,12 +362,12 @@ class FeatureValidator {
   }
 
   async validateAccessibility() {
-    console.log('♿ Validating Accessibility Compliance...');
-    
+    console.log("♿ Validating Accessibility Compliance...");
+
     const a11yResults = {
       score: 0,
       tests: {},
-      issues: []
+      issues: [],
     };
 
     try {
@@ -338,19 +376,22 @@ class FeatureValidator {
       a11yResults.score += a11yResults.tests.wcagCompliance.score;
 
       // Test 2: Keyboard navigation
-      a11yResults.tests.keyboardNavigation = await this.testKeyboardNavigation();
+      a11yResults.tests.keyboardNavigation =
+        await this.testKeyboardNavigation();
       a11yResults.score += a11yResults.tests.keyboardNavigation ? 25 : 0;
 
       // Test 3: Screen reader compatibility
-      a11yResults.tests.screenReader = await this.testScreenReaderCompatibility();
+      a11yResults.tests.screenReader =
+        await this.testScreenReaderCompatibility();
       a11yResults.score += a11yResults.tests.screenReader ? 25 : 0;
 
       // Test 4: Color contrast
       a11yResults.tests.colorContrast = await this.testColorContrast();
       a11yResults.score += a11yResults.tests.colorContrast ? 15 : 0;
-
     } catch (error) {
-      a11yResults.issues.push(`Accessibility validation error: ${error.message}`);
+      a11yResults.issues.push(
+        `Accessibility validation error: ${error.message}`,
+      );
     }
 
     this.results.validationResults.accessibility = a11yResults;
@@ -382,7 +423,7 @@ class FeatureValidator {
     // Simulate connection pooling test
     return {
       implemented: true,
-      memoryReduction: 93 // Placeholder - should measure actual reduction
+      memoryReduction: 93, // Placeholder - should measure actual reduction
     };
   }
 
@@ -390,17 +431,17 @@ class FeatureValidator {
     // Test database query performance
     return {
       averageQueryTime: 150,
-      score: 25
+      score: 25,
     };
   }
 
   async validateMigrations() {
     try {
-      const migrationsDir = './database/migrations';
+      const migrationsDir = "./database/migrations";
       const files = await fs.readdir(migrationsDir);
       return {
         complete: files.length >= 20,
-        count: files.length
+        count: files.length,
       };
     } catch {
       return { complete: false, count: 0 };
@@ -465,7 +506,7 @@ class FeatureValidator {
 
   async measureMemoryUsage() {
     // Measure memory usage efficiency
-    return { efficient: true, usage: '45MB' };
+    return { efficient: true, usage: "45MB" };
   }
 
   async runLighthouseAudit() {
@@ -477,9 +518,12 @@ class FeatureValidator {
     // Count implemented research studies
     try {
       // Look for research data files
-      const researchFiles = ['./database/research-studies.json', './docs/research-integration.md'];
+      const researchFiles = [
+        "./database/research-studies.json",
+        "./docs/research-integration.md",
+      ];
       let count = 0;
-      
+
       for (const file of researchFiles) {
         try {
           await fs.access(file);
@@ -488,7 +532,7 @@ class FeatureValidator {
           // File doesn't exist
         }
       }
-      
+
       return count;
     } catch {
       return 0;
@@ -507,7 +551,7 @@ class FeatureValidator {
 
   async testWCAGCompliance() {
     // Test WCAG 2.1 compliance
-    return { score: 60, level: 'AA' }; // Placeholder
+    return { score: 60, level: "AA" }; // Placeholder
   }
 
   async testKeyboardNavigation() {
@@ -527,29 +571,38 @@ class FeatureValidator {
 
   calculateOverallScore() {
     const categories = Object.values(this.results.validationResults);
-    const totalScore = categories.reduce((sum, category) => sum + category.score, 0);
+    const totalScore = categories.reduce(
+      (sum, category) => sum + category.score,
+      0,
+    );
     const categoryCount = categories.length;
-    
+
     this.results.overallScore = Math.round(totalScore / categoryCount);
-    
+
     // Add recommendations based on score
     if (this.results.overallScore < 70) {
-      this.results.recommendations.push('Significant improvements needed before Olympic-ready claim');
+      this.results.recommendations.push(
+        "Significant improvements needed before Olympic-ready claim",
+      );
     } else if (this.results.overallScore < 85) {
-      this.results.recommendations.push('Good foundation but needs refinement for Olympic level');
+      this.results.recommendations.push(
+        "Good foundation but needs refinement for Olympic level",
+      );
     } else {
-      this.results.recommendations.push('Strong foundation for Olympic-level application');
+      this.results.recommendations.push(
+        "Strong foundation for Olympic-level application",
+      );
     }
   }
 
   async generateReport() {
-    const reportPath = './validation-report.json';
+    const reportPath = "./validation-report.json";
     await fs.writeFile(reportPath, JSON.stringify(this.results, null, 2));
-    
+
     // Generate markdown report
     const markdownReport = this.generateMarkdownReport();
-    await fs.writeFile('./VALIDATION_REPORT.md', markdownReport);
-    
+    await fs.writeFile("./VALIDATION_REPORT.md", markdownReport);
+
     console.log(`\n📊 Detailed reports generated:`);
     console.log(`   - JSON: ${reportPath}`);
     console.log(`   - Markdown: ./VALIDATION_REPORT.md`);
@@ -562,28 +615,34 @@ class FeatureValidator {
     report += `**Overall Score:** ${this.results.overallScore}/100\n\n`;
 
     // Add each category
-    Object.entries(this.results.validationResults).forEach(([category, results]) => {
-      report += `## ${category.charAt(0).toUpperCase() + category.slice(1)}\n\n`;
-      report += `**Score:** ${results.score}/100\n\n`;
-      
-      if (results.issues && results.issues.length > 0) {
-        report += `**Issues:**\n`;
-        results.issues.forEach(issue => report += `- ${issue}\n`);
-        report += '\n';
-      }
-    });
+    Object.entries(this.results.validationResults).forEach(
+      ([category, results]) => {
+        report += `## ${category.charAt(0).toUpperCase() + category.slice(1)}\n\n`;
+        report += `**Score:** ${results.score}/100\n\n`;
+
+        if (results.issues && results.issues.length > 0) {
+          report += `**Issues:**\n`;
+          results.issues.forEach((issue) => (report += `- ${issue}\n`));
+          report += "\n";
+        }
+      },
+    );
 
     // Add critical issues
     if (this.results.criticalIssues.length > 0) {
       report += `## Critical Issues\n\n`;
-      this.results.criticalIssues.forEach(issue => report += `- ❌ ${issue}\n`);
-      report += '\n';
+      this.results.criticalIssues.forEach(
+        (issue) => (report += `- ❌ ${issue}\n`),
+      );
+      report += "\n";
     }
 
     // Add recommendations
     if (this.results.recommendations.length > 0) {
       report += `## Recommendations\n\n`;
-      this.results.recommendations.forEach(rec => report += `- 💡 ${rec}\n`);
+      this.results.recommendations.forEach(
+        (rec) => (report += `- 💡 ${rec}\n`),
+      );
     }
 
     return report;

@@ -1,37 +1,37 @@
 // Netlify Function: User Authentication - Login
 // Handles user login with email/password authentication using Supabase
 
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
-const { db, checkEnvVars } = require('./supabase-client.cjs');
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
+const { db, checkEnvVars } = require("./supabase-client.cjs");
 
 // Demo users to seed if database is empty
 const demoUsers = [
   {
-    email: 'test@flagfitpro.com',
-    name: 'Test User',
-    password: 'demo123',
-    role: 'player'
+    email: "test@flagfitpro.com",
+    name: "Test User",
+    password: "demo123",
+    role: "player",
   },
   {
-    email: 'demo@flagfitpro.com', 
-    name: 'Demo User',
-    password: 'demo123',
-    role: 'player'
+    email: "demo@flagfitpro.com",
+    name: "Demo User",
+    password: "demo123",
+    role: "player",
   },
   {
-    email: 'coach@flagfitpro.com',
-    name: 'Coach Mike',
-    password: 'demo123',
-    role: 'coach'
-  }
+    email: "coach@flagfitpro.com",
+    name: "Coach Mike",
+    password: "demo123",
+    role: "coach",
+  },
 ];
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
 if (!JWT_SECRET) {
-  console.error('CRITICAL: JWT_SECRET environment variable is not set!');
-  throw new Error('JWT_SECRET environment variable is required for security');
+  console.error("CRITICAL: JWT_SECRET environment variable is not set!");
+  throw new Error("JWT_SECRET environment variable is required for security");
 }
 
 // Seed demo users if they don't exist
@@ -39,7 +39,7 @@ async function seedDemoUsers() {
   try {
     for (const userData of demoUsers) {
       const existingUser = await db.users.findByEmail(userData.email);
-      
+
       if (!existingUser) {
         // Hash password and create user
         const hashedPassword = await bcrypt.hash(userData.password, 10);
@@ -47,48 +47,48 @@ async function seedDemoUsers() {
           email: userData.email,
           name: userData.name,
           password: hashedPassword,
-          role: userData.role
+          role: userData.role,
         });
         console.log(`Seeded demo user: ${userData.email}`);
       }
     }
   } catch (error) {
-    console.warn('Failed to seed demo users:', error);
+    console.warn("Failed to seed demo users:", error);
   }
 }
 
 exports.handler = async (event, context) => {
   // Handle CORS preflight
-  if (event.httpMethod === 'OPTIONS') {
+  if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
       headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS'
-      }
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+      },
     };
   }
 
   // Only allow POST requests
-  if (event.httpMethod !== 'POST') {
+  if (event.httpMethod !== "POST") {
     return {
       statusCode: 405,
       headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'application/json'
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         success: false,
-        error: 'Method not allowed'
-      })
+        error: "Method not allowed",
+      }),
     };
   }
 
   try {
     // Check environment variables
     checkEnvVars();
-    
+
     // Seed demo users on first run
     await seedDemoUsers();
 
@@ -100,13 +100,13 @@ exports.handler = async (event, context) => {
       return {
         statusCode: 400,
         headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Content-Type': 'application/json'
+          "Access-Control-Allow-Origin": "*",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           success: false,
-          error: 'Email and password are required'
-        })
+          error: "Email and password are required",
+        }),
       };
     }
 
@@ -116,13 +116,13 @@ exports.handler = async (event, context) => {
       return {
         statusCode: 401,
         headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Content-Type': 'application/json'
+          "Access-Control-Allow-Origin": "*",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           success: false,
-          error: 'Invalid email or password'
-        })
+          error: "Invalid email or password",
+        }),
       };
     }
 
@@ -132,59 +132,58 @@ exports.handler = async (event, context) => {
       return {
         statusCode: 401,
         headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Content-Type': 'application/json'
+          "Access-Control-Allow-Origin": "*",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           success: false,
-          error: 'Invalid email or password'
-        })
+          error: "Invalid email or password",
+        }),
       };
     }
 
     // Generate JWT token
     const token = jwt.sign(
-      { 
-        userId: user.id, 
+      {
+        userId: user.id,
         email: user.email,
-        role: user.role 
+        role: user.role,
       },
       JWT_SECRET,
-      { expiresIn: '24h' }
+      { expiresIn: "24h" },
     );
 
     // Return success response (exclude password)
     const { password: _, ...safeUser } = user;
-    
+
     return {
       statusCode: 200,
       headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'application/json'
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         success: true,
         data: {
           token,
-          user: safeUser
+          user: safeUser,
         },
-        message: 'Login successful'
-      })
+        message: "Login successful",
+      }),
     };
-
   } catch (error) {
-    console.error('Login error:', error);
-    
+    console.error("Login error:", error);
+
     return {
       statusCode: 500,
       headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'application/json'
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         success: false,
-        error: 'Internal server error'
-      })
+        error: "Internal server error",
+      }),
     };
   }
 };

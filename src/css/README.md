@@ -44,29 +44,39 @@ src/css/
 ## Naming Conventions
 
 ### Layout (`.l-*`)
+
 Page-wide structural positioning:
+
 - `.l-header`, `.l-main`, `.l-sidebar`, `.l-footer`
 - `.l-container`, `.l-grid`, `.l-flex`
 - `.l-page`, `.l-page-sidebar`, `.l-page-centered`
 
 ### Components (no prefix)
+
 Reusable UI components:
+
 - `.btn`, `.card`, `.form-input`, `.modal`
 - `.badge`, `.alert`
 
 ### State (`.is-*`, `.has-*`)
+
 Dynamic states controlled by JavaScript:
+
 - `.is-active`, `.is-disabled`, `.is-loading`
 - `.has-error`, `.has-warning`, `.has-success`
 
 ### Utilities (`.u-*`)
+
 Single-purpose helper classes:
+
 - `.u-margin-16`, `.u-padding-24`
 - `.u-text-heading-lg`, `.u-text-primary`
 - `.u-display-flex`, `.u-justify-between`
 
 ### JavaScript Hooks (`.js-*`)
+
 Non-styled classes for JS targeting:
+
 - `.js-modal-trigger`, `.js-dropdown-menu`
 - `.js-theme-toggle`, `.js-animation-trigger`
 
@@ -79,6 +89,7 @@ The architecture uses CSS `@layer` for explicit specificity control:
 ```
 
 **Layer Priority** (lowest to highest):
+
 1. `reset` - CSS resets
 2. `base` - Base element styles
 3. `tokens` - Design tokens
@@ -96,7 +107,7 @@ The architecture uses CSS `@layer` for explicit specificity control:
 ### Basic Setup
 
 ```html
-<link rel="stylesheet" href="./src/css/main.css">
+<link rel="stylesheet" href="./src/css/main.css" />
 ```
 
 ### Design Tokens
@@ -173,8 +184,8 @@ All design values are available as CSS custom properties:
 ```
 
 ```javascript
-document.querySelectorAll('.js-modal-trigger').forEach(trigger => {
-  trigger.addEventListener('click', () => {
+document.querySelectorAll(".js-modal-trigger").forEach((trigger) => {
+  trigger.addEventListener("click", () => {
     const modalId = trigger.dataset.modal;
     // Open modal logic
   });
@@ -186,11 +197,13 @@ document.querySelectorAll('.js-modal-trigger').forEach(trigger => {
 ### Button
 
 **Markup:**
+
 ```html
 <button class="btn btn-primary btn-lg">Click</button>
 ```
 
 **Variants:**
+
 - `.btn-primary` - Primary action
 - `.btn-secondary` - Secondary action
 - `.btn-tertiary` - Tertiary action
@@ -199,6 +212,7 @@ document.querySelectorAll('.js-modal-trigger').forEach(trigger => {
 - `.btn-error` - Error state
 
 **Sizes:**
+
 - `.btn-xs` - Extra small (28px)
 - `.btn-sm` - Small (36px)
 - `.btn-md` - Medium (44px)
@@ -208,6 +222,7 @@ document.querySelectorAll('.js-modal-trigger').forEach(trigger => {
 ### Card
 
 **Markup:**
+
 ```html
 <div class="card">
   <div class="card-header">Header</div>
@@ -217,6 +232,7 @@ document.querySelectorAll('.js-modal-trigger').forEach(trigger => {
 ```
 
 **Variants:**
+
 - `.card` - Standard card
 - `.card-glass` - Glassmorphism effect
 - `.card-elevated` - Elevated shadow
@@ -225,6 +241,7 @@ document.querySelectorAll('.js-modal-trigger').forEach(trigger => {
 ### Form
 
 **Markup:**
+
 ```html
 <div class="form-group">
   <label class="form-label required">Name</label>
@@ -235,17 +252,20 @@ document.querySelectorAll('.js-modal-trigger').forEach(trigger => {
 ```
 
 **Input Types:**
+
 - `.form-input` - Text input
 - `.form-textarea` - Textarea
 - `.form-select` - Select dropdown
 
 **States:**
+
 - `.form-input.error` - Error state
 - `.form-input:disabled` - Disabled state
 
 ### Modal
 
 **Markup:**
+
 ```html
 <div class="modal-overlay">
   <div class="modal-content">
@@ -263,14 +283,16 @@ document.querySelectorAll('.js-modal-trigger').forEach(trigger => {
 ```
 
 **JavaScript:**
+
 ```javascript
 // Toggle modal
-modalOverlay.classList.toggle('open');
+modalOverlay.classList.toggle("open");
 ```
 
 ### Alert
 
 **Markup:**
+
 ```html
 <div class="alert alert-success">
   <span>Success message</span>
@@ -278,6 +300,7 @@ modalOverlay.classList.toggle('open');
 ```
 
 **Variants:**
+
 - `.alert-info` - Info message
 - `.alert-success` - Success message
 - `.alert-warning` - Warning message
@@ -286,11 +309,13 @@ modalOverlay.classList.toggle('open');
 ### Badge
 
 **Markup:**
+
 ```html
 <span class="badge badge-primary">New</span>
 ```
 
 **Variants:**
+
 - `.badge-primary` - Primary badge
 - `.badge-secondary` - Secondary badge
 - `.badge-success` - Success badge
@@ -313,6 +338,7 @@ Content-based breakpoints (not device-specific):
 ```
 
 **Usage:**
+
 ```css
 @media (min-width: var(--bp-tablet)) {
   /* Tablet and up */
@@ -322,22 +348,27 @@ Content-based breakpoints (not device-specific):
 ## Themes
 
 ### Light Theme (Default)
+
 ```html
 <html data-theme="light">
-<!-- or -->
-<html class="light">
+  <!-- or -->
+  <html class="light"></html>
+</html>
 ```
 
 ### Dark Theme
+
 ```html
 <html data-theme="dark">
-<!-- or -->
-<html class="dark">
+  <!-- or -->
+  <html class="dark"></html>
+</html>
 ```
 
 ### High Contrast Theme
+
 ```html
-<html data-theme="high-contrast">
+<html data-theme="high-contrast"></html>
 ```
 
 **System Preference:**
@@ -394,8 +425,12 @@ Themes automatically respect `prefers-color-scheme` when no manual theme is set.
 
 ```css
 @keyframes customAnimation {
-  from { /* ... */ }
-  to { /* ... */ }
+  from {
+    /* ... */
+  }
+  to {
+    /* ... */
+  }
 }
 ```
 
@@ -422,6 +457,7 @@ Themes automatically respect `prefers-color-scheme` when no manual theme is set.
 - Edge 99+
 
 **Required Features:**
+
 - CSS Custom Properties
 - CSS Cascade Layers (`@layer`)
 - CSS Grid

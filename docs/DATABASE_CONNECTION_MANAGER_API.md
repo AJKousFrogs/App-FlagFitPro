@@ -13,6 +13,7 @@ The `DatabaseConnectionManager` is a **critical singleton service** that provide
 - **Production Ready**: SSL support and timeout management
 
 ## 📍 **File Location**
+
 ```
 /src/services/DatabaseConnectionManager.js
 ```
@@ -24,6 +25,7 @@ The `DatabaseConnectionManager` is a **critical singleton service** that provide
 ## 🔧 **Configuration**
 
 ### Connection Settings
+
 ```javascript
 {
   connectionString: process.env.VITE_DATABASE_URL,
@@ -39,6 +41,7 @@ The `DatabaseConnectionManager` is a **critical singleton service** that provide
 ### **Core Methods**
 
 #### `connect()`
+
 Establishes initial database connection and creates the connection pool.
 
 ```javascript
@@ -49,6 +52,7 @@ await dbManager.connect();
 **Throws**: Connection error if database is unreachable
 
 #### `getPool()`
+
 Returns the active connection pool, creating it if necessary.
 
 ```javascript
@@ -59,30 +63,32 @@ const pool = await dbManager.getPool();
 **Auto-connects**: Creates connection if not already established
 
 #### `query(text, params)`
+
 Executes a SQL query using the connection pool.
 
 ```javascript
-const result = await dbManager.query(
-  'SELECT * FROM users WHERE id = $1', 
-  [userId]
-);
+const result = await dbManager.query("SELECT * FROM users WHERE id = $1", [
+  userId,
+]);
 ```
 
 **Parameters**:
+
 - `text` (string) - SQL query with parameter placeholders
 - `params` (array) - Query parameters
 
 **Returns**: Query result object
 
 #### `getClient()`
+
 Gets a dedicated client connection for transactions.
 
 ```javascript
 const client = await dbManager.getClient();
 try {
-  await client.query('BEGIN');
+  await client.query("BEGIN");
   // Perform transaction operations
-  await client.query('COMMIT');
+  await client.query("COMMIT");
 } finally {
   client.release(); // Always release the client
 }
@@ -92,6 +98,7 @@ try {
 **Important**: Always call `client.release()` when done
 
 #### `disconnect()`
+
 Cleanly shuts down all database connections.
 
 ```javascript
@@ -101,6 +108,7 @@ await dbManager.disconnect();
 **Use Case**: Application shutdown, testing cleanup
 
 #### `getConnectionStatus()`
+
 Returns real-time connection pool statistics.
 
 ```javascript
@@ -120,46 +128,47 @@ console.log(status);
 ## 🛠️ **Usage Examples**
 
 ### **Basic Query**
+
 ```javascript
-import dbManager from '../services/DatabaseConnectionManager.js';
+import dbManager from "../services/DatabaseConnectionManager.js";
 
 // Simple query
-const users = await dbManager.query('SELECT * FROM users LIMIT 10');
+const users = await dbManager.query("SELECT * FROM users LIMIT 10");
 
 // Parameterized query
-const user = await dbManager.query(
-  'SELECT * FROM users WHERE email = $1', 
-  ['user@example.com']
-);
+const user = await dbManager.query("SELECT * FROM users WHERE email = $1", [
+  "user@example.com",
+]);
 ```
 
 ### **Transaction Example**
+
 ```javascript
-import dbManager from '../services/DatabaseConnectionManager.js';
+import dbManager from "../services/DatabaseConnectionManager.js";
 
 async function transferCredits(fromUserId, toUserId, amount) {
   const client = await dbManager.getClient();
-  
+
   try {
-    await client.query('BEGIN');
-    
+    await client.query("BEGIN");
+
     // Deduct from sender
     await client.query(
-      'UPDATE users SET credits = credits - $1 WHERE id = $2',
-      [amount, fromUserId]
+      "UPDATE users SET credits = credits - $1 WHERE id = $2",
+      [amount, fromUserId],
     );
-    
+
     // Add to receiver
     await client.query(
-      'UPDATE users SET credits = credits + $1 WHERE id = $2',
-      [amount, toUserId]
+      "UPDATE users SET credits = credits + $1 WHERE id = $2",
+      [amount, toUserId],
     );
-    
-    await client.query('COMMIT');
-    console.log('✅ Transfer completed');
+
+    await client.query("COMMIT");
+    console.log("✅ Transfer completed");
   } catch (error) {
-    await client.query('ROLLBACK');
-    console.error('❌ Transfer failed:', error);
+    await client.query("ROLLBACK");
+    console.error("❌ Transfer failed:", error);
     throw error;
   } finally {
     client.release();
@@ -168,6 +177,7 @@ async function transferCredits(fromUserId, toUserId, amount) {
 ```
 
 ### **Service Integration**
+
 ```javascript
 // In other services (BEFORE optimization)
 // ❌ OLD PATTERN (Memory inefficient)
@@ -183,7 +193,7 @@ import dbManager from '../services/DatabaseConnectionManager.js';
 class UserService {
   async getUserProfile(userId) {
     return await dbManager.query(
-      'SELECT * FROM users WHERE id = $1', 
+      'SELECT * FROM users WHERE id = $1',
       [userId]
     );
   }
@@ -193,38 +203,44 @@ class UserService {
 ## 🔍 **Health Monitoring**
 
 ### **Connection Status Monitoring**
+
 ```javascript
 // Monitor connection health
 setInterval(() => {
   const status = dbManager.getConnectionStatus();
-  
+
   if (!status.isConnected) {
-    console.warn('⚠️ Database disconnected');
+    console.warn("⚠️ Database disconnected");
   }
-  
+
   if (status.waitingClients > 5) {
-    console.warn('⚠️ High connection wait queue:', status.waitingClients);
+    console.warn("⚠️ High connection wait queue:", status.waitingClients);
   }
-  
-  console.log(`📊 DB Pool: ${status.totalConnections} total, ${status.idleConnections} idle`);
+
+  console.log(
+    `📊 DB Pool: ${status.totalConnections} total, ${status.idleConnections} idle`,
+  );
 }, 30000); // Check every 30 seconds
 ```
 
 ## ⚡ **Performance Impact**
 
 ### **Before Optimization**
+
 - 14 individual database pools across services
 - ~280MB memory usage for database connections
 - Connection limit exhaustion risk
 - Inconsistent error handling
 
 ### **After Optimization**
+
 - 1 singleton connection pool
 - ~20MB memory usage (93% reduction)
 - Centralized connection management
 - Standardized error handling
 
 ### **Performance Metrics**
+
 - **Memory Reduction**: 93%
 - **Connection Efficiency**: 20 max connections vs 14 × 20 = 280 max
 - **Error Handling**: Centralized and consistent
@@ -233,17 +249,20 @@ setInterval(() => {
 ## 🚨 **Error Handling**
 
 ### **Connection Errors**
+
 The manager automatically handles:
+
 - Connection timeouts (2 seconds)
 - Idle connection cleanup (30 seconds)
 - Pool errors with automatic retry
 - SSL configuration for production
 
 ### **Error Event Handling**
+
 ```javascript
 // Built-in error handling
-pool.on('error', (err) => {
-  console.error('❌ Database pool error:', err);
+pool.on("error", (err) => {
+  console.error("❌ Database pool error:", err);
   // Manager automatically sets isConnected = false
   // Next query will trigger reconnection attempt
 });
@@ -259,22 +278,24 @@ pool.on('error', (err) => {
 ## 🧪 **Testing**
 
 ### **Connection Testing**
+
 ```javascript
 // Test database connectivity
 try {
   await dbManager.connect();
-  console.log('✅ Database connection test passed');
+  console.log("✅ Database connection test passed");
 } catch (error) {
-  console.error('❌ Database connection test failed:', error);
+  console.error("❌ Database connection test failed:", error);
 }
 ```
 
 ### **Performance Testing**
+
 ```javascript
 // Test connection pooling efficiency
 const startTime = Date.now();
-const promises = Array.from({ length: 100 }, (_, i) => 
-  dbManager.query('SELECT $1 as test_value', [i])
+const promises = Array.from({ length: 100 }, (_, i) =>
+  dbManager.query("SELECT $1 as test_value", [i]),
 );
 
 await Promise.all(promises);
@@ -285,6 +306,7 @@ console.log(`✅ 100 concurrent queries completed in ${duration}ms`);
 ## 📈 **Migration Guide**
 
 ### **For Existing Services**
+
 ```javascript
 // Step 1: Remove individual Pool creation
 // ❌ Remove this:
@@ -292,7 +314,7 @@ console.log(`✅ 100 concurrent queries completed in ${duration}ms`);
 // this.pool = new Pool({ connectionString: ... });
 
 // Step 2: Import the singleton manager
-import dbManager from '../services/DatabaseConnectionManager.js';
+import dbManager from "../services/DatabaseConnectionManager.js";
 
 // Step 3: Replace pool.query() calls
 // ❌ OLD: await this.pool.query(sql, params);

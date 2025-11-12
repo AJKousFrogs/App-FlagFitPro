@@ -1,37 +1,38 @@
 // Netlify Function: User Authentication - Registration
 // Handles new user registration with email/password using Supabase
 
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
-const { db, checkEnvVars } = require('./supabase-client.cjs');
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
+const { db, checkEnvVars } = require("./supabase-client.cjs");
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production';
+const JWT_SECRET =
+  process.env.JWT_SECRET || "your-super-secret-jwt-key-change-in-production";
 
 exports.handler = async (event, context) => {
   // Handle CORS preflight
-  if (event.httpMethod === 'OPTIONS') {
+  if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
       headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS'
-      }
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+      },
     };
   }
 
   // Only allow POST requests
-  if (event.httpMethod !== 'POST') {
+  if (event.httpMethod !== "POST") {
     return {
       statusCode: 405,
       headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'application/json'
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         success: false,
-        error: 'Method not allowed'
-      })
+        error: "Method not allowed",
+      }),
     };
   }
 
@@ -47,13 +48,13 @@ exports.handler = async (event, context) => {
       return {
         statusCode: 400,
         headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Content-Type': 'application/json'
+          "Access-Control-Allow-Origin": "*",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           success: false,
-          error: 'Name, email, and password are required'
-        })
+          error: "Name, email, and password are required",
+        }),
       };
     }
 
@@ -63,13 +64,13 @@ exports.handler = async (event, context) => {
       return {
         statusCode: 400,
         headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Content-Type': 'application/json'
+          "Access-Control-Allow-Origin": "*",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           success: false,
-          error: 'Invalid email format'
-        })
+          error: "Invalid email format",
+        }),
       };
     }
 
@@ -78,31 +79,31 @@ exports.handler = async (event, context) => {
       return {
         statusCode: 400,
         headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Content-Type': 'application/json'
+          "Access-Control-Allow-Origin": "*",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           success: false,
-          error: 'Password must be at least 6 characters long'
-        })
+          error: "Password must be at least 6 characters long",
+        }),
       };
     }
 
     // Check if user already exists in database
     const normalizedEmail = email.toLowerCase();
     const existingUser = await db.users.findByEmail(normalizedEmail);
-    
+
     if (existingUser) {
       return {
         statusCode: 409,
         headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Content-Type': 'application/json'
+          "Access-Control-Allow-Origin": "*",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           success: false,
-          error: 'User with this email already exists'
-        })
+          error: "User with this email already exists",
+        }),
       };
     }
 
@@ -115,50 +116,49 @@ exports.handler = async (event, context) => {
       name: name.trim(),
       email: normalizedEmail,
       password: hashedPassword,
-      role: 'player'
+      role: "player",
     });
 
     // Generate JWT token
     const token = jwt.sign(
-      { 
-        userId: newUser.id, 
+      {
+        userId: newUser.id,
         email: newUser.email,
-        role: newUser.role 
+        role: newUser.role,
       },
       JWT_SECRET,
-      { expiresIn: '24h' }
+      { expiresIn: "24h" },
     );
 
     // Return success response (exclude password)
     const { password: _, ...safeUser } = newUser;
-    
+
     return {
       statusCode: 201,
       headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'application/json'
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         success: true,
         token,
         user: safeUser,
-        message: 'Account created successfully'
-      })
+        message: "Account created successfully",
+      }),
     };
-
   } catch (error) {
-    console.error('Registration error:', error);
-    
+    console.error("Registration error:", error);
+
     return {
       statusCode: 500,
       headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'application/json'
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         success: false,
-        error: 'Internal server error'
-      })
+        error: "Internal server error",
+      }),
     };
   }
 };

@@ -47,7 +47,7 @@
 }
 
 .is-loading::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -252,4 +252,3 @@ input:required,
     background-position: -200% 0;
   }
 }
-

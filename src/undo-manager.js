@@ -1,0 +1,294 @@
+// Undo Manager for FlagFit Pro
+// Provides undo functionality and confirmation dialogs
+
+export class UndoManager {
+  constructor() {
+    this.actionHistory = [];
+    this.maxHistorySize = 50;
+    this.undoTimeout = 30000; // 30 seconds
+    this.init();
+  }
+
+  init() {
+    // Listen for delete actions
+    document.addEventListener('click', (e) => {
+      const deleteBtn = e.target.closest('[data-action="delete"]');
+      if (deleteBtn) {
+        e.preventDefault();
+        this.handleDelete(deleteBtn);
+      }
+    });
+  }
+
+  // Handle delete action with confirmation
+  handleDelete(button) {
+    const itemName = button.getAttribute('data-item-name') || 'this item';
+    const itemId = button.getAttribute('data-item-id');
+    const itemType = button.getAttribute('data-item-type') || 'item';
+    const onConfirm = button.getAttribute('data-on-confirm');
+
+    // Show confirmation dialog
+    this.showConfirmationDialog({
+      title: 'Confirm Deletion',
+      message: `Are you sure you want to delete "${itemName}"? This action can be undone.`,
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      onConfirm: () => {
+        // Store action for undo
+        const action = {
+          type: 'delete',
+          itemId,
+          itemName,
+          itemType,
+          timestamp: Date.now(),
+          data: this.getItemData(itemId, itemType)
+        };
+
+        this.addToHistory(action);
+
+        // Execute delete
+        if (onConfirm) {
+          try {
+            const callback = new Function('return ' + onConfirm)();
+            if (typeof callback === 'function') {
+              callback();
+            }
+          } catch (e) {
+            console.error('Error executing delete callback:', e);
+          }
+        }
+
+        // Show undo notification
+        this.showUndoNotification(action);
+      }
+    });
+  }
+
+  // Show confirmation dialog
+  showConfirmationDialog(options) {
+    const {
+      title = 'Confirm Action',
+      message = 'Are you sure?',
+      confirmText = 'Confirm',
+      cancelText = 'Cancel',
+      onConfirm,
+      onCancel,
+      destructive = false
+    } = options;
+
+    const modal = document.createElement('div');
+    modal.className = 'confirmation-modal';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-labelledby', 'confirmation-title');
+    modal.setAttribute('aria-modal', 'true');
+
+    modal.innerHTML = `
+      <div class="confirmation-overlay"></div>
+      <div class="confirmation-content">
+        <div class="confirmation-header">
+          <h3 id="confirmation-title">${title}</h3>
+        </div>
+        <div class="confirmation-body">
+          <p>${message}</p>
+        </div>
+        <div class="confirmation-footer">
+          <button class="btn btn-secondary confirmation-cancel">${cancelText}</button>
+          <button class="btn ${destructive ? 'btn-danger' : 'btn-primary'} confirmation-confirm">${confirmText}</button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    const confirmBtn = modal.querySelector('.confirmation-confirm');
+    const cancelBtn = modal.querySelector('.confirmation-cancel');
+    const overlay = modal.querySelector('.confirmation-overlay');
+
+    confirmBtn.addEventListener('click', () => {
+      if (onConfirm) onConfirm();
+      this.closeConfirmation(modal);
+    });
+
+    cancelBtn.addEventListener('click', () => {
+      if (onCancel) onCancel();
+      this.closeConfirmation(modal);
+    });
+
+    overlay.addEventListener('click', () => {
+      if (onCancel) onCancel();
+      this.closeConfirmation(modal);
+    });
+
+    // Keyboard navigation
+    modal.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (onCancel) onCancel();
+        this.closeConfirmation(modal);
+      } else if (e.key === 'Enter' && e.target === modal) {
+        if (onConfirm) onConfirm();
+        this.closeConfirmation(modal);
+      }
+    });
+
+    confirmBtn.focus();
+    this.trapFocus(modal);
+  }
+
+  trapFocus(modal) {
+    // Store previous focus
+    this.previousFocus = document.activeElement;
+    
+    const focusableElements = modal.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+
+    // Focus first element
+    if (firstElement) {
+      firstElement.focus();
+    }
+
+    const handleKeyDown = (e) => {
+      if (e.key !== 'Tab') return;
+
+      if (e.shiftKey) {
+        if (document.activeElement === firstElement) {
+          e.preventDefault();
+          lastElement.focus();
+        }
+      } else {
+        if (document.activeElement === lastElement) {
+          e.preventDefault();
+          firstElement.focus();
+        }
+      }
+    };
+
+    modal.addEventListener('keydown', handleKeyDown);
+    
+    // Store handler for cleanup
+    modal._focusTrapHandler = handleKeyDown;
+  }
+
+  closeConfirmation(modal) {
+    // Restore focus before closing
+    if (this.previousFocus && typeof this.previousFocus.focus === 'function') {
+      this.previousFocus.focus();
+    }
+    
+    // Clean up focus trap
+    if (modal._focusTrapHandler) {
+      modal.removeEventListener('keydown', modal._focusTrapHandler);
+    }
+    
+    modal.style.opacity = '0';
+    setTimeout(() => modal.remove(), 300);
+  }
+
+  // Add action to history
+  addToHistory(action) {
+    this.actionHistory.unshift(action);
+    if (this.actionHistory.length > this.maxHistorySize) {
+      this.actionHistory.pop();
+    }
+
+    // Auto-remove after timeout
+    setTimeout(() => {
+      const index = this.actionHistory.findIndex(a => a === action);
+      if (index !== -1) {
+        this.actionHistory.splice(index, 1);
+      }
+    }, this.undoTimeout);
+  }
+
+  // Show undo notification
+  showUndoNotification(action) {
+    const notification = document.createElement('div');
+    notification.className = 'undo-notification';
+    notification.innerHTML = `
+      <div class="undo-notification-content">
+        <span>${action.itemName} deleted</span>
+        <button class="undo-button" data-action-id="${action.timestamp}">Undo</button>
+      </div>
+    `;
+
+    document.body.appendChild(notification);
+
+    const undoBtn = notification.querySelector('.undo-button');
+    undoBtn.addEventListener('click', () => {
+      this.undoAction(action);
+      notification.remove();
+    });
+
+    // Auto-remove after timeout
+    setTimeout(() => {
+      notification.style.opacity = '0';
+      setTimeout(() => notification.remove(), 300);
+    }, this.undoTimeout);
+  }
+
+  // Undo action
+  undoAction(action) {
+    const index = this.actionHistory.findIndex(a => a.timestamp === action.timestamp);
+    if (index === -1) return;
+
+    // Restore item
+    this.restoreItem(action);
+
+    // Remove from history
+    this.actionHistory.splice(index, 1);
+
+    // Show success notification
+    this.showSuccessNotification(`${action.itemName} restored`);
+  }
+
+  // Get item data before deletion
+  getItemData(itemId, itemType) {
+    // This would typically fetch from DOM or store
+    const element = document.querySelector(`[data-item-id="${itemId}"]`);
+    if (element) {
+      return {
+        html: element.outerHTML,
+        data: element.dataset
+      };
+    }
+    return null;
+  }
+
+  // Restore item
+  restoreItem(action) {
+    // This would typically restore from storage or DOM
+    if (action.data && action.data.html) {
+      // Restore logic here
+      console.log('Restoring item:', action.itemName);
+    }
+  }
+
+  // Show success notification
+  showSuccessNotification(message) {
+    const notification = document.createElement('div');
+    notification.className = 'success-notification';
+    notification.innerHTML = `
+      <div class="success-notification-content">
+        <i data-lucide="check-circle" aria-hidden="true"></i>
+        <span>${message}</span>
+      </div>
+    `;
+
+    document.body.appendChild(notification);
+
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons();
+    }
+
+    setTimeout(() => {
+      notification.style.opacity = '0';
+      setTimeout(() => notification.remove(), 300);
+    }, 3000);
+  }
+}
+
+// Global instance
+export const undoManager = new UndoManager();
+

@@ -1,6 +1,7 @@
 # GitHub + Netlify Setup Guide
 
 ## 🚀 Your Latest Deployment
+
 **Live URL:** https://cosmic-unicorn-1babc9.netlify.app
 **Modern Dashboard:** https://cosmic-unicorn-1babc9.netlify.app/dashboard-modern.html
 **Modern Training:** https://cosmic-unicorn-1babc9.netlify.app/training-modern.html
@@ -8,6 +9,7 @@
 ## 📋 Quick Setup Steps
 
 ### 1. Create GitHub Repository
+
 ```bash
 # Option A: Create new repo on GitHub.com
 1. Go to https://github.com/new
@@ -18,6 +20,7 @@
 ```
 
 ### 2. Connect Your Code to GitHub
+
 Since you have Xcode license issues, use GitHub Desktop:
 
 ```bash
@@ -27,13 +30,14 @@ Since you have Xcode license issues, use GitHub Desktop:
 3. Choose your folder: "/Users/aljosaursakous/Desktop/Flag football HTML - APP"
 4. Click "create a repository" if prompted
 5. Commit all files with message: "Initial commit - Modern UI FlagFit Pro"
-6. Click "Publish repository" 
+6. Click "Publish repository"
 7. Choose your GitHub account
 8. Repository name: "flagfit-pro-app"
 9. Click "Publish Repository"
 ```
 
 ### 3. Connect Netlify to GitHub
+
 ```bash
 1. Go to https://app.netlify.com/
 2. Click "New site from Git"
@@ -47,6 +51,7 @@ Since you have Xcode license issues, use GitHub Desktop:
 ```
 
 ### 4. Update Your Domain (Optional)
+
 ```bash
 1. In Netlify dashboard → Site settings
 2. Change site name from "cosmic-unicorn-1babc9" to "flagfit-pro"
@@ -54,12 +59,15 @@ Since you have Xcode license issues, use GitHub Desktop:
 ```
 
 ## 🔧 Auto-Deploy Setup
+
 Once connected to GitHub:
+
 - Every time you push to GitHub, Netlify automatically deploys
 - No need to manually deploy anymore
 - Instant updates from any device
 
 ## 📁 Current Project Structure
+
 ```
 flagfit-pro-app/
 ├── dashboard-modern.html      # ✨ New ultra-modern dashboard
@@ -73,6 +81,7 @@ flagfit-pro-app/
 ```
 
 ## 🎨 Modern Features Deployed
+
 ✅ Ultra-clean design system
 ✅ Consistent card components  
 ✅ Interactive hover effects
@@ -83,21 +92,25 @@ flagfit-pro-app/
 ✅ Professional typography
 
 ## 🔗 Key URLs After Setup
+
 - **Demo:** https://your-site.netlify.app/demo.html
-- **Modern Dashboard:** https://your-site.netlify.app/dashboard-modern.html  
+- **Modern Dashboard:** https://your-site.netlify.app/dashboard-modern.html
 - **Modern Training:** https://your-site.netlify.app/training-modern.html
 
 ## 💡 Pro Tips
+
 1. Keep using the hot reload server for development: `npm run dev:hot`
 2. Test locally at http://localhost:8080
 3. Push to GitHub when ready for production
 4. Netlify will auto-deploy from GitHub
 
 ## 🚨 If You Need Help
+
 1. The Xcode license issue only affects git commands in terminal
 2. GitHub Desktop bypasses this issue completely
 3. All your modern UI improvements are already deployed and working
 4. Contact me if you need assistance with any step
 
 ---
+
 Your FlagFit Pro app is now live with the ultra-modern design! 🎉

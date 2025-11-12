@@ -1,1188 +1,1476 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FlagFit Pro - Official Tournament Schedule 2026-2027</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Roboto:wght@300;400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
     <!-- New Modular CSS Architecture -->
-    <link rel="stylesheet" href="./src/css/main.css">
+    <link rel="stylesheet" href="./src/css/main.css" />
     <!-- Lucide Icons - Modern icon library similar to Radix UI -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="./src/icon-helper.js"></script>
     <script src="./src/theme-switcher.js"></script>
     <script src="./src/nav-highlight.js"></script>
+    <script src="./src/components/organisms/top-bar/top-bar.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          "Poppins",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        background: var(--dark-bg-primary);
+        min-height: 100vh;
+      }
+
+      /* Tournament-specific styles */
+      .dashboard-container {
+        display: flex;
+        min-height: 100vh;
+        background: var(--dark-bg-primary);
+      }
+
+      /* Modern Sidebar - Enhanced Design (matching dashboard.html) */
+      .sidebar {
+        width: 250px;
+        height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 24px;
+        z-index: var(--z-index-dropdown, 1000);
+        gap: 12px;
+        transition: all 0.2s ease;
+      }
+
+      /* Dark Theme Sidebar */
+      body[data-theme="dark"] .sidebar,
+      html[data-theme="dark"] .sidebar {
+        background: #1a1a1a;
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow:
+          4px 0 24px rgba(0, 0, 0, 0.3),
+          inset -1px 0 0 rgba(255, 255, 255, 0.05);
+      }
+
+      /* Light Theme Sidebar */
+      body[data-theme="light"] .sidebar,
+      html[data-theme="light"] .sidebar {
+        background: #ffffff;
+        border-right: 1px solid rgba(0, 0, 0, 0.08);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      }
+
+      .sidebar-logo {
+        width: 48px;
+        height: 48px;
+        border-radius: 16px;
+        background: linear-gradient(
+          135deg,
+          #10c96b 0%,
+          #0ab85a 50%,
+          #089949 100%
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        margin-bottom: 8px;
+        box-shadow:
+          0 4px 16px rgba(16, 201, 107, 0.35),
+          0 2px 8px rgba(16, 201, 107, 0.25),
+          inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      }
+
+      .sidebar-logo:hover {
+        transform: scale(1.08) rotate(5deg);
+        box-shadow:
+          0 8px 24px rgba(16, 201, 107, 0.45),
+          0 4px 12px rgba(16, 201, 107, 0.3),
+          inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      }
+
+      .nav-section {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        border-radius: 12px;
+        color: var(--color-text-secondary);
+        text-decoration: none;
+        transition: all 0.3s ease;
+        position: relative;
+        width: 100%;
+        justify-content: flex-start;
+        min-height: 48px;
+      }
+
+      .nav-item::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 3px;
+        height: 0;
+        background: var(--primitive-primary-500);
+        border-radius: 0 2px 2px 0;
+        transition: height 0.3s ease;
+      }
+
+      .nav-item:hover {
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--color-text-primary);
+        transform: translateX(4px);
+      }
+
+      .nav-item:hover::before {
+        height: 60%;
+      }
+
+      .nav-item.active {
+        background: rgba(16, 201, 107, 0.1);
+        color: var(--primitive-primary-500);
+      }
+
+      .nav-item.active::before {
+        height: 80%;
+        background: var(--primitive-primary-500);
+      }
+
+      .nav-item.active .nav-item-icon {
+        background: rgba(16, 201, 107, 0.15);
+        color: var(--primitive-primary-500);
+      }
+
+      .nav-item-icon {
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        transition: all 0.3s ease;
+      }
+
+      .nav-item-label {
+        opacity: 1;
+        transform: translateX(0);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        white-space: nowrap;
+        font-weight: var(--font-weight-medium, 500);
+        font-size: var(--text-sm);
+      }
+
+      body[data-theme="dark"] .nav-item,
+      html[data-theme="dark"] .nav-item {
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      body[data-theme="dark"] .nav-item:hover,
+      html[data-theme="dark"] .nav-item:hover {
+        background: rgba(255, 255, 255, 0.08);
+        color: rgba(255, 255, 255, 0.9);
+      }
+
+      body[data-theme="dark"] .nav-item.active,
+      html[data-theme="dark"] .nav-item.active {
+        background: rgba(16, 201, 107, 0.15);
+        color: var(--primitive-primary-500);
+      }
+
+      body[data-theme="light"] .nav-item,
+      html[data-theme="light"] .nav-item {
+        color: rgba(0, 0, 0, 0.6);
+      }
+
+      body[data-theme="light"] .nav-item:hover,
+      html[data-theme="light"] .nav-item:hover {
+        background: rgba(0, 0, 0, 0.05);
+        color: rgba(0, 0, 0, 0.9);
+      }
+
+      body[data-theme="light"] .nav-item.active,
+      html[data-theme="light"] .nav-item.active {
+        background: rgba(16, 201, 107, 0.1);
+        color: var(--primitive-primary-500);
+      }
+
+      /* Page-specific styles that can't be replaced with utilities */
+      .main-content {
+        margin-left: 250px;
+        width: calc(100% - 250px); /* ✅ Use width instead of max-width */
+        padding: var(--spacing-layout-md, 32px) var(--spacing-layout-lg, 40px);
+        box-sizing: border-box;
+      }
+      
+      @media (max-width: 1024px) {
+        .main-content {
+          margin-left: 0;
+          width: 100%; /* ✅ Full width on mobile */
+          padding: var(--spacing-layout-xs, 20px) var(--spacing-component-lg, 24px);
         }
-
-        body {
-            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: var(--dark-bg-primary);
-            min-height: 100vh;
+      }
+      
+      @media (max-width: 480px) {
+        .main-content {
+          padding: var(--spacing-layout-xs, 16px) var(--spacing-component-md, 16px);
         }
+      }
+      .tournament-card {
+        background: var(--surface-primary);
+        overflow: hidden;
+        transition: all var(--motion-duration-normal)
+          var(--motion-easing-productive);
+      }
+      .tournament-card:hover {
+        transform: translateY(-5px);
+      }
+      .tournament-header {
+        background: linear-gradient(
+          135deg,
+          var(--color-brand-primary) 0%,
+          var(--color-brand-secondary) 100%
+        );
+        position: relative;
+      }
 
-        /* Tournament-specific styles */
-        .dashboard-container {
-            display: flex;
-            min-height: 100vh;
-            background: var(--dark-bg-primary);
-        }
+      .tournament-status {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: rgba(255, 255, 255, 0.2);
+        color: var(--dark-text-primary);
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: var(--font-size-sm, 0.875rem);
+        font-weight: var(--font-weight-medium, 500);
+      }
 
-        
+      .tournament-title {
+        font-size: var(--font-size-xl, 1.25rem);
+        font-weight: var(--font-weight-bold, 700);
+        margin-bottom: 10px;
+      }
 
-        
+      .tournament-subtitle {
+        opacity: 0.9;
+        font-size: var(--font-size-sm, 0.875rem);
+      }
 
-        
+      .tournament-body {
+        padding: 25px;
+      }
 
-        /* Modern Sidebar - Enhanced Design (matching dashboard.html) */
+      .tournament-info {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .info-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 0.9rem;
+      }
+
+      .info-icon {
+        width: 35px;
+        height: 35px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+      }
+
+      .info-icon.date {
+        background: var(--primary-50);
+        color: var(--primary-600);
+      }
+
+      .info-icon.location {
+        background: #f3e5f5;
+        color: #7b1fa2;
+      }
+
+      .info-icon.prize {
+        background: var(--dark-card-bg);
+        color: #f57c00;
+      }
+
+      .info-icon.teams {
+        background: #e8f5e8;
+        color: #2e7d32;
+      }
+
+      .tournament-progress {
+        margin-bottom: 20px;
+      }
+
+      .progress-label {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+        color: var(--dark-text-secondary);
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 8px;
+        background: #e2e8f0;
+        border-radius: 4px;
+        overflow: hidden;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          var(--primary-500) 0%,
+          var(--primary-600) 100%
+        );
+        transition: width 0.3s ease;
+      }
+
+      .tournament-actions {
+        display: flex;
+        gap: 10px;
+      }
+
+      .action-btn {
+        flex: 1;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: var(--font-weight-medium, 500);
+        transition: all 0.3s ease;
+      }
+
+      .action-btn.primary {
+        background: var(--primary-500);
+        color: var(--dark-text-primary);
+      }
+
+      .action-btn.primary:hover {
+        background: #5a6fd8;
+      }
+
+      .action-btn.secondary {
+        background: #f1f5f9;
+        color: var(--dark-text-muted);
+        border: 2px solid #e2e8f0;
+      }
+
+      .action-btn.secondary:hover {
+        background: #e2e8f0;
+      }
+
+      .bracket-container {
+        background: var(--dark-text-primary);
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        padding: 30px;
+        margin-bottom: 30px;
+      }
+
+      .bracket-title {
+        font-size: var(--font-size-2xl, 1.5rem);
+        font-weight: var(--font-weight-semibold, 600);
+        color: var(--dark-text-primary);
+        margin-bottom: 25px;
+        text-align: center;
+      }
+
+      .bracket {
+        display: flex;
+        justify-content: space-between;
+        gap: 40px;
+        overflow-x: auto;
+        padding: 20px 0;
+      }
+
+      .bracket-round {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        min-width: 200px;
+      }
+
+      .round-title {
+        text-align: center;
+        font-weight: var(--font-weight-semibold, 600);
+        color: var(--dark-text-secondary);
+        margin-bottom: 15px;
+        font-size: var(--font-size-sm, 0.875rem);
+      }
+
+      .match {
+        background: var(--dark-text-primary);
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 15px;
+        position: relative;
+      }
+
+      .match.completed {
+        border-color: var(--primary-500);
+      }
+
+      .match.upcoming {
+        border-color: var(--primary-500);
+      }
+
+      .team {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid #f0f0f0;
+      }
+
+      .team:last-child {
+        border-bottom: none;
+      }
+
+      .team.winner {
+        font-weight: var(--font-weight-semibold, 600);
+        color: var(--primary-500);
+      }
+
+      .team-name {
+        font-size: var(--font-size-sm, 0.875rem);
+      }
+
+      .team-score {
+        font-weight: var(--font-weight-semibold, 600);
+        min-width: 30px;
+        text-align: right;
+      }
+
+      .leaderboard {
+        background: var(--dark-text-primary);
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        padding: 30px;
+      }
+
+      .leaderboard-title {
+        font-size: var(--font-size-xl, 1.25rem);
+        font-weight: var(--font-weight-semibold, 600);
+        color: var(--dark-text-primary);
+        margin-bottom: 25px;
+      }
+
+      .leaderboard-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 15px 0;
+        border-bottom: 1px solid #f0f0f0;
+      }
+
+      .leaderboard-item:last-child {
+        border-bottom: none;
+      }
+
+      .rank {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: var(--font-weight-bold, 700);
+        color: var(--dark-text-primary);
+      }
+
+      .rank.first {
+        background: linear-gradient(135deg, #ffd700 0%, #ffb300 100%);
+      }
+
+      .rank.second {
+        background: linear-gradient(
+          135deg,
+          var(--dark-text-muted) 0%,
+          var(--dark-text-muted) 100%
+        );
+      }
+
+      .rank.third {
+        background: linear-gradient(
+          135deg,
+          var(--tertiary-600) 0%,
+          var(--tertiary-700) 100%
+        );
+      }
+
+      .rank.other {
+        background: #e2e8f0;
+        color: var(--dark-text-muted);
+      }
+
+      .team-info {
+        flex: 1;
+      }
+
+      .team-name-lb {
+        font-weight: var(--font-weight-semibold, 600);
+        color: var(--dark-text-primary);
+      }
+
+      .team-stats {
+        font-size: var(--font-size-sm, 0.875rem);
+        color: var(--dark-text-secondary);
+        margin-top: 2px;
+      }
+
+      .points {
+        font-size: var(--font-size-lg, 1.125rem);
+        font-weight: var(--font-weight-bold, 700);
+        color: var(--primary-500);
+      }
+
+      @media (max-width: 768px) {
         .sidebar {
-            width: 250px;
-            height: 100vh;
-            position: fixed;
-            left: 0;
-            top: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            padding: 24px;
-            z-index: var(--z-index-dropdown, 1000);
-            gap: 12px;
-            transition: all 0.2s ease;
+          transform: translateX(-100%);
+          transition: transform 0.3s ease;
         }
-        
-        /* Dark Theme Sidebar */
-        body[data-theme="dark"] .sidebar,
-        html[data-theme="dark"] .sidebar {
-            background: #1a1a1a;
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 
-                4px 0 24px rgba(0, 0, 0, 0.3),
-                inset -1px 0 0 rgba(255, 255, 255, 0.05);
-        }
-        
-        /* Light Theme Sidebar */
-        body[data-theme="light"] .sidebar,
-        html[data-theme="light"] .sidebar {
-            background: #ffffff;
-            border-right: 1px solid rgba(0, 0, 0, 0.08);
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-        }
-        
-        .sidebar-logo {
-            width: 48px;
-            height: 48px;
-            border-radius: 16px;
-            background: linear-gradient(135deg, #10c96b 0%, #0ab85a 50%, #089949 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            margin-bottom: 8px;
-            box-shadow: 
-                0 4px 16px rgba(16, 201, 107, 0.35),
-                0 2px 8px rgba(16, 201, 107, 0.25),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
-        }
-        
-        .sidebar-logo:hover {
-            transform: scale(1.08) rotate(5deg);
-            box-shadow: 
-                0 8px 24px rgba(16, 201, 107, 0.45),
-                0 4px 12px rgba(16, 201, 107, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.3);
-        }
-        
-        .nav-section {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-bottom: 8px;
-        }
-        
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            border-radius: 12px;
-            color: var(--color-text-secondary);
-            text-decoration: none;
-            transition: all 0.3s ease;
-            position: relative;
-            width: 100%;
-            justify-content: flex-start;
-            min-height: 48px;
-        }
-        
-        .nav-item::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 3px;
-            height: 0;
-            background: var(--primitive-primary-500);
-            border-radius: 0 2px 2px 0;
-            transition: height 0.3s ease;
-        }
-        
-        .nav-item:hover {
-            background: rgba(255, 255, 255, 0.08);
-            color: var(--color-text-primary);
-            transform: translateX(4px);
-        }
-        
-        .nav-item:hover::before {
-            height: 60%;
-        }
-        
-        .nav-item.active {
-            background: rgba(16, 201, 107, 0.1);
-            color: var(--primitive-primary-500);
-        }
-        
-        .nav-item.active::before {
-            height: 80%;
-            background: var(--primitive-primary-500);
-        }
-        
-        .nav-item.active .nav-item-icon {
-            background: rgba(16, 201, 107, 0.15);
-            color: var(--primitive-primary-500);
-        }
-        
-        .nav-item-icon {
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            transition: all 0.3s ease;
-        }
-        
-        .nav-item-label {
-            opacity: 1;
-            transform: translateX(0);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            white-space: nowrap;
-            font-weight: 500;
-            font-size: var(--text-sm);
-        }
-        
-        body[data-theme="dark"] .nav-item,
-        html[data-theme="dark"] .nav-item {
-            color: rgba(255, 255, 255, 0.7);
-        }
-        
-        body[data-theme="dark"] .nav-item:hover,
-        html[data-theme="dark"] .nav-item:hover {
-            background: rgba(255, 255, 255, 0.08);
-            color: rgba(255, 255, 255, 0.9);
-        }
-        
-        body[data-theme="dark"] .nav-item.active,
-        html[data-theme="dark"] .nav-item.active {
-            background: rgba(16, 201, 107, 0.15);
-            color: var(--primitive-primary-500);
-        }
-        
-        body[data-theme="light"] .nav-item,
-        html[data-theme="light"] .nav-item {
-            color: rgba(0, 0, 0, 0.6);
-        }
-        
-        body[data-theme="light"] .nav-item:hover,
-        html[data-theme="light"] .nav-item:hover {
-            background: rgba(0, 0, 0, 0.05);
-            color: rgba(0, 0, 0, 0.9);
-        }
-        
-        body[data-theme="light"] .nav-item.active,
-        html[data-theme="light"] .nav-item.active {
-            background: rgba(16, 201, 107, 0.1);
-            color: var(--primitive-primary-500);
+
+        .sidebar.open {
+          transform: translateX(0);
         }
 
         .main-content {
-            margin-left: 250px;
-            flex: 1;
-            min-width: 0;
-            max-width: calc(100vw - 250px);
-            overflow-x: hidden;
-            overflow-y: auto;
-            padding: var(--spacing-component-lg);
-            background: var(--dark-bg-primary);
-        }
-
-        .header {
-            background: var(--dark-text-primary);
-            padding: 20px 30px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            margin-bottom: 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .tournament-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-        }
-
-        .tab-btn {
-            padding: 12px 24px;
-            background: var(--dark-text-primary);
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .tab-btn.active {
-            background: var(--primary-500);
-            color: var(--dark-text-primary);
-            border-color: var(--primary-500);
+          margin-left: 0;
+          max-width: 100%;
         }
 
         .tournaments-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-
-        .tournament-card {
-            background: var(--dark-text-primary);
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .tournament-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        }
-
-        .tournament-header {
-            background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
-            color: var(--dark-text-primary);
-            padding: 20px;
-            position: relative;
-        }
-
-        .tournament-status {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(255, 255, 255, 0.2);
-            color: var(--dark-text-primary);
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        .tournament-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-
-        .tournament-subtitle {
-            opacity: 0.9;
-            font-size: 0.9rem;
-        }
-
-        .tournament-body {
-            padding: 25px;
+          grid-template-columns: 1fr;
         }
 
         .tournament-info {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .info-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.9rem;
-        }
-
-        .info-icon {
-            width: 35px;
-            height: 35px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.1rem;
-        }
-
-        .info-icon.date {
-            background: var(--primary-50);
-            color: var(--primary-600);
-        }
-
-        .info-icon.location {
-            background: #f3e5f5;
-            color: #7b1fa2;
-        }
-
-        .info-icon.prize {
-            background: var(--dark-card-bg);
-            color: #f57c00;
-        }
-
-        .info-icon.teams {
-            background: #e8f5e8;
-            color: #2e7d32;
-        }
-
-        .tournament-progress {
-            margin-bottom: 20px;
-        }
-
-        .progress-label {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-            color: var(--dark-text-secondary);
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: #e2e8f0;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary-500) 0%, var(--primary-600) 100%);
-            transition: width 0.3s ease;
-        }
-
-        .tournament-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .action-btn {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .action-btn.primary {
-            background: var(--primary-500);
-            color: var(--dark-text-primary);
-        }
-
-        .action-btn.primary:hover {
-            background: #5a6fd8;
-        }
-
-        .action-btn.secondary {
-            background: #f1f5f9;
-            color: var(--dark-text-muted);
-            border: 2px solid #e2e8f0;
-        }
-
-        .action-btn.secondary:hover {
-            background: #e2e8f0;
-        }
-
-        .bracket-container {
-            background: var(--dark-text-primary);
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            padding: 30px;
-            margin-bottom: 30px;
-        }
-
-        .bracket-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--dark-text-primary);
-            margin-bottom: 25px;
-            text-align: center;
+          grid-template-columns: 1fr;
         }
 
         .bracket {
-            display: flex;
-            justify-content: space-between;
-            gap: 40px;
-            overflow-x: auto;
-            padding: 20px 0;
+          gap: 20px;
         }
 
         .bracket-round {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            min-width: 200px;
+          min-width: 150px;
         }
 
-        .round-title {
-            text-align: center;
-            font-weight: 600;
-            color: var(--dark-text-secondary);
-            margin-bottom: 15px;
-            font-size: 0.9rem;
+        .tournament-card {
+          margin-bottom: 1rem;
         }
 
-        .match {
-            background: var(--dark-text-primary);
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 15px;
-            position: relative;
+        .tournament-info h3 {
+          font-size: var(--font-size-base, 1rem);
         }
 
-        .match.completed {
-            border-color: var(--primary-500);
+        .tournament-meta {
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .sidebar {
+          width: 100%;
+          transform: translateX(-100%);
+          transition: transform 0.3s ease;
         }
 
-        .match.upcoming {
-            border-color: var(--primary-500);
+        .sidebar.open {
+          transform: translateX(0);
         }
 
-        .team {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid #f0f0f0;
+        .main-content {
+          margin-left: 0;
+          padding: 1rem;
         }
 
-        .team:last-child {
-            border-bottom: none;
+        .page-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 1rem;
         }
 
-        .team.winner {
-            font-weight: 600;
-            color: var(--primary-500);
+        .filter-tabs {
+          overflow-x: auto;
+          padding-bottom: 0.5rem;
         }
 
-        .team-name {
-            font-size: 0.9rem;
+        .filter-tab {
+          white-space: nowrap;
+          min-width: 80px;
         }
 
-        .team-score {
-            font-weight: 600;
-            min-width: 30px;
-            text-align: right;
+        .tournaments-grid {
+          grid-template-columns: 1fr;
         }
 
-        .leaderboard {
-            background: var(--dark-text-primary);
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            padding: 30px;
+        .bracket {
+          overflow-x: auto;
+          padding-bottom: 1rem;
         }
-
-        .leaderboard-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: var(--dark-text-primary);
-            margin-bottom: 25px;
-        }
-
-        .leaderboard-item {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 15px 0;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        .leaderboard-item:last-child {
-            border-bottom: none;
-        }
-
-        .rank {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            color: var(--dark-text-primary);
-        }
-
-        .rank.first {
-            background: linear-gradient(135deg, #ffd700 0%, #ffb300 100%);
-        }
-
-        .rank.second {
-            background: linear-gradient(135deg, var(--dark-text-muted) 0%, var(--dark-text-muted) 100%);
-        }
-
-        .rank.third {
-            background: linear-gradient(135deg, var(--tertiary-600) 0%, var(--tertiary-700) 100%);
-        }
-
-        .rank.other {
-            background: #e2e8f0;
-            color: var(--dark-text-muted);
-        }
-
-        .team-info {
-            flex: 1;
-        }
-
-        .team-name-lb {
-            font-weight: 600;
-            color: var(--dark-text-primary);
-        }
-
-        .team-stats {
-            font-size: 0.8rem;
-            color: var(--dark-text-secondary);
-            margin-top: 2px;
-        }
-
-        .points {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--primary-500);
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-            }
-
-            .sidebar.open {
-                transform: translateX(0);
-            }
-
-            .main-content {
-                margin-left: 0;
-                max-width: 100vw;
-            }
-
-            .tournaments-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .tournament-info {
-                grid-template-columns: 1fr;
-            }
-
-            .bracket {
-                gap: 20px;
-            }
-
-            .bracket-round {
-                min-width: 150px;
-            }
-            
-            .tournament-card {
-                margin-bottom: 1rem;
-            }
-            
-            .tournament-info h3 {
-                font-size: 1rem;
-            }
-            
-            .tournament-meta {
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .sidebar {
-                width: 100%;
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-            }
-            
-            .sidebar.open {
-                transform: translateX(0);
-            }
-            
-            .main-content {
-                margin-left: 0;
-                padding: 1rem;
-            }
-            
-            .page-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-            
-            .filter-tabs {
-                overflow-x: auto;
-                padding-bottom: 0.5rem;
-            }
-            
-            .filter-tab {
-                var(--dark-text-primary)-space: nowrap;
-                min-width: 80px;
-            }
-            
-            .tournaments-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .bracket {
-                overflow-x: auto;
-                padding-bottom: 1rem;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="dashboard-container">
-        <!-- Unified Sidebar Navigation -->
-        <div class="sidebar">
-            <div class="sidebar-logo" onclick="window.location.href='/dashboard.html'" title="FlagFit Pro">
-                <i data-lucide="activity" style="width: 20px; height: 20px; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
-            </div>
-            
-            <nav class="nav-section" aria-label="Dashboard navigation">
-                <a href="/dashboard.html" class="nav-item" aria-label="Dashboard Overview" id="nav-dashboard">
-                    <span class="nav-item-icon">
-                        <i data-lucide="layout-dashboard" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Overview</span>
-                </a>
-                <a href="/analytics.html" class="nav-item" aria-label="Analytics" id="nav-analytics">
-                    <span class="nav-item-icon">
-                        <i data-lucide="bar-chart-3" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Analytics</span>
-                </a>
-            </nav>
-            
-            <nav class="nav-section" aria-label="Team navigation">
-                <a href="/roster.html" class="nav-item" aria-label="Team Roster" id="nav-roster">
-                    <span class="nav-item-icon">
-                        <i data-lucide="users" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Roster</span>
-                </a>
-                <a href="/training.html" class="nav-item" aria-label="Training" id="nav-training">
-                    <span class="nav-item-icon">
-                        <i data-lucide="zap" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Training</span>
-                </a>
-                <a href="/tournaments.html" class="nav-item active" aria-label="Tournaments" id="nav-tournaments">
-                    <span class="nav-item-icon">
-                        <i data-lucide="trophy" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Tournaments</span>
-                </a>
-            </nav>
-            
-            <nav class="nav-section" aria-label="Community navigation">
-                <a href="/community.html" class="nav-item" aria-label="Community" id="nav-community">
-                    <span class="nav-item-icon">
-                        <i data-lucide="message-circle" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Community</span>
-                </a>
-                <a href="/chat.html" class="nav-item" aria-label="Chat" id="nav-chat">
-                    <span class="nav-item-icon">
-                        <i data-lucide="message-square" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Chat</span>
-                </a>
-            </nav>
-            
-            <nav class="nav-section" aria-label="Personal navigation">
-                <a href="/settings.html" class="nav-item" aria-label="Settings" id="nav-settings">
-                    <span class="nav-item-icon">
-                        <i data-lucide="settings" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Settings</span>
-                </a>
-                <a href="/profile.html" class="nav-item" aria-label="Profile" id="nav-profile">
-                    <span class="nav-item-icon">
-                        <i data-lucide="user" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Profile</span>
-                </a>
-            </nav>
+      <!-- Mobile Overlay/Scrim (for closing sidebar on mobile) -->
+      <div class="menu-scrim" aria-hidden="true" onclick="closeMenu()"></div>
+      
+      <!-- Unified Sidebar Navigation -->
+      <div class="sidebar">
+        <div
+          class="sidebar-logo"
+          onclick="window.location.href='/dashboard.html'"
+          title="FlagFit Pro"
+        >
+          <i
+            data-lucide="activity"
+            style="
+              width: 20px;
+              height: 20px;
+              color: var(--icon-color-primary);
+              stroke: var(--icon-color-primary);
+            "
+          ></i>
         </div>
 
-                    <!-- Top Bar -->
-            <div class="top-bar">
-                <div class="header-left">
-                    <div class="search-box">
-                        <span class="search-icon"><i data-lucide="search" style="width: 16px;  height: 16px; ; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span>
-                        <input type="text" id="global-search" class="search-input" placeholder="Search for players, teams & more" oninput="if(typeof performGlobalSearch === 'function') performGlobalSearch(this.value)">
-                        <div id="search-results" class="search-results" style="display: none;"></div>
-                    </div>
-                </div>
-                
-                <div class="header-right">
-                    <div style="position: relative;">
-                        <div id="notification-bell" class="header-icon" onclick="if(typeof toggleNotifications === 'function') toggleNotifications()">
-                            <i data-lucide="bell" style="width: 18px;  height: 18px ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
-                        </div>
-                        <div id="notification-badge" style="position: absolute; top: -4px; right: -4px; width: 20px; height: 20px; background: var(--error-500); color: var(--dark-text-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; border: 2px solid var(--dark-bg-secondary); display: none;">3</div>
-                    </div>
-                    <div class="header-icon">
-                        <i data-lucide="settings" style="width: 18px;  height: 18px; ; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
-                    </div>
-                    
-                    <div class="theme-toggle-container">
-                        <label class="theme-toggle-label">
-                            <input type="checkbox" id="theme-toggle" class="theme-toggle-input" checked>
-                            <span class="theme-toggle-slider"></span>
-                            <span class="theme-toggle-text">Dark</span>
-                        </label>
-                    </div>
-                    <div class="user-menu">
-                        <div class="user-avatar" id="user-avatar">U</div>
-                    </div>
-                </div>
+        <nav class="nav-section" aria-label="Dashboard navigation">
+          <a
+            href="/dashboard.html"
+            class="nav-item"
+            aria-label="Dashboard Overview"
+            id="nav-dashboard"
+          >
+            <span class="nav-item-icon">
+              <i
+                data-lucide="layout-dashboard"
+                style="width: 24px; height: 24px"
+              ></i>
+            </span>
+            <span class="nav-item-label">Overview</span>
+          </a>
+          <a
+            href="/analytics.html"
+            class="nav-item"
+            aria-label="Analytics"
+            id="nav-analytics"
+          >
+            <span class="nav-item-icon">
+              <i
+                data-lucide="bar-chart-3"
+                style="width: 24px; height: 24px"
+              ></i>
+            </span>
+            <span class="nav-item-label">Analytics</span>
+          </a>
+        </nav>
+
+        <nav class="nav-section" aria-label="Team navigation">
+          <a
+            href="/roster.html"
+            class="nav-item"
+            aria-label="Team Roster"
+            id="nav-roster"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="users" style="width: 24px; height: 24px"></i>
+            </span>
+            <span class="nav-item-label">Roster</span>
+          </a>
+          <a
+            href="/training.html"
+            class="nav-item"
+            aria-label="Training"
+            id="nav-training"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="zap" style="width: 24px; height: 24px"></i>
+            </span>
+            <span class="nav-item-label">Training</span>
+          </a>
+          <a
+            href="/tournaments.html"
+            class="nav-item active"
+            aria-label="Tournaments"
+            id="nav-tournaments"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="trophy" style="width: 24px; height: 24px"></i>
+            </span>
+            <span class="nav-item-label">Tournaments</span>
+          </a>
+        </nav>
+
+        <nav class="nav-section" aria-label="Community navigation">
+          <a
+            href="/community.html"
+            class="nav-item"
+            aria-label="Community"
+            id="nav-community"
+          >
+            <span class="nav-item-icon">
+              <i
+                data-lucide="message-circle"
+                style="width: 24px; height: 24px"
+              ></i>
+            </span>
+            <span class="nav-item-label">Community</span>
+          </a>
+          <a href="/chat.html" class="nav-item" aria-label="Chat" id="nav-chat">
+            <span class="nav-item-icon">
+              <i
+                data-lucide="message-square"
+                style="width: 24px; height: 24px"
+              ></i>
+            </span>
+            <span class="nav-item-label">Chat</span>
+          </a>
+        </nav>
+
+        <nav class="nav-section" aria-label="Personal navigation">
+          <a
+            href="/settings.html"
+            class="nav-item"
+            aria-label="Settings"
+            id="nav-settings"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="settings" style="width: 24px; height: 24px"></i>
+            </span>
+            <span class="nav-item-label">Settings</span>
+          </a>
+          <a
+            href="/profile.html"
+            class="nav-item"
+            aria-label="Profile"
+            id="nav-profile"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="user" style="width: 24px; height: 24px"></i>
+            </span>
+            <span class="nav-item-label">Profile</span>
+          </a>
+        </nav>
+      </div>
+
+      <main
+        class="main-content u-flex-1 u-min-width-0 u-overflow-x-hidden u-overflow-y-auto u-padding-24 u-bg-primary"
+      >
+        <!-- Top Bar -->
+        <div class="top-bar" role="banner">
+          <div class="header-left">
+            <!-- Global Search (combobox pattern) -->
+            <div class="search-box">
+              <label for="global-search" class="sr-only"
+                >Search for players, teams and more</label
+              >
+              <span class="search-icon" aria-hidden="true">
+                <i data-lucide="search" class="icon-16"></i>
+              </span>
+
+              <input
+                id="global-search"
+                class="search-input"
+                type="text"
+                placeholder="Search for players, teams & more"
+                role="combobox"
+                aria-autocomplete="list"
+                aria-haspopup="listbox"
+                aria-expanded="false"
+                aria-owns="search-results"
+                aria-controls="search-results"
+                aria-activedescendant=""
+                autocomplete="off"
+                inputmode="search"
+              />
+
+              <div id="search-status" class="sr-only" aria-live="polite"></div>
+
+              <div
+                id="search-results"
+                class="search-results"
+                role="listbox"
+                hidden
+              ></div>
+            </div>
+          </div>
+
+          <div class="header-right">
+            <!-- Notifications -->
+            <div class="header-icon-wrap">
+              <button
+                id="notification-bell"
+                class="header-icon"
+                type="button"
+                aria-label="Notifications"
+                aria-controls="notification-panel"
+                aria-expanded="false"
+              >
+                <i data-lucide="bell" class="icon-18"></i>
+                <span id="notification-badge" class="badge" hidden>3</span>
+              </button>
+              <span
+                id="notification-live"
+                class="sr-only"
+                aria-live="polite"
+              ></span>
             </div>
 
-<main class="main-content">
-        <header class="header">
-            <div>
-                <h1 style="font-size: 1.5rem; font-weight: 600; color: var(--dark-text-primary);">Official Tournament Schedule 2026-2027 <i data-lucide="trophy" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></h1>
-                <p style="color: var(--dark-text-secondary); margin-top: 5px;">International Flag Football Season featuring 7 major tournaments across Europe</p>
+            <!-- Settings -->
+            <button class="header-icon" type="button" aria-label="Settings">
+              <i data-lucide="settings" class="icon-18"></i>
+            </button>
+
+            <!-- Theme Toggle -->
+            <div class="theme-toggle-container" aria-label="Theme toggle">
+              <!-- JS inserts switch; fallback below -->
+              <button
+                class="theme-toggle-fallback"
+                type="button"
+                data-theme-toggle
+                hidden
+              >
+                Theme
+              </button>
             </div>
-            <div>
-                <button class="btn btn-primary hover-lift" id="nextTournamentBtn">Next Tournament</button>
-            </div>
+
+            <!-- User Menu -->
+            <button
+              id="user-menu-button"
+              class="user-menu"
+              type="button"
+              aria-label="User menu"
+              aria-haspopup="menu"
+              aria-controls="user-menu"
+              aria-expanded="false"
+            >
+              <div class="user-avatar" id="user-avatar" aria-hidden="true">
+                U
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <header
+          class="header u-bg-primary u-padding-20 u-padding-x-30 u-radius-md u-shadow-sm u-margin-bottom-30 u-display-flex u-justify-between u-align-center"
+        >
+          <div>
+            <h1 class="u-text-heading-lg u-font-weight-600 u-text-primary">
+              Official Tournament Schedule 2026-2027
+              <i
+                data-lucide="trophy"
+                style="
+                  width: 16px;
+                  height: 16px;
+                  display: inline-block;
+                  vertical-align: middle;
+                  color: var(--icon-color-primary);
+                  stroke: var(--icon-color-primary);
+                "
+              ></i>
+            </h1>
+            <p class="u-text-body-sm u-text-secondary u-margin-top-4">
+              International Flag Football Season featuring 7 major tournaments
+              across Europe
+            </p>
+          </div>
+          <div>
+            <button class="btn btn-primary hover-lift" id="nextTournamentBtn">
+              Next Tournament
+            </button>
+          </div>
         </header>
 
-        <div class="tournament-tabs">
-            <button class="btn btn-ghost active" onclick="switchTab('2026')">2026 Season</button>
-            <button class="btn btn-ghost" onclick="switchTab('2027')">2027 Season</button>
-            <button class="btn btn-ghost" onclick="switchTab('all')">All Tournaments</button>
-            <button class="btn btn-ghost" onclick="switchTab('preparation')">Preparation</button>
+        <div class="tournament-tabs u-display-flex u-gap-10 u-margin-bottom-30">
+          <button
+            class="btn btn-ghost u-padding-y-12 u-padding-x-24 u-radius-md u-font-weight-500 active"
+            onclick="switchTab('2026')"
+            style="transition: all 0.3s ease"
+          >
+            2026 Season
+          </button>
+          <button
+            class="btn btn-ghost u-padding-y-12 u-padding-x-24 u-radius-md u-font-weight-500"
+            onclick="switchTab('2027')"
+            style="transition: all 0.3s ease"
+          >
+            2027 Season
+          </button>
+          <button
+            class="btn btn-ghost u-padding-y-12 u-padding-x-24 u-radius-md u-font-weight-500"
+            onclick="switchTab('all')"
+            style="transition: all 0.3s ease"
+          >
+            All Tournaments
+          </button>
+          <button
+            class="btn btn-ghost u-padding-y-12 u-padding-x-24 u-radius-md u-font-weight-500"
+            onclick="switchTab('preparation')"
+            style="transition: all 0.3s ease"
+          >
+            Preparation
+          </button>
         </div>
 
-        <section class="tournaments-grid" id="tournamentsGrid">
-            <!-- Tournament cards will be populated by JavaScript -->
-                            <div>
-                                <div>16 teams</div>
-                                <div style="font-size: 0.8rem; color: var(--dark-text-secondary);">Competing</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="tournament-progress">
-                        <div class="progress-label">
-                            <span>Tournament Progress</span>
-                            <span>50%</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 50%"></div>
-                        </div>
-                    </div>
-                    <div class="tournament-actions">
-                        <button class="btn btn-primary hover-lift">Watch Live</button>
-                        <button class="btn btn-secondary hover-lift-small">View Bracket</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="tournament-card hover-lift glow-hover">
-                <div class="tournament-header">
-                    <div class="tournament-status">Coming Soon</div>
-                    <div class="tournament-title">Winter League</div>
-                    <div class="tournament-subtitle">Indoor Flag Football</div>
-                </div>
-                <div class="tournament-body">
-                    <div class="tournament-info">
-                        <div class="info-item">
-                            <div class="info-icon date"><i data-lucide="calendar" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></div>
-                            <div>
-                                <div>Dec 1-15</div>
-                                <div style="font-size: 0.8rem; color: var(--dark-text-secondary);">2 weeks</div>
-                            </div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-icon location">📍</div>
-                            <div>
-                                <div>Indoor Arena</div>
-                                <div style="font-size: 0.8rem; color: var(--dark-text-secondary);">Chicago</div>
-                            </div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-icon prize">💰</div>
-                            <div>
-                                <div>$7,500</div>
-                                <div style="font-size: 0.8rem; color: var(--dark-text-secondary);">Prize pool</div>
-                            </div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-icon teams"><i data-lucide="users" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></div>
-                            <div>
-                                <div>0/24 teams</div>
-                                <div style="font-size: 0.8rem; color: var(--dark-text-secondary);">Registered</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="tournament-progress">
-                        <div class="progress-label">
-                            <span>Opens in</span>
-                            <span>30 days</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 0%"></div>
-                        </div>
-                    </div>
-                    <div class="tournament-actions">
-                        <button class="btn btn-secondary hover-lift-small">Set Reminder</button>
-                        <button class="btn btn-secondary hover-lift-small">View Details</button>
-                    </div>
-                </div>
-            </div>
+        <section
+          class="tournaments-grid u-display-grid u-gap-25 u-margin-bottom-30"
+          id="tournamentsGrid"
+          style="grid-template-columns: repeat(auto-fill, minmax(350px, 1fr))"
+        >
+          <!-- Tournament cards will be populated by JavaScript -->
         </section>
 
-        <section class="bracket-container" id="bracketContainer">
-            <h3 class="bracket-title">Summer Slam - Tournament Bracket</h3>
-            <div class="bracket">
-                <div class="bracket-round">
-                    <div class="round-title">Quarter Finals</div>
-                    <div class="match completed">
-                        <div class="team winner">
-                            <span class="team-name">Thunder Bolts</span>
-                            <span class="team-score">21</span>
-                        </div>
-                        <div class="team">
-                            <span class="team-name">Lightning Strike</span>
-                            <span class="team-score">14</span>
-                        </div>
-                    </div>
-                    <div class="match completed">
-                        <div class="team winner">
-                            <span class="team-name">Storm Chasers</span>
-                            <span class="team-score">28</span>
-                        </div>
-                        <div class="team">
-                            <span class="team-name">Wind Runners</span>
-                            <span class="team-score">17</span>
-                        </div>
-                    </div>
-                    <div class="match upcoming">
-                        <div class="team">
-                            <span class="team-name">Fire Eagles</span>
-                            <span class="team-score">-</span>
-                        </div>
-                        <div class="team">
-                            <span class="team-name">Ice Wolves</span>
-                            <span class="team-score">-</span>
-                        </div>
-                    </div>
-                    <div class="match upcoming">
-                        <div class="team">
-                            <span class="team-name">Sky Hawks</span>
-                            <span class="team-score">-</span>
-                        </div>
-                        <div class="team">
-                            <span class="team-name">Ground Force</span>
-                            <span class="team-score">-</span>
-                        </div>
-                    </div>
-                </div>
+        <!-- Loading state -->
+        <div
+          id="tournamentsLoading"
+          class="u-text-center u-padding-48 u-text-secondary"
+          style="display: none"
+        >
+          <div class="u-text-body-lg">Loading tournaments...</div>
+        </div>
 
-                <div class="bracket-round">
-                    <div class="round-title">Semi Finals</div>
-                    <div class="match upcoming">
-                        <div class="team">
-                            <span class="team-name">Thunder Bolts</span>
-                            <span class="team-score">-</span>
-                        </div>
-                        <div class="team">
-                            <span class="team-name">Storm Chasers</span>
-                            <span class="team-score">-</span>
-                        </div>
-                    </div>
-                    <div class="match upcoming">
-                        <div class="team">
-                            <span class="team-name">TBD</span>
-                            <span class="team-score">-</span>
-                        </div>
-                        <div class="team">
-                            <span class="team-name">TBD</span>
-                            <span class="team-score">-</span>
-                        </div>
-                    </div>
-                </div>
+        <!-- Empty state -->
+        <div
+          id="tournamentsEmpty"
+          class="u-text-center u-padding-48 u-text-secondary"
+          style="display: none"
+        >
+          <div class="u-text-heading-md u-margin-bottom-8">
+            No tournaments found
+          </div>
+          <div class="u-text-body-md">
+            Check back later for upcoming tournaments.
+          </div>
+        </div>
 
-                <div class="bracket-round">
-                    <div class="round-title">Final</div>
-                    <div class="match upcoming">
-                        <div class="team">
-                            <span class="team-name">TBD</span>
-                            <span class="team-score">-</span>
-                        </div>
-                        <div class="team">
-                            <span class="team-name">TBD</span>
-                            <span class="team-score">-</span>
-                        </div>
-                    </div>
-                </div>
+        <!-- Legacy tournament cards (will be removed by JavaScript) -->
+        <div style="display: none">
+          <div class="tournament-card hover-lift glow-hover">
+            <div class="tournament-header">
+              <div class="tournament-status">Coming Soon</div>
+              <div class="tournament-title">Winter League</div>
+              <div class="tournament-subtitle">Indoor Flag Football</div>
             </div>
+            <div class="tournament-body">
+              <div class="tournament-info">
+                <div class="info-item">
+                  <div class="info-icon date">
+                    <i
+                      data-lucide="calendar"
+                      style="
+                        width: 16px;
+                        height: 16px;
+                        display: inline-block;
+                        vertical-align: middle;
+                        color: var(--icon-color-primary);
+                        stroke: var(--icon-color-primary);
+                      "
+                    ></i>
+                  </div>
+                  <div>
+                    <div>Dec 1-15</div>
+                    <div
+                      style="
+                        font-size: 0.8rem;
+                        color: var(--dark-text-secondary);
+                      "
+                    >
+                      2 weeks
+                    </div>
+                  </div>
+                </div>
+                <div class="info-item">
+                  <div class="info-icon location">📍</div>
+                  <div>
+                    <div>Indoor Arena</div>
+                    <div
+                      style="
+                        font-size: 0.8rem;
+                        color: var(--dark-text-secondary);
+                      "
+                    >
+                      Chicago
+                    </div>
+                  </div>
+                </div>
+                <div class="info-item">
+                  <div class="info-icon prize">💰</div>
+                  <div>
+                    <div>$7,500</div>
+                    <div
+                      style="
+                        font-size: 0.8rem;
+                        color: var(--dark-text-secondary);
+                      "
+                    >
+                      Prize pool
+                    </div>
+                  </div>
+                </div>
+                <div class="info-item">
+                  <div class="info-icon teams">
+                    <i
+                      data-lucide="users"
+                      style="
+                        width: 16px;
+                        height: 16px;
+                        display: inline-block;
+                        vertical-align: middle;
+                        color: var(--icon-color-primary);
+                        stroke: var(--icon-color-primary);
+                      "
+                    ></i>
+                  </div>
+                  <div>
+                    <div>0/24 teams</div>
+                    <div
+                      style="
+                        font-size: 0.8rem;
+                        color: var(--dark-text-secondary);
+                      "
+                    >
+                      Registered
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="tournament-progress">
+                <div class="progress-label">
+                  <span>Opens in</span>
+                  <span>30 days</span>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: 0%"></div>
+                </div>
+              </div>
+              <div class="tournament-actions">
+                <button class="btn btn-secondary hover-lift-small">
+                  Set Reminder
+                </button>
+                <button class="btn btn-secondary hover-lift-small">
+                  View Details
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- End legacy tournament cards -->
+
+        <section
+          class="bracket-container u-bg-primary u-radius-md u-shadow-sm u-padding-30 u-margin-bottom-30"
+          id="bracketContainer"
+          style="display: none"
+        >
+          <h3 class="bracket-title">Summer Slam - Tournament Bracket</h3>
+          <div class="bracket">
+            <div class="bracket-round">
+              <div class="round-title">Quarter Finals</div>
+              <div class="match completed">
+                <div class="team winner">
+                  <span class="team-name">Thunder Bolts</span>
+                  <span class="team-score">21</span>
+                </div>
+                <div class="team">
+                  <span class="team-name">Lightning Strike</span>
+                  <span class="team-score">14</span>
+                </div>
+              </div>
+              <div class="match completed">
+                <div class="team winner">
+                  <span class="team-name">Storm Chasers</span>
+                  <span class="team-score">28</span>
+                </div>
+                <div class="team">
+                  <span class="team-name">Wind Runners</span>
+                  <span class="team-score">17</span>
+                </div>
+              </div>
+              <div class="match upcoming">
+                <div class="team">
+                  <span class="team-name">Fire Eagles</span>
+                  <span class="team-score">-</span>
+                </div>
+                <div class="team">
+                  <span class="team-name">Ice Wolves</span>
+                  <span class="team-score">-</span>
+                </div>
+              </div>
+              <div class="match upcoming">
+                <div class="team">
+                  <span class="team-name">Sky Hawks</span>
+                  <span class="team-score">-</span>
+                </div>
+                <div class="team">
+                  <span class="team-name">Ground Force</span>
+                  <span class="team-score">-</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="bracket-round">
+              <div class="round-title">Semi Finals</div>
+              <div class="match upcoming">
+                <div class="team">
+                  <span class="team-name">Thunder Bolts</span>
+                  <span class="team-score">-</span>
+                </div>
+                <div class="team">
+                  <span class="team-name">Storm Chasers</span>
+                  <span class="team-score">-</span>
+                </div>
+              </div>
+              <div class="match upcoming">
+                <div class="team">
+                  <span class="team-name">TBD</span>
+                  <span class="team-score">-</span>
+                </div>
+                <div class="team">
+                  <span class="team-name">TBD</span>
+                  <span class="team-score">-</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="bracket-round">
+              <div class="round-title">Final</div>
+              <div class="match upcoming">
+                <div class="team">
+                  <span class="team-name">TBD</span>
+                  <span class="team-score">-</span>
+                </div>
+                <div class="team">
+                  <span class="team-name">TBD</span>
+                  <span class="team-score">-</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </section>
 
         <section class="leaderboard">
-            <h3 class="leaderboard-title">Tournament Rankings</h3>
-            <div id="leaderboardList">
-                <div class="leaderboard-item">
-                    <div class="rank first">1</div>
-                    <div class="team-info">
-                        <div class="team-name-lb">Thunder Bolts</div>
-                        <div class="team-stats">5 wins • 0 losses • 145 points scored</div>
-                    </div>
-                    <div class="points">2,500</div>
+          <h3 class="leaderboard-title">Tournament Rankings</h3>
+          <div id="leaderboardList">
+            <div class="leaderboard-item">
+              <div class="rank first">1</div>
+              <div class="team-info">
+                <div class="team-name-lb">Thunder Bolts</div>
+                <div class="team-stats">
+                  5 wins • 0 losses • 145 points scored
                 </div>
-                <div class="leaderboard-item">
-                    <div class="rank second">2</div>
-                    <div class="team-info">
-                        <div class="team-name-lb">Storm Chasers</div>
-                        <div class="team-stats">4 wins • 1 loss • 128 points scored</div>
-                    </div>
-                    <div class="points">2,200</div>
-                </div>
-                <div class="leaderboard-item">
-                    <div class="rank third">3</div>
-                    <div class="team-info">
-                        <div class="team-name-lb">Fire Eagles</div>
-                        <div class="team-stats">4 wins • 1 loss • 112 points scored</div>
-                    </div>
-                    <div class="points">2,100</div>
-                </div>
-                <div class="leaderboard-item">
-                    <div class="rank other">4</div>
-                    <div class="team-info">
-                        <div class="team-name-lb">Ice Wolves</div>
-                        <div class="team-stats">3 wins • 2 losses • 98 points scored</div>
-                    </div>
-                    <div class="points">1,850</div>
-                </div>
-                <div class="leaderboard-item">
-                    <div class="rank other">5</div>
-                    <div class="team-info">
-                        <div class="team-name-lb">Sky Hawks</div>
-                        <div class="team-stats">3 wins • 2 losses • 89 points scored</div>
-                    </div>
-                    <div class="points">1,720</div>
-                </div>
+              </div>
+              <div class="points">2,500</div>
             </div>
+            <div class="leaderboard-item">
+              <div class="rank second">2</div>
+              <div class="team-info">
+                <div class="team-name-lb">Storm Chasers</div>
+                <div class="team-stats">
+                  4 wins • 1 loss • 128 points scored
+                </div>
+              </div>
+              <div class="points">2,200</div>
+            </div>
+            <div class="leaderboard-item">
+              <div class="rank third">3</div>
+              <div class="team-info">
+                <div class="team-name-lb">Fire Eagles</div>
+                <div class="team-stats">
+                  4 wins • 1 loss • 112 points scored
+                </div>
+              </div>
+              <div class="points">2,100</div>
+            </div>
+            <div class="leaderboard-item">
+              <div class="rank other">4</div>
+              <div class="team-info">
+                <div class="team-name-lb">Ice Wolves</div>
+                <div class="team-stats">
+                  3 wins • 2 losses • 98 points scored
+                </div>
+              </div>
+              <div class="points">1,850</div>
+            </div>
+            <div class="leaderboard-item">
+              <div class="rank other">5</div>
+              <div class="team-info">
+                <div class="team-name-lb">Sky Hawks</div>
+                <div class="team-stats">
+                  3 wins • 2 losses • 89 points scored
+                </div>
+              </div>
+              <div class="points">1,720</div>
+            </div>
+          </div>
         </section>
-    </main>
+      </main>
     </div>
 
     <script type="module">
-        import { authManager } from './src/auth-manager.js';
-        import { apiClient } from './src/api-config.js';
-        import { PerformanceUtils } from './src/performance-utils.js';
-        import { AccessibilityUtils } from './src/accessibility-utils.js';
-        import { 
-            TOURNAMENT_SCHEDULE, 
-            getAllTournaments, 
-            getTournamentsByYear,
-            getNextTournament,
-            getDaysUntilTournament,
-            formatTournamentDate,
-            getTournamentTypeInfo,
-            getTournamentPreparation
-        } from './src/tournament-schedule.js';
+      import { authManager } from "./src/auth-manager.js";
+      import { apiClient } from "./src/api-config.js";
+      import { PerformanceUtils } from "./src/performance-utils.js";
+      import { AccessibilityUtils } from "./src/accessibility-utils.js";
+      import {
+        TOURNAMENT_SCHEDULE,
+        getAllTournaments,
+        getTournamentsByYear,
+        getNextTournament,
+        getDaysUntilTournament,
+        formatTournamentDate,
+        getTournamentTypeInfo,
+        getTournamentPreparation,
+      } from "./src/tournament-schedule.js";
 
-        async function initTournamentsPage() {
-            if (!authManager.requireAuth()) return;
-            
-            // Load real tournament data
-            loadRealTournamentData();
-            
-            // Initialize next tournament button
-            initNextTournamentButton();
-
-            // Use performance monitoring for page load
-            await PerformanceUtils.measureAsyncPerformance('Tournament Page Load', async () => {
-                await loadTournaments();
-            });
-            
-            // Setup optimized scroll handling for leaderboard
-            setupOptimizedScrolling();
-        }
-        
-        function setupOptimizedScrolling() {
-            const leaderboard = document.getElementById('leaderboardList');
-            if (leaderboard) {
-                // Add intersection observer for lazy loading leaderboard items
-                const observer = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            entry.target.classList.add('visible');
-                        }
-                    });
-                }, { threshold: 0.1 });
-                
-                leaderboard.querySelectorAll('.leaderboard-item').forEach(item => {
-                    observer.observe(item);
-                });
-            }
-        }
-
-        async function loadTournaments() {
-            try {
-                // Check cache first for faster loading
-                const cacheKey = 'tournaments_data';
-                let response = PerformanceUtils.getCachedResponse(cacheKey);
-                
-                if (!response) {
-                    response = await apiClient.get('/api/tournaments');
-                    // Cache successful responses for 5 minutes
-                    if (response.success) {
-                        PerformanceUtils.cacheResponse(cacheKey, response, 5);
-                    }
-                }
-                
-                if (response.success && response.data.tournaments) {
-                    updateTournamentsGrid(response.data.tournaments);
-                }
-                
-                if (response.success && response.data.leaderboard) {
-                    updateLeaderboard(response.data.leaderboard);
-                }
-            } catch (error) {
-                console.error('Failed to load tournaments:', error);
-                authManager.showError('Failed to load tournament data');
-            }
-        }
+      async function initTournamentsPage() {
+        if (!authManager.requireAuth()) return;
 
         // Load real tournament data
-        function loadRealTournamentData() {
-            // Default to 2026 season
-            switchTab('2026');
-        }
-        
-        function initNextTournamentButton() {
-            const nextTournament = getNextTournament();
-            const btn = document.getElementById('nextTournamentBtn');
-            
-            if (nextTournament) {
-                const daysUntil = getDaysUntilTournament(nextTournament);
-                if (daysUntil !== null) {
-                    btn.textContent = `Next: ${nextTournament.name} (${daysUntil} days)`;
-                } else {
-                    btn.textContent = `Next: ${nextTournament.name} (${nextTournament.month})`;
+        loadRealTournamentData();
+
+        // Initialize next tournament button
+        initNextTournamentButton();
+
+        // Use performance monitoring for page load
+        await PerformanceUtils.measureAsyncPerformance(
+          "Tournament Page Load",
+          async () => {
+            await loadTournaments();
+          },
+        );
+
+        // Setup optimized scroll handling for leaderboard
+        setupOptimizedScrolling();
+      }
+
+      function setupOptimizedScrolling() {
+        const leaderboard = document.getElementById("leaderboardList");
+        if (leaderboard) {
+          // Add intersection observer for lazy loading leaderboard items
+          const observer = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                  entry.target.classList.add("visible");
                 }
-                btn.onclick = () => scrollToTournament(nextTournament.id);
-            } else {
-                btn.textContent = 'Season Complete';
-                btn.disabled = true;
-            }
+              });
+            },
+            { threshold: 0.1 },
+          );
+
+          leaderboard.querySelectorAll(".leaderboard-item").forEach((item) => {
+            observer.observe(item);
+          });
         }
-        
-        function scrollToTournament(tournamentId) {
-            const card = document.querySelector(`[data-tournament-id="${tournamentId}"]`);
-            if (card) {
-                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                card.style.animation = 'highlight 2s ease-in-out';
+      }
+
+      async function loadTournaments() {
+        const loadingDiv = document.getElementById("tournamentsLoading");
+        const grid = document.getElementById("tournamentsGrid");
+
+        // Show loading state
+        if (loadingDiv) loadingDiv.style.display = "block";
+        if (grid) grid.innerHTML = "";
+
+        try {
+          // Check cache first for faster loading
+          const cacheKey = "tournaments_data";
+          let response = PerformanceUtils.getCachedResponse(cacheKey);
+
+          if (!response) {
+            response = await apiClient.get("/api/tournaments");
+            // Cache successful responses for 5 minutes
+            if (response.success) {
+              PerformanceUtils.cacheResponse(cacheKey, response, 5);
             }
+          }
+
+          if (response.success && response.data.tournaments) {
+            updateTournamentsGrid(response.data.tournaments);
+          } else {
+            updateTournamentsGrid([]);
+          }
+
+          if (response.success && response.data.leaderboard) {
+            updateLeaderboard(response.data.leaderboard);
+          }
+        } catch (error) {
+          console.error("Failed to load tournaments:", error);
+          updateTournamentsGrid([]);
+          authManager.showError("Failed to load tournament data");
+        } finally {
+          // Hide loading state
+          if (loadingDiv) loadingDiv.style.display = "none";
+        }
+      }
+
+      // Load real tournament data
+      function loadRealTournamentData() {
+        // Default to 2026 season
+        switchTab("2026");
+      }
+
+      function initNextTournamentButton() {
+        const nextTournament = getNextTournament();
+        const btn = document.getElementById("nextTournamentBtn");
+
+        if (nextTournament) {
+          const daysUntil = getDaysUntilTournament(nextTournament);
+          if (daysUntil !== null) {
+            btn.textContent = `Next: ${nextTournament.name} (${daysUntil} days)`;
+          } else {
+            btn.textContent = `Next: ${nextTournament.name} (${nextTournament.month})`;
+          }
+          btn.onclick = () => scrollToTournament(nextTournament.id);
+        } else {
+          btn.textContent = "Season Complete";
+          btn.disabled = true;
+        }
+      }
+
+      function scrollToTournament(tournamentId) {
+        const card = document.querySelector(
+          `[data-tournament-id="${tournamentId}"]`,
+        );
+        if (card) {
+          card.scrollIntoView({ behavior: "smooth", block: "center" });
+          card.style.animation = "highlight 2s ease-in-out";
+        }
+      }
+
+      function updateTournamentsGrid(tournaments) {
+        const grid = document.getElementById("tournamentsGrid");
+        const loadingDiv = document.getElementById("tournamentsLoading");
+        const emptyDiv = document.getElementById("tournamentsEmpty");
+
+        // Hide loading and empty states
+        if (loadingDiv) loadingDiv.style.display = "none";
+        if (emptyDiv) emptyDiv.style.display = "none";
+
+        // Show empty state if no tournaments
+        if (!tournaments || tournaments.length === 0) {
+          if (emptyDiv) emptyDiv.style.display = "block";
+          grid.innerHTML = "";
+          return;
         }
 
-        function updateTournamentsGrid(tournaments) {
-            const grid = document.getElementById('tournamentsGrid');
-            
-            grid.innerHTML = tournaments.map(tournament => {
-                const typeInfo = getTournamentTypeInfo(tournament.type);
-                const daysUntil = getDaysUntilTournament(tournament);
-                const preparation = getTournamentPreparation(tournament);
-                
-                return `
-                <div class="tournament-card hover-lift glow-hover" data-tournament-id="${tournament.id}">
-                    <div class="tournament-header">
-                        <div class="tournament-status" style="background: ${typeInfo.color};">${tournament.type}</div>
-                        <div class="tournament-title">${tournament.name} ${tournament.flag}</div>
-                        <div class="tournament-subtitle">${tournament.description}</div>
+        grid.innerHTML = tournaments
+          .map((tournament) => {
+            const typeInfo = getTournamentTypeInfo(tournament.type);
+            const daysUntil = getDaysUntilTournament(tournament);
+            const preparation = getTournamentPreparation(tournament);
+
+            return `
+                <div class="tournament-card u-radius-xl u-shadow-md" data-tournament-id="${tournament.id}" style="border: 1px solid var(--color-border-secondary);">
+                    <div class="tournament-header u-padding-20 u-text-primary" style="color: var(--color-text-on-surface);">
+                        <div class="tournament-status u-position-absolute u-padding-y-2 u-padding-x-12 u-radius-full u-text-caption u-font-weight-500" style="top: 15px; right: 15px; background: rgba(255, 255, 255, 0.2);">${tournament.type}</div>
+                        <div class="tournament-title u-text-heading-md u-font-weight-700 u-margin-bottom-8">${tournament.name} ${tournament.flag || ""}</div>
+                        <div class="tournament-subtitle u-text-body-sm" style="opacity: 0.9;">${tournament.description || ""}</div>
                     </div>
-                    <div class="tournament-body">
-                        <div class="tournament-info">
-                            <div class="info-item">
-                                <div class="info-icon date"><i data-lucide="calendar" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></div>
+                    <div class="tournament-body u-padding-25">
+                        <div class="tournament-info u-display-grid u-gap-15 u-margin-bottom-20" style="grid-template-columns: 1fr 1fr;">
+                            <div class="info-item u-display-flex u-align-center u-gap-10">
+                                <div class="info-icon date u-width-35 u-height-35 u-radius-md u-display-flex u-align-center u-justify-center" style="background: var(--color-brand-subtle); color: var(--color-brand-primary); font-size: 1.1rem;"><i data-lucide="calendar" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></div>
                                 <div>
-                                    <div>${formatTournamentDate(tournament)}</div>
-                                    <div style="font-size: 0.8rem; color: var(--dark-text-secondary);">${daysUntil !== null ? `${daysUntil} days away` : 'Date TBD'}</div>
+                                    <div class="u-text-body-sm u-font-weight-500 u-text-primary">${formatTournamentDate(tournament)}</div>
+                                    <div class="u-text-caption u-text-secondary">${daysUntil !== null ? `${daysUntil} days away` : "Date TBD"}</div>
                                 </div>
                             </div>
-                            <div class="info-item">
-                                <div class="info-icon location">📍</div>
+                            <div class="info-item u-display-flex u-align-center u-gap-10">
+                                <div class="info-icon location u-width-35 u-height-35 u-radius-md u-display-flex u-align-center u-justify-center" style="background: #f3e5f5; color: #7b1fa2; font-size: 1.1rem;">📍</div>
                                 <div>
-                                    <div>${tournament.location}</div>
-                                    <div style="font-size: 0.8rem; color: var(--dark-text-secondary);">${tournament.venue || 'Venue TBD'}</div>
+                                    <div class="u-text-body-sm u-font-weight-500 u-text-primary">${tournament.location || "TBD"}</div>
+                                    <div class="u-text-caption u-text-secondary">${tournament.venue || "Venue TBD"}</div>
                                 </div>
                             </div>
-                            <div class="info-item">
-                                <div class="info-icon prize">💰</div>
+                            <div class="info-item u-display-flex u-align-center u-gap-10">
+                                <div class="info-icon prize u-width-35 u-height-35 u-radius-md u-display-flex u-align-center u-justify-center" style="background: #fff3e0; color: #f57c00; font-size: 1.1rem;">💰</div>
                                 <div>
-                                    <div>${tournament.prizePool === 'TBD' ? 'TBD' : tournament.prizePool}</div>
-                                    <div style="font-size: 0.8rem; color: var(--dark-text-secondary);">Prize pool</div>
+                                    <div class="u-text-body-sm u-font-weight-500 u-text-primary">${tournament.prizePool === "TBD" ? "TBD" : tournament.prizePool}</div>
+                                    <div class="u-text-caption u-text-secondary">Prize pool</div>
                                 </div>
                             </div>
-                            <div class="info-item">
-                                <div class="info-icon teams"><i data-lucide="users" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></div>
+                            <div class="info-item u-display-flex u-align-center u-gap-10">
+                                <div class="info-icon teams u-width-35 u-height-35 u-radius-md u-display-flex u-align-center u-justify-center" style="background: var(--color-brand-subtle); color: var(--color-brand-primary); font-size: 1.1rem;"><i data-lucide="users" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></div>
                                 <div>
-                                    <div>${tournament.expectedTeams === 'TBD' ? 'TBD' : tournament.expectedTeams + ' teams'}</div>
-                                    <div style="font-size: 0.8rem; color: var(--dark-text-secondary);">${tournament.isInvitationOnly ? 'Invitation Only' : 'Expected'}</div>
+                                    <div class="u-text-body-sm u-font-weight-500 u-text-primary">${tournament.expectedTeams === "TBD" ? "TBD" : tournament.expectedTeams + " teams"}</div>
+                                    <div class="u-text-caption u-text-secondary">${tournament.isInvitationOnly ? "Invitation Only" : "Expected"}</div>
                                 </div>
                             </div>
                         </div>
-                        <div class="tournament-progress">
-                            <div class="progress-label">
-                                <span>Preparation: ${preparation.phase.replace('_', ' ')}</span>
-                                <span>${tournament.qualificationPoints === 'TBD' ? 'Points TBD' : tournament.qualificationPoints + ' pts'}</span>
+                        <div class="tournament-progress u-margin-bottom-20">
+                            <div class="progress-label u-display-flex u-justify-between u-margin-bottom-8 u-text-body-sm u-text-primary">
+                                <span>Preparation: ${preparation.phase.replace("_", " ")}</span>
+                                <span>${tournament.qualificationPoints === "TBD" ? "Points TBD" : tournament.qualificationPoints + " pts"}</span>
                             </div>
-                            <div style="background: var(--dark-bg-primary); padding: var(--space-3); border-radius: var(--radius-lg); margin-top: var(--space-3);">
-                                <div style="font-size: 0.8rem; color: var(--dark-text-secondary); margin-bottom: var(--space-2);">${preparation.description}</div>
-                                ${preparation.tasks.slice(0, 2).map(task => `<div style="font-size: 0.75rem; color: var(--dark-text-muted);">• ${task}</div>`).join('')}
+                            <div class="u-bg-secondary u-padding-12 u-radius-lg u-margin-top-12">
+                                <div class="u-text-caption u-text-secondary u-margin-bottom-8">${preparation.description}</div>
+                                ${preparation.tasks
+                                  .slice(0, 2)
+                                  .map(
+                                    (task) =>
+                                      `<div class="u-text-caption u-text-secondary">• ${task}</div>`,
+                                  )
+                                  .join("")}
                             </div>
                         </div>
-                        <div class="tournament-actions">
-                            ${tournament.isInvitationOnly ? 
-                                '<button class="btn btn-secondary hover-lift-small" disabled>Invitation Only</button>' :
-                                `<button class="btn btn-primary hover-lift" onclick="viewTournamentDetails('${tournament.id}')">Register Interest</button>`
+                        <div class="tournament-actions u-display-flex u-gap-10">
+                            ${
+                              tournament.isInvitationOnly
+                                ? '<button class="btn btn-secondary hover-lift-small u-flex-1" disabled>Invitation Only</button>'
+                                : `<button class="btn btn-primary hover-lift u-flex-1" onclick="viewTournamentDetails('${tournament.id}')">Register Interest</button>`
                             }
-                            <button class="btn btn-secondary hover-lift-small" onclick="viewTournamentDetails('${tournament.id}')">View Details</button>
+                            <button class="btn btn-secondary hover-lift-small u-flex-1" onclick="viewTournamentDetails('${tournament.id}')">View Details</button>
                         </div>
                     </div>
                 </div>
-            `}).join('');
-        }
+            `;
+          })
+          .join("");
+      }
 
-        function updateLeaderboard(teams) {
-            const leaderboard = document.getElementById('leaderboardList');
-            
-            leaderboard.innerHTML = teams.map((team, index) => `
+      function updateLeaderboard(teams) {
+        const leaderboard = document.getElementById("leaderboardList");
+
+        leaderboard.innerHTML = teams
+          .map(
+            (team, index) => `
                 <div class="leaderboard-item">
                     <div class="rank ${getRankClass(index + 1)}">${index + 1}</div>
                     <div class="team-info">
@@ -1191,106 +1479,127 @@
                     </div>
                     <div class="points">${team.points.toLocaleString()}</div>
                 </div>
-            `).join('');
+            `,
+          )
+          .join("");
+      }
+
+      function getStatusColor(status) {
+        const colors = {
+          "Registration Open": "rgba(102, 126, 234, 0.8)",
+          "Live Now": "var(--primary-500)",
+          "Coming Soon": "var(--tertiary-500)",
+          Completed: "var(--dark-text-muted)",
+        };
+        return colors[status] || "rgba(102, 126, 234, 0.8)";
+      }
+
+      function getRankClass(rank) {
+        if (rank === 1) return "first";
+        if (rank === 2) return "second";
+        if (rank === 3) return "third";
+        return "other";
+      }
+
+      window.switchTab = function (tab) {
+        // Remove active class from all tabs
+        document
+          .querySelectorAll(".btn.btn-ghost")
+          .forEach((btn) => btn.classList.remove("active"));
+
+        // Add active class to clicked tab
+        event.target.classList.add("active");
+
+        // Load tournaments based on tab
+        let tournaments = [];
+
+        switch (tab) {
+          case "2026":
+            tournaments = getTournamentsByYear("2026");
+            break;
+          case "2027":
+            tournaments = getTournamentsByYear("2027");
+            break;
+          case "all":
+            tournaments = getAllTournaments();
+            break;
+          case "preparation":
+            tournaments = getAllTournaments().filter((t) => {
+              const prep = getTournamentPreparation(t);
+              return (
+                prep.phase === "intensive_training" ||
+                prep.phase === "final_preparation"
+              );
+            });
+            break;
+          default:
+            tournaments = getTournamentsByYear("2026");
         }
 
-        function getStatusColor(status) {
-            const colors = {
-                'Registration Open': 'rgba(102, 126, 234, 0.8)',
-                'Live Now': 'var(--primary-500)',
-                'Coming Soon': 'var(--tertiary-500)',
-                'Completed': 'var(--dark-text-muted)'
-            };
-            return colors[status] || 'rgba(102, 126, 234, 0.8)';
-        }
+        updateTournamentsGrid(tournaments);
 
-        function getRankClass(rank) {
-            if (rank === 1) return 'first';
-            if (rank === 2) return 'second';
-            if (rank === 3) return 'third';
-            return 'other';
-        }
+        // Load tournaments for selected tab
+        loadTournamentsByType(tab);
+      };
 
-        window.switchTab = function(tab) {
-            // Remove active class from all tabs
-            document.querySelectorAll('.btn.btn-ghost').forEach(btn => btn.classList.remove('active'));
-            
-            // Add active class to clicked tab
-            event.target.classList.add('active');
-            
-            // Load tournaments based on tab
-            let tournaments = [];
-            
-            switch(tab) {
-                case '2026':
-                    tournaments = getTournamentsByYear('2026');
-                    break;
-                case '2027':
-                    tournaments = getTournamentsByYear('2027');
-                    break;
-                case 'all':
-                    tournaments = getAllTournaments();
-                    break;
-                case 'preparation':
-                    tournaments = getAllTournaments().filter(t => {
-                        const prep = getTournamentPreparation(t);
-                        return prep.phase === 'intensive_training' || prep.phase === 'final_preparation';
-                    });
-                    break;
-                default:
-                    tournaments = getTournamentsByYear('2026');
-            }
-            
-            updateTournamentsGrid(tournaments);
-            
-            // Load tournaments for selected tab
-            loadTournamentsByType(tab);
-        }
+      async function loadTournamentsByType(type) {
+        const loadingDiv = document.getElementById("tournamentsLoading");
+        const grid = document.getElementById("tournamentsGrid");
 
-        async function loadTournamentsByType(type) {
-            try {
-                const response = await apiClient.get(`/api/tournaments?type=${type}`);
-                
-                if (response.success) {
-                    updateTournamentsGrid(response.data.tournaments || []);
-                }
-            } catch (error) {
-                console.error('Failed to load tournaments by type:', error);
-                // Show default tournaments if API fails
-            }
-        }
+        // Show loading state
+        if (loadingDiv) loadingDiv.style.display = "block";
+        if (grid) grid.innerHTML = "";
 
-        window.handleTournamentAction = async function(tournamentId, action) {
-            try {
-                authManager.showLoading('Processing...');
-                
-                const response = await apiClient.post(`/api/tournaments/${tournamentId}/${action}`);
-                
-                if (response.success) {
-                    authManager.showSuccess(`Successfully ${action}ed for tournament!`);
-                    await loadTournaments(); // Refresh tournaments
-                } else {
-                    authManager.showError(response.error || `Failed to ${action}`);
-                }
-            } catch (error) {
-                console.error('Tournament action failed:', error);
-                authManager.showError(`Failed to ${action} for tournament`);
-            } finally {
-                authManager.hideLoading();
-            }
-        }
+        try {
+          const response = await apiClient.get(`/api/tournaments?type=${type}`);
 
-        window.viewTournamentDetails = function(tournamentId) {
-            authManager.showSuccess('Opening tournament details...');
-            // In a real app, this would navigate to a detailed tournament page
+          if (response.success) {
+            updateTournamentsGrid(response.data.tournaments || []);
+          } else {
+            updateTournamentsGrid([]);
+          }
+        } catch (error) {
+          console.error("Failed to load tournaments by type:", error);
+          updateTournamentsGrid([]);
+        } finally {
+          // Hide loading state
+          if (loadingDiv) loadingDiv.style.display = "none";
         }
+      }
 
-        window.showCreateTournament = function() {
-            authManager.showSuccess('Opening tournament creation form...');
-            // In a real app, this would show a tournament creation modal
+      window.handleTournamentAction = async function (tournamentId, action) {
+        try {
+          authManager.showLoading("Processing...");
+
+          const response = await apiClient.post(
+            `/api/tournaments/${tournamentId}/${action}`,
+          );
+
+          if (response.success) {
+            authManager.showSuccess(`Successfully ${action}ed for tournament!`);
+            await loadTournaments(); // Refresh tournaments
+          } else {
+            authManager.showError(response.error || `Failed to ${action}`);
+          }
+        } catch (error) {
+          console.error("Tournament action failed:", error);
+          authManager.showError(`Failed to ${action} for tournament`);
+        } finally {
+          authManager.hideLoading();
         }
+      };
 
-        document.addEventListener('DOMContentLoaded', initTournamentsPage);
+      window.viewTournamentDetails = function (tournamentId) {
+        authManager.showSuccess("Opening tournament details...");
+        // In a real app, this would navigate to a detailed tournament page
+      };
+
+      window.showCreateTournament = function () {
+        authManager.showSuccess("Opening tournament creation form...");
+        // In a real app, this would show a tournament creation modal
+      };
+
+      document.addEventListener("DOMContentLoaded", initTournamentsPage);
     </script>
-</body>
+  </body>
 </html>

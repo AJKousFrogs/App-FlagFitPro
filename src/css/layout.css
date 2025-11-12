@@ -178,6 +178,34 @@
   overflow-x: hidden;
 }
 
+/* ================================================================
+   LEGACY LAYOUT CLASSES (for backward compatibility)
+   ================================================================ */
+
+/* Stop the gap */
+.layout {
+  display: flex;
+  gap: 0;
+}
+
+.sidebar {
+  width: 248px;
+  flex: 0 0 248px;
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  padding: 24px;
+  margin-left: 0 !important;
+}
+
 .l-page-centered {
   display: flex;
   align-items: center;
@@ -200,7 +228,7 @@
   .l-page-sidebar {
     flex-direction: column;
   }
-  
+
   .l-sidebar {
     width: 100%;
     height: auto;
@@ -208,17 +236,17 @@
     border-right: none;
     border-bottom: 1px solid var(--color-border-secondary);
   }
-  
+
   .l-page-split {
     grid-template-columns: 1fr;
   }
-  
+
   .l-grid-2,
   .l-grid-3,
   .l-grid-4 {
     grid-template-columns: 1fr;
   }
-  
+
   .l-container {
     padding: 0 var(--spacing-component-md);
   }
@@ -237,11 +265,11 @@
   .l-grid-2 {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .l-grid-3 {
     grid-template-columns: repeat(3, 1fr);
   }
-  
+
   .l-grid-4 {
     grid-template-columns: repeat(4, 1fr);
   }
@@ -252,9 +280,8 @@
   .l-container {
     padding: 0 var(--spacing-layout-lg);
   }
-  
+
   .l-grid {
     gap: var(--spacing-component-lg);
   }
 }
-

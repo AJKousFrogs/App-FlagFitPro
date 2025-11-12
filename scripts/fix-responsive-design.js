@@ -1,61 +1,72 @@
 // Script to fix responsive design issues across all files
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 function getAllHtmlFiles(dir) {
-    let results = [];
-    const list = fs.readdirSync(dir);
-    
-    list.forEach(file => {
-        const filePath = path.join(dir, file);
-        const stat = fs.statSync(filePath);
-        
-        if (stat && stat.isDirectory() && !file.startsWith('.') && file !== 'node_modules' && file !== 'docs' && file !== 'netlify') {
-            results = results.concat(getAllHtmlFiles(filePath));
-        } else if (file.endsWith('.html') && !file.includes('design-system-example')) {
-            results.push(filePath);
-        }
-    });
-    
-    return results;
+  let results = [];
+  const list = fs.readdirSync(dir);
+
+  list.forEach((file) => {
+    const filePath = path.join(dir, file);
+    const stat = fs.statSync(filePath);
+
+    if (
+      stat &&
+      stat.isDirectory() &&
+      !file.startsWith(".") &&
+      file !== "node_modules" &&
+      file !== "docs" &&
+      file !== "netlify"
+    ) {
+      results = results.concat(getAllHtmlFiles(filePath));
+    } else if (
+      file.endsWith(".html") &&
+      !file.includes("design-system-example")
+    ) {
+      results.push(filePath);
+    }
+  });
+
+  return results;
 }
 
 function addViewportMeta(htmlContent) {
-    // Check if viewport already exists
-    if (htmlContent.includes('viewport')) {
-        return htmlContent;
-    }
-    
-    // Add viewport meta tag after charset
-    const viewportMeta = '    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">';
-    
-    if (htmlContent.includes('<meta charset')) {
-        htmlContent = htmlContent.replace(
-            /(<meta charset[^>]*>)/i,
-            `$1\n${viewportMeta}`
-        );
-    } else if (htmlContent.includes('<head>')) {
-        htmlContent = htmlContent.replace(
-            /(<head>)/i,
-            `$1\n${viewportMeta}`
-        );
-    }
-    
+  // Check if viewport already exists
+  if (htmlContent.includes("viewport")) {
     return htmlContent;
+  }
+
+  // Add viewport meta tag after charset
+  const viewportMeta =
+    '    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">';
+
+  if (htmlContent.includes("<meta charset")) {
+    htmlContent = htmlContent.replace(
+      /(<meta charset[^>]*>)/i,
+      `$1\n${viewportMeta}`,
+    );
+  } else if (htmlContent.includes("<head>")) {
+    htmlContent = htmlContent.replace(/(<head>)/i, `$1\n${viewportMeta}`);
+  }
+
+  return htmlContent;
 }
 
 function enhanceDarkThemeCSS(cssContent) {
-    let updated = cssContent;
-    
-    // Check if responsive section exists
-    if (!cssContent.includes('/* RESPONSIVE DESIGN */') && !cssContent.includes('@media (max-width: 768px)')) {
-        // Add comprehensive responsive design section
-        const responsiveCSS = `
+  let updated = cssContent;
+
+  // Check if responsive section exists
+  if (
+    !cssContent.includes("/* RESPONSIVE DESIGN */") &&
+    !cssContent.includes("@media (max-width: 768px)")
+  ) {
+    // Add comprehensive responsive design section
+    const responsiveCSS = `
 
 /* ====================================================================
    15. COMPREHENSIVE RESPONSIVE DESIGN - All Devices
@@ -236,37 +247,44 @@ function enhanceDarkThemeCSS(cssContent) {
     }
 }
 `;
-        
-        // Add before the contrast verification section
-        if (updated.includes('CONTRAST VERIFICATION')) {
-            updated = updated.replace('/* ====================================================================\n   14. CONTRAST VERIFICATION', responsiveCSS + '\n/* ====================================================================\n   14. CONTRAST VERIFICATION');
-        } else {
-            updated += responsiveCSS;
+
+    // Add before the contrast verification section
+    if (updated.includes("CONTRAST VERIFICATION")) {
+      updated = updated.replace(
+        "/* ====================================================================\n   14. CONTRAST VERIFICATION",
+        responsiveCSS +
+          "\n/* ====================================================================\n   14. CONTRAST VERIFICATION",
+      );
+    } else {
+      updated += responsiveCSS;
+    }
+  }
+
+  // Ensure inputs have 16px font-size
+  if (!cssContent.includes("font-size: 16px") && cssContent.includes("input")) {
+    updated = updated.replace(
+      /(input[^}]*\{[^}]*)(font-size[^;]*;)?/gi,
+      (match) => {
+        if (!match.includes("font-size")) {
+          return match.replace(
+            "{",
+            "{\n    font-size: 16px; /* Prevents zoom on iOS */",
+          );
         }
-    }
-    
-    // Ensure inputs have 16px font-size
-    if (!cssContent.includes('font-size: 16px') && cssContent.includes('input')) {
-        updated = updated.replace(
-            /(input[^}]*\{[^}]*)(font-size[^;]*;)?/gi,
-            (match) => {
-                if (!match.includes('font-size')) {
-                    return match.replace('{', '{\n    font-size: 16px; /* Prevents zoom on iOS */');
-                }
-                return match;
-            }
-        );
-    }
-    
-    return updated;
+        return match;
+      },
+    );
+  }
+
+  return updated;
 }
 
 function enhanceLightThemeCSS(cssContent) {
-    let updated = cssContent;
-    
-    // Add responsive design section if missing
-    if (!cssContent.includes('@media (max-width: 768px)')) {
-        const responsiveCSS = `
+  let updated = cssContent;
+
+  // Add responsive design section if missing
+  if (!cssContent.includes("@media (max-width: 768px)")) {
+    const responsiveCSS = `
 
 /* ====================================================================
    13. RESPONSIVE DESIGN - Light Mode
@@ -347,56 +365,55 @@ function enhanceLightThemeCSS(cssContent) {
     }
 }
 `;
-        
-        updated += responsiveCSS;
-    }
-    
-    return updated;
+
+    updated += responsiveCSS;
+  }
+
+  return updated;
 }
 
-const htmlFiles = getAllHtmlFiles(path.join(__dirname, '..'));
+const htmlFiles = getAllHtmlFiles(path.join(__dirname, ".."));
 
 console.log(`\n🔧 FIXING RESPONSIVE DESIGN ISSUES\n`);
 console.log(`Processing ${htmlFiles.length} HTML files...\n`);
 
 let fixedHTML = 0;
-htmlFiles.forEach(file => {
-    try {
-        const content = fs.readFileSync(file, 'utf8');
-        const updated = addViewportMeta(content);
-        
-        if (content !== updated) {
-            fs.writeFileSync(file, updated, 'utf8');
-            const relativePath = path.relative(path.join(__dirname, '..'), file);
-            console.log(`✅ Added viewport: ${relativePath}`);
-            fixedHTML++;
-        }
-    } catch (error) {
-        console.error(`❌ Error: ${file}:`, error.message);
+htmlFiles.forEach((file) => {
+  try {
+    const content = fs.readFileSync(file, "utf8");
+    const updated = addViewportMeta(content);
+
+    if (content !== updated) {
+      fs.writeFileSync(file, updated, "utf8");
+      const relativePath = path.relative(path.join(__dirname, ".."), file);
+      console.log(`✅ Added viewport: ${relativePath}`);
+      fixedHTML++;
     }
+  } catch (error) {
+    console.error(`❌ Error: ${file}:`, error.message);
+  }
 });
 
 // Fix CSS files
-const darkThemePath = path.join(__dirname, '..', 'src', 'dark-theme.css');
-const lightThemePath = path.join(__dirname, '..', 'src', 'light-theme.css');
+const darkThemePath = path.join(__dirname, "..", "src", "dark-theme.css");
+const lightThemePath = path.join(__dirname, "..", "src", "light-theme.css");
 
 if (fs.existsSync(darkThemePath)) {
-    const content = fs.readFileSync(darkThemePath, 'utf8');
-    const updated = enhanceDarkThemeCSS(content);
-    if (content !== updated) {
-        fs.writeFileSync(darkThemePath, updated, 'utf8');
-        console.log(`✅ Enhanced dark-theme.css with responsive design`);
-    }
+  const content = fs.readFileSync(darkThemePath, "utf8");
+  const updated = enhanceDarkThemeCSS(content);
+  if (content !== updated) {
+    fs.writeFileSync(darkThemePath, updated, "utf8");
+    console.log(`✅ Enhanced dark-theme.css with responsive design`);
+  }
 }
 
 if (fs.existsSync(lightThemePath)) {
-    const content = fs.readFileSync(lightThemePath, 'utf8');
-    const updated = enhanceLightThemeCSS(content);
-    if (content !== updated) {
-        fs.writeFileSync(lightThemePath, updated, 'utf8');
-        console.log(`✅ Enhanced light-theme.css with responsive design`);
-    }
+  const content = fs.readFileSync(lightThemePath, "utf8");
+  const updated = enhanceLightThemeCSS(content);
+  if (content !== updated) {
+    fs.writeFileSync(lightThemePath, updated, "utf8");
+    console.log(`✅ Enhanced light-theme.css with responsive design`);
+  }
 }
 
 console.log(`\n✨ Fixed ${fixedHTML} HTML files and enhanced CSS files!\n`);
-

@@ -11,82 +11,106 @@
 
 <!-- Basic Radio -->
 <div class="form-group">
-    <label class="form-radio">
-        <input type="radio" id="radio-basic" name="radio-group" value="option1">
-        <span>Option 1</span>
-    </label>
+  <label class="form-radio">
+    <input type="radio" id="radio-basic" name="radio-group" value="option1" />
+    <span>Option 1</span>
+  </label>
 </div>
 
 <!-- Radio Group -->
 <fieldset class="form-group">
-    <legend class="form-label">Select an option</legend>
-    <div class="radio-group">
-        <label class="form-radio">
-            <input type="radio" id="radio-1" name="choice" value="option1" checked>
-            <span>Option 1</span>
-        </label>
-        <label class="form-radio">
-            <input type="radio" id="radio-2" name="choice" value="option2">
-            <span>Option 2</span>
-        </label>
-        <label class="form-radio">
-            <input type="radio" id="radio-3" name="choice" value="option3">
-            <span>Option 3</span>
-        </label>
-    </div>
+  <legend class="form-label">Select an option</legend>
+  <div class="radio-group">
+    <label class="form-radio">
+      <input type="radio" id="radio-1" name="choice" value="option1" checked />
+      <span>Option 1</span>
+    </label>
+    <label class="form-radio">
+      <input type="radio" id="radio-2" name="choice" value="option2" />
+      <span>Option 2</span>
+    </label>
+    <label class="form-radio">
+      <input type="radio" id="radio-3" name="choice" value="option3" />
+      <span>Option 3</span>
+    </label>
+  </div>
 </fieldset>
 
 <!-- Radio Group with Error -->
 <fieldset class="form-group">
-    <legend class="form-label required">Required selection</legend>
-    <div class="radio-group error">
-        <label class="form-radio">
-            <input type="radio" id="radio-error-1" name="required-choice" value="option1">
-            <span>Option 1</span>
-        </label>
-        <label class="form-radio">
-            <input type="radio" id="radio-error-2" name="required-choice" value="option2">
-            <span>Option 2</span>
-        </label>
-    </div>
-    <div class="form-error" role="alert">Please select an option</div>
+  <legend class="form-label required">Required selection</legend>
+  <div class="radio-group error">
+    <label class="form-radio">
+      <input
+        type="radio"
+        id="radio-error-1"
+        name="required-choice"
+        value="option1"
+      />
+      <span>Option 1</span>
+    </label>
+    <label class="form-radio">
+      <input
+        type="radio"
+        id="radio-error-2"
+        name="required-choice"
+        value="option2"
+      />
+      <span>Option 2</span>
+    </label>
+  </div>
+  <div class="form-error" role="alert">Please select an option</div>
 </fieldset>
 
 <!-- Disabled Radio -->
 <div class="form-group">
-    <label class="form-radio">
-        <input type="radio" id="radio-disabled" name="disabled-group" value="disabled" disabled>
-        <span>Disabled option</span>
-    </label>
+  <label class="form-radio">
+    <input
+      type="radio"
+      id="radio-disabled"
+      name="disabled-group"
+      value="disabled"
+      disabled
+    />
+    <span>Disabled option</span>
+  </label>
 </div>
 
 <!-- Radio Group Horizontal -->
 <fieldset class="form-group">
-    <legend class="form-label">Training Intensity</legend>
-    <div class="radio-group" style="display: flex; gap: var(--spacing-component-md);">
-        <label class="form-radio">
-            <input type="radio" id="intensity-low" name="intensity" value="low">
-            <span>Low</span>
-        </label>
-        <label class="form-radio">
-            <input type="radio" id="intensity-medium" name="intensity" value="medium" checked>
-            <span>Medium</span>
-        </label>
-        <label class="form-radio">
-            <input type="radio" id="intensity-high" name="intensity" value="high">
-            <span>High</span>
-        </label>
-    </div>
+  <legend class="form-label">Training Intensity</legend>
+  <div
+    class="radio-group"
+    style="display: flex; gap: var(--spacing-component-md)"
+  >
+    <label class="form-radio">
+      <input type="radio" id="intensity-low" name="intensity" value="low" />
+      <span>Low</span>
+    </label>
+    <label class="form-radio">
+      <input
+        type="radio"
+        id="intensity-medium"
+        name="intensity"
+        value="medium"
+        checked
+      />
+      <span>Medium</span>
+    </label>
+    <label class="form-radio">
+      <input type="radio" id="intensity-high" name="intensity" value="high" />
+      <span>High</span>
+    </label>
+  </div>
 </fieldset>
 
 <!-- Radio with Icon -->
 <div class="form-group">
-    <label class="form-radio">
-        <input type="radio" id="radio-icon" name="icon-group" value="icon">
-        <span>
-            <i data-lucide="star" style="width: 16px; height: 16px;"></i>
-            Featured option
-        </span>
-    </label>
+  <label class="form-radio">
+    <input type="radio" id="radio-icon" name="icon-group" value="icon" />
+    <span>
+      <i data-lucide="star" style="width: 16px; height: 16px"></i>
+      Featured option
+    </span>
+  </label>
 </div>
-

@@ -11,12 +11,12 @@ Copy the HTML from `textarea.html` into your page. Always pair with a `<label>` 
 ## HTML Structure
 
 ```html
-<textarea 
-    id="textarea-id" 
-    name="textarea-name"
-    class="form-input form-textarea"
-    rows="4"
-    placeholder="Enter text..."
+<textarea
+  id="textarea-id"
+  name="textarea-name"
+  class="form-input form-textarea"
+  rows="4"
+  placeholder="Enter text..."
 ></textarea>
 ```
 
@@ -24,13 +24,13 @@ Copy the HTML from `textarea.html` into your page. Always pair with a `<label>` 
 
 ```html
 <div class="form-group">
-    <label for="textarea-id" class="form-label">Description</label>
-    <textarea 
-        id="textarea-id" 
-        name="description"
-        class="form-input form-textarea"
-        rows="4"
-    ></textarea>
+  <label for="textarea-id" class="form-label">Description</label>
+  <textarea
+    id="textarea-id"
+    name="description"
+    class="form-input form-textarea"
+    rows="4"
+  ></textarea>
 </div>
 ```
 
@@ -59,6 +59,7 @@ Textarea can be resized:
 ```
 
 Options:
+
 - `resize: vertical` - Only vertical resize
 - `resize: horizontal` - Only horizontal resize
 - `resize: both` - Both directions
@@ -77,4 +78,3 @@ Options:
 - Set appropriate `rows` attribute
 - Consider `maxlength` for long content
 - Test with screen readers
-

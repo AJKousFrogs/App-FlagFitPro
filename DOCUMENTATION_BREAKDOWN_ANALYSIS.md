@@ -5,12 +5,14 @@
 **Total: 162 MD files**
 
 ### By Location
+
 - **Component READMEs:** 25 files (KEEP - necessary)
 - **CSS Documentation:** 3 files (KEEP - necessary)
 - **Root Level:** 18 files (some redundant)
 - **docs/ Folder:** 116 files (⚠️ **TOO MANY**)
 
 ### By Category in docs/
+
 - **Wireframe Documentation:** 36 files
 - **Summary/Report Files:** 35 files
 - **Implementation Files:** 11 files
@@ -22,6 +24,7 @@
 **116 files in docs/ folder is excessive!**
 
 Many are:
+
 1. **Historical/Archival** - Old implementation summaries
 2. **Redundant** - Multiple summaries for same features
 3. **Outdated** - Superseded by newer documentation
@@ -32,6 +35,7 @@ Many are:
 ### Essential Documentation (~30-40 files total)
 
 **Core References (5 files):**
+
 1. `DESIGN_SYSTEM_DOCUMENTATION.md` - Main design system
 2. `CSS_ARCHITECTURE_GUIDE.md` - CSS architecture
 3. `COMPONENT_LIBRARY_ANALYSIS.md` - Component status
@@ -39,12 +43,15 @@ Many are:
 5. `docs/README.md` - Project overview
 
 **Component Docs (25 files):**
+
 - All component READMEs - KEEP
 
 **CSS Docs (3 files):**
+
 - All CSS documentation - KEEP
 
 **Setup Guides (6 files):**
+
 - Environment setup
 - Deployment checklist
 - GitHub/Netlify setup
@@ -53,12 +60,14 @@ Many are:
 - YouTube setup
 
 **API/Database (5-8 files):**
+
 - API documentation
 - Database setup
 - Database schema
 - Key API references
 
 **Legal (2 files):**
+
 - Privacy policy
 - Terms of use
 
@@ -67,7 +76,9 @@ Many are:
 ## ❌ What Can Be Removed/Consolidated
 
 ### Historical Implementation Summaries (~40-50 files)
+
 Many files like:
+
 - `*_IMPLEMENTATION_SUMMARY.md`
 - `*_COMPLETE_SUMMARY.md`
 - `*_FIXES_COMPLETE.md`
@@ -76,12 +87,15 @@ Many files like:
 These document **past work** but aren't needed for **current development**.
 
 ### Redundant Wireframe Docs (~20-25 files)
+
 Many wireframe documentation files that:
+
 - Reference HTML wireframes that may not exist
 - Are superseded by `COMPREHENSIVE_WIREFRAME_TECHNICAL_DOCUMENTATION.md`
 - Are page-specific wireframes that are now implemented
 
 ### Outdated Reports (~15-20 files)
+
 - Old audit reports
 - Old health check reports
 - Old status reports
@@ -90,18 +104,24 @@ Many wireframe documentation files that:
 ## 💡 Recommendation
 
 ### Option 1: Archive Historical Docs
+
 Move historical/archival docs to `docs/archive/` folder:
+
 - Keep them for reference but out of main docs
 - Reduces main docs to ~50-60 files
 
 ### Option 2: Aggressive Cleanup
+
 Delete historical implementation summaries:
+
 - Keep only current/active documentation
 - Reduces to ~50-60 files
 - Risk: Lose historical context
 
 ### Option 3: Consolidate
+
 Merge related summaries into single files:
+
 - Combine all navigation summaries into one
 - Combine all database summaries into one
 - Reduces to ~60-70 files
@@ -119,16 +139,19 @@ Merge related summaries into single files:
 ## 📋 Files to Archive (Move to docs/archive/)
 
 ### Implementation Summaries (Move, don't delete)
+
 - All `*_IMPLEMENTATION_SUMMARY.md` files
 - All `*_COMPLETE_SUMMARY.md` files
 - All `*_INTEGRATION_COMPLETE.md` files
 
 ### Historical Reports (Move, don't delete)
+
 - Old audit reports
 - Old status reports
 - Historical feature summaries
 
 ### Wireframe Documentation (Keep main, archive rest)
+
 - Keep: `COMPREHENSIVE_WIREFRAME_TECHNICAL_DOCUMENTATION.md`
 - Keep: `WIREFRAME_DOCUMENTATION_INDEX.md`
 - Archive: Individual page wireframe docs
@@ -153,4 +176,3 @@ docs/
 **Active Docs:** ~50-55 files  
 **Archived:** ~60-70 files  
 **Total:** Same files, better organized
-

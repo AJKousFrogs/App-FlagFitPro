@@ -17,6 +17,7 @@ Copy the HTML from `icon.html` into your page. Always set explicit width and hei
 ## Icon Sizes
 
 Common sizes:
+
 - **16px** - Small icons, inline with text
 - **18px** - Button icons
 - **20px** - Medium icons, navigation
@@ -26,10 +27,14 @@ Common sizes:
 ## With Color
 
 ```html
-<i data-lucide="football" style="width: 24px; height: 24px; color: var(--color-brand-primary);"></i>
+<i
+  data-lucide="football"
+  style="width: 24px; height: 24px; color: var(--color-brand-primary);"
+></i>
 ```
 
 Use CSS variables for colors:
+
 - `var(--color-brand-primary)` - Primary brand color
 - `var(--color-text-primary)` - Primary text color
 - `var(--color-text-secondary)` - Secondary text color
@@ -53,8 +58,8 @@ Use CSS variables for colors:
 
 ```html
 <button class="btn btn-primary btn-md">
-    <i data-lucide="play" style="width: 18px; height: 18px;"></i>
-    Start Training
+  <i data-lucide="play" style="width: 18px; height: 18px;"></i>
+  Start Training
 </button>
 ```
 
@@ -62,7 +67,7 @@ Use CSS variables for colors:
 
 ```html
 <button class="btn btn-tertiary btn-sm" aria-label="Settings">
-    <i data-lucide="settings" style="width: 18px; height: 18px;"></i>
+  <i data-lucide="settings" style="width: 18px; height: 18px;"></i>
 </button>
 ```
 
@@ -73,8 +78,8 @@ Use CSS variables for colors:
 Icons are automatically initialized when the page loads via `icon-helper.js`. If you add icons dynamically, call:
 
 ```javascript
-if (typeof lucide !== 'undefined') {
-    lucide.createIcons();
+if (typeof lucide !== "undefined") {
+  lucide.createIcons();
 }
 ```
 
@@ -91,4 +96,3 @@ if (typeof lucide !== 'undefined') {
 - Icons inherit color from parent element
 - Lucide icons are SVG-based and scale well
 - See [Lucide Icons](https://lucide.dev/icons/) for full icon list
-

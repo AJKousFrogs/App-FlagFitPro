@@ -17,20 +17,20 @@ Copy the HTML from `performance-chart.html` into your page. Requires Chart.js li
 
 ```html
 <div class="performance-chart-card card">
-    <div class="card-header">
-        <h3>Chart Title</h3>
-        <div class="chart-controls">
-            <!-- Period buttons -->
-        </div>
+  <div class="card-header">
+    <h3>Chart Title</h3>
+    <div class="chart-controls">
+      <!-- Period buttons -->
     </div>
-    <div class="card-body">
-        <canvas id="chart-id"></canvas>
+  </div>
+  <div class="card-body">
+    <canvas id="chart-id"></canvas>
+  </div>
+  <div class="card-footer">
+    <div class="chart-legend">
+      <!-- Legend items -->
     </div>
-    <div class="card-footer">
-        <div class="chart-legend">
-            <!-- Legend items -->
-        </div>
-    </div>
+  </div>
 </div>
 ```
 
@@ -52,6 +52,7 @@ Copy the HTML from `performance-chart.html` into your page. Requires Chart.js li
 ## Chart.js Configuration
 
 The component includes a basic Chart.js configuration. Customize:
+
 - Chart type (`line`, `bar`, `pie`, etc.)
 - Data labels
 - Colors (use CSS variables)
@@ -71,4 +72,3 @@ The component includes a basic Chart.js configuration. Customize:
 - Canvas element requires explicit dimensions or responsive config
 - Use CSS variables for colors to match theme
 - Consider adding data export functionality
-

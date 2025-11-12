@@ -12,9 +12,9 @@ Copy the HTML from `select.html` into your page. Always pair with a `<label>` el
 
 ```html
 <select id="select-id" name="select-name" class="form-input form-select">
-    <option value="">Choose an option</option>
-    <option value="option1">Option 1</option>
-    <option value="option2">Option 2</option>
+  <option value="">Choose an option</option>
+  <option value="option1">Option 1</option>
+  <option value="option2">Option 2</option>
 </select>
 ```
 
@@ -22,11 +22,11 @@ Copy the HTML from `select.html` into your page. Always pair with a `<label>` el
 
 ```html
 <div class="form-group">
-    <label for="select-id" class="form-label">Label</label>
-    <select id="select-id" name="field" class="form-input form-select">
-        <option value="">Select...</option>
-        <option value="option1">Option 1</option>
-    </select>
+  <label for="select-id" class="form-label">Label</label>
+  <select id="select-id" name="field" class="form-input form-select">
+    <option value="">Select...</option>
+    <option value="option1">Option 1</option>
+  </select>
 </div>
 ```
 
@@ -40,9 +40,15 @@ Copy the HTML from `select.html` into your page. Always pair with a `<label>` el
 ## Multiple Selection
 
 ```html
-<select id="select-multiple" name="multiple" class="form-input form-select" multiple size="4">
-    <option value="option1">Option 1</option>
-    <option value="option2">Option 2</option>
+<select
+  id="select-multiple"
+  name="multiple"
+  class="form-input form-select"
+  multiple
+  size="4"
+>
+  <option value="option1">Option 1</option>
+  <option value="option2">Option 2</option>
 </select>
 ```
 
@@ -50,12 +56,12 @@ Copy the HTML from `select.html` into your page. Always pair with a `<label>` el
 
 ```html
 <select class="form-input form-select">
-    <optgroup label="Group 1">
-        <option value="option1">Option 1</option>
-    </optgroup>
-    <optgroup label="Group 2">
-        <option value="option2">Option 2</option>
-    </optgroup>
+  <optgroup label="Group 1">
+    <option value="option1">Option 1</option>
+  </optgroup>
+  <optgroup label="Group 2">
+    <option value="option2">Option 2</option>
+  </optgroup>
 </select>
 ```
 
@@ -74,4 +80,3 @@ Copy the HTML from `select.html` into your page. Always pair with a `<label>` el
 - `multiple` attribute enables multi-select
 - `size` attribute controls visible options
 - Test with keyboard navigation
-

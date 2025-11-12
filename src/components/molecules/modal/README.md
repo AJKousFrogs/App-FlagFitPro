@@ -12,19 +12,17 @@ Copy the HTML from `modal.html` into your page. Modals require JavaScript to tog
 
 ```html
 <div class="modal-overlay" id="modal-id" role="dialog" aria-modal="true">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2 class="modal-title">Title</h2>
-            <button type="button" class="modal-close">×</button>
-        </div>
-        <div class="modal-body">
-            Content here
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-secondary">Cancel</button>
-            <button class="btn btn-primary">Confirm</button>
-        </div>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 class="modal-title">Title</h2>
+      <button type="button" class="modal-close">×</button>
     </div>
+    <div class="modal-body">Content here</div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary">Cancel</button>
+      <button class="btn btn-primary">Confirm</button>
+    </div>
+  </div>
 </div>
 ```
 
@@ -33,7 +31,7 @@ Copy the HTML from `modal.html` into your page. Modals require JavaScript to tog
 Add the `.open` class to the `.modal-overlay`:
 
 ```javascript
-document.getElementById('modal-id').classList.add('open');
+document.getElementById("modal-id").classList.add("open");
 ```
 
 ## Closing a Modal
@@ -41,7 +39,7 @@ document.getElementById('modal-id').classList.add('open');
 Remove the `.open` class:
 
 ```javascript
-document.getElementById('modal-id').classList.remove('open');
+document.getElementById("modal-id").classList.remove("open");
 ```
 
 ## CSS Classes
@@ -67,6 +65,7 @@ document.getElementById('modal-id').classList.remove('open');
 ## JavaScript Requirements
 
 Include the modal initialization script from `modal.html`:
+
 - Close on overlay click
 - Close on Escape key
 - Focus management (recommended)
@@ -78,4 +77,3 @@ Include the modal initialization script from `modal.html`:
 - Max width: 90vw, Max height: 90vh
 - Backdrop blur effect included
 - All sections are optional
-

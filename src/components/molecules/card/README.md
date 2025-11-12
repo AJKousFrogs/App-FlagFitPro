@@ -19,9 +19,9 @@ Copy the HTML from `card.html` into your page. Cards are flexible containers tha
 
 ```html
 <div class="card">
-    <div class="card-header">Header</div>
-    <div class="card-body">Body</div>
-    <div class="card-footer">Footer</div>
+  <div class="card-header">Header</div>
+  <div class="card-body">Body</div>
+  <div class="card-footer">Footer</div>
 </div>
 ```
 
@@ -31,9 +31,9 @@ All sections are optional. Use only what you need.
 
 ```html
 <div class="card">
-    <div class="card-body">
-        <p>Simple card with just body content.</p>
-    </div>
+  <div class="card-body">
+    <p>Simple card with just body content.</p>
+  </div>
 </div>
 ```
 
@@ -41,12 +41,12 @@ All sections are optional. Use only what you need.
 
 ```html
 <div class="card">
-    <div class="card-header">
-        <h3>Card Title</h3>
-    </div>
-    <div class="card-body">
-        <p>Card content.</p>
-    </div>
+  <div class="card-header">
+    <h3>Card Title</h3>
+  </div>
+  <div class="card-body">
+    <p>Card content.</p>
+  </div>
 </div>
 ```
 
@@ -54,12 +54,12 @@ All sections are optional. Use only what you need.
 
 ```html
 <div class="card">
-    <div class="card-body">
-        <p>Card content.</p>
-    </div>
-    <div class="card-footer">
-        <button class="btn btn-primary btn-sm">Action</button>
-    </div>
+  <div class="card-body">
+    <p>Card content.</p>
+  </div>
+  <div class="card-footer">
+    <button class="btn btn-primary btn-sm">Action</button>
+  </div>
 </div>
 ```
 
@@ -79,13 +79,13 @@ All sections are optional. Use only what you need.
 
 ```html
 <div class="card">
-    <div class="card-header">
-        <span>Training Sessions</span>
-    </div>
-    <div class="card-body">
-        <div style="font-size: 2rem; font-weight: 600;">24</div>
-        <div style="color: var(--color-text-secondary);">+12% from last week</div>
-    </div>
+  <div class="card-header">
+    <span>Training Sessions</span>
+  </div>
+  <div class="card-body">
+    <div style="font-size: 2rem; font-weight: 600;">24</div>
+    <div style="color: var(--color-text-secondary);">+12% from last week</div>
+  </div>
 </div>
 ```
 
@@ -93,15 +93,17 @@ All sections are optional. Use only what you need.
 
 ```html
 <div class="card">
-    <div class="card-body">
-        <div style="display: flex; justify-content: space-between;">
-            <div>
-                <div style="font-size: 0.875rem; color: var(--color-text-secondary);">Total Distance</div>
-                <div style="font-size: 1.5rem; font-weight: 600;">12.5 km</div>
-            </div>
-            <i data-lucide="map" style="width: 32px; height: 32px;"></i>
+  <div class="card-body">
+    <div style="display: flex; justify-content: space-between;">
+      <div>
+        <div style="font-size: 0.875rem; color: var(--color-text-secondary);">
+          Total Distance
         </div>
+        <div style="font-size: 1.5rem; font-weight: 600;">12.5 km</div>
+      </div>
+      <i data-lucide="map" style="width: 32px; height: 32px;"></i>
     </div>
+  </div>
 </div>
 ```
 
@@ -119,4 +121,3 @@ All sections are optional. Use only what you need.
 - Footer typically contains actions or metadata
 - Use elevated variant sparingly for emphasis
 - Interactive cards should be clickable or have clear affordance
-

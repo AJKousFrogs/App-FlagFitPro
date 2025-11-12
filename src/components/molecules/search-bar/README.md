@@ -12,8 +12,8 @@ Copy the HTML from `search-bar.html` into your page. The search bar includes an 
 
 ```html
 <div class="search-bar">
-    <i data-lucide="search" style="width: 20px; height: 20px;"></i>
-    <input type="search" class="search-input" placeholder="Search...">
+  <i data-lucide="search" style="width: 20px; height: 20px;"></i>
+  <input type="search" class="search-input" placeholder="Search..." />
 </div>
 ```
 
@@ -26,11 +26,16 @@ Copy the HTML from `search-bar.html` into your page. The search bar includes an 
 
 ```html
 <div class="search-bar" style="position: relative;">
-    <i data-lucide="search" style="width: 20px; height: 20px;"></i>
-    <input type="search" class="search-input" placeholder="Search..." id="search-input">
-    <button type="button" class="search-clear" aria-label="Clear search">
-        <i data-lucide="x" style="width: 18px; height: 18px;"></i>
-    </button>
+  <i data-lucide="search" style="width: 20px; height: 20px;"></i>
+  <input
+    type="search"
+    class="search-input"
+    placeholder="Search..."
+    id="search-input"
+  />
+  <button type="button" class="search-clear" aria-label="Clear search">
+    <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+  </button>
 </div>
 ```
 
@@ -47,4 +52,3 @@ Copy the HTML from `search-bar.html` into your page. The search bar includes an 
 - Use `type="search"` for mobile keyboard optimization
 - Clear button should appear when input has value
 - Consider adding debounce for search functionality
-

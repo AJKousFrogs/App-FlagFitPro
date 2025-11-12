@@ -1,11 +1,13 @@
 # Complete Routing Structure - FlagFit Pro Wireframe
 
 ## 🎯 **Overview**
+
 This document maps every Call-to-Action (CTA) button in the FlagFit Pro wireframe to its destination, showing the complete routing structure and user flow.
 
 ## 🏠 **Main Navigation Flow**
 
 ### **Header Navigation**
+
 ```
 🏈 FlagFit Pro → Dashboard (Home)
 ├── Dashboard → Dashboard View
@@ -21,6 +23,7 @@ This document maps every Call-to-Action (CTA) button in the FlagFit Pro wirefram
 ## 🔐 **Authentication Flow**
 
 ### **Login Page (`/login`)**
+
 ```
 📧 Email Input → Form Validation
 🔑 Password Input → Form Validation
@@ -34,6 +37,7 @@ This document maps every Call-to-Action (CTA) button in the FlagFit Pro wirefram
 ```
 
 ### **Register Page (`/register`)**
+
 ```
 📝 Create Account Form → Form Validation
 ⚖️ Measurement Toggle → Imperial/Metric Selection
@@ -46,6 +50,7 @@ This document maps every Call-to-Action (CTA) button in the FlagFit Pro wirefram
 ```
 
 ### **Onboarding Flow**
+
 ```
 👋 Welcome → Step 1: Personal Info
 📝 Personal Info → Step 2: Physical Profile
@@ -58,6 +63,7 @@ This document maps every Call-to-Action (CTA) button in the FlagFit Pro wirefram
 ## 🏠 **Dashboard Flow**
 
 ### **Quick Actions Section**
+
 ```
 🏋️ Start Training Session → Training Page
 📊 View Team Stats → Team Analytics Page
@@ -66,6 +72,7 @@ This document maps every Call-to-Action (CTA) button in the FlagFit Pro wirefram
 ```
 
 ### **Draggable Dashboard Sections**
+
 ```
 📊 Physical Profile → Profile Page (Physical Metrics)
 🤝 Team Chemistry → Community Page (Team Overview)
@@ -75,6 +82,7 @@ This document maps every Call-to-Action (CTA) button in the FlagFit Pro wirefram
 ```
 
 ### **AI Coach Section**
+
 ```
 🤖 Ask AI Coach → AI Chat Interface
 📊 View Progress → Progress Analytics Page
@@ -84,6 +92,7 @@ This document maps every Call-to-Action (CTA) button in the FlagFit Pro wirefram
 ## 🏋️ **Training Page Flow**
 
 ### **AI Coach Message**
+
 ```
 🤖 Ask AI Coach → AI Chat Interface
 📊 View Progress → Progress Analytics Page
@@ -91,6 +100,7 @@ This document maps every Call-to-Action (CTA) button in the FlagFit Pro wirefram
 ```
 
 ### **Training Categories**
+
 ```
 🏃 Route Running → Route Training Drills
 ⚡ Plyometrics → Plyometric Exercises
@@ -103,6 +113,7 @@ This document maps every Call-to-Action (CTA) button in the FlagFit Pro wirefram
 ```
 
 ### **Coach-Recommended Drills**
+
 ```
 🏈 QB Pocket Movement Drills
 ├── Start Drill → Drill Execution Page
@@ -122,6 +133,7 @@ This document maps every Call-to-Action (CTA) button in the FlagFit Pro wirefram
 ```
 
 ### **Weekly Training Schedule**
+
 ```
 💾 Save Schedule → Schedule Confirmation
 🤖 Get AI Recommendations → AI Recommendation Engine
@@ -131,6 +143,7 @@ This document maps every Call-to-Action (CTA) button in the FlagFit Pro wirefram
 ## 👥 **Community Page Flow**
 
 ### **Tab Navigation**
+
 ```
 💬 Chat → Chat Interface
 🏋️ Training Sessions → Training Sessions View
@@ -139,6 +152,7 @@ This document maps every Call-to-Action (CTA) button in the FlagFit Pro wirefram
 ```
 
 ### **Chat Rooms**
+
 ```
 🏈 Main Team Chat → Chat Room Interface
 ⚡ Offense Chat → Offense Chat Room
@@ -148,6 +162,7 @@ This document maps every Call-to-Action (CTA) button in the FlagFit Pro wirefram
 ```
 
 ### **Chat Messages**
+
 ```
 💬 Send Message → Message Sent Confirmation
 👍 Like Message → Like Confirmation
@@ -155,6 +170,7 @@ This document maps every Call-to-Action (CTA) button in the FlagFit Pro wirefram
 ```
 
 ### **Film Room**
+
 ```
 📹 Upload Game Video → Video Upload Process
 🎬 Watch & Analyze → Video Analysis Interface
@@ -165,6 +181,7 @@ This document maps every Call-to-Action (CTA) button in the FlagFit Pro wirefram
 ## 🏆 **Tournaments Page Flow**
 
 ### **Upcoming Tournaments**
+
 ```
 🏆 Spring Championship 2024
 └── View Details → Tournament Details Page
@@ -174,12 +191,14 @@ This document maps every Call-to-Action (CTA) button in the FlagFit Pro wirefram
 ```
 
 ### **Tournament Schedule**
+
 ```
 📅 Game Schedule → Game Details
 🥤 Nutrition Plan → Nutrition Details
 ```
 
 ### **Tournament Results**
+
 ```
 📊 Win vs Eagles → Game Recap
 📊 Win vs Lions → Game Recap
@@ -187,6 +206,7 @@ This document maps every Call-to-Action (CTA) button in the FlagFit Pro wirefram
 ```
 
 ### **Nutrition Planning**
+
 ```
 🏥 Medical Restrictions → Health Profile
 📝 Request Modification → Health Update Form
@@ -197,6 +217,7 @@ This document maps every Call-to-Action (CTA) button in the FlagFit Pro wirefram
 ## 👤 **Profile Page Flow**
 
 ### **Profile Information**
+
 ```
 ✏️ Edit Profile → Profile Editor Mode
 💾 Save Changes → Profile Update Confirmation
@@ -204,6 +225,7 @@ This document maps every Call-to-Action (CTA) button in the FlagFit Pro wirefram
 ```
 
 ### **Physical Metrics**
+
 ```
 ⚖️ Measurement Toggle → Imperial/Metric Switch
 📏 Weight Input → Weight Update
@@ -211,6 +233,7 @@ This document maps every Call-to-Action (CTA) button in the FlagFit Pro wirefram
 ```
 
 ### **Available Positions**
+
 ```
 🏈 QB → Position Details
 🏃 WR → Position Details
@@ -222,6 +245,7 @@ This document maps every Call-to-Action (CTA) button in the FlagFit Pro wirefram
 ## 🎬 **Film Room Detailed Flow**
 
 ### **Video Upload**
+
 ```
 📹 YouTube URL → Video Validation
 📝 Game Title → Title Confirmation
@@ -232,6 +256,7 @@ This document maps every Call-to-Action (CTA) button in the FlagFit Pro wirefram
 ```
 
 ### **Video Actions**
+
 ```
 ▶️ Watch & Analyze → Video Player with Analysis Tools
 💬 View Comments → Comments Interface
@@ -239,6 +264,7 @@ This document maps every Call-to-Action (CTA) button in the FlagFit Pro wirefram
 ```
 
 ### **Coach Analysis**
+
 ```
 📊 QB Performance Analysis → Detailed QB Metrics
 📊 WR Route Analysis → Detailed WR Metrics
@@ -248,6 +274,7 @@ This document maps every Call-to-Action (CTA) button in the FlagFit Pro wirefram
 ## 🔄 **Cross-Page Navigation**
 
 ### **Breadcrumb Navigation**
+
 ```
 🏠 Home → Dashboard
 📚 Current Page → Current Location
@@ -255,6 +282,7 @@ This document maps every Call-to-Action (CTA) button in the FlagFit Pro wirefram
 ```
 
 ### **Contextual Navigation**
+
 ```
 📊 Stats → Analytics Dashboard
 📅 Calendar → Schedule View
@@ -265,6 +293,7 @@ This document maps every Call-to-Action (CTA) button in the FlagFit Pro wirefram
 ## 📱 **Mobile Navigation**
 
 ### **Mobile Menu**
+
 ```
 🍔 Hamburger Menu → Mobile Navigation Drawer
 📱 Quick Actions → Mobile Action Sheet
@@ -272,6 +301,7 @@ This document maps every Call-to-Action (CTA) button in the FlagFit Pro wirefram
 ```
 
 ### **Mobile-Specific Actions**
+
 ```
 📞 Call Coach → Phone Integration
 📧 Email Team → Email Integration
@@ -281,6 +311,7 @@ This document maps every Call-to-Action (CTA) button in the FlagFit Pro wirefram
 ## 🎯 **User Flow Scenarios**
 
 ### **New Player Onboarding**
+
 ```
 1. Register → Personal Info → Physical Profile → Team Selection → Position → Experience → Dashboard
 2. Dashboard → Training → AI Coach → First Training Session
@@ -289,6 +320,7 @@ This document maps every Call-to-Action (CTA) button in the FlagFit Pro wirefram
 ```
 
 ### **Returning Player**
+
 ```
 1. Login → Dashboard → Check AI Coach Message → View Progress
 2. Dashboard → Training → Weekly Schedule → Start Training Session
@@ -297,6 +329,7 @@ This document maps every Call-to-Action (CTA) button in the FlagFit Pro wirefram
 ```
 
 ### **Coach Workflow**
+
 ```
 1. Login → Dashboard → Team Overview → Player Progress
 2. Dashboard → Training → Coach Drills → Upload New Drills
@@ -307,6 +340,7 @@ This document maps every Call-to-Action (CTA) button in the FlagFit Pro wirefram
 ## 🔗 **Deep Linking Structure**
 
 ### **Direct URLs**
+
 ```
 / → Dashboard
 /login → Login Page
@@ -323,6 +357,7 @@ This document maps every Call-to-Action (CTA) button in the FlagFit Pro wirefram
 ```
 
 ### **Parameter-Based Routing**
+
 ```
 /training/drill/:id → Specific Drill
 /community/chat/:roomId → Specific Chat Room
@@ -334,6 +369,7 @@ This document maps every Call-to-Action (CTA) button in the FlagFit Pro wirefram
 ## 🎨 **UI State Management**
 
 ### **Loading States**
+
 ```
 ⏳ Loading → Loading Spinner
 ✅ Success → Success Message
@@ -342,6 +378,7 @@ This document maps every Call-to-Action (CTA) button in the FlagFit Pro wirefram
 ```
 
 ### **Interactive States**
+
 ```
 👆 Hover → Hover Effects
 👆 Active → Active States
@@ -355,4 +392,4 @@ This document maps every Call-to-Action (CTA) button in the FlagFit Pro wirefram
 
 This routing structure provides a complete map of every CTA button and navigation element in the FlagFit Pro wireframe. Each button leads to a specific destination, creating a comprehensive user experience that guides players, coaches, and teams through all aspects of flag football training, community interaction, and tournament participation.
 
-**Next Steps**: Implement the actual routing logic and page transitions based on this structure. 
+**Next Steps**: Implement the actual routing logic and page transitions based on this structure.

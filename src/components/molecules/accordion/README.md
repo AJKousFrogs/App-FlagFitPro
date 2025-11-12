@@ -12,17 +12,25 @@ Copy the HTML from `accordion.html` into your page. Includes JavaScript for func
 
 ```html
 <div class="accordion" data-accordion="unique-id">
-    <div class="accordion-item">
-        <button class="accordion-trigger" aria-expanded="false" aria-controls="panel-1" id="trigger-1">
-            <span>Section Title</span>
-            <i data-lucide="chevron-down" class="accordion-icon"></i>
-        </button>
-        <div class="accordion-panel" role="region" aria-labelledby="trigger-1" id="panel-1">
-            <div class="accordion-content">
-                Content here
-            </div>
-        </div>
+  <div class="accordion-item">
+    <button
+      class="accordion-trigger"
+      aria-expanded="false"
+      aria-controls="panel-1"
+      id="trigger-1"
+    >
+      <span>Section Title</span>
+      <i data-lucide="chevron-down" class="accordion-icon"></i>
+    </button>
+    <div
+      class="accordion-panel"
+      role="region"
+      aria-labelledby="trigger-1"
+      id="panel-1"
+    >
+      <div class="accordion-content">Content here</div>
     </div>
+  </div>
 </div>
 ```
 
@@ -71,4 +79,3 @@ Copy the HTML from `accordion.html` into your page. Includes JavaScript for func
 - Icon rotation handled by JavaScript
 - Max-height transition for smooth animation
 - Test with keyboard navigation
-

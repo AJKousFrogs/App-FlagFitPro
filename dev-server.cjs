@@ -1,9 +1,9 @@
-const express = require('express');
-const chokidar = require('chokidar');
-const WebSocket = require('ws');
-const http = require('http');
-const path = require('path');
-const fs = require('fs');
+const express = require("express");
+const chokidar = require("chokidar");
+const WebSocket = require("ws");
+const http = require("http");
+const path = require("path");
+const fs = require("fs");
 
 const app = express();
 const server = http.createServer(app);
@@ -12,76 +12,85 @@ const wss = new WebSocket.Server({ server });
 const PORT = process.env.VITE_DEV_PORT || 4000;
 const API_PORT = process.env.PORT || 3001;
 
-console.log('🔥 Starting Flag Football Training App Hot Reload Server...');
+console.log("🔥 Starting Flag Football Training App Hot Reload Server...");
 
 // Serve static files
-app.use(express.static('.'));
+app.use(express.static("."));
 
 // Serve HTML files
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
 });
 
-app.get('*.html', (req, res) => {
-  const fileName = req.path.slice(1) || 'index.html';
+app.get("*.html", (req, res) => {
+  const fileName = req.path.slice(1) || "index.html";
   const filePath = path.join(__dirname, fileName);
-  
+
   if (fs.existsSync(filePath)) {
     res.sendFile(filePath);
   } else {
-    res.status(404).send('Page not found');
+    res.status(404).send("Page not found");
   }
 });
 
 // Proxy API requests to backend
-app.use('/api', (req, res) => {
+app.use("/api", (req, res) => {
   const apiUrl = `http://localhost:${API_PORT}${req.url}`;
-  
-  const request = require('http').request(apiUrl, {
-    method: req.method,
-    headers: req.headers
-  }, (apiRes) => {
-    res.status(apiRes.statusCode);
-    apiRes.pipe(res);
-  });
-  
+
+  const request = require("http").request(
+    apiUrl,
+    {
+      method: req.method,
+      headers: req.headers,
+    },
+    (apiRes) => {
+      res.status(apiRes.statusCode);
+      apiRes.pipe(res);
+    },
+  );
+
   req.pipe(request);
 });
 
 // Hot reload WebSocket connection
-wss.on('connection', (ws) => {
-  console.log('🔗 Hot reload client connected');
-  
-  ws.on('close', () => {
-    console.log('🔌 Hot reload client disconnected');
+wss.on("connection", (ws) => {
+  console.log("🔗 Hot reload client connected");
+
+  ws.on("close", () => {
+    console.log("🔌 Hot reload client disconnected");
   });
 });
 
 // File watcher for hot reload
-const watcher = chokidar.watch([
-  '*.html',
-  '*.css', 
-  '*.js',
-  'src/**/*',
-  '!node_modules/**',
-  '!tests/**',
-  '!*.backup'
-], {
-  ignored: /(^|[\/\\])\../, // ignore dotfiles
-  persistent: true
-});
+const watcher = chokidar.watch(
+  [
+    "*.html",
+    "*.css",
+    "*.js",
+    "src/**/*",
+    "!node_modules/**",
+    "!tests/**",
+    "!*.backup",
+  ],
+  {
+    ignored: /(^|[\/\\])\../, // ignore dotfiles
+    persistent: true,
+  },
+);
 
-watcher.on('change', (filePath) => {
+watcher.on("change", (filePath) => {
   console.log(`📁 File changed: ${filePath}`);
-  
+
   // Notify all connected clients to reload
   wss.clients.forEach((client) => {
     if (client.readyState === WebSocket.OPEN) {
-      client.send(JSON.stringify({
-        type: 'reload',
-        file: filePath,
-        timestamp: Date.now()
-      }));
+      client.send(
+        JSON.stringify({
+          type: "reload",
+          file: filePath,
+          timestamp: Date.now(),
+        }),
+      );
     }
   });
 });
@@ -127,11 +136,11 @@ const hotReloadScript = `
 
 // Inject hot reload script into HTML responses
 app.use((req, res, next) => {
-  if (req.path.endsWith('.html') || req.path === '/') {
+  if (req.path.endsWith(".html") || req.path === "/") {
     const originalSend = res.send;
-    res.send = function(data) {
-      if (typeof data === 'string' && data.includes('</body>')) {
-        data = data.replace('</body>', hotReloadScript + '</body>');
+    res.send = function (data) {
+      if (typeof data === "string" && data.includes("</body>")) {
+        data = data.replace("</body>", hotReloadScript + "</body>");
       }
       originalSend.call(this, data);
     };
@@ -147,8 +156,8 @@ server.listen(PORT, () => {
 });
 
 // Graceful shutdown
-process.on('SIGTERM', () => {
-  console.log('🛑 Shutting down hot reload server...');
+process.on("SIGTERM", () => {
+  console.log("🛑 Shutting down hot reload server...");
   watcher.close();
   server.close();
   process.exit(0);

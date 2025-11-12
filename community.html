@@ -1,711 +1,1117 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FlagFit Pro - Community</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Roboto:wght@300;400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
     <!-- New Modular CSS Architecture -->
-    <link rel="stylesheet" href="./src/css/main.css">
+    <link rel="stylesheet" href="./src/css/main.css" />
     <!-- Lucide Icons - Modern icon library similar to Radix UI -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="./src/icon-helper.js"></script>
     <script src="./src/theme-switcher.js"></script>
     <script src="./src/nav-highlight.js"></script>
+    <script src="./src/components/organisms/top-bar/top-bar.js"></script>
     <style>
-        /* Modern Sidebar - Enhanced Design (matching dashboard.html) */
+      /* Modern Sidebar - Enhanced Design (matching dashboard.html) */
+      .sidebar {
+        width: 250px;
+        height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 24px;
+        z-index: var(--z-index-dropdown, 1000);
+        gap: 12px;
+        transition: all 0.2s ease;
+      }
+
+      /* Dark Theme Sidebar */
+      body[data-theme="dark"] .sidebar,
+      html[data-theme="dark"] .sidebar {
+        background: #1a1a1a;
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow:
+          4px 0 24px rgba(0, 0, 0, 0.3),
+          inset -1px 0 0 rgba(255, 255, 255, 0.05);
+      }
+
+      /* Light Theme Sidebar */
+      body[data-theme="light"] .sidebar,
+      html[data-theme="light"] .sidebar {
+        background: #ffffff;
+        border-right: 1px solid rgba(0, 0, 0, 0.08);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      }
+
+      .sidebar-logo {
+        width: 48px;
+        height: 48px;
+        border-radius: 16px;
+        background: linear-gradient(
+          135deg,
+          #10c96b 0%,
+          #0ab85a 50%,
+          #089949 100%
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        margin-bottom: 8px;
+        box-shadow:
+          0 4px 16px rgba(16, 201, 107, 0.35),
+          0 2px 8px rgba(16, 201, 107, 0.25),
+          inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      }
+
+      .sidebar-logo:hover {
+        transform: scale(1.08) rotate(5deg);
+        box-shadow:
+          0 8px 24px rgba(16, 201, 107, 0.45),
+          0 4px 12px rgba(16, 201, 107, 0.3),
+          inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      }
+
+      .nav-section {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        border-radius: 12px;
+        color: var(--color-text-secondary);
+        text-decoration: none;
+        transition: all 0.3s ease;
+        position: relative;
+        width: 100%;
+        justify-content: flex-start;
+        min-height: 48px;
+      }
+
+      .nav-item::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 3px;
+        height: 0;
+        background: var(--primitive-primary-500);
+        border-radius: 0 2px 2px 0;
+        transition: height 0.3s ease;
+      }
+
+      .nav-item:hover {
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--color-text-primary);
+        transform: translateX(4px);
+      }
+
+      .nav-item:hover::before {
+        height: 60%;
+      }
+
+      .nav-item.active {
+        background: rgba(16, 201, 107, 0.1);
+        color: var(--primitive-primary-500);
+      }
+
+      .nav-item.active::before {
+        height: 80%;
+        background: var(--primitive-primary-500);
+      }
+
+      .nav-item.active .nav-item-icon {
+        background: rgba(16, 201, 107, 0.15);
+        color: var(--primitive-primary-500);
+      }
+
+      .nav-item-icon {
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        transition: all 0.3s ease;
+      }
+
+      .nav-item-label {
+        opacity: 1;
+        transform: translateX(0);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        white-space: nowrap;
+        font-weight: var(--font-weight-medium, 500);
+        font-size: var(--text-sm);
+      }
+
+      body[data-theme="dark"] .nav-item,
+      html[data-theme="dark"] .nav-item {
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      body[data-theme="dark"] .nav-item:hover,
+      html[data-theme="dark"] .nav-item:hover {
+        background: rgba(255, 255, 255, 0.08);
+        color: rgba(255, 255, 255, 0.9);
+      }
+
+      body[data-theme="dark"] .nav-item.active,
+      html[data-theme="dark"] .nav-item.active {
+        background: rgba(16, 201, 107, 0.15);
+        color: var(--primitive-primary-500);
+      }
+
+      body[data-theme="light"] .nav-item,
+      html[data-theme="light"] .nav-item {
+        color: rgba(0, 0, 0, 0.6);
+      }
+
+      body[data-theme="light"] .nav-item:hover,
+      html[data-theme="light"] .nav-item:hover {
+        background: rgba(0, 0, 0, 0.05);
+        color: rgba(0, 0, 0, 0.9);
+      }
+
+      body[data-theme="light"] .nav-item.active,
+      html[data-theme="light"] .nav-item.active {
+        background: rgba(16, 201, 107, 0.1);
+        color: var(--primitive-primary-500);
+      }
+
+      /* Page-specific styles that can't be replaced with utilities */
+      .main-content {
+        margin-left: 250px;
+        width: calc(100% - 250px); /* ✅ Use width instead of max-width */
+        padding: var(--spacing-layout-md, 32px) var(--spacing-layout-lg, 40px);
+        box-sizing: border-box;
+      }
+
+      /* Top Bar styles are now in src/css/components/header.css */
+
+      @media (max-width: 1024px) {
         .sidebar {
-            width: 250px;
-            height: 100vh;
-            position: fixed;
-            left: 0;
-            top: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            padding: 24px;
-            z-index: var(--z-index-dropdown, 1000);
-            gap: 12px;
-            transition: all 0.2s ease;
+          position: fixed;
+          transform: translateX(-100%);
+          transition: transform 0.3s ease;
+          z-index: var(--z-index-modal, 1400);
         }
-        
-        /* Dark Theme Sidebar */
-        body[data-theme="dark"] .sidebar,
-        html[data-theme="dark"] .sidebar {
-            background: #1a1a1a;
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 
-                4px 0 24px rgba(0, 0, 0, 0.3),
-                inset -1px 0 0 rgba(255, 255, 255, 0.05);
-        }
-        
-        /* Light Theme Sidebar */
-        body[data-theme="light"] .sidebar,
-        html[data-theme="light"] .sidebar {
-            background: #ffffff;
-            border-right: 1px solid rgba(0, 0, 0, 0.08);
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-        }
-        
-        .sidebar-logo {
-            width: 48px;
-            height: 48px;
-            border-radius: 16px;
-            background: linear-gradient(135deg, #10c96b 0%, #0ab85a 50%, #089949 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            margin-bottom: 8px;
-            box-shadow: 
-                0 4px 16px rgba(16, 201, 107, 0.35),
-                0 2px 8px rgba(16, 201, 107, 0.25),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
-        }
-        
-        .sidebar-logo:hover {
-            transform: scale(1.08) rotate(5deg);
-            box-shadow: 
-                0 8px 24px rgba(16, 201, 107, 0.45),
-                0 4px 12px rgba(16, 201, 107, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.3);
-        }
-        
-        .nav-section {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-bottom: 8px;
-        }
-        
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            border-radius: 12px;
-            color: var(--color-text-secondary);
-            text-decoration: none;
-            transition: all 0.3s ease;
-            position: relative;
-            width: 100%;
-            justify-content: flex-start;
-            min-height: 48px;
-        }
-        
-        .nav-item::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 3px;
-            height: 0;
-            background: var(--primitive-primary-500);
-            border-radius: 0 2px 2px 0;
-            transition: height 0.3s ease;
-        }
-        
-        .nav-item:hover {
-            background: rgba(255, 255, 255, 0.08);
-            color: var(--color-text-primary);
-            transform: translateX(4px);
-        }
-        
-        .nav-item:hover::before {
-            height: 60%;
-        }
-        
-        .nav-item.active {
-            background: rgba(16, 201, 107, 0.1);
-            color: var(--primitive-primary-500);
-        }
-        
-        .nav-item.active::before {
-            height: 80%;
-            background: var(--primitive-primary-500);
-        }
-        
-        .nav-item.active .nav-item-icon {
-            background: rgba(16, 201, 107, 0.15);
-            color: var(--primitive-primary-500);
-        }
-        
-        .nav-item-icon {
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            transition: all 0.3s ease;
-        }
-        
-        .nav-item-label {
-            opacity: 1;
-            transform: translateX(0);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            white-space: nowrap;
-            font-weight: 500;
-            font-size: var(--text-sm);
-        }
-        
-        body[data-theme="dark"] .nav-item,
-        html[data-theme="dark"] .nav-item {
-            color: rgba(255, 255, 255, 0.7);
-        }
-        
-        body[data-theme="dark"] .nav-item:hover,
-        html[data-theme="dark"] .nav-item:hover {
-            background: rgba(255, 255, 255, 0.08);
-            color: rgba(255, 255, 255, 0.9);
-        }
-        
-        body[data-theme="dark"] .nav-item.active,
-        html[data-theme="dark"] .nav-item.active {
-            background: rgba(16, 201, 107, 0.15);
-            color: var(--primitive-primary-500);
-        }
-        
-        body[data-theme="light"] .nav-item,
-        html[data-theme="light"] .nav-item {
-            color: rgba(0, 0, 0, 0.6);
-        }
-        
-        body[data-theme="light"] .nav-item:hover,
-        html[data-theme="light"] .nav-item:hover {
-            background: rgba(0, 0, 0, 0.05);
-            color: rgba(0, 0, 0, 0.9);
-        }
-        
-        body[data-theme="light"] .nav-item.active,
-        html[data-theme="light"] .nav-item.active {
-            background: rgba(16, 201, 107, 0.1);
-            color: var(--primitive-primary-500);
+
+        .sidebar.open {
+          transform: translateX(0);
         }
 
         .main-content {
-            margin-left: 250px;
-            flex: 1;
-            min-width: 0;
-            max-width: calc(100vw - 250px);
-            overflow-x: hidden;
-            overflow-y: auto;
-            padding: var(--spacing-component-lg);
-            background: var(--dark-bg-primary);
+          margin-left: 0;
+          width: 100%; /* ✅ Full width on mobile */
+          padding: var(--spacing-layout-xs, 20px) var(--spacing-component-lg, 24px);
         }
-        
-        @media (max-width: 1024px) {
-            .sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-            }
-
-            .sidebar.open {
-                transform: translateX(0);
-            }
-
-            .main-content {
-                margin-left: 0;
-                max-width: 100vw;
-            }
+      }
+      
+      @media (max-width: 480px) {
+        .main-content {
+          padding: var(--spacing-layout-xs, 16px) var(--spacing-component-md, 16px);
         }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="dashboard-container">
-        <!-- Unified Sidebar Navigation -->
-        <div class="sidebar">
-            <div class="sidebar-logo" onclick="window.location.href='/dashboard.html'" title="FlagFit Pro">
-                <i data-lucide="activity" style="width: 20px; height: 20px; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
-            </div>
-            
-            <nav class="nav-section" aria-label="Dashboard navigation">
-                <a href="/dashboard.html" class="nav-item" aria-label="Dashboard Overview" id="nav-dashboard">
-                    <span class="nav-item-icon">
-                        <i data-lucide="layout-dashboard" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Overview</span>
-                </a>
-                <a href="/analytics.html" class="nav-item" aria-label="Analytics" id="nav-analytics">
-                    <span class="nav-item-icon">
-                        <i data-lucide="bar-chart-3" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Analytics</span>
-                </a>
-            </nav>
-            
-            <nav class="nav-section" aria-label="Team navigation">
-                <a href="/roster.html" class="nav-item" aria-label="Team Roster" id="nav-roster">
-                    <span class="nav-item-icon">
-                        <i data-lucide="users" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Roster</span>
-                </a>
-                <a href="/training.html" class="nav-item" aria-label="Training" id="nav-training">
-                    <span class="nav-item-icon">
-                        <i data-lucide="zap" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Training</span>
-                </a>
-                <a href="/tournaments.html" class="nav-item" aria-label="Tournaments" id="nav-tournaments">
-                    <span class="nav-item-icon">
-                        <i data-lucide="trophy" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Tournaments</span>
-                </a>
-            </nav>
-            
-            <nav class="nav-section" aria-label="Community navigation">
-                <a href="/community.html" class="nav-item active" aria-label="Community" id="nav-community">
-                    <span class="nav-item-icon">
-                        <i data-lucide="message-circle" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Community</span>
-                </a>
-                <a href="/chat.html" class="nav-item" aria-label="Chat" id="nav-chat">
-                    <span class="nav-item-icon">
-                        <i data-lucide="message-square" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Chat</span>
-                </a>
-            </nav>
-            
-            <nav class="nav-section" aria-label="Personal navigation">
-                <a href="/settings.html" class="nav-item" aria-label="Settings" id="nav-settings">
-                    <span class="nav-item-icon">
-                        <i data-lucide="settings" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Settings</span>
-                </a>
-                <a href="/profile.html" class="nav-item" aria-label="Profile" id="nav-profile">
-                    <span class="nav-item-icon">
-                        <i data-lucide="user" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Profile</span>
-                </a>
-            </nav>
+      <!-- Mobile Overlay/Scrim (for closing sidebar on mobile) -->
+      <div class="menu-scrim" aria-hidden="true" onclick="closeMenu()"></div>
+      
+      <!-- Unified Sidebar Navigation -->
+      <div class="sidebar">
+        <div
+          class="sidebar-logo"
+          onclick="window.location.href='/dashboard.html'"
+          title="FlagFit Pro"
+        >
+          <i
+            data-lucide="activity"
+            style="
+              width: 20px;
+              height: 20px;
+              color: var(--icon-color-primary);
+              stroke: var(--icon-color-primary);
+            "
+          ></i>
         </div>
 
-<!-- Top Bar -->
-            <div class="top-bar">
-                <div class="header-left">
-                    <div class="search-box">
-                        <span class="search-icon"><i data-lucide="search" style="width: 16px;  height: 16px; ; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span>
-                        <input type="text" id="global-search" class="search-input" placeholder="Search for players, teams & more" oninput="if(typeof performGlobalSearch === 'function') performGlobalSearch(this.value)">
-                        <div id="search-results" class="search-results" style="display: none;"></div>
-                    </div>
-                </div>
-                
-                <div class="header-right">
-                    <div style="position: relative;">
-                        <div id="notification-bell" class="header-icon" onclick="if(typeof toggleNotifications === 'function') toggleNotifications()">
-                            <i data-lucide="bell" style="width: 18px;  height: 18px ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
-                        </div>
-                        <div id="notification-badge" style="position: absolute; top: -4px; right: -4px; width: 20px; height: 20px; background: var(--error-500); color: var(--dark-text-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; border: 2px solid var(--dark-bg-secondary); display: none;">3</div>
-                    </div>
-                    <div class="header-icon">
-                        <i data-lucide="settings" style="width: 18px;  height: 18px; ; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
-                    </div>
-                    
-                    <div class="theme-toggle-container">
-                        <label class="theme-toggle-label">
-                            <input type="checkbox" id="theme-toggle" class="theme-toggle-input" checked>
-                            <span class="theme-toggle-slider"></span>
-                            <span class="theme-toggle-text">Dark</span>
-                        </label>
-                    </div>
-                    <div class="user-menu">
-                        <div class="user-avatar" id="user-avatar">U</div>
-                    </div>
-                </div>
-            </div>
+        <nav class="nav-section" aria-label="Dashboard navigation">
+          <a
+            href="/dashboard.html"
+            class="nav-item"
+            aria-label="Dashboard Overview"
+            id="nav-dashboard"
+          >
+            <span class="nav-item-icon">
+              <i
+                data-lucide="layout-dashboard"
+                style="width: 24px; height: 24px"
+              ></i>
+            </span>
+            <span class="nav-item-label">Overview</span>
+          </a>
+          <a
+            href="/analytics.html"
+            class="nav-item"
+            aria-label="Analytics"
+            id="nav-analytics"
+          >
+            <span class="nav-item-icon">
+              <i
+                data-lucide="bar-chart-3"
+                style="width: 24px; height: 24px"
+              ></i>
+            </span>
+            <span class="nav-item-label">Analytics</span>
+          </a>
+        </nav>
 
-<main class="main-content">
-        <header class="header">
-            <div>
-                <h1 style="font-size: 1.5rem; font-weight: 600; color: var(--dark-text-primary);">Community Hub</h1>
-                <p style="color: var(--dark-text-secondary); margin-top: 5px;">Connect with the flag football community</p>
-            </div>
-            <div>
-                <button class="post-btn" onclick="scrollToCreatePost()">Create Post</button>
-            </div>
+        <nav class="nav-section" aria-label="Team navigation">
+          <a
+            href="/roster.html"
+            class="nav-item"
+            aria-label="Team Roster"
+            id="nav-roster"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="users" style="width: 24px; height: 24px"></i>
+            </span>
+            <span class="nav-item-label">Roster</span>
+          </a>
+          <a
+            href="/training.html"
+            class="nav-item"
+            aria-label="Training"
+            id="nav-training"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="zap" style="width: 24px; height: 24px"></i>
+            </span>
+            <span class="nav-item-label">Training</span>
+          </a>
+          <a
+            href="/tournaments.html"
+            class="nav-item"
+            aria-label="Tournaments"
+            id="nav-tournaments"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="trophy" style="width: 24px; height: 24px"></i>
+            </span>
+            <span class="nav-item-label">Tournaments</span>
+          </a>
+        </nav>
+
+        <nav class="nav-section" aria-label="Community navigation">
+          <a
+            href="/community.html"
+            class="nav-item active"
+            aria-label="Community"
+            id="nav-community"
+          >
+            <span class="nav-item-icon">
+              <i
+                data-lucide="message-circle"
+                style="width: 24px; height: 24px"
+              ></i>
+            </span>
+            <span class="nav-item-label">Community</span>
+          </a>
+          <a href="/chat.html" class="nav-item" aria-label="Chat" id="nav-chat">
+            <span class="nav-item-icon">
+              <i
+                data-lucide="message-square"
+                style="width: 24px; height: 24px"
+              ></i>
+            </span>
+            <span class="nav-item-label">Chat</span>
+          </a>
+        </nav>
+
+        <nav class="nav-section" aria-label="Personal navigation">
+          <a
+            href="/settings.html"
+            class="nav-item"
+            aria-label="Settings"
+            id="nav-settings"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="settings" style="width: 24px; height: 24px"></i>
+            </span>
+            <span class="nav-item-label">Settings</span>
+          </a>
+          <a
+            href="/profile.html"
+            class="nav-item"
+            aria-label="Profile"
+            id="nav-profile"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="user" style="width: 24px; height: 24px"></i>
+            </span>
+            <span class="nav-item-label">Profile</span>
+          </a>
+        </nav>
+      </div>
+
+      <!-- Top Bar -->
+      <div class="top-bar" role="banner">
+        <div class="header-left">
+          <!-- Global Search (combobox pattern) -->
+          <div class="search-box">
+            <label for="global-search" class="sr-only"
+              >Search for players, teams and more</label
+            >
+            <span class="search-icon" aria-hidden="true">
+              <i data-lucide="search" class="icon-16"></i>
+            </span>
+
+            <input
+              id="global-search"
+              class="search-input"
+              type="text"
+              placeholder="Search for players, teams & more"
+              role="combobox"
+              aria-autocomplete="list"
+              aria-haspopup="listbox"
+              aria-expanded="false"
+              aria-owns="search-results"
+              aria-controls="search-results"
+              aria-activedescendant=""
+              autocomplete="off"
+              inputmode="search"
+            />
+
+            <div id="search-status" class="sr-only" aria-live="polite"></div>
+
+            <div
+              id="search-results"
+              class="search-results"
+              role="listbox"
+              hidden
+            ></div>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <!-- Notifications -->
+          <div class="header-icon-wrap">
+            <button
+              id="notification-bell"
+              class="header-icon"
+              type="button"
+              aria-label="Notifications"
+              aria-controls="notification-panel"
+              aria-expanded="false"
+            >
+              <i data-lucide="bell" class="icon-18"></i>
+              <span id="notification-badge" class="badge" hidden>3</span>
+            </button>
+            <span
+              id="notification-live"
+              class="sr-only"
+              aria-live="polite"
+            ></span>
+          </div>
+
+          <!-- Settings -->
+          <button class="header-icon" type="button" aria-label="Settings">
+            <i data-lucide="settings" class="icon-18"></i>
+          </button>
+
+          <!-- Theme Toggle -->
+          <div class="theme-toggle-container" aria-label="Theme toggle">
+            <!-- JS inserts switch; fallback below -->
+            <button
+              class="theme-toggle-fallback"
+              type="button"
+              data-theme-toggle
+              hidden
+            >
+              Theme
+            </button>
+          </div>
+
+          <!-- User Menu -->
+          <button
+            id="user-menu-button"
+            class="user-menu"
+            type="button"
+            aria-label="User menu"
+            aria-haspopup="menu"
+            aria-controls="user-menu"
+            aria-expanded="false"
+          >
+            <div class="user-avatar" id="user-avatar" aria-hidden="true">U</div>
+          </button>
+        </div>
+      </div>
+
+      <main
+        class="main-content u-flex-1 u-min-width-0 u-overflow-x-hidden u-overflow-y-auto u-padding-24 u-bg-primary"
+      >
+        <header
+          class="header u-bg-primary u-padding-20 u-padding-x-30 u-radius-md u-shadow-sm u-margin-bottom-30 u-display-flex u-justify-between u-align-center"
+        >
+          <div>
+            <h1 class="u-text-heading-lg u-font-weight-600 u-text-primary">
+              Community Hub
+            </h1>
+            <p class="u-text-body-sm u-text-secondary u-margin-top-4">
+              Connect with the flag football community
+            </p>
+          </div>
+          <div>
+            <button class="post-btn" onclick="scrollToCreatePost()">
+              Create Post
+            </button>
+          </div>
         </header>
 
         <div class="community-grid">
-            <div class="feed-container">
-                <div class="create-post">
-                    <textarea 
-                        id="postInput" 
-                        class="post-input" 
-                        placeholder="What's on your mind? Share your latest training, game highlights, or tips with the community..."
-                    ></textarea>
-                    <div class="post-actions">
-                        <div class="post-options">
-                            <button class="post-option">📷 Photo</button>
-                            <button class="post-option">🎥 Video</button>
-                            <button class="post-option"><i data-lucide="bar-chart-3" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Poll</button>
-                        </div>
-                        <button class="post-btn" id="submitPost" disabled onclick="createPost()">Post</button>
-                    </div>
+          <div class="feed-container">
+            <div class="create-post">
+              <textarea
+                id="postInput"
+                class="post-input"
+                placeholder="What's on your mind? Share your latest training, game highlights, or tips with the community..."
+              ></textarea>
+              <div class="post-actions">
+                <div class="post-options">
+                  <button class="post-option">📷 Photo</button>
+                  <button class="post-option">🎥 Video</button>
+                  <button class="post-option">
+                    <i
+                      data-lucide="bar-chart-3"
+                      style="
+                        width: 16px;
+                        height: 16px;
+                        display: inline-block;
+                        vertical-align: middle;
+                        color: var(--icon-color-primary);
+                        stroke: var(--icon-color-primary);
+                      "
+                    ></i>
+                    Poll
+                  </button>
                 </div>
-
-                <div id="postsContainer">
-                    <div class="post">
-                        <div class="post-header">
-                            <div class="post-avatar">CM</div>
-                            <div class="post-info">
-                                <div class="post-author">Coach Mike Thompson</div>
-                                <div class="post-meta">2 hours ago • 📍 Training Field</div>
-                            </div>
-                        </div>
-                        <div class="post-content">
-                            <div class="post-text">
-                                Great practice session today! I'm seeing incredible improvement in everyone's route running. The precision passing drill really paid off. Keep up the momentum team! <i data-lucide="football" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i><i data-lucide="dumbbell" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
-                            </div>
-                        </div>
-                        <div class="post-engagement">
-                            <div class="engagement-stats">
-                                <span>👍 24 likes</span>
-                                <span><i data-lucide="message-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> 8 comments</span>
-                                <span>🔄 3 shares</span>
-                            </div>
-                            <div class="engagement-actions">
-                                <button class="action-btn" onclick="toggleLike(this, 'post1')">
-                                    <span>👍</span> Like
-                                </button>
-                                <button class="action-btn" onclick="toggleComments('post1')">
-                                    <span><i data-lucide="message-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span> Comment
-                                </button>
-                                <button class="action-btn">
-                                    <span>🔄</span> Share
-                                </button>
-                            </div>
-                        </div>
-                        <div class="comments-section" id="comments-post1">
-                            <div class="comment">
-                                <div class="comment-avatar">SC</div>
-                                <div class="comment-content">
-                                    <div class="comment-author">Sarah Chen</div>
-                                    <div class="comment-text">Couldn't agree more! My timing felt perfect today.</div>
-                                    <div class="comment-time">1 hour ago</div>
-                                </div>
-                            </div>
-                            <div class="comment">
-                                <div class="comment-avatar">JD</div>
-                                <div class="comment-content">
-                                    <div class="comment-author">Jake Davis</div>
-                                    <div class="comment-text">Those cone drills are really helping with my cuts!</div>
-                                    <div class="comment-time">45 minutes ago</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="post">
-                        <div class="post-header">
-                            <div class="post-avatar">AL</div>
-                            <div class="post-info">
-                                <div class="post-author">Alex Rodriguez</div>
-                                <div class="post-meta">4 hours ago • <i data-lucide="trophy" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Tournament Victory</div>
-                            </div>
-                        </div>
-                        <div class="post-content">
-                            <div class="achievement-badge">
-                                <i data-lucide="trophy" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Tournament Champion! First place in the Regional Championship!
-                            </div>
-                            <div class="post-text">
-                                What an incredible weekend! Our team played phenomenally and took home the championship trophy. Special thanks to everyone who supported us. This one's for the community! 🙌
-                            </div>
-                        </div>
-                        <div class="post-engagement">
-                            <div class="engagement-stats">
-                                <span>👍 87 likes</span>
-                                <span><i data-lucide="message-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> 23 comments</span>
-                                <span>🔄 12 shares</span>
-                            </div>
-                            <div class="engagement-actions">
-                                <button class="action-btn liked" onclick="toggleLike(this, 'post2')">
-                                    <span>❤️</span> Loved
-                                </button>
-                                <button class="action-btn" onclick="toggleComments('post2')">
-                                    <span><i data-lucide="message-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span> Comment
-                                </button>
-                                <button class="action-btn">
-                                    <span>🔄</span> Share
-                                </button>
-                            </div>
-                        </div>
-                        <div class="comments-section" id="comments-post2">
-                            <div class="comment">
-                                <div class="comment-avatar">MT</div>
-                                <div class="comment-content">
-                                    <div class="comment-author">Maya Thompson</div>
-                                    <div class="comment-text">Congratulations! Well deserved victory! 🎉</div>
-                                    <div class="comment-time">3 hours ago</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="post">
-                        <div class="post-header">
-                            <div class="post-avatar">RJ</div>
-                            <div class="post-info">
-                                <div class="post-author">Riley Johnson</div>
-                                <div class="post-meta">6 hours ago • <i data-lucide="zap" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Training Tips</div>
-                            </div>
-                        </div>
-                        <div class="post-content">
-                            <div class="post-text">
-                                Pro tip for new players: Focus on your flag positioning! Keep them loose enough to grab but not so loose they fall off during runs. Game changer for defense! <i data-lucide="target" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
-                            </div>
-                        </div>
-                        <div class="post-engagement">
-                            <div class="engagement-stats">
-                                <span>👍 42 likes</span>
-                                <span><i data-lucide="message-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> 15 comments</span>
-                                <span>🔄 8 shares</span>
-                            </div>
-                            <div class="engagement-actions">
-                                <button class="action-btn" onclick="toggleLike(this, 'post3')">
-                                    <span>👍</span> Like
-                                </button>
-                                <button class="action-btn" onclick="toggleComments('post3')">
-                                    <span><i data-lucide="message-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span> Comment
-                                </button>
-                                <button class="action-btn">
-                                    <span>🔄</span> Share
-                                </button>
-                            </div>
-                        </div>
-                        <div class="comments-section" id="comments-post3"></div>
-                    </div>
-                </div>
+                <button
+                  class="post-btn"
+                  id="submitPost"
+                  disabled
+                  onclick="createPost()"
+                >
+                  Post
+                </button>
+              </div>
             </div>
 
-            <div class="sidebar-content">
-                <div class="sidebar-section">
-                    <h3 class="section-title">🔥 Trending Topics</h3>
-                    <div class="trending-item">
-                        <div class="trending-topic">#FlagFootballTips</div>
-                        <div class="trending-count">142 posts</div>
-                    </div>
-                    <div class="trending-item">
-                        <div class="trending-topic">#TrainingTuesday</div>
-                        <div class="trending-count">89 posts</div>
-                    </div>
-                    <div class="trending-item">
-                        <div class="trending-topic">#GameHighlights</div>
-                        <div class="trending-count">76 posts</div>
-                    </div>
-                    <div class="trending-item">
-                        <div class="trending-topic">#TeamBuilding</div>
-                        <div class="trending-count">54 posts</div>
-                    </div>
-                    <div class="trending-item">
-                        <div class="trending-topic">#TournamentPrep</div>
-                        <div class="trending-count">38 posts</div>
-                    </div>
+            <div id="postsContainer">
+              <div class="post">
+                <div class="post-header">
+                  <div class="post-avatar">CM</div>
+                  <div class="post-info">
+                    <div class="post-author">Coach Mike Thompson</div>
+                    <div class="post-meta">2 hours ago • 📍 Training Field</div>
+                  </div>
                 </div>
+                <div class="post-content">
+                  <div class="post-text">
+                    Great practice session today! I'm seeing incredible
+                    improvement in everyone's route running. The precision
+                    passing drill really paid off. Keep up the momentum team!
+                    <i
+                      data-lucide="football"
+                      style="
+                        width: 16px;
+                        height: 16px;
+                        display: inline-block;
+                        vertical-align: middle;
+                        color: var(--icon-color-primary);
+                        stroke: var(--icon-color-primary);
+                      "
+                    ></i
+                    ><i
+                      data-lucide="dumbbell"
+                      style="
+                        width: 16px;
+                        height: 16px;
+                        display: inline-block;
+                        vertical-align: middle;
+                        color: var(--icon-color-primary);
+                        stroke: var(--icon-color-primary);
+                      "
+                    ></i>
+                  </div>
+                </div>
+                <div class="post-engagement">
+                  <div class="engagement-stats">
+                    <span>👍 24 likes</span>
+                    <span
+                      ><i
+                        data-lucide="message-circle"
+                        style="
+                          width: 16px;
+                          height: 16px;
+                          display: inline-block;
+                          vertical-align: middle;
+                          color: var(--icon-color-primary);
+                          stroke: var(--icon-color-primary);
+                        "
+                      ></i>
+                      8 comments</span
+                    >
+                    <span>🔄 3 shares</span>
+                  </div>
+                  <div class="engagement-actions">
+                    <button
+                      class="action-btn"
+                      onclick="toggleLike(this, 'post1')"
+                    >
+                      <span>👍</span> Like
+                    </button>
+                    <button
+                      class="action-btn"
+                      onclick="toggleComments('post1')"
+                    >
+                      <span
+                        ><i
+                          data-lucide="message-circle"
+                          style="
+                            width: 16px;
+                            height: 16px;
+                            display: inline-block;
+                            vertical-align: middle;
+                            color: var(--icon-color-primary);
+                            stroke: var(--icon-color-primary);
+                          "
+                        ></i
+                      ></span>
+                      Comment
+                    </button>
+                    <button class="action-btn"><span>🔄</span> Share</button>
+                  </div>
+                </div>
+                <div class="comments-section" id="comments-post1">
+                  <div class="comment">
+                    <div class="comment-avatar">SC</div>
+                    <div class="comment-content">
+                      <div class="comment-author">Sarah Chen</div>
+                      <div class="comment-text">
+                        Couldn't agree more! My timing felt perfect today.
+                      </div>
+                      <div class="comment-time">1 hour ago</div>
+                    </div>
+                  </div>
+                  <div class="comment">
+                    <div class="comment-avatar">JD</div>
+                    <div class="comment-content">
+                      <div class="comment-author">Jake Davis</div>
+                      <div class="comment-text">
+                        Those cone drills are really helping with my cuts!
+                      </div>
+                      <div class="comment-time">45 minutes ago</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-                <div class="sidebar-section">
-                    <h3 class="section-title"><i data-lucide="users" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Suggested Connections</h3>
-                    <div class="suggested-user">
-                        <div class="user-avatar">DS</div>
-                        <div class="user-info">
-                            <div class="user-name">David Smith</div>
-                            <div class="user-detail">Pro Coach • 2.3k followers</div>
-                        </div>
-                        <button class="follow-btn">Follow</button>
+              <div class="post">
+                <div class="post-header">
+                  <div class="post-avatar">AL</div>
+                  <div class="post-info">
+                    <div class="post-author">Alex Rodriguez</div>
+                    <div class="post-meta">
+                      4 hours ago •
+                      <i
+                        data-lucide="trophy"
+                        style="
+                          width: 16px;
+                          height: 16px;
+                          display: inline-block;
+                          vertical-align: middle;
+                          color: var(--icon-color-primary);
+                          stroke: var(--icon-color-primary);
+                        "
+                      ></i>
+                      Tournament Victory
                     </div>
-                    <div class="suggested-user">
-                        <div class="user-avatar">EM</div>
-                        <div class="user-info">
-                            <div class="user-name">Emma Martinez</div>
-                            <div class="user-detail">Team Captain • 1.8k followers</div>
-                        </div>
-                        <button class="follow-btn">Follow</button>
-                    </div>
-                    <div class="suggested-user">
-                        <div class="user-avatar">TW</div>
-                        <div class="user-info">
-                            <div class="user-name">Tyler Wilson</div>
-                            <div class="user-detail">Athletic Trainer • 1.2k followers</div>
-                        </div>
-                        <button class="follow-btn">Follow</button>
-                    </div>
+                  </div>
                 </div>
+                <div class="post-content">
+                  <div class="achievement-badge">
+                    <i
+                      data-lucide="trophy"
+                      style="
+                        width: 16px;
+                        height: 16px;
+                        display: inline-block;
+                        vertical-align: middle;
+                        color: var(--icon-color-primary);
+                        stroke: var(--icon-color-primary);
+                      "
+                    ></i>
+                    Tournament Champion! First place in the Regional
+                    Championship!
+                  </div>
+                  <div class="post-text">
+                    What an incredible weekend! Our team played phenomenally and
+                    took home the championship trophy. Special thanks to
+                    everyone who supported us. This one's for the community! 🙌
+                  </div>
+                </div>
+                <div class="post-engagement">
+                  <div class="engagement-stats">
+                    <span>👍 87 likes</span>
+                    <span
+                      ><i
+                        data-lucide="message-circle"
+                        style="
+                          width: 16px;
+                          height: 16px;
+                          display: inline-block;
+                          vertical-align: middle;
+                          color: var(--icon-color-primary);
+                          stroke: var(--icon-color-primary);
+                        "
+                      ></i>
+                      23 comments</span
+                    >
+                    <span>🔄 12 shares</span>
+                  </div>
+                  <div class="engagement-actions">
+                    <button
+                      class="action-btn liked"
+                      onclick="toggleLike(this, 'post2')"
+                    >
+                      <span>❤️</span> Loved
+                    </button>
+                    <button
+                      class="action-btn"
+                      onclick="toggleComments('post2')"
+                    >
+                      <span
+                        ><i
+                          data-lucide="message-circle"
+                          style="
+                            width: 16px;
+                            height: 16px;
+                            display: inline-block;
+                            vertical-align: middle;
+                            color: var(--icon-color-primary);
+                            stroke: var(--icon-color-primary);
+                          "
+                        ></i
+                      ></span>
+                      Comment
+                    </button>
+                    <button class="action-btn"><span>🔄</span> Share</button>
+                  </div>
+                </div>
+                <div class="comments-section" id="comments-post2">
+                  <div class="comment">
+                    <div class="comment-avatar">MT</div>
+                    <div class="comment-content">
+                      <div class="comment-author">Maya Thompson</div>
+                      <div class="comment-text">
+                        Congratulations! Well deserved victory! 🎉
+                      </div>
+                      <div class="comment-time">3 hours ago</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-                <div class="sidebar-section">
-                    <h3 class="section-title"><i data-lucide="trophy" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Recent Achievements</h3>
-                    <div class="achievement-badge">
-                        🥇 Regional Champions
+              <div class="post">
+                <div class="post-header">
+                  <div class="post-avatar">RJ</div>
+                  <div class="post-info">
+                    <div class="post-author">Riley Johnson</div>
+                    <div class="post-meta">
+                      6 hours ago •
+                      <i
+                        data-lucide="zap"
+                        style="
+                          width: 16px;
+                          height: 16px;
+                          display: inline-block;
+                          vertical-align: middle;
+                          color: var(--icon-color-primary);
+                          stroke: var(--icon-color-primary);
+                        "
+                      ></i>
+                      Training Tips
                     </div>
-                    <div class="achievement-badge" style="background: linear-gradient(135deg, var(--dark-text-muted) 0%, var(--dark-text-muted) 100%);">
-                        🥈 Training Milestone
-                    </div>
-                    <div class="achievement-badge" style="background: linear-gradient(135deg, var(--tertiary-600) 0%, var(--tertiary-700) 100%);">
-                        🥉 Community Helper
-                    </div>
+                  </div>
                 </div>
+                <div class="post-content">
+                  <div class="post-text">
+                    Pro tip for new players: Focus on your flag positioning!
+                    Keep them loose enough to grab but not so loose they fall
+                    off during runs. Game changer for defense!
+                    <i
+                      data-lucide="target"
+                      style="
+                        width: 16px;
+                        height: 16px;
+                        display: inline-block;
+                        vertical-align: middle;
+                        color: var(--icon-color-primary);
+                        stroke: var(--icon-color-primary);
+                      "
+                    ></i>
+                  </div>
+                </div>
+                <div class="post-engagement">
+                  <div class="engagement-stats">
+                    <span>👍 42 likes</span>
+                    <span
+                      ><i
+                        data-lucide="message-circle"
+                        style="
+                          width: 16px;
+                          height: 16px;
+                          display: inline-block;
+                          vertical-align: middle;
+                          color: var(--icon-color-primary);
+                          stroke: var(--icon-color-primary);
+                        "
+                      ></i>
+                      15 comments</span
+                    >
+                    <span>🔄 8 shares</span>
+                  </div>
+                  <div class="engagement-actions">
+                    <button
+                      class="action-btn"
+                      onclick="toggleLike(this, 'post3')"
+                    >
+                      <span>👍</span> Like
+                    </button>
+                    <button
+                      class="action-btn"
+                      onclick="toggleComments('post3')"
+                    >
+                      <span
+                        ><i
+                          data-lucide="message-circle"
+                          style="
+                            width: 16px;
+                            height: 16px;
+                            display: inline-block;
+                            vertical-align: middle;
+                            color: var(--icon-color-primary);
+                            stroke: var(--icon-color-primary);
+                          "
+                        ></i
+                      ></span>
+                      Comment
+                    </button>
+                    <button class="action-btn"><span>🔄</span> Share</button>
+                  </div>
+                </div>
+                <div class="comments-section" id="comments-post3"></div>
+              </div>
             </div>
+          </div>
+
+          <div class="sidebar-content">
+            <div class="sidebar-section">
+              <h3 class="section-title">🔥 Trending Topics</h3>
+              <div class="trending-item">
+                <div class="trending-topic">#FlagFootballTips</div>
+                <div class="trending-count">142 posts</div>
+              </div>
+              <div class="trending-item">
+                <div class="trending-topic">#TrainingTuesday</div>
+                <div class="trending-count">89 posts</div>
+              </div>
+              <div class="trending-item">
+                <div class="trending-topic">#GameHighlights</div>
+                <div class="trending-count">76 posts</div>
+              </div>
+              <div class="trending-item">
+                <div class="trending-topic">#TeamBuilding</div>
+                <div class="trending-count">54 posts</div>
+              </div>
+              <div class="trending-item">
+                <div class="trending-topic">#TournamentPrep</div>
+                <div class="trending-count">38 posts</div>
+              </div>
+            </div>
+
+            <div class="sidebar-section">
+              <h3 class="section-title">
+                <i
+                  data-lucide="users"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    color: var(--icon-color-primary);
+                    stroke: var(--icon-color-primary);
+                  "
+                ></i>
+                Suggested Connections
+              </h3>
+              <div class="suggested-user">
+                <div class="user-avatar">DS</div>
+                <div class="user-info">
+                  <div class="user-name">David Smith</div>
+                  <div class="user-detail">Pro Coach • 2.3k followers</div>
+                </div>
+                <button class="follow-btn">Follow</button>
+              </div>
+              <div class="suggested-user">
+                <div class="user-avatar">EM</div>
+                <div class="user-info">
+                  <div class="user-name">Emma Martinez</div>
+                  <div class="user-detail">Team Captain • 1.8k followers</div>
+                </div>
+                <button class="follow-btn">Follow</button>
+              </div>
+              <div class="suggested-user">
+                <div class="user-avatar">TW</div>
+                <div class="user-info">
+                  <div class="user-name">Tyler Wilson</div>
+                  <div class="user-detail">
+                    Athletic Trainer • 1.2k followers
+                  </div>
+                </div>
+                <button class="follow-btn">Follow</button>
+              </div>
+            </div>
+
+            <div class="sidebar-section">
+              <h3 class="section-title">
+                <i
+                  data-lucide="trophy"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    color: var(--icon-color-primary);
+                    stroke: var(--icon-color-primary);
+                  "
+                ></i>
+                Recent Achievements
+              </h3>
+              <div class="achievement-badge">🥇 Regional Champions</div>
+              <div
+                class="achievement-badge"
+                style="
+                  background: linear-gradient(
+                    135deg,
+                    var(--dark-text-muted) 0%,
+                    var(--dark-text-muted) 100%
+                  );
+                "
+              >
+                🥈 Training Milestone
+              </div>
+              <div
+                class="achievement-badge"
+                style="
+                  background: linear-gradient(
+                    135deg,
+                    var(--tertiary-600) 0%,
+                    var(--tertiary-700) 100%
+                  );
+                "
+              >
+                🥉 Community Helper
+              </div>
+            </div>
+          </div>
         </div>
-    </main>
+      </main>
     </div>
 
     <script type="module">
-        import { authManager } from './src/auth-manager.js';
-        import { apiClient } from './src/api-config.js';
-        import { PerformanceUtils } from './src/performance-utils.js';
-        import { AccessibilityUtils } from './src/accessibility-utils.js';
+      import { authManager } from "./src/auth-manager.js";
+      import { apiClient } from "./src/api-config.js";
+      import { PerformanceUtils } from "./src/performance-utils.js";
+      import { AccessibilityUtils } from "./src/accessibility-utils.js";
 
-        let postCounter = 4;
+      let postCounter = 4;
 
-        async function initCommunityPage() {
-            if (!authManager.requireAuth()) return;
+      async function initCommunityPage() {
+        if (!authManager.requireAuth()) return;
 
-            // Use performance monitoring
-            await PerformanceUtils.measureAsyncPerformance('Community Page Load', async () => {
-                setupPostInput();
-                await loadCommunityFeed();
-            });
-            
-            // Setup optimized scrolling for posts
-            setupInfiniteScrolling();
-            
-            // Add demo posts to make the community feel active
-            setTimeout(addDemoPosts, 500);
+        // Use performance monitoring
+        await PerformanceUtils.measureAsyncPerformance(
+          "Community Page Load",
+          async () => {
+            setupPostInput();
+            await loadCommunityFeed();
+          },
+        );
+
+        // Setup optimized scrolling for posts
+        setupInfiniteScrolling();
+
+        // Add demo posts to make the community feel active
+        setTimeout(addDemoPosts, 500);
+      }
+
+      function setupInfiniteScrolling() {
+        const postsContainer = document.getElementById("postsContainer");
+        let isLoading = false;
+
+        const loadMorePosts = PerformanceUtils.throttle(async () => {
+          if (isLoading) return;
+
+          const scrollPosition = window.scrollY + window.innerHeight;
+          const documentHeight = document.documentElement.scrollHeight;
+
+          // Load more when 200px from bottom
+          if (scrollPosition >= documentHeight - 200) {
+            isLoading = true;
+
+            // Simulate loading more posts
+            setTimeout(() => {
+              addDemoPosts();
+              isLoading = false;
+            }, 1000);
+          }
+        }, 250);
+
+        window.addEventListener("scroll", loadMorePosts);
+      }
+
+      function addDemoPosts() {
+        const demoPosts = [
+          {
+            id: "demo1",
+            author: "sarah.williams",
+            authorName: "Sarah Williams",
+            content:
+              "Just hit a new personal best on my 40-yard dash! 4.8 seconds! 🏃‍♀️💨 All those early morning training sessions are paying off. Who else is working on their speed this week?",
+            timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+            likes: 18,
+            comments: 5,
+            shares: 2,
+            isLiked: false,
+            location: "🏃‍♀️ Track",
+          },
+          {
+            id: "demo2",
+            author: "alex.rodriguez",
+            authorName: "Alex Rodriguez",
+            content:
+              'Game highlights from yesterday\'s scrimmage! That touchdown pass in the final minutes was INSANE! <i data-lucide="football" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>🔥 Great teamwork everyone!',
+            timestamp: new Date(Date.now() - 18 * 60 * 60 * 1000).toISOString(),
+            likes: 31,
+            comments: 12,
+            shares: 8,
+            isLiked: true,
+            location: "🏟️ Championship Field",
+            achievement:
+              '<i data-lucide="trophy" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Game MVP',
+          },
+          {
+            id: "demo3",
+            author: "tyler.johnson",
+            authorName: "Tyler Johnson",
+            content:
+              "Quick tip for better flag pulling: Watch the hips, not the feet! The hips don't lie and will tell you exactly where the runner is going. Works every time! 💯",
+            timestamp: new Date(
+              Date.now() - 2 * 24 * 60 * 60 * 1000,
+            ).toISOString(),
+            likes: 45,
+            comments: 15,
+            shares: 12,
+            isLiked: false,
+            location:
+              '<i data-lucide="lightbulb" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Training Tips',
+          },
+        ];
+
+        const container = document.getElementById("postsContainer");
+        if (container) {
+          demoPosts.forEach((post) => {
+            const postHTML = createPostHTML(post, authManager.getCurrentUser());
+            container.insertAdjacentHTML("beforeend", postHTML);
+          });
+          console.log(
+            '<i data-lucide="check-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Demo posts added to community feed',
+          );
         }
-        
-        function setupInfiniteScrolling() {
-            const postsContainer = document.getElementById('postsContainer');
-            let isLoading = false;
-            
-            const loadMorePosts = PerformanceUtils.throttle(async () => {
-                if (isLoading) return;
-                
-                const scrollPosition = window.scrollY + window.innerHeight;
-                const documentHeight = document.documentElement.scrollHeight;
-                
-                // Load more when 200px from bottom
-                if (scrollPosition >= documentHeight - 200) {
-                    isLoading = true;
-                    
-                    // Simulate loading more posts
-                    setTimeout(() => {
-                        addDemoPosts();
-                        isLoading = false;
-                    }, 1000);
-                }
-            }, 250);
-            
-            window.addEventListener('scroll', loadMorePosts);
+      }
+
+      function setupPostInput() {
+        const postInput = document.getElementById("postInput");
+        const submitBtn = document.getElementById("submitPost");
+
+        // Use debounced input handler for better performance
+        const debouncedInputHandler = PerformanceUtils.debounce(function () {
+          submitBtn.disabled = !this.value.trim();
+        }, 150);
+
+        postInput.addEventListener("input", debouncedInputHandler);
+      }
+
+      async function loadCommunityFeed() {
+        try {
+          const response = await apiClient.get("/api/community/feed");
+
+          if (response.success && response.data.posts) {
+            updateFeed(response.data.posts);
+          }
+        } catch (error) {
+          console.error("Failed to load community feed:", error);
+          // Keep existing demo posts if API fails
         }
-        
-        function addDemoPosts() {
-            const demoPosts = [
-                {
-                    id: 'demo1',
-                    author: 'sarah.williams',
-                    authorName: 'Sarah Williams',
-                    content: 'Just hit a new personal best on my 40-yard dash! 4.8 seconds! 🏃‍♀️💨 All those early morning training sessions are paying off. Who else is working on their speed this week?',
-                    timestamp: new Date(Date.now() - 4*60*60*1000).toISOString(),
-                    likes: 18,
-                    comments: 5,
-                    shares: 2,
-                    isLiked: false,
-                    location: '🏃‍♀️ Track'
-                },
-                {
-                    id: 'demo2',
-                    author: 'alex.rodriguez',
-                    authorName: 'Alex Rodriguez',
-                    content: 'Game highlights from yesterday\'s scrimmage! That touchdown pass in the final minutes was INSANE! <i data-lucide="football" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>🔥 Great teamwork everyone!',
-                    timestamp: new Date(Date.now() - 18*60*60*1000).toISOString(),
-                    likes: 31,
-                    comments: 12,
-                    shares: 8,
-                    isLiked: true,
-                    location: '🏟️ Championship Field',
-                    achievement: '<i data-lucide="trophy" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Game MVP'
-                },
-                {
-                    id: 'demo3',
-                    author: 'tyler.johnson',
-                    authorName: 'Tyler Johnson',
-                    content: 'Quick tip for better flag pulling: Watch the hips, not the feet! The hips don\'t lie and will tell you exactly where the runner is going. Works every time! 💯',
-                    timestamp: new Date(Date.now() - 2*24*60*60*1000).toISOString(),
-                    likes: 45,
-                    comments: 15,
-                    shares: 12,
-                    isLiked: false,
-                    location: '<i data-lucide="lightbulb" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Training Tips'
-                }
-            ];
-            
-            const container = document.getElementById('postsContainer');
-            if (container) {
-                demoPosts.forEach(post => {
-                    const postHTML = createPostHTML(post, authManager.getCurrentUser());
-                    container.insertAdjacentHTML('beforeend', postHTML);
-                });
-                console.log('<i data-lucide="check-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Demo posts added to community feed');
-            }
-        }
+      }
 
-        function setupPostInput() {
-            const postInput = document.getElementById('postInput');
-            const submitBtn = document.getElementById('submitPost');
+      function updateFeed(posts) {
+        const container = document.getElementById("postsContainer");
+        const currentUser = authManager.getCurrentUser();
 
-            // Use debounced input handler for better performance
-            const debouncedInputHandler = PerformanceUtils.debounce(function() {
-                submitBtn.disabled = !this.value.trim();
-            }, 150);
+        // Keep existing create post at top, add new posts
+        const existingPosts = container.innerHTML;
+        container.innerHTML =
+          posts.map((post) => createPostHTML(post, currentUser)).join("") +
+          existingPosts;
+      }
 
-            postInput.addEventListener('input', debouncedInputHandler);
-        }
-
-        async function loadCommunityFeed() {
-            try {
-                const response = await apiClient.get('/api/community/feed');
-                
-                if (response.success && response.data.posts) {
-                    updateFeed(response.data.posts);
-                }
-            } catch (error) {
-                console.error('Failed to load community feed:', error);
-                // Keep existing demo posts if API fails
-            }
-        }
-
-        function updateFeed(posts) {
-            const container = document.getElementById('postsContainer');
-            const currentUser = authManager.getCurrentUser();
-            
-            // Keep existing create post at top, add new posts
-            const existingPosts = container.innerHTML;
-            container.innerHTML = posts.map(post => createPostHTML(post, currentUser)).join('') + existingPosts;
-        }
-
-        function createPostHTML(post, currentUser) {
-            return `
+      function createPostHTML(post, currentUser) {
+        return `
                 <div class="post">
                     <div class="post-header">
                         <div class="post-avatar">${getInitials(post.author)}</div>
                         <div class="post-info">
                             <div class="post-author">${post.authorName}</div>
-                            <div class="post-meta">${formatTime(post.timestamp)} • ${post.location || '📍 Community'}</div>
+                            <div class="post-meta">${formatTime(post.timestamp)} • ${post.location || "📍 Community"}</div>
                         </div>
                     </div>
                     <div class="post-content">
-                        ${post.achievement ? `<div class="achievement-badge">${post.achievement}</div>` : ''}
+                        ${post.achievement ? `<div class="achievement-badge">${post.achievement}</div>` : ""}
                         <div class="post-text">${escapeHtml(post.content)}</div>
-                        ${post.image ? `<img src="${post.image}" alt="Post image" class="post-image">` : ''}
+                        ${post.image ? `<img src="${post.image}" alt="Post image" class="post-image">` : ""}
                     </div>
                     <div class="post-engagement">
                         <div class="engagement-stats">
@@ -714,8 +1120,8 @@
                             <span>🔄 ${post.shares || 0} shares</span>
                         </div>
                         <div class="engagement-actions">
-                            <button class="action-btn ${post.isLiked ? 'liked' : ''}" onclick="toggleLike(this, '${post.id}')">
-                                <span>${post.isLiked ? '❤️' : '👍'}</span> ${post.isLiked ? 'Loved' : 'Like'}
+                            <button class="action-btn ${post.isLiked ? "liked" : ""}" onclick="toggleLike(this, '${post.id}')">
+                                <span>${post.isLiked ? "❤️" : "👍"}</span> ${post.isLiked ? "Loved" : "Like"}
                             </button>
                             <button class="action-btn" onclick="toggleComments('${post.id}')">
                                 <span><i data-lucide="message-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span> Comment
@@ -726,14 +1132,14 @@
                         </div>
                     </div>
                     <div class="comments-section" id="comments-${post.id}">
-                        ${post.topComments ? post.topComments.map(comment => createCommentHTML(comment)).join('') : ''}
+                        ${post.topComments ? post.topComments.map((comment) => createCommentHTML(comment)).join("") : ""}
                     </div>
                 </div>
             `;
-        }
+      }
 
-        function createCommentHTML(comment) {
-            return `
+      function createCommentHTML(comment) {
+        return `
                 <div class="comment">
                     <div class="comment-avatar">${getInitials(comment.author)}</div>
                     <div class="comment-content">
@@ -743,136 +1149,150 @@
                     </div>
                 </div>
             `;
+      }
+
+      window.createPost = async function () {
+        const postInput = document.getElementById("postInput");
+        const content = postInput.value.trim();
+
+        if (!content) return;
+
+        const user = authManager.getCurrentUser();
+
+        try {
+          const response = await apiClient.post("/api/community/posts", {
+            content: content,
+          });
+
+          if (response.success) {
+            // Add post to UI immediately
+            addPostToUI({
+              id: `post${postCounter++}`,
+              author: user.email,
+              authorName: user.name || "You",
+              content: content,
+              timestamp: new Date().toISOString(),
+              likes: 0,
+              comments: 0,
+              shares: 0,
+              isLiked: false,
+            });
+
+            postInput.value = "";
+            document.getElementById("submitPost").disabled = true;
+
+            authManager.showSuccess("Post created successfully!");
+          }
+        } catch (error) {
+          console.error("Failed to create post:", error);
+
+          // Still add to UI for demo purposes
+          addPostToUI({
+            id: `post${postCounter++}`,
+            author: user.email,
+            authorName: user.name || "You",
+            content: content,
+            timestamp: new Date().toISOString(),
+            likes: 0,
+            comments: 0,
+            shares: 0,
+            isLiked: false,
+          });
+
+          postInput.value = "";
+          document.getElementById("submitPost").disabled = true;
+
+          authManager.showSuccess("Post created!");
         }
+      };
 
-        window.createPost = async function() {
-            const postInput = document.getElementById('postInput');
-            const content = postInput.value.trim();
-            
-            if (!content) return;
+      function addPostToUI(post) {
+        const container = document.getElementById("postsContainer");
+        const postHTML = createPostHTML(post, authManager.getCurrentUser());
 
-            const user = authManager.getCurrentUser();
-            
-            try {
-                const response = await apiClient.post('/api/community/posts', {
-                    content: content
-                });
-                
-                if (response.success) {
-                    // Add post to UI immediately
-                    addPostToUI({
-                        id: `post${postCounter++}`,
-                        author: user.email,
-                        authorName: user.name || 'You',
-                        content: content,
-                        timestamp: new Date().toISOString(),
-                        likes: 0,
-                        comments: 0,
-                        shares: 0,
-                        isLiked: false
-                    });
-                    
-                    postInput.value = '';
-                    document.getElementById('submitPost').disabled = true;
-                    
-                    authManager.showSuccess('Post created successfully!');
-                }
-            } catch (error) {
-                console.error('Failed to create post:', error);
-                
-                // Still add to UI for demo purposes
-                addPostToUI({
-                    id: `post${postCounter++}`,
-                    author: user.email,
-                    authorName: user.name || 'You',
-                    content: content,
-                    timestamp: new Date().toISOString(),
-                    likes: 0,
-                    comments: 0,
-                    shares: 0,
-                    isLiked: false
-                });
-                
-                postInput.value = '';
-                document.getElementById('submitPost').disabled = true;
-                
-                authManager.showSuccess('Post created!');
-            }
-        }
+        // Insert after create post form
+        container.insertAdjacentHTML("afterbegin", postHTML);
+      }
 
-        function addPostToUI(post) {
-            const container = document.getElementById('postsContainer');
-            const postHTML = createPostHTML(post, authManager.getCurrentUser());
-            
-            // Insert after create post form
-            container.insertAdjacentHTML('afterbegin', postHTML);
-        }
+      window.toggleLike = async function (button, postId) {
+        try {
+          const isLiked = button.classList.contains("liked");
 
-        window.toggleLike = async function(button, postId) {
-            try {
-                const isLiked = button.classList.contains('liked');
-                
-                const response = await apiClient.post(`/api/community/posts/${postId}/${isLiked ? 'unlike' : 'like'}`);
-                
-                if (response.success || true) { // Allow for demo
-                    button.classList.toggle('liked');
-                    
-                    if (button.classList.contains('liked')) {
-                        button.innerHTML = '<span>❤️</span> Loved';
-                    } else {
-                        button.innerHTML = '<span>👍</span> Like';
-                    }
-                    
-                    // Update like count in stats
-                    const stats = button.closest('.post-engagement').querySelector('.engagement-stats');
-                    const likeSpan = stats.children[0];
-                    const currentLikes = parseInt(likeSpan.textContent.match(/\d+/)[0]);
-                    const newLikes = isLiked ? currentLikes - 1 : currentLikes + 1;
-                    likeSpan.textContent = `👍 ${newLikes} likes`;
-                }
-            } catch (error) {
-                console.error('Failed to toggle like:', error);
-                // Still toggle for demo
-                button.classList.toggle('liked');
-            }
-        }
+          const response = await apiClient.post(
+            `/api/community/posts/${postId}/${isLiked ? "unlike" : "like"}`,
+          );
 
-        window.toggleComments = function(postId) {
-            const commentsSection = document.getElementById(`comments-${postId}`);
-            commentsSection.classList.toggle('show');
-        }
+          if (response.success || true) {
+            // Allow for demo
+            button.classList.toggle("liked");
 
-        window.scrollToCreatePost = function() {
-            document.querySelector('.create-post').scrollIntoView({ behavior: 'smooth' });
-            document.getElementById('postInput').focus();
-        }
-
-        function getInitials(name) {
-            if (!name) return '??';
-            return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
-        }
-
-        function formatTime(timestamp) {
-            const date = new Date(timestamp);
-            const now = new Date();
-            const diff = now - date;
-            
-            if (diff < 3600000) { // Less than 1 hour
-                return `${Math.floor(diff / 60000)} minutes ago`;
-            } else if (diff < 86400000) { // Less than 1 day
-                return `${Math.floor(diff / 3600000)} hours ago`;
+            if (button.classList.contains("liked")) {
+              button.innerHTML = "<span>❤️</span> Loved";
             } else {
-                return date.toLocaleDateString();
+              button.innerHTML = "<span>👍</span> Like";
             }
-        }
 
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
+            // Update like count in stats
+            const stats = button
+              .closest(".post-engagement")
+              .querySelector(".engagement-stats");
+            const likeSpan = stats.children[0];
+            const currentLikes = parseInt(likeSpan.textContent.match(/\d+/)[0]);
+            const newLikes = isLiked ? currentLikes - 1 : currentLikes + 1;
+            likeSpan.textContent = `👍 ${newLikes} likes`;
+          }
+        } catch (error) {
+          console.error("Failed to toggle like:", error);
+          // Still toggle for demo
+          button.classList.toggle("liked");
         }
+      };
 
-        document.addEventListener('DOMContentLoaded', initCommunityPage);
+      window.toggleComments = function (postId) {
+        const commentsSection = document.getElementById(`comments-${postId}`);
+        commentsSection.classList.toggle("show");
+      };
+
+      window.scrollToCreatePost = function () {
+        document
+          .querySelector(".create-post")
+          .scrollIntoView({ behavior: "smooth" });
+        document.getElementById("postInput").focus();
+      };
+
+      function getInitials(name) {
+        if (!name) return "??";
+        return name
+          .split(" ")
+          .map((n) => n[0])
+          .join("")
+          .toUpperCase()
+          .slice(0, 2);
+      }
+
+      function formatTime(timestamp) {
+        const date = new Date(timestamp);
+        const now = new Date();
+        const diff = now - date;
+
+        if (diff < 3600000) {
+          // Less than 1 hour
+          return `${Math.floor(diff / 60000)} minutes ago`;
+        } else if (diff < 86400000) {
+          // Less than 1 day
+          return `${Math.floor(diff / 3600000)} hours ago`;
+        } else {
+          return date.toLocaleDateString();
+        }
+      }
+
+      function escapeHtml(text) {
+        const div = document.createElement("div");
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      document.addEventListener("DOMContentLoaded", initCommunityPage);
     </script>
-</body>
+  </body>
 </html>

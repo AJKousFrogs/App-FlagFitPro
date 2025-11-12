@@ -1,724 +1,922 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FlagFit Pro - Settings</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
     <!-- New Modular CSS Architecture -->
-    <link rel="stylesheet" href="./src/css/main.css">
+    <link rel="stylesheet" href="./src/css/main.css" />
     <!-- Lucide Icons - Modern icon library similar to Radix UI -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="./src/icon-helper.js"></script>
     <script src="./src/theme-switcher.js"></script>
     <script src="./src/nav-highlight.js"></script>
+    <script src="./src/components/organisms/top-bar/top-bar.js"></script>
     <style>
-        .dashboard-container {
-            display: flex;
-            min-height: 100vh;
-            background: var(--dark-bg-primary);
+      .dashboard-container {
+        display: flex;
+        min-height: 100vh;
+        background: var(--dark-bg-primary);
+      }
+
+      .sidebar-nav {
+        padding: var(--space-6);
+      }
+
+      .nav-icon {
+        width: 20px;
+        height: 20px;
+        opacity: 0.8;
+      }
+
+      /* Top Bar styles are now in src/css/components/header.css */
+      .main-content {
+        margin-left: 64px;
+        margin-top: 70px;
+        flex: 1;
+        padding: 32px;
+        background: var(--dark-bg-primary);
+      }
+
+      .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--space-8);
+      }
+
+      .page-title-section h1 {
+        font-size: var(--text-3xl);
+        font-weight: var(--font-bold);
+        color: var(--dark-text-primary);
+        margin-bottom: var(--space-2);
+      }
+
+      .page-title-section p {
+        font-size: var(--text-lg);
+        color: var(--dark-text-muted);
+      }
+
+      .settings-grid {
+        display: grid;
+        gap: var(--space-6);
+        max-width: 800px;
+      }
+
+      .settings-section {
+        background: var(--dark-card-bg);
+        border-radius: var(--radius-xl);
+        padding: var(--space-6);
+        border: 1px solid var(--dark-border);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .section-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        margin-bottom: var(--space-4);
+        padding-bottom: var(--space-3);
+        border: 1px solid var(--dark-border);
+      }
+
+      .section-icon {
+        width: 24px;
+        height: 24px;
+        color: var(--primary);
+      }
+
+      .section-title {
+        font-size: var(--text-lg);
+        font-weight: var(--font-semibold);
+        color: var(--dark-text-primary);
+      }
+
+      .setting-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--space-4) 0;
+        border: 1px solid var(--dark-border);
+      }
+
+      .setting-item:last-child {
+        border-bottom: none;
+      }
+
+      .setting-info h3 {
+        font-size: var(--text-sm);
+        font-weight: var(--font-medium);
+        color: var(--dark-text-primary);
+        margin-bottom: var(--space-1);
+      }
+
+      .setting-info p {
+        font-size: var(--text-xs);
+        color: var(--dark-text-muted);
+      }
+
+      .toggle-switch {
+        position: relative;
+        width: 48px;
+        height: 24px;
+        background: var(--gray-300);
+        border-radius: 24px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .toggle-switch.active {
+        background: var(--primary);
+      }
+
+      .toggle-switch::after {
+        content: "";
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 20px;
+        height: 20px;
+        background: var(--dark-text-primary);
+        border-radius: 50%;
+        transition: transform 0.3s;
+      }
+
+      .toggle-switch.active::after {
+        transform: translateX(24px);
+      }
+
+      .form-group {
+        margin-bottom: var(--space-4);
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: var(--space-2);
+        font-weight: var(--font-medium);
+        color: var(--gray-700);
+        font-size: var(--text-sm);
+      }
+
+      .form-input {
+        width: 100%;
+        padding: var(--space-3);
+        border: 1px solid var(--dark-border);
+        border-radius: var(--radius-lg);
+        font-size: var(--text-sm);
+        transition: all var(--transition-fast);
+      }
+
+      .form-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(16, 201, 107, 0.1);
+      }
+
+      .select-input {
+        width: 100%;
+        padding: var(--space-3);
+        border: 1px solid var(--dark-border);
+        border-radius: var(--radius-lg);
+        font-size: var(--text-sm);
+        background: var(--dark-text-primary);
+        cursor: pointer;
+      }
+
+      .danger-zone {
+        border: 1px solid var(--error);
+        background: var(--error-50);
+      }
+
+      .danger-zone .section-header {
+        color: var(--error);
+        border-bottom-color: var(--error);
+      }
+
+      .btn-danger {
+        background: var(--error);
+        color: var(--dark-text-primary);
+        border: none;
+        padding: var(--space-3) var(--space-4);
+        border-radius: var(--radius-lg);
+        font-weight: var(--font-medium);
+        cursor: pointer;
+        transition: all var(--transition-fast);
+      }
+
+      .btn-danger:hover {
+        background: var(--error-600);
+        transform: translateY(-1px);
+      }
+
+      @media (max-width: 1024px) {
+        .sidebar {
+          transform: translateX(-100%);
+          transition: transform var(--transition-normal);
         }
 
-        
-
-        
-
-        
-
-        .sidebar-nav {
-            padding: var(--space-6);
-        }
-
-        
-
-        
-
-        
-
-        
-
-        
-
-        .nav-icon {
-            width: 20px;
-            height: 20px;
-            opacity: 0.8;
+        .sidebar.open {
+          transform: translateX(0);
         }
 
         .main-content {
-            margin-left: 64px;
-            margin-top: 70px;
-            flex: 1;
-            padding: 32px;
-            background: var(--dark-bg-primary);
+          margin-left: 0;
         }
-
-        .page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--space-8);
-        }
-
-        .page-title-section h1 {
-            font-size: var(--text-3xl);
-            font-weight: var(--font-bold);
-            color: var(--dark-text-primary);
-            margin-bottom: var(--space-2);
-        }
-
-        .page-title-section p {
-            font-size: var(--text-lg);
-            color: var(--dark-text-muted);
-        }
-
-        .settings-grid {
-            display: grid;
-            gap: var(--space-6);
-            max-width: 800px;
-        }
-
-        .settings-section {
-            background: var(--dark-card-bg);
-            border-radius: var(--radius-xl);
-            padding: var(--space-6);
-            border: 1px solid var(--dark-border);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .section-header {
-            display: flex;
-            align-items: center;
-            gap: var(--space-3);
-            margin-bottom: var(--space-4);
-            padding-bottom: var(--space-3);
-            border: 1px solid var(--dark-border);
-        }
-
-        .section-icon {
-            width: 24px;
-            height: 24px;
-            color: var(--primary);
-        }
-
-        .section-title {
-            font-size: var(--text-lg);
-            font-weight: var(--font-semibold);
-            color: var(--dark-text-primary);
-        }
-
-        .setting-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: var(--space-4) 0;
-            border: 1px solid var(--dark-border);
-        }
-
-        .setting-item:last-child {
-            border-bottom: none;
-        }
-
-        .setting-info h3 {
-            font-size: var(--text-sm);
-            font-weight: var(--font-medium);
-            color: var(--dark-text-primary);
-            margin-bottom: var(--space-1);
-        }
-
-        .setting-info p {
-            font-size: var(--text-xs);
-            color: var(--dark-text-muted);
-        }
-
-        .toggle-switch {
-            position: relative;
-            width: 48px;
-            height: 24px;
-            background: var(--gray-300);
-            border-radius: 24px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .toggle-switch.active {
-            background: var(--primary);
-        }
-
-        .toggle-switch::after {
-            content: '';
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 20px;
-            height: 20px;
-            background: var(--dark-text-primary);
-            border-radius: 50%;
-            transition: transform 0.3s;
-        }
-
-        .toggle-switch.active::after {
-            transform: translateX(24px);
-        }
-
-        .form-group {
-            margin-bottom: var(--space-4);
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: var(--space-2);
-            font-weight: var(--font-medium);
-            color: var(--gray-700);
-            font-size: var(--text-sm);
-        }
-
-        .form-input {
-            width: 100%;
-            padding: var(--space-3);
-            border: 1px solid var(--dark-border);
-            border-radius: var(--radius-lg);
-            font-size: var(--text-sm);
-            transition: all var(--transition-fast);
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(16, 201, 107, 0.1);
-        }
-
-        .select-input {
-            width: 100%;
-            padding: var(--space-3);
-            border: 1px solid var(--dark-border);
-            border-radius: var(--radius-lg);
-            font-size: var(--text-sm);
-            background: var(--dark-text-primary);
-            cursor: pointer;
-        }
-
-        .danger-zone {
-            border: 1px solid var(--error);
-            background: var(--error-50);
-        }
-
-        .danger-zone .section-header {
-            color: var(--error);
-            border-bottom-color: var(--error);
-        }
-
-        .btn-danger {
-            background: var(--error);
-            color: var(--dark-text-primary);
-            border: none;
-            padding: var(--space-3) var(--space-4);
-            border-radius: var(--radius-lg);
-            font-weight: var(--font-medium);
-            cursor: pointer;
-            transition: all var(--transition-fast);
-        }
-
-        .btn-danger:hover {
-            background: var(--error-600);
-            transform: translateY(-1px);
-        }
-
-        @media (max-width: 1024px) {
-            .sidebar {
-                transform: translateX(-100%);
-                transition: transform var(--transition-normal);
-            }
-
-            .sidebar.open {
-                transform: translateX(0);
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="dashboard-container">
-        <!-- Unified Sidebar Navigation -->
-        <div class="sidebar">
-            <div class="sidebar-logo" onclick="window.location.href='/dashboard.html'" title="FlagFit Pro">
-                <i data-lucide="activity" style="width: 20px; height: 20px; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
-            </div>
-            
-            <nav class="nav-section" aria-label="Dashboard navigation">
-                <a href="/dashboard.html" class="nav-item" aria-label="Dashboard Overview" id="nav-dashboard">
-                    <span class="nav-item-icon">
-                        <i data-lucide="layout-dashboard" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Overview</span>
-                </a>
-                <a href="/analytics.html" class="nav-item" aria-label="Analytics" id="nav-analytics">
-                    <span class="nav-item-icon">
-                        <i data-lucide="bar-chart-3" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Analytics</span>
-                </a>
-            </nav>
-            
-            <nav class="nav-section" aria-label="Team navigation">
-                <a href="/roster.html" class="nav-item" aria-label="Team Roster" id="nav-roster">
-                    <span class="nav-item-icon">
-                        <i data-lucide="users" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Roster</span>
-                </a>
-                <a href="/training.html" class="nav-item" aria-label="Training" id="nav-training">
-                    <span class="nav-item-icon">
-                        <i data-lucide="zap" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Training</span>
-                </a>
-                <a href="/tournaments.html" class="nav-item" aria-label="Tournaments" id="nav-tournaments">
-                    <span class="nav-item-icon">
-                        <i data-lucide="trophy" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Tournaments</span>
-                </a>
-            </nav>
-            
-            <nav class="nav-section" aria-label="Community navigation">
-                <a href="/community.html" class="nav-item" aria-label="Community" id="nav-community">
-                    <span class="nav-item-icon">
-                        <i data-lucide="message-circle" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Community</span>
-                </a>
-                <a href="/chat.html" class="nav-item" aria-label="Chat" id="nav-chat">
-                    <span class="nav-item-icon">
-                        <i data-lucide="message-square" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Chat</span>
-                </a>
-            </nav>
-            
-            <nav class="nav-section" aria-label="Personal navigation">
-                <a href="/settings.html" class="nav-item active" aria-label="Settings" id="nav-settings">
-                    <span class="nav-item-icon">
-                        <i data-lucide="settings" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Settings</span>
-                </a>
-                <a href="/profile.html" class="nav-item" aria-label="Profile" id="nav-profile">
-                    <span class="nav-item-icon">
-                        <i data-lucide="user" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Profile</span>
-                </a>
-            </nav>
+      <!-- Unified Sidebar Navigation -->
+      <div class="sidebar">
+        <div
+          class="sidebar-logo"
+          onclick="window.location.href='/dashboard.html'"
+          title="FlagFit Pro"
+        >
+          <i
+            data-lucide="activity"
+            style="
+              width: 20px;
+              height: 20px;
+              color: var(--icon-color-primary);
+              stroke: var(--icon-color-primary);
+            "
+          ></i>
         </div>
 
-<!-- Top Bar -->
-            <div class="top-bar">
-                <div class="header-left">
-                    <div class="search-box">
-                        <span class="search-icon"><i data-lucide="search" style="width: 16px;  height: 16px; ; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span>
-                        <input type="text" id="global-search" class="search-input" placeholder="Search for players, teams & more" oninput="if(typeof performGlobalSearch === 'function') performGlobalSearch(this.value)">
-                        <div id="search-results" class="search-results" style="display: none;"></div>
-                    </div>
-                </div>
-                
-                <div class="header-right">
-                    <div style="position: relative;">
-                        <div id="notification-bell" class="header-icon" onclick="if(typeof toggleNotifications === 'function') toggleNotifications()">
-                            <i data-lucide="bell" style="width: 18px;  height: 18px ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
-                        </div>
-                        <div id="notification-badge" style="position: absolute; top: -4px; right: -4px; width: 20px; height: 20px; background: var(--error-500); color: var(--dark-text-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; border: 2px solid var(--dark-bg-secondary); display: none;">3</div>
-                    </div>
-                    <div class="header-icon">
-                        <i data-lucide="settings" style="width: 18px;  height: 18px; ; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
-                    </div>
-                    
-                    <div class="theme-toggle-container">
-                        <label class="theme-toggle-label">
-                            <input type="checkbox" id="theme-toggle" class="theme-toggle-input" checked>
-                            <span class="theme-toggle-slider"></span>
-                            <span class="theme-toggle-text">Dark</span>
-                        </label>
-                    </div>
-                    <div class="user-menu">
-                        <div class="user-avatar" id="user-avatar">U</div>
-                    </div>
-                </div>
+        <nav class="nav-section" aria-label="Dashboard navigation">
+          <a
+            href="/dashboard.html"
+            class="nav-item"
+            aria-label="Dashboard Overview"
+            id="nav-dashboard"
+          >
+            <span class="nav-item-icon">
+              <i
+                data-lucide="layout-dashboard"
+                style="width: 24px; height: 24px"
+              ></i>
+            </span>
+            <span class="nav-item-label">Overview</span>
+          </a>
+          <a
+            href="/analytics.html"
+            class="nav-item"
+            aria-label="Analytics"
+            id="nav-analytics"
+          >
+            <span class="nav-item-icon">
+              <i
+                data-lucide="bar-chart-3"
+                style="width: 24px; height: 24px"
+              ></i>
+            </span>
+            <span class="nav-item-label">Analytics</span>
+          </a>
+        </nav>
+
+        <nav class="nav-section" aria-label="Team navigation">
+          <a
+            href="/roster.html"
+            class="nav-item"
+            aria-label="Team Roster"
+            id="nav-roster"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="users" style="width: 24px; height: 24px"></i>
+            </span>
+            <span class="nav-item-label">Roster</span>
+          </a>
+          <a
+            href="/training.html"
+            class="nav-item"
+            aria-label="Training"
+            id="nav-training"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="zap" style="width: 24px; height: 24px"></i>
+            </span>
+            <span class="nav-item-label">Training</span>
+          </a>
+          <a
+            href="/tournaments.html"
+            class="nav-item"
+            aria-label="Tournaments"
+            id="nav-tournaments"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="trophy" style="width: 24px; height: 24px"></i>
+            </span>
+            <span class="nav-item-label">Tournaments</span>
+          </a>
+        </nav>
+
+        <nav class="nav-section" aria-label="Community navigation">
+          <a
+            href="/community.html"
+            class="nav-item"
+            aria-label="Community"
+            id="nav-community"
+          >
+            <span class="nav-item-icon">
+              <i
+                data-lucide="message-circle"
+                style="width: 24px; height: 24px"
+              ></i>
+            </span>
+            <span class="nav-item-label">Community</span>
+          </a>
+          <a href="/chat.html" class="nav-item" aria-label="Chat" id="nav-chat">
+            <span class="nav-item-icon">
+              <i
+                data-lucide="message-square"
+                style="width: 24px; height: 24px"
+              ></i>
+            </span>
+            <span class="nav-item-label">Chat</span>
+          </a>
+        </nav>
+
+        <nav class="nav-section" aria-label="Personal navigation">
+          <a
+            href="/settings.html"
+            class="nav-item active"
+            aria-label="Settings"
+            id="nav-settings"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="settings" style="width: 24px; height: 24px"></i>
+            </span>
+            <span class="nav-item-label">Settings</span>
+          </a>
+          <a
+            href="/profile.html"
+            class="nav-item"
+            aria-label="Profile"
+            id="nav-profile"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="user" style="width: 24px; height: 24px"></i>
+            </span>
+            <span class="nav-item-label">Profile</span>
+          </a>
+        </nav>
+      </div>
+
+      <!-- Top Bar -->
+      <div class="top-bar" role="banner">
+        <div class="header-left">
+          <!-- Global Search (combobox pattern) -->
+          <div class="search-box">
+            <label for="global-search" class="sr-only"
+              >Search for players, teams and more</label
+            >
+            <span class="search-icon" aria-hidden="true">
+              <i data-lucide="search" class="icon-16"></i>
+            </span>
+
+            <input
+              id="global-search"
+              class="search-input"
+              type="text"
+              placeholder="Search for players, teams & more"
+              role="combobox"
+              aria-autocomplete="list"
+              aria-haspopup="listbox"
+              aria-expanded="false"
+              aria-owns="search-results"
+              aria-controls="search-results"
+              aria-activedescendant=""
+              autocomplete="off"
+              inputmode="search"
+            />
+
+            <div id="search-status" class="sr-only" aria-live="polite"></div>
+
+            <div
+              id="search-results"
+              class="search-results"
+              role="listbox"
+              hidden
+            ></div>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <!-- Notifications -->
+          <div class="header-icon-wrap">
+            <button
+              id="notification-bell"
+              class="header-icon"
+              type="button"
+              aria-label="Notifications"
+              aria-controls="notification-panel"
+              aria-expanded="false"
+            >
+              <i data-lucide="bell" class="icon-18"></i>
+              <span id="notification-badge" class="badge" hidden>3</span>
+            </button>
+            <span
+              id="notification-live"
+              class="sr-only"
+              aria-live="polite"
+            ></span>
+          </div>
+
+          <!-- Settings -->
+          <button class="header-icon" type="button" aria-label="Settings">
+            <i data-lucide="settings" class="icon-18"></i>
+          </button>
+
+          <!-- Theme Toggle -->
+          <div class="theme-toggle-container" aria-label="Theme toggle">
+            <!-- JS inserts switch; fallback below -->
+            <button
+              class="theme-toggle-fallback"
+              type="button"
+              data-theme-toggle
+              hidden
+            >
+              Theme
+            </button>
+          </div>
+
+          <!-- User Menu -->
+          <button
+            id="user-menu-button"
+            class="user-menu"
+            type="button"
+            aria-label="User menu"
+            aria-haspopup="menu"
+            aria-controls="user-menu"
+            aria-expanded="false"
+          >
+            <div class="user-avatar" id="user-avatar" aria-hidden="true">U</div>
+          </button>
+        </div>
+      </div>
+
+      <main class="main-content">
+        <!-- Page Header -->
+        <div class="page-header">
+          <div class="page-title-section">
+            <h1>Settings</h1>
+            <p>Manage your account and application preferences</p>
+          </div>
+
+          <button class="btn btn-primary" onclick="saveSettings()">
+            <span>💾</span>
+            Save Changes
+          </button>
+        </div>
+
+        <!-- Settings Grid -->
+        <div class="settings-grid">
+          <!-- Profile Settings -->
+          <div class="settings-section">
+            <div class="section-header">
+              <span class="section-icon">👤</span>
+              <h2 class="section-title">Profile Settings</h2>
             </div>
 
-<main class="main-content">
-            <!-- Page Header -->
-            <div class="page-header">
-                <div class="page-title-section">
-                    <h1>Settings</h1>
-                    <p>Manage your account and application preferences</p>
-                </div>
-                
-                <button class="btn btn-primary" onclick="saveSettings()">
-                    <span>💾</span>
-                    Save Changes
-                </button>
+            <div class="form-group">
+              <label for="displayName">Display Name</label>
+              <input
+                type="text"
+                id="displayName"
+                class="form-input"
+                value=""
+                placeholder="Enter your display name"
+              />
             </div>
 
-            <!-- Settings Grid -->
-            <div class="settings-grid">
-                <!-- Profile Settings -->
-                <div class="settings-section">
-                    <div class="section-header">
-                        <span class="section-icon">👤</span>
-                        <h2 class="section-title">Profile Settings</h2>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="displayName">Display Name</label>
-                        <input type="text" id="displayName" class="form-input" value="" placeholder="Enter your display name">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <input type="email" id="email" class="form-input" value="john.doe@example.com" placeholder="Enter your email">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="position">Playing Position</label>
-                        <select id="position" class="select-input">
-                            <option>Wide Receiver</option>
-                            <option>Quarterback</option>
-                            <option>Running Back</option>
-                            <option>Center</option>
-                            <option>Rusher</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="team">Current Team</label>
-                        <input type="text" id="team" class="form-input" value="Lightning Bolts" placeholder="Enter your team name">
-                    </div>
-                </div>
-
-                <!-- Notification Settings -->
-                <div class="settings-section">
-                    <div class="section-header">
-                        <span class="section-icon"><i data-lucide="bell" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span>
-                        <h2 class="section-title">Notifications</h2>
-                    </div>
-
-                    <div class="setting-item">
-                        <div class="setting-info">
-                            <h3>Training Reminders</h3>
-                            <p>Get notified about upcoming training sessions</p>
-                        </div>
-                        <div class="toggle-switch active" onclick="toggleSetting(this)"></div>
-                    </div>
-
-                    <div class="setting-item">
-                        <div class="setting-info">
-                            <h3>Tournament Updates</h3>
-                            <p>Receive updates about tournament schedules and results</p>
-                        </div>
-                        <div class="toggle-switch active" onclick="toggleSetting(this)"></div>
-                    </div>
-
-                    <div class="setting-item">
-                        <div class="setting-info">
-                            <h3>Team Messages</h3>
-                            <p>Get notified when teammates send messages</p>
-                        </div>
-                        <div class="toggle-switch" onclick="toggleSetting(this)"></div>
-                    </div>
-
-                    <div class="setting-item">
-                        <div class="setting-info">
-                            <h3>Performance Insights</h3>
-                            <p>Weekly reports on your training progress</p>
-                        </div>
-                        <div class="toggle-switch active" onclick="toggleSetting(this)"></div>
-                    </div>
-                </div>
-
-                <!-- Privacy Settings -->
-                <div class="settings-section">
-                    <div class="section-header">
-                        <span class="section-icon">🔒</span>
-                        <h2 class="section-title">Privacy & Security</h2>
-                    </div>
-
-                    <div class="setting-item">
-                        <div class="setting-info">
-                            <h3>Profile Visibility</h3>
-                            <p>Allow other players to see your profile</p>
-                        </div>
-                        <div class="toggle-switch active" onclick="toggleSetting(this)"></div>
-                    </div>
-
-                    <div class="setting-item">
-                        <div class="setting-info">
-                            <h3>Training Data Sharing</h3>
-                            <p>Share training data with coaches and teammates</p>
-                        </div>
-                        <div class="toggle-switch active" onclick="toggleSetting(this)"></div>
-                    </div>
-
-                    <div class="setting-item">
-                        <div class="setting-info">
-                            <h3>Analytics Tracking</h3>
-                            <p>Allow collection of usage data to improve the app</p>
-                        </div>
-                        <div class="toggle-switch" onclick="toggleSetting(this)"></div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="currentPassword">Current Password</label>
-                        <input type="password" id="currentPassword" class="form-input" placeholder="Enter current password">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="newPassword">New Password</label>
-                        <input type="password" id="newPassword" class="form-input" placeholder="Enter new password">
-                    </div>
-                </div>
-
-                <!-- App Preferences -->
-                <div class="settings-section">
-                    <div class="section-header">
-                        <span class="section-icon">🎨</span>
-                        <h2 class="section-title">App Preferences</h2>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="theme">Theme</label>
-                        <select id="theme" class="select-input">
-                            <option>Light Mode</option>
-                            <option>Dark Mode</option>
-                            <option>Auto (System)</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="language">Language</label>
-                        <select id="language" class="select-input">
-                            <option>English</option>
-                            <option>Spanish</option>
-                            <option>French</option>
-                            <option>German</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="timezone">Timezone</label>
-                        <select id="timezone" class="select-input">
-                            <option>UTC-8 (Pacific)</option>
-                            <option>UTC-7 (Mountain)</option>
-                            <option>UTC-6 (Central)</option>
-                            <option>UTC-5 (Eastern)</option>
-                        </select>
-                    </div>
-
-                    <div class="setting-item">
-                        <div class="setting-info">
-                            <h3>Auto-refresh Data</h3>
-                            <p>Automatically refresh training and tournament data</p>
-                        </div>
-                        <div class="toggle-switch active" onclick="toggleSetting(this)"></div>
-                    </div>
-                </div>
-
-                <!-- Danger Zone -->
-                <div class="settings-section danger-zone">
-                    <div class="section-header">
-                        <span class="section-icon">⚠️</span>
-                        <h2 class="section-title">Danger Zone</h2>
-                    </div>
-
-                    <div class="setting-item">
-                        <div class="setting-info">
-                            <h3>Export Data</h3>
-                            <p>Download all your training data and statistics</p>
-                        </div>
-                        <button class="btn btn-secondary" onclick="exportData()">Export</button>
-                    </div>
-
-                    <div class="setting-item">
-                        <div class="setting-info">
-                            <h3>Delete Account</h3>
-                            <p>Permanently delete your account and all associated data</p>
-                        </div>
-                        <button class="btn-danger" onclick="deleteAccount()">Delete Account</button>
-                    </div>
-                </div>
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input
+                type="email"
+                id="email"
+                class="form-input"
+                value="john.doe@example.com"
+                placeholder="Enter your email"
+              />
             </div>
-        </main>
+
+            <div class="form-group">
+              <label for="position">Playing Position</label>
+              <select id="position" class="select-input">
+                <option>Wide Receiver</option>
+                <option>Quarterback</option>
+                <option>Running Back</option>
+                <option>Center</option>
+                <option>Rusher</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="team">Current Team</label>
+              <input
+                type="text"
+                id="team"
+                class="form-input"
+                value="Lightning Bolts"
+                placeholder="Enter your team name"
+              />
+            </div>
+          </div>
+
+          <!-- Notification Settings -->
+          <div class="settings-section">
+            <div class="section-header">
+              <span class="section-icon"
+                ><i
+                  data-lucide="bell"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    color: var(--icon-color-primary);
+                    stroke: var(--icon-color-primary);
+                  "
+                ></i
+              ></span>
+              <h2 class="section-title">Notifications</h2>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h3>Training Reminders</h3>
+                <p>Get notified about upcoming training sessions</p>
+              </div>
+              <div
+                class="toggle-switch active"
+                onclick="toggleSetting(this)"
+              ></div>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h3>Tournament Updates</h3>
+                <p>Receive updates about tournament schedules and results</p>
+              </div>
+              <div
+                class="toggle-switch active"
+                onclick="toggleSetting(this)"
+              ></div>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h3>Team Messages</h3>
+                <p>Get notified when teammates send messages</p>
+              </div>
+              <div class="toggle-switch" onclick="toggleSetting(this)"></div>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h3>Performance Insights</h3>
+                <p>Weekly reports on your training progress</p>
+              </div>
+              <div
+                class="toggle-switch active"
+                onclick="toggleSetting(this)"
+              ></div>
+            </div>
+          </div>
+
+          <!-- Privacy Settings -->
+          <div class="settings-section">
+            <div class="section-header">
+              <span class="section-icon">🔒</span>
+              <h2 class="section-title">Privacy & Security</h2>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h3>Profile Visibility</h3>
+                <p>Allow other players to see your profile</p>
+              </div>
+              <div
+                class="toggle-switch active"
+                onclick="toggleSetting(this)"
+              ></div>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h3>Training Data Sharing</h3>
+                <p>Share training data with coaches and teammates</p>
+              </div>
+              <div
+                class="toggle-switch active"
+                onclick="toggleSetting(this)"
+              ></div>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h3>Analytics Tracking</h3>
+                <p>Allow collection of usage data to improve the app</p>
+              </div>
+              <div class="toggle-switch" onclick="toggleSetting(this)"></div>
+            </div>
+
+            <div class="form-group">
+              <label for="currentPassword">Current Password</label>
+              <input
+                type="password"
+                id="currentPassword"
+                class="form-input"
+                placeholder="Enter current password"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="newPassword">New Password</label>
+              <input
+                type="password"
+                id="newPassword"
+                class="form-input"
+                placeholder="Enter new password"
+              />
+            </div>
+          </div>
+
+          <!-- App Preferences -->
+          <div class="settings-section">
+            <div class="section-header">
+              <span class="section-icon">🎨</span>
+              <h2 class="section-title">App Preferences</h2>
+            </div>
+
+            <div class="form-group">
+              <label for="theme">Theme</label>
+              <select id="theme" class="select-input">
+                <option>Light Mode</option>
+                <option>Dark Mode</option>
+                <option>Auto (System)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="language">Language</label>
+              <select id="language" class="select-input">
+                <option>English</option>
+                <option>Spanish</option>
+                <option>French</option>
+                <option>German</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="timezone">Timezone</label>
+              <select id="timezone" class="select-input">
+                <option>UTC-8 (Pacific)</option>
+                <option>UTC-7 (Mountain)</option>
+                <option>UTC-6 (Central)</option>
+                <option>UTC-5 (Eastern)</option>
+              </select>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h3>Auto-refresh Data</h3>
+                <p>Automatically refresh training and tournament data</p>
+              </div>
+              <div
+                class="toggle-switch active"
+                onclick="toggleSetting(this)"
+              ></div>
+            </div>
+          </div>
+
+          <!-- Danger Zone -->
+          <div class="settings-section danger-zone">
+            <div class="section-header">
+              <span class="section-icon">⚠️</span>
+              <h2 class="section-title">Danger Zone</h2>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h3>Export Data</h3>
+                <p>Download all your training data and statistics</p>
+              </div>
+              <button class="btn btn-secondary" onclick="exportData()">
+                Export
+              </button>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h3>Delete Account</h3>
+                <p>Permanently delete your account and all associated data</p>
+              </div>
+              <button class="btn-danger" onclick="deleteAccount()">
+                Delete Account
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
 
     <script type="module">
-        import { authManager } from './src/auth-manager.js';
-        import { REAL_TEAM_DATA, getAllPlayers } from './src/real-team-data.js';
+      import { authManager } from "./src/auth-manager.js";
+      import { REAL_TEAM_DATA, getAllPlayers } from "./src/real-team-data.js";
 
-        // Initialize settings page
-        document.addEventListener('DOMContentLoaded', async function() {
-            // Initialize Lucide icons
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
-            // Check authentication
-            if (!authManager.isAuthenticated()) {
-                window.location.href = '/login.html';
-                return;
-            }
-
-            // Load user settings
-            loadUserSettings();
-            
-            // Initialize with real player data
-            initializeWithRealPlayerData();
-        });
-
-        function loadUserSettings() {
-            // Load settings from localStorage or API
-            const user = authManager.getCurrentUser();
-            if (user) {
-                // Populate form fields with user data
-                document.getElementById('displayName').value = user.name || '';
-                document.getElementById('email').value = user.email || '';
-                
-                // Load saved preferences
-                const savedSettings = JSON.parse(localStorage.getItem('flagfit_settings') || '{}');
-                
-                // Apply saved theme
-                if (savedSettings.theme) {
-                    document.getElementById('theme').value = savedSettings.theme;
-                }
-                
-                // Apply saved language
-                if (savedSettings.language) {
-                    document.getElementById('language').value = savedSettings.language;
-                }
-                
-                // Apply saved timezone
-                if (savedSettings.timezone) {
-                    document.getElementById('timezone').value = savedSettings.timezone;
-                }
-            }
+      // Initialize settings page
+      document.addEventListener("DOMContentLoaded", async function () {
+        // Initialize Lucide icons
+        if (typeof lucide !== "undefined") {
+          lucide.createIcons();
+        }
+        // Check authentication
+        if (!authManager.isAuthenticated()) {
+          window.location.href = "/login.html";
+          return;
         }
 
-        function initializeWithRealPlayerData() {
-            // Get a random real player to demonstrate with their data
-            const allPlayers = getAllPlayers();
-            const randomPlayer = allPlayers[Math.floor(Math.random() * allPlayers.length)];
-            
-            // Pre-fill some fields with real player data if they're empty
-            const displayNameField = document.getElementById('displayName');
-            const teamField = document.getElementById('team');
-            const positionField = document.getElementById('position');
-            
-            if (!displayNameField.value) {
-                displayNameField.value = randomPlayer.name;
-                displayNameField.placeholder = `e.g., ${randomPlayer.name} ${randomPlayer.nationality}`;
-            }
-            
-            if (teamField && !teamField.value) {
-                teamField.value = `International Team - Jersey #${randomPlayer.jersey}`;
-            }
-            
-            if (positionField && !positionField.value) {
-                positionField.value = randomPlayer.position;
-            }
+        // Load user settings
+        loadUserSettings();
+
+        // Initialize with real player data
+        initializeWithRealPlayerData();
+      });
+
+      function loadUserSettings() {
+        // Load settings from localStorage or API
+        const user = authManager.getCurrentUser();
+        if (user) {
+          // Populate form fields with user data
+          document.getElementById("displayName").value = user.name || "";
+          document.getElementById("email").value = user.email || "";
+
+          // Load saved preferences
+          const savedSettings = JSON.parse(
+            localStorage.getItem("flagfit_settings") || "{}",
+          );
+
+          // Apply saved theme
+          if (savedSettings.theme) {
+            document.getElementById("theme").value = savedSettings.theme;
+          }
+
+          // Apply saved language
+          if (savedSettings.language) {
+            document.getElementById("language").value = savedSettings.language;
+          }
+
+          // Apply saved timezone
+          if (savedSettings.timezone) {
+            document.getElementById("timezone").value = savedSettings.timezone;
+          }
+        }
+      }
+
+      function initializeWithRealPlayerData() {
+        // Get a random real player to demonstrate with their data
+        const allPlayers = getAllPlayers();
+        const randomPlayer =
+          allPlayers[Math.floor(Math.random() * allPlayers.length)];
+
+        // Pre-fill some fields with real player data if they're empty
+        const displayNameField = document.getElementById("displayName");
+        const teamField = document.getElementById("team");
+        const positionField = document.getElementById("position");
+
+        if (!displayNameField.value) {
+          displayNameField.value = randomPlayer.name;
+          displayNameField.placeholder = `e.g., ${randomPlayer.name} ${randomPlayer.nationality}`;
         }
 
-        window.toggleSetting = function(element) {
-            element.classList.toggle('active');
+        if (teamField && !teamField.value) {
+          teamField.value = `International Team - Jersey #${randomPlayer.jersey}`;
+        }
+
+        if (positionField && !positionField.value) {
+          positionField.value = randomPlayer.position;
+        }
+      }
+
+      window.toggleSetting = function (element) {
+        element.classList.toggle("active");
+      };
+
+      window.saveSettings = function () {
+        // Collect all settings
+        const settings = {
+          displayName: document.getElementById("displayName").value,
+          email: document.getElementById("email").value,
+          position: document.getElementById("position").value,
+          team: document.getElementById("team").value,
+          theme: document.getElementById("theme").value,
+          language: document.getElementById("language").value,
+          timezone: document.getElementById("timezone").value,
+          notifications: {
+            training: document
+              .querySelector(".setting-item:nth-child(1) .toggle-switch")
+              .classList.contains("active"),
+            tournaments: document
+              .querySelector(".setting-item:nth-child(2) .toggle-switch")
+              .classList.contains("active"),
+            messages: document
+              .querySelector(".setting-item:nth-child(3) .toggle-switch")
+              .classList.contains("active"),
+            insights: document
+              .querySelector(".setting-item:nth-child(4) .toggle-switch")
+              .classList.contains("active"),
+          },
+          privacy: {
+            profileVisible: document
+              .querySelector(
+                ".settings-section:nth-child(3) .setting-item:nth-child(1) .toggle-switch",
+              )
+              .classList.contains("active"),
+            dataSharing: document
+              .querySelector(
+                ".settings-section:nth-child(3) .setting-item:nth-child(2) .toggle-switch",
+              )
+              .classList.contains("active"),
+            analytics: document
+              .querySelector(
+                ".settings-section:nth-child(3) .setting-item:nth-child(3) .toggle-switch",
+              )
+              .classList.contains("active"),
+          },
         };
 
-        window.saveSettings = function() {
-            // Collect all settings
-            const settings = {
-                displayName: document.getElementById('displayName').value,
-                email: document.getElementById('email').value,
-                position: document.getElementById('position').value,
-                team: document.getElementById('team').value,
-                theme: document.getElementById('theme').value,
-                language: document.getElementById('language').value,
-                timezone: document.getElementById('timezone').value,
-                notifications: {
-                    training: document.querySelector('.setting-item:nth-child(1) .toggle-switch').classList.contains('active'),
-                    tournaments: document.querySelector('.setting-item:nth-child(2) .toggle-switch').classList.contains('active'),
-                    messages: document.querySelector('.setting-item:nth-child(3) .toggle-switch').classList.contains('active'),
-                    insights: document.querySelector('.setting-item:nth-child(4) .toggle-switch').classList.contains('active')
-                },
-                privacy: {
-                    profileVisible: document.querySelector('.settings-section:nth-child(3) .setting-item:nth-child(1) .toggle-switch').classList.contains('active'),
-                    dataSharing: document.querySelector('.settings-section:nth-child(3) .setting-item:nth-child(2) .toggle-switch').classList.contains('active'),
-                    analytics: document.querySelector('.settings-section:nth-child(3) .setting-item:nth-child(3) .toggle-switch').classList.contains('active')
-                }
-            };
+        // Save to localStorage
+        localStorage.setItem("flagfit_settings", JSON.stringify(settings));
 
-            // Save to localStorage
-            localStorage.setItem('flagfit_settings', JSON.stringify(settings));
+        // Show success message
+        const button = event.target;
+        const originalText = button.innerHTML;
+        button.innerHTML =
+          '<span><i data-lucide="check-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span> Saved!';
+        button.style.background = "var(--success)";
 
-            // Show success message
-            const button = event.target;
-            const originalText = button.innerHTML;
-            button.innerHTML = '<span><i data-lucide="check-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span> Saved!';
-            button.style.background = 'var(--success)';
+        setTimeout(() => {
+          button.innerHTML = originalText;
+          button.style.background = "var(--primary)";
+        }, 2000);
 
-            setTimeout(() => {
-                button.innerHTML = originalText;
-                button.style.background = 'var(--primary)';
-            }, 2000);
+        console.log("Settings saved:", settings);
+      };
 
-            console.log('Settings saved:', settings);
+      window.exportData = function () {
+        // Create a mock data export
+        const userData = {
+          profile: {
+            name: document.getElementById("displayName").value,
+            email: document.getElementById("email").value,
+            position: document.getElementById("position").value,
+            team: document.getElementById("team").value,
+          },
+          trainingData: {
+            sessionsCompleted: 28,
+            totalHours: 45,
+            averageScore: 87,
+            weeklyGoals: "5/7 completed",
+          },
+          exportDate: new Date().toISOString(),
         };
 
-        window.exportData = function() {
-            // Create a mock data export
-            const userData = {
-                profile: {
-                    name: document.getElementById('displayName').value,
-                    email: document.getElementById('email').value,
-                    position: document.getElementById('position').value,
-                    team: document.getElementById('team').value
-                },
-                trainingData: {
-                    sessionsCompleted: 28,
-                    totalHours: 45,
-                    averageScore: 87,
-                    weeklyGoals: "5/7 completed"
-                },
-                exportDate: new Date().toISOString()
-            };
+        // Create and download JSON file
+        const dataStr = JSON.stringify(userData, null, 2);
+        const dataBlob = new Blob([dataStr], { type: "application/json" });
+        const url = URL.createObjectURL(dataBlob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "flagfit-pro-data-export.json";
+        link.click();
+        URL.revokeObjectURL(url);
 
-            // Create and download JSON file
-            const dataStr = JSON.stringify(userData, null, 2);
-            const dataBlob = new Blob([dataStr], {type: 'application/json'});
-            const url = URL.createObjectURL(dataBlob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = 'flagfit-pro-data-export.json';
-            link.click();
-            URL.revokeObjectURL(url);
+        // Show success message
+        alert("Your data has been exported successfully!");
+      };
 
-            // Show success message
-            alert('Your data has been exported successfully!');
-        };
+      window.deleteAccount = function () {
+        showDeleteAccountModal();
+      };
 
-        window.deleteAccount = function() {
-            showDeleteAccountModal();
-        };
-        
-        function showDeleteAccountModal() {
-            const modal = document.createElement('div');
-            modal.style.cssText = `
+      function showDeleteAccountModal() {
+        const modal = document.createElement("div");
+        modal.style.cssText = `
                 position: fixed; top: 0; left: 0; width: 100%; height: 100%;
                 background: rgba(0,0,0,0.5); display: flex; align-items: center;
-                justify-content: center; z-index: 1000;
+                justify-content: center; z-index: var(--z-index-modal, 1400);
             `;
-            
-            modal.innerHTML = `
+
+        modal.innerHTML = `
                 <div style="background: var(--dark-text-primary); padding: 2rem; border-radius: 12px; max-width: 500px; width: 90%; border: 2px solid var(--error);">
                     <h3 style="margin-bottom: 1rem; color: var(--error); display: flex; align-items: center; gap: 0.5rem;">
                         ⚠️ Delete Account
@@ -734,7 +932,7 @@
                         </ul>
                     </div>
                     <div style="margin-bottom: 1.5rem;">
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Type "DELETE" to confirm:</label>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: var(--font-weight-medium, 500);">Type "DELETE" to confirm:</label>
                         <input type="text" id="deleteConfirmation" style="width: 100%; padding: 0.75rem; border: 2px solid var(--error); border-radius: 6px; font-family: monospace;"
                                placeholder="Type DELETE here" oninput="validateDeleteInput(this)">
                     </div>
@@ -744,78 +942,86 @@
                     </div>
                 </div>
             `;
-            
-            document.body.appendChild(modal);
+
+        document.body.appendChild(modal);
+      }
+
+      window.validateDeleteInput = function (input) {
+        const confirmBtn = document.getElementById("confirmDeleteBtn");
+        if (input.value === "DELETE") {
+          confirmBtn.disabled = false;
+          confirmBtn.style.cursor = "pointer";
+          confirmBtn.style.opacity = "1";
+        } else {
+          confirmBtn.disabled = true;
+          confirmBtn.style.cursor = "not-allowed";
+          confirmBtn.style.opacity = "0.5";
         }
-        
-        window.validateDeleteInput = function(input) {
-            const confirmBtn = document.getElementById('confirmDeleteBtn');
-            if (input.value === 'DELETE') {
-                confirmBtn.disabled = false;
-                confirmBtn.style.cursor = 'pointer';
-                confirmBtn.style.opacity = '1';
-            } else {
-                confirmBtn.disabled = true;
-                confirmBtn.style.cursor = 'not-allowed';
-                confirmBtn.style.opacity = '0.5';
-            }
-        }
-        
-        window.confirmAccountDeletion = function() {
-            const isDemoMode = window.location.hostname === 'localhost' || 
-                              window.location.hostname === '127.0.0.1' ||
-                              window.location.search.includes('demo=true');
-            
-            if (isDemoMode) {
-                // Demo mode - show demo message
-                alert('Demo Mode: Account deletion is disabled in the demo. In production, this would permanently delete your account and all data.');
-                // Close modal
-                document.querySelector('div[style*="position: fixed"]').remove();
-                return;
-            }
-            
-            // Production mode - implement actual deletion
-            const deleteButton = document.getElementById('confirmDeleteBtn');
-            deleteButton.innerHTML = '⏳ Deleting...';
-            deleteButton.disabled = true;
-            
-            // Simulate API call to delete account
-            setTimeout(async () => {
-                try {
-                    // Clear all local data
-                    localStorage.clear();
-                    sessionStorage.clear();
-                    
-                    // In a real app, call the API to delete account
-                    // await authManager.deleteAccount();
-                    
-                    // Show success message and redirect
-                    alert('Your account has been successfully deleted. You will now be redirected to the home page.');
-                    window.location.href = '/index.html';
-                    
-                } catch (error) {
-                    alert('Error deleting account. Please try again or contact support.');
-                    deleteButton.innerHTML = 'Delete Account';
-                    deleteButton.disabled = false;
-                }
-            }, 2000);
+      };
+
+      window.confirmAccountDeletion = function () {
+        const isDemoMode =
+          window.location.hostname === "localhost" ||
+          window.location.hostname === "127.0.0.1" ||
+          window.location.search.includes("demo=true");
+
+        if (isDemoMode) {
+          // Demo mode - show demo message
+          alert(
+            "Demo Mode: Account deletion is disabled in the demo. In production, this would permanently delete your account and all data.",
+          );
+          // Close modal
+          document.querySelector('div[style*="position: fixed"]').remove();
+          return;
         }
 
-        // Navigation handlers
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.addEventListener('click', function(e) {
-                if (this.getAttribute('href') !== '#') {
-                    return; // Allow navigation
-                }
-                e.preventDefault();
-                
-                // Remove active class from all items
-                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-                
-                // Add active class to clicked item
-                this.classList.add('active');
-            });
+        // Production mode - implement actual deletion
+        const deleteButton = document.getElementById("confirmDeleteBtn");
+        deleteButton.innerHTML = "⏳ Deleting...";
+        deleteButton.disabled = true;
+
+        // Simulate API call to delete account
+        setTimeout(async () => {
+          try {
+            // Clear all local data
+            localStorage.clear();
+            sessionStorage.clear();
+
+            // In a real app, call the API to delete account
+            // await authManager.deleteAccount();
+
+            // Show success message and redirect
+            alert(
+              "Your account has been successfully deleted. You will now be redirected to the home page.",
+            );
+            window.location.href = "/index.html";
+          } catch (error) {
+            alert(
+              "Error deleting account. Please try again or contact support.",
+            );
+            deleteButton.innerHTML = "Delete Account";
+            deleteButton.disabled = false;
+          }
+        }, 2000);
+      };
+
+      // Navigation handlers
+      document.querySelectorAll(".nav-item").forEach((item) => {
+        item.addEventListener("click", function (e) {
+          if (this.getAttribute("href") !== "#") {
+            return; // Allow navigation
+          }
+          e.preventDefault();
+
+          // Remove active class from all items
+          document
+            .querySelectorAll(".nav-item")
+            .forEach((nav) => nav.classList.remove("active"));
+
+          // Add active class to clicked item
+          this.classList.add("active");
         });
+      });
     </script>
-</body>
+  </body>
 </html>

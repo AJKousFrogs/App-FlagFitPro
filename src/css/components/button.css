@@ -39,13 +39,18 @@
 }
 
 .btn::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
   transition: left var(--motion-duration-slower) ease;
   z-index: 1;
 }
@@ -110,10 +115,14 @@
 
 /* Button Variants */
 .btn-primary {
-  background: linear-gradient(135deg, var(--color-interactive-primary) 0%, var(--color-interactive-primary-hover) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-interactive-primary) 0%,
+    var(--color-interactive-primary-hover) 100%
+  );
   color: var(--color-text-on-primary);
   border-color: transparent;
-  box-shadow: 
+  box-shadow:
     0 8px 20px rgba(16, 201, 107, 0.4),
     0 4px 12px rgba(16, 201, 107, 0.3),
     0 2px 6px rgba(16, 201, 107, 0.2),
@@ -122,9 +131,13 @@
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, var(--color-interactive-primary-hover) 0%, var(--color-interactive-primary) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-interactive-primary-hover) 0%,
+    var(--color-interactive-primary) 100%
+  );
   transform: translateY(-3px) scale(1.02);
-  box-shadow: 
+  box-shadow:
     0 12px 32px rgba(16, 201, 107, 0.45),
     0 6px 16px rgba(16, 201, 107, 0.35),
     0 3px 8px rgba(16, 201, 107, 0.25),
@@ -132,19 +145,27 @@
 }
 
 .btn-primary:active:not(:disabled) {
-  background: linear-gradient(135deg, var(--color-interactive-primary-active) 0%, var(--color-interactive-primary) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-interactive-primary-active) 0%,
+    var(--color-interactive-primary) 100%
+  );
   transform: translateY(-1px) scale(0.99);
-  box-shadow: 
+  box-shadow:
     0 4px 12px rgba(16, 201, 107, 0.3),
     0 2px 6px rgba(16, 201, 107, 0.2),
     inset 0 2px 4px rgba(0, 0, 0, 0.15);
 }
 
 .btn-secondary {
-  background: linear-gradient(135deg, var(--surface-primary) 0%, var(--surface-secondary) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--surface-primary) 0%,
+    var(--surface-secondary) 100%
+  );
   color: var(--color-text-primary);
   border: 1.5px solid var(--color-border-primary);
-  box-shadow: 
+  box-shadow:
     0 6px 16px rgba(0, 0, 0, 0.15),
     0 3px 8px rgba(0, 0, 0, 0.1),
     0 1px 4px rgba(0, 0, 0, 0.08),
@@ -153,10 +174,14 @@
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: linear-gradient(135deg, var(--surface-secondary) 0%, var(--surface-tertiary) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--surface-secondary) 0%,
+    var(--surface-tertiary) 100%
+  );
   border-color: var(--color-brand-primary);
   transform: translateY(-3px) scale(1.01);
-  box-shadow: 
+  box-shadow:
     0 8px 24px rgba(0, 0, 0, 0.18),
     0 4px 12px rgba(0, 0, 0, 0.12),
     0 0 0 2px var(--color-brand-primary-light),
@@ -166,7 +191,7 @@
 .btn-secondary:active:not(:disabled) {
   background: var(--surface-tertiary);
   transform: translateY(-1px) scale(0.99);
-  box-shadow: 
+  box-shadow:
     0 3px 8px rgba(0, 0, 0, 0.12),
     0 1px 3px rgba(0, 0, 0, 0.08),
     inset 0 2px 4px rgba(0, 0, 0, 0.08);
@@ -180,13 +205,17 @@
 }
 
 .btn-tertiary::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   left: 50%;
   width: 0;
   height: 2px;
-  background: linear-gradient(90deg, var(--color-interactive-primary), var(--color-interactive-primary-hover));
+  background: linear-gradient(
+    90deg,
+    var(--color-interactive-primary),
+    var(--color-interactive-primary-hover)
+  );
   transition: all var(--motion-duration-normal) var(--motion-easing-productive);
   transform: translateX(-50%);
 }
@@ -241,4 +270,3 @@
   background-color: var(--primitive-red-700);
   border-color: var(--primitive-red-700);
 }
-

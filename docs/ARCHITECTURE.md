@@ -1,7 +1,9 @@
 # 🏗️ Flag Football App - Logical Architecture
-*Comprehensive System Design and Dependencies*
+
+_Comprehensive System Design and Dependencies_
 
 ## 📋 Table of Contents
+
 1. [System Overview](#system-overview)
 2. [Logical Architecture](#logical-architecture)
 3. [Core Dependencies](#core-dependencies)
@@ -13,9 +15,11 @@
 ## 🎯 System Overview
 
 ### Mission Statement
+
 A comprehensive flag football management platform that prioritizes **player safety**, **performance tracking**, and **community engagement** through modern web technologies and data-driven insights.
 
 ### Core Principles
+
 - **Safety First**: Emergency protocols and injury prevention
 - **Data Integrity**: Backup, recovery, and consistency
 - **User Experience**: Intuitive, responsive, accessible design
@@ -25,6 +29,7 @@ A comprehensive flag football management platform that prioritizes **player safe
 ## 🏗️ Logical Architecture
 
 ### 1. **Presentation Layer** (Client-Side)
+
 ```
 ┌─────────────────────────────────────────────┐
 │              PRESENTATION LAYER             │
@@ -51,6 +56,7 @@ A comprehensive flag football management platform that prioritizes **player safe
 ```
 
 ### 2. **Application Layer** (Business Logic)
+
 ```
 ┌─────────────────────────────────────────────┐
 │             APPLICATION LAYER               │
@@ -84,6 +90,7 @@ A comprehensive flag football management platform that prioritizes **player safe
 ```
 
 ### 3. **Data Layer** (Persistence & External APIs)
+
 ```
 ┌─────────────────────────────────────────────┐
 │                DATA LAYER                   │
@@ -117,6 +124,7 @@ A comprehensive flag football management platform that prioritizes **player safe
 ## 🔧 Core Dependencies
 
 ### 1. **Frontend Framework & UI**
+
 ```json
 {
   "primary": {
@@ -139,6 +147,7 @@ A comprehensive flag football management platform that prioritizes **player safe
 ```
 
 ### 2. **State Management & Data Fetching**
+
 ```json
 {
   "state_management": {
@@ -157,6 +166,7 @@ A comprehensive flag football management platform that prioritizes **player safe
 ```
 
 ### 3. **Database & Backend**
+
 ```json
 {
   "database": {
@@ -176,6 +186,7 @@ A comprehensive flag football management platform that prioritizes **player safe
 ```
 
 ### 4. **Real-time & Communication**
+
 ```json
 {
   "realtime": {
@@ -194,6 +205,7 @@ A comprehensive flag football management platform that prioritizes **player safe
 ```
 
 ### 5. **Media & Analytics**
+
 ```json
 {
   "media": {
@@ -214,6 +226,7 @@ A comprehensive flag football management platform that prioritizes **player safe
 ```
 
 ### 6. **Development & Testing**
+
 ```json
 {
   "testing": {
@@ -238,201 +251,212 @@ A comprehensive flag football management platform that prioritizes **player safe
 ## 🌐 Open-Source API Endpoints
 
 ### 1. **Weather & Environmental Data**
+
 ```javascript
 // OpenWeatherMap API (Free tier: 1000 calls/day)
 const WEATHER_APIs = {
   current: "https://api.openweathermap.org/data/2.5/weather",
   forecast: "https://api.openweathermap.org/data/2.5/forecast",
   alerts: "https://api.openweathermap.org/data/2.5/onecall",
-  usage: "Game day weather, practice conditions, safety alerts"
+  usage: "Game day weather, practice conditions, safety alerts",
 };
 
 // UV Index API (Free)
 const UV_API = {
   endpoint: "https://api.openuv.io/api/v1/uv",
-  usage: "Player safety during outdoor activities"
+  usage: "Player safety during outdoor activities",
 };
 
 // Air Quality API (Free)
 const AIR_QUALITY_API = {
   endpoint: "https://api.openweathermap.org/data/2.5/air_pollution",
-  usage: "Exercise safety recommendations"
+  usage: "Exercise safety recommendations",
 };
 ```
 
 ### 2. **Location & Mapping Services**
+
 ```javascript
 // OpenStreetMap & Nominatim (Free, unlimited)
 const LOCATION_APIs = {
   geocoding: "https://nominatim.openstreetmap.org/search",
   reverse_geocoding: "https://nominatim.openstreetmap.org/reverse",
   maps: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-  usage: "Field locations, emergency services, travel planning"
+  usage: "Field locations, emergency services, travel planning",
 };
 
 // IP Geolocation (Free tier: 1000 requests/month)
 const IP_LOCATION_API = {
   endpoint: "https://ipapi.co/json/",
-  usage: "Auto-detect user location for local weather/services"
+  usage: "Auto-detect user location for local weather/services",
 };
 ```
 
 ### 3. **Sports & Fitness APIs**
+
 ```javascript
 // Sports Statistics APIs
 const SPORTS_APIs = {
   // TheSportsDB (Free)
   sports_db: {
     endpoint: "https://www.thesportsdb.com/api/v1/json/3",
-    usage: "Professional flag football stats, team inspiration"
+    usage: "Professional flag football stats, team inspiration",
   },
-  
+
   // Strava API (Free tier)
   strava: {
     endpoint: "https://www.strava.com/api/v3",
-    usage: "Fitness tracking integration, running stats"
+    usage: "Fitness tracking integration, running stats",
   },
-  
+
   // Nutritionix API (Free tier: 500 calls/day)
   nutrition: {
     endpoint: "https://trackapi.nutritionix.com/v2",
-    usage: "Player nutrition tracking, meal planning"
-  }
+    usage: "Player nutrition tracking, meal planning",
+  },
 };
 ```
 
 ### 4. **Communication & Notifications**
+
 ```javascript
 // Email Services
 const EMAIL_APIs = {
   // EmailJS (Free tier: 200 emails/month)
   emailjs: {
     endpoint: "https://api.emailjs.com/api/v1.0/email/send",
-    usage: "Team notifications, emergency alerts"
+    usage: "Team notifications, emergency alerts",
   },
-  
+
   // Resend (Free tier: 3000 emails/month)
   resend: {
     endpoint: "https://api.resend.com/emails",
-    usage: "Transactional emails, newsletters"
-  }
+    usage: "Transactional emails, newsletters",
+  },
 };
 
 // SMS Services
 const SMS_APIs = {
   // Twilio (Pay-as-you-go, $0.0075/SMS)
   twilio: {
-    endpoint: "https://api.twilio.com/2010-04-01/Accounts/{AccountSid}/Messages",
-    usage: "Emergency alerts, important notifications"
+    endpoint:
+      "https://api.twilio.com/2010-04-01/Accounts/{AccountSid}/Messages",
+    usage: "Emergency alerts, important notifications",
   },
-  
+
   // TextBelt (Free tier: 1 text/day, $0.15/text after)
   textbelt: {
     endpoint: "https://textbelt.com/text",
-    usage: "Simple SMS notifications"
-  }
+    usage: "Simple SMS notifications",
+  },
 };
 ```
 
 ### 5. **Media & Content APIs**
+
 ```javascript
 // Image & Video Processing
 const MEDIA_APIs = {
   // Cloudinary (Free tier: 25GB storage, 25GB bandwidth)
   cloudinary: {
     endpoint: "https://api.cloudinary.com/v1_1/{cloud_name}",
-    usage: "Image optimization, video processing, storage"
+    usage: "Image optimization, video processing, storage",
   },
-  
+
   // Uploadcare (Free tier: 3GB storage, 30GB traffic)
   uploadcare: {
     endpoint: "https://upload.uploadcare.com/base/",
-    usage: "File uploads, image transformations"
+    usage: "File uploads, image transformations",
   },
-  
+
   // YouTube Data API (Free quota: 10,000 units/day)
   youtube: {
     endpoint: "https://www.googleapis.com/youtube/v3",
-    usage: "Training video integration, technique tutorials"
-  }
+    usage: "Training video integration, technique tutorials",
+  },
 };
 ```
 
 ### 6. **Health & Fitness APIs**
+
 ```javascript
 // Health Data APIs
 const HEALTH_APIs = {
   // Heart Rate API (via Web Bluetooth)
   heart_rate: {
     endpoint: "Web Bluetooth API",
-    usage: "Real-time heart rate monitoring during training"
+    usage: "Real-time heart rate monitoring during training",
   },
-  
+
   // BMI Calculator API (Free)
   bmi_calculator: {
     endpoint: "https://fitness-calculator.p.rapidapi.com/bmi",
-    usage: "Player health assessments"
+    usage: "Player health assessments",
   },
-  
+
   // Exercise Database (Free)
   exercise_db: {
     endpoint: "https://exercisedb.p.rapidapi.com",
-    usage: "Training exercise library, workout planning"
-  }
+    usage: "Training exercise library, workout planning",
+  },
 };
 ```
 
 ### 7. **Emergency & Safety APIs**
+
 ```javascript
 // Emergency Services APIs
 const EMERGENCY_APIs = {
   // Emergency Services Locator (Free)
   emergency_services: {
     endpoint: "https://overpass-api.de/api/interpreter",
-    usage: "Find nearest hospitals, urgent care centers"
+    usage: "Find nearest hospitals, urgent care centers",
   },
-  
+
   // FEMA Disaster API (Free)
   fema_disasters: {
     endpoint: "https://www.fema.gov/api/open/v2/DisasterDeclarationsSummaries",
-    usage: "Weather emergency alerts, safety warnings"
+    usage: "Weather emergency alerts, safety warnings",
   },
-  
+
   // Red Cross Safety Tips API (Free)
   red_cross: {
-    endpoint: "https://www.redcross.org/get-help/how-to-prepare-for-emergencies",
-    usage: "Safety protocol guidelines, first aid tips"
-  }
+    endpoint:
+      "https://www.redcross.org/get-help/how-to-prepare-for-emergencies",
+    usage: "Safety protocol guidelines, first aid tips",
+  },
 };
 ```
 
 ### 8. **Analytics & Performance APIs**
+
 ```javascript
 // Analytics & Monitoring
 const ANALYTICS_APIs = {
   // Google Analytics 4 (Free)
   google_analytics: {
     endpoint: "https://www.googletagmanager.com/gtag/js",
-    usage: "User behavior analytics, app performance"
+    usage: "User behavior analytics, app performance",
   },
-  
+
   // PostHog (Free tier: 1M events/month)
   posthog: {
     endpoint: "https://app.posthog.com",
-    usage: "Product analytics, feature flags, A/B testing"
+    usage: "Product analytics, feature flags, A/B testing",
   },
-  
+
   // Mixpanel (Free tier: 100K events/month)
   mixpanel: {
     endpoint: "https://api.mixpanel.com",
-    usage: "Event tracking, user journey analysis"
-  }
+    usage: "Event tracking, user journey analysis",
+  },
 };
 ```
 
 ## 🔄 Data Flow Architecture
 
 ### 1. **User Interaction Flow**
+
 ```
 User Action → Component → Service Layer → Database/API → Response → State Update → UI Refresh
      ↓
@@ -440,20 +464,23 @@ Emergency Detection → Immediate Notification → Backup Creation → Alert Bro
 ```
 
 ### 2. **Real-time Data Flow**
+
 ```
-Training Session → Performance Capture → Real-time Analysis → 
+Training Session → Performance Capture → Real-time Analysis →
 Live Updates → Team Notifications → Historical Storage
 ```
 
 ### 3. **Safety Protocol Flow**
+
 ```
-Incident Detection → Emergency Protocol → Contact Notification → 
+Incident Detection → Emergency Protocol → Contact Notification →
 Backup Creation → Medical Response → Documentation → Follow-up
 ```
 
 ## 🔒 Security Architecture
 
 ### 1. **Authentication & Authorization**
+
 ```typescript
 interface SecurityLayers {
   authentication: {
@@ -475,6 +502,7 @@ interface SecurityLayers {
 ```
 
 ### 2. **Data Security Measures**
+
 - **End-to-end encryption** for sensitive medical data
 - **Role-based access control** for different user types
 - **Audit logging** for all data access and modifications
@@ -484,19 +512,20 @@ interface SecurityLayers {
 ## 🚀 Deployment Architecture
 
 ### 1. **Infrastructure Stack**
+
 ```yaml
 hosting:
   primary: "Vercel" # Auto-scaling, global CDN
   alternative: "Netlify" # Backup deployment option
-  
+
 database:
   primary: "Neon PostgreSQL" # Serverless, auto-scaling
   backup: "Automated daily backups with point-in-time recovery"
-  
+
 cdn:
   assets: "Vercel Edge Network"
   media: "Cloudinary CDN"
-  
+
 monitoring:
   errors: "Sentry"
   performance: "Vercel Analytics"
@@ -504,6 +533,7 @@ monitoring:
 ```
 
 ### 2. **Environment Configuration**
+
 ```typescript
 interface Environments {
   development: {
@@ -528,6 +558,7 @@ interface Environments {
 ## 📊 Performance Optimization Strategy
 
 ### 1. **Frontend Optimization**
+
 - **Code splitting** by routes and features
 - **Lazy loading** for heavy components
 - **Image optimization** with WebP and responsive images
@@ -535,12 +566,14 @@ interface Environments {
 - **Bundle analysis** and size monitoring
 
 ### 2. **Database Optimization**
+
 - **Connection pooling** with Neon
 - **Query optimization** with proper indexing
 - **Read replicas** for analytics queries
 - **Caching strategy** for frequently accessed data
 
 ### 3. **API Optimization**
+
 - **Request batching** for multiple API calls
 - **Response caching** with appropriate TTL
 - **Rate limiting** and quota management
@@ -549,12 +582,14 @@ interface Environments {
 ## 🔮 Future Architecture Considerations
 
 ### 1. **Scalability Plans**
+
 - **Microservices migration** as the app grows
 - **Event-driven architecture** for real-time features
 - **Multi-region deployment** for global users
 - **Container orchestration** with Kubernetes
 
 ### 2. **Advanced Features**
+
 - **Machine learning** for performance prediction
 - **IoT integration** for wearable devices
 - **AR/VR training** modules
@@ -562,4 +597,4 @@ interface Environments {
 
 ---
 
-*This architecture document serves as the blueprint for building a scalable, secure, and feature-rich flag football management platform that prioritizes player safety and performance.*
+_This architecture document serves as the blueprint for building a scalable, secure, and feature-rich flag football management platform that prioritizes player safety and performance._

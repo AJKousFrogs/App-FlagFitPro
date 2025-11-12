@@ -5,7 +5,7 @@
 The Flag Football Training App now includes **YouTube API integration** to provide athletes with professional warm-up and training videos, including:
 
 - **A skips, B skips, C skips** demonstrations
-- **Sprint technique** tutorials  
+- **Sprint technique** tutorials
 - **Flag football specific** drills
 - **Agility training** videos
 - **Plyometric exercises**
@@ -38,9 +38,10 @@ The Flag Football Training App now includes **YouTube API integration** to provi
 ### 2. Configure the Application
 
 1. **Update API Key in Code**
+
    ```javascript
    // In src/youtube-training-service.js, line 6:
-   this.apiKey = 'YOUR_ACTUAL_YOUTUBE_API_KEY_HERE';
+   this.apiKey = "YOUR_ACTUAL_YOUTUBE_API_KEY_HERE";
    ```
 
 2. **Alternative: Environment Variable**
@@ -59,7 +60,7 @@ The Flag Football Training App now includes **YouTube API integration** to provi
    - Sprint preparation drills
    - Athletic activation sequences
 
-2. **⚡ Sprint Technique** 
+2. **⚡ Sprint Technique**
    - Sprint mechanics tutorials
    - Acceleration drills
    - Running form improvements
@@ -103,40 +104,46 @@ The Flag Football Training App now includes **YouTube API integration** to provi
 **Location**: Training page → "Training Videos" section
 
 **Quick Training Sessions**:
+
 - ⚡ Speed Focus (30 min)
-- 🏃 Agility Focus (35 min) 
+- 🏃 Agility Focus (35 min)
 - 🎯 Complete Session (60 min)
 - 😌 Recovery Session (20 min)
 
 ## 🚀 API Usage & Quotas
 
 ### **YouTube API Quotas**
+
 - **Free Tier**: 10,000 units/day
 - **Search Request**: 100 units each
 - **Video Details**: 1 unit each
 
 ### **Optimization Features**
+
 - **Smart Caching**: Reduces API calls by 80%
 - **Batch Requests**: Efficiently fetches multiple videos
 - **Quality Scoring**: Ranks videos to show best content first
 - **Error Handling**: Graceful fallbacks when API unavailable
 
 ### **Estimated Usage**
+
 - **Per User/Day**: ~200-500 API units
 - **App can support**: 20-50 active users/day on free tier
 
 ## 🛡️ Security & Best Practices
 
 ### **API Key Security**
+
 - ✅ **DO**: Restrict API key to YouTube Data API v3 only
 - ✅ **DO**: Add website restrictions to your domains
 - ❌ **DON'T**: Commit API key to public repositories
 - ❌ **DON'T**: Share API key in client-side code in production
 
 ### **Recommended Production Setup**
+
 ```javascript
 // Use environment variables or server-side proxy
-const API_KEY = process.env.YOUTUBE_API_KEY || await getApiKeyFromServer();
+const API_KEY = process.env.YOUTUBE_API_KEY || (await getApiKeyFromServer());
 ```
 
 ## 🔧 Troubleshooting
@@ -147,7 +154,7 @@ const API_KEY = process.env.YOUTUBE_API_KEY || await getApiKeyFromServer();
    - Check API key is correctly set in youtube-training-service.js
    - Verify API key is not 'YOUR_YOUTUBE_API_KEY_HERE'
 
-2. **"YouTube API error: 403"** 
+2. **"YouTube API error: 403"**
    - API key restrictions may be too strict
    - Check daily quota hasn't been exceeded
    - Verify YouTube Data API v3 is enabled
@@ -165,6 +172,7 @@ const API_KEY = process.env.YOUTUBE_API_KEY || await getApiKeyFromServer();
 ### **Testing Without API Key**
 
 The app works in **demo mode** without an API key:
+
 - Shows curated fallback videos
 - Displays search links to YouTube
 - All UI functionality works
@@ -173,17 +181,20 @@ The app works in **demo mode** without an API key:
 ## 📊 Analytics & Monitoring
 
 ### **Built-in Analytics**
+
 ```javascript
 // Check API usage stats
 console.log(youTubeTrainingService.getApiUsageStats());
 ```
 
 **Returns**:
+
 - Cache hit rate
-- Number of cached videos  
+- Number of cached videos
 - API configuration status
 
 ### **Performance Monitoring**
+
 - Video load times
 - API response times
 - Cache effectiveness
@@ -192,19 +203,22 @@ console.log(youTubeTrainingService.getApiUsageStats());
 ## 🎯 Advanced Features
 
 ### **Custom Video Curation**
+
 Coaches can pre-approve specific videos by adding them to the allowlist:
 
 ```javascript
 // In youtube-training-service.js
 this.channelAllowlist = [
-    'UCblfuW_4rakIf2h6aqANefA', // World Athletics
-    'UCTlO2AY8O9cKpR7qSWwBhXg', // Track & Field Training
-    'YOUR_CHANNEL_ID_HERE'       // Add trusted channels
+  "UCblfuW_4rakIf2h6aqANefA", // World Athletics
+  "UCTlO2AY8O9cKpR7qSWwBhXg", // Track & Field Training
+  "YOUR_CHANNEL_ID_HERE", // Add trusted channels
 ];
 ```
 
 ### **Training Integration**
+
 Videos automatically sync with:
+
 - Weekly training schedules
 - Session-specific warm-ups
 - Recovery protocols

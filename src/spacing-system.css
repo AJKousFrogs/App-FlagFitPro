@@ -8,46 +8,54 @@
    ================================================================ */
 :root {
   /* Enhanced Component Spacing - More breathable */
-  --spacing-component-xs: var(--primitive-space-12);    /* 12px - was 8px */
-  --spacing-component-sm: var(--primitive-space-16);   /* 16px - was 12px */
-  --spacing-component-md: var(--primitive-space-24);   /* 24px - was 16px */
-  --spacing-component-lg: var(--primitive-space-32);   /* 32px - was 24px */
-  --spacing-component-xl: var(--primitive-space-40);   /* 40px - was 32px */
-  --spacing-component-2xl: var(--primitive-space-48);  /* 48px */
-  --spacing-component-3xl: var(--primitive-space-56);  /* 56px */
-  
+  --spacing-component-xs: var(--primitive-space-12); /* 12px - was 8px */
+  --spacing-component-sm: var(--primitive-space-16); /* 16px - was 12px */
+  --spacing-component-md: var(--primitive-space-24); /* 24px - was 16px */
+  --spacing-component-lg: var(--primitive-space-32); /* 32px - was 24px */
+  --spacing-component-xl: var(--primitive-space-40); /* 40px - was 32px */
+  --spacing-component-2xl: var(--primitive-space-48); /* 48px */
+  --spacing-component-3xl: var(--primitive-space-56); /* 56px */
+
   /* Enhanced Layout Spacing - More generous */
-  --spacing-layout-xs: var(--primitive-space-24);      /* 24px - was 16px */
-  --spacing-layout-sm: var(--primitive-space-32);       /* 32px - was 24px */
-  --spacing-layout-md: var(--primitive-space-40);       /* 40px - was 32px */
-  --spacing-layout-lg: var(--primitive-space-56);       /* 56px - was 48px */
-  --spacing-layout-xl: var(--primitive-space-64);       /* 64px */
-  --spacing-layout-2xl: var(--primitive-space-80);      /* 80px */
-  
+  --spacing-layout-xs: var(--primitive-space-24); /* 24px - was 16px */
+  --spacing-layout-sm: var(--primitive-space-32); /* 32px - was 24px */
+  --spacing-layout-md: var(--primitive-space-40); /* 40px - was 32px */
+  --spacing-layout-lg: var(--primitive-space-56); /* 56px - was 48px */
+  --spacing-layout-xl: var(--primitive-space-64); /* 64px */
+  --spacing-layout-2xl: var(--primitive-space-80); /* 80px */
+
   /* Card Spacing - Standardized - More breathable */
-  --card-padding-sm: var(--primitive-space-24);         /* 24px - increased from 20px */
-  --card-padding-md: var(--primitive-space-32);          /* 32px - increased from 28px */
-  --card-padding-lg: var(--primitive-space-40);         /* 40px - increased from 36px */
-  --card-padding-xl: var(--primitive-space-48);         /* 48px - increased from 40px */
-  
+  --card-padding-sm: var(--primitive-space-24); /* 24px - increased from 20px */
+  --card-padding-md: var(--primitive-space-32); /* 32px - increased from 28px */
+  --card-padding-lg: var(--primitive-space-40); /* 40px - increased from 36px */
+  --card-padding-xl: var(--primitive-space-48); /* 48px - increased from 40px */
+
   /* Grid Spacing - Standardized - More breathable */
-  --grid-gap-sm: var(--primitive-space-24);            /* 24px - increased from 20px */
-  --grid-gap-md: var(--primitive-space-32);             /* 32px - increased from 28px */
-  --grid-gap-lg: var(--primitive-space-40);             /* 40px - increased from 32px */
-  --grid-gap-xl: var(--primitive-space-48);              /* 48px - increased from 40px */
-  
+  --grid-gap-sm: var(--primitive-space-24); /* 24px - increased from 20px */
+  --grid-gap-md: var(--primitive-space-32); /* 32px - increased from 28px */
+  --grid-gap-lg: var(--primitive-space-40); /* 40px - increased from 32px */
+  --grid-gap-xl: var(--primitive-space-48); /* 48px - increased from 40px */
+
   /* Section Spacing - Standardized - More breathable */
-  --section-spacing-sm: var(--primitive-space-40);     /* 40px - increased from 32px */
-  --section-spacing-md: var(--primitive-space-48);      /* 48px - increased from 40px */
-  --section-spacing-lg: var(--primitive-space-56);      /* 56px - increased from 48px */
-  --section-spacing-xl: var(--primitive-space-80);      /* 80px - increased from 64px */
-  
+  --section-spacing-sm: var(
+    --primitive-space-40
+  ); /* 40px - increased from 32px */
+  --section-spacing-md: var(
+    --primitive-space-48
+  ); /* 48px - increased from 40px */
+  --section-spacing-lg: var(
+    --primitive-space-56
+  ); /* 56px - increased from 48px */
+  --section-spacing-xl: var(
+    --primitive-space-80
+  ); /* 80px - increased from 64px */
+
   /* Button Spacing - Standardized */
   --button-padding-sm: var(--primitive-space-12) var(--primitive-space-20);
   --button-padding-md: var(--primitive-space-16) var(--primitive-space-28);
   --button-padding-lg: var(--primitive-space-20) var(--primitive-space-32);
-  --button-gap: var(--primitive-space-16);              /* 16px */
-  --button-gap-lg: var(--primitive-space-20);           /* 20px */
+  --button-gap: var(--primitive-space-16); /* 16px */
+  --button-gap-lg: var(--primitive-space-20); /* 20px */
 }
 
 /* ================================================================
@@ -235,21 +243,50 @@ section,
 /* ================================================================
    UTILITY CLASSES - For fine-tuning
    ================================================================ */
-.spacing-xs { margin: var(--spacing-component-xs); }
-.spacing-sm { margin: var(--spacing-component-sm); }
-.spacing-md { margin: var(--spacing-component-md); }
-.spacing-lg { margin: var(--spacing-component-lg); }
-.spacing-xl { margin: var(--spacing-component-xl); }
+.spacing-xs {
+  margin: var(--spacing-component-xs);
+}
+.spacing-sm {
+  margin: var(--spacing-component-sm);
+}
+.spacing-md {
+  margin: var(--spacing-component-md);
+}
+.spacing-lg {
+  margin: var(--spacing-component-lg);
+}
+.spacing-xl {
+  margin: var(--spacing-component-xl);
+}
 
-.padding-xs { padding: var(--spacing-component-xs); }
-.padding-sm { padding: var(--spacing-component-sm); }
-.padding-md { padding: var(--spacing-component-md); }
-.padding-lg { padding: var(--spacing-component-lg); }
-.padding-xl { padding: var(--spacing-component-xl); }
+.padding-xs {
+  padding: var(--spacing-component-xs);
+}
+.padding-sm {
+  padding: var(--spacing-component-sm);
+}
+.padding-md {
+  padding: var(--spacing-component-md);
+}
+.padding-lg {
+  padding: var(--spacing-component-lg);
+}
+.padding-xl {
+  padding: var(--spacing-component-xl);
+}
 
-.gap-xs { gap: var(--spacing-component-xs); }
-.gap-sm { gap: var(--spacing-component-sm); }
-.gap-md { gap: var(--spacing-component-md); }
-.gap-lg { gap: var(--spacing-component-lg); }
-.gap-xl { gap: var(--spacing-component-xl); }
-
+.gap-xs {
+  gap: var(--spacing-component-xs);
+}
+.gap-sm {
+  gap: var(--spacing-component-sm);
+}
+.gap-md {
+  gap: var(--spacing-component-md);
+}
+.gap-lg {
+  gap: var(--spacing-component-lg);
+}
+.gap-xl {
+  gap: var(--spacing-component-xl);
+}

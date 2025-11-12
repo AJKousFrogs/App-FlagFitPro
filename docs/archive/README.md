@@ -23,4 +23,3 @@ These files document **completed work** and **historical context** but are not n
 ## 📝 Note
 
 If you need information from archived files, they're still here - just organized better. The main `docs/` folder now contains only active, current documentation.
-

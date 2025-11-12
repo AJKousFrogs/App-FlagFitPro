@@ -7,6 +7,7 @@ A modern, accessible login page built with Radix UI primitives for the Flag Foot
 ## ✨ Features
 
 ### Core Functionality
+
 - **Form Validation**: Real-time validation with error messages
 - **Loading States**: Smooth loading animations and disabled states
 - **Password Toggle**: Show/hide password functionality
@@ -15,6 +16,7 @@ A modern, accessible login page built with Radix UI primitives for the Flag Foot
 - **Error Handling**: Comprehensive error display and recovery
 
 ### Design Features
+
 - **Modern UI**: Clean, minimalist design with proper spacing
 - **Responsive Design**: Optimized for all device sizes
 - **Dark Mode Support**: Automatic theme detection and switching
@@ -23,6 +25,7 @@ A modern, accessible login page built with Radix UI primitives for the Flag Foot
 - **Focus Management**: Proper focus trapping and indicators
 
 ### Radix UI Components Used
+
 - **Card**: Main container and sponsor banner
 - **Form**: Form fields with validation
 - **Button**: Primary, outline, and ghost variants
@@ -36,6 +39,7 @@ A modern, accessible login page built with Radix UI primitives for the Flag Foot
 ## 🎨 Design System
 
 ### Color Palette
+
 ```css
 /* Primary Colors */
 --primary-black: #111827;
@@ -59,6 +63,7 @@ A modern, accessible login page built with Radix UI primitives for the Flag Foot
 ```
 
 ### Typography
+
 ```css
 /* Headings */
 --font-size-3xl: 1.875rem;
@@ -77,6 +82,7 @@ A modern, accessible login page built with Radix UI primitives for the Flag Foot
 ```
 
 ### Spacing System
+
 ```css
 /* Spacing Scale */
 --space-1: 0.25rem;
@@ -90,6 +96,7 @@ A modern, accessible login page built with Radix UI primitives for the Flag Foot
 ## 🚀 Implementation Details
 
 ### File Structure
+
 ```
 src/
 ├── pages/
@@ -103,6 +110,7 @@ src/
 ### Component Architecture
 
 #### WelcomeBackPage.jsx
+
 ```jsx
 // Main component structure
 <Container.Root>
@@ -112,33 +120,27 @@ src/
         <Card.Title>Welcome Back! 🏈</Card.Title>
         <Text.Root>Ready to dominate today's training?</Text.Root>
       </Card.Header>
-      
+
       <Card.Content>
         {/* Sponsor Banner */}
-        <Card.Root className="sponsor-banner">
-          {/* Banner content */}
-        </Card.Root>
-        
+        <Card.Root className="sponsor-banner">{/* Banner content */}</Card.Root>
+
         {/* Login Form */}
         <Form.Root>
-          <Form.Field name="email">
-            {/* Email input */}
-          </Form.Field>
-          
+          <Form.Field name="email">{/* Email input */}</Form.Field>
+
           <Form.Field name="password">
             {/* Password input with toggle */}
           </Form.Field>
-          
-          <Button.Root type="submit">
-            {/* Sign in button */}
-          </Button.Root>
+
+          <Button.Root type="submit">{/* Sign in button */}</Button.Root>
         </Form.Root>
-        
+
         {/* Alternative Login Options */}
         <Flex.Root direction="column">
           {/* Biometric and phone login buttons */}
         </Flex.Root>
-        
+
         {/* Footer Links */}
         <Flex.Root direction="column">
           {/* Forgot password and create account links */}
@@ -150,10 +152,11 @@ src/
 ```
 
 ### State Management
+
 ```jsx
 const [formData, setFormData] = useState({
-  email: '',
-  password: ''
+  email: "",
+  password: "",
 });
 const [showPassword, setShowPassword] = useState(false);
 const [isLoading, setIsLoading] = useState(false);
@@ -161,24 +164,25 @@ const [errors, setErrors] = useState({});
 ```
 
 ### Form Validation
+
 ```jsx
 const validateForm = () => {
   const newErrors = {};
-  
+
   // Email validation
   if (!formData.email) {
-    newErrors.email = 'Email is required';
+    newErrors.email = "Email is required";
   } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-    newErrors.email = 'Please enter a valid email';
+    newErrors.email = "Please enter a valid email";
   }
-  
+
   // Password validation
   if (!formData.password) {
-    newErrors.password = 'Password is required';
+    newErrors.password = "Password is required";
   } else if (formData.password.length < 6) {
-    newErrors.password = 'Password must be at least 6 characters';
+    newErrors.password = "Password must be at least 6 characters";
   }
-  
+
   return newErrors;
 };
 ```
@@ -186,13 +190,14 @@ const validateForm = () => {
 ## 🎯 Usage
 
 ### Basic Implementation
+
 ```jsx
-import WelcomeBackPage from './pages/WelcomeBackPage';
+import WelcomeBackPage from "./pages/WelcomeBackPage";
 
 function App() {
   const handleLogin = (userData) => {
     // Handle login logic
-    console.log('Login data:', userData);
+    console.log("Login data:", userData);
   };
 
   return <WelcomeBackPage onLogin={handleLogin} />;
@@ -200,6 +205,7 @@ function App() {
 ```
 
 ### Routing Configuration
+
 ```jsx
 // In App.jsx
 <Route path="/welcome-back" element={<WelcomeBackPage onLogin={handleLogin} />} />
@@ -207,19 +213,20 @@ function App() {
 ```
 
 ### Customization
+
 ```jsx
 // Custom styling
-<WelcomeBackPage 
+<WelcomeBackPage
   onLogin={handleLogin}
   className="custom-welcome-page"
   sponsorBanner={{
     enabled: true,
     sponsor: {
-      name: 'Custom Sponsor',
-      logo: '🏆',
-      message: 'Custom message',
-      cta: 'Learn More'
-    }
+      name: "Custom Sponsor",
+      logo: "🏆",
+      message: "Custom message",
+      cta: "Learn More",
+    },
   }}
 />
 ```
@@ -227,6 +234,7 @@ function App() {
 ## 🔧 Configuration
 
 ### Environment Variables
+
 ```env
 # Optional: Customize sponsor banner
 REACT_APP_SPONSOR_BANNER_ENABLED=true
@@ -236,6 +244,7 @@ REACT_APP_SPONSOR_MESSAGE=Start your fitness journey
 ```
 
 ### CSS Custom Properties
+
 ```css
 /* Customize colors */
 :root {
@@ -256,13 +265,16 @@ REACT_APP_SPONSOR_MESSAGE=Start your fitness journey
 ## 🧪 Testing
 
 ### Demo Page
+
 Visit `/welcome-demo` to see the component in action with different states:
+
 - Default state
 - Loading state
 - Error state
 - Validation errors
 
 ### Manual Testing Checklist
+
 - [ ] Form validation works correctly
 - [ ] Password toggle functionality
 - [ ] Loading states display properly
@@ -277,21 +289,25 @@ Visit `/welcome-demo` to see the component in action with different states:
 ## 🎨 Design Decisions
 
 ### Layout
+
 - **Centered Card Design**: Creates focus and reduces cognitive load
 - **Generous Spacing**: Improves readability and touch targets
 - **Clear Visual Hierarchy**: Guides user attention through the form
 
 ### Colors
+
 - **High Contrast**: Ensures accessibility compliance
 - **Semantic Colors**: Red for errors, blue for links, yellow for ads
 - **Neutral Background**: Reduces visual noise
 
 ### Typography
+
 - **Large Headings**: Creates strong visual impact
 - **Readable Body Text**: Optimized for mobile screens
 - **Consistent Font Weights**: Maintains visual hierarchy
 
 ### Interactions
+
 - **Smooth Transitions**: Provides feedback without being distracting
 - **Clear Focus States**: Essential for keyboard navigation
 - **Loading Indicators**: Keeps users informed during processing
@@ -299,17 +315,20 @@ Visit `/welcome-demo` to see the component in action with different states:
 ## 🚀 Performance Optimizations
 
 ### Code Splitting
+
 ```jsx
 // Lazy loading for better performance
-const WelcomeBackPage = React.lazy(() => import('./pages/WelcomeBackPage'));
+const WelcomeBackPage = React.lazy(() => import("./pages/WelcomeBackPage"));
 ```
 
 ### CSS Optimization
+
 - **CSS Custom Properties**: Enables easy theming
 - **Efficient Selectors**: Minimizes CSS specificity issues
 - **Critical CSS**: Inline styles for above-the-fold content
 
 ### Bundle Size
+
 - **Tree Shaking**: Only imports used Radix components
 - **Icon Optimization**: Uses Heroicons for consistency
 - **Minimal Dependencies**: Reduces bundle size
@@ -317,6 +336,7 @@ const WelcomeBackPage = React.lazy(() => import('./pages/WelcomeBackPage'));
 ## 🔮 Future Enhancements
 
 ### Planned Features
+
 - [ ] Social login integration (Google, Apple, Facebook)
 - [ ] Two-factor authentication
 - [ ] Remember me functionality
@@ -327,6 +347,7 @@ const WelcomeBackPage = React.lazy(() => import('./pages/WelcomeBackPage'));
 - [ ] Multi-language support
 
 ### Accessibility Improvements
+
 - [ ] Voice navigation support
 - [ ] High contrast mode enhancements
 - [ ] Motion reduction preferences
@@ -335,11 +356,13 @@ const WelcomeBackPage = React.lazy(() => import('./pages/WelcomeBackPage'));
 ## 📚 Resources
 
 ### Documentation
+
 - [Radix UI Documentation](https://www.radix-ui.com/)
 - [React Router Documentation](https://reactrouter.com/)
 - [Heroicons Documentation](https://heroicons.com/)
 
 ### Design Resources
+
 - [WCAG Guidelines](https://www.w3.org/WAI/WCAG21/quickref/)
 - [Material Design Guidelines](https://material.io/design)
 - [Apple Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/)
@@ -347,12 +370,14 @@ const WelcomeBackPage = React.lazy(() => import('./pages/WelcomeBackPage'));
 ## 🤝 Contributing
 
 ### Development Setup
+
 1. Install dependencies: `npm install`
 2. Start development server: `npm run dev`
 3. Visit `/welcome-demo` to test the component
 4. Make changes and see live updates
 
 ### Code Style
+
 - Use Radix UI primitives for consistency
 - Follow the established color system
 - Maintain accessibility standards
@@ -360,6 +385,7 @@ const WelcomeBackPage = React.lazy(() => import('./pages/WelcomeBackPage'));
 - Document new features
 
 ### Testing
+
 ```bash
 # Run tests
 npm test
@@ -376,4 +402,4 @@ npm run test:visual
 **Created**: January 2025  
 **Last Updated**: January 2025  
 **Version**: 1.0.0  
-**Status**: ✅ Production Ready 
+**Status**: ✅ Production Ready

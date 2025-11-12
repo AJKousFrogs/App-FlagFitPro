@@ -12,13 +12,13 @@ Copy the HTML from `dashboard-header.html` into your page. Typically placed at t
 
 ```html
 <header class="dashboard-header">
-    <div class="header-left">
-        <h1 class="page-title">Page Title</h1>
-        <p class="page-subtitle">Subtitle</p>
-    </div>
-    <div class="header-right">
-        <!-- Actions, search, user menu -->
-    </div>
+  <div class="header-left">
+    <h1 class="page-title">Page Title</h1>
+    <p class="page-subtitle">Subtitle</p>
+  </div>
+  <div class="header-right">
+    <!-- Actions, search, user menu -->
+  </div>
 </header>
 ```
 
@@ -52,6 +52,7 @@ Copy the HTML from `dashboard-header.html` into your page. Typically placed at t
 ## Responsive Behavior
 
 On mobile:
+
 - Search bar may collapse to icon-only
 - User menu may simplify
 - Actions may move to overflow menu
@@ -62,4 +63,3 @@ On mobile:
 - Search bar is optional
 - Notification badge shows count
 - User menu requires JavaScript for dropdown
-

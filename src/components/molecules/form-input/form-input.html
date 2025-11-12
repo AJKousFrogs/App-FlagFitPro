@@ -11,97 +11,102 @@
 
 <!-- Basic Input -->
 <div class="form-group">
-    <label for="username" class="form-label">Username</label>
-    <input 
-        type="text" 
-        id="username" 
-        name="username"
-        class="form-input"
-        placeholder="Enter your username"
-    >
+  <label for="username" class="form-label">Username</label>
+  <input
+    type="text"
+    id="username"
+    name="username"
+    class="form-input"
+    placeholder="Enter your username"
+  />
 </div>
 
 <!-- Input with Helper Text -->
 <div class="form-group">
-    <label for="email" class="form-label">Email Address</label>
-    <input 
-        type="email" 
-        id="email" 
-        name="email"
-        class="form-input"
-        placeholder="athlete@example.com"
-    >
-    <small class="form-hint">We'll never share your email</small>
+  <label for="email" class="form-label">Email Address</label>
+  <input
+    type="email"
+    id="email"
+    name="email"
+    class="form-input"
+    placeholder="athlete@example.com"
+  />
+  <small class="form-hint">We'll never share your email</small>
 </div>
 
 <!-- Input with Error -->
 <div class="form-group">
-    <label for="password" class="form-label required">Password</label>
-    <input 
-        type="password" 
-        id="password" 
-        name="password"
-        class="form-input error"
-        value="pass"
-    >
-    <div class="form-error" role="alert">
-        Password must be at least 8 characters
-    </div>
+  <label for="password" class="form-label required">Password</label>
+  <input
+    type="password"
+    id="password"
+    name="password"
+    class="form-input error"
+    value="pass"
+  />
+  <div class="form-error" role="alert">
+    Password must be at least 8 characters
+  </div>
 </div>
 
 <!-- Input with Success -->
 <div class="form-group">
-    <label for="phone" class="form-label">Phone Number</label>
-    <input 
-        type="tel" 
-        id="phone" 
-        name="phone"
-        class="form-input success"
-        value="+1 234 567 8900"
-    >
-    <small class="form-success">Phone verified!</small>
+  <label for="phone" class="form-label">Phone Number</label>
+  <input
+    type="tel"
+    id="phone"
+    name="phone"
+    class="form-input success"
+    value="+1 234 567 8900"
+  />
+  <small class="form-success">Phone verified!</small>
 </div>
 
 <!-- Required Field Indicator -->
 <div class="form-group">
-    <label for="name" class="form-label">
-        <span>Athlete Name</span>
-        <span class="required-indicator" aria-label="required">*</span>
-    </label>
-    <input 
-        type="text" 
-        id="name" 
-        name="name"
-        class="form-input"
-        required
-    >
+  <label for="name" class="form-label">
+    <span>Athlete Name</span>
+    <span class="required-indicator" aria-label="required">*</span>
+  </label>
+  <input type="text" id="name" name="name" class="form-input" required />
 </div>
 
 <!-- Disabled Input -->
 <div class="form-group">
-    <label for="disabled" class="form-label">Disabled Field</label>
-    <input 
-        type="text" 
-        id="disabled" 
-        class="form-input"
-        value="Cannot edit"
-        disabled
-    >
+  <label for="disabled" class="form-label">Disabled Field</label>
+  <input
+    type="text"
+    id="disabled"
+    class="form-input"
+    value="Cannot edit"
+    disabled
+  />
 </div>
 
 <!-- Input with Icon (Prefix) -->
 <div class="form-group">
-    <label for="search" class="form-label">Search</label>
-    <div style="position: relative;">
-        <i data-lucide="search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; color: var(--color-text-secondary); pointer-events: none;"></i>
-        <input 
-            type="search" 
-            id="search" 
-            name="search"
-            class="form-input"
-            placeholder="Search athletes..."
-            style="padding-left: 40px;"
-        >
-    </div>
+  <label for="search" class="form-label">Search</label>
+  <div style="position: relative">
+    <i
+      data-lucide="search"
+      style="
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 20px;
+        height: 20px;
+        color: var(--color-text-secondary);
+        pointer-events: none;
+      "
+    ></i>
+    <input
+      type="search"
+      id="search"
+      name="search"
+      class="form-input"
+      placeholder="Search athletes..."
+      style="padding-left: 40px"
+    />
+  </div>
 </div>
-

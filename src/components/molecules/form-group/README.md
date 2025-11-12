@@ -12,9 +12,9 @@ Copy the HTML from `form-group.html` into your forms. Use one form group per for
 
 ```html
 <div class="form-group">
-    <label for="input-id" class="form-label">Label</label>
-    <input type="text" id="input-id" class="form-input">
-    <small class="form-hint">Helper text</small>
+  <label for="input-id" class="form-label">Label</label>
+  <input type="text" id="input-id" class="form-input" />
+  <small class="form-hint">Helper text</small>
 </div>
 ```
 
@@ -38,17 +38,17 @@ Copy the HTML from `form-group.html` into your forms. Use one form group per for
 
 ```html
 <form>
-    <div class="form-group">
-        <label for="name" class="form-label">Name</label>
-        <input type="text" id="name" class="form-input" required>
-    </div>
-    
-    <div class="form-group">
-        <label for="email" class="form-label">Email</label>
-        <input type="email" id="email" class="form-input" required>
-    </div>
-    
-    <button type="submit" class="btn btn-primary btn-md">Submit</button>
+  <div class="form-group">
+    <label for="name" class="form-label">Name</label>
+    <input type="text" id="name" class="form-input" required />
+  </div>
+
+  <div class="form-group">
+    <label for="email" class="form-label">Email</label>
+    <input type="email" id="email" class="form-input" required />
+  </div>
+
+  <button type="submit" class="btn btn-primary btn-md">Submit</button>
 </form>
 ```
 
@@ -58,4 +58,3 @@ Copy the HTML from `form-group.html` into your forms. Use one form group per for
 - Provides consistent vertical spacing
 - Groups label, input, and messages together
 - Makes forms easier to maintain
-

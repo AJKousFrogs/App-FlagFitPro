@@ -3,6 +3,7 @@
 ## 🎨 Design System
 
 **FlagFit Pro uses a consistent color scheme across all pages:**
+
 - **Primary**: Green (#16A34A) for buttons, links, and actions
 - **Background**: White (#FFFFFF) for cards and main backgrounds
 - **Text**: Black (#111827) for headings and main text
@@ -10,6 +11,7 @@
 - **Borders**: Light gray (#E5E7EB) for card borders
 
 **All pages follow this branding:**
+
 - Login/Register: White backgrounds with green accents
 - Dashboard: White cards with green progress indicators
 - Training: Green gradients for challenges, white cards for content
@@ -18,6 +20,7 @@
 ## Quick Start with Netlify (Recommended)
 
 ### Option 1: One-Click Deploy
+
 [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/AJKous31/flagfit-pro-training-app)
 
 ### Option 2: Manual Netlify Setup
@@ -38,6 +41,7 @@
    - **Node version**: 18
 
 4. **Environment Variables** (Optional)
+
    ```
    DATABASE_URL=postgresql://username:password@hostname/database?sslmode=require
    VITE_APP_ENVIRONMENT=production
@@ -52,6 +56,7 @@
 ## Alternative Deployment Options
 
 ### Railway (Full-Stack)
+
 ```bash
 # Install Railway CLI
 npm install -g @railway/cli
@@ -62,15 +67,14 @@ railway create flagfit-pro
 railway up
 ```
 
-
-
 ### GitHub Pages (Static Only)
+
 ```yaml
 # .github/workflows/deploy.yml
 name: Deploy to GitHub Pages
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -89,6 +93,7 @@ jobs:
 ## Environment Configuration
 
 ### Production Environment Variables
+
 ```bash
 # Required
 VITE_APP_ENVIRONMENT=production
@@ -106,7 +111,9 @@ VITE_APP_VERSION=1.0.2
 ```
 
 ### Demo Mode
+
 The app automatically switches to demo mode when:
+
 - No `DATABASE_URL` is configured
 - Database connection fails
 - Deployed to preview environments
@@ -114,6 +121,7 @@ The app automatically switches to demo mode when:
 ## Build Process
 
 ### Local Build
+
 ```bash
 cd react-flagfootball-app
 npm install
@@ -121,6 +129,7 @@ npm run build
 ```
 
 ### Build Output
+
 - **Size**: ~313KB main bundle (104KB gzipped)
 - **Target**: ES2015 for broad browser support
 - **Chunks**: Optimized vendor, router, UI, and database chunks
@@ -148,6 +157,7 @@ npm run build
 ### Getting Help
 
 If deployment fails:
+
 1. Check build logs for specific errors
 2. Verify environment variables are set correctly
 3. Ensure repository has latest commits with fixes
@@ -156,12 +166,14 @@ If deployment fails:
 ## Performance Optimization
 
 ### Recommendations
+
 - **CDN**: Automatically handled by Netlify
 - **Caching**: Static assets cached for 1 year
 - **Compression**: Gzip compression enabled
 - **Image Optimization**: Consider adding image optimization service
 
 ### Monitoring
+
 - **Uptime**: Use Netlify's built-in monitoring
 - **Performance**: Consider adding analytics
 - **Errors**: Sentry integration available (set `VITE_SENTRY_DSN`)
@@ -169,16 +181,19 @@ If deployment fails:
 ## Security Considerations
 
 ### Environment Variables
+
 - Never commit `.env` files to version control
 - Use platform-specific environment variable management
 - Prefix client variables with `VITE_` only
 
 ### HTTPS
+
 - Automatically handled by Netlify
 - Custom domain SSL certificates supported
 - Force HTTPS redirects enabled
 
 ### CORS
+
 - Configure Neon database connection for your domain
 - Ensure API endpoints allow your deployment URL
 - Test database connections in production

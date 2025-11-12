@@ -2,7 +2,7 @@
 
 # 🏈 Flag Football Training App
 
-*Professional-grade training platform with advanced analytics and AI-powered insights*
+_Professional-grade training platform with advanced analytics and AI-powered insights_
 
 [![React](https://img.shields.io/badge/React-18.0+-blue.svg)](https://reactjs.org/)
 [![Vite](https://img.shields.io/badge/Vite-5.0+-purple.svg)](https://vitejs.dev/)
@@ -15,6 +15,7 @@
 The Flag Football Training App is a comprehensive training platform that combines modern web technologies with sports science to deliver personalized training experiences, advanced performance analytics, and team management tools.
 
 ### 🛠 Technology Stack
+
 - **Frontend**: React 18 + Vite + Tailwind CSS + TypeScript
 - **Backend**: Neon PostgreSQL + Drizzle ORM + Express
 - **Authentication**: JWT with React Context + React Query
@@ -30,6 +31,7 @@ The Flag Football Training App is a comprehensive training platform that combine
 ## ✨ Key Features
 
 ### 🏆 Performance Analytics
+
 - **AI-Powered Predictions**: Transformer-based models with 87.4% accuracy
 - **Evidence-Based Research**: 2024-2025 studies integrated (156 studies, 3,847 participants)
 - **Flag Football Specific**: 73% more agility focus, 10-25 yard sprint optimization
@@ -38,6 +40,7 @@ The Flag Football Training App is a comprehensive training platform that combine
 - **Interactive Visualizations**: Advanced analytics dashboard with research-backed insights
 
 ### 🥗 Nutrition Intelligence
+
 - **USDA Database Integration**: 100,000+ food nutritional profiles
 - **Precision Hydration**: 8.3% performance improvement in hot conditions
 - **Evidence-Based Supplements**: Research-backed recommendations with 12.4% improvement
@@ -45,12 +48,14 @@ The Flag Football Training App is a comprehensive training platform that combine
 - **Performance Correlation**: Nutrition impact tracking with biomarker integration
 
 ### 🤝 Team Chemistry
+
 - **Relationship Analytics**: Player interaction and chemistry scoring
 - **Communication Metrics**: Team communication effectiveness analysis
 - **Network Visualization**: Interactive team relationship mapping
 - **Performance Impact**: Chemistry correlation with team performance
 
 ### 📊 Advanced Analytics Dashboard
+
 - **Real-Time Streaming**: Ready for GPS/wearable device integration
 - **Predictive Insights**: 3-week performance forecasting with confidence intervals
 - **Flag Football Optimization**: Route running, sprint prediction, game readiness
@@ -61,11 +66,11 @@ The Flag Football Training App is a comprehensive training platform that combine
 
 <div align="center">
 
-| Frontend | Backend | Database | Analytics |
-|----------|---------|----------|-----------|
-| React 18 | Node.js | Neon PostgreSQL | AI/ML Models |
-| Vite | Express | Drizzle ORM | D3.js Visualizations |
-| Tailwind CSS | GraphQL | Redis Cache | Sports Analytics APIs |
+| Frontend     | Backend | Database        | Analytics             |
+| ------------ | ------- | --------------- | --------------------- |
+| React 18     | Node.js | Neon PostgreSQL | AI/ML Models          |
+| Vite         | Express | Drizzle ORM     | D3.js Visualizations  |
+| Tailwind CSS | GraphQL | Redis Cache     | Sports Analytics APIs |
 
 </div>
 
@@ -100,6 +105,7 @@ src/
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - Node.js 18+
 - PostgreSQL 14+ or Neon PostgreSQL
 - npm or yarn
@@ -107,32 +113,37 @@ src/
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/AJKous31/app-new-flag.git
    cd app-new-flag
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Set up environment variables**
+
    ```bash
    cp .env.example .env
    # Edit .env with your configuration
    ```
 
 4. **Set Up Database**
+
    ```bash
    # In .env file, add your Neon database connection string
-DATABASE_URL="postgresql://username:password@hostname/database?sslmode=require"
-   
+   DATABASE_URL="postgresql://username:password@hostname/database?sslmode=require"
+
    # Run database setup
    npm run db:setup
    ```
 
 5. **Start development server**
+
    ```bash
    npm run dev
    ```
@@ -144,6 +155,7 @@ DATABASE_URL="postgresql://username:password@hostname/database?sslmode=require"
 ## 📊 Advanced Features
 
 ### 🤖 AI Performance Engine
+
 - **Advanced ML Models**: Transformer, ensemble, and LSTM architectures
 - **Research-Backed Algorithms**: Integration of 2024-2025 sports science studies
 - **Flag Football Specifics**: 89% skill transfer rate, 91% sprint accuracy
@@ -152,6 +164,7 @@ DATABASE_URL="postgresql://username:password@hostname/database?sslmode=require"
 - **Model Validation**: Comprehensive A/B testing and cross-validation framework
 
 ### 📈 Data Science Components
+
 - **Evidence-Based Research**: 156 studies integrated with meta-analysis
 - **Flag Football Research**: Sport-specific metrics and optimization
 - **Predictive Modeling**: LA28 Olympics readiness tracking
@@ -160,6 +173,7 @@ DATABASE_URL="postgresql://username:password@hostname/database?sslmode=require"
 - **Model Validation**: Statistical testing with 99/100 codebase health score
 
 ### 🔒 Privacy & Compliance
+
 - **GDPR Compliant**: Full European data protection compliance (Articles 13 & 14)
 - **HIPAA-level Security**: Health data protection standards
 - **Multi-jurisdictional**: Slovenia (ZVOP-2, ZVPot-1) and Germany (BDSG, BGB) compliance
@@ -225,6 +239,7 @@ npm run db:seed:advanced # Seed advanced research database
 ## 🔐 Authentication
 
 ### Enhanced Security Features
+
 - **JWT Authentication**: Secure token-based authentication
 - **Session Management**: Automatic token refresh and validation
 - **Rate Limiting**: Protection against brute force attacks
@@ -232,15 +247,18 @@ npm run db:seed:advanced # Seed advanced research database
 - **Data Integrity**: Comprehensive backup and recovery systems
 
 ### Test Credentials
+
 - **Email**: `demo@flagfit.com`
 - **Password**: `password123`
 
 ### User Roles
+
 - **Athletes**: Access training programs and track progress
 - **Coaches**: Manage teams and assign programs
 - **Admins**: Full system administration access
 
 ### Authentication Flow
+
 1. **Login**: Email/password with JWT token generation
 2. **Token Validation**: Automatic token validation on app initialization
 3. **Session Management**: Secure token storage and renewal
@@ -249,6 +267,7 @@ npm run db:seed:advanced # Seed advanced research database
 ## 🗄️ Database
 
 ### Neon PostgreSQL Tables
+
 - `users`: User authentication and profiles
 - `training_sessions`: Training session data
 - `training_goals`: User training objectives
@@ -257,9 +276,11 @@ npm run db:seed:advanced # Seed advanced research database
 - `games`: Game statistics and history
 
 ### Migrations
+
 Database migrations are located in `/drizzle/` and managed via Drizzle ORM. Run `npm run db:migrate` to apply migrations.
 
 ### Database Testing
+
 ```bash
 npm run db:test
 ```
@@ -274,6 +295,7 @@ The application is deployment-ready with:
 - **CDN Integration**: Fast global content delivery
 
 ### Database Configuration
+
 The app uses optimized connection pooling with the `DatabaseConnectionManager` singleton:
 
 ```javascript
@@ -287,6 +309,7 @@ Set up your Neon PostgreSQL connection string in environment variables for produ
 ## 🏥 System Health & Optimization
 
 ### Performance Metrics
+
 - **Health Score**: 99/100 ⭐
 - **Memory Optimization**: 93% reduction through connection pooling
 - **Database Performance**: Optimized with singleton connection manager
@@ -294,12 +317,14 @@ Set up your Neon PostgreSQL connection string in environment variables for produ
 - **Real-time Ready**: Streaming analytics pipeline for GPS/wearable integration
 
 ### Optimization Results
+
 - **Database Connections**: Reduced from 14 individual pools to 1 singleton manager
 - **Function Consolidation**: Created `CommonFunctions.js` utility class
 - **Automated Health Monitoring**: Comprehensive system diagnostics
 - **Research Integration**: 2024-2025 sports science studies (156 studies, 3,847 participants)
 
 ### 2025 Research Integration
+
 - **Evidence-Based Training**: Latest flag football research integration
 - **Predictive Analytics**: 87.4% accuracy in performance predictions
 - **Injury Prevention**: 78% prevention rate through AI modeling

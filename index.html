@@ -1,103 +1,162 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FlagFit Pro - Welcome</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
     <!-- New Modular CSS Architecture -->
-    <link rel="stylesheet" href="./src/css/main.css">
+    <link rel="stylesheet" href="./src/css/main.css" />
     <!-- Lucide Icons - Modern icon library similar to Radix UI -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="./src/icon-helper.js"></script>
     <script src="./src/theme-switcher.js"></script>
     <style>
-        /* Page-specific styles that can't be replaced with utilities */
-        body {
-            background: var(--gradient-primary);
-            min-height: 100vh;
-        }
-        .welcome-container {
-            max-width: 600px;
-        }
-        .welcome-feature-icon {
-            width: 50px;
-        }
+      /* Page-specific styles that can't be replaced with utilities */
+      body {
+        background: var(--gradient-primary);
+        min-height: 100vh;
+      }
+      .welcome-container {
+        max-width: 600px;
+      }
+      .welcome-feature-icon {
+        width: 50px;
+      }
     </style>
-</head>
-<body class="u-display-flex u-align-center u-justify-center">
-    <div class="welcome-container u-bg-primary u-padding-48 u-radius-xl u-shadow-xl u-text-center">
-        <div class="welcome-logo u-text-display-lg u-margin-bottom-24 u-text-brand">
-            <i data-lucide="football"></i>
+  </head>
+  <body class="u-display-flex u-align-center u-justify-center">
+    <div
+      class="welcome-container u-bg-primary u-padding-48 u-radius-xl u-shadow-xl u-text-center"
+    >
+      <div
+        class="welcome-logo u-text-display-lg u-margin-bottom-24 u-text-brand"
+      >
+        <i data-lucide="football"></i>
+      </div>
+      <h1 class="u-text-display-md">Welcome to FlagFit Pro</h1>
+      <p class="u-text-body-lg">
+        The ultimate flag football training and competition platform. Track your
+        progress, join tournaments, and connect with the community.
+      </p>
+
+      <div class="welcome-features u-margin-y-48 u-text-left">
+        <div
+          class="welcome-feature u-display-flex u-align-center u-margin-y-16 u-padding-16 u-bg-secondary u-radius-lg"
+        >
+          <div
+            class="welcome-feature-icon u-text-heading-xl u-margin-right-16 u-text-brand"
+          >
+            <i data-lucide="bar-chart-3"></i>
+          </div>
+          <div class="welcome-feature-text" style="flex: 1">
+            <div
+              class="welcome-feature-title u-text-heading-sm u-text-primary u-margin-bottom-4"
+            >
+              Performance Analytics
+            </div>
+            <div class="welcome-feature-desc u-text-body-sm u-text-secondary">
+              Track your training sessions and game statistics
+            </div>
+          </div>
         </div>
-        <h1 class="u-text-display-md">Welcome to FlagFit Pro</h1>
-        <p class="u-text-body-lg">The ultimate flag football training and competition platform. Track your progress, join tournaments, and connect with the community.</p>
-        
-        <div class="welcome-features u-margin-y-48 u-text-left">
-            <div class="welcome-feature u-display-flex u-align-center u-margin-y-16 u-padding-16 u-bg-secondary u-radius-lg">
-                <div class="welcome-feature-icon u-text-heading-xl u-margin-right-16 u-text-brand">
-                    <i data-lucide="bar-chart-3"></i>
-                </div>
-                <div class="welcome-feature-text" style="flex: 1;">
-                    <div class="welcome-feature-title u-text-heading-sm u-text-primary u-margin-bottom-4">Performance Analytics</div>
-                    <div class="welcome-feature-desc u-text-body-sm u-text-secondary">Track your training sessions and game statistics</div>
-                </div>
+        <div
+          class="welcome-feature u-display-flex u-align-center u-margin-y-16 u-padding-16 u-bg-secondary u-radius-lg"
+        >
+          <div
+            class="welcome-feature-icon u-text-heading-xl u-margin-right-16 u-text-brand"
+          >
+            <i data-lucide="trophy"></i>
+          </div>
+          <div class="welcome-feature-text" style="flex: 1">
+            <div
+              class="welcome-feature-title u-text-heading-sm u-text-primary u-margin-bottom-4"
+            >
+              Tournament System
             </div>
-            <div class="welcome-feature u-display-flex u-align-center u-margin-y-16 u-padding-16 u-bg-secondary u-radius-lg">
-                <div class="welcome-feature-icon u-text-heading-xl u-margin-right-16 u-text-brand">
-                    <i data-lucide="trophy"></i>
-                </div>
-                <div class="welcome-feature-text" style="flex: 1;">
-                    <div class="welcome-feature-title u-text-heading-sm u-text-primary u-margin-bottom-4">Tournament System</div>
-                    <div class="welcome-feature-desc u-text-body-sm u-text-secondary">Join competitions and climb the leaderboards</div>
-                </div>
+            <div class="welcome-feature-desc u-text-body-sm u-text-secondary">
+              Join competitions and climb the leaderboards
             </div>
-            <div class="welcome-feature u-display-flex u-align-center u-margin-y-16 u-padding-16 u-bg-secondary u-radius-lg">
-                <div class="welcome-feature-icon u-text-heading-xl u-margin-right-16 u-text-brand">
-                    <i data-lucide="users"></i>
-                </div>
-                <div class="welcome-feature-text" style="flex: 1;">
-                    <div class="welcome-feature-title u-text-heading-sm u-text-primary u-margin-bottom-4">Community Hub</div>
-                    <div class="welcome-feature-desc u-text-body-sm u-text-secondary">Connect with players, coaches, and teams</div>
-                </div>
-            </div>
-            <div class="welcome-feature u-display-flex u-align-center u-margin-y-16 u-padding-16 u-bg-secondary u-radius-lg">
-                <div class="welcome-feature-icon u-text-heading-xl u-margin-right-16 u-text-brand">
-                    <i data-lucide="zap"></i>
-                </div>
-                <div class="welcome-feature-text" style="flex: 1;">
-                    <div class="welcome-feature-title u-text-heading-sm u-text-primary u-margin-bottom-4">Training Programs</div>
-                    <div class="welcome-feature-desc u-text-body-sm u-text-secondary">Structured workouts and skill development</div>
-                </div>
-            </div>
+          </div>
         </div>
-        
-        <div id="loadingText" style="display: none;" class="u-text-brand u-font-weight-500">Checking authentication...</div>
-        
-        <div id="actionButtons" class="welcome-actions u-display-flex u-gap-16 u-justify-center u-flex-wrap">
-            <a href="/login.html" class="btn btn-secondary btn-lg">
-                <i data-lucide="log-in"></i>
-                Sign In
-            </a>
-            <a href="/register.html" class="btn btn-primary btn-lg">
-                <i data-lucide="user-plus"></i>
-                Create Account
-            </a>
+        <div
+          class="welcome-feature u-display-flex u-align-center u-margin-y-16 u-padding-16 u-bg-secondary u-radius-lg"
+        >
+          <div
+            class="welcome-feature-icon u-text-heading-xl u-margin-right-16 u-text-brand"
+          >
+            <i data-lucide="users"></i>
+          </div>
+          <div class="welcome-feature-text" style="flex: 1">
+            <div
+              class="welcome-feature-title u-text-heading-sm u-text-primary u-margin-bottom-4"
+            >
+              Community Hub
+            </div>
+            <div class="welcome-feature-desc u-text-body-sm u-text-secondary">
+              Connect with players, coaches, and teams
+            </div>
+          </div>
         </div>
+        <div
+          class="welcome-feature u-display-flex u-align-center u-margin-y-16 u-padding-16 u-bg-secondary u-radius-lg"
+        >
+          <div
+            class="welcome-feature-icon u-text-heading-xl u-margin-right-16 u-text-brand"
+          >
+            <i data-lucide="zap"></i>
+          </div>
+          <div class="welcome-feature-text" style="flex: 1">
+            <div
+              class="welcome-feature-title u-text-heading-sm u-text-primary u-margin-bottom-4"
+            >
+              Training Programs
+            </div>
+            <div class="welcome-feature-desc u-text-body-sm u-text-secondary">
+              Structured workouts and skill development
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        id="loadingText"
+        style="display: none"
+        class="u-text-brand u-font-weight-500"
+      >
+        Checking authentication...
+      </div>
+
+      <div
+        id="actionButtons"
+        class="welcome-actions u-display-flex u-gap-16 u-justify-center u-flex-wrap"
+      >
+        <a href="/login.html" class="btn btn-secondary btn-lg">
+          <i data-lucide="log-in"></i>
+          Sign In
+        </a>
+        <a href="/register.html" class="btn btn-primary btn-lg">
+          <i data-lucide="user-plus"></i>
+          Create Account
+        </a>
+      </div>
     </div>
 
     <script type="module">
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize Lucide icons
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
-            // Skip authentication check and show login buttons immediately
-            document.getElementById('loadingText').style.display = 'none';
-            document.getElementById('actionButtons').style.display = 'block';
-        });
+      document.addEventListener("DOMContentLoaded", function () {
+        // Initialize Lucide icons
+        if (typeof lucide !== "undefined") {
+          lucide.createIcons();
+        }
+        // Skip authentication check and show login buttons immediately
+        document.getElementById("loadingText").style.display = "none";
+        document.getElementById("actionButtons").style.display = "block";
+      });
     </script>
-</body>
+  </body>
 </html>

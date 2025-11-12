@@ -22,13 +22,13 @@
           "description": "Convert package names to Context7-compatible IDs for sports science libraries"
         },
         {
-          "name": "get-library-docs", 
+          "name": "get-library-docs",
           "description": "Retrieve documentation for sports science, nutrition, and training libraries"
         }
       ]
     },
     "sequential-thought": {
-      "type": "stdio", 
+      "type": "stdio",
       "command": "npx",
       "args": ["-y", "@sequential-thought/mcp-server"],
       "env": {
@@ -58,7 +58,7 @@
     "framework": "react-vite",
     "aiFeatures": [
       "coaching-recommendations",
-      "nutrition-analysis", 
+      "nutrition-analysis",
       "injury-risk-assessment",
       "performance-prediction",
       "recovery-optimization"

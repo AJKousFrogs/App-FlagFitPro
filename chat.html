@@ -1,766 +1,1017 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FlagFit Pro - Team Chat</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Roboto:wght@300;400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
     <!-- New Modular CSS Architecture -->
-    <link rel="stylesheet" href="./src/css/main.css">
+    <link rel="stylesheet" href="./src/css/main.css" />
     <!-- Lucide Icons - Modern icon library similar to Radix UI -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="./src/icon-helper.js"></script>
     <script src="./src/theme-switcher.js"></script>
     <script src="./src/nav-highlight.js"></script>
+    <script src="./src/components/organisms/top-bar/top-bar.js"></script>
     <style>
-        /* Modern Sidebar - Enhanced Design (matching dashboard.html) */
+      /* Modern Sidebar - Enhanced Design (matching dashboard.html) */
+      .sidebar {
+        width: 250px;
+        height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 24px;
+        z-index: var(--z-index-dropdown, 1000);
+        gap: 12px;
+        transition: all 0.2s ease;
+      }
+
+      /* Dark Theme Sidebar */
+      body[data-theme="dark"] .sidebar,
+      html[data-theme="dark"] .sidebar {
+        background: #1a1a1a;
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow:
+          4px 0 24px rgba(0, 0, 0, 0.3),
+          inset -1px 0 0 rgba(255, 255, 255, 0.05);
+      }
+
+      /* Light Theme Sidebar */
+      body[data-theme="light"] .sidebar,
+      html[data-theme="light"] .sidebar {
+        background: #ffffff;
+        border-right: 1px solid rgba(0, 0, 0, 0.08);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      }
+
+      .sidebar-logo {
+        width: 48px;
+        height: 48px;
+        border-radius: 16px;
+        background: linear-gradient(
+          135deg,
+          #10c96b 0%,
+          #0ab85a 50%,
+          #089949 100%
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        margin-bottom: 8px;
+        box-shadow:
+          0 4px 16px rgba(16, 201, 107, 0.35),
+          0 2px 8px rgba(16, 201, 107, 0.25),
+          inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      }
+
+      .sidebar-logo:hover {
+        transform: scale(1.08) rotate(5deg);
+        box-shadow:
+          0 8px 24px rgba(16, 201, 107, 0.45),
+          0 4px 12px rgba(16, 201, 107, 0.3),
+          inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      }
+
+      .nav-section {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        border-radius: 12px;
+        color: var(--color-text-secondary);
+        text-decoration: none;
+        transition: all 0.3s ease;
+        position: relative;
+        width: 100%;
+        justify-content: flex-start;
+        min-height: 48px;
+      }
+
+      .nav-item::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 3px;
+        height: 0;
+        background: var(--primitive-primary-500);
+        border-radius: 0 2px 2px 0;
+        transition: height 0.3s ease;
+      }
+
+      .nav-item:hover {
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--color-text-primary);
+        transform: translateX(4px);
+      }
+
+      .nav-item:hover::before {
+        height: 60%;
+      }
+
+      .nav-item.active {
+        background: rgba(16, 201, 107, 0.1);
+        color: var(--primitive-primary-500);
+      }
+
+      .nav-item.active::before {
+        height: 80%;
+        background: var(--primitive-primary-500);
+      }
+
+      .nav-item.active .nav-item-icon {
+        background: rgba(16, 201, 107, 0.15);
+        color: var(--primitive-primary-500);
+      }
+
+      .nav-item-icon {
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        transition: all 0.3s ease;
+      }
+
+      .nav-item-label {
+        opacity: 1;
+        transform: translateX(0);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        white-space: nowrap;
+        font-weight: var(--font-weight-medium, 500);
+        font-size: var(--text-sm);
+      }
+
+      body[data-theme="dark"] .nav-item,
+      html[data-theme="dark"] .nav-item {
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      body[data-theme="dark"] .nav-item:hover,
+      html[data-theme="dark"] .nav-item:hover {
+        background: rgba(255, 255, 255, 0.08);
+        color: rgba(255, 255, 255, 0.9);
+      }
+
+      body[data-theme="dark"] .nav-item.active,
+      html[data-theme="dark"] .nav-item.active {
+        background: rgba(16, 201, 107, 0.15);
+        color: var(--primitive-primary-500);
+      }
+
+      body[data-theme="light"] .nav-item,
+      html[data-theme="light"] .nav-item {
+        color: rgba(0, 0, 0, 0.6);
+      }
+
+      body[data-theme="light"] .nav-item:hover,
+      html[data-theme="light"] .nav-item:hover {
+        background: rgba(0, 0, 0, 0.05);
+        color: rgba(0, 0, 0, 0.9);
+      }
+
+      body[data-theme="light"] .nav-item.active,
+      html[data-theme="light"] .nav-item.active {
+        background: rgba(16, 201, 107, 0.1);
+        color: var(--primitive-primary-500);
+      }
+
+      /* Page-specific styles that can't be replaced with utilities */
+      .main-content {
+        margin-left: 250px;
+        width: calc(100% - 250px); /* ✅ Use width instead of max-width */
+        padding: var(--spacing-layout-md, 32px) var(--spacing-layout-lg, 40px);
+        box-sizing: border-box;
+      }
+
+      /* Top Bar styles are now in src/css/components/header.css */
+
+      @media (max-width: 1024px) {
         .sidebar {
-            width: 250px;
-            height: 100vh;
-            position: fixed;
-            left: 0;
-            top: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            padding: 24px;
-            z-index: var(--z-index-dropdown, 1000);
-            gap: 12px;
-            transition: all 0.2s ease;
+          position: fixed;
+          transform: translateX(-100%);
+          transition: transform 0.3s ease;
+          z-index: var(--z-index-modal, 1400);
         }
-        
-        /* Dark Theme Sidebar */
-        body[data-theme="dark"] .sidebar,
-        html[data-theme="dark"] .sidebar {
-            background: #1a1a1a;
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 
-                4px 0 24px rgba(0, 0, 0, 0.3),
-                inset -1px 0 0 rgba(255, 255, 255, 0.05);
-        }
-        
-        /* Light Theme Sidebar */
-        body[data-theme="light"] .sidebar,
-        html[data-theme="light"] .sidebar {
-            background: #ffffff;
-            border-right: 1px solid rgba(0, 0, 0, 0.08);
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-        }
-        
-        .sidebar-logo {
-            width: 48px;
-            height: 48px;
-            border-radius: 16px;
-            background: linear-gradient(135deg, #10c96b 0%, #0ab85a 50%, #089949 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            margin-bottom: 8px;
-            box-shadow: 
-                0 4px 16px rgba(16, 201, 107, 0.35),
-                0 2px 8px rgba(16, 201, 107, 0.25),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
-        }
-        
-        .sidebar-logo:hover {
-            transform: scale(1.08) rotate(5deg);
-            box-shadow: 
-                0 8px 24px rgba(16, 201, 107, 0.45),
-                0 4px 12px rgba(16, 201, 107, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.3);
-        }
-        
-        .nav-section {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-bottom: 8px;
-        }
-        
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            border-radius: 12px;
-            color: var(--color-text-secondary);
-            text-decoration: none;
-            transition: all 0.3s ease;
-            position: relative;
-            width: 100%;
-            justify-content: flex-start;
-            min-height: 48px;
-        }
-        
-        .nav-item::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 3px;
-            height: 0;
-            background: var(--primitive-primary-500);
-            border-radius: 0 2px 2px 0;
-            transition: height 0.3s ease;
-        }
-        
-        .nav-item:hover {
-            background: rgba(255, 255, 255, 0.08);
-            color: var(--color-text-primary);
-            transform: translateX(4px);
-        }
-        
-        .nav-item:hover::before {
-            height: 60%;
-        }
-        
-        .nav-item.active {
-            background: rgba(16, 201, 107, 0.1);
-            color: var(--primitive-primary-500);
-        }
-        
-        .nav-item.active::before {
-            height: 80%;
-            background: var(--primitive-primary-500);
-        }
-        
-        .nav-item.active .nav-item-icon {
-            background: rgba(16, 201, 107, 0.15);
-            color: var(--primitive-primary-500);
-        }
-        
-        .nav-item-icon {
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            transition: all 0.3s ease;
-        }
-        
-        .nav-item-label {
-            opacity: 1;
-            transform: translateX(0);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            white-space: nowrap;
-            font-weight: 500;
-            font-size: var(--text-sm);
-        }
-        
-        body[data-theme="dark"] .nav-item,
-        html[data-theme="dark"] .nav-item {
-            color: rgba(255, 255, 255, 0.7);
-        }
-        
-        body[data-theme="dark"] .nav-item:hover,
-        html[data-theme="dark"] .nav-item:hover {
-            background: rgba(255, 255, 255, 0.08);
-            color: rgba(255, 255, 255, 0.9);
-        }
-        
-        body[data-theme="dark"] .nav-item.active,
-        html[data-theme="dark"] .nav-item.active {
-            background: rgba(16, 201, 107, 0.15);
-            color: var(--primitive-primary-500);
-        }
-        
-        body[data-theme="light"] .nav-item,
-        html[data-theme="light"] .nav-item {
-            color: rgba(0, 0, 0, 0.6);
-        }
-        
-        body[data-theme="light"] .nav-item:hover,
-        html[data-theme="light"] .nav-item:hover {
-            background: rgba(0, 0, 0, 0.05);
-            color: rgba(0, 0, 0, 0.9);
-        }
-        
-        body[data-theme="light"] .nav-item.active,
-        html[data-theme="light"] .nav-item.active {
-            background: rgba(16, 201, 107, 0.1);
-            color: var(--primitive-primary-500);
+
+        .sidebar.open {
+          transform: translateX(0);
         }
 
         .main-content {
-            margin-left: 250px;
-            flex: 1;
-            min-width: 0;
-            max-width: calc(100vw - 250px);
-            overflow-x: hidden;
-            overflow-y: auto;
-            padding: var(--spacing-component-lg);
-            background: var(--dark-bg-primary);
+          margin-left: 0;
+          width: 100%; /* ✅ Full width on mobile */
+          padding: var(--spacing-layout-xs, 20px) var(--spacing-component-lg, 24px);
         }
-        
-        @media (max-width: 1024px) {
-            .sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-            }
-
-            .sidebar.open {
-                transform: translateX(0);
-            }
-
-            .main-content {
-                margin-left: 0;
-                max-width: 100vw;
-            }
+      }
+      
+      @media (max-width: 480px) {
+        .main-content {
+          padding: var(--spacing-layout-xs, 16px) var(--spacing-component-md, 16px);
         }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="dashboard-container">
-        <!-- Unified Sidebar Navigation -->
-        <div class="sidebar">
-            <div class="sidebar-logo" onclick="window.location.href='/dashboard.html'" title="FlagFit Pro">
-                <i data-lucide="activity" style="width: 20px; height: 20px; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
-            </div>
-            
-            <nav class="nav-section" aria-label="Dashboard navigation">
-                <a href="/dashboard.html" class="nav-item" aria-label="Dashboard Overview" id="nav-dashboard">
-                    <span class="nav-item-icon">
-                        <i data-lucide="layout-dashboard" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Overview</span>
-                </a>
-                <a href="/analytics.html" class="nav-item" aria-label="Analytics" id="nav-analytics">
-                    <span class="nav-item-icon">
-                        <i data-lucide="bar-chart-3" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Analytics</span>
-                </a>
-            </nav>
-            
-            <nav class="nav-section" aria-label="Team navigation">
-                <a href="/roster.html" class="nav-item" aria-label="Team Roster" id="nav-roster">
-                    <span class="nav-item-icon">
-                        <i data-lucide="users" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Roster</span>
-                </a>
-                <a href="/training.html" class="nav-item" aria-label="Training" id="nav-training">
-                    <span class="nav-item-icon">
-                        <i data-lucide="zap" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Training</span>
-                </a>
-                <a href="/tournaments.html" class="nav-item" aria-label="Tournaments" id="nav-tournaments">
-                    <span class="nav-item-icon">
-                        <i data-lucide="trophy" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Tournaments</span>
-                </a>
-            </nav>
-            
-            <nav class="nav-section" aria-label="Community navigation">
-                <a href="/community.html" class="nav-item" aria-label="Community" id="nav-community">
-                    <span class="nav-item-icon">
-                        <i data-lucide="message-circle" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Community</span>
-                </a>
-                <a href="/chat.html" class="nav-item active" aria-label="Chat" id="nav-chat">
-                    <span class="nav-item-icon">
-                        <i data-lucide="message-square" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Chat</span>
-                </a>
-            </nav>
-            
-            <nav class="nav-section" aria-label="Personal navigation">
-                <a href="/settings.html" class="nav-item" aria-label="Settings" id="nav-settings">
-                    <span class="nav-item-icon">
-                        <i data-lucide="settings" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Settings</span>
-                </a>
-                <a href="/profile.html" class="nav-item" aria-label="Profile" id="nav-profile">
-                    <span class="nav-item-icon">
-                        <i data-lucide="user" style="width: 24px; height: 24px;"></i>
-                    </span>
-                    <span class="nav-item-label">Profile</span>
-                </a>
-            </nav>
+      <!-- Mobile Overlay/Scrim (for closing sidebar on mobile) -->
+      <div class="menu-scrim" aria-hidden="true" onclick="closeMenu()"></div>
+      
+      <!-- Unified Sidebar Navigation -->
+      <div class="sidebar">
+        <div
+          class="sidebar-logo"
+          onclick="window.location.href='/dashboard.html'"
+          title="FlagFit Pro"
+        >
+          <i
+            data-lucide="activity"
+            style="
+              width: 20px;
+              height: 20px;
+              color: var(--icon-color-primary);
+              stroke: var(--icon-color-primary);
+            "
+          ></i>
         </div>
 
-<!-- Top Bar -->
-            <div class="top-bar">
-                <div class="header-left">
-                    <div class="search-box">
-                        <span class="search-icon"><i data-lucide="search" style="width: 16px;  height: 16px; ; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span>
-                        <input type="text" id="global-search" class="search-input" placeholder="Search for players, teams & more" oninput="if(typeof performGlobalSearch === 'function') performGlobalSearch(this.value)">
-                        <div id="search-results" class="search-results" style="display: none;"></div>
-                    </div>
-                </div>
-                
-                <div class="header-right">
-                    <div style="position: relative;">
-                        <div id="notification-bell" class="header-icon" onclick="if(typeof toggleNotifications === 'function') toggleNotifications()">
-                            <i data-lucide="bell" style="width: 18px;  height: 18px ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
-                        </div>
-                        <div id="notification-badge" style="position: absolute; top: -4px; right: -4px; width: 20px; height: 20px; background: var(--error-500); color: var(--dark-text-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; border: 2px solid var(--dark-bg-secondary); display: none;">3</div>
-                    </div>
-                    <div class="header-icon">
-                        <i data-lucide="settings" style="width: 18px;  height: 18px; ; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
-                    </div>
-                    
-                    <div class="theme-toggle-container">
-                        <label class="theme-toggle-label">
-                            <input type="checkbox" id="theme-toggle" class="theme-toggle-input" checked>
-                            <span class="theme-toggle-slider"></span>
-                            <span class="theme-toggle-text">Dark</span>
-                        </label>
-                    </div>
-                    <div class="user-menu">
-                        <div class="user-avatar" id="user-avatar">U</div>
-                    </div>
-                </div>
-            </div>
+        <nav class="nav-section" aria-label="Dashboard navigation">
+          <a
+            href="/dashboard.html"
+            class="nav-item"
+            aria-label="Dashboard Overview"
+            id="nav-dashboard"
+          >
+            <span class="nav-item-icon">
+              <i
+                data-lucide="layout-dashboard"
+                style="width: 24px; height: 24px"
+              ></i>
+            </span>
+            <span class="nav-item-label">Overview</span>
+          </a>
+          <a
+            href="/analytics.html"
+            class="nav-item"
+            aria-label="Analytics"
+            id="nav-analytics"
+          >
+            <span class="nav-item-icon">
+              <i
+                data-lucide="bar-chart-3"
+                style="width: 24px; height: 24px"
+              ></i>
+            </span>
+            <span class="nav-item-label">Analytics</span>
+          </a>
+        </nav>
 
-<main class="main-content">
-            <header class="chat-header">
-                <div>
-                    <h1 class="chat-title"># <span id="currentChannelName">team-general</span></h1>
-                    <p class="chat-subtitle"><span id="channelMembers">24</span> members • <span id="onlineMembers">8</span> online</p>
-                </div>
-                <div class="chat-actions">
-                    <button class="chat-action-btn">📞</button>
-                    <button class="chat-action-btn">📹</button>
-                    <button class="chat-action-btn"><i data-lucide="settings" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></button>
-                </div>
-            </header>
+        <nav class="nav-section" aria-label="Team navigation">
+          <a
+            href="/roster.html"
+            class="nav-item"
+            aria-label="Team Roster"
+            id="nav-roster"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="users" style="width: 24px; height: 24px"></i>
+            </span>
+            <span class="nav-item-label">Roster</span>
+          </a>
+          <a
+            href="/training.html"
+            class="nav-item"
+            aria-label="Training"
+            id="nav-training"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="zap" style="width: 24px; height: 24px"></i>
+            </span>
+            <span class="nav-item-label">Training</span>
+          </a>
+          <a
+            href="/tournaments.html"
+            class="nav-item"
+            aria-label="Tournaments"
+            id="nav-tournaments"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="trophy" style="width: 24px; height: 24px"></i>
+            </span>
+            <span class="nav-item-label">Tournaments</span>
+          </a>
+        </nav>
+
+        <nav class="nav-section" aria-label="Community navigation">
+          <a
+            href="/community.html"
+            class="nav-item"
+            aria-label="Community"
+            id="nav-community"
+          >
+            <span class="nav-item-icon">
+              <i
+                data-lucide="message-circle"
+                style="width: 24px; height: 24px"
+              ></i>
+            </span>
+            <span class="nav-item-label">Community</span>
+          </a>
+          <a
+            href="/chat.html"
+            class="nav-item active"
+            aria-label="Chat"
+            id="nav-chat"
+          >
+            <span class="nav-item-icon">
+              <i
+                data-lucide="message-square"
+                style="width: 24px; height: 24px"
+              ></i>
+            </span>
+            <span class="nav-item-label">Chat</span>
+          </a>
+        </nav>
+
+        <nav class="nav-section" aria-label="Personal navigation">
+          <a
+            href="/settings.html"
+            class="nav-item"
+            aria-label="Settings"
+            id="nav-settings"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="settings" style="width: 24px; height: 24px"></i>
+            </span>
+            <span class="nav-item-label">Settings</span>
+          </a>
+          <a
+            href="/profile.html"
+            class="nav-item"
+            aria-label="Profile"
+            id="nav-profile"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="user" style="width: 24px; height: 24px"></i>
+            </span>
+            <span class="nav-item-label">Profile</span>
+          </a>
+        </nav>
+      </div>
+
+      <!-- Top Bar -->
+      <div class="top-bar" role="banner">
+        <div class="header-left">
+          <!-- Global Search (combobox pattern) -->
+          <div class="search-box">
+            <label for="global-search" class="sr-only"
+              >Search for players, teams and more</label
+            >
+            <span class="search-icon" aria-hidden="true">
+              <i data-lucide="search" class="icon-16"></i>
+            </span>
+
+            <input
+              id="global-search"
+              class="search-input"
+              type="text"
+              placeholder="Search for players, teams & more"
+              role="combobox"
+              aria-autocomplete="list"
+              aria-haspopup="listbox"
+              aria-expanded="false"
+              aria-owns="search-results"
+              aria-controls="search-results"
+              aria-activedescendant=""
+              autocomplete="off"
+              inputmode="search"
+            />
+
+            <div id="search-status" class="sr-only" aria-live="polite"></div>
+
+            <div
+              id="search-results"
+              class="search-results"
+              role="listbox"
+              hidden
+            ></div>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <!-- Notifications -->
+          <div class="header-icon-wrap">
+            <button
+              id="notification-bell"
+              class="header-icon"
+              type="button"
+              aria-label="Notifications"
+              aria-controls="notification-panel"
+              aria-expanded="false"
+            >
+              <i data-lucide="bell" class="icon-18"></i>
+              <span id="notification-badge" class="badge" hidden>3</span>
+            </button>
+            <span
+              id="notification-live"
+              class="sr-only"
+              aria-live="polite"
+            ></span>
+          </div>
+
+          <!-- Settings -->
+          <button class="header-icon" type="button" aria-label="Settings">
+            <i data-lucide="settings" class="icon-18"></i>
+          </button>
+
+          <!-- Theme Toggle -->
+          <div class="theme-toggle-container" aria-label="Theme toggle">
+            <!-- JS inserts switch; fallback below -->
+            <button
+              class="theme-toggle-fallback"
+              type="button"
+              data-theme-toggle
+              hidden
+            >
+              Theme
+            </button>
+          </div>
+
+          <!-- User Menu -->
+          <button
+            id="user-menu-button"
+            class="user-menu"
+            type="button"
+            aria-label="User menu"
+            aria-haspopup="menu"
+            aria-controls="user-menu"
+            aria-expanded="false"
+          >
+            <div class="user-avatar" id="user-avatar" aria-hidden="true">U</div>
+          </button>
+        </div>
+      </div>
+
+      <main
+        class="main-content u-flex-1 u-min-width-0 u-overflow-x-hidden u-overflow-y-auto u-padding-24 u-bg-primary"
+      >
+        <header
+          class="chat-header u-bg-primary u-padding-20 u-padding-x-30 u-radius-md u-shadow-sm u-margin-bottom-30 u-display-flex u-justify-between u-align-center"
+        >
+          <div>
+            <h1
+              class="chat-title u-text-heading-lg u-font-weight-600 u-text-primary"
+            >
+              # <span id="currentChannelName">team-general</span>
+            </h1>
+            <p class="chat-subtitle u-text-body-sm u-text-secondary">
+              <span id="channelMembers">24</span> members •
+              <span id="onlineMembers">8</span> online
+            </p>
+          </div>
+          <div class="chat-actions u-display-flex u-gap-8">
+            <button class="chat-action-btn">📞</button>
+            <button class="chat-action-btn">📹</button>
+            <button class="chat-action-btn">
+              <i
+                data-lucide="settings"
+                style="
+                  width: 16px;
+                  height: 16px;
+                  display: inline-block;
+                  vertical-align: middle;
+                  color: var(--icon-color-primary);
+                  stroke: var(--icon-color-primary);
+                "
+              ></i>
+            </button>
+          </div>
+        </header>
 
         <div class="chat-container">
-            <aside class="channels-sidebar">
-                <div class="channels-header">
-                    <input type="text" class="channel-search" placeholder="Search channels..." id="channelSearch">
-                </div>
-                
-                <div class="channels-list" id="channelsList">
-                    <div class="channel-category">Team Channels</div>
-                    <div class="channel-item active" data-channel="team-general">
-                        <span class="channel-icon">#</span>
-                        <div class="channel-info">
-                            <div class="channel-name">team-general</div>
-                            <div class="channel-preview">Let's crush tomorrow's game!</div>
-                        </div>
-                    </div>
-                    
-                    <div class="channel-item" data-channel="strategy">
-                        <span class="channel-icon">#</span>
-                        <div class="channel-info">
-                            <div class="channel-name">strategy</div>
-                            <div class="channel-preview">New play formations</div>
-                        </div>
-                        <span class="unread-count">3</span>
-                    </div>
-                    
-                    <div class="channel-item" data-channel="training">
-                        <span class="channel-icon">#</span>
-                        <div class="channel-info">
-                            <div class="channel-name">training</div>
-                            <div class="channel-preview">Tomorrow's session at 8am</div>
-                        </div>
-                    </div>
-                    
-                    <div class="channel-category">Direct Messages</div>
-                    <div class="channel-item" data-channel="coach-mike">
-                        <span class="channel-icon">👨‍💼</span>
-                        <div class="channel-info">
-                            <div class="channel-name">Coach Mike</div>
-                            <div class="channel-preview">Great job on training today</div>
-                        </div>
-                        <div class="online-status"></div>
-                    </div>
-                    
-                    <div class="channel-item" data-channel="sarah-captain">
-                        <span class="channel-icon">👩‍💼</span>
-                        <div class="channel-info">
-                            <div class="channel-name">Sarah (Captain)</div>
-                            <div class="channel-preview">Team meeting tomorrow?</div>
-                        </div>
-                        <span class="unread-count">1</span>
-                    </div>
-                </div>
-            </aside>
-
-            <div class="chat-area">
-                <div class="messages-container" id="messagesContainer" role="log" aria-live="polite" aria-label="Chat messages">
-                    <div class="message">
-                        <div class="message-avatar">CM</div>
-                        <div class="message-content">
-                            <div class="message-header">
-                                <span class="message-author">Coach Mike</span>
-                                <span class="message-time">Today at 2:30 PM</span>
-                            </div>
-                            <div class="message-text">Great training session everyone! I saw some real improvements in our passing accuracy. Keep up the excellent work! <i data-lucide="football" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></div>
-                        </div>
-                    </div>
-
-                    <div class="message">
-                        <div class="message-avatar">SC</div>
-                        <div class="message-content">
-                            <div class="message-header">
-                                <span class="message-author">Sarah (Captain)</span>
-                                <span class="message-time">Today at 2:45 PM</span>
-                            </div>
-                            <div class="message-text">Thanks coach! I think we're really starting to gel as a team. Tomorrow's game is going to be awesome!</div>
-                        </div>
-                    </div>
-
-                    <div class="message">
-                        <div class="message-avatar">JD</div>
-                        <div class="message-content">
-                            <div class="message-header">
-                                <span class="message-author">Jake Davis</span>
-                                <span class="message-time">Today at 3:00 PM</span>
-                            </div>
-                            <div class="message-text">Anyone up for some extra practice tonight? I want to work on my route running.</div>
-                        </div>
-                    </div>
-
-                    <div class="message own">
-                        <div class="message-avatar">ME</div>
-                        <div class="message-content">
-                            <div class="message-header">
-                                <span class="message-author">You</span>
-                                <span class="message-time">Today at 3:15 PM</span>
-                            </div>
-                            <div class="message-text">I'm in! Let's meet at the field around 6 PM?</div>
-                        </div>
-                    </div>
-
-                    <div class="message">
-                        <div class="message-avatar">AL</div>
-                        <div class="message-content">
-                            <div class="message-header">
-                                <span class="message-author">Alex Lopez</span>
-                                <span class="message-time">Today at 3:20 PM</span>
-                            </div>
-                            <div class="message-text">Count me in too! Should we bring some cones for drills?</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="typing-indicator" id="typingIndicator">
-                    <span>Sarah is typing</span>
-                    <div class="typing-dots">
-                        <div class="typing-dot"></div>
-                        <div class="typing-dot"></div>
-                        <div class="typing-dot"></div>
-                    </div>
-                </div>
-
-                <div class="message-input-container">
-                    <div class="message-input-wrapper">
-                        <textarea 
-                            id="messageInput" 
-                            class="message-input" 
-                            placeholder="Type your message..." 
-                            rows="1"
-                            aria-label="Message input"
-                            aria-describedby="messageInputHelp"
-                        ></textarea>
-                        <div id="messageInputHelp" class="sr-only">
-                            Press Enter to send, Shift+Enter for new line
-                        </div>
-                        <button class="send-btn" id="sendBtn" disabled aria-label="Send message">
-                            <span aria-hidden="true">➤</span>
-                        </button>
-                    </div>
-                </div>
+          <aside class="channels-sidebar">
+            <div class="channels-header">
+              <input
+                type="text"
+                class="channel-search"
+                placeholder="Search channels..."
+                id="channelSearch"
+              />
             </div>
+
+            <div class="channels-list" id="channelsList">
+              <div class="channel-category">Team Channels</div>
+              <div class="channel-item active" data-channel="team-general">
+                <span class="channel-icon">#</span>
+                <div class="channel-info">
+                  <div class="channel-name">team-general</div>
+                  <div class="channel-preview">
+                    Let's crush tomorrow's game!
+                  </div>
+                </div>
+              </div>
+
+              <div class="channel-item" data-channel="strategy">
+                <span class="channel-icon">#</span>
+                <div class="channel-info">
+                  <div class="channel-name">strategy</div>
+                  <div class="channel-preview">New play formations</div>
+                </div>
+                <span class="unread-count">3</span>
+              </div>
+
+              <div class="channel-item" data-channel="training">
+                <span class="channel-icon">#</span>
+                <div class="channel-info">
+                  <div class="channel-name">training</div>
+                  <div class="channel-preview">Tomorrow's session at 8am</div>
+                </div>
+              </div>
+
+              <div class="channel-category">Direct Messages</div>
+              <div class="channel-item" data-channel="coach-mike">
+                <span class="channel-icon">👨‍💼</span>
+                <div class="channel-info">
+                  <div class="channel-name">Coach Mike</div>
+                  <div class="channel-preview">Great job on training today</div>
+                </div>
+                <div class="online-status"></div>
+              </div>
+
+              <div class="channel-item" data-channel="sarah-captain">
+                <span class="channel-icon">👩‍💼</span>
+                <div class="channel-info">
+                  <div class="channel-name">Sarah (Captain)</div>
+                  <div class="channel-preview">Team meeting tomorrow?</div>
+                </div>
+                <span class="unread-count">1</span>
+              </div>
+            </div>
+          </aside>
+
+          <div class="chat-area">
+            <div
+              class="messages-container"
+              id="messagesContainer"
+              role="log"
+              aria-live="polite"
+              aria-label="Chat messages"
+            >
+              <div class="message">
+                <div class="message-avatar">CM</div>
+                <div class="message-content">
+                  <div class="message-header">
+                    <span class="message-author">Coach Mike</span>
+                    <span class="message-time">Today at 2:30 PM</span>
+                  </div>
+                  <div class="message-text">
+                    Great training session everyone! I saw some real
+                    improvements in our passing accuracy. Keep up the excellent
+                    work!
+                    <i
+                      data-lucide="football"
+                      style="
+                        width: 16px;
+                        height: 16px;
+                        display: inline-block;
+                        vertical-align: middle;
+                        color: var(--icon-color-primary);
+                        stroke: var(--icon-color-primary);
+                      "
+                    ></i>
+                  </div>
+                </div>
+              </div>
+
+              <div class="message">
+                <div class="message-avatar">SC</div>
+                <div class="message-content">
+                  <div class="message-header">
+                    <span class="message-author">Sarah (Captain)</span>
+                    <span class="message-time">Today at 2:45 PM</span>
+                  </div>
+                  <div class="message-text">
+                    Thanks coach! I think we're really starting to gel as a
+                    team. Tomorrow's game is going to be awesome!
+                  </div>
+                </div>
+              </div>
+
+              <div class="message">
+                <div class="message-avatar">JD</div>
+                <div class="message-content">
+                  <div class="message-header">
+                    <span class="message-author">Jake Davis</span>
+                    <span class="message-time">Today at 3:00 PM</span>
+                  </div>
+                  <div class="message-text">
+                    Anyone up for some extra practice tonight? I want to work on
+                    my route running.
+                  </div>
+                </div>
+              </div>
+
+              <div class="message own">
+                <div class="message-avatar">ME</div>
+                <div class="message-content">
+                  <div class="message-header">
+                    <span class="message-author">You</span>
+                    <span class="message-time">Today at 3:15 PM</span>
+                  </div>
+                  <div class="message-text">
+                    I'm in! Let's meet at the field around 6 PM?
+                  </div>
+                </div>
+              </div>
+
+              <div class="message">
+                <div class="message-avatar">AL</div>
+                <div class="message-content">
+                  <div class="message-header">
+                    <span class="message-author">Alex Lopez</span>
+                    <span class="message-time">Today at 3:20 PM</span>
+                  </div>
+                  <div class="message-text">
+                    Count me in too! Should we bring some cones for drills?
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="typing-indicator" id="typingIndicator">
+              <span>Sarah is typing</span>
+              <div class="typing-dots">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+              </div>
+            </div>
+
+            <div class="message-input-container">
+              <div class="message-input-wrapper">
+                <textarea
+                  id="messageInput"
+                  class="message-input"
+                  placeholder="Type your message..."
+                  rows="1"
+                  aria-label="Message input"
+                  aria-describedby="messageInputHelp"
+                ></textarea>
+                <div id="messageInputHelp" class="sr-only">
+                  Press Enter to send, Shift+Enter for new line
+                </div>
+                <button
+                  class="send-btn"
+                  id="sendBtn"
+                  disabled
+                  aria-label="Send message"
+                >
+                  <span aria-hidden="true">➤</span>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-        </main>
+      </main>
     </div>
 
     <script type="module">
-        import { authManager } from './src/auth-manager.js';
-        import { apiClient } from './src/api-config.js';
-        import { ErrorHandler } from './src/error-handler.js';
-        import { AccessibilityUtils } from './src/accessibility-utils.js';
+      import { authManager } from "./src/auth-manager.js";
+      import { apiClient } from "./src/api-config.js";
+      import { ErrorHandler } from "./src/error-handler.js";
+      import { AccessibilityUtils } from "./src/accessibility-utils.js";
 
-        let currentChannel = 'team-general';
-        let typingTimeout;
-        let lastMessageTime = 0;
+      let currentChannel = "team-general";
+      let typingTimeout;
+      let lastMessageTime = 0;
 
-        async function initChatPage() {
-            if (!authManager.requireAuth()) return;
+      async function initChatPage() {
+        if (!authManager.requireAuth()) return;
 
-            setupMessageInput();
-            setupChannelSwitching();
-            await loadMessages();
-            
-            // Load any stored messages for current channel
-            loadMessagesFromStorage();
-            
-            // Simulate real-time updates
-            setInterval(simulateNewMessages, 15000);
-            setInterval(simulateTyping, 30000);
-        }
+        setupMessageInput();
+        setupChannelSwitching();
+        await loadMessages();
 
-        function setupMessageInput() {
-            const input = document.getElementById('messageInput');
-            const sendBtn = document.getElementById('sendBtn');
+        // Load any stored messages for current channel
+        loadMessagesFromStorage();
 
-            input.addEventListener('input', function() {
-                sendBtn.disabled = !this.value.trim();
-                
-                // Auto-resize textarea
-                this.style.height = 'auto';
-                this.style.height = Math.min(this.scrollHeight, 100) + 'px';
-                
-                // Show typing indicator to others (simulated)
-                clearTimeout(typingTimeout);
-                typingTimeout = setTimeout(() => {
-                    // Stop typing indicator
-                }, 1000);
-            });
+        // Simulate real-time updates
+        setInterval(simulateNewMessages, 15000);
+        setInterval(simulateTyping, 30000);
+      }
 
-            input.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    sendMessage();
-                }
-            });
+      function setupMessageInput() {
+        const input = document.getElementById("messageInput");
+        const sendBtn = document.getElementById("sendBtn");
 
-            sendBtn.addEventListener('click', sendMessage);
-        }
+        input.addEventListener("input", function () {
+          sendBtn.disabled = !this.value.trim();
 
-        function setupChannelSwitching() {
-            const channelItems = document.querySelectorAll('.channel-item');
-            
-            channelItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    // Remove active class from all items
-                    channelItems.forEach(i => i.classList.remove('active'));
-                    
-                    // Add active class to clicked item
-                    this.classList.add('active');
-                    
-                    // Update current channel
-                    currentChannel = this.dataset.channel;
-                    document.getElementById('currentChannelName').textContent = currentChannel;
-                    
-                    // Remove unread count
-                    const unreadCount = this.querySelector('.unread-count');
-                    if (unreadCount) {
-                        unreadCount.remove();
-                    }
-                    
-                    // Load messages for new channel
-                    loadMessages();
-                });
-            });
-        }
+          // Auto-resize textarea
+          this.style.height = "auto";
+          this.style.height = Math.min(this.scrollHeight, 100) + "px";
 
-        async function loadMessages() {
-            try {
-                const response = await apiClient.get(`/api/chat/messages/${currentChannel}`);
-                
-                if (response.success && response.data.messages) {
-                    updateMessagesContainer(response.data.messages);
-                } else {
-                    // Load from localStorage if API fails
-                    loadMessagesFromStorage();
-                }
-            } catch (error) {
-                console.error('Failed to load messages:', error);
-                // Load from localStorage as fallback
-                loadMessagesFromStorage();
-                scrollToBottom();
+          // Show typing indicator to others (simulated)
+          clearTimeout(typingTimeout);
+          typingTimeout = setTimeout(() => {
+            // Stop typing indicator
+          }, 1000);
+        });
+
+        input.addEventListener("keydown", function (e) {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+          }
+        });
+
+        sendBtn.addEventListener("click", sendMessage);
+      }
+
+      function setupChannelSwitching() {
+        const channelItems = document.querySelectorAll(".channel-item");
+
+        channelItems.forEach((item) => {
+          item.addEventListener("click", function () {
+            // Remove active class from all items
+            channelItems.forEach((i) => i.classList.remove("active"));
+
+            // Add active class to clicked item
+            this.classList.add("active");
+
+            // Update current channel
+            currentChannel = this.dataset.channel;
+            document.getElementById("currentChannelName").textContent =
+              currentChannel;
+
+            // Remove unread count
+            const unreadCount = this.querySelector(".unread-count");
+            if (unreadCount) {
+              unreadCount.remove();
             }
-        }
 
-        function updateMessagesContainer(messages) {
-            const container = document.getElementById('messagesContainer');
-            const currentUser = authManager.getCurrentUser();
-            
-            container.innerHTML = messages.map(msg => `
-                <div class="message ${msg.author === currentUser?.email ? 'own' : ''}">
+            // Load messages for new channel
+            loadMessages();
+          });
+        });
+      }
+
+      async function loadMessages() {
+        try {
+          const response = await apiClient.get(
+            `/api/chat/messages/${currentChannel}`,
+          );
+
+          if (response.success && response.data.messages) {
+            updateMessagesContainer(response.data.messages);
+          } else {
+            // Load from localStorage if API fails
+            loadMessagesFromStorage();
+          }
+        } catch (error) {
+          console.error("Failed to load messages:", error);
+          // Load from localStorage as fallback
+          loadMessagesFromStorage();
+          scrollToBottom();
+        }
+      }
+
+      function updateMessagesContainer(messages) {
+        const container = document.getElementById("messagesContainer");
+        const currentUser = authManager.getCurrentUser();
+
+        container.innerHTML = messages
+          .map(
+            (msg) => `
+                <div class="message ${msg.author === currentUser?.email ? "own" : ""}">
                     <div class="message-avatar">${getInitials(msg.author)}</div>
                     <div class="message-content">
                         <div class="message-header">
-                            <span class="message-author">${msg.author === currentUser?.email ? 'You' : msg.authorName}</span>
+                            <span class="message-author">${msg.author === currentUser?.email ? "You" : msg.authorName}</span>
                             <span class="message-time">${formatTime(msg.timestamp)}</span>
                         </div>
                         <div class="message-text">${escapeHtml(msg.text)}</div>
                     </div>
                 </div>
-            `).join('');
-            
+            `,
+          )
+          .join("");
+
+        scrollToBottom();
+      }
+
+      async function sendMessage() {
+        const input = document.getElementById("messageInput");
+        const sendBtn = document.getElementById("sendBtn");
+        const message = input.value.trim();
+
+        if (!message) return;
+
+        const user = authManager.getCurrentUser();
+
+        // Show loading state with accessibility
+        const originalBtnText = sendBtn.innerHTML;
+        sendBtn.innerHTML = '<span aria-hidden="true">⏳</span>';
+        sendBtn.disabled = true;
+        sendBtn.setAttribute("aria-label", "Sending message...");
+
+        try {
+          const response = await apiClient.post("/api/chat/send", {
+            channel: currentChannel,
+            message: message,
+          });
+
+          if (response.success) {
+            // Add message to UI immediately
+            addMessageToUI(
+              {
+                author: user.email,
+                authorName: user.name || "You",
+                text: message,
+                timestamp: new Date().toISOString(),
+              },
+              true,
+            );
+
+            // Save to localStorage for persistence
+            saveMessageToStorage({
+              channel: currentChannel,
+              author: user.email,
+              authorName: user.name || "You",
+              text: message,
+              timestamp: new Date().toISOString(),
+            });
+          }
+        } catch (error) {
+          console.error("Failed to send message:", error);
+
+          // Still add to UI for demo purposes with graceful fallback
+          addMessageToUI(
+            {
+              author: user.email,
+              authorName: user.name || "You",
+              text: message,
+              timestamp: new Date().toISOString(),
+            },
+            true,
+          );
+
+          // Save to localStorage for offline functionality
+          saveMessageToStorage({
+            channel: currentChannel,
+            author: user.email,
+            authorName: user.name || "You",
+            text: message,
+            timestamp: new Date().toISOString(),
+          });
+
+          // Simulate team response for better demo experience
+          setTimeout(
+            () => {
+              simulateTeamResponse(message);
+            },
+            Math.random() * 3000 + 1000,
+          ); // Random delay 1-4 seconds
+        }
+
+        // Reset form state
+        input.value = "";
+        input.style.height = "auto";
+        sendBtn.innerHTML = originalBtnText;
+        sendBtn.disabled = true;
+        sendBtn.setAttribute("aria-label", "Send message");
+
+        // Announce message sent to screen readers
+        AccessibilityUtils.announce("Message sent", "polite");
+
+        scrollToBottom();
+      }
+
+      function saveMessageToStorage(message) {
+        try {
+          const storageKey = `chat_messages_${currentChannel}`;
+          const existingMessages = JSON.parse(
+            localStorage.getItem(storageKey) || "[]",
+          );
+          existingMessages.push(message);
+
+          // Keep only last 50 messages per channel to prevent storage bloat
+          if (existingMessages.length > 50) {
+            existingMessages.splice(0, existingMessages.length - 50);
+          }
+
+          localStorage.setItem(storageKey, JSON.stringify(existingMessages));
+        } catch (error) {
+          console.warn("Failed to save message to localStorage:", error);
+        }
+      }
+
+      function loadMessagesFromStorage() {
+        try {
+          const storageKey = `chat_messages_${currentChannel}`;
+          const storedMessages = JSON.parse(
+            localStorage.getItem(storageKey) || "[]",
+          );
+
+          if (storedMessages.length > 0) {
+            // Clear existing demo messages and load stored ones
+            const container = document.getElementById("messagesContainer");
+            container.innerHTML = "";
+
+            storedMessages.forEach((msg) => {
+              addMessageToUI(
+                msg,
+                msg.author === authManager.getCurrentUser()?.email,
+              );
+            });
+
             scrollToBottom();
+          }
+        } catch (error) {
+          console.warn("Failed to load messages from localStorage:", error);
         }
+      }
 
-        async function sendMessage() {
-            const input = document.getElementById('messageInput');
-            const sendBtn = document.getElementById('sendBtn');
-            const message = input.value.trim();
-            
-            if (!message) return;
+      function simulateTeamResponse(originalMessage) {
+        const responses = [
+          {
+            author: "Coach Mike",
+            text: "Good point! Let's discuss this more at practice.",
+          },
+          {
+            author: "Sarah (Captain)",
+            text: "I agree! This will definitely help our game strategy.",
+          },
+          { author: "Jake Davis", text: "Thanks for sharing! Very helpful." },
+          {
+            author: "Alex Lopez",
+            text: "Absolutely! Can't wait to try this out.",
+          },
+          {
+            author: "Riley Johnson",
+            text: "Great idea! This could be a game changer.",
+          },
+        ];
 
-            const user = authManager.getCurrentUser();
-            
-            // Show loading state with accessibility
-            const originalBtnText = sendBtn.innerHTML;
-            sendBtn.innerHTML = '<span aria-hidden="true">⏳</span>';
-            sendBtn.disabled = true;
-            sendBtn.setAttribute('aria-label', 'Sending message...');
-            
-            try {
-                const response = await apiClient.post('/api/chat/send', {
-                    channel: currentChannel,
-                    message: message
-                });
-                
-                if (response.success) {
-                    // Add message to UI immediately
-                    addMessageToUI({
-                        author: user.email,
-                        authorName: user.name || 'You',
-                        text: message,
-                        timestamp: new Date().toISOString()
-                    }, true);
-                    
-                    // Save to localStorage for persistence
-                    saveMessageToStorage({
-                        channel: currentChannel,
-                        author: user.email,
-                        authorName: user.name || 'You',
-                        text: message,
-                        timestamp: new Date().toISOString()
-                    });
-                }
-            } catch (error) {
-                console.error('Failed to send message:', error);
-                
-                // Still add to UI for demo purposes with graceful fallback
-                addMessageToUI({
-                    author: user.email,
-                    authorName: user.name || 'You',
-                    text: message,
-                    timestamp: new Date().toISOString()
-                }, true);
-                
-                // Save to localStorage for offline functionality
-                saveMessageToStorage({
-                    channel: currentChannel,
-                    author: user.email,
-                    authorName: user.name || 'You',
-                    text: message,
-                    timestamp: new Date().toISOString()
-                });
-                
-                // Simulate team response for better demo experience
-                setTimeout(() => {
-                    simulateTeamResponse(message);
-                }, Math.random() * 3000 + 1000); // Random delay 1-4 seconds
-            }
-            
-            // Reset form state
-            input.value = '';
-            input.style.height = 'auto';
-            sendBtn.innerHTML = originalBtnText;
-            sendBtn.disabled = true;
-            sendBtn.setAttribute('aria-label', 'Send message');
-            
-            // Announce message sent to screen readers
-            AccessibilityUtils.announce('Message sent', 'polite');
-            
-            scrollToBottom();
-        }
-        
-        function saveMessageToStorage(message) {
-            try {
-                const storageKey = `chat_messages_${currentChannel}`;
-                const existingMessages = JSON.parse(localStorage.getItem(storageKey) || '[]');
-                existingMessages.push(message);
-                
-                // Keep only last 50 messages per channel to prevent storage bloat
-                if (existingMessages.length > 50) {
-                    existingMessages.splice(0, existingMessages.length - 50);
-                }
-                
-                localStorage.setItem(storageKey, JSON.stringify(existingMessages));
-            } catch (error) {
-                console.warn('Failed to save message to localStorage:', error);
-            }
-        }
-        
-        function loadMessagesFromStorage() {
-            try {
-                const storageKey = `chat_messages_${currentChannel}`;
-                const storedMessages = JSON.parse(localStorage.getItem(storageKey) || '[]');
-                
-                if (storedMessages.length > 0) {
-                    // Clear existing demo messages and load stored ones
-                    const container = document.getElementById('messagesContainer');
-                    container.innerHTML = '';
-                    
-                    storedMessages.forEach(msg => {
-                        addMessageToUI(msg, msg.author === authManager.getCurrentUser()?.email);
-                    });
-                    
-                    scrollToBottom();
-                }
-            } catch (error) {
-                console.warn('Failed to load messages from localStorage:', error);
-            }
-        }
-        
-        function simulateTeamResponse(originalMessage) {
-            const responses = [
-                { author: 'Coach Mike', text: 'Good point! Let\'s discuss this more at practice.' },
-                { author: 'Sarah (Captain)', text: 'I agree! This will definitely help our game strategy.' },
-                { author: 'Jake Davis', text: 'Thanks for sharing! Very helpful.' },
-                { author: 'Alex Lopez', text: 'Absolutely! Can\'t wait to try this out.' },
-                { author: 'Riley Johnson', text: 'Great idea! This could be a game changer.' }
-            ];
-            
-            // Select random response that makes sense
-            const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-            
-            // Add typing indicator first
-            const typingIndicator = document.getElementById('typingIndicator');
-            typingIndicator.querySelector('span').textContent = `${randomResponse.author} is typing`;
-            typingIndicator.classList.add('visible');
-            
-            setTimeout(() => {
-                typingIndicator.classList.remove('visible');
-                
-                addMessageToUI({
-                    authorName: randomResponse.author,
-                    text: randomResponse.text,
-                    timestamp: new Date().toISOString()
-                });
-                
-                // Save simulated response to storage
-                saveMessageToStorage({
-                    channel: currentChannel,
-                    author: randomResponse.author.toLowerCase().replace(/\s+/g, '.'),
-                    authorName: randomResponse.author,
-                    text: randomResponse.text,
-                    timestamp: new Date().toISOString()
-                });
-                
-                scrollToBottom();
-            }, 2000); // Show typing for 2 seconds
-        }
+        // Select random response that makes sense
+        const randomResponse =
+          responses[Math.floor(Math.random() * responses.length)];
 
-        function addMessageToUI(message, isOwn = false) {
-            const container = document.getElementById('messagesContainer');
-            
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${isOwn ? 'own' : ''}`;
-            messageDiv.innerHTML = `
+        // Add typing indicator first
+        const typingIndicator = document.getElementById("typingIndicator");
+        typingIndicator.querySelector("span").textContent =
+          `${randomResponse.author} is typing`;
+        typingIndicator.classList.add("visible");
+
+        setTimeout(() => {
+          typingIndicator.classList.remove("visible");
+
+          addMessageToUI({
+            authorName: randomResponse.author,
+            text: randomResponse.text,
+            timestamp: new Date().toISOString(),
+          });
+
+          // Save simulated response to storage
+          saveMessageToStorage({
+            channel: currentChannel,
+            author: randomResponse.author.toLowerCase().replace(/\s+/g, "."),
+            authorName: randomResponse.author,
+            text: randomResponse.text,
+            timestamp: new Date().toISOString(),
+          });
+
+          scrollToBottom();
+        }, 2000); // Show typing for 2 seconds
+      }
+
+      function addMessageToUI(message, isOwn = false) {
+        const container = document.getElementById("messagesContainer");
+
+        const messageDiv = document.createElement("div");
+        messageDiv.className = `message ${isOwn ? "own" : ""}`;
+        messageDiv.innerHTML = `
                 <div class="message-avatar">${getInitials(message.authorName)}</div>
                 <div class="message-content">
                     <div class="message-header">
@@ -770,72 +1021,95 @@
                     <div class="message-text">${escapeHtml(message.text)}</div>
                 </div>
             `;
-            
-            container.appendChild(messageDiv);
-        }
 
-        function simulateNewMessages() {
-            if (Math.random() < 0.3) { // 30% chance of new message
-                const messages = [
-                    { author: 'Coach Mike', text: 'Don\'t forget tomorrow\'s game starts at 10 AM sharp!' },
-                    { author: 'Sarah (Captain)', text: 'Great hustle in practice today everyone!' },
-                    { author: 'Jake Davis', text: 'Who\'s bringing the team snacks this week?' },
-                    { author: 'Alex Lopez', text: 'Just finished reviewing the game film. We\'re looking good!' }
-                ];
-                
-                const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-                
-                addMessageToUI({
-                    authorName: randomMessage.author,
-                    text: randomMessage.text,
-                    timestamp: new Date().toISOString()
-                });
-                
-                scrollToBottom();
-            }
-        }
+        container.appendChild(messageDiv);
+      }
 
-        function simulateTyping() {
-            if (Math.random() < 0.2) { // 20% chance of typing indicator
-                const typingIndicator = document.getElementById('typingIndicator');
-                typingIndicator.classList.add('visible');
-                
-                setTimeout(() => {
-                    typingIndicator.classList.remove('visible');
-                }, 3000);
-            }
-        }
+      function simulateNewMessages() {
+        if (Math.random() < 0.3) {
+          // 30% chance of new message
+          const messages = [
+            {
+              author: "Coach Mike",
+              text: "Don't forget tomorrow's game starts at 10 AM sharp!",
+            },
+            {
+              author: "Sarah (Captain)",
+              text: "Great hustle in practice today everyone!",
+            },
+            {
+              author: "Jake Davis",
+              text: "Who's bringing the team snacks this week?",
+            },
+            {
+              author: "Alex Lopez",
+              text: "Just finished reviewing the game film. We're looking good!",
+            },
+          ];
 
-        function getInitials(name) {
-            if (!name) return '??';
-            return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
-        }
+          const randomMessage =
+            messages[Math.floor(Math.random() * messages.length)];
 
-        function formatTime(timestamp) {
-            const date = new Date(timestamp);
-            const now = new Date();
-            
-            if (date.toDateString() === now.toDateString()) {
-                return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            } else {
-                return date.toLocaleDateString();
-            }
-        }
+          addMessageToUI({
+            authorName: randomMessage.author,
+            text: randomMessage.text,
+            timestamp: new Date().toISOString(),
+          });
 
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
+          scrollToBottom();
         }
+      }
 
-        function scrollToBottom() {
-            const container = document.getElementById('messagesContainer');
-            setTimeout(() => {
-                container.scrollTop = container.scrollHeight;
-            }, 100);
+      function simulateTyping() {
+        if (Math.random() < 0.2) {
+          // 20% chance of typing indicator
+          const typingIndicator = document.getElementById("typingIndicator");
+          typingIndicator.classList.add("visible");
+
+          setTimeout(() => {
+            typingIndicator.classList.remove("visible");
+          }, 3000);
         }
+      }
 
-        document.addEventListener('DOMContentLoaded', initChatPage);
+      function getInitials(name) {
+        if (!name) return "??";
+        return name
+          .split(" ")
+          .map((n) => n[0])
+          .join("")
+          .toUpperCase()
+          .slice(0, 2);
+      }
+
+      function formatTime(timestamp) {
+        const date = new Date(timestamp);
+        const now = new Date();
+
+        if (date.toDateString() === now.toDateString()) {
+          return date.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+        } else {
+          return date.toLocaleDateString();
+        }
+      }
+
+      function escapeHtml(text) {
+        const div = document.createElement("div");
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      function scrollToBottom() {
+        const container = document.getElementById("messagesContainer");
+        setTimeout(() => {
+          container.scrollTop = container.scrollHeight;
+        }, 100);
+      }
+
+      document.addEventListener("DOMContentLoaded", initChatPage);
     </script>
-</body>
+  </body>
 </html>

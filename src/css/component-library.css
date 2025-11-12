@@ -109,7 +109,8 @@
   padding: var(--spacing-component-lg);
   margin-bottom: var(--spacing-component-lg);
   box-shadow: var(--elevation-low);
-  transition: box-shadow var(--motion-duration-normal) var(--motion-easing-productive);
+  transition: box-shadow var(--motion-duration-normal)
+    var(--motion-easing-productive);
 }
 
 .component-demo:hover {
@@ -127,7 +128,7 @@
 }
 
 .component-demo h3::before {
-  content: '';
+  content: "";
   width: 4px;
   height: 24px;
   background: var(--color-brand-primary);
@@ -182,16 +183,18 @@
   padding: var(--spacing-component-md);
   background: var(--surface-primary);
   user-select: none;
-  transition: background var(--motion-duration-fast) var(--motion-easing-productive);
+  transition: background var(--motion-duration-fast)
+    var(--motion-easing-productive);
   display: flex;
   align-items: center;
   gap: var(--spacing-component-sm);
 }
 
 .code-snippet summary::before {
-  content: '▶';
+  content: "▶";
   font-size: 0.75rem;
-  transition: transform var(--motion-duration-fast) var(--motion-easing-productive);
+  transition: transform var(--motion-duration-fast)
+    var(--motion-easing-productive);
 }
 
 .code-snippet[open] summary::before {
@@ -210,7 +213,8 @@
   overflow-x: auto;
   font-size: 0.875rem;
   line-height: 1.6;
-  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', 'Consolas', monospace;
+  font-family:
+    "SF Mono", "Monaco", "Inconsolata", "Fira Code", "Consolas", monospace;
 }
 
 .code-snippet code {
@@ -281,7 +285,7 @@
   border-radius: var(--radius-component-sm);
   font-size: 0.875em;
   color: var(--color-brand-primary);
-  font-family: 'SF Mono', monospace;
+  font-family: "SF Mono", monospace;
 }
 
 .component-docs table {
@@ -313,7 +317,7 @@
   .component-library {
     grid-template-columns: 240px 1fr;
   }
-  
+
   .library-main {
     padding: var(--spacing-component-lg);
   }
@@ -336,7 +340,7 @@
   .library-main {
     padding: var(--spacing-component-md);
   }
-  
+
   .demo-row {
     flex-direction: column;
     align-items: flex-start;
@@ -364,4 +368,3 @@
 .library-main::-webkit-scrollbar-thumb:hover {
   background: var(--color-border-primary);
 }
-

@@ -3,11 +3,13 @@
 ## Status: 🚧 UPDATING FOR COMPREHENSIVE DASHBOARD
 
 ## Overview
+
 The registration page provides a secure, legally compliant, and user-friendly account creation process, including email verification, legal agreement checkboxes, and a two-step flow. Sponsor logos are always visible for revenue and partnership recognition.
 
 ## Wireframe Layout
 
 ### Header Section
+
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │ [Logo] MERLINS PLAYBOOK [Theme Toggle] [Accessibility Menu] │
@@ -15,6 +17,7 @@ The registration page provides a secure, legally compliant, and user-friendly ac
 ```
 
 ### Sponsor Section
+
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │ [Sponsor Logo Placeholder] [Sponsor Logo Placeholder] [Sponsor Logo Placeholder] │
@@ -23,6 +26,7 @@ The registration page provides a secure, legally compliant, and user-friendly ac
 ```
 
 ### Step 1: Basic Information
+
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │ │
@@ -61,6 +65,7 @@ The registration page provides a secure, legally compliant, and user-friendly ac
 ```
 
 ### Step 2: Preferences & Legal
+
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │ │
@@ -106,6 +111,7 @@ The registration page provides a secure, legally compliant, and user-friendly ac
 ```
 
 ### Email Verification Modal
+
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │ │
@@ -124,6 +130,7 @@ The registration page provides a secure, legally compliant, and user-friendly ac
 ```
 
 ### Error States
+
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │ ❌ Registration Error │
@@ -138,11 +145,13 @@ The registration page provides a secure, legally compliant, and user-friendly ac
 ## Key Updates Made
 
 ### Critical Missing Elements Addressed
+
 1. **Email Verification Process**: Added email verification step with resend functionality
 2. **Terms of Service and Privacy Policy**: Mandatory legal agreement checkboxes with links
 3. **Age Verification**: Explicit 18+ requirement for flag football
 
 ### UX Improvements Implemented
+
 1. **Enhanced Registration Flow**:
    - Split into two logical steps: Basic Info → Preferences & Legal
    - Real-time email verification with status indicator
@@ -155,19 +164,22 @@ The registration page provides a secure, legally compliant, and user-friendly ac
 ## Technical Implementation Notes
 
 ### Registration Flow
+
 - **Step 1**: Basic information with email verification
 - **Step 2**: Role-specific preferences and legal agreements
 - **Validation**: Real-time field validation with error feedback
 - **Security**: Password strength requirements and age verification
 
 ### Security Features
+
 - Email verification before account activation
 - Password strength validation (minimum 8 characters, mixed case, numbers, symbols)
 - Age verification for 18+ requirement
 - Terms acceptance tracking
 
 ### Integration Points
+
 - **AuthContext**: User registration and verification
 - **EmailService**: Verification email sending
 - **ValidationService**: Real-time form validation
-- **AnalyticsContext**: Registration funnel tracking 
+- **AnalyticsContext**: Registration funnel tracking

@@ -12,8 +12,8 @@ Copy the HTML from `radio.html` into your page. Always use `<fieldset>` and `<le
 
 ```html
 <label class="form-radio">
-    <input type="radio" id="radio-id" name="group-name" value="value">
-    <span>Label text</span>
+  <input type="radio" id="radio-id" name="group-name" value="value" />
+  <span>Label text</span>
 </label>
 ```
 
@@ -23,17 +23,17 @@ Copy the HTML from `radio.html` into your page. Always use `<fieldset>` and `<le
 
 ```html
 <fieldset class="form-group">
-    <legend class="form-label">Select option</legend>
-    <div class="radio-group">
-        <label class="form-radio">
-            <input type="radio" id="option1" name="choice" value="option1">
-            <span>Option 1</span>
-        </label>
-        <label class="form-radio">
-            <input type="radio" id="option2" name="choice" value="option2">
-            <span>Option 2</span>
-        </label>
-    </div>
+  <legend class="form-label">Select option</legend>
+  <div class="radio-group">
+    <label class="form-radio">
+      <input type="radio" id="option1" name="choice" value="option1" />
+      <span>Option 1</span>
+    </label>
+    <label class="form-radio">
+      <input type="radio" id="option2" name="choice" value="option2" />
+      <span>Option 2</span>
+    </label>
+  </div>
 </fieldset>
 ```
 
@@ -45,25 +45,30 @@ Copy the HTML from `radio.html` into your page. Always use `<fieldset>` and `<le
 
 ## States
 
-| State | Attribute | Usage |
-|-------|-----------|-------|
-| Unchecked | (none) | Default state |
-| Checked | `checked` | Selected state |
-| Disabled | `disabled` | Non-interactive |
+| State     | Attribute  | Usage           |
+| --------- | ---------- | --------------- |
+| Unchecked | (none)     | Default state   |
+| Checked   | `checked`  | Selected state  |
+| Disabled  | `disabled` | Non-interactive |
 
 ## Layout Options
 
 ### Vertical (Default)
+
 ```html
 <div class="radio-group">
-    <!-- Radios stack vertically -->
+  <!-- Radios stack vertically -->
 </div>
 ```
 
 ### Horizontal
+
 ```html
-<div class="radio-group" style="display: flex; gap: var(--spacing-component-md);">
-    <!-- Radios display horizontally -->
+<div
+  class="radio-group"
+  style="display: flex; gap: var(--spacing-component-md);"
+>
+  <!-- Radios display horizontally -->
 </div>
 ```
 
@@ -83,4 +88,3 @@ Copy the HTML from `radio.html` into your page. Always use `<fieldset>` and `<le
 - Use fieldset/legend for groups
 - Only one radio can be selected per group
 - Test with keyboard navigation
-

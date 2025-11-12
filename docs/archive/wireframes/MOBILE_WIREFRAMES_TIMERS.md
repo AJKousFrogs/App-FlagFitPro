@@ -1,6 +1,7 @@
 # Mobile Timer Wireframes Documentation
 
 ## Page Overview
+
 Comprehensive mobile timer interfaces for both game breaks and training sessions with fully editable durations, customizable activities, and intelligent presets for different scenarios.
 
 ## **Editable Break Timer System**
@@ -145,7 +146,7 @@ Comprehensive mobile timer interfaces for both game breaks and training sessions
 │         🏈 Game Break Timer         │
 │                                     │
 │           ┌─────────┐               │
-│           │   29    │               │ ← Large, 
+│           │   29    │               │ ← Large,
 │           │   :     │               │   readable
 │           │   47    │               │   timer
 │           └─────────┘               │

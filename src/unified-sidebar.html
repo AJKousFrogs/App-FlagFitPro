@@ -1,100 +1,182 @@
 <!-- Unified Sidebar Navigation Component -->
 <!-- This is the standard sidebar structure to be used across all pages -->
+<div class="menu-scrim" onclick="closeMenu()"></div>
 <div class="sidebar">
-    <div class="sidebar-logo" onclick="window.location.href='/dashboard.html'" title="FlagFit Pro">
-        <i data-lucide="activity" style="width: 20px; height: 20px; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
-    </div>
-    
-    <nav class="nav-section" aria-label="Dashboard navigation">
-        <a href="/dashboard.html" class="nav-item" aria-label="Dashboard Overview" id="nav-dashboard">
-            <span class="nav-item-icon">
-                <i data-lucide="layout-dashboard" style="width: 24px; height: 24px;"></i>
-            </span>
-            <span class="nav-item-label">Overview</span>
-        </a>
-        <a href="/analytics.html" class="nav-item" aria-label="Analytics" id="nav-analytics">
-            <span class="nav-item-icon">
-                <i data-lucide="bar-chart-3" style="width: 24px; height: 24px;"></i>
-            </span>
-            <span class="nav-item-label">Analytics</span>
-        </a>
-    </nav>
-    
-    <nav class="nav-section" aria-label="Team navigation">
-        <a href="/roster.html" class="nav-item" aria-label="Team Roster" id="nav-roster">
-            <span class="nav-item-icon">
-                <i data-lucide="users" style="width: 24px; height: 24px;"></i>
-            </span>
-            <span class="nav-item-label">Roster</span>
-        </a>
-        <a href="/training.html" class="nav-item" aria-label="Training" id="nav-training">
-            <span class="nav-item-icon">
-                <i data-lucide="zap" style="width: 24px; height: 24px;"></i>
-            </span>
-            <span class="nav-item-label">Training</span>
-        </a>
-        <a href="/tournaments.html" class="nav-item" aria-label="Tournaments" id="nav-tournaments">
-            <span class="nav-item-icon">
-                <i data-lucide="trophy" style="width: 24px; height: 24px;"></i>
-            </span>
-            <span class="nav-item-label">Tournaments</span>
-        </a>
-    </nav>
-    
-    <nav class="nav-section" aria-label="Community navigation">
-        <a href="/community.html" class="nav-item" aria-label="Community" id="nav-community">
-            <span class="nav-item-icon">
-                <i data-lucide="message-circle" style="width: 24px; height: 24px;"></i>
-            </span>
-            <span class="nav-item-label">Community</span>
-        </a>
-        <a href="/chat.html" class="nav-item" aria-label="Chat" id="nav-chat">
-            <span class="nav-item-icon">
-                <i data-lucide="message-square" style="width: 24px; height: 24px;"></i>
-            </span>
-            <span class="nav-item-label">Chat</span>
-        </a>
-    </nav>
-    
-    <nav class="nav-section" aria-label="Personal navigation">
-        <a href="/settings.html" class="nav-item" aria-label="Settings" id="nav-settings">
-            <span class="nav-item-icon">
-                <i data-lucide="settings" style="width: 24px; height: 24px;"></i>
-            </span>
-            <span class="nav-item-label">Settings</span>
-        </a>
-        <a href="/profile.html" class="nav-item" aria-label="Profile" id="nav-profile">
-            <span class="nav-item-icon">
-                <i data-lucide="user" style="width: 24px; height: 24px;"></i>
-            </span>
-            <span class="nav-item-label">Profile</span>
-        </a>
-    </nav>
+  <div
+    class="sidebar-logo"
+    onclick="window.location.href='/dashboard.html'"
+    title="FlagFit Pro"
+  >
+    <i
+      data-lucide="activity"
+      style="
+        width: 20px;
+        height: 20px;
+        color: var(--icon-color-primary);
+        stroke: var(--icon-color-primary);
+      "
+    ></i>
+  </div>
+
+  <nav class="nav-section" aria-label="Dashboard navigation">
+    <a
+      href="/dashboard.html"
+      class="nav-item"
+      aria-label="Dashboard Overview"
+      id="nav-dashboard"
+    >
+      <span class="nav-item-icon">
+        <i data-lucide="layout-dashboard" style="width: 24px; height: 24px"></i>
+      </span>
+      <span class="nav-item-label">Overview</span>
+    </a>
+    <a
+      href="/analytics.html"
+      class="nav-item"
+      aria-label="Analytics"
+      id="nav-analytics"
+    >
+      <span class="nav-item-icon">
+        <i data-lucide="bar-chart-3" style="width: 24px; height: 24px"></i>
+      </span>
+      <span class="nav-item-label">Analytics</span>
+    </a>
+  </nav>
+
+  <nav class="nav-section" aria-label="Team navigation">
+    <a
+      href="/roster.html"
+      class="nav-item"
+      aria-label="Team Roster"
+      id="nav-roster"
+    >
+      <span class="nav-item-icon">
+        <i data-lucide="users" style="width: 24px; height: 24px"></i>
+      </span>
+      <span class="nav-item-label">Roster</span>
+    </a>
+    <a
+      href="/training.html"
+      class="nav-item"
+      aria-label="Training"
+      id="nav-training"
+    >
+      <span class="nav-item-icon">
+        <i data-lucide="zap" style="width: 24px; height: 24px"></i>
+      </span>
+      <span class="nav-item-label">Training</span>
+    </a>
+    <a
+      href="/tournaments.html"
+      class="nav-item"
+      aria-label="Tournaments"
+      id="nav-tournaments"
+    >
+      <span class="nav-item-icon">
+        <i data-lucide="trophy" style="width: 24px; height: 24px"></i>
+      </span>
+      <span class="nav-item-label">Tournaments</span>
+    </a>
+  </nav>
+
+  <nav class="nav-section" aria-label="Community navigation">
+    <a
+      href="/community.html"
+      class="nav-item"
+      aria-label="Community"
+      id="nav-community"
+    >
+      <span class="nav-item-icon">
+        <i data-lucide="message-circle" style="width: 24px; height: 24px"></i>
+      </span>
+      <span class="nav-item-label">Community</span>
+    </a>
+    <a href="/chat.html" class="nav-item" aria-label="Chat" id="nav-chat">
+      <span class="nav-item-icon">
+        <i data-lucide="message-square" style="width: 24px; height: 24px"></i>
+      </span>
+      <span class="nav-item-label">Chat</span>
+    </a>
+  </nav>
+
+  <nav class="nav-section" aria-label="Personal navigation">
+    <a
+      href="/settings.html"
+      class="nav-item"
+      aria-label="Settings"
+      id="nav-settings"
+    >
+      <span class="nav-item-icon">
+        <i data-lucide="settings" style="width: 24px; height: 24px"></i>
+      </span>
+      <span class="nav-item-label">Settings</span>
+    </a>
+    <a
+      href="/profile.html"
+      class="nav-item"
+      aria-label="Profile"
+      id="nav-profile"
+    >
+      <span class="nav-item-icon">
+        <i data-lucide="user" style="width: 24px; height: 24px"></i>
+      </span>
+      <span class="nav-item-label">Profile</span>
+    </a>
+  </nav>
 </div>
 
 <script>
-// Auto-highlight active navigation item based on current page
-(function() {
-    const currentPage = window.location.pathname.split('/').pop() || 'dashboard.html';
+  // Auto-highlight active navigation item based on current page
+  (function () {
+    const currentPage =
+      window.location.pathname.split("/").pop() || "dashboard.html";
     const navMap = {
-        'dashboard.html': 'nav-dashboard',
-        'analytics.html': 'nav-analytics',
-        'roster.html': 'nav-roster',
-        'training.html': 'nav-training',
-        'tournaments.html': 'nav-tournaments',
-        'community.html': 'nav-community',
-        'chat.html': 'nav-chat',
-        'settings.html': 'nav-settings',
-        'profile.html': 'nav-profile'
+      "dashboard.html": "nav-dashboard",
+      "analytics.html": "nav-analytics",
+      "roster.html": "nav-roster",
+      "training.html": "nav-training",
+      "tournaments.html": "nav-tournaments",
+      "community.html": "nav-community",
+      "chat.html": "nav-chat",
+      "settings.html": "nav-settings",
+      "profile.html": "nav-profile",
     };
-    
+
     const activeNavId = navMap[currentPage];
     if (activeNavId) {
-        const activeNav = document.getElementById(activeNavId);
-        if (activeNav) {
-            activeNav.classList.add('active');
-        }
+      const activeNav = document.getElementById(activeNavId);
+      if (activeNav) {
+        activeNav.classList.add("active");
+      }
     }
-})();
-</script>
+  })();
 
+  // Menu open/close functions
+  function openMenu() {
+    document.body.classList.add("menu-open");
+    const menuButton = document.getElementById("mobile-menu-toggle");
+    if (menuButton) {
+      menuButton.setAttribute("aria-expanded", "true");
+    }
+  }
+
+  function closeMenu() {
+    document.body.classList.remove("menu-open");
+    const menuButton = document.getElementById("mobile-menu-toggle");
+    if (menuButton) {
+      menuButton.setAttribute("aria-expanded", "false");
+    }
+  }
+
+  // Close menu when clicking on nav items (mobile)
+  document.addEventListener("DOMContentLoaded", function () {
+    const navItems = document.querySelectorAll(".sidebar .nav-item");
+    navItems.forEach((item) => {
+      item.addEventListener("click", function () {
+        if (window.innerWidth <= 1024) {
+          closeMenu();
+        }
+      });
+    });
+  });
+</script>

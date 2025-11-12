@@ -18,6 +18,7 @@ npm run wireframes:generate
 ```
 
 This command will:
+
 - Process all HTML wireframes in `Wireframes clean/`
 - Generate React components in `src/components/wireframes/`
 - Create route configurations
@@ -26,6 +27,7 @@ This command will:
 ### 2. Access Wireframe Dashboard
 
 Navigate to `/wireframes` in your app to see:
+
 - All available wireframes
 - Integration status
 - Component generation tools
@@ -65,6 +67,7 @@ src/
 ### 1. Wireframe Processing
 
 The system reads HTML wireframes and extracts:
+
 - **Sections**: Content areas and layouts
 - **Navigation**: Menu structures and links
 - **Forms**: Input fields and validation
@@ -75,6 +78,7 @@ The system reads HTML wireframes and extracts:
 ### 2. React Component Generation
 
 Each wireframe becomes a React component with:
+
 - **State management** for data loading
 - **Backend integration** via WireframeIntegrationService
 - **Error handling** and loading states
@@ -84,6 +88,7 @@ Each wireframe becomes a React component with:
 ### 3. Backend Integration
 
 Components connect to your existing services:
+
 - **Neon Database**: User data and analytics
 - **Training Services**: Session management
 - **AI Coach**: Recommendations and insights
@@ -96,26 +101,36 @@ All generated components use the unified wireframe design system:
 
 ```css
 /* Consistent styling across all wireframes */
-.wireframe-container { /* Layout containers */ }
-.wireframe-box { /* Content boxes */ }
-.wireframe-button { /* Action buttons */ }
-.wireframe-metric { /* Performance indicators */ }
-.wireframe-navigation { /* Navigation elements */ }
+.wireframe-container {
+  /* Layout containers */
+}
+.wireframe-box {
+  /* Content boxes */
+}
+.wireframe-button {
+  /* Action buttons */
+}
+.wireframe-metric {
+  /* Performance indicators */
+}
+.wireframe-navigation {
+  /* Navigation elements */
+}
 ```
 
 ## 📱 Available Wireframes
 
-| Wireframe | Component | Route | Description |
-|-----------|-----------|-------|-------------|
-| `dashboard-complete-wireframe.html` | `DashboardComplete` | `/dashboard` | Complete dashboard with all features |
-| `training-complete-wireframe.html` | `TrainingComplete` | `/training` | Complete training interface |
-| `community-complete-wireframe.html` | `CommunityComplete` | `/community` | Complete community features |
-| `tournament-complete-wireframe.html` | `TournamentComplete` | `/tournaments` | Complete tournament management |
-| `coach-dashboard-wireframe.html` | `CoachDashboard` | `/coach/dashboard` | Coach dashboard interface |
-| `coach-analytics-wireframe.html` | `CoachAnalytics` | `/coach/analytics` | Coach analytics interface |
-| `coach-games-wireframe.html` | `CoachGames` | `/coach/games` | Coach games management |
-| `coach-training-wireframe.html` | `CoachTraining` | `/coach/training` | Coach training interface |
-| `coach-team-management-wireframe.html` | `CoachTeamManagement` | `/coach/team-management` | Coach team management interface |
+| Wireframe                              | Component             | Route                    | Description                          |
+| -------------------------------------- | --------------------- | ------------------------ | ------------------------------------ |
+| `dashboard-complete-wireframe.html`    | `DashboardComplete`   | `/dashboard`             | Complete dashboard with all features |
+| `training-complete-wireframe.html`     | `TrainingComplete`    | `/training`              | Complete training interface          |
+| `community-complete-wireframe.html`    | `CommunityComplete`   | `/community`             | Complete community features          |
+| `tournament-complete-wireframe.html`   | `TournamentComplete`  | `/tournaments`           | Complete tournament management       |
+| `coach-dashboard-wireframe.html`       | `CoachDashboard`      | `/coach/dashboard`       | Coach dashboard interface            |
+| `coach-analytics-wireframe.html`       | `CoachAnalytics`      | `/coach/analytics`       | Coach analytics interface            |
+| `coach-games-wireframe.html`           | `CoachGames`          | `/coach/games`           | Coach games management               |
+| `coach-training-wireframe.html`        | `CoachTraining`       | `/coach/training`        | Coach training interface             |
+| `coach-team-management-wireframe.html` | `CoachTeamManagement` | `/coach/team-management` | Coach team management interface      |
 
 ## 🔌 Backend Services
 
@@ -124,16 +139,19 @@ All generated components use the unified wireframe design system:
 The main service that connects wireframes to your backend:
 
 ```javascript
-import wireframeIntegrationService from '../services/WireframeIntegrationService';
+import wireframeIntegrationService from "../services/WireframeIntegrationService";
 
 // Initialize the service
 await wireframeIntegrationService.initialize();
 
 // Get wireframe data
-const data = await wireframeIntegrationService.getWireframeData('dashboard');
+const data = await wireframeIntegrationService.getWireframeData("dashboard");
 
 // Save wireframe data
-const success = await wireframeIntegrationService.saveWireframeData('dashboard', data);
+const success = await wireframeIntegrationService.saveWireframeData(
+  "dashboard",
+  data,
+);
 ```
 
 ### Available Methods
@@ -149,6 +167,7 @@ const success = await wireframeIntegrationService.saveWireframeData('dashboard',
 ### 1. Modify Generated Components
 
 Edit components in `src/components/wireframes/` to:
+
 - Add custom logic
 - Integrate with specific backend services
 - Customize styling and layout
@@ -157,6 +176,7 @@ Edit components in `src/components/wireframes/` to:
 ### 2. Extend Wireframe Service
 
 Modify `WireframeIntegrationService.js` to:
+
 - Add new data sources
 - Implement custom validation
 - Connect to additional APIs
@@ -165,6 +185,7 @@ Modify `WireframeIntegrationService.js` to:
 ### 3. Update Design System
 
 Modify `wireframe-design-system.css` to:
+
 - Change color schemes
 - Adjust spacing and typography
 - Add new component styles
@@ -225,7 +246,7 @@ useEffect(() => {
   const interval = setInterval(() => {
     loadComponentData();
   }, 30000); // Update every 30 seconds
-  
+
   return () => clearInterval(interval);
 }, []);
 ```
@@ -240,13 +261,13 @@ const [isOnline, setIsOnline] = useState(navigator.onLine);
 useEffect(() => {
   const handleOnline = () => setIsOnline(true);
   const handleOffline = () => setIsOnline(false);
-  
-  window.addEventListener('online', handleOnline);
-  window.addEventListener('offline', handleOffline);
-  
+
+  window.addEventListener("online", handleOnline);
+  window.addEventListener("offline", handleOffline);
+
   return () => {
-    window.removeEventListener('online', handleOnline);
-    window.removeEventListener('offline', handleOffline);
+    window.removeEventListener("online", handleOnline);
+    window.removeEventListener("offline", handleOffline);
   };
 }, []);
 ```
@@ -257,7 +278,7 @@ Components include performance optimizations:
 
 ```javascript
 // Lazy load heavy components
-const HeavyComponent = React.lazy(() => import('./HeavyComponent'));
+const HeavyComponent = React.lazy(() => import("./HeavyComponent"));
 
 // Memoize expensive calculations
 const memoizedData = useMemo(() => processData(data), [data]);
@@ -265,7 +286,7 @@ const memoizedData = useMemo(() => processData(data), [data]);
 // Debounce user input
 const debouncedSearch = useCallback(
   debounce((query) => performSearch(query), 300),
-  []
+  [],
 );
 ```
 
@@ -274,6 +295,7 @@ const debouncedSearch = useCallback(
 ### Integration Status
 
 Each component shows:
+
 - ✅ Service connectivity
 - ✅ Data loading status
 - ✅ Backend integration
@@ -282,6 +304,7 @@ Each component shows:
 ### Performance Metrics
 
 Monitor:
+
 - Component load times
 - Data fetch performance
 - User interaction patterns

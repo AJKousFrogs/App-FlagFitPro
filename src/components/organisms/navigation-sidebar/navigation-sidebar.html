@@ -5,66 +5,72 @@
     Includes logo, navigation links, and user section
 -->
 
-<nav class="sidebar" role="navigation" aria-label="Main navigation">
-    <!-- Logo/Brand -->
-    <div class="sidebar-header">
-        <a href="/dashboard" class="sidebar-logo" aria-label="FlagFit Pro Home">
-            <i data-lucide="football" style="width: 24px; height: 24px; color: white;"></i>
-        </a>
-        <h2 class="sidebar-title">FlagFit Pro</h2>
-    </div>
+<!-- Mobile Overlay/Scrim (for closing sidebar on mobile) -->
+<div class="menu-scrim" aria-hidden="true" onclick="closeMenu()"></div>
 
-    <!-- Navigation Links -->
-    <ul class="sidebar-nav" role="list">
-        <li role="listitem">
-            <a href="/dashboard" class="sidebar-link active" aria-current="page">
-                <i data-lucide="home" style="width: 20px; height: 20px;"></i>
-                <span>Dashboard</span>
-            </a>
-        </li>
-        <li role="listitem">
-            <a href="/training" class="sidebar-link">
-                <i data-lucide="activity" style="width: 20px; height: 20px;"></i>
-                <span>Training</span>
-            </a>
-        </li>
-        <li role="listitem">
-            <a href="/roster" class="sidebar-link">
-                <i data-lucide="users" style="width: 20px; height: 20px;"></i>
-                <span>Roster</span>
-            </a>
-        </li>
-        <li role="listitem">
-            <a href="/tournaments" class="sidebar-link">
-                <i data-lucide="trophy" style="width: 20px; height: 20px;"></i>
-                <span>Tournaments</span>
-            </a>
-        </li>
-        <li role="listitem">
-            <a href="/community" class="sidebar-link">
-                <i data-lucide="message-circle" style="width: 20px; height: 20px;"></i>
-                <span>Community</span>
-            </a>
-        </li>
-        <li role="listitem">
-            <a href="/analytics" class="sidebar-link">
-                <i data-lucide="bar-chart-3" style="width: 20px; height: 20px;"></i>
-                <span>Analytics</span>
-            </a>
-        </li>
-    </ul>
+<nav class="sidebar" role="navigation" aria-label="Main navigation" id="sidebar">
+  <!-- Logo/Brand -->
+  <div class="sidebar-header">
+    <a href="/dashboard" class="sidebar-logo" aria-label="FlagFit Pro Home">
+      <i
+        data-lucide="football"
+        style="width: 24px; height: 24px; color: white"
+      ></i>
+    </a>
+    <h2 class="sidebar-title">FlagFit Pro</h2>
+  </div>
 
-    <!-- User Section -->
-    <div class="sidebar-footer">
-        <a href="/settings" class="sidebar-link">
-            <i data-lucide="settings" style="width: 20px; height: 20px;"></i>
-            <span>Settings</span>
-        </a>
-        <a href="/profile" class="sidebar-link">
-            <i data-lucide="user" style="width: 20px; height: 20px;"></i>
-            <span>Profile</span>
-        </a>
-    </div>
+  <!-- Navigation Links -->
+  <ul class="sidebar-nav" role="list">
+    <li role="listitem">
+      <a href="/dashboard" class="sidebar-link active" aria-current="page">
+        <i data-lucide="home" style="width: 20px; height: 20px"></i>
+        <span>Dashboard</span>
+      </a>
+    </li>
+    <li role="listitem">
+      <a href="/training" class="sidebar-link">
+        <i data-lucide="activity" style="width: 20px; height: 20px"></i>
+        <span>Training</span>
+      </a>
+    </li>
+    <li role="listitem">
+      <a href="/roster" class="sidebar-link">
+        <i data-lucide="users" style="width: 20px; height: 20px"></i>
+        <span>Roster</span>
+      </a>
+    </li>
+    <li role="listitem">
+      <a href="/tournaments" class="sidebar-link">
+        <i data-lucide="trophy" style="width: 20px; height: 20px"></i>
+        <span>Tournaments</span>
+      </a>
+    </li>
+    <li role="listitem">
+      <a href="/community" class="sidebar-link">
+        <i data-lucide="message-circle" style="width: 20px; height: 20px"></i>
+        <span>Community</span>
+      </a>
+    </li>
+    <li role="listitem">
+      <a href="/analytics" class="sidebar-link">
+        <i data-lucide="bar-chart-3" style="width: 20px; height: 20px"></i>
+        <span>Analytics</span>
+      </a>
+    </li>
+  </ul>
+
+  <!-- User Section -->
+  <div class="sidebar-footer">
+    <a href="/settings" class="sidebar-link">
+      <i data-lucide="settings" style="width: 20px; height: 20px"></i>
+      <span>Settings</span>
+    </a>
+    <a href="/profile" class="sidebar-link">
+      <i data-lucide="user" style="width: 20px; height: 20px"></i>
+      <span>Profile</span>
+    </a>
+  </div>
 </nav>
 
 <!-- 
@@ -78,4 +84,3 @@
     - .sidebar-link.active - Active state
     - .sidebar-footer - Footer section
 -->
-
