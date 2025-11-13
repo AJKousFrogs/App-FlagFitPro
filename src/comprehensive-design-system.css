@@ -1218,58 +1218,8 @@ h2 {
   transform: translateY(-2px);
 }
 
-/* Modern Glassmorphism Card Variant */
-.card-glass {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.1) 0%,
-    rgba(255, 255, 255, 0.05) 100%
-  );
-  backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow:
-    0 8px 24px rgba(0, 0, 0, 0.15),
-    0 4px 12px rgba(0, 0, 0, 0.1),
-    0 2px 6px rgba(0, 0, 0, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-}
-
-.card-glass::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    var(--color-brand-primary) 50%,
-    transparent 100%
-  );
-  opacity: 0;
-  transition: opacity var(--motion-duration-normal)
-    var(--motion-easing-productive);
-  z-index: 1;
-}
-
-.card-glass:hover::before {
-  opacity: 0.5;
-}
-
-.card-glass:hover {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.15) 0%,
-    rgba(255, 255, 255, 0.08) 100%
-  );
-  border-color: var(--color-brand-primary);
-  box-shadow:
-    0 12px 40px rgba(0, 0, 0, 0.15),
-    0 4px 12px var(--color-brand-primary-light),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
-  transform: translateY(-4px) scale(1.01);
-}
+/* Glassmorphism removed - Performance and accessibility issue */
+/* Use .card or .card-elevated instead for high-contrast, readable cards */
 
 /* Elevated Card Variant */
 .card-elevated {
@@ -1334,33 +1284,6 @@ h2 {
 }
 
 /* Dark Mode Card Adjustments */
-@media (prefers-color-scheme: dark) {
-  .card-glass {
-    background: linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.04) 0%,
-      rgba(255, 255, 255, 0.02) 100%
-    );
-    border-color: rgba(255, 255, 255, 0.1);
-    box-shadow:
-      0 4px 16px rgba(0, 0, 0, 0.2),
-      0 1px 3px rgba(0, 0, 0, 0.1),
-      inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  }
-
-  .card-glass:hover {
-    background: linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.06) 0%,
-      rgba(255, 255, 255, 0.03) 100%
-    );
-    border-color: var(--color-brand-primary);
-    box-shadow:
-      0 12px 40px rgba(0, 0, 0, 0.4),
-      0 4px 12px var(--color-brand-primary-light),
-      inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  }
-}
 
 /* Form System */
 .form-group {

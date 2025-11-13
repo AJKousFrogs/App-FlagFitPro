@@ -11,9 +11,8 @@ Copy the HTML from `card.html` into your page. Cards are flexible containers tha
 ## Variants
 
 - **Default** (`.card`) - Standard card with shadow
-- **Elevated** (`.card-elevated`) - Higher shadow for emphasis
+- **Elevated** (`.card-elevated`) - Higher shadow for emphasis, high contrast
 - **Interactive** (`.card-interactive`) - Hover effects, clickable
-- **Glass** (`.card-glass`) - Glassmorphism effect with backdrop blur
 
 ## Structure
 
@@ -66,9 +65,8 @@ All sections are optional. Use only what you need.
 ## CSS Classes
 
 - `.card` - Base card class (required)
-- `.card-elevated` - Elevated shadow variant
+- `.card-elevated` - Elevated shadow variant, high contrast
 - `.card-interactive` - Interactive hover effects
-- `.card-glass` - Glassmorphism variant
 - `.card-header` - Header section
 - `.card-body` - Body section (main content)
 - `.card-footer` - Footer section

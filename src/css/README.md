@@ -234,8 +234,7 @@ document.querySelectorAll(".js-modal-trigger").forEach((trigger) => {
 **Variants:**
 
 - `.card` - Standard card
-- `.card-glass` - Glassmorphism effect
-- `.card-elevated` - Elevated shadow
+- `.card-elevated` - Elevated shadow, high contrast
 - `.card-interactive` - Interactive with gradient accent
 
 ### Form
