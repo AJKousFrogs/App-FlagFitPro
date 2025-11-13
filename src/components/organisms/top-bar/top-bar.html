@@ -90,15 +90,18 @@
 
     <!-- Theme Toggle -->
     <div class="theme-toggle-container" aria-label="Theme toggle">
-      <!-- JS inserts switch; fallback below -->
-      <button
-        class="theme-toggle-fallback"
-        type="button"
-        data-theme-toggle
-        hidden
-      >
-        Theme
-      </button>
+      <label class="theme-toggle-label" title="Toggle theme">
+        <input
+          type="checkbox"
+          id="header-theme-toggle"
+          class="theme-toggle-input"
+          aria-label="Toggle theme"
+        />
+        <span class="theme-toggle-slider">
+          <span class="theme-toggle-dot" id="theme-toggle-dot"></span>
+        </span>
+        <span class="theme-toggle-text">🌙 Dark</span>
+      </label>
     </div>
 
     <!-- User Menu -->
@@ -140,3 +143,14 @@
     </div>
   </div>
 </div>
+
+<!-- Scroll to Top Button -->
+<button
+  id="scroll-to-top"
+  class="scroll-to-top"
+  type="button"
+  aria-label="Scroll to top"
+  hidden
+>
+  <i data-lucide="arrow-up" class="icon-20"></i>
+</button>

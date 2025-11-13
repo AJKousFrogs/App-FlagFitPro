@@ -45,6 +45,9 @@
     initSearch();
     initNotifications();
     initUserMenu();
+    initScrollEffects();
+    initScrollToTop();
+    initThemeToggle();
   }
 
   /**
@@ -344,5 +347,178 @@
         }, 100);
       });
     });
+  }
+
+  /**
+   * Scroll Effects Implementation
+   * Handles dynamic shadow based on scroll position
+   */
+  function initScrollEffects() {
+    const topBar = document.querySelector(".top-bar");
+    if (!topBar) return;
+
+    let lastScrollY = window.scrollY;
+    let ticking = false;
+
+    function updateScrollEffects() {
+      const scrollY = window.scrollY;
+
+      if (scrollY > 10) {
+        topBar.classList.add("scrolled");
+        if (scrollY > 100) {
+          topBar.classList.add("scrolled-deep");
+        } else {
+          topBar.classList.remove("scrolled-deep");
+        }
+      } else {
+        topBar.classList.remove("scrolled", "scrolled-deep");
+      }
+
+      ticking = false;
+    }
+
+    function requestTick() {
+      if (!ticking) {
+        window.requestAnimationFrame(updateScrollEffects);
+        ticking = true;
+      }
+    }
+
+    window.addEventListener("scroll", requestTick, { passive: true });
+    // Initial check
+    updateScrollEffects();
+  }
+
+  /**
+   * Scroll to Top Button Implementation
+   * Shows button after 50px scroll, handles smooth scroll to top
+   */
+  function initScrollToTop() {
+    const scrollButton = document.getElementById("scroll-to-top");
+    if (!scrollButton) return;
+
+    let lastScrollY = window.scrollY;
+    let ticking = false;
+
+    function updateScrollButton() {
+      const scrollY = window.scrollY;
+
+      if (scrollY > 50) {
+        scrollButton.hidden = false;
+      } else {
+        scrollButton.hidden = true;
+      }
+
+      ticking = false;
+    }
+
+    function requestTick() {
+      if (!ticking) {
+        window.requestAnimationFrame(updateScrollButton);
+        ticking = true;
+      }
+    }
+
+    // Show/hide button based on scroll position
+    window.addEventListener("scroll", requestTick, { passive: true });
+    // Initial check
+    updateScrollButton();
+
+    // Smooth scroll to top on click
+    scrollButton.addEventListener("click", () => {
+      const headerHeight = window.innerWidth <= 768 ? 56 : 64;
+      
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+
+      // Announce to screen readers
+      const announcement = document.createElement("div");
+      announcement.className = "sr-only";
+      announcement.setAttribute("aria-live", "polite");
+      announcement.textContent = "Scrolled to top";
+      document.body.appendChild(announcement);
+      setTimeout(() => {
+        document.body.removeChild(announcement);
+      }, 1000);
+    });
+
+    // Keyboard support
+    scrollButton.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        scrollButton.click();
+      }
+    });
+  }
+
+  /**
+   * Theme Toggle Implementation
+   * Handles theme toggle interactions and syncs with theme-switcher.js
+   */
+  function initThemeToggle() {
+    const themeToggle = document.getElementById("header-theme-toggle");
+    if (!themeToggle) return;
+
+    // Initialize toggle state based on current theme
+    const currentTheme =
+      document.documentElement.getAttribute("data-theme") || "dark";
+    themeToggle.checked = currentTheme === "dark";
+
+    // Update toggle visual state
+    updateToggleVisualState(currentTheme);
+
+    // Handle toggle change
+    themeToggle.addEventListener("change", (e) => {
+      const newTheme = e.target.checked ? "dark" : "light";
+
+      // Use global theme switcher if available, otherwise fallback
+      if (window.themeSwitcher) {
+        window.themeSwitcher.switchTheme(newTheme);
+      } else {
+        // Fallback implementation
+        document.documentElement.setAttribute("data-theme", newTheme);
+        document.body.setAttribute("data-theme", newTheme);
+        localStorage.setItem("theme", newTheme);
+        updateToggleVisualState(newTheme);
+      }
+    });
+
+    // Listen for theme changes from other sources (e.g., settings page)
+    const observer = new MutationObserver(() => {
+      const currentTheme =
+        document.documentElement.getAttribute("data-theme") || "dark";
+      if (themeToggle.checked !== (currentTheme === "dark")) {
+        themeToggle.checked = currentTheme === "dark";
+        updateToggleVisualState(currentTheme);
+      }
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    });
+  }
+
+  /**
+   * Update theme toggle visual state
+   */
+  function updateToggleVisualState(theme) {
+    const toggleDot = document.getElementById("theme-toggle-dot");
+    const toggleText = document.querySelector(".theme-toggle-text");
+    const toggleSlider = document.querySelector(".theme-toggle-slider");
+
+    if (toggleDot && toggleText && toggleSlider) {
+      if (theme === "dark") {
+        toggleDot.style.transform = "translateX(24px)";
+        toggleSlider.style.background = "var(--color-brand-primary)";
+        toggleText.textContent = "🌙 Dark";
+      } else {
+        toggleDot.style.transform = "translateX(0px)";
+        toggleSlider.style.background = "var(--surface-tertiary)";
+        toggleText.textContent = "☀️ Light";
+      }
+    }
   }
 })();

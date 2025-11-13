@@ -18,8 +18,8 @@
   z-index: 1000;
 
   /* Spacing */
-  padding: 0 24px;
-  gap: var(--space-4, 16px);
+  padding: 0 var(--space-6);
+  gap: var(--space-4);
 
   /* Style - High contrast, solid background for performance */
   background: var(--surface-primary);
@@ -30,8 +30,20 @@
   flex-direction: row !important;
   flex-wrap: nowrap !important;
 
-  /* Animation */
-  transition: all 0.2s ease-in-out;
+  /* Animation - Using design system motion tokens */
+  transition:
+    box-shadow var(--transition-slow),
+    background-color var(--transition),
+    border-color var(--transition);
+}
+
+/* Enhanced scroll shadow - dynamic based on scroll position */
+.top-bar.scrolled {
+  box-shadow: var(--shadow-md);
+}
+
+.top-bar.scrolled-deep {
+  box-shadow: var(--shadow-lg);
 }
 
 /* Mobile responsive header */
@@ -40,7 +52,7 @@
     left: 0;
     height: 64px;
     min-height: 64px;
-    padding: 0 24px;
+    padding: 0 var(--space-6);
   }
 }
 
@@ -49,20 +61,24 @@
   .top-bar {
     height: 56px;
     min-height: 56px;
-    padding: var(--primitive-space-8) var(--primitive-space-16);
+    padding: var(--space-2) var(--space-4);
     flex-direction: row; /* Keep horizontal layout */
-    gap: var(--primitive-space-12);
+    gap: var(--space-3);
     align-items: center;
   }
 
   html {
     scroll-padding-top: 56px;
+    scroll-behavior: smooth;
   }
 }
 
-/* Desktop: Add scroll shadow */
-.top-bar.scrolled {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+/* Desktop: Smooth scroll behavior */
+@media (min-width: 769px) {
+  html {
+    scroll-padding-top: 64px;
+    scroll-behavior: smooth;
+  }
 }
 
 /* ============================================================================
@@ -74,7 +90,7 @@
   align-items: center;
   flex: 1;
   min-width: 0;
-  gap: var(--primitive-space-12);
+  gap: var(--space-3);
 }
 
 /* Mobile Menu Toggle Button */
@@ -87,13 +103,13 @@
   width: 44px;
   height: 44px;
   border: none;
-  border-radius: var(--radius-component-md);
+  border-radius: var(--radius-md);
   background: transparent;
   cursor: pointer;
   color: var(--icon-color-primary);
   transition:
-    background-color var(--motion-duration-fast) var(--motion-easing-productive),
-    transform var(--motion-duration-fast) var(--motion-easing-productive);
+    background-color var(--transition-fast),
+    transform var(--transition-fast);
   padding: 0;
   flex-shrink: 0;
 }
@@ -121,7 +137,7 @@
 .top-bar .header-right {
   display: flex;
   align-items: center;
-  gap: 16px !important;
+  gap: var(--space-4) !important;
 }
 
 /* Search Box */
@@ -137,7 +153,7 @@
 
 .top-bar .search-icon {
   position: absolute;
-  left: var(--primitive-space-12);
+  left: var(--space-3);
   display: flex;
   align-items: center;
   pointer-events: none;
@@ -164,31 +180,30 @@
 .top-bar .search-input {
   width: 100%;
   height: 40px !important;
-  padding: var(--primitive-space-12) var(--primitive-space-12)
-    var(--primitive-space-12) var(--primitive-space-40);
-  padding-left: 44px !important;
-  border: 1px solid rgba(0, 0, 0, 0.06) !important;
-  border-radius: 12px !important;
-  background: rgba(255, 255, 255, 0.9) !important;
+  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-3);
+  padding-left: 44px !important; /* Touch target compliance - 44px minimum */
+  border: 1px solid var(--color-border-primary) !important;
+  border-radius: var(--radius-lg) !important;
+  background: var(--surface-primary) !important;
   color: var(--color-text-primary);
-  font-size: 14px !important;
+  font-size: var(--text-sm) !important;
   min-height: 40px; /* ✅ Minimum touch target */
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
-  transition: all 0.2s ease !important;
+  box-shadow: var(--shadow-sm) !important;
+  transition: all var(--transition) !important;
 }
 
 .top-bar .search-input:focus {
   outline: none !important;
-  border-color: #10c96b !important;
+  border-color: var(--color-brand-primary) !important;
   box-shadow: 0 0 0 3px rgba(16, 201, 107, 0.1) !important;
-  background: rgba(255, 255, 255, 1) !important;
+  background: var(--surface-primary) !important;
 }
 
 /* Standalone search-input styles (not scoped to .top-bar) */
 .search-input {
-  padding: 8px 12px 8px 36px;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
+  padding: var(--space-2) var(--space-3) var(--space-2) var(--space-8);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
 }
 
 .search-input:focus {
@@ -208,15 +223,15 @@
   top: 100%;
   left: 0;
   right: 0;
-  margin-top: var(--primitive-space-4);
+  margin-top: var(--space-1);
   background: var(--surface-primary);
   border: 1px solid var(--color-border-primary);
-  border-radius: var(--radius-component-md);
-  box-shadow: var(--elevation-medium);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
   z-index: var(--z-index-dropdown);
   max-height: 400px;
   overflow-y: auto;
-  padding: var(--primitive-space-4);
+  padding: var(--space-1);
 }
 
 .top-bar .search-results[hidden] {
@@ -224,12 +239,11 @@
 }
 
 .top-bar .result-item {
-  padding: var(--primitive-space-12) var(--primitive-space-16);
-  border-radius: var(--radius-component-sm);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
   cursor: pointer;
   color: var(--color-text-primary);
-  transition: background-color var(--motion-duration-fast)
-    var(--motion-easing-productive);
+  transition: background-color var(--transition-fast);
 }
 
 .top-bar .result-item:hover,
@@ -256,11 +270,11 @@
   width: 40px !important;
   height: 40px !important;
   border: none;
-  border-radius: 10px !important;
-  background: rgba(0, 0, 0, 0.04) !important;
+  border-radius: var(--radius-md) !important;
+  background: var(--surface-secondary) !important;
   cursor: pointer;
   color: var(--icon-color-primary);
-  transition: all 0.2s ease !important;
+  transition: all var(--transition) !important;
   padding: 0;
 }
 
@@ -270,7 +284,7 @@
 }
 
 .top-bar .header-icon:hover {
-  background: rgba(0, 0, 0, 0.08) !important;
+  background: var(--surface-tertiary) !important;
   transform: translateY(-1px) !important;
 }
 
@@ -313,15 +327,15 @@
   justify-content: center;
   min-inline-size: 44px;
   min-block-size: 44px;
-  padding: var(--primitive-space-4);
+  padding: var(--space-1);
   border: none;
-  border-radius: var(--radius-component-md);
+  border-radius: var(--radius-md);
   background: transparent;
   cursor: pointer;
   color: var(--icon-color-primary);
   transition:
-    background-color var(--motion-duration-fast) var(--motion-easing-productive),
-    transform var(--motion-duration-fast) var(--motion-easing-productive);
+    background-color var(--transition-fast),
+    transform var(--transition-fast);
 }
 
 .top-bar .user-menu:hover {
@@ -347,7 +361,7 @@
   align-items: center;
   justify-content: center;
   font-weight: var(--font-weight-semibold);
-  font-size: var(--typography-body-md-size);
+  font-size: var(--text-base);
 }
 
 /* User Menu Wrapper (positioning container) */
@@ -358,24 +372,24 @@
 /* User Menu Dropdown */
 .top-bar .user-menu-dropdown {
   position: absolute;
-  top: calc(100% + var(--primitive-space-8));
+  top: calc(100% + var(--space-2));
   right: 0;
   min-width: 200px;
   max-width: 280px;
   background: var(--surface-primary);
   border: 1px solid var(--color-border-primary);
-  border-radius: var(--radius-component-md);
-  box-shadow: var(--elevation-medium);
-  padding: var(--primitive-space-4);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  padding: var(--space-1);
   margin: 0;
   list-style: none;
   z-index: var(--z-index-dropdown);
   opacity: 0;
   transform: translateY(-8px);
   transition:
-    opacity var(--motion-duration-fast) var(--motion-easing-productive),
-    transform var(--motion-duration-fast) var(--motion-easing-productive),
-    visibility var(--motion-duration-fast) var(--motion-easing-productive);
+    opacity var(--transition-fast),
+    transform var(--transition-fast),
+    visibility var(--transition-fast);
   visibility: hidden;
   pointer-events: none;
 }
@@ -405,16 +419,16 @@
 .top-bar .user-menu-item {
   display: flex;
   align-items: center;
-  gap: var(--primitive-space-12);
-  padding: var(--primitive-space-12) var(--primitive-space-16);
-  border-radius: var(--radius-component-sm);
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
   color: var(--color-text-primary);
   text-decoration: none;
-  font-size: var(--typography-body-sm-size);
-  font-weight: var(--font-weight-regular);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-normal);
   transition:
-    background-color var(--motion-duration-fast) var(--motion-easing-productive),
-    color var(--motion-duration-fast) var(--motion-easing-productive);
+    background-color var(--transition-fast),
+    color var(--transition-fast);
   cursor: pointer;
   width: 100%;
 }
@@ -448,27 +462,111 @@
 .top-bar .user-menu-separator {
   height: 1px;
   background: var(--color-border-primary);
-  margin: var(--primitive-space-8) 0;
+  margin: var(--space-2) 0;
   padding: 0;
   list-style: none;
 }
 
-/* Theme Toggle Container */
+/* Theme Toggle Container - Redesigned with smooth animations */
 .top-bar .theme-toggle-container {
   display: flex;
   align-items: center;
+  position: relative;
+}
+
+.top-bar .theme-toggle-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  user-select: none;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition);
+  min-inline-size: 44px;
+  min-block-size: 44px;
+}
+
+.top-bar .theme-toggle-label:hover {
+  background: var(--surface-secondary);
+}
+
+.top-bar .theme-toggle-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.top-bar .theme-toggle-slider {
+  position: relative;
+  width: 48px;
+  height: 24px;
+  background: var(--surface-tertiary);
+  border-radius: var(--radius-lg);
+  transition:
+    background-color var(--transition-slow),
+    box-shadow var(--transition-slow);
+  border: 1px solid var(--color-border-subtle);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.top-bar .theme-toggle-input:checked + .theme-toggle-slider {
+  background: var(--color-brand-primary);
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.1),
+    0 0 0 3px rgba(16, 201, 107, 0.1);
+}
+
+.top-bar .theme-toggle-dot {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background: var(--surface-primary);
+  border-radius: 50%;
+  transition:
+    transform var(--transition-slow),
+    box-shadow var(--transition-slow);
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.1),
+    0 1px 2px rgba(0, 0, 0, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.top-bar .theme-toggle-input:checked + .theme-toggle-slider .theme-toggle-dot {
+  transform: translateX(24px);
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.15),
+    0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.top-bar .theme-toggle-text {
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  transition: color var(--transition);
+  white-space: nowrap;
+}
+
+.top-bar .theme-toggle-label:hover .theme-toggle-text {
+  color: var(--color-text-primary);
 }
 
 .top-bar .theme-toggle-fallback {
   min-inline-size: 44px;
   min-block-size: 44px;
-  padding: var(--primitive-space-8) var(--primitive-space-12);
+  padding: var(--space-2) var(--space-3);
   border: 1px solid var(--color-border-secondary);
-  border-radius: var(--radius-component-md);
+  border-radius: var(--radius-md);
   background: var(--surface-secondary);
   color: var(--color-text-primary);
   cursor: pointer;
-  font-size: var(--typography-body-sm-size);
+  font-size: var(--text-sm);
 }
 
 .top-bar .theme-toggle-fallback:hover {
@@ -483,7 +581,7 @@
 .top-bar .page-title-section {
   display: flex;
   flex-direction: column;
-  gap: var(--primitive-space-4);
+  gap: var(--space-1);
 }
 
 .top-bar .page-title {
@@ -500,19 +598,36 @@
   margin: 0;
 }
 
-/* Reduced Motion */
+/* Reduced Motion Support */
 @media (prefers-reduced-motion: reduce) {
   .top-bar,
   .top-bar .header-icon,
   .top-bar .user-menu,
   .top-bar .search-input,
-  .top-bar .result-item {
+  .top-bar .result-item,
+  .top-bar .theme-toggle-slider,
+  .top-bar .theme-toggle-dot,
+  .top-bar .theme-toggle-label,
+  .top-bar .user-menu-dropdown,
+  .scroll-to-top {
     transition: none;
   }
 
   .top-bar .header-icon:active,
-  .top-bar .user-menu:active {
+  .top-bar .user-menu:active,
+  .top-bar .mobile-menu-toggle:active,
+  .scroll-to-top:active {
     transform: none;
+  }
+
+  .top-bar .header-icon:hover,
+  .scroll-to-top:hover {
+    transform: none;
+  }
+
+  .top-bar.scrolled,
+  .top-bar.scrolled-deep {
+    box-shadow: var(--shadow-sm);
   }
 }
 
@@ -520,10 +635,10 @@
 @media (max-width: 768px) {
   .top-bar {
     flex-direction: row; /* ✅ Keep horizontal layout */
-    gap: var(--primitive-space-12);
+    gap: var(--space-3);
     height: 56px;
     min-height: 56px;
-    padding: var(--primitive-space-8) var(--primitive-space-12);
+    padding: var(--space-2) var(--space-3);
     align-items: center;
   }
 
@@ -532,14 +647,14 @@
     min-width: 0;
     display: flex;
     align-items: center;
-    gap: var(--primitive-space-8);
+    gap: var(--space-2);
   }
 
   .top-bar .header-right {
     flex-shrink: 0;
     display: flex;
     align-items: center;
-    gap: var(--primitive-space-8);
+    gap: var(--space-2);
     flex-wrap: nowrap;
   }
 
@@ -551,10 +666,10 @@
   
   /* Ensure search input is readable and doesn't trigger iOS zoom */
   .top-bar .search-input {
-    font-size: 16px; /* ✅ Explicit 16px to prevent iOS zoom */
+    font-size: var(--text-base); /* ✅ Explicit 16px to prevent iOS zoom */
     min-height: 44px;
-    padding: var(--primitive-space-10, 10px) var(--primitive-space-10, 10px)
-      var(--primitive-space-10, 10px) var(--primitive-space-36, 36px);
+    padding: var(--space-3) var(--space-3) var(--space-3) var(--space-3);
+    padding-left: 44px !important; /* Touch target compliance */
   }
 
   /* User menu dropdown positioning on mobile */
@@ -562,7 +677,7 @@
     right: 0;
     left: auto;
     min-width: 200px;
-    max-width: calc(100vw - var(--primitive-space-32));
+    max-width: calc(100vw - var(--space-8));
   }
 
   /* ✅ Ensure icons meet 44px minimum touch target */
@@ -584,16 +699,16 @@
 /* Very small mobile devices (320px - 480px) */
 @media (max-width: 480px) {
   .top-bar {
-    padding: var(--primitive-space-8) var(--primitive-space-8);
-    gap: var(--primitive-space-8);
+    padding: var(--space-2) var(--space-2);
+    gap: var(--space-2);
   }
   
   .top-bar .header-left {
-    gap: var(--primitive-space-4);
+    gap: var(--space-1);
   }
   
   .top-bar .header-right {
-    gap: var(--primitive-space-4);
+    gap: var(--space-1);
   }
   
   /* Search box should adapt to available space */
@@ -604,12 +719,12 @@
   
   /* Ensure text doesn't get too small */
   .top-bar .search-input::placeholder {
-    font-size: 14px;
+    font-size: var(--text-sm);
   }
   
   /* Ensure search input remains usable */
   .top-bar .search-input {
-    font-size: 16px; /* Prevent iOS zoom */
+    font-size: var(--text-base); /* Prevent iOS zoom */
     min-height: 44px; /* Touch target */
   }
 }
@@ -618,13 +733,13 @@
 @media (min-width: 481px) and (max-width: 768px) and (orientation: landscape) {
   .top-bar {
     height: 48px;
-    padding: var(--primitive-space-8) var(--primitive-space-16);
+    padding: var(--space-2) var(--space-4);
   }
   
   .hero-section {
     grid-template-columns: repeat(2, 1fr);
     padding: var(--spacing-layout-sm);
-    gap: var(--primitive-space-16);
+    gap: var(--space-4);
   }
   
   /* Reduce vertical spacing in landscape */
@@ -703,6 +818,101 @@
 }
 
 /* ============================================================================
+   SCROLL TO TOP BUTTON
+   ========================================================================== */
+
+.scroll-to-top {
+  position: fixed;
+  bottom: var(--space-6);
+  right: var(--space-6);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--color-brand-primary);
+  color: var(--color-text-on-primary);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-md);
+  z-index: 999;
+  opacity: 0;
+  transform: translateY(20px) scale(0.8);
+  transition:
+    opacity var(--transition-slow),
+    transform var(--transition-slow),
+    background-color var(--transition),
+    box-shadow var(--transition);
+  pointer-events: none;
+}
+
+.scroll-to-top:not([hidden]) {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.scroll-to-top:hover {
+  background: var(--color-brand-primary-hover);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px) scale(1.05);
+}
+
+.scroll-to-top:active {
+  transform: translateY(0) scale(0.95);
+}
+
+.scroll-to-top i {
+  stroke: currentColor;
+  fill: none;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .scroll-to-top {
+    width: 44px;
+    height: 44px;
+    bottom: var(--space-5);
+    right: var(--space-5);
+  }
+}
+
+/* Reduced motion support is handled in main reduced motion block above */
+
+/* ============================================================================
+   CONTENT PADDING FOR FIXED HEADER
+   ========================================================================== */
+
+/* Ensure main content has proper padding to prevent overlap with fixed header */
+/* This ensures content starts below the fixed top-bar (64px desktop, 56px mobile) */
+.main-content {
+  padding-top: 64px !important; /* Desktop header height - override existing padding-top */
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    padding-top: 56px !important; /* Mobile header height */
+  }
+}
+
+/* For pages using .l-main or other containers */
+.l-main {
+  padding-top: 64px !important;
+}
+
+@media (max-width: 768px) {
+  .l-main {
+    padding-top: 56px !important;
+  }
+}
+
+/* Ensure content inside main-content that comes after top-bar has proper spacing */
+.main-content > .top-bar + * {
+  margin-top: 0; /* Remove any extra margin since padding-top handles spacing */
+}
+
+/* ============================================================================
    DARK MODE (using your existing theme system)
    ========================================================================== */
 
@@ -745,3 +955,36 @@ body[data-theme="dark"] .top-bar .header-icon:hover,
 html[data-theme="dark"] .top-bar .header-icon:hover {
   background: rgba(255, 255, 255, 0.12) !important;
 }
+
+/* Dark theme scroll-to-top button */
+body[data-theme="dark"] .scroll-to-top,
+html[data-theme="dark"] .scroll-to-top {
+  background: var(--color-brand-primary);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.3),
+    0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+body[data-theme="dark"] .scroll-to-top:hover,
+html[data-theme="dark"] .scroll-to-top:hover {
+  background: var(--color-brand-primary-hover);
+  box-shadow:
+    0 6px 16px rgba(0, 0, 0, 0.4),
+    0 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Dark theme toggle styles */
+body[data-theme="dark"] .top-bar .theme-toggle-slider,
+html[data-theme="dark"] .top-bar .theme-toggle-slider {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+body[data-theme="dark"] .top-bar .theme-toggle-dot,
+html[data-theme="dark"] .top-bar .theme-toggle-dot {
+  background: var(--surface-primary);
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.2),
+    0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
