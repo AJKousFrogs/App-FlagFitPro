@@ -4,6 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FlagFit Pro - Community</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -12,226 +16,15 @@
     />
     <!-- New Modular CSS Architecture -->
     <link rel="stylesheet" href="./src/css/main.css" />
+    <!-- Page-specific styles -->
+    <link rel="stylesheet" href="./src/css/pages/community.css" />
+
     <!-- Lucide Icons - Modern icon library similar to Radix UI -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="./src/icon-helper.js"></script>
-    <script src="./src/theme-switcher.js"></script>
-    <script src="./src/nav-highlight.js"></script>
-    <script src="./src/components/organisms/top-bar/top-bar.js"></script>
-    <style>
-      /* Modern Sidebar - Enhanced Design (matching dashboard.html) */
-      .sidebar {
-        width: 250px;
-        height: 100vh;
-        position: fixed;
-        left: 0;
-        top: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 24px;
-        z-index: var(--z-index-dropdown, 1000);
-        gap: 12px;
-        transition: all 0.2s ease;
-      }
-
-      /* Dark Theme Sidebar */
-      body[data-theme="dark"] .sidebar,
-      html[data-theme="dark"] .sidebar {
-        background: #1a1a1a;
-        border-right: 1px solid rgba(255, 255, 255, 0.1);
-        box-shadow:
-          4px 0 24px rgba(0, 0, 0, 0.3),
-          inset -1px 0 0 rgba(255, 255, 255, 0.05);
-      }
-
-      /* Light Theme Sidebar */
-      body[data-theme="light"] .sidebar,
-      html[data-theme="light"] .sidebar {
-        background: #ffffff;
-        border-right: 1px solid rgba(0, 0, 0, 0.08);
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-      }
-
-      .sidebar-logo {
-        width: 48px;
-        height: 48px;
-        border-radius: 16px;
-        background: linear-gradient(
-          135deg,
-          #10c96b 0%,
-          #0ab85a 50%,
-          #089949 100%
-        );
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        margin-bottom: 8px;
-        box-shadow:
-          0 4px 16px rgba(16, 201, 107, 0.35),
-          0 2px 8px rgba(16, 201, 107, 0.25),
-          inset 0 1px 0 rgba(255, 255, 255, 0.2);
-      }
-
-      .sidebar-logo:hover {
-        transform: scale(1.08) rotate(5deg);
-        box-shadow:
-          0 8px 24px rgba(16, 201, 107, 0.45),
-          0 4px 12px rgba(16, 201, 107, 0.3),
-          inset 0 1px 0 rgba(255, 255, 255, 0.3);
-      }
-
-      .nav-section {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        margin-bottom: 8px;
-      }
-
-      .nav-item {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 12px;
-        border-radius: 12px;
-        color: var(--color-text-secondary);
-        text-decoration: none;
-        transition: all 0.3s ease;
-        position: relative;
-        width: 100%;
-        justify-content: flex-start;
-        min-height: 48px;
-      }
-
-      .nav-item::before {
-        content: "";
-        position: absolute;
-        left: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 3px;
-        height: 0;
-        background: var(--primitive-primary-500);
-        border-radius: 0 2px 2px 0;
-        transition: height 0.3s ease;
-      }
-
-      .nav-item:hover {
-        background: rgba(255, 255, 255, 0.08);
-        color: var(--color-text-primary);
-        transform: translateX(4px);
-      }
-
-      .nav-item:hover::before {
-        height: 60%;
-      }
-
-      .nav-item.active {
-        background: rgba(16, 201, 107, 0.1);
-        color: var(--primitive-primary-500);
-      }
-
-      .nav-item.active::before {
-        height: 80%;
-        background: var(--primitive-primary-500);
-      }
-
-      .nav-item.active .nav-item-icon {
-        background: rgba(16, 201, 107, 0.15);
-        color: var(--primitive-primary-500);
-      }
-
-      .nav-item-icon {
-        width: 24px;
-        height: 24px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-        transition: all 0.3s ease;
-      }
-
-      .nav-item-label {
-        opacity: 1;
-        transform: translateX(0);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        white-space: nowrap;
-        font-weight: var(--font-weight-medium, 500);
-        font-size: var(--text-sm);
-      }
-
-      body[data-theme="dark"] .nav-item,
-      html[data-theme="dark"] .nav-item {
-        color: rgba(255, 255, 255, 0.7);
-      }
-
-      body[data-theme="dark"] .nav-item:hover,
-      html[data-theme="dark"] .nav-item:hover {
-        background: rgba(255, 255, 255, 0.08);
-        color: rgba(255, 255, 255, 0.9);
-      }
-
-      body[data-theme="dark"] .nav-item.active,
-      html[data-theme="dark"] .nav-item.active {
-        background: rgba(16, 201, 107, 0.15);
-        color: var(--primitive-primary-500);
-      }
-
-      body[data-theme="light"] .nav-item,
-      html[data-theme="light"] .nav-item {
-        color: rgba(0, 0, 0, 0.6);
-      }
-
-      body[data-theme="light"] .nav-item:hover,
-      html[data-theme="light"] .nav-item:hover {
-        background: rgba(0, 0, 0, 0.05);
-        color: rgba(0, 0, 0, 0.9);
-      }
-
-      body[data-theme="light"] .nav-item.active,
-      html[data-theme="light"] .nav-item.active {
-        background: rgba(16, 201, 107, 0.1);
-        color: var(--primitive-primary-500);
-      }
-
-      /* Page-specific styles that can't be replaced with utilities */
-      .main-content {
-        margin-left: 250px;
-        width: calc(100% - 250px); /* ✅ Use width instead of max-width */
-        padding: var(--spacing-layout-md, 32px) var(--spacing-layout-lg, 40px);
-        box-sizing: border-box;
-      }
-
-      /* Top Bar styles are now in src/css/components/header.css */
-
-      @media (max-width: 1024px) {
-        .sidebar {
-          position: fixed;
-          transform: translateX(-100%);
-          transition: transform 0.3s ease;
-          z-index: var(--z-index-modal, 1400);
-        }
-
-        .sidebar.open {
-          transform: translateX(0);
-        }
-
-        .main-content {
-          margin-left: 0;
-          width: 100%; /* ✅ Full width on mobile */
-          padding: var(--spacing-layout-xs, 20px) var(--spacing-component-lg, 24px);
-        }
-      }
-      
-      @media (max-width: 480px) {
-        .main-content {
-          padding: var(--spacing-layout-xs, 16px) var(--spacing-component-md, 16px);
-        }
-      }
-    </style>
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+    <script src="./src/icon-helper.js" defer></script>
+    <script src="./src/theme-switcher.js" defer></script>
+    <script src="./src/nav-highlight.js" defer></script>
+    <script src="./src/components/organisms/top-bar/top-bar.js" defer></script>
   </head>
   <body>
     <div class="dashboard-container">
@@ -245,15 +38,7 @@
           onclick="window.location.href='/dashboard.html'"
           title="FlagFit Pro"
         >
-          <i
-            data-lucide="activity"
-            style="
-              width: 20px;
-              height: 20px;
-              color: var(--icon-color-primary);
-              stroke: var(--icon-color-primary);
-            "
-          ></i>
+          <i data-lucide="activity"></i>
         </div>
 
         <nav class="nav-section" aria-label="Dashboard navigation">
@@ -530,43 +315,27 @@
                   <div class="post-avatar">CM</div>
                   <div class="post-info">
                     <div class="post-author">Coach Mike Thompson</div>
-                    <div class="post-meta">2 hours ago • 📍 Training Field</div>
+                    <div class="post-meta">
+                      2 hours ago • 
+                      <i data-lucide="map-pin" class="icon-14"></i>
+                      Training Field
+                    </div>
                   </div>
                 </div>
                 <div class="post-content">
-                  <div class="post-text">
+                    <div class="post-text">
                     Great practice session today! I'm seeing incredible
                     improvement in everyone's route running. The precision
                     passing drill really paid off. Keep up the momentum team!
-                    <i
-                      data-lucide="football"
-                      style="
-                        width: 16px;
-                        height: 16px;
-                        display: inline-block;
-                        vertical-align: middle;
-                        color: var(--icon-color-primary);
-                        stroke: var(--icon-color-primary);
-                      "
-                    ></i
-                    ><i
-                      data-lucide="dumbbell"
-                      style="
-                        width: 16px;
-                        height: 16px;
-                        display: inline-block;
-                        vertical-align: middle;
-                        color: var(--icon-color-primary);
-                        stroke: var(--icon-color-primary);
-                      "
-                    ></i>
+                    <i data-lucide="football" class="icon-16"></i>
+                    <i data-lucide="dumbbell" class="icon-16"></i>
                   </div>
                 </div>
                 <div class="post-engagement">
                   <div class="engagement-stats">
-                    <span><i data-lucide="thumbs-up" class="w-14px h-14px"></i> 24 likes</span>
-                    <span><i data-lucide="message-circle" class="w-14px h-14px"></i> 8 comments</span>
-                    <span><i data-lucide="share-2" class="w-14px h-14px"></i> 3 shares</span>
+                    <span><i data-lucide="thumbs-up" class="icon-14"></i> 24 likes</span>
+                    <span><i data-lucide="message-circle" class="icon-14"></i> 8 comments</span>
+                    <span><i data-lucide="share-2" class="icon-14"></i> 3 shares</span>
                   </div>
                   <div class="engagement-actions">
                     <button
@@ -617,48 +386,29 @@
                     <div class="post-author">Alex Rodriguez</div>
                     <div class="post-meta">
                       4 hours ago •
-                      <i
-                        data-lucide="trophy"
-                        style="
-                          width: 16px;
-                          height: 16px;
-                          display: inline-block;
-                          vertical-align: middle;
-                          color: var(--icon-color-primary);
-                          stroke: var(--icon-color-primary);
-                        "
-                      ></i>
+                      <i data-lucide="trophy" class="icon-14"></i>
                       Tournament Victory
                     </div>
                   </div>
                 </div>
                 <div class="post-content">
                   <div class="achievement-badge">
-                    <i
-                      data-lucide="trophy"
-                      style="
-                        width: 16px;
-                        height: 16px;
-                        display: inline-block;
-                        vertical-align: middle;
-                        color: var(--icon-color-primary);
-                        stroke: var(--icon-color-primary);
-                      "
-                    ></i>
+                    <i data-lucide="trophy" class="icon-16"></i>
                     Tournament Champion! First place in the Regional
                     Championship!
                   </div>
                   <div class="post-text">
                     What an incredible weekend! Our team played phenomenally and
                     took home the championship trophy. Special thanks to
-                    everyone who supported us. This one's for the community! 🙌
+                    everyone who supported us. This one's for the community!
+                    <i data-lucide="heart" class="icon-16"></i>
                   </div>
                 </div>
                 <div class="post-engagement">
                   <div class="engagement-stats">
-                    <span><i data-lucide="thumbs-up" class="w-14px h-14px"></i> 87 likes</span>
-                    <span><i data-lucide="message-circle" class="w-14px h-14px"></i> 23 comments</span>
-                    <span><i data-lucide="share-2" class="w-14px h-14px"></i> 12 shares</span>
+                    <span><i data-lucide="thumbs-up" class="icon-14"></i> 87 likes</span>
+                    <span><i data-lucide="message-circle" class="icon-14"></i> 23 comments</span>
+                    <span><i data-lucide="share-2" class="icon-14"></i> 12 shares</span>
                   </div>
                   <div class="engagement-actions">
                     <button
@@ -699,44 +449,24 @@
                     <div class="post-author">Riley Johnson</div>
                     <div class="post-meta">
                       6 hours ago •
-                      <i
-                        data-lucide="zap"
-                        style="
-                          width: 16px;
-                          height: 16px;
-                          display: inline-block;
-                          vertical-align: middle;
-                          color: var(--icon-color-primary);
-                          stroke: var(--icon-color-primary);
-                        "
-                      ></i>
+                      <i data-lucide="zap" class="icon-14"></i>
                       Training Tips
                     </div>
                   </div>
                 </div>
                 <div class="post-content">
-                  <div class="post-text">
+                    <div class="post-text">
                     Pro tip for new players: Focus on your flag positioning!
                     Keep them loose enough to grab but not so loose they fall
                     off during runs. Game changer for defense!
-                    <i
-                      data-lucide="target"
-                      style="
-                        width: 16px;
-                        height: 16px;
-                        display: inline-block;
-                        vertical-align: middle;
-                        color: var(--icon-color-primary);
-                        stroke: var(--icon-color-primary);
-                      "
-                    ></i>
+                    <i data-lucide="target" class="icon-16"></i>
                   </div>
                 </div>
                 <div class="post-engagement">
                   <div class="engagement-stats">
-                    <span><i data-lucide="thumbs-up" class="w-14px h-14px"></i> 42 likes</span>
-                    <span><i data-lucide="message-circle" class="w-14px h-14px"></i> 15 comments</span>
-                    <span><i data-lucide="share-2" class="w-14px h-14px"></i> 8 shares</span>
+                    <span><i data-lucide="thumbs-up" class="icon-14"></i> 42 likes</span>
+                    <span><i data-lucide="message-circle" class="icon-14"></i> 15 comments</span>
+                    <span><i data-lucide="share-2" class="icon-14"></i> 8 shares</span>
                   </div>
                   <div class="engagement-actions">
                     <button
@@ -763,7 +493,10 @@
 
           <div class="sidebar-content">
             <div class="sidebar-section">
-              <h3 class="section-title">🔥 Trending Topics</h3>
+              <h3 class="section-title">
+                <i data-lucide="trending-up" class="icon-18"></i>
+                Trending Topics
+              </h3>
               <div class="trending-item">
                 <div class="trending-topic">#FlagFootballTips</div>
                 <div class="trending-count">142 posts</div>
@@ -788,17 +521,7 @@
 
             <div class="sidebar-section">
               <h3 class="section-title">
-                <i
-                  data-lucide="users"
-                  style="
-                    width: 16px;
-                    height: 16px;
-                    display: inline-block;
-                    vertical-align: middle;
-                    color: var(--icon-color-primary);
-                    stroke: var(--icon-color-primary);
-                  "
-                ></i>
+                <i data-lucide="users" class="icon-18"></i>
                 Suggested Connections
               </h3>
               <div class="suggested-user">
@@ -831,43 +554,20 @@
 
             <div class="sidebar-section">
               <h3 class="section-title">
-                <i
-                  data-lucide="trophy"
-                  style="
-                    width: 16px;
-                    height: 16px;
-                    display: inline-block;
-                    vertical-align: middle;
-                    color: var(--icon-color-primary);
-                    stroke: var(--icon-color-primary);
-                  "
-                ></i>
+                <i data-lucide="trophy" class="icon-18"></i>
                 Recent Achievements
               </h3>
-              <div class="achievement-badge">🥇 Regional Champions</div>
-              <div
-                class="achievement-badge"
-                style="
-                  background: linear-gradient(
-                    135deg,
-                    var(--dark-text-muted) 0%,
-                    var(--dark-text-muted) 100%
-                  );
-                "
-              >
-                🥈 Training Milestone
+              <div class="achievement-badge">
+                <i data-lucide="award" class="icon-16"></i>
+                Regional Champions
               </div>
-              <div
-                class="achievement-badge"
-                style="
-                  background: linear-gradient(
-                    135deg,
-                    var(--tertiary-600) 0%,
-                    var(--tertiary-700) 100%
-                  );
-                "
-              >
-                🥉 Community Helper
+              <div class="achievement-badge achievement-silver">
+                <i data-lucide="target" class="icon-16"></i>
+                Training Milestone
+              </div>
+              <div class="achievement-badge achievement-bronze">
+                <i data-lucide="users" class="icon-16"></i>
+                Community Helper
               </div>
             </div>
           </div>
@@ -934,35 +634,35 @@
             author: "sarah.williams",
             authorName: "Sarah Williams",
             content:
-              "Just hit a new personal best on my 40-yard dash! 4.8 seconds! 🏃‍♀️💨 All those early morning training sessions are paying off. Who else is working on their speed this week?",
+              "Just hit a new personal best on my 40-yard dash! 4.8 seconds! All those early morning training sessions are paying off. Who else is working on their speed this week?",
             timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
             likes: 18,
             comments: 5,
             shares: 2,
             isLiked: false,
-            location: "🏃‍♀️ Track",
+            location: '<i data-lucide="map-pin" class="icon-14"></i> Track',
           },
           {
             id: "demo2",
             author: "alex.rodriguez",
             authorName: "Alex Rodriguez",
             content:
-              'Game highlights from yesterday\'s scrimmage! That touchdown pass in the final minutes was INSANE! <i data-lucide="football" class="icon-16 inline-block align-middle"></i>🔥 Great teamwork everyone!',
+              'Game highlights from yesterday\'s scrimmage! That touchdown pass in the final minutes was INSANE! <i data-lucide="football" class="icon-16"></i> Great teamwork everyone!',
             timestamp: new Date(Date.now() - 18 * 60 * 60 * 1000).toISOString(),
             likes: 31,
             comments: 12,
             shares: 8,
             isLiked: true,
-            location: "🏟️ Championship Field",
+            location: '<i data-lucide="map-pin" class="icon-14"></i> Championship Field',
             achievement:
-              '<i data-lucide="trophy" class="icon-16 inline-block align-middle"></i> Game MVP',
+              '<i data-lucide="trophy" class="icon-16"></i> Game MVP',
           },
           {
             id: "demo3",
             author: "tyler.johnson",
             authorName: "Tyler Johnson",
             content:
-              "Quick tip for better flag pulling: Watch the hips, not the feet! The hips don't lie and will tell you exactly where the runner is going. Works every time! 💯",
+              "Quick tip for better flag pulling: Watch the hips, not the feet! The hips don't lie and will tell you exactly where the runner is going. Works every time!",
             timestamp: new Date(
               Date.now() - 2 * 24 * 60 * 60 * 1000,
             ).toISOString(),
@@ -971,7 +671,7 @@
             shares: 12,
             isLiked: false,
             location:
-              '<i data-lucide="lightbulb" class="icon-16 inline-block align-middle"></i> Training Tips',
+              '<i data-lucide="lightbulb" class="icon-14"></i> Training Tips',
           },
         ];
 
@@ -981,9 +681,11 @@
             const postHTML = createPostHTML(post, authManager.getCurrentUser());
             container.insertAdjacentHTML("beforeend", postHTML);
           });
-          console.log(
-            '<i data-lucide="check-circle" class="icon-16 inline-block align-middle"></i> Demo posts added to community feed',
-          );
+          // Initialize Lucide icons for dynamically added posts
+          if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+          }
+          console.log('Demo posts added to community feed');
         }
       }
 
@@ -1030,19 +732,19 @@
                         <div class="post-avatar">${getInitials(post.author)}</div>
                         <div class="post-info">
                             <div class="post-author">${post.authorName}</div>
-                            <div class="post-meta">${formatTime(post.timestamp)} • ${post.location || "📍 Community"}</div>
+                            <div class="post-meta">${formatTime(post.timestamp)} • ${post.location || '<i data-lucide="map-pin" class="icon-14"></i> Community'}</div>
                         </div>
                     </div>
                     <div class="post-content">
                         ${post.achievement ? `<div class="achievement-badge">${post.achievement}</div>` : ""}
-                        <div class="post-text">${escapeHtml(post.content)}</div>
+                        <div class="post-text">${post.content}</div>
                         ${post.image ? `<img src="${post.image}" alt="Post image" class="post-image">` : ""}
                     </div>
                     <div class="post-engagement">
                         <div class="engagement-stats">
-                            <span><i data-lucide="thumbs-up" class="w-14px h-14px"></i> ${post.likes || 0} likes</span>
-                            <span><i data-lucide="message-circle" class="w-14px h-14px"></i> ${post.comments || 0} comments</span>
-                            <span><i data-lucide="share-2" class="w-14px h-14px"></i> ${post.shares || 0} shares</span>
+                            <span><i data-lucide="thumbs-up" class="icon-14"></i> ${post.likes || 0} likes</span>
+                            <span><i data-lucide="message-circle" class="icon-14"></i> ${post.comments || 0} comments</span>
+                            <span><i data-lucide="share-2" class="icon-14"></i> ${post.shares || 0} shares</span>
                         </div>
                         <div class="engagement-actions">
                             <button class="action-btn ${post.isLiked ? "liked" : ""}" onclick="toggleLike(this, '${post.id}')">
@@ -1137,6 +839,11 @@
 
         // Insert after create post form
         container.insertAdjacentHTML("afterbegin", postHTML);
+        
+        // Initialize Lucide icons for the new post
+        if (typeof lucide !== 'undefined') {
+          lucide.createIcons();
+        }
       }
 
       window.toggleLike = async function (button, postId) {
@@ -1166,7 +873,7 @@
             const likeSpan = stats.children[0];
             const currentLikes = parseInt(likeSpan.textContent.match(/\d+/)[0]);
             const newLikes = isLiked ? currentLikes - 1 : currentLikes + 1;
-            likeSpan.innerHTML = `<i data-lucide="thumbs-up" class="w-14px h-14px"></i> ${newLikes} likes`;
+            likeSpan.innerHTML = `<i data-lucide="thumbs-up" class="icon-14"></i> ${newLikes} likes`;
             lucide.createIcons();
           }
         } catch (error) {
@@ -1222,5 +929,38 @@
 
       document.addEventListener("DOMContentLoaded", initCommunityPage);
     </script>
+
+    <!-- Footer -->
+    <footer role="contentinfo" class="main-footer">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>FlagFit Pro</h3>
+          <p>Professional flag football training and analytics platform</p>
+        </div>
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <nav aria-label="Footer navigation">
+            <ul>
+              <li><a href="/dashboard.html">Dashboard</a></li>
+              <li><a href="/training.html">Training</a></li>
+              <li><a href="/roster.html">Roster</a></li>
+              <li><a href="/analytics.html">Analytics</a></li>
+            </ul>
+          </nav>
+        </div>
+        <div class="footer-section">
+          <h4>Support</h4>
+          <nav aria-label="Support links">
+            <ul>
+              <li><a href="/settings.html">Settings</a></li>
+              <li><a href="/community.html">Community</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 FlagFit Pro. All rights reserved.</p>
+      </div>
+    </footer>
   </body>
 </html>

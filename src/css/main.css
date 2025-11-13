@@ -42,6 +42,7 @@
    ================================================================ */
 @import url("./layout.css") layer(layout);
 @import url("./layout-modern.css") layer(layout);
+@import url("./components/footer.css") layer(components);
 
 /* ================================================================
    LAYER 6.5: GRADIENTS
@@ -62,6 +63,8 @@
 @import url("./components/header.css") layer(components);
 @import url("./components/sidebar.css") layer(components);
 @import url("./components/community.css") layer(components);
+@import url("./components/post.css") layer(components);
+@import url("./components/sidebar-widgets.css") layer(components);
 
 /* ================================================================
    LAYER 7.5: COMPONENTS MODERN
@@ -97,6 +100,7 @@
    Helper classes (.u-*) - highest specificity
    ================================================================ */
 @import url("./utilities.css") layer(utilities);
+@import url("./inline-styles-extracted.css") layer(utilities);
 
 /* ================================================================
    LAYER 11: HOOKS

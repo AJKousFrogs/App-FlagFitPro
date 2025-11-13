@@ -4,10 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Update Team Roster Data - FlagFit Pro</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
+    />
     <!-- New Modular CSS Architecture -->
     <link rel="stylesheet" href="./src/css/main.css">
-    <script src="./src/theme-switcher.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="./src/theme-switcher.js" defer></script>
+    <script src="https://unpkg.com/lucide@latest" defer></script>
 </head>
 <body>
     <div class="container">
@@ -26,7 +30,7 @@
             </ol>
         </div>
         
-        <!-- Team Information -->
+    <!-- Team Information -->
         <div class="team-info-card">
             <h2>Team Information</h2>
             <div class="form-row">
@@ -49,7 +53,7 @@
             </div>
         </div>
         
-        <!-- Add Player Form -->
+    <!-- Add Player Form -->
         <div class="player-form-card">
             <h2>Add New Player</h2>
             <form id="playerForm">
@@ -118,7 +122,7 @@
             </form>
         </div>
         
-        <!-- Current Roster -->
+    <!-- Current Roster -->
         <div class="team-info-card">
             <h2>Current Roster (<span id="playerCount">0</span> players)</h2>
             <div id="currentRoster" class="players-grid">
@@ -126,7 +130,7 @@
             </div>
         </div>
         
-        <!-- Export Section -->
+    <!-- Export Section -->
         <div class="export-section">
             <h2>Generated Code</h2>
             <p>Copy this code and replace the demo data in your dashboard.html file:</p>
@@ -137,7 +141,7 @@
             <button onclick="copyToClipboard()" class="btn btn-secondary" style="margin-top: var(--space-4);">Copy to Clipboard</button>
         </div>
     </div>
-    
+
     <script>
         let teamRoster = [
             // Start with placeholder data that matches current structure
@@ -398,5 +402,38 @@ const teamInfo = {
             validatePosition(this.value);
         });
     </script>
+
+    <!-- Footer -->
+    <footer role="contentinfo" class="main-footer">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>FlagFit Pro</h3>
+          <p>Professional flag football training and analytics platform</p>
+        </div>
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <nav aria-label="Footer navigation">
+            <ul>
+              <li><a href="/dashboard.html">Dashboard</a></li>
+              <li><a href="/training.html">Training</a></li>
+              <li><a href="/roster.html">Roster</a></li>
+              <li><a href="/analytics.html">Analytics</a></li>
+            </ul>
+          </nav>
+        </div>
+        <div class="footer-section">
+          <h4>Support</h4>
+          <nav aria-label="Support links">
+            <ul>
+              <li><a href="/settings.html">Settings</a></li>
+              <li><a href="/community.html">Community</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 FlagFit Pro. All rights reserved.</p>
+      </div>
+    </footer>
 </body>
 </html>

@@ -4,6 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FlagFit Pro - Team Chat</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -12,226 +16,19 @@
     />
     <!-- New Modular CSS Architecture -->
     <link rel="stylesheet" href="./src/css/main.css" />
+    <!-- Chat Component Styles -->
+    <link rel="stylesheet" href="./src/css/components/chat.css" />
+    <!-- Modern UI Enhancements -->
+    <link rel="stylesheet" href="./src/css/components/chat-modern.css" />
+    <!-- Page-specific styles -->
+    <link rel="stylesheet" href="./src/css/pages/chat.css" />
+
+
     <!-- Lucide Icons - Modern icon library similar to Radix UI -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="./src/icon-helper.js"></script>
-    <script src="./src/theme-switcher.js"></script>
-    <script src="./src/nav-highlight.js"></script>
-    <script src="./src/components/organisms/top-bar/top-bar.js"></script>
-    <style>
-      /* Modern Sidebar - Enhanced Design (matching dashboard.html) */
-      .sidebar {
-        width: 250px;
-        height: 100vh;
-        position: fixed;
-        left: 0;
-        top: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 24px;
-        z-index: var(--z-index-dropdown, 1000);
-        gap: 12px;
-        transition: all 0.2s ease;
-      }
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+    <script src="./src/icon-helper.js" defer></script>
+    <script src="./src/theme-switcher.js" defer></script>
 
-      /* Dark Theme Sidebar */
-      body[data-theme="dark"] .sidebar,
-      html[data-theme="dark"] .sidebar {
-        background: #1a1a1a;
-        border-right: 1px solid rgba(255, 255, 255, 0.1);
-        box-shadow:
-          4px 0 24px rgba(0, 0, 0, 0.3),
-          inset -1px 0 0 rgba(255, 255, 255, 0.05);
-      }
-
-      /* Light Theme Sidebar */
-      body[data-theme="light"] .sidebar,
-      html[data-theme="light"] .sidebar {
-        background: #ffffff;
-        border-right: 1px solid rgba(0, 0, 0, 0.08);
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-      }
-
-      .sidebar-logo {
-        width: 48px;
-        height: 48px;
-        border-radius: 16px;
-        background: linear-gradient(
-          135deg,
-          #10c96b 0%,
-          #0ab85a 50%,
-          #089949 100%
-        );
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        margin-bottom: 8px;
-        box-shadow:
-          0 4px 16px rgba(16, 201, 107, 0.35),
-          0 2px 8px rgba(16, 201, 107, 0.25),
-          inset 0 1px 0 rgba(255, 255, 255, 0.2);
-      }
-
-      .sidebar-logo:hover {
-        transform: scale(1.08) rotate(5deg);
-        box-shadow:
-          0 8px 24px rgba(16, 201, 107, 0.45),
-          0 4px 12px rgba(16, 201, 107, 0.3),
-          inset 0 1px 0 rgba(255, 255, 255, 0.3);
-      }
-
-      .nav-section {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        margin-bottom: 8px;
-      }
-
-      .nav-item {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 12px;
-        border-radius: 12px;
-        color: var(--color-text-secondary);
-        text-decoration: none;
-        transition: all 0.3s ease;
-        position: relative;
-        width: 100%;
-        justify-content: flex-start;
-        min-height: 48px;
-      }
-
-      .nav-item::before {
-        content: "";
-        position: absolute;
-        left: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 3px;
-        height: 0;
-        background: var(--primitive-primary-500);
-        border-radius: 0 2px 2px 0;
-        transition: height 0.3s ease;
-      }
-
-      .nav-item:hover {
-        background: rgba(255, 255, 255, 0.08);
-        color: var(--color-text-primary);
-        transform: translateX(4px);
-      }
-
-      .nav-item:hover::before {
-        height: 60%;
-      }
-
-      .nav-item.active {
-        background: rgba(16, 201, 107, 0.1);
-        color: var(--primitive-primary-500);
-      }
-
-      .nav-item.active::before {
-        height: 80%;
-        background: var(--primitive-primary-500);
-      }
-
-      .nav-item.active .nav-item-icon {
-        background: rgba(16, 201, 107, 0.15);
-        color: var(--primitive-primary-500);
-      }
-
-      .nav-item-icon {
-        width: 24px;
-        height: 24px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-        transition: all 0.3s ease;
-      }
-
-      .nav-item-label {
-        opacity: 1;
-        transform: translateX(0);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        white-space: nowrap;
-        font-weight: var(--font-weight-medium, 500);
-        font-size: var(--text-sm);
-      }
-
-      body[data-theme="dark"] .nav-item,
-      html[data-theme="dark"] .nav-item {
-        color: rgba(255, 255, 255, 0.7);
-      }
-
-      body[data-theme="dark"] .nav-item:hover,
-      html[data-theme="dark"] .nav-item:hover {
-        background: rgba(255, 255, 255, 0.08);
-        color: rgba(255, 255, 255, 0.9);
-      }
-
-      body[data-theme="dark"] .nav-item.active,
-      html[data-theme="dark"] .nav-item.active {
-        background: rgba(16, 201, 107, 0.15);
-        color: var(--primitive-primary-500);
-      }
-
-      body[data-theme="light"] .nav-item,
-      html[data-theme="light"] .nav-item {
-        color: rgba(0, 0, 0, 0.6);
-      }
-
-      body[data-theme="light"] .nav-item:hover,
-      html[data-theme="light"] .nav-item:hover {
-        background: rgba(0, 0, 0, 0.05);
-        color: rgba(0, 0, 0, 0.9);
-      }
-
-      body[data-theme="light"] .nav-item.active,
-      html[data-theme="light"] .nav-item.active {
-        background: rgba(16, 201, 107, 0.1);
-        color: var(--primitive-primary-500);
-      }
-
-      /* Page-specific styles that can't be replaced with utilities */
-      .main-content {
-        margin-left: 250px;
-        width: calc(100% - 250px); /* ✅ Use width instead of max-width */
-        padding: var(--spacing-layout-md, 32px) var(--spacing-layout-lg, 40px);
-        box-sizing: border-box;
-      }
-
-      /* Top Bar styles are now in src/css/components/header.css */
-
-      @media (max-width: 1024px) {
-        .sidebar {
-          position: fixed;
-          transform: translateX(-100%);
-          transition: transform 0.3s ease;
-          z-index: var(--z-index-modal, 1400);
-        }
-
-        .sidebar.open {
-          transform: translateX(0);
-        }
-
-        .main-content {
-          margin-left: 0;
-          width: 100%; /* ✅ Full width on mobile */
-          padding: var(--spacing-layout-xs, 20px) var(--spacing-component-lg, 24px);
-        }
-      }
-      
-      @media (max-width: 480px) {
-        .main-content {
-          padding: var(--spacing-layout-xs, 16px) var(--spacing-component-md, 16px);
-        }
-      }
-    </style>
   </head>
   <body>
     <div class="dashboard-container">
@@ -247,12 +44,7 @@
         >
           <i
             data-lucide="activity"
-            style="
-              width: 20px;
-              height: 20px;
-              color: var(--icon-color-primary);
-              stroke: var(--icon-color-primary);
-            "
+            class="icon-20"
           ></i>
         </div>
 
@@ -491,20 +283,14 @@
             </p>
           </div>
           <div class="chat-actions u-display-flex u-gap-8">
-            <button class="chat-action-btn">📞</button>
-            <button class="chat-action-btn">📹</button>
-            <button class="chat-action-btn">
-              <i
-                data-lucide="settings"
-                style="
-                  width: 16px;
-                  height: 16px;
-                  display: inline-block;
-                  vertical-align: middle;
-                  color: var(--icon-color-primary);
-                  stroke: var(--icon-color-primary);
-                "
-              ></i>
+            <button class="chat-action-btn" aria-label="Start voice call">
+              <i data-lucide="phone" class="icon-16"></i>
+            </button>
+            <button class="chat-action-btn" aria-label="Start video call">
+              <i data-lucide="video" class="icon-16"></i>
+            </button>
+            <button class="chat-action-btn" aria-label="Channel settings">
+              <i data-lucide="settings" class="icon-16"></i>
             </button>
           </div>
         </header>
@@ -522,7 +308,13 @@
 
             <div class="channels-list" id="channelsList">
               <div class="channel-category">Team Channels</div>
-              <div class="channel-item active" data-channel="team-general">
+              <div 
+                class="channel-item active" 
+                data-channel="team-general"
+                role="button"
+                tabindex="0"
+                aria-label="Channel: team-general"
+              >
                 <span class="channel-icon">#</span>
                 <div class="channel-info">
                   <div class="channel-name">team-general</div>
@@ -532,16 +324,28 @@
                 </div>
               </div>
 
-              <div class="channel-item" data-channel="strategy">
+              <div 
+                class="channel-item" 
+                data-channel="strategy"
+                role="button"
+                tabindex="0"
+                aria-label="Channel: strategy, 3 unread messages"
+              >
                 <span class="channel-icon">#</span>
                 <div class="channel-info">
                   <div class="channel-name">strategy</div>
                   <div class="channel-preview">New play formations</div>
                 </div>
-                <span class="unread-count">3</span>
+                <span class="unread-count" aria-label="3 unread messages">3</span>
               </div>
 
-              <div class="channel-item" data-channel="training">
+              <div 
+                class="channel-item" 
+                data-channel="training"
+                role="button"
+                tabindex="0"
+                aria-label="Channel: training"
+              >
                 <span class="channel-icon">#</span>
                 <div class="channel-info">
                   <div class="channel-name">training</div>
@@ -550,22 +354,34 @@
               </div>
 
               <div class="channel-category">Direct Messages</div>
-              <div class="channel-item" data-channel="coach-mike">
-                <span class="channel-icon">👨‍💼</span>
+              <div 
+                class="channel-item" 
+                data-channel="coach-mike"
+                role="button"
+                tabindex="0"
+                aria-label="Direct message: Coach Mike, online"
+              >
+                <span class="channel-icon">CM</span>
                 <div class="channel-info">
                   <div class="channel-name">Coach Mike</div>
                   <div class="channel-preview">Great job on training today</div>
                 </div>
-                <div class="online-status"></div>
+                <div class="online-status" aria-label="Online"></div>
               </div>
 
-              <div class="channel-item" data-channel="sarah-captain">
-                <span class="channel-icon">👩‍💼</span>
+              <div 
+                class="channel-item" 
+                data-channel="sarah-captain"
+                role="button"
+                tabindex="0"
+                aria-label="Direct message: Sarah (Captain), 1 unread message"
+              >
+                <span class="channel-icon">SC</span>
                 <div class="channel-info">
                   <div class="channel-name">Sarah (Captain)</div>
                   <div class="channel-preview">Team meeting tomorrow?</div>
                 </div>
-                <span class="unread-count">1</span>
+                <span class="unread-count" aria-label="1 unread message">1</span>
               </div>
             </div>
           </aside>
@@ -578,12 +394,12 @@
               aria-live="polite"
               aria-label="Chat messages"
             >
-              <div class="message">
+              <div class="message" role="article" aria-label="Message from Coach Mike at 2:30 PM">
                 <div class="message-avatar">CM</div>
                 <div class="message-content">
                   <div class="message-header">
                     <span class="message-author">Coach Mike</span>
-                    <span class="message-time">Today at 2:30 PM</span>
+                    <span class="message-time" aria-label="Today at 2:30 PM">Today at 2:30 PM</span>
                   </div>
                   <div class="message-text">
                     Great training session everyone! I saw some real
@@ -593,6 +409,17 @@
                       data-lucide="football"
                       class="icon-16 inline-block align-middle"
                     ></i>
+                  </div>
+                  <div class="message-actions" role="toolbar" aria-label="Message actions">
+                    <button class="action-btn-mini" aria-label="React to message">
+                      <i data-lucide="smile" class="icon-14"></i>
+                    </button>
+                    <button class="action-btn-mini" aria-label="Reply to message">
+                      <i data-lucide="reply" class="icon-14"></i>
+                    </button>
+                    <button class="action-btn-mini" aria-label="More options">
+                      <i data-lucide="more-horizontal" class="icon-14"></i>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -625,15 +452,30 @@
                 </div>
               </div>
 
-              <div class="message own">
+              <div class="message own" role="article" aria-label="Your message at 3:15 PM">
                 <div class="message-avatar">ME</div>
                 <div class="message-content">
                   <div class="message-header">
                     <span class="message-author">You</span>
-                    <span class="message-time">Today at 3:15 PM</span>
+                    <span class="message-time" aria-label="Today at 3:15 PM">Today at 3:15 PM</span>
                   </div>
                   <div class="message-text">
                     I'm in! Let's meet at the field around 6 PM?
+                  </div>
+                  <div class="message-status">
+                    <i data-lucide="check-check" class="status-read icon-14"></i>
+                    <span class="message-time">3:15 PM</span>
+                  </div>
+                  <div class="message-actions" role="toolbar" aria-label="Message actions">
+                    <button class="action-btn-mini" aria-label="React to message">
+                      <i data-lucide="smile" class="icon-14"></i>
+                    </button>
+                    <button class="action-btn-mini" aria-label="Reply to message">
+                      <i data-lucide="reply" class="icon-14"></i>
+                    </button>
+                    <button class="action-btn-mini" aria-label="More options">
+                      <i data-lucide="more-horizontal" class="icon-14"></i>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -680,7 +522,8 @@
                   disabled
                   aria-label="Send message"
                 >
-                  <span aria-hidden="true">➤</span>
+                  <i data-lucide="send" class="icon-18" aria-hidden="true"></i>
+                  <span class="sr-only">Send message</span>
                 </button>
               </div>
             </div>
@@ -698,6 +541,8 @@
       let currentChannel = "team-general";
       let typingTimeout;
       let lastMessageTime = 0;
+      let lastMessageAuthor = null;
+      const MESSAGE_GROUP_THRESHOLD = 5 * 60 * 1000; // 5 minutes in milliseconds
 
       async function initChatPage() {
         if (!authManager.requireAuth()) return;
@@ -746,28 +591,59 @@
         const channelItems = document.querySelectorAll(".channel-item");
 
         channelItems.forEach((item) => {
+          // Click handler
           item.addEventListener("click", function () {
-            // Remove active class from all items
-            channelItems.forEach((i) => i.classList.remove("active"));
+            selectChannel(this);
+          });
 
-            // Add active class to clicked item
-            this.classList.add("active");
-
-            // Update current channel
-            currentChannel = this.dataset.channel;
-            document.getElementById("currentChannelName").textContent =
-              currentChannel;
-
-            // Remove unread count
-            const unreadCount = this.querySelector(".unread-count");
-            if (unreadCount) {
-              unreadCount.remove();
+          // Keyboard navigation
+          item.addEventListener("keydown", function (e) {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              selectChannel(this);
+            } else if (e.key === "ArrowDown") {
+              e.preventDefault();
+              const next = this.nextElementSibling;
+              if (next && next.classList.contains("channel-item")) {
+                next.focus();
+              }
+            } else if (e.key === "ArrowUp") {
+              e.preventDefault();
+              const prev = this.previousElementSibling;
+              if (prev && prev.classList.contains("channel-item")) {
+                prev.focus();
+              }
             }
-
-            // Load messages for new channel
-            loadMessages();
           });
         });
+      }
+
+      function selectChannel(item) {
+        const channelItems = document.querySelectorAll(".channel-item");
+        
+        // Remove active class from all items
+        channelItems.forEach((i) => i.classList.remove("active"));
+
+        // Add active class to selected item
+        item.classList.add("active");
+
+        // Update current channel
+        currentChannel = item.dataset.channel;
+        document.getElementById("currentChannelName").textContent =
+          currentChannel;
+
+        // Remove unread count
+        const unreadCount = item.querySelector(".unread-count");
+        if (unreadCount) {
+          unreadCount.remove();
+        }
+
+        // Reset grouping state
+        lastMessageAuthor = null;
+        lastMessageTime = 0;
+
+        // Load messages for new channel
+        loadMessages();
       }
 
       async function loadMessages() {
@@ -793,23 +669,53 @@
       function updateMessagesContainer(messages) {
         const container = document.getElementById("messagesContainer");
         const currentUser = authManager.getCurrentUser();
+        
+        // Reset grouping state
+        lastMessageAuthor = null;
+        lastMessageTime = 0;
 
         container.innerHTML = messages
-          .map(
-            (msg) => `
-                <div class="message ${msg.author === currentUser?.email ? "own" : ""}">
-                    <div class="message-avatar">${getInitials(msg.author)}</div>
+          .map((msg, index) => {
+            const isOwn = msg.author === currentUser?.email;
+            const msgTime = new Date(msg.timestamp).getTime();
+            const msgAuthor = msg.author || msg.authorName;
+            
+            // Check if message should be grouped
+            const shouldGroup = 
+              lastMessageAuthor === msgAuthor &&
+              msgTime - lastMessageTime < MESSAGE_GROUP_THRESHOLD;
+            
+            // Update tracking variables
+            lastMessageAuthor = msgAuthor;
+            lastMessageTime = msgTime;
+            
+            const groupedClass = shouldGroup ? "grouped" : "";
+            const statusHtml = isOwn ? getMessageStatusHtml(msg.status || "read") : "";
+            const actionsHtml = getMessageActionsHtml(isOwn);
+            
+            return `
+                <div class="message ${isOwn ? "own" : ""} ${groupedClass}" 
+                     role="article" 
+                     aria-label="Message from ${isOwn ? "You" : msg.authorName} at ${formatTime(msg.timestamp)}">
+                    <div class="message-avatar">${getInitials(msg.authorName || msg.author)}</div>
                     <div class="message-content">
                         <div class="message-header">
-                            <span class="message-author">${msg.author === currentUser?.email ? "You" : msg.authorName}</span>
-                            <span class="message-time">${formatTime(msg.timestamp)}</span>
+                            <span class="message-author">${isOwn ? "You" : msg.authorName}</span>
+                            <span class="message-time" aria-label="${formatTime(msg.timestamp)}">${formatTime(msg.timestamp)}</span>
                         </div>
                         <div class="message-text">${escapeHtml(msg.text)}</div>
+                        ${statusHtml}
+                        ${actionsHtml}
                     </div>
                 </div>
-            `,
-          )
+            `;
+          })
           .join("");
+
+        // Initialize Lucide icons for new messages
+        if (typeof lucide !== "undefined") {
+          lucide.createIcons();
+        }
 
         scrollToBottom();
       }
@@ -836,16 +742,26 @@
           });
 
           if (response.success) {
-            // Add message to UI immediately
+            // Add message to UI immediately with "sent" status
             addMessageToUI(
               {
                 author: user.email,
                 authorName: user.name || "You",
                 text: message,
                 timestamp: new Date().toISOString(),
+                status: "sent",
               },
               true,
             );
+            
+            // Simulate status progression
+            setTimeout(() => {
+              updateMessageStatus("delivered");
+            }, 500);
+            
+            setTimeout(() => {
+              updateMessageStatus("read");
+            }, 1500);
 
             // Save to localStorage for persistence
             saveMessageToStorage({
@@ -866,9 +782,19 @@
               authorName: user.name || "You",
               text: message,
               timestamp: new Date().toISOString(),
+              status: "sent",
             },
             true,
           );
+          
+          // Simulate status progression
+          setTimeout(() => {
+            updateMessageStatus("delivered");
+          }, 500);
+          
+          setTimeout(() => {
+            updateMessageStatus("read");
+          }, 1500);
 
           // Save to localStorage for offline functionality
           saveMessageToStorage({
@@ -894,6 +820,14 @@
         sendBtn.innerHTML = originalBtnText;
         sendBtn.disabled = true;
         sendBtn.setAttribute("aria-label", "Send message");
+
+        // Re-initialize Lucide icons for send button
+        if (typeof lucide !== "undefined") {
+          lucide.createIcons();
+        }
+
+        // Focus back to input for better UX
+        input.focus();
 
         // Announce message sent to screen readers
         AccessibilityUtils.announce("Message sent", "polite");
@@ -1001,21 +935,84 @@
 
       function addMessageToUI(message, isOwn = false) {
         const container = document.getElementById("messagesContainer");
-
+        const msgTime = new Date(message.timestamp).getTime();
+        const msgAuthor = message.author || message.authorName;
+        
+        // Check if message should be grouped with previous message
+        const shouldGroup = 
+          lastMessageAuthor === msgAuthor &&
+          msgTime - lastMessageTime < MESSAGE_GROUP_THRESHOLD;
+        
+        // Update tracking variables
+        lastMessageAuthor = msgAuthor;
+        lastMessageTime = msgTime;
+        
         const messageDiv = document.createElement("div");
-        messageDiv.className = `message ${isOwn ? "own" : ""}`;
+        messageDiv.className = `message ${isOwn ? "own" : ""} ${shouldGroup ? "grouped" : ""}`;
+        messageDiv.setAttribute("role", "article");
+        messageDiv.setAttribute("aria-label", `Message from ${isOwn ? "You" : message.authorName} at ${formatTime(message.timestamp)}`);
+        
+        const statusHtml = isOwn ? getMessageStatusHtml(message.status || "sent") : "";
+        const actionsHtml = getMessageActionsHtml(isOwn);
+        
         messageDiv.innerHTML = `
                 <div class="message-avatar">${getInitials(message.authorName)}</div>
                 <div class="message-content">
                     <div class="message-header">
                         <span class="message-author">${message.authorName}</span>
-                        <span class="message-time">${formatTime(message.timestamp)}</span>
+                        <span class="message-time" aria-label="${formatTime(message.timestamp)}">${formatTime(message.timestamp)}</span>
                     </div>
                     <div class="message-text">${escapeHtml(message.text)}</div>
+                    ${statusHtml}
+                    ${actionsHtml}
                 </div>
             `;
 
         container.appendChild(messageDiv);
+        
+        // Initialize Lucide icons
+        if (typeof lucide !== "undefined") {
+          lucide.createIcons(messageDiv);
+        }
+      }
+
+      function getMessageStatusHtml(status) {
+        const statusIcons = {
+          sent: "check",
+          delivered: "check-check",
+          read: "check-check"
+        };
+        
+        const statusClasses = {
+          sent: "status-sent",
+          delivered: "status-delivered",
+          read: "status-read"
+        };
+        
+        const icon = statusIcons[status] || "check";
+        const statusClass = statusClasses[status] || "status-sent";
+        
+        return `
+          <div class="message-status">
+            <i data-lucide="${icon}" class="${statusClass} icon-14"></i>
+          </div>
+        `;
+      }
+
+      function getMessageActionsHtml(isOwn) {
+        return `
+          <div class="message-actions" role="toolbar" aria-label="Message actions">
+            <button class="action-btn-mini" aria-label="React to message">
+              <i data-lucide="smile" class="icon-14"></i>
+            </button>
+            <button class="action-btn-mini" aria-label="Reply to message">
+              <i data-lucide="reply" class="icon-14"></i>
+            </button>
+            <button class="action-btn-mini" aria-label="More options">
+              <i data-lucide="more-horizontal" class="icon-14"></i>
+            </button>
+          </div>
+        `;
       }
 
       function simulateNewMessages() {
@@ -1102,7 +1099,70 @@
         }, 100);
       }
 
+      function updateMessageStatus(status) {
+        const messages = document.querySelectorAll(".message.own");
+        if (messages.length > 0) {
+          const lastMessage = messages[messages.length - 1];
+          const statusDiv = lastMessage.querySelector(".message-status");
+          if (statusDiv) {
+            const icon = statusDiv.querySelector("i");
+            if (icon) {
+              const statusIcons = {
+                sent: "check",
+                delivered: "check-check",
+                read: "check-check"
+              };
+              const statusClasses = {
+                sent: "status-sent",
+                delivered: "status-delivered",
+                read: "status-read"
+              };
+              
+              icon.setAttribute("data-lucide", statusIcons[status] || "check");
+              icon.className = `${statusClasses[status] || "status-sent"} icon-14`;
+              
+              if (typeof lucide !== "undefined") {
+                lucide.createIcons();
+              }
+            }
+          }
+        }
+      }
+
       document.addEventListener("DOMContentLoaded", initChatPage);
     </script>
+
+    <!-- Footer -->
+    <footer role="contentinfo" class="main-footer">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>FlagFit Pro</h3>
+          <p>Professional flag football training and analytics platform</p>
+        </div>
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <nav aria-label="Footer navigation">
+            <ul>
+              <li><a href="/dashboard.html">Dashboard</a></li>
+              <li><a href="/training.html">Training</a></li>
+              <li><a href="/roster.html">Roster</a></li>
+              <li><a href="/analytics.html">Analytics</a></li>
+            </ul>
+          </nav>
+        </div>
+        <div class="footer-section">
+          <h4>Support</h4>
+          <nav aria-label="Support links">
+            <ul>
+              <li><a href="/settings.html">Settings</a></li>
+              <li><a href="/community.html">Community</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 FlagFit Pro. All rights reserved.</p>
+      </div>
+    </footer>
   </body>
 </html>

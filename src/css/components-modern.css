@@ -5,20 +5,8 @@
 
 /* ================================================================
    HERO SECTION
+   NOTE: Consolidated to components/header.css - removed duplicate
    ================================================================ */
-
-.hero-section {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: var(--space-8);
-  margin-bottom: var(--space-12);
-}
-
-@media (max-width: 1024px) {
-  .hero-section {
-    grid-template-columns: 1fr;
-  }
-}
 
 /* ================================================================
    CHART CARD COMPONENT

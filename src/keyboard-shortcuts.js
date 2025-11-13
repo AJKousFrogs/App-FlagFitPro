@@ -5,6 +5,8 @@ export class KeyboardShortcuts {
   constructor() {
     this.shortcuts = new Map();
     this.commandPaletteActive = false;
+    // Store bound handler for cleanup
+    this.boundHandleKeyDown = this.handleKeyDown.bind(this);
     this.init();
   }
 
@@ -12,8 +14,14 @@ export class KeyboardShortcuts {
     // Register default shortcuts
     this.registerDefaultShortcuts();
     
-    // Listen for keyboard events
-    document.addEventListener('keydown', (e) => this.handleKeyDown(e));
+    // Listen for keyboard events - use bound method for cleanup
+    document.addEventListener('keydown', this.boundHandleKeyDown);
+  }
+
+  // Cleanup method to remove event listeners
+  destroy() {
+    document.removeEventListener('keydown', this.boundHandleKeyDown);
+    this.shortcuts.clear();
   }
 
   registerDefaultShortcuts() {
@@ -259,15 +267,21 @@ export class KeyboardShortcuts {
   }
 
   showNotification(message) {
-    const notification = document.createElement('div');
-    notification.className = 'shortcut-notification';
-    notification.textContent = message;
-    document.body.appendChild(notification);
-    
-    setTimeout(() => {
-      notification.style.opacity = '0';
-      setTimeout(() => notification.remove(), 300);
-    }, 2000);
+    // Use ErrorHandler for consistent notifications
+    if (typeof ErrorHandler !== 'undefined') {
+      ErrorHandler.showInfo(message);
+    } else {
+      // Fallback if ErrorHandler not available
+      const notification = document.createElement('div');
+      notification.className = 'shortcut-notification';
+      notification.textContent = message;
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.style.opacity = '0';
+        setTimeout(() => notification.remove(), 300);
+      }, 2000);
+    }
   }
 
   handleKeyDown(e) {

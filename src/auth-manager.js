@@ -2,17 +2,14 @@
 // Handles login, registration, session management, and user state
 
 import { apiClient, auth } from "./api-config.js";
+import { loadingManager } from "./loading-manager.js";
+import { logger } from "./logger.js";
 
 // Import mock authentication for static deployment
 let mockAuth = null;
 const initMockAuth = async () => {
   // Initialize mock authentication for development only
-  const isDevelopment =
-    window.location.hostname === "localhost" ||
-    window.location.hostname === "127.0.0.1";
-  if (isDevelopment) {
-    console.log("🔄 Initializing mock authentication for development...");
-  }
+  logger.debug("Initializing mock authentication for development...");
 
   // Check if we're using Netlify Functions
   const isUsingNetlifyFunctions =
@@ -20,27 +17,20 @@ const initMockAuth = async () => {
     (window.location.hostname === "localhost" &&
       window.location.port === "8888");
 
-  if (isDevelopment) {
-    console.log("🔍 Using Netlify Functions:", isUsingNetlifyFunctions);
-  }
+  logger.debug("Using Netlify Functions:", isUsingNetlifyFunctions);
 
   // For local development without Netlify Dev, always use mock auth
   if (!isUsingNetlifyFunctions) {
-    if (isDevelopment)
-      console.log("🎭 Loading mock authentication for local development...");
+    logger.debug("Loading mock authentication for local development...");
     try {
       const { MockAuth } = await import("./mock-auth.js");
       mockAuth = new MockAuth();
-      if (isDevelopment)
-        console.log("✅ Mock authentication loaded successfully");
+      logger.success("Mock authentication loaded successfully");
     } catch (error) {
-      if (isDevelopment) console.error("❌ Failed to load mock auth:", error);
+      logger.error("Failed to load mock auth:", error);
     }
   } else {
-    if (isDevelopment)
-      console.log(
-        "🌐 Using production Netlify Functions - no mock auth needed",
-      );
+    logger.debug("Using production Netlify Functions - no mock auth needed");
   }
 };
 
@@ -66,10 +56,7 @@ class AuthManager {
 
   // Initialize auth manager
   async init() {
-    const isDevelopment =
-      window.location.hostname === "localhost" ||
-      window.location.hostname === "127.0.0.1";
-    if (isDevelopment) console.log("🚀 Initializing authentication manager...");
+    logger.debug("Initializing authentication manager...");
 
     this.isInitializing = true;
 
@@ -85,7 +72,7 @@ class AuthManager {
     this.isInitializing = false;
     this.isInitialized = true;
 
-    if (isDevelopment) console.log("✅ Authentication manager initialized");
+    logger.success("Authentication manager initialized");
   }
 
   // Wait for authentication to be fully initialized
@@ -110,12 +97,12 @@ class AuthManager {
       window.location.hostname === "localhost" ||
       window.location.hostname === "127.0.0.1";
     if (isDevelopment)
-      console.log("🔍 Checking authentication state on page load...");
+      logger.debug("Checking authentication state on page load...");
 
     // Prevent redirect loops by checking if we're already redirecting
     if (this.isRedirecting) {
       if (isDevelopment)
-        console.log("🔄 Already redirecting, skipping auth check");
+        logger.debug("Already redirecting, skipping auth check");
       return;
     }
 
@@ -130,15 +117,15 @@ class AuthManager {
 
     if (this.isAuthenticated()) {
       if (isDevelopment) {
-        console.log("✅ User is already authenticated");
-        console.log("👤 Current user:", this.user?.email || "Unknown");
-        console.log("🎫 Current token:", this.token ? "Present" : "Missing");
+        logger.debug("User is already authenticated");
+        logger.debug("Current user:", this.user?.email || "Unknown");
+        logger.debug("Current token:", this.token ? "Present" : "Missing");
       }
 
       // For demo tokens or local development, skip server validation to prevent loops
       if (this.token && this.token.startsWith("demo-token-")) {
         if (isDevelopment)
-          console.log("🎭 Demo token detected, skipping server validation");
+          logger.debug("Demo token detected, skipping server validation");
         this.notifyLoginCallbacks();
         return;
       }
@@ -147,18 +134,18 @@ class AuthManager {
       this.validateStoredToken()
         .then((isValid) => {
           if (isValid) {
-            if (isDevelopment) console.log("✅ Token validation successful");
+            logger.debug("Token validation successful");
             this.notifyLoginCallbacks();
           } else {
             if (isDevelopment)
-              console.log("❌ Token validation failed, redirecting to login");
+              logger.warn("Token validation failed, redirecting to login");
             this.redirectToLogin();
           }
         })
         .catch((error) => {
           if (isDevelopment) {
-            console.error("❌ Token validation error:", error);
-            console.log(
+            logger.error("Token validation error:", error);
+            logger.debug(
               "🎭 Falling back to demo mode to prevent redirect loop",
             );
           }
@@ -166,11 +153,11 @@ class AuthManager {
         });
     } else {
       if (isDevelopment)
-        console.log("❌ No valid authentication found on page load");
+        logger.debug("No valid authentication found on page load");
       // Check if we're on a protected page
       if (this.isProtectedPage()) {
         if (isDevelopment)
-          console.log("🔒 Protected page detected, redirecting to login");
+          logger.debug("Protected page detected, redirecting to login");
         this.redirectToLogin();
       }
     }
@@ -192,36 +179,36 @@ class AuthManager {
     const isDevelopment =
       window.location.hostname === "localhost" ||
       window.location.hostname === "127.0.0.1";
-    if (isDevelopment) console.log("📂 Loading stored authentication data...");
+    logger.debug("Loading stored authentication data...");
 
     try {
       this.token = localStorage.getItem("authToken");
       const userData = localStorage.getItem("userData");
 
       if (isDevelopment) {
-        console.log("🎫 Stored token:", this.token ? "Present" : "Missing");
-        console.log("👤 Stored user data:", userData ? "Present" : "Missing");
+        logger.debug("Stored token:", this.token ? "Present" : "Missing");
+        logger.debug("Stored user data:", userData ? "Present" : "Missing");
       }
 
       if (userData) {
         this.user = JSON.parse(userData);
-        if (isDevelopment) console.log("👤 Loaded user:", this.user);
+        logger.debug("Loaded user:", this.user);
       }
 
       if (this.token) {
         apiClient.setAuthToken(this.token);
-        if (isDevelopment) console.log("🔗 Token set in API client");
+        logger.debug("Token set in API client");
       }
 
       if (isDevelopment) {
         if (this.token && this.user) {
-          console.log("✅ Stored auth data loaded successfully");
+          logger.success("Stored auth data loaded successfully");
         } else {
-          console.log("❌ No complete stored auth data found");
+          logger.debug("No complete stored auth data found");
         }
       }
     } catch (error) {
-      if (isDevelopment) console.error("❌ Error loading stored auth:", error);
+      logger.error("Error loading stored auth:", error);
       this.clearAuth();
     }
   }
@@ -232,7 +219,7 @@ class AuthManager {
 
     // Skip validation for demo tokens to prevent loops
     if (this.token.startsWith("demo-token-")) {
-      console.log("🎭 Demo token, skipping server validation");
+      logger.debug("Demo token, skipping server validation");
       return true;
     }
 
@@ -244,14 +231,14 @@ class AuthManager {
         this.notifyLoginCallbacks();
         return true;
       } else {
-        console.log("❌ Token validation failed on server");
+        logger.warn("Token validation failed on server");
         // Don't clear auth immediately, let the page handle it
         return false;
       }
     } catch (error) {
-      console.error("❌ Token validation network error:", error);
+      logger.error("Token validation network error:", error);
       // On network error, assume token is still valid to prevent redirect loops
-      console.log("🌐 Network error during validation, assuming token valid");
+      logger.debug("Network error during validation, assuming token valid");
       return true;
     }
   }
@@ -259,9 +246,9 @@ class AuthManager {
   // Login with email and password
   async login(email, password) {
     try {
-      console.log("🔐 Starting authentication process...");
-      console.log("📧 Email:", email);
-      console.log("🔑 Password length:", password ? password.length : 0);
+      logger.debug("Starting authentication process...");
+      logger.debug("Email:", email);
+      logger.debug("Password length:", password ? password.length : 0);
 
       this.showLoading("Signing in...");
 
@@ -272,24 +259,24 @@ class AuthManager {
         (window.location.hostname === "localhost" &&
           window.location.port === "8888");
 
-      console.log("🔍 Using Netlify Functions:", isUsingNetlifyFunctions);
-      console.log(
-        "🔍 Mock auth status:",
+      logger.debug("Using Netlify Functions:", isUsingNetlifyFunctions);
+      logger.debug(
+        "Mock auth status:",
         mockAuth ? "Available" : "Not available",
       );
-      console.log("🎭 Demo mode enabled for Netlify deployment");
+      logger.debug("Demo mode enabled for Netlify deployment");
 
       // Fallback to mock auth if real auth failed or not using Netlify
       if (mockAuth) {
-        console.log("🎭 Using mock authentication...");
+        logger.debug("Using mock authentication...");
         const response = await mockAuth.login({ email, password });
 
-        console.log("📋 Authentication response:", response);
+        logger.debug("Authentication response:", response);
 
         if (response.success) {
-          console.log("✅ Authentication successful!");
-          console.log("🎫 Token received:", response.data.token ? "Yes" : "No");
-          console.log("👤 User data:", response.data.user);
+          logger.success("Authentication successful!");
+          logger.debug("Token received:", response.data.token ? "Yes" : "No");
+          logger.debug("User data:", response.data.user);
 
           this.token = response.data.token;
           this.user = response.data.user;
@@ -297,19 +284,19 @@ class AuthManager {
           // Store authentication data
           localStorage.setItem("authToken", this.token);
           localStorage.setItem("userData", JSON.stringify(this.user));
-          console.log("💾 Auth data stored in localStorage");
-          console.log("💾 Stored token key: authToken");
-          console.log("💾 Stored user key: userData");
+          logger.debug("Auth data stored in localStorage");
+          logger.debug("Stored token key: authToken");
+          logger.debug("Stored user key: userData");
 
           this.saveUserData();
 
           // Set token in API client
           apiClient.setAuthToken(this.token);
-          console.log("🔗 Token set in API client");
+          logger.debug("Token set in API client");
 
           // Verify auth state
           const isValid = this.isAuthenticated();
-          console.log("🔍 Auth state valid:", isValid);
+          logger.debug("Auth state valid:", isValid);
 
           // Notify callbacks
           this.notifyLoginCallbacks();
@@ -319,41 +306,28 @@ class AuthManager {
 
           // Redirect to dashboard after successful login
           setTimeout(() => {
-            console.log("🚀 Starting dashboard redirect...");
-            console.log("🔍 Final auth check before redirect:");
-            console.log("   - Token exists:", !!this.token);
-            console.log("   - User exists:", !!this.user);
-            console.log("   - Token value:", this.token);
-            console.log("   - User value:", this.user);
-            console.log(
-              "   - LocalStorage token:",
-              localStorage.getItem("authToken"),
-            );
-            console.log(
-              "   - LocalStorage user:",
-              localStorage.getItem("userData"),
-            );
-            console.log("   - Is authenticated:", this.isAuthenticated());
+            logger.debug("Starting dashboard redirect...");
+            logger.debug("Final auth check before redirect:", {
+              tokenExists: !!this.token,
+              userExists: !!this.user,
+              isAuthenticated: this.isAuthenticated()
+            });
 
             // Double-check auth state with a brief delay
             if (this.isAuthenticated()) {
-              console.log(
-                "✅ Authentication confirmed, proceeding with redirect",
-              );
+              logger.debug("Authentication confirmed, proceeding with redirect");
               this.redirectToDashboard();
             } else {
-              console.error("❌ Auth state invalid at redirect time");
-              console.log("🔄 Attempting to restore auth from localStorage...");
+              logger.warn("Auth state invalid at redirect time");
+              logger.debug("Attempting to restore auth from localStorage...");
               this.loadStoredAuth();
 
               // Try again after loading
               if (this.isAuthenticated()) {
-                console.log(
-                  "✅ Auth restored from storage, proceeding with redirect",
-                );
+                logger.success("Auth restored from storage, proceeding with redirect");
                 this.redirectToDashboard();
               } else {
-                console.error("❌ Unable to restore authentication");
+                logger.error("Unable to restore authentication");
                 this.showError(
                   "Authentication state lost. Please try logging in again.",
                 );
@@ -363,7 +337,7 @@ class AuthManager {
 
           return { success: true, user: this.user };
         } else {
-          console.error("❌ Authentication failed:", response.error);
+          logger.error("Authentication failed:", response.error);
           this.hideLoading();
           this.showError(response.error || "Login failed");
           return { success: false, error: response.error };
@@ -690,7 +664,7 @@ class AuthManager {
       }, SESSION_TIMEOUT);
     };
 
-    // Track user activity
+    // Track user activity - store handlers for cleanup
     const activityEvents = [
       "mousedown",
       "mousemove",
@@ -700,17 +674,19 @@ class AuthManager {
       "click",
     ];
 
+    // Create bound handler that can be removed
+    const activityHandler = () => {
+      if (this.isAuthenticated() && Date.now() - lastActivity > 60000) {
+        // Reset every minute
+        resetSessionTimer();
+      }
+    };
+
+    // Store handlers for cleanup
+    this.activityHandlers = [];
     activityEvents.forEach((event) => {
-      document.addEventListener(
-        event,
-        () => {
-          if (this.isAuthenticated() && Date.now() - lastActivity > 60000) {
-            // Reset every minute
-            resetSessionTimer();
-          }
-        },
-        true,
-      );
+      document.addEventListener(event, activityHandler, true);
+      this.activityHandlers.push({ event, handler: activityHandler });
     });
 
     // Initialize session timer
@@ -723,10 +699,17 @@ class AuthManager {
       resetSessionTimer();
     });
 
-    // Clear timers on logout
+    // Clear timers and remove event listeners on logout
     this.onLogout(() => {
       if (sessionTimer) clearTimeout(sessionTimer);
       if (warningTimer) clearTimeout(warningTimer);
+      // Remove activity event listeners
+      if (this.activityHandlers) {
+        this.activityHandlers.forEach(({ event, handler }) => {
+          document.removeEventListener(event, handler, true);
+        });
+        this.activityHandlers = [];
+      }
     });
   }
 
@@ -837,64 +820,14 @@ class AuthManager {
     return `${baseUrl}/dashboard.html`;
   }
 
-  // Show loading indicator
+  // Show loading indicator - uses centralized LoadingManager
   showLoading(message = "Loading...") {
-    const loadingDiv =
-      document.getElementById("loading-indicator") ||
-      this.createLoadingIndicator();
-    const messageSpan = loadingDiv.querySelector(".loading-message");
-    if (messageSpan) {
-      messageSpan.textContent = message;
-    }
-    loadingDiv.style.display = "flex";
+    return loadingManager.showLoading(message, "auth-loading");
   }
 
-  // Hide loading indicator
+  // Hide loading indicator - uses centralized LoadingManager
   hideLoading() {
-    const loadingDiv = document.getElementById("loading-indicator");
-    if (loadingDiv) {
-      loadingDiv.style.display = "none";
-    }
-  }
-
-  // Create loading indicator
-  createLoadingIndicator() {
-    const loadingDiv = document.createElement("div");
-    loadingDiv.id = "loading-indicator";
-    loadingDiv.style.cssText = `
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.8);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 10000;
-      color: white;
-      font-family: 'Poppins', sans-serif;
-    `;
-
-    loadingDiv.innerHTML = `
-      <div style="text-align: center;">
-        <div style="width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
-        <span class="loading-message">Loading...</span>
-      </div>
-    `;
-
-    // Add spinner animation
-    const style = document.createElement("style");
-    style.textContent = `
-      @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-      }
-    `;
-    document.head.appendChild(style);
-
-    document.body.appendChild(loadingDiv);
-    return loadingDiv;
+    loadingManager.hideLoading("auth-loading");
   }
 
   // Show success message
@@ -915,44 +848,6 @@ class AuthManager {
   // Show info message
   showInfo(message) {
     this.showNotification(message, "info");
-  }
-
-  // Show loading overlay
-  showLoading(message = "Loading...") {
-    // Remove any existing loading
-    const existing = document.querySelector(".auth-loading-overlay");
-    if (existing) existing.remove();
-
-    const overlay = document.createElement("div");
-    overlay.className = "auth-loading-overlay";
-    overlay.style.cssText = `
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 10002;
-    `;
-
-    overlay.innerHTML = `
-      <div style="background: white; padding: 2rem; border-radius: 12px; text-align: center; min-width: 200px;">
-        <div style="font-size: 2rem; margin-bottom: 1rem; animation: spin 1s linear infinite;">⏳</div>
-        <div style="font-weight: 500; color: #374151;">${message}</div>
-      </div>
-    `;
-
-    document.body.appendChild(overlay);
-    return overlay;
-  }
-
-  // Hide loading overlay
-  hideLoading() {
-    const loading = document.querySelector(".auth-loading-overlay");
-    if (loading) loading.remove();
   }
 
   // Show notification

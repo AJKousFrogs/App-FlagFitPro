@@ -4,6 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>QB Assessment & Testing Tools - FlagFit Pro</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -12,123 +16,9 @@
     />
     <!-- New Modular CSS Architecture -->
     <link rel="stylesheet" href="./src/css/main.css" />
-    <style>
-      /* Page-specific styles that can't be replaced with utilities */
-      body {
-        background: linear-gradient(
-          135deg,
-          var(--color-brand-primary) 0%,
-          var(--color-brand-secondary) 100%
-        );
-        min-height: 100vh;
-        color: var(--color-text-primary);
-      }
-      .container {
-        max-width: 1200px;
-      }
-      .readiness-banner {
-        background: linear-gradient(
-          135deg,
-          var(--color-brand-tertiary) 0%,
-          #f7931e 100%
-        );
-      }
-      .assessment-card {
-        background: var(--surface-primary);
-        box-shadow: var(--elevation-medium);
-        transition: transform 0.3s ease;
-      }
-      .assessment-card:hover {
-        transform: translateY(-5px);
-      }
-      .card-icon {
-        width: 50px;
-        height: 50px;
-        font-size: 1.5rem;
-      }
-      .velocity-icon {
-        background: linear-gradient(
-          135deg,
-          var(--color-brand-tertiary) 0%,
-          #f7931e 100%
-        );
-      }
-      .mobility-icon {
-        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-      }
-      .endurance-icon {
-        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-      }
-      .strength-icon {
-        background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-      }
-      .progress-bar {
-        background: var(--color-border-secondary);
-      }
-      .progress-fill {
-        background: linear-gradient(
-          135deg,
-          var(--color-brand-primary) 0%,
-          var(--color-brand-secondary) 100%
-        );
-      }
-      .btn {
-        background: linear-gradient(
-          135deg,
-          var(--color-brand-primary) 0%,
-          var(--color-brand-secondary) 100%
-        );
-        color: var(--surface-primary);
-      }
-      .btn:hover {
-        transform: translateY(-2px);
-      }
-      .btn-secondary {
-        background: var(--color-text-tertiary);
-      }
-      .tournament-simulation {
-        background: linear-gradient(
-          135deg,
-          var(--color-brand-tertiary) 0%,
-          #f7931e 100%
-        );
-      }
-      .simulation-stat {
-        background: rgba(255, 255, 255, 0.1);
-      }
-      .modal {
-        background-color: rgba(0, 0, 0, 0.5);
-      }
-      .modal-content {
-        background-color: var(--surface-primary);
-      }
-      .history-table th {
-        background: var(--surface-secondary);
-      }
-      .history-table th,
-      .history-table td {
-        border-bottom: 1px solid var(--color-border-secondary);
-      }
-      .status-excellent {
-        color: var(--color-status-success);
-      }
-      .status-good {
-        color: var(--color-status-info);
-      }
-      .status-needs-work {
-        color: var(--color-status-warning);
-      }
-      .status-poor {
-        color: var(--color-status-error);
-      }
-      @media (max-width: 768px) {
-        .container {
-          padding: 15px;
-        }
-      }
-    </style>
-    <script src="./src/theme-switcher.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Page-specific styles -->
+    <script src="./src/theme-switcher.js" defer></script>
+    <script src="https://unpkg.com/lucide@latest" defer></script>
   </head>
   <body>
     <div class="container l-container u-margin-x-auto u-padding-20">
@@ -172,7 +62,7 @@
         class="assessment-grid u-display-grid u-gap-20 u-margin-bottom-30"
         style="grid-template-columns: repeat(auto-fit, minmax(350px, 1fr))"
       >
-        <!-- Throwing Velocity Assessment -->
+    <!-- Throwing Velocity Assessment -->
         <div class="assessment-card u-radius-lg u-padding-24">
           <div
             class="card-header u-display-flex u-align-center u-margin-bottom-20"
@@ -245,7 +135,7 @@
           </button>
         </div>
 
-        <!-- Shoulder Mobility Assessment -->
+    <!-- Shoulder Mobility Assessment -->
         <div class="assessment-card u-radius-lg u-padding-24">
           <div
             class="card-header u-display-flex u-align-center u-margin-bottom-20"
@@ -320,7 +210,7 @@
           </button>
         </div>
 
-        <!-- Throwing Endurance -->
+    <!-- Throwing Endurance -->
         <div class="assessment-card u-radius-lg u-padding-24">
           <div
             class="card-header u-display-flex u-align-center u-margin-bottom-20"
@@ -405,7 +295,7 @@
           </button>
         </div>
 
-        <!-- Rotator Cuff Strength -->
+    <!-- Rotator Cuff Strength -->
         <div class="assessment-card u-radius-lg u-padding-24">
           <div
             class="card-header u-display-flex u-align-center u-margin-bottom-20"
@@ -1207,5 +1097,38 @@
         }
       };
     </script>
+
+    <!-- Footer -->
+    <footer role="contentinfo" class="main-footer">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>FlagFit Pro</h3>
+          <p>Professional flag football training and analytics platform</p>
+        </div>
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <nav aria-label="Footer navigation">
+            <ul>
+              <li><a href="/dashboard.html">Dashboard</a></li>
+              <li><a href="/training.html">Training</a></li>
+              <li><a href="/roster.html">Roster</a></li>
+              <li><a href="/analytics.html">Analytics</a></li>
+            </ul>
+          </nav>
+        </div>
+        <div class="footer-section">
+          <h4>Support</h4>
+          <nav aria-label="Support links">
+            <ul>
+              <li><a href="/settings.html">Settings</a></li>
+              <li><a href="/community.html">Community</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 FlagFit Pro. All rights reserved.</p>
+      </div>
+    </footer>
   </body>
 </html>

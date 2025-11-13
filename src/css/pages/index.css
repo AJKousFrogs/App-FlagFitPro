@@ -1,0 +1,19 @@
+/* ================================================================
+   INDEX PAGE STYLES - FlagFit Pro
+   Page-specific styles for index.html (Welcome page)
+   ================================================================ */
+
+/* Page-specific styles that can't be replaced with utilities */
+body {
+  background: var(--gradient-primary);
+  min-height: 100vh;
+}
+
+.welcome-container {
+  max-width: 600px;
+}
+
+.welcome-feature-icon {
+  width: 50px;
+}
+

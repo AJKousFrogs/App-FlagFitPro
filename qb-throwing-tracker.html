@@ -4,6 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>QB Throwing Volume & Velocity Tracker - FlagFit Pro</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -12,291 +16,9 @@
     />
     <!-- New Modular CSS Architecture -->
     <link rel="stylesheet" href="./src/css/main.css" />
-    <style>
-      /* Page-specific styles that can't be replaced with utilities */
-      body {
-        background: linear-gradient(
-          135deg,
-          var(--color-brand-primary) 0%,
-          var(--color-brand-secondary) 100%
-        );
-        min-height: 100vh;
-        color: var(--color-text-primary);
-      }
-      .container {
-        max-width: 1400px;
-      }
-      .progress-banner {
-        background: linear-gradient(
-          135deg,
-          var(--color-brand-tertiary) 0%,
-          #f7931e 100%
-        );
-      }
-      .banner-stat {
-        background: rgba(255, 255, 255, 0.1);
-      }
-      .tracking-card {
-        background: var(--surface-primary);
-        box-shadow: var(--elevation-medium);
-      }
-
-      .card-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-right: 15px;
-        font-size: 1.2rem;
-      }
-
-      .volume-icon {
-        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-      }
-      .velocity-icon {
-        background: linear-gradient(
-          135deg,
-          var(--tertiary-500) 0%,
-          #f7931e 100%
-        );
-      }
-
-      .quick-log {
-        background: var(--dark-text-primary);
-        border-radius: 12px;
-        padding: 25px;
-        margin-bottom: 30px;
-      }
-
-      .form-row {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 15px;
-        margin-bottom: 15px;
-      }
-
-      .form-group {
-        margin-bottom: 15px;
-      }
-
-      .form-label {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: var(--font-weight-semibold, 600);
-        color: var(--dark-text-primary);
-      }
-
-      .form-input,
-      .form-select {
-        width: 100%;
-        padding: 10px;
-        border: 2px solid #e9ecef;
-        border-radius: 6px;
-        font-size: 1rem;
-      }
-
-      .form-input:focus,
-      .form-select:focus {
-        border-color: var(--primary-500);
-        outline: none;
-      }
-
-      .btn {
-        background: linear-gradient(
-          135deg,
-          var(--primary-500) 0%,
-          var(--primary-600) 100%
-        );
-        color: var(--dark-text-primary);
-        border: none;
-        padding: 12px 25px;
-        border-radius: 8px;
-        font-weight: var(--font-weight-semibold, 600);
-        cursor: pointer;
-        transition: all 0.3s ease;
-        margin-right: 10px;
-      }
-
-      .btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-      }
-
-      .btn-success {
-        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-      }
-
-      .btn-warning {
-        background: linear-gradient(135deg, #ffc107 0%, #ff8c00 100%);
-      }
-
-      .progress-section {
-        background: var(--dark-text-primary);
-        border-radius: 12px;
-        padding: 25px;
-        margin-bottom: 30px;
-      }
-
-      .progress-bar-container {
-        margin: 15px 0;
-      }
-
-      .progress-bar-label {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 5px;
-        font-weight: var(--font-weight-semibold, 600);
-      }
-
-      .progress-bar {
-        width: 100%;
-        height: 12px;
-        background: #e9ecef;
-        border-radius: 6px;
-        overflow: hidden;
-      }
-
-      .progress-fill {
-        height: 100%;
-        border-radius: 6px;
-        transition: width 0.3s ease;
-      }
-
-      .volume-progress {
-        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-      }
-      .velocity-progress {
-        background: linear-gradient(
-          135deg,
-          var(--tertiary-500) 0%,
-          #f7931e 100%
-        );
-      }
-      .tournament-progress {
-        background: linear-gradient(
-          135deg,
-          var(--primary-500) 0%,
-          var(--primary-600) 100%
-        );
-      }
-
-      .session-log {
-        background: var(--dark-text-primary);
-        border-radius: 12px;
-        padding: 25px;
-      }
-
-      .log-entry {
-        border-left: 4px solid var(--primary-500);
-        padding: 15px;
-        margin-bottom: 15px;
-        background: var(--dark-bg-secondary);
-        border-radius: 0 8px 8px 0;
-      }
-
-      .log-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 10px;
-      }
-
-      .log-date {
-        font-weight: var(--font-weight-semibold, 600);
-        color: var(--primary-500);
-      }
-
-      .log-type {
-        background: var(--primary-500);
-        color: var(--dark-text-primary);
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 0.8rem;
-      }
-
-      .log-stats {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-        gap: 10px;
-        margin-top: 10px;
-      }
-
-      .log-stat {
-        text-align: center;
-        padding: 8px;
-        background: var(--dark-text-primary);
-        border-radius: 6px;
-      }
-
-      .log-stat-number {
-        font-size: var(--font-size-xl, 1.25rem);
-        font-weight: var(--font-weight-bold, 700);
-        color: var(--dark-text-primary);
-      }
-
-      .log-stat-label {
-        font-size: var(--font-size-sm, 0.875rem);
-        color: var(--dark-text-secondary);
-      }
-
-      .chart-placeholder {
-        width: 100%;
-        height: 200px;
-        background: var(--dark-bg-secondary);
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--dark-text-secondary);
-        font-style: italic;
-      }
-
-      .warning-banner {
-        background: linear-gradient(135deg, #ffc107 0%, #ff8c00 100%);
-        color: var(--dark-text-primary);
-        padding: 15px;
-        border-radius: 8px;
-        margin-bottom: 20px;
-        text-align: center;
-      }
-
-      .nav-links {
-        text-align: center;
-        margin-top: 30px;
-      }
-
-      .nav-links a {
-        color: var(--dark-text-primary);
-        text-decoration: none;
-        margin: 0 15px;
-        padding: 10px 20px;
-        border-radius: 8px;
-        background: rgba(255, 255, 255, 0.1);
-        transition: background 0.3s ease;
-      }
-
-      .nav-links a:hover {
-        background: rgba(255, 255, 255, 0.2);
-      }
-
-      @media (max-width: 768px) {
-        .dashboard-grid {
-          grid-template-columns: 1fr;
-        }
-
-        .form-row {
-          grid-template-columns: 1fr;
-        }
-
-        .banner-stats {
-          grid-template-columns: 1fr 1fr;
-        }
-      }
-    </style>
-    <script src="./src/theme-switcher.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Page-specific styles -->
+    <script src="./src/theme-switcher.js" defer></script>
+    <script src="https://unpkg.com/lucide@latest" defer></script>
   </head>
   <body>
     <div class="container l-container u-margin-x-auto u-padding-20">
@@ -550,7 +272,7 @@
       </div>
 
       <div class="dashboard-grid">
-        <!-- Volume Tracking -->
+    <!-- Volume Tracking -->
         <div class="tracking-card u-radius-lg u-padding-24">
           <div
             class="card-title u-display-flex u-align-center u-text-heading-md u-font-weight-600 u-margin-bottom-20"
@@ -590,7 +312,7 @@
           </div>
         </div>
 
-        <!-- Velocity Tracking -->
+    <!-- Velocity Tracking -->
         <div class="tracking-card u-radius-lg u-padding-24">
           <div
             class="card-title u-display-flex u-align-center u-text-heading-md u-font-weight-600 u-margin-bottom-20"
@@ -997,5 +719,38 @@
       // Initialize when page loads
       document.addEventListener("DOMContentLoaded", initializeDashboard);
     </script>
+
+    <!-- Footer -->
+    <footer role="contentinfo" class="main-footer">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>FlagFit Pro</h3>
+          <p>Professional flag football training and analytics platform</p>
+        </div>
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <nav aria-label="Footer navigation">
+            <ul>
+              <li><a href="/dashboard.html">Dashboard</a></li>
+              <li><a href="/training.html">Training</a></li>
+              <li><a href="/roster.html">Roster</a></li>
+              <li><a href="/analytics.html">Analytics</a></li>
+            </ul>
+          </nav>
+        </div>
+        <div class="footer-section">
+          <h4>Support</h4>
+          <nav aria-label="Support links">
+            <ul>
+              <li><a href="/settings.html">Settings</a></li>
+              <li><a href="/community.html">Community</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 FlagFit Pro. All rights reserved.</p>
+      </div>
+    </footer>
   </body>
 </html>

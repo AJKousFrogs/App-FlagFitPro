@@ -1,6 +1,9 @@
 // Global Error Handler for FlagFit Pro
 // Provides consistent error handling and user feedback across the app
 
+import { loadingManager } from "./loading-manager.js";
+import { logger } from "./logger.js";
+
 export class ErrorHandler {
   static init() {
     // Global error event listeners
@@ -18,9 +21,7 @@ export class ErrorHandler {
   static handleError(event) {
     const isDevelopment = window.location.hostname === "localhost";
 
-    if (isDevelopment) {
-      console.error("Global error caught:", event.error);
-    }
+    logger.error("Global error caught:", event.error);
 
     // Show user-friendly error message
     this.showUserError(
@@ -31,9 +32,7 @@ export class ErrorHandler {
   static handlePromiseRejection(event) {
     const isDevelopment = window.location.hostname === "localhost";
 
-    if (isDevelopment) {
-      console.error("Unhandled promise rejection:", event.reason);
-    }
+    logger.error("Unhandled promise rejection:", event.reason);
 
     // Prevent the default browser error handling
     event.preventDefault();
@@ -56,9 +55,7 @@ export class ErrorHandler {
   static handleApiError(error, context = "") {
     const isDevelopment = window.location.hostname === "localhost";
 
-    if (isDevelopment) {
-      console.error(`API Error ${context}:`, error);
-    }
+    logger.error(`API Error ${context}:`, error);
 
     let message = "Something went wrong. Please try again.";
 
@@ -294,49 +291,13 @@ export class ErrorHandler {
     }
   }
 
-  // Loading state management
+  // Loading state management - uses centralized LoadingManager
   static showLoading(message = "Loading...") {
-    const existing = document.querySelector(".global-loading-overlay");
-    if (existing) existing.remove();
-
-    const overlay = document.createElement("div");
-    overlay.className = "global-loading-overlay";
-    overlay.style.cssText = `
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 10001;
-      backdrop-filter: blur(2px);
-    `;
-
-    overlay.innerHTML = `
-      <div style="background: white; padding: 2rem 3rem; border-radius: 12px; text-align: center; 
-                  min-width: 200px; box-shadow: 0 20px 40px rgba(0,0,0,0.1);">
-        <div style="font-size: 2rem; margin-bottom: 1rem; 
-                    animation: spin 1s linear infinite;">⏳</div>
-        <div style="font-weight: 500; color: #374151; font-size: 1rem;">${message}</div>
-      </div>
-      <style>
-        @keyframes spin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-      </style>
-    `;
-
-    document.body.appendChild(overlay);
-    return overlay;
+    return loadingManager.showLoading(message, "global-loading");
   }
 
   static hideLoading() {
-    const loading = document.querySelector(".global-loading-overlay");
-    if (loading) loading.remove();
+    loadingManager.hideLoading("global-loading");
   }
 
   // Utility method to wrap async operations with error handling

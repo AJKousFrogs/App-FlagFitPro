@@ -4,6 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FlagFit Pro - Coach</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -12,10 +16,10 @@
     />
     <!-- New Modular CSS Architecture -->
     <link rel="stylesheet" href="./src/css/main.css" />
-    <script src="./src/theme-switcher.js"></script>
-    <script src="./src/nav-highlight.js"></script>
-    <script src="./src/components/organisms/top-bar/top-bar.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="./src/theme-switcher.js" defer></script>
+    <script src="./src/nav-highlight.js" defer></script>
+    <script src="./src/components/organisms/top-bar/top-bar.js" defer></script>
+    <script src="https://unpkg.com/lucide@latest" defer></script>
   </head>
   <body>
     <!-- Mobile Menu Toggle -->
@@ -162,7 +166,7 @@
       </div>
 
       <main class="main-content">
-        <!-- Top Bar -->
+    <!-- Top Bar -->
         <div class="top-bar" role="banner">
           <div class="header-left">
             <!-- Global Search (combobox pattern) -->
@@ -257,7 +261,7 @@
           </div>
         </div>
 
-        <!-- Page Title Section (Hero) -->
+    <!-- Page Title Section (Hero) -->
         <div
           class="hero-section"
           style="margin-bottom: var(--spacing-layout-md)"
@@ -275,7 +279,7 @@
             </p>
           </div>
         </div>
-        <!-- Team Overview Cards -->
+    <!-- Team Overview Cards -->
         <div class="coach-overview">
           <div class="overview-card">
             <div class="card-header">
@@ -433,7 +437,7 @@
           </div>
         </div>
 
-        <!-- Player Management Section -->
+    <!-- Player Management Section -->
         <div class="team-section">
           <div class="section-header">
             <h2 class="section-title">
@@ -462,7 +466,7 @@
           </div>
         </div>
 
-        <!-- Team Chemistry Analysis -->
+    <!-- Team Chemistry Analysis -->
         <div class="team-section chemistry-section">
           <div class="section-header">
             <h2 class="section-title">
@@ -1153,5 +1157,38 @@
 
       document.addEventListener("DOMContentLoaded", initCoachDashboard);
     </script>
+
+    <!-- Footer -->
+    <footer role="contentinfo" class="main-footer">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>FlagFit Pro</h3>
+          <p>Professional flag football training and analytics platform</p>
+        </div>
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <nav aria-label="Footer navigation">
+            <ul>
+              <li><a href="/dashboard.html">Dashboard</a></li>
+              <li><a href="/training.html">Training</a></li>
+              <li><a href="/roster.html">Roster</a></li>
+              <li><a href="/analytics.html">Analytics</a></li>
+            </ul>
+          </nav>
+        </div>
+        <div class="footer-section">
+          <h4>Support</h4>
+          <nav aria-label="Support links">
+            <ul>
+              <li><a href="/settings.html">Settings</a></li>
+              <li><a href="/community.html">Community</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 FlagFit Pro. All rights reserved.</p>
+      </div>
+    </footer>
   </body>
 </html>

@@ -1,0 +1,29 @@
+/* ================================================================
+   LOGIN PAGE STYLES - FlagFit Pro
+   Page-specific styles for login.html
+   ================================================================ */
+
+/* Page-specific styles that can't be replaced with utilities */
+body {
+  background: var(--gradient-primary);
+  min-height: 100vh;
+}
+.login-container {
+  max-width: 400px;
+}
+.login-divider::before,
+.login-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--color-border-secondary);
+}
+#loginForm button[type="submit"] i[data-lucide] {
+  width: 18px;
+  height: 18px;
+}
+@media (max-width: 480px) {
+  .login-container {
+    padding: var(--spacing-component-xl) var(--spacing-component-lg);
+  }
+}

@@ -202,11 +202,7 @@
   border-top-color: var(--color-brand-primary, #10c96b);
 }
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
+/* @keyframes spin - Consolidated to animations.css */
 
 @keyframes skeleton-pulse {
   0%, 100% {

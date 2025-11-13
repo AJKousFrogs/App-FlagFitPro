@@ -4,6 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FlagFit Pro - Create Account</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -12,47 +16,12 @@
     />
     <!-- New Modular CSS Architecture -->
     <link rel="stylesheet" href="./src/css/main.css" />
+    <!-- Page-specific styles -->
+    <link rel="stylesheet" href="./src/css/pages/register.css" />
+
     <!-- Lucide Icons - Modern icon library similar to Radix UI -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="./src/icon-helper.js"></script>
-    <style>
-      /* Page-specific styles that can't be replaced with utilities */
-      body {
-        background: var(--surface-primary);
-        min-height: 100vh;
-      }
-      .register-container {
-        max-width: 450px;
-        border: 2px solid var(--color-brand-primary);
-      }
-      .divider::before,
-      .divider::after {
-        content: "";
-        flex: 1;
-        height: 1px;
-        background: var(--color-border-secondary);
-      }
-      .register-btn {
-        background: linear-gradient(
-          135deg,
-          var(--color-brand-primary) 0%,
-          var(--color-brand-secondary) 100%
-        );
-        min-height: 50px;
-      }
-      .register-btn:hover {
-        background: linear-gradient(
-          135deg,
-          var(--color-brand-secondary) 0%,
-          var(--color-brand-tertiary) 100%
-        );
-      }
-      @media (max-width: 480px) {
-        .register-container {
-          padding: 30px 20px;
-        }
-      }
-    </style>
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+    <script src="./src/icon-helper.js" defer></script>
   </head>
   <body class="u-display-flex u-align-center u-justify-center u-padding-20">
     <div
@@ -514,5 +483,38 @@
         element.style.display = "none";
       }
     </script>
+
+    <!-- Footer -->
+    <footer role="contentinfo" class="main-footer">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>FlagFit Pro</h3>
+          <p>Professional flag football training and analytics platform</p>
+        </div>
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <nav aria-label="Footer navigation">
+            <ul>
+              <li><a href="/dashboard.html">Dashboard</a></li>
+              <li><a href="/training.html">Training</a></li>
+              <li><a href="/roster.html">Roster</a></li>
+              <li><a href="/analytics.html">Analytics</a></li>
+            </ul>
+          </nav>
+        </div>
+        <div class="footer-section">
+          <h4>Support</h4>
+          <nav aria-label="Support links">
+            <ul>
+              <li><a href="/settings.html">Settings</a></li>
+              <li><a href="/community.html">Community</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 FlagFit Pro. All rights reserved.</p>
+      </div>
+    </footer>
   </body>
 </html>

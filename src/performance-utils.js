@@ -1,6 +1,8 @@
 // Performance optimization utilities for FlagFit Pro
 // Provides lazy loading, caching, and optimization features
 
+import { logger } from "./logger.js";
+
 export class PerformanceUtils {
   static cache = new Map();
   static observers = new Map();
@@ -8,7 +10,7 @@ export class PerformanceUtils {
   // Lazy load images with intersection observer
   static setupLazyLoading() {
     if (!("IntersectionObserver" in window)) {
-      console.warn(
+      logger.warn(
         "IntersectionObserver not supported, falling back to immediate loading",
       );
       return;
@@ -202,12 +204,12 @@ export class PerformanceUtils {
     const result = fn();
     const end = performance.now();
 
-    console.log(`⚡ ${name}: ${(end - start).toFixed(2)}ms`);
+    logger.debug(`Performance: ${name}: ${(end - start).toFixed(2)}ms`);
 
     // Log slow operations
     if (end - start > 100) {
-      console.warn(
-        `🐌 Slow operation detected: ${name} took ${(end - start).toFixed(2)}ms`,
+      logger.warn(
+        `Slow operation detected: ${name} took ${(end - start).toFixed(2)}ms`,
       );
     }
 
@@ -220,11 +222,11 @@ export class PerformanceUtils {
     const result = await fn();
     const end = performance.now();
 
-    console.log(`⚡ ${name}: ${(end - start).toFixed(2)}ms`);
+    logger.debug(`Performance: ${name}: ${(end - start).toFixed(2)}ms`);
 
     if (end - start > 100) {
-      console.warn(
-        `🐌 Slow async operation detected: ${name} took ${(end - start).toFixed(2)}ms`,
+      logger.warn(
+        `Slow async operation detected: ${name} took ${(end - start).toFixed(2)}ms`,
       );
     }
 
@@ -245,7 +247,7 @@ export class PerformanceUtils {
       this.cacheResponse(cacheKey, module, 60); // Cache for 1 hour
       return module;
     } catch (error) {
-      console.error(`Failed to load component: ${componentPath}`, error);
+      logger.error(`Failed to load component: ${componentPath}`, error);
       throw error;
     }
   }
@@ -280,7 +282,7 @@ export class PerformanceUtils {
 
   // Initialize all performance optimizations
   static init() {
-    console.log("🚀 Initializing performance optimizations...");
+    logger.debug("Initializing performance optimizations...");
     this.setupWillChangeCleanup();
 
     // Setup lazy loading
@@ -311,24 +313,18 @@ export class PerformanceUtils {
       setTimeout(() => {
         const perfData = performance.getEntriesByType("navigation")[0];
         if (perfData) {
-          console.log("📊 Page Load Performance:");
-          const domContentLoaded =
-            perfData.domContentLoadedEventEnd -
-            perfData.domContentLoadedEventStart;
-          const loadComplete = perfData.loadEventEnd - perfData.loadEventStart;
-          const totalLoadTime =
-            perfData.loadEventEnd && perfData.navigationStart
+          logger.debug("Page Load Performance:", {
+            domContentLoaded: `${perfData.domContentLoadedEventEnd - perfData.domContentLoadedEventStart}ms`,
+            loadComplete: `${perfData.loadEventEnd - perfData.loadEventStart}ms`,
+            totalLoadTime: `${perfData.loadEventEnd && perfData.navigationStart
               ? perfData.loadEventEnd - perfData.navigationStart
-              : domContentLoaded + loadComplete;
-
-          console.log(`  DOM Content Loaded: ${domContentLoaded}ms`);
-          console.log(`  Load Complete: ${loadComplete}ms`);
-          console.log(`  Total Load Time: ${totalLoadTime}ms`);
+              : (perfData.domContentLoadedEventEnd - perfData.domContentLoadedEventStart) + (perfData.loadEventEnd - perfData.loadEventStart)}ms`
+          });
         }
       }, 100);
     });
 
-    console.log("✅ Performance optimizations initialized");
+    logger.success("Performance optimizations initialized");
   }
 
   // Cleanup observers and resources

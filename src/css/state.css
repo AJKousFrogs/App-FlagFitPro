@@ -238,11 +238,7 @@ input:required,
    KEYFRAMES (referenced by state classes)
    ================================================================ */
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
+/* @keyframes spin - Consolidated to animations.css */
 
 @keyframes skeleton-loading {
   0% {

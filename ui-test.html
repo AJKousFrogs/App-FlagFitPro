@@ -4,43 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>UI Test - FlagFit Pro</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
+    />
     <!-- New Modular CSS Architecture -->
     <link rel="stylesheet" href="./src/css/main.css" />
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-      body {
-        background: var(--surface-secondary);
-        color: var(--color-text-primary);
-        font-family: var(--font-family-body);
-        margin: 0;
-        padding: 20px;
-      }
+    <!-- Page-specific styles -->
+    <link rel="stylesheet" href="./src/css/pages/ui-test.css" />
 
-      .test-container {
-        max-width: 800px;
-        margin: 0 auto;
-        background: var(--surface-primary);
-        padding: 30px;
-        border-radius: var(--radius-component-lg);
-        border: 1px solid var(--color-border-secondary);
-      }
-
-      .test-section {
-        margin-bottom: 30px;
-        padding: 20px;
-        border: 1px solid var(--color-border-secondary);
-        border-radius: var(--radius-component-md);
-      }
-
-      .color-swatch {
-        display: inline-block;
-        width: 50px;
-        height: 30px;
-        margin: 5px;
-        border: 1px solid var(--color-border-secondary);
-        border-radius: 4px;
-      }
-    </style>
+        <script src="https://unpkg.com/lucide@latest" defer></script>
   </head>
   <body>
     <div class="test-container">
@@ -240,5 +213,38 @@
         }
       });
     </script>
+
+    <!-- Footer -->
+    <footer role="contentinfo" class="main-footer">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>FlagFit Pro</h3>
+          <p>Professional flag football training and analytics platform</p>
+        </div>
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <nav aria-label="Footer navigation">
+            <ul>
+              <li><a href="/dashboard.html">Dashboard</a></li>
+              <li><a href="/training.html">Training</a></li>
+              <li><a href="/roster.html">Roster</a></li>
+              <li><a href="/analytics.html">Analytics</a></li>
+            </ul>
+          </nav>
+        </div>
+        <div class="footer-section">
+          <h4>Support</h4>
+          <nav aria-label="Support links">
+            <ul>
+              <li><a href="/settings.html">Settings</a></li>
+              <li><a href="/community.html">Community</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 FlagFit Pro. All rights reserved.</p>
+      </div>
+    </footer>
   </body>
 </html>
