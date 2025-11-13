@@ -822,6 +822,8 @@ Mobile-first approach with comprehensive device coverage:
 - Touch-specific media queries: `@media (hover: none) and (pointer: coarse)`
 - Landscape orientation support for mobile devices
 
+> **📱 Mobile-First Implementation Guide**: For complete mobile patterns, navigation components, swipe gestures, form optimizations, and performance strategies, see [MOBILE_FIRST_DESIGN_PATTERNS.md](./MOBILE_FIRST_DESIGN_PATTERNS.md)
+
 ## Component Library
 
 ### Button System
@@ -2364,6 +2366,8 @@ new DataTable("athletes-table");
 **Status**: ✅ **Stable** - Production-ready
 
 Comprehensive guidelines for displaying performance data, training metrics, and analytics in charts and graphs.
+
+> **📘 Detailed Implementation Guide**: For complete HTML/CSS/JavaScript examples, component implementations, and best practices, see [DATA_VISUALIZATION_IMPLEMENTATION_GUIDE.md](./DATA_VISUALIZATION_IMPLEMENTATION_GUIDE.md)
 
 ### Chart Type Selection Guide
 

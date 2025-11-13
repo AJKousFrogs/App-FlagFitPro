@@ -6007,7 +6007,7 @@
             <span class="nav-item-icon">
               <i
                 data-lucide="layout-dashboard"
-                style="width: 24px; height: 24px"
+                class="icon-24"
               ></i>
             </span>
             <span class="nav-item-label">Overview</span>
@@ -6021,7 +6021,7 @@
             <span class="nav-item-icon">
               <i
                 data-lucide="bar-chart-3"
-                style="width: 24px; height: 24px"
+                class="icon-24"
               ></i>
             </span>
             <span class="nav-item-label">Analytics</span>
@@ -6036,7 +6036,7 @@
             id="nav-roster"
           >
             <span class="nav-item-icon">
-              <i data-lucide="users" style="width: 24px; height: 24px"></i>
+              <i data-lucide="users" class="icon-24"></i>
             </span>
             <span class="nav-item-label">Roster</span>
           </a>
@@ -6047,7 +6047,7 @@
             id="nav-training"
           >
             <span class="nav-item-icon">
-              <i data-lucide="zap" style="width: 24px; height: 24px"></i>
+              <i data-lucide="zap" class="icon-24"></i>
             </span>
             <span class="nav-item-label">Training</span>
           </a>
@@ -6058,7 +6058,7 @@
             id="nav-tournaments"
           >
             <span class="nav-item-icon">
-              <i data-lucide="trophy" style="width: 24px; height: 24px"></i>
+              <i data-lucide="trophy" class="icon-24"></i>
             </span>
             <span class="nav-item-label">Tournaments</span>
           </a>
@@ -6074,7 +6074,7 @@
             <span class="nav-item-icon">
               <i
                 data-lucide="message-circle"
-                style="width: 24px; height: 24px"
+                class="icon-24"
               ></i>
             </span>
             <span class="nav-item-label">Community</span>
@@ -6083,7 +6083,7 @@
             <span class="nav-item-icon">
               <i
                 data-lucide="message-square"
-                style="width: 24px; height: 24px"
+                class="icon-24"
               ></i>
             </span>
             <span class="nav-item-label">Chat</span>
@@ -6098,7 +6098,7 @@
             id="nav-settings"
           >
             <span class="nav-item-icon">
-              <i data-lucide="settings" style="width: 24px; height: 24px"></i>
+              <i data-lucide="settings" class="icon-24"></i>
             </span>
             <span class="nav-item-label">Settings</span>
           </a>
@@ -6109,7 +6109,7 @@
             id="nav-profile"
           >
             <span class="nav-item-icon">
-              <i data-lucide="user" style="width: 24px; height: 24px"></i>
+              <i data-lucide="user" class="icon-24"></i>
             </span>
             <span class="nav-item-label">Profile</span>
           </a>
@@ -6140,7 +6140,7 @@
               aria-controls="sidebar"
               onclick="toggleSidebar()"
             >
-              <i data-lucide="menu" style="width: 20px; height: 20px"></i>
+              <i data-lucide="menu" class="icon-20"></i>
             </button>
             <!-- Global Search (combobox pattern) -->
             <div class="search-box">
@@ -6249,7 +6249,7 @@
                 <div class="session-time" id="training-hub-session-time">Today 3:00 PM</div>
                 <div class="session-title" id="training-hub-session-title">Lower Body Strength + Plyometric</div>
                 <button class="start-btn" id="training-hub-start-btn">
-                  <i data-lucide="play" style="width: 18px; height: 18px;"></i>
+                  <i data-lucide="play" class="icon-18"></i>
                   Start Session
                 </button>
               </div>
@@ -6303,17 +6303,13 @@
                     >
                       <stop
                         offset="0%"
-                        style="
-                          stop-color: var(--primitive-primary-500);
-                          stop-opacity: 1;
-                        "
+                        stop-color="var(--primitive-primary-500)"
+                        stop-opacity="1"
                       />
                       <stop
                         offset="100%"
-                        style="
-                          stop-color: var(--primitive-success-500);
-                          stop-opacity: 1;
-                        "
+                        stop-color="var(--primitive-success-500)"
+                        stop-opacity="1"
                       />
                     </linearGradient>
                   </defs>
@@ -6376,26 +6372,27 @@
                   Quick Stats
                 </h3>
               </div>
-              <div class="flex flex-col gap-16">
+              <div class="flex flex-col gap-4">
                 <div class="flex justify-between items-center">
-                  <div class="flex items-center gap-8">
+                  <div class="flex items-center gap-2">
                     <i
                       data-lucide="flame"
-                      style="width: 20px; height: 20px; color: var(--primitive-primary-500);"
+                      class="w-5 h-5 text-primary-600"
                     ></i>
-                    <span style="font-size: 0.875rem; color: var(--color-text-secondary);">Current Streak</span>
+                    <span class="text-sm text-secondary">Current Streak</span>
                   </div>
-                  <span id="training-streak" style="font-size: 1.125rem; font-weight: 700; color: var(--color-text-primary);">5 days</span>
+                  <span id="training-streak" class="text-lg font-bold text-primary">5 days</span>
                 </div>
                 <div class="flex justify-between items-center">
-                  <div class="flex items-center gap-8">
+                  <div class="flex items-center gap-2">
                     <i
                       data-lucide="check-circle"
-                      style="width: 20px; height: 20px; color: var(--primitive-success-500);"
+                      class="w-5 h-5"
+                      style="color: var(--color-success);"
                     ></i>
-                    <span style="font-size: 0.875rem; color: var(--color-text-secondary);">Completed This Week</span>
+                    <span class="text-sm text-secondary">Completed This Week</span>
                   </div>
-                  <span id="weekly-completed" style="font-size: 1.125rem; font-weight: 700; color: var(--color-text-primary);">3/5</span>
+                  <span id="weekly-completed" class="text-lg font-bold text-primary">3/5</span>
                 </div>
               </div>
             </div>
@@ -6651,15 +6648,15 @@
                 </div>
                 <div id="recent-achievements-list" class="flex flex-col gap-12">
                   <!-- Will be populated dynamically -->
-                  <div class="achievement-item" style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--surface-secondary); border-radius: 12px;">
-                    <div class="achievement-icon" style="width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, #10c96b 0%, #0ab85a 100%); display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">
+                  <div class="achievement-item flex items-center gap-3 p-3 bg-surface-secondary rounded-lg">
+                    <div class="achievement-icon w-12 h-12 rounded-lg bg-primary-gradient-solid flex items-center justify-center text-2xl flex-shrink-0">
                       🏃
                     </div>
-                    <div class="achievement-content" style="flex: 1;">
-                      <div style="font-weight: 700; color: var(--color-text-primary); margin-bottom: 4px;">Speed Demon</div>
-                      <div style="font-size: 0.875rem; color: var(--color-text-secondary);">Completed 5 speed training sessions</div>
+                    <div class="achievement-content flex-1">
+                      <div class="font-bold text-primary mb-1">Speed Demon</div>
+                      <div class="text-sm text-secondary">Completed 5 speed training sessions</div>
                     </div>
-                    <div class="achievement-badge" style="background: var(--primitive-primary-500); color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">New</div>
+                    <div class="achievement-badge bg-primary text-white px-2 py-1 rounded-lg text-xs font-semibold">New</div>
                   </div>
                 </div>
               </div>
@@ -8191,8 +8188,8 @@
         const weeklyScheduleContent =
           document.getElementById("weekly-schedule");
         weeklyScheduleContent.innerHTML = `
-                <div style="text-align: center; padding: 30px; color: var(--color-text-muted);">
-                    <h4 style="margin-bottom: 10px;">No training scheduled</h4>
+                <div class="text-center p-30 text-muted">
+                    <h4 class="mb-10">No training scheduled</h4>
                     <p>Select a program above to see your weekly training schedule</p>
                 </div>
             `;
@@ -8208,7 +8205,7 @@
           if (sessionTimeEl) sessionTimeEl.textContent = "Select Program";
           if (sessionTitleEl) sessionTitleEl.textContent = "Choose your training program to begin";
           if (startBtnEl) {
-            startBtnEl.innerHTML = '<i data-lucide="settings" style="width: 18px; height: 18px;"></i> Select Program';
+            startBtnEl.innerHTML = '<i data-lucide="settings" class="icon-18"></i> Select Program';
             startBtnEl.onclick = () => showProgramSelection();
             // Reinitialize Lucide icons
             if (typeof lucide !== "undefined") {
@@ -8272,7 +8269,7 @@
           }
 
           if (startBtnEl) {
-            startBtnEl.innerHTML = '<i data-lucide="play" style="width: 18px; height: 18px;"></i> Start Session';
+            startBtnEl.innerHTML = '<i data-lucide="play" class="icon-18"></i> Start Session';
             startBtnEl.onclick = () => {
               if (window.startWorkout) {
                 window.startWorkout(workoutDay);
@@ -8377,10 +8374,10 @@
             const time = workout.time || getWorkoutTime(dayName);
 
             html += `
-              <div class="upcoming-item" style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--surface-secondary); border-radius: 12px;">
-                <div style="flex: 1;">
-                  <div style="font-weight: 700; color: var(--color-text-primary); margin-bottom: 4px;">${workout.type}</div>
-                  <div style="font-size: 0.875rem; color: var(--color-text-secondary);">${dayLabel} at ${time}</div>
+              <div class="upcoming-item flex items-center gap-3 p-3 bg-surface-secondary rounded-lg">
+                <div class="flex-1">
+                  <div class="font-bold text-primary mb-1">${workout.type}</div>
+                  <div class="text-sm text-secondary">${dayLabel} at ${time}</div>
                 </div>
               </div>
             `;
@@ -8523,19 +8520,19 @@
         const icon = getWorkoutIcon(workout);
 
         return `
-                <div class="upcoming-item" style="display: flex; align-items: center; gap: var(--spacing-component-md); padding: var(--spacing-component-md); background: rgba(255, 255, 255, 0.5); border-radius: 16px; border: 1px solid rgba(16, 201, 107, 0.1); transition: all 0.3s ease;">
-                    <div class="upcoming-icon" style="background: linear-gradient(135deg, rgba(16, 201, 107, 0.15) 0%, rgba(16, 201, 107, 0.08) 100%); color: var(--primitive-primary-600); width: 56px; height: 56px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">${icon}</div>
-                    <div class="upcoming-content" style="flex: 1; min-width: 0;">
-                        <div class="upcoming-title" style="font-size: 1.125rem; font-weight: 700; color: var(--color-text-primary); margin-bottom: 4px; line-height: 1.375;">${workout.type}</div>
-                        <div class="upcoming-time" style="font-size: 0.875rem; font-weight: 600; color: var(--primitive-primary-600); margin-bottom: 4px;">${timeDisplay} at ${workout.time}</div>
-                        <div style="font-size: 0.75rem; color: var(--color-text-secondary); display: flex; align-items: center; gap: 8px;">
-                            <i data-lucide="clock" style="width: 14px; height: 14px;"></i>
+                <div class="upcoming-item flex items-center gap-4 p-4 bg-white-50 rounded-xl border-primary-10 transition-base">
+                    <div class="upcoming-icon bg-primary-gradient text-primary-600 w-14 h-14 rounded-lg flex items-center justify-center text-lg flex-shrink-0">${icon}</div>
+                    <div class="upcoming-content flex-1 min-w-0">
+                        <div class="upcoming-title text-lg font-bold text-primary mb-1 leading-tight">${workout.type}</div>
+                        <div class="upcoming-time text-sm font-semibold text-primary-600 mb-1">${timeDisplay} at ${workout.time}</div>
+                        <div class="text-xs text-secondary flex items-center gap-2">
+                            <i data-lucide="clock" class="w-14px h-14px"></i>
                             <span>${workout.duration} min</span>
-                            ${workout.focus ? `<span style="margin-left: 8px;">•</span><span>${workout.focus}</span>` : ""}
+                            ${workout.focus ? `<span class="ml-2">•</span><span>${workout.focus}</span>` : ""}
                         </div>
                     </div>
-                    <button class="btn btn-primary btn-start" onclick="startWorkout('${day}')" style="flex-shrink: 0; min-width: 120px;" aria-label="Start ${workout.type} session">
-                        <i data-lucide="rocket" style="width: 18px; height: 18px;"></i>
+                    <button class="btn btn-primary btn-start flex-shrink-0 min-w-30" onclick="startWorkout('${day}')" aria-label="Start ${workout.type} session">
+                        <i data-lucide="rocket" class="w-18px h-18px"></i>
                         <span>Start</span>
                     </button>
                 </div>
@@ -8545,14 +8542,14 @@
       function getWorkoutIcon(workout) {
         if (workout.isRestDay) return "🛌";
         if (workout.type.includes("QB"))
-          return '<i data-lucide="target" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>';
+          return '<i data-lucide="target" class="icon-16 inline-block align-middle"></i>';
         if (workout.type.includes("Strength"))
-          return '<i data-lucide="dumbbell" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>';
+          return '<i data-lucide="dumbbell" class="icon-16 inline-block align-middle"></i>';
         if (workout.type.includes("Speed"))
-          return '<i data-lucide="zap" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>';
+          return '<i data-lucide="zap" class="icon-16 inline-block align-middle"></i>';
         if (workout.type.includes("Power")) return "🚀";
         if (workout.type.includes("Recovery"))
-          return '<i data-lucide="heart-pulse" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>‍♂️';
+          return '<i data-lucide="heart-pulse" class="icon-16 inline-block align-middle"></i>‍♂️';
         return "🏃‍♂️";
       }
 
@@ -8561,9 +8558,9 @@
           "next-session-content",
         );
         nextSessionContent.innerHTML = `
-                <div style="text-align: center; padding: 30px; color: var(--color-text-muted);">
-                    <div style="font-size: 2rem; margin-bottom: 10px;">🛌</div>
-                    <h4 style="margin-bottom: 5px;">Rest Period</h4>
+                <div class="text-center p-30 text-muted">
+                    <div class="text-2xl mb-10">🛌</div>
+                    <h4 class="mb-5">Rest Period</h4>
                     <p>No training scheduled - enjoy your recovery time!</p>
                 </div>
             `;
@@ -8623,71 +8620,51 @@
 
         // Create modal overlay
         const modal = document.createElement("div");
-        modal.style.cssText = `
-                position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
-                background: rgba(0,0,0,0.5); display: flex; align-items: center; 
-                justify-content: center; z-index: var(--z-index-modal, 1400); backdrop-filter: blur(4px);
-            `;
+        modal.className = "modal-backdrop modal";
 
         modal.innerHTML = `
-                <div style="
-                    background: var(--color-text-primary); border-radius: 20px; max-width: 600px; width: 90%; 
-                    max-height: 80vh; overflow-y: auto; position: relative;
-                    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-                ">
-                    <div style="
-                        padding: 30px; border: 1px solid var(--color-border-secondary);
-                        background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
-                        color: var(--color-text-primary); border-radius: 20px 20px 0 0;
-                    ">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div class="modal-container">
+                    <div class="modal-header">
+                        <div class="flex justify-between items-center">
                             <div>
-                                <h2 style="margin: 0; font-size: 24px; font-weight: 700;">${workout.type}</h2>
-                                <p style="margin: 8px 0 0 0; opacity: 0.9;">${dayNames[day]} • ${workout.duration} • ${workout.description}</p>
+                                <h2 class="m-0 text-2xl font-bold">${workout.type}</h2>
+                                <p class="mt-2 mb-0 opacity-90">${dayNames[day]} • ${workout.duration} • ${workout.description}</p>
                             </div>
-                            <button onclick="this.closest('.modal').remove()" style="
-                                background: rgba(255,255,255,0.2); border: none; border-radius: 50%;
-                                width: 40px; height: 40px; color: var(--color-text-primary); font-size: 20px; cursor: pointer;
-                                display: flex; align-items: center; justify-content: center;
-                            ">×</button>
+                            <button onclick="this.closest('.modal-backdrop').remove()" class="modal-close-btn">×</button>
                         </div>
                     </div>
                     
-                    <div style="padding: 30px;">
-                        <div style="text-align: center; margin-bottom: 30px;">
-                            <div style="
-                                width: 80px; height: 80px; background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
-                                border-radius: 50%; display: flex; align-items: center; justify-content: center;
-                                font-size: 32px; margin: 0 auto 15px; color: var(--color-text-primary);
-                            ">🏃‍♂️</div>
-                            <h3 style="margin: 0; color: var(--color-text-primary);">Ready to Start Your Workout?</h3>
+                    <div class="p-30">
+                        <div class="text-center mb-30">
+                            <div class="icon-circle">🏃‍♂️</div>
+                            <h3 class="m-0 text-primary">Ready to Start Your Workout?</h3>
                         </div>
                         
-                        <div style="background: var(--surface-tertiary); border-radius: 12px; padding: 20px; margin-bottom: 20px;">
-                            <h4 style="margin: 0 0 15px 0; color: var(--color-text-primary);">Workout Overview:</h4>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="bg-surface-tertiary rounded-lg p-20 mb-20">
+                            <h4 class="m-0 mb-15 text-primary">Workout Overview:</h4>
+                            <div class="grid grid-cols-2 gap-15">
                                 <div>
-                                    <div style="font-weight: 600; color: var(--color-text-muted);">Duration</div>
-                                    <div style="color: var(--color-text-primary); font-size: 18px;">${workout.duration}</div>
+                                    <div class="font-semibold text-muted">Duration</div>
+                                    <div class="text-primary text-18px">${workout.duration}</div>
                                 </div>
                                 <div>
-                                    <div style="font-weight: 600; color: var(--color-text-muted);">Focus</div>
-                                    <div style="color: var(--color-text-primary); font-size: 18px;">${workout.description}</div>
+                                    <div class="font-semibold text-muted">Focus</div>
+                                    <div class="text-primary text-18px">${workout.description}</div>
                                 </div>
                                 <div>
-                                    <div style="font-weight: 600; color: var(--color-text-muted);">Coach</div>
-                                    <div style="color: var(--color-text-primary); font-size: 18px;">${workout.coach}</div>
+                                    <div class="font-semibold text-muted">Coach</div>
+                                    <div class="text-primary text-18px">${workout.coach}</div>
                                 </div>
                                 <div>
-                                    <div style="font-weight: 600; color: var(--color-text-muted);">Time</div>
-                                    <div style="color: var(--color-text-primary); font-size: 18px;">${workout.time}</div>
+                                    <div class="font-semibold text-muted">Time</div>
+                                    <div class="text-primary text-18px">${workout.time}</div>
                                 </div>
                             </div>
                         </div>
                         
-                        <div style="background: var(--primary-50); border-left: 4px solid var(--primary-600); padding: 15px; border-radius: 8px; margin-bottom: 25px;">
-                            <h4 style="margin: 0 0 8px 0; color: var(--primary-700);">Pre-Workout Checklist:</h4>
-                            <ul style="margin: 0; padding-left: 20px; color: var(--primary-700);">
+                        <div class="bg-primary-50 border-l-4 border-l-primary-600 p-15 rounded-md mb-25">
+                            <h4 class="m-0 mb-2 text-primary-700">Pre-Workout Checklist:</h4>
+                            <ul class="m-0 pl-20 list-disc text-primary-700">
                                 <li>Complete 10-15 minute dynamic warm-up</li>
                                 <li>Ensure proper hydration (500ml water 2 hours prior)</li>
                                 <li>Have adequate space and equipment ready</li>
@@ -8695,20 +8672,11 @@
                             </ul>
                         </div>
                         
-                        <div style="display: flex; gap: 15px; justify-content: center;">
-                            <button onclick="startActualWorkout('${day}')" style="
-                                background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
-                                color: var(--color-text-primary); border: none; padding: 15px 30px; border-radius: 10px;
-                                font-size: 16px; font-weight: 600; cursor: pointer;
-                                display: flex; align-items: center; gap: 10px; min-width: 160px; justify-content: center;
-                            ">
+                        <div class="flex gap-15 justify-center">
+                            <button onclick="startActualWorkout('${day}')" class="btn-primary-gradient">
                                 🚀 Start Training
                             </button>
-                            <button onclick="this.closest('.modal').remove()" style="
-                                background: var(--dark-bg-secondary); color: var(--color-text-secondary); border: 1px solid var(--color-border-secondary);
-                                padding: 15px 30px; border-radius: 10px; font-size: 16px; font-weight: 600;
-                                cursor: pointer; min-width: 120px;
-                            ">
+                            <button onclick="this.closest('.modal-backdrop').remove()" class="btn-secondary-outline">
                                 Cancel
                             </button>
                         </div>
@@ -8716,7 +8684,6 @@
                 </div>
             `;
 
-        modal.className = "modal";
         document.body.appendChild(modal);
 
         // Add click outside to close

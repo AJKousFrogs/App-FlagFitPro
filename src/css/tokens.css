@@ -9,8 +9,9 @@
      ESSENTIAL TOKENS ONLY (30 total)
      ================================ */
 
-  /* Colors (8 tokens) */
+  /* Colors (8 tokens) - Simplified based on actual usage */
   --color-primary: #10c96b;
+  --color-primary-600: #0ab85a;
   --color-primary-dark: #089949;
   --color-success: #22c55e;
   --color-warning: #f59e0b;
@@ -18,6 +19,9 @@
   --color-text: #1a1a1a;
   --color-text-muted: #6b7280;
   --color-border: #e5e7eb;
+  
+  /* Icon colors */
+  --icon-color-primary: #ffffff;
 
   /* Spacing (6 tokens) */
   --space-xs: 4px;
@@ -91,6 +95,11 @@
   --color-border-primary: var(--color-border);
   --color-border-secondary: var(--color-border);
   --border-subtle: var(--color-border);
+  
+  /* Primitive aliases (most commonly used) */
+  --primitive-primary-500: var(--color-primary);
+  --primitive-primary-600: var(--color-primary-600);
+  --primitive-success-500: var(--color-success);
 
   /* Brand color aliases */
   --brand-green: var(--color-primary);
