@@ -1,0 +1,196 @@
+=================================================================================
+HTML CODEBASE INCONSISTENCIES - QUICK REFERENCE
+=================================================================================
+
+CRITICAL ISSUES (Fix Immediately)
+├─ 1094+ INLINE STYLES across codebase - Move to CSS classes
+│  └─ Worst offenders: dashboard.html (359), training.html (350), coach.html (95)
+│
+├─ ALL 51 FILES missing FOOTER elements - Add footer sections
+│
+├─ 19 PAGES without script defer attribute - Add defer to all external scripts
+│  └─ Affected: chat.html, coach-dashboard.html, coach.html, community.html, etc.
+│
+└─ Incomplete ARIA accessibility in 17 files - Add aria-labels to onclick handlers
+   └─ Affected: coach.html (13 onclick, 17 aria-labels), dashboard.html (49 onclick, 36 aria-labels)
+
+
+HIGH PRIORITY ISSUES
+├─ 49 of 51 FILES missing favicon/manifest links
+│  └─ Only component-library.html and analytics.html have icon references
+│
+├─ FORM VALIDATION inconsistencies across 6+ files
+│  └─ login.html: 5 aria-invalid | register.html: 7 aria-invalid | coach.html: 0
+│
+├─ DOCTYPE inconsistency (2 files use uppercase)
+│  └─ analytics.html and update-roster-data.html use <!DOCTYPE html>
+│  └─ Change to lowercase <!doctype html> per HTML5 standard
+│
+└─ EMPTY aria attributes found (e.g., aria-activedescendant="")
+
+
+MEDIUM PRIORITY ISSUES
+├─ FONT FAMILY mixed across files:
+│  ├─ Poppins: 13 files
+│  ├─ Inter: 15 files
+│  └─ Roboto: 8 files
+│  └─ ACTION: Choose ONE primary + ONE secondary font
+│
+├─ DUPLICATE IDs across pages (same IDs in multiple files)
+│  └─ id="email" (5 files), id="password" (3 files), nav IDs (repeated)
+│
+├─ CLASS NAMING CONVENTIONS mixed:
+│  ├─ Utility classes: u-display-flex, u-padding-24
+│  ├─ BEM classes: welcome-container, login-container
+│  └─ Component classes: btn, btn-primary, card, form-group
+│
+├─ NAVIGATION inconsistency:
+│  ├─ Links use .html extensions (/login.html instead of /login)
+│  ├─ Mobile menu support missing from 49 pages (only in 2 files)
+│  └─ Navigation IDs duplicated across pages
+│
+└─ HARDCODED VALUES in JavaScript:
+   ├─ Demo credentials: "test@flagfitpro.com", "TestDemo123!"
+   ├─ Player data: hardcoded in coach.html lines 673-740
+   └─ External URLs: YouTube links, Google Fonts, etc.
+
+
+LOW PRIORITY ISSUES
+├─ Title tag format inconsistency:
+│  ├─ "FlagFit Pro - [Page Name]" (most files)
+│  ├─ "[Page Name] - FlagFit Pro" (some files)
+│  └─ "Update Team Roster Data - FlagFit Pro" (verbose)
+│
+├─ PRECONNECT links variation:
+│  └─ Some files omit crossorigin attribute
+│
+└─ Icon aria-hidden inconsistency:
+   └─ Not all Lucide icons have aria-hidden="true"
+
+
+=================================================================================
+FILE DETAILS BY SEVERITY
+=================================================================================
+
+FILES WITH MOST INLINE STYLES (top 5):
+1. dashboard.html         - 359 inline styles
+2. training.html          - 350 inline styles
+3. coach.html             - 95 inline styles
+4. qb-assessment-tools.html - 49 inline styles
+5. roster.html            - 47 inline styles
+
+FILES WITH ONCLICK HANDLERS (accessibility issue):
+analytics.html, chat.html, coach-dashboard.html, coach.html, community.html,
+dashboard.html, exercise-library.html, qb-assessment-tools.html,
+qb-throwing-tracker.html, qb-training-schedule.html, roster.html, settings.html,
+tournaments.html, training-schedule.html, training.html, update-roster-data.html,
+workout.html (17 files total)
+
+FILES WITHOUT DEFER ATTRIBUTE (script loading):
+chat.html, coach-dashboard.html, coach.html, community.html, component-library.html,
+exercise-library.html, login.html, qb-assessment-tools.html, qb-throwing-tracker.html,
+qb-training-schedule.html, register.html, reset-password.html, roster.html,
+settings.html, tournaments.html, training-schedule.html, training.html,
+update-roster-data.html, workout.html (19 files total)
+
+
+=================================================================================
+KEY RECOMMENDATIONS IN ORDER OF IMPORTANCE
+=================================================================================
+
+PHASE 1: CRITICAL (Security & Performance)
+─────────────────────────────────────────
+1. Extract all 1094+ inline styles to external CSS files
+   └─ Create utility CSS classes for common patterns:
+      • Icon sizing: .icon-16, .icon-18, .icon-20, .icon-24, .icon-48
+      • Display: .hidden, .visible
+      • Colors: Using CSS variables (already present)
+
+2. Add defer attribute to all <script src> tags
+   └─ Find and replace: <script src=" → <script src=" defer="
+   └─ Affects 19 files
+
+3. Add <footer> element to all 51 files
+   └─ Include: copyright, privacy/terms links, social links, sitemap
+
+
+PHASE 2: HIGH PRIORITY (Accessibility & UX)
+─────────────────────────────────────────────
+1. Add aria-label to all 13+ files with onclick handlers
+   └─ Convert onclick to addEventListener for better control
+
+2. Add favicon/manifest links to all 49 missing files
+   └─ Add to <head>:
+      <link rel="manifest" href="/manifest.json">
+      <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+      <link rel="icon" type="image/png" href="/favicon.png">
+
+3. Fix DOCTYPE inconsistency (2 files)
+   └─ Change <!DOCTYPE html> to <!doctype html>
+
+4. Ensure form validation consistency
+   └─ Add aria-invalid, aria-describedby to all form fields
+
+
+PHASE 3: MEDIUM PRIORITY (Maintainability)
+──────────────────────────────────────────
+1. Choose ONE font family: Inter (15 files) or Poppins (13 files)
+   └─ Remove mixed font loading
+
+2. Standardize class naming convention
+   └─ Recommend: Utility-first with u- prefix (already partially done)
+
+3. Refactor navigation as reusable component
+   └─ Reduce ID duplication across pages
+
+4. Remove hardcoded values from JavaScript
+   └─ Move to configuration or API
+
+
+PHASE 4: LOW PRIORITY (Polish)
+──────────────────────────────
+1. Standardize title format: "FlagFit Pro - [Page Name]"
+2. Ensure aria-hidden consistency on all Lucide icons
+3. Normalize preconnect link attributes
+
+
+=================================================================================
+QUICK FIND COMMANDS FOR DEVELOPERS
+=================================================================================
+
+Find all files with inline styles:
+  grep -l 'style="' *.html
+
+Count inline styles per file:
+  for f in *.html; do echo "$f: $(grep -c 'style="' "$f")"; done
+
+Find all onclick handlers:
+  grep -n 'onclick=' *.html | grep -v 'aria-label'
+
+Find missing defer attributes:
+  grep -n '<script src' *.html | grep -v 'defer'
+
+Find files without favicon:
+  grep -L 'rel="icon\|rel="apple' *.html
+
+Find duplicate IDs:
+  grep -oh 'id="[^"]*"' *.html | sort | uniq -d
+
+Find files missing footer:
+  grep -L '<footer' *.html | wc -l
+
+
+=================================================================================
+SUMMARY
+=================================================================================
+
+Total Issues Identified: 38+ distinct categories
+- Critical: 7
+- High: 9  
+- Medium: 21
+- Low: 1
+
+Estimated effort to fix: 40-60 developer hours
+Priority: Complete Phase 1 & 2 before production release
+
+=================================================================================
