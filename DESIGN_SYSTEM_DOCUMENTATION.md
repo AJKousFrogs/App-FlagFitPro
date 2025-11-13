@@ -748,8 +748,43 @@ h2 {
   } /* Half width */
 }
 
-/* Mobile: Single column */
+/* Mobile: 2-column grid (improved hierarchy) */
 @media (max-width: 768px) {
+  .bento-grid {
+    grid-template-columns: 1fr 1fr; /* 2 columns, not 1 */
+    gap: var(--space-4); /* Smaller gap on mobile */
+  }
+  
+  /* Hero cards span full width */
+  .bento-card-hero,
+  .bento-card-span-12 {
+    grid-column: 1 / -1; /* Hero spans full width */
+  }
+  
+  /* Large cards span full width on mobile */
+  .bento-card-span-8 {
+    grid-column: span 2; /* Full width */
+  }
+  
+  /* Medium cards span full width */
+  .bento-card-span-6 {
+    grid-column: span 2; /* Full width */
+  }
+  
+  /* Small cards stay 1 column (half width) */
+  .bento-card-span-4 {
+    grid-column: span 1; /* Half width */
+  }
+  
+  /* Row spans reset on mobile */
+  .bento-card-row-span-2,
+  .bento-card-row-span-3 {
+    grid-row: span 1;
+  }
+}
+
+/* Small mobile: Single column for very small screens */
+@media (max-width: 480px) {
   .bento-grid {
     grid-template-columns: 1fr;
   }
@@ -2577,6 +2612,545 @@ const performanceChart = new Chart(ctx, {
 // Best for: Identifying training patterns, rest periods
 ```
 
+### Sports-Specific Chart Templates
+
+**Status**: ✅ **New** - Production-ready templates for athletic applications
+
+Pre-configured Chart.js templates optimized for sports performance tracking and analysis.
+
+#### 1. Performance Trend Chart
+
+Tracks speed, strength, or other metrics over time with comparison to team average.
+
+```javascript
+/**
+ * Performance Trend Chart - Speed/Strength Over Time
+ * Shows individual athlete performance vs team average
+ */
+function createPerformanceTrendChart(canvasId, athleteData, teamAverageData) {
+  const ctx = document.getElementById(canvasId).getContext("2d");
+  return new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: athleteData.labels, // ["Week 1", "Week 2", ...]
+      datasets: [
+        {
+          label: "Athlete Performance",
+          data: athleteData.values, // [4.2, 4.1, 4.0, 3.9, ...]
+          borderColor: "var(--chart-primary)",
+          backgroundColor: "rgba(16, 201, 107, 0.1)",
+          tension: 0.4,
+          fill: true,
+        },
+        {
+          label: "Team Average",
+          data: teamAverageData.values,
+          borderColor: "var(--chart-secondary)",
+          backgroundColor: "rgba(137, 195, 0, 0.1)",
+          borderDash: [5, 5],
+          tension: 0.4,
+          fill: false,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: "bottom",
+          labels: {
+            usePointStyle: true,
+            padding: 15,
+          },
+        },
+        tooltip: {
+          mode: "index",
+          intersect: false,
+          callbacks: {
+            label: function (context) {
+              return `${context.dataset.label}: ${context.parsed.y}s`;
+            },
+          },
+        },
+      },
+      scales: {
+        y: {
+          beginAtZero: false,
+          reverse: true, // Lower times = better for speed metrics
+          title: {
+            display: true,
+            text: "Time (seconds)",
+          },
+          grid: {
+            color: "var(--chart-grid)",
+          },
+        },
+        x: {
+          title: {
+            display: true,
+            text: "Time Period",
+          },
+          grid: {
+            display: false,
+          },
+        },
+      },
+    },
+  });
+}
+```
+
+**Usage Example:**
+
+```html
+<div class="chart-card">
+  <div class="chart-header">
+    <h3>40-Yard Dash Progress</h3>
+  </div>
+  <div class="chart-body">
+    <canvas id="speed-trend-chart" role="img" aria-label="Speed improvement chart showing athlete vs team average"></canvas>
+  </div>
+</div>
+
+<script>
+const athleteData = {
+  labels: ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6"],
+  values: [4.5, 4.4, 4.3, 4.2, 4.1, 4.0],
+};
+
+const teamAverageData = {
+  values: [4.6, 4.6, 4.5, 4.5, 4.4, 4.4],
+};
+
+createPerformanceTrendChart("speed-trend-chart", athleteData, teamAverageData);
+</script>
+```
+
+#### 2. Athlete Comparison Chart
+
+Compares multiple athletes across key performance metrics.
+
+```javascript
+/**
+ * Athlete Comparison Chart - Bar Chart
+ * Compares performance across multiple athletes
+ */
+function createAthleteComparisonChart(canvasId, athletes, metric) {
+  const ctx = document.getElementById(canvasId).getContext("2d");
+  const colors = [
+    "var(--chart-color-1)",
+    "var(--chart-color-2)",
+    "var(--chart-color-3)",
+    "var(--chart-color-4)",
+    "var(--chart-color-5)",
+  ];
+
+  return new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: athletes.map((a) => a.name),
+      datasets: [
+        {
+          label: metric.label,
+          data: athletes.map((a) => a[metric.key]),
+          backgroundColor: athletes.map((_, i) => colors[i % colors.length]),
+          borderColor: athletes.map((_, i) => colors[i % colors.length]),
+          borderWidth: 1,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false,
+        },
+        tooltip: {
+          callbacks: {
+            label: function (context) {
+              return `${metric.label}: ${context.parsed.y}${metric.unit || ""}`;
+            },
+          },
+        },
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: metric.label,
+          },
+          grid: {
+            color: "var(--chart-grid)",
+          },
+        },
+        x: {
+          grid: {
+            display: false,
+          },
+        },
+      },
+    },
+  });
+}
+```
+
+**Usage Example:**
+
+```javascript
+const athletes = [
+  { name: "Alex Johnson", speed: 4.2, strength: 85, agility: 78 },
+  { name: "Sam Williams", speed: 4.4, strength: 90, agility: 82 },
+  { name: "Jordan Davis", speed: 4.1, strength: 88, agility: 85 },
+];
+
+createAthleteComparisonChart("athlete-comparison", athletes, {
+  key: "speed",
+  label: "40-Yard Dash Time",
+  unit: "s",
+});
+```
+
+#### 3. Progress Tracking Chart
+
+Shows goal completion, streaks, and milestone achievements.
+
+```javascript
+/**
+ * Progress Tracking Chart - Goal Completion
+ * Shows progress toward goals with milestone markers
+ */
+function createProgressTrackingChart(canvasId, progressData, goalValue) {
+  const ctx = document.getElementById(canvasId).getContext("2d");
+  const currentValue = progressData.current;
+  const percentage = (currentValue / goalValue) * 100;
+
+  return new Chart(ctx, {
+    type: "doughnut",
+    data: {
+      labels: ["Completed", "Remaining"],
+      datasets: [
+        {
+          data: [currentValue, Math.max(0, goalValue - currentValue)],
+          backgroundColor: [
+            percentage >= 100 ? "var(--chart-success)" : "var(--chart-primary)",
+            "var(--chart-grid)",
+          ],
+          borderWidth: 0,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: "75%",
+      plugins: {
+        legend: {
+          display: false,
+        },
+        tooltip: {
+          callbacks: {
+            label: function (context) {
+              const value = context.parsed;
+              const total = context.dataset.data.reduce((a, b) => a + b, 0);
+              const percent = ((value / total) * 100).toFixed(1);
+              return `${context.label}: ${value} (${percent}%)`;
+            },
+          },
+        },
+      },
+    },
+    plugins: [
+      {
+        id: "centerText",
+        beforeDraw: function (chart) {
+          const ctx = chart.ctx;
+          const centerX = chart.chartArea.left + (chart.chartArea.right - chart.chartArea.left) / 2;
+          const centerY = chart.chartArea.top + (chart.chartArea.bottom - chart.chartArea.top) / 2;
+
+          ctx.save();
+          ctx.font = "bold 24px var(--font-family-base)";
+          ctx.fillStyle = "var(--chart-text)";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(`${percentage.toFixed(0)}%`, centerX, centerY - 10);
+
+          ctx.font = "14px var(--font-family-base)";
+          ctx.fillStyle = "var(--chart-text-secondary)";
+          ctx.fillText(`${currentValue}/${goalValue}`, centerX, centerY + 15);
+          ctx.restore();
+        },
+      },
+    ],
+  });
+}
+```
+
+**Usage Example:**
+
+```html
+<div class="chart-card">
+  <div class="chart-header">
+    <h3>Training Sessions Goal</h3>
+    <span class="text-caption">Target: 30 sessions this month</span>
+  </div>
+  <div class="chart-body">
+    <canvas id="progress-chart"></canvas>
+  </div>
+</div>
+
+<script>
+createProgressTrackingChart("progress-chart", { current: 24 }, 30);
+</script>
+```
+
+#### 4. Training Intensity Heat Map
+
+Visualizes training intensity patterns over weeks/months.
+
+```javascript
+/**
+ * Training Intensity Heat Map
+ * Shows intensity patterns using color gradients
+ */
+function createTrainingHeatMap(canvasId, intensityData) {
+  const ctx = document.getElementById(canvasId).getContext("2d");
+  
+  // Prepare data for heat map visualization
+  const weeks = intensityData.weeks; // ["Week 1", "Week 2", ...]
+  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  
+  // Create matrix data (weeks x days)
+  const matrixData = weeks.map((week, weekIndex) => {
+    return days.map((day, dayIndex) => {
+      return intensityData.data[weekIndex * 7 + dayIndex] || 0;
+    });
+  });
+
+  return new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: weeks,
+      datasets: days.map((day, dayIndex) => ({
+        label: day,
+        data: matrixData.map((week) => week[dayIndex]),
+        backgroundColor: (context) => {
+          const value = context.parsed.y;
+          if (value >= 8) return "var(--chart-error)"; // High intensity
+          if (value >= 5) return "var(--chart-warning)"; // Medium intensity
+          if (value >= 2) return "var(--chart-info)"; // Low intensity
+          return "var(--chart-grid)"; // Rest
+        },
+      })),
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: true,
+          position: "bottom",
+        },
+        tooltip: {
+          callbacks: {
+            label: function (context) {
+              return `Intensity: ${context.parsed.y}/10`;
+            },
+          },
+        },
+      },
+      scales: {
+        x: {
+          stacked: true,
+          grid: {
+            display: false,
+          },
+        },
+        y: {
+          stacked: true,
+          max: 10,
+          title: {
+            display: true,
+            text: "Intensity Level",
+          },
+          grid: {
+            color: "var(--chart-grid)",
+          },
+        },
+      },
+    },
+  });
+}
+```
+
+**Usage Example:**
+
+```javascript
+const intensityData = {
+  weeks: ["Week 1", "Week 2", "Week 3", "Week 4"],
+  data: [
+    // Week 1 (7 days)
+    5, 7, 6, 8, 4, 3, 2,
+    // Week 2
+    6, 8, 7, 9, 5, 4, 2,
+    // Week 3
+    7, 9, 8, 9, 6, 5, 2,
+    // Week 4 (recovery)
+    4, 5, 4, 3, 2, 2, 1,
+  ],
+};
+
+createTrainingHeatMap("intensity-heatmap", intensityData);
+```
+
+#### 5. Real-Time Metric Display
+
+Live updating chart for metrics during active training sessions.
+
+```javascript
+/**
+ * Real-Time Metric Display
+ * Updates chart in real-time during training sessions
+ */
+class RealTimeMetricChart {
+  constructor(canvasId, metricLabel, updateInterval = 1000) {
+    this.canvasId = canvasId;
+    this.metricLabel = metricLabel;
+    this.updateInterval = updateInterval;
+    this.dataPoints = [];
+    this.maxDataPoints = 60; // Keep last 60 seconds
+    this.chart = null;
+    this.initializeChart();
+  }
+
+  initializeChart() {
+    const ctx = document.getElementById(this.canvasId).getContext("2d");
+    this.chart = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: [],
+        datasets: [
+          {
+            label: this.metricLabel,
+            data: [],
+            borderColor: "var(--chart-primary)",
+            backgroundColor: "rgba(16, 201, 107, 0.1)",
+            tension: 0.4,
+            fill: true,
+            pointRadius: 0, // Hide points for cleaner look
+            pointHoverRadius: 4,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: {
+          duration: 0, // Disable animation for real-time updates
+        },
+        plugins: {
+          legend: {
+            display: false,
+          },
+          tooltip: {
+            mode: "index",
+            intersect: false,
+          },
+        },
+        scales: {
+          x: {
+            type: "linear",
+            position: "bottom",
+            title: {
+              display: true,
+              text: "Time (seconds)",
+            },
+            grid: {
+              display: false,
+            },
+          },
+          y: {
+            beginAtZero: false,
+            title: {
+              display: true,
+              text: this.metricLabel,
+            },
+            grid: {
+              color: "var(--chart-grid)",
+            },
+          },
+        },
+      },
+    });
+  }
+
+  addDataPoint(value, timestamp = Date.now()) {
+    this.dataPoints.push({ value, timestamp });
+    
+    // Keep only last N data points
+    if (this.dataPoints.length > this.maxDataPoints) {
+      this.dataPoints.shift();
+    }
+
+    // Update chart
+    const startTime = this.dataPoints[0]?.timestamp || timestamp;
+    this.chart.data.labels = this.dataPoints.map(
+      (point) => ((point.timestamp - startTime) / 1000).toFixed(0) + "s"
+    );
+    this.chart.data.datasets[0].data = this.dataPoints.map((point) => point.value);
+    this.chart.update("none"); // 'none' mode for instant updates
+  }
+
+  start() {
+    this.intervalId = setInterval(() => {
+      // Simulate data - replace with actual sensor data
+      const value = Math.random() * 100;
+      this.addDataPoint(value);
+    }, this.updateInterval);
+  }
+
+  stop() {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
+  }
+}
+```
+
+**Usage Example:**
+
+```html
+<div class="chart-card">
+  <div class="chart-header">
+    <h3>Heart Rate Monitor</h3>
+    <span class="text-caption">Live during training</span>
+  </div>
+  <div class="chart-body">
+    <canvas id="realtime-heartrate"></canvas>
+  </div>
+</div>
+
+<script>
+const heartRateChart = new RealTimeMetricChart("realtime-heartrate", "Heart Rate (BPM)", 1000);
+heartRateChart.start();
+
+// Stop when training ends
+// heartRateChart.stop();
+</script>
+```
+
+### Chart Template Quick Reference
+
+| Template | Use Case | Key Features |
+|----------|----------|--------------|
+| **Performance Trend** | Speed/strength over time | Athlete vs team comparison, trend lines |
+| **Athlete Comparison** | Multi-athlete metrics | Bar chart, color-coded athletes |
+| **Progress Tracking** | Goal completion | Doughnut chart, percentage display |
+| **Training Heat Map** | Intensity patterns | Weekly/daily intensity visualization |
+| **Real-Time Metrics** | Live training data | Auto-updating, sensor integration |
+
 ### Tabs Component
 
 **Status**: ✅ **Stable** - Production-ready, fully implemented
@@ -2729,6 +3303,568 @@ class Tabs {
 document.querySelectorAll(".tabs").forEach((container) => {
   new Tabs(container);
 });
+```
+
+---
+
+## Sports-Specific Components
+
+**Status**: ✅ **New** - Production-ready components for athletic applications
+
+Specialized components designed specifically for sports performance tracking and training management.
+
+### Athlete Profile Card
+
+**Status**: ✅ **Stable** - Production-ready
+
+A specialized card component for displaying athlete information with quick stats preview and action buttons.
+
+#### Component API
+
+| Property | Type | Default | Required | Description |
+|----------|------|---------|----------|-------------|
+| `athlete-card` | class | - | Yes | Main card container |
+| `athlete-header` | class | - | Yes | Header section with photo and stats |
+| `athlete-photo` | class | - | Yes | Athlete profile image |
+| `athlete-stats-preview` | class | - | No | Quick stats display |
+| `athlete-body` | class | - | Yes | Main content area |
+| `athlete-footer` | class | - | No | Action buttons area |
+
+#### HTML Structure
+
+```html
+<div class="card athlete-card">
+  <div class="athlete-header">
+    <img 
+      src="/images/athletes/alex-johnson.jpg" 
+      alt="Alex Johnson"
+      class="athlete-photo"
+    />
+    <div class="athlete-info">
+      <h3 class="athlete-name">Alex Johnson</h3>
+      <p class="athlete-position">Quarterback • #12</p>
+      <div class="athlete-stats-preview">
+        <div class="stat-item">
+          <span class="stat-value">24</span>
+          <span class="stat-label">Sessions</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-value">85%</span>
+          <span class="stat-label">Performance</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-value">4.2s</span>
+          <span class="stat-label">40-Yard</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="athlete-body">
+    <div class="athlete-metrics">
+      <div class="metric">
+        <span class="metric-label">Last Session</span>
+        <span class="metric-value">2 days ago</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Training Streak</span>
+        <span class="metric-value">5 days</span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="athlete-footer">
+    <button class="btn btn-secondary btn-sm">View Profile</button>
+    <button class="btn btn-primary btn-sm">Start Session</button>
+  </div>
+</div>
+```
+
+#### CSS Implementation
+
+```css
+.athlete-card {
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.athlete-header {
+  display: flex;
+  gap: var(--space-4);
+  align-items: flex-start;
+}
+
+.athlete-photo {
+  width: 80px;
+  height: 80px;
+  border-radius: var(--radius-full);
+  object-fit: cover;
+  border: 2px solid var(--color-border-secondary);
+  flex-shrink: 0;
+}
+
+.athlete-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.athlete-name {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-1) 0;
+}
+
+.athlete-position {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--space-3) 0;
+}
+
+.athlete-stats-preview {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.stat-value {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  line-height: 1.2;
+}
+
+.stat-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.athlete-body {
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border-secondary);
+}
+
+.athlete-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.metric-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.metric-value {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+}
+
+.athlete-footer {
+  display: flex;
+  gap: var(--space-3);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border-secondary);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .athlete-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .athlete-stats-preview {
+    justify-content: center;
+  }
+  
+  .athlete-footer {
+    flex-direction: column;
+  }
+  
+  .athlete-footer .btn {
+    width: 100%;
+  }
+}
+```
+
+### Training Session Timer
+
+**Status**: ✅ **Stable** - Production-ready
+
+A real-time timer component for tracking active training sessions with exercise progression.
+
+#### Component API
+
+| Property | Type | Default | Required | Description |
+|----------|------|---------|----------|-------------|
+| `session-timer` | class | - | Yes | Main timer container |
+| `timer-display` | class | - | Yes | Time display element |
+| `exercise-current` | class | - | Yes | Current exercise name |
+| `exercise-progress` | class | - | No | Exercise progress indicator |
+| `timer-controls` | class | - | No | Play/pause/stop buttons |
+
+#### HTML Structure
+
+```html
+<div class="card session-timer">
+  <div class="timer-header">
+    <h3>Active Session</h3>
+    <span class="timer-status">In Progress</span>
+  </div>
+  
+  <div class="timer-display">
+    <span class="timer-time" id="session-timer-display">15:23</span>
+    <span class="timer-label">Elapsed Time</span>
+  </div>
+  
+  <div class="exercise-current">
+    <div class="exercise-name">Burpees</div>
+    <div class="exercise-duration">30 seconds remaining</div>
+    <div class="exercise-progress">
+      <div class="progress-bar">
+        <div class="progress-fill" style="width: 60%"></div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="timer-controls">
+    <button class="btn btn-icon" aria-label="Pause session">
+      <i data-lucide="pause"></i>
+    </button>
+    <button class="btn btn-icon" aria-label="Stop session">
+      <i data-lucide="square"></i>
+    </button>
+  </div>
+</div>
+```
+
+#### CSS Implementation
+
+```css
+.session-timer {
+  padding: var(--space-6);
+  text-align: center;
+}
+
+.timer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-6);
+}
+
+.timer-status {
+  font-size: var(--font-size-sm);
+  color: var(--color-status-success);
+  font-weight: var(--font-weight-medium);
+  padding: var(--space-1) var(--space-3);
+  background: rgba(34, 197, 94, 0.1);
+  border-radius: var(--radius-full);
+}
+
+.timer-display {
+  margin-bottom: var(--space-6);
+}
+
+.timer-time {
+  display: block;
+  font-size: 3rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  margin-bottom: var(--space-2);
+}
+
+.timer-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.exercise-current {
+  padding: var(--space-4);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-4);
+}
+
+.exercise-name {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.exercise-duration {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-3);
+}
+
+.exercise-progress {
+  margin-top: var(--space-3);
+}
+
+.progress-bar {
+  height: 4px;
+  background: var(--color-border-secondary);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--color-brand-primary);
+  transition: width 0.3s ease;
+}
+
+.timer-controls {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .timer-time {
+    font-size: 2.5rem;
+  }
+}
+```
+
+#### JavaScript Implementation
+
+```javascript
+class SessionTimer {
+  constructor(displayElementId) {
+    this.displayElement = document.getElementById(displayElementId);
+    this.startTime = null;
+    this.elapsedTime = 0;
+    this.isRunning = false;
+    this.intervalId = null;
+  }
+
+  start() {
+    if (this.isRunning) return;
+    
+    this.startTime = Date.now() - this.elapsedTime;
+    this.isRunning = true;
+    this.intervalId = setInterval(() => this.update(), 100);
+  }
+
+  pause() {
+    if (!this.isRunning) return;
+    
+    this.isRunning = false;
+    clearInterval(this.intervalId);
+  }
+
+  stop() {
+    this.pause();
+    this.elapsedTime = 0;
+    this.update();
+  }
+
+  update() {
+    if (this.isRunning) {
+      this.elapsedTime = Date.now() - this.startTime;
+    }
+    
+    const minutes = Math.floor(this.elapsedTime / 60000);
+    const seconds = Math.floor((this.elapsedTime % 60000) / 1000);
+    this.displayElement.textContent = 
+      `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  }
+}
+
+// Usage
+const timer = new SessionTimer("session-timer-display");
+timer.start();
+```
+
+### Metric Display Card
+
+**Status**: ✅ **Stable** - Production-ready
+
+A specialized card for displaying athletic metrics with trend indicators and context.
+
+#### Component API
+
+| Property | Type | Default | Required | Description |
+|----------|------|---------|----------|-------------|
+| `metric-card` | class | - | Yes | Main metric card container |
+| `metric-trend` | class | - | No | Trend indicator (up/down/neutral) |
+| `metric-value` | class | - | Yes | Main metric value |
+| `metric-label` | class | - | Yes | Metric description |
+| `metric-comparison` | class | - | No | Comparison to previous period |
+
+#### HTML Structure
+
+```html
+<div class="card metric-card">
+  <div class="metric-header">
+    <div class="metric-trend trend-up">
+      <i data-lucide="trending-up"></i>
+      <span>+5%</span>
+    </div>
+  </div>
+  
+  <div class="metric-body">
+    <div class="metric-value">4.2s</div>
+    <div class="metric-label">40-Yard Dash</div>
+    <div class="metric-comparison">
+      <span class="comparison-label">vs last month:</span>
+      <span class="comparison-value">4.4s</span>
+    </div>
+  </div>
+</div>
+```
+
+#### CSS Implementation
+
+```css
+.metric-card {
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.metric-header {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.metric-trend {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+}
+
+.metric-trend.trend-up {
+  color: var(--color-status-success);
+  background: rgba(34, 197, 94, 0.1);
+}
+
+.metric-trend.trend-down {
+  color: var(--color-status-error);
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.metric-trend.trend-neutral {
+  color: var(--color-text-secondary);
+  background: var(--surface-secondary);
+}
+
+.metric-body {
+  text-align: center;
+}
+
+.metric-value {
+  font-size: 2.5rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  line-height: 1;
+  margin-bottom: var(--space-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.metric-label {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-3);
+}
+
+.metric-comparison {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border-secondary);
+}
+
+.comparison-label {
+  color: var(--color-text-secondary);
+}
+
+.comparison-value {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .metric-value {
+    font-size: 2rem;
+  }
+}
+```
+
+#### Usage Examples
+
+```html
+<!-- Speed Metric -->
+<div class="card metric-card">
+  <div class="metric-header">
+    <div class="metric-trend trend-up">
+      <i data-lucide="trending-up"></i>
+      <span>+5%</span>
+    </div>
+  </div>
+  <div class="metric-body">
+    <div class="metric-value">4.2s</div>
+    <div class="metric-label">40-Yard Dash</div>
+    <div class="metric-comparison">
+      <span class="comparison-label">vs last month:</span>
+      <span class="comparison-value">4.4s</span>
+    </div>
+  </div>
+</div>
+
+<!-- Strength Metric -->
+<div class="card metric-card">
+  <div class="metric-header">
+    <div class="metric-trend trend-up">
+      <i data-lucide="trending-up"></i>
+      <span>+8%</span>
+    </div>
+  </div>
+  <div class="metric-body">
+    <div class="metric-value">185 lbs</div>
+    <div class="metric-label">Bench Press Max</div>
+    <div class="metric-comparison">
+      <span class="comparison-label">vs last month:</span>
+      <span class="comparison-value">171 lbs</span>
+    </div>
+  </div>
+</div>
 ```
 
 ### Tooltip Component
@@ -4150,6 +5286,1072 @@ document.addEventListener("DOMContentLoaded", () => {
 }
 ```
 
+## TypeScript Definitions
+
+**Status**: ✅ **New** - Type definitions for component props and APIs
+
+TypeScript type definitions for all components to ensure type safety and better developer experience.
+
+### Component Type Definitions
+
+```typescript
+// Button Component Types
+interface ButtonProps {
+  variant?: 'primary' | 'secondary' | 'tertiary' | 'danger' | 'ghost';
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  disabled?: boolean;
+  loading?: boolean;
+  fullWidth?: boolean;
+  icon?: string; // Lucide icon name
+  iconPosition?: 'left' | 'right';
+  children: React.ReactNode;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  type?: 'button' | 'submit' | 'reset';
+  'aria-label'?: string;
+}
+
+// Card Component Types
+interface CardProps {
+  variant?: 'default' | 'elevated' | 'outlined' | 'flat';
+  padding?: 'none' | 'sm' | 'md' | 'lg';
+  children: React.ReactNode;
+  className?: string;
+}
+
+// Form Input Types
+interface InputProps {
+  type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'search';
+  label?: string;
+  placeholder?: string;
+  value?: string;
+  defaultValue?: string;
+  disabled?: boolean;
+  required?: boolean;
+  error?: string;
+  hint?: string;
+  icon?: string;
+  iconPosition?: 'left' | 'right';
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
+  'aria-label'?: string;
+  'aria-describedby'?: string;
+}
+
+// Select/Dropdown Types
+interface SelectProps {
+  label?: string;
+  placeholder?: string;
+  value?: string | string[];
+  multiple?: boolean;
+  disabled?: boolean;
+  required?: boolean;
+  error?: string;
+  hint?: string;
+  options: SelectOption[];
+  onChange?: (value: string | string[]) => void;
+  'aria-label'?: string;
+}
+
+interface SelectOption {
+  value: string;
+  label: string;
+  disabled?: boolean;
+  group?: string;
+}
+
+// Modal Types
+interface ModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  title?: string;
+  size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  closeOnOverlayClick?: boolean;
+  closeOnEscape?: boolean;
+  children: React.ReactNode;
+  footer?: React.ReactNode;
+}
+
+// Toast Notification Types
+interface ToastProps {
+  id?: string;
+  message: string;
+  type?: 'success' | 'error' | 'warning' | 'info';
+  duration?: number;
+  position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left';
+  action?: {
+    label: string;
+    onClick: () => void;
+  };
+}
+
+// Chart Types
+interface ChartProps {
+  type: 'line' | 'bar' | 'pie' | 'doughnut' | 'radar' | 'scatter';
+  data: ChartData;
+  options?: ChartOptions;
+  height?: number;
+  'aria-label'?: string;
+}
+
+interface ChartData {
+  labels: string[];
+  datasets: ChartDataset[];
+}
+
+interface ChartDataset {
+  label: string;
+  data: number[];
+  backgroundColor?: string | string[];
+  borderColor?: string | string[];
+  borderWidth?: number;
+}
+
+// Athlete Card Types
+interface AthleteCardProps {
+  name: string;
+  position: string;
+  jerseyNumber?: number;
+  photo?: string;
+  stats: {
+    sessions: number;
+    performance: number;
+    speed?: string;
+  };
+  lastSession?: string;
+  trainingStreak?: number;
+  onViewProfile?: () => void;
+  onStartSession?: () => void;
+}
+
+// Session Timer Types
+interface SessionTimerProps {
+  startTime?: Date;
+  exercise?: {
+    name: string;
+    duration: number;
+    remaining: number;
+  };
+  onPause?: () => void;
+  onStop?: () => void;
+}
+
+// Metric Card Types
+interface MetricCardProps {
+  value: string | number;
+  label: string;
+  trend?: {
+    direction: 'up' | 'down' | 'neutral';
+    percentage: number;
+  };
+  comparison?: {
+    label: string;
+    value: string | number;
+  };
+}
+```
+
+### Usage Example
+
+```typescript
+import { Button, Card, Input, Modal } from '@flagfit/design-system';
+
+function AthleteProfile() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  const handleSave: ButtonProps['onClick'] = (event) => {
+    event.preventDefault();
+    // Save logic
+  };
+  
+  return (
+    <Card variant="elevated" padding="lg">
+      <Input
+        type="text"
+        label="Athlete Name"
+        placeholder="Enter name"
+        required
+        error={errors.name}
+      />
+      <Button
+        variant="primary"
+        size="md"
+        onClick={handleSave}
+        loading={isSaving}
+      >
+        Save Changes
+      </Button>
+    </Card>
+  );
+}
+```
+
+### Export Structure
+
+```typescript
+// design-system.d.ts
+export * from './components/Button';
+export * from './components/Card';
+export * from './components/Input';
+export * from './components/Select';
+export * from './components/Modal';
+export * from './components/Toast';
+export * from './components/Chart';
+export * from './components/AthleteCard';
+export * from './components/SessionTimer';
+export * from './components/MetricCard';
+```
+
+---
+
+## Edge Case Patterns
+
+**Status**: ✅ **New** - Production-ready patterns for real-world scenarios
+
+Handling edge cases and uncommon scenarios that occur in production environments.
+
+### Offline State Handling
+
+**Status**: ✅ **Stable** - Production-ready
+
+Patterns for handling network failures and offline states gracefully.
+
+#### Offline Detection
+
+```javascript
+class OfflineHandler {
+  constructor() {
+    this.isOnline = navigator.onLine;
+    this.init();
+  }
+
+  init() {
+    window.addEventListener('online', () => this.handleOnline());
+    window.addEventListener('offline', () => this.handleOffline());
+  }
+
+  handleOnline() {
+    this.isOnline = true;
+    this.showToast({
+      message: 'Connection restored. Syncing data...',
+      type: 'success',
+    });
+    this.syncPendingChanges();
+  }
+
+  handleOffline() {
+    this.isOnline = false;
+    this.showToast({
+      message: 'You\'re offline. Changes will sync when connection is restored.',
+      type: 'warning',
+      duration: 5000,
+    });
+  }
+
+  async syncPendingChanges() {
+    // Sync any pending changes from IndexedDB/localStorage
+    const pending = await this.getPendingChanges();
+    for (const change of pending) {
+      try {
+        await this.syncChange(change);
+        await this.removePendingChange(change.id);
+      } catch (error) {
+        console.error('Sync failed:', error);
+      }
+    }
+  }
+}
+```
+
+#### Offline UI Pattern
+
+```html
+<!-- Offline Banner -->
+<div class="offline-banner" id="offline-banner" role="alert" aria-live="polite" hidden>
+  <div class="offline-banner-content">
+    <i data-lucide="wifi-off"></i>
+    <span>You're offline. Some features may be unavailable.</span>
+  </div>
+</div>
+
+<!-- Offline Indicator on Forms -->
+<form class="form" id="training-form">
+  <div class="form-group">
+    <label for="session-name">Session Name</label>
+    <input type="text" id="session-name" name="sessionName" required>
+  </div>
+  
+  <div class="form-footer">
+    <button type="submit" class="btn btn-primary">
+      Save Session
+    </button>
+    <span class="offline-indicator" id="offline-indicator" hidden>
+      <i data-lucide="wifi-off"></i>
+      Will sync when online
+    </span>
+  </div>
+</form>
+```
+
+```css
+.offline-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: var(--color-status-warning);
+  color: var(--color-text-on-warning);
+  padding: var(--space-3) var(--space-4);
+  z-index: var(--z-index-toast);
+  box-shadow: var(--shadow-md);
+}
+
+.offline-banner-content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.offline-indicator {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.offline-banner[hidden],
+.offline-indicator[hidden] {
+  display: none;
+}
+```
+
+### Large Dataset Performance
+
+**Status**: ✅ **Stable** - Production-ready
+
+Optimizations for handling 1000+ items in dropdowns, tables, and lists.
+
+#### Virtualized Dropdown
+
+```javascript
+class VirtualizedSelect {
+  constructor(selectElement, options) {
+    this.selectElement = selectElement;
+    this.options = options; // Array of 1000+ items
+    this.visibleCount = 10; // Show 10 at a time
+    this.scrollPosition = 0;
+    this.filteredOptions = options;
+    
+    this.init();
+  }
+
+  init() {
+    // Render only visible items
+    this.renderVisibleOptions();
+    
+    // Add search/filter
+    this.addSearchInput();
+    
+    // Virtual scrolling
+    this.setupVirtualScroll();
+  }
+
+  renderVisibleOptions() {
+    const start = this.scrollPosition;
+    const end = start + this.visibleCount;
+    const visible = this.filteredOptions.slice(start, end);
+    
+    // Clear and render only visible items
+    this.selectElement.innerHTML = '';
+    visible.forEach(option => {
+      this.selectElement.appendChild(this.createOptionElement(option));
+    });
+  }
+
+  setupVirtualScroll() {
+    this.selectElement.addEventListener('scroll', () => {
+      const scrollTop = this.selectElement.scrollTop;
+      const itemHeight = 40; // Height of each option
+      const newPosition = Math.floor(scrollTop / itemHeight);
+      
+      if (newPosition !== this.scrollPosition) {
+        this.scrollPosition = newPosition;
+        this.renderVisibleOptions();
+      }
+    });
+  }
+
+  addSearchInput() {
+    const searchInput = document.createElement('input');
+    searchInput.type = 'search';
+    searchInput.placeholder = 'Search athletes...';
+    searchInput.addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase();
+      this.filteredOptions = this.options.filter(opt => 
+        opt.label.toLowerCase().includes(query)
+      );
+      this.scrollPosition = 0;
+      this.renderVisibleOptions();
+    });
+    
+    this.selectElement.parentElement.insertBefore(
+      searchInput,
+      this.selectElement
+    );
+  }
+}
+```
+
+#### Paginated Table
+
+```javascript
+class PaginatedTable {
+  constructor(tableElement, data, pageSize = 50) {
+    this.tableElement = tableElement;
+    this.data = data;
+    this.pageSize = pageSize;
+    this.currentPage = 1;
+    this.totalPages = Math.ceil(data.length / pageSize);
+    
+    this.init();
+  }
+
+  init() {
+    this.renderTable();
+    this.renderPagination();
+  }
+
+  renderTable() {
+    const start = (this.currentPage - 1) * this.pageSize;
+    const end = start + this.pageSize;
+    const pageData = this.data.slice(start, end);
+    
+    // Clear and render page data
+    const tbody = this.tableElement.querySelector('tbody');
+    tbody.innerHTML = '';
+    
+    pageData.forEach(row => {
+      const tr = document.createElement('tr');
+      // Build row...
+      tbody.appendChild(tr);
+    });
+  }
+
+  renderPagination() {
+    // Pagination controls
+    const pagination = document.createElement('div');
+    pagination.className = 'pagination';
+    
+    // Previous button
+    const prevBtn = document.createElement('button');
+    prevBtn.textContent = 'Previous';
+    prevBtn.disabled = this.currentPage === 1;
+    prevBtn.addEventListener('click', () => {
+      if (this.currentPage > 1) {
+        this.currentPage--;
+        this.renderTable();
+        this.renderPagination();
+      }
+    });
+    
+    // Page numbers
+    const pageInfo = document.createElement('span');
+    pageInfo.textContent = `Page ${this.currentPage} of ${this.totalPages}`;
+    
+    // Next button
+    const nextBtn = document.createElement('button');
+    nextBtn.textContent = 'Next';
+    nextBtn.disabled = this.currentPage === this.totalPages;
+    nextBtn.addEventListener('click', () => {
+      if (this.currentPage < this.totalPages) {
+        this.currentPage++;
+        this.renderTable();
+        this.renderPagination();
+      }
+    });
+    
+    pagination.appendChild(prevBtn);
+    pagination.appendChild(pageInfo);
+    pagination.appendChild(nextBtn);
+    
+    // Replace existing pagination
+    const existing = this.tableElement.parentElement.querySelector('.pagination');
+    if (existing) existing.remove();
+    this.tableElement.parentElement.appendChild(pagination);
+  }
+}
+```
+
+### Internationalization Hooks
+
+**Status**: ✅ **Stable** - Production-ready
+
+Support for RTL languages, date formats, and localization.
+
+#### RTL Support
+
+```css
+/* RTL Layout Support */
+[dir="rtl"] .athlete-header {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .btn-icon {
+  transform: scaleX(-1);
+}
+
+[dir="rtl"] .metric-comparison {
+  flex-direction: row-reverse;
+}
+
+/* RTL-aware spacing */
+.athlete-card {
+  padding-inline-start: var(--space-6);
+  padding-inline-end: var(--space-6);
+}
+
+/* RTL-aware borders */
+.card {
+  border-inline-start: 1px solid var(--color-border-secondary);
+}
+```
+
+#### Date Formatting
+
+```javascript
+class DateFormatter {
+  constructor(locale = 'en-US') {
+    this.locale = locale;
+  }
+
+  formatDate(date, format = 'short') {
+    const options = {
+      short: { year: 'numeric', month: 'short', day: 'numeric' },
+      long: { year: 'numeric', month: 'long', day: 'numeric' },
+      time: { hour: '2-digit', minute: '2-digit' },
+    };
+    
+    return new Intl.DateTimeFormat(this.locale, options[format]).format(date);
+  }
+
+  formatRelative(date) {
+    const rtf = new Intl.RelativeTimeFormat(this.locale, { numeric: 'auto' });
+    const diff = date - Date.now();
+    const seconds = Math.floor(diff / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    
+    if (Math.abs(days) > 0) return rtf.format(days, 'day');
+    if (Math.abs(hours) > 0) return rtf.format(hours, 'hour');
+    if (Math.abs(minutes) > 0) return rtf.format(minutes, 'minute');
+    return rtf.format(seconds, 'second');
+  }
+}
+
+// Usage
+const formatter = new DateFormatter('ar-SA'); // Arabic
+formatter.formatDate(new Date()); // "٢٥ ديسمبر ٢٠٢٤"
+```
+
+### Print Stylesheets
+
+**Status**: ✅ **Stable** - Production-ready
+
+Optimized styles for printing training schedules, reports, and athlete profiles.
+
+```css
+/* Print Stylesheet */
+@media print {
+  /* Hide non-essential elements */
+  .sidebar,
+  .header,
+  .btn,
+  .navigation,
+  .offline-banner {
+    display: none !important;
+  }
+
+  /* Optimize layout for print */
+  .layout-container {
+    max-width: 100%;
+    padding: 0;
+  }
+
+  /* Ensure proper page breaks */
+  .card,
+  .athlete-card,
+  .session-card {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Print-specific spacing */
+  .card {
+    margin-bottom: var(--space-4);
+    padding: var(--space-4);
+    box-shadow: none;
+    border: 1px solid #000;
+  }
+
+  /* Optimize colors for print */
+  .metric-value,
+  .timer-time {
+    color: #000 !important;
+  }
+
+  /* Show URLs for links */
+  a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #666;
+  }
+
+  /* Page setup */
+  @page {
+    margin: 1cm;
+    size: A4;
+  }
+
+  /* Avoid breaking tables */
+  table {
+    page-break-inside: avoid;
+  }
+
+  tr {
+    page-break-inside: avoid;
+  }
+
+  /* Print headers/footers */
+  .print-header {
+    display: block;
+    position: running(header);
+  }
+
+  .print-footer {
+    display: block;
+    position: running(footer);
+  }
+
+  @page {
+    @top-center {
+      content: element(header);
+    }
+    @bottom-center {
+      content: element(footer);
+    }
+  }
+}
+```
+
+#### Print-Specific HTML
+
+```html
+<!-- Print Header -->
+<div class="print-header">
+  <h1>Training Schedule - Week of December 25, 2024</h1>
+  <p>FlagFit Pro Training Report</p>
+</div>
+
+<!-- Print Footer -->
+<div class="print-footer">
+  <p>Generated on <span id="print-date"></span></p>
+  <p>Page <span class="page-number"></span> of <span class="total-pages"></span></p>
+</div>
+
+<script>
+// Set print date
+document.getElementById('print-date').textContent = new Date().toLocaleDateString();
+
+// Print button
+document.getElementById('print-btn').addEventListener('click', () => {
+  window.print();
+});
+</script>
+```
+
+---
+
+## Component Interaction Patterns
+
+**Status**: ✅ **New** - Production-ready patterns for complex component combinations
+
+Documentation for combining multiple components into complex interaction patterns.
+
+### Modal with Form and Validation
+
+**Pattern**: Modal containing a form with real-time validation and toast notifications.
+
+```html
+<div class="modal" id="add-athlete-modal">
+  <div class="modal-content modal-lg">
+    <div class="modal-header">
+      <h2>Add New Athlete</h2>
+      <button class="btn-icon" aria-label="Close modal" onclick="closeModal()">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+    
+    <form class="form" id="add-athlete-form" onsubmit="handleSubmit(event)">
+      <div class="form-group">
+        <label for="athlete-name">Full Name *</label>
+        <input 
+          type="text" 
+          id="athlete-name" 
+          name="name"
+          required
+          onblur="validateField(this)"
+          aria-describedby="name-error name-hint"
+        />
+        <span class="form-hint" id="name-hint">Enter athlete's full name</span>
+        <span class="form-error" id="name-error" role="alert"></span>
+      </div>
+      
+      <div class="form-group">
+        <label for="athlete-position">Position *</label>
+        <select id="athlete-position" name="position" required>
+          <option value="">Select position</option>
+          <option value="qb">Quarterback</option>
+          <option value="wr">Wide Receiver</option>
+          <!-- More options -->
+        </select>
+      </div>
+      
+      <div class="form-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal()">
+          Cancel
+        </button>
+        <button type="submit" class="btn btn-primary" id="submit-btn">
+          Add Athlete
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+function validateField(field) {
+  const errorElement = document.getElementById(`${field.name}-error`);
+  
+  if (!field.validity.valid) {
+    errorElement.textContent = field.validationMessage;
+    field.classList.add('input-error');
+  } else {
+    errorElement.textContent = '';
+    field.classList.remove('input-error');
+  }
+}
+
+async function handleSubmit(event) {
+  event.preventDefault();
+  const form = event.target;
+  const submitBtn = document.getElementById('submit-btn');
+  
+  // Disable submit button
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Adding...';
+  
+  try {
+    const formData = new FormData(form);
+    const response = await fetch('/api/athletes', {
+      method: 'POST',
+      body: formData,
+    });
+    
+    if (response.ok) {
+      // Show success toast
+      showToast({
+        message: 'Athlete added successfully',
+        type: 'success',
+      });
+      
+      // Close modal
+      closeModal();
+      
+      // Refresh athlete list
+      refreshAthleteList();
+    } else {
+      throw new Error('Failed to add athlete');
+    }
+  } catch (error) {
+    showToast({
+      message: 'Failed to add athlete. Please try again.',
+      type: 'error',
+    });
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Add Athlete';
+  }
+}
+</script>
+```
+
+### DataTable with Selection and Bulk Actions
+
+**Pattern**: Table with row selection, bulk actions, and toast notifications.
+
+```html
+<div class="card">
+  <div class="card-header">
+    <h3>Athletes</h3>
+    <div class="card-actions">
+      <button 
+        class="btn btn-secondary btn-sm" 
+        id="bulk-actions-btn"
+        disabled
+        onclick="showBulkActions()"
+      >
+        Actions (<span id="selected-count">0</span>)
+      </button>
+    </div>
+  </div>
+  
+  <div class="data-table-container">
+    <table class="data-table" id="athletes-table">
+      <thead>
+        <tr>
+          <th>
+            <input 
+              type="checkbox" 
+              id="select-all"
+              onchange="toggleSelectAll(this)"
+              aria-label="Select all athletes"
+            />
+          </th>
+          <th>Name</th>
+          <th>Position</th>
+          <th>Performance</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Rows with checkboxes -->
+        <tr>
+          <td>
+            <input 
+              type="checkbox" 
+              class="row-checkbox"
+              data-athlete-id="1"
+              onchange="updateSelection()"
+            />
+          </td>
+          <td>Alex Johnson</td>
+          <td>Quarterback</td>
+          <td>85%</td>
+          <td>
+            <button class="btn-icon" onclick="editAthlete(1)">
+              <i data-lucide="edit"></i>
+            </button>
+          </td>
+        </tr>
+        <!-- More rows -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Bulk Actions Dropdown -->
+<div class="dropdown" id="bulk-actions-menu" hidden>
+  <button class="dropdown-item" onclick="bulkDelete()">
+    <i data-lucide="trash-2"></i>
+    Delete Selected
+  </button>
+  <button class="dropdown-item" onclick="bulkExport()">
+    <i data-lucide="download"></i>
+    Export Selected
+  </button>
+</div>
+
+<script>
+let selectedIds = new Set();
+
+function updateSelection() {
+  const checkboxes = document.querySelectorAll('.row-checkbox:checked');
+  selectedIds = new Set(Array.from(checkboxes).map(cb => cb.dataset.athleteId));
+  
+  const count = selectedIds.size;
+  document.getElementById('selected-count').textContent = count;
+  document.getElementById('bulk-actions-btn').disabled = count === 0;
+}
+
+function toggleSelectAll(checkbox) {
+  const rowCheckboxes = document.querySelectorAll('.row-checkbox');
+  rowCheckboxes.forEach(cb => {
+    cb.checked = checkbox.checked;
+  });
+  updateSelection();
+}
+
+async function bulkDelete() {
+  if (!confirm(`Delete ${selectedIds.size} athlete(s)?`)) return;
+  
+  try {
+    const response = await fetch('/api/athletes/bulk', {
+      method: 'DELETE',
+      body: JSON.stringify({ ids: Array.from(selectedIds) }),
+    });
+    
+    if (response.ok) {
+      showToast({
+        message: `${selectedIds.size} athlete(s) deleted successfully`,
+        type: 'success',
+      });
+      selectedIds.clear();
+      updateSelection();
+      refreshTable();
+    }
+  } catch (error) {
+    showToast({
+      message: 'Failed to delete athletes',
+      type: 'error',
+    });
+  }
+}
+</script>
+```
+
+### Stacked Toast Notifications
+
+**Pattern**: Multiple toast notifications that stack vertically without overlapping.
+
+```javascript
+class ToastManager {
+  constructor() {
+    this.toasts = [];
+    this.container = this.createContainer();
+  }
+
+  createContainer() {
+    const container = document.createElement('div');
+    container.className = 'toast-container toast-container-top-right';
+    container.setAttribute('aria-live', 'polite');
+    container.setAttribute('aria-atomic', 'true');
+    document.body.appendChild(container);
+    return container;
+  }
+
+  show(toast) {
+    const id = Date.now().toString();
+    const toastElement = this.createToastElement(id, toast);
+    
+    this.container.appendChild(toastElement);
+    this.toasts.push({ id, element: toastElement });
+    
+    // Animate in
+    requestAnimationFrame(() => {
+      toastElement.classList.add('toast-visible');
+    });
+    
+    // Auto-dismiss
+    if (toast.duration !== 0) {
+      setTimeout(() => {
+        this.dismiss(id);
+      }, toast.duration || 5000);
+    }
+    
+    return id;
+  }
+
+  createToastElement(id, toast) {
+    const element = document.createElement('div');
+    element.className = `toast toast-${toast.type}`;
+    element.id = `toast-${id}`;
+    element.setAttribute('role', 'alert');
+    
+    element.innerHTML = `
+      <div class="toast-content">
+        <i data-lucide="${this.getIcon(toast.type)}"></i>
+        <span class="toast-message">${toast.message}</span>
+      </div>
+      ${toast.action ? `
+        <button class="toast-action" onclick="toastManager.dismiss('${id}')">
+          ${toast.action.label}
+        </button>
+      ` : ''}
+      <button class="toast-close" onclick="toastManager.dismiss('${id}')" aria-label="Close">
+        <i data-lucide="x"></i>
+      </button>
+    `;
+    
+    return element;
+  }
+
+  dismiss(id) {
+    const toast = this.toasts.find(t => t.id === id);
+    if (!toast) return;
+    
+    toast.element.classList.remove('toast-visible');
+    setTimeout(() => {
+      toast.element.remove();
+      this.toasts = this.toasts.filter(t => t.id !== id);
+    }, 300);
+  }
+
+  getIcon(type) {
+    const icons = {
+      success: 'check-circle',
+      error: 'alert-circle',
+      warning: 'alert-triangle',
+      info: 'info',
+    };
+    return icons[type] || 'info';
+  }
+}
+
+// Global instance
+const toastManager = new ToastManager();
+
+// Usage
+toastManager.show({
+  message: 'Athlete added successfully',
+  type: 'success',
+});
+
+// Stacked toasts
+toastManager.show({ message: 'First notification', type: 'info' });
+toastManager.show({ message: 'Second notification', type: 'success' });
+toastManager.show({ message: 'Third notification', type: 'warning' });
+```
+
+```css
+.toast-container {
+  position: fixed;
+  top: var(--space-4);
+  right: var(--space-4);
+  z-index: var(--z-index-toast);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-width: 400px;
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  opacity: 0;
+  transform: translateX(100%);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.toast-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Prevent overlap on small screens */
+@media (max-width: 768px) {
+  .toast-container {
+    left: var(--space-4);
+    right: var(--space-4);
+    max-width: none;
+  }
+}
+```
+
+---
+
 ## Performance Guidelines
 
 **Status**: ✅ **Stable** - Production-ready
@@ -4162,10 +6364,109 @@ Performance optimization strategies and budgets to ensure fast, responsive user 
 
 | Metric             | Budget           | Notes                 |
 | ------------------ | ---------------- | --------------------- |
-| **Total CSS Size** | < 50KB (gzipped) | All design system CSS |
+| **Total CSS Size** | < 30KB (gzipped) | Target: 30KB with critical CSS extraction (improved from 50KB) |
 | **Critical CSS**   | < 14KB (gzipped) | Above-the-fold styles |
 | **CSS Selectors**  | < 4096 per file  | Browser limit         |
 | **CSS Variables**  | < 1000           | Performance impact    |
+
+#### Performance Optimizations
+
+**CSS Containment**
+
+Use CSS containment to isolate component rendering and improve performance:
+
+```css
+/* Component isolation for better performance */
+.component {
+  contain: layout style paint;
+}
+
+/* For components with complex content */
+.card {
+  contain: layout style;
+}
+
+/* For components that don't affect layout */
+.metric-value {
+  contain: style;
+}
+
+/* For isolated components (modals, dropdowns) */
+.modal,
+.dropdown {
+  contain: strict; /* layout style paint size */
+}
+```
+
+**Critical CSS Extraction**
+
+Extract and inline critical CSS for above-the-fold content:
+
+```html
+<!-- Inline critical CSS in <head> -->
+<style>
+  /* Critical CSS: Header, navigation, first card */
+  .header { /* ... */ }
+  .nav { /* ... */ }
+  .card:first-child { /* ... */ }
+</style>
+
+<!-- Load non-critical CSS asynchronously -->
+<link rel="preload" href="/css/design-system.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="/css/design-system.css"></noscript>
+```
+
+**CSS Loading Strategy**
+
+```html
+<!-- 1. Inline critical CSS -->
+<style>
+  /* Critical styles here */
+</style>
+
+<!-- 2. Preload main stylesheet -->
+<link rel="preload" href="/css/main.css" as="style">
+
+<!-- 3. Load main stylesheet -->
+<link rel="stylesheet" href="/css/main.css">
+
+<!-- 4. Load non-critical CSS asynchronously -->
+<link rel="preload" href="/css/components.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="/css/components.css"></noscript>
+```
+
+**Component-Level Performance**
+
+```css
+/* Use will-change sparingly for animated elements */
+.animated-card {
+  will-change: transform;
+  transition: transform 0.3s ease;
+}
+
+/* Use transform instead of position for animations */
+.slide-in {
+  transform: translateX(0);
+  transition: transform 0.3s ease;
+}
+
+.slide-in-hidden {
+  transform: translateX(-100%);
+}
+
+/* Optimize repaints with transform and opacity */
+.fade-in {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* GPU acceleration for smooth animations */
+.smooth-animation {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+```
 
 #### JavaScript Performance
 
