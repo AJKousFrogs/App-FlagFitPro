@@ -280,7 +280,7 @@
       .hero-section {
         margin-bottom: var(--spacing-section-md);
         display: grid;
-        grid-template-columns: 2fr 1fr;
+        grid-template-columns: 1fr;
         gap: var(--grid-gap-md);
         width: 100%; /* Ensure full width */
         max-width: 100%; /* Prevent any max-width constraints */
@@ -289,6 +289,144 @@
       @media (max-width: 1024px) {
         .hero-section {
           grid-template-columns: 1fr;
+        }
+      }
+
+      /* Training Hub Card */
+      .training-hub-card {
+        background: linear-gradient(135deg, #10c96b 0%, #0ab85a 100%);
+        color: white;
+        border-radius: 16px;
+        padding: 24px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hub-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+      }
+
+      .hub-header h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: white;
+        margin: 0;
+      }
+
+      .progress-badge {
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+        color: white;
+      }
+
+      .hub-content {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      .next-session-priority {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .session-time {
+        font-size: 0.875rem;
+        font-weight: 600;
+        opacity: 0.9;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .session-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: white;
+      }
+
+      .start-btn {
+        background: white;
+        color: #10c96b;
+        border: none;
+        border-radius: 12px;
+        padding: 12px 24px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        align-self: flex-start;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .start-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .start-btn:active {
+        transform: translateY(0);
+      }
+
+      .week-overview {
+        display: flex;
+        gap: 8px;
+        margin-top: 16px;
+      }
+
+      .day {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 0.875rem;
+      }
+
+      .day[data-status="completed"] {
+        background: rgba(255, 255, 255, 0.3);
+        color: white;
+      }
+
+      .day[data-status="today"] {
+        background: #fff;
+        color: #10c96b;
+      }
+
+      .day[data-status="scheduled"] {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+      }
+
+      @media (max-width: 768px) {
+        .training-hub-card {
+          padding: 20px;
+        }
+
+        .hub-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 12px;
+        }
+
+        .next-session-priority {
+          gap: 16px;
+        }
+
+        .start-btn {
+          width: 100%;
+          justify-content: center;
         }
       }
 
@@ -6096,227 +6234,195 @@
           </div>
         </div>
 
-        <!-- Hero Section - Today's Focus -->
+        <!-- Hero Section - Training Hub -->
         <div class="hero-section">
-          <!-- Hero Card: Next Session (Most Important) -->
-          <div class="hero-card">
-            <div class="hero-title">Today's Focus</div>
-            <h2 class="hero-main-title">
-              <i
-                data-lucide="calendar"
-                style="
-                  width: 28px;
-                  height: 28px;
-                  display: inline-block;
-                  vertical-align: middle;
-                  margin-right: 12px;
-                  color: var(--primitive-primary-500);
-                "
-              ></i>
-              Next Session
-            </h2>
-            <div id="next-session-content">
-              <!-- Will be populated by real training data -->
-              <div class="upcoming-item text-center text-text-secondary p-20">
-                <div>Loading training data...</div>
-              </div>
+          <!-- Single Training Hub Card -->
+          <div class="training-hub-card">
+            <div class="hub-header">
+              <h2>Training Hub</h2>
+              <div class="progress-badge" id="training-hub-progress-badge">75% • +12% this week</div>
             </div>
-          </div>
 
-          <!-- Hero Card: Training Progress Summary -->
-          <div class="hero-card">
-            <div class="hero-title">Weekly Progress</div>
-            <h2 class="hero-main-title">Training Progress</h2>
-            <div class="progress-ring-container my-24 mx-auto">
-              <svg class="progress-ring" width="100" height="100">
-                <defs>
-                  <linearGradient
-                    id="heroTrainingGradient"
-                    x1="0%"
-                    y1="0%"
-                    x2="100%"
-                    y2="100%"
-                  >
-                    <stop
-                      offset="0%"
-                      style="
-                        stop-color: var(--primitive-primary-500);
-                        stop-opacity: 1;
-                      "
-                    />
-                    <stop
-                      offset="100%"
-                      style="
-                        stop-color: var(--primitive-success-500);
-                        stop-opacity: 1;
-                      "
-                    />
-                  </linearGradient>
-                </defs>
-                <circle
-                  class="progress-ring-circle progress-ring-bg"
-                  cx="50"
-                  cy="50"
-                  r="40"
-                  stroke-width="8"
-                ></circle>
-                <circle
-                  class="progress-ring-circle progress-ring-progress"
-                  cx="50"
-                  cy="50"
-                  r="40"
-                  stroke="url(#heroTrainingGradient)"
-                  stroke-width="8"
-                  stroke-linecap="round"
-                  stroke-dasharray="251"
-                  stroke-dashoffset="63"
-                  transform="rotate(-90 50 50)"
-                ></circle>
-              </svg>
-              <div
-                class="progress-ring-value"
-                style="font-size: 1.5rem; font-weight: 700"
-                id="hero-training-progress-value"
-                aria-live="polite"
-              >
-                75%
+            <div class="hub-content">
+              <!-- Next Session (Priority) -->
+              <div class="next-session-priority">
+                <div class="session-time" id="training-hub-session-time">Today 3:00 PM</div>
+                <div class="session-title" id="training-hub-session-title">Lower Body Strength + Plyometric</div>
+                <button class="start-btn" id="training-hub-start-btn">
+                  <i data-lucide="play" style="width: 18px; height: 18px;"></i>
+                  Start Session
+                </button>
               </div>
-            </div>
-            <div class="stat-change positive flex justify-center">
-              <span
-                ><i
-                  data-lucide="trending-up"
-                  style="
-                    width: 16px;
-                    height: 16px;
-                    display: inline-block;
-                    vertical-align: middle;
-                  "
-                ></i
-              ></span>
-              <span>+12% <span class="trend-period">from last week</span></span>
+
+              <!-- Weekly Overview -->
+              <div class="week-overview" id="training-hub-week-overview">
+                <div class="day" data-status="completed">M</div>
+                <div class="day" data-status="completed">T</div>
+                <div class="day" data-status="today">W</div>
+                <div class="day" data-status="scheduled">T</div>
+                <div class="day" data-status="scheduled">F</div>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- Main Dashboard Layout: Left = Stats, Right = Actions -->
+        <!-- Main Dashboard Layout: Left = Stats, Right = Training Sidebar -->
         <div class="grid grid-cols-2 gap-16 mb-24 px-48">
-          <!-- Left Column: Training Progress Card (Detailed) -->
-          <div
-            class="stat-card"
-            data-type="training"
-            role="article"
-            aria-label="Training Progress"
-          >
-            <div class="stat-header flex justify-between items-center mb-24">
-              <span class="stat-title">
-                <i
-                  data-lucide="dumbbell"
-                  style="
-                    width: 16px;
-                    height: 16px;
-                    display: inline-block;
-                    vertical-align: middle;
-                    margin-right: 6px;
-                  "
-                ></i>
-                Training Progress
-              </span>
-              <div
-                class="stat-icon"
-                style="
-                  background: var(--success-bg);
-                  color: var(--success);
-                  width: 36px;
-                  height: 36px;
-                  border-radius: 10px;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                "
-                tabindex="0"
-                role="button"
-                aria-label="View training progress details"
-              >
-                <i data-lucide="dumbbell" style="width: 18px; height: 18px"></i>
-              </div>
-            </div>
-            <!-- Modern Progress Ring -->
-            <div class="progress-ring-container my-24 mx-auto">
-              <svg class="progress-ring" width="120" height="120">
-                <defs>
-                  <linearGradient
-                    id="trainingGradient"
-                    x1="0%"
-                    y1="0%"
-                    x2="100%"
-                    y2="100%"
-                  >
-                    <stop
-                      offset="0%"
-                      style="
-                        stop-color: var(--primitive-primary-500);
-                        stop-opacity: 1;
-                      "
-                    />
-                    <stop
-                      offset="100%"
-                      style="
-                        stop-color: var(--primitive-success-500);
-                        stop-opacity: 1;
-                      "
-                    />
-                  </linearGradient>
-                </defs>
-                <circle
-                  class="progress-ring-circle progress-ring-bg"
-                  cx="60"
-                  cy="60"
-                  r="48"
-                  stroke-width="10"
-                ></circle>
-                <circle
-                  class="progress-ring-circle progress-ring-progress"
-                  cx="60"
-                  cy="60"
-                  r="48"
-                  stroke="url(#trainingGradient)"
-                  stroke-width="10"
-                  stroke-linecap="round"
-                  stroke-dasharray="302"
-                  stroke-dashoffset="75.5"
-                  transform="rotate(-90 60 60)"
-                ></circle>
-              </svg>
-              <div
-                class="progress-ring-value"
-                id="training-progress-value"
-                aria-live="polite"
-              >
-                75%
-              </div>
-            </div>
-            <div class="stat-change positive">
-              <span
-                ><i
-                  data-lucide="trending-up"
-                  style="
-                    width: 16px;
-                    height: 16px;
-                    display: inline-block;
-                    vertical-align: middle;
-                  "
-                ></i
-              ></span>
-              <span>+12% <span class="trend-period">from last week</span></span>
-            </div>
-            <div class="stat-context">
-              <span class="live-indicator"></span>On track for weekly goal
-            </div>
+          <!-- Left Column: Other Stats (Performance, etc.) -->
+          <div class="flex flex-col gap-16">
+            <!-- Placeholder for other stat cards - can be Performance Score, etc. -->
+            <!-- This space is reserved for non-training related stats -->
           </div>
 
-          <!-- Right Column: Weekly Schedule -->
+          <!-- Right Sidebar: Training Progress & Upcoming -->
           <div class="flex flex-col gap-16">
+            <!-- Weekly Progress Ring Card -->
+            <div class="upcoming-card">
+              <div
+                class="upcoming-header flex justify-between items-center mb-24"
+              >
+                <h3
+                  style="
+                    font-size: 1.125rem;
+                    font-weight: 700;
+                    color: var(--color-text-primary);
+                  "
+                >
+                  Weekly Progress
+                </h3>
+              </div>
+              <div class="progress-ring-container my-24 mx-auto">
+                <svg class="progress-ring" width="120" height="120">
+                  <defs>
+                    <linearGradient
+                      id="sidebarTrainingGradient"
+                      x1="0%"
+                      y1="0%"
+                      x2="100%"
+                      y2="100%"
+                    >
+                      <stop
+                        offset="0%"
+                        style="
+                          stop-color: var(--primitive-primary-500);
+                          stop-opacity: 1;
+                        "
+                      />
+                      <stop
+                        offset="100%"
+                        style="
+                          stop-color: var(--primitive-success-500);
+                          stop-opacity: 1;
+                        "
+                      />
+                    </linearGradient>
+                  </defs>
+                  <circle
+                    class="progress-ring-circle progress-ring-bg"
+                    cx="60"
+                    cy="60"
+                    r="48"
+                    stroke-width="10"
+                  ></circle>
+                  <circle
+                    class="progress-ring-circle progress-ring-progress"
+                    cx="60"
+                    cy="60"
+                    r="48"
+                    stroke="url(#sidebarTrainingGradient)"
+                    stroke-width="10"
+                    stroke-linecap="round"
+                    stroke-dasharray="302"
+                    stroke-dashoffset="75.5"
+                    transform="rotate(-90 60 60)"
+                  ></circle>
+                </svg>
+                <div
+                  class="progress-ring-value"
+                  id="training-progress-value"
+                  aria-live="polite"
+                >
+                  75%
+                </div>
+              </div>
+              <div class="stat-change positive text-center">
+                <span
+                  ><i
+                    data-lucide="trending-up"
+                    style="
+                      width: 16px;
+                      height: 16px;
+                      display: inline-block;
+                      vertical-align: middle;
+                    "
+                  ></i
+                ></span>
+                <span>+12% <span class="trend-period">this week</span></span>
+              </div>
+            </div>
+
+            <!-- Quick Stats Card -->
+            <div class="upcoming-card">
+              <div
+                class="upcoming-header flex justify-between items-center mb-24"
+              >
+                <h3
+                  style="
+                    font-size: 1.125rem;
+                    font-weight: 700;
+                    color: var(--color-text-primary);
+                  "
+                >
+                  Quick Stats
+                </h3>
+              </div>
+              <div class="flex flex-col gap-16">
+                <div class="flex justify-between items-center">
+                  <div class="flex items-center gap-8">
+                    <i
+                      data-lucide="flame"
+                      style="width: 20px; height: 20px; color: var(--primitive-primary-500);"
+                    ></i>
+                    <span style="font-size: 0.875rem; color: var(--color-text-secondary);">Current Streak</span>
+                  </div>
+                  <span id="training-streak" style="font-size: 1.125rem; font-weight: 700; color: var(--color-text-primary);">5 days</span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <div class="flex items-center gap-8">
+                    <i
+                      data-lucide="check-circle"
+                      style="width: 20px; height: 20px; color: var(--primitive-success-500);"
+                    ></i>
+                    <span style="font-size: 0.875rem; color: var(--color-text-secondary);">Completed This Week</span>
+                  </div>
+                  <span id="weekly-completed" style="font-size: 1.125rem; font-weight: 700; color: var(--color-text-primary);">3/5</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Upcoming Sessions (3-day preview) -->
+            <div class="upcoming-card">
+              <div
+                class="upcoming-header flex justify-between items-center mb-24"
+              >
+                <h3
+                  style="
+                    font-size: 1.125rem;
+                    font-weight: 700;
+                    color: var(--color-text-primary);
+                  "
+                >
+                  Upcoming Sessions
+                </h3>
+              </div>
+              <div id="upcoming-sessions-preview">
+                <!-- Will be populated with 3-day preview -->
+                <div class="upcoming-item text-center text-text-secondary p-20">
+                  <div>Loading upcoming sessions...</div>
+                </div>
+              </div>
+            </div>
+
             <!-- Weekly Training Schedule Card -->
             <div class="upcoming-card">
               <div
@@ -6514,6 +6620,46 @@
                       <i data-lucide="activity"></i>
                       <span>Log Wellness</span>
                     </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Recent Achievements Section -->
+              <div class="upcoming-card">
+                <div
+                  class="upcoming-header flex justify-between items-center mb-24"
+                >
+                  <h3
+                    style="
+                      font-size: 1.125rem;
+                      font-weight: 700;
+                      color: var(--color-text-primary);
+                    "
+                  >
+                    <i
+                      data-lucide="trophy"
+                      style="
+                        width: 20px;
+                        height: 20px;
+                        display: inline-block;
+                        vertical-align: middle;
+                        margin-right: 8px;
+                      "
+                    ></i>
+                    Recent Achievements
+                  </h3>
+                </div>
+                <div id="recent-achievements-list" class="flex flex-col gap-12">
+                  <!-- Will be populated dynamically -->
+                  <div class="achievement-item" style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--surface-secondary); border-radius: 12px;">
+                    <div class="achievement-icon" style="width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, #10c96b 0%, #0ab85a 100%); display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">
+                      🏃
+                    </div>
+                    <div class="achievement-content" style="flex: 1;">
+                      <div style="font-weight: 700; color: var(--color-text-primary); margin-bottom: 4px;">Speed Demon</div>
+                      <div style="font-size: 0.875rem; color: var(--color-text-secondary);">Completed 5 speed training sessions</div>
+                    </div>
+                    <div class="achievement-badge" style="background: var(--primitive-primary-500); color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">New</div>
                   </div>
                 </div>
               </div>
@@ -7102,11 +7248,13 @@
         }
         initChart();
 
-        // Initialize training schedule FIRST (this sets programStarted), then update next session
+        // Initialize training schedule FIRST (this sets programStarted), then update Training Hub
         initializeTrainingSchedule();
-        // Update next session after program is initialized
+        // Update Training Hub after program is initialized
         setTimeout(() => {
-          updateNextSession();
+          updateTrainingHub();
+          updateUpcomingSessionsPreview();
+          updateQuickStats();
         }, 100);
 
         // Add period button interactions for modern chart controls
@@ -8050,9 +8198,23 @@
             `;
       }
 
-      function updateNextSession() {
+      function updateTrainingHub() {
         if (!programStarted) {
-          showProgramSelection();
+          // Show program selection in Training Hub
+          const sessionTimeEl = document.getElementById("training-hub-session-time");
+          const sessionTitleEl = document.getElementById("training-hub-session-title");
+          const startBtnEl = document.getElementById("training-hub-start-btn");
+          
+          if (sessionTimeEl) sessionTimeEl.textContent = "Select Program";
+          if (sessionTitleEl) sessionTitleEl.textContent = "Choose your training program to begin";
+          if (startBtnEl) {
+            startBtnEl.innerHTML = '<i data-lucide="settings" style="width: 18px; height: 18px;"></i> Select Program';
+            startBtnEl.onclick = () => showProgramSelection();
+            // Reinitialize Lucide icons
+            if (typeof lucide !== "undefined") {
+              lucide.createIcons();
+            }
+          }
           return;
         }
 
@@ -8067,37 +8229,247 @@
           "friday",
           "saturday",
         ];
+        const dayShortNames = ["S", "M", "T", "W", "T", "F", "S"];
         const currentDay = dayNames[dayOfWeek];
 
         const todaysData = getRealTrainingData(0);
         if (!todaysData) {
-          showNoTrainingMessage();
+          const sessionTimeEl = document.getElementById("training-hub-session-time");
+          const sessionTitleEl = document.getElementById("training-hub-session-title");
+          if (sessionTimeEl) sessionTimeEl.textContent = "No Training";
+          if (sessionTitleEl) sessionTitleEl.textContent = "Rest Period";
           return;
         }
 
+        // Update Next Session
         const todaysWorkout = todaysData[currentDay];
-        const nextSessionContent = document.getElementById(
-          "next-session-content",
-        );
+        let nextWorkout = todaysWorkout;
+        let isToday = true;
+        let workoutDay = currentDay;
 
         if (!todaysWorkout || todaysWorkout.isRestDay) {
-          // Look for next training day
           const nextTrainingDay = findNextTrainingDay(todaysData, dayOfWeek);
           if (nextTrainingDay) {
-            nextSessionContent.innerHTML = createSessionCard(
-              nextTrainingDay.workout,
-              nextTrainingDay.day,
-              false,
-            );
-          } else {
-            showNoTrainingMessage();
+            nextWorkout = nextTrainingDay.workout;
+            workoutDay = nextTrainingDay.day;
+            isToday = false;
           }
-        } else {
-          nextSessionContent.innerHTML = createSessionCard(
-            todaysWorkout,
-            currentDay,
-            true,
+        }
+
+        if (nextWorkout && !nextWorkout.isRestDay) {
+          const sessionTimeEl = document.getElementById("training-hub-session-time");
+          const sessionTitleEl = document.getElementById("training-hub-session-title");
+          const startBtnEl = document.getElementById("training-hub-start-btn");
+
+          if (sessionTimeEl) {
+            const timeDisplay = isToday ? "Today" : dayNames.find((d, i) => dayNames[i] === workoutDay);
+            const time = nextWorkout.time || getWorkoutTime(workoutDay);
+            sessionTimeEl.textContent = `${isToday ? "Today" : timeDisplay} ${time}`;
+          }
+
+          if (sessionTitleEl) {
+            sessionTitleEl.textContent = nextWorkout.type || "Training Session";
+          }
+
+          if (startBtnEl) {
+            startBtnEl.innerHTML = '<i data-lucide="play" style="width: 18px; height: 18px;"></i> Start Session';
+            startBtnEl.onclick = () => {
+              if (window.startWorkout) {
+                window.startWorkout(workoutDay);
+              }
+            };
+            // Reinitialize Lucide icons
+            if (typeof lucide !== "undefined") {
+              lucide.createIcons();
+            }
+          }
+        }
+
+        // Update Weekly Overview
+        const weekOverviewEl = document.getElementById("training-hub-week-overview");
+        if (weekOverviewEl) {
+          const completedWorkouts = JSON.parse(
+            localStorage.getItem("flagfit_completed_workouts") || "{}",
           );
+          const currentWeek = getCurrentTrainingWeek();
+          
+          let html = "";
+          const weekDays = ["monday", "tuesday", "wednesday", "thursday", "friday"];
+          const weekDayLabels = ["M", "T", "W", "T", "F"];
+          
+          for (let i = 0; i < 5; i++) { // Monday to Friday
+            const dayName = weekDays[i];
+            const workout = todaysData[dayName];
+            const isCompleted = !!completedWorkouts[`week${currentWeek}_${dayName}`];
+            const dayIndex = dayNames.indexOf(dayName);
+            const isTodayDay = dayIndex === dayOfWeek;
+            
+            let status = "scheduled";
+            if (isCompleted) {
+              status = "completed";
+            } else if (isTodayDay) {
+              status = "today";
+            }
+
+            html += `<div class="day" data-status="${status}">${weekDayLabels[i]}</div>`;
+          }
+          weekOverviewEl.innerHTML = html;
+        }
+
+        // Update Progress Badge
+        const progressBadgeEl = document.getElementById("training-hub-progress-badge");
+        if (progressBadgeEl) {
+          const progressValue = document.getElementById("training-progress-value");
+          const progress = progressValue ? progressValue.textContent : "75%";
+          progressBadgeEl.textContent = `${progress} • +12% this week`;
+        }
+      }
+
+      function updateNextSession() {
+        // Legacy function - now calls updateTrainingHub
+        updateTrainingHub();
+      }
+
+      function updateUpcomingSessionsPreview() {
+        const previewEl = document.getElementById("upcoming-sessions-preview");
+        if (!previewEl || !programStarted) return;
+
+        const today = new Date();
+        const dayOfWeek = today.getDay();
+        const dayNames = [
+          "sunday",
+          "monday",
+          "tuesday",
+          "wednesday",
+          "thursday",
+          "friday",
+          "saturday",
+        ];
+        const dayDisplayNames = {
+          monday: "Mon",
+          tuesday: "Tue",
+          wednesday: "Wed",
+          thursday: "Thu",
+          friday: "Fri",
+          saturday: "Sat",
+          sunday: "Sun",
+        };
+
+        const todaysData = getRealTrainingData(0);
+        if (!todaysData) {
+          previewEl.innerHTML = '<div class="upcoming-item text-center text-text-secondary p-20"><div>No upcoming sessions</div></div>';
+          return;
+        }
+
+        let html = "";
+        let count = 0;
+        const maxSessions = 3;
+
+        // Start from today and find next 3 training sessions
+        for (let i = 0; i < 7 && count < maxSessions; i++) {
+          const dayIndex = (dayOfWeek + i) % 7;
+          const dayName = dayNames[dayIndex];
+          const workout = todaysData[dayName];
+
+          if (workout && !workout.isRestDay) {
+            const isToday = i === 0;
+            const dayLabel = isToday ? "Today" : dayDisplayNames[dayName];
+            const time = workout.time || getWorkoutTime(dayName);
+
+            html += `
+              <div class="upcoming-item" style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--surface-secondary); border-radius: 12px;">
+                <div style="flex: 1;">
+                  <div style="font-weight: 700; color: var(--color-text-primary); margin-bottom: 4px;">${workout.type}</div>
+                  <div style="font-size: 0.875rem; color: var(--color-text-secondary);">${dayLabel} at ${time}</div>
+                </div>
+              </div>
+            `;
+            count++;
+          }
+        }
+
+        if (html === "") {
+          previewEl.innerHTML = '<div class="upcoming-item text-center text-text-secondary p-20"><div>No upcoming sessions</div></div>';
+        } else {
+          previewEl.innerHTML = html;
+        }
+      }
+
+      function updateQuickStats() {
+        if (!programStarted) return;
+
+        const completedWorkouts = JSON.parse(
+          localStorage.getItem("flagfit_completed_workouts") || "{}",
+        );
+        const currentWeek = getCurrentTrainingWeek();
+
+        // Calculate streak
+        let streak = 0;
+        const today = new Date();
+        const dayOfWeek = today.getDay();
+        const dayNames = [
+          "sunday",
+          "monday",
+          "tuesday",
+          "wednesday",
+          "thursday",
+          "friday",
+          "saturday",
+        ];
+
+        // Count consecutive completed days backwards from today
+        for (let i = 0; i < 30; i++) {
+          const checkDate = new Date(today);
+          checkDate.setDate(checkDate.getDate() - i);
+          const checkDayIndex = checkDate.getDay();
+          const checkDayName = dayNames[checkDayIndex];
+          const weekOffset = Math.floor(i / 7);
+          const week = currentWeek - weekOffset;
+          const key = `week${week}_${checkDayName}`;
+
+          if (completedWorkouts[key]) {
+            streak++;
+          } else if (i > 0) {
+            break;
+          }
+        }
+
+        // Calculate weekly completed
+        let weeklyCompleted = 0;
+        const todaysData = getRealTrainingData(0);
+        if (todaysData) {
+          for (const dayName of dayNames) {
+            const workout = todaysData[dayName];
+            if (workout && !workout.isRestDay) {
+              const key = `week${currentWeek}_${dayName}`;
+              if (completedWorkouts[key]) {
+                weeklyCompleted++;
+              }
+            }
+          }
+        }
+
+        // Count total scheduled sessions for the week
+        let weeklyTotal = 0;
+        if (todaysData) {
+          for (const dayName of dayNames) {
+            const workout = todaysData[dayName];
+            if (workout && !workout.isRestDay) {
+              weeklyTotal++;
+            }
+          }
+        }
+
+        // Update DOM
+        const streakEl = document.getElementById("training-streak");
+        const completedEl = document.getElementById("weekly-completed");
+
+        if (streakEl) {
+          streakEl.textContent = `${streak} ${streak === 1 ? "day" : "days"}`;
+        }
+
+        if (completedEl) {
+          completedEl.textContent = `${weeklyCompleted}/${weeklyTotal}`;
         }
       }
 
@@ -8210,7 +8582,9 @@
 
         // Reinitialize with new program
         initializeTrainingSchedule();
-        updateNextSession();
+          updateTrainingHub();
+          updateUpcomingSessionsPreview();
+          updateQuickStats();
       };
 
       window.startWorkout = function (day) {

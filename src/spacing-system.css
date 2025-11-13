@@ -189,6 +189,8 @@ button[class*="btn"],
 .dashboard-container > main,
 .content-area {
   padding: var(--spacing-layout-md) var(--spacing-layout-lg);
+  /* Ensure content doesn't hide behind fixed header */
+  padding-top: calc(64px + var(--spacing-layout-md)) !important;
 }
 
 /* Desktop: More generous padding */
@@ -197,6 +199,7 @@ button[class*="btn"],
   .dashboard-container > main,
   .content-area {
     padding: var(--spacing-layout-lg) var(--spacing-layout-xl);
+    padding-top: calc(64px + var(--spacing-layout-lg)) !important;
   }
 }
 
@@ -206,15 +209,25 @@ button[class*="btn"],
   .dashboard-container > main,
   .content-area {
     padding: var(--spacing-layout-sm) var(--spacing-layout-md);
+    padding-top: calc(64px + var(--spacing-layout-sm)) !important;
   }
 }
 
 /* Mobile: Compact padding */
+@media (max-width: 1024px) {
+  .main-content,
+  .dashboard-container > main,
+  .content-area {
+    padding-top: 64px !important;
+  }
+}
+
 @media (max-width: 767px) {
   .main-content,
   .dashboard-container > main,
   .content-area {
     padding: var(--spacing-layout-xs) var(--spacing-component-lg);
+    padding-top: calc(56px + var(--spacing-layout-xs)) !important;
   }
 }
 

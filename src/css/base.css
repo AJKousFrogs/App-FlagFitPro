@@ -69,7 +69,7 @@ h1,
   font-family: var(--primitive-font-display);
   font-size: var(--typography-display-md-size);
   font-weight: var(--typography-display-md-weight);
-  line-height: var(--typography-display-md-line-height);
+  line-height: 1.2;
   letter-spacing: var(--typography-display-md-letter-spacing);
   color: var(--color-text-primary);
   margin: 0 0 var(--spacing-component-lg) 0;
@@ -80,7 +80,7 @@ h2,
   font-family: var(--primitive-font-display);
   font-size: var(--typography-heading-lg-size);
   font-weight: var(--typography-heading-lg-weight);
-  line-height: var(--typography-heading-lg-line-height);
+  line-height: 1.2;
   letter-spacing: var(--typography-heading-lg-letter-spacing);
   color: var(--color-text-primary);
   margin: 0 0 var(--spacing-component-lg) 0;
@@ -90,7 +90,7 @@ h3,
 .h3 {
   font-size: var(--typography-heading-lg-size);
   font-weight: var(--typography-heading-lg-weight);
-  line-height: var(--typography-heading-lg-line-height);
+  line-height: 1.2;
   letter-spacing: var(--typography-heading-lg-letter-spacing);
   color: var(--color-text-primary);
   margin: 0 0 var(--spacing-component-md) 0;
@@ -133,12 +133,44 @@ h6,
 p {
   margin: 0 0 var(--spacing-component-md) 0;
   font-size: var(--typography-body-md-size);
-  line-height: var(--typography-body-md-line-height);
+  line-height: 1.5;
   color: var(--color-text-primary);
 }
 
 p:last-child {
   margin-bottom: 0;
+}
+
+/* ================================================================
+   TYPOGRAPHY HIERARCHY UTILITIES (Unified Design System)
+   ================================================================ */
+
+.text-xs {
+  font-size: var(--font-xs);
+}
+
+.text-sm {
+  font-size: var(--font-sm);
+}
+
+.text-base {
+  font-size: var(--font-base);
+}
+
+.text-lg {
+  font-size: var(--font-lg);
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.font-bold {
+  font-weight: 700;
 }
 
 /* Mobile: Ensure minimum readable font sizes */

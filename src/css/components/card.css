@@ -1,27 +1,30 @@
 /* ================================================================
    CARD COMPONENT - FlagFit Pro
+   Standardized Card Component using Unified Design System
    ================================================================ */
 
 .card {
-  position: relative;
-  background-color: var(--surface-primary);
-  border: 1px solid var(--color-border-secondary);
-  border-radius: var(--radius-component-xl);
-  box-shadow:
-    0 8px 24px rgba(0, 0, 0, 0.12),
-    0 4px 12px rgba(0, 0, 0, 0.08),
-    0 2px 6px rgba(0, 0, 0, 0.06);
-  overflow: hidden;
-  isolation: isolate;
-  transition: all var(--motion-duration-normal) var(--motion-easing-productive);
+  background: var(--surface-primary);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-subtle);
+  transition: all 0.2s ease;
 }
 
 .card:hover {
-  box-shadow:
-    0 12px 32px rgba(0, 0, 0, 0.16),
-    0 6px 16px rgba(0, 0, 0, 0.12),
-    0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-md);
   transform: translateY(-2px);
+}
+
+.card-header {
+  margin-bottom: var(--space-4);
+}
+
+.card-title {
+  font-size: var(--font-lg);
+  font-weight: 600;
+  margin-bottom: var(--space-1);
 }
 
 /* Glassmorphism Card Variant */
