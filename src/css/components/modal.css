@@ -18,8 +18,8 @@
   opacity: 0;
   visibility: hidden;
   transition:
-    opacity var(--motion-duration-normal) var(--motion-easing-expressive),
-    visibility var(--motion-duration-normal) var(--motion-easing-expressive);
+    opacity var(--transition),
+    visibility var(--transition);
 }
 
 /* Enhanced backdrop blur for supported browsers */
@@ -38,14 +38,13 @@
 
 .modal-content {
   background-color: var(--surface-primary);
-  border-radius: var(--radius-component-xl);
-  box-shadow: var(--elevation-highest);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
   max-width: 90vw;
   max-height: 90vh;
   overflow: hidden;
   transform: scale(0.95);
-  transition: transform var(--motion-duration-normal)
-    var(--motion-easing-expressive);
+  transition: transform var(--transition);
 }
 
 .modal-overlay.open .modal-content {
@@ -53,7 +52,7 @@
 }
 
 .modal-header {
-  padding: var(--spacing-component-lg);
+  padding: var(--space-6);
   border-bottom: 1px solid var(--color-border-secondary);
   display: flex;
   align-items: center;
@@ -61,14 +60,14 @@
 }
 
 .modal-body {
-  padding: var(--spacing-component-lg);
+  padding: var(--space-6);
   overflow-y: auto;
 }
 
 .modal-footer {
-  padding: var(--spacing-component-lg);
+  padding: var(--space-6);
   border-top: 1px solid var(--color-border-secondary);
   display: flex;
-  gap: var(--primitive-space-12);
+  gap: var(--space-3);
   justify-content: flex-end;
 }

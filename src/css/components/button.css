@@ -9,8 +9,8 @@
   justify-content: center;
   padding: var(--space-3) var(--space-6);
   border-radius: var(--radius-lg);
-  font-weight: 500;
-  transition: all 0.2s ease;
+  font-weight: var(--font-weight-medium);
+  transition: var(--transition);
   border: none;
   cursor: pointer;
 }
@@ -40,7 +40,7 @@
     rgba(255, 255, 255, 0.2),
     transparent
   );
-  transition: left var(--motion-duration-slower) ease;
+  transition: left var(--transition-slow) ease;
   z-index: 1;
 }
 
@@ -68,16 +68,16 @@
 
 /* Button Sizes */
 .btn-xs {
-  padding: var(--primitive-space-6) var(--primitive-space-12);
-  font-size: var(--typography-label-sm-size);
-  border-radius: var(--radius-component-sm);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  border-radius: var(--radius-sm);
   min-height: 28px;
 }
 
 .btn-sm {
-  padding: var(--primitive-space-8) var(--primitive-space-16);
-  font-size: var(--typography-label-sm-size);
-  border-radius: var(--radius-component-md);
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-sm);
+  border-radius: var(--radius-md);
   min-height: 36px;
 }
 
@@ -86,28 +86,28 @@
   .btn-xs,
   .btn-sm {
     min-height: 44px;
-    padding: var(--primitive-space-12) var(--primitive-space-16);
+    padding: var(--space-3) var(--space-4);
   }
 }
 
 .btn-md {
-  padding: var(--primitive-space-12) var(--primitive-space-20);
-  font-size: var(--typography-label-md-size);
-  border-radius: var(--radius-component-md);
+  padding: var(--space-3) var(--space-6);
+  font-size: var(--text-base);
+  border-radius: var(--radius-md);
   min-height: 44px;
 }
 
 .btn-lg {
-  padding: var(--primitive-space-16) var(--primitive-space-24);
-  font-size: var(--typography-label-lg-size);
-  border-radius: var(--radius-component-lg);
+  padding: var(--space-4) var(--space-6);
+  font-size: var(--text-lg);
+  border-radius: var(--radius-lg);
   min-height: 52px;
 }
 
 .btn-xl {
-  padding: var(--primitive-space-20) var(--primitive-space-32);
-  font-size: var(--typography-label-lg-size);
-  border-radius: var(--radius-component-lg);
+  padding: var(--space-6) var(--space-8);
+  font-size: var(--text-lg);
+  border-radius: var(--radius-lg);
   min-height: 60px;
 }
 
@@ -147,7 +147,7 @@
     var(--color-interactive-primary),
     var(--color-interactive-primary-hover)
   );
-  transition: all var(--motion-duration-normal) var(--motion-easing-productive);
+  transition: all var(--transition);
   transform: translateX(-50%);
 }
 

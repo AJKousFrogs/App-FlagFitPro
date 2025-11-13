@@ -8,9 +8,9 @@
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-component-sm);
+  border-radius: var(--radius-sm);
   font-size: var(--text-xs);
-  font-weight: var(--font-semibold);
+  font-weight: var(--font-weight-semibold);
   line-height: var(--line-height-normal);
   letter-spacing: var(--tracking-wide);
   white-space: nowrap;
@@ -99,7 +99,7 @@
 
 /* Badge sizes */
 .badge-sm {
-  padding: var(--primitive-space-2) var(--primitive-space-6);
+  padding: var(--space-1) var(--space-3);
   font-size: 0.625rem; /* 10px */
 }
 
