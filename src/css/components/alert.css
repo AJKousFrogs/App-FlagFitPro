@@ -3,12 +3,12 @@
    ================================================================ */
 
 .alert {
-  padding: var(--spacing-component-md);
-  border-radius: var(--radius-component-md);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
   border-left: 4px solid;
   display: flex;
   align-items: flex-start;
-  gap: var(--primitive-space-12);
+  gap: var(--space-3);
 }
 
 .alert-info {

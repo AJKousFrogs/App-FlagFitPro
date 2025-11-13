@@ -3,16 +3,16 @@
    ================================================================ */
 
 .form-group {
-  margin-bottom: var(--spacing-component-md);
+  margin-bottom: var(--space-4);
 }
 
 .form-label {
   display: block;
-  margin-bottom: var(--primitive-space-8);
-  font-size: var(--typography-label-sm-size);
-  font-weight: var(--typography-label-sm-weight);
-  line-height: var(--typography-label-sm-line-height);
-  letter-spacing: var(--typography-label-sm-letter-spacing);
+  margin-bottom: var(--space-2);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-normal);
+  letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
   color: var(--color-text-primary);
 }
@@ -25,24 +25,24 @@
 .form-input {
   display: block;
   width: 100%;
-  padding: var(--primitive-space-12) var(--primitive-space-16);
+  padding: var(--space-3) var(--space-4);
   border: 1.5px solid var(--color-border-primary);
-  border-radius: var(--radius-component-xl);
+  border-radius: var(--radius-xl);
   background: linear-gradient(
     135deg,
     var(--surface-primary) 0%,
     var(--surface-secondary) 100%
   );
   color: var(--color-text-on-surface);
-  font-size: var(--typography-body-md-size);
-  line-height: var(--typography-body-md-line-height);
-  transition: all var(--motion-duration-normal) var(--motion-easing-productive);
+  font-size: var(--text-base);
+  line-height: var(--line-height-normal);
+  transition: var(--transition);
   min-height: 48px;
   box-shadow:
     0 4px 12px rgba(0, 0, 0, 0.12),
     0 2px 6px rgba(0, 0, 0, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.9);
-  font-family: var(--primitive-font-sans);
+  font-family: var(--font-family);
 }
 
 .form-input:hover:not(:disabled):not(:focus) {
@@ -104,35 +104,35 @@
   background-position: right 12px center;
   background-repeat: no-repeat;
   background-size: 16px;
-  padding-right: var(--primitive-space-48);
+  padding-right: var(--space-12);
   appearance: none;
 }
 
 .form-help {
-  margin-top: var(--primitive-space-6);
-  font-size: var(--typography-body-sm-size);
-  line-height: var(--typography-body-sm-line-height);
+  margin-top: var(--space-2);
+  font-size: var(--text-sm);
+  line-height: var(--line-height-normal);
   color: var(--color-text-tertiary);
 }
 
 .form-error {
-  margin-top: var(--primitive-space-6);
-  font-size: var(--typography-body-sm-size);
-  line-height: var(--typography-body-sm-line-height);
+  margin-top: var(--space-2);
+  font-size: var(--text-sm);
+  line-height: var(--line-height-normal);
   color: var(--color-status-error);
   display: flex;
   align-items: center;
-  gap: var(--primitive-space-4);
+  gap: var(--space-2);
 }
 
 .form-success {
-  margin-top: var(--primitive-space-6);
-  font-size: var(--typography-body-sm-size);
-  line-height: var(--typography-body-sm-line-height);
+  margin-top: var(--space-2);
+  font-size: var(--text-sm);
+  line-height: var(--line-height-normal);
   color: var(--color-status-success);
   display: flex;
   align-items: center;
-  gap: var(--primitive-space-4);
+  gap: var(--space-2);
 }
 
 .form-success::before {
@@ -143,8 +143,8 @@
 }
 
 .form-hint {
-  margin-top: var(--primitive-space-6);
-  font-size: var(--typography-body-sm-size);
-  line-height: var(--typography-body-sm-line-height);
+  margin-top: var(--space-2);
+  font-size: var(--text-sm);
+  line-height: var(--line-height-normal);
   color: var(--color-text-tertiary);
 }

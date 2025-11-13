@@ -61,6 +61,7 @@
   --space-2: var(--space-sm);
   --space-3: 12px;
   --space-4: var(--space-md);
+  --space-5: 20px; /* 1.25rem - between space-4 (16px) and space-6 (24px) */
   --space-6: var(--space-lg);
   --space-8: var(--space-xl);
   --space-12: var(--space-2xl);

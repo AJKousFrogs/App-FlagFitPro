@@ -397,7 +397,12 @@ Quick reference table of all available design tokens:
 | **Typography**      | `--font-size-base`            | `16px`           | Body text                       |
 |                     | `--font-size-lg`              | `18px`           | Large body                      |
 |                     | `--font-size-xl`              | `20px`           | Small headings                  |
+|                     | `--font-weight-normal`        | `400`            | Body text, default              |
+|                     | `--font-weight-medium`        | `500`            | Emphasized text                 |
 |                     | `--font-weight-semibold`      | `600`            | Headings                        |
+|                     | `--font-weight-bold`          | `700`            | Strong emphasis                 |
+|                     | `--line-height-normal`        | `1.5`            | Body text                       |
+|                     | `--letter-spacing-normal`     | `0`              | Default spacing                 |
 | **Shadows**         | `--shadow-sm`                 | `0 1px 3px...`   | Subtle elevation                |
 |                     | `--shadow-md`                 | `0 4px 6px...`   | Standard elevation              |
 |                     | `--shadow-lg`                 | `0 10px 15px...` | High elevation                  |
@@ -445,6 +450,322 @@ Our typography system uses semantic sizing that adapts to context:
 
 <!-- Supporting Detail -->
 <span class="text-caption">Last updated 2 minutes ago</span>
+```
+
+### Base Heading Styles (H1-H6)
+
+All HTML heading elements have base styles that align with the typography scale. These styles ensure semantic headings have proper hierarchy, spacing, and typography without requiring utility classes:
+
+```css
+/* H1 - Page Headers / Hero Sections */
+h1 {
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 60px; /* display-xl */
+  line-height: 1.0;
+  font-weight: 600; /* semibold */
+  color: var(--color-text-primary, var(--primitive-gray-900));
+  margin-top: 0;
+  margin-bottom: var(--space-6); /* 24px */
+}
+
+/* H2 - Section Headers */
+h2 {
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 30px; /* heading-xl */
+  line-height: 1.25;
+  font-weight: 600; /* semibold */
+  color: var(--color-text-primary, var(--primitive-gray-900));
+  margin-top: 0;
+  margin-bottom: var(--space-4); /* 16px */
+}
+
+/* H3 - Subsection Headers */
+h3 {
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 24px; /* heading-lg */
+  line-height: 1.25;
+  font-weight: 600; /* semibold */
+  color: var(--color-text-primary, var(--primitive-gray-900));
+  margin-top: 0;
+  margin-bottom: var(--space-3); /* 12px */
+}
+
+/* H4 - Component Titles */
+h4 {
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 20px; /* heading-md */
+  line-height: 1.375;
+  font-weight: 600; /* semibold */
+  color: var(--color-text-primary, var(--primitive-gray-900));
+  margin-top: 0;
+  margin-bottom: var(--space-3); /* 12px */
+}
+
+/* H5 - Large Body Text */
+h5 {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 18px; /* body-lg */
+  line-height: 1.625;
+  font-weight: 600; /* semibold */
+  color: var(--color-text-primary, var(--primitive-gray-900));
+  margin-top: 0;
+  margin-bottom: var(--space-2); /* 8px */
+}
+
+/* H6 - Standard Body Text */
+h6 {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 16px; /* body-md */
+  line-height: 1.5;
+  font-weight: 600; /* semibold */
+  color: var(--color-text-primary, var(--primitive-gray-900));
+  margin-top: 0;
+  margin-bottom: var(--space-2); /* 8px */
+}
+```
+
+**Heading Hierarchy Mapping:**
+
+| HTML Element | Typography Size | Font Size | Use Case |
+|--------------|----------------|-----------|----------|
+| `h1` | `display-xl` | 60px | Page headers, hero sections |
+| `h2` | `heading-xl` | 30px | Major section headers |
+| `h3` | `heading-lg` | 24px | Subsection headers |
+| `h4` | `heading-md` | 20px | Component titles |
+| `h5` | `body-lg` | 18px | Small section headers |
+| `h6` | `body-md` | 16px | Minor headings |
+
+**Notes:**
+- **H1-H4** use `Poppins` font (display font for headings)
+- **H5-H6** use `Inter` font (primary UI font, as they're closer to body text size)
+- All headings use `font-weight: 600` (semibold) for visual hierarchy
+- Spacing decreases with heading level (larger headings need more space below)
+- Utility classes (e.g., `text-display-xl`, `text-heading-lg`) can still be used to override base styles when needed
+
+### Font Weights
+
+The design system provides a comprehensive font weight scale for different use cases:
+
+| Weight Name | Value | CSS Variable | Usage |
+|-------------|-------|--------------|-------|
+| Normal | `400` | `--font-weight-normal` | Body text, default weight |
+| Medium | `500` | `--font-weight-medium` | Emphasized body text, labels |
+| Semibold | `600` | `--font-weight-semibold` | Headings, important text |
+| Bold | `700` | `--font-weight-bold` | Strong emphasis, callouts |
+| Extrabold | `800` | `--font-weight-extrabold` | Hero text, maximum emphasis |
+
+```css
+/* Font Weight Tokens */
+--font-weight-normal: 400;
+--font-weight-medium: 500;
+--font-weight-semibold: 600;
+--font-weight-bold: 700;
+--font-weight-extrabold: 800;
+```
+
+**Usage Guidelines:**
+- **Body text**: Use `normal` (400) for optimal readability
+- **Headings**: Use `semibold` (600) for clear hierarchy
+- **Emphasis**: Use `medium` (500) or `bold` (700) sparingly
+- **Hero sections**: Use `extrabold` (800) for maximum impact
+
+### Letter Spacing (Tracking)
+
+Letter spacing helps improve readability and visual hierarchy:
+
+| Spacing Name | Value | CSS Variable | Usage |
+|--------------|-------|--------------|-------|
+| Tighter | `-0.05em` | `--letter-spacing-tighter` | Large display text |
+| Tight | `-0.025em` | `--letter-spacing-tight` | Headings, condensed text |
+| Normal | `0` | `--letter-spacing-normal` | Default, body text |
+| Wide | `0.025em` | `--letter-spacing-wide` | Uppercase text, labels |
+| Wider | `0.05em` | `--letter-spacing-wider` | Small uppercase text |
+
+```css
+/* Letter Spacing Tokens */
+--letter-spacing-tighter: -0.05em;
+--letter-spacing-tight: -0.025em;
+--letter-spacing-normal: 0;
+--letter-spacing-wide: 0.025em;
+--letter-spacing-wider: 0.05em;
+```
+
+**Usage Guidelines:**
+- **Large headings**: Use `tight` or `tighter` for better visual cohesion
+- **Uppercase text**: Use `wide` or `wider` for improved readability
+- **Body text**: Use `normal` (default) for optimal reading experience
+
+### Line Height Scale
+
+Line height values are optimized for readability across different font sizes:
+
+| Line Height Name | Value | CSS Variable | Usage |
+|------------------|-------|--------------|-------|
+| None | `1.0` | `--line-height-none` | Tight display text |
+| Tight | `1.25` | `--line-height-tight` | Headings, large text |
+| Snug | `1.375` | `--line-height-snug` | Subheadings, medium text |
+| Normal | `1.5` | `--line-height-normal` | Body text (default) |
+| Relaxed | `1.625` | `--line-height-relaxed` | Large body text |
+| Loose | `2.0` | `--line-height-loose` | Spacious layouts |
+
+```css
+/* Line Height Tokens */
+--line-height-none: 1.0;
+--line-height-tight: 1.25;
+--line-height-snug: 1.375;
+--line-height-normal: 1.5;
+--line-height-relaxed: 1.625;
+--line-height-loose: 2.0;
+```
+
+**Usage Guidelines:**
+- **Headings**: Use `tight` (1.25) for compact, impactful headings
+- **Body text**: Use `normal` (1.5) for optimal readability
+- **Large text**: Use `relaxed` (1.625) for better line spacing
+- **Display text**: Use `none` (1.0) for tight, dramatic text
+
+### Base Body Text Styles
+
+Default body text styles ensure consistent typography across the application:
+
+```css
+body {
+  font-family: var(--font-sans, 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
+  font-size: var(--font-size-base, 16px);
+  font-weight: var(--font-weight-normal, 400);
+  line-height: var(--line-height-normal, 1.5);
+  color: var(--color-text-primary, var(--primitive-gray-900));
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+p {
+  margin-top: 0;
+  margin-bottom: var(--space-4); /* 16px */
+}
+
+/* Links inherit body text styles with color override */
+a {
+  color: var(--color-brand-primary, #10c96b);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--color-brand-primary-hover, #0ab85a);
+  text-decoration: underline;
+}
+```
+
+### Text Utilities
+
+Common text utility classes for alignment, transformation, and overflow handling:
+
+#### Text Alignment
+
+```css
+.text-left { text-align: left; }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-justify { text-align: justify; }
+```
+
+#### Text Transform
+
+```css
+.text-uppercase { text-transform: uppercase; }
+.text-lowercase { text-transform: lowercase; }
+.text-capitalize { text-transform: capitalize; }
+.text-normal-case { text-transform: none; }
+```
+
+**Usage:** Use `text-uppercase` with `letter-spacing-wide` for labels and badges.
+
+#### Text Truncation
+
+```css
+.text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.text-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.text-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+```
+
+**Usage:**
+- `text-truncate`: Single-line truncation with ellipsis
+- `text-clamp-2` / `text-clamp-3`: Multi-line truncation for cards and lists
+
+### Font Loading Strategy
+
+For optimal performance and user experience, fonts should be loaded with the `font-display: swap` property:
+
+```css
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/inter-var.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap; /* Prevents invisible text during font load */
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/poppins-var.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+```
+
+**Benefits:**
+- **Immediate text rendering**: System fonts display immediately while web fonts load
+- **Better performance**: No layout shift or invisible text (FOIT)
+- **Improved UX**: Users can read content immediately, even on slow connections
+
+### Responsive Typography
+
+Typography scales appropriately across device sizes. Consider these guidelines:
+
+**Mobile (< 768px):**
+- Reduce heading sizes by 20-30%
+- Maintain readable body text (minimum 16px)
+- Increase line height slightly for better mobile readability
+
+**Tablet (768px - 1024px):**
+- Use standard typography scale
+- Optimize for touch targets and readability
+
+**Desktop (> 1024px):**
+- Full typography scale
+- Consider larger line heights for wide layouts
+
+**Example Responsive Heading:**
+
+```css
+h1 {
+  font-size: 60px; /* Desktop */
+}
+
+@media (max-width: 768px) {
+  h1 {
+    font-size: 36px; /* Mobile - 40% reduction */
+  }
+}
 ```
 
 ## Color System
@@ -652,11 +973,9 @@ Consistent vertical spacing for content sections:
 .section {
   margin-top: var(--space-6); /* 24px top margin */
 }
-
-h2 {
-  margin-bottom: var(--space-3); /* 12px bottom margin */
-}
 ```
+
+**Note:** Base heading styles (H1-H6) including spacing are defined in the [Typography System](#typography-system) section above.
 
 ### Usage Examples
 
