@@ -1145,6 +1145,7 @@
       import { authManager } from "./src/auth-manager.js";
       import { apiClient, dashboard } from "./src/api-config.js";
       import { onboardingManager } from "./src/onboarding-manager.js";
+      import { profileCompletionManager } from "./src/profile-completion.js";
       import { helpSystem } from "./src/help-system.js";
       import { loadingManager } from "./src/loading-manager.js";
       import { undoManager } from "./src/undo-manager.js";
@@ -1212,6 +1213,12 @@
 
       // Initialize dashboard
       document.addEventListener("DOMContentLoaded", async function () {
+        // Check if profile needs completion
+        if (profileCompletionManager.needsCompletion()) {
+          setTimeout(() => {
+            profileCompletionManager.showProfileCompletionModal(false); // Optional on dashboard
+          }, 2000); // Show after 2 seconds to let dashboard load
+        }
         // Apply accessibility fixes
         applyAccessibilityFixes();
         

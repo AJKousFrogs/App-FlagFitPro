@@ -1,0 +1,626 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FlagFit Pro - Profile</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Roboto:wght@300;400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <!-- New Modular CSS Architecture -->
+    <link rel="stylesheet" href="./src/css/main.css" />
+    <!-- Page-specific styles -->
+    <link rel="stylesheet" href="./src/css/pages/profile.css" />
+
+    <!-- Lucide Icons - Modern icon library similar to Radix UI -->
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+    <script src="./src/icon-helper.js" defer></script>
+    <script src="./src/theme-switcher.js" defer></script>
+    <script src="./src/nav-highlight.js" defer></script>
+    <script src="./src/components/organisms/top-bar/top-bar.js" defer></script>
+  </head>
+  <body>
+    <div class="dashboard-container">
+      <!-- Mobile Overlay/Scrim (for closing sidebar on mobile) -->
+      <div class="menu-scrim" aria-hidden="true" onclick="closeMenu()"></div>
+      
+      <!-- Unified Sidebar Navigation -->
+      <div class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
+        <div
+          class="sidebar-logo"
+          onclick="window.location.href='/dashboard.html'"
+          title="FlagFit Pro"
+          aria-label="Go to dashboard"
+        >
+          <i
+            data-lucide="activity"
+            class="icon-20 icon-inline"
+          ></i>
+        </div>
+
+        <nav class="nav-section" aria-label="Dashboard navigation">
+          <a
+            href="/dashboard.html"
+            class="nav-item"
+            aria-label="Dashboard Overview"
+            id="nav-dashboard"
+          >
+            <span class="nav-item-icon">
+              <i
+                data-lucide="layout-dashboard"
+                class="icon-24"
+              ></i>
+            </span>
+            <span class="nav-item-label">Overview</span>
+          </a>
+          <a
+            href="/analytics.html"
+            class="nav-item"
+            aria-label="Analytics"
+            id="nav-analytics"
+          >
+            <span class="nav-item-icon">
+              <i
+                data-lucide="bar-chart-3"
+                class="icon-24"
+              ></i>
+            </span>
+            <span class="nav-item-label">Analytics</span>
+          </a>
+        </nav>
+
+        <nav class="nav-section" aria-label="Team navigation">
+          <a
+            href="/roster.html"
+            class="nav-item"
+            aria-label="Team Roster"
+            id="nav-roster"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="users" class="icon-24"></i>
+            </span>
+            <span class="nav-item-label">Roster</span>
+          </a>
+          <a
+            href="/training.html"
+            class="nav-item"
+            aria-label="Training"
+            id="nav-training"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="zap" class="icon-24"></i>
+            </span>
+            <span class="nav-item-label">Training</span>
+          </a>
+          <a
+            href="/tournaments.html"
+            class="nav-item"
+            aria-label="Tournaments"
+            id="nav-tournaments"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="trophy" class="icon-24"></i>
+            </span>
+            <span class="nav-item-label">Tournaments</span>
+          </a>
+        </nav>
+
+        <nav class="nav-section" aria-label="Community navigation">
+          <a
+            href="/community.html"
+            class="nav-item"
+            aria-label="Community"
+            id="nav-community"
+          >
+            <span class="nav-item-icon">
+              <i
+                data-lucide="message-circle"
+                class="icon-24"
+              ></i>
+            </span>
+            <span class="nav-item-label">Community</span>
+          </a>
+          <a href="/chat.html" class="nav-item" aria-label="Chat" id="nav-chat">
+            <span class="nav-item-icon">
+              <i
+                data-lucide="message-square"
+                class="icon-24"
+              ></i>
+            </span>
+            <span class="nav-item-label">Chat</span>
+          </a>
+        </nav>
+
+        <nav class="nav-section" aria-label="Personal navigation">
+          <a
+            href="/settings.html"
+            class="nav-item"
+            aria-label="Settings"
+            id="nav-settings"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="settings" class="icon-24"></i>
+            </span>
+            <span class="nav-item-label">Settings</span>
+          </a>
+          <a
+            href="/profile.html"
+            class="nav-item active"
+            aria-label="Profile"
+            id="nav-profile"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="user" class="icon-24"></i>
+            </span>
+            <span class="nav-item-label">Profile</span>
+          </a>
+        </nav>
+      </div>
+
+      <!-- Top Bar -->
+      <div class="top-bar" role="banner">
+        <div class="header-left">
+          <!-- Global Search (combobox pattern) -->
+          <div class="search-box">
+            <label for="global-search" class="sr-only"
+              >Search for players, teams and more</label
+            >
+            <span class="search-icon" aria-hidden="true">
+              <i data-lucide="search" class="icon-16"></i>
+            </span>
+
+            <input
+              id="global-search"
+              class="search-input"
+              type="text"
+              placeholder="Search for players, teams & more"
+              role="combobox"
+              aria-autocomplete="list"
+              aria-haspopup="listbox"
+              aria-expanded="false"
+              aria-owns="search-results"
+              aria-controls="search-results"
+              aria-activedescendant=""
+              autocomplete="off"
+              inputmode="search"
+            />
+
+            <div id="search-status" class="sr-only" aria-live="polite"></div>
+
+            <div
+              id="search-results"
+              class="search-results"
+              role="listbox"
+              hidden
+            ></div>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <!-- Notifications -->
+          <div class="header-icon-wrap">
+            <button
+              id="notification-bell"
+              class="header-icon"
+              type="button"
+              aria-label="Notifications"
+              aria-controls="notification-panel"
+              aria-expanded="false"
+            >
+              <i data-lucide="bell" class="icon-18"></i>
+              <span id="notification-badge" class="badge" hidden>3</span>
+            </button>
+            <span
+              id="notification-live"
+              class="sr-only"
+              aria-live="polite"
+            ></span>
+          </div>
+
+          <!-- Settings -->
+          <button class="header-icon" type="button" aria-label="Settings">
+            <i data-lucide="settings" class="icon-18"></i>
+          </button>
+
+          <!-- Theme Toggle -->
+          <div class="theme-toggle-container" aria-label="Theme toggle">
+            <!-- JS inserts switch; fallback below -->
+            <button
+              class="theme-toggle-fallback"
+              type="button"
+              data-theme-toggle
+              hidden
+            >
+              Theme
+            </button>
+          </div>
+
+          <!-- User Menu -->
+          <button
+            id="user-menu-button"
+            class="user-menu"
+            type="button"
+            aria-label="User menu"
+            aria-haspopup="menu"
+            aria-controls="user-menu"
+            aria-expanded="false"
+          >
+            <div class="user-avatar" id="user-avatar" aria-hidden="true">U</div>
+          </button>
+        </div>
+      </div>
+
+      <main class="main-content">
+        <div class="profile-container">
+          <!-- Profile Header -->
+          <div class="profile-header">
+            <div class="profile-avatar-section">
+              <div class="profile-avatar" id="profileAvatar">
+                <span id="avatarInitials">U</span>
+              </div>
+              <button class="avatar-edit-btn" id="avatarEditBtn" aria-label="Change profile picture">
+                <i data-lucide="camera" class="icon-16"></i>
+              </button>
+            </div>
+            <div class="profile-info">
+              <h1 class="profile-name" id="profileName">Loading...</h1>
+              <p class="profile-role" id="profileRole">Player</p>
+              <p class="profile-email" id="profileEmail">Loading...</p>
+            </div>
+            <div class="profile-actions">
+              <button class="btn-secondary" onclick="window.location.href='/settings.html'">
+                <i data-lucide="settings" class="icon-16"></i>
+                Edit Profile
+              </button>
+            </div>
+          </div>
+
+          <!-- Profile Stats -->
+          <div class="profile-stats">
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i data-lucide="zap" class="icon-24"></i>
+              </div>
+              <div class="stat-content">
+                <div class="stat-value" id="trainingSessions">0</div>
+                <div class="stat-label">Training Sessions</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i data-lucide="trophy" class="icon-24"></i>
+              </div>
+              <div class="stat-content">
+                <div class="stat-value" id="gamesPlayed">0</div>
+                <div class="stat-label">Games Played</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i data-lucide="target" class="icon-24"></i>
+              </div>
+              <div class="stat-content">
+                <div class="stat-value" id="performanceScore">0</div>
+                <div class="stat-label">Performance Score</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i data-lucide="award" class="icon-24"></i>
+              </div>
+              <div class="stat-content">
+                <div class="stat-value" id="achievements">0</div>
+                <div class="stat-label">Achievements</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Profile Details -->
+          <div class="profile-details">
+            <div class="detail-section">
+              <h2 class="section-title">Personal Information</h2>
+              <div class="detail-grid">
+                <div class="detail-item">
+                  <label>Position</label>
+                  <p id="profilePosition">Not set</p>
+                </div>
+                <div class="detail-item">
+                  <label>Jersey Number</label>
+                  <p id="profileJersey">-</p>
+                </div>
+                <div class="detail-item">
+                  <label>Experience Level</label>
+                  <p id="profileExperience">Not set</p>
+                </div>
+                <div class="detail-item">
+                  <label>Member Since</label>
+                  <p id="profileMemberSince">Loading...</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="detail-section">
+              <h2 class="section-title">Physical Stats</h2>
+              <div class="detail-grid">
+                <div class="detail-item">
+                  <label>Height</label>
+                  <p id="profileHeight">Not set</p>
+                </div>
+                <div class="detail-item">
+                  <label>Weight</label>
+                  <p id="profileWeight">Not set</p>
+                </div>
+                <div class="detail-item">
+                  <label>Date of Birth</label>
+                  <p id="profileBirthDate">Not set</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="detail-section">
+              <h2 class="section-title">Bio</h2>
+              <p class="profile-bio" id="profileBio">No bio available.</p>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script type="module">
+      import { authManager } from "./src/auth-manager.js";
+      import { apiClient } from "./src/api-config.js";
+      import { ErrorHandler } from "./src/error-handler.js";
+      import { profileCompletionManager } from "./src/profile-completion.js";
+
+      async function initProfilePage() {
+        if (!authManager.requireAuth()) return;
+
+        await loadProfileData();
+        setupAvatarEdit();
+        checkProfileCompletion();
+      }
+
+      function checkProfileCompletion() {
+        // Show prompt if profile is incomplete
+        if (profileCompletionManager.needsCompletion()) {
+          showProfileIncompletePrompt();
+        }
+      }
+
+      function showProfileIncompletePrompt() {
+        const prompt = document.createElement('div');
+        prompt.className = 'profile-incomplete-prompt';
+        prompt.innerHTML = `
+          <div class="profile-prompt-content">
+            <div class="profile-prompt-icon">
+              <i data-lucide="alert-circle" class="icon-24"></i>
+            </div>
+            <div class="profile-prompt-text">
+              <h3>Complete Your Profile</h3>
+              <p>Your profile is missing some information. Complete it to get the most out of FlagFit Pro.</p>
+            </div>
+            <button class="btn-primary" onclick="window.profileCompletionManager.showProfileCompletionModal(false)">
+              Complete Profile
+            </button>
+            <button class="profile-prompt-close" onclick="this.closest('.profile-incomplete-prompt').remove()" aria-label="Dismiss">
+              <i data-lucide="x" class="icon-16"></i>
+            </button>
+          </div>
+        `;
+
+        const profileContainer = document.querySelector('.profile-container');
+        if (profileContainer) {
+          profileContainer.insertBefore(prompt, profileContainer.firstChild);
+          
+          // Initialize Lucide icons
+          if (typeof lucide !== 'undefined') {
+            lucide.createIcons(prompt);
+          }
+        }
+      }
+
+      async function loadProfileData() {
+        try {
+          const user = authManager.getCurrentUser();
+          
+          if (!user) {
+            console.error('No user found');
+            return;
+          }
+
+          // Parse name into first and last name if needed
+          const fullName = user.name || '';
+          const nameParts = fullName.trim().split(/\s+/);
+          const firstName = nameParts[0] || '';
+          const lastName = nameParts.slice(1).join(' ') || '';
+
+          // Update basic info - use full name from user data
+          document.getElementById('profileName').textContent = fullName || 'User';
+          document.getElementById('profileEmail').textContent = user.email || '';
+          document.getElementById('profileRole').textContent = 
+            (user.role || 'player').charAt(0).toUpperCase() + (user.role || 'player').slice(1);
+          
+          // Update avatar initials
+          const initials = getUserInitials(fullName || user.email || 'U');
+          document.getElementById('avatarInitials').textContent = initials;
+          document.getElementById('user-avatar').textContent = initials;
+
+          // Load profile data from multiple sources
+          let profileData = {};
+          
+          // 1. Try API first
+          try {
+            const response = await apiClient.get('/api/user/profile');
+            if (response.success && response.data) {
+              profileData = { ...profileData, ...response.data };
+            }
+          } catch (apiError) {
+            console.warn('API profile not available, checking localStorage:', apiError);
+          }
+
+          // 2. Check localStorage for user_profile (from onboarding/settings)
+          try {
+            const storedProfile = JSON.parse(localStorage.getItem('user_profile') || '{}');
+            profileData = { ...profileData, ...storedProfile };
+          } catch (e) {
+            console.warn('Error reading user_profile from localStorage:', e);
+          }
+
+          // 3. Check userData in localStorage (from registration)
+          try {
+            const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+            // Merge user data fields that might be in userData
+            if (userData.position) profileData.position = userData.position;
+            if (userData.jerseyNumber || userData.jersey_number) {
+              profileData.jerseyNumber = userData.jerseyNumber || userData.jersey_number;
+            }
+            if (userData.experienceLevel || userData.experience_level) {
+              profileData.experienceLevel = userData.experienceLevel || userData.experience_level;
+            }
+            if (userData.height_cm) profileData.height_cm = userData.height_cm;
+            if (userData.weight_kg) profileData.weight_kg = userData.weight_kg;
+            if (userData.birth_date) profileData.birth_date = userData.birth_date;
+            if (userData.bio) profileData.bio = userData.bio;
+            if (userData.createdAt || userData.created_at) {
+              profileData.createdAt = userData.createdAt || userData.created_at;
+            }
+          } catch (e) {
+            console.warn('Error reading userData from localStorage:', e);
+          }
+
+          // 4. Also check for team_members data (jersey number might be there)
+          try {
+            const teamMembers = JSON.parse(localStorage.getItem('team_members') || '[]');
+            const userMemberData = teamMembers.find(m => m.user_id === user.id || m.email === user.email);
+            if (userMemberData) {
+              if (userMemberData.jersey_number) profileData.jerseyNumber = userMemberData.jersey_number;
+              if (userMemberData.position) profileData.position = userMemberData.position;
+            }
+          } catch (e) {
+            console.warn('Error reading team_members from localStorage:', e);
+          }
+
+          // Update stats
+          document.getElementById('trainingSessions').textContent = 
+            profileData.trainingSessions || profileData.training_sessions || 0;
+          document.getElementById('gamesPlayed').textContent = 
+            profileData.gamesPlayed || profileData.games_played || 0;
+          document.getElementById('performanceScore').textContent = 
+            profileData.performanceScore || profileData.performance_score || 0;
+          document.getElementById('achievements').textContent = 
+            profileData.achievements || 0;
+
+          // Update personal info
+          if (profileData.position) {
+            document.getElementById('profilePosition').textContent = profileData.position;
+          }
+          if (profileData.jerseyNumber || profileData.jersey_number) {
+            document.getElementById('profileJersey').textContent = 
+              profileData.jerseyNumber || profileData.jersey_number;
+          }
+          if (profileData.experienceLevel || profileData.experience_level) {
+            const expLevel = profileData.experienceLevel || profileData.experience_level;
+            document.getElementById('profileExperience').textContent = 
+              expLevel.charAt(0).toUpperCase() + expLevel.slice(1);
+          }
+          
+          // Member since date
+          if (profileData.createdAt || profileData.created_at || user.createdAt) {
+            const date = new Date(profileData.createdAt || profileData.created_at || user.createdAt);
+            document.getElementById('profileMemberSince').textContent = 
+              date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+          } else {
+            document.getElementById('profileMemberSince').textContent = 'Recently';
+          }
+
+          // Update physical stats
+          if (profileData.height_cm) {
+            const feet = Math.floor(profileData.height_cm / 30.48);
+            const inches = Math.round((profileData.height_cm % 30.48) / 2.54);
+            document.getElementById('profileHeight').textContent = `${feet}'${inches}"`;
+          }
+          if (profileData.weight_kg) {
+            const lbs = Math.round(profileData.weight_kg * 2.20462);
+            document.getElementById('profileWeight').textContent = `${lbs} lbs`;
+          }
+          if (profileData.birth_date || profileData.birthDate) {
+            const date = new Date(profileData.birth_date || profileData.birthDate);
+            document.getElementById('profileBirthDate').textContent = 
+              date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+          }
+
+          // Update bio
+          if (profileData.bio) {
+            document.getElementById('profileBio').textContent = profileData.bio;
+          }
+
+        } catch (error) {
+          console.error('Failed to load profile:', error);
+          ErrorHandler.handleError(error, 'Failed to load profile data');
+        }
+      }
+
+      function getUserInitials(name) {
+        if (!name) return 'U';
+        const parts = name.trim().split(' ');
+        if (parts.length >= 2) {
+          return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+        }
+        return name.substring(0, 2).toUpperCase();
+      }
+
+      function setupAvatarEdit() {
+        const avatarEditBtn = document.getElementById('avatarEditBtn');
+        if (avatarEditBtn) {
+          avatarEditBtn.addEventListener('click', () => {
+            // Navigate to settings for now
+            window.location.href = '/settings.html';
+          });
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', initProfilePage);
+    </script>
+
+    <!-- Footer -->
+    <footer role="contentinfo" class="main-footer">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>FlagFit Pro</h3>
+          <p>Professional flag football training and analytics platform</p>
+        </div>
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <nav aria-label="Footer navigation">
+            <ul>
+              <li><a href="/dashboard.html">Dashboard</a></li>
+              <li><a href="/training.html">Training</a></li>
+              <li><a href="/roster.html">Roster</a></li>
+              <li><a href="/analytics.html">Analytics</a></li>
+            </ul>
+          </nav>
+        </div>
+        <div class="footer-section">
+          <h4>Support</h4>
+          <nav aria-label="Support links">
+            <ul>
+              <li><a href="/settings.html">Settings</a></li>
+              <li><a href="/community.html">Community</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 FlagFit Pro. All rights reserved.</p>
+      </div>
+    </footer>
+  </body>
+</html>
+

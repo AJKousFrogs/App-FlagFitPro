@@ -313,11 +313,39 @@
             <div class="form-group">
               <label for="position">Playing Position</label>
               <select id="position" class="form-input form-select">
-                <option>Wide Receiver</option>
-                <option>Quarterback</option>
-                <option>Running Back</option>
-                <option>Center</option>
-                <option>Rusher</option>
+                <option value="">Select position</option>
+                <option value="QB">Quarterback (QB)</option>
+                <option value="WR">Wide Receiver (WR)</option>
+                <option value="RB">Running Back (RB)</option>
+                <option value="DB">Defensive Back (DB)</option>
+                <option value="LB">Linebacker (LB)</option>
+                <option value="K">Kicker (K)</option>
+                <option value="FLEX">Flex</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="jerseyNumber">Jersey Number</label>
+              <input
+                type="number"
+                id="jerseyNumber"
+                class="form-input"
+                min="0"
+                max="99"
+                placeholder="Enter jersey number"
+                aria-describedby="jerseyNumber-help"
+              />
+              <small id="jerseyNumber-help" class="form-help">Your jersey number (0-99)</small>
+            </div>
+
+            <div class="form-group">
+              <label for="experienceLevel">Experience Level</label>
+              <select id="experienceLevel" class="form-input form-select">
+                <option value="">Select experience level</option>
+                <option value="beginner">Beginner</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="advanced">Advanced</option>
+                <option value="expert">Expert</option>
               </select>
             </div>
 
@@ -554,10 +582,28 @@
         if (typeof lucide !== "undefined") {
           lucide.createIcons();
         }
-        // Check authentication
-        if (!authManager.isAuthenticated()) {
+        
+        // Wait for auth manager to initialize
+        await authManager.waitForInit();
+        
+        // Check authentication - allow demo access in development
+        const isDevelopment =
+          window.location.hostname === "localhost" ||
+          window.location.hostname === "127.0.0.1";
+        const isAuthenticated = authManager.isAuthenticated();
+
+        if (!isAuthenticated && !isDevelopment) {
+          console.log(
+            "User not authenticated, redirecting to login"
+          );
           window.location.href = "/login.html";
           return;
+        }
+
+        if (!isAuthenticated && isDevelopment) {
+          console.log(
+            "Development mode: Loading settings without authentication"
+          );
         }
 
         // Load user settings
@@ -585,8 +631,15 @@
         const user = authManager.getCurrentUser();
         if (user) {
           // Populate form fields with user data
-          document.getElementById("displayName").value = user.name || "";
-          document.getElementById("email").value = user.email || "";
+          const displayNameField = document.getElementById("displayName");
+          const emailField = document.getElementById("email");
+          
+          if (displayNameField) {
+            displayNameField.value = user.name || "";
+          }
+          if (emailField) {
+            emailField.value = user.email || "";
+          }
 
           // Load saved preferences
           const savedSettings = JSON.parse(
@@ -595,18 +648,73 @@
 
           // Apply saved theme
           if (savedSettings.theme) {
-            document.getElementById("theme").value = savedSettings.theme;
+            const themeField = document.getElementById("theme");
+            if (themeField) {
+              themeField.value = savedSettings.theme;
+            }
           }
 
           // Apply saved language
           if (savedSettings.language) {
-            document.getElementById("language").value = savedSettings.language;
+            const languageField = document.getElementById("language");
+            if (languageField) {
+              languageField.value = savedSettings.language;
+            }
           }
 
           // Apply saved timezone
           if (savedSettings.timezone) {
-            document.getElementById("timezone").value = savedSettings.timezone;
+            const timezoneField = document.getElementById("timezone");
+            if (timezoneField) {
+              timezoneField.value = savedSettings.timezone;
+            }
           }
+
+          // Apply saved position and team from settings
+          if (savedSettings.position) {
+            const positionField = document.getElementById("position");
+            if (positionField) {
+              positionField.value = savedSettings.position;
+            }
+          }
+          if (savedSettings.team) {
+            const teamField = document.getElementById("team");
+            if (teamField) {
+              teamField.value = savedSettings.team;
+            }
+          }
+        }
+
+        // Load profile data from user_profile (takes precedence)
+        try {
+          const profileData = JSON.parse(localStorage.getItem('user_profile') || '{}');
+          const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+          
+          // Load position (prefer profileData)
+          if (profileData.position) {
+            const positionField = document.getElementById("position");
+            if (positionField) {
+              positionField.value = profileData.position;
+            }
+          }
+          
+          // Load jersey number
+          if (profileData.jerseyNumber || profileData.jersey_number) {
+            const jerseyInput = document.getElementById("jerseyNumber");
+            if (jerseyInput) {
+              jerseyInput.value = profileData.jerseyNumber || profileData.jersey_number;
+            }
+          }
+          
+          // Load experience level
+          if (profileData.experienceLevel || profileData.experience_level) {
+            const expInput = document.getElementById("experienceLevel");
+            if (expInput) {
+              expInput.value = profileData.experienceLevel || profileData.experience_level;
+            }
+          }
+        } catch (error) {
+          console.warn('Error loading profile data:', error);
         }
       }
 
@@ -754,7 +862,7 @@
         element.classList.toggle("active");
       };
 
-      window.saveSettings = function () {
+      window.saveSettings = async function () {
         // Collect all settings
         const settings = {
           displayName: document.getElementById("displayName").value,
@@ -800,6 +908,34 @@
         // Save to localStorage
         localStorage.setItem("flagfit_settings", JSON.stringify(settings));
 
+        // Also save profile data to user_profile for profile page
+        const profileData = {
+          position: document.getElementById("position").value,
+          jerseyNumber: parseInt(document.getElementById("jerseyNumber")?.value || 0) || null,
+          experienceLevel: document.getElementById("experienceLevel")?.value || null,
+          updatedAt: new Date().toISOString(),
+        };
+
+        // Get existing profile data
+        const existingProfile = JSON.parse(localStorage.getItem('user_profile') || '{}');
+        const updatedProfile = { ...existingProfile, ...profileData };
+        localStorage.setItem('user_profile', JSON.stringify(updatedProfile));
+
+        // Update userData name if displayName changed
+        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        if (settings.displayName && settings.displayName !== userData.name) {
+          userData.name = settings.displayName;
+          localStorage.setItem('userData', JSON.stringify(userData));
+        }
+
+        // Try to save to API
+        try {
+          const { apiClient } = await import('./src/api-config.js');
+          await apiClient.put('/api/user/profile', updatedProfile);
+        } catch (error) {
+          console.warn('Could not save to API, saved locally:', error);
+        }
+
         // Show success message
         const button = event.target;
         const originalText = button.innerHTML;
@@ -813,6 +949,7 @@
         }, 2000);
 
         console.log("Settings saved:", settings);
+        console.log("Profile data saved:", updatedProfile);
       };
 
       window.exportData = function () {

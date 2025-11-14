@@ -185,6 +185,7 @@
 
     <script type="module">
       import { authManager } from "./src/auth-manager.js";
+      import { profileCompletionManager } from "./src/profile-completion.js";
 
       document
         .getElementById("registerForm")
@@ -219,9 +220,13 @@
           });
 
           if (result.success) {
+            // Show profile completion form instead of redirecting immediately
             setTimeout(() => {
-              authManager.redirectToDashboard();
-            }, 1500);
+              profileCompletionManager.showProfileCompletionModal(true); // true = required
+            }, 500);
+          } else {
+            submitButton.innerHTML = originalText;
+            submitButton.disabled = false;
           }
         });
 

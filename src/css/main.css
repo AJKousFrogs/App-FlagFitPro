@@ -77,6 +77,7 @@
    Onboarding, help system, loading states, undo, shortcuts
    ================================================================ */
 @import url("./onboarding.css") layer(components-modern);
+@import url("./profile-completion.css") layer(components-modern);
 @import url("./help-system.css") layer(components-modern);
 @import url("./loading-states.css") layer(components-modern);
 @import url("./recently-viewed.css") layer(components-modern);

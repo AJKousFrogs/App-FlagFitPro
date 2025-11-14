@@ -267,10 +267,10 @@
       </div>
 
       <main
-        class="main-content u-flex-1 u-min-width-0 u-overflow-x-hidden u-overflow-y-auto u-padding-24 u-bg-primary"
+        class="main-content u-flex-1 u-min-width-0 u-overflow-hidden u-bg-primary"
       >
         <header
-          class="chat-header u-bg-primary u-padding-20 u-padding-x-30 u-radius-md u-shadow-sm u-margin-bottom-30 u-display-flex u-justify-between u-align-center"
+          class="chat-header u-bg-primary u-display-flex u-justify-between u-align-center"
         >
           <div>
             <h1
@@ -284,13 +284,13 @@
             </p>
           </div>
           <div class="chat-actions u-display-flex u-gap-8">
-            <button class="chat-action-btn" aria-label="Start voice call">
+            <button class="chat-action-btn" id="voiceCallBtn" aria-label="Start voice call">
               <i data-lucide="phone" class="icon-16"></i>
             </button>
-            <button class="chat-action-btn" aria-label="Start video call">
+            <button class="chat-action-btn" id="videoCallBtn" aria-label="Start video call">
               <i data-lucide="video" class="icon-16"></i>
             </button>
-            <button class="chat-action-btn" aria-label="Channel settings">
+            <button class="chat-action-btn" id="channelSettingsBtn" aria-label="Channel settings">
               <i data-lucide="settings" class="icon-16"></i>
             </button>
           </div>
@@ -550,6 +550,8 @@
 
         setupMessageInput();
         setupChannelSwitching();
+        setupCallButtons();
+        setupChannelSettings();
         await loadMessages();
 
         // Load any stored messages for current channel
@@ -617,6 +619,333 @@
             }
           });
         });
+      }
+
+      function setupCallButtons() {
+        const videoCallBtn = document.getElementById("videoCallBtn");
+        const voiceCallBtn = document.getElementById("voiceCallBtn");
+
+        if (videoCallBtn) {
+          videoCallBtn.addEventListener("click", startGoogleMeetCall);
+        }
+
+        if (voiceCallBtn) {
+          voiceCallBtn.addEventListener("click", startGoogleMeetCall);
+        }
+      }
+
+      function setupChannelSettings() {
+        const settingsBtn = document.getElementById("channelSettingsBtn");
+        if (!settingsBtn) return;
+
+        const user = authManager.getCurrentUser();
+        const userRole = authManager.getUserRole();
+        
+        // Check if user is a coach, moderator, or admin
+        const canCreateChannels = ['coach', 'moderator', 'admin', 'assistant_coach'].includes(userRole?.toLowerCase());
+        
+        if (canCreateChannels) {
+          settingsBtn.addEventListener("click", openChannelSettings);
+          settingsBtn.setAttribute("aria-label", "Channel settings - Create new channel");
+        } else {
+          // Disable button for regular players
+          settingsBtn.disabled = true;
+          settingsBtn.setAttribute("aria-label", "Channel settings - Only coaches and moderators can create channels");
+          settingsBtn.style.opacity = "0.5";
+          settingsBtn.style.cursor = "not-allowed";
+        }
+      }
+
+      function isModeratorOrCoach() {
+        const userRole = authManager.getUserRole()?.toLowerCase();
+        return ['coach', 'moderator', 'admin', 'assistant_coach'].includes(userRole);
+      }
+
+      function openChannelSettings() {
+        if (!isModeratorOrCoach()) {
+          AccessibilityUtils.announce('Only coaches and moderators can create channels.', 'polite');
+          return;
+        }
+
+        // Create modal for channel creation
+        const modal = document.createElement('div');
+        modal.className = 'channel-create-modal';
+        modal.setAttribute('role', 'dialog');
+        modal.setAttribute('aria-labelledby', 'channel-modal-title');
+        modal.setAttribute('aria-modal', 'true');
+        
+        modal.innerHTML = `
+          <div class="channel-modal-overlay" onclick="closeChannelModal()"></div>
+          <div class="channel-modal-content">
+            <div class="channel-modal-header">
+              <h2 id="channel-modal-title">Create New Channel</h2>
+              <button class="channel-modal-close" onclick="closeChannelModal()" aria-label="Close dialog">
+                <i data-lucide="x" class="icon-18"></i>
+              </button>
+            </div>
+            <form id="channelCreateForm" class="channel-modal-form">
+              <div class="form-group">
+                <label for="channelName">Channel Name</label>
+                <input 
+                  type="text" 
+                  id="channelName" 
+                  name="channelName" 
+                  placeholder="e.g., strategy, training, announcements"
+                  required
+                  pattern="[a-z0-9-]+"
+                  title="Channel name must be lowercase letters, numbers, and hyphens only"
+                  aria-describedby="channelNameHelp"
+                />
+                <small id="channelNameHelp" class="form-help">
+                  Use lowercase letters, numbers, and hyphens only. Channel names cannot be changed.
+                </small>
+              </div>
+              <div class="form-group">
+                <label for="channelDescription">Description (Optional)</label>
+                <textarea 
+                  id="channelDescription" 
+                  name="channelDescription" 
+                  rows="3"
+                  placeholder="What is this channel for?"
+                ></textarea>
+              </div>
+              <div class="form-group">
+                <label for="channelType">Channel Type</label>
+                <select id="channelType" name="channelType" required>
+                  <option value="public">Public - All team members can join</option>
+                  <option value="private">Private - Invite only</option>
+                </select>
+              </div>
+              <div class="form-actions">
+                <button type="button" class="btn-secondary" onclick="closeChannelModal()">Cancel</button>
+                <button type="submit" class="btn-primary">Create Channel</button>
+              </div>
+            </form>
+          </div>
+        `;
+
+        document.body.appendChild(modal);
+        
+        // Initialize Lucide icons
+        if (typeof lucide !== "undefined") {
+          lucide.createIcons(modal);
+        }
+
+        // Focus on channel name input
+        setTimeout(() => {
+          const channelNameInput = document.getElementById("channelName");
+          if (channelNameInput) {
+            channelNameInput.focus();
+          }
+        }, 100);
+
+        // Handle form submission
+        const form = document.getElementById("channelCreateForm");
+        form.addEventListener("submit", handleChannelCreation);
+
+        // Close on Escape key
+        modal.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") {
+            closeChannelModal();
+          }
+        });
+      }
+
+      function closeChannelModal() {
+        const modal = document.querySelector('.channel-create-modal');
+        if (modal) {
+          modal.remove();
+        }
+      }
+
+      // Make function globally accessible for onclick handlers
+      window.closeChannelModal = closeChannelModal;
+
+      async function handleChannelCreation(e) {
+        e.preventDefault();
+        
+        const form = e.target;
+        const channelName = document.getElementById("channelName").value.trim().toLowerCase();
+        const channelDescription = document.getElementById("channelDescription").value.trim();
+        const channelType = document.getElementById("channelType").value;
+
+        if (!channelName) {
+          AccessibilityUtils.announce('Channel name is required.', 'polite');
+          return;
+        }
+
+        // Validate channel name format
+        if (!/^[a-z0-9-]+$/.test(channelName)) {
+          AccessibilityUtils.announce('Channel name can only contain lowercase letters, numbers, and hyphens.', 'polite');
+          return;
+        }
+
+        // Check if channel already exists
+        const existingChannels = document.querySelectorAll('.channel-item');
+        const channelExists = Array.from(existingChannels).some(item => 
+          item.dataset.channel === channelName
+        );
+
+        if (channelExists) {
+          AccessibilityUtils.announce(`Channel "${channelName}" already exists.`, 'polite');
+          return;
+        }
+
+        try {
+          const user = authManager.getCurrentUser();
+          
+          // Create channel via API (if available) or localStorage
+          const newChannel = {
+            name: channelName,
+            description: channelDescription,
+            type: channelType,
+            createdBy: user?.email || 'unknown',
+            createdAt: new Date().toISOString(),
+            members: [user?.email || 'unknown']
+          };
+
+          // Save to localStorage
+          const channels = JSON.parse(localStorage.getItem('chat_channels') || '[]');
+          channels.push(newChannel);
+          localStorage.setItem('chat_channels', JSON.stringify(channels));
+
+          // Add channel to UI
+          addChannelToSidebar(newChannel);
+
+          // Announce success
+          AccessibilityUtils.announce(`Channel "${channelName}" created successfully.`, 'polite');
+
+          // Close modal
+          closeChannelModal();
+
+          // Switch to new channel
+          setTimeout(() => {
+            const newChannelItem = document.querySelector(`[data-channel="${channelName}"]`);
+            if (newChannelItem) {
+              selectChannel(newChannelItem);
+            }
+          }, 100);
+
+        } catch (error) {
+          console.error('Failed to create channel:', error);
+          ErrorHandler.handleError(error, 'Failed to create channel');
+        }
+      }
+
+      function addChannelToSidebar(channel) {
+        const channelsList = document.getElementById("channelsList");
+        if (!channelsList) return;
+
+        // Find where to insert (after Team Channels category)
+        const teamChannelsCategory = channelsList.querySelector('.channel-category');
+        let insertAfter = teamChannelsCategory;
+
+        // Find the last team channel item
+        const teamChannels = Array.from(channelsList.querySelectorAll('.channel-item'));
+        const lastTeamChannel = teamChannels.find(item => {
+          const nextSibling = item.nextElementSibling;
+          return nextSibling && nextSibling.classList.contains('channel-category');
+        });
+
+        if (lastTeamChannel) {
+          insertAfter = lastTeamChannel;
+        }
+
+        // Create channel item
+        const channelItem = document.createElement('div');
+        channelItem.className = 'channel-item';
+        channelItem.dataset.channel = channel.name;
+        channelItem.setAttribute('role', 'button');
+        channelItem.setAttribute('tabindex', '0');
+        channelItem.setAttribute('aria-label', `Channel: ${channel.name}`);
+
+        channelItem.innerHTML = `
+          <span class="channel-icon">#</span>
+          <div class="channel-info">
+            <div class="channel-name">${channel.name}</div>
+            ${channel.description ? `<div class="channel-preview">${escapeHtml(channel.description)}</div>` : ''}
+          </div>
+        `;
+
+        // Add click handler
+        channelItem.addEventListener("click", function () {
+          selectChannel(this);
+        });
+
+        // Add keyboard navigation
+        channelItem.addEventListener("keydown", function (e) {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            selectChannel(this);
+          }
+        });
+
+        // Insert after the last team channel
+        if (insertAfter && insertAfter.nextSibling) {
+          channelsList.insertBefore(channelItem, insertAfter.nextSibling);
+        } else {
+          channelsList.appendChild(channelItem);
+        }
+      }
+
+      async function startGoogleMeetCall() {
+        try {
+          const user = authManager.getCurrentUser();
+          const channelName = currentChannel;
+          
+          // Use Google Meet's instant meeting creation URL
+          // This creates a new meeting and redirects to it
+          const meetUrl = 'https://meet.google.com/new';
+          
+          // Create a meeting name based on channel
+          const meetingName = `${channelName.replace(/-/g, ' ')} - ${new Date().toLocaleDateString()}`;
+          
+          // Post meeting info to chat
+          const meetingMessage = `🎥 Starting Google Meet call for ${meetingName}\n\nClick the link to join: ${meetUrl}`;
+          
+          // Add meeting message to UI
+          addMessageToUI({
+            author: user?.email || 'system',
+            authorName: user?.name || 'System',
+            text: meetingMessage,
+            timestamp: new Date().toISOString(),
+          }, false);
+          
+          // Save to storage
+          saveMessageToStorage({
+            channel: currentChannel,
+            author: user?.email || 'system',
+            authorName: user?.name || 'System',
+            text: meetingMessage,
+            timestamp: new Date().toISOString(),
+          });
+          
+          // Open Google Meet in new window/tab
+          // Google Meet will create a new meeting automatically
+          const meetWindow = window.open(
+            meetUrl,
+            '_blank',
+            'width=1280,height=720,menubar=no,toolbar=no,location=no,status=no'
+          );
+          
+          if (!meetWindow) {
+            // If popup blocked, try direct navigation
+            AccessibilityUtils.announce('Popup blocked. Opening Google Meet in new tab.', 'polite');
+            window.open(meetUrl, '_blank');
+          }
+          
+          // Announce to screen readers
+          AccessibilityUtils.announce(`Google Meet call started. Meeting link posted to chat.`, 'polite');
+          
+          scrollToBottom();
+          
+        } catch (error) {
+          console.error('Failed to start Google Meet call:', error);
+          ErrorHandler.handleError(error, 'Failed to start video call');
+          
+          // Fallback: Open Google Meet directly
+          window.open('https://meet.google.com/new', '_blank');
+        }
       }
 
       function selectChannel(item) {

@@ -23,46 +23,46 @@
     <script src="https://unpkg.com/lucide@latest" defer></script>
     <script src="./src/icon-helper.js" defer></script>
   </head>
-  <body class="u-display-flex u-align-center u-justify-center u-padding-24">
+  <body class="flex items-center justify-center p-6 min-h-screen">
     <div
-      class="login-container u-bg-primary u-radius-xl u-shadow-xl u-padding-48 u-width-full u-text-center"
+      class="login-container card card-elevated w-full max-w-md mx-auto text-center"
     >
-      <div class="login-logo u-text-display-sm u-margin-bottom-12 u-text-brand">
-        <i data-lucide="football" aria-hidden="true"></i>
+      <div class="login-logo mb-6 text-primary">
+        <i data-lucide="football" aria-hidden="true" class="icon-24"></i>
       </div>
       <h1
-        class="login-title u-text-heading-xl u-text-primary u-margin-bottom-40"
+        class="login-title text-2xl font-bold text-primary mb-6"
       >
         Sign in to FlagFit Pro
       </h1>
 
-      <div class="alert alert-info" id="demoNote" style="display: none">
+      <div class="alert alert-info mb-4" id="demoNote" style="display: none">
         <strong>Demo Mode:</strong> This login accepts any email and password
         for testing purposes.
       </div>
 
       <div
-        class="alert alert-error"
+        class="alert alert-error mb-4"
         id="errorMessage"
         style="display: none"
       ></div>
       <div
-        class="alert alert-success"
+        class="alert alert-success mb-4"
         id="successMessage"
         style="display: none"
       ></div>
 
       <!-- Manual redirect button (backup) -->
       <div
-        class="alert alert-success"
+        class="alert alert-success mb-4"
         id="manualRedirect"
         style="display: none"
       >
-        <p class="u-margin-bottom-12">
-          <i data-lucide="check-circle" aria-hidden="true"></i> Login successful!
+        <p class="mb-3">
+          <i data-lucide="check-circle" aria-hidden="true" class="icon-18"></i> Login successful!
         </p>
-        <button type="button" id="goDashboard" class="btn btn-primary btn-sm">
-          Go to Dashboard <i data-lucide="chevron-right" aria-hidden="true"></i>
+        <button type="button" id="goDashboard" class="btn btn-primary btn-sm flex items-center gap-2">
+          Go to Dashboard <i data-lucide="chevron-right" aria-hidden="true" class="icon-18"></i>
         </button>
       </div>
 
@@ -104,14 +104,14 @@
           <small id="password-success" class="form-success" style="display: none;">Password is valid</small>
           <div
             id="password-requirements"
-            class="password-requirements u-margin-top-4 u-text-body-sm u-text-tertiary"
+            class="password-requirements form-hint mt-2"
             role="note"
           >
             Password must be at least 8 characters and include uppercase, lowercase, number, and special character (@$!%*?&).
           </div>
           <div
             id="passwordStrength"
-            class="password-strength u-margin-top-4 u-text-body-sm"
+            class="password-strength mt-2 text-sm"
             style="display: none"
             role="status"
             aria-live="polite"
@@ -119,17 +119,17 @@
         </div>
 
         <div
-          class="login-form-options u-display-flex u-justify-between u-align-center u-margin-bottom-40 u-text-body-sm"
+          class="login-form-options flex justify-between items-center mb-6 text-sm"
         >
           <div
-            class="login-checkbox-group u-display-flex u-align-center u-gap-4"
+            class="login-checkbox-group flex items-center gap-2"
           >
             <input type="checkbox" id="remember" name="remember" />
-            <label for="remember">Remember me</label>
+            <label for="remember" class="text-primary cursor-pointer">Remember me</label>
           </div>
           <a
             href="/reset-password.html"
-            class="login-forgot-link u-text-brand u-text-label-md"
+            class="login-forgot-link text-primary font-medium"
             style="text-decoration: none"
             >Forgot your password?</a
           >
@@ -137,53 +137,53 @@
 
         <button
           type="submit"
-          class="btn btn-primary btn-lg btn-block u-display-flex u-align-center u-justify-center u-gap-4 u-width-full"
+          class="btn btn-primary btn-lg w-full flex items-center justify-center gap-2"
         >
-          <i data-lucide="lock" aria-hidden="true"></i>
+          <i data-lucide="lock" aria-hidden="true" class="icon-18"></i>
           Sign in
         </button>
       </form>
 
       <div
-        class="login-divider u-margin-y-40 u-display-flex u-align-center u-text-body-sm"
+        class="login-divider my-6 flex items-center text-sm"
         style="color: var(--color-text-muted)"
       >
-        <span class="u-padding-x-16">Or</span>
+        <span class="px-4">Or</span>
       </div>
 
       <a
         href="/register.html"
-        class="login-create-link u-text-brand u-text-label-md"
+        class="login-create-link text-primary font-medium mb-6 inline-block"
         style="text-decoration: none"
         >create a new account</a
       >
 
       <div
-        class="login-sponsors u-margin-top-48 u-padding-top-40"
+        class="login-sponsors mt-8 pt-6"
         style="border-top: 1px solid var(--color-border-secondary)"
       >
         <div
-          class="login-sponsors-title u-text-body-sm u-text-tertiary u-margin-bottom-24"
+          class="login-sponsors-title text-sm text-muted mb-4"
         >
           Proudly sponsored by
         </div>
         <div
-          class="login-sponsor-logos u-display-flex u-justify-center u-gap-24 u-flex-wrap"
+          class="login-sponsor-logos flex justify-center gap-4 flex-wrap"
         >
           <div
-            class="login-sponsor-logo u-text-caption u-text-tertiary u-padding-y-4 u-padding-x-16 u-radius-full u-bg-secondary"
+            class="login-sponsor-logo text-xs text-muted py-2 px-4 rounded-full bg-surface-secondary"
             style="border: 1px solid var(--color-border-secondary)"
           >
             LA PRIMAFIT
           </div>
           <div
-            class="login-sponsor-logo u-text-caption u-text-tertiary u-padding-y-4 u-padding-x-16 u-radius-full u-bg-secondary"
+            class="login-sponsor-logo text-xs text-muted py-2 px-4 rounded-full bg-surface-secondary"
             style="border: 1px solid var(--color-border-secondary)"
           >
             Chemius
           </div>
           <div
-            class="login-sponsor-logo u-text-caption u-text-tertiary u-padding-y-4 u-padding-x-16 u-radius-full u-bg-secondary"
+            class="login-sponsor-logo text-xs text-muted py-2 px-4 rounded-full bg-surface-secondary"
             style="border: 1px solid var(--color-border-secondary)"
           >
             GEAR XPRO
@@ -639,38 +639,5 @@
         }
       }
     </script>
-
-    <!-- Footer -->
-    <footer role="contentinfo" class="main-footer">
-      <div class="footer-content">
-        <div class="footer-section">
-          <h3>FlagFit Pro</h3>
-          <p>Professional flag football training and analytics platform</p>
-        </div>
-        <div class="footer-section">
-          <h4>Quick Links</h4>
-          <nav aria-label="Footer navigation">
-            <ul>
-              <li><a href="/dashboard.html">Dashboard</a></li>
-              <li><a href="/training.html">Training</a></li>
-              <li><a href="/roster.html">Roster</a></li>
-              <li><a href="/analytics.html">Analytics</a></li>
-            </ul>
-          </nav>
-        </div>
-        <div class="footer-section">
-          <h4>Support</h4>
-          <nav aria-label="Support links">
-            <ul>
-              <li><a href="/settings.html">Settings</a></li>
-              <li><a href="/community.html">Community</a></li>
-            </ul>
-          </nav>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <p>&copy; 2025 FlagFit Pro. All rights reserved.</p>
-      </div>
-    </footer>
   </body>
 </html>

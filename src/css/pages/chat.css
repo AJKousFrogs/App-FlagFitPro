@@ -185,8 +185,13 @@ html[data-theme="light"] .nav-item.active {
 .main-content {
   margin-left: 250px;
   width: calc(100% - 250px); /* ✅ Use width instead of max-width */
-  padding: var(--spacing-layout-md, 32px) var(--spacing-layout-lg, 40px);
+  padding: 0;
+  padding-top: 64px; /* Account for fixed top-bar */
   box-sizing: border-box;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 /* Top Bar styles are now in src/css/components/header.css */
@@ -206,12 +211,19 @@ html[data-theme="light"] .nav-item.active {
   .main-content {
     margin-left: 0;
     width: 100%; /* ✅ Full width on mobile */
-    padding: var(--spacing-layout-xs, 20px) var(--spacing-component-lg, 24px);
+    padding: 0;
+    padding-top: 64px; /* Account for fixed top-bar */
+  }
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    padding-top: 56px; /* Account for smaller mobile top-bar */
   }
 }
 
 @media (max-width: 480px) {
   .main-content {
-    padding: var(--spacing-layout-xs, 16px) var(--spacing-component-md, 16px);
+    padding-top: 56px; /* Account for smaller mobile top-bar */
   }
 }
