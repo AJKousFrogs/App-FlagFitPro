@@ -8,703 +8,407 @@
       rel="icon"
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
     />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <!-- New Modular CSS Architecture -->
+    <!-- Design System CSS -->
     <link rel="stylesheet" href="./src/css/main.css" />
+    <!-- Component CSS -->
+    <link rel="stylesheet" href="./src/css/components/sidebar.css" />
+    <link rel="stylesheet" href="./src/css/components/header.css" />
     <!-- Page-specific styles -->
     <link rel="stylesheet" href="./src/css/pages/coach-dashboard.css" />
-
-    <!-- Lucide Icons - Modern icon library similar to Radix UI -->
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest" defer></script>
     <script src="./src/icon-helper.js" defer></script>
     <script src="./src/theme-switcher.js" defer></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"
-      defer
-    ></script>
-    <script>
-      // Chart.js fallback system
-      window.addEventListener("load", function () {
-        if (typeof Chart === "undefined") {
-          console.log("Loading Chart.js fallback...");
-          const fallbackScript = document.createElement("script");
-          fallbackScript.src =
-            "https://unpkg.com/chart.js@4.4.1/dist/chart.umd.js";
-          fallbackScript.onload = function () {
-            console.log("Chart.js fallback loaded successfully");
-            if (window.initializeComparisonChart)
-              window.initializeComparisonChart();
-          };
-          fallbackScript.onerror = function () {
-            console.warn("Chart.js fallback also failed, using mock charts");
-            // Fallback to text-based display
-            document.getElementById("teamComparisonChart").innerHTML =
-              '<p style="text-align: center; padding: 40px;">Chart data will be displayed here when online</p>';
-          };
-          document.head.appendChild(fallbackScript);
-        }
-      });
-    </script>
+    <script src="./src/nav-highlight.js" defer></script>
+    <script src="./src/components/organisms/top-bar/top-bar.js" defer></script>
   </head>
   <body>
-    <div class="coach-dashboard">
-      <!-- Header -->
-      <header class="coach-header">
+    <div class="dashboard-container">
+      <!-- Unified Sidebar Navigation -->
+      <div
+        class="sidebar"
+        id="sidebar"
+        role="navigation"
+        aria-label="Main navigation"
+      >
         <div
-          style="
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-          "
+          class="sidebar-logo"
+          onclick="window.location.href='/coach-dashboard.html'"
+          title="FlagFit Pro"
+          aria-label="Go to coach dashboard"
         >
-          <div>
-            <h1 class="coach-title">
-              <i
-                data-lucide="football"
-                style="
-                  width: 16px;
-                  height: 16px;
-                  display: inline-block;
-                  vertical-align: middle;
-                  color: var(--icon-color-primary);
-                  stroke: var(--icon-color-primary);
-                "
-              ></i>
-              Coach Dashboard
-            </h1>
-            <p class="coach-subtitle">
-              Monitor your team's performance and wellness
-            </p>
-          </div>
-          <div style="display: flex; gap: var(--space-3); align-items: center">
-            <button
-              class="btn btn-secondary hover-lift"
-              onclick="exportTeamReport()"
-            >
-              <i
-                data-lucide="bar-chart-3"
-                style="
-                  width: 16px;
-                  height: 16px;
-                  display: inline-block;
-                  vertical-align: middle;
-                  color: var(--icon-color-primary);
-                  stroke: var(--icon-color-primary);
-                "
-              ></i>
-              Export Report
-            </button>
-            <button
-              class="btn btn-primary hover-lift"
-              onclick="scheduleTeamMeeting()"
-            >
-              <i
-                data-lucide="calendar"
-                style="
-                  width: 16px;
-                  height: 16px;
-                  display: inline-block;
-                  vertical-align: middle;
-                  color: var(--icon-color-primary);
-                  stroke: var(--icon-color-primary);
-                "
-              ></i>
-              Schedule Meeting
-            </button>
-            <a href="/dashboard.html" class="btn btn-ghost hover-lift">
-              <i
-                data-lucide="chevron-left"
-                style="
-                  width: 16px;
-                  height: 16px;
-                  display: inline-block;
-                  vertical-align: middle;
-                  color: var(--icon-color-primary);
-                  stroke: var(--icon-color-primary);
-                "
-              ></i>
-              Back to Dashboard
-            </a>
-          </div>
-        </div>
-      </header>
-
-      <main class="coach-content">
-    <!-- Filter Controls -->
-        <div class="filter-controls">
-          <div class="filter-group">
-            <label class="filter-label">Position Filter</label>
-            <select
-              id="position-filter"
-              class="filter-select hover-lift-small"
-              onchange="filterAthletes()"
-            >
-              <option value="all">All Positions</option>
-              <option value="quarterback">Quarterback</option>
-              <option value="receiver">Receiver</option>
-              <option value="rusher">Rusher</option>
-              <option value="defense">Defense</option>
-            </select>
-          </div>
-          <div class="filter-group">
-            <label class="filter-label">Performance Period</label>
-            <select
-              id="period-filter"
-              class="filter-select hover-lift-small"
-              onchange="updateTeamStats()"
-            >
-              <option value="7d">Last 7 Days</option>
-              <option value="30d" selected>Last 30 Days</option>
-              <option value="90d">Last 3 Months</option>
-            </select>
-          </div>
-          <div class="filter-group">
-            <label class="filter-label">Alert Level</label>
-            <select
-              id="alert-filter"
-              class="filter-select hover-lift-small"
-              onchange="filterAlerts()"
-            >
-              <option value="all">All Alerts</option>
-              <option value="high">High Priority</option>
-              <option value="medium">Medium Priority</option>
-              <option value="low">Low Priority</option>
-            </select>
-          </div>
+          <i
+            data-lucide="activity"
+            class="icon-20 icon-inline"
+          ></i>
         </div>
 
-    <!-- Team Overview -->
-        <div class="team-overview">
-          <div class="team-stats card hover-lift">
-            <h3
-              style="
-                font-size: var(--text-xl);
-                font-weight: var(--font-semibold);
-                margin-bottom: var(--space-4);
-                color: var(--dark-text-primary);
-              "
-            >
-              Team Performance Overview
-            </h3>
-            <div class="stats-grid" id="teamStatsGrid">
-              <!-- Will be populated by JavaScript -->
-            </div>
-          </div>
-
-          <div class="alerts-panel card hover-lift">
-            <h3
-              style="
-                font-size: var(--text-xl);
-                font-weight: var(--font-semibold);
-                margin-bottom: var(--space-4);
-                color: var(--dark-text-primary);
-              "
-            >
-              ⚠️ Active Alerts
-            </h3>
-            <div id="alertsList">
-              <!-- Will be populated by JavaScript -->
-            </div>
-          </div>
-        </div>
-
-    <!-- Performance Comparison Chart -->
-        <div class="performance-comparison card hover-lift">
-          <h3
-            style="
-              font-size: var(--text-xl);
-              font-weight: var(--font-semibold);
-              margin-bottom: var(--space-4);
-              color: var(--dark-text-primary);
-            "
+        <nav class="nav-section" aria-label="Main navigation">
+          <a
+            href="/coach-dashboard.html"
+            class="nav-item active"
+            aria-label="Overview"
+            id="nav-overview"
           >
-            Team Performance Comparison
-          </h3>
-          <div class="comparison-chart">
-            <canvas id="teamComparisonChart"></canvas>
+            <span class="nav-item-icon">
+              <i data-lucide="layout-dashboard" class="icon-24"></i>
+            </span>
+            <span class="nav-item-label">Overview</span>
+          </a>
+          <a
+            href="/training.html"
+            class="nav-item"
+            aria-label="Training"
+            id="nav-training"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="zap" class="icon-24"></i>
+            </span>
+            <span class="nav-item-label">Training</span>
+          </a>
+          <a
+            href="/analytics.html"
+            class="nav-item"
+            aria-label="Analytics"
+            id="nav-analytics"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="bar-chart-3" class="icon-24"></i>
+            </span>
+            <span class="nav-item-label">Analytics</span>
+          </a>
+          <a
+            href="/wellness.html"
+            class="nav-item"
+            aria-label="Wellness"
+            id="nav-wellness"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="heart-pulse" class="icon-24"></i>
+            </span>
+            <span class="nav-item-label">Wellness</span>
+          </a>
+          <a
+            href="/roster.html"
+            class="nav-item"
+            aria-label="Roster"
+            id="nav-roster"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="users" class="icon-24"></i>
+            </span>
+            <span class="nav-item-label">Roster</span>
+          </a>
+          <a
+            href="/tournaments.html"
+            class="nav-item"
+            aria-label="Tournaments"
+            id="nav-tournaments"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="trophy" class="icon-24"></i>
+            </span>
+            <span class="nav-item-label">Tournaments</span>
+          </a>
+          <a
+            href="/settings.html"
+            class="nav-item"
+            aria-label="Settings"
+            id="nav-settings"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="settings" class="icon-24"></i>
+            </span>
+            <span class="nav-item-label">Settings</span>
+          </a>
+        </nav>
+      </div>
+
+      <!-- Sidebar Overlay for Mobile -->
+      <div
+        class="sidebar-overlay"
+        id="sidebar-overlay"
+        aria-hidden="true"
+      ></div>
+
+      <main
+        class="main-content flex-1 min-w-0 overflow-x-hidden overflow-y-auto bg-surface-primary min-h-screen transition-bg"
+      >
+    <!-- Top Bar -->
+        <div class="top-bar" role="banner">
+          <div class="header-left">
+            <!-- Mobile Hamburger Menu Button -->
+            <button
+              id="mobile-menu-toggle"
+              class="mobile-menu-toggle"
+              type="button"
+              aria-label="Toggle navigation menu"
+              aria-expanded="false"
+              aria-controls="sidebar"
+              onclick="toggleSidebar()" aria-label="Toggle sidebar navigation"
+            >
+              <i data-lucide="menu" class="icon-20"></i>
+            </button>
+            <!-- Global Search (combobox pattern) -->
+            <div class="search-box">
+              <label for="global-search" class="sr-only"
+                >Search for players, teams and more</label
+              >
+              <span class="search-icon" aria-hidden="true">
+                <i data-lucide="search" class="icon-16"></i>
+              </span>
+
+              <input
+                id="global-search"
+                class="search-input"
+                type="text"
+                placeholder="Search for players, teams & more"
+                role="combobox"
+                aria-autocomplete="list"
+                aria-haspopup="listbox"
+                aria-expanded="false"
+                aria-owns="search-results"
+                aria-controls="search-results"
+                autocomplete="off"
+                inputmode="search"
+              />
+
+              <div id="search-status" class="sr-only" aria-live="polite"></div>
+
+              <div
+                id="search-results"
+                class="search-results"
+                role="listbox"
+                hidden
+              ></div>
+            </div>
+          </div>
+
+          <div class="header-right">
+            <!-- Notifications -->
+            <div class="header-icon-wrap">
+              <button
+                id="notification-bell"
+                class="header-icon"
+                type="button"
+                aria-label="Notifications"
+                aria-controls="notification-panel"
+                aria-expanded="false"
+              >
+                <i data-lucide="bell" class="icon-18"></i>
+                <span id="notification-badge" class="badge" hidden>3</span>
+              </button>
+              <span
+                id="notification-live"
+                class="sr-only"
+                aria-live="polite"
+              ></span>
+            </div>
+
+            <!-- Settings -->
+            <button class="header-icon" type="button" aria-label="Settings">
+              <i data-lucide="settings" class="icon-18"></i>
+            </button>
+
+            <!-- Theme Toggle -->
+            <div class="theme-toggle-container" aria-label="Theme toggle">
+              <!-- JS inserts switch; fallback below -->
+              <button
+                class="theme-toggle-fallback"
+                type="button"
+                data-theme-toggle
+                hidden
+              >
+                Theme
+              </button>
+            </div>
+
+            <!-- User Menu -->
+            <button
+              id="user-menu-button"
+              class="user-menu"
+              type="button"
+              aria-label="User menu"
+              aria-haspopup="menu"
+              aria-controls="user-menu"
+              aria-expanded="false"
+            >
+              <div class="user-avatar" id="user-avatar" aria-hidden="true">
+                JD
+              </div>
+            </button>
           </div>
         </div>
 
-    <!-- Athletes Grid -->
-        <h2
-          style="
-            font-size: var(--text-h2);
-            font-weight: var(--font-bold);
-            color: var(--dark-text-primary);
-            margin-bottom: var(--space-6);
-          "
-        >
-          Team Members
-        </h2>
-        <div class="athlete-grid" id="athleteGrid">
-          <!-- Will be populated by JavaScript -->
+    <!-- Coach Dashboard Content -->
+        <div class="coach-dashboard-layout">
+          <div class="coach-dashboard-header">
+            <h1>COACH DASHBOARD</h1>
+          </div>
+
+          <!-- Top Row: 3 Main Stats -->
+          <div class="stats-top-row">
+            <div class="stat-card">
+              <div class="stat-label">Team Readiness</div>
+              <div class="stat-value">82%</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Average Wellness Score Today</div>
+              <div class="stat-value">6.4/10</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Injury Alerts</div>
+              <div class="stat-value">3 players</div>
+            </div>
+          </div>
+
+          <!-- Wellness Snapshot -->
+          <div class="wellness-snapshot-card">
+            <h2>WELLNESS SNAPSHOT</h2>
+            <div class="wellness-table-container">
+              <table class="wellness-table">
+                <thead>
+                  <tr>
+                    <th>Player</th>
+                    <th>Energy</th>
+                    <th>Sleep</th>
+                    <th>Mood</th>
+                    <th>Load</th>
+                    <th>Flags</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Player 1</td>
+                    <td>7/10</td>
+                    <td>8/10</td>
+                    <td>6/10</td>
+                    <td>5/10</td>
+                    <td>—</td>
+                  </tr>
+                  <tr class="warning-row">
+                    <td>Player 2</td>
+                    <td>4/10</td>
+                    <td>5/10</td>
+                    <td>3/10</td>
+                    <td>8/10</td>
+                    <td><span class="flag-warning">⚠ Overload</span></td>
+                  </tr>
+                  <tr>
+                    <td>Player 3</td>
+                    <td>6/10</td>
+                    <td>7/10</td>
+                    <td>5/10</td>
+                    <td>6/10</td>
+                    <td>—</td>
+                  </tr>
+                  <tr class="high-risk-row">
+                    <td>Player 4</td>
+                    <td>3/10</td>
+                    <td>4/10</td>
+                    <td>4/10</td>
+                    <td>8/10</td>
+                    <td><span class="flag-high-risk">⚠ High Risk</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Injury Reports -->
+          <div class="injury-reports-card">
+            <h2>INJURY REPORTS</h2>
+            <div class="injury-reports-content">
+              <h3>Latest Issues</h3>
+              <ul class="injury-list">
+                <li class="injury-item">
+                  <span class="injury-player">Player 2:</span>
+                  <span class="injury-description">Hamstring tightness (5/10)</span>
+                </li>
+                <li class="injury-item">
+                  <span class="injury-player">Player 4:</span>
+                  <span class="injury-description">Shoulder pain (6/10)</span>
+                </li>
+                <li class="injury-item">
+                  <span class="injury-player">Player 7:</span>
+                  <span class="injury-description">Wrist soreness (3/10)</span>
+                </li>
+              </ul>
+              <button class="btn-view-all">View All</button>
+            </div>
+          </div>
+
+          <!-- Training Management -->
+          <div class="training-management-card">
+            <h2>TRAINING MANAGEMENT</h2>
+            <div class="training-management-content">
+              <h3>TODAY'S SESSION</h3>
+              <div class="session-info">
+                <div class="session-time">18:30 — Speed & Agility</div>
+                <div class="session-stats">
+                  <div class="session-stat">
+                    <span class="stat-label">Attendance expected:</span>
+                    <span class="stat-value">14/17</span>
+                  </div>
+                  <div class="session-stat">
+                    <span class="stat-label">Wellness risk:</span>
+                    <span class="stat-value warning">3 flagged</span>
+                  </div>
+                </div>
+                <div class="session-actions">
+                  <button class="btn-adjust-load">Adjust Training Load</button>
+                  <button class="btn-send-reminder">Send Reminder</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Coaching Assistant -->
+          <div class="ai-coaching-card">
+            <h2>AI COACHING ASSISTANT</h2>
+            <div class="ai-coaching-content">
+              <div class="ai-suggestion">
+                "3 players show early fatigue patterns. Suggested:
+                <ul class="suggestion-list">
+                  <li>reduce sprint reps by 15%</li>
+                  <li>extend warm-up by 3 minutes</li>
+                  <li>recommend magnesium for Player 4</li>
+                </ul>
+              </div>
+              <div class="ai-actions">
+                <button class="btn-apply-suggestion">Apply Suggestion</button>
+                <button class="btn-ask-more">Ask for More</button>
+              </div>
+            </div>
+          </div>
         </div>
       </main>
     </div>
 
-    <script type="module">
-      import { REAL_TEAM_DATA } from "./src/real-team-data.js";
-      import { performanceCharts } from "./src/performance-charts.js";
-      import { performanceAPI } from "./src/performance-api.js";
-      import { authManager } from "./src/auth-manager.js";
-
-      // Mock coach data for demonstration
-      const MOCK_TEAM_DATA = {
-        teamStats: {
-          averagePerformance: 78.5,
-          totalAthletes: 20,
-          activeAlerts: 5,
-          overallWellness: 7.8,
-        },
-        athletes: [
-          {
-            id: "vince_machi",
-            name: "Vince Machi",
-            position: "QB",
-            jersey: 10,
-            avatar: "VM",
-            performance: {
-              overall: 85,
-              trend: "up",
-              change: "+3.2%",
-            },
-            wellness: {
-              score: 8.2,
-              status: "good", // good, warning, concern
-            },
-            lastActive: "2024-11-08",
-            alerts: [],
-          },
-          {
-            id: "harry_pickup",
-            name: "Harry Pickup",
-            position: "WR",
-            jersey: 21,
-            avatar: "HP",
-            performance: {
-              overall: 78,
-              trend: "stable",
-              change: "+0.8%",
-            },
-            wellness: {
-              score: 6.5,
-              status: "warning",
-            },
-            lastActive: "2024-11-07",
-            alerts: ["Low sleep quality reported"],
-          },
-          {
-            id: "liam_obrien",
-            name: "Liam O'Brien",
-            position: "RB",
-            jersey: 33,
-            avatar: "LO",
-            performance: {
-              overall: 82,
-              trend: "up",
-              change: "+5.1%",
-            },
-            wellness: {
-              score: 7.9,
-              status: "good",
-            },
-            lastActive: "2024-11-08",
-            alerts: [],
-          },
-          {
-            id: "alex_johnson",
-            name: "Alex Johnson",
-            position: "WR",
-            jersey: 15,
-            avatar: "AJ",
-            performance: {
-              overall: 74,
-              trend: "down",
-              change: "-2.3%",
-            },
-            wellness: {
-              score: 5.8,
-              status: "concern",
-            },
-            lastActive: "2024-11-06",
-            alerts: ["Declining performance", "Missed training session"],
-          },
-        ],
-        alerts: [
-          {
-            id: 1,
-            athlete: "Alex Johnson",
-            type: "performance",
-            level: "high",
-            message:
-              "Performance decline detected - 40-yard dash time increased",
-            timestamp: "2024-11-08T10:30:00Z",
-          },
-          {
-            id: 2,
-            athlete: "Harry Pickup",
-            type: "wellness",
-            level: "medium",
-            message: "Sleep quality below optimal for 3 consecutive days",
-            timestamp: "2024-11-08T09:15:00Z",
-          },
-          {
-            id: 3,
-            athlete: "Alex Johnson",
-            type: "attendance",
-            level: "medium",
-            message: "Missed scheduled training session",
-            timestamp: "2024-11-07T16:00:00Z",
-          },
-        ],
-      };
-
-      // Initialize coach dashboard
-      document.addEventListener("DOMContentLoaded", async function () {
-        // Initialize Lucide icons
-        if (typeof lucide !== "undefined") {
-          lucide.createIcons();
-        }
-        console.log(
-          '<i data-lucide="football" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Coach Dashboard loading...',
-        );
-
-        // Check authentication
-        if (!authManager.isAuthenticated()) {
-          window.location.href = "/login.html";
-          return;
-        }
-
-        await initializeCoachDashboard();
-      });
-
-      async function initializeCoachDashboard() {
-        try {
-          // Load team statistics
-          loadTeamStats();
-
-          // Load active alerts
-          loadAlerts();
-
-          // Load athletes grid
-          loadAthletes();
-
-          // Initialize performance comparison chart
-          await initializeComparisonChart();
-
-          console.log(
-            '<i data-lucide="check-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Coach dashboard initialized successfully',
-          );
-        } catch (error) {
-          console.error(
-            '<i data-lucide="x-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Failed to initialize coach dashboard:',
-            error,
-          );
-        }
-      }
-
-      function loadTeamStats() {
-        const container = document.getElementById("teamStatsGrid");
-        const stats = MOCK_TEAM_DATA.teamStats;
-
-        container.innerHTML = `
-                <div class="stat-item hover-lift-small">
-                    <div class="stat-value">${stats.totalAthletes}</div>
-                    <div class="stat-label">Athletes</div>
-                </div>
-                <div class="stat-item hover-lift-small">
-                    <div class="stat-value">${stats.averagePerformance}%</div>
-                    <div class="stat-label">Avg Performance</div>
-                </div>
-                <div class="stat-item hover-lift-small">
-                    <div class="stat-value">${stats.overallWellness}/10</div>
-                    <div class="stat-label">Team Wellness</div>
-                </div>
-                <div class="stat-item hover-lift-small">
-                    <div class="stat-value">${stats.activeAlerts}</div>
-                    <div class="stat-label">Active Alerts</div>
-                </div>
-            `;
-      }
-
-      function loadAlerts() {
-        const container = document.getElementById("alertsList");
-        const alerts = MOCK_TEAM_DATA.alerts;
-
-        if (alerts.length === 0) {
-          container.innerHTML = `
-                    <div style="text-align: center; color: var(--dark-text-muted); padding: var(--space-4);">
-                        <i data-lucide="check-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> No active alerts
-                    </div>
-                `;
-          return;
-        }
-
-        container.innerHTML = alerts
-          .map(
-            (alert) => `
-                <div class="alert-item ${alert.level}-priority hover-lift-small">
-                    <div style="flex: 1;">
-                        <div style="font-weight: var(--font-medium); margin-bottom: var(--space-1);">${alert.athlete}</div>
-                        <div style="font-size: var(--text-sm); color: var(--dark-text-secondary);">${alert.message}</div>
-                        <div style="font-size: var(--text-xs); color: var(--dark-text-muted); margin-top: var(--space-1);">
-                            ${new Date(alert.timestamp).toLocaleDateString()} ${new Date(alert.timestamp).toLocaleTimeString()}
-                        </div>
-                    </div>
-                    <div class="alert-indicator ${getAlertColor(alert.level)}"></div>
-                </div>
-            `,
-          )
-          .join("");
-      }
-
-      function loadAthletes() {
-        const container = document.getElementById("athleteGrid");
-        const athletes = MOCK_TEAM_DATA.athletes;
-
-        container.innerHTML = athletes
-          .map(
-            (athlete) => `
-                <div class="athlete-card hover-lift" data-position="${athlete.position.toLowerCase()}">
-                    <div class="athlete-header">
-                        <div class="athlete-avatar">${athlete.avatar}</div>
-                        <div class="athlete-info">
-                            <h3>${athlete.name}</h3>
-                            <div class="athlete-position">#${athlete.jersey} • ${athlete.position}</div>
-                        </div>
-                    </div>
-                    
-                    <div class="performance-indicators">
-                        <div class="indicator hover-lift-small">
-                            <div class="indicator-value">
-                                ${athlete.performance.overall}%
-                                <span class="trend-indicator trend-${athlete.performance.trend}">
-                                    ${getTrendIcon(athlete.performance.trend)}
-                                    ${athlete.performance.change}
-                                </span>
-                            </div>
-                            <div class="indicator-label">Performance</div>
-                        </div>
-                        <div class="indicator hover-lift-small">
-                            <div class="indicator-value">
-                                ${athlete.wellness.score}/10
-                                <div class="alert-indicator ${getWellnessColor(athlete.wellness.status)}" style="margin: 4px auto 0;"></div>
-                            </div>
-                            <div class="indicator-label">Wellness</div>
-                        </div>
-                    </div>
-                    
-                    <div class="wellness-status">
-                        <span class="wellness-score">Last active: ${new Date(athlete.lastActive).toLocaleDateString()}</span>
-                        ${athlete.alerts.length > 0 ? `<span style="color: var(--error); font-size: var(--text-sm);">${athlete.alerts.length} alert(s)</span>` : ""}
-                    </div>
-                    
-                    <div class="athlete-actions">
-                        <button class="action-btn hover-lift-small" onclick="viewAthleteDetails('${athlete.id}')">
-                            View Details
-                        </button>
-                        <button class="action-btn hover-lift-small" onclick="messageAthlete('${athlete.id}')">
-                            Message
-                        </button>
-                    </div>
-                </div>
-            `,
-          )
-          .join("");
-      }
-
-      async function initializeComparisonChart() {
-        try {
-          await performanceCharts.loadChartJS();
-
-          const canvas = document.getElementById("teamComparisonChart");
-          const ctx = canvas.getContext("2d");
-
-          const chart = new Chart(ctx, {
-            type: "radar",
-            data: {
-              labels: [
-                "Speed",
-                "Agility",
-                "Power",
-                "Endurance",
-                "Wellness",
-                "Consistency",
-              ],
-              datasets: [
-                {
-                  label: "Team Average",
-                  data: [78, 82, 75, 80, 78, 85],
-                  backgroundColor: "rgba(102, 126, 234, 0.2)",
-                  borderColor: "var(--primary-500)",
-                  pointBackgroundColor: "var(--primary-500)",
-                },
-                {
-                  label: "Top Performer",
-                  data: [95, 90, 88, 92, 85, 90],
-                  backgroundColor: "rgba(16, 185, 129, 0.2)",
-                  borderColor: "var(--primary-500)",
-                  pointBackgroundColor: "var(--primary-500)",
-                },
-              ],
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              scales: {
-                r: {
-                  beginAtZero: true,
-                  max: 100,
-                  grid: {
-                    color: "rgba(0, 0, 0, 0.1)",
-                  },
-                  angleLines: {
-                    color: "rgba(0, 0, 0, 0.1)",
-                  },
-                  pointLabels: {
-                    font: {
-                      size: 12,
-                    },
-                  },
-                },
-              },
-              plugins: {
-                legend: {
-                  position: "bottom",
-                  labels: {
-                    padding: 20,
-                    usePointStyle: true,
-                  },
-                },
-              },
-            },
-          });
-
-          console.log(
-            '<i data-lucide="bar-chart-3" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Team comparison chart initialized',
-          );
-        } catch (error) {
-          console.error(
-            '<i data-lucide="x-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Failed to initialize comparison chart:',
-            error,
-          );
-        }
-      }
-
-      // Helper functions
-      function getTrendIcon(trend) {
-        switch (trend) {
-          case "up":
-            return '<i data-lucide="trending-up" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>️';
-          case "down":
-            return '<i data-lucide="trending-down" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>️';
-          case "stable":
-            return '<i data-lucide="chevron-right" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>';
-          default:
-            return '<i data-lucide="chevron-right" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>';
-        }
-      }
-
-      function getAlertColor(level) {
-        switch (level) {
-          case "high":
-            return "alert-red";
-          case "medium":
-            return "alert-yellow";
-          case "low":
-            return "alert-green";
-          default:
-            return "alert-yellow";
-        }
-      }
-
-      function getWellnessColor(status) {
-        switch (status) {
-          case "good":
-            return "alert-green";
-          case "warning":
-            return "alert-yellow";
-          case "concern":
-            return "alert-red";
-          default:
-            return "alert-yellow";
-        }
-      }
-
-      // Global functions for UI interactions
-      window.filterAthletes = function () {
-        const filter = document.getElementById("position-filter").value;
-        const cards = document.querySelectorAll(".athlete-card");
-
-        cards.forEach((card) => {
-          if (filter === "all" || card.dataset.position === filter) {
-            card.style.display = "block";
-          } else {
-            card.style.display = "none";
-          }
-        });
-      };
-
-      window.filterAlerts = function () {
-        console.log("Filtering alerts...");
-        // Implementation would filter alerts based on priority level
-      };
-
-      window.updateTeamStats = function () {
-        const period = document.getElementById("period-filter").value;
-        console.log("Updating team stats for period:", period);
-        // Implementation would fetch data for different time periods
-      };
-
-      window.viewAthleteDetails = function (athleteId) {
-        console.log("👤 Viewing details for athlete:", athleteId);
-        // This would open a detailed view modal or navigate to athlete detail page
-        const athlete = MOCK_TEAM_DATA.athletes.find((a) => a.id === athleteId);
-        if (athlete) {
-          authManager.showInfo(
-            `Opening detailed view for ${athlete.name}. This would show comprehensive performance history, wellness trends, and training recommendations.`,
-          );
-        }
-      };
-
-      window.messageAthlete = function (athleteId) {
-        console.log(
-          '<i data-lucide="message-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Messaging athlete:',
-          athleteId,
-        );
-        const athlete = MOCK_TEAM_DATA.athletes.find((a) => a.id === athleteId);
-        if (athlete) {
-          authManager.showInfo(
-            `Opening messaging interface for ${athlete.name}. This would integrate with team communication tools.`,
-          );
-        }
-      };
-
-      window.exportTeamReport = function () {
-        console.log(
-          '<i data-lucide="bar-chart-3" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Exporting team report...',
-        );
-        authManager.showSuccess(
-          "Team performance report would be generated and exported as PDF/Excel format with comprehensive analytics.",
-        );
-      };
-
-      window.scheduleTeamMeeting = function () {
-        console.log(
-          '<i data-lucide="calendar" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Scheduling team meeting...',
-        );
-        authManager.showInfo(
-          "Integration with calendar system would open here to schedule team meetings and training sessions.",
-        );
-      };
-    </script>
+    <!-- Notification Panel -->
+    <div id="notification-panel" class="notification-panel">
+      <div class="notification-header">
+        <h3>
+          <i data-lucide="bell"></i>
+          Notifications
+        </h3>
+        <button
+          onclick="toggleNotifications()"
+          aria-label="Close notifications"
+        >
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div id="notification-list" class="notification-list">
+    <!-- Notifications will be populated by JavaScript -->
+      </div>
+      <div class="notification-actions">
+        <button class="notification-action-btn" onclick="markAllAsRead()">
+          <i data-lucide="check-circle"></i>
+          Mark all as read
+        </button>
+      </div>
+    </div>
 
     <!-- Footer -->
     <footer role="contentinfo" class="main-footer">
@@ -717,7 +421,7 @@
           <h4>Quick Links</h4>
           <nav aria-label="Footer navigation">
             <ul>
-              <li><a href="/dashboard.html">Dashboard</a></li>
+              <li><a href="/coach-dashboard.html">Coach Dashboard</a></li>
               <li><a href="/training.html">Training</a></li>
               <li><a href="/roster.html">Roster</a></li>
               <li><a href="/analytics.html">Analytics</a></li>

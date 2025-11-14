@@ -1,305 +1,505 @@
 /* ================================================================
-   COACH-DASHBOARD PAGE STYLES - FlagFit Pro
+   COACH DASHBOARD PAGE STYLES - FlagFit Pro
    Page-specific styles for coach-dashboard.html
    ================================================================ */
 
-.coach-dashboard {
-  background: var(--dark-bg-primary);
+/* Dashboard Container */
+.dashboard-container {
+  display: flex;
   min-height: 100vh;
+  background: var(--surface-primary);
 }
 
-.coach-header {
-  background: var(--dark-card-bg);
-  border: 1px solid var(--dark-border);
-  padding: var(--space-6);
-}
-
-.coach-title {
-  font-size: var(--text-h1);
-  font-weight: var(--font-bold);
-  color: var(--dark-text-primary);
-  margin-bottom: var(--space-2);
-}
-
-.coach-subtitle {
-  color: var(--dark-text-secondary);
-  font-size: var(--text-lg);
-}
-
-.coach-content {
-  padding: var(--space-8);
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-.athlete-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: var(--space-6);
-  margin-bottom: var(--space-8);
-}
-
-.athlete-card {
-  background: var(--dark-card-bg);
-  border-radius: var(--radius-xl);
-  padding: var(--space-6);
-  border: 1px solid var(--dark-border);
-  position: relative;
-  overflow: hidden;
-}
-
-.athlete-header {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  margin-bottom: var(--space-4);
-}
-
-.athlete-avatar {
-  width: 60px;
-  height: 60px;
-  border-radius: var(--radius-full);
-  background: linear-gradient(135deg, var(--primary), var(--accent));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--var(--dark-text-primary));
-  font-weight: var(--font-bold);
-  font-size: var(--text-xl);
-}
-
-.athlete-info h3 {
-  font-weight: var(--font-semibold);
-  color: var(--dark-text-primary);
-  margin-bottom: var(--space-1);
-}
-
-.athlete-position {
-  color: var(--dark-text-secondary);
-  font-size: var(--text-sm);
-}
-
-.performance-indicators {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-3);
-  margin-bottom: var(--space-4);
-}
-
-.indicator {
-  text-align: center;
-  padding: var(--space-3);
-  background: var(--gray-50);
-  border-radius: var(--radius-lg);
-}
-
-.indicator-value {
-  font-size: var(--text-xl);
-  font-weight: var(--font-bold);
-  color: var(--dark-text-primary);
-}
-
-.indicator-label {
-  font-size: var(--text-xs);
-  color: var(--dark-text-secondary);
-  margin-top: var(--space-1);
-}
-
-.trend-indicator {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  margin-left: var(--space-1);
-  font-size: var(--text-xs);
-}
-
-.trend-up {
-  color: var(--success);
-}
-.trend-down {
-  color: var(--error);
-}
-.trend-stable {
-  color: var(--warning);
-}
-
-.wellness-status {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--space-3);
-  background: var(--gray-50);
-  border-radius: var(--radius-lg);
-  margin-bottom: var(--space-4);
-}
-
-.wellness-score {
-  font-size: var(--text-lg);
-  font-weight: var(--font-semibold);
-  color: var(--dark-text-primary);
-}
-
-.alert-indicator {
-  width: 12px;
-  height: 12px;
-  border-radius: var(--radius-full);
-  margin-left: var(--space-2);
-}
-
-.alert-green {
-  background: var(--success);
-}
-.alert-yellow {
-  background: var(--warning);
-}
-.alert-red {
-  background: var(--error);
-}
-
-.athlete-actions {
-  display: flex;
-  gap: var(--space-2);
-}
-
-.action-btn {
+/* Main Content Area */
+.main-content {
   flex: 1;
-  padding: var(--space-2);
-  border: 1px solid var(--color-border-primary);
-  border-radius: var(--radius-md);
-  background: var(--dark-card-bg);
-  color: var(--gray-700);
-  font-size: var(--text-sm);
-  cursor: pointer;
-  transition: var(--hover-transition);
-}
-
-.action-btn:hover {
-  background: var(--gray-50);
-  border-color: var(--primary);
-}
-
-.team-overview {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: var(--space-8);
-  margin-bottom: var(--space-8);
-}
-
-.team-stats {
-  background: var(--dark-card-bg);
-  border-radius: var(--radius-xl);
-  padding: var(--space-6);
-  border: 1px solid var(--dark-border);
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-4);
-}
-
-.stat-item {
-  text-align: center;
-  padding: var(--space-4);
-  background: var(--gray-50);
-  border-radius: var(--radius-lg);
-}
-
-.stat-value {
-  font-size: var(--text-h2);
-  font-weight: var(--font-bold);
-  color: var(--primary);
-  margin-bottom: var(--space-1);
-}
-
-.stat-label {
-  font-size: var(--text-sm);
-  color: var(--dark-text-secondary);
-}
-
-.alerts-panel {
-  background: var(--dark-card-bg);
-  border-radius: var(--radius-xl);
-  padding: var(--space-6);
-  border: 1px solid var(--dark-border);
-}
-
-.alert-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3);
-  margin-bottom: var(--space-3);
-  background: var(--gray-50);
-  border-radius: var(--radius-lg);
-  border-left: 4px solid var(--warning);
-}
-
-.alert-item.high-priority {
-  border-left-color: var(--error);
-}
-
-.alert-item.low-priority {
-  border-left-color: var(--success);
-}
-
-.performance-comparison {
-  background: var(--dark-card-bg);
-  border-radius: var(--radius-xl);
-  padding: var(--space-6);
-  border: 1px solid var(--dark-border);
-  margin-bottom: var(--space-8);
-}
-
-.comparison-chart {
-  height: 400px;
-  margin-top: var(--space-4);
-}
-
-.filter-controls {
-  display: flex;
-  gap: var(--space-4);
-  margin-bottom: var(--space-6);
-  padding: var(--space-4);
-  background: var(--dark-card-bg);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--dark-border);
-}
-
-.filter-group {
+  margin-left: 250px;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
+  transition: margin-left var(--transition);
+  padding-top: 64px; /* Account for fixed top bar */
 }
 
-.filter-label {
-  font-size: var(--text-sm);
-  font-weight: var(--font-medium);
-  color: var(--gray-700);
-}
-
-.filter-select {
-  padding: var(--space-2);
-  border: 1px solid var(--color-border-primary);
-  border-radius: var(--radius-md);
-  font-size: var(--text-sm);
-  background: var(--dark-card-bg);
+@media (max-width: 1024px) {
+  .main-content {
+    margin-left: 0;
+  }
 }
 
 @media (max-width: 768px) {
-  .coach-content {
-    padding: var(--space-4);
+  .main-content {
+    padding-top: 56px; /* Mobile top bar height */
   }
+}
 
-  .team-overview {
+/* Coach Dashboard Layout */
+.coach-dashboard-layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding: var(--space-6);
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.coach-dashboard-header {
+  margin-bottom: var(--space-4);
+}
+
+.coach-dashboard-header h1 {
+  font-size: var(--typography-heading-xl-size, 2rem);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+}
+
+/* Top Row: 3 Main Stats */
+.stats-top-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+@media (max-width: 768px) {
+  .stats-top-row {
     grid-template-columns: 1fr;
   }
+}
 
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
+.stat-card {
+  background: var(--surface-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition);
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.stat-label {
+  font-size: var(--typography-body-sm-size);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-2);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+}
+
+.stat-value {
+  font-size: var(--typography-heading-lg-size);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-brand-primary);
+}
+
+/* Wellness Snapshot Card */
+.wellness-snapshot-card {
+  background: var(--surface-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: var(--space-6);
+}
+
+.wellness-snapshot-card h2 {
+  font-size: var(--typography-heading-md-size);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-4) 0;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+}
+
+.wellness-table-container {
+  overflow-x: auto;
+}
+
+.wellness-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--typography-body-md-size);
+}
+
+.wellness-table thead {
+  background: var(--surface-tertiary);
+}
+
+.wellness-table th {
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  font-size: var(--typography-body-sm-size);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  border-bottom: 2px solid var(--color-border-primary);
+}
+
+.wellness-table td {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border-primary);
+  color: var(--color-text-primary);
+}
+
+.wellness-table tbody tr {
+  transition: background-color var(--transition);
+}
+
+.wellness-table tbody tr:hover {
+  background: var(--surface-tertiary);
+}
+
+.wellness-table tbody tr.warning-row {
+  background: rgba(245, 158, 11, 0.1);
+  border-left: 3px solid var(--color-warning);
+}
+
+.wellness-table tbody tr.high-risk-row {
+  background: rgba(239, 68, 68, 0.1);
+  border-left: 3px solid var(--color-error);
+}
+
+.flag-warning {
+  color: var(--color-warning);
+  font-weight: var(--font-weight-semibold);
+}
+
+.flag-high-risk {
+  color: var(--color-error);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Injury Reports Card */
+.injury-reports-card {
+  background: var(--surface-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: var(--space-6);
+}
+
+.injury-reports-card h2 {
+  font-size: var(--typography-heading-md-size);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-4) 0;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+}
+
+.injury-reports-content h3 {
+  font-size: var(--typography-heading-sm-size);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-4) 0;
+}
+
+.injury-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--space-4) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.injury-item {
+  padding: var(--space-3);
+  background: var(--surface-primary);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--color-error);
+}
+
+.injury-player {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.injury-description {
+  color: var(--color-text-secondary);
+}
+
+.btn-view-all {
+  padding: var(--space-2) var(--space-4);
+  background: transparent;
+  color: var(--color-brand-primary);
+  border: 1px solid var(--color-brand-primary);
+  border-radius: var(--radius-md);
+  font-size: var(--typography-body-sm-size);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.btn-view-all:hover {
+  background: var(--color-brand-primary);
+  color: white;
+}
+
+/* Training Management Card */
+.training-management-card {
+  background: var(--surface-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: var(--space-6);
+}
+
+.training-management-card h2 {
+  font-size: var(--typography-heading-md-size);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-4) 0;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+}
+
+.training-management-content h3 {
+  font-size: var(--typography-heading-sm-size);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-4) 0;
+}
+
+.session-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.session-time {
+  font-size: var(--typography-body-lg-size);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.session-stats {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.session-stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stat-label {
+  font-size: var(--typography-body-md-size);
+  color: var(--color-text-secondary);
+}
+
+.stat-value {
+  font-size: var(--typography-body-md-size);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.stat-value.warning {
+  color: var(--color-warning);
+}
+
+.session-actions {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.btn-adjust-load,
+.btn-send-reminder {
+  padding: var(--space-3) var(--space-6);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--typography-body-md-size);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.btn-adjust-load {
+  background: var(--color-brand-primary);
+  color: white;
+}
+
+.btn-adjust-load:hover {
+  background: var(--color-brand-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-send-reminder {
+  background: var(--surface-tertiary);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border-primary);
+}
+
+.btn-send-reminder:hover {
+  background: var(--surface-primary);
+  border-color: var(--color-brand-primary);
+}
+
+/* AI Coaching Card */
+.ai-coaching-card {
+  background: var(--surface-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+}
+
+.ai-coaching-card h2 {
+  font-size: var(--typography-heading-md-size);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-4) 0;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+}
+
+.ai-coaching-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.ai-suggestion {
+  font-size: var(--typography-body-md-size);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-relaxed);
+}
+
+.suggestion-list {
+  margin: var(--space-2) 0 0 var(--space-6);
+  padding: 0;
+  list-style: disc;
+  color: var(--color-text-secondary);
+}
+
+.suggestion-list li {
+  margin-bottom: var(--space-2);
+}
+
+.ai-actions {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.btn-apply-suggestion,
+.btn-ask-more {
+  padding: var(--space-3) var(--space-6);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--typography-body-md-size);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.btn-apply-suggestion {
+  background: var(--color-brand-primary);
+  color: white;
+}
+
+.btn-apply-suggestion:hover {
+  background: var(--color-brand-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-ask-more {
+  background: transparent;
+  color: var(--color-brand-primary);
+  border: 1px solid var(--color-brand-primary);
+}
+
+.btn-ask-more:hover {
+  background: var(--color-brand-primary);
+  color: white;
+}
+
+/* Dark Theme Adjustments */
+body[data-theme="dark"] .stat-card,
+html[data-theme="dark"] .stat-card,
+body[data-theme="dark"] .wellness-snapshot-card,
+html[data-theme="dark"] .wellness-snapshot-card,
+body[data-theme="dark"] .injury-reports-card,
+html[data-theme="dark"] .injury-reports-card,
+body[data-theme="dark"] .training-management-card,
+html[data-theme="dark"] .training-management-card,
+body[data-theme="dark"] .ai-coaching-card,
+html[data-theme="dark"] .ai-coaching-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+body[data-theme="dark"] .injury-item,
+html[data-theme="dark"] .injury-item {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .coach-dashboard-layout {
+    padding: var(--space-4);
   }
-
-  .filter-controls {
+  
+  .coach-dashboard-header h1 {
+    font-size: var(--typography-heading-md-size);
+  }
+  
+  .wellness-table {
+    font-size: var(--typography-body-sm-size);
+  }
+  
+  .wellness-table th,
+  .wellness-table td {
+    padding: var(--space-2) var(--space-3);
+  }
+  
+  .session-actions,
+  .ai-actions {
     flex-direction: column;
+  }
+  
+  .btn-adjust-load,
+  .btn-send-reminder,
+  .btn-apply-suggestion,
+  .btn-ask-more {
+    width: 100%;
+  }
+}
+
+/* Sidebar Overlay */
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition);
+}
+
+body.menu-open .sidebar-overlay {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+@media (min-width: 1025px) {
+  .sidebar-overlay {
+    display: none;
   }
 }
