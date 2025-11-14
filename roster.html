@@ -165,42 +165,15 @@
       <!-- Top Bar -->
       <div class="top-bar" role="banner">
         <div class="header-left">
-          <!-- Global Search (combobox pattern) -->
-          <div class="search-box">
-            <label for="global-search" class="sr-only"
-              >Search for players, teams and more</label
-            >
-            <span class="search-icon" aria-hidden="true">
-              <i data-lucide="search" class="icon-16"></i>
-            </span>
-
-            <input
-              id="global-search"
-              class="search-input"
-              type="text"
-              placeholder="Search for players, teams & more"
-              role="combobox"
-              aria-autocomplete="list"
-              aria-haspopup="listbox"
-              aria-expanded="false"
-              aria-owns="search-results"
-              aria-controls="search-results"
-              aria-activedescendant=""
-              autocomplete="off"
-              inputmode="search"
-            />
-
-            <div id="search-status" class="sr-only" aria-live="polite"></div>
-
-            <div
-              id="search-results"
-              class="search-results"
-              role="listbox"
-              hidden
-            ></div>
+          <div class="page-title-section">
+            <h1 class="page-title">
+              <i data-lucide="users" class="icon-18" style="display: inline-block; vertical-align: middle; margin-right: var(--primitive-space-8);"></i>
+              Team Roster
+            </h1>
+            <p class="page-subtitle">International Flag Football Team</p>
           </div>
         </div>
-
+        
         <div class="header-right">
           <!-- Notifications -->
           <div class="header-icon-wrap">
@@ -215,11 +188,7 @@
               <i data-lucide="bell" class="icon-18"></i>
               <span id="notification-badge" class="badge" hidden>3</span>
             </button>
-            <span
-              id="notification-live"
-              class="sr-only"
-              aria-live="polite"
-            ></span>
+            <span id="notification-live" class="sr-only" aria-live="polite"></span>
           </div>
 
           <!-- Settings -->
@@ -230,14 +199,7 @@
           <!-- Theme Toggle -->
           <div class="theme-toggle-container" aria-label="Theme toggle">
             <!-- JS inserts switch; fallback below -->
-            <button
-              class="theme-toggle-fallback"
-              type="button"
-              data-theme-toggle
-              hidden
-            >
-              Theme
-            </button>
+            <button class="theme-toggle-fallback" type="button" data-theme-toggle hidden>Theme</button>
           </div>
 
           <!-- User Menu -->
@@ -256,61 +218,47 @@
       </div>
 
       <main
-        class="main-content u-flex-1 u-min-width-0 u-overflow-x-hidden u-overflow-y-auto u-padding-24 u-bg-primary"
+        class="main-content u-flex-1 u-min-width-0 u-bg-primary"
       >
-        <div
-          class="header-section u-bg-primary u-padding-24 u-radius-xl u-margin-bottom-24 u-border-secondary"
-          style="border: 1px solid var(--color-border-secondary)"
-        >
-          <h1
-            class="u-text-heading-xl u-font-weight-700 u-text-primary u-margin-bottom-8"
-          >
-            International Flag Football Team
-          </h1>
-          <p class="u-text-body-lg u-text-secondary">
-            Meet our world-class athletes and coaching staff representing 12
-            countries
-          </p>
+        <!-- Team Header Card -->
+        <div class="card card-elevated">
+          <div class="card-body">
+            <h2 class="u-text-heading-lg u-font-weight-700 u-text-primary u-margin-bottom-8">
+              International Flag Football Team
+            </h2>
+            <p class="u-text-body-md u-text-secondary u-margin-0">
+              Meet our world-class athletes and coaching staff representing 12 countries
+            </p>
+          </div>
         </div>
 
     <!-- Team Overview Stats -->
-        <div
-          class="team-stats u-bg-primary u-radius-xl u-padding-24 u-margin-bottom-24 u-border-secondary"
-          style="border: 1px solid var(--color-border-secondary)"
-        >
-          <h2 class="u-text-heading-md u-text-primary u-margin-bottom-16">
-            <i
-              data-lucide="trophy"
-              style="
-                width: 16px;
-                height: 16px;
-                display: inline-block;
-                vertical-align: middle;
-                color: var(--icon-color-primary);
-                stroke: var(--icon-color-primary);
-              "
-            ></i>
-            Team Overview
-          </h2>
-          <div
-            class="team-overview u-display-grid u-gap-16"
-            id="team-overview"
-            style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))"
-          >
-            <!-- Stats will be populated by JavaScript -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title u-display-flex u-align-center u-gap-8 u-margin-0">
+              <i data-lucide="trophy" class="icon-20" style="color: var(--color-brand-primary);"></i>
+              Team Overview
+            </h2>
+          </div>
+          <div class="card-body">
+            <div
+              class="team-overview u-display-grid"
+              id="team-overview"
+              style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))"
+            >
+              <!-- Stats will be populated by JavaScript -->
+            </div>
           </div>
         </div>
 
     <!-- Coaching Staff -->
-        <div class="position-section u-margin-bottom-64">
-          <h2
-            class="position-title u-text-heading-xl u-font-weight-700 u-text-primary u-margin-bottom-16 u-display-flex u-align-center u-gap-8"
-          >
-            <span class="position-icon">👔</span>
+        <div class="position-section">
+          <h2 class="u-text-heading-xl u-font-weight-700 u-text-primary u-display-flex u-align-center u-gap-8">
+            <i data-lucide="users" class="icon-24" style="color: var(--color-brand-primary);"></i>
             Coaching Staff & Support
           </h2>
           <div
-            class="roster-grid u-display-grid u-gap-16 u-margin-top-24"
+            class="roster-grid u-display-grid"
             id="coaching-staff"
             style="grid-template-columns: repeat(auto-fill, minmax(320px, 1fr))"
           >
@@ -421,25 +369,35 @@
         }
 
         overviewContainer.innerHTML = `
-                <div class="overview-item u-text-center u-padding-16 u-bg-secondary u-radius-lg">
-                    <div class="overview-value u-text-heading-xl u-font-weight-700 u-text-brand u-margin-bottom-8">${teamStats.totalPlayers || "20"}</div>
-                    <div class="overview-label u-text-body-sm u-text-secondary">Total Players</div>
+                <div class="card card-interactive u-text-center">
+                    <div class="card-body">
+                        <div class="overview-value u-text-heading-xl u-font-weight-700 u-text-brand u-margin-bottom-8">${teamStats.totalPlayers || "20"}</div>
+                        <div class="overview-label u-text-body-sm u-text-secondary u-font-weight-500">Total Players</div>
+                    </div>
                 </div>
-                <div class="overview-item u-text-center u-padding-16 u-bg-secondary u-radius-lg">
-                    <div class="overview-value u-text-heading-xl u-font-weight-700 u-text-brand u-margin-bottom-8">${teamStats.countries || "12"}</div>
-                    <div class="overview-label u-text-body-sm u-text-secondary">Countries Represented</div>
+                <div class="card card-interactive u-text-center">
+                    <div class="card-body">
+                        <div class="overview-value u-text-heading-2xl u-font-weight-700 u-text-brand u-margin-bottom-8">${teamStats.countries || "12"}</div>
+                        <div class="overview-label u-text-body-sm u-text-secondary u-font-weight-500">Countries Represented</div>
+                    </div>
                 </div>
-                <div class="overview-item u-text-center u-padding-16 u-bg-secondary u-radius-lg">
-                    <div class="overview-value u-text-heading-xl u-font-weight-700 u-text-brand u-margin-bottom-8">${teamStats.averageAge || "26"}</div>
-                    <div class="overview-label u-text-body-sm u-text-secondary">Average Age</div>
+                <div class="card card-interactive u-text-center">
+                    <div class="card-body">
+                        <div class="overview-value u-text-heading-2xl u-font-weight-700 u-text-brand u-margin-bottom-8">${teamStats.averageAge || "26"}</div>
+                        <div class="overview-label u-text-body-sm u-text-secondary u-font-weight-500">Average Age</div>
+                    </div>
                 </div>
-                <div class="overview-item u-text-center u-padding-16 u-bg-secondary u-radius-lg">
-                    <div class="overview-value u-text-heading-xl u-font-weight-700 u-text-brand u-margin-bottom-8">${teamStats.winLossRecord || "15-3"}</div>
-                    <div class="overview-label u-text-body-sm u-text-secondary">Win-Loss Record</div>
+                <div class="card card-interactive u-text-center">
+                    <div class="card-body">
+                        <div class="overview-value u-text-heading-2xl u-font-weight-700 u-text-brand u-margin-bottom-8">${teamStats.winLossRecord || "15-3"}</div>
+                        <div class="overview-label u-text-body-sm u-text-secondary u-font-weight-500">Win-Loss Record</div>
+                    </div>
                 </div>
-                <div class="overview-item u-text-center u-padding-16 u-bg-secondary u-radius-lg">
-                    <div class="overview-value u-text-heading-xl u-font-weight-700 u-text-brand u-margin-bottom-8">${teamStats.olympicQualificationScore || "8.7"}</div>
-                    <div class="overview-label u-text-body-sm u-text-secondary">Olympic Qualification Score</div>
+                <div class="card card-interactive u-text-center">
+                    <div class="card-body">
+                        <div class="overview-value u-text-heading-2xl u-font-weight-700 u-text-brand u-margin-bottom-8">${teamStats.olympicQualificationScore || "8.7"}</div>
+                        <div class="overview-label u-text-body-sm u-text-secondary u-font-weight-500">Olympic Qualification Score</div>
+                    </div>
                 </div>
             `;
         console.log(
@@ -473,48 +431,52 @@
         staffContainer.innerHTML = staff
           .map(
             (member) => `
-                <div class="player-card staff-card u-radius-xl u-padding-24 u-text-primary">
-                    <div class="player-header u-display-flex u-align-center u-gap-16 u-margin-bottom-16">
-                        <div class="player-jersey u-radius-full u-display-flex u-align-center u-justify-center u-font-weight-700 u-text-body-lg u-text-primary">
-                            ${member.name
-                              .split(" ")
-                              .map((n) => n[0])
-                              .join("")}
+                <div class="card card-interactive">
+                    <div class="card-body">
+                        <div class="player-header u-display-flex u-align-center u-gap-16 u-margin-bottom-16">
+                            <div class="player-jersey u-radius-full u-display-flex u-align-center u-justify-center u-font-weight-700 u-text-body-lg" style="width: 56px; height: 56px; background: var(--gradient-primary); color: white;">
+                                ${member.name
+                                  .split(" ")
+                                  .map((n) => n[0])
+                                  .join("")}
+                            </div>
+                            <div class="player-info u-flex-1">
+                                <h3 class="u-text-heading-md u-font-weight-600 u-text-primary u-margin-0">
+                                    ${member.name}
+                                </h3>
+                                <div class="player-position u-text-body-sm u-text-secondary u-margin-top-4">${member.position}</div>
+                                <div class="u-text-body-sm u-text-secondary u-margin-top-2">${member.experience} experience</div>
+                            </div>
                         </div>
-                        <div class="player-info u-flex-1">
-                            <h3 class="u-text-heading-md u-font-weight-600 u-text-primary u-margin-0">${member.name} ${member.nationality}</h3>
-                            <div class="player-position u-text-body-sm u-text-secondary u-margin-y-4">${member.position}</div>
-                            <div class="player-nationality u-text-body-lg u-margin-top-4">🇬🇧 ${member.experience} experience</div>
+                        
+                        <div class="stats-grid u-display-grid u-gap-12 u-margin-top-16" style="grid-template-columns: 1fr 1fr;">
+                            <div class="stat-item u-text-center u-padding-12 u-radius-lg" style="background: var(--surface-secondary);">
+                                <div class="stat-value u-font-weight-700 u-text-body-lg u-text-brand u-margin-bottom-4">${member.experience.split(" ")[0]}</div>
+                                <div class="stat-label u-text-caption u-text-secondary">Years</div>
+                            </div>
+                            <div class="stat-item u-text-center u-padding-12 u-radius-lg" style="background: var(--surface-secondary);">
+                                <div class="stat-value u-font-weight-700 u-text-body-lg u-text-brand u-margin-bottom-4">${member.country}</div>
+                                <div class="stat-label u-text-caption u-text-secondary">Country</div>
+                            </div>
                         </div>
+                        
+                        ${
+                          member.achievements && member.achievements.length > 0
+                            ? `
+                            <div class="u-margin-top-16 u-padding-top-16" style="border-top: 1px solid var(--color-border-secondary);">
+                                <div class="u-text-caption u-text-secondary u-margin-bottom-8 u-font-weight-500">Key Achievements:</div>
+                                ${member.achievements
+                                  .slice(0, 2)
+                                  .map(
+                                    (achievement) =>
+                                      `<div class="u-text-caption u-text-primary u-margin-bottom-4">• ${achievement}</div>`,
+                                  )
+                                  .join("")}
+                            </div>
+                        `
+                            : ""
+                        }
                     </div>
-                    
-                    <div class="stats-grid u-display-grid u-gap-12 u-margin-top-16" style="grid-template-columns: 1fr 1fr;">
-                        <div class="stat-item u-text-center u-padding-12 u-bg-secondary u-radius-lg">
-                            <div class="stat-value u-font-weight-700 u-text-body-lg u-text-brand u-margin-bottom-4">${member.experience.split(" ")[0]}</div>
-                            <div class="stat-label u-text-caption u-text-secondary" style="text-transform: uppercase; letter-spacing: 0.05em;">Years</div>
-                        </div>
-                        <div class="stat-item u-text-center u-padding-12 u-bg-secondary u-radius-lg">
-                            <div class="stat-value u-font-weight-700 u-text-body-lg u-text-brand u-margin-bottom-4">${member.country}</div>
-                            <div class="stat-label u-text-caption u-text-secondary" style="text-transform: uppercase; letter-spacing: 0.05em;">Country</div>
-                        </div>
-                    </div>
-                    
-                    ${
-                      member.achievements
-                        ? `
-                        <div class="u-margin-top-16 u-padding-top-16" style="border-top: 1px solid rgba(255,255,255,0.2);">
-                            <div class="u-text-caption u-text-secondary u-margin-bottom-8">Key Achievements:</div>
-                            ${member.achievements
-                              .slice(0, 2)
-                              .map(
-                                (achievement) =>
-                                  `<div class="u-text-caption u-text-primary u-margin-bottom-4">• ${achievement}</div>`,
-                              )
-                              .join("")}
-                        </div>
-                    `
-                        : ""
-                    }
                 </div>
             `,
           )
@@ -565,12 +527,12 @@
           if (players && players.length > 0) {
             totalPlayersLoaded += players.length;
             html += `
-                        <div class="position-section u-margin-bottom-64">
-                            <h2 class="position-title u-text-heading-xl u-font-weight-700 u-text-primary u-margin-bottom-16 u-display-flex u-align-center u-gap-8">
-                                <span class="position-icon">${position.icon}</span>
+                        <div class="position-section">
+                            <h2 class="u-text-heading-xl u-font-weight-700 u-text-primary u-display-flex u-align-center u-gap-8">
+                                ${position.icon}
                                 ${position.title} (${players.length})
                             </h2>
-                            <div class="roster-grid u-display-grid u-gap-16 u-margin-top-24" style="grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));">
+                            <div class="roster-grid u-display-grid" style="grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));">
                                 ${players.map((player) => createPlayerCard(player)).join("")}
                             </div>
                         </div>
@@ -600,36 +562,40 @@
         const secondaryStat = getPlayerSecondaryStat(player);
 
         return `
-                <div class="player-card hover-lift glow-hover u-radius-xl u-padding-24 u-position-relative u-overflow-hidden">
-                    <div class="player-header u-display-flex u-align-center u-gap-16 u-margin-bottom-16">
-                        <div class="player-jersey u-radius-full u-display-flex u-align-center u-justify-center u-font-weight-700 u-text-body-lg u-text-primary">${player.jersey}</div>
-                        <div class="player-info u-flex-1">
-                            <h3 class="u-text-heading-md u-font-weight-600 u-text-primary u-margin-0">${player.name} ${player.nationality}</h3>
-                            <div class="player-position u-text-body-sm u-text-secondary u-margin-y-4">${player.position}</div>
-                            <div class="player-nationality u-text-body-lg u-margin-top-4">${player.country}</div>
+                <div class="card card-interactive u-position-relative">
+                    ${player.isPrimary ? `<div class="card-accent-bar"></div>` : ''}
+                    <div class="card-body">
+                        <div class="player-header u-display-flex u-align-center u-gap-16 u-margin-bottom-16">
+                            <div class="player-jersey u-radius-full u-display-flex u-align-center u-justify-center u-font-weight-700 u-text-body-lg" style="width: 56px; height: 56px; background: var(--gradient-primary); color: white;">
+                                ${player.jersey}
+                            </div>
+                            <div class="player-info u-flex-1">
+                                <h3 class="u-text-heading-md u-font-weight-600 u-text-primary u-margin-0">${player.name}</h3>
+                                <div class="player-position u-text-body-sm u-text-secondary u-margin-top-4">${player.position}</div>
+                                <div class="player-nationality u-text-body-sm u-text-secondary u-margin-top-2">${player.country} ${player.nationality}</div>
+                            </div>
+                            ${
+                              player.isPrimary
+                                ? `
+                                <div class="u-padding-y-2 u-padding-x-6 u-radius-sm u-text-caption u-font-weight-700" style="background: var(--color-brand-primary); color: white;">
+                                    STARTER
+                                </div>
+                            `
+                                : ""
+                            }
+                        </div>
+                        
+                        <div class="stats-grid u-display-grid u-gap-12 u-margin-top-16" style="grid-template-columns: 1fr 1fr;">
+                            <div class="stat-item u-text-center u-padding-12 u-radius-lg" style="background: var(--surface-secondary);">
+                                <div class="stat-value u-font-weight-700 u-text-body-lg u-text-brand u-margin-bottom-4">${primaryStat.value}</div>
+                                <div class="stat-label u-text-caption u-text-secondary" style="text-transform: uppercase; letter-spacing: 0.05em;">${primaryStat.label}</div>
+                            </div>
+                            <div class="stat-item u-text-center u-padding-12 u-radius-lg" style="background: var(--surface-secondary);">
+                                <div class="stat-value u-font-weight-700 u-text-body-lg u-text-brand u-margin-bottom-4">${secondaryStat.value}</div>
+                                <div class="stat-label u-text-caption u-text-secondary" style="text-transform: uppercase; letter-spacing: 0.05em;">${secondaryStat.label}</div>
+                            </div>
                         </div>
                     </div>
-                    
-                    <div class="stats-grid u-display-grid u-gap-12 u-margin-top-16" style="grid-template-columns: 1fr 1fr;">
-                        <div class="stat-item u-text-center u-padding-12 u-bg-secondary u-radius-lg">
-                            <div class="stat-value u-font-weight-700 u-text-body-lg u-text-brand u-margin-bottom-4">${primaryStat.value}</div>
-                            <div class="stat-label u-text-caption u-text-secondary" style="text-transform: uppercase; letter-spacing: 0.05em;">${primaryStat.label}</div>
-                        </div>
-                        <div class="stat-item u-text-center u-padding-12 u-bg-secondary u-radius-lg">
-                            <div class="stat-value u-font-weight-700 u-text-body-lg u-text-brand u-margin-bottom-4">${secondaryStat.value}</div>
-                            <div class="stat-label u-text-caption u-text-secondary" style="text-transform: uppercase; letter-spacing: 0.05em;">${secondaryStat.label}</div>
-                        </div>
-                    </div>
-                    
-                    ${
-                      player.isPrimary
-                        ? `
-                        <div class="u-position-absolute u-padding-y-2 u-padding-x-6 u-radius-sm u-text-caption u-font-weight-700" style="top: 12px; right: 12px; background: var(--color-brand-secondary); color: var(--color-text-primary);">
-                            STARTER
-                        </div>
-                    `
-                        : ""
-                    }
                 </div>
             `;
       }

@@ -1,197 +1,28 @@
 /* ================================================================
    ROSTER PAGE STYLES - FlagFit Pro
    Page-specific styles for roster.html
+   
+   Note: Sidebar styles are imported from src/css/components/sidebar.css
+   Note: Footer styles are imported from src/css/components/footer.css
    ================================================================ */
 
+/* Dashboard Container */
 .dashboard-container {
   display: flex;
   min-height: 100vh;
-  background: var(--dark-bg-primary);
-}
-
-/* Modern Sidebar - Enhanced Design (matching dashboard.html) */
-.sidebar {
-  width: 250px;
-  height: 100vh;
-  position: fixed;
-  left: 0;
-  top: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 24px;
-  z-index: var(--z-index-dropdown, 1000);
-  gap: 12px;
-  transition: all 0.2s ease;
-}
-
-/* Dark Theme Sidebar */
-body[data-theme="dark"] .sidebar,
-html[data-theme="dark"] .sidebar {
-  background: #1a1a1a;
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow:
-    4px 0 24px rgba(0, 0, 0, 0.3),
-    inset -1px 0 0 rgba(255, 255, 255, 0.05);
-}
-
-/* Light Theme Sidebar */
-body[data-theme="light"] .sidebar,
-html[data-theme="light"] .sidebar {
-  background: #ffffff;
-  border-right: 1px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-}
-
-.sidebar-logo {
-  width: 48px;
-  height: 48px;
-  border-radius: 16px;
-  background: linear-gradient(
-    135deg,
-    #10c96b 0%,
-    #0ab85a 50%,
-    #089949 100%
-  );
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  margin-bottom: 8px;
-  box-shadow:
-    0 4px 16px rgba(16, 201, 107, 0.35),
-    0 2px 8px rgba(16, 201, 107, 0.25),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
-}
-
-.sidebar-logo:hover {
-  transform: scale(1.08) rotate(5deg);
-  box-shadow:
-    0 8px 24px rgba(16, 201, 107, 0.45),
-    0 4px 12px rgba(16, 201, 107, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
-}
-
-.nav-section {
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
-.nav-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px;
-  border-radius: 12px;
-  color: var(--color-text-secondary);
-  text-decoration: none;
-  transition: all 0.3s ease;
   position: relative;
-  width: 100%;
-  justify-content: flex-start;
-  min-height: 48px;
-}
-
-.nav-item::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 3px;
-  height: 0;
-  background: var(--primitive-primary-500);
-  border-radius: 0 2px 2px 0;
-  transition: height 0.3s ease;
-}
-
-.nav-item:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--color-text-primary);
-  transform: translateX(4px);
-}
-
-.nav-item:hover::before {
-  height: 60%;
-}
-
-.nav-item.active {
-  background: rgba(16, 201, 107, 0.1);
-  color: var(--primitive-primary-500);
-}
-
-.nav-item.active::before {
-  height: 80%;
-  background: var(--primitive-primary-500);
-}
-
-.nav-item.active .nav-item-icon {
-  background: rgba(16, 201, 107, 0.15);
-  color: var(--primitive-primary-500);
-}
-
-.nav-item-icon {
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: all 0.3s ease;
-}
-
-.nav-item-label {
-  opacity: 1;
-  transform: translateX(0);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  white-space: nowrap;
-  font-weight: var(--font-weight-medium, 500);
-  font-size: var(--text-sm);
-}
-
-body[data-theme="dark"] .nav-item,
-html[data-theme="dark"] .nav-item {
-  color: rgba(255, 255, 255, 0.7);
-}
-
-body[data-theme="dark"] .nav-item:hover,
-html[data-theme="dark"] .nav-item:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.9);
-}
-
-body[data-theme="dark"] .nav-item.active,
-html[data-theme="dark"] .nav-item.active {
-  background: rgba(16, 201, 107, 0.15);
-  color: var(--primitive-primary-500);
-}
-
-body[data-theme="light"] .nav-item,
-html[data-theme="light"] .nav-item {
-  color: rgba(0, 0, 0, 0.6);
-}
-
-body[data-theme="light"] .nav-item:hover,
-html[data-theme="light"] .nav-item:hover {
-  background: rgba(0, 0, 0, 0.05);
-  color: rgba(0, 0, 0, 0.9);
-}
-
-body[data-theme="light"] .nav-item.active,
-html[data-theme="light"] .nav-item.active {
-  background: rgba(16, 201, 107, 0.1);
-  color: var(--primitive-primary-500);
 }
 
 /* Page-specific styles that can't be replaced with utilities */
+/* Note: header.css sets padding-top: 64px !important, so we override it to add spacing */
 .main-content {
   margin-left: 250px;
   width: calc(100% - 250px); /* ✅ Use width instead of max-width */
-  padding: var(--spacing-layout-md, 32px) var(--spacing-layout-lg, 40px);
+  padding-top: calc(64px + var(--space-6, 24px)) !important; /* Override header.css: 64px header + 24px spacing */
+  padding-right: var(--space-6, 24px);
+  padding-bottom: var(--space-8, 48px); /* Extra bottom padding to prevent content cutoff */
+  padding-left: var(--space-6, 24px);
   box-sizing: border-box;
 }
 
@@ -199,46 +30,205 @@ html[data-theme="light"] .nav-item.active {
   .main-content {
     margin-left: 0;
     width: 100%; /* ✅ Full width on mobile */
-    padding: var(--spacing-layout-xs, 20px) var(--spacing-component-lg, 24px);
+    padding-top: calc(64px + var(--space-5, 20px)) !important; /* Override header.css */
+    padding-right: var(--space-5, 20px);
+    padding-bottom: var(--space-8, 48px); /* Extra bottom padding */
+    padding-left: var(--space-5, 20px);
+  }
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    padding-top: calc(56px + var(--space-4, 16px)) !important; /* Override header.css mobile rule */
+    padding-right: var(--space-4, 16px);
+    padding-bottom: var(--space-8, 48px); /* Extra bottom padding */
+    padding-left: var(--space-4, 16px);
   }
 }
 
 @media (max-width: 480px) {
   .main-content {
-    padding: var(--spacing-layout-xs, 16px) var(--spacing-component-md, 16px);
+    padding-top: calc(56px + var(--space-3, 12px)) !important;
+    padding-right: var(--space-3, 12px);
+    padding-bottom: var(--space-6, 24px); /* Adequate bottom padding */
+    padding-left: var(--space-3, 12px);
   }
 }
 
 /* Top Bar styles are now in src/css/components/header.css */
-.player-card {
-  background: var(--surface-primary);
-  border: 1px solid var(--color-border-secondary);
-  transition: all var(--motion-duration-fast)
-    var(--motion-easing-productive);
+
+/* Roster Page Specific Styles */
+
+/* Position Section Headers */
+.position-section {
+  margin-bottom: var(--space-8, 48px);
 }
-.player-card:hover {
-  transform: translateY(-2px);
-  border-color: var(--color-brand-primary);
+
+.position-section:last-child {
+  margin-bottom: 0;
 }
+
+.position-section h2 {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
+  margin-bottom: var(--space-6, 24px);
+  margin-top: 0;
+}
+
+/* Roster Grid */
+.roster-grid {
+  display: grid;
+  gap: var(--space-6, 24px);
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+}
+
+@media (max-width: 768px) {
+  .roster-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-4, 16px);
+  }
+}
+
+/* Player Card Enhancements */
+.player-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4, 16px);
+  margin-bottom: var(--space-4, 16px);
+}
+
 .player-jersey {
-  width: 50px;
-  height: 50px;
-  background: linear-gradient(
-    135deg,
-    var(--color-brand-primary),
-    var(--color-brand-secondary)
-  );
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--font-weight-bold);
+  border-radius: 50%;
 }
-.staff-card {
-  background: linear-gradient(
-    135deg,
-    var(--color-brand-primary),
-    var(--color-brand-secondary)
-  );
+
+.player-info {
+  flex: 1;
+  min-width: 0;
 }
-.staff-card .player-jersey {
-  background: rgba(255, 255, 255, 0.2);
+
+.player-info h3 {
+  margin: 0;
+  margin-bottom: var(--space-1, 4px);
 }
-.position-icon {
-  font-size: var(--typography-heading-lg-size);
+
+.player-position {
+  margin-top: var(--space-2, 8px);
+  margin-bottom: 0;
+  color: var(--color-text-secondary);
+}
+
+.player-nationality {
+  margin-top: var(--space-1, 4px);
+  margin-bottom: 0;
+  color: var(--color-text-secondary);
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  gap: var(--space-3, 12px);
+  margin-top: var(--space-4, 16px);
+}
+
+.stat-item {
+  text-align: center;
+  padding: var(--space-4, 16px) var(--space-3, 12px);
+  border-radius: var(--radius-lg);
+}
+
+.stat-value {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-brand-primary);
+  margin-bottom: var(--space-2, 8px);
+  line-height: 1.2;
+}
+
+.stat-label {
+  font-size: var(--text-xs, 12px);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+/* Overview Items */
+.overview-item {
+  text-align: center;
+}
+
+.overview-value {
+  font-size: var(--text-3xl, 30px);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-brand-primary);
+  margin-bottom: var(--space-2, 8px);
+  line-height: 1.2;
+}
+
+.overview-label {
+  font-size: var(--text-sm, 14px);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+  margin: 0;
+}
+
+/* Team Stats Card */
+.team-stats {
+  margin-bottom: var(--space-6, 24px);
+}
+
+.team-overview {
+  display: grid;
+  gap: var(--space-4, 16px);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+@media (max-width: 768px) {
+  .team-overview {
+    grid-template-columns: 1fr;
+    gap: var(--space-3, 12px);
+  }
+}
+
+/* Card spacing improvements */
+.main-content > .card {
+  margin-bottom: var(--space-6, 24px);
+}
+
+.main-content > .card:last-child {
+  margin-bottom: 0;
+}
+
+/* Card header spacing adjustments */
+.card .card-header {
+  margin-bottom: 0;
+}
+
+.card .card-header .card-title {
+  margin: 0;
+}
+
+/* Section spacing */
+.main-content > .card:first-child {
+  margin-top: 0;
+}
+
+/* Position section spacing */
+.position-section + .position-section {
+  margin-top: var(--space-8, 48px);
+}
+
+/* Ensure proper spacing in overview cards */
+.team-overview .card {
+  margin-bottom: 0;
+}
+
+/* Roster grid cards should not have extra margin */
+.roster-grid .card {
+  margin-bottom: 0;
 }

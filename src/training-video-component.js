@@ -72,7 +72,7 @@ class TrainingVideoComponent {
                             <div class="loading-spinner"></div>
                             <p>Finding the best training videos...</p>
                         </div>
-                        
+
                         <div id="video-grid" class="video-grid">
                             <!-- Video thumbnails will be populated here -->
                         </div>
@@ -140,7 +140,7 @@ class TrainingVideoComponent {
 
                 .category-select {
                     padding: var(--space-2) var(--space-3);
-                    border: 1px solid var(--border-medium);
+                    border: 1px solid var(--color-border-primary);
                     border-radius: var(--radius-md);
                     background: var(--white);
                     font-size: var(--text-sm);
@@ -359,7 +359,7 @@ class TrainingVideoComponent {
 
                 .playlist-btn {
                     padding: var(--space-2) var(--space-4);
-                    border: 1px solid var(--border-medium);
+                    border: 1px solid var(--color-border-primary);
                     border-radius: var(--radius-md);
                     background: var(--white);
                     color: var(--gray-700);
@@ -382,20 +382,20 @@ class TrainingVideoComponent {
                     .video-content {
                         grid-template-columns: 1fr;
                     }
-                    
+
                     .video-header {
                         flex-direction: column;
                         align-items: stretch;
                     }
-                    
+
                     .video-controls {
                         flex-direction: column;
                     }
-                    
+
                     .category-select {
                         min-width: auto;
                     }
-                    
+
                     .playlist-buttons {
                         flex-direction: column;
                     }
@@ -490,7 +490,7 @@ class TrainingVideoComponent {
       .map(
         (video) => `
             <div class="video-card" data-video-id="${video.id}">
-                <img src="${video.thumbnail}" alt="${video.title}" class="video-thumbnail" 
+                <img src="${video.thumbnail}" alt="${video.title}" class="video-thumbnail"
                      onerror="this.src='data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"320\" height=\"180\" viewBox=\"0 0 320 180\"><rect width=\"320\" height=\"180\" fill=\"%23f3f4f6\"/><text x=\"160\" y=\"90\" text-anchor=\"middle\" dy=\".3em\" fill=\"%236b7280\">📺</text></svg>'">
                 <div class="video-card-content">
                     <h5 class="video-card-title">${video.title}</h5>
@@ -585,7 +585,7 @@ class TrainingVideoComponent {
                         <span class="placeholder-icon">📺</span>
                         <h4>${video.title}</h4>
                         <p>This is a demo video. Configure YouTube API for real videos.</p>
-                        <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(video.title)}" 
+                        <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(video.title)}"
                            target="_blank" class="btn btn-primary">Search on YouTube</a>
                     </div>
                 </div>
@@ -593,9 +593,9 @@ class TrainingVideoComponent {
     } else {
       // Embed real video
       videoPlayer.innerHTML = `
-                <iframe 
+                <iframe
                     src="${video.embedUrl}?autoplay=0&rel=0&modestbranding=1"
-                    frameborder="0" 
+                    frameborder="0"
                     allowfullscreen
                     style="width: 100%; height: 100%;">
                 </iframe>
@@ -634,11 +634,11 @@ class TrainingVideoComponent {
                         <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
                             Search for specific exercise or technique:
                         </label>
-                        <input type="text" id="exercise-search" placeholder="e.g., A skips, B skips, sprint starts" 
+                        <input type="text" id="exercise-search" placeholder="e.g., A skips, B skips, sprint starts"
                                style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 6px;">
                     </div>
                     <div style="display: flex; gap: 1rem; justify-content: flex-end;">
-                        <button type="button" onclick="this.closest('div[style*=\"position: fixed\"]').remove()" 
+                        <button type="button" onclick="this.closest('div[style*=\"position: fixed\"]').remove()"
                                 style="background: #f3f4f6; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer;">
                             Cancel
                         </button>

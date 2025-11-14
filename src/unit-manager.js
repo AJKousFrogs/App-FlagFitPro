@@ -231,31 +231,31 @@ export class UnitManager {
                 border-radius: var(--radius-lg); margin-bottom: var(--space-6);
             ">
                 <div style="display: flex; align-items: center; gap: var(--space-2);">
-                    <span style="font-size: var(--text-sm); font-weight: var(--font-medium); color: var(--text-secondary);">
+                    <span style="font-size: var(--text-sm); font-weight: var(--font-medium); color: var(--color-text-secondary);">
                         Distance:
                     </span>
                     <div class="btn-group">
-                        <button onclick="unitManager.setDistanceUnit('imperial')" 
+                        <button onclick="unitManager.setDistanceUnit('imperial')"
                                 class="btn btn-sm ${this.units.distance === "imperial" ? "btn-primary" : "btn-secondary"}">
                             Inches
                         </button>
-                        <button onclick="unitManager.setDistanceUnit('metric')" 
+                        <button onclick="unitManager.setDistanceUnit('metric')"
                                 class="btn btn-sm ${this.units.distance === "metric" ? "btn-primary" : "btn-secondary"}">
                             CM
                         </button>
                     </div>
                 </div>
-                
+
                 <div style="display: flex; align-items: center; gap: var(--space-2);">
-                    <span style="font-size: var(--text-sm); font-weight: var(--font-medium); color: var(--text-secondary);">
+                    <span style="font-size: var(--text-sm); font-weight: var(--font-medium); color: var(--color-text-secondary);">
                         Weight:
                     </span>
                     <div class="btn-group">
-                        <button onclick="unitManager.setWeightUnit('imperial')" 
+                        <button onclick="unitManager.setWeightUnit('imperial')"
                                 class="btn btn-sm ${this.units.weight === "imperial" ? "btn-primary" : "btn-secondary"}">
                             LBS
                         </button>
-                        <button onclick="unitManager.setWeightUnit('metric')" 
+                        <button onclick="unitManager.setWeightUnit('metric')"
                                 class="btn btn-sm ${this.units.weight === "metric" ? "btn-primary" : "btn-secondary"}">
                             KG
                         </button>
