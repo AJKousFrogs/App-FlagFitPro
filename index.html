@@ -25,121 +25,145 @@
     <script src="./src/icon-helper.js" defer></script>
     <script src="./src/theme-switcher.js" defer></script>
   </head>
-  <body class="u-display-flex u-align-center u-justify-center">
-    <div
-      class="welcome-container u-bg-primary u-padding-48 u-radius-xl u-shadow-xl u-text-center"
-    >
-      <div
-        class="welcome-logo u-text-display-lg u-margin-bottom-24 u-text-brand"
-      >
-        <i data-lucide="football"></i>
+  <body class="landing-page-body">
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="hero-background">
+        <div class="hero-gradient-1"></div>
+        <div class="hero-gradient-2"></div>
+        <div class="hero-pattern"></div>
       </div>
-      <h1 class="u-text-display-md">Welcome to FlagFit Pro</h1>
-      <p class="u-text-body-lg">
-        The ultimate flag football training and competition platform. Track your
-        progress, join tournaments, and connect with the community.
-      </p>
+      
+      <div class="hero-container">
+        <div class="hero-content">
+          <div class="hero-logo-wrapper">
+            <div class="hero-logo">
+              <i data-lucide="football"></i>
+            </div>
+            <div class="hero-badge">🏆 Pro Platform</div>
+          </div>
+          
+          <h1 class="hero-title">
+            Elevate Your
+            <span class="hero-title-accent">Flag Football</span>
+            Game
+          </h1>
+          
+          <p class="hero-description">
+            The ultimate training and competition platform for serious players. 
+            Track performance, join tournaments, and connect with a community 
+            that shares your passion for the game.
+          </p>
 
-      <div class="welcome-features u-margin-y-48 u-text-left">
-        <div
-          class="welcome-feature u-display-flex u-align-center u-margin-y-16 u-padding-16 u-bg-secondary u-radius-lg"
-        >
           <div
-            class="welcome-feature-icon u-text-heading-xl u-margin-right-16 u-text-brand"
+            id="actionButtons"
+            class="hero-actions"
           >
-            <i data-lucide="bar-chart-3"></i>
+            <a href="/register.html" class="btn-hero btn-hero-primary">
+              <span>Get Started Free</span>
+              <i data-lucide="arrow-right"></i>
+            </a>
+            <a href="/login.html" class="btn-hero btn-hero-secondary">
+              <i data-lucide="log-in"></i>
+              <span>Sign In</span>
+            </a>
           </div>
-          <div class="welcome-feature-text flex-1">
-            <div
-              class="welcome-feature-title u-text-heading-sm u-text-primary u-margin-bottom-4"
-            >
-              Performance Analytics
-            </div>
-            <div class="welcome-feature-desc u-text-body-sm u-text-secondary">
-              Track your training sessions and game statistics
-            </div>
-          </div>
-        </div>
-        <div
-          class="welcome-feature u-display-flex u-align-center u-margin-y-16 u-padding-16 u-bg-secondary u-radius-lg"
-        >
-          <div
-            class="welcome-feature-icon u-text-heading-xl u-margin-right-16 u-text-brand"
-          >
-            <i data-lucide="trophy"></i>
-          </div>
-          <div class="welcome-feature-text flex-1">
-            <div
-              class="welcome-feature-title u-text-heading-sm u-text-primary u-margin-bottom-4"
-            >
-              Tournament System
-            </div>
-            <div class="welcome-feature-desc u-text-body-sm u-text-secondary">
-              Join competitions and climb the leaderboards
-            </div>
-          </div>
-        </div>
-        <div
-          class="welcome-feature u-display-flex u-align-center u-margin-y-16 u-padding-16 u-bg-secondary u-radius-lg"
-        >
-          <div
-            class="welcome-feature-icon u-text-heading-xl u-margin-right-16 u-text-brand"
-          >
-            <i data-lucide="users"></i>
-          </div>
-          <div class="welcome-feature-text flex-1">
-            <div
-              class="welcome-feature-title u-text-heading-sm u-text-primary u-margin-bottom-4"
-            >
-              Community Hub
-            </div>
-            <div class="welcome-feature-desc u-text-body-sm u-text-secondary">
-              Connect with players, coaches, and teams
-            </div>
-          </div>
-        </div>
-        <div
-          class="welcome-feature u-display-flex u-align-center u-margin-y-16 u-padding-16 u-bg-secondary u-radius-lg"
-        >
-          <div
-            class="welcome-feature-icon u-text-heading-xl u-margin-right-16 u-text-brand"
-          >
-            <i data-lucide="zap"></i>
-          </div>
-          <div class="welcome-feature-text flex-1">
-            <div
-              class="welcome-feature-title u-text-heading-sm u-text-primary u-margin-bottom-4"
-            >
-              Training Programs
-            </div>
-            <div class="welcome-feature-desc u-text-body-sm u-text-secondary">
-              Structured workouts and skill development
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <div
-        id="loadingText"
-        class="hidden u-text-brand u-font-weight-500"
-      >
-        Checking authentication...
+          <div class="hero-stats">
+            <div class="hero-stat">
+              <div class="hero-stat-number">10K+</div>
+              <div class="hero-stat-label">Active Players</div>
+            </div>
+            <div class="hero-stat">
+              <div class="hero-stat-number">500+</div>
+              <div class="hero-stat-label">Tournaments</div>
+            </div>
+            <div class="hero-stat">
+              <div class="hero-stat-number">50K+</div>
+              <div class="hero-stat-label">Training Sessions</div>
+            </div>
+          </div>
+        </div>
       </div>
+    </section>
 
-      <div
-        id="actionButtons"
-        class="welcome-actions u-display-flex u-gap-16 u-justify-center u-flex-wrap"
-      >
-        <a href="/login.html" class="btn btn-secondary btn-lg">
-          <i data-lucide="log-in"></i>
-          Sign In
-        </a>
-        <a href="/register.html" class="btn btn-primary btn-lg">
-          <i data-lucide="user-plus"></i>
-          Create Account
-        </a>
+    <!-- Features Section -->
+    <section class="features-section">
+      <div class="features-container">
+        <div class="features-header">
+          <h2 class="features-title">Everything You Need to Excel</h2>
+          <p class="features-subtitle">
+            Powerful tools designed to help you train smarter, compete better, and grow faster
+          </p>
+        </div>
+
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-card-icon">
+              <div class="feature-icon-wrapper feature-icon-analytics">
+                <i data-lucide="bar-chart-3"></i>
+              </div>
+            </div>
+            <h3 class="feature-card-title">Performance Analytics</h3>
+            <p class="feature-card-description">
+              Track every training session and game statistic. Get insights that help you identify strengths and areas for improvement.
+            </p>
+            <div class="feature-card-link">
+              <span>Learn more</span>
+              <i data-lucide="arrow-right"></i>
+            </div>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-card-icon">
+              <div class="feature-icon-wrapper feature-icon-tournament">
+                <i data-lucide="trophy"></i>
+              </div>
+            </div>
+            <h3 class="feature-card-title">Tournament System</h3>
+            <p class="feature-card-description">
+              Join competitive tournaments, climb leaderboards, and compete against the best players in your region.
+            </p>
+            <div class="feature-card-link">
+              <span>Learn more</span>
+              <i data-lucide="arrow-right"></i>
+            </div>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-card-icon">
+              <div class="feature-icon-wrapper feature-icon-community">
+                <i data-lucide="users"></i>
+              </div>
+            </div>
+            <h3 class="feature-card-title">Community Hub</h3>
+            <p class="feature-card-description">
+              Connect with players, coaches, and teams. Share strategies, celebrate wins, and build lasting relationships.
+            </p>
+            <div class="feature-card-link">
+              <span>Learn more</span>
+              <i data-lucide="arrow-right"></i>
+            </div>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-card-icon">
+              <div class="feature-icon-wrapper feature-icon-training">
+                <i data-lucide="zap"></i>
+              </div>
+            </div>
+            <h3 class="feature-card-title">Training Programs</h3>
+            <p class="feature-card-description">
+              Access structured workouts and skill development plans designed by professional coaches and trainers.
+            </p>
+            <div class="feature-card-link">
+              <span>Learn more</span>
+              <i data-lucide="arrow-right"></i>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
 
     <script type="module">
       document.addEventListener("DOMContentLoaded", function () {
@@ -147,42 +171,85 @@
         if (typeof lucide !== "undefined") {
           lucide.createIcons();
         }
-        // Skip authentication check and show login buttons immediately
-        document.getElementById("loadingText").style.display = "none";
-        document.getElementById("actionButtons").style.display = "block";
+        // Ensure action buttons are visible
+        const actionButtons = document.getElementById("actionButtons");
+        if (actionButtons) {
+          actionButtons.style.display = "flex";
+        }
       });
     </script>
 
     <!-- Footer -->
-    <footer role="contentinfo" class="main-footer">
+    <footer role="contentinfo" class="landing-footer">
       <div class="footer-content">
-        <div class="footer-section">
-          <h3>FlagFit Pro</h3>
-          <p>Professional flag football training and analytics platform</p>
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <i data-lucide="football"></i>
+            <span>FlagFit Pro</span>
+          </div>
+          <p class="footer-tagline">
+            Professional flag football training and analytics platform. 
+            Elevate your game with data-driven insights.
+          </p>
+          <div class="footer-social">
+            <a href="#" class="footer-social-link" aria-label="Twitter">
+              <i data-lucide="twitter"></i>
+            </a>
+            <a href="#" class="footer-social-link" aria-label="Instagram">
+              <i data-lucide="instagram"></i>
+            </a>
+            <a href="#" class="footer-social-link" aria-label="Facebook">
+              <i data-lucide="facebook"></i>
+            </a>
+          </div>
         </div>
-        <div class="footer-section">
-          <h4>Quick Links</h4>
-          <nav aria-label="Footer navigation">
-            <ul>
-              <li><a href="/dashboard.html">Dashboard</a></li>
-              <li><a href="/training.html">Training</a></li>
-              <li><a href="/roster.html">Roster</a></li>
-              <li><a href="/analytics.html">Analytics</a></li>
-            </ul>
-          </nav>
-        </div>
-        <div class="footer-section">
-          <h4>Support</h4>
-          <nav aria-label="Support links">
-            <ul>
-              <li><a href="/settings.html">Settings</a></li>
-              <li><a href="/community.html">Community</a></li>
-            </ul>
-          </nav>
+        
+        <div class="footer-links">
+          <div class="footer-link-group">
+            <h4 class="footer-link-title">Platform</h4>
+            <nav aria-label="Platform navigation">
+              <ul class="footer-link-list">
+                <li><a href="/dashboard.html">Dashboard</a></li>
+                <li><a href="/training.html">Training</a></li>
+                <li><a href="/roster.html">Roster</a></li>
+                <li><a href="/analytics.html">Analytics</a></li>
+              </ul>
+            </nav>
+          </div>
+          
+          <div class="footer-link-group">
+            <h4 class="footer-link-title">Community</h4>
+            <nav aria-label="Community navigation">
+              <ul class="footer-link-list">
+                <li><a href="/community.html">Community Hub</a></li>
+                <li><a href="/tournaments.html">Tournaments</a></li>
+                <li><a href="/coach.html">Coaching</a></li>
+              </ul>
+            </nav>
+          </div>
+          
+          <div class="footer-link-group">
+            <h4 class="footer-link-title">Support</h4>
+            <nav aria-label="Support navigation">
+              <ul class="footer-link-list">
+                <li><a href="/settings.html">Settings</a></li>
+                <li><a href="#">Help Center</a></li>
+                <li><a href="#">Contact Us</a></li>
+              </ul>
+            </nav>
+          </div>
         </div>
       </div>
+      
       <div class="footer-bottom">
-        <p>&copy; 2025 FlagFit Pro. All rights reserved.</p>
+        <p class="footer-copyright">
+          &copy; 2025 FlagFit Pro. All rights reserved.
+        </p>
+        <div class="footer-legal">
+          <a href="#">Privacy Policy</a>
+          <span class="footer-separator">•</span>
+          <a href="#">Terms of Service</a>
+        </div>
       </div>
     </footer>
   </body>
