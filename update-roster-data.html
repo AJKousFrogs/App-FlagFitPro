@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="./src/css/main.css">
     <script src="./src/theme-switcher.js" defer></script>
     <script src="https://unpkg.com/lucide@latest" defer></script>
+    <script src="./src/icon-helper.js" defer></script>
 </head>
 <body>
     <div class="container">
@@ -118,7 +119,7 @@
                         <label for="isStarter">Starting lineup</label>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-primary">Add Player</button>
+                <button type="submit" class="btn btn-primary btn-md">Add Player</button>
             </form>
         </div>
         
@@ -134,11 +135,11 @@
         <div class="export-section">
             <h2>Generated Code</h2>
             <p>Copy this code and replace the demo data in your dashboard.html file:</p>
-            <button onclick="generateCode()" class="btn btn-primary" style="margin-bottom: var(--space-4);">Generate Updated Code</button>
+            <button onclick="generateCode()" class="btn btn-primary btn-md" style="margin-bottom: var(--space-4);">Generate Updated Code</button>
             <div id="generatedCode" class="generated-code">
                 // Click "Generate Updated Code" button to see the code
             </div>
-            <button onclick="copyToClipboard()" class="btn btn-secondary" style="margin-top: var(--space-4);">Copy to Clipboard</button>
+            <button onclick="copyToClipboard()" class="btn btn-secondary btn-md" style="margin-top: var(--space-4);">Copy to Clipboard</button>
         </div>
     </div>
 
@@ -336,9 +337,8 @@
                             <div style="font-weight: 600; color: var(--dark-text-primary);">${player.name}</div>
                             <div style="color: var(--dark-text-secondary); font-size: var(--text-sm);">${player.position} • ${player.class}</div>
                         </div>
-                        <button onclick="removePlayer(${player.number})" style="
-                            background: var(--error-light); color: var(--error); border: none;
-                            padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px;
+                        <button onclick="removePlayer(${player.number})" class="btn btn-secondary btn-xs" style="
+                            background: var(--color-status-error); color: var(--color-text-primary); border: none;
                             margin-left: auto;
                         ">Remove</button>
                     </div>

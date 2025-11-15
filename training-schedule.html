@@ -345,7 +345,7 @@
                 Full body mobility routine to prepare your body for training.
                 Focus on ankle, knee, hip, and quad health.
               </p>
-              <button class="start-workout-btn">View Routine</button>
+              <button class="btn btn-primary btn-md">View Routine</button>
             </div>
             <div class="protocol-card">
               <div class="protocol-title">🔥 Universal Warm-Up</div>
@@ -356,7 +356,7 @@
                 Comprehensive warm-up including general activation, lower body
                 chain prep, and sprint drills.
               </p>
-              <button class="start-workout-btn">View Warm-Up</button>
+              <button class="btn btn-primary btn-md">View Warm-Up</button>
             </div>
             <div class="protocol-card">
               <div class="protocol-title">
@@ -378,7 +378,7 @@
                 Complete recovery protocol with stretching, foam rolling, and
                 light activity.
               </p>
-              <button class="start-workout-btn">View Protocol</button>
+              <button class="btn btn-primary btn-md">View Protocol</button>
             </div>
           </div>
         </div>
@@ -388,7 +388,7 @@
           <div class="schedule-header">
             <div class="week-selector">
               <div class="week-nav">
-                <button class="week-nav-btn" id="prevWeek">
+                <button class="btn btn-secondary btn-sm" id="prevWeek">
                   <i
                     data-lucide="chevron-left"
                     style="
@@ -402,7 +402,7 @@
                   ></i>
                   Previous
                 </button>
-                <button class="week-nav-btn" id="nextWeek">
+                <button class="btn btn-secondary btn-sm" id="nextWeek">
                   Next
                   <i
                     data-lucide="chevron-right"
@@ -723,7 +723,7 @@
                                 ${dayData.blocks.length > 2 ? `<div style="font-style: italic; opacity: 0.7; text-align: center; margin-top: var(--space-2);">+ ${dayData.blocks.length - 2} more blocks</div>` : ""}
                             </div>
                             
-                            <button class="start-workout-btn" onclick="startWorkout('${day}', ${weekNumber})">
+                            <button class="btn btn-primary btn-md" onclick="startWorkout('${day}', ${weekNumber})">
                                 Start Workout
                             </button>
                         </div>
@@ -827,7 +827,7 @@
                 }
                 
                 <div style="margin-top: var(--space-6); text-align: center;">
-                    <button class="start-workout-btn" style="width: auto; padding: var(--space-3) var(--space-6);" onclick="startWorkoutTracking('${day}', ${week})">
+                    <button class="btn btn-primary btn-md" style="width: auto; padding: var(--space-3) var(--space-6);" onclick="startWorkoutTracking('${day}', ${week})">
                         🚀 Begin Workout
                     </button>
                 </div>
