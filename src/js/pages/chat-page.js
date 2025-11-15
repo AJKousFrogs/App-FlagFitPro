@@ -1,0 +1,835 @@
+// Chat Page JavaScript Module
+import { authManager } from "../auth-manager.js";
+import { apiClient } from "../api-config.js";
+import { ErrorHandler } from "../error-handler.js";
+import { AccessibilityUtils } from "../accessibility-utils.js";
+import { 
+  escapeHtml, 
+  getInitials, 
+  formatTime, 
+  scrollToBottom,
+  initializeLucideIcons,
+  getMessageStatusHtml,
+  getMessageActionsHtml,
+  saveToStorage,
+  getFromStorage,
+  announceToScreenReader
+} from "../utils/shared.js";
+
+let currentChannel = "team-general";
+let typingTimeout;
+let lastMessageTime = 0;
+let lastMessageAuthor = null;
+const MESSAGE_GROUP_THRESHOLD = 5 * 60 * 1000; // 5 minutes in milliseconds
+
+async function initChatPage() {
+  if (!authManager.requireAuth()) return;
+
+  setupMessageInput();
+  setupChannelSwitching();
+  setupCallButtons();
+  setupChannelSettings();
+  await loadMessages();
+
+  // Load any stored messages for current channel
+  loadMessagesFromStorage();
+
+  // Simulate real-time updates
+  setInterval(simulateNewMessages, 15000);
+  setInterval(simulateTyping, 30000);
+}
+
+function setupMessageInput() {
+  const input = document.getElementById("messageInput");
+  const sendBtn = document.getElementById("sendBtn");
+
+  input.addEventListener("input", function () {
+    sendBtn.disabled = !this.value.trim();
+
+    // Auto-resize textarea
+    this.style.height = "auto";
+    this.style.height = Math.min(this.scrollHeight, 100) + "px";
+
+    // Show typing indicator to others (simulated)
+    clearTimeout(typingTimeout);
+    typingTimeout = setTimeout(() => {
+      // Stop typing indicator
+    }, 1000);
+  });
+
+  input.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+
+  sendBtn.addEventListener("click", sendMessage);
+}
+
+function setupChannelSwitching() {
+  const channelItems = document.querySelectorAll(".channel-item");
+
+  channelItems.forEach((item) => {
+    // Click handler
+    item.addEventListener("click", function () {
+      selectChannel(this);
+    });
+
+    // Keyboard navigation
+    item.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        selectChannel(this);
+      } else if (e.key === "ArrowDown") {
+        e.preventDefault();
+        const next = this.nextElementSibling;
+        if (next && next.classList.contains("channel-item")) {
+          next.focus();
+        }
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        const prev = this.previousElementSibling;
+        if (prev && prev.classList.contains("channel-item")) {
+          prev.focus();
+        }
+      }
+    });
+  });
+}
+
+function setupCallButtons() {
+  const videoCallBtn = document.getElementById("videoCallBtn");
+  const voiceCallBtn = document.getElementById("voiceCallBtn");
+
+  if (videoCallBtn) {
+    videoCallBtn.addEventListener("click", startGoogleMeetCall);
+  }
+
+  if (voiceCallBtn) {
+    voiceCallBtn.addEventListener("click", startGoogleMeetCall);
+  }
+}
+
+function setupChannelSettings() {
+  const settingsBtn = document.getElementById("channelSettingsBtn");
+  if (!settingsBtn) return;
+
+  const user = authManager.getCurrentUser();
+  const userRole = authManager.getUserRole();
+  
+  // Check if user is a coach, moderator, or admin
+  const canCreateChannels = ['coach', 'moderator', 'admin', 'assistant_coach'].includes(userRole?.toLowerCase());
+  
+  if (canCreateChannels) {
+    settingsBtn.addEventListener("click", openChannelSettings);
+    settingsBtn.setAttribute("aria-label", "Channel settings - Create new channel");
+  } else {
+    // Disable button for regular players
+    settingsBtn.disabled = true;
+    settingsBtn.setAttribute("aria-label", "Channel settings - Only coaches and moderators can create channels");
+    settingsBtn.style.opacity = "0.5";
+    settingsBtn.style.cursor = "not-allowed";
+  }
+}
+
+function isModeratorOrCoach() {
+  const userRole = authManager.getUserRole()?.toLowerCase();
+  return ['coach', 'moderator', 'admin', 'assistant_coach'].includes(userRole);
+}
+
+function openChannelSettings() {
+  if (!isModeratorOrCoach()) {
+    AccessibilityUtils.announce('Only coaches and moderators can create channels.', 'polite');
+    return;
+  }
+
+  // Create modal for channel creation
+  const modal = document.createElement('div');
+  modal.className = 'channel-create-modal';
+  modal.setAttribute('role', 'dialog');
+  modal.setAttribute('aria-labelledby', 'channel-modal-title');
+  modal.setAttribute('aria-modal', 'true');
+  
+  modal.innerHTML = `
+    <div class="channel-modal-overlay" onclick="closeChannelModal()"></div>
+    <div class="channel-modal-content">
+      <div class="channel-modal-header">
+        <h2 id="channel-modal-title">Create New Channel</h2>
+        <button class="channel-modal-close" onclick="closeChannelModal()" aria-label="Close dialog">
+          <i data-lucide="x" class="icon-18"></i>
+        </button>
+      </div>
+      <form id="channelCreateForm" class="channel-modal-form">
+        <div class="form-group">
+          <label for="channelName">Channel Name</label>
+          <input 
+            type="text" 
+            id="channelName" 
+            name="channelName" 
+            placeholder="e.g., strategy, training, announcements"
+            required
+            pattern="[a-z0-9-]+"
+            title="Channel name must be lowercase letters, numbers, and hyphens only"
+            aria-describedby="channelNameHelp"
+          />
+          <small id="channelNameHelp" class="form-help">
+            Use lowercase letters, numbers, and hyphens only. Channel names cannot be changed.
+          </small>
+        </div>
+        <div class="form-group">
+          <label for="channelDescription">Description (Optional)</label>
+          <textarea 
+            id="channelDescription" 
+            name="channelDescription" 
+            rows="3"
+            placeholder="What is this channel for?"
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label for="channelType">Channel Type</label>
+          <select id="channelType" name="channelType" required>
+            <option value="public">Public - All team members can join</option>
+            <option value="private">Private - Invite only</option>
+          </select>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" onclick="closeChannelModal()">Cancel</button>
+          <button type="submit" class="btn-primary">Create Channel</button>
+        </div>
+      </form>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+  
+  // Initialize Lucide icons
+  if (typeof lucide !== "undefined") {
+    lucide.createIcons(modal);
+  }
+
+  // Focus on channel name input
+  setTimeout(() => {
+    const channelNameInput = document.getElementById("channelName");
+    if (channelNameInput) {
+      channelNameInput.focus();
+    }
+  }, 100);
+
+  // Handle form submission
+  const form = document.getElementById("channelCreateForm");
+  form.addEventListener("submit", handleChannelCreation);
+
+  // Close on Escape key
+  modal.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      closeChannelModal();
+    }
+  });
+}
+
+function closeChannelModal() {
+  const modal = document.querySelector('.channel-create-modal');
+  if (modal) {
+    modal.remove();
+  }
+}
+
+// Make function globally accessible for onclick handlers
+window.closeChannelModal = closeChannelModal;
+
+async function handleChannelCreation(e) {
+  e.preventDefault();
+  
+  const form = e.target;
+  const channelName = document.getElementById("channelName").value.trim().toLowerCase();
+  const channelDescription = document.getElementById("channelDescription").value.trim();
+  const channelType = document.getElementById("channelType").value;
+
+  if (!channelName) {
+    AccessibilityUtils.announce('Channel name is required.', 'polite');
+    return;
+  }
+
+  // Validate channel name format
+  if (!/^[a-z0-9-]+$/.test(channelName)) {
+    AccessibilityUtils.announce('Channel name can only contain lowercase letters, numbers, and hyphens.', 'polite');
+    return;
+  }
+
+  // Check if channel already exists
+  const existingChannels = document.querySelectorAll('.channel-item');
+  const channelExists = Array.from(existingChannels).some(item => 
+    item.dataset.channel === channelName
+  );
+
+  if (channelExists) {
+    AccessibilityUtils.announce(`Channel "${channelName}" already exists.`, 'polite');
+    return;
+  }
+
+  try {
+    const user = authManager.getCurrentUser();
+    
+    // Create channel via API (if available) or localStorage
+    const newChannel = {
+      name: channelName,
+      description: channelDescription,
+      type: channelType,
+      createdBy: user?.email || 'unknown',
+      createdAt: new Date().toISOString(),
+      members: [user?.email || 'unknown']
+    };
+
+    // Save to localStorage
+    const channels = JSON.parse(localStorage.getItem('chat_channels') || '[]');
+    channels.push(newChannel);
+    localStorage.setItem('chat_channels', JSON.stringify(channels));
+
+    // Add channel to UI
+    addChannelToSidebar(newChannel);
+
+    // Announce success
+    AccessibilityUtils.announce(`Channel "${channelName}" created successfully.`, 'polite');
+
+    // Close modal
+    closeChannelModal();
+
+    // Switch to new channel
+    setTimeout(() => {
+      const newChannelItem = document.querySelector(`[data-channel="${channelName}"]`);
+      if (newChannelItem) {
+        selectChannel(newChannelItem);
+      }
+    }, 100);
+
+  } catch (error) {
+    console.error('Failed to create channel:', error);
+    ErrorHandler.handleError(error, 'Failed to create channel');
+  }
+}
+
+function addChannelToSidebar(channel) {
+  const channelsList = document.getElementById("channelsList");
+  if (!channelsList) return;
+
+  // Find where to insert (after Team Channels category)
+  const teamChannelsCategory = channelsList.querySelector('.channel-category');
+  let insertAfter = teamChannelsCategory;
+
+  // Find the last team channel item
+  const teamChannels = Array.from(channelsList.querySelectorAll('.channel-item'));
+  const lastTeamChannel = teamChannels.find(item => {
+    const nextSibling = item.nextElementSibling;
+    return nextSibling && nextSibling.classList.contains('channel-category');
+  });
+
+  if (lastTeamChannel) {
+    insertAfter = lastTeamChannel;
+  }
+
+  // Create channel item
+  const channelItem = document.createElement('div');
+  channelItem.className = 'channel-item';
+  channelItem.dataset.channel = channel.name;
+  channelItem.setAttribute('role', 'button');
+  channelItem.setAttribute('tabindex', '0');
+  channelItem.setAttribute('aria-label', `Channel: ${channel.name}`);
+
+  channelItem.innerHTML = `
+    <span class="channel-icon">#</span>
+    <div class="channel-info">
+      <div class="channel-name">${channel.name}</div>
+      ${channel.description ? `<div class="channel-preview">${escapeHtml(channel.description)}</div>` : ''}
+    </div>
+  `;
+
+  // Add click handler
+  channelItem.addEventListener("click", function () {
+    selectChannel(this);
+  });
+
+  // Add keyboard navigation
+  channelItem.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      selectChannel(this);
+    }
+  });
+
+  // Insert after the last team channel
+  if (insertAfter && insertAfter.nextSibling) {
+    channelsList.insertBefore(channelItem, insertAfter.nextSibling);
+  } else {
+    channelsList.appendChild(channelItem);
+  }
+}
+
+async function startGoogleMeetCall() {
+  try {
+    const user = authManager.getCurrentUser();
+    const channelName = currentChannel;
+    
+    // Use Google Meet's instant meeting creation URL
+    const meetUrl = 'https://meet.google.com/new';
+    
+    // Create a meeting name based on channel
+    const meetingName = `${channelName.replace(/-/g, ' ')} - ${new Date().toLocaleDateString()}`;
+    
+    // Post meeting info to chat
+    const meetingMessage = `🎥 Starting Google Meet call for ${meetingName}\n\nClick the link to join: ${meetUrl}`;
+    
+    // Add meeting message to UI
+    addMessageToUI({
+      author: user?.email || 'system',
+      authorName: user?.name || 'System',
+      text: meetingMessage,
+      timestamp: new Date().toISOString(),
+    }, false);
+    
+    // Save to storage
+    saveMessageToStorage({
+      channel: currentChannel,
+      author: user?.email || 'system',
+      authorName: user?.name || 'System',
+      text: meetingMessage,
+      timestamp: new Date().toISOString(),
+    });
+    
+    // Open Google Meet in new window/tab
+    const meetWindow = window.open(
+      meetUrl,
+      '_blank',
+      'width=1280,height=720,menubar=no,toolbar=no,location=no,status=no'
+    );
+    
+    if (!meetWindow) {
+      // If popup blocked, try direct navigation
+      AccessibilityUtils.announce('Popup blocked. Opening Google Meet in new tab.', 'polite');
+      window.open(meetUrl, '_blank');
+    }
+    
+    // Announce to screen readers
+    announceToScreenReader(`Google Meet call started. Meeting link posted to chat.`, 'polite');
+    
+    scrollToBottom("messagesContainer");
+    
+  } catch (error) {
+    console.error('Failed to start Google Meet call:', error);
+    ErrorHandler.handleError(error, 'Failed to start video call');
+    
+    // Fallback: Open Google Meet directly
+    window.open('https://meet.google.com/new', '_blank');
+  }
+}
+
+function selectChannel(item) {
+  const channelItems = document.querySelectorAll(".channel-item");
+  
+  // Remove active class from all items
+  channelItems.forEach((i) => i.classList.remove("active"));
+
+  // Add active class to selected item
+  item.classList.add("active");
+
+  // Update current channel
+  currentChannel = item.dataset.channel;
+  document.getElementById("currentChannelName").textContent = currentChannel;
+
+  // Remove unread count
+  const unreadCount = item.querySelector(".unread-count");
+  if (unreadCount) {
+    unreadCount.remove();
+  }
+
+  // Reset grouping state
+  lastMessageAuthor = null;
+  lastMessageTime = 0;
+
+  // Load messages for new channel
+  loadMessages();
+}
+
+async function loadMessages() {
+  try {
+    const response = await apiClient.get(`/api/chat/messages/${currentChannel}`);
+
+    if (response.success && response.data.messages) {
+      updateMessagesContainer(response.data.messages);
+    } else {
+      // Load from localStorage if API fails
+      loadMessagesFromStorage();
+    }
+  } catch (error) {
+    console.error("Failed to load messages:", error);
+    // Load from localStorage as fallback
+    loadMessagesFromStorage();
+    scrollToBottom();
+  }
+}
+
+function updateMessagesContainer(messages) {
+  const container = document.getElementById("messagesContainer");
+  const currentUser = authManager.getCurrentUser();
+  
+  // Reset grouping state
+  lastMessageAuthor = null;
+  lastMessageTime = 0;
+
+  container.innerHTML = messages
+    .map((msg, index) => {
+      const isOwn = msg.author === currentUser?.email;
+      const msgTime = new Date(msg.timestamp).getTime();
+      const msgAuthor = msg.author || msg.authorName;
+      
+      // Check if message should be grouped
+      const shouldGroup = 
+        lastMessageAuthor === msgAuthor &&
+        msgTime - lastMessageTime < MESSAGE_GROUP_THRESHOLD;
+      
+      // Update tracking variables
+      lastMessageAuthor = msgAuthor;
+      lastMessageTime = msgTime;
+      
+      const groupedClass = shouldGroup ? "grouped" : "";
+      const statusHtml = isOwn ? getMessageStatusHtml(msg.status || "read") : "";
+      const actionsHtml = getMessageActionsHtml(isOwn);
+      
+      return `
+          <div class="message ${isOwn ? "own" : ""} ${groupedClass}" 
+               role="article" 
+               aria-label="Message from ${isOwn ? "You" : msg.authorName} at ${formatTime(msg.timestamp)}">
+              <div class="message-avatar">${getInitials(msg.authorName || msg.author)}</div>
+              <div class="message-content">
+                  <div class="message-header">
+                      <span class="message-author">${isOwn ? "You" : msg.authorName}</span>
+                      <span class="message-time" aria-label="${formatTime(msg.timestamp)}">${formatTime(msg.timestamp)}</span>
+                  </div>
+                  <div class="message-text">${escapeHtml(msg.text)}</div>
+                  ${statusHtml}
+                  ${actionsHtml}
+              </div>
+          </div>
+      `;
+    })
+    .join("");
+
+  // Initialize Lucide icons for new messages
+  initializeLucideIcons();
+
+  scrollToBottom("messagesContainer");
+}
+
+async function sendMessage() {
+  const input = document.getElementById("messageInput");
+  const sendBtn = document.getElementById("sendBtn");
+  const message = input.value.trim();
+
+  if (!message) return;
+
+  const user = authManager.getCurrentUser();
+
+  // Show loading state with accessibility
+  const originalBtnText = sendBtn.innerHTML;
+  sendBtn.innerHTML = '<span aria-hidden="true">⏳</span>';
+  sendBtn.disabled = true;
+  sendBtn.setAttribute("aria-label", "Sending message...");
+
+  try {
+    const response = await apiClient.post("/api/chat/send", {
+      channel: currentChannel,
+      message: message,
+    });
+
+    if (response.success) {
+      // Add message to UI immediately with "sent" status
+      addMessageToUI(
+        {
+          author: user.email,
+          authorName: user.name || "You",
+          text: message,
+          timestamp: new Date().toISOString(),
+          status: "sent",
+        },
+        true,
+      );
+      
+      // Simulate status progression
+      setTimeout(() => {
+        updateMessageStatus("delivered");
+      }, 500);
+      
+      setTimeout(() => {
+        updateMessageStatus("read");
+      }, 1500);
+
+      // Save to localStorage for persistence
+      saveMessageToStorage({
+        channel: currentChannel,
+        author: user.email,
+        authorName: user.name || "You",
+        text: message,
+        timestamp: new Date().toISOString(),
+      });
+    }
+  } catch (error) {
+    console.error("Failed to send message:", error);
+
+    // Still add to UI for demo purposes with graceful fallback
+    addMessageToUI(
+      {
+        author: user.email,
+        authorName: user.name || "You",
+        text: message,
+        timestamp: new Date().toISOString(),
+        status: "sent",
+      },
+      true,
+    );
+
+    // Save to localStorage for offline functionality
+    saveMessageToStorage({
+      channel: currentChannel,
+      author: user.email,
+      authorName: user.name || "You",
+      text: message,
+      timestamp: new Date().toISOString(),
+    });
+
+    // Simulate team response for better demo experience
+    setTimeout(
+      () => {
+        simulateTeamResponse(message);
+      },
+      Math.random() * 3000 + 1000,
+    ); // Random delay 1-4 seconds
+  }
+
+  // Reset form state
+  input.value = "";
+  input.style.height = "auto";
+  sendBtn.innerHTML = originalBtnText;
+  sendBtn.disabled = true;
+  sendBtn.setAttribute("aria-label", "Send message");
+
+  // Re-initialize Lucide icons for send button
+  if (typeof lucide !== "undefined") {
+    lucide.createIcons();
+  }
+
+  // Focus back to input for better UX
+  input.focus();
+
+  // Announce message sent to screen readers
+  AccessibilityUtils.announce("Message sent", "polite");
+
+  scrollToBottom();
+}
+
+function saveMessageToStorage(message) {
+  const storageKey = `chat_messages_${currentChannel}`;
+  const existingMessages = getFromStorage(storageKey, []);
+  existingMessages.push(message);
+
+  // Keep only last 50 messages per channel to prevent storage bloat
+  if (existingMessages.length > 50) {
+    existingMessages.splice(0, existingMessages.length - 50);
+  }
+
+  saveToStorage(storageKey, existingMessages);
+}
+
+function loadMessagesFromStorage() {
+  const storageKey = `chat_messages_${currentChannel}`;
+  const storedMessages = getFromStorage(storageKey, []);
+
+  if (storedMessages.length > 0) {
+    // Clear existing demo messages and load stored ones
+    const container = document.getElementById("messagesContainer");
+    container.innerHTML = "";
+
+    storedMessages.forEach((msg) => {
+      addMessageToUI(
+        msg,
+        msg.author === authManager.getCurrentUser()?.email,
+      );
+    });
+
+    scrollToBottom("messagesContainer");
+  }
+}
+
+function simulateTeamResponse(originalMessage) {
+  const responses = [
+    {
+      author: "Coach Mike",
+      text: "Good point! Let's discuss this more at practice.",
+    },
+    {
+      author: "Sarah (Captain)",
+      text: "I agree! This will definitely help our game strategy.",
+    },
+    { author: "Jake Davis", text: "Thanks for sharing! Very helpful." },
+    {
+      author: "Alex Lopez",
+      text: "Absolutely! Can't wait to try this out.",
+    },
+    {
+      author: "Riley Johnson",
+      text: "Great idea! This could be a game changer.",
+    },
+  ];
+
+  // Select random response that makes sense
+  const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+
+  // Add typing indicator first
+  const typingIndicator = document.getElementById("typingIndicator");
+  typingIndicator.querySelector("span").textContent = `${randomResponse.author} is typing`;
+  typingIndicator.classList.add("visible");
+
+  setTimeout(() => {
+    typingIndicator.classList.remove("visible");
+
+    addMessageToUI({
+      authorName: randomResponse.author,
+      text: randomResponse.text,
+      timestamp: new Date().toISOString(),
+    });
+
+    // Save simulated response to storage
+    saveMessageToStorage({
+      channel: currentChannel,
+      author: randomResponse.author.toLowerCase().replace(/\s+/g, "."),
+      authorName: randomResponse.author,
+      text: randomResponse.text,
+      timestamp: new Date().toISOString(),
+    });
+
+    scrollToBottom("messagesContainer");
+  }, 2000); // Show typing for 2 seconds
+}
+
+function addMessageToUI(message, isOwn = false) {
+  const container = document.getElementById("messagesContainer");
+  const msgTime = new Date(message.timestamp).getTime();
+  const msgAuthor = message.author || message.authorName;
+  
+  // Check if message should be grouped with previous message
+  const shouldGroup = 
+    lastMessageAuthor === msgAuthor &&
+    msgTime - lastMessageTime < MESSAGE_GROUP_THRESHOLD;
+  
+  // Update tracking variables
+  lastMessageAuthor = msgAuthor;
+  lastMessageTime = msgTime;
+  
+  const messageDiv = document.createElement("div");
+  messageDiv.className = `message ${isOwn ? "own" : ""} ${shouldGroup ? "grouped" : ""}`;
+  messageDiv.setAttribute("role", "article");
+  messageDiv.setAttribute("aria-label", `Message from ${isOwn ? "You" : message.authorName} at ${formatTime(message.timestamp)}`);
+  
+  const statusHtml = isOwn ? getMessageStatusHtml(message.status || "sent") : "";
+  const actionsHtml = getMessageActionsHtml(isOwn);
+  
+  messageDiv.innerHTML = `
+          <div class="message-avatar">${getInitials(message.authorName)}</div>
+          <div class="message-content">
+              <div class="message-header">
+                  <span class="message-author">${message.authorName}</span>
+                  <span class="message-time" aria-label="${formatTime(message.timestamp)}">${formatTime(message.timestamp)}</span>
+              </div>
+              <div class="message-text">${escapeHtml(message.text)}</div>
+              ${statusHtml}
+              ${actionsHtml}
+          </div>
+      `;
+
+  container.appendChild(messageDiv);
+  
+  // Initialize Lucide icons
+  initializeLucideIcons(messageDiv);
+}
+
+
+function simulateNewMessages() {
+  if (Math.random() < 0.3) {
+    // 30% chance of new message
+    const messages = [
+      {
+        author: "Coach Mike",
+        text: "Don't forget tomorrow's game starts at 10 AM sharp!",
+      },
+      {
+        author: "Sarah (Captain)",
+        text: "Great hustle in practice today everyone!",
+      },
+      {
+        author: "Jake Davis",
+        text: "Who's bringing the team snacks this week?",
+      },
+      {
+        author: "Alex Lopez",
+        text: "Just finished reviewing the game film. We're looking good!",
+      },
+    ];
+
+    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+
+    addMessageToUI({
+      authorName: randomMessage.author,
+      text: randomMessage.text,
+      timestamp: new Date().toISOString(),
+    });
+
+    scrollToBottom();
+  }
+}
+
+function simulateTyping() {
+  if (Math.random() < 0.2) {
+    // 20% chance of typing indicator
+    const typingIndicator = document.getElementById("typingIndicator");
+    typingIndicator.classList.add("visible");
+
+    setTimeout(() => {
+      typingIndicator.classList.remove("visible");
+    }, 3000);
+  }
+}
+
+
+
+function updateMessageStatus(status) {
+  const messages = document.querySelectorAll(".message.own");
+  if (messages.length > 0) {
+    const lastMessage = messages[messages.length - 1];
+    const statusDiv = lastMessage.querySelector(".message-status");
+    if (statusDiv) {
+      const statusIcons = {
+        sent: "check",
+        delivered: "check-check",
+        read: "check-check"
+      };
+      
+      const statusClasses = {
+        sent: "status-sent",
+        delivered: "status-delivered", 
+        read: "status-read"
+      };
+      
+      const icon = statusIcons[status] || "check";
+      const statusClass = statusClasses[status] || "status-sent";
+      
+      statusDiv.innerHTML = `<i data-lucide="${icon}" class="${statusClass} icon-14"></i>`;
+      
+      // Re-initialize Lucide icons
+      if (typeof lucide !== "undefined") {
+        lucide.createIcons(statusDiv);
+      }
+    }
+  }
+}
+
+// Initialize when page loads
+document.addEventListener("DOMContentLoaded", initChatPage);
