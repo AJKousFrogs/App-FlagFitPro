@@ -3,10 +3,10 @@ import { authManager } from "../auth-manager.js";
 import { apiClient } from "../api-config.js";
 import { ErrorHandler } from "../error-handler.js";
 import { AccessibilityUtils } from "../accessibility-utils.js";
-import { 
-  escapeHtml, 
-  getInitials, 
-  formatTime, 
+import {
+  escapeHtml,
+  getInitials,
+  formatTime,
   scrollToBottom,
   initializeLucideIcons,
   getMessageStatusHtml,
@@ -22,8 +22,23 @@ let lastMessageTime = 0;
 let lastMessageAuthor = null;
 const MESSAGE_GROUP_THRESHOLD = 5 * 60 * 1000; // 5 minutes in milliseconds
 
+// Store interval IDs for cleanup
+let messageInterval;
+let typingInterval;
+
 async function initChatPage() {
   if (!authManager.requireAuth()) return;
+
+  // Check for channel parameter in URL (e.g., ?channel=flagfit-assistant)
+  const urlParams = new URLSearchParams(window.location.search);
+  const requestedChannel = urlParams.get("channel");
+
+  if (requestedChannel) {
+    // Check if channel exists, if not create it
+    await ensureChannelExists(requestedChannel);
+    // Select the requested channel
+    selectChannelByName(requestedChannel);
+  }
 
   setupMessageInput();
   setupChannelSwitching();
@@ -34,9 +49,128 @@ async function initChatPage() {
   // Load any stored messages for current channel
   loadMessagesFromStorage();
 
-  // Simulate real-time updates
-  setInterval(simulateNewMessages, 15000);
-  setInterval(simulateTyping, 30000);
+  // Simulate real-time updates (store IDs for cleanup)
+  messageInterval = setInterval(simulateNewMessages, 15000);
+  typingInterval = setInterval(simulateTyping, 30000);
+}
+
+// Ensure a channel exists, create it if it doesn't
+async function ensureChannelExists(channelName) {
+  const channelsList = document.getElementById("channelsList");
+  if (!channelsList) return;
+
+  // Check if channel already exists
+  const existingChannel = channelsList.querySelector(`[data-channel="${channelName}"]`);
+  if (existingChannel) {
+    return; // Channel already exists
+  }
+
+  // Special handling for AI assistant channel
+  if (channelName === "flagfit-assistant") {
+    createAIAssistantChannel();
+    return;
+  }
+
+  // For other channels, they would need to be created through the normal flow
+  // or we could create them here if needed
+}
+
+// Create the AI Assistant channel
+function createAIAssistantChannel() {
+  const channelsList = document.getElementById("channelsList");
+  if (!channelsList) return;
+
+  // Find where to insert (after Direct Messages category or at end)
+  const dmCategory = Array.from(channelsList.querySelectorAll(".channel-category"))
+    .find(cat => cat.textContent.includes("Direct Messages"));
+
+  // Create channel item
+  const channelItem = document.createElement("div");
+  channelItem.className = "channel-item";
+  channelItem.dataset.channel = "flagfit-assistant";
+  channelItem.setAttribute("role", "button");
+  channelItem.setAttribute("tabindex", "0");
+  channelItem.setAttribute("aria-label", "Channel: FlagFit AI Assistant");
+
+  channelItem.innerHTML = `
+    <span class="channel-icon">🤖</span>
+    <div class="channel-info">
+      <div class="channel-name">FlagFit AI Assistant</div>
+      <div class="channel-preview">Ask me about training, nutrition, and performance</div>
+    </div>
+  `;
+
+  // Add click handler
+  channelItem.addEventListener("click", function () {
+    selectChannel(this);
+  });
+
+  // Add keyboard navigation
+  channelItem.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      selectChannel(this);
+    }
+  });
+
+  // Insert after DM category or at end
+  if (dmCategory && dmCategory.nextSibling) {
+    channelsList.insertBefore(channelItem, dmCategory.nextSibling);
+  } else {
+    channelsList.appendChild(channelItem);
+  }
+
+  // Add welcome message for AI assistant
+  const welcomeMessage = {
+    author: "system",
+    authorName: "FlagFit AI Assistant",
+    text: "👋 Hello! I'm your FlagFit AI Assistant. I can help you with:\n\n• Training tips and techniques\n• Nutrition and supplement advice\n• Performance tracking insights\n• Recovery strategies\n• Injury prevention\n\nWhat would you like to know?",
+    timestamp: new Date().toISOString(),
+  };
+
+  // Save welcome message to storage
+  saveMessageToStorage({
+    channel: "flagfit-assistant",
+    ...welcomeMessage,
+  });
+}
+
+// Select channel by name (helper function)
+function selectChannelByName(channelName) {
+  const channelItem = document.querySelector(`[data-channel="${channelName}"]`);
+  if (channelItem) {
+    selectChannel(channelItem);
+  } else {
+    // Channel doesn't exist yet, wait a bit and try again
+    setTimeout(() => {
+      const retryItem = document.querySelector(`[data-channel="${channelName}"]`);
+      if (retryItem) {
+        selectChannel(retryItem);
+      }
+    }, 100);
+  }
+}
+
+// Cleanup function for chat page
+function cleanupChatPage() {
+  if (messageInterval) {
+    clearInterval(messageInterval);
+    messageInterval = null;
+  }
+  if (typingInterval) {
+    clearInterval(typingInterval);
+    typingInterval = null;
+  }
+  if (typingTimeout) {
+    clearTimeout(typingTimeout);
+    typingTimeout = null;
+  }
+}
+
+// Cleanup on page unload
+if (typeof window !== 'undefined') {
+  window.addEventListener('beforeunload', cleanupChatPage);
+  window.addEventListener('pagehide', cleanupChatPage);
 }
 
 function setupMessageInput() {
@@ -117,10 +251,10 @@ function setupChannelSettings() {
 
   const user = authManager.getCurrentUser();
   const userRole = authManager.getUserRole();
-  
+
   // Check if user is a coach, moderator, or admin
   const canCreateChannels = ['coach', 'moderator', 'admin', 'assistant_coach'].includes(userRole?.toLowerCase());
-  
+
   if (canCreateChannels) {
     settingsBtn.addEventListener("click", openChannelSettings);
     settingsBtn.setAttribute("aria-label", "Channel settings - Create new channel");
@@ -150,7 +284,7 @@ function openChannelSettings() {
   modal.setAttribute('role', 'dialog');
   modal.setAttribute('aria-labelledby', 'channel-modal-title');
   modal.setAttribute('aria-modal', 'true');
-  
+
   modal.innerHTML = `
     <div class="channel-modal-overlay" onclick="closeChannelModal()"></div>
     <div class="channel-modal-content">
@@ -163,10 +297,10 @@ function openChannelSettings() {
       <form id="channelCreateForm" class="channel-modal-form">
         <div class="form-group">
           <label for="channelName">Channel Name</label>
-          <input 
-            type="text" 
-            id="channelName" 
-            name="channelName" 
+          <input
+            type="text"
+            id="channelName"
+            name="channelName"
             placeholder="e.g., strategy, training, announcements"
             required
             pattern="[a-z0-9-]+"
@@ -179,9 +313,9 @@ function openChannelSettings() {
         </div>
         <div class="form-group">
           <label for="channelDescription">Description (Optional)</label>
-          <textarea 
-            id="channelDescription" 
-            name="channelDescription" 
+          <textarea
+            id="channelDescription"
+            name="channelDescription"
             rows="3"
             placeholder="What is this channel for?"
           ></textarea>
@@ -202,7 +336,7 @@ function openChannelSettings() {
   `;
 
   document.body.appendChild(modal);
-  
+
   // Initialize Lucide icons
   if (typeof lucide !== "undefined") {
     lucide.createIcons(modal);
@@ -240,7 +374,7 @@ window.closeChannelModal = closeChannelModal;
 
 async function handleChannelCreation(e) {
   e.preventDefault();
-  
+
   const form = e.target;
   const channelName = document.getElementById("channelName").value.trim().toLowerCase();
   const channelDescription = document.getElementById("channelDescription").value.trim();
@@ -259,7 +393,7 @@ async function handleChannelCreation(e) {
 
   // Check if channel already exists
   const existingChannels = document.querySelectorAll('.channel-item');
-  const channelExists = Array.from(existingChannels).some(item => 
+  const channelExists = Array.from(existingChannels).some(item =>
     item.dataset.channel === channelName
   );
 
@@ -270,7 +404,7 @@ async function handleChannelCreation(e) {
 
   try {
     const user = authManager.getCurrentUser();
-    
+
     // Create channel via API (if available) or localStorage
     const newChannel = {
       name: channelName,
@@ -369,16 +503,16 @@ async function startGoogleMeetCall() {
   try {
     const user = authManager.getCurrentUser();
     const channelName = currentChannel;
-    
+
     // Use Google Meet's instant meeting creation URL
     const meetUrl = 'https://meet.google.com/new';
-    
+
     // Create a meeting name based on channel
     const meetingName = `${channelName.replace(/-/g, ' ')} - ${new Date().toLocaleDateString()}`;
-    
+
     // Post meeting info to chat
     const meetingMessage = `🎥 Starting Google Meet call for ${meetingName}\n\nClick the link to join: ${meetUrl}`;
-    
+
     // Add meeting message to UI
     addMessageToUI({
       author: user?.email || 'system',
@@ -386,7 +520,7 @@ async function startGoogleMeetCall() {
       text: meetingMessage,
       timestamp: new Date().toISOString(),
     }, false);
-    
+
     // Save to storage
     saveMessageToStorage({
       channel: currentChannel,
@@ -395,29 +529,29 @@ async function startGoogleMeetCall() {
       text: meetingMessage,
       timestamp: new Date().toISOString(),
     });
-    
+
     // Open Google Meet in new window/tab
     const meetWindow = window.open(
       meetUrl,
       '_blank',
       'width=1280,height=720,menubar=no,toolbar=no,location=no,status=no'
     );
-    
+
     if (!meetWindow) {
       // If popup blocked, try direct navigation
       AccessibilityUtils.announce('Popup blocked. Opening Google Meet in new tab.', 'polite');
       window.open(meetUrl, '_blank');
     }
-    
+
     // Announce to screen readers
     announceToScreenReader(`Google Meet call started. Meeting link posted to chat.`, 'polite');
-    
+
     scrollToBottom("messagesContainer");
-    
+
   } catch (error) {
     console.error('Failed to start Google Meet call:', error);
     ErrorHandler.handleError(error, 'Failed to start video call');
-    
+
     // Fallback: Open Google Meet directly
     window.open('https://meet.google.com/new', '_blank');
   }
@@ -425,7 +559,7 @@ async function startGoogleMeetCall() {
 
 function selectChannel(item) {
   const channelItems = document.querySelectorAll(".channel-item");
-  
+
   // Remove active class from all items
   channelItems.forEach((i) => i.classList.remove("active"));
 
@@ -470,49 +604,60 @@ async function loadMessages() {
 
 function updateMessagesContainer(messages) {
   const container = document.getElementById("messagesContainer");
+  if (!container) return;
+
   const currentUser = authManager.getCurrentUser();
-  
+
   // Reset grouping state
   lastMessageAuthor = null;
   lastMessageTime = 0;
 
-  container.innerHTML = messages
-    .map((msg, index) => {
-      const isOwn = msg.author === currentUser?.email;
-      const msgTime = new Date(msg.timestamp).getTime();
-      const msgAuthor = msg.author || msg.authorName;
-      
-      // Check if message should be grouped
-      const shouldGroup = 
-        lastMessageAuthor === msgAuthor &&
-        msgTime - lastMessageTime < MESSAGE_GROUP_THRESHOLD;
-      
-      // Update tracking variables
-      lastMessageAuthor = msgAuthor;
-      lastMessageTime = msgTime;
-      
-      const groupedClass = shouldGroup ? "grouped" : "";
-      const statusHtml = isOwn ? getMessageStatusHtml(msg.status || "read") : "";
-      const actionsHtml = getMessageActionsHtml(isOwn);
-      
-      return `
-          <div class="message ${isOwn ? "own" : ""} ${groupedClass}" 
-               role="article" 
-               aria-label="Message from ${isOwn ? "You" : msg.authorName} at ${formatTime(msg.timestamp)}">
-              <div class="message-avatar">${getInitials(msg.authorName || msg.author)}</div>
-              <div class="message-content">
-                  <div class="message-header">
-                      <span class="message-author">${isOwn ? "You" : msg.authorName}</span>
-                      <span class="message-time" aria-label="${formatTime(msg.timestamp)}">${formatTime(msg.timestamp)}</span>
-                  </div>
-                  <div class="message-text">${escapeHtml(msg.text)}</div>
-                  ${statusHtml}
-                  ${actionsHtml}
-              </div>
-          </div>
-      `;
-    })
-    .join("");
+  // Use DocumentFragment for batch DOM operations (prevents reflows)
+  const fragment = document.createDocumentFragment();
+
+  messages.forEach((msg, index) => {
+    const isOwn = msg.author === currentUser?.email;
+    const msgTime = new Date(msg.timestamp).getTime();
+    const msgAuthor = msg.author || msg.authorName;
+
+    // Check if message should be grouped
+    const shouldGroup =
+      lastMessageAuthor === msgAuthor &&
+      msgTime - lastMessageTime < MESSAGE_GROUP_THRESHOLD;
+
+    // Update tracking variables
+    lastMessageAuthor = msgAuthor;
+    lastMessageTime = msgTime;
+
+    const groupedClass = shouldGroup ? "grouped" : "";
+    const statusHtml = isOwn ? getMessageStatusHtml(msg.status || "read") : "";
+    const actionsHtml = getMessageActionsHtml(isOwn);
+
+    // Create message element
+    const messageDiv = document.createElement("div");
+    messageDiv.className = `message ${isOwn ? "own" : ""} ${groupedClass}`;
+    messageDiv.setAttribute("role", "article");
+    messageDiv.setAttribute("aria-label", `Message from ${isOwn ? "You" : msg.authorName} at ${formatTime(msg.timestamp)}`);
+
+    messageDiv.innerHTML = `
+      <div class="message-avatar">${getInitials(msg.authorName || msg.author)}</div>
+      <div class="message-content">
+        <div class="message-header">
+          <span class="message-author">${isOwn ? "You" : msg.authorName}</span>
+          <span class="message-time" aria-label="${formatTime(msg.timestamp)}">${formatTime(msg.timestamp)}</span>
+        </div>
+        <div class="message-text">${escapeHtml(msg.text)}</div>
+        ${statusHtml}
+        ${actionsHtml}
+      </div>
+    `;
+
+    fragment.appendChild(messageDiv);
+  });
+
+  // Single DOM update - clear and append fragment
+  container.innerHTML = "";
+  container.appendChild(fragment);
 
   // Initialize Lucide icons for new messages
   initializeLucideIcons();
@@ -553,12 +698,12 @@ async function sendMessage() {
         },
         true,
       );
-      
+
       // Simulate status progression
       setTimeout(() => {
         updateMessageStatus("delivered");
       }, 500);
-      
+
       setTimeout(() => {
         updateMessageStatus("read");
       }, 1500);
@@ -714,24 +859,24 @@ function addMessageToUI(message, isOwn = false) {
   const container = document.getElementById("messagesContainer");
   const msgTime = new Date(message.timestamp).getTime();
   const msgAuthor = message.author || message.authorName;
-  
+
   // Check if message should be grouped with previous message
-  const shouldGroup = 
+  const shouldGroup =
     lastMessageAuthor === msgAuthor &&
     msgTime - lastMessageTime < MESSAGE_GROUP_THRESHOLD;
-  
+
   // Update tracking variables
   lastMessageAuthor = msgAuthor;
   lastMessageTime = msgTime;
-  
+
   const messageDiv = document.createElement("div");
   messageDiv.className = `message ${isOwn ? "own" : ""} ${shouldGroup ? "grouped" : ""}`;
   messageDiv.setAttribute("role", "article");
   messageDiv.setAttribute("aria-label", `Message from ${isOwn ? "You" : message.authorName} at ${formatTime(message.timestamp)}`);
-  
+
   const statusHtml = isOwn ? getMessageStatusHtml(message.status || "sent") : "";
   const actionsHtml = getMessageActionsHtml(isOwn);
-  
+
   messageDiv.innerHTML = `
           <div class="message-avatar">${getInitials(message.authorName)}</div>
           <div class="message-content">
@@ -746,7 +891,7 @@ function addMessageToUI(message, isOwn = false) {
       `;
 
   container.appendChild(messageDiv);
-  
+
   // Initialize Lucide icons
   initializeLucideIcons(messageDiv);
 }
@@ -811,18 +956,18 @@ function updateMessageStatus(status) {
         delivered: "check-check",
         read: "check-check"
       };
-      
+
       const statusClasses = {
         sent: "status-sent",
-        delivered: "status-delivered", 
+        delivered: "status-delivered",
         read: "status-read"
       };
-      
+
       const icon = statusIcons[status] || "check";
       const statusClass = statusClasses[status] || "status-sent";
-      
+
       statusDiv.innerHTML = `<i data-lucide="${icon}" class="${statusClass} icon-14"></i>`;
-      
+
       // Re-initialize Lucide icons
       if (typeof lucide !== "undefined") {
         lucide.createIcons(statusDiv);

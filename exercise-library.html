@@ -8,15 +8,29 @@
       rel="icon"
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
     />
+    <!-- Preconnect to external resources for faster loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
       rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
     />
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
     <!-- New Modular CSS Architecture -->
     <link rel="stylesheet" href="./src/css/main.css" />
     <!-- Page-specific styles -->
     <link rel="stylesheet" href="./src/css/pages/exercise-library.css" />
+    <link rel="stylesheet" href="./src/css/components/pagination.css" />
 
+    <!-- Preconnect to unpkg for faster icon loading -->
+    <link rel="preconnect" href="https://unpkg.com" />
     <!-- Lucide Icons - Modern icon library similar to Radix UI -->
     <script src="https://unpkg.com/lucide@latest" defer></script>
     <script src="./src/icon-helper.js" defer></script>
@@ -355,200 +369,80 @@
     </div>
 
     <script type="module">
-      import { authManager } from "./src/auth-manager.js";
-      import { EXERCISE_LIBRARY } from "./src/training-program-data.js";
-
-      // Initialize page
-      document.addEventListener("DOMContentLoaded", function () {
-        // Initialize Lucide icons
+      // Show loading state immediately
+      document.addEventListener("DOMContentLoaded", async function () {
+        // Initialize Lucide icons immediately (non-blocking)
         if (typeof lucide !== "undefined") {
           lucide.createIcons();
         }
+        
+        // Show loading indicator
+        const exerciseGrid = document.getElementById("exerciseGrid");
+        if (exerciseGrid) {
+          exerciseGrid.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: var(--space-12);">
+              <div style="font-size: 2rem; margin-bottom: var(--space-4);">⏳</div>
+              <h3>Loading Exercise Library...</h3>
+              <p>Please wait while we load the exercise data</p>
+            </div>
+          `;
+        }
+
         console.log("📚 Exercise Library page loading...");
 
-        // Check authentication
-        if (!authManager.isAuthenticated()) {
-          console.log(
-            '<i data-lucide="x-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> User not authenticated, redirecting to login',
-          );
-          window.location.href = "/login.html";
-          return;
-        }
+        try {
+          // Import modules with error handling
+          const authModule = await import("./src/auth-manager.js");
+          const { authManager } = authModule;
+          
+          // Wait for auth manager to initialize (with timeout)
+          await authManager.waitForInit(5000);
 
-        console.log(
-          '<i data-lucide="check-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> User authenticated, loading exercise library',
-        );
-
-        initializeExerciseLibrary();
-      });
-
-      // Use the complete exercise library from training-program-data.js
-      const COMPLETE_EXERCISE_LIBRARY = EXERCISE_LIBRARY;
-
-      let currentFilter = "all";
-      let searchTerm = "";
-
-      function initializeExerciseLibrary() {
-        console.log("📚 Initializing exercise library...");
-
-        setupSearchAndFilter();
-        displayExercises();
-        updateStats();
-      }
-
-      function setupSearchAndFilter() {
-        // Search functionality
-        const searchInput = document.getElementById("exerciseSearch");
-        searchInput.addEventListener("input", function (e) {
-          searchTerm = e.target.value.toLowerCase();
-          displayExercises();
-        });
-
-        // Filter functionality
-        const filterTabs = document.querySelectorAll(".filter-tab");
-        filterTabs.forEach((tab) => {
-          tab.addEventListener("click", function () {
-            // Remove active class from all tabs
-            filterTabs.forEach((t) => t.classList.remove("active"));
-
-            // Add active class to clicked tab
-            this.classList.add("active");
-
-            // Update filter
-            currentFilter = this.dataset.filter;
-
-            // Display filtered exercises
-            displayExercises();
-          });
-        });
-      }
-
-      function displayExercises() {
-        const exerciseGrid = document.getElementById("exerciseGrid");
-        const exercises = Object.entries(COMPLETE_EXERCISE_LIBRARY);
-
-        // Filter exercises
-        let filteredExercises = exercises.filter(([name, exercise]) => {
-          // Apply category filter
-          const categoryMatch =
-            currentFilter === "all" || exercise.category === currentFilter;
-
-          // Apply search filter
-          const searchMatch =
-            !searchTerm ||
-            name.toLowerCase().includes(searchTerm) ||
-            exercise.category.toLowerCase().includes(searchTerm) ||
-            exercise.primaryMuscles.some((muscle) =>
-              muscle.toLowerCase().includes(searchTerm),
-            ) ||
-            exercise.equipment.some((equip) =>
-              equip.toLowerCase().includes(searchTerm),
+          // Check authentication
+          if (!authManager.isAuthenticated()) {
+            console.log(
+              '<i data-lucide="x-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> User not authenticated, redirecting to login',
             );
+            window.location.href = "/login.html";
+            return;
+          }
 
-          return categoryMatch && searchMatch;
-        });
+          console.log(
+            '<i data-lucide="check-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> User authenticated, loading exercise library',
+          );
 
-        if (filteredExercises.length === 0) {
-          exerciseGrid.innerHTML = `
-                    <div style="grid-column: 1 / -1; text-align: center; padding: var(--space-12); color: var(--color-text-secondary);">
-                        <div style="font-size: 3rem; margin-bottom: var(--space-4);"><i data-lucide="search" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></div>
-                        <h3>No exercises found</h3>
-                        <p>Try adjusting your search terms or filters</p>
-                    </div>
-                `;
-          return;
+          // Import exercise library page module
+          const exerciseModule = await import("./src/js/pages/exercise-library-page.js");
+          const { exerciseLibraryPage } = exerciseModule;
+
+          // Initialize optimized exercise library page
+          exerciseLibraryPage.initialize();
+
+          // Cleanup on page unload
+          window.addEventListener("beforeunload", () => {
+            exerciseLibraryPage.cleanup();
+          });
+        } catch (error) {
+          console.error("Failed to load exercise library:", error);
+          if (exerciseGrid) {
+            exerciseGrid.innerHTML = `
+              <div style="grid-column: 1 / -1; text-align: center; padding: var(--space-12); color: var(--color-error);">
+                <div style="font-size: 2rem; margin-bottom: var(--space-4);">❌</div>
+                <h3>Failed to load exercise library</h3>
+                <p>${error.message || "Please refresh the page or try again later"}</p>
+                <button onclick="window.location.reload()" style="margin-top: var(--space-4); padding: var(--space-2) var(--space-4); background: var(--color-brand-primary); color: white; border: none; border-radius: var(--radius-md); cursor: pointer;">
+                  Reload Page
+                </button>
+              </div>
+            `;
+          }
         }
-
-        exerciseGrid.innerHTML = filteredExercises
-          .map(
-            ([name, exercise]) => `
-                <div class="exercise-card hover-lift" onclick="openExerciseModal('${name}')">
-                    <div class="exercise-video">
-                        ${getExerciseIcon(exercise.category)}
-                    </div>
-                    <div class="exercise-content">
-                        <div class="exercise-header">
-                            <div class="exercise-category">${exercise.category}</div>
-                            <h3 class="exercise-title">${name}</h3>
-                        </div>
-                        
-                        <div class="muscle-tags">
-                            ${exercise.primaryMuscles
-                              .map(
-                                (muscle) =>
-                                  `<span class="muscle-tag primary">${muscle}</span>`,
-                              )
-                              .join("")}
-                            ${exercise.secondaryMuscles
-                              .map(
-                                (muscle) =>
-                                  `<span class="muscle-tag">${muscle}</span>`,
-                              )
-                              .join("")}
-                        </div>
-                        
-                        <p class="exercise-description">
-                            ${exercise.setup}
-                        </p>
-                        
-                        <div class="exercise-meta">
-                            <span class="difficulty-badge difficulty-${exercise.difficulty}">
-                                ${exercise.difficulty.charAt(0).toUpperCase() + exercise.difficulty.slice(1)}
-                            </span>
-                            <div class="equipment-list">
-                                ${exercise.equipment.slice(0, 2).join(", ")}${exercise.equipment.length > 2 ? "..." : ""}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `,
-          )
-          .join("");
-      }
-
-      function getExerciseIcon(category) {
-        const icons = {
-          "Posterior Chain": "🦵",
-          Plyometric:
-            '<i data-lucide="zap" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>',
-          Sprint: "🏃‍♂️",
-          Strength:
-            '<i data-lucide="dumbbell" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>',
-          Core: '<i data-lucide="target" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>',
-          Recovery: "🧘",
-          Agility:
-            '<i data-lucide="football" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>',
-        };
-        return icons[category] || "🏋️‍♂️";
-      }
-
-      function updateStats() {
-        const exercises = Object.entries(COMPLETE_EXERCISE_LIBRARY);
-        const categories = [
-          ...new Set(exercises.map(([_, ex]) => ex.category)),
-        ];
-        const totalProgressions = exercises.reduce(
-          (total, [_, ex]) => total + (ex.progressions?.length || 0),
-          0,
-        );
-        const totalSafetyNotes = exercises.reduce(
-          (total, [_, ex]) => total + (ex.safetyNotes?.length || 0),
-          0,
-        );
-
-        document.getElementById("totalExercises").textContent =
-          exercises.length;
-        document.getElementById("categoriesCount").textContent =
-          categories.length;
-        document.getElementById("progressionsCount").textContent =
-          totalProgressions;
-        document.getElementById("safetyNotesCount").textContent =
-          totalSafetyNotes;
-      }
+      });
 
       // Global function for opening exercise modal
       window.openExerciseModal = function (exerciseName) {
-        const exercise = COMPLETE_EXERCISE_LIBRARY[exerciseName];
+        const library = window.COMPLETE_EXERCISE_LIBRARY || COMPLETE_EXERCISE_LIBRARY;
+        const exercise = library[exerciseName];
         if (!exercise) return;
 
         const modal = document.getElementById("exerciseModal");

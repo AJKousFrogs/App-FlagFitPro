@@ -125,6 +125,19 @@ export const API_ENDPOINTS = {
     health: "/api/algorithms/health",
   },
 
+  // Knowledge Base
+  knowledge: {
+    search: API_BASE_URL.includes("netlify/functions")
+      ? "/knowledge-search"
+      : "/api/knowledge/search",
+    entry: (topic) => API_BASE_URL.includes("netlify/functions")
+      ? `/knowledge-search?topic=${topic}`
+      : `/api/knowledge/entry/${topic}`,
+    articles: API_BASE_URL.includes("netlify/functions")
+      ? "/knowledge-search"
+      : "/api/knowledge/articles",
+  },
+
   // General
   health: "/api/health",
 };
@@ -266,6 +279,21 @@ export class ApiClient {
     }
   }
 
+  // Cancel all active requests for a specific endpoint pattern
+  cancelRequestsByPattern(pattern) {
+    if (!this.activeRequests) return;
+
+    const toCancel = [];
+    this.activeRequests.forEach((controller, requestId) => {
+      if (requestId.includes(pattern)) {
+        controller.abort();
+        toCancel.push(requestId);
+      }
+    });
+
+    toCancel.forEach((id) => this.activeRequests.delete(id));
+  }
+
   // Cancel all active requests
   cancelAllRequests() {
     if (this.activeRequests) {
@@ -397,6 +425,15 @@ export const coach = {
   createTrainingSession: (sessionData) =>
     apiClient.post(API_ENDPOINTS.coach.createTrainingSession, sessionData),
   getGames: (coachId) => apiClient.get(API_ENDPOINTS.coach.games, { coachId }),
+};
+
+export const knowledge = {
+  search: (query, category = null, limit = 5) =>
+    apiClient.post(API_ENDPOINTS.knowledge.search, { query, category, limit }),
+  getEntry: (topic) =>
+    apiClient.get(API_ENDPOINTS.knowledge.entry(topic)),
+  searchArticles: (query, categories = [], limit = 10) =>
+    apiClient.post(API_ENDPOINTS.knowledge.articles, { query, categories, limit }),
 };
 
 // Export default client

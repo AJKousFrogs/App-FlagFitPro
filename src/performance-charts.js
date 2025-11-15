@@ -59,6 +59,9 @@ export class PerformanceCharts {
   // Initialize charts in dashboard
   async initializeDashboardCharts() {
     try {
+      // Cleanup any existing charts first
+      this.cleanupAllCharts();
+
       await this.loadChartJS();
 
       // Create performance trends chart
@@ -76,6 +79,18 @@ export class PerformanceCharts {
       console.error("Failed to initialize charts:", error);
       this.showChartError();
     }
+  }
+
+  // Cleanup all charts to prevent memory leaks
+  cleanupAllCharts() {
+    this.charts.forEach((chart, canvasId) => {
+      try {
+        chart.destroy();
+      } catch (error) {
+        console.warn(`Error destroying chart ${canvasId}:`, error);
+      }
+    });
+    this.charts.clear();
   }
 
   // Load Chart.js library dynamically
@@ -104,6 +119,12 @@ export class PerformanceCharts {
   async createPerformanceTrendsChart(canvasId) {
     const canvas = document.getElementById(canvasId);
     if (!canvas) return;
+
+    // Destroy existing chart if present (prevent memory leaks)
+    if (this.charts.has(canvasId)) {
+      this.charts.get(canvasId).destroy();
+      this.charts.delete(canvasId);
+    }
 
     try {
       const performanceHistory = await performanceAPI.getPerformanceHistory(
@@ -152,6 +173,12 @@ export class PerformanceCharts {
     const canvas = document.getElementById(canvasId);
     if (!canvas) return;
 
+    // Destroy existing chart if present (prevent memory leaks)
+    if (this.charts.has(canvasId)) {
+      this.charts.get(canvasId).destroy();
+      this.charts.delete(canvasId);
+    }
+
     try {
       const wellnessHistory = await performanceAPI.getWellnessHistory("30d");
 
@@ -197,6 +224,12 @@ export class PerformanceCharts {
   async createBodyCompositionChart(canvasId) {
     const canvas = document.getElementById(canvasId);
     if (!canvas) return;
+
+    // Destroy existing chart if present (prevent memory leaks)
+    if (this.charts.has(canvasId)) {
+      this.charts.get(canvasId).destroy();
+      this.charts.delete(canvasId);
+    }
 
     try {
       const measurementHistory = await performanceAPI.getPhysicalMeasurements(
@@ -244,6 +277,12 @@ export class PerformanceCharts {
   async createOverviewChart(canvasId) {
     const canvas = document.getElementById(canvasId);
     if (!canvas) return;
+
+    // Destroy existing chart if present (prevent memory leaks)
+    if (this.charts.has(canvasId)) {
+      this.charts.get(canvasId).destroy();
+      this.charts.delete(canvasId);
+    }
 
     try {
       const trends = await performanceAPI.getPerformanceTrends("3m");

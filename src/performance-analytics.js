@@ -347,8 +347,20 @@ export class PerformanceAnalytics {
     };
   }
 
-  // Filter data by date
+  // Filter data by date (with memoization)
   filterDataByDate(data, cutoffDate) {
+    // Use memoization cache key based on data hash and cutoff date
+    const cacheKey = `filter_${cutoffDate.getTime()}_${JSON.stringify(data.dates?.slice(0, 5))}`;
+
+    // Check cache first (simple in-memory cache)
+    if (!this._filterCache) {
+      this._filterCache = new Map();
+    }
+
+    if (this._filterCache.has(cacheKey)) {
+      return this._filterCache.get(cacheKey);
+    }
+
     const filteredData = { ...data };
     const cutoffStr = cutoffDate.toISOString().split("T")[0];
 
@@ -364,6 +376,13 @@ export class PerformanceAnalytics {
         );
       }
     });
+
+    // Cache result (limit cache size to prevent memory issues)
+    if (this._filterCache.size > 50) {
+      const firstKey = this._filterCache.keys().next().value;
+      this._filterCache.delete(firstKey);
+    }
+    this._filterCache.set(cacheKey, filteredData);
 
     return filteredData;
   }

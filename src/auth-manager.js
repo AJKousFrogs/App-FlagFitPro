@@ -76,13 +76,17 @@ class AuthManager {
   }
 
   // Wait for authentication to be fully initialized
-  async waitForInit() {
+  async waitForInit(maxWait = 5000) {
     if (this.isInitialized) return;
 
     return new Promise((resolve) => {
+      const startTime = Date.now();
       const checkInit = () => {
         if (this.isInitialized) {
           resolve();
+        } else if (Date.now() - startTime > maxWait) {
+          console.warn("Auth initialization timeout - proceeding anyway");
+          resolve(); // Don't block, just proceed
         } else {
           setTimeout(checkInit, 50);
         }

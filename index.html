@@ -166,17 +166,59 @@
     </section>
 
     <script type="module">
+      // Add timeout wrapper to prevent page freeze
+      const initTimeout = setTimeout(function() {
+        console.warn("Page initialization timeout - forcing page to be responsive");
+      }, 10000); // 10 second safety timeout
+
       document.addEventListener("DOMContentLoaded", function () {
-        // Initialize Lucide icons
-        if (typeof lucide !== "undefined") {
-          lucide.createIcons();
-        }
-        // Ensure action buttons are visible
-        const actionButtons = document.getElementById("actionButtons");
-        if (actionButtons) {
-          actionButtons.style.display = "flex";
+        try {
+          // Initialize Lucide icons with error handling and timeout
+          function initIcons() {
+            try {
+              if (typeof lucide !== "undefined") {
+                lucide.createIcons();
+              } else {
+                // Wait for Lucide with timeout
+                let attempts = 0;
+                const maxAttempts = 50; // 5 seconds max
+                const checkLucide = setInterval(function() {
+                  attempts++;
+                  if (typeof lucide !== "undefined") {
+                    clearInterval(checkLucide);
+                    lucide.createIcons();
+                  } else if (attempts >= maxAttempts) {
+                    clearInterval(checkLucide);
+                    console.warn("Lucide icons failed to load - page will continue without icons");
+                  }
+                }, 100);
+              }
+            } catch (error) {
+              console.error("Error initializing icons:", error);
+            }
+          }
+          
+          // Initialize icons (non-blocking)
+          setTimeout(initIcons, 0);
+          
+          // Ensure action buttons are visible
+          const actionButtons = document.getElementById("actionButtons");
+          if (actionButtons) {
+            actionButtons.style.display = "flex";
+          }
+          
+          // Clear timeout on successful initialization
+          clearTimeout(initTimeout);
+        } catch (error) {
+          console.error("Error in DOMContentLoaded handler:", error);
+          clearTimeout(initTimeout);
         }
       });
+      
+      // Fallback: if DOMContentLoaded never fires, clear timeout after 15 seconds
+      setTimeout(function() {
+        clearTimeout(initTimeout);
+      }, 15000);
     </script>
 
     <!-- Footer -->

@@ -35,8 +35,12 @@ class ThemeSwitcher {
     }
 
     // Find header-right or create container
+    // Don't create toggle on landing page (index.html) - it doesn't have header-right
     const headerRight = document.querySelector(".header-right");
-    if (!headerRight) return;
+    if (!headerRight) {
+      // Silently fail - landing page doesn't need theme toggle in header
+      return;
+    }
 
     // Create toggle container
     const toggleContainer = document.createElement("div");

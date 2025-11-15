@@ -1,7 +1,22 @@
 // Training Page JavaScript Module
-import { authManager } from '../auth-manager.js';
-import { REAL_TEAM_DATA, getAllPlayers, getStaffMember } from '../real-team-data.js';
-import TrainingVideoComponent from '../training-video-component.js';
+import { authManager } from '../../auth-manager.js';
+import { REAL_TEAM_DATA, getAllPlayers, getStaffMember } from '../../real-team-data.js';
+import TrainingVideoComponent from '../../training-video-component.js';
+// Services
+import { storageService } from '../services/storageService.js';
+import { workoutService } from '../services/workoutService.js';
+import { scheduleService } from '../services/scheduleService.js';
+import { statsService } from '../services/statsService.js';
+// State & Renderers
+import { trainingPageState } from './training-page-state.js';
+import { renderPage, renderWeeklySchedule } from './training-page-renderers.js';
+// Components
+import ScheduleBuilderModal from '../components/schedule-builder-modal.js';
+import ProgramModal from '../components/program-modal.js';
+// Config
+import { OFFSEASON_PROGRAM_CONFIG, QB_PROGRAM_CONFIG } from '../config/program-configs.js';
+// Utils
+import { delegateClick } from '../utils/event-delegation.js';
 
 // Initialize training page
 document.addEventListener('DOMContentLoaded', async function() {
@@ -15,31 +30,65 @@ document.addEventListener('DOMContentLoaded', async function() {
         return;
     }
 
-    // Update user display with real player data
-    const user = authManager.getCurrentUser();
-    if (user) {
-        const userAvatar = document.querySelector('.user-avatar');
-        const userName = document.getElementById('user-display-name-training');
-        if (userAvatar && userName) {
-            // Get a random real player for demo
-            const allPlayers = getAllPlayers();
-            const randomPlayer = allPlayers[Math.floor(Math.random() * allPlayers.length)];
+    // Initialize page state and load data
+    await initializePageState();
 
-            const displayName = randomPlayer.name;
-            const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase();
-
-            userAvatar.textContent = initials;
-            userName.textContent = `${displayName} ${randomPlayer.nationality}`;
-            userName.title = `Jersey #${randomPlayer.jersey} - ${randomPlayer.position}`;
-        }
-    }
-
-    // Load user progress data
-    loadProgressData();
+    // Render page with loaded state
+    renderPage(trainingPageState.getState());
 
     // Initialize YouTube training videos
     initializeTrainingVideos();
+
+    // Initialize AI Chat Assistant Button
+    initializeAIChatButton();
+
+    // Initialize workout card event delegation
+    initializeWorkoutCards();
+
+    // Setup global functions
+    setupGlobalFunctions();
+
+    // Initialize modal instances
+    initializeModals();
 });
+
+// Setup global functions for inline handlers
+function setupGlobalFunctions() {
+    window.toggleSidebar = toggleSidebar;
+    window.closeMenu = toggleSidebar; // Alias for menu-scrim
+}
+
+// Toggle sidebar for mobile
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    const toggleBtn = document.getElementById('mobile-menu-toggle');
+
+    if (!sidebar) return;
+
+    const isOpen = sidebar.classList.contains('open') || sidebar.classList.contains('mobile-open');
+
+    if (isOpen) {
+        sidebar.classList.remove('open', 'mobile-open');
+        if (overlay) overlay.classList.remove('active');
+        document.body.classList.remove('sidebar-open', 'menu-open');
+        if (toggleBtn) {
+            toggleBtn.setAttribute('aria-expanded', 'false');
+        }
+        // Return focus to toggle button
+        if (toggleBtn) toggleBtn.focus();
+    } else {
+        sidebar.classList.add('open', 'mobile-open');
+        if (overlay) overlay.classList.add('active');
+        document.body.classList.add('sidebar-open', 'menu-open');
+        if (toggleBtn) {
+            toggleBtn.setAttribute('aria-expanded', 'true');
+        }
+        // Focus first nav item for accessibility
+        const firstNavItem = sidebar.querySelector('.nav-item');
+        if (firstNavItem) firstNavItem.focus();
+    }
+}
 
 // Initialize YouTube Training Videos Component
 function initializeTrainingVideos() {
@@ -65,150 +114,187 @@ function initializeTrainingVideos() {
     }
 }
 
-function loadProgressData() {
-    // Helper function to get workout exercises based on type
-    function getWorkoutExercises(type) {
-        const exercises = {
-            speed: [
-                { name: '40-yard dash', sets: 5, reps: 1, rest: '2 min' },
-                { name: 'Cone sprints', sets: 3, reps: 8, rest: '90 sec' },
-                { name: 'Ladder drills', sets: 4, reps: 1, rest: '60 sec' }
-            ],
-            strength: [
-                { name: 'Squats', sets: 4, reps: 12, rest: '90 sec' },
-                { name: 'Push-ups', sets: 3, reps: 15, rest: '60 sec' },
-                { name: 'Burpees', sets: 3, reps: 10, rest: '90 sec' }
-            ],
-            agility: [
-                { name: '5-10-5 shuttle', sets: 4, reps: 3, rest: '2 min' },
-                { name: 'Cone weaves', sets: 3, reps: 5, rest: '90 sec' },
-                { name: 'T-drill', sets: 3, reps: 3, rest: '2 min' }
-            ],
-            endurance: [
-                { name: 'Jog', sets: 1, reps: '20 min', rest: 'none' },
-                { name: 'High knees', sets: 3, reps: '30 sec', rest: '30 sec' },
-                { name: 'Mountain climbers', sets: 3, reps: 20, rest: '45 sec' }
-            ]
-        };
-        return exercises[type] || exercises.speed;
+/**
+ * Initialize page state by loading all data
+ */
+async function initializePageState() {
+    // Load user data
+    const user = authManager.getCurrentUser();
+    if (user) {
+        // Get a random real player for demo
+        const allPlayers = getAllPlayers();
+        const randomPlayer = allPlayers[Math.floor(Math.random() * allPlayers.length)];
+
+        const displayName = randomPlayer.name;
+        const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase();
+
+        // Update avatar
+        const userAvatar = document.querySelector('.user-avatar');
+        if (userAvatar) {
+            userAvatar.textContent = initials;
+        }
+
+        // Set user in state
+        trainingPageState.setUser({
+            name: displayName,
+            initials: initials,
+            nationality: randomPlayer.nationality,
+            jersey: randomPlayer.jersey,
+            position: randomPlayer.position
+        });
     }
 
-    // Load real progress data from localStorage and API
-    const savedWorkouts = JSON.parse(localStorage.getItem('recentWorkouts') || '[]');
-    const currentWeekWorkouts = savedWorkouts.filter(workout => {
-        const workoutDate = new Date(workout.date);
-        const weekAgo = new Date();
-        weekAgo.setDate(weekAgo.getDate() - 7);
-        return workoutDate > weekAgo;
+    // Load schedule settings
+    const scheduleSettings = storageService.getScheduleSettings();
+    trainingPageState.setScheduleSettings(scheduleSettings);
+
+    // Load recent workouts
+    const recentWorkouts = storageService.getRecentWorkouts();
+    trainingPageState.setRecentWorkouts(recentWorkouts);
+
+    // Calculate stats
+    const today = new Date();
+    const weeklyStats = statsService.calculateWeeklyStats(recentWorkouts, today);
+    const overallStats = statsService.calculateOverallStats(recentWorkouts);
+    const streak = statsService.computeStreak(recentWorkouts, today);
+    trainingPageState.setStats(weeklyStats, overallStats, streak);
+
+    // Generate weekly schedule
+    const weeklySchedule = scheduleService.generateWeekSchedule({
+        today,
+        scheduleSettings,
+        recentWorkouts
     });
+    trainingPageState.setWeeklySchedule(weeklySchedule);
 
-    // Update progress stats with real data
-    const hoursThisWeek = currentWeekWorkouts.reduce((total, workout) => total + (workout.duration || 0.75), 0);
-    const totalSessions = savedWorkouts.length;
-    const avgScore = savedWorkouts.length > 0 ?
-        Math.round(savedWorkouts.reduce((sum, w) => sum + (w.score || 85), 0) / savedWorkouts.length) : 87;
+    // Load program states
+    const currentProgram = storageService.getOffseasonProgram();
+    const qbProgram = storageService.getQBProgram();
+    if (currentProgram) trainingPageState.setCurrentProgram(currentProgram);
+    if (qbProgram) trainingPageState.setQBProgram(qbProgram);
 
-    // Update UI elements
-    const progressStats = document.querySelectorAll('.progress-stat-value');
-    if (progressStats.length >= 3) {
-        progressStats[0].textContent = Math.round(hoursThisWeek);
-        progressStats[1].textContent = totalSessions;
-        progressStats[2].textContent = avgScore;
-    }
-
-    console.log('Real training progress data loaded:', {
-        hoursThisWeek,
-        totalSessions,
-        avgScore
-    });
-
-    // Store getWorkoutExercises function for global access
-    window.getWorkoutExercises = getWorkoutExercises;
+    // Set up global function for workout exercises (needed by workout.html)
+    window.getWorkoutExercises = (type) => workoutService.getExercisesForType(type);
 }
 
-window.startWorkout = function(type) {
-    // Show loading state
-    const card = event.currentTarget;
-    const button = card.querySelector('.btn');
-    const originalText = button.textContent;
+// Get user's custom schedule settings (using service)
+function getUserSchedule() {
+    return storageService.getScheduleSettings();
+}
 
+// Save user's custom schedule (using service)
+function saveUserSchedule(schedule) {
+    const success = storageService.saveScheduleSettings(schedule);
+    if (success) {
+        // Update state
+        trainingPageState.setScheduleSettings(schedule);
+        // Regenerate schedule
+        const today = new Date();
+        const recentWorkouts = trainingPageState.recentWorkouts;
+        const weeklySchedule = scheduleService.generateWeekSchedule({
+            today,
+            scheduleSettings: schedule,
+            recentWorkouts
+        });
+        trainingPageState.setWeeklySchedule(weeklySchedule);
+    }
+    return success;
+}
+
+// Initialize Weekly Schedule View (now handled by renderer)
+function initializeWeeklySchedule() {
+    const state = trainingPageState.getState();
+    renderWeeklySchedule(
+        state.weeklySchedule,
+        state.scheduleSettings,
+        state.ui.scheduleViewMode
+    );
+}
+
+// Toggle schedule view between detailed and compact (using state)
+window.toggleScheduleView = function() {
+    const currentMode = trainingPageState.ui.scheduleViewMode;
+    const newMode = currentMode === 'detailed' ? 'compact' : 'detailed';
+
+    trainingPageState.setScheduleViewMode(newMode);
+
+    const state = trainingPageState.getState();
+    renderWeeklySchedule(
+        state.weeklySchedule,
+        state.scheduleSettings,
+        state.ui.scheduleViewMode
+    );
+};
+
+// Start workout for a specific day (using service)
+window.startDayWorkout = function(type, dateISO) {
+    const workoutSession = workoutService.createSession(type, dateISO);
+    storageService.setCurrentWorkout(workoutSession);
+    window.location.href = `/workout.html?type=${type}&id=${workoutSession.id}`;
+};
+
+// Open Custom Schedule Builder Modal (using component)
+window.openCustomScheduleBuilder = function() {
+    if (scheduleBuilderModal) {
+        const schedule = getUserSchedule();
+        trainingPageState.setActiveModal('scheduleBuilder');
+        scheduleBuilderModal.open(schedule);
+    }
+};
+
+function loadProgressData() {
+    // This function is now handled by initializePageState and renderPage
+    // Keeping for backward compatibility if needed
+    const state = trainingPageState.getState();
+
+    // Store getWorkoutExercises function for global access (using service)
+    window.getWorkoutExercises = (type) => workoutService.getExercisesForType(type);
+
+    console.log('Training page state loaded:', {
+        weeklyStats: state.weeklyStats,
+        overallStats: state.overallStats,
+        streak: state.streak
+    });
+}
+
+window.startWorkout = function(type, event) {
+    // Handle both inline onclick and programmatic calls
+    const card = event?.currentTarget || event?.target?.closest('.workout-card');
+    const button = card?.querySelector('.btn');
+    const originalText = button?.textContent;
+
+    if (button) {
     button.textContent = 'Starting...';
     button.disabled = true;
+    }
 
     // Start actual workout session
     setTimeout(() => {
-        // Create workout session object
-        const workoutSession = {
-            id: Date.now(),
-            type: type,
-            startTime: new Date().toISOString(),
-            status: 'active',
-            exercises: window.getWorkoutExercises(type)
-        };
+        // Create workout session using service
+        const workoutSession = workoutService.createSession(type);
 
-        // Save to localStorage for session tracking
-        localStorage.setItem('currentWorkout', JSON.stringify(workoutSession));
+        // Save to storage using service
+        storageService.setCurrentWorkout(workoutSession);
 
         // Navigate to workout interface
         window.location.href = `/workout.html?type=${type}&id=${workoutSession.id}`;
     }, 1000);
 };
 
-window.openOffseasonProgram = function() {
-    // Create comprehensive offseason program modal
-    const modal = document.createElement('div');
-    modal.innerHTML = `
-        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: var(--z-index-modal, 1400); overflow-y: auto;">
-            <div style="background: var(--surface-primary); padding: 2rem; border-radius: 16px; max-width: 800px; max-height: 90vh; overflow-y: auto; margin: 2rem;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-                    <h2 style="color: var(--text-primary); margin: 0; flex: 1;">🏆 14-Week Flag Football Offseason Program</h2>
-                    <button onclick="this.closest('div').remove()" style="background: none; border: none; font-size: 24px; cursor: pointer; padding: 0.5rem;">✖</button>
-                </div>
-
-                <div style="background: var(--gradient-primary); color: white; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
-                    <h3 style="margin: 0 0 1rem 0;">WR/DB PERFORMANCE OPTIMIZATION</h3>
-                    <p style="margin: 0; opacity: 0.9;">November 17, 2025 - February 28, 2026 (14 Weeks)</p>
-                </div>
-
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
-                    <div style="background: var(--surface-secondary); padding: 1.5rem; border-radius: 12px; text-align: center;">
-                        <div style="font-size: 2rem; font-weight: bold; color: var(--brand-primary); margin-bottom: 0.5rem;">5-6</div>
-                        <div style="color: var(--text-secondary); font-size: 0.9rem;">Days/Week</div>
-                    </div>
-                    <div style="background: var(--surface-secondary); padding: 1.5rem; border-radius: 12px; text-align: center;">
-                        <div style="font-size: 2rem; font-weight: bold; color: var(--brand-primary); margin-bottom: 0.5rem;">60-90</div>
-                        <div style="color: var(--text-secondary); font-size: 0.9rem;">Minutes/Session</div>
-                    </div>
-                    <div style="background: var(--surface-secondary); padding: 1.5rem; border-radius: 12px; text-align: center;">
-                        <div style="font-size: 2rem; font-weight: bold; color: var(--brand-primary); margin-bottom: 0.5rem;">40%</div>
-                        <div style="color: var(--text-secondary); font-size: 0.9rem;">Max Load (BW)</div>
-                    </div>
-                </div>
-
-                <div style="text-align: center; margin-top: 2rem;">
-                    <button onclick="downloadProgram()" style="background: var(--brand-primary); color: white; border: none; padding: 1rem 2rem; border-radius: 8px; cursor: pointer; font-weight: 600; margin-right: 1rem;">📥 Download Full Program</button>
-                    <button onclick="startProgram()" style="background: var(--brand-secondary); color: white; border: none; padding: 1rem 2rem; border-radius: 8px; cursor: pointer; font-weight: 600; margin-right: 1rem;">🚀 Start Week 1</button>
-                    <button onclick="this.closest('div').remove()" style="background: var(--surface-secondary); color: var(--text-primary); border: none; padding: 1rem 2rem; border-radius: 8px; cursor: pointer;">Maybe Later</button>
-                </div>
-            </div>
-        </div>
-    `;
-    document.body.appendChild(modal);
-};
-
-window.downloadProgram = function() {
-    // Create a simple download experience
+// Download Offseason Program
+function downloadOffseasonProgram() {
+    const config = OFFSEASON_PROGRAM_CONFIG;
     const link = document.createElement('a');
-    link.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent('COMPLETE FLAG FOOTBALL OFFSEASON TRAINING PROGRAM\nWR/DB PERFORMANCE OPTIMIZATION\nNovember 17, 2025 - February 28, 2026 (14 Weeks)\n\nThis is the complete 14-week periodized training program for flag football players. Visit the training section in FlagFit Pro for the interactive version with weekly breakdowns, exercise demonstrations, and progress tracking.');
-    link.download = 'FlagFit-Pro-14Week-Offseason-Program.txt';
+    link.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(
+        `COMPLETE FLAG FOOTBALL OFFSEASON TRAINING PROGRAM\n${config.title}\n${config.startDate} - ${config.endDate} (${config.durationWeeks} Weeks)\n\nThis is the complete ${config.durationWeeks}-week periodized training program for flag football players. Visit the training section in FlagFit Pro for the interactive version with weekly breakdowns, exercise demonstrations, and progress tracking.`
+    );
+    link.download = `FlagFit-Pro-${config.durationWeeks}Week-Offseason-Program.txt`;
     link.click();
+    alert(`🎉 Program downloaded! The complete ${config.durationWeeks}-week training program with detailed weekly workouts is now saved to your device.`);
+}
 
-    // Show confirmation
-    alert('🎉 Program downloaded! The complete 14-week training program with detailed weekly workouts is now saved to your device.');
-};
-
-window.startProgram = function() {
-    // Set program start date and track participation
+// Start Offseason Program
+function startOffseasonProgram() {
     const startDate = new Date().toISOString();
     const programData = {
         started: startDate,
@@ -217,74 +303,33 @@ window.startProgram = function() {
         completedWorkouts: [],
         assessments: {}
     };
-
-    localStorage.setItem('offseasonProgram', JSON.stringify(programData));
+    storageService.saveOffseasonProgram(programData);
+    trainingPageState.setCurrentProgram(programData);
     alert('🚀 Program started! Navigate to the workout section to begin Week 1.');
+}
+
+// Open Offseason Program Modal (using component)
+window.openOffseasonProgram = function() {
+    if (offseasonProgramModal) {
+        trainingPageState.setActiveModal('offseasonProgram');
+        offseasonProgramModal.open();
+    }
 };
 
-window.openQBProgram = function() {
-    // Create simplified QB program modal
-    const modal = document.createElement('div');
-    modal.innerHTML = `
-        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: var(--z-index-modal, 1400); overflow-y: auto;">
-            <div style="background: var(--surface-primary); padding: 2rem; border-radius: 16px; max-width: 900px; max-height: 90vh; overflow-y: auto; margin: 2rem;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-                    <h2 style="color: var(--text-primary); margin: 0; flex: 1;">🎯 14-Week Elite Quarterback Program</h2>
-                    <button onclick="this.closest('div').remove()" style="background: none; border: none; font-size: 24px; cursor: pointer; padding: 0.5rem;">✖</button>
-                </div>
-
-                <div style="background: var(--gradient-primary); color: white; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
-                    <h3 style="margin: 0 0 1rem 0;">ELITE QB DEVELOPMENT</h3>
-                    <p style="margin: 0; opacity: 0.9;">November 17, 2025 - February 28, 2026 • Prepare for 320 throws/weekend</p>
-                </div>
-
-                <div style="background: var(--color-warning-subtle); border: 2px solid var(--color-warning); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem;">
-                    <h3 style="margin: 0 0 1rem 0; color: var(--color-warning-foreground);">🚨 The QB Challenge: 320 Throws in a Weekend</h3>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; color: var(--text-primary);">
-                        <div style="text-align: center;">
-                            <div style="font-size: 1.5rem; font-weight: bold;">8</div>
-                            <div style="font-size: 0.8rem;">Games/Weekend</div>
-                        </div>
-                        <div style="text-align: center;">
-                            <div style="font-size: 1.5rem; font-weight: bold;">40</div>
-                            <div style="font-size: 0.8rem;">Throws/Game</div>
-                        </div>
-                        <div style="text-align: center;">
-                            <div style="font-size: 1.5rem; font-weight: bold;">320</div>
-                            <div style="font-size: 0.8rem;">Total Throws</div>
-                        </div>
-                        <div style="text-align: center;">
-                            <div style="font-size: 1.5rem; font-weight: bold;">2hrs</div>
-                            <div style="font-size: 0.8rem;">Between Games</div>
-                        </div>
-                    </div>
-                    <p style="margin: 1rem 0 0 0; font-size: 0.9rem; color: var(--text-primary); text-align: center;"><strong>This requires EXTREME preparation - sustained accuracy under fatigue</strong></p>
-                </div>
-
-                <div style="text-align: center; margin-top: 2rem;">
-                    <button onclick="downloadQBProgram()" style="background: var(--brand-primary); color: white; border: none; padding: 1rem 2rem; border-radius: 8px; cursor: pointer; font-weight: 600; margin-right: 1rem;">📥 Download Full Program</button>
-                    <button onclick="startQBProgram()" style="background: var(--brand-secondary); color: white; border: none; padding: 1rem 2rem; border-radius: 8px; cursor: pointer; font-weight: 600; margin-right: 1rem;">🎯 Start QB Training</button>
-                    <button onclick="this.closest('div').remove()" style="background: var(--surface-secondary); color: var(--text-primary); border: none; padding: 1rem 2rem; border-radius: 8px; cursor: pointer;">Maybe Later</button>
-                </div>
-            </div>
-        </div>
-    `;
-    document.body.appendChild(modal);
-};
-
-window.downloadQBProgram = function() {
-    // Create download for QB program
+// Download QB Program
+function downloadQBProgram() {
+    const config = QB_PROGRAM_CONFIG;
     const link = document.createElement('a');
-    link.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent('COMPLETE QUARTERBACK FLAG FOOTBALL TRAINING PROGRAM\n14-WEEK ELITE QB DEVELOPMENT\nNovember 17, 2025 - February 28, 2026\n\nThis comprehensive 14-week quarterback development program prepares you for the ultimate challenge: 320 throws in a weekend tournament while maintaining velocity and accuracy. Includes dual-track training (lower body + QB-specific), evidence-based protocols, and progressive endurance building to handle 8 games at elite level.');
+    link.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(
+        `COMPLETE QUARTERBACK FLAG FOOTBALL TRAINING PROGRAM\n${config.title}\n${config.startDate} - ${config.endDate}\n\nThis comprehensive ${config.durationWeeks}-week quarterback development program prepares you for the ultimate challenge: ${config.challenge.totalThrows} throws in a weekend tournament while maintaining velocity and accuracy. Includes dual-track training (lower body + QB-specific), evidence-based protocols, and progressive endurance building to handle ${config.challenge.gamesPerWeekend} games at elite level.`
+    );
     link.download = 'FlagFit-Pro-Elite-QB-Program.txt';
     link.click();
-
-    // Show confirmation
     alert('🎯 QB Program downloaded! The complete 14-week quarterback development program for 320 throws/weekend is now saved to your device.');
-};
+}
 
-window.startQBProgram = function() {
-    // Set program start date and track participation
+// Start QB Program
+function startQBProgram() {
     const startDate = new Date().toISOString();
     const programData = {
         started: startDate,
@@ -296,49 +341,19 @@ window.startQBProgram = function() {
         armCareLog: [],
         throwingVolume: []
     };
-
-    localStorage.setItem('qbProgram', JSON.stringify(programData));
+    storageService.saveQBProgram(programData);
+    trainingPageState.setQBProgram(programData);
     alert('🎯 QB Program started! Enhanced training with dual-track approach begins now.');
-};
+}
 
-window.quickStart = function() {
-    // Analyze user data to recommend best workout
-    const user = authManager.getCurrentUser();
-    const savedSettings = JSON.parse(localStorage.getItem('flagfit_settings') || '{}');
-    const recentWorkouts = JSON.parse(localStorage.getItem('recentWorkouts') || '[]');
-
-    // Simple recommendation logic based on last workout
-    let recommendedType = 'speed'; // default
-    if (recentWorkouts.length > 0) {
-        const lastWorkout = recentWorkouts[recentWorkouts.length - 1];
-        const daysSinceLastWorkout = (Date.now() - new Date(lastWorkout.date).getTime()) / (1000 * 60 * 60 * 24);
-
-        // Recommend different type based on last workout
-        switch (lastWorkout.type) {
-            case 'speed': recommendedType = 'strength'; break;
-            case 'strength': recommendedType = 'agility'; break;
-            case 'agility': recommendedType = 'endurance'; break;
-            case 'endurance': recommendedType = 'speed'; break;
-        }
+// Open QB Program Modal (using component)
+window.openQBProgram = function() {
+    if (qbProgramModal) {
+        trainingPageState.setActiveModal('qbProgram');
+        qbProgramModal.open();
     }
-
-    // Show recommendation modal
-    const modal = document.createElement('div');
-    modal.innerHTML = `
-        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: var(--z-index-modal, 1400);">
-            <div style="background: var(--surface-primary); padding: 2rem; border-radius: 12px; max-width: 400px; text-align: center;">
-                <h3 style="margin-bottom: 1rem; color: var(--text-primary);">🎯 Recommended Workout</h3>
-                <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">Based on your training history, we recommend:</p>
-                <div style="background: var(--brand-primary); color: white; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; text-transform: capitalize; font-weight: 600;">${recommendedType} Training</div>
-                <div style="display: flex; gap: 1rem; justify-content: center;">
-                    <button onclick="this.closest('div').remove(); startWorkout('${recommendedType}')" style="background: var(--brand-primary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer;">Start Now</button>
-                    <button onclick="this.closest('div').remove()" style="background: var(--surface-secondary); color: var(--text-primary); border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer;">Maybe Later</button>
-                </div>
-            </div>
-        </div>
-    `;
-    document.body.appendChild(modal);
 };
+
 
 // Navigation handlers
 document.querySelectorAll('.nav-item').forEach(item => {
@@ -366,3 +381,113 @@ document.querySelectorAll('.workout-card').forEach(card => {
         this.style.transform = 'translateY(0)';
     });
 });
+
+// Initialize workout card event delegation (using utility)
+function initializeWorkoutCards() {
+    // Handle card clicks (excluding buttons)
+    delegateClick('.workouts-section', '.workout-card[data-workout-type]', (e, card) => {
+        const workoutType = card.getAttribute('data-workout-type');
+        if (workoutType && !e.target.closest('.btn')) {
+            startWorkout(workoutType, e);
+        }
+    });
+
+    // Handle button clicks specifically
+    delegateClick('.workouts-section', '.workout-card[data-workout-type] .btn', (e, button) => {
+        e.stopPropagation(); // Prevent card click from firing
+        const card = button.closest('.workout-card[data-workout-type]');
+        if (card) {
+            const workoutType = card.getAttribute('data-workout-type');
+            if (workoutType) {
+                startWorkout(workoutType, e);
+            }
+        }
+    });
+}
+
+// Initialize modal instances
+let scheduleBuilderModal = null;
+let offseasonProgramModal = null;
+let qbProgramModal = null;
+
+function initializeModals() {
+    // Schedule Builder Modal
+    scheduleBuilderModal = new ScheduleBuilderModal({
+        onSave: (schedule) => {
+            // Update state
+            trainingPageState.setScheduleSettings(schedule);
+            // Regenerate schedule
+            const today = new Date();
+            const recentWorkouts = trainingPageState.recentWorkouts;
+            const weeklySchedule = scheduleService.generateWeekSchedule({
+                today,
+                scheduleSettings: schedule,
+                recentWorkouts
+            });
+            trainingPageState.setWeeklySchedule(weeklySchedule);
+            // Re-render
+            const state = trainingPageState.getState();
+            renderWeeklySchedule(
+                state.weeklySchedule,
+                state.scheduleSettings,
+                state.ui.scheduleViewMode
+            );
+        }
+    });
+
+    // Offseason Program Modal
+    offseasonProgramModal = new ProgramModal(OFFSEASON_PROGRAM_CONFIG, {
+        onDownload: downloadOffseasonProgram,
+        onStart: startOffseasonProgram
+    });
+
+    // QB Program Modal
+    qbProgramModal = new ProgramModal(QB_PROGRAM_CONFIG, {
+        onDownload: downloadQBProgram,
+        onStart: startQBProgram
+    });
+}
+
+// Initialize AI Chat Assistant Button
+function initializeAIChatButton() {
+    const aiChatBtn = document.getElementById('ai-chat-button-training') || document.querySelector('.ai-chat-button');
+    if (aiChatBtn) {
+        aiChatBtn.addEventListener('click', handleAIChat);
+    }
+}
+
+// Handle AI Chat Button Click
+async function handleAIChat(e) {
+    e.preventDefault();
+
+    const chatButton = e.target.closest(".ai-chat-button") || e.target;
+
+    // Add visual feedback
+    chatButton.style.transform = "scale(0.95)";
+    setTimeout(() => {
+        chatButton.style.transform = "scale(1)";
+    }, 150);
+
+    // Open the chatbot modal
+    try {
+        // Import and open chatbot
+        const chatbotModule = await import("../components/chatbot.js");
+        const { flagFitChatbot } = chatbotModule;
+
+        if (flagFitChatbot && typeof flagFitChatbot.open === "function") {
+            flagFitChatbot.open();
+        } else {
+            throw new Error("Chatbot module not properly initialized");
+        }
+    } catch (error) {
+        console.error("Failed to load chatbot:", error);
+
+        // Try to use global chatbot if available
+        if (window.flagFitChatbot && typeof window.flagFitChatbot.open === "function") {
+            window.flagFitChatbot.open();
+        } else {
+            // Last resort: show alert
+            alert("AI Assistant Chat\n\nAsk me about:\n• Sports psychology & mental training\n• Nutrition & supplements\n• Speed & agility development\n• Injury prevention & treatment\n• Recovery strategies\n• Training programs");
+        }
+    }
+}

@@ -125,14 +125,32 @@ async function handleMeasurements(method, userId, body, query) {
   switch (method) {
     case "GET":
       const timeframe = query?.timeframe || "6m";
-      const measurements = mockDB.measurements.filter(
+      const page = parseInt(query?.page || "1", 10);
+      const limit = Math.min(parseInt(query?.limit || "50", 10), 100); // Max 100 per page
+      const offset = (page - 1) * limit;
+      
+      let measurements = mockDB.measurements.filter(
         (m) => m.userId === userId && isWithinTimeframe(m.timestamp, timeframe),
       );
+      
+      // Sort by timestamp descending (newest first)
+      measurements.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+      
+      const total = measurements.length;
+      const paginatedMeasurements = measurements.slice(offset, offset + limit);
+      
       return {
         statusCode: 200,
         body: JSON.stringify({
-          data: measurements,
-          summary: calculateMeasurementsSummary(measurements),
+          data: paginatedMeasurements,
+          summary: calculateMeasurementsSummary(paginatedMeasurements),
+          pagination: {
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit),
+            hasMore: offset + limit < total,
+          },
         }),
       };
 
@@ -178,6 +196,9 @@ async function handlePerformanceTests(method, userId, body, query) {
     case "GET":
       const testType = query?.testType;
       const timeframe = query?.timeframe || "12m";
+      const page = parseInt(query?.page || "1", 10);
+      const limit = Math.min(parseInt(query?.limit || "50", 10), 100); // Max 100 per page
+      const offset = (page - 1) * limit;
 
       let tests = mockDB.performanceTests.filter(
         (t) => t.userId === userId && isWithinTimeframe(t.timestamp, timeframe),
@@ -187,12 +208,25 @@ async function handlePerformanceTests(method, userId, body, query) {
         tests = tests.filter((t) => t.testType === testType);
       }
 
+      // Sort by timestamp descending (newest first)
+      tests.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+      
+      const total = tests.length;
+      const paginatedTests = tests.slice(offset, offset + limit);
+
       return {
         statusCode: 200,
         body: JSON.stringify({
-          data: tests,
-          trends: calculatePerformanceTrends(tests),
-          summary: calculateTestsSummary(tests),
+          data: paginatedTests,
+          trends: calculatePerformanceTrends(paginatedTests),
+          summary: calculateTestsSummary(paginatedTests),
+          pagination: {
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit),
+            hasMore: offset + limit < total,
+          },
         }),
       };
 

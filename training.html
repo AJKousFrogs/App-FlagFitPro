@@ -18,6 +18,9 @@
     <link rel="stylesheet" href="./src/css/main.css" />
     <!-- Page-specific styles -->
     <link rel="stylesheet" href="./src/css/pages/training.css" />
+    <!-- Component Styles -->
+    <link rel="stylesheet" href="./src/css/components/chatbot.css" />
+    <link rel="stylesheet" href="./src/css/components/modal.css" />
 
     <!-- Lucide Icons - Modern icon library similar to Radix UI -->
     <script src="https://unpkg.com/lucide@latest" defer></script>
@@ -25,14 +28,32 @@
     <script src="./src/theme-switcher.js" defer></script>
     <script src="./src/nav-highlight.js" defer></script>
     <script src="./src/components/organisms/top-bar/top-bar.js" defer></script>
+    <!-- Preload Chatbot Component -->
+    <script type="module">
+      // Preload chatbot for faster access
+      import('./src/js/components/chatbot.js').then((module) => {
+        // Ensure chatbot is available globally
+        if (module.flagFitChatbot) {
+          window.flagFitChatbot = module.flagFitChatbot;
+          console.log('Chatbot loaded successfully');
+        }
+      }).catch((error) => {
+        console.warn('Chatbot preload failed:', error);
+      });
+    </script>
   </head>
   <body>
     <div class="dashboard-container">
-      <!-- Mobile Overlay/Scrim (for closing sidebar on mobile) -->
-      <div class="menu-scrim" aria-hidden="true" onclick="closeMenu()"></div>
+      <!-- Sidebar Overlay for Mobile -->
+      <div
+        class="sidebar-overlay"
+        id="sidebar-overlay"
+        aria-hidden="true"
+        onclick="toggleSidebar()"
+      ></div>
       
       <!-- Unified Sidebar Navigation -->
-      <div class="sidebar">
+      <div class="sidebar" id="sidebar">
         <div
           class="sidebar-logo"
           onclick="window.location.href='/dashboard.html'"
@@ -170,6 +191,18 @@
     <!-- Top Bar -->
         <div class="top-bar" role="banner">
           <div class="header-left">
+            <!-- Mobile Hamburger Menu Button -->
+            <button
+              id="mobile-menu-toggle"
+              class="mobile-menu-toggle"
+              type="button"
+              aria-label="Toggle navigation menu"
+              aria-expanded="false"
+              aria-controls="sidebar"
+              onclick="toggleSidebar()"
+            >
+              <i data-lucide="menu" class="icon-20"></i>
+            </button>
             <!-- Global Search (combobox pattern) -->
             <div class="search-box">
               <label for="global-search" class="sr-only"
@@ -267,20 +300,51 @@
           class="hero-section mb-16"
         >
           <div class="hero-card">
+            <div class="u-text-body-sm u-text-secondary u-font-weight-500 u-margin-bottom-8" style="text-transform: uppercase; letter-spacing: 0.5px;">
+              Training Hub
+            </div>
             <h1
               class="hero-main-title mb-8"
             >
-              Welcome back, Alex!
+              Welcome back, <span id="user-display-name-training">Alex</span>!
             </h1>
             <p class="u-text-heading-md u-text-secondary m-0">
               Ready to dominate today?
             </p>
+            <div class="u-text-body-sm u-text-secondary u-font-weight-500 u-margin-top-12" style="opacity: 0.7;">
+              Your Weekly Performance Snapshot
+            </div>
+          </div>
+        </div>
+
+    <!-- Custom Schedule Builder CTA -->
+        <div class="custom-schedule-cta u-margin-bottom-32">
+          <div class="cta-card u-radius-xl u-padding-24 u-shadow-sm">
+            <div class="u-display-flex u-align-center u-justify-between u-flex-wrap u-gap-16">
+              <div class="cta-content">
+                <h2 class="u-text-heading-lg u-font-weight-700 u-margin-bottom-8">
+                  <i data-lucide="calendar-plus" class="icon-20 icon-inline" style="color: var(--color-brand-primary);"></i>
+                  Build Your Custom Training Schedule
+                </h2>
+                <p class="u-text-body-md u-margin-bottom-0" style="max-width: 600px;">
+                  Join 20 players from 12 nations who follow personalized training plans. Create a schedule that fits your game days, timezone, and goals.
+                </p>
+              </div>
+              <button 
+                class="btn btn-primary btn-md" 
+                onclick="openCustomScheduleBuilder()"
+                style="white-space: nowrap;"
+              >
+                <i data-lucide="plus" class="icon-16 icon-inline"></i>
+                Create Schedule
+              </button>
+            </div>
           </div>
         </div>
 
     <!-- Training Stats Grid -->
         <div
-          class="stats-grid u-display-grid u-gap-24 u-margin-bottom-64 grid-auto-fit-280"
+          class="stats-grid u-display-grid u-gap-24 u-margin-bottom-64"
         >
           <div class="stat-card u-radius-xl u-padding-24 u-shadow-sm">
             <div
@@ -313,7 +377,7 @@
             <div
               class="stat-value u-text-display-lg u-font-weight-700 u-text-primary u-margin-bottom-8"
             >
-              4<span class="u-text-body-lg u-text-secondary">/6</span>
+              4<span class="u-text-body-lg u-text-secondary">/7</span>
             </div>
             <div
               class="u-width-full u-height-6 u-bg-secondary u-radius-sm u-margin-y-8"
@@ -321,7 +385,7 @@
               <div
                 class="u-height-full u-radius-sm"
                 style="
-                  width: 67%;
+                  width: 57%;
                   background: linear-gradient(
                     90deg,
                     var(--color-success),
@@ -336,6 +400,9 @@
             >
               <span>🔥</span>
               <span>Sessions Completed</span>
+            </div>
+            <div class="u-text-body-xs u-text-secondary u-margin-top-8" style="opacity: 0.7;">
+              +2 sessions vs last week
             </div>
           </div>
 
@@ -352,6 +419,7 @@
                 style="
                   background: rgba(245, 158, 11, 0.1);
                   color: var(--color-brand-secondary);
+                  margin-top: 2px;
                 "
               >
                 <i
@@ -390,6 +458,9 @@
               ></span>
               <span>Personal best streak!</span>
             </div>
+            <div class="u-text-body-xs u-text-secondary u-margin-top-8" style="opacity: 0.7;">
+              Record streak: 14 days
+            </div>
           </div>
 
           <div class="stat-card u-radius-xl u-padding-24 u-shadow-sm">
@@ -421,6 +492,9 @@
               <span>⬆️</span>
               <span>+4.2h this week</span>
             </div>
+            <div class="u-text-body-xs u-text-secondary u-margin-top-8" style="opacity: 0.7;">
+              Last week: 24.3h
+            </div>
           </div>
 
           <div class="stat-card u-radius-xl u-padding-24 u-shadow-sm">
@@ -442,7 +516,7 @@
               </div>
             </div>
             <div
-              class="stat-value u-text-body-lg u-font-weight-700 u-text-primary u-margin-bottom-8"
+              class="stat-value u-text-display-lg u-font-weight-700 u-text-primary u-margin-bottom-8"
             >
               Olympic Prep
             </div>
@@ -464,6 +538,42 @@
               ></span>
               <span>Today at 3:00 PM</span>
             </div>
+            <div class="u-text-body-xs u-text-secondary u-margin-top-8" style="opacity: 0.7;">
+              Speed focus
+            </div>
+          </div>
+        </div>
+
+    <!-- Weekly Schedule View -->
+        <div class="weekly-schedule-section u-margin-bottom-64">
+          <div class="section-header u-margin-bottom-24">
+            <h2
+              class="section-title u-text-heading-lg u-font-weight-700 u-text-primary"
+            >
+              <i
+                data-lucide="calendar"
+                style="
+                  width: 20px;
+                  height: 20px;
+                  display: inline-block;
+                  vertical-align: middle;
+                  color: var(--icon-color-primary);
+                  stroke: var(--icon-color-primary);
+                "
+              ></i>
+              Weekly Training Schedule
+            </h2>
+            <button 
+              class="btn btn-secondary btn-md"
+              onclick="toggleScheduleView()"
+            >
+              <i data-lucide="grid-3x3" class="icon-16 icon-inline"></i>
+              <span id="schedule-view-toggle">View Details</span>
+            </button>
+          </div>
+
+          <div class="weekly-schedule-grid u-display-grid u-gap-16" id="weekly-schedule-grid">
+            <!-- Days will be populated by JavaScript -->
           </div>
         </div>
 
@@ -494,7 +604,7 @@
 
             <div
               class="workout-card u-display-flex u-align-center u-gap-16 u-padding-20 u-bg-primary u-radius-lg u-border-secondary u-margin-bottom-16"
-              onclick="startWorkout('speed')"
+              data-workout-type="speed"
               style="
                 cursor: pointer;
                 border: 1px solid var(--color-border-secondary);
@@ -530,12 +640,12 @@
                   <span>📍 Track required</span>
                 </div>
               </div>
-              <button class="btn btn-primary">Start</button>
+              <button class="btn btn-primary btn-md">Start</button>
             </div>
 
             <div
               class="workout-card u-display-flex u-align-center u-gap-16 u-padding-20 u-bg-primary u-radius-lg u-border-secondary u-margin-bottom-16"
-              onclick="startWorkout('strength')"
+              data-workout-type="strength"
               style="
                 cursor: pointer;
                 border: 1px solid var(--color-border-secondary);
@@ -581,12 +691,12 @@
                   <span>🏋️ Gym access</span>
                 </div>
               </div>
-              <button class="btn btn-primary">Start</button>
+              <button class="btn btn-primary btn-md">Start</button>
             </div>
 
             <div
               class="workout-card u-display-flex u-align-center u-gap-16 u-padding-20 u-bg-primary u-radius-lg u-border-secondary u-margin-bottom-16"
-              onclick="startWorkout('agility')"
+              data-workout-type="agility"
               style="
                 cursor: pointer;
                 border: 1px solid var(--color-border-secondary);
@@ -622,12 +732,12 @@
                   <span>⚽ Field access</span>
                 </div>
               </div>
-              <button class="btn btn-primary">Start</button>
+              <button class="btn btn-primary btn-md">Start</button>
             </div>
 
             <div
               class="workout-card u-display-flex u-align-center u-gap-16 u-padding-20 u-bg-primary u-radius-lg u-border-secondary u-margin-bottom-16"
-              onclick="startWorkout('endurance')"
+              data-workout-type="endurance"
               style="
                 cursor: pointer;
                 border: 1px solid var(--color-border-secondary);
@@ -663,7 +773,7 @@
                   <span>🏃 Anywhere</span>
                 </div>
               </div>
-              <button class="btn btn-primary">Start</button>
+              <button class="btn btn-primary btn-md">Start</button>
             </div>
 
             <div
@@ -744,7 +854,7 @@
                   >
                 </div>
               </div>
-              <button class="btn btn-primary">View Program</button>
+              <button class="btn btn-primary btn-md">View Program</button>
             </div>
 
             <div
@@ -825,7 +935,7 @@
                   >
                 </div>
               </div>
-              <button class="btn btn-primary">View Program</button>
+              <button class="btn btn-primary btn-md">View Program</button>
             </div>
           </div>
 
@@ -870,7 +980,7 @@
                 </div>
               </div>
 
-              <div class="progress-chart">Weekly Progress Chart</div>
+              <div class="progress-chart"></div>
             </div>
 
             <!-- Achievements Section -->
@@ -906,12 +1016,14 @@
                   🏃
                 </div>
                 <div class="achievement-content">
-                  <div class="achievement-title">Speed Demon</div>
+                  <div class="achievement-title">
+                    Speed Demon
+                    <span class="achievement-badge">New</span>
+                  </div>
                   <div class="achievement-description">
                     Completed 5 speed training sessions
                   </div>
                 </div>
-                <div class="achievement-badge">New</div>
               </div>
 
               <div class="achievement-item">
@@ -1002,20 +1114,12 @@
       </main>
     </div>
 
-    <!-- Quick Start Button -->
-    <button class="quick-start-btn" onclick="quickStart()">
-      <i
-        data-lucide="zap"
-        style="
-          width: 16px;
-          height: 16px;
-          display: inline-block;
-          vertical-align: middle;
-          color: var(--icon-color-primary);
-          stroke: var(--icon-color-primary);
-        "
-      ></i>
-    </button>
+    <!-- AI Chat Floating Bubble -->
+    <div class="ai-chat-bubble">
+      <button class="ai-chat-button" id="ai-chat-button-training">
+        💬 "Ask FlagFit Assistant"
+      </button>
+    </div>
 
     <!-- Training Page JavaScript -->
     <script type="module" src="./src/js/pages/training-page.js"></script>
