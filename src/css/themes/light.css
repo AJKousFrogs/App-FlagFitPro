@@ -52,63 +52,13 @@ html[data-theme="light"] {
 
   /* Status Colors - Light Mode */
   --status-success-600: var(--primitive-primary-700);      /* #089949 */
-  --status-warning-500: #f59e0b;
-  --status-error-500: #dc2626;
-  --status-info-500: #2563eb;
+  --status-warning-500: var(--primitive-warning-500);      /* #f59e0b */
+  --status-error-500: var(--primitive-error-600);          /* #dc2626 */
+  --status-info-500: var(--primitive-info-600);            /* #2563eb */
 }
 
-/* Class-based theme switching */
-.light,
-html.light {
-  /* Surface Colors - Light Mode (Design System Compliant) */
-  --surface-primary: #ffffff;
-  --surface-secondary: var(--primitive-neutral-50);        /* #fafafa */
-  --surface-tertiary: var(--primitive-neutral-100);        /* #f5f5f5 */
-  --surface-quaternary: var(--primitive-neutral-200);      /* #f0f0f0 - for layered UI */
-  --surface-elevated: #ffffff;
-  --surface-inverse: var(--primitive-neutral-900);         /* #171717 */
-
-  /* Text Colors - Light Mode (Design System Compliant) */
-  --color-text-primary: var(--primitive-neutral-900);      /* #171717 */
-  --color-text-secondary: var(--primitive-neutral-700);    /* #404040 */
-  --color-text-tertiary: var(--primitive-neutral-600);     /* #737373 */
-  --color-text-disabled: var(--primitive-neutral-400);     /* #d4d4d4 */
-  --color-text-inverse: var(--primitive-neutral-50);       /* #fafafa */
-  --color-text-on-surface: var(--primitive-neutral-900);   /* #171717 */
-
-  /* Icon Colors - Light Mode (WCAG AA Compliant) */
-  --icon-color-primary: var(--primitive-neutral-900);      /* #171717 */
-  --icon-color-secondary: var(--primitive-neutral-700);    /* #404040 */
-  --icon-color-tertiary: var(--primitive-neutral-600);     /* #737373 */
-  --icon-color-disabled: var(--primitive-neutral-400);     /* #d4d4d4 */
-  --icon-color-on-primary: #ffffff;
-  --icon-color-brand: var(--primitive-primary-700);        /* #089949 */
-
-  /* Border Colors - Light Mode (Design System Compliant) */
-  --color-border-primary: var(--primitive-neutral-300);    /* #e5e5e5 */
-  --color-border-secondary: var(--primitive-neutral-200);  /* #f0f0f0 */
-  --color-border-subtle: var(--primitive-neutral-100);     /* #f5f5f5 */
-  --color-border-strong: var(--primitive-neutral-400);     /* #d4d4d4 */
-  --color-border-medium: var(--primitive-neutral-300);     /* #e5e5e5 */
-  --color-border-focus: var(--primitive-primary-700);      /* #089949 */
-
-  /* Brand Colors - Light Mode */
-  --color-brand-primary: var(--primitive-primary-700);     /* #089949 */
-  --color-brand-primary-hover: var(--primitive-primary-800); /* #067a3c */
-  --color-brand-primary-active: var(--primitive-primary-900); /* #036d35 */
-  --color-brand-primary-alpha-10: rgba(8, 153, 73, 0.1);
-  --color-brand-primary-alpha-20: rgba(8, 153, 73, 0.2);
-
-  /* Chart Colors - Light Mode */
-  --chart-bar-fill: var(--color-brand-primary);
-  --chart-bar-bg: var(--primitive-neutral-100);            /* #f5f5f5 */
-
-  /* Status Colors - Light Mode */
-  --status-success-600: var(--primitive-primary-700);      /* #089949 */
-  --status-warning-500: #f59e0b;
-  --status-error-500: #dc2626;
-  --status-info-500: #2563eb;
-}
+/* Note: Class-based theme switching removed to eliminate duplication.
+   Use [data-theme="light"] for theme switching. */
 
 /* ================================================================
    LIGHT THEME COMPONENT OVERRIDES
@@ -140,11 +90,11 @@ html[data-theme="light"] body {
 
 [data-theme="light"] .nav-item.active {
   background: var(--color-brand-primary);
-  color: #ffffff;
+  color: var(--icon-color-on-primary);
 }
 
 [data-theme="light"] .nav-item.active .nav-item-icon {
-  color: #ffffff;
+  color: var(--icon-color-on-primary);
 }
 
 /* Top bar and header */
@@ -179,7 +129,7 @@ html[data-theme="light"] body {
 [data-theme="light"] input,
 [data-theme="light"] select,
 [data-theme="light"] textarea {
-  background: var(--surface-primary);
+  background: var(--surface-elevated);
   border: 1px solid var(--color-border-primary);
   color: var(--color-text-primary);
 }
@@ -278,7 +228,7 @@ html[data-theme="light"] body {
 }
 
 [data-theme="light"] ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-border-primary);
+  background: var(--primitive-neutral-500);
 }
 
 /* System preference (only if no manual theme is set) */
@@ -329,8 +279,8 @@ html[data-theme="light"] body {
 
     /* Status Colors - Light Mode */
     --status-success-600: var(--primitive-primary-700);
-    --status-warning-500: #f59e0b;
-    --status-error-500: #dc2626;
-    --status-info-500: #2563eb;
+    --status-warning-500: var(--primitive-warning-500);
+    --status-error-500: var(--primitive-error-600);
+    --status-info-500: var(--primitive-info-600);
   }
 }

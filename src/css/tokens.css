@@ -122,6 +122,22 @@
   --primitive-primary-800: #067a3c;
   --primitive-primary-900: #036d35;
 
+  /* Primitive Status Palettes (Design System Compliant) */
+  /* Warning - Amber scale */
+  --primitive-warning-400: #fbbf24;  /* For dark mode */
+  --primitive-warning-500: #f59e0b;  /* For light mode */
+  --primitive-warning-600: #d97706;
+
+  /* Error - Red scale */
+  --primitive-error-500: #ef4444;    /* For dark mode */
+  --primitive-error-600: #dc2626;    /* For light mode */
+  --primitive-error-700: #b91c1c;
+
+  /* Info - Blue scale */
+  --primitive-info-500: #3b82f6;     /* For dark mode */
+  --primitive-info-600: #2563eb;     /* For light mode */
+  --primitive-info-700: #1d4ed8;
+
   /* Primitive aliases (most commonly used) */
   --primitive-success-500: var(--color-success);
 
