@@ -3,10 +3,10 @@
 
 // Simple logger fallback
 const logger = {
-  error: (...args) => console.error(...args),
-  warn: (...args) => console.warn(...args),
-  info: (...args) => console.info(...args),
-  log: (...args) => console.log(...args),
+  error: (...args) => logger.error(...args),
+  warn: (...args) => logger.warn(...args),
+  info: (...args) => logger.info(...args),
+  log: (...args) => logger.debug(...args),
 };
 
 class FlagFitChatbot {
@@ -405,7 +405,7 @@ class FlagFitChatbot {
       this.hideTypingIndicator();
       this.addMessage("bot", response);
     } catch (error) {
-      console.error("Error getting response:", error);
+      logger.error("Error getting response:", error);
       this.hideTypingIndicator();
       this.addMessage("bot", "I apologize, but I'm having trouble processing your question right now. Please try rephrasing it.");
     }
@@ -480,14 +480,14 @@ class FlagFitChatbot {
           return answer;
         }
       } catch (error) {
-        console.log("Knowledge base service unavailable, using local knowledge:", error);
+        logger.debug("Knowledge base service unavailable, using local knowledge:", error);
       }
 
       // Fallback to local knowledge with intelligent parsing
       return await this.getLocalResponse(parsedQuestion, userMessage, lowerMessage);
 
     } catch (error) {
-      console.error("Error in intelligent response:", error);
+      logger.error("Error in intelligent response:", error);
       // Ultimate fallback
       return await this.getLocalResponse(null, userMessage, lowerMessage);
     }
@@ -537,7 +537,7 @@ class FlagFitChatbot {
       }
     } catch (e) {
       // Continue with direct local responses
-      console.log("Answer generator unavailable, using direct responses:", e);
+      logger.debug("Answer generator unavailable, using direct responses:", e);
     }
 
     // Check for specific supplement questions

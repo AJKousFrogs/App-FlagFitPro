@@ -1,6 +1,8 @@
 // Loading Manager for FlagFit Pro
 // Provides consistent loading states, skeleton screens, and progress indicators
 
+import { SecureDOMUtils } from './secure-dom-utils.js';
+
 export class LoadingManager {
   constructor() {
     this.activeLoaders = new Map();
@@ -17,34 +19,45 @@ export class LoadingManager {
     overlay.setAttribute('aria-live', 'polite');
     overlay.setAttribute('aria-label', message);
 
-    const cancelButton = cancellable ? `
-      <button class="loading-cancel-btn" aria-label="Cancel loading" style="
-        margin-top: 1rem;
-        padding: 0.5rem 1rem;
-        background: rgba(255, 255, 255, 0.2);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        color: white;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 0.875rem;
-      ">Cancel</button>
-    ` : '';
+    // Create spinner
+    const spinner = SecureDOMUtils.createElement(overlay, 'div', {
+      className: 'loading-spinner'
+    });
 
-    overlay.innerHTML = `
-      <div class="loading-spinner"></div>
-      <div class="loading-message">${message}</div>
-      ${cancelButton}
-    `;
+    // Create message
+    const messageEl = SecureDOMUtils.createElement(overlay, 'div', {
+      className: 'loading-message',
+      textContent: message
+    });
+
+    // Add cancel button if needed
+    let cancelBtn = null;
+    if (cancellable) {
+      cancelBtn = SecureDOMUtils.createElement(overlay, 'button', {
+        className: 'loading-cancel-btn',
+        textContent: 'Cancel',
+        attributes: {
+          'aria-label': 'Cancel loading',
+          style: `
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.875rem;
+          `
+        }
+      });
+    }
 
     // Add cancel handler
-    if (cancellable && onCancel) {
-      const cancelBtn = overlay.querySelector('.loading-cancel-btn');
-      if (cancelBtn) {
-        cancelBtn.addEventListener('click', () => {
-          if (onCancel) onCancel();
-          this.hideLoading(loaderId);
-        });
-      }
+    if (cancellable && onCancel && cancelBtn) {
+      cancelBtn.addEventListener('click', () => {
+        if (onCancel) onCancel();
+        this.hideLoading(loaderId);
+      });
     }
 
     document.body.appendChild(overlay);
@@ -84,17 +97,31 @@ export class LoadingManager {
 
     const skeletons = [];
     for (let i = 0; i < count; i++) {
-      const skeleton = document.createElement('div');
-      skeleton.className = 'skeleton-item';
-      skeleton.innerHTML = `
-        <div class="skeleton-header"></div>
-        <div class="skeleton-body">
-          <div class="skeleton-line"></div>
-          <div class="skeleton-line"></div>
-          <div class="skeleton-line short"></div>
-        </div>
-      `;
-      container.appendChild(skeleton);
+      const skeleton = SecureDOMUtils.createElement(container, 'div', {
+        className: 'skeleton-item'
+      });
+      
+      // Create skeleton header
+      SecureDOMUtils.createElement(skeleton, 'div', {
+        className: 'skeleton-header'
+      });
+      
+      // Create skeleton body
+      const skeletonBody = SecureDOMUtils.createElement(skeleton, 'div', {
+        className: 'skeleton-body'
+      });
+      
+      // Create skeleton lines
+      SecureDOMUtils.createElement(skeletonBody, 'div', {
+        className: 'skeleton-line'
+      });
+      SecureDOMUtils.createElement(skeletonBody, 'div', {
+        className: 'skeleton-line'
+      });
+      SecureDOMUtils.createElement(skeletonBody, 'div', {
+        className: 'skeleton-line short'
+      });
+      
       skeletons.push(skeleton);
     }
 
@@ -125,18 +152,35 @@ export class LoadingManager {
     const progressId = `progress-${Date.now()}`;
     const percentage = Math.round((current / total) * 100);
 
-    const progressBar = document.createElement('div');
-    progressBar.id = progressId;
-    progressBar.className = 'progress-container';
-    progressBar.innerHTML = `
-      ${message ? `<div class="progress-message">${message}</div>` : ''}
-      <div class="progress-bar-wrapper">
-        <div class="progress-bar" style="width: ${percentage}%"></div>
-      </div>
-      <div class="progress-text">${current} of ${total} (${percentage}%)</div>
-    `;
-
-    container.appendChild(progressBar);
+    const progressBar = SecureDOMUtils.createElement(container, 'div', {
+      className: 'progress-container',
+      attributes: { id: progressId }
+    });
+    
+    // Add message if provided
+    if (message) {
+      SecureDOMUtils.createElement(progressBar, 'div', {
+        className: 'progress-message',
+        textContent: message
+      });
+    }
+    
+    // Create progress bar wrapper
+    const wrapper = SecureDOMUtils.createElement(progressBar, 'div', {
+      className: 'progress-bar-wrapper'
+    });
+    
+    // Create progress bar
+    SecureDOMUtils.createElement(wrapper, 'div', {
+      className: 'progress-bar',
+      attributes: { style: `width: ${percentage}%` }
+    });
+    
+    // Create progress text
+    SecureDOMUtils.createElement(progressBar, 'div', {
+      className: 'progress-text',
+      textContent: `${current} of ${total} (${percentage}%)`
+    });
     return progressId;
   }
 
@@ -150,7 +194,7 @@ export class LoadingManager {
     const text = progressBar.querySelector('.progress-text');
 
     if (bar) bar.style.width = `${percentage}%`;
-    if (text) text.textContent = `${current} of ${total} (${percentage}%)`;
+    if (text) SecureDOMUtils.setTextContent(text, `${current} of ${total} (${percentage}%)`);
   }
 
   // Show inline loading state
@@ -183,15 +227,20 @@ export class LoadingManager {
     if (!element) return;
 
     const savingId = `saving-${Date.now()}`;
-    const indicator = document.createElement('div');
-    indicator.id = savingId;
-    indicator.className = 'saving-indicator';
-    indicator.innerHTML = `
-      <i data-lucide="loader-2"></i>
-      <span>${message}</span>
-    `;
-
-    element.appendChild(indicator);
+    const indicator = SecureDOMUtils.createElement(element, 'div', {
+      className: 'saving-indicator',
+      attributes: { id: savingId }
+    });
+    
+    // Create icon element
+    SecureDOMUtils.createElement(indicator, 'i', {
+      attributes: { 'data-lucide': 'loader-2' }
+    });
+    
+    // Create message span
+    SecureDOMUtils.createElement(indicator, 'span', {
+      textContent: message
+    });
 
     if (typeof lucide !== 'undefined') {
       lucide.createIcons();

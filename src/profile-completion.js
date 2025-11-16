@@ -307,7 +307,7 @@ export class ProfileCompletionManager {
       const { apiClient } = await import('./api-config.js');
       await apiClient.put('/api/user/profile', updatedProfile);
     } catch (error) {
-      console.warn('Could not save to API, saved locally:', error);
+      logger.warn('Could not save to API, saved locally:', error);
     }
 
     // Show success message

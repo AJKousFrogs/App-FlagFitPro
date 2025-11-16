@@ -110,7 +110,7 @@ class YouTubeTrainingService {
     if (this.cache.has(cacheKey)) {
       const cached = this.cache.get(cacheKey);
       if (Date.now() - cached.timestamp < this.cacheExpiry) {
-        console.log(`📺 Using cached videos for ${category}`);
+        logger.debug(`📺 Using cached videos for ${category}`);
         return cached.data;
       }
     }
@@ -126,7 +126,7 @@ class YouTubeTrainingService {
 
       return videos;
     } catch (error) {
-      console.error(`❌ Error fetching ${category} videos:`, error);
+      logger.error(`❌ Error fetching ${category} videos:`, error);
 
       // Return fallback/demo videos if API fails
       return this.getFallbackVideos(category);
@@ -142,7 +142,7 @@ class YouTubeTrainingService {
       throw new Error(`Unknown category: ${category}`);
     }
 
-    console.log(`📺 Fetching ${category} videos from YouTube...`);
+    logger.debug(`📺 Fetching ${category} videos from YouTube...`);
 
     const allVideos = [];
 
@@ -156,7 +156,7 @@ class YouTubeTrainingService {
         );
         allVideos.push(...videos);
       } catch (error) {
-        console.warn(
+        logger.warn(
           `⚠️ Failed to fetch videos for "${keyword}":`,
           error.message,
         );
@@ -166,7 +166,7 @@ class YouTubeTrainingService {
     // Remove duplicates and filter for quality
     const uniqueVideos = this.filterAndSortVideos(allVideos, maxResults);
 
-    console.log(`✅ Found ${uniqueVideos.length} videos for ${category}`);
+    logger.debug(`✅ Found ${uniqueVideos.length} videos for ${category}`);
     return uniqueVideos;
   }
 
@@ -372,7 +372,7 @@ class YouTubeTrainingService {
       const videos = await this.searchVideos(enhancedQuery, maxResults);
       return this.filterAndSortVideos(videos, maxResults);
     } catch (error) {
-      console.error(`❌ Error searching for ${exerciseName}:`, error);
+      logger.error(`❌ Error searching for ${exerciseName}:`, error);
       return this.getFallbackVideos("sprint-drills").slice(0, maxResults);
     }
   }
@@ -405,7 +405,7 @@ class YouTubeTrainingService {
         };
       }
     } catch (error) {
-      console.error(`❌ Error fetching video details for ${videoId}:`, error);
+      logger.error(`❌ Error fetching video details for ${videoId}:`, error);
     }
 
     return null;

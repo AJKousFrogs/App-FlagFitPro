@@ -15,7 +15,7 @@ class StorageService {
             localStorage.removeItem(test);
             return true;
         } catch (e) {
-            console.warn('localStorage not available:', e);
+            logger.warn('localStorage not available:', e);
             return false;
         }
     }
@@ -27,14 +27,14 @@ class StorageService {
             const data = localStorage.getItem('recentWorkouts');
             return data ? JSON.parse(data) : [];
         } catch (e) {
-            console.error('Error reading recentWorkouts:', e);
+            logger.error('Error reading recentWorkouts:', e);
             return [];
         }
     }
 
     saveWorkoutSession(session) {
         if (!this.isAvailable) {
-            console.warn('Cannot save workout session: localStorage unavailable');
+            logger.warn('Cannot save workout session: localStorage unavailable');
             return false;
         }
         try {
@@ -47,7 +47,7 @@ class StorageService {
             localStorage.setItem('recentWorkouts', JSON.stringify(workouts));
             return true;
         } catch (e) {
-            console.error('Error saving workout session:', e);
+            logger.error('Error saving workout session:', e);
             return false;
         }
     }
@@ -58,7 +58,7 @@ class StorageService {
             const data = localStorage.getItem('currentWorkout');
             return data ? JSON.parse(data) : null;
         } catch (e) {
-            console.error('Error reading currentWorkout:', e);
+            logger.error('Error reading currentWorkout:', e);
             return null;
         }
     }
@@ -69,7 +69,7 @@ class StorageService {
             localStorage.setItem('currentWorkout', JSON.stringify(session));
             return true;
         } catch (e) {
-            console.error('Error saving currentWorkout:', e);
+            logger.error('Error saving currentWorkout:', e);
             return false;
         }
     }
@@ -79,7 +79,7 @@ class StorageService {
         try {
             localStorage.removeItem('currentWorkout');
         } catch (e) {
-            console.error('Error clearing currentWorkout:', e);
+            logger.error('Error clearing currentWorkout:', e);
         }
     }
 
@@ -95,7 +95,7 @@ class StorageService {
             }
             return this.getDefaultScheduleSettings();
         } catch (e) {
-            console.error('Error reading schedule settings:', e);
+            logger.error('Error reading schedule settings:', e);
             return this.getDefaultScheduleSettings();
         }
     }
@@ -113,14 +113,14 @@ class StorageService {
 
     saveScheduleSettings(settings) {
         if (!this.isAvailable) {
-            console.warn('Cannot save schedule settings: localStorage unavailable');
+            logger.warn('Cannot save schedule settings: localStorage unavailable');
             return false;
         }
         try {
             localStorage.setItem('flagfit_custom_schedule', JSON.stringify(settings));
             return true;
         } catch (e) {
-            console.error('Error saving schedule settings:', e);
+            logger.error('Error saving schedule settings:', e);
             return false;
         }
     }
@@ -132,7 +132,7 @@ class StorageService {
             const data = localStorage.getItem('offseasonProgram');
             return data ? JSON.parse(data) : null;
         } catch (e) {
-            console.error('Error reading offseason program:', e);
+            logger.error('Error reading offseason program:', e);
             return null;
         }
     }
@@ -143,7 +143,7 @@ class StorageService {
             localStorage.setItem('offseasonProgram', JSON.stringify(programData));
             return true;
         } catch (e) {
-            console.error('Error saving offseason program:', e);
+            logger.error('Error saving offseason program:', e);
             return false;
         }
     }
@@ -154,7 +154,7 @@ class StorageService {
             const data = localStorage.getItem('qbProgram');
             return data ? JSON.parse(data) : null;
         } catch (e) {
-            console.error('Error reading QB program:', e);
+            logger.error('Error reading QB program:', e);
             return null;
         }
     }
@@ -165,7 +165,7 @@ class StorageService {
             localStorage.setItem('qbProgram', JSON.stringify(programData));
             return true;
         } catch (e) {
-            console.error('Error saving QB program:', e);
+            logger.error('Error saving QB program:', e);
             return false;
         }
     }
@@ -177,7 +177,7 @@ class StorageService {
             const data = localStorage.getItem(key);
             return data ? JSON.parse(data) : defaultValue;
         } catch (e) {
-            console.error(`Error reading ${key}:`, e);
+            logger.error(`Error reading ${key}:`, e);
             return defaultValue;
         }
     }
@@ -188,7 +188,7 @@ class StorageService {
             localStorage.setItem(key, JSON.stringify(value));
             return true;
         } catch (e) {
-            console.error(`Error saving ${key}:`, e);
+            logger.error(`Error saving ${key}:`, e);
             return false;
         }
     }
@@ -198,7 +198,7 @@ class StorageService {
         try {
             localStorage.removeItem(key);
         } catch (e) {
-            console.error(`Error removing ${key}:`, e);
+            logger.error(`Error removing ${key}:`, e);
         }
     }
 }

@@ -1,6 +1,8 @@
 // Accessibility utilities for FlagFit Pro
 // Provides comprehensive accessibility features and enhancements
 
+import { logger } from './logger.js';
+
 export class AccessibilityUtils {
   static focusManagement = {
     focusStack: [],
@@ -9,7 +11,7 @@ export class AccessibilityUtils {
 
   // Initialize accessibility features
   static init() {
-    console.log("♿ Initializing accessibility features...");
+    logger.debug("♿ Initializing accessibility features...");
 
     this.setupKeyboardNavigation();
     this.setupScreenReaderSupport();
@@ -18,7 +20,7 @@ export class AccessibilityUtils {
     this.setupReducedMotion();
     this.addSkipLinks();
 
-    console.log("✅ Accessibility features initialized");
+    logger.debug("✅ Accessibility features initialized");
   }
 
   // Enhanced keyboard navigation
@@ -546,7 +548,7 @@ export class AccessibilityUtils {
   // Cleanup
   static cleanup() {
     // Remove event listeners and observers
-    console.log("♿ Cleaning up accessibility features");
+    logger.debug("♿ Cleaning up accessibility features");
   }
 }
 

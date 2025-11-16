@@ -115,7 +115,7 @@
         );
         render(results);
       } catch (error) {
-        console.error("Search error:", error);
+        logger.error("Search error:", error);
         render([]);
         status.textContent = "Search error occurred";
       }

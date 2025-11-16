@@ -25,7 +25,7 @@ const getApiBaseUrl = () => {
     window.location.hostname === "localhost" ||
     window.location.hostname === "127.0.0.1"
   ) {
-    console.log("🎭 Local development detected - using mock API");
+    logger.debug("🎭 Local development detected - using mock API");
     return "mock://api";
   }
 
@@ -163,7 +163,7 @@ export class ApiClient {
       const { mockApiClient } = await import("./mock-api.js");
       this.mockApi = mockApiClient;
     } catch (error) {
-      console.warn("Failed to load mock API:", error);
+      logger.warn("Failed to load mock API:", error);
     }
   }
 
@@ -245,15 +245,15 @@ export class ApiClient {
 
       // Handle abort error
       if (error.name === 'AbortError') {
-        console.log(`Request cancelled: ${endpoint}`);
+        logger.debug(`Request cancelled: ${endpoint}`);
         throw new Error('Request cancelled');
       }
 
-      console.error(`API request failed: ${endpoint}`, error);
+      logger.error(`API request failed: ${endpoint}`, error);
 
       // Fallback to mock data in development if real API fails
       if (this.baseUrl.includes("localhost")) {
-        console.warn("Real API failed, falling back to mock data");
+        logger.warn("Real API failed, falling back to mock data");
         if (!this.mockApi) {
           await this.initMockApi();
         }

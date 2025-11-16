@@ -206,7 +206,7 @@ function switchTab(tab) {
     ?.classList.add("active");
 
   // Here you would implement actual tab switching logic
-  console.log("Switched to tab:", tab);
+  logger.debug("Switched to tab:", tab);
 }
 
 // Player management functions

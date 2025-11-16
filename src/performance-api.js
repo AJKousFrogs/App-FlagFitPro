@@ -47,7 +47,7 @@ export class PerformanceAPI {
       if (!response.ok) throw new Error("Failed to save measurements");
       return await response.json();
     } catch (error) {
-      console.error("Error saving measurements:", error);
+      logger.error("Error saving measurements:", error);
       // Fallback to localStorage for demo
       return this.saveToLocalStorage("measurements", data);
     }
@@ -65,7 +65,7 @@ export class PerformanceAPI {
       if (!response.ok) throw new Error("Failed to fetch measurements");
       return await response.json();
     } catch (error) {
-      console.error("Error fetching measurements:", error);
+      logger.error("Error fetching measurements:", error);
       return this.getFromLocalStorage("measurements");
     }
   }
@@ -91,7 +91,7 @@ export class PerformanceAPI {
       if (!response.ok) throw new Error("Failed to save performance test");
       return await response.json();
     } catch (error) {
-      console.error("Error saving performance test:", error);
+      logger.error("Error saving performance test:", error);
       return this.saveToLocalStorage(`performance_${testType}`, data);
     }
   }
@@ -108,7 +108,7 @@ export class PerformanceAPI {
       if (!response.ok) throw new Error("Failed to fetch performance history");
       return await response.json();
     } catch (error) {
-      console.error("Error fetching performance history:", error);
+      logger.error("Error fetching performance history:", error);
       return this.getFromLocalStorage(`performance_${testType}`);
     }
   }
@@ -137,7 +137,7 @@ export class PerformanceAPI {
       if (!response.ok) throw new Error("Failed to save wellness data");
       return await response.json();
     } catch (error) {
-      console.error("Error saving wellness data:", error);
+      logger.error("Error saving wellness data:", error);
       return this.saveToLocalStorage("wellness", data);
     }
   }
@@ -154,7 +154,7 @@ export class PerformanceAPI {
       if (!response.ok) throw new Error("Failed to fetch wellness history");
       return await response.json();
     } catch (error) {
-      console.error("Error fetching wellness history:", error);
+      logger.error("Error fetching wellness history:", error);
       return this.getFromLocalStorage("wellness");
     }
   }
@@ -179,7 +179,7 @@ export class PerformanceAPI {
       if (!response.ok) throw new Error("Failed to log supplement");
       return await response.json();
     } catch (error) {
-      console.error("Error logging supplement:", error);
+      logger.error("Error logging supplement:", error);
       return this.saveToLocalStorage("supplements", {
         supplement: supplementName,
         time,
@@ -200,7 +200,7 @@ export class PerformanceAPI {
       if (!response.ok) throw new Error("Failed to fetch supplement history");
       return await response.json();
     } catch (error) {
-      console.error("Error fetching supplement history:", error);
+      logger.error("Error fetching supplement history:", error);
       return this.getFromLocalStorage("supplements");
     }
   }
@@ -228,7 +228,7 @@ export class PerformanceAPI {
       if (!response.ok) throw new Error("Failed to report injury");
       return await response.json();
     } catch (error) {
-      console.error("Error reporting injury:", error);
+      logger.error("Error reporting injury:", error);
       return this.saveToLocalStorage("injuries", injuryData);
     }
   }
@@ -251,7 +251,7 @@ export class PerformanceAPI {
       if (!response.ok) throw new Error("Failed to update injury status");
       return await response.json();
     } catch (error) {
-      console.error("Error updating injury:", error);
+      logger.error("Error updating injury:", error);
       return { success: false, error: error.message };
     }
   }
@@ -269,7 +269,7 @@ export class PerformanceAPI {
       if (!response.ok) throw new Error("Failed to fetch trends");
       return await response.json();
     } catch (error) {
-      console.error("Error fetching trends:", error);
+      logger.error("Error fetching trends:", error);
       return this.generateMockTrends();
     }
   }
@@ -291,7 +291,7 @@ export class PerformanceAPI {
       if (!response.ok) throw new Error("Failed to fetch comparative analysis");
       return await response.json();
     } catch (error) {
-      console.error("Error fetching comparative analysis:", error);
+      logger.error("Error fetching comparative analysis:", error);
       return { success: false, error: error.message };
     }
   }
@@ -313,7 +313,7 @@ export class PerformanceAPI {
       }
       return await response.json();
     } catch (error) {
-      console.error("Error exporting data:", error);
+      logger.error("Error exporting data:", error);
       return this.exportLocalStorageData(format);
     }
   }
@@ -330,7 +330,7 @@ export class PerformanceAPI {
       localStorage.setItem(`perf_${key}`, JSON.stringify(existing));
       return { success: true, id: existing[existing.length - 1].id };
     } catch (error) {
-      console.error("LocalStorage error:", error);
+      logger.error("LocalStorage error:", error);
       return { success: false, error: error.message };
     }
   }
@@ -339,7 +339,7 @@ export class PerformanceAPI {
     try {
       return JSON.parse(localStorage.getItem(`perf_${key}`) || "[]");
     } catch (error) {
-      console.error("LocalStorage error:", error);
+      logger.error("LocalStorage error:", error);
       return [];
     }
   }

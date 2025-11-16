@@ -102,7 +102,7 @@ export class LoadManagementService {
         calculationDate: date
       };
     } catch (error) {
-      console.error('Error calculating ACWR:', error);
+      logger.error('Error calculating ACWR:', error);
       throw error;
     }
   }
@@ -211,7 +211,7 @@ export class LoadManagementService {
         recommendation: this.generateMonotonyRecommendation(monotony, monotonyRisk)
       };
     } catch (error) {
-      console.error('Error calculating monotony:', error);
+      logger.error('Error calculating monotony:', error);
       throw error;
     }
   }
@@ -299,7 +299,7 @@ export class LoadManagementService {
         recommendation: this.generateTSBRecommendation(tsb, interpretation)
       };
     } catch (error) {
-      console.error('Error calculating TSB:', error);
+      logger.error('Error calculating TSB:', error);
       throw error;
     }
   }
@@ -471,7 +471,7 @@ export class LoadManagementService {
         assessmentDate: date
       };
     } catch (error) {
-      console.error('Error calculating injury risk:', error);
+      logger.error('Error calculating injury risk:', error);
       throw error;
     }
   }
@@ -583,7 +583,7 @@ export class LoadManagementService {
 
       return 0;
     } catch (error) {
-      console.error('Error calculating load spike risk:', error);
+      logger.error('Error calculating load spike risk:', error);
       return 0;
     }
   }

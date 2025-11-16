@@ -4,6 +4,7 @@
 import { apiClient, auth } from "./api-config.js";
 import { loadingManager } from "./loading-manager.js";
 import { logger } from "./logger.js";
+import { secureStorage } from "./secure-storage.js";
 
 // Import mock authentication for static deployment
 let mockAuth = null;
@@ -85,7 +86,7 @@ class AuthManager {
         if (this.isInitialized) {
           resolve();
         } else if (Date.now() - startTime > maxWait) {
-          console.warn("Auth initialization timeout - proceeding anyway");
+          logger.warn("Auth initialization timeout - proceeding anyway");
           resolve(); // Don't block, just proceed
         } else {
           setTimeout(checkInit, 50);
@@ -113,8 +114,8 @@ class AuthManager {
     // Skip check if still initializing - let individual pages handle it
     if (this.isInitializing) {
       if (isDevelopment)
-        console.log(
-          "⏳ Still initializing, deferring auth check to page logic",
+        logger.debug(
+          "⏳ Still initializing, deferring auth check to page logic"
         );
       return;
     }
@@ -178,7 +179,7 @@ class AuthManager {
     return protectedPages.some((page) => currentPath.includes(page));
   }
 
-  // Load authentication data from localStorage
+  // Load authentication data from secure storage
   loadStoredAuth() {
     const isDevelopment =
       window.location.hostname === "localhost" ||
@@ -186,16 +187,19 @@ class AuthManager {
     logger.debug("Loading stored authentication data...");
 
     try {
-      this.token = localStorage.getItem("authToken");
-      const userData = localStorage.getItem("userData");
+      // Try to migrate from legacy storage first
+      secureStorage.migrateFromLegacyStorage();
+      
+      // Load from secure storage
+      this.token = secureStorage.getAuthToken();
+      this.user = secureStorage.getUserData();
 
       if (isDevelopment) {
         logger.debug("Stored token:", this.token ? "Present" : "Missing");
-        logger.debug("Stored user data:", userData ? "Present" : "Missing");
+        logger.debug("Stored user data:", this.user ? "Present" : "Missing");
       }
 
-      if (userData) {
-        this.user = JSON.parse(userData);
+      if (this.user) {
         logger.debug("Loaded user:", this.user);
       }
 
@@ -285,12 +289,12 @@ class AuthManager {
           this.token = response.data.token;
           this.user = response.data.user;
 
-          // Store authentication data
-          localStorage.setItem("authToken", this.token);
-          localStorage.setItem("userData", JSON.stringify(this.user));
-          logger.debug("Auth data stored in localStorage");
-          logger.debug("Stored token key: authToken");
-          logger.debug("Stored user key: userData");
+          // Store authentication data securely
+          secureStorage.setAuthToken(this.token);
+          secureStorage.setUserData(this.user);
+          logger.debug("Auth data stored securely");
+          logger.debug("Stored token: encrypted");
+          logger.debug("Stored user data: encrypted");
 
           this.saveUserData();
 
@@ -350,7 +354,7 @@ class AuthManager {
 
       // If no mock auth available, create temporary demo auth for any environment
       if (!mockAuth) {
-        console.log("🎭 Creating temporary demo authentication...");
+        logger.debug("🎭 Creating temporary demo authentication...");
 
         // Simple demo authentication for any environment
         if (email && password) {
@@ -365,16 +369,16 @@ class AuthManager {
           this.token = demoToken;
           this.user = demoUser;
 
-          // Store authentication data
-          localStorage.setItem("authToken", this.token);
-          localStorage.setItem("userData", JSON.stringify(this.user));
-          console.log("💾 Demo auth data stored in localStorage");
+          // Store authentication data securely
+          secureStorage.setAuthToken(this.token);
+          secureStorage.setUserData(this.user);
+          logger.debug("💾 Demo auth data stored securely");
 
           this.saveUserData();
 
           // Set token in API client
           apiClient.setAuthToken(this.token);
-          console.log("🔗 Token set in API client");
+          logger.debug("🔗 Token set in API client");
 
           // Notify callbacks
           this.notifyLoginCallbacks();
@@ -384,16 +388,16 @@ class AuthManager {
 
           // Redirect to dashboard after successful login
           setTimeout(() => {
-            console.log("🚀 Starting dashboard redirect...");
-            console.log("🔍 Final auth check before redirect:");
-            console.log("   - Token exists:", !!this.token);
-            console.log("   - User exists:", !!this.user);
-            console.log("   - Is authenticated:", this.isAuthenticated());
+            logger.debug("🚀 Starting dashboard redirect...");
+            logger.debug("🔍 Final auth check before redirect:");
+            logger.debug("   - Token exists:", !!this.token);
+            logger.debug("   - User exists:", !!this.user);
+            logger.debug("   - Is authenticated:", this.isAuthenticated());
 
             if (this.isAuthenticated()) {
               this.redirectToDashboard();
             } else {
-              console.error("❌ Auth state invalid at redirect time");
+              logger.error("❌ Auth state invalid at redirect time");
               this.showError(
                 "Authentication state lost. Please try logging in again.",
               );
@@ -405,15 +409,15 @@ class AuthManager {
       }
 
       // Try real API
-      console.log("🌐 Trying real API authentication...");
+      logger.debug("🌐 Trying real API authentication...");
       const response = await auth.login({ email, password });
 
       if (response.success) {
         this.token = response.data.token;
         this.user = response.data.user;
 
-        // Store authentication data
-        localStorage.setItem("authToken", this.token);
+        // Store authentication data securely
+        secureStorage.setAuthToken(this.token);
         this.saveUserData();
 
         // Set token in API client
@@ -439,7 +443,7 @@ class AuthManager {
     } catch (error) {
       this.hideLoading();
       this.showError("Network error. Please try again.");
-      console.error("Login error:", error);
+      logger.error("Login error:", error);
       return { success: false, error: error.message };
     }
   }
@@ -455,8 +459,8 @@ class AuthManager {
         this.token = response.token;
         this.user = response.user;
 
-        // Store authentication data
-        localStorage.setItem("authToken", this.token);
+        // Store authentication data securely
+        secureStorage.setAuthToken(this.token);
         this.saveUserData();
 
         // Set token in API client
@@ -477,7 +481,7 @@ class AuthManager {
     } catch (error) {
       this.hideLoading();
       this.showError("Network error. Please try again.");
-      console.error("Registration error:", error);
+      logger.error("Registration error:", error);
       return { success: false, error: error.message };
     }
   }
@@ -490,7 +494,7 @@ class AuthManager {
         await auth.logout().catch(() => {}); // Don't fail if backend is offline
       }
     } catch (error) {
-      console.warn("Logout API call failed:", error);
+      logger.warn("Logout API call failed:", error);
     }
 
     this.clearAuth();
@@ -502,15 +506,14 @@ class AuthManager {
   clearAuth() {
     this.user = null;
     this.token = null;
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("userData");
+    secureStorage.clearAll();
     apiClient.setAuthToken(null);
   }
 
-  // Save user data to localStorage
+  // Save user data securely
   saveUserData() {
     if (this.user) {
-      localStorage.setItem("userData", JSON.stringify(this.user));
+      secureStorage.setUserData(this.user);
     }
   }
 
@@ -520,9 +523,9 @@ class AuthManager {
       window.location.hostname === "localhost" ||
       window.location.hostname === "127.0.0.1";
     if (isDevelopment) {
-      console.log("🔍 Checking authentication state...");
-      console.log("🎫 Token exists:", !!this.token);
-      console.log("👤 User exists:", !!this.user);
+      logger.debug("🔍 Checking authentication state...");
+      logger.debug("🎫 Token exists:", !!this.token);
+      logger.debug("👤 User exists:", !!this.user);
     }
 
     if (this.token && this.user) {
@@ -531,15 +534,15 @@ class AuthManager {
         if (isDevelopment) {
           // Only log in development
           if (window.location.hostname === "localhost") {
-            console.log(
+            logger.debug(
               "🎭 Demo token detected in development, skipping JWT validation",
             );
-            console.log("✅ User is authenticated (demo mode)");
+            logger.debug("✅ User is authenticated (demo mode)");
           }
           return true;
         } else {
           // Demo tokens strictly forbidden in production
-          console.error(
+          logger.error(
             "❌ SECURITY VIOLATION: Demo token detected in production environment",
           );
           this.clearAuth();
@@ -558,33 +561,33 @@ class AuthManager {
 
         // Only log token details in development
         if (isDevelopment) {
-          console.log("⏰ Token expires at:", new Date(payload.exp * 1000));
-          console.log("⏰ Current time:", new Date(now * 1000));
-          console.log("⏰ Token valid:", payload.exp > now);
+          logger.debug("⏰ Token expires at:", new Date(payload.exp * 1000));
+          logger.debug("⏰ Current time:", new Date(now * 1000));
+          logger.debug("⏰ Token valid:", payload.exp > now);
         }
 
         if (payload.exp && payload.exp > now) {
           if (isDevelopment) {
-            console.log("✅ User is authenticated (JWT valid)");
+            logger.debug("✅ User is authenticated (JWT valid)");
           }
           return true;
         } else {
           if (isDevelopment) {
-            console.log("❌ Token expired, clearing auth");
+            logger.debug("❌ Token expired, clearing auth");
           }
           this.clearAuth();
           return false;
         }
       } catch (error) {
         if (isDevelopment) {
-          console.error("❌ JWT token validation failed:", error);
-          console.log("🔄 Treating as demo token fallback");
+          logger.error("❌ JWT token validation failed:", error);
+          logger.debug("🔄 Treating as demo token fallback");
         }
 
         // If JWT parsing fails but we have token and user, only allow in development
         if (this.token && this.user && isDevelopment) {
           if (isDevelopment) {
-            console.log("✅ User is authenticated (fallback mode)");
+            logger.debug("✅ User is authenticated (fallback mode)");
           }
           return true;
         }
@@ -596,7 +599,7 @@ class AuthManager {
     }
 
     if (isDevelopment) {
-      console.log("❌ No valid authentication found");
+      logger.debug("❌ No valid authentication found");
     }
     return false;
   }
@@ -733,7 +736,7 @@ class AuthManager {
       try {
         callback(this.user);
       } catch (error) {
-        console.error("Login callback error:", error);
+        logger.error("Login callback error:", error);
       }
     });
   }
@@ -744,64 +747,64 @@ class AuthManager {
       try {
         callback();
       } catch (error) {
-        console.error("Logout callback error:", error);
+        logger.error("Logout callback error:", error);
       }
     });
   }
 
   // Redirect to login if not authenticated
   async requireAuth() {
-    console.log("🔒 Checking authentication requirement...");
+    logger.debug("🔒 Checking authentication requirement...");
 
     // Wait for auth manager to finish initializing
     await this.waitForInit();
 
-    console.log("🔍 Auth check after initialization:");
-    console.log("   - Is authenticated:", this.isAuthenticated());
-    console.log("   - Token exists:", !!this.token);
-    console.log("   - User exists:", !!this.user);
+    logger.debug("🔍 Auth check after initialization:");
+    logger.debug("   - Is authenticated:", this.isAuthenticated());
+    logger.debug("   - Token exists:", !!this.token);
+    logger.debug("   - User exists:", !!this.user);
 
     if (!this.isAuthenticated()) {
-      console.log(
+      logger.debug(
         "❌ Authentication required but user not authenticated, redirecting to login",
       );
       this.redirectToLogin();
       return false;
     }
 
-    console.log("✅ Authentication verified");
+    logger.debug("✅ Authentication verified");
     return true;
   }
 
   // Redirect to login page
   redirectToLogin() {
     if (this.isRedirecting) {
-      console.log("🔄 Already redirecting, skipping");
+      logger.debug("🔄 Already redirecting, skipping");
       return;
     }
     this.isRedirecting = true;
-    console.log("🚀 Redirecting to login...");
+    logger.debug("🚀 Redirecting to login...");
     window.location.href = "/login.html";
   }
 
   // Redirect to dashboard
   redirectToDashboard() {
     if (this.isRedirecting) {
-      console.log("🔄 Already redirecting, skipping");
+      logger.debug("🔄 Already redirecting, skipping");
       return;
     }
     this.isRedirecting = true;
-    console.log("🚀 Redirecting to dashboard...");
-    console.log("📍 Current location:", window.location.href);
+    logger.debug("🚀 Redirecting to dashboard...");
+    logger.debug("📍 Current location:", window.location.href);
 
     // Handle different environments
     const dashboardUrl = this.getDashboardUrl();
-    console.log("🎯 Dashboard URL:", dashboardUrl);
+    logger.debug("🎯 Dashboard URL:", dashboardUrl);
 
     try {
       window.location.href = dashboardUrl;
     } catch (error) {
-      console.error("❌ Redirect failed:", error);
+      logger.error("❌ Redirect failed:", error);
       // Fallback: try window.location.assign
       window.location.assign(dashboardUrl);
     }
@@ -928,7 +931,7 @@ class AuthManager {
     } catch (error) {
       this.hideLoading();
       this.showError("Network error. Please try again.");
-      console.error("Profile update error:", error);
+      logger.error("Profile update error:", error);
       return { success: false, error: error.message };
     }
   }
@@ -955,7 +958,7 @@ class AuthManager {
     } catch (error) {
       this.hideLoading();
       this.showError("Network error. Please try again.");
-      console.error("Password change error:", error);
+      logger.error("Password change error:", error);
       return { success: false, error: error.message };
     }
   }

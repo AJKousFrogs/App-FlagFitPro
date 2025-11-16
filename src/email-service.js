@@ -31,10 +31,10 @@ class EmailService {
       }
 
       this.isInitialized = true;
-      console.log(`✅ Email service initialized with ${provider}`);
+      logger.debug(`✅ Email service initialized with ${provider}`);
       return true;
     } catch (error) {
-      console.error("❌ Failed to initialize email service:", error);
+      logger.error("❌ Failed to initialize email service:", error);
       return false;
     }
   }
@@ -160,10 +160,10 @@ class EmailService {
 
     try {
       const result = await this.transporter.sendMail(mailOptions);
-      console.log(`✅ Password reset email sent to ${email}`);
+      logger.debug(`✅ Password reset email sent to ${email}`);
       return { success: true, messageId: result.messageId, token };
     } catch (error) {
-      console.error("❌ Failed to send password reset email:", error);
+      logger.error("❌ Failed to send password reset email:", error);
       throw error;
     }
   }
@@ -190,10 +190,10 @@ class EmailService {
 
     try {
       const result = await this.transporter.sendMail(mailOptions);
-      console.log(`✅ Welcome email sent to ${email}`);
+      logger.debug(`✅ Welcome email sent to ${email}`);
       return { success: true, messageId: result.messageId };
     } catch (error) {
-      console.error("❌ Failed to send welcome email:", error);
+      logger.error("❌ Failed to send welcome email:", error);
       throw error;
     }
   }
@@ -384,10 +384,10 @@ The FlagFit Pro Team
 
     try {
       await this.transporter.verify();
-      console.log("✅ Email service connection verified");
+      logger.debug("✅ Email service connection verified");
       return true;
     } catch (error) {
-      console.error("❌ Email service connection failed:", error);
+      logger.error("❌ Email service connection failed:", error);
       return false;
     }
   }

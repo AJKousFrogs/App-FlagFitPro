@@ -39,7 +39,7 @@ class KnowledgeBaseService {
 
       return null;
     } catch (error) {
-      console.warn("Knowledge base search failed, using fallback:", error);
+      logger.warn("Knowledge base search failed, using fallback:", error);
       return null;
     }
   }
@@ -60,7 +60,7 @@ class KnowledgeBaseService {
 
       return null;
     } catch (error) {
-      console.warn("Failed to get knowledge entry:", error);
+      logger.warn("Failed to get knowledge entry:", error);
       return null;
     }
   }
@@ -82,7 +82,7 @@ class KnowledgeBaseService {
 
       return [];
     } catch (error) {
-      console.warn("Article search failed:", error);
+      logger.warn("Article search failed:", error);
       return [];
     }
   }

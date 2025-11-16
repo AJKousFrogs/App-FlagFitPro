@@ -17,7 +17,7 @@ export function delegate(container, selector, event, handler, options = {}) {
         : container;
 
     if (!containerElement) {
-        console.warn(`Container not found: ${container}`);
+        logger.warn(`Container not found: ${container}`);
         return () => {}; // Return no-op cleanup function
     }
 

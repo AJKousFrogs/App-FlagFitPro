@@ -46,7 +46,7 @@ class StateSubscription {
                 try {
                     callback(value, oldValue, key);
                 } catch (error) {
-                    console.error(`Error in subscriber callback for ${key}:`, error);
+                    logger.error(`Error in subscriber callback for ${key}:`, error);
                 }
             });
         }

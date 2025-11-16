@@ -158,7 +158,7 @@ export function saveToStorage(key, data) {
     localStorage.setItem(key, JSON.stringify(data));
     return true;
   } catch (error) {
-    console.warn('Failed to save to localStorage:', error);
+    logger.warn('Failed to save to localStorage:', error);
     return false;
   }
 }
@@ -168,7 +168,7 @@ export function getFromStorage(key, defaultValue = null) {
     const data = localStorage.getItem(key);
     return data ? JSON.parse(data) : defaultValue;
   } catch (error) {
-    console.warn('Failed to get from localStorage:', error);
+    logger.warn('Failed to get from localStorage:', error);
     return defaultValue;
   }
 }
@@ -178,7 +178,7 @@ export function removeFromStorage(key) {
     localStorage.removeItem(key);
     return true;
   } catch (error) {
-    console.warn('Failed to remove from localStorage:', error);
+    logger.warn('Failed to remove from localStorage:', error);
     return false;
   }
 }

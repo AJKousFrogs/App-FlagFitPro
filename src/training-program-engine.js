@@ -460,7 +460,7 @@ export class TrainingProgramEngine {
       const saved = localStorage.getItem("flagfit_training_progress");
       return saved ? JSON.parse(saved) : this.getDefaultProgress();
     } catch (error) {
-      console.error("Error loading user progress:", error);
+      logger.error("Error loading user progress:", error);
       return this.getDefaultProgress();
     }
   }
@@ -472,7 +472,7 @@ export class TrainingProgramEngine {
         JSON.stringify(this.userProgress),
       );
     } catch (error) {
-      console.error("Error saving user progress:", error);
+      logger.error("Error saving user progress:", error);
     }
   }
 

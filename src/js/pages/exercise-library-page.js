@@ -44,7 +44,7 @@ export class ExerciseLibraryPage {
         this.updateStats();
       }, 0);
     } catch (error) {
-      console.error("Failed to load exercise library:", error);
+      logger.error("Failed to load exercise library:", error);
       this.showError(`Failed to load exercise library: ${error.message}. Please refresh the page.`);
     }
   }
@@ -242,7 +242,7 @@ export class ExerciseLibraryPage {
   createExerciseCard(name, exercise) {
     // Add defensive checks
     if (!exercise || !name) {
-      console.warn("Invalid exercise data:", { name, exercise });
+      logger.warn("Invalid exercise data:", { name, exercise });
       return document.createTextNode(""); // Return empty node instead of crashing
     }
 

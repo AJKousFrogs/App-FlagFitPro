@@ -14,7 +14,7 @@ export class PerformanceAnalytics {
       const saved = localStorage.getItem(this.storageKey);
       return saved ? JSON.parse(saved) : this.getDefaultPerformanceData();
     } catch (error) {
-      console.error("Error loading performance data:", error);
+      logger.error("Error loading performance data:", error);
       return this.getDefaultPerformanceData();
     }
   }
@@ -27,7 +27,7 @@ export class PerformanceAnalytics {
         JSON.stringify(this.performanceData),
       );
     } catch (error) {
-      console.error("Error saving performance data:", error);
+      logger.error("Error saving performance data:", error);
     }
   }
 

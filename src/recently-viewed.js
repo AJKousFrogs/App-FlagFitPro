@@ -1,6 +1,8 @@
 // Recently Viewed Tracker for FlagFit Pro
 // Tracks and displays recently viewed pages/items with enhanced UX
 
+import { SecureDOMUtils } from './secure-dom-utils.js';
+
 export class RecentlyViewed {
   constructor() {
     this.storageKey = 'recentlyViewed';
@@ -69,23 +71,69 @@ export class RecentlyViewed {
       existingWidget.remove();
     }
 
-    const widget = document.createElement('div');
-    widget.className = 'recently-viewed-widget';
-    widget.innerHTML = `
-      <div class="recently-viewed-header">
-        <h3>${this.mode === 'quick-access' ? 'Quick Access' : 'Recently Viewed'}</h3>
-        <div class="recently-viewed-actions">
-          <button class="recently-viewed-mode-toggle" aria-label="Toggle view mode" title="Switch to ${this.mode === 'recent' ? 'Quick Access' : 'Recently Viewed'}">
-            <i data-lucide="${this.mode === 'recent' ? 'zap' : 'clock'}" aria-hidden="true"></i>
-          </button>
-          ${this.mode === 'recent' ? '<button class="recently-viewed-clear" aria-label="Clear history">Clear</button>' : ''}
-        </div>
-      </div>
-      ${this.mode === 'recent' ? this.renderTabs() : ''}
-      <div class="recently-viewed-list" id="recently-viewed-list">
-        ${this.mode === 'recent' ? this.renderRecentItems() : this.renderQuickAccess()}
-      </div>
-    `;
+    const widget = SecureDOMUtils.createElement(null, 'div', {
+      className: 'recently-viewed-widget'
+    });
+    
+    // Create header
+    const header = SecureDOMUtils.createElement(widget, 'div', {
+      className: 'recently-viewed-header'
+    });
+    
+    // Create title
+    SecureDOMUtils.createElement(header, 'h3', {
+      textContent: this.mode === 'quick-access' ? 'Quick Access' : 'Recently Viewed'
+    });
+    
+    // Create actions container
+    const actions = SecureDOMUtils.createElement(header, 'div', {
+      className: 'recently-viewed-actions'
+    });
+    
+    // Create mode toggle button
+    const toggleBtn = SecureDOMUtils.createElement(actions, 'button', {
+      className: 'recently-viewed-mode-toggle',
+      attributes: {
+        'aria-label': 'Toggle view mode',
+        'title': `Switch to ${this.mode === 'recent' ? 'Quick Access' : 'Recently Viewed'}`
+      }
+    });
+    
+    SecureDOMUtils.createElement(toggleBtn, 'i', {
+      attributes: {
+        'data-lucide': this.mode === 'recent' ? 'zap' : 'clock',
+        'aria-hidden': 'true'
+      }
+    });
+    
+    // Add clear button if in recent mode
+    if (this.mode === 'recent') {
+      SecureDOMUtils.createElement(actions, 'button', {
+        className: 'recently-viewed-clear',
+        textContent: 'Clear',
+        attributes: {
+          'aria-label': 'Clear history'
+        }
+      });
+    }
+    
+    // Add tabs if in recent mode
+    if (this.mode === 'recent') {
+      this.createTabsSecurely(widget);
+    }
+    
+    // Create list container
+    const listContainer = SecureDOMUtils.createElement(widget, 'div', {
+      className: 'recently-viewed-list',
+      attributes: { id: 'recently-viewed-list' }
+    });
+    
+    // Add content based on mode
+    if (this.mode === 'recent') {
+      this.renderRecentItemsSecurely(listContainer);
+    } else {
+      this.renderQuickAccessSecurely(listContainer);
+    }
 
     // Insert at the beginning of dashboard
     dashboard.insertBefore(widget, dashboard.firstChild);
@@ -101,29 +149,6 @@ export class RecentlyViewed {
     this.attachEventHandlers(widget);
   }
 
-  renderTabs() {
-    const tabs = [
-      { id: 'all', label: 'All' },
-      { id: 'players', label: 'Players' },
-      { id: 'teams', label: 'Teams' },
-      { id: 'stats', label: 'Stats' },
-      { id: 'reports', label: 'Reports' }
-    ];
-
-    return `
-      <div class="recently-viewed-tabs">
-        ${tabs.map(tab => `
-          <button
-            class="recently-viewed-tab ${this.activeTab === tab.id ? 'active' : ''}"
-            data-tab="${tab.id}"
-            aria-label="Filter by ${tab.label}"
-          >
-            ${tab.label}
-          </button>
-        `).join('')}
-      </div>
-    `;
-  }
 
   attachEventHandlers(widget) {
     // Mode toggle
@@ -144,7 +169,8 @@ export class RecentlyViewed {
           this.clearHistory();
           const list = widget.querySelector('.recently-viewed-list');
           if (list) {
-            list.innerHTML = this.renderEmptyState();
+            SecureDOMUtils.replaceChildren(list);
+            this.renderEmptyStateSecurely(list);
             // Reinitialize icons
             if (typeof lucide !== 'undefined') {
               setTimeout(() => lucide.createIcons(), 50);
@@ -161,7 +187,8 @@ export class RecentlyViewed {
         this.activeTab = btn.dataset.tab;
         const list = widget.querySelector('.recently-viewed-list');
         if (list) {
-          list.innerHTML = this.renderRecentItems();
+          SecureDOMUtils.replaceChildren(list);
+          this.renderRecentItemsSecurely(list);
           // Reinitialize icons
           if (typeof lucide !== 'undefined') {
             setTimeout(() => lucide.createIcons(), 50);
@@ -184,7 +211,8 @@ export class RecentlyViewed {
           this.removeItem(url);
           const list = widget.querySelector('.recently-viewed-list');
           if (list) {
-            list.innerHTML = this.renderRecentItems();
+            SecureDOMUtils.replaceChildren(list);
+            this.renderRecentItemsSecurely(list);
             // Reinitialize icons
             if (typeof lucide !== 'undefined') {
               setTimeout(() => lucide.createIcons(), 50);
@@ -195,108 +223,8 @@ export class RecentlyViewed {
     });
   }
 
-  renderEmptyState() {
-    return `
-      <div class="recently-viewed-empty">
-        <div class="empty-icon">📊</div>
-        <h3>Start exploring to see your recent items</h3>
-        <p>View players, teams, or stats to build your recent activity</p>
-        <div class="suggested-actions">
-          <a href="/roster.html" class="btn btn-secondary btn-sm btn-quick-action">
-            <i data-lucide="users" aria-hidden="true"></i>
-            View Top Players
-          </a>
-          <a href="/roster.html" class="btn btn-secondary btn-sm btn-quick-action">
-            <i data-lucide="users-round" aria-hidden="true"></i>
-            Browse Teams
-          </a>
-        </div>
-      </div>
-    `;
-  }
 
-  renderQuickAccess() {
-    const quickActions = [
-      {
-        icon: 'trophy',
-        label: 'Recent Matches',
-        url: '/tournaments.html',
-        description: 'View latest game results'
-      },
-      {
-        icon: 'trending-up',
-        label: 'Top Performers',
-        url: '/analytics.html',
-        description: 'See leading players'
-      },
-      {
-        icon: 'calendar',
-        label: 'Upcoming Games',
-        url: '/tournaments.html',
-        description: 'Check schedule'
-      },
-      {
-        icon: 'dumbbell',
-        label: 'Training Schedules',
-        url: '/training.html',
-        description: 'View workouts'
-      }
-    ];
 
-    return `
-      <div class="quick-access-grid">
-        ${quickActions.map(action => `
-          <a href="${action.url}" class="quick-access-item">
-            <div class="quick-access-icon">
-              <i data-lucide="${action.icon}" aria-hidden="true"></i>
-            </div>
-            <div class="quick-access-content">
-              <span class="quick-access-label">${action.label}</span>
-              <span class="quick-access-description">${action.description}</span>
-            </div>
-            <i data-lucide="arrow-right" class="quick-access-arrow" aria-hidden="true"></i>
-          </a>
-        `).join('')}
-      </div>
-    `;
-  }
-
-  renderRecentItems() {
-    let items = this.getRecentItems().filter(item => item.url !== window.location.pathname);
-
-    // Filter by active tab
-    if (this.activeTab !== 'all') {
-      items = items.filter(item => item.category === this.activeTab);
-    }
-
-    if (items.length === 0) {
-      return this.renderEmptyState();
-    }
-
-    return items.slice(0, 5).map(item => {
-      const timeAgo = this.getTimeAgo(item.timestamp);
-      const icon = this.getPageIcon(item.url);
-      const category = this.getCategoryLabel(item.category);
-
-      return `
-        <div class="recent-item" data-url="${item.url}">
-          <div class="item-avatar">${icon}</div>
-          <div class="item-info">
-            <span class="item-name">${item.title.replace(' - FlagFit Pro', '')}</span>
-            <span class="item-type">${category} • ${timeAgo}</span>
-          </div>
-          <div class="item-actions">
-            <button class="item-action-remove" aria-label="Remove item" title="Remove">
-              <i data-lucide="x" aria-hidden="true"></i>
-            </button>
-            <a href="${item.url}" class="item-action" aria-label="View">
-              <i data-lucide="arrow-right" aria-hidden="true"></i>
-            </a>
-          </div>
-        </div>
-      `;
-    }).join('');
-  }
 
   getCategoryLabel(category) {
     const labels = {
@@ -350,6 +278,244 @@ export class RecentlyViewed {
 
   clearHistory() {
     localStorage.removeItem(this.storageKey);
+  }
+
+  createTabsSecurely(parent) {
+    const tabs = [
+      { id: 'all', label: 'All' },
+      { id: 'players', label: 'Players' },
+      { id: 'teams', label: 'Teams' },
+      { id: 'stats', label: 'Stats' },
+      { id: 'reports', label: 'Reports' }
+    ];
+
+    const tabsContainer = SecureDOMUtils.createElement(parent, 'div', {
+      className: 'recently-viewed-tabs'
+    });
+
+    tabs.forEach(tab => {
+      SecureDOMUtils.createElement(tabsContainer, 'button', {
+        className: `recently-viewed-tab ${this.activeTab === tab.id ? 'active' : ''}`,
+        textContent: tab.label,
+        attributes: {
+          'data-tab': tab.id,
+          'aria-label': `Filter by ${tab.label}`
+        }
+      });
+    });
+  }
+
+  renderRecentItemsSecurely(container) {
+    let items = this.getRecentItems().filter(item => item.url !== window.location.pathname);
+
+    // Filter by active tab
+    if (this.activeTab !== 'all') {
+      items = items.filter(item => item.category === this.activeTab);
+    }
+
+    if (items.length === 0) {
+      this.renderEmptyStateSecurely(container);
+      return;
+    }
+
+    items.slice(0, 5).forEach(item => {
+      const timeAgo = this.getTimeAgo(item.timestamp);
+      const icon = this.getPageIcon(item.url);
+      const category = this.getCategoryLabel(item.category);
+
+      const itemEl = SecureDOMUtils.createElement(container, 'div', {
+        className: 'recent-item',
+        attributes: { 'data-url': item.url }
+      });
+
+      // Item avatar
+      SecureDOMUtils.createElement(itemEl, 'div', {
+        className: 'item-avatar',
+        textContent: icon
+      });
+
+      // Item info
+      const itemInfo = SecureDOMUtils.createElement(itemEl, 'div', {
+        className: 'item-info'
+      });
+
+      SecureDOMUtils.createElement(itemInfo, 'span', {
+        className: 'item-name',
+        textContent: item.title.replace(' - FlagFit Pro', '')
+      });
+
+      SecureDOMUtils.createElement(itemInfo, 'span', {
+        className: 'item-type',
+        textContent: `${category} • ${timeAgo}`
+      });
+
+      // Item actions
+      const itemActions = SecureDOMUtils.createElement(itemEl, 'div', {
+        className: 'item-actions'
+      });
+
+      // Remove button
+      const removeBtn = SecureDOMUtils.createElement(itemActions, 'button', {
+        className: 'item-action-remove',
+        attributes: {
+          'aria-label': 'Remove item',
+          'title': 'Remove'
+        }
+      });
+
+      SecureDOMUtils.createElement(removeBtn, 'i', {
+        attributes: {
+          'data-lucide': 'x',
+          'aria-hidden': 'true'
+        }
+      });
+
+      // View link
+      const viewLink = SecureDOMUtils.createElement(itemActions, 'a', {
+        className: 'item-action',
+        attributes: {
+          'href': item.url,
+          'aria-label': 'View'
+        }
+      });
+
+      SecureDOMUtils.createElement(viewLink, 'i', {
+        attributes: {
+          'data-lucide': 'arrow-right',
+          'aria-hidden': 'true'
+        }
+      });
+    });
+  }
+
+  renderEmptyStateSecurely(container) {
+    const emptyState = SecureDOMUtils.createElement(container, 'div', {
+      className: 'recently-viewed-empty'
+    });
+
+    SecureDOMUtils.createElement(emptyState, 'div', {
+      className: 'empty-icon',
+      textContent: '📊'
+    });
+
+    SecureDOMUtils.createElement(emptyState, 'h3', {
+      textContent: 'Start exploring to see your recent items'
+    });
+
+    SecureDOMUtils.createElement(emptyState, 'p', {
+      textContent: 'View players, teams, or stats to build your recent activity'
+    });
+
+    // Suggested actions
+    const actions = SecureDOMUtils.createElement(emptyState, 'div', {
+      className: 'suggested-actions'
+    });
+
+    // Players link
+    const playersLink = SecureDOMUtils.createElement(actions, 'a', {
+      className: 'btn btn-secondary btn-sm btn-quick-action',
+      attributes: { href: '/roster.html' }
+    });
+
+    SecureDOMUtils.createElement(playersLink, 'i', {
+      attributes: {
+        'data-lucide': 'users',
+        'aria-hidden': 'true'
+      }
+    });
+
+    SecureDOMUtils.setTextContent(playersLink, playersLink.textContent + 'View Top Players');
+
+    // Teams link
+    const teamsLink = SecureDOMUtils.createElement(actions, 'a', {
+      className: 'btn btn-secondary btn-sm btn-quick-action',
+      attributes: { href: '/roster.html' }
+    });
+
+    SecureDOMUtils.createElement(teamsLink, 'i', {
+      attributes: {
+        'data-lucide': 'users-round',
+        'aria-hidden': 'true'
+      }
+    });
+
+    SecureDOMUtils.setTextContent(teamsLink, teamsLink.textContent + 'Browse Teams');
+  }
+
+  renderQuickAccessSecurely(container) {
+    const quickActions = [
+      {
+        icon: 'trophy',
+        label: 'Recent Matches',
+        url: '/tournaments.html',
+        description: 'View latest game results'
+      },
+      {
+        icon: 'trending-up',
+        label: 'Top Performers',
+        url: '/analytics.html',
+        description: 'See leading players'
+      },
+      {
+        icon: 'calendar',
+        label: 'Upcoming Games',
+        url: '/tournaments.html',
+        description: 'Check schedule'
+      },
+      {
+        icon: 'dumbbell',
+        label: 'Training Schedules',
+        url: '/training.html',
+        description: 'View workouts'
+      }
+    ];
+
+    const grid = SecureDOMUtils.createElement(container, 'div', {
+      className: 'quick-access-grid'
+    });
+
+    quickActions.forEach(action => {
+      const item = SecureDOMUtils.createElement(grid, 'a', {
+        className: 'quick-access-item',
+        attributes: { href: action.url }
+      });
+
+      // Icon container
+      const iconContainer = SecureDOMUtils.createElement(item, 'div', {
+        className: 'quick-access-icon'
+      });
+
+      SecureDOMUtils.createElement(iconContainer, 'i', {
+        attributes: {
+          'data-lucide': action.icon,
+          'aria-hidden': 'true'
+        }
+      });
+
+      // Content container
+      const content = SecureDOMUtils.createElement(item, 'div', {
+        className: 'quick-access-content'
+      });
+
+      SecureDOMUtils.createElement(content, 'span', {
+        className: 'quick-access-label',
+        textContent: action.label
+      });
+
+      SecureDOMUtils.createElement(content, 'span', {
+        className: 'quick-access-description',
+        textContent: action.description
+      });
+
+      // Arrow
+      SecureDOMUtils.createElement(item, 'i', {
+        className: 'quick-access-arrow',
+        attributes: {
+          'data-lucide': 'arrow-right',
+          'aria-hidden': 'true'
+        }
+      });
+    });
   }
 }
 

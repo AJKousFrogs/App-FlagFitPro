@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   const isAuthenticated = authManager.isAuthenticated();
 
   if (!isAuthenticated && !isDevelopment) {
-    console.log(
+    logger.debug(
       "User not authenticated, redirecting to login"
     );
     window.location.href = "/login.html";
@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 
   if (!isAuthenticated && isDevelopment) {
-    console.log(
+    logger.debug(
       "Development mode: Loading settings without authentication"
     );
   }
@@ -150,7 +150,7 @@ function loadUserSettings() {
       }
     }
   } catch (error) {
-    console.warn('Error loading profile data:', error);
+    logger.warn('Error loading profile data:', error);
   }
 }
 
@@ -370,7 +370,7 @@ window.saveSettings = async function () {
     const { apiClient } = await import('./src/api-config.js');
     await apiClient.put('/api/user/profile', updatedProfile);
   } catch (error) {
-    console.warn('Could not save to API, saved locally:', error);
+    logger.warn('Could not save to API, saved locally:', error);
   }
 
   // Show success message
@@ -385,8 +385,8 @@ window.saveSettings = async function () {
     button.style.background = "var(--primary)";
   }, 2000);
 
-  console.log("Settings saved:", settings);
-  console.log("Profile data saved:", updatedProfile);
+  logger.debug("Settings saved:", settings);
+  logger.debug("Profile data saved:", updatedProfile);
 };
 
 window.exportData = function () {

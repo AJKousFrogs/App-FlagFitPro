@@ -124,13 +124,13 @@ function fixHeadingStructure() {
       // First heading should be h1
       if (level !== 1 && level < 3) {
         // Don't auto-fix, just log warning
-        console.warn('Heading structure issue: First heading should be h1', heading);
+        logger.warn('Heading structure issue: First heading should be h1', heading);
       }
       currentLevel = level;
     } else {
       // Check for skipped levels
       if (level > currentLevel + 1) {
-        console.warn('Heading structure issue: Skipped level', heading, `Expected h${currentLevel + 1}, got h${level}`);
+        logger.warn('Heading structure issue: Skipped level', heading, `Expected h${currentLevel + 1}, got h${level}`);
       }
       currentLevel = level;
     }
@@ -139,7 +139,7 @@ function fixHeadingStructure() {
   // Check for multiple h1 elements
   const h1Elements = document.querySelectorAll('h1');
   if (h1Elements.length > 1) {
-    console.warn('Multiple h1 elements found:', h1Elements.length);
+    logger.warn('Multiple h1 elements found:', h1Elements.length);
     // Convert extra h1s to h2
     Array.from(h1Elements).slice(1).forEach(h1 => {
       const h2 = document.createElement('h2');
@@ -168,14 +168,14 @@ function fixFormLabels() {
         // Try to find label that wraps input
         const parentLabel = input.closest('label');
         if (!parentLabel) {
-          console.warn('Input without label:', input);
+          logger.warn('Input without label:', input);
         }
       }
     } else {
       // Input without id - try to find associated label
       const parentLabel = input.closest('label');
       if (!parentLabel) {
-        console.warn('Input without id or label:', input);
+        logger.warn('Input without id or label:', input);
       }
     }
   });

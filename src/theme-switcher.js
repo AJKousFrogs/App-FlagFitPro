@@ -80,7 +80,7 @@ class ThemeSwitcher {
   }
 
   applyTheme(theme) {
-    console.log("🎨 Applying theme:", theme);
+    logger.debug("🎨 Applying theme:", theme);
 
     // Set data-theme attribute on html FIRST - this updates CSS variables
     document.documentElement.setAttribute("data-theme", theme);
@@ -89,11 +89,11 @@ class ThemeSwitcher {
     document.body.setAttribute("data-theme", theme);
 
     // Verify it was set
-    console.log(
+    logger.debug(
       "✅ data-theme set on html:",
       document.documentElement.getAttribute("data-theme"),
     );
-    console.log(
+    logger.debug(
       "✅ data-theme set on body:",
       document.body.getAttribute("data-theme"),
     );
@@ -113,7 +113,7 @@ class ThemeSwitcher {
     if (toggle) {
       // Toggle checked = dark theme, unchecked = light theme
       toggle.checked = theme === "dark";
-      console.log(
+      logger.debug(
         "✅ Toggle state updated:",
         toggle.checked,
         "for theme:",
@@ -164,8 +164,8 @@ class ThemeSwitcher {
     setTimeout(() => {
       const computedBg = window.getComputedStyle(document.body).backgroundColor;
       const computedColor = window.getComputedStyle(document.body).color;
-      console.log("✅ Computed body background:", computedBg);
-      console.log("✅ Computed body color:", computedColor);
+      logger.debug("✅ Computed body background:", computedBg);
+      logger.debug("✅ Computed body color:", computedColor);
     }, 10);
   }
 

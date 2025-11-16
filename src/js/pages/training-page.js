@@ -100,11 +100,11 @@ function toggleSidebar() {
 // Initialize YouTube Training Videos Component
 function initializeTrainingVideos() {
     try {
-        console.log('🎥 Initializing YouTube training videos...');
+        logger.debug('🎥 Initializing YouTube training videos...');
         const videoComponent = new TrainingVideoComponent('training-videos-container');
-        console.log('✅ Training videos component initialized');
+        logger.debug('✅ Training videos component initialized');
     } catch (error) {
-        console.error('❌ Error initializing training videos:', error);
+        logger.error('❌ Error initializing training videos:', error);
         // Show fallback message
         const container = document.getElementById('training-videos-container');
         if (container) {
@@ -257,7 +257,7 @@ function loadProgressData() {
     // Store getWorkoutExercises function for global access (using service)
     window.getWorkoutExercises = (type) => workoutService.getExercisesForType(type);
 
-    console.log('Training page state loaded:', {
+    logger.debug('Training page state loaded:', {
         weeklyStats: state.weeklyStats,
         overallStats: state.overallStats,
         streak: state.streak
@@ -487,7 +487,7 @@ async function handleAIChat(e) {
             throw new Error("Chatbot module not properly initialized");
         }
     } catch (error) {
-        console.error("Failed to load chatbot:", error);
+        logger.error("Failed to load chatbot:", error);
 
         // Try to use global chatbot if available
         if (window.flagFitChatbot && typeof window.flagFitChatbot.open === "function") {

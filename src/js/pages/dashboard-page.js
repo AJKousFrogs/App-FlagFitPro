@@ -538,7 +538,7 @@ class DashboardPage {
       }
     } catch (error) {
       logger.error("Failed to load chatbot:", error);
-      console.error("Chatbot error details:", error);
+      logger.error("Chatbot error details:", error);
 
       // Try to use global chatbot if available
       if (window.flagFitChatbot && typeof window.flagFitChatbot.open === "function") {

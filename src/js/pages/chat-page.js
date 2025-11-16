@@ -438,7 +438,7 @@ async function handleChannelCreation(e) {
     }, 100);
 
   } catch (error) {
-    console.error('Failed to create channel:', error);
+    logger.error('Failed to create channel:', error);
     ErrorHandler.handleError(error, 'Failed to create channel');
   }
 }
@@ -549,7 +549,7 @@ async function startGoogleMeetCall() {
     scrollToBottom("messagesContainer");
 
   } catch (error) {
-    console.error('Failed to start Google Meet call:', error);
+    logger.error('Failed to start Google Meet call:', error);
     ErrorHandler.handleError(error, 'Failed to start video call');
 
     // Fallback: Open Google Meet directly
@@ -595,7 +595,7 @@ async function loadMessages() {
       loadMessagesFromStorage();
     }
   } catch (error) {
-    console.error("Failed to load messages:", error);
+    logger.error("Failed to load messages:", error);
     // Load from localStorage as fallback
     loadMessagesFromStorage();
     scrollToBottom();
@@ -718,7 +718,7 @@ async function sendMessage() {
       });
     }
   } catch (error) {
-    console.error("Failed to send message:", error);
+    logger.error("Failed to send message:", error);
 
     // Still add to UI for demo purposes with graceful fallback
     addMessageToUI(

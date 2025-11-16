@@ -2,9 +2,12 @@
 // Displays YouTube training videos integrated with training sessions
 
 import { youTubeTrainingService } from "./youtube-training-service.js";
+import { ComponentWithCleanup } from "./event-cleanup-utils.js";
+import { logger } from "./logger.js";
 
-class TrainingVideoComponent {
+class TrainingVideoComponent extends ComponentWithCleanup {
   constructor(containerId) {
+    super(); // Initialize cleanup management
     this.container = document.getElementById(containerId);
     this.currentCategory = null;
     this.currentVideos = [];
@@ -14,7 +17,7 @@ class TrainingVideoComponent {
 
   init() {
     if (!this.container) {
-      console.error("Training video container not found");
+      logger.error("Training video container not found");
       return;
     }
 
@@ -407,24 +410,28 @@ class TrainingVideoComponent {
   attachEventListeners() {
     // Category selection
     const categorySelect = document.getElementById("video-category-select");
-    categorySelect?.addEventListener("change", (e) => {
-      if (e.target.value) {
-        this.loadVideoCategory(e.target.value);
-      } else {
-        this.clearVideoGrid();
-      }
-    });
+    if (categorySelect) {
+      this.addEventListener(categorySelect, "change", (e) => {
+        if (e.target.value) {
+          this.loadVideoCategory(e.target.value);
+        } else {
+          this.clearVideoGrid();
+        }
+      });
+    }
 
     // Custom search
     const searchBtn = document.getElementById("search-custom-btn");
-    searchBtn?.addEventListener("click", () => {
-      this.showCustomSearchModal();
-    });
+    if (searchBtn) {
+      this.addEventListener(searchBtn, "click", () => {
+        this.showCustomSearchModal();
+      });
+    }
 
     // Playlist buttons
     const playlistBtns = document.querySelectorAll(".playlist-btn");
     playlistBtns.forEach((btn) => {
-      btn.addEventListener("click", (e) => {
+      this.addEventListener(btn, "click", (e) => {
         const playlistType = e.target.dataset.playlist;
         this.loadTrainingPlaylist(playlistType);
       });
@@ -432,11 +439,13 @@ class TrainingVideoComponent {
 
     // Retry button
     const retryBtn = document.getElementById("retry-btn");
-    retryBtn?.addEventListener("click", () => {
-      if (this.currentCategory) {
-        this.loadVideoCategory(this.currentCategory);
-      }
-    });
+    if (retryBtn) {
+      this.addEventListener(retryBtn, "click", () => {
+        if (this.currentCategory) {
+          this.loadVideoCategory(this.currentCategory);
+        }
+      });
+    }
   }
 
   async loadVideoCategory(category) {
@@ -444,7 +453,7 @@ class TrainingVideoComponent {
     this.showLoading();
 
     try {
-      console.log(`📺 Loading ${category} videos...`);
+      logger.debug(`📺 Loading ${category} videos...`);
       const videos = await youTubeTrainingService.getTrainingVideos(
         category,
         12,
@@ -453,7 +462,7 @@ class TrainingVideoComponent {
       this.renderVideoGrid(videos);
       this.hideLoading();
     } catch (error) {
-      console.error("Error loading videos:", error);
+      logger.error("Error loading videos:", error);
       this.showError();
     }
   }
@@ -462,13 +471,13 @@ class TrainingVideoComponent {
     this.showLoading();
 
     try {
-      console.log(`📺 Loading ${playlistType} playlist...`);
+      logger.debug(`📺 Loading ${playlistType} playlist...`);
       const playlist =
         await youTubeTrainingService.getTrainingPlaylist(playlistType);
       this.renderPlaylist(playlist);
       this.hideLoading();
     } catch (error) {
-      console.error("Error loading playlist:", error);
+      logger.error("Error loading playlist:", error);
       this.showError();
     }
   }
@@ -671,7 +680,7 @@ class TrainingVideoComponent {
     this.showLoading();
 
     try {
-      console.log(`📺 Searching for: ${searchTerm}`);
+      logger.debug(`📺 Searching for: ${searchTerm}`);
       const videos = await youTubeTrainingService.searchSpecificExercise(
         searchTerm,
         8,
@@ -684,7 +693,7 @@ class TrainingVideoComponent {
       const categorySelect = document.getElementById("video-category-select");
       categorySelect.value = "";
     } catch (error) {
-      console.error("Error searching exercise:", error);
+      logger.error("Error searching exercise:", error);
       this.showError();
     }
   }
@@ -718,6 +727,22 @@ class TrainingVideoComponent {
             </div>
         `;
     document.getElementById("video-info").classList.add("hidden");
+  }
+
+  /**
+   * Clean up component resources
+   */
+  destroy() {
+    this.onDestroy(); // Calls parent cleanup method
+    this.currentVideos = [];
+    this.selectedVideo = null;
+    this.currentCategory = null;
+    
+    if (this.container) {
+      this.container.innerHTML = '';
+    }
+    
+    logger.debug('TrainingVideoComponent destroyed and cleaned up');
   }
 }
 

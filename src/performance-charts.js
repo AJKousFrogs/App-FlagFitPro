@@ -76,7 +76,7 @@ export class PerformanceCharts {
       // Create combined overview chart
       await this.createOverviewChart("performance-overview-chart");
     } catch (error) {
-      console.error("Failed to initialize charts:", error);
+      logger.error("Failed to initialize charts:", error);
       this.showChartError();
     }
   }
@@ -87,7 +87,7 @@ export class PerformanceCharts {
       try {
         chart.destroy();
       } catch (error) {
-        console.warn(`Error destroying chart ${canvasId}:`, error);
+        logger.warn(`Error destroying chart ${canvasId}:`, error);
       }
     });
     this.charts.clear();
@@ -163,7 +163,7 @@ export class PerformanceCharts {
       this.charts.set(canvasId, chart);
       this.addChartInteractivity(chart, "performance");
     } catch (error) {
-      console.error("Performance trends chart error:", error);
+      logger.error("Performance trends chart error:", error);
       this.showMockPerformanceChart(canvas);
     }
   }
@@ -215,7 +215,7 @@ export class PerformanceCharts {
       this.charts.set(canvasId, chart);
       this.addChartInteractivity(chart, "wellness");
     } catch (error) {
-      console.error("Wellness chart error:", error);
+      logger.error("Wellness chart error:", error);
       this.showMockWellnessChart(canvas);
     }
   }
@@ -268,7 +268,7 @@ export class PerformanceCharts {
       this.charts.set(canvasId, chart);
       this.addChartInteractivity(chart, "body-composition");
     } catch (error) {
-      console.error("Body composition chart error:", error);
+      logger.error("Body composition chart error:", error);
       this.showMockBodyCompositionChart(canvas);
     }
   }
@@ -321,7 +321,7 @@ export class PerformanceCharts {
 
       this.charts.set(canvasId, chart);
     } catch (error) {
-      console.error("Overview chart error:", error);
+      logger.error("Overview chart error:", error);
       this.showMockOverviewChart(canvas);
     }
   }
@@ -646,7 +646,7 @@ export class PerformanceCharts {
   }
 
   showChartError() {
-    console.warn(
+    logger.warn(
       "Charts could not be initialized - falling back to mock data display",
     );
   }

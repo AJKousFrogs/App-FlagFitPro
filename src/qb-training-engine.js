@@ -439,7 +439,7 @@ export class QBTrainingEngine extends TrainingProgramEngine {
       const saved = localStorage.getItem("flagfit_throwing_progress");
       return saved ? JSON.parse(saved) : this.getDefaultThrowingProgress();
     } catch (error) {
-      console.error("Error loading throwing progress:", error);
+      logger.error("Error loading throwing progress:", error);
       return this.getDefaultThrowingProgress();
     }
   }
@@ -490,7 +490,7 @@ export class QBTrainingEngine extends TrainingProgramEngine {
         JSON.stringify(this.throwingVolume),
       );
     } catch (error) {
-      console.error("Error saving throwing progress:", error);
+      logger.error("Error saving throwing progress:", error);
     }
   }
 
@@ -581,7 +581,7 @@ export class QBTrainingEngine extends TrainingProgramEngine {
       const saved = localStorage.getItem("flagfit_velocity_progress");
       return saved ? JSON.parse(saved) : this.getDefaultVelocityProgress();
     } catch (error) {
-      console.error("Error loading velocity progress:", error);
+      logger.error("Error loading velocity progress:", error);
       return this.getDefaultVelocityProgress();
     }
   }

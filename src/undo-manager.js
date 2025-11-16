@@ -54,7 +54,7 @@ export class UndoManager {
               callback();
             }
           } catch (e) {
-            console.error('Error executing delete callback:', e);
+            logger.error('Error executing delete callback:', e);
           }
         }
 
@@ -261,7 +261,7 @@ export class UndoManager {
     // This would typically restore from storage or DOM
     if (action.data && action.data.html) {
       // Restore logic here
-      console.log('Restoring item:', action.itemName);
+      logger.debug('Restoring item:', action.itemName);
     }
   }
 
