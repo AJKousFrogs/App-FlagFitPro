@@ -1,13 +1,23 @@
 // Settings Page JavaScript Module
 import { authManager } from '../auth-manager.js';
 import { REAL_TEAM_DATA, getAllPlayers } from '../real-team-data.js';
+import { 
+  initializeLucideIcons,
+  validateEmail,
+  validateRequired,
+  validateLength,
+  showFieldError,
+  showFieldSuccess,
+  clearFieldState,
+  saveToStorage,
+  getFromStorage,
+  announceToScreenReader
+} from '../utils/shared.js';
 
 // Initialize settings page
 document.addEventListener("DOMContentLoaded", async function () {
   // Initialize Lucide icons
-  if (typeof lucide !== "undefined") {
-    lucide.createIcons();
-  }
+  initializeLucideIcons();
   
   // Wait for auth manager to initialize
   await authManager.waitForInit();

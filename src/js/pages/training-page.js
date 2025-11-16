@@ -1,6 +1,13 @@
 // Training Page JavaScript Module
 import { authManager } from '../../auth-manager.js';
 import { REAL_TEAM_DATA, getAllPlayers, getStaffMember } from '../../real-team-data.js';
+import { 
+  initializeLucideIcons,
+  announceToScreenReader,
+  debounce,
+  saveToStorage,
+  getFromStorage
+} from '../../utils/shared.js';
 import TrainingVideoComponent from '../../training-video-component.js';
 // Services
 import { storageService } from '../services/storageService.js';
