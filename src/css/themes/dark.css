@@ -51,64 +51,14 @@ html[data-theme="dark"] {
   --chart-bar-bg: var(--primitive-neutral-800);            /* #262626 */
 
   /* Status Colors - Dark Mode */
-  --status-success-600: var(--primitive-primary-600);      /* #0ab85a */
-  --status-warning-500: #fbbf24;
-  --status-error-500: #ef4444;
-  --status-info-500: #3b82f6;
+  --status-success-600: var(--primitive-primary-600);      /* #0ab85a - bright green */
+  --status-warning-500: var(--primitive-warning-400);      /* #fbbf24 - amber */
+  --status-error-500: var(--primitive-error-500);          /* #ef4444 - red */
+  --status-info-500: var(--primitive-primary-500);         /* #10c96b - lighter green */
 }
 
-/* Class-based theme switching */
-.dark,
-html.dark {
-  /* Surface Colors - Dark Mode (Design System Compliant) */
-  --surface-primary: var(--primitive-neutral-900);         /* #171717 */
-  --surface-secondary: var(--primitive-neutral-800);       /* #262626 */
-  --surface-tertiary: var(--primitive-neutral-700);        /* #404040 */
-  --surface-quaternary: var(--primitive-neutral-600);      /* #737373 - for layered UI */
-  --surface-elevated: var(--primitive-neutral-800);        /* #262626 - for cards/modals */
-  --surface-inverse: var(--primitive-neutral-50);          /* #fafafa */
-
-  /* Text Colors - Dark Mode (Design System Compliant) */
-  --color-text-primary: var(--primitive-neutral-100);      /* #f5f5f5 */
-  --color-text-secondary: var(--primitive-neutral-300);    /* #e5e5e5 */
-  --color-text-tertiary: var(--primitive-neutral-500);     /* #a3a3a3 */
-  --color-text-disabled: var(--primitive-neutral-700);     /* #404040 */
-  --color-text-inverse: var(--primitive-neutral-900);      /* #171717 */
-  --color-text-on-surface: var(--primitive-neutral-100);   /* #f5f5f5 */
-
-  /* Icon Colors - Dark Mode (WCAG AA Compliant) */
-  --icon-color-primary: var(--primitive-neutral-100);      /* #f5f5f5 */
-  --icon-color-secondary: var(--primitive-neutral-300);    /* #e5e5e5 */
-  --icon-color-tertiary: var(--primitive-neutral-500);     /* #a3a3a3 */
-  --icon-color-disabled: var(--primitive-neutral-700);     /* #404040 */
-  --icon-color-on-primary: var(--primitive-neutral-900);   /* #171717 */
-  --icon-color-brand: var(--primitive-primary-600);        /* #0ab85a */
-
-  /* Border Colors - Dark Mode (Design System Compliant) */
-  --color-border-primary: var(--primitive-neutral-700);    /* #404040 */
-  --color-border-secondary: var(--primitive-neutral-800);  /* #262626 */
-  --color-border-subtle: var(--primitive-neutral-900);     /* #171717 */
-  --color-border-strong: var(--primitive-neutral-500);     /* #a3a3a3 */
-  --color-border-medium: var(--primitive-neutral-700);     /* #404040 */
-  --color-border-focus: var(--primitive-primary-600);      /* #0ab85a */
-
-  /* Brand Colors - Dark Mode */
-  --color-brand-primary: var(--primitive-primary-600);     /* #0ab85a */
-  --color-brand-primary-hover: var(--primitive-primary-500); /* #10c96b */
-  --color-brand-primary-active: var(--primitive-primary-700); /* #089949 */
-  --color-brand-primary-alpha-10: rgba(10, 184, 90, 0.1);
-  --color-brand-primary-alpha-20: rgba(10, 184, 90, 0.2);
-
-  /* Chart Colors - Dark Mode */
-  --chart-bar-fill: var(--color-brand-primary);
-  --chart-bar-bg: var(--primitive-neutral-800);            /* #262626 */
-
-  /* Status Colors - Dark Mode */
-  --status-success-600: var(--primitive-primary-600);      /* #0ab85a */
-  --status-warning-500: #fbbf24;
-  --status-error-500: #ef4444;
-  --status-info-500: #3b82f6;
-}
+/* Note: Class-based theme switching removed to eliminate duplication.
+   Use [data-theme="dark"] for theme switching. */
 
 /* ================================================================
    DARK THEME COMPONENT OVERRIDES
@@ -140,17 +90,18 @@ html[data-theme="dark"] body {
 
 [data-theme="dark"] .nav-item.active {
   background: var(--color-brand-primary);
-  color: #ffffff;
+  color: var(--icon-color-on-primary);
 }
 
 [data-theme="dark"] .nav-item.active .nav-item-icon {
-  color: #ffffff;
+  color: var(--icon-color-on-primary);
 }
 
 /* Top bar and header */
 [data-theme="dark"] .top-bar {
   background: var(--surface-elevated);
   border-bottom: 1px solid var(--color-border-primary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 [data-theme="dark"] .header-icon {
@@ -178,7 +129,7 @@ html[data-theme="dark"] body {
 [data-theme="dark"] input,
 [data-theme="dark"] select,
 [data-theme="dark"] textarea {
-  background: var(--surface-tertiary);
+  background: var(--surface-elevated);
   border: 1px solid var(--color-border-primary);
   color: var(--color-text-primary);
 }
@@ -277,7 +228,7 @@ html[data-theme="dark"] body {
 }
 
 [data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-border-primary);
+  background: var(--primitive-neutral-400);
 }
 
 /* System preference (only if no manual theme is set) */
@@ -328,8 +279,8 @@ html[data-theme="dark"] body {
 
     /* Status Colors - Dark Mode */
     --status-success-600: var(--primitive-primary-600);
-    --status-warning-500: #fbbf24;
-    --status-error-500: #ef4444;
-    --status-info-500: #3b82f6;
+    --status-warning-500: var(--primitive-warning-400);
+    --status-error-500: var(--primitive-error-500);
+    --status-info-500: var(--primitive-primary-500);
   }
 }
