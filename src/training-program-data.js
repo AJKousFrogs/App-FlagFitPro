@@ -3788,6 +3788,2004 @@ export const WEEKLY_SCHEDULES = {
         },
       },
     },
+
+    week9: {
+      weekNumber: 9,
+      dateRange: "January 26 - February 1, 2026",
+      phase: "Power",
+      focus: "Convert strength to explosive power + max velocity emphasis",
+      days: {
+        monday: {
+          title: "Explosive Power Development - Plyometric Focus",
+          type: "power",
+          duration: 85,
+          warmup: "Standard Protocol (15 min) + Extended Plyometric Prep (12 min)",
+          blocks: [
+            {
+              title: "Block 1: Reactive Plyometric Work",
+              duration: 35,
+              exercises: [
+                {
+                  name: "Depth Jumps (Reactive Emphasis)",
+                  sets: 6,
+                  reps: 6,
+                  rest: "3 min",
+                  boxHeight: "12 inches",
+                  notes: "Step off, minimal ground contact, maximum reactive jump",
+                },
+                {
+                  name: "Reactive Box Jumps (Step Down + Immediate Jump)",
+                  sets: 6,
+                  reps: 5,
+                  rest: "2.5 min",
+                  boxHeight: "28-30 inches",
+                  notes: "Step down, stick briefly, explosive re-jump",
+                },
+                {
+                  name: "Pogo Jumps (Maximum Height)",
+                  sets: 4,
+                  duration: "25s",
+                  rest: "2 min",
+                  notes: "Minimal ground contact time, max height each rep",
+                },
+              ],
+            },
+            {
+              title: "Block 2: Multi-Directional Power",
+              duration: 30,
+              exercises: [
+                {
+                  name: "Lateral Bounds (Maximum Distance)",
+                  sets: 5,
+                  reps: "8 each direction",
+                  rest: "2 min",
+                  notes: "Max horizontal displacement, stick landing",
+                },
+                {
+                  name: "Single-Leg Bounds",
+                  sets: 5,
+                  distance: "30m each",
+                  rest: "2.5 min",
+                  notes: "Maximum distance per bound",
+                },
+                {
+                  name: "Hurdle Hops (Reactive Series)",
+                  sets: 5,
+                  reps: "12 hurdles",
+                  rest: "2 min",
+                  hurdleHeight: "12-15 inches",
+                  notes: "Minimal ground contact between hurdles",
+                },
+              ],
+            },
+            {
+              title: "Block 3: Strength Maintenance",
+              duration: 15,
+              exercises: [
+                {
+                  name: "RDLs",
+                  sets: 3,
+                  reps: 8,
+                  rest: "2 min",
+                  load: "30% BW (maintenance)",
+                  notes: "Reduced volume for maintenance",
+                },
+                {
+                  name: "Nordic Curls",
+                  sets: 3,
+                  reps: "AMRAP",
+                  rest: "2 min",
+                },
+              ],
+            },
+          ],
+          equipment: ["Plyo boxes (12\", 28-30\")", "hurdles", "barbell/DBs"],
+        },
+
+        tuesday: {
+          title: "Maximum Velocity + Speed Endurance",
+          type: "sprint",
+          duration: 85,
+          warmup: "Standard Protocol (15 min) + Extended Sprint Drills (12 min)",
+          blocks: [
+            {
+              title: "Block 1: Maximum Velocity Development",
+              duration: 40,
+              options: [
+                {
+                  condition: "Track available",
+                  exercises: [
+                    {
+                      name: "Flying 30s (Max Velocity)",
+                      sets: 6,
+                      protocol: "40m build-up + 30m timed max sprint",
+                      rest: "5 min",
+                      notes: "Peak velocity work - focus on mechanics at max speed",
+                    },
+                    {
+                      name: "60m Sprints",
+                      sets: 5,
+                      distance: "60m",
+                      intensity: "Max effort",
+                      rest: "5 min",
+                      notes: "Extended sprint distance",
+                    },
+                    {
+                      name: "10-Yard Acceleration Sprints",
+                      sets: 6,
+                      distance: "10 yards",
+                      intensity: "Max effort",
+                      rest: "3 min",
+                      notes: "First step explosiveness",
+                    },
+                  ],
+                },
+                {
+                  condition: "No track",
+                  exercises: [
+                    { name: "Wall Sprint Drills", sets: 8, duration: "15s max", rest: "2.5 min" },
+                    { name: "Resistance Band Sprints (Heavy)", sets: 12, duration: "10s", rest: "3 min" },
+                  ],
+                },
+              ],
+            },
+            {
+              title: "Block 2: Speed Endurance",
+              duration: 30,
+              options: [
+                {
+                  condition: "Track available",
+                  exercise: {
+                    name: "150m Intervals",
+                    sets: "8-10",
+                    distance: "150m",
+                    intensity: "90-95%",
+                    rest: "3.5-4 min",
+                    notes: "High-intensity speed endurance",
+                  },
+                },
+                {
+                  condition: "No track",
+                  exercise: {
+                    name: "Treadmill High-Intensity Intervals",
+                    sets: "10",
+                    duration: "90s",
+                    intensity: "Very hard effort",
+                    rest: "2.5 min",
+                  },
+                },
+              ],
+            },
+          ],
+          equipment: ["Track or treadmill", "resistance bands", "stopwatch"],
+        },
+
+        wednesday: {
+          title: "Active Recovery + Mobility",
+          type: "recovery",
+          duration: 60,
+          warmup: "Light movement (10 min)",
+          blocks: [
+            {
+              title: "Block 1: Comprehensive Mobility",
+              duration: 30,
+              exercises: [
+                { name: "Hip mobility circuit", duration: "15 min" },
+                { name: "Ankle/calf mobility", duration: "10 min" },
+                { name: "Thoracic mobility", duration: "5 min" },
+              ],
+            },
+            {
+              title: "Block 2: Light Activation + Recovery",
+              duration: 20,
+              exercises: [
+                { name: "Glute activation circuit", rounds: 2 },
+                { name: "Copenhagen Plank", sets: 2, duration: "40s each" },
+                { name: "Foam rolling (comprehensive)", duration: "20 min" },
+              ],
+            },
+          ],
+          equipment: ["Yoga mat", "foam roller", "bands"],
+        },
+
+        thursday: {
+          title: "Power + Agility Peak",
+          type: "power",
+          duration: 85,
+          warmup: "Standard Protocol (15 min) + Plyometric Prep (10 min)",
+          blocks: [
+            {
+              title: "Block 1: Complex Training (Power Emphasis)",
+              duration: 30,
+              exercises: [
+                {
+                  name: "Complex: Squat + Reactive Depth Jump + Vertical Jump",
+                  sets: 5,
+                  protocol: "3 squats @ 35% BW → 3 depth jumps → 2 max vertical jumps",
+                  rest: "4 min",
+                  notes: "Triple complex for maximum power expression",
+                },
+                {
+                  name: "Complex: Split Squat + Lateral Bound Series",
+                  sets: 4,
+                  protocol: "5 reps each leg → 6 lateral bounds each direction",
+                  rest: "3 min",
+                },
+              ],
+            },
+            {
+              title: "Block 2: Peak Plyometric Volume",
+              duration: 35,
+              exercises: [
+                {
+                  name: "Box Jumps (Maximum Height)",
+                  sets: 6,
+                  reps: 6,
+                  rest: "2.5 min",
+                  boxHeight: "30-36 inches",
+                  notes: "Peak height for program",
+                },
+                {
+                  name: "Broad Jumps (Maximum Distance)",
+                  sets: 6,
+                  reps: 4,
+                  rest: "2 min",
+                  notes: "Max horizontal power, measure distance",
+                },
+                {
+                  name: "Tuck Jumps",
+                  sets: 5,
+                  reps: 6,
+                  rest: "2 min",
+                  notes: "Pull knees to chest, max height",
+                },
+              ],
+            },
+          ],
+          equipment: ["Barbell/DBs", "plyo boxes (various heights)", "measuring tape"],
+        },
+
+        friday: {
+          title: "Maximum Speed + Advanced Agility",
+          type: "sprint",
+          duration: 80,
+          warmup: "Standard Protocol (15 min) + Sprint Drills (12 min)",
+          blocks: [
+            {
+              title: "Block 1: Peak Velocity Work",
+              duration: 40,
+              options: [
+                {
+                  condition: "Track available",
+                  exercises: [
+                    {
+                      name: "40-Yard Sprints (Timed)",
+                      sets: 6,
+                      distance: "40 yards",
+                      intensity: "Max effort",
+                      rest: "5 min",
+                      notes: "Track times - attempt PRs",
+                    },
+                    {
+                      name: "Flying 20s",
+                      sets: 6,
+                      protocol: "30m build-up + 20m max sprint",
+                      rest: "4 min",
+                    },
+                  ],
+                },
+                {
+                  condition: "No track",
+                  exercises: [
+                    { name: "Wall Sprint Drills", sets: 8, duration: "15s max", rest: "2.5 min" },
+                    { name: "First Step Explosions", sets: 12, distance: "10m", rest: "2 min" },
+                  ],
+                },
+              ],
+            },
+            {
+              title: "Block 2: Game-Specific Agility",
+              duration: 30,
+              exercises: [
+                {
+                  name: "Pro Agility (5-10-5) - Timed",
+                  sets: 8,
+                  rest: "3 min",
+                  notes: "Maximum effort, track times",
+                },
+                {
+                  name: "L-Drill - Timed",
+                  sets: 6,
+                  rest: "3 min",
+                  notes: "Both directions",
+                },
+                {
+                  name: "Reactive Agility Drills",
+                  sets: 8,
+                  duration: "20s",
+                  rest: "2 min",
+                  notes: "Partner calls directions - game simulation",
+                },
+              ],
+            },
+          ],
+          equipment: ["Track or space", "cones", "stopwatch"],
+        },
+
+        saturday: {
+          title: "RSA + Game Conditioning",
+          type: "conditioning",
+          duration: 70,
+          warmup: "Standard Protocol (15 min) + Sprint Drills (10 min)",
+          blocks: [
+            {
+              title: "Block 1: RSA at Game Intensity",
+              duration: 45,
+              options: [
+                {
+                  condition: "Track available",
+                  exercise: {
+                    name: "Game Simulation RSA",
+                    sets: "15-18 sprints",
+                    distance: "30m",
+                    intensity: "Maximum effort each rep",
+                    rest: "25s between sprints",
+                    notes: "Approaching game capacity (40+ sprints). Track fatigue index",
+                  },
+                },
+                {
+                  condition: "No track",
+                  exercise: {
+                    name: "RSA Simulation - Game Volume",
+                    sets: "15-18 sprints",
+                    duration: "8-10s max effort",
+                    rest: "25s",
+                    notes: "Building game conditioning",
+                  },
+                },
+              ],
+            },
+          ],
+          equipment: ["Track or space", "stopwatch"],
+          notes: "Peak RSA volume approaching game demands",
+        },
+
+        sunday: {
+          title: "Complete Recovery",
+          type: "recovery",
+          duration: 60,
+          protocol: "Complete Recovery Protocol",
+          activities: [
+            { name: "Lower body chain stretching", duration: "25 min" },
+            { name: "Foam rolling (full body)", duration: "20 min" },
+            { name: "Light walk or easy bike", duration: "25 min" },
+            { name: "Visualization + mental preparation", duration: "10 min" },
+          ],
+        },
+      },
+      weekSummary: {
+        lowerBodySessions: 2,
+        sprintSessions: 3,
+        focus: "Explosive power development, maximum velocity emphasis, reactive plyometrics, RSA volume 15-18 sprints",
+      },
+    },
+
+    week10: {
+      weekNumber: 10,
+      dateRange: "February 2-8, 2026",
+      phase: "Power",
+      focus: "Peak power output + game-specific conditioning",
+      days: {
+        monday: {
+          title: "Peak Reactive Power",
+          type: "power",
+          duration: 85,
+          warmup: "Standard Protocol (15 min) + Extended Plyometric Prep (12 min)",
+          blocks: [
+            {
+              title: "Block 1: Maximum Reactive Ability",
+              duration: 35,
+              exercises: [
+                {
+                  name: "Depth Jumps (Maximum Reactive Height)",
+                  sets: 6,
+                  reps: 6,
+                  rest: "3 min",
+                  boxHeight: "12-15 inches",
+                  notes: "Absolute minimal ground contact time, max reactive jump",
+                },
+                {
+                  name: "Hurdle Hops (Speed Emphasis)",
+                  sets: 6,
+                  reps: "12-15 hurdles",
+                  rest: "2.5 min",
+                  hurdleHeight: "15 inches",
+                  notes: "Speed through the series, minimal contact",
+                },
+                {
+                  name: "Double-Leg Bounds (Maximum Distance)",
+                  sets: 5,
+                  reps: "8 bounds",
+                  rest: "2.5 min",
+                  notes: "Max horizontal distance, explosive each rep",
+                },
+              ],
+            },
+            {
+              title: "Block 2: Explosive Strength",
+              duration: 30,
+              exercises: [
+                {
+                  name: "Jump Squats (Bodyweight)",
+                  sets: 5,
+                  reps: 6,
+                  rest: "2 min",
+                  notes: "Maximum height each rep, explosive concentric",
+                },
+                {
+                  name: "Broad Jumps",
+                  sets: 5,
+                  reps: 5,
+                  rest: "2 min",
+                  notes: "Measure distance - track progress",
+                },
+                {
+                  name: "Lateral Bounds",
+                  sets: 4,
+                  reps: "8 each",
+                  rest: "2 min",
+                },
+              ],
+            },
+            {
+              title: "Block 3: Strength Maintenance",
+              duration: 15,
+              exercises: [
+                {
+                  name: "Back Squats",
+                  sets: 3,
+                  reps: 6,
+                  rest: "2 min",
+                  load: "30-35% BW (maintenance)",
+                },
+                {
+                  name: "Nordic Curls",
+                  sets: 3,
+                  reps: "AMRAP",
+                  rest: "2 min",
+                },
+              ],
+            },
+          ],
+          equipment: ["Plyo boxes", "hurdles", "barbell/DBs"],
+        },
+
+        tuesday: {
+          title: "Maximum Velocity + Lactate Tolerance",
+          type: "sprint",
+          duration: 90,
+          warmup: "Standard Protocol (15 min) + Extended Sprint Drills (12 min)",
+          blocks: [
+            {
+              title: "Block 1: Peak Velocity Development",
+              duration: 45,
+              options: [
+                {
+                  condition: "Track available",
+                  exercises: [
+                    {
+                      name: "Flying 30s (Peak Velocity)",
+                      sets: 6,
+                      protocol: "40m build-up + 30m timed max sprint",
+                      rest: "5-6 min",
+                      notes: "Absolute maximum velocity - perfect mechanics",
+                    },
+                    {
+                      name: "80m Sprints",
+                      sets: 4,
+                      distance: "80m",
+                      intensity: "Max effort",
+                      rest: "6 min",
+                      notes: "Extended distance for velocity maintenance",
+                    },
+                    {
+                      name: "20-Yard Sprints",
+                      sets: 6,
+                      distance: "20 yards",
+                      intensity: "Max effort",
+                      rest: "3 min",
+                    },
+                  ],
+                },
+                {
+                  condition: "No track",
+                  exercises: [
+                    { name: "Wall Sprint Drills", sets: 8, duration: "15s max", rest: "3 min" },
+                    { name: "Resistance Band Sprints", sets: 12, duration: "12s", rest: "3 min" },
+                  ],
+                },
+              ],
+            },
+            {
+              title: "Block 2: Lactate Tolerance Work",
+              duration: 30,
+              options: [
+                {
+                  condition: "Track available",
+                  exercise: {
+                    name: "200m Intervals",
+                    sets: "6-8",
+                    distance: "200m",
+                    intensity: "90%",
+                    rest: "5 min walk/jog",
+                    notes: "High-intensity lactate tolerance",
+                  },
+                },
+                {
+                  condition: "No track",
+                  exercise: {
+                    name: "Treadmill Long Intervals",
+                    sets: "8",
+                    duration: "2 min",
+                    intensity: "Very hard effort",
+                    rest: "3 min walk",
+                  },
+                },
+              ],
+            },
+          ],
+          equipment: ["Track or treadmill", "resistance bands"],
+        },
+
+        wednesday: {
+          title: "Active Recovery + Mobility",
+          type: "recovery",
+          duration: 60,
+          warmup: "Light movement (10 min)",
+          blocks: [
+            {
+              title: "Block 1: Comprehensive Mobility",
+              duration: 30,
+              exercises: [
+                { name: "Hip mobility circuit", duration: "15 min" },
+                { name: "Ankle/calf mobility", duration: "10 min" },
+                { name: "Thoracic mobility", duration: "5 min" },
+              ],
+            },
+            {
+              title: "Block 2: Light Activation + Recovery",
+              duration: 20,
+              exercises: [
+                { name: "Glute activation circuit", rounds: 2 },
+                { name: "Copenhagen Plank", sets: 2, duration: "40s each" },
+                { name: "Foam rolling (comprehensive)", duration: "20 min" },
+              ],
+            },
+          ],
+          equipment: ["Yoga mat", "foam roller", "bands"],
+        },
+
+        thursday: {
+          title: "Power + Multi-Directional Explosiveness",
+          type: "power",
+          duration: 85,
+          warmup: "Standard Protocol (15 min) + Plyometric Prep (10 min)",
+          blocks: [
+            {
+              title: "Block 1: Multi-Directional Power",
+              duration: 35,
+              exercises: [
+                {
+                  name: "Lateral Box Jumps",
+                  sets: 5,
+                  reps: "6 each direction",
+                  rest: "2.5 min",
+                  boxHeight: "20-24 inches",
+                  notes: "Lateral power development",
+                },
+                {
+                  name: "Rotational Broad Jumps",
+                  sets: 5,
+                  reps: "4 each direction",
+                  rest: "2 min",
+                  notes: "180-degree rotation in air, land in broad jump",
+                },
+                {
+                  name: "Single-Leg Lateral Bounds",
+                  sets: 5,
+                  reps: "6 each leg",
+                  rest: "2 min",
+                  notes: "Unilateral lateral power",
+                },
+              ],
+            },
+            {
+              title: "Block 2: Reactive Agility Power",
+              duration: 30,
+              exercises: [
+                {
+                  name: "Reactive Box Jumps (Multi-Height)",
+                  sets: 6,
+                  reps: "5",
+                  rest: "2.5 min",
+                  protocol: "Step down from 12\", immediate jump to 30\"",
+                  notes: "Maximum reactive power",
+                },
+                {
+                  name: "Pogo Jumps + Sprint",
+                  sets: 5,
+                  protocol: "20s pogo jumps → immediately 20m sprint",
+                  rest: "3 min",
+                  notes: "Reactive to linear speed transition",
+                },
+              ],
+            },
+            {
+              title: "Block 3: Posterior Chain Maintenance",
+              duration: 15,
+              exercises: [
+                { name: "RDLs", sets: 3, reps: 8, rest: "2 min", load: "30% BW" },
+                { name: "Glute-Ham Raises", sets: 3, reps: 10, rest: "90s" },
+              ],
+            },
+          ],
+          equipment: ["Plyo boxes (various heights)", "measuring tape"],
+        },
+
+        friday: {
+          title: "Speed + Advanced Change of Direction",
+          type: "sprint",
+          duration: 80,
+          warmup: "Standard Protocol (15 min) + Sprint Drills (12 min)",
+          blocks: [
+            {
+              title: "Block 1: Maximum Speed Work",
+              duration: 40,
+              options: [
+                {
+                  condition: "Track available",
+                  exercises: [
+                    {
+                      name: "40-Yard Sprints (PR Attempts)",
+                      sets: 6,
+                      distance: "40 yards",
+                      intensity: "Max effort",
+                      rest: "5 min",
+                      notes: "Attempt personal records",
+                    },
+                    {
+                      name: "Flying 20s",
+                      sets: 6,
+                      protocol: "30m build-up + 20m max sprint",
+                      rest: "4 min",
+                    },
+                  ],
+                },
+                {
+                  condition: "No track",
+                  exercises: [
+                    { name: "Wall Sprint Drills", sets: 8, duration: "15s max", rest: "2.5 min" },
+                    { name: "Resistance Band Sprints", sets: 10, duration: "10s", rest: "3 min" },
+                  ],
+                },
+              ],
+            },
+            {
+              title: "Block 2: Peak Agility Work",
+              duration: 30,
+              exercises: [
+                {
+                  name: "Pro Agility (PR Attempts)",
+                  sets: 6,
+                  rest: "4 min",
+                  notes: "Maximum effort - attempt PRs",
+                },
+                {
+                  name: "L-Drill (Both Directions)",
+                  sets: 6,
+                  rest: "3 min",
+                  notes: "Timed - track both directions",
+                },
+                {
+                  name: "Reactive Cone Drills (Game Speed)",
+                  sets: 8,
+                  duration: "25s",
+                  rest: "2 min",
+                  notes: "Partner calls - game simulation",
+                },
+              ],
+            },
+          ],
+          equipment: ["Track or space", "cones", "stopwatch"],
+        },
+
+        saturday: {
+          title: "Peak RSA + Game Conditioning",
+          type: "conditioning",
+          duration: 75,
+          warmup: "Standard Protocol (15 min) + Sprint Drills (10 min)",
+          blocks: [
+            {
+              title: "Block 1: Peak RSA Volume",
+              duration: 50,
+              options: [
+                {
+                  condition: "Track available",
+                  exercise: {
+                    name: "Game Simulation RSA (Peak Volume)",
+                    sets: "18-20 sprints",
+                    distance: "30m",
+                    intensity: "Maximum effort each rep",
+                    rest: "25s between sprints",
+                    notes: "PEAK RSA volume. Simulates late-game fatigue. Track performance drop-off",
+                  },
+                },
+                {
+                  condition: "No track",
+                  exercise: {
+                    name: "RSA Simulation - Peak Volume",
+                    sets: "18-20 sprints",
+                    duration: "8-10s max effort",
+                    rest: "25s",
+                    notes: "Peak game conditioning volume",
+                  },
+                },
+              ],
+            },
+          ],
+          equipment: ["Track or space", "stopwatch"],
+          notes: "Peak RSA week - capacity for 40+ sprint games",
+        },
+
+        sunday: {
+          title: "Complete Recovery",
+          type: "recovery",
+          duration: 60,
+          protocol: "Complete Recovery Protocol",
+          activities: [
+            { name: "Lower body chain stretching", duration: "25 min" },
+            { name: "Foam rolling (full body)", duration: "20 min" },
+            { name: "Light walk or easy bike", duration: "25 min" },
+            { name: "Visualization + game preparation", duration: "10 min" },
+          ],
+        },
+      },
+      weekSummary: {
+        lowerBodySessions: 2,
+        sprintSessions: 3,
+        focus: "Peak power output, maximum velocity development, multi-directional explosiveness, RSA peak 18-20 sprints",
+      },
+    },
+
+    week11: {
+      weekNumber: 11,
+      dateRange: "February 9-15, 2026",
+      phase: "Power",
+      focus: "Power maintenance + game-specific conditioning peak",
+      days: {
+        monday: {
+          title: "Power Maintenance + Game Preparation",
+          type: "power",
+          duration: 75,
+          warmup: "Standard Protocol (15 min) + Plyometric Prep (10 min)",
+          blocks: [
+            {
+              title: "Block 1: Reactive Power Maintenance",
+              duration: 30,
+              exercises: [
+                {
+                  name: "Depth Jumps",
+                  sets: 5,
+                  reps: 5,
+                  rest: "2.5 min",
+                  boxHeight: "12 inches",
+                  notes: "Maintain reactive ability",
+                },
+                {
+                  name: "Box Jumps",
+                  sets: 5,
+                  reps: 5,
+                  rest: "2 min",
+                  boxHeight: "30 inches",
+                },
+                {
+                  name: "Broad Jumps",
+                  sets: 4,
+                  reps: 4,
+                  rest: "2 min",
+                },
+              ],
+            },
+            {
+              title: "Block 2: Multi-Directional Power",
+              duration: 25,
+              exercises: [
+                {
+                  name: "Lateral Bounds",
+                  sets: 4,
+                  reps: "6 each",
+                  rest: "2 min",
+                },
+                {
+                  name: "Single-Leg Bounds",
+                  sets: 4,
+                  distance: "25m each",
+                  rest: "2 min",
+                },
+              ],
+            },
+            {
+              title: "Block 3: Strength Maintenance",
+              duration: 15,
+              exercises: [
+                {
+                  name: "Goblet Squats",
+                  sets: 3,
+                  reps: 8,
+                  rest: "2 min",
+                  load: "Moderate DB",
+                },
+                {
+                  name: "Nordic Curls",
+                  sets: 3,
+                  reps: "AMRAP",
+                  rest: "2 min",
+                },
+              ],
+            },
+          ],
+          equipment: ["Plyo boxes", "dumbbells"],
+        },
+
+        tuesday: {
+          title: "Game Speed + Conditioning",
+          type: "sprint",
+          duration: 85,
+          warmup: "Standard Protocol (15 min) + Sprint Drills (12 min)",
+          blocks: [
+            {
+              title: "Block 1: Game-Specific Speed Work",
+              duration: 40,
+              options: [
+                {
+                  condition: "Track available",
+                  exercises: [
+                    {
+                      name: "40-Yard Sprints (Game Simulation)",
+                      sets: 6,
+                      distance: "40 yards",
+                      intensity: "Max effort",
+                      rest: "4 min",
+                      notes: "Game-specific distance",
+                    },
+                    {
+                      name: "Flying 20s",
+                      sets: 6,
+                      protocol: "30m build-up + 20m max sprint",
+                      rest: "4 min",
+                    },
+                    {
+                      name: "10-Yard Sprints (Game Starts)",
+                      sets: 8,
+                      distance: "10 yards",
+                      intensity: "Max effort",
+                      rest: "2 min",
+                    },
+                  ],
+                },
+                {
+                  condition: "No track",
+                  exercises: [
+                    { name: "Wall Sprint Drills", sets: 8, duration: "15s max", rest: "2.5 min" },
+                    { name: "First Step Explosions", sets: 12, distance: "10m", rest: "2 min" },
+                  ],
+                },
+              ],
+            },
+            {
+              title: "Block 2: Speed Endurance",
+              duration: 30,
+              options: [
+                {
+                  condition: "Track available",
+                  exercise: {
+                    name: "150m Intervals (Game Pace)",
+                    sets: "8",
+                    distance: "150m",
+                    intensity: "90%",
+                    rest: "3.5 min",
+                    notes: "Game-specific speed endurance",
+                  },
+                },
+                {
+                  condition: "No track",
+                  exercise: {
+                    name: "Treadmill Intervals",
+                    sets: "10",
+                    duration: "90s",
+                    intensity: "Hard effort",
+                    rest: "2 min",
+                  },
+                },
+              ],
+            },
+          ],
+          equipment: ["Track or treadmill", "cones"],
+        },
+
+        wednesday: {
+          title: "Active Recovery + Mobility",
+          type: "recovery",
+          duration: 60,
+          warmup: "Light movement (10 min)",
+          blocks: [
+            {
+              title: "Block 1: Comprehensive Mobility",
+              duration: 30,
+              exercises: [
+                { name: "Hip mobility circuit", duration: "15 min" },
+                { name: "Ankle/calf mobility", duration: "10 min" },
+                { name: "Thoracic mobility", duration: "5 min" },
+              ],
+            },
+            {
+              title: "Block 2: Light Activation + Recovery",
+              duration: 20,
+              exercises: [
+                { name: "Glute activation circuit", rounds: 2 },
+                { name: "Copenhagen Plank", sets: 2, duration: "40s each" },
+                { name: "Foam rolling (comprehensive)", duration: "20 min" },
+              ],
+            },
+          ],
+          equipment: ["Yoga mat", "foam roller", "bands"],
+        },
+
+        thursday: {
+          title: "Power + Agility Integration",
+          type: "power",
+          duration: 75,
+          warmup: "Standard Protocol (15 min) + Plyometric Prep (10 min)",
+          blocks: [
+            {
+              title: "Block 1: Integrated Power + Agility",
+              duration: 35,
+              exercises: [
+                {
+                  name: "Box Jump + Pro Agility",
+                  sets: 5,
+                  protocol: "3 box jumps (24\") → immediately Pro Agility drill",
+                  rest: "3 min",
+                  notes: "Power to agility transition",
+                },
+                {
+                  name: "Depth Jump + Sprint",
+                  sets: 5,
+                  protocol: "3 depth jumps → immediately 20m sprint",
+                  rest: "3 min",
+                  notes: "Reactive to linear speed",
+                },
+                {
+                  name: "Lateral Bounds + L-Drill",
+                  sets: 4,
+                  protocol: "6 lateral bounds each → immediately L-drill",
+                  rest: "3 min",
+                },
+              ],
+            },
+            {
+              title: "Block 2: Plyometric Maintenance",
+              duration: 25,
+              exercises: [
+                { name: "Pogo Jumps", sets: 4, duration: "20s", rest: "2 min" },
+                { name: "Hurdle Hops", sets: 4, reps: "10 hurdles", rest: "2 min" },
+                { name: "Broad Jumps", sets: 4, reps: 4, rest: "2 min" },
+              ],
+            },
+          ],
+          equipment: ["Plyo boxes", "cones", "hurdles"],
+        },
+
+        friday: {
+          title: "Maximum Speed + Game Agility",
+          type: "sprint",
+          duration: 75,
+          warmup: "Standard Protocol (15 min) + Sprint Drills (12 min)",
+          blocks: [
+            {
+              title: "Block 1: Speed Work",
+              duration: 35,
+              options: [
+                {
+                  condition: "Track available",
+                  exercises: [
+                    {
+                      name: "40-Yard Sprints",
+                      sets: 6,
+                      distance: "40 yards",
+                      intensity: "Max effort",
+                      rest: "4 min",
+                    },
+                    {
+                      name: "Flying 10s",
+                      sets: 6,
+                      protocol: "20m build-up + 10m max sprint",
+                      rest: "3 min",
+                    },
+                  ],
+                },
+                {
+                  condition: "No track",
+                  exercises: [
+                    { name: "Wall Sprint Drills", sets: 8, duration: "15s max", rest: "2.5 min" },
+                    { name: "Resistance Band Sprints", sets: 10, duration: "10s", rest: "3 min" },
+                  ],
+                },
+              ],
+            },
+            {
+              title: "Block 2: Game Agility",
+              duration: 30,
+              exercises: [
+                { name: "Pro Agility", sets: 6, rest: "3 min" },
+                { name: "L-Drill", sets: 5, rest: "2.5 min" },
+                { name: "Reactive Cone Drills", sets: 8, duration: "20s", rest: "2 min" },
+              ],
+            },
+          ],
+          equipment: ["Track or space", "cones"],
+        },
+
+        saturday: {
+          title: "Game Simulation RSA",
+          type: "conditioning",
+          duration: 75,
+          warmup: "Standard Protocol (15 min) + Sprint Drills (10 min)",
+          blocks: [
+            {
+              title: "Block 1: Full Game RSA Simulation",
+              duration: 50,
+              options: [
+                {
+                  condition: "Track available",
+                  exercise: {
+                    name: "Full Game RSA Simulation",
+                    sets: "20-22 sprints",
+                    distance: "30m",
+                    intensity: "Maximum effort each rep",
+                    rest: "25s between sprints",
+                    notes: "Full game simulation. Capacity for 40+ sprint games. Track fatigue index",
+                  },
+                },
+                {
+                  condition: "No track",
+                  exercise: {
+                    name: "RSA Game Simulation",
+                    sets: "20-22 sprints",
+                    duration: "8-10s max effort",
+                    rest: "25s",
+                    notes: "Game conditioning capacity",
+                  },
+                },
+              ],
+            },
+          ],
+          equipment: ["Track or space", "stopwatch"],
+          notes: "Full game capacity - ready for competition",
+        },
+
+        sunday: {
+          title: "Complete Recovery",
+          type: "recovery",
+          duration: 60,
+          protocol: "Complete Recovery Protocol",
+          activities: [
+            { name: "Lower body chain stretching", duration: "25 min" },
+            { name: "Foam rolling (full body)", duration: "20 min" },
+            { name: "Light walk or easy bike", duration: "25 min" },
+            { name: "Mental preparation + visualization", duration: "10 min" },
+          ],
+        },
+      },
+      weekSummary: {
+        lowerBodySessions: 2,
+        sprintSessions: 3,
+        focus: "Power maintenance, game-specific conditioning, integrated power + agility work, RSA game simulation 20-22 sprints",
+      },
+    },
+
+    week12: {
+      weekNumber: 12,
+      dateRange: "February 16-22, 2026",
+      phase: "Power",
+      focus: "Final assessment + transition to Competition phase",
+      assessmentWeek: true,
+      days: {
+        monday: {
+          title: "Power & Strength Assessment",
+          type: "assessment",
+          duration: 90,
+          warmup: "Extended Protocol (20 min)",
+          blocks: [
+            {
+              title: "Block 1: Power Assessment",
+              duration: 30,
+              exercises: [
+                {
+                  name: "Vertical Jump Test",
+                  sets: 3,
+                  rest: "3 min",
+                  record: "Best jump height. Compare to Weeks 1 & 8",
+                  notes: "Jump mat or wall mark",
+                },
+                {
+                  name: "Broad Jump Test",
+                  sets: 3,
+                  rest: "3 min",
+                  record: "Best distance. Compare to Weeks 1 & 8",
+                },
+                {
+                  name: "Depth Jump Test (12\" Box)",
+                  sets: 3,
+                  rest: "3 min",
+                  record: "Best reactive jump height",
+                },
+              ],
+            },
+            {
+              title: "Block 2: Strength Assessment",
+              duration: 30,
+              exercises: [
+                {
+                  name: "Back Squat - Test Set",
+                  sets: "1-2",
+                  reps: "Max reps @ 40% BW",
+                  rest: "5 min",
+                  record: "Total reps. Compare to Weeks 1 & 8",
+                },
+                {
+                  name: "RDL - Test Set",
+                  sets: "1-2",
+                  reps: "Max reps @ 35% BW",
+                  rest: "5 min",
+                  record: "Total reps",
+                },
+                {
+                  name: "Nordic Curls - Unassisted Test",
+                  sets: 2,
+                  reps: "AMRAP (no assistance)",
+                  rest: "4 min",
+                  record: "Best set total reps",
+                },
+              ],
+            },
+            {
+              title: "Block 3: Reactive Ability Assessment",
+              duration: 20,
+              exercises: [
+                {
+                  name: "Repeated Pogo Jump Test",
+                  sets: 2,
+                  duration: "30s max height",
+                  rest: "3 min",
+                  record: "Total jumps + avg height if available",
+                },
+                {
+                  name: "10-Jump Test",
+                  sets: 2,
+                  protocol: "10 consecutive max broad jumps",
+                  rest: "4 min",
+                  record: "Total distance",
+                },
+              ],
+            },
+          ],
+          equipment: ["Barbell/DBs", "measuring tape", "jump mat"],
+          notes: "Record all results for comparison to Weeks 1 & 8",
+        },
+
+        tuesday: {
+          title: "Speed & Agility Assessment",
+          type: "assessment",
+          duration: 90,
+          warmup: "Extended Protocol (20 min) + thorough sprint drills",
+          blocks: [
+            {
+              title: "Block 1: Linear Speed Assessment",
+              duration: 35,
+              exercises: [
+                {
+                  name: "10-Yard Sprint Test",
+                  sets: 3,
+                  rest: "4 min",
+                  record: "Best time. Compare to Weeks 1 & 8",
+                },
+                {
+                  name: "20-Yard Sprint Test",
+                  sets: 3,
+                  rest: "4 min",
+                  record: "Best time",
+                },
+                {
+                  name: "40-Yard Sprint Test",
+                  sets: 3,
+                  rest: "5 min",
+                  record: "Best time. PRIMARY speed metric",
+                },
+                {
+                  name: "Flying 20m Test",
+                  sets: 3,
+                  protocol: "30m build-up + 20m timed",
+                  rest: "5 min",
+                  record: "Best time (max velocity)",
+                },
+              ],
+            },
+            {
+              title: "Block 2: Change of Direction Assessment",
+              duration: 30,
+              exercises: [
+                {
+                  name: "Pro Agility Test (5-10-5)",
+                  sets: 3,
+                  rest: "4 min",
+                  record: "Best time. Compare to Weeks 1 & 8",
+                },
+                {
+                  name: "L-Drill Test",
+                  sets: 3,
+                  rest: "3.5 min",
+                  record: "Best time each direction",
+                },
+                {
+                  name: "T-Test",
+                  sets: 2,
+                  rest: "4 min",
+                  record: "Best time",
+                },
+              ],
+            },
+            {
+              title: "Block 3: RSA Assessment",
+              duration: 20,
+              exercise: {
+                name: "RSA Test (10 Sprints)",
+                sets: "10 sprints",
+                distance: "30m",
+                intensity: "Max effort each",
+                rest: "25s",
+                record: "All 10 times. Calculate fatigue index: (worst - best) / best × 100%",
+                notes: "Compare to Week 8",
+              },
+            },
+          ],
+          equipment: ["Cones", "stopwatch or electronic timing"],
+          notes: "Compare all results to Weeks 1 & 8 - track improvements",
+        },
+
+        wednesday: {
+          title: "Movement Quality + Recovery",
+          type: "recovery",
+          duration: 60,
+          warmup: "Light movement (10 min)",
+          blocks: [
+            {
+              title: "Block 1: Movement Quality Assessment",
+              duration: 25,
+              exercises: [
+                {
+                  name: "Single-Leg Balance Test",
+                  sets: 2,
+                  duration: "Max time (up to 60s)",
+                  record: "Best time each leg",
+                },
+                {
+                  name: "Overhead Squat Assessment",
+                  sets: 3,
+                  reps: 5,
+                  notes: "Movement quality, depth, balance",
+                },
+              ],
+            },
+            {
+              title: "Block 2: Comprehensive Recovery",
+              duration: 30,
+              exercises: [
+                { name: "Full body stretching", duration: "20 min" },
+                { name: "Foam rolling", duration: "15 min" },
+              ],
+            },
+          ],
+          equipment: ["Yoga mat", "foam roller"],
+        },
+
+        thursday: {
+          title: "Deload - Light Power Work",
+          type: "power",
+          duration: 50,
+          warmup: "Standard Protocol (15 min)",
+          blocks: [
+            {
+              title: "Block 1: Light Plyometrics",
+              duration: 25,
+              exercises: [
+                {
+                  name: "Box Jumps",
+                  sets: 3,
+                  reps: 5,
+                  rest: "2 min",
+                  boxHeight: "16-20 inches (reduced)",
+                  notes: "50-60% effort - movement quality",
+                },
+                {
+                  name: "Pogo Jumps",
+                  sets: 3,
+                  duration: "15s",
+                  rest: "90s",
+                  notes: "Light, springy",
+                },
+                {
+                  name: "Lateral Bounds",
+                  sets: 3,
+                  reps: "6 each",
+                  rest: "90s",
+                },
+              ],
+            },
+          ],
+          equipment: ["Plyo boxes"],
+        },
+
+        friday: {
+          title: "Deload - Speed Mechanics",
+          type: "sprint",
+          duration: 45,
+          warmup: "Standard Protocol (15 min)",
+          blocks: [
+            {
+              title: "Block 1: Sprint Drills + Light Speed Work",
+              duration: 25,
+              exercises: [
+                {
+                  name: "A-march/A-skip",
+                  sets: 3,
+                  distance: "20m each",
+                  rest: "60s",
+                  notes: "Perfect mechanics",
+                },
+                {
+                  name: "Build-Up Runs",
+                  sets: 4,
+                  distance: "50m",
+                  intensity: "70-80%",
+                  rest: "3 min",
+                },
+                {
+                  name: "Flying 10s (Light)",
+                  sets: 4,
+                  protocol: "20m build-up + 10m @ 80%",
+                  rest: "3 min",
+                },
+              ],
+            },
+          ],
+          equipment: ["Track or space"],
+        },
+
+        saturday: {
+          title: "Deload - Light Strength",
+          type: "strength",
+          duration: 50,
+          warmup: "Standard Protocol (15 min)",
+          blocks: [
+            {
+              title: "Block 1: Light Lower Body",
+              duration: 30,
+              exercises: [
+                {
+                  name: "Goblet Squats",
+                  sets: 3,
+                  reps: 8,
+                  rest: "2 min",
+                  load: "Light-moderate DB (50-60% of training load)",
+                },
+                {
+                  name: "RDLs",
+                  sets: 3,
+                  reps: 8,
+                  rest: "2 min",
+                  load: "20-25% BW (light)",
+                },
+                {
+                  name: "Single-Leg RDL",
+                  sets: 3,
+                  reps: "6 each",
+                  rest: "90s",
+                  load: "Light DB or bodyweight",
+                },
+                {
+                  name: "Copenhagen Plank",
+                  sets: 2,
+                  duration: "30s each",
+                  rest: "60s",
+                },
+              ],
+            },
+          ],
+          equipment: ["Dumbbells", "mat"],
+        },
+
+        sunday: {
+          title: "Complete Recovery + Phase Review",
+          type: "recovery",
+          duration: 60,
+          protocol: "Complete Recovery Protocol",
+          activities: [
+            { name: "Lower body stretching", duration: "25 min" },
+            { name: "Foam rolling", duration: "20 min" },
+            { name: "Light walk/bike", duration: "25 min" },
+            { name: "Review assessment results + set Competition phase goals", duration: "15 min" },
+          ],
+        },
+      },
+      weekSummary: {
+        lowerBodySessions: 1,
+        sprintSessions: 2,
+        assessmentFocus: "Power (jumps, reactive ability), strength, speed, agility, RSA",
+        deloadVolume: "50-60% of training loads",
+        notes: "Compare all results to Weeks 1 & 8. Prepare for Competition phase (Weeks 13-14)",
+      },
+      phaseSummary: {
+        title: "Power Phase Complete (Weeks 9-12)!",
+        achievements: [
+          "Converted strength to explosive power",
+          "Peak plyometric abilities (depth jumps, reactive work)",
+          "Maximum velocity development (flying 30s, 40-yard sprints)",
+          "Multi-directional power (lateral bounds, rotational jumps)",
+          "Game-specific conditioning (RSA 15-22 sprints)",
+          "Integrated power + agility work (game-specific transitions)",
+          "Peak reactive ability (minimal ground contact times)",
+        ],
+        keyMetrics: {
+          powerGains: "Compare Week 12 to Week 8 to Week 1: vertical jump, broad jump, depth jump",
+          speedGains: "10/20/40-yard sprints, flying 20m max velocity",
+          agilityGains: "Pro Agility, L-drill, T-test times",
+          conditioningGains: "RSA capacity (20-22 sprints), fatigue index improvement",
+          reactiveGains: "Pogo jump test, 10-jump test",
+        },
+        nextPhase: {
+          name: "Competition Prep (Weeks 13-14)",
+          focus: [
+            "Outdoor transition complete",
+            "Peak power maintenance",
+            "Volume reduction (taper)",
+            "Competition simulation",
+            "Mental preparation",
+            "Physical freshness for competition",
+          ],
+          trainingShifts: {
+            volume: "Reduce 40-50% for taper",
+            intensity: "Maintain at 90-100% for speed/power",
+            focus: "Quality over quantity",
+            outdoor: "Full outdoor transition (weather permitting)",
+          },
+        },
+      },
+    },
+
+    week13: {
+      weekNumber: 13,
+      dateRange: "February 23 - March 1, 2026",
+      phase: "Competition Prep",
+      focus: "Taper + competition simulation",
+      days: {
+        monday: {
+          title: "Power Maintenance - Quality Over Quantity",
+          type: "power",
+          duration: 60,
+          warmup: "Standard Protocol (15 min) + Plyometric Prep (8 min)",
+          blocks: [
+            {
+              title: "Block 1: Explosive Power Maintenance",
+              duration: 25,
+              exercises: [
+                {
+                  name: "Depth Jumps",
+                  sets: 4,
+                  reps: 4,
+                  rest: "3 min",
+                  boxHeight: "12 inches",
+                  notes: "50-60% volume, 100% intensity - maintain explosive ability",
+                },
+                {
+                  name: "Box Jumps",
+                  sets: 4,
+                  reps: 4,
+                  rest: "2.5 min",
+                  boxHeight: "30 inches",
+                  notes: "Quality reps only",
+                },
+                {
+                  name: "Broad Jumps",
+                  sets: 3,
+                  reps: 3,
+                  rest: "2 min",
+                  notes: "Maximum effort each rep",
+                },
+              ],
+            },
+            {
+              title: "Block 2: Light Strength Maintenance",
+              duration: 15,
+              exercises: [
+                {
+                  name: "Goblet Squats",
+                  sets: 3,
+                  reps: 6,
+                  rest: "2 min",
+                  load: "Moderate DB (30-35% of max)",
+                  notes: "Light maintenance volume",
+                },
+                {
+                  name: "Nordic Curls",
+                  sets: 2,
+                  reps: "AMRAP",
+                  rest: "2 min",
+                  notes: "Maintain hamstring readiness",
+                },
+              ],
+            },
+          ],
+          equipment: ["Plyo boxes", "dumbbells"],
+          notes: "TAPER WEEK - Quality over quantity. Stay fresh.",
+        },
+
+        tuesday: {
+          title: "Speed Sharpening + Competition Simulation",
+          type: "sprint",
+          duration: 70,
+          warmup: "Standard Protocol (15 min) + Sprint Drills (10 min)",
+          blocks: [
+            {
+              title: "Block 1: Speed Sharpening",
+              duration: 30,
+              options: [
+                {
+                  condition: "Track available",
+                  exercises: [
+                    {
+                      name: "40-Yard Sprints",
+                      sets: 5,
+                      distance: "40 yards",
+                      intensity: "95-100%",
+                      rest: "5 min",
+                      notes: "Sharpen speed, not build fitness",
+                    },
+                    {
+                      name: "Flying 10s",
+                      sets: 5,
+                      protocol: "20m build-up + 10m max sprint",
+                      rest: "4 min",
+                      notes: "Perfect mechanics at max velocity",
+                    },
+                  ],
+                },
+                {
+                  condition: "No track",
+                  exercises: [
+                    { name: "Wall Sprint Drills", sets: 6, duration: "12s max", rest: "3 min" },
+                    { name: "First Step Explosions", sets: 8, distance: "10m", rest: "2 min" },
+                  ],
+                },
+              ],
+            },
+            {
+              title: "Block 2: Agility Sharpening",
+              duration: 20,
+              exercises: [
+                {
+                  name: "Pro Agility",
+                  sets: 4,
+                  rest: "3 min",
+                  notes: "Maximum effort, perfect technique",
+                },
+                {
+                  name: "L-Drill",
+                  sets: 4,
+                  rest: "3 min",
+                  notes: "Sharp cuts, game speed",
+                },
+              ],
+            },
+          ],
+          equipment: ["Track or space", "cones"],
+        },
+
+        wednesday: {
+          title: "Active Recovery + Mental Preparation",
+          type: "recovery",
+          duration: 50,
+          warmup: "Light movement (10 min)",
+          blocks: [
+            {
+              title: "Block 1: Light Mobility",
+              duration: 20,
+              exercises: [
+                { name: "Hip mobility circuit", duration: "10 min" },
+                { name: "Ankle/calf mobility", duration: "8 min" },
+              ],
+            },
+            {
+              title: "Block 2: Recovery + Mental Work",
+              duration: 20,
+              exercises: [
+                { name: "Foam rolling (light)", duration: "12 min" },
+                { name: "Visualization + competition mental prep", duration: "15 min" },
+              ],
+            },
+          ],
+          equipment: ["Yoga mat", "foam roller"],
+          notes: "Mental preparation becomes priority",
+        },
+
+        thursday: {
+          title: "Competition Simulation - Game Speed",
+          type: "sprint + power",
+          duration: 65,
+          warmup: "Standard Protocol (15 min) + Dynamic Warm-up (10 min)",
+          blocks: [
+            {
+              title: "Block 1: Game Scenario Drills",
+              duration: 30,
+              exercises: [
+                {
+                  name: "Game Situation Sprints",
+                  sets: 8,
+                  distance: "20-40 yards",
+                  intensity: "Game speed (90-95%)",
+                  rest: "3 min",
+                  notes: "Simulate game scenarios - routes, breakaways, pursuit angles",
+                },
+                {
+                  name: "Reactive Agility (Partner Calls)",
+                  sets: 6,
+                  duration: "15s",
+                  rest: "2.5 min",
+                  notes: "Game-specific reactive work",
+                },
+              ],
+            },
+            {
+              title: "Block 2: Light Plyometric Reactivity",
+              duration: 15,
+              exercises: [
+                { name: "Pogo Jumps", sets: 3, duration: "15s", rest: "2 min" },
+                { name: "Lateral Bounds", sets: 3, reps: "4 each", rest: "2 min" },
+              ],
+            },
+          ],
+          equipment: ["Cones", "plyo boxes"],
+          notes: "Game simulation - stay sharp, stay fresh",
+        },
+
+        friday: {
+          title: "Speed Maintenance + Technique",
+          type: "sprint",
+          duration: 45,
+          warmup: "Standard Protocol (15 min)",
+          blocks: [
+            {
+              title: "Block 1: Speed Drills + Light Sprints",
+              duration: 25,
+              exercises: [
+                {
+                  name: "A-skip/B-skip",
+                  sets: 3,
+                  distance: "20m each",
+                  rest: "90s",
+                  notes: "Perfect mechanics",
+                },
+                {
+                  name: "Build-Up Runs",
+                  sets: 4,
+                  distance: "40m",
+                  intensity: "70-80-90%",
+                  rest: "3 min",
+                  notes: "Smooth acceleration, maintain speed",
+                },
+              ],
+            },
+          ],
+          equipment: ["Track or space"],
+        },
+
+        saturday: {
+          title: "Competition RSA - Short Volume",
+          type: "conditioning",
+          duration: 50,
+          warmup: "Standard Protocol (15 min) + Sprint Drills (8 min)",
+          blocks: [
+            {
+              title: "Block 1: Light RSA Work",
+              duration: 25,
+              options: [
+                {
+                  condition: "Track available",
+                  exercise: {
+                    name: "Repeated Sprint Ability (Competition Prep)",
+                    sets: "8-10 sprints",
+                    distance: "30m",
+                    intensity: "90-95%",
+                    rest: "30s",
+                    notes: "Maintain capacity, don't build it - taper volume",
+                  },
+                },
+                {
+                  condition: "No track",
+                  exercise: {
+                    name: "RSA Simulation - Light",
+                    sets: "8-10 sprints",
+                    duration: "8s",
+                    intensity: "90-95%",
+                    rest: "30s",
+                  },
+                },
+              ],
+            },
+          ],
+          equipment: ["Track or space"],
+          notes: "Light RSA to maintain game conditioning",
+        },
+
+        sunday: {
+          title: "Complete Recovery + Final Mental Prep",
+          type: "recovery",
+          duration: 60,
+          protocol: "Complete Recovery Protocol",
+          activities: [
+            { name: "Lower body stretching", duration: "20 min" },
+            { name: "Foam rolling", duration: "15 min" },
+            { name: "Light walk", duration: "20 min" },
+            { name: "Competition visualization + strategy", duration: "20 min" },
+          ],
+        },
+      },
+      weekSummary: {
+        lowerBodySessions: 1,
+        sprintSessions: 4,
+        focus: "Taper (40-50% volume), maintain intensity (90-100%), competition simulation, mental preparation",
+        notes: "Quality over quantity. Stay sharp, stay fresh. Mental prep becomes priority.",
+      },
+    },
+
+    week14: {
+      weekNumber: 14,
+      dateRange: "March 2-8, 2026",
+      phase: "Competition Prep",
+      focus: "Final preparation + peak freshness",
+      days: {
+        monday: {
+          title: "Light Power Activation",
+          type: "power",
+          duration: 40,
+          warmup: "Standard Protocol (12 min) + Light Plyometric Prep (5 min)",
+          blocks: [
+            {
+              title: "Block 1: Explosive Activation",
+              duration: 20,
+              exercises: [
+                {
+                  name: "Box Jumps",
+                  sets: 3,
+                  reps: 3,
+                  rest: "2.5 min",
+                  boxHeight: "24-28 inches",
+                  notes: "Neuromuscular activation - quality only",
+                },
+                {
+                  name: "Broad Jumps",
+                  sets: 3,
+                  reps: 3,
+                  rest: "2 min",
+                  notes: "Max effort, full recovery",
+                },
+                {
+                  name: "Pogo Jumps",
+                  sets: 2,
+                  duration: "12s",
+                  rest: "2 min",
+                  notes: "Reactive activation",
+                },
+              ],
+            },
+          ],
+          equipment: ["Plyo boxes"],
+          notes: "MINIMAL VOLUME - Just activation. Stay fresh.",
+        },
+
+        tuesday: {
+          title: "Speed Activation + Game Prep",
+          type: "sprint",
+          duration: 50,
+          warmup: "Standard Protocol (15 min) + Sprint Drills (8 min)",
+          blocks: [
+            {
+              title: "Block 1: Speed Activation",
+              duration: 25,
+              options: [
+                {
+                  condition: "Track available",
+                  exercises: [
+                    {
+                      name: "40-Yard Sprints",
+                      sets: 4,
+                      distance: "40 yards",
+                      intensity: "95%",
+                      rest: "5 min",
+                      notes: "Activation only - not max effort",
+                    },
+                    {
+                      name: "Flying 10s",
+                      sets: 4,
+                      protocol: "20m build-up + 10m @ 95%",
+                      rest: "4 min",
+                    },
+                  ],
+                },
+                {
+                  condition: "No track",
+                  exercises: [
+                    { name: "Wall Sprint Drills", sets: 5, duration: "10s", rest: "3 min" },
+                    { name: "First Step Explosions", sets: 6, distance: "10m", rest: "2 min" },
+                  ],
+                },
+              ],
+            },
+          ],
+          equipment: ["Track or space"],
+        },
+
+        wednesday: {
+          title: "Recovery + Visualization",
+          type: "recovery",
+          duration: 45,
+          warmup: "Light movement (8 min)",
+          blocks: [
+            {
+              title: "Block 1: Light Mobility + Mental Work",
+              duration: 35,
+              exercises: [
+                { name: "Hip mobility circuit (light)", duration: "10 min" },
+                { name: "Light stretching", duration: "10 min" },
+                { name: "Competition visualization", duration: "20 min", notes: "Primary focus" },
+              ],
+            },
+          ],
+          equipment: ["Yoga mat"],
+          notes: "Mental preparation is primary focus",
+        },
+
+        thursday: {
+          title: "Light Game Simulation",
+          type: "activation",
+          duration: 45,
+          warmup: "Standard Protocol (12 min)",
+          blocks: [
+            {
+              title: "Block 1: Game Scenario Activation",
+              duration: 25,
+              exercises: [
+                {
+                  name: "Game Situation Sprints (Light)",
+                  sets: 5,
+                  distance: "20-30 yards",
+                  intensity: "85-90%",
+                  rest: "3 min",
+                  notes: "Feel game speed, stay fresh",
+                },
+                {
+                  name: "Pro Agility (Light)",
+                  sets: 3,
+                  intensity: "85-90%",
+                  rest: "3 min",
+                  notes: "Agility activation",
+                },
+              ],
+            },
+          ],
+          equipment: ["Cones"],
+        },
+
+        friday: {
+          title: "Final Speed Activation",
+          type: "activation",
+          duration: 35,
+          warmup: "Standard Protocol (12 min)",
+          blocks: [
+            {
+              title: "Block 1: Neuromuscular Activation",
+              duration: 20,
+              exercises: [
+                {
+                  name: "Build-Up Runs",
+                  sets: 3,
+                  distance: "40m",
+                  intensity: "60-70-80%",
+                  rest: "3 min",
+                  notes: "Feel speed, perfect mechanics",
+                },
+                {
+                  name: "Starts (From Stance)",
+                  sets: 4,
+                  distance: "10m",
+                  intensity: "90%",
+                  rest: "2 min",
+                  notes: "First step sharpness",
+                },
+              ],
+            },
+          ],
+          equipment: ["Track or space"],
+          notes: "Last session before competition - VERY light",
+        },
+
+        saturday: {
+          title: "Complete Rest + Final Mental Prep",
+          type: "rest",
+          duration: 30,
+          activities: [
+            { name: "Light stretching (optional)", duration: "10 min" },
+            { name: "Competition strategy review", duration: "15 min" },
+            { name: "Visualization", duration: "15 min" },
+          ],
+          notes: "Complete physical rest. Mental preparation only.",
+        },
+
+        sunday: {
+          title: "COMPETITION DAY or Final Preparation",
+          type: "competition",
+          preGameWarmup: "Extended warm-up protocol (20-25 min)",
+          notes: "Ready to compete. Trust your preparation. Execute the game plan.",
+        },
+      },
+      weekSummary: {
+        lowerBodySessions: 1,
+        sprintSessions: 3,
+        focus: "Minimal volume (20-30% of peak), activation only, peak freshness, mental preparation",
+        notes: "Physical work is minimal. Mental preparation is priority. Ready to compete.",
+      },
+      programSummary: {
+        title: "14-WEEK WR/DB OFFSEASON PROGRAM COMPLETE!",
+        overallAchievements: [
+          "Complete periodized program: Foundation → Strength → Power → Competition",
+          "Maximum strength developed (40% BW squats/RDLs)",
+          "Explosive power peak (depth jumps, reactive work, max velocity sprints)",
+          "Game-specific conditioning (RSA 20-22 sprint capacity)",
+          "Multi-directional speed + agility development",
+          "Injury prevention focus (Nordic curls, Copenhagen planks, comprehensive mobility)",
+          "Taper for peak performance",
+        ],
+        keyProgression: {
+          strength: "Weeks 1-8: Foundation + Strength Development (25-40% BW loads)",
+          power: "Weeks 9-12: Power Phase (peak plyometrics, max velocity, RSA 20-22 sprints)",
+          taper: "Weeks 13-14: Competition Prep (volume reduction, intensity maintenance)",
+        },
+        physicalReadiness: {
+          strength: "Maximum safe loads achieved, hamstring injury prevention optimized",
+          power: "Vertical jump, broad jump, reactive ability peaked",
+          speed: "10/20/40-yard sprint times optimized, max velocity developed",
+          agility: "Pro Agility, L-drill times improved",
+          conditioning: "RSA capacity for 40+ sprint games",
+        },
+        nextSteps: [
+          "COMPETE with confidence",
+          "Execute game plan",
+          "Trust your preparation",
+          "Maintain training during season (2-3x/week maintenance)",
+          "Return to this program next offseason for continued development",
+        ],
+      },
+    },
   },
 };
 
