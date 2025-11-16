@@ -51,10 +51,10 @@ html[data-theme="light"] {
   --chart-bar-bg: var(--primitive-neutral-100);            /* #f5f5f5 */
 
   /* Status Colors - Light Mode */
-  --status-success-600: var(--primitive-primary-700);      /* #089949 */
-  --status-warning-500: var(--primitive-warning-500);      /* #f59e0b */
-  --status-error-500: var(--primitive-error-600);          /* #dc2626 */
-  --status-info-500: var(--primitive-info-600);            /* #2563eb */
+  --status-success-600: var(--primitive-primary-700);      /* #089949 - dark green */
+  --status-warning-500: var(--primitive-warning-500);      /* #f59e0b - amber */
+  --status-error-500: var(--primitive-error-600);          /* #dc2626 - red */
+  --status-info-500: var(--primitive-primary-400);         /* #40ccaf - light green/teal */
 }
 
 /* Note: Class-based theme switching removed to eliminate duplication.
@@ -281,6 +281,6 @@ html[data-theme="light"] body {
     --status-success-600: var(--primitive-primary-700);
     --status-warning-500: var(--primitive-warning-500);
     --status-error-500: var(--primitive-error-600);
-    --status-info-500: var(--primitive-info-600);
+    --status-info-500: var(--primitive-primary-400);
   }
 }

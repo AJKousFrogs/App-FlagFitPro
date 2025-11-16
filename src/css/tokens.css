@@ -133,11 +133,6 @@
   --primitive-error-600: #dc2626;    /* For light mode */
   --primitive-error-700: #b91c1c;
 
-  /* Info - Blue scale */
-  --primitive-info-500: #3b82f6;     /* For dark mode */
-  --primitive-info-600: #2563eb;     /* For light mode */
-  --primitive-info-700: #1d4ed8;
-
   /* Primitive aliases (most commonly used) */
   --primitive-success-500: var(--color-success);
 
