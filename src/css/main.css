@@ -67,6 +67,7 @@
 @import url("./components/universal-loading-states.css") layer(components);
 @import url("./components/universal-touch-targets.css") layer(components);
 @import url("./components/universal-focus-management.css") layer(components);
+@import url("./components/theme-toggle.css") layer(components);
 @import url("./components/community.css") layer(components);
 @import url("./components/post.css") layer(components);
 @import url("./components/sidebar-widgets.css") layer(components);

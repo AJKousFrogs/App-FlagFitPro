@@ -1,0 +1,529 @@
+/**
+ * Game Stats Service
+ * Handles saving, loading, and analyzing game statistics
+ */
+
+class GameStatsService {
+  constructor() {
+    this.storageKey = 'flagfit_games';
+    this.currentGameKey = 'flagfit_current_game';
+  }
+
+  /**
+   * Save a game to localStorage
+   * @param {Object} game - Game object to save
+   * @returns {boolean} Success status
+   */
+  saveGame(game) {
+    try {
+      const games = this.getAllGames();
+
+      // Find existing game by ID
+      const existingIndex = games.findIndex(g => g.gameId === game.gameId);
+
+      if (existingIndex >= 0) {
+        // Update existing game
+        games[existingIndex] = {
+          ...games[existingIndex],
+          ...game,
+          updatedAt: new Date().toISOString()
+        };
+      } else {
+        // Add new game
+        games.push({
+          ...game,
+          createdAt: game.createdAt || new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        });
+      }
+
+      // Save to localStorage
+      localStorage.setItem(this.storageKey, JSON.stringify(games));
+
+      // Also save as current game
+      localStorage.setItem(this.currentGameKey, JSON.stringify(game));
+
+      return true;
+    } catch (error) {
+      console.error('Error saving game:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Get a specific game by ID
+   * @param {string} gameId - Game ID
+   * @returns {Object|null} Game object or null
+   */
+  getGame(gameId) {
+    try {
+      const games = this.getAllGames();
+      return games.find(g => g.gameId === gameId) || null;
+    } catch (error) {
+      console.error('Error getting game:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Get all games
+   * @returns {Array} Array of game objects
+   */
+  getAllGames() {
+    try {
+      const gamesJson = localStorage.getItem(this.storageKey);
+      return gamesJson ? JSON.parse(gamesJson) : [];
+    } catch (error) {
+      console.error('Error loading games:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Get current active game
+   * @returns {Object|null} Current game or null
+   */
+  getCurrentGame() {
+    try {
+      const gameJson = localStorage.getItem(this.currentGameKey);
+      return gameJson ? JSON.parse(gameJson) : null;
+    } catch (error) {
+      console.error('Error loading current game:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Delete a game
+   * @param {string} gameId - Game ID to delete
+   * @returns {boolean} Success status
+   */
+  deleteGame(gameId) {
+    try {
+      const games = this.getAllGames();
+      const filteredGames = games.filter(g => g.gameId !== gameId);
+      localStorage.setItem(this.storageKey, JSON.stringify(filteredGames));
+      return true;
+    } catch (error) {
+      console.error('Error deleting game:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Get games for a specific date range
+   * @param {Date} startDate - Start date
+   * @param {Date} endDate - End date
+   * @returns {Array} Filtered games
+   */
+  getGamesByDateRange(startDate, endDate) {
+    const games = this.getAllGames();
+    return games.filter(game => {
+      const gameDate = new Date(game.gameDate);
+      return gameDate >= startDate && gameDate <= endDate;
+    });
+  }
+
+  /**
+   * Calculate player statistics across all games
+   * @param {string} playerId - Player ID
+   * @returns {Object} Player statistics
+   */
+  getPlayerStats(playerId) {
+    const games = this.getAllGames();
+    const stats = {
+      gamesPlayed: 0,
+      // Passing stats
+      passAttempts: 0,
+      completions: 0,
+      passingYards: 0,
+      touchdowns: 0,
+      interceptions: 0,
+      completionPercentage: 0,
+      badThrows: 0,
+      // Receiving stats
+      targets: 0,
+      receptions: 0,
+      receivingYards: 0,
+      drops: 0,
+      dropRate: 0,
+      // Rushing stats
+      rushingAttempts: 0,
+      rushingYards: 0,
+      // Defensive stats
+      flagPullAttempts: 0,
+      flagPulls: 0,
+      flagPullSuccessRate: 0,
+      missedFlagPulls: 0
+    };
+
+    games.forEach(game => {
+      if (!game.plays) return;
+
+      let playerInGame = false;
+
+      game.plays.forEach(play => {
+        // Check if player was involved in this play
+        const isQB = play.quarterbackId === playerId;
+        const isReceiver = play.receiverId === playerId;
+        const isBallCarrier = play.ballCarrierId === playerId;
+        const isDefender = play.defenderId === playerId;
+
+        if (isQB || isReceiver || isBallCarrier || isDefender) {
+          playerInGame = true;
+        }
+
+        // Passing stats
+        if (isQB && play.playType === 'pass') {
+          stats.passAttempts++;
+          if (play.outcome === 'completion') stats.completions++;
+          if (play.outcome === 'interception') stats.interceptions++;
+          if (play.throwAccuracy === 'bad' || play.throwAccuracy === 'terrible') {
+            stats.badThrows++;
+          }
+          // You could track yards here if added to play data
+        }
+
+        // Receiving stats
+        if (isReceiver && play.playType === 'pass') {
+          stats.targets++;
+          if (play.outcome === 'completion') stats.receptions++;
+          if (play.isDrop) stats.drops++;
+        }
+
+        // Rushing stats
+        if (isBallCarrier && play.playType === 'run') {
+          stats.rushingAttempts++;
+          stats.rushingYards += play.yardsGained || 0;
+        }
+
+        // Defensive stats
+        if (isDefender && play.playType === 'flag_pull') {
+          stats.flagPullAttempts++;
+          if (play.isSuccessful) {
+            stats.flagPulls++;
+          } else {
+            stats.missedFlagPulls++;
+          }
+        }
+      });
+
+      if (playerInGame) stats.gamesPlayed++;
+    });
+
+    // Calculate percentages
+    if (stats.passAttempts > 0) {
+      stats.completionPercentage = ((stats.completions / stats.passAttempts) * 100).toFixed(1);
+    }
+
+    if (stats.targets > 0) {
+      stats.dropRate = ((stats.drops / stats.targets) * 100).toFixed(1);
+    }
+
+    if (stats.flagPullAttempts > 0) {
+      stats.flagPullSuccessRate = ((stats.flagPulls / stats.flagPullAttempts) * 100).toFixed(1);
+    }
+
+    return stats;
+  }
+
+  /**
+   * Get drop analysis for a player
+   * @param {string} playerId - Player ID
+   * @returns {Object} Drop analysis
+   */
+  getPlayerDropAnalysis(playerId) {
+    const games = this.getAllGames();
+    const drops = [];
+
+    games.forEach(game => {
+      if (!game.plays) return;
+
+      game.plays.forEach(play => {
+        if (play.receiverId === playerId && play.isDrop) {
+          drops.push({
+            gameId: game.gameId,
+            gameDate: game.gameDate,
+            opponent: game.opponentName,
+            playNumber: play.playNumber,
+            quarter: play.quarter,
+            routeType: play.routeType,
+            dropSeverity: play.dropSeverity,
+            dropReason: play.dropReason,
+            throwAccuracy: play.throwAccuracy
+          });
+        }
+      });
+    });
+
+    // Analyze drop patterns
+    const severityCounts = {};
+    const reasonCounts = {};
+    const routeCounts = {};
+
+    drops.forEach(drop => {
+      // Count by severity
+      severityCounts[drop.dropSeverity] = (severityCounts[drop.dropSeverity] || 0) + 1;
+
+      // Count by reason
+      reasonCounts[drop.dropReason] = (reasonCounts[drop.dropReason] || 0) + 1;
+
+      // Count by route
+      routeCounts[drop.routeType] = (routeCounts[drop.routeType] || 0) + 1;
+    });
+
+    return {
+      totalDrops: drops.length,
+      drops: drops,
+      bySeverity: severityCounts,
+      byReason: reasonCounts,
+      byRoute: routeCounts,
+      mostCommonReason: this.getMostCommon(reasonCounts),
+      mostCommonRoute: this.getMostCommon(routeCounts)
+    };
+  }
+
+  /**
+   * Get flag pull analysis for a defender
+   * @param {string} playerId - Player ID (defender)
+   * @returns {Object} Flag pull analysis
+   */
+  getDefenderFlagPullAnalysis(playerId) {
+    const games = this.getAllGames();
+    const attempts = [];
+
+    games.forEach(game => {
+      if (!game.plays) return;
+
+      game.plays.forEach(play => {
+        if (play.defenderId === playerId && play.playType === 'flag_pull') {
+          attempts.push({
+            gameId: game.gameId,
+            gameDate: game.gameDate,
+            opponent: game.opponentName,
+            playNumber: play.playNumber,
+            quarter: play.quarter,
+            isSuccessful: play.isSuccessful,
+            missReason: play.missReason
+          });
+        }
+      });
+    });
+
+    const successful = attempts.filter(a => a.isSuccessful).length;
+    const missed = attempts.filter(a => !a.isSuccessful).length;
+
+    // Analyze miss reasons
+    const missReasons = {};
+    attempts.forEach(attempt => {
+      if (!attempt.isSuccessful && attempt.missReason) {
+        missReasons[attempt.missReason] = (missReasons[attempt.missReason] || 0) + 1;
+      }
+    });
+
+    return {
+      totalAttempts: attempts.length,
+      successful: successful,
+      missed: missed,
+      successRate: attempts.length > 0 ? ((successful / attempts.length) * 100).toFixed(1) : 0,
+      attempts: attempts,
+      missReasons: missReasons,
+      mostCommonMissReason: this.getMostCommon(missReasons)
+    };
+  }
+
+  /**
+   * Get QB accuracy analysis
+   * @param {string} playerId - Player ID (QB)
+   * @returns {Object} QB accuracy analysis
+   */
+  getQBAccuracyAnalysis(playerId) {
+    const games = this.getAllGames();
+    const throws = [];
+
+    games.forEach(game => {
+      if (!game.plays) return;
+
+      game.plays.forEach(play => {
+        if (play.quarterbackId === playerId && play.playType === 'pass') {
+          throws.push({
+            gameId: game.gameId,
+            gameDate: game.gameDate,
+            opponent: game.opponentName,
+            playNumber: play.playNumber,
+            quarter: play.quarter,
+            routeType: play.routeType,
+            outcome: play.outcome,
+            throwAccuracy: play.throwAccuracy,
+            isDrop: play.isDrop
+          });
+        }
+      });
+    });
+
+    // Analyze by route type
+    const byRoute = {};
+    throws.forEach(t => {
+      if (!byRoute[t.routeType]) {
+        byRoute[t.routeType] = {
+          attempts: 0,
+          completions: 0,
+          incompletions: 0,
+          drops: 0,
+          badThrows: 0
+        };
+      }
+
+      byRoute[t.routeType].attempts++;
+      if (t.outcome === 'completion') byRoute[t.routeType].completions++;
+      if (t.outcome !== 'completion') byRoute[t.routeType].incompletions++;
+      if (t.isDrop) byRoute[t.routeType].drops++;
+      if (t.throwAccuracy === 'bad' || t.throwAccuracy === 'terrible') {
+        byRoute[t.routeType].badThrows++;
+      }
+    });
+
+    // Calculate completion % by route
+    Object.keys(byRoute).forEach(route => {
+      const data = byRoute[route];
+      if (data.attempts > 0) {
+        data.completionPercentage = ((data.completions / data.attempts) * 100).toFixed(1);
+        data.badThrowRate = ((data.badThrows / data.attempts) * 100).toFixed(1);
+      }
+    });
+
+    return {
+      totalThrows: throws.length,
+      throws: throws,
+      byRoute: byRoute
+    };
+  }
+
+  /**
+   * Get team statistics for a game
+   * @param {string} gameId - Game ID
+   * @returns {Object} Team statistics
+   */
+  getTeamStats(gameId) {
+    const game = this.getGame(gameId);
+
+    if (!game || !game.plays) {
+      return null;
+    }
+
+    const stats = {
+      totalPlays: game.plays.length,
+      passAttempts: 0,
+      completions: 0,
+      incompletions: 0,
+      drops: 0,
+      interceptions: 0,
+      rushingAttempts: 0,
+      totalYards: 0,
+      flagPullAttempts: 0,
+      flagPulls: 0
+    };
+
+    game.plays.forEach(play => {
+      if (play.playType === 'pass') {
+        stats.passAttempts++;
+        if (play.outcome === 'completion') stats.completions++;
+        else stats.incompletions++;
+        if (play.isDrop) stats.drops++;
+        if (play.outcome === 'interception') stats.interceptions++;
+      } else if (play.playType === 'run') {
+        stats.rushingAttempts++;
+        stats.totalYards += play.yardsGained || 0;
+      } else if (play.playType === 'flag_pull') {
+        stats.flagPullAttempts++;
+        if (play.isSuccessful) stats.flagPulls++;
+      }
+    });
+
+    // Calculate percentages
+    if (stats.passAttempts > 0) {
+      stats.completionPercentage = ((stats.completions / stats.passAttempts) * 100).toFixed(1);
+      stats.dropRate = ((stats.drops / stats.passAttempts) * 100).toFixed(1);
+    }
+
+    if (stats.flagPullAttempts > 0) {
+      stats.flagPullSuccessRate = ((stats.flagPulls / stats.flagPullAttempts) * 100).toFixed(1);
+    }
+
+    return stats;
+  }
+
+  /**
+   * Helper function to get most common item from counts object
+   * @param {Object} counts - Object with counts
+   * @returns {string} Most common key
+   */
+  getMostCommon(counts) {
+    let maxCount = 0;
+    let mostCommon = null;
+
+    Object.keys(counts).forEach(key => {
+      if (counts[key] > maxCount) {
+        maxCount = counts[key];
+        mostCommon = key;
+      }
+    });
+
+    return mostCommon;
+  }
+
+  /**
+   * Export game data as JSON
+   * @param {string} gameId - Game ID
+   * @returns {string} JSON string
+   */
+  exportGameAsJSON(gameId) {
+    const game = this.getGame(gameId);
+    return game ? JSON.stringify(game, null, 2) : null;
+  }
+
+  /**
+   * Export all games as JSON
+   * @returns {string} JSON string
+   */
+  exportAllGamesAsJSON() {
+    const games = this.getAllGames();
+    return JSON.stringify(games, null, 2);
+  }
+
+  /**
+   * Import games from JSON
+   * @param {string} jsonString - JSON string of games
+   * @returns {boolean} Success status
+   */
+  importGamesFromJSON(jsonString) {
+    try {
+      const games = JSON.parse(jsonString);
+      localStorage.setItem(this.storageKey, JSON.stringify(games));
+      return true;
+    } catch (error) {
+      console.error('Error importing games:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Clear all game data (use with caution!)
+   * @returns {boolean} Success status
+   */
+  clearAllGames() {
+    try {
+      localStorage.removeItem(this.storageKey);
+      localStorage.removeItem(this.currentGameKey);
+      return true;
+    } catch (error) {
+      console.error('Error clearing games:', error);
+      return false;
+    }
+  }
+}
+
+// Create and export singleton instance
+const gameStatsService = new GameStatsService();
+
+export { gameStatsService };

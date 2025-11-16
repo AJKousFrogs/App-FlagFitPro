@@ -1,123 +1,335 @@
 /* ================================================================
    DARK THEME - FlagFit Pro
+   Comprehensive dark theme with proper contrast and accessibility
+   Design System Compliant - Uses primitive tokens for maintainability
    ================================================================ */
 
 /* Manual theme switching via data-theme attribute */
 [data-theme="dark"],
 html[data-theme="dark"] {
   /* Surface Colors - Dark Mode (Design System Compliant) */
-  --surface-primary: var(--primitive-neutral-900);
-  --surface-secondary: var(--primitive-neutral-800);
-  --surface-tertiary: var(--primitive-neutral-700);
-  --surface-inverse: var(--primitive-neutral-50);
+  --surface-primary: var(--primitive-neutral-900);         /* #171717 */
+  --surface-secondary: var(--primitive-neutral-800);       /* #262626 */
+  --surface-tertiary: var(--primitive-neutral-700);        /* #404040 */
+  --surface-quaternary: var(--primitive-neutral-600);      /* #737373 - for layered UI */
+  --surface-elevated: var(--primitive-neutral-800);        /* #262626 - for cards/modals */
+  --surface-inverse: var(--primitive-neutral-50);          /* #fafafa */
 
   /* Text Colors - Dark Mode (Design System Compliant) */
-  --color-text-primary: var(--primitive-neutral-100);
-  --color-text-secondary: var(--primitive-neutral-300);
-  --color-text-tertiary: var(--primitive-neutral-500);
-  --color-text-disabled: var(--primitive-neutral-700);
-  --color-text-inverse: var(--primitive-neutral-900);
-  --color-text-on-surface: var(--primitive-neutral-100);
+  --color-text-primary: var(--primitive-neutral-100);      /* #f5f5f5 */
+  --color-text-secondary: var(--primitive-neutral-300);    /* #e5e5e5 */
+  --color-text-tertiary: var(--primitive-neutral-500);     /* #a3a3a3 */
+  --color-text-disabled: var(--primitive-neutral-700);     /* #404040 */
+  --color-text-inverse: var(--primitive-neutral-900);      /* #171717 */
+  --color-text-on-surface: var(--primitive-neutral-100);   /* #f5f5f5 */
 
   /* Icon Colors - Dark Mode (WCAG AA Compliant) */
-  --icon-color-primary: var(--primitive-neutral-100);
-  --icon-color-secondary: var(--primitive-neutral-100);
-  --icon-color-tertiary: var(--primitive-neutral-100);
-  --icon-color-disabled: var(--primitive-neutral-700);
-  --icon-color-on-primary: var(--color-text-on-primary);
+  --icon-color-primary: var(--primitive-neutral-100);      /* #f5f5f5 */
+  --icon-color-secondary: var(--primitive-neutral-300);    /* #e5e5e5 */
+  --icon-color-tertiary: var(--primitive-neutral-500);     /* #a3a3a3 */
+  --icon-color-disabled: var(--primitive-neutral-700);     /* #404040 */
+  --icon-color-on-primary: var(--primitive-neutral-900);   /* #171717 */
+  --icon-color-brand: var(--primitive-primary-600);        /* #0ab85a */
 
   /* Border Colors - Dark Mode (Design System Compliant) */
-  --color-border-primary: var(--primitive-neutral-700);
-  --color-border-secondary: var(--primitive-neutral-800);
-  --color-border-subtle: var(--primitive-neutral-900);
-  --color-border-strong: var(--primitive-neutral-500);
-  --color-border-medium: var(--primitive-neutral-700);
+  --color-border-primary: var(--primitive-neutral-700);    /* #404040 */
+  --color-border-secondary: var(--primitive-neutral-800);  /* #262626 */
+  --color-border-subtle: var(--primitive-neutral-900);     /* #171717 */
+  --color-border-strong: var(--primitive-neutral-500);     /* #a3a3a3 */
+  --color-border-medium: var(--primitive-neutral-700);     /* #404040 */
+  --color-border-focus: var(--primitive-primary-600);      /* #0ab85a */
 
   /* Brand Colors - Dark Mode */
-  --color-brand-primary: var(--primitive-primary-600);
-  --color-brand-primary-hover: var(--primitive-primary-500);
-  --color-brand-primary-active: var(--primitive-primary-400);
+  --color-brand-primary: var(--primitive-primary-600);     /* #0ab85a */
+  --color-brand-primary-hover: var(--primitive-primary-500); /* #10c96b */
+  --color-brand-primary-active: var(--primitive-primary-700); /* #089949 */
+  --color-brand-primary-alpha-10: rgba(10, 184, 90, 0.1);
+  --color-brand-primary-alpha-20: rgba(10, 184, 90, 0.2);
 
   /* Chart Colors - Dark Mode */
   --chart-bar-fill: var(--color-brand-primary);
-  --chart-bar-bg: var(--primitive-neutral-800);
+  --chart-bar-bg: var(--primitive-neutral-800);            /* #262626 */
+
+  /* Status Colors - Dark Mode */
+  --status-success-600: var(--primitive-primary-600);      /* #0ab85a */
+  --status-warning-500: #fbbf24;
+  --status-error-500: #ef4444;
+  --status-info-500: #3b82f6;
 }
 
 /* Class-based theme switching */
 .dark,
 html.dark {
   /* Surface Colors - Dark Mode (Design System Compliant) */
-  --surface-primary: var(--primitive-neutral-900);
-  --surface-secondary: var(--primitive-neutral-800);
-  --surface-tertiary: var(--primitive-neutral-700);
-  --surface-inverse: var(--primitive-neutral-50);
+  --surface-primary: var(--primitive-neutral-900);         /* #171717 */
+  --surface-secondary: var(--primitive-neutral-800);       /* #262626 */
+  --surface-tertiary: var(--primitive-neutral-700);        /* #404040 */
+  --surface-quaternary: var(--primitive-neutral-600);      /* #737373 - for layered UI */
+  --surface-elevated: var(--primitive-neutral-800);        /* #262626 - for cards/modals */
+  --surface-inverse: var(--primitive-neutral-50);          /* #fafafa */
 
   /* Text Colors - Dark Mode (Design System Compliant) */
-  --color-text-primary: var(--primitive-neutral-100);
-  --color-text-secondary: var(--primitive-neutral-300);
-  --color-text-tertiary: var(--primitive-neutral-500);
-  --color-text-disabled: var(--primitive-neutral-700);
-  --color-text-inverse: var(--primitive-neutral-900);
-  --color-text-on-surface: var(--primitive-neutral-100);
+  --color-text-primary: var(--primitive-neutral-100);      /* #f5f5f5 */
+  --color-text-secondary: var(--primitive-neutral-300);    /* #e5e5e5 */
+  --color-text-tertiary: var(--primitive-neutral-500);     /* #a3a3a3 */
+  --color-text-disabled: var(--primitive-neutral-700);     /* #404040 */
+  --color-text-inverse: var(--primitive-neutral-900);      /* #171717 */
+  --color-text-on-surface: var(--primitive-neutral-100);   /* #f5f5f5 */
 
   /* Icon Colors - Dark Mode (WCAG AA Compliant) */
-  --icon-color-primary: var(--primitive-neutral-100);
-  --icon-color-secondary: var(--primitive-neutral-100);
-  --icon-color-tertiary: var(--primitive-neutral-100);
-  --icon-color-disabled: var(--primitive-neutral-700);
-  --icon-color-on-primary: var(--color-text-on-primary);
+  --icon-color-primary: var(--primitive-neutral-100);      /* #f5f5f5 */
+  --icon-color-secondary: var(--primitive-neutral-300);    /* #e5e5e5 */
+  --icon-color-tertiary: var(--primitive-neutral-500);     /* #a3a3a3 */
+  --icon-color-disabled: var(--primitive-neutral-700);     /* #404040 */
+  --icon-color-on-primary: var(--primitive-neutral-900);   /* #171717 */
+  --icon-color-brand: var(--primitive-primary-600);        /* #0ab85a */
 
   /* Border Colors - Dark Mode (Design System Compliant) */
-  --color-border-primary: var(--primitive-neutral-700);
-  --color-border-secondary: var(--primitive-neutral-800);
-  --color-border-subtle: var(--primitive-neutral-900);
-  --color-border-strong: var(--primitive-neutral-500);
-  --color-border-medium: var(--primitive-neutral-700);
+  --color-border-primary: var(--primitive-neutral-700);    /* #404040 */
+  --color-border-secondary: var(--primitive-neutral-800);  /* #262626 */
+  --color-border-subtle: var(--primitive-neutral-900);     /* #171717 */
+  --color-border-strong: var(--primitive-neutral-500);     /* #a3a3a3 */
+  --color-border-medium: var(--primitive-neutral-700);     /* #404040 */
+  --color-border-focus: var(--primitive-primary-600);      /* #0ab85a */
 
   /* Brand Colors - Dark Mode */
-  --color-brand-primary: var(--primitive-primary-600);
-  --color-brand-primary-hover: var(--primitive-primary-500);
-  --color-brand-primary-active: var(--primitive-primary-400);
+  --color-brand-primary: var(--primitive-primary-600);     /* #0ab85a */
+  --color-brand-primary-hover: var(--primitive-primary-500); /* #10c96b */
+  --color-brand-primary-active: var(--primitive-primary-700); /* #089949 */
+  --color-brand-primary-alpha-10: rgba(10, 184, 90, 0.1);
+  --color-brand-primary-alpha-20: rgba(10, 184, 90, 0.2);
 
   /* Chart Colors - Dark Mode */
   --chart-bar-fill: var(--color-brand-primary);
-  --chart-bar-bg: var(--primitive-neutral-800);
+  --chart-bar-bg: var(--primitive-neutral-800);            /* #262626 */
+
+  /* Status Colors - Dark Mode */
+  --status-success-600: var(--primitive-primary-600);      /* #0ab85a */
+  --status-warning-500: #fbbf24;
+  --status-error-500: #ef4444;
+  --status-info-500: #3b82f6;
+}
+
+/* ================================================================
+   DARK THEME COMPONENT OVERRIDES
+   ================================================================ */
+
+/* Body and main layout */
+[data-theme="dark"] body,
+html[data-theme="dark"] body {
+  background-color: var(--surface-primary);
+  color: var(--color-text-primary);
+}
+
+/* Sidebar styling */
+[data-theme="dark"] .sidebar {
+  background: var(--surface-secondary);
+  border-right: 1px solid var(--color-border-primary);
+}
+
+[data-theme="dark"] .nav-item {
+  color: var(--color-text-secondary);
+  border-radius: 8px;
+  margin: 2px 8px;
+}
+
+[data-theme="dark"] .nav-item:hover {
+  background: var(--color-brand-primary-alpha-10);
+  color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .nav-item.active {
+  background: var(--color-brand-primary);
+  color: #ffffff;
+}
+
+[data-theme="dark"] .nav-item.active .nav-item-icon {
+  color: #ffffff;
+}
+
+/* Top bar and header */
+[data-theme="dark"] .top-bar {
+  background: var(--surface-elevated);
+  border-bottom: 1px solid var(--color-border-primary);
+}
+
+[data-theme="dark"] .header-icon {
+  color: var(--icon-color-primary);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+[data-theme="dark"] .header-icon:hover {
+  background: var(--color-border-primary);
+  border-color: var(--color-border-strong);
+}
+
+/* Cards and containers */
+[data-theme="dark"] .card,
+[data-theme="dark"] .stat-card {
+  background: var(--surface-elevated);
+  border: 1px solid var(--color-border-primary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Form elements */
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+  background: var(--surface-tertiary);
+  border: 1px solid var(--color-border-primary);
+  color: var(--color-text-primary);
+}
+
+[data-theme="dark"] input:focus,
+[data-theme="dark"] select:focus,
+[data-theme="dark"] textarea:focus {
+  border-color: var(--color-brand-primary);
+  box-shadow: 0 0 0 3px var(--color-brand-primary-alpha-20);
+}
+
+/* Buttons */
+[data-theme="dark"] .btn-secondary {
+  background: var(--surface-tertiary);
+  border: 1px solid var(--color-border-strong);
+  color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .btn-secondary:hover {
+  background: var(--surface-quaternary);
+  border-color: var(--color-border-strong);
+}
+
+/* Icons - Ensure proper contrast */
+[data-theme="dark"] .icon,
+[data-theme="dark"] [data-lucide],
+[data-theme="dark"] svg {
+  color: var(--icon-color-primary);
+}
+
+[data-theme="dark"] .nav-item-icon [data-lucide],
+[data-theme="dark"] .nav-item-icon svg {
+  color: inherit;
+}
+
+/* Tables */
+[data-theme="dark"] table {
+  background: var(--surface-elevated);
+  border: 1px solid var(--color-border-primary);
+}
+
+[data-theme="dark"] th {
+  background: var(--surface-tertiary);
+  border-bottom: 1px solid var(--color-border-primary);
+  color: var(--color-text-primary);
+}
+
+[data-theme="dark"] td {
+  border-bottom: 1px solid var(--color-border-subtle);
+  color: var(--color-text-secondary);
+}
+
+/* Theme toggle button */
+[data-theme="dark"] .theme-toggle-container {
+  background: var(--surface-tertiary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: 6px;
+  padding: 4px;
+}
+
+/* Notification panel */
+[data-theme="dark"] .notification-panel {
+  background: var(--surface-elevated);
+  border: 1px solid var(--color-border-primary);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* Charts and data visualization */
+[data-theme="dark"] .chart-container {
+  background: var(--surface-elevated);
+  border: 1px solid var(--color-border-primary);
+}
+
+[data-theme="dark"] .chart-legend {
+  color: var(--color-text-secondary);
+}
+
+/* Mobile menu overlay */
+[data-theme="dark"] .mobile-menu-overlay {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+/* Scrollbars for dark theme */
+[data-theme="dark"] ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: var(--surface-secondary);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: 4px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: var(--color-border-primary);
 }
 
 /* System preference (only if no manual theme is set) */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]):not(.light) {
-    /* Surface Colors - Dark Mode */
+    /* Surface Colors - Dark Mode (Design System Compliant) */
     --surface-primary: var(--primitive-neutral-900);
     --surface-secondary: var(--primitive-neutral-800);
     --surface-tertiary: var(--primitive-neutral-700);
+    --surface-quaternary: var(--primitive-neutral-600);
+    --surface-elevated: var(--primitive-neutral-800);
     --surface-inverse: var(--primitive-neutral-50);
 
-    /* Text Colors - Dark Mode */
+    /* Text Colors - Dark Mode (Design System Compliant) */
     --color-text-primary: var(--primitive-neutral-100);
     --color-text-secondary: var(--primitive-neutral-300);
     --color-text-tertiary: var(--primitive-neutral-500);
     --color-text-disabled: var(--primitive-neutral-700);
     --color-text-inverse: var(--primitive-neutral-900);
-    --color-text-on-surface: var(--color-text-primary);
+    --color-text-on-surface: var(--primitive-neutral-100);
 
-    /* Icon Colors - Dark Mode */
-    /* Updated icon colors to meet WCAG AA contrast */
-    --icon-color-primary: var(--color-text-primary);
-    --icon-color-secondary: var(--color-text-primary); /* Changed for contrast */
-    --icon-color-tertiary: var(--color-text-primary); /* Changed for contrast */
-    --icon-color-disabled: var(--color-text-disabled);
-    --icon-color-on-primary: var(--color-text-on-primary);
+    /* Icon Colors - Dark Mode (WCAG AA Compliant) */
+    --icon-color-primary: var(--primitive-neutral-100);
+    --icon-color-secondary: var(--primitive-neutral-300);
+    --icon-color-tertiary: var(--primitive-neutral-500);
+    --icon-color-disabled: var(--primitive-neutral-700);
+    --icon-color-on-primary: var(--primitive-neutral-900);
+    --icon-color-brand: var(--primitive-primary-600);
 
-    /* Border Colors - Dark Mode */
+    /* Border Colors - Dark Mode (Design System Compliant) */
     --color-border-primary: var(--primitive-neutral-700);
     --color-border-secondary: var(--primitive-neutral-800);
     --color-border-subtle: var(--primitive-neutral-900);
     --color-border-strong: var(--primitive-neutral-500);
+    --color-border-medium: var(--primitive-neutral-700);
+    --color-border-focus: var(--primitive-primary-600);
 
-    /* Primary colors for dark mode - use darker variants */
+    /* Brand Colors - Dark Mode */
     --color-brand-primary: var(--primitive-primary-600);
     --color-brand-primary-hover: var(--primitive-primary-500);
-    --color-brand-primary-active: var(--primitive-primary-400);
+    --color-brand-primary-active: var(--primitive-primary-700);
+    --color-brand-primary-alpha-10: rgba(10, 184, 90, 0.1);
+    --color-brand-primary-alpha-20: rgba(10, 184, 90, 0.2);
+
+    /* Chart Colors - Dark Mode */
+    --chart-bar-fill: var(--color-brand-primary);
+    --chart-bar-bg: var(--primitive-neutral-800);
+
+    /* Status Colors - Dark Mode */
+    --status-success-600: var(--primitive-primary-600);
+    --status-warning-500: #fbbf24;
+    --status-error-500: #ef4444;
+    --status-info-500: #3b82f6;
   }
 }
