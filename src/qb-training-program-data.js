@@ -1382,6 +1382,1918 @@ export const QB_WEEKLY_SCHEDULES = {
         focus: "Foundation building, movement quality, throwing mechanics introduction",
       },
     },
+
+    week2: {
+      weekNumber: 2,
+      dateRange: "December 8-14, 2025",
+      phase: "Foundation",
+      focus: "Volume progression + technique refinement",
+      throwingVolume: "100-120 throws total for week",
+      days: {
+        monday: {
+          title: "Lower Body Strength + QB Arm Strength Progression",
+          type: "dual-track",
+          duration: 100,
+          warmup: "QB Enhanced Warm-Up (30 min)",
+
+          blocks: [
+            {
+              title: "Block 1: Lower Body - Posterior Chain Volume",
+              duration: 22,
+              exercises: [
+                {
+                  name: "RDLs",
+                  sets: 4,
+                  reps: 10,
+                  rest: "90s",
+                  load: "28-32% BW",
+                  notes: "Load increase from Week 1",
+                },
+                {
+                  name: "Nordic Curls (Assisted)",
+                  sets: 4,
+                  reps: "AMRAP",
+                  rest: "2 min",
+                  notes: "Add 4th set. Less assistance than Week 1",
+                },
+                {
+                  name: "Hip Thrusts",
+                  sets: 4,
+                  reps: 12,
+                  rest: "90s",
+                  load: "Light weight",
+                },
+              ],
+            },
+            {
+              title: "Block 2: Lower Body - Quad/Ankle",
+              duration: 18,
+              exercises: [
+                {
+                  name: "Goblet or Back Squats",
+                  sets: 4,
+                  reps: 10,
+                  rest: "90s",
+                  load: "30-35% BW",
+                },
+                {
+                  name: "Walking Lunges",
+                  sets: 3,
+                  reps: "12 each",
+                  rest: "90s",
+                },
+                {
+                  name: "Single-Leg Calf Raises",
+                  sets: 3,
+                  reps: "15 each",
+                  rest: "60s",
+                  tempo: "2s up, 2s down",
+                },
+              ],
+            },
+            {
+              title: "Block 3: QB Arm Strength Progression",
+              duration: 20,
+              qbSpecific: true,
+              exercises: [
+                {
+                  name: "Band External Rotation",
+                  sets: 3,
+                  reps: "15 each arm",
+                  rest: "45s",
+                  notes: "Increase resistance from Week 1",
+                },
+                {
+                  name: "Band Internal Rotation",
+                  sets: 3,
+                  reps: "15 each arm",
+                  rest: "45s",
+                },
+                {
+                  name: "I-Y-T Raises",
+                  sets: 3,
+                  reps: "12 each position",
+                  rest: "60s",
+                  load: "2-5 lbs",
+                  notes: "Volume increase",
+                },
+                {
+                  name: "Face Pulls",
+                  sets: 4,
+                  reps: 15,
+                  rest: "45s",
+                },
+                {
+                  name: "Single-Arm DB Rows",
+                  sets: 3,
+                  reps: "12 each arm",
+                  rest: "75s",
+                  load: "Light-moderate",
+                },
+                {
+                  name: "Tricep Extensions (Overhead DB)",
+                  sets: 3,
+                  reps: 12,
+                  rest: "60s",
+                  notes: "Triceps = 23% of ball velocity",
+                },
+              ],
+            },
+            {
+              title: "Block 4: QB Core + Rotational Power",
+              duration: 10,
+              qbSpecific: true,
+              exercises: [
+                {
+                  name: "Plank Series",
+                  sets: 3,
+                  duration: "50s",
+                  rest: "60s",
+                },
+                {
+                  name: "Medicine Ball Rotational Throws",
+                  sets: 3,
+                  reps: "10 each side",
+                  rest: "60s",
+                  load: "8 lbs",
+                },
+              ],
+            },
+          ],
+          equipment: ["Barbell/DBs", "bands", "medicine ball"],
+        },
+
+        tuesday: {
+          title: "Sprint Mechanics + QB Shoulder Health",
+          type: "dual-track",
+          duration: 100,
+          warmup: "QB Enhanced Warm-Up (30 min)",
+
+          blocks: [
+            {
+              title: "Block 1: Sprint Drill Progression",
+              duration: 22,
+              exercises: [
+                { name: "A-March", sets: 3, distance: "25m", rest: "45s" },
+                { name: "A-Skip", sets: 3, distance: "25m", rest: "45s" },
+                { name: "B-Skip", sets: 3, distance: "20m", rest: "60s" },
+                { name: "High Knees", sets: 3, distance: "25m", rest: "45s" },
+                { name: "Wall Drills", sets: 4, duration: "25s each leg", rest: "60s" },
+              ],
+            },
+            {
+              title: "Block 2: Tempo Running Volume",
+              duration: 22,
+              options: [
+                {
+                  condition: "Track available",
+                  exercise: {
+                    name: "Tempo Runs",
+                    sets: 10,
+                    distance: "100m",
+                    intensity: "70-75%",
+                    rest: "75s walk",
+                  },
+                },
+                {
+                  condition: "No track",
+                  exercise: {
+                    name: "Treadmill Tempo",
+                    sets: 10,
+                    duration: "2min",
+                    rest: "1min walk",
+                  },
+                },
+              ],
+            },
+            {
+              title: "Block 3: QB Shoulder Mobility & Strengthening",
+              duration: 20,
+              qbSpecific: true,
+              exercises: [
+                {
+                  name: "Sleeper Stretch",
+                  sets: 4,
+                  duration: "75s each arm",
+                  notes: "Increased duration from Week 1",
+                },
+                {
+                  name: "Doorway Pec Stretch",
+                  sets: 3,
+                  duration: "75s each side",
+                },
+                {
+                  name: "Wall Slides",
+                  sets: 4,
+                  reps: 15,
+                  rest: "45s",
+                },
+                {
+                  name: "Band Pull-Aparts",
+                  sets: 4,
+                  reps: 20,
+                  rest: "30s",
+                },
+                {
+                  name: "Cuban Press (Light)",
+                  sets: 2,
+                  reps: 10,
+                  rest: "60s",
+                  load: "5 lbs",
+                  notes: "Complete rotator cuff activation",
+                },
+                {
+                  name: "Thoracic Extensions",
+                  duration: "8 min",
+                },
+              ],
+            },
+            {
+              title: "Block 4: Light Throwing",
+              duration: 16,
+              qbSpecific: true,
+              throwingVolume: "20-25 throws",
+              protocol: [
+                { distance: "5-10 yards", throws: "8-10", intensity: "40-50%" },
+                { distance: "15-20 yards", throws: "8-10", intensity: "60%" },
+                { distance: "25 yards", throws: "4-5", intensity: "70%" },
+              ],
+            },
+          ],
+          equipment: ["Track or treadmill", "bands", "foam roller", "football", "light DBs"],
+        },
+
+        wednesday: {
+          title: "Active Recovery + QB Hip Flexor Emphasis",
+          type: "recovery/qb-specific",
+          duration: 75,
+          warmup: "Light movement (10 min)",
+
+          blocks: [
+            {
+              title: "Block 1: General Mobility",
+              duration: 15,
+              exercises: [
+                { name: "World's Greatest Stretch", sets: 2, reps: "5 each side" },
+                { name: "90/90 Hip Stretches", sets: 2, duration: "60s each" },
+                { name: "Foam Rolling", duration: "10 min" },
+              ],
+            },
+            {
+              title: "Block 2: QB Hip Flexor Work (Extended)",
+              duration: 25,
+              qbSpecific: true,
+              exercises: [
+                {
+                  name: "Couch Stretch",
+                  sets: 3,
+                  duration: "2 min each leg",
+                  notes: "Duration increase. Deep work",
+                },
+                {
+                  name: "Kneeling Hip Flexor Stretch",
+                  sets: 3,
+                  duration: "90s each side",
+                },
+                {
+                  name: "Standing Quad/Hip Flexor Stretch",
+                  sets: 3,
+                  duration: "60s each",
+                },
+                {
+                  name: "90/90 Hip Flow",
+                  reps: "15 transitions",
+                  notes: "Increased volume",
+                },
+                {
+                  name: "Thomas Test Assessment",
+                  notes: "Check hip flexor tightness. Thigh should be below horizontal",
+                },
+              ],
+            },
+            {
+              title: "Block 3: QB Back Strength Development",
+              duration: 20,
+              qbSpecific: true,
+              exercises: [
+                {
+                  name: "Single-Arm DB Rows",
+                  sets: 4,
+                  reps: "12 each arm",
+                  rest: "75s",
+                  load: "Moderate",
+                },
+                {
+                  name: "Lat Pulldowns",
+                  sets: 3,
+                  reps: "12",
+                  rest: "90s",
+                },
+                {
+                  name: "Face Pulls",
+                  sets: 3,
+                  reps: 20,
+                  rest: "45s",
+                },
+                {
+                  name: "Bicep Curls (Eccentric Focus)",
+                  sets: 3,
+                  reps: 10,
+                  rest: "60s",
+                  tempo: "1-0-4",
+                  notes: "Slow eccentric for deceleration strength",
+                },
+                {
+                  name: "Thoracic Extension Work",
+                  duration: "10 min",
+                },
+              ],
+            },
+            {
+              title: "Block 4: Light Activation",
+              duration: 15,
+              exercises: [
+                { name: "Copenhagen Plank", sets: 2, duration: "25-30s each" },
+                { name: "Glute bridges", sets: 2, reps: 20 },
+              ],
+            },
+          ],
+          equipment: ["Yoga mat", "foam roller", "DBs", "bands", "cable machine", "couch/bench"],
+        },
+
+        thursday: {
+          title: "Lower Body Power + QB Throwing Progression",
+          type: "dual-track",
+          duration: 115,
+          warmup: "QB Enhanced Warm-Up (30 min)",
+
+          blocks: [
+            {
+              title: "Block 1: Lower Body Strength",
+              duration: 22,
+              exercises: [
+                {
+                  name: "Back Squats",
+                  sets: 4,
+                  reps: 8,
+                  rest: "2 min",
+                  load: "32-38% BW",
+                },
+                {
+                  name: "Bulgarian Split Squats",
+                  sets: 3,
+                  reps: "10 each",
+                  rest: "90s",
+                  load: "Light DBs",
+                },
+                {
+                  name: "Single-Leg RDLs",
+                  sets: 3,
+                  reps: "10 each",
+                  rest: "75s",
+                },
+              ],
+            },
+            {
+              title: "Block 2: Plyometric Volume",
+              duration: 20,
+              exercises: [
+                {
+                  name: "Box Jumps",
+                  sets: 4,
+                  reps: 5,
+                  rest: "2 min",
+                  boxHeight: "12-18 inches",
+                },
+                {
+                  name: "Broad Jumps",
+                  sets: 4,
+                  reps: 5,
+                  rest: "90s",
+                },
+                {
+                  name: "Lateral Bounds",
+                  sets: 3,
+                  reps: "10 each direction",
+                  rest: "90s",
+                },
+              ],
+            },
+            {
+              title: "Block 3: QB Throwing Session - Volume Progression",
+              duration: 28,
+              qbSpecific: true,
+              throwingVolume: "35-45 throws",
+              exercises: [
+                {
+                  name: "Progressive Throwing Warm-Up",
+                  throws: 15,
+                  protocol: "5y→10y→15y→20y→25y",
+                },
+                {
+                  name: "Footwork + Throwing Integration",
+                  sets: 4,
+                  reps: "5 throws each",
+                  rest: "90s",
+                  drills: ["3-step drop", "5-step drop", "Rollout", "Sprint out"],
+                  notes: "20 throws total",
+                },
+                {
+                  name: "Accuracy Targets",
+                  throws: "10-15",
+                  distance: "15 yards",
+                  notes: "Hit specific targets, 70% effort",
+                },
+              ],
+            },
+            {
+              title: "Block 4: QB Arm Care",
+              duration: 15,
+              qbSpecific: true,
+              exercises: [
+                { name: "Light throwing cool-down", throws: "5-8" },
+                { name: "Sleeper Stretch", sets: 3, duration: "60s each" },
+                { name: "Cross-body stretch", sets: 2, duration: "45s each" },
+                { name: "Band external rotation (light)", sets: 2, reps: 15 },
+                { name: "Wrist curls/extensions", sets: 2, reps: "15 each" },
+              ],
+            },
+          ],
+          equipment: ["Barbell/DBs", "box", "football", "bands", "targets"],
+        },
+
+        friday: {
+          title: "Power + QB Endurance Progression",
+          type: "dual-track",
+          duration: 105,
+          warmup: "QB Enhanced Warm-Up (30 min)",
+
+          blocks: [
+            {
+              title: "Block 1: Lower Body Power",
+              duration: 20,
+              exercises: [
+                { name: "Box Jumps", sets: 4, reps: 4, rest: "2 min", boxHeight: "15 inches" },
+                { name: "Medicine Ball Slams", sets: 4, reps: 8, rest: "90s" },
+                { name: "Jump Squats", sets: 4, reps: 6, rest: "2 min" },
+              ],
+            },
+            {
+              title: "Block 2: QB Upper Body Power",
+              duration: 15,
+              qbSpecific: true,
+              exercises: [
+                {
+                  name: "Medicine Ball Rotational Throws",
+                  sets: 4,
+                  reps: "10 each side",
+                  rest: "90s",
+                  load: "8 lbs",
+                },
+                {
+                  name: "Push-Ups",
+                  sets: 3,
+                  reps: "15-18",
+                  rest: "60s",
+                },
+                {
+                  name: "Band Rows",
+                  sets: 3,
+                  reps: 15,
+                  rest: "60s",
+                },
+              ],
+            },
+            {
+              title: "Block 3: QB Throwing Endurance Building",
+              duration: 30,
+              qbSpecific: true,
+              throwingVolume: "60-90 throws total",
+              protocol: {
+                warmUp: "Progressive warm-up (15 throws)",
+                mainWork: {
+                  name: "Continuous Throwing - Volume Increase",
+                  throws: "50-70",
+                  distance: "12-18 yards",
+                  intensity: "65-70% effort",
+                  rest: "Minimal between throws",
+                  notes: "Focus on maintaining mechanics under increasing fatigue",
+                },
+                coolDown: "Light tosses (5 throws)",
+              },
+              notes: "Week 2: 60-90 total throws. Building endurance capacity",
+            },
+            {
+              title: "Block 4: Arm Care",
+              duration: 10,
+              qbSpecific: true,
+              exercises: [
+                { name: "Sleeper stretch", sets: 3, duration: "60s each" },
+                { name: "Shoulder mobility circuit", duration: "5 min" },
+                { name: "Forearm stretching", duration: "3 min" },
+              ],
+            },
+          ],
+          equipment: ["Box", "medicine ball", "football", "bands"],
+        },
+
+        saturday: {
+          title: "Sprint Work + QB Throwing Session",
+          type: "dual-track",
+          duration: 95,
+          warmup: "QB Enhanced Warm-Up (30 min)",
+
+          blocks: [
+            {
+              title: "Block 1: Sprint Acceleration",
+              duration: 35,
+              options: [
+                {
+                  condition: "Track available",
+                  exercises: [
+                    {
+                      name: "Acceleration Mechanics",
+                      sets: 8,
+                      distance: "20m",
+                      intensity: "80%",
+                      rest: "2 min",
+                    },
+                    {
+                      name: "Build-Up Runs",
+                      sets: 5,
+                      distance: "50m",
+                      rest: "2.5 min",
+                    },
+                  ],
+                },
+                {
+                  condition: "No track",
+                  exercises: [
+                    { name: "Wall Drills", sets: 5, duration: "30s each leg", rest: "90s" },
+                    { name: "Resistance Band Sprints", sets: 8, duration: "15s", rest: "2 min" },
+                  ],
+                },
+              ],
+            },
+            {
+              title: "Block 2: QB Throwing Session - Technique & Accuracy",
+              duration: 30,
+              qbSpecific: true,
+              throwingVolume: "25-35 throws",
+              protocol: [
+                {
+                  phase: "Warm-up",
+                  throws: 10,
+                  notes: "Progressive 5y→25y",
+                },
+                {
+                  phase: "Main Work",
+                  drills: [
+                    { name: "Footwork patterns", throws: "8-10", notes: "Various drops + throws" },
+                    { name: "Moving pocket throws", throws: "5-8", notes: "Slide in pocket + throw" },
+                    { name: "Accuracy challenge", throws: "8-10", notes: "Hit 8/10 targets" },
+                  ],
+                },
+                {
+                  phase: "Cool-down",
+                  throws: "3-5 easy",
+                },
+              ],
+            },
+          ],
+          equipment: ["Track or wall space", "bands", "football", "targets/cones"],
+        },
+
+        sunday: {
+          title: "Complete Recovery (Lower + Upper)",
+          type: "recovery",
+          duration: 75,
+          protocol: "QB-Enhanced Recovery Protocol",
+
+          blocks: [
+            {
+              title: "Lower Body Recovery",
+              duration: 25,
+              exercises: [
+                { name: "Lower body chain stretching", duration: "20 min" },
+                { name: "Foam rolling - legs", duration: "10 min" },
+              ],
+            },
+            {
+              title: "Upper Body/QB Recovery Extended",
+              duration: 35,
+              qbSpecific: true,
+              exercises: [
+                {
+                  name: "Shoulder mobility complex",
+                  duration: "15 min",
+                  protocol: [
+                    "Sleeper stretch 4×75s each",
+                    "Doorway pec stretch 3×75s",
+                    "Cross-body stretch 3×60s each",
+                    "Wall slides 3×15",
+                    "Band pull-aparts 3×20",
+                  ],
+                },
+                {
+                  name: "Hip flexor flexibility",
+                  duration: "12 min",
+                  protocol: [
+                    "Couch stretch 3×2min each",
+                    "Kneeling hip flexor 2×90s each",
+                  ],
+                },
+                {
+                  name: "Thoracic mobility",
+                  duration: "8 min",
+                },
+              ],
+            },
+            {
+              title: "General Recovery",
+              duration: 15,
+              activities: [
+                { name: "Light walk or easy bike", duration: "20 min" },
+                { name: "Visualization", duration: "10 min" },
+              ],
+            },
+          ],
+        },
+      },
+      weekSummary: {
+        totalThrows: "100-120",
+        lowerBodySessions: 4,
+        qbSpecificSessions: 6,
+        focus: "Volume progression, throwing endurance building, arm care emphasis",
+      },
+    },
+
+    week3: {
+      weekNumber: 3,
+      dateRange: "December 15-21, 2025",
+      phase: "Foundation",
+      focus: "Intensity increase + movement quality",
+      throwingVolume: "120-150 throws total for week",
+      days: {
+        monday: {
+          title: "Lower Body Strength Peak + QB Arm Strength",
+          type: "dual-track",
+          duration: 105,
+          warmup: "QB Enhanced Warm-Up (30 min)",
+
+          blocks: [
+            {
+              title: "Block 1: Lower Body - Posterior Chain Strength",
+              duration: 25,
+              exercises: [
+                {
+                  name: "RDLs",
+                  sets: 5,
+                  reps: 8,
+                  rest: "2 min",
+                  load: "32-35% BW",
+                  notes: "Set increase, rep decrease for intensity",
+                },
+                {
+                  name: "Nordic Curls (Reduced Assistance)",
+                  sets: 4,
+                  reps: "AMRAP",
+                  rest: "2.5 min",
+                  notes: "Aim for 4-6 reps with minimal assistance",
+                },
+                {
+                  name: "Hip Thrusts",
+                  sets: 4,
+                  reps: 10,
+                  rest: "90s",
+                  load: "Moderate weight",
+                },
+              ],
+            },
+            {
+              title: "Block 2: Lower Body - Quad Strength",
+              duration: 20,
+              exercises: [
+                {
+                  name: "Back Squats",
+                  sets: 4,
+                  reps: 8,
+                  rest: "2 min",
+                  load: "35-40% BW",
+                },
+                {
+                  name: "Bulgarian Split Squats",
+                  sets: 3,
+                  reps: "8 each",
+                  rest: "90s",
+                  load: "Moderate DBs",
+                },
+                {
+                  name: "Single-Leg Calf Raises",
+                  sets: 4,
+                  reps: "15 each",
+                  rest: "60s",
+                  tempo: "3s up, 3s down",
+                },
+              ],
+            },
+            {
+              title: "Block 3: QB Arm Strength Peak",
+              duration: 25,
+              qbSpecific: true,
+              exercises: [
+                {
+                  name: "Band External Rotation",
+                  sets: 4,
+                  reps: "15 each arm",
+                  rest: "45s",
+                  notes: "Heaviest band resistance of Foundation phase",
+                },
+                {
+                  name: "Band Internal Rotation",
+                  sets: 4,
+                  reps: "15 each arm",
+                  rest: "45s",
+                },
+                {
+                  name: "I-Y-T Raises",
+                  sets: 3,
+                  reps: "12 each position",
+                  rest: "60s",
+                  load: "3-5 lbs",
+                },
+                {
+                  name: "Face Pulls",
+                  sets: 4,
+                  reps: 20,
+                  rest: "45s",
+                },
+                {
+                  name: "Single-Arm DB Rows",
+                  sets: 4,
+                  reps: "10 each arm",
+                  rest: "90s",
+                  load: "Moderate-heavy",
+                  notes: "Focus on explosive pull, controlled lower",
+                },
+                {
+                  name: "Tricep Extensions",
+                  sets: 3,
+                  reps: 12,
+                  rest: "60s",
+                },
+                {
+                  name: "Wrist Curls + Extensions",
+                  sets: 3,
+                  reps: "15 each",
+                  rest: "45s",
+                },
+              ],
+            },
+            {
+              title: "Block 4: QB Core Strength",
+              duration: 10,
+              qbSpecific: true,
+              exercises: [
+                { name: "Plank Series", sets: 3, duration: "60s", rest: "60s" },
+                { name: "Medicine Ball Rotational Throws", sets: 3, reps: "10 each side", rest: "60s", load: "10 lbs" },
+                { name: "Anti-Rotation Press (Pallof Press)", sets: 3, reps: "10 each side", rest: "60s" },
+              ],
+            },
+          ],
+          equipment: ["Barbell/DBs", "bands", "medicine ball", "cable machine"],
+        },
+
+        tuesday: {
+          title: "Sprint Mechanics Refinement + QB Mobility Peak",
+          type: "dual-track",
+          duration: 105,
+          warmup: "QB Enhanced Warm-Up (30 min)",
+
+          blocks: [
+            {
+              title: "Block 1: Advanced Sprint Drills",
+              duration: 25,
+              exercises: [
+                { name: "A-Skip", sets: 4, distance: "30m", rest: "45s" },
+                { name: "B-Skip", sets: 4, distance: "25m", rest: "60s" },
+                { name: "C-Skip", sets: 3, distance: "20m", rest: "60s" },
+                { name: "Ankling Drill", sets: 3, distance: "20m", rest: "45s" },
+                { name: "Wall Sprint Drills", sets: 4, duration: "15s max effort", rest: "90s" },
+              ],
+            },
+            {
+              title: "Block 2: Extended Tempo Work",
+              duration: 25,
+              options: [
+                {
+                  condition: "Track available",
+                  exercise: {
+                    name: "Tempo Runs",
+                    sets: 12,
+                    distance: "100m",
+                    intensity: "75%",
+                    rest: "60s walk",
+                  },
+                },
+                {
+                  condition: "No track",
+                  exercise: {
+                    name: "Treadmill Tempo",
+                    sets: 12,
+                    duration: "2min",
+                    rest: "1min walk",
+                  },
+                },
+              ],
+            },
+            {
+              title: "Block 3: QB Shoulder Mobility Peak",
+              duration: 20,
+              qbSpecific: true,
+              exercises: [
+                {
+                  name: "Sleeper Stretch",
+                  sets: 4,
+                  duration: "90s each arm",
+                  notes: "Peak duration for Foundation phase",
+                },
+                {
+                  name: "Doorway Pec Stretch",
+                  sets: 3,
+                  duration: "90s each side",
+                },
+                {
+                  name: "Wall Slides",
+                  sets: 4,
+                  reps: 15,
+                  rest: "45s",
+                },
+                {
+                  name: "Band Pull-Aparts",
+                  sets: 4,
+                  reps: 25,
+                  rest: "30s",
+                },
+                {
+                  name: "Cuban Press",
+                  sets: 3,
+                  reps: 10,
+                  rest: "60s",
+                  load: "5-8 lbs",
+                },
+                {
+                  name: "Thoracic Extensions",
+                  duration: "10 min",
+                  notes: "Extended session for peak mobility",
+                },
+              ],
+            },
+            {
+              title: "Block 4: Light Throwing",
+              duration: 15,
+              qbSpecific: true,
+              throwingVolume: "20-25 throws",
+              protocol: [
+                { distance: "5-15 yards", throws: "10-12", intensity: "50-60%" },
+                { distance: "20-30 yards", throws: "8-10", intensity: "70-75%" },
+                { notes: "Increased distance from previous weeks" },
+              ],
+            },
+          },
+          equipment: ["Track or treadmill", "bands", "foam roller", "football", "light DBs"],
+        },
+
+        wednesday: {
+          title: "Active Recovery + QB Flexibility Peak",
+          type: "recovery/qb-specific",
+          duration: 80,
+          warmup: "Light movement (10 min)",
+
+          blocks: [
+            {
+              title: "Block 1: Comprehensive Mobility",
+              duration: 30,
+              exercises: [
+                {
+                  name: "Hip Flexor Complex",
+                  duration: "15 min",
+                  exercises: [
+                    { name: "Couch stretch", sets: 4, duration: "2 min each" },
+                    { name: "Standing quad stretch", sets: 3, duration: "75s each" },
+                  ],
+                },
+                {
+                  name: "Hip Rotation Complex",
+                  duration: "12 min",
+                  exercises: [
+                    { name: "Pigeon pose", sets: 3, duration: "2 min each" },
+                    { name: "90/90 stretch", sets: 3, duration: "75s each" },
+                    { name: "90/90 flow", reps: "20 transitions" },
+                  ],
+                },
+              ],
+            },
+            {
+              title: "Block 2: QB Back Strength Peak",
+              duration: 25,
+              qbSpecific: true,
+              exercises: [
+                {
+                  name: "Single-Arm DB Rows",
+                  sets: 4,
+                  reps: "12 each arm",
+                  rest: "75s",
+                  load: "Moderate-heavy",
+                },
+                {
+                  name: "Lat Pulldowns",
+                  sets: 4,
+                  reps: "10-12",
+                  rest: "90s",
+                },
+                {
+                  name: "Face Pulls",
+                  sets: 4,
+                  reps: 20,
+                  rest: "45s",
+                },
+                {
+                  name: "Bicep Curls (Eccentric)",
+                  sets: 3,
+                  reps: 10,
+                  rest: "60s",
+                  tempo: "1-0-4",
+                },
+                {
+                  name: "Overhead Press (Light)",
+                  sets: 3,
+                  reps: 10,
+                  rest: "75s",
+                  load: "Conservative",
+                  notes: "Shoulder strength for velocity",
+                },
+                {
+                  name: "Thoracic Extension Work",
+                  duration: "10 min",
+                },
+              ],
+            },
+            {
+              title: "Block 3: Recovery Work",
+              duration: 15,
+              exercises: [
+                { name: "Copenhagen Plank", sets: 3, duration: "30-40s each" },
+                { name: "Foam Rolling Full Body", duration: "15 min" },
+              ],
+            },
+          },
+          equipment: ["Yoga mat", "foam roller", "DBs", "bands", "cable machine", "couch/bench"],
+        },
+
+        thursday: {
+          title: "Lower Body Power + QB Throwing Peak Session",
+          type: "dual-track",
+          duration: 120,
+          warmup: "QB Enhanced Warm-Up (30 min)",
+
+          blocks: [
+            {
+              title: "Block 1: Heavy Lower Body Strength",
+              duration: 25,
+              exercises: [
+                {
+                  name: "Back Squats",
+                  sets: 5,
+                  reps: 6,
+                  rest: "2.5 min",
+                  load: "38-40% BW",
+                  notes: "Peak load for Foundation phase",
+                },
+                {
+                  name: "RDLs",
+                  sets: 4,
+                  reps: 8,
+                  rest: "2 min",
+                  load: "32-35% BW",
+                },
+                {
+                  name: "Walking Lunges",
+                  sets: 3,
+                  reps: "12 each",
+                  rest: "90s",
+                  load: "Moderate DBs",
+                },
+              ],
+            },
+            {
+              title: "Block 2: Advanced Plyometrics",
+              duration: 25,
+              exercises: [
+                {
+                  name: "Depth Drops (Introduction)",
+                  sets: 4,
+                  reps: 5,
+                  rest: "2 min",
+                  boxHeight: "6 inches",
+                  notes: "Step off, stick landing",
+                },
+                {
+                  name: "Box Jumps",
+                  sets: 4,
+                  reps: 4,
+                  rest: "2 min",
+                  boxHeight: "18 inches",
+                },
+                {
+                  name: "Single-Leg Bounds",
+                  sets: 4,
+                  distance: "20m each",
+                  rest: "2 min",
+                },
+              ],
+            },
+            {
+              title: "Block 3: QB Peak Throwing Session",
+              duration: 35,
+              qbSpecific: true,
+              throwingVolume: "50-65 throws",
+              exercises: [
+                {
+                  name: "Progressive Throwing Warm-Up",
+                  throws: 20,
+                  protocol: "5y→10y→15y→20y→25y→30y",
+                  notes: "Extended warm-up for peak session",
+                },
+                {
+                  name: "Footwork + Throwing Mastery",
+                  sets: 5,
+                  reps: "5 throws each",
+                  rest: "2 min",
+                  drills: ["3-step", "5-step", "7-step", "Bootleg", "Sprint out"],
+                  notes: "25 throws total. Full game simulation",
+                },
+                {
+                  name: "Long Toss (Introduction)",
+                  throws: "10-15",
+                  protocol: "Progressive to 35+ yards",
+                  notes: "Building arm strength",
+                },
+                {
+                  name: "Accuracy Under Fatigue",
+                  throws: "10-15",
+                  notes: "Maintain mechanics while tired",
+                },
+              ],
+            },
+            {
+              title: "Block 4: Comprehensive Arm Care",
+              duration: 15,
+              qbSpecific: true,
+              exercises: [
+                { name: "Light throwing cool-down", throws: "8-10 easy" },
+                { name: "Sleeper Stretch", sets: 4, duration: "75s each" },
+                { name: "Cross-body stretch", sets: 3, duration: "60s each" },
+                { name: "Shoulder mobility circuit", duration: "5 min" },
+                { name: "Forearm/wrist work", duration: "3 min" },
+              ],
+            },
+          },
+          equipment: ["Barbell/DBs", "boxes", "football", "bands", "targets"],
+        },
+
+        friday: {
+          title: "Power Expression + QB Endurance Peak",
+          type: "dual-track",
+          duration: 110,
+          warmup: "QB Enhanced Warm-Up (30 min)",
+
+          blocks: [
+            {
+              title: "Block 1: Isometric Strength Introduction",
+              duration: 15,
+              exercises: [
+                {
+                  name: "Isometric Squat Holds (Quarter + Parallel)",
+                  positions: [
+                    { name: "Quarter squat", sets: 2, duration: "5s max" },
+                    { name: "Parallel squat", sets: 2, duration: "5s max" },
+                  ],
+                  rest: "2.5 min",
+                  notes: "85-90% effort",
+                },
+                {
+                  name: "Isometric Deadlift Pulls",
+                  sets: 3,
+                  duration: "5s max",
+                  rest: "2.5 min",
+                },
+              ],
+            },
+            {
+              title: "Block 2: Explosive Power",
+              duration: 20,
+              exercises: [
+                {
+                  name: "Complex: Squat + Box Jump",
+                  sets: 4,
+                  protocol: "3 squats @ 35% → immediately 3 box jumps",
+                  rest: "3 min",
+                },
+                {
+                  name: "Medicine Ball Rotational Throws (QB)",
+                  sets: 4,
+                  reps: "10 each side",
+                  rest: "90s",
+                  load: "10 lbs",
+                },
+                {
+                  name: "Broad Jumps",
+                  sets: 4,
+                  reps: 3,
+                  rest: "2 min",
+                  notes: "Max distance",
+                },
+              ],
+            },
+            {
+              title: "Block 3: QB Throwing Endurance Peak",
+              duration: 35,
+              qbSpecific: true,
+              throwingVolume: "80-100 throws total",
+              protocol: {
+                warmUp: "Progressive warm-up (20 throws)",
+                mainWork: {
+                  name: "Extended Endurance Session",
+                  throws: "60-80",
+                  distance: "15-20 yards",
+                  intensity: "65-75% effort",
+                  rest: "Minimal",
+                  notes: "Peak volume for Foundation phase. Maintain mechanics under extended fatigue",
+                },
+                coolDown: "Light tosses (5-8 throws)",
+              },
+              notes: "Week 3 peak: 80-100 total throws. Preparing for tournament endurance",
+            },
+            {
+              title: "Block 4: Extended Arm Care",
+              duration: 10,
+              qbSpecific: true,
+              exercises: [
+                { name: "Sleeper stretch", sets: 4, duration: "75s each" },
+                { name: "Comprehensive shoulder mobility", duration: "8 min" },
+              ],
+            },
+          },
+          equipment: ["Squat rack", "box", "medicine ball", "football", "bands"],
+        },
+
+        saturday: {
+          title: "Sprint Peak + QB Throwing Session",
+          type: "dual-track",
+          duration: 100,
+          warmup: "QB Enhanced Warm-Up (30 min)",
+
+          blocks: [
+            {
+              title: "Block 1: Sprint Acceleration Peak",
+              duration: 40,
+              options: [
+                {
+                  condition: "Track available",
+                  exercises: [
+                    {
+                      name: "Acceleration Development",
+                      sets: 10,
+                      distance: "20m",
+                      intensity: "85%",
+                      rest: "2.5 min",
+                    },
+                    {
+                      name: "Build-Up Runs",
+                      sets: 5,
+                      distance: "60m",
+                      rest: "3 min",
+                    },
+                    {
+                      name: "Flying 10s",
+                      sets: 4,
+                      protocol: "20m build + 10m sprint",
+                      rest: "3 min",
+                    },
+                  ],
+                },
+                {
+                  condition: "No track",
+                  exercises: [
+                    { name: "Wall Sprint Drills", sets: 5, duration: "20s max", rest: "2 min" },
+                    { name: "Resistance Band Sprints", sets: 10, duration: "15s", rest: "2 min" },
+                  ],
+                },
+              ],
+            },
+            {
+              title: "Block 2: QB Throwing - Game Simulation",
+              duration: 30,
+              qbSpecific: true,
+              throwingVolume: "30-40 throws",
+              protocol: [
+                {
+                  phase: "Warm-up",
+                  throws: 12,
+                  notes: "Progressive to 30 yards",
+                },
+                {
+                  phase: "Game Simulation",
+                  drills: [
+                    { name: "Quick game", throws: "8-10", notes: "3-step drops, quick release" },
+                    { name: "Intermediate routes", throws: "8-10", notes: "5-step, 15-20 yards" },
+                    { name: "Pressure situations", throws: "6-8", notes: "Throw under simulated pressure" },
+                  ],
+                },
+                {
+                  phase: "Cool-down",
+                  throws: "4-6 easy",
+                },
+              ],
+            },
+          ],
+          equipment: ["Track or wall space", "bands", "football", "targets"],
+        },
+
+        sunday: {
+          title: "Recovery + Mental Prep for Assessment Week",
+          type: "recovery",
+          duration: 80,
+          protocol: "QB-Enhanced Recovery + Assessment Preparation",
+
+          blocks: [
+            {
+              title: "Lower Body Recovery",
+              duration: 25,
+              exercises: [
+                { name: "Lower body chain stretching", duration: "25 min" },
+                { name: "Foam rolling (comprehensive)", duration: "15 min" },
+              ],
+            },
+            {
+              title: "Upper Body/QB Recovery Extended",
+              duration: 40,
+              qbSpecific: true,
+              exercises: [
+                {
+                  name: "Shoulder mobility comprehensive",
+                  duration: "18 min",
+                  protocol: [
+                    "Sleeper stretch 4×90s each",
+                    "Doorway pec 3×90s",
+                    "Cross-body 3×60s each",
+                    "Wall slides 3×15",
+                    "Band pull-aparts 3×25",
+                    "Cuban press light 2×10",
+                  ],
+                },
+                {
+                  name: "Hip flexor flexibility peak",
+                  duration: "15 min",
+                  protocol: [
+                    "Couch stretch 4×2min each",
+                    "Kneeling hip flexor 3×90s each",
+                    "90/90 flow 20 transitions",
+                  ],
+                },
+                {
+                  name: "Thoracic mobility extended",
+                  duration: "10 min",
+                },
+              ],
+            },
+            {
+              title: "Mental Preparation",
+              duration: 15,
+              activities: [
+                { name: "Light walk", duration: "20 min" },
+                { name: "Visualization for Week 4 assessments", duration: "15 min" },
+                { name: "Review Foundation phase progress", notes: "Reflect on improvements" },
+              ],
+            },
+          },
+        },
+      },
+      weekSummary: {
+        totalThrows: "120-150",
+        lowerBodySessions: 4,
+        qbSpecificSessions: 6,
+        focus: "Peak Foundation loads, throwing volume peak, comprehensive mobility work",
+      },
+    },
+
+    week4: {
+      weekNumber: 4,
+      dateRange: "December 22-28, 2025",
+      phase: "Foundation",
+      focus: "Assessment week + deload for recovery",
+      assessmentWeek: true,
+      throwingVolume: "60-80 throws (assessment + deload)",
+      days: {
+        monday: {
+          title: "QB Foundation Assessment - Strength & Power",
+          type: "assessment",
+          duration: 90,
+          warmup: "Extended QB warm-up (35 min)",
+
+          blocks: [
+            {
+              title: "Block 1: Lower Body Strength Assessment",
+              duration: 30,
+              exercises: [
+                {
+                  name: "Back Squat Assessment",
+                  protocol: "Work up to 8RM at 40% BW",
+                  rest: "3-4 min between sets",
+                  notes: "Record weight and movement quality",
+                },
+                {
+                  name: "RDL Assessment",
+                  protocol: "Work up to 10RM within load limits",
+                  rest: "3 min",
+                },
+                {
+                  name: "Nordic Curl Test",
+                  protocol: "Max reps unassisted (or minimum assistance)",
+                  sets: 2,
+                  rest: "3 min",
+                  notes: "Record reps and assistance level",
+                },
+              ],
+            },
+            {
+              title: "Block 2: Power Assessment",
+              duration: 20,
+              exercises: [
+                {
+                  name: "Vertical Jump Test",
+                  sets: 3,
+                  rest: "2 min",
+                  notes: "Best of 3, record height",
+                },
+                {
+                  name: "Broad Jump Test",
+                  sets: 3,
+                  rest: "2 min",
+                  notes: "Best of 3, record distance",
+                },
+              ],
+            },
+            {
+              title: "Block 3: QB Arm Strength Assessment",
+              duration: 25,
+              qbSpecific: true,
+              exercises: [
+                {
+                  name: "Band External Rotation Max Resistance Test",
+                  protocol: "Test max resistance for 12 reps each arm",
+                  notes: "Record band resistance level",
+                },
+                {
+                  name: "Single-Arm DB Row Assessment",
+                  protocol: "Work up to 10RM each arm",
+                  notes: "Record weight achieved",
+                },
+                {
+                  name: "Tricep Extension Assessment",
+                  protocol: "Work up to 12RM",
+                  notes: "Record weight - triceps = 23% of velocity",
+                },
+                {
+                  name: "Medicine Ball Rotational Throw Distance",
+                  sets: 3,
+                  notes: "Max distance each side, record best",
+                },
+              ],
+            },
+            {
+              title: "Block 4: Core Endurance",
+              duration: 15,
+              qbSpecific: true,
+              exercises: [
+                {
+                  name: "Plank Hold Test",
+                  sets: 1,
+                  notes: "Max hold, record time",
+                },
+                {
+                  name: "Side Plank Test",
+                  sets: 1,
+                  notes: "Max hold each side",
+                },
+                {
+                  name: "Anti-Rotation Press Endurance",
+                  sets: 1,
+                  notes: "Max reps each side with consistent form",
+                },
+              ],
+            },
+          ],
+          equipment: ["Barbell", "DBs", "bands", "medicine ball", "measuring tape", "timer"],
+          notes: "Record all results for comparison at Week 8 and Week 14",
+        },
+
+        tuesday: {
+          title: "QB Foundation Assessment - Speed & Mobility",
+          type: "assessment",
+          duration: 85,
+          warmup: "Extended QB warm-up (35 min)",
+
+          blocks: [
+            {
+              title: "Block 1: Speed Testing (Same as WR/DB)",
+              duration: 30,
+              options: [
+                {
+                  condition: "Track/timing available",
+                  exercises: [
+                    {
+                      name: "10-Yard Sprint",
+                      attempts: 3,
+                      rest: "3 min",
+                      notes: "Best of 3, record time",
+                    },
+                    {
+                      name: "20-Yard Sprint",
+                      attempts: 3,
+                      rest: "3 min",
+                      notes: "Best of 3, record time",
+                    },
+                    {
+                      name: "40-Yard Sprint",
+                      attempts: 2,
+                      rest: "4 min",
+                      notes: "Best of 2, record time",
+                    },
+                  ],
+                },
+                {
+                  condition: "No timing available",
+                  exercises: [
+                    {
+                      name: "Sprint Mechanics Assessment",
+                      notes: "Video analysis - dorsiflexion, knee drive, arm action",
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              title: "Block 2: QB Mobility Assessment (CRITICAL)",
+              duration: 25,
+              qbSpecific: true,
+              exercises: [
+                {
+                  name: "Shoulder External Rotation ROM Test",
+                  protocol: "Measure external rotation degrees",
+                  target: "110-130° (optimal for throwing)",
+                  notes: "Record both arms, compare left/right",
+                },
+                {
+                  name: "Horizontal Abduction Test",
+                  protocol: "Measure horizontal abduction",
+                  target: "45-55° (proper arm slot)",
+                  notes: "Critical for throwing mechanics",
+                },
+                {
+                  name: "Hip Flexor Flexibility Test (Thomas Test)",
+                  protocol: "Lie supine, pull one knee to chest, assess other leg",
+                  target: "Thigh below horizontal = good flexibility",
+                  notes: "CRITICAL - tight hip flexors reduce velocity 15-20%",
+                },
+                {
+                  name: "Couch Stretch Hold Time",
+                  protocol: "Max comfortable hold each leg",
+                  target: "90+ seconds",
+                  notes: "Record time for each leg",
+                },
+                {
+                  name: "Thoracic Extension Assessment",
+                  protocol: "Measure thoracic extension ROM",
+                  notes: "Thoracic extension adds 8-12 mph velocity",
+                },
+              ],
+            },
+            {
+              title: "Block 3: Agility Testing",
+              duration: 20,
+              exercises: [
+                {
+                  name: "Pro Agility Test (5-10-5)",
+                  attempts: 3,
+                  rest: "3 min",
+                  notes: "Best of 3, both starting directions",
+                },
+                {
+                  name: "L-Drill Test",
+                  attempts: 3,
+                  rest: "3 min",
+                  notes: "Best of 3, record time",
+                },
+              ],
+            },
+          ],
+          equipment: ["Cones", "stopwatch/timing gates", "measuring tape", "goniometer"],
+          notes: "QB mobility assessment is CRITICAL for velocity development",
+        },
+
+        wednesday: {
+          title: "QB Throwing Assessment + Deload",
+          type: "assessment/throwing",
+          duration: 80,
+          warmup: "QB Enhanced Warm-Up (30 min)",
+
+          blocks: [
+            {
+              title: "Block 1: QB Throwing Velocity & Accuracy Assessment",
+              duration: 35,
+              qbSpecific: true,
+              throwingVolume: "40-50 throws",
+              assessments: [
+                {
+                  name: "Velocity Test",
+                  throws: "10-12",
+                  protocol: "Progressive warm-up, then max velocity throws from pocket",
+                  distance: "15 yards",
+                  notes: "Measure peak velocity with radar gun if available. Record best 3",
+                },
+                {
+                  name: "Accuracy Under Fresh Conditions",
+                  throws: "10-12",
+                  protocol: "Hit targets at 10, 15, 20 yards",
+                  notes: "Record accuracy percentage",
+                },
+                {
+                  name: "Footwork Mechanics Assessment",
+                  throws: "15-20",
+                  drills: ["3-step drops", "5-step drops", "7-step drops", "Rollouts"],
+                  notes: "Video analysis - assess mechanics quality",
+                },
+                {
+                  name: "Light cool-down",
+                  throws: "5-8 easy",
+                },
+              ],
+              notes: "Baseline throwing assessment - compare to Week 8 and Week 14",
+            },
+            {
+              title: "Block 2: Throwing Endurance Test",
+              duration: 20,
+              qbSpecific: true,
+              throwingVolume: "20-30 throws",
+              protocol: {
+                name: "Sustained Throwing Test",
+                throws: "20-30 continuous",
+                distance: "15 yards",
+                intensity: "70% effort",
+                notes: "Assess mechanics breakdown under moderate fatigue. Track accuracy decline",
+              },
+              assessment: "Record when mechanics begin to break down, accuracy percentage",
+            },
+            {
+              title: "Block 3: Comprehensive Arm Care",
+              duration: 15,
+              qbSpecific: true,
+              exercises: [
+                { name: "Light throwing cool-down", throws: "8-10 easy" },
+                { name: "Sleeper Stretch", sets: 4, duration: "90s each" },
+                { name: "Full shoulder mobility circuit", duration: "10 min" },
+                { name: "Forearm/wrist recovery", duration: "5 min" },
+              ],
+            },
+          },
+          equipment: ["Football", "targets", "radar gun (optional)", "video camera"],
+          notes: "Foundation throwing baseline - record all metrics for future comparison",
+        },
+
+        thursday: {
+          title: "Active Recovery + QB Mobility Focus",
+          type: "recovery/qb-specific",
+          duration: 70,
+          warmup: "Light movement (10 min)",
+
+          blocks: [
+            {
+              title: "Block 1: Comprehensive Mobility",
+              duration: 30,
+              exercises: [
+                { name: "Full hip mobility circuit", duration: "15 min" },
+                { name: "Ankle and calf work", duration: "8 min" },
+                { name: "Dynamic stretching", duration: "7 min" },
+              ],
+            },
+            {
+              title: "Block 2: QB-Specific Mobility Extended",
+              duration: 25,
+              qbSpecific: true,
+              exercises: [
+                {
+                  name: "Shoulder mobility complex",
+                  duration: "12 min",
+                  protocol: [
+                    "Sleeper stretch 4×90s each",
+                    "Doorway pec 3×90s",
+                    "Wall slides 3×15",
+                  ],
+                },
+                {
+                  name: "Hip flexor work",
+                  duration: "13 min",
+                  protocol: [
+                    "Couch stretch 4×2min each",
+                    "Kneeling hip flexor 3×90s each",
+                  ],
+                },
+              ],
+            },
+            {
+              title: "Block 3: Light Movement",
+              duration: 15,
+              activities: [
+                { name: "Easy bike or walk", duration: "20 min", intensity: "Very light" },
+                { name: "Foam rolling", duration: "15 min" },
+              ],
+            },
+          },
+          notes: "Reflect on Foundation phase progress. Review assessment results",
+        },
+
+        friday: {
+          title: "Deload - Light Lower Body + QB Work",
+          type: "deload",
+          duration: 65,
+          warmup: "Light QB warm-up (20 min)",
+
+          blocks: [
+            {
+              title: "Block 1: Light Strength (50-60% of Week 3 loads)",
+              duration: 20,
+              exercises: [
+                {
+                  name: "Goblet Squats",
+                  sets: 3,
+                  reps: 8,
+                  rest: "90s",
+                  load: "Light",
+                  notes: "Focus on quality",
+                },
+                {
+                  name: "RDLs",
+                  sets: 3,
+                  reps: 8,
+                  rest: "90s",
+                  load: "Light (50-60% of Week 3)",
+                },
+                {
+                  name: "Hip Thrusts",
+                  sets: 3,
+                  reps: 12,
+                  rest: "75s",
+                  load: "Bodyweight or very light",
+                },
+              ],
+            },
+            {
+              title: "Block 2: QB Light Arm Work",
+              duration: 15,
+              qbSpecific: true,
+              exercises: [
+                {
+                  name: "Band External Rotation (Light)",
+                  sets: 2,
+                  reps: "15 each",
+                  rest: "45s",
+                  notes: "Light resistance, focus on form",
+                },
+                {
+                  name: "I-Y-T Raises (Light)",
+                  sets: 2,
+                  reps: "10 each position",
+                  rest: "60s",
+                  load: "Bodyweight or 2 lbs",
+                },
+                {
+                  name: "Face Pulls",
+                  sets: 2,
+                  reps: 15,
+                  rest: "45s",
+                },
+              ],
+            },
+            {
+              title: "Block 3: Movement Quality",
+              duration: 15,
+              exercises: [
+                {
+                  name: "Nordic Curls (Assisted)",
+                  sets: 2,
+                  reps: "Easy reps",
+                  rest: "2 min",
+                },
+                {
+                  name: "Single-leg balance work",
+                  sets: 2,
+                  duration: "30s each",
+                },
+                {
+                  name: "Ankle mobility circuit",
+                  duration: "5 min",
+                },
+              ],
+            },
+            {
+              title: "Block 4: Light Throwing (Optional)",
+              duration: 15,
+              qbSpecific: true,
+              throwingVolume: "15-25 throws",
+              protocol: [
+                { distance: "5-15 yards", throws: "15-25", intensity: "40-50%" },
+                { notes: "Very light, focus on mechanics only" },
+              ],
+            },
+          },
+          equipment: ["Light DBs", "bands", "football (optional)"],
+          notes: "Recovery week - movement quality, not intensity",
+        },
+
+        saturday: {
+          title: "Deload - Light Movement + Throwing",
+          type: "deload",
+          duration: 60,
+          warmup: "Light QB warm-up (20 min)",
+
+          blocks: [
+            {
+              title: "Block 1: Light Plyometrics",
+              duration: 15,
+              exercises: [
+                {
+                  name: "Box Step-Ups",
+                  sets: 3,
+                  reps: 8,
+                  rest: "90s",
+                  boxHeight: "Low",
+                },
+                {
+                  name: "Broad Jumps",
+                  sets: 3,
+                  reps: 3,
+                  rest: "90s",
+                  notes: "Submaximal effort",
+                },
+              ],
+            },
+            {
+              title: "Block 2: Sprint Drill Quality",
+              duration: 15,
+              exercises: [
+                {
+                  name: "A-march, A-skip only",
+                  sets: 3,
+                  distance: "20m",
+                  notes: "Perfect mechanics",
+                },
+              ],
+            },
+            {
+              title: "Block 3: Light QB Throwing (Optional)",
+              duration: 20,
+              qbSpecific: true,
+              throwingVolume: "0-20 throws",
+              protocol: [
+                { distance: "5-15 yards", throws: "0-20", intensity: "40-50%" },
+                { notes: "Optional. If arm feels good, light throwing. Otherwise rest" },
+              ],
+            },
+            {
+              title: "Block 4: Core Maintenance",
+              duration: 10,
+              exercises: [
+                {
+                  name: "Core stability circuit",
+                  rounds: 2,
+                  exercises: ["Plank 30s", "Side plank 20s each", "Dead bugs 10 each"],
+                },
+              ],
+            },
+          },
+          equipment: ["Low box", "bands", "football (optional)"],
+          notes: "Optional session. Complete rest if feeling fatigued",
+        },
+
+        sunday: {
+          title: "Recovery + Preparation for Strength Phase",
+          type: "recovery",
+          duration: 75,
+          protocol: "Complete QB Recovery + Mental Preparation",
+
+          blocks: [
+            {
+              title: "Lower Body Recovery",
+              duration: 25,
+              exercises: [
+                { name: "Lower body chain stretching", duration: "25 min" },
+                { name: "Foam rolling (full body)", duration: "20 min" },
+              ],
+            },
+            {
+              title: "Upper Body/QB Recovery Comprehensive",
+              duration: 35,
+              qbSpecific: true,
+              exercises: [
+                {
+                  name: "Shoulder mobility complete protocol",
+                  duration: "18 min",
+                  protocol: [
+                    "Sleeper stretch 4×90s each",
+                    "Doorway pec 3×90s",
+                    "Cross-body 3×60s each",
+                    "Wall slides 3×15",
+                    "Band pull-aparts 3×20",
+                    "Cuban press 2×10 (light)",
+                  ],
+                },
+                {
+                  name: "Hip flexor flexibility complete protocol",
+                  duration: "17 min",
+                  protocol: [
+                    "Couch stretch 4×2min each",
+                    "Kneeling hip flexor 3×90s each",
+                    "Standing quad stretch 2×60s each",
+                    "90/90 flow 20 transitions",
+                  ],
+                },
+              ],
+            },
+            {
+              title: "Mental Preparation for Strength Phase",
+              duration: 15,
+              activities: [
+                { name: "Light walk", duration: "20 min" },
+                { name: "Review Foundation phase achievements", duration: "10 min" },
+                { name: "Set goals for Strength phase (Weeks 5-8)", duration: "10 min" },
+                { name: "Visualization for increased throwing volume", duration: "10 min" },
+              ],
+            },
+          },
+          notes: "Prepare for Strength Development phase. Review all assessment results.",
+        },
+      },
+      weekSummary: {
+        totalThrows: "60-80 (assessment + deload)",
+        assessments: [
+          "Strength: Squats, RDLs, Nordic curls, power jumps",
+          "QB arm strength: Band resistance, rows, triceps, rotational throws",
+          "Speed: 10/20/40-yard sprints, Pro Agility, L-Drill",
+          "QB mobility: Shoulder ROM, hip flexor flexibility (CRITICAL)",
+          "Throwing: Velocity, accuracy, endurance, mechanics quality",
+        ],
+        lowerBodySessions: 3,
+        qbSpecificSessions: 5,
+        focus: "Baseline assessment, deload for recovery, Foundation phase completion",
+      },
+      phaseSummary: {
+        title: "Foundation Phase Complete (Weeks 1-4)!",
+        achievements: [
+          "Established lower body foundation (posterior chain, quads, ankles)",
+          "Developed QB arm strength and rotator cuff stability",
+          "Built shoulder mobility and hip flexor flexibility foundation",
+          "Introduction to throwing endurance (80-150 throws/week)",
+          "Developed back strength for throwing power (lats = 18% of power)",
+          "Baseline assessments completed for all major categories",
+        ],
+        keyMetrics: {
+          totalThrows: "300-440 throws over 4 weeks",
+          progressiveVolume: "Week 1: 80-120, Week 2: 100-120, Week 3: 120-150",
+          armStrength: "Band resistance progressed, rotator cuff strengthened",
+          mobility: "Shoulder ROM improved, hip flexors loosened (critical for velocity)",
+        },
+        nextPhase: {
+          name: "Strength Development (Weeks 5-8)",
+          focus: [
+            "Maximum strength building (higher loads)",
+            "Increased throwing volume (150-250 throws/week)",
+            "Advanced arm strength work",
+            "Long toss introduction for velocity",
+            "Throwing endurance progression toward 320-throw goal",
+            "Maximal isometric contractions",
+            "Sprint intensity increase",
+          ],
+          throwingProgression: {
+            week5: "150-180 throws",
+            week6: "180-220 throws",
+            week7: "220-250 throws",
+            week8: "Assessment + partial deload",
+          },
+        },
+      },
+    },
   },
 };
 
