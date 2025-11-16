@@ -1,43 +1,130 @@
-// Mock Authentication for Static Deployment
-// This replaces backend authentication for demo purposes
+// Mock Authentication for Development/Demo Environments Only
+// WARNING: This is for development/demo purposes only and should never be used in production
+
+import { logger } from "./logger.js";
+import { config } from "./config/environment.js";
 
 export class MockAuth {
   constructor() {
     this.isLoggedIn = false;
     this.currentUser = null;
+    this.loginAttempts = new Map(); // Track login attempts by email
+    
+    // Security warning for production
+    if (!config.ENABLE_MOCK_AUTH) {
+      logger.error("MockAuth should not be instantiated when ENABLE_MOCK_AUTH is false");
+      throw new Error("Mock authentication is disabled in this environment");
+    }
+    
+    logger.warn("🚨 MOCK AUTHENTICATION ACTIVE - FOR DEVELOPMENT ONLY");
   }
 
   async login(credentials) {
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    // Simulate realistic API delay
+    await new Promise((resolve) => setTimeout(resolve, 800 + Math.random() * 400));
 
-    // Accept any email/password for demo
-    if (credentials.email && credentials.password) {
+    // Basic validation
+    if (!credentials?.email || !credentials?.password) {
+      return {
+        success: false,
+        error: "Email and password are required",
+      };
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(credentials.email)) {
+      return {
+        success: false,
+        error: "Invalid email format",
+      };
+    }
+
+    // Check password requirements (minimum 6 characters for demo)
+    if (credentials.password.length < 6) {
+      return {
+        success: false,
+        error: "Password must be at least 6 characters long",
+      };
+    }
+
+    // Track login attempts (basic rate limiting simulation)
+    const attempts = this.loginAttempts.get(credentials.email) || 0;
+    if (attempts >= 5) {
+      return {
+        success: false,
+        error: "Too many login attempts. Please try again later.",
+      };
+    }
+
+    // For demo purposes, accept any valid email/password combination
+    // In production, this would validate against a real database
+    try {
       this.isLoggedIn = true;
       this.currentUser = {
-        id: "1",
+        id: `demo-${Date.now()}`,
         email: credentials.email,
-        name: credentials.email.split("@")[0],
+        name: this.extractNameFromEmail(credentials.email),
         role: "player",
+        createdAt: new Date().toISOString(),
+        lastLogin: new Date().toISOString(),
       };
 
-      // Store in localStorage
-      localStorage.setItem("authToken", "demo-token-" + Date.now());
+      // Generate a more realistic demo token
+      const token = this.generateDemoToken();
+      
+      // Reset login attempts on successful login
+      this.loginAttempts.delete(credentials.email);
+
+      // Store in localStorage (securely in production this would be httpOnly cookies)
+      localStorage.setItem("authToken", token);
       localStorage.setItem("userData", JSON.stringify(this.currentUser));
+
+      logger.debug("Demo login successful for:", credentials.email);
 
       return {
         success: true,
         data: {
-          token: "demo-token-" + Date.now(),
+          token: token,
           user: this.currentUser,
+          expiresIn: 3600, // 1 hour for demo
         },
       };
+    } catch (error) {
+      logger.error("Mock login error:", error);
+      
+      // Increment login attempts
+      this.loginAttempts.set(credentials.email, attempts + 1);
+      
+      return {
+        success: false,
+        error: "Authentication failed. Please try again.",
+      };
     }
+  }
 
-    return {
-      success: false,
-      error: "Invalid credentials",
-    };
+  extractNameFromEmail(email) {
+    const localPart = email.split("@")[0];
+    // Convert common patterns like "john.doe" or "john_doe" to "John Doe"
+    return localPart
+      .replace(/[._-]/g, " ")
+      .split(" ")
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(" ");
+  }
+
+  generateDemoToken() {
+    // Generate a more realistic-looking JWT-style token for demo
+    const header = btoa(JSON.stringify({ alg: "HS256", typ: "JWT" }));
+    const payload = btoa(JSON.stringify({
+      sub: this.currentUser?.id || "demo-user",
+      iat: Math.floor(Date.now() / 1000),
+      exp: Math.floor(Date.now() / 1000) + 3600, // 1 hour
+      iss: "flagfit-demo"
+    }));
+    const signature = btoa("demo-signature-" + Date.now());
+    
+    return `${header}.${payload}.${signature}`;
   }
 
   async register(userData) {

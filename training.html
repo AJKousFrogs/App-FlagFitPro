@@ -937,6 +937,134 @@
               </div>
               <button class="btn btn-primary btn-md">View Program</button>
             </div>
+
+            <!-- AI-Powered Position Training Section -->
+            <div class="position-training-section u-margin-top-32">
+              <div class="section-header u-margin-bottom-24">
+                <h2 class="section-title u-text-heading-lg u-font-weight-700 u-text-primary">
+                  <i data-lucide="brain" class="icon-20 icon-inline" style="color: var(--color-brand-primary);"></i>
+                  AI-Powered Position Training
+                </h2>
+                <p class="u-text-body-md u-text-secondary u-margin-bottom-0">
+                  Specialized training modules powered by machine learning for position-specific skill development
+                </p>
+              </div>
+
+              <div class="u-display-grid u-gap-16" style="grid-template-columns: 1fr 1fr;">
+                <!-- QB Training Module -->
+                <div
+                  class="workout-card u-display-flex u-align-center u-gap-16 u-padding-20 u-bg-primary u-radius-lg u-border-secondary"
+                  onclick="openQBTrainingModule()"
+                  style="
+                    cursor: pointer;
+                    border: 2px solid var(--color-success);
+                    transition: all var(--motion-duration-normal);
+                    background: linear-gradient(135deg, rgba(16, 201, 107, 0.05), rgba(16, 201, 107, 0.1));
+                  "
+                >
+                  <div
+                    class="workout-icon u-width-56 u-height-56 u-radius-lg u-display-flex u-align-center u-justify-center"
+                    style="
+                      background: linear-gradient(135deg, var(--color-success), var(--color-success-600));
+                      color: white;
+                      font-size: 24px;
+                    "
+                  >
+                    🎯
+                  </div>
+                  <div class="workout-content u-flex-1">
+                    <h3 class="workout-title u-text-heading-md u-font-weight-600 u-text-primary u-margin-bottom-4">
+                      QB Training Module
+                    </h3>
+                    <p class="workout-description u-text-body-sm u-text-secondary u-margin-bottom-8">
+                      Accuracy, decision-making, missed throws, pressure handling
+                    </p>
+                    <div class="workout-meta u-display-flex u-gap-16 u-text-caption u-text-secondary">
+                      <span>🤖 AI-Powered</span>
+                      <span>🎯 4 Focus Areas</span>
+                      <span>📊 Performance Analytics</span>
+                    </div>
+                  </div>
+                  <button class="btn btn-success btn-md">Start QB Training</button>
+                </div>
+
+                <!-- DB Training Module -->
+                <div
+                  class="workout-card u-display-flex u-align-center u-gap-16 u-padding-20 u-bg-primary u-radius-lg u-border-secondary"
+                  onclick="openDBTrainingModule()"
+                  style="
+                    cursor: pointer;
+                    border: 2px solid var(--color-primary);
+                    transition: all var(--motion-duration-normal);
+                    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(59, 130, 246, 0.1));
+                  "
+                >
+                  <div
+                    class="workout-icon u-width-56 u-height-56 u-radius-lg u-display-flex u-align-center u-justify-center"
+                    style="
+                      background: linear-gradient(135deg, var(--color-primary), var(--color-primary-600));
+                      color: white;
+                      font-size: 24px;
+                    "
+                  >
+                    🛡️
+                  </div>
+                  <div class="workout-content u-flex-1">
+                    <h3 class="workout-title u-text-heading-md u-font-weight-600 u-text-primary u-margin-bottom-4">
+                      DB Training Module
+                    </h3>
+                    <p class="workout-description u-text-body-sm u-text-secondary u-margin-bottom-8">
+                      Flag pulls, coverage, 1v1 scenarios, route recognition
+                    </p>
+                    <div class="workout-meta u-display-flex u-gap-16 u-text-caption u-text-secondary">
+                      <span>🤖 AI-Powered</span>
+                      <span>🛡️ 3 Core Skills</span>
+                      <span>📈 Progress Tracking</span>
+                    </div>
+                  </div>
+                  <button class="btn btn-primary btn-md">Start DB Training</button>
+                </div>
+
+                <!-- Enhanced Analytics Link -->
+                <div
+                  class="workout-card u-display-flex u-align-center u-gap-16 u-padding-20 u-bg-primary u-radius-lg u-border-secondary"
+                  onclick="openEnhancedAnalytics()"
+                  style="
+                    cursor: pointer;
+                    border: 2px solid var(--color-warning);
+                    transition: all var(--motion-duration-normal);
+                    background: linear-gradient(135deg, rgba(249, 115, 22, 0.05), rgba(249, 115, 22, 0.1));
+                    grid-column: 1 / -1;
+                  "
+                >
+                  <div
+                    class="workout-icon u-width-56 u-height-56 u-radius-lg u-display-flex u-align-center u-justify-center"
+                    style="
+                      background: linear-gradient(135deg, var(--color-warning), var(--color-warning-600));
+                      color: white;
+                      font-size: 24px;
+                    "
+                  >
+                    🧠
+                  </div>
+                  <div class="workout-content u-flex-1">
+                    <h3 class="workout-title u-text-heading-md u-font-weight-600 u-text-primary u-margin-bottom-4">
+                      Enhanced Analytics Dashboard
+                    </h3>
+                    <p class="workout-description u-text-body-sm u-text-secondary u-margin-bottom-8">
+                      ML predictions, performance forecasting, injury prevention insights
+                    </p>
+                    <div class="workout-meta u-display-flex u-gap-16 u-text-caption u-text-secondary">
+                      <span>🧠 ML Predictions</span>
+                      <span>📊 Real-time Analytics</span>
+                      <span>🔮 Performance Forecasting</span>
+                      <span>⚕️ Injury Prevention</span>
+                    </div>
+                  </div>
+                  <button class="btn btn-warning btn-md">Open Dashboard</button>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- Training Videos Section -->

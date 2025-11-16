@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FlagFit Pro - Wellness & Recovery</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https: wss:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="./src/css/main.css" />
+    <link rel="stylesheet" href="./src/css/pages/wellness.css" />
+
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@1.0.445/dist/umd/lucide.js" 
+            integrity="sha384-QUHo9yIHF1gPrLIKJyuJ6l2VzF5YNGFCk2sT3dSsGmBjDrPyYlqVjdJsJ8e6JkX2" 
+            crossorigin="anonymous" defer></script>
+    <script src="./src/icon-helper.js" defer></script>
+    <script src="./src/theme-switcher.js" defer></script>
+    <script src="./src/nav-highlight.js" defer></script>
+  </head>
+  <body>
+    <div class="dashboard-container">
+      <!-- Sidebar Overlay for Mobile -->
+      <div
+        class="sidebar-overlay"
+        id="sidebar-overlay"
+        aria-hidden="true"
+        onclick="toggleSidebar()"
+      ></div>
+      
+      <!-- Unified Sidebar Navigation -->
+      <div class="sidebar" id="sidebar">
+        <div
+          class="sidebar-logo"
+          onclick="window.location.href='/dashboard.html'"
+          title="FlagFit Pro"
+          aria-label="Go to dashboard"
+        >
+          <i data-lucide="activity" class="icon-20 icon-inline"></i>
+        </div>
+
+        <nav class="nav-section" aria-label="Dashboard navigation">
+          <a href="/dashboard.html" class="nav-item" aria-label="Dashboard Overview" id="nav-dashboard">
+            <span class="nav-item-icon">
+              <i data-lucide="layout-dashboard" class="icon-24"></i>
+            </span>
+            <span class="nav-item-label">Overview</span>
+          </a>
+          <a href="/analytics.html" class="nav-item" aria-label="Analytics" id="nav-analytics">
+            <span class="nav-item-icon">
+              <i data-lucide="bar-chart-3" class="icon-24"></i>
+            </span>
+            <span class="nav-item-label">Analytics</span>
+          </a>
+        </nav>
+
+        <nav class="nav-section" aria-label="Team navigation">
+          <a href="/roster.html" class="nav-item" aria-label="Team Roster" id="nav-roster">
+            <span class="nav-item-icon">
+              <i data-lucide="users" class="icon-24"></i>
+            </span>
+            <span class="nav-item-label">Roster</span>
+          </a>
+          <a href="/training.html" class="nav-item" aria-label="Training" id="nav-training">
+            <span class="nav-item-icon">
+              <i data-lucide="zap" class="icon-24"></i>
+            </span>
+            <span class="nav-item-label">Training</span>
+          </a>
+          <a href="/tournaments.html" class="nav-item" aria-label="Tournaments" id="nav-tournaments">
+            <span class="nav-item-icon">
+              <i data-lucide="trophy" class="icon-24"></i>
+            </span>
+            <span class="nav-item-label">Tournaments</span>
+          </a>
+          <a href="/wellness.html" class="nav-item active" aria-label="Wellness" id="nav-wellness">
+            <span class="nav-item-icon">
+              <i data-lucide="heart" class="icon-24"></i>
+            </span>
+            <span class="nav-item-label">Wellness</span>
+          </a>
+        </nav>
+
+        <nav class="nav-section" aria-label="Community navigation">
+          <a href="/community.html" class="nav-item" aria-label="Community" id="nav-community">
+            <span class="nav-item-icon">
+              <i data-lucide="message-circle" class="icon-24"></i>
+            </span>
+            <span class="nav-item-label">Community</span>
+          </a>
+          <a href="/chat.html" class="nav-item" aria-label="Chat" id="nav-chat">
+            <span class="nav-item-icon">
+              <i data-lucide="message-square" class="icon-24"></i>
+            </span>
+            <span class="nav-item-label">Chat</span>
+          </a>
+        </nav>
+
+        <nav class="nav-section" aria-label="Personal navigation">
+          <a href="/settings.html" class="nav-item" aria-label="Settings" id="nav-settings">
+            <span class="nav-item-icon">
+              <i data-lucide="settings" class="icon-24"></i>
+            </span>
+            <span class="nav-item-label">Settings</span>
+          </a>
+          <a href="/profile.html" class="nav-item" aria-label="Profile" id="nav-profile">
+            <span class="nav-item-icon">
+              <i data-lucide="user" class="icon-24"></i>
+            </span>
+            <span class="nav-item-label">Profile</span>
+          </a>
+        </nav>
+      </div>
+
+      <main class="main-content u-flex-1 u-min-width-0 u-overflow-x-hidden u-overflow-y-auto u-padding-24 u-bg-primary">
+        <!-- Top Bar -->
+        <div class="top-bar" role="banner">
+          <div class="header-left">
+            <button
+              id="mobile-menu-toggle"
+              class="mobile-menu-toggle"
+              type="button"
+              aria-label="Toggle navigation menu"
+              aria-expanded="false"
+              aria-controls="sidebar"
+              onclick="toggleSidebar()"
+            >
+              <i data-lucide="menu" class="icon-20"></i>
+            </button>
+            
+            <div class="search-box">
+              <label for="global-search" class="sr-only">Search wellness resources</label>
+              <span class="search-icon" aria-hidden="true">
+                <i data-lucide="search" class="icon-16"></i>
+              </span>
+              <input
+                id="global-search"
+                class="search-input"
+                type="text"
+                placeholder="Search recovery tips, nutrition guides..."
+                role="combobox"
+                aria-autocomplete="list"
+                aria-haspopup="listbox"
+                aria-expanded="false"
+                autocomplete="off"
+                inputmode="search"
+              />
+            </div>
+          </div>
+
+          <div class="header-right">
+            <div class="header-icon-wrap">
+              <button
+                id="notification-bell"
+                class="header-icon"
+                type="button"
+                aria-label="Notifications"
+                aria-controls="notification-panel"
+                aria-expanded="false"
+              >
+                <i data-lucide="bell" class="icon-18"></i>
+                <span id="notification-badge" class="badge" hidden>2</span>
+              </button>
+            </div>
+
+            <button class="header-icon" type="button" aria-label="Settings">
+              <i data-lucide="settings" class="icon-18"></i>
+            </button>
+
+            <div class="theme-toggle-container" aria-label="Theme toggle">
+              <button class="theme-toggle-fallback" type="button" data-theme-toggle hidden>
+                Theme
+              </button>
+            </div>
+
+            <button
+              id="user-menu-button"
+              class="user-menu"
+              type="button"
+              aria-label="User menu"
+              aria-haspopup="menu"
+              aria-controls="user-menu"
+              aria-expanded="false"
+            >
+              <div class="user-avatar" id="user-avatar" aria-hidden="true">
+                JD
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Wellness Content -->
+        <div class="wellness-hero mb-16">
+          <div class="hero-card">
+            <div class="u-text-body-sm u-text-secondary u-font-weight-500 u-margin-bottom-8" style="text-transform: uppercase; letter-spacing: 0.5px;">
+              Wellness & Recovery
+            </div>
+            <h1 class="hero-main-title mb-8">
+              Your Health Dashboard
+            </h1>
+            <p class="u-text-heading-md u-text-secondary m-0">
+              Monitor recovery, nutrition, and mental wellness
+            </p>
+          </div>
+        </div>
+
+        <!-- Wellness Metrics Grid -->
+        <div class="wellness-grid u-display-grid u-gap-24 u-margin-bottom-64">
+          <!-- Recovery Score -->
+          <div class="wellness-card u-radius-xl u-padding-24 u-shadow-sm">
+            <div class="card-header u-display-flex u-justify-between u-align-center u-margin-bottom-16">
+              <h3 class="card-title u-text-heading-lg u-font-weight-700">Recovery Score</h3>
+              <div class="wellness-icon" style="background: var(--color-success-subtle); color: var(--color-success);">
+                <i data-lucide="heart" class="icon-20"></i>
+              </div>
+            </div>
+            <div class="wellness-value u-text-display-lg u-font-weight-700 u-text-primary u-margin-bottom-8">
+              87<span class="u-text-body-lg u-text-secondary">/100</span>
+            </div>
+            <div class="wellness-progress u-width-full u-height-6 u-bg-secondary u-radius-sm u-margin-y-8">
+              <div class="u-height-full u-radius-sm" style="width: 87%; background: var(--color-success);"></div>
+            </div>
+            <p class="u-text-body-sm u-text-secondary">Excellent recovery state</p>
+          </div>
+
+          <!-- Sleep Quality -->
+          <div class="wellness-card u-radius-xl u-padding-24 u-shadow-sm">
+            <div class="card-header u-display-flex u-justify-between u-align-center u-margin-bottom-16">
+              <h3 class="card-title u-text-heading-lg u-font-weight-700">Sleep Quality</h3>
+              <div class="wellness-icon" style="background: var(--color-primary-subtle); color: var(--color-primary);">
+                <i data-lucide="moon" class="icon-20"></i>
+              </div>
+            </div>
+            <div class="wellness-value u-text-display-lg u-font-weight-700 u-text-primary u-margin-bottom-8">
+              8.2<span class="u-text-body-lg u-text-secondary">hrs</span>
+            </div>
+            <div class="wellness-progress u-width-full u-height-6 u-bg-secondary u-radius-sm u-margin-y-8">
+              <div class="u-height-full u-radius-sm" style="width: 91%; background: var(--color-primary);"></div>
+            </div>
+            <p class="u-text-body-sm u-text-secondary">Above recommended 8 hours</p>
+          </div>
+
+          <!-- Hydration -->
+          <div class="wellness-card u-radius-xl u-padding-24 u-shadow-sm">
+            <div class="card-header u-display-flex u-justify-between u-align-center u-margin-bottom-16">
+              <h3 class="card-title u-text-heading-lg u-font-weight-700">Hydration</h3>
+              <div class="wellness-icon" style="background: var(--color-info-subtle); color: var(--color-info);">
+                <i data-lucide="droplets" class="icon-20"></i>
+              </div>
+            </div>
+            <div class="wellness-value u-text-display-lg u-font-weight-700 u-text-primary u-margin-bottom-8">
+              2.1<span class="u-text-body-lg u-text-secondary">L</span>
+            </div>
+            <div class="wellness-progress u-width-full u-height-6 u-bg-secondary u-radius-sm u-margin-y-8">
+              <div class="u-height-full u-radius-sm" style="width: 70%; background: var(--color-info);"></div>
+            </div>
+            <p class="u-text-body-sm u-text-secondary">Goal: 3.0L daily</p>
+          </div>
+
+          <!-- Stress Level -->
+          <div class="wellness-card u-radius-xl u-padding-24 u-shadow-sm">
+            <div class="card-header u-display-flex u-justify-between u-align-center u-margin-bottom-16">
+              <h3 class="card-title u-text-heading-lg u-font-weight-700">Stress Level</h3>
+              <div class="wellness-icon" style="background: var(--color-warning-subtle); color: var(--color-warning);">
+                <i data-lucide="brain" class="icon-20"></i>
+              </div>
+            </div>
+            <div class="wellness-value u-text-display-lg u-font-weight-700 u-text-primary u-margin-bottom-8">
+              Low
+            </div>
+            <div class="wellness-progress u-width-full u-height-6 u-bg-secondary u-radius-sm u-margin-y-8">
+              <div class="u-height-full u-radius-sm" style="width: 25%; background: var(--color-success);"></div>
+            </div>
+            <p class="u-text-body-sm u-text-secondary">Optimal stress levels</p>
+          </div>
+        </div>
+
+        <!-- Recovery Recommendations -->
+        <div class="recovery-section u-margin-bottom-64">
+          <h2 class="section-title u-text-heading-lg u-font-weight-700 u-margin-bottom-24">
+            <i data-lucide="target" class="icon-20 icon-inline"></i>
+            Today's Recovery Plan
+          </h2>
+          
+          <div class="u-display-grid u-gap-16" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+            <div class="recommendation-card u-padding-20 u-bg-primary u-radius-lg u-border-secondary">
+              <div class="recommendation-header u-display-flex u-align-center u-gap-12 u-margin-bottom-12">
+                <div class="recommendation-icon" style="background: var(--color-success-subtle); color: var(--color-success);">
+                  <i data-lucide="bed" class="icon-16"></i>
+                </div>
+                <h4 class="u-text-heading-sm u-font-weight-600">Sleep Optimization</h4>
+              </div>
+              <p class="u-text-body-sm u-text-secondary u-margin-bottom-12">
+                Maintain 8+ hours of quality sleep for optimal recovery
+              </p>
+              <button class="btn btn-sm btn-tertiary">Set Sleep Goals</button>
+            </div>
+
+            <div class="recommendation-card u-padding-20 u-bg-primary u-radius-lg u-border-secondary">
+              <div class="recommendation-header u-display-flex u-align-center u-gap-12 u-margin-bottom-12">
+                <div class="recommendation-icon" style="background: var(--color-info-subtle); color: var(--color-info);">
+                  <i data-lucide="apple" class="icon-16"></i>
+                </div>
+                <h4 class="u-text-heading-sm u-font-weight-600">Nutrition Focus</h4>
+              </div>
+              <p class="u-text-body-sm u-text-secondary u-margin-bottom-12">
+                Post-workout protein within 30 minutes for muscle recovery
+              </p>
+              <button class="btn btn-sm btn-tertiary">View Meal Plans</button>
+            </div>
+
+            <div class="recommendation-card u-padding-20 u-bg-primary u-radius-lg u-border-secondary">
+              <div class="recommendation-header u-display-flex u-align-center u-gap-12 u-margin-bottom-12">
+                <div class="recommendation-icon" style="background: var(--color-warning-subtle); color: var(--color-warning);">
+                  <i data-lucide="stretch-horizontal" class="icon-16"></i>
+                </div>
+                <h4 class="u-text-heading-sm u-font-weight-600">Active Recovery</h4>
+              </div>
+              <p class="u-text-body-sm u-text-secondary u-margin-bottom-12">
+                15-minute mobility session to enhance flexibility
+              </p>
+              <button class="btn btn-sm btn-tertiary">Start Session</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Coming Soon Features -->
+        <div class="coming-soon-section">
+          <h2 class="section-title u-text-heading-lg u-font-weight-700 u-margin-bottom-24">
+            <i data-lucide="sparkles" class="icon-20 icon-inline"></i>
+            Coming Soon
+          </h2>
+          
+          <div class="u-display-grid u-gap-16" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+            <div class="feature-preview u-padding-20 u-bg-secondary u-radius-lg u-text-center">
+              <i data-lucide="smartphone" class="icon-32 u-margin-bottom-12" style="color: var(--color-primary);"></i>
+              <h4 class="u-text-heading-sm u-font-weight-600 u-margin-bottom-8">Wearable Integration</h4>
+              <p class="u-text-body-sm u-text-secondary">Connect fitness trackers for real-time health monitoring</p>
+            </div>
+
+            <div class="feature-preview u-padding-20 u-bg-secondary u-radius-lg u-text-center">
+              <i data-lucide="calendar-heart" class="icon-32 u-margin-bottom-12" style="color: var(--color-success);"></i>
+              <h4 class="u-text-heading-sm u-font-weight-600 u-margin-bottom-8">Wellness Calendar</h4>
+              <p class="u-text-body-sm u-text-secondary">Track wellness activities and recovery sessions</p>
+            </div>
+
+            <div class="feature-preview u-padding-20 u-bg-secondary u-radius-lg u-text-center">
+              <i data-lucide="brain-circuit" class="icon-32 u-margin-bottom-12" style="color: var(--color-warning);"></i>
+              <h4 class="u-text-heading-sm u-font-weight-600 u-margin-bottom-8">AI Health Insights</h4>
+              <p class="u-text-body-sm u-text-secondary">Personalized wellness recommendations powered by AI</p>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- JavaScript -->
+    <script type="module">
+      import { authManager } from './src/auth-manager.js';
+      import { logger } from './src/logger.js';
+
+      // Check authentication
+      if (!authManager.isAuthenticated()) {
+        window.location.href = '/login.html';
+      }
+
+      // Initialize icons
+      document.addEventListener('DOMContentLoaded', () => {
+        if (typeof lucide !== 'undefined') {
+          lucide.createIcons();
+        }
+      });
+
+      // Sidebar toggle functionality
+      window.toggleSidebar = function() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+        const isOpen = sidebar.classList.contains('open');
+        
+        if (isOpen) {
+          sidebar.classList.remove('open');
+          overlay.classList.remove('active');
+        } else {
+          sidebar.classList.add('open');
+          overlay.classList.add('active');
+        }
+      };
+
+      logger.info('Wellness page initialized');
+    </script>
+
+    <!-- Footer -->
+    <footer role="contentinfo" class="main-footer">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>FlagFit Pro</h3>
+          <p>Professional flag football training and analytics platform</p>
+        </div>
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <nav aria-label="Footer navigation">
+            <ul>
+              <li><a href="/dashboard.html">Dashboard</a></li>
+              <li><a href="/training.html">Training</a></li>
+              <li><a href="/wellness.html">Wellness</a></li>
+              <li><a href="/analytics.html">Analytics</a></li>
+            </ul>
+          </nav>
+        </div>
+        <div class="footer-section">
+          <h4>Support</h4>
+          <nav aria-label="Support links">
+            <ul>
+              <li><a href="/settings.html">Settings</a></li>
+              <li><a href="/community.html">Community</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 FlagFit Pro. All rights reserved.</p>
+      </div>
+    </footer>
+  </body>
+</html>

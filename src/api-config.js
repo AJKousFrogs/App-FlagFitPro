@@ -1,14 +1,28 @@
 // API Configuration for FlagFit Pro
 // Handles different environments (development, production, Netlify)
 
+import { config, apiEndpoints } from './config/environment.js';
+import { logger } from './logger.js';
+
 const getApiBaseUrl = () => {
-  // Use Netlify Functions for production (real Supabase backend)
+  // Use environment configuration for API base URL
+  const envBaseUrl = config.API_BASE_URL;
+  
+  // If we have a configured API URL, use it
+  if (envBaseUrl && envBaseUrl !== 'mock://api') {
+    logger.debug('Using configured API URL:', envBaseUrl);
+    return envBaseUrl;
+  }
+
+  // Auto-detect based on hostname for backward compatibility
   if (
     window.location.hostname.includes("netlify.app") ||
     window.location.hostname.includes("netlify.com")
   ) {
-    // Use Netlify Functions for real data
-    return window.location.origin + "/.netlify/functions";
+    // Use Netlify Functions for production
+    const netlifyUrl = window.location.origin + "/.netlify/functions";
+    logger.debug('Using Netlify Functions:', netlifyUrl);
+    return netlifyUrl;
   }
 
   // Check if we're in local development with Netlify Dev
@@ -17,10 +31,12 @@ const getApiBaseUrl = () => {
     window.location.port === "8888"
   ) {
     // Netlify Dev environment
-    return "http://localhost:8888/.netlify/functions";
+    const netlifyDevUrl = "http://localhost:8888/.netlify/functions";
+    logger.debug('Using Netlify Dev:', netlifyDevUrl);
+    return netlifyDevUrl;
   }
 
-  // For local development, always use mock API to avoid CORS and function issues
+  // For local development, use mock API if no real API configured
   if (
     window.location.hostname === "localhost" ||
     window.location.hostname === "127.0.0.1"
@@ -30,22 +46,24 @@ const getApiBaseUrl = () => {
   }
 
   // Default fallback to mock for other static hosting
+  logger.warn("No API configuration found - falling back to mock API");
   return "mock://api";
 };
 
 export const API_BASE_URL = getApiBaseUrl();
 
-// API Endpoints - Updated for Netlify Functions
+// API Endpoints - Using centralized configuration
 export const API_ENDPOINTS = {
-  // Authentication (Netlify Functions)
+  // Authentication endpoints
   auth: {
     login: API_BASE_URL.includes("netlify/functions")
       ? "/auth-login"
-      : "/api/auth/login",
+      : apiEndpoints.AUTH.LOGIN,
     register: API_BASE_URL.includes("netlify/functions")
       ? "/auth-register"
-      : "/api/auth/register",
-    logout: "/api/auth/logout",
+      : apiEndpoints.AUTH.REGISTER,
+    logout: apiEndpoints.AUTH.LOGOUT,
+    refresh: apiEndpoints.AUTH.REFRESH,
     me: API_BASE_URL.includes("netlify/functions")
       ? "/auth-me"
       : "/api/auth/me",

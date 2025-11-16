@@ -24,6 +24,10 @@ import ProgramModal from '../components/program-modal.js';
 import { OFFSEASON_PROGRAM_CONFIG, QB_PROGRAM_CONFIG } from '../config/program-configs.js';
 // Utils
 import { delegateClick } from '../utils/event-delegation.js';
+// Training Modules
+import { qbTraining } from '../../training-modules/qb-training.js';
+import { dbTraining } from '../../training-modules/db-training.js';
+import { logger } from '../../logger.js';
 
 // Initialize training page
 document.addEventListener('DOMContentLoaded', async function() {
@@ -497,4 +501,177 @@ async function handleAIChat(e) {
             alert("AI Assistant Chat\n\nAsk me about:\n• Sports psychology & mental training\n• Nutrition & supplements\n• Speed & agility development\n• Injury prevention & treatment\n• Recovery strategies\n• Training programs");
         }
     }
+}
+
+// Enhanced Training Module Functions
+window.openQBTrainingModule = function() {
+    try {
+        logger.info('Opening QB Training Module');
+        
+        // Get current user data for training analysis
+        const state = trainingPageState.getState();
+        const playerData = {
+            id: state.user?.name || 'player1',
+            position: 'QB',
+            stats: {
+                passing: {
+                    short_completions: 45, short_attempts: 50,
+                    medium_completions: 28, medium_attempts: 40,
+                    deep_completions: 8, deep_attempts: 15
+                },
+                decisions: {
+                    correct_reads: 25, total_reads: 30,
+                    avg_decision_time: 2.8, turnovers: 2
+                }
+            }
+        };
+
+        // Generate QB training plan
+        qbTraining.generateQBTrainingPlan(playerData).then(plan => {
+            // Create modal to display training plan
+            const modal = createTrainingPlanModal('QB Training Module', plan);
+            document.body.appendChild(modal);
+            modal.style.display = 'flex';
+        }).catch(error => {
+            logger.error('Failed to generate QB training plan:', error);
+            alert('QB Training Module\n\nFocus Areas:\n• Accuracy Training (Short/Medium/Deep)\n• Decision Making Excellence\n• Field Vision Development\n• Mechanics Optimization\n\nFeatures coming soon!');
+        });
+    } catch (error) {
+        logger.error('Error opening QB training module:', error);
+        alert('QB Training Module\n\nSpecialized quarterback training with AI-powered analytics coming soon!');
+    }
+};
+
+window.openDBTrainingModule = function() {
+    try {
+        logger.info('Opening DB Training Module');
+        
+        // Get current user data for training analysis
+        const state = trainingPageState.getState();
+        const playerData = {
+            id: state.user?.name || 'player1',
+            position: 'DB',
+            stats: {
+                flagPull: {
+                    successful_pulls: 18, attempted_pulls: 25,
+                    missed_flags: 3
+                },
+                coverage: {
+                    completions_allowed: 8, targets: 15,
+                    blown_coverage: 1
+                }
+            }
+        };
+
+        // Generate DB training plan
+        dbTraining.generateTrainingPlan(playerData).then(plan => {
+            // Create modal to display training plan
+            const modal = createTrainingPlanModal('DB Training Module', plan);
+            document.body.appendChild(modal);
+            modal.style.display = 'flex';
+        }).catch(error => {
+            logger.error('Failed to generate DB training plan:', error);
+            alert('DB Training Module\n\nFocus Areas:\n• Flag Pull Mastery\n• Coverage Excellence\n• 1v1 Domination\n• Route Recognition\n\nFeatures coming soon!');
+        });
+    } catch (error) {
+        logger.error('Error opening DB training module:', error);
+        alert('DB Training Module\n\nSpecialized defensive back training with AI-powered analytics coming soon!');
+    }
+};
+
+window.openEnhancedAnalytics = function() {
+    try {
+        logger.info('Opening Enhanced Analytics Dashboard');
+        window.location.href = '/enhanced-analytics.html';
+    } catch (error) {
+        logger.error('Error opening enhanced analytics:', error);
+        alert('Enhanced Analytics Dashboard\n\nAdvanced ML-powered performance insights coming soon!');
+    }
+};
+
+// Helper function to create training plan modal
+function createTrainingPlanModal(title, plan) {
+    const modal = document.createElement('div');
+    modal.className = 'modal-overlay';
+    modal.style.cssText = `
+        position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+        background: rgba(0,0,0,0.8); display: none; align-items: center; 
+        justify-content: center; z-index: 10000; padding: 20px;
+    `;
+
+    const modalContent = document.createElement('div');
+    modalContent.style.cssText = `
+        background: white; border-radius: 12px; max-width: 800px; 
+        max-height: 90vh; overflow-y: auto; padding: 24px; width: 100%;
+    `;
+
+    const header = document.createElement('div');
+    header.style.cssText = `display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;`;
+    
+    const titleEl = document.createElement('h2');
+    titleEl.textContent = title;
+    titleEl.style.cssText = `margin: 0; color: var(--color-text-primary);`;
+
+    const closeBtn = document.createElement('button');
+    closeBtn.textContent = '×';
+    closeBtn.style.cssText = `
+        background: none; border: none; font-size: 24px; cursor: pointer; 
+        padding: 8px; border-radius: 4px;
+    `;
+    closeBtn.onclick = () => modal.remove();
+
+    header.appendChild(titleEl);
+    header.appendChild(closeBtn);
+
+    const content = document.createElement('div');
+    content.innerHTML = formatTrainingPlan(plan);
+
+    modalContent.appendChild(header);
+    modalContent.appendChild(content);
+    modal.appendChild(modalContent);
+
+    // Close on overlay click
+    modal.onclick = (e) => {
+        if (e.target === modal) modal.remove();
+    };
+
+    return modal;
+}
+
+// Helper function to format training plan for display
+function formatTrainingPlan(plan) {
+    if (!plan || !plan.focusAreas) {
+        return '<p>Training plan data not available.</p>';
+    }
+
+    let html = `
+        <div style="margin-bottom: 20px;">
+            <h3>Current Performance Level: ${(plan.currentLevel * 100).toFixed(1)}%</h3>
+            <div style="background: var(--color-background); padding: 16px; border-radius: 8px; margin: 16px 0;">
+                <h4>Focus Areas</h4>
+                <ul style="margin: 0; padding-left: 20px;">
+    `;
+
+    plan.focusAreas.forEach(area => {
+        if (typeof area === 'string') {
+            html += `<li>${area}</li>`;
+        } else if (area.name) {
+            html += `<li><strong>${area.name}</strong>: ${area.description || 'Specialized training focus'}</li>`;
+        }
+    });
+
+    html += `
+                </ul>
+            </div>
+            <div style="margin-top: 20px;">
+                <button onclick="this.closest('.modal-overlay').remove()" 
+                        class="btn btn-primary" 
+                        style="padding: 12px 24px; border: none; border-radius: 6px; background: var(--color-primary); color: white; cursor: pointer;">
+                    Start Training Plan
+                </button>
+            </div>
+        </div>
+    `;
+
+    return html;
 }

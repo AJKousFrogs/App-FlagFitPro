@@ -5,33 +5,23 @@ import { apiClient, auth } from "./api-config.js";
 import { loadingManager } from "./loading-manager.js";
 import { logger } from "./logger.js";
 import { secureStorage } from "./secure-storage.js";
+import { config, security } from "./config/environment.js";
 
-// Import mock authentication for static deployment
+// Import mock authentication for development/demo environments
 let mockAuth = null;
 const initMockAuth = async () => {
-  // Initialize mock authentication for development only
-  logger.debug("Initializing mock authentication for development...");
-
-  // Check if we're using Netlify Functions
-  const isUsingNetlifyFunctions =
-    window.location.hostname.includes("netlify") ||
-    (window.location.hostname === "localhost" &&
-      window.location.port === "8888");
-
-  logger.debug("Using Netlify Functions:", isUsingNetlifyFunctions);
-
-  // For local development without Netlify Dev, always use mock auth
-  if (!isUsingNetlifyFunctions) {
-    logger.debug("Loading mock authentication for local development...");
+  // Only use mock auth when explicitly enabled in environment config
+  if (config.ENABLE_MOCK_AUTH) {
+    logger.debug("Mock authentication enabled in environment config");
     try {
       const { MockAuth } = await import("./mock-auth.js");
       mockAuth = new MockAuth();
-      logger.success("Mock authentication loaded successfully");
+      logger.success("Mock authentication initialized");
     } catch (error) {
-      logger.error("Failed to load mock auth:", error);
+      logger.error("Failed to initialize mock auth:", error);
     }
   } else {
-    logger.debug("Using production Netlify Functions - no mock auth needed");
+    logger.debug("Mock authentication disabled - using production auth");
   }
 };
 

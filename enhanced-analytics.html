@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Analytics - FlagFit Pro</title>
+    
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https: wss:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS Bundles -->
+    <link rel="stylesheet" href="./dist/css/main-bundle.css">
+    <link rel="stylesheet" href="./dist/css/components-bundle.css">
+    
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@1.0.445/dist/umd/lucide.js" 
+            integrity="sha384-QUHo9yIHF1gPrLIKJyuJ6l2VzF5YNGFCk2sT3dSsGmBjDrPyYlqVjdJsJ8e6JkX2" 
+            crossorigin="anonymous" defer></script>
+    
+    <!-- Chart.js for Advanced Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@2.29.3/index.min.js" crossorigin="anonymous"></script>
+    
+    <style>
+        .analytics-dashboard {
+            padding: var(--space-6);
+            background: var(--color-background);
+            min-height: 100vh;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-8);
+            flex-wrap: wrap;
+            gap: var(--space-4);
+        }
+        
+        .analytics-controls {
+            display: flex;
+            gap: var(--space-4);
+            flex-wrap: wrap;
+        }
+        
+        .position-selector {
+            padding: var(--space-2) var(--space-4);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            background: white;
+            font-family: inherit;
+            cursor: pointer;
+        }
+        
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: var(--space-6);
+            margin-bottom: var(--space-8);
+        }
+        
+        .analytics-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            border: 1px solid var(--color-border);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-4);
+        }
+        
+        .card-title {
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            color: var(--color-text-primary);
+        }
+        
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--space-4);
+            margin-bottom: var(--space-6);
+        }
+        
+        .metric-card {
+            text-align: center;
+            padding: var(--space-4);
+            background: var(--color-background);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--color-border-light);
+        }
+        
+        .metric-value {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            color: var(--color-primary);
+            display: block;
+        }
+        
+        .metric-label {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+            margin-top: var(--space-1);
+        }
+        
+        .metric-change {
+            font-size: var(--font-size-xs);
+            margin-top: var(--space-1);
+        }
+        
+        .metric-change.positive { color: var(--color-success); }
+        .metric-change.negative { color: var(--color-error); }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: var(--space-4);
+        }
+        
+        .prediction-panel {
+            background: linear-gradient(135deg, var(--color-primary-light), var(--color-primary));
+            color: white;
+            border-radius: var(--radius-lg);
+            padding: var(--space-6);
+            margin-bottom: var(--space-6);
+        }
+        
+        .prediction-title {
+            font-size: var(--font-size-xl);
+            font-weight: 600;
+            margin-bottom: var(--space-4);
+        }
+        
+        .prediction-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-4);
+        }
+        
+        .prediction-metric {
+            background: rgba(255, 255, 255, 0.1);
+            padding: var(--space-4);
+            border-radius: var(--radius-md);
+        }
+        
+        .training-recommendations {
+            background: var(--color-background);
+            border-radius: var(--radius-lg);
+            padding: var(--space-6);
+        }
+        
+        .recommendation-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-3);
+            background: white;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--color-border-light);
+            margin-bottom: var(--space-3);
+        }
+        
+        .recommendation-priority {
+            width: 8px;
+            height: 40px;
+            border-radius: var(--radius-full);
+        }
+        
+        .priority-high { background: var(--color-error); }
+        .priority-medium { background: var(--color-warning); }
+        .priority-low { background: var(--color-success); }
+        
+        .position-tabs {
+            display: flex;
+            gap: var(--space-2);
+            margin-bottom: var(--space-6);
+            background: var(--color-background);
+            padding: var(--space-2);
+            border-radius: var(--radius-lg);
+        }
+        
+        .position-tab {
+            flex: 1;
+            padding: var(--space-3) var(--space-4);
+            border: none;
+            background: transparent;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+        
+        .position-tab.active {
+            background: var(--color-primary);
+            color: white;
+        }
+        
+        .skills-matrix {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: var(--space-3);
+            margin-top: var(--space-4);
+        }
+        
+        .skill-item {
+            text-align: center;
+            padding: var(--space-3);
+            background: var(--color-background);
+            border-radius: var(--radius-md);
+        }
+        
+        .skill-score {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-2);
+            font-weight: 600;
+            color: white;
+        }
+        
+        .score-excellent { background: var(--color-success); }
+        .score-good { background: var(--color-primary); }
+        .score-fair { background: var(--color-warning); }
+        .score-poor { background: var(--color-error); }
+        
+        .loading-state {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            color: var(--color-text-secondary);
+        }
+        
+        @media (max-width: 768px) {
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .prediction-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="analytics-dashboard">
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+            <div>
+                <h1>Enhanced Analytics Dashboard</h1>
+                <p>AI-Powered Performance Insights & Predictions</p>
+            </div>
+            <div class="analytics-controls">
+                <select id="playerSelect" class="position-selector">
+                    <option value="">Select Player</option>
+                    <option value="player1">John Smith (QB)</option>
+                    <option value="player2">Mike Johnson (WR)</option>
+                    <option value="player3">Sarah Davis (DB)</option>
+                    <option value="player4">Chris Wilson (RB)</option>
+                </select>
+                <select id="timeRange" class="position-selector">
+                    <option value="7">Last 7 Days</option>
+                    <option value="30" selected>Last 30 Days</option>
+                    <option value="90">Last 90 Days</option>
+                    <option value="365">Last Year</option>
+                </select>
+                <button id="generateReport" class="btn btn-primary">
+                    <i data-lucide="download"></i>
+                    Export Report
+                </button>
+            </div>
+        </div>
+
+        <!-- Position-Specific Tabs -->
+        <div class="position-tabs">
+            <button class="position-tab active" data-position="all">All Positions</button>
+            <button class="position-tab" data-position="QB">Quarterbacks</button>
+            <button class="position-tab" data-position="WR">Receivers</button>
+            <button class="position-tab" data-position="DB">Defensive Backs</button>
+            <button class="position-tab" data-position="RB">Running Backs</button>
+        </div>
+
+        <!-- ML Predictions Panel -->
+        <div class="prediction-panel">
+            <h2 class="prediction-title">🤖 AI Performance Predictions</h2>
+            <div class="prediction-grid">
+                <div class="prediction-metric">
+                    <div class="metric-value" id="performancePrediction">+12.5%</div>
+                    <div class="metric-label">Expected Improvement</div>
+                    <div class="metric-change">Next 4 weeks</div>
+                </div>
+                <div class="prediction-metric">
+                    <div class="metric-value" id="injuryRisk">18%</div>
+                    <div class="metric-label">Injury Risk</div>
+                    <div class="metric-change">6-week window</div>
+                </div>
+                <div class="prediction-metric">
+                    <div class="metric-value" id="peakPerformance">Jul 15</div>
+                    <div class="metric-label">Peak Performance Date</div>
+                    <div class="metric-change">87% confidence</div>
+                </div>
+                <div class="prediction-metric">
+                    <div class="metric-value" id="readiness">Elite</div>
+                    <div class="metric-label">Competition Readiness</div>
+                    <div class="metric-change">Championship ready</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Grid -->
+        <div class="analytics-grid">
+            <!-- Position-Specific Performance -->
+            <div class="analytics-card" id="positionPerformanceCard">
+                <div class="card-header">
+                    <h3 class="card-title">Position-Specific Analysis</h3>
+                    <button class="btn btn-tertiary btn-sm" id="refreshPosition">
+                        <i data-lucide="refresh-cw"></i>
+                    </button>
+                </div>
+                
+                <div class="skills-matrix" id="skillsMatrix">
+                    <!-- Dynamically populated based on position -->
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="positionChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Performance Prediction Trends -->
+            <div class="analytics-card">
+                <div class="card-header">
+                    <h3 class="card-title">Performance Trends & Predictions</h3>
+                    <div class="card-actions">
+                        <button class="btn btn-tertiary btn-sm" id="predictionSettings">
+                            <i data-lucide="settings"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="metric-grid">
+                    <div class="metric-card">
+                        <span class="metric-value" id="currentLevel">8.2</span>
+                        <div class="metric-label">Current Level</div>
+                        <div class="metric-change positive" id="levelTrend">+0.5 this week</div>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-value" id="potentialRating">9.1</span>
+                        <div class="metric-label">Predicted Peak</div>
+                        <div class="metric-change positive">+10.9% potential</div>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-value" id="confidenceScore">87%</span>
+                        <div class="metric-label">AI Confidence</div>
+                        <div class="metric-change">High accuracy</div>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="predictionChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Training Recommendations -->
+            <div class="analytics-card">
+                <div class="card-header">
+                    <h3 class="card-title">AI Training Recommendations</h3>
+                    <button class="btn btn-primary btn-sm" id="generateTrainingPlan">
+                        Generate Plan
+                    </button>
+                </div>
+                
+                <div class="training-recommendations" id="trainingRecommendations">
+                    <!-- Dynamically populated -->
+                </div>
+            </div>
+
+            <!-- Injury Prevention Analytics -->
+            <div class="analytics-card">
+                <div class="card-header">
+                    <h3 class="card-title">Injury Prevention Insights</h3>
+                    <div class="card-actions">
+                        <span class="badge badge-success" id="riskLevel">Low Risk</span>
+                    </div>
+                </div>
+                
+                <div class="metric-grid">
+                    <div class="metric-card">
+                        <span class="metric-value" id="loadManagement">0.82</span>
+                        <div class="metric-label">ACWR Ratio</div>
+                        <div class="metric-change positive">Optimal zone</div>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-value" id="recoveryScore">85%</span>
+                        <div class="metric-label">Recovery Status</div>
+                        <div class="metric-change positive">Well recovered</div>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-value" id="monotony">1.2</span>
+                        <div class="metric-label">Training Monotony</div>
+                        <div class="metric-change">Varied training</div>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="injuryPreventionChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Modules -->
+    <script type="module">
+        import { mlPredictor } from './src/ml-performance-predictor.js';
+        import { dbTraining } from './src/training-modules/db-training.js';
+        import { qbTraining } from './src/training-modules/qb-training.js';
+        import { logger } from './src/logger.js';
+        import { globalCleanupManager } from './src/event-cleanup-utils.js';
+
+        class EnhancedAnalyticsDashboard {
+            constructor() {
+                this.currentPosition = 'all';
+                this.currentPlayer = null;
+                this.charts = new Map();
+                this.initializeDashboard();
+            }
+
+            async initializeDashboard() {
+                try {
+                    await this.setupEventListeners();
+                    await this.loadInitialData();
+                    await this.initializeCharts();
+                    await this.generatePredictions();
+                    logger.info('Enhanced Analytics Dashboard initialized');
+                } catch (error) {
+                    logger.error('Dashboard initialization failed:', error);
+                    this.showError('Failed to initialize dashboard');
+                }
+            }
+
+            setupEventListeners() {
+                // Position tabs
+                document.querySelectorAll('.position-tab').forEach(tab => {
+                    globalCleanupManager.addEventListener(tab, 'click', (e) => {
+                        this.switchPosition(e.target.dataset.position);
+                    });
+                });
+
+                // Player selection
+                const playerSelect = document.getElementById('playerSelect');
+                globalCleanupManager.addEventListener(playerSelect, 'change', (e) => {
+                    this.selectPlayer(e.target.value);
+                });
+
+                // Generate training plan
+                const generatePlan = document.getElementById('generateTrainingPlan');
+                globalCleanupManager.addEventListener(generatePlan, 'click', () => {
+                    this.generateTrainingPlan();
+                });
+
+                // Refresh position data
+                const refreshBtn = document.getElementById('refreshPosition');
+                globalCleanupManager.addEventListener(refreshBtn, 'click', () => {
+                    this.refreshPositionData();
+                });
+            }
+
+            async switchPosition(position) {
+                this.currentPosition = position;
+                
+                // Update active tab
+                document.querySelectorAll('.position-tab').forEach(tab => {
+                    tab.classList.toggle('active', tab.dataset.position === position);
+                });
+
+                await this.updatePositionAnalysis();
+                await this.updateSkillsMatrix();
+            }
+
+            async updatePositionAnalysis() {
+                const skillsMatrix = document.getElementById('skillsMatrix');
+                
+                let skills = {};
+                if (this.currentPosition === 'QB') {
+                    skills = {
+                        'Accuracy': 0.85,
+                        'Decision Making': 0.78,
+                        'Field Vision': 0.82,
+                        'Pressure Handling': 0.75,
+                        'Leadership': 0.88
+                    };
+                } else if (this.currentPosition === 'DB') {
+                    skills = {
+                        'Flag Pull': 0.72,
+                        'Coverage': 0.68,
+                        '1v1 Defense': 0.81,
+                        'Route Recognition': 0.74,
+                        'Communication': 0.79
+                    };
+                } else if (this.currentPosition === 'WR') {
+                    skills = {
+                        'Route Running': 0.84,
+                        'Hands': 0.88,
+                        'Speed': 0.79,
+                        'Separation': 0.76,
+                        'YAC Ability': 0.82
+                    };
+                } else {
+                    skills = {
+                        'Overall': 0.81,
+                        'Consistency': 0.77,
+                        'Improvement': 0.15,
+                        'Potential': 0.89
+                    };
+                }
+
+                skillsMatrix.innerHTML = '';
+                Object.entries(skills).forEach(([skill, score]) => {
+                    const skillItem = document.createElement('div');
+                    skillItem.className = 'skill-item';
+                    
+                    const scoreClass = score >= 0.8 ? 'score-excellent' : 
+                                     score >= 0.7 ? 'score-good' :
+                                     score >= 0.6 ? 'score-fair' : 'score-poor';
+                    
+                    skillItem.innerHTML = `
+                        <div class="skill-score ${scoreClass}">${Math.round(score * 100)}</div>
+                        <div class="skill-name">${skill}</div>
+                    `;
+                    skillsMatrix.appendChild(skillItem);
+                });
+            }
+
+            async generatePredictions() {
+                try {
+                    const mockPlayerData = {
+                        id: 'player1',
+                        position: this.currentPosition,
+                        stats: {
+                            passing: { short_completions: 45, short_attempts: 50 },
+                            decisions: { correct_reads: 12, total_reads: 15 },
+                            flagPull: { successful_pulls: 8, attempted_pulls: 12 }
+                        }
+                    };
+
+                    // Get ML predictions
+                    const sprintPrediction = await mlPredictor.predictSprintPerformance(mockPlayerData);
+                    const decisionPrediction = await mlPredictor.predictDecisionMaking(mockPlayerData, this.currentPosition);
+
+                    // Update prediction panel
+                    document.getElementById('performancePrediction').textContent = `+${(sprintPrediction.improvement * 100).toFixed(1)}%`;
+                    document.getElementById('injuryRisk').textContent = '18%';
+                    document.getElementById('peakPerformance').textContent = 'Jul 15';
+                    document.getElementById('readiness').textContent = 'Elite';
+
+                } catch (error) {
+                    logger.error('Prediction generation failed:', error);
+                }
+            }
+
+            async generateTrainingPlan() {
+                const mockPlayerData = {
+                    id: this.currentPlayer || 'player1',
+                    position: this.currentPosition,
+                    stats: this.getMockStatsForPosition()
+                };
+
+                let trainingPlan;
+                if (this.currentPosition === 'QB') {
+                    trainingPlan = await qbTraining.generateQBTrainingPlan(mockPlayerData);
+                } else if (this.currentPosition === 'DB') {
+                    trainingPlan = await dbTraining.generateTrainingPlan(mockPlayerData);
+                } else {
+                    trainingPlan = this.generateGenericTrainingPlan(mockPlayerData);
+                }
+
+                this.displayTrainingRecommendations(trainingPlan);
+            }
+
+            displayTrainingRecommendations(plan) {
+                const container = document.getElementById('trainingRecommendations');
+                container.innerHTML = '';
+
+                if (plan.focusAreas) {
+                    plan.focusAreas.forEach((area, index) => {
+                        const item = document.createElement('div');
+                        item.className = 'recommendation-item';
+                        
+                        const priority = index === 0 ? 'high' : index === 1 ? 'medium' : 'low';
+                        item.innerHTML = `
+                            <div class="recommendation-priority priority-${priority}"></div>
+                            <div class="recommendation-content">
+                                <h4>${area.name || area}</h4>
+                                <p>${area.description || 'Focus on fundamental improvements'}</p>
+                                <small>Priority: ${priority.toUpperCase()}</small>
+                            </div>
+                        `;
+                        container.appendChild(item);
+                    });
+                }
+            }
+
+            getMockStatsForPosition() {
+                if (this.currentPosition === 'QB') {
+                    return {
+                        passing: {
+                            short_completions: 45, short_attempts: 50,
+                            medium_completions: 28, medium_attempts: 40,
+                            deep_completions: 8, deep_attempts: 15
+                        },
+                        decisions: {
+                            correct_reads: 25, total_reads: 30,
+                            avg_decision_time: 2.8, turnovers: 2
+                        }
+                    };
+                } else if (this.currentPosition === 'DB') {
+                    return {
+                        flagPull: {
+                            successful_pulls: 18, attempted_pulls: 25,
+                            missed_flags: 3
+                        },
+                        coverage: {
+                            completions_allowed: 8, targets: 15,
+                            blown_coverage: 1
+                        }
+                    };
+                }
+                return {};
+            }
+
+            async initializeCharts() {
+                // Position-specific performance chart
+                this.createPositionChart();
+                
+                // Prediction trends chart
+                this.createPredictionChart();
+                
+                // Injury prevention chart
+                this.createInjuryChart();
+            }
+
+            createPositionChart() {
+                const ctx = document.getElementById('positionChart');
+                if (!ctx) return;
+
+                this.charts.set('position', new Chart(ctx, {
+                    type: 'radar',
+                    data: {
+                        labels: ['Accuracy', 'Speed', 'Decision Making', 'Consistency', 'Potential'],
+                        datasets: [{
+                            label: 'Current Performance',
+                            data: [8.5, 7.8, 8.2, 7.5, 8.8],
+                            borderColor: 'rgb(16, 201, 107)',
+                            backgroundColor: 'rgba(16, 201, 107, 0.2)',
+                            pointBackgroundColor: 'rgb(16, 201, 107)'
+                        }, {
+                            label: 'Predicted Performance',
+                            data: [9.2, 8.4, 8.8, 8.1, 9.1],
+                            borderColor: 'rgb(59, 130, 246)',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            pointBackgroundColor: 'rgb(59, 130, 246)'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            r: {
+                                beginAtZero: true,
+                                max: 10
+                            }
+                        }
+                    }
+                }));
+            }
+
+            createPredictionChart() {
+                const ctx = document.getElementById('predictionChart');
+                if (!ctx) return;
+
+                const dates = [];
+                const currentData = [];
+                const predictedData = [];
+
+                // Generate sample data
+                for (let i = -30; i <= 30; i++) {
+                    dates.push(new Date(Date.now() + i * 24 * 60 * 60 * 1000));
+                    if (i <= 0) {
+                        currentData.push(8.2 + Math.random() * 0.4 - 0.2);
+                        predictedData.push(null);
+                    } else {
+                        currentData.push(null);
+                        predictedData.push(8.2 + (i / 30) * 0.9 + Math.random() * 0.2 - 0.1);
+                    }
+                }
+
+                this.charts.set('prediction', new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: dates,
+                        datasets: [{
+                            label: 'Historical Performance',
+                            data: currentData,
+                            borderColor: 'rgb(16, 201, 107)',
+                            backgroundColor: 'rgba(16, 201, 107, 0.1)',
+                            tension: 0.4
+                        }, {
+                            label: 'AI Prediction',
+                            data: predictedData,
+                            borderColor: 'rgb(59, 130, 246)',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            borderDash: [5, 5],
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                type: 'time',
+                                time: {
+                                    unit: 'day'
+                                }
+                            },
+                            y: {
+                                beginAtZero: false,
+                                min: 6,
+                                max: 10
+                            }
+                        }
+                    }
+                }));
+            }
+
+            createInjuryChart() {
+                const ctx = document.getElementById('injuryPreventionChart');
+                if (!ctx) return;
+
+                this.charts.set('injury', new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Current'],
+                        datasets: [{
+                            label: 'ACWR Ratio',
+                            data: [0.95, 0.88, 0.82, 0.79, 0.82],
+                            borderColor: 'rgb(249, 115, 22)',
+                            backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                            tension: 0.4
+                        }, {
+                            label: 'Optimal Zone',
+                            data: [0.8, 0.8, 0.8, 0.8, 0.8],
+                            borderColor: 'rgb(34, 197, 94)',
+                            borderDash: [5, 5],
+                            pointRadius: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                min: 0.5,
+                                max: 1.2
+                            }
+                        }
+                    }
+                }));
+            }
+        }
+
+        // Initialize the dashboard when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            new EnhancedAnalyticsDashboard();
+        });
+
+        // Create Lucide icons
+        setTimeout(() => {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }, 100);
+    </script>
+</body>
+</html>
