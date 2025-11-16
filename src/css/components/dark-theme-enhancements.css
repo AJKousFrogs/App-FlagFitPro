@@ -1,0 +1,433 @@
+/**
+ * Dark Theme Enhancements
+ * Comprehensive dark theme improvements for better consistency and accessibility
+ */
+
+/* ================================================================
+   ENHANCED SIDEBAR NAVIGATION - DARK THEME
+   ================================================================ */
+
+[data-theme="dark"] .sidebar {
+  background: var(--surface-secondary);
+  border-right: 1px solid var(--color-border-primary);
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .nav-item {
+  color: var(--icon-color-secondary);
+  background: transparent;
+  border: 1px solid transparent;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="dark"] .nav-item:hover {
+  background: var(--color-brand-primary-alpha-10);
+  color: var(--icon-color-primary);
+  border-color: var(--color-brand-primary-alpha-20);
+  transform: translateX(4px);
+  box-shadow: 0 2px 8px rgba(16, 201, 107, 0.15);
+}
+
+[data-theme="dark"] .nav-item.active {
+  background: var(--color-brand-primary);
+  color: #ffffff;
+  border-color: var(--color-brand-primary);
+  box-shadow: 
+    0 4px 12px rgba(16, 201, 107, 0.3),
+    0 2px 6px rgba(16, 201, 107, 0.2);
+}
+
+[data-theme="dark"] .nav-item.active::before {
+  height: 100%;
+  background: #ffffff;
+}
+
+[data-theme="dark"] .nav-item-icon {
+  color: inherit;
+}
+
+[data-theme="dark"] .nav-item-icon [data-lucide],
+[data-theme="dark"] .nav-item-icon svg {
+  color: inherit;
+  stroke: currentColor;
+}
+
+[data-theme="dark"] .nav-item.active .nav-item-icon {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .nav-item-label {
+  color: inherit;
+  font-weight: 500;
+}
+
+[data-theme="dark"] .nav-item.active .nav-item-label {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* ================================================================
+   ENHANCED HEADER ELEMENTS - DARK THEME
+   ================================================================ */
+
+[data-theme="dark"] .top-bar {
+  background: var(--surface-elevated);
+  border-bottom: 1px solid var(--color-border-primary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .header-icon {
+  color: var(--icon-color-primary);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  padding: 8px;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+[data-theme="dark"] .header-icon:hover {
+  background: var(--color-border-primary);
+  border-color: var(--color-border-strong);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="dark"] .header-icon:active {
+  transform: translateY(0);
+  background: var(--color-border-strong);
+}
+
+[data-theme="dark"] .header-icon [data-lucide],
+[data-theme="dark"] .header-icon svg {
+  color: var(--icon-color-primary);
+  stroke: currentColor;
+}
+
+/* ================================================================
+   SEARCH BAR ENHANCEMENTS - DARK THEME
+   ================================================================ */
+
+[data-theme="dark"] .search-box {
+  background: var(--surface-tertiary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: 8px;
+}
+
+[data-theme="dark"] .search-input {
+  background: transparent;
+  color: var(--color-text-primary);
+  border: none;
+}
+
+[data-theme="dark"] .search-input::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+[data-theme="dark"] .search-input:focus {
+  box-shadow: 0 0 0 2px var(--color-brand-primary-alpha-20);
+}
+
+[data-theme="dark"] .search-icon {
+  color: var(--icon-color-tertiary);
+}
+
+/* ================================================================
+   USER MENU ENHANCEMENTS - DARK THEME
+   ================================================================ */
+
+[data-theme="dark"] .user-menu {
+  background: var(--surface-tertiary);
+  border: 1px solid var(--color-border-primary);
+  color: var(--color-text-primary);
+  transition: all 0.2s ease;
+}
+
+[data-theme="dark"] .user-menu:hover {
+  background: var(--surface-quaternary);
+  border-color: var(--color-border-strong);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="dark"] .user-avatar {
+  background: var(--color-brand-primary);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* ================================================================
+   NOTIFICATION ENHANCEMENTS - DARK THEME
+   ================================================================ */
+
+[data-theme="dark"] .notification-badge {
+  background: var(--status-error-500);
+  color: #ffffff;
+  box-shadow: 0 0 0 2px var(--surface-elevated);
+}
+
+[data-theme="dark"] .notification-panel {
+  background: var(--surface-elevated);
+  border: 1px solid var(--color-border-primary);
+  box-shadow: 
+    0 20px 25px -5px rgba(0, 0, 0, 0.4),
+    0 10px 10px -5px rgba(0, 0, 0, 0.2);
+}
+
+/* ================================================================
+   DATE PICKER ENHANCEMENTS - DARK THEME
+   ================================================================ */
+
+[data-theme="dark"] .date-picker-input {
+  background: var(--surface-tertiary);
+  border: 1px solid var(--color-border-primary);
+  color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .date-picker-input:focus {
+  border-color: var(--color-brand-primary);
+  box-shadow: 0 0 0 2px var(--color-brand-primary-alpha-20);
+}
+
+[data-theme="dark"] .date-nav-btn {
+  background: var(--surface-tertiary);
+  border: 1px solid var(--color-border-primary);
+  color: var(--icon-color-primary);
+}
+
+[data-theme="dark"] .date-nav-btn:hover {
+  background: var(--surface-quaternary);
+  border-color: var(--color-brand-primary);
+}
+
+/* ================================================================
+   CONTENT CARDS ENHANCEMENTS - DARK THEME
+   ================================================================ */
+
+[data-theme="dark"] .card,
+[data-theme="dark"] .stat-card,
+[data-theme="dark"] .dashboard-card {
+  background: var(--surface-elevated);
+  border: 1px solid var(--color-border-primary);
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.3),
+    0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="dark"] .card:hover,
+[data-theme="dark"] .stat-card:hover,
+[data-theme="dark"] .dashboard-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 10px 15px -3px rgba(0, 0, 0, 0.4),
+    0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  border-color: var(--color-border-strong);
+}
+
+/* ================================================================
+   FORM ELEMENTS ENHANCEMENTS - DARK THEME
+   ================================================================ */
+
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea,
+[data-theme="dark"] .form-control {
+  background: var(--surface-tertiary);
+  border: 1px solid var(--color-border-primary);
+  color: var(--color-text-primary);
+  transition: all 0.2s ease;
+}
+
+[data-theme="dark"] input:focus,
+[data-theme="dark"] select:focus,
+[data-theme="dark"] textarea:focus,
+[data-theme="dark"] .form-control:focus {
+  background: var(--surface-quaternary);
+  border-color: var(--color-brand-primary);
+  box-shadow: 
+    0 0 0 2px var(--color-brand-primary-alpha-20),
+    0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+/* ================================================================
+   WELLNESS SLIDERS ENHANCEMENTS - DARK THEME
+   ================================================================ */
+
+[data-theme="dark"] .wellness-slider {
+  background: var(--surface-tertiary);
+  border-radius: 12px;
+  height: 8px;
+}
+
+[data-theme="dark"] .wellness-slider::-webkit-slider-track {
+  background: var(--surface-tertiary);
+  border-radius: 12px;
+}
+
+[data-theme="dark"] .wellness-slider::-webkit-slider-thumb {
+  background: var(--color-brand-primary);
+  border: 2px solid var(--surface-elevated);
+  box-shadow: 
+    0 2px 6px rgba(16, 201, 107, 0.3),
+    0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="dark"] .wellness-slider::-moz-range-track {
+  background: var(--surface-tertiary);
+  border-radius: 12px;
+}
+
+[data-theme="dark"] .wellness-slider::-moz-range-thumb {
+  background: var(--color-brand-primary);
+  border: 2px solid var(--surface-elevated);
+  box-shadow: 
+    0 2px 6px rgba(16, 201, 107, 0.3),
+    0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* ================================================================
+   SUPPLEMENT TOGGLES ENHANCEMENTS - DARK THEME
+   ================================================================ */
+
+[data-theme="dark"] .supplement-item {
+  background: var(--surface-elevated);
+  border: 1px solid var(--color-border-primary);
+  transition: all 0.2s ease;
+}
+
+[data-theme="dark"] .supplement-item:hover {
+  background: var(--surface-tertiary);
+  border-color: var(--color-border-strong);
+}
+
+[data-theme="dark"] .supplement-toggle {
+  background: var(--surface-tertiary);
+  border: 1px solid var(--color-border-primary);
+}
+
+[data-theme="dark"] .supplement-toggle:checked {
+  background: var(--color-brand-primary);
+  border-color: var(--color-brand-primary);
+  box-shadow: 0 0 0 2px var(--color-brand-primary-alpha-20);
+}
+
+[data-theme="dark"] .supplement-toggle:checked::after {
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* ================================================================
+   BUTTONS ENHANCEMENTS - DARK THEME
+   ================================================================ */
+
+[data-theme="dark"] .btn-primary {
+  background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-primary-hover) 100%);
+  color: #ffffff;
+  border: 1px solid var(--color-brand-primary);
+  box-shadow: 
+    0 4px 6px rgba(16, 201, 107, 0.2),
+    0 1px 3px rgba(16, 201, 107, 0.1);
+}
+
+[data-theme="dark"] .btn-primary:hover {
+  background: linear-gradient(135deg, var(--color-brand-primary-hover) 0%, var(--color-brand-primary-active) 100%);
+  transform: translateY(-1px);
+  box-shadow: 
+    0 6px 12px rgba(16, 201, 107, 0.3),
+    0 2px 6px rgba(16, 201, 107, 0.2);
+}
+
+[data-theme="dark"] .btn-secondary {
+  background: var(--surface-tertiary);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border-strong);
+}
+
+[data-theme="dark"] .btn-secondary:hover {
+  background: var(--surface-quaternary);
+  border-color: var(--color-brand-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* ================================================================
+   TABLE ENHANCEMENTS - DARK THEME
+   ================================================================ */
+
+[data-theme="dark"] table {
+  background: var(--surface-elevated);
+  border: 1px solid var(--color-border-primary);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+[data-theme="dark"] th {
+  background: var(--surface-tertiary);
+  color: var(--color-text-primary);
+  border-bottom: 1px solid var(--color-border-primary);
+  font-weight: 600;
+}
+
+[data-theme="dark"] td {
+  background: var(--surface-elevated);
+  color: var(--color-text-secondary);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+[data-theme="dark"] tr:hover td {
+  background: var(--surface-tertiary);
+  color: var(--color-text-primary);
+}
+
+/* ================================================================
+   SCROLLBAR ENHANCEMENTS - DARK THEME
+   ================================================================ */
+
+[data-theme="dark"] ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: var(--surface-secondary);
+  border-radius: 4px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: var(--color-brand-primary);
+}
+
+/* ================================================================
+   MOBILE MENU ENHANCEMENTS - DARK THEME
+   ================================================================ */
+
+[data-theme="dark"] .mobile-menu-toggle {
+  background: var(--surface-tertiary);
+  border: 1px solid var(--color-border-primary);
+  color: var(--icon-color-primary);
+}
+
+[data-theme="dark"] .mobile-menu-toggle:hover {
+  background: var(--surface-quaternary);
+  border-color: var(--color-brand-primary);
+}
+
+[data-theme="dark"] .mobile-menu-overlay {
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
+}

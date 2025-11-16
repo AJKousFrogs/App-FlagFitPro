@@ -1,35 +1,281 @@
 /* ================================================================
    LIGHT THEME - FlagFit Pro
+   Comprehensive light theme with proper contrast and accessibility
    ================================================================ */
 
 /* Manual theme switching via data-theme attribute */
 [data-theme="light"],
 html[data-theme="light"] {
+  /* Surface Colors - Clean and professional */
   --surface-primary: #ffffff;
-  --surface-secondary: #f8f9fa;
-  --surface-tertiary: #e9ecef;
-  --color-text-primary: #1a1a1a;
-  --color-text-secondary: #404040;
-  --color-text-tertiary: #6b6b6b;
-  --color-border-strong: #cccccc;
-  --color-border-medium: #e0e0e0;
+  --surface-secondary: #f8fafc;
+  --surface-tertiary: #f1f5f9;
+  --surface-quaternary: #e2e8f0;
+  --surface-elevated: #ffffff;
+  --surface-inverse: #0f0f14;
+  
+  /* Text Colors - High contrast for accessibility */
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #334155;
+  --color-text-tertiary: #64748b;
+  --color-text-disabled: #cbd5e1;
+  --color-text-inverse: #ffffff;
+  --color-text-on-surface: var(--color-text-primary);
+  
+  /* Icon Colors - Clear hierarchy */
+  --icon-color-primary: #0f172a;
+  --icon-color-secondary: #334155;
+  --icon-color-tertiary: #64748b;
+  --icon-color-disabled: #cbd5e1;
+  --icon-color-on-primary: #ffffff;
+  --icon-color-brand: var(--color-brand-primary);
+  
+  /* Border Colors - Subtle but defined */
+  --color-border-primary: #e2e8f0;
+  --color-border-secondary: #f1f5f9;
+  --color-border-subtle: #f8fafc;
+  --color-border-strong: #cbd5e1;
+  --color-border-focus: var(--color-brand-primary);
+  
+  /* Brand Colors - Optimized for light backgrounds */
+  --color-brand-primary: #10c96b;
+  --color-brand-primary-hover: #0ea55a;
+  --color-brand-primary-active: #0d8f4f;
+  --color-brand-primary-alpha-10: rgba(16, 201, 107, 0.1);
+  --color-brand-primary-alpha-20: rgba(16, 201, 107, 0.2);
+  
+  /* Chart Colors */
   --chart-bar-fill: var(--color-brand-primary);
-  --chart-bar-bg: #e9ecef;
+  --chart-bar-bg: var(--surface-tertiary);
+  
+  /* Status Colors */
+  --status-success-600: #16a34a;
+  --status-warning-500: #f59e0b;
+  --status-error-500: #dc2626;
+  --status-info-500: #2563eb;
 }
 
 /* Class-based theme switching */
 .light,
 html.light {
+  /* Surface Colors - Clean and professional */
   --surface-primary: #ffffff;
-  --surface-secondary: #f8f9fa;
-  --surface-tertiary: #e9ecef;
-  --color-text-primary: #1a1a1a;
-  --color-text-secondary: #404040;
-  --color-text-tertiary: #6b6b6b;
-  --color-border-strong: #cccccc;
-  --color-border-medium: #e0e0e0;
+  --surface-secondary: #f8fafc;
+  --surface-tertiary: #f1f5f9;
+  --surface-quaternary: #e2e8f0;
+  --surface-elevated: #ffffff;
+  --surface-inverse: #0f0f14;
+  
+  /* Text Colors - High contrast for accessibility */
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #334155;
+  --color-text-tertiary: #64748b;
+  --color-text-disabled: #cbd5e1;
+  --color-text-inverse: #ffffff;
+  --color-text-on-surface: var(--color-text-primary);
+  
+  /* Icon Colors - Clear hierarchy */
+  --icon-color-primary: #0f172a;
+  --icon-color-secondary: #334155;
+  --icon-color-tertiary: #64748b;
+  --icon-color-disabled: #cbd5e1;
+  --icon-color-on-primary: #ffffff;
+  --icon-color-brand: var(--color-brand-primary);
+  
+  /* Border Colors - Subtle but defined */
+  --color-border-primary: #e2e8f0;
+  --color-border-secondary: #f1f5f9;
+  --color-border-subtle: #f8fafc;
+  --color-border-strong: #cbd5e1;
+  --color-border-focus: var(--color-brand-primary);
+  
+  /* Brand Colors - Optimized for light backgrounds */
+  --color-brand-primary: #10c96b;
+  --color-brand-primary-hover: #0ea55a;
+  --color-brand-primary-active: #0d8f4f;
+  --color-brand-primary-alpha-10: rgba(16, 201, 107, 0.1);
+  --color-brand-primary-alpha-20: rgba(16, 201, 107, 0.2);
+  
+  /* Chart Colors */
   --chart-bar-fill: var(--color-brand-primary);
-  --chart-bar-bg: #e9ecef;
+  --chart-bar-bg: var(--surface-tertiary);
+  
+  /* Status Colors */
+  --status-success-600: #16a34a;
+  --status-warning-500: #f59e0b;
+  --status-error-500: #dc2626;
+  --status-info-500: #2563eb;
+}
+
+/* ================================================================
+   LIGHT THEME COMPONENT OVERRIDES
+   ================================================================ */
+
+/* Body and main layout */
+[data-theme="light"] body,
+html[data-theme="light"] body {
+  background-color: var(--surface-primary);
+  color: var(--color-text-primary);
+}
+
+/* Sidebar styling */
+[data-theme="light"] .sidebar {
+  background: var(--surface-secondary);
+  border-right: 1px solid var(--color-border-primary);
+}
+
+[data-theme="light"] .nav-item {
+  color: var(--color-text-secondary);
+  border-radius: 8px;
+  margin: 2px 8px;
+}
+
+[data-theme="light"] .nav-item:hover {
+  background: var(--color-brand-primary-alpha-10);
+  color: var(--color-text-primary);
+}
+
+[data-theme="light"] .nav-item.active {
+  background: var(--color-brand-primary);
+  color: #ffffff;
+}
+
+[data-theme="light"] .nav-item.active .nav-item-icon {
+  color: #ffffff;
+}
+
+/* Top bar and header */
+[data-theme="light"] .top-bar {
+  background: var(--surface-elevated);
+  border-bottom: 1px solid var(--color-border-primary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .header-icon {
+  color: var(--icon-color-primary);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+[data-theme="light"] .header-icon:hover {
+  background: var(--surface-secondary);
+  border-color: var(--color-border-primary);
+}
+
+/* Cards and containers */
+[data-theme="light"] .card,
+[data-theme="light"] .stat-card {
+  background: var(--surface-elevated);
+  border: 1px solid var(--color-border-primary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Form elements */
+[data-theme="light"] input,
+[data-theme="light"] select,
+[data-theme="light"] textarea {
+  background: var(--surface-primary);
+  border: 1px solid var(--color-border-primary);
+  color: var(--color-text-primary);
+}
+
+[data-theme="light"] input:focus,
+[data-theme="light"] select:focus,
+[data-theme="light"] textarea:focus {
+  border-color: var(--color-brand-primary);
+  box-shadow: 0 0 0 3px var(--color-brand-primary-alpha-20);
+}
+
+/* Buttons */
+[data-theme="light"] .btn-secondary {
+  background: var(--surface-elevated);
+  border: 1px solid var(--color-border-strong);
+  color: var(--color-text-primary);
+}
+
+[data-theme="light"] .btn-secondary:hover {
+  background: var(--surface-secondary);
+  border-color: var(--color-border-strong);
+}
+
+/* Icons - Ensure proper contrast */
+[data-theme="light"] .icon,
+[data-theme="light"] [data-lucide],
+[data-theme="light"] svg {
+  color: var(--icon-color-primary);
+}
+
+[data-theme="light"] .nav-item-icon [data-lucide],
+[data-theme="light"] .nav-item-icon svg {
+  color: inherit;
+}
+
+/* Tables */
+[data-theme="light"] table {
+  background: var(--surface-elevated);
+  border: 1px solid var(--color-border-primary);
+}
+
+[data-theme="light"] th {
+  background: var(--surface-secondary);
+  border-bottom: 1px solid var(--color-border-primary);
+  color: var(--color-text-primary);
+}
+
+[data-theme="light"] td {
+  border-bottom: 1px solid var(--color-border-subtle);
+  color: var(--color-text-secondary);
+}
+
+/* Theme toggle button */
+[data-theme="light"] .theme-toggle-container {
+  background: var(--surface-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: 6px;
+  padding: 4px;
+}
+
+/* Notification panel */
+[data-theme="light"] .notification-panel {
+  background: var(--surface-elevated);
+  border: 1px solid var(--color-border-primary);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+/* Charts and data visualization */
+[data-theme="light"] .chart-container {
+  background: var(--surface-elevated);
+  border: 1px solid var(--color-border-primary);
+}
+
+[data-theme="light"] .chart-legend {
+  color: var(--color-text-secondary);
+}
+
+/* Mobile menu overlay */
+[data-theme="light"] .mobile-menu-overlay {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* Scrollbars for light theme */
+[data-theme="light"] ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+[data-theme="light"] ::-webkit-scrollbar-track {
+  background: var(--surface-secondary);
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: 4px;
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+  background: var(--color-border-primary);
 }
 
 /* System preference (only if no manual theme is set) */

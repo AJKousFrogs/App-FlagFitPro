@@ -244,15 +244,18 @@
 
             <!-- Theme Toggle -->
             <div class="theme-toggle-container" aria-label="Theme toggle">
-              <!-- JS inserts switch; fallback below -->
-              <button
-                class="theme-toggle-fallback"
-                type="button"
-                data-theme-toggle
-                hidden
-              >
-                Theme
-              </button>
+              <label class="theme-toggle-label" for="theme-toggle" title="Toggle Dark/Light Mode">
+                <input 
+                  type="checkbox" 
+                  id="theme-toggle" 
+                  class="theme-toggle-input"
+                  checked
+                >
+                <span class="theme-toggle-slider">
+                  <span class="theme-toggle-dot"></span>
+                </span>
+                <span class="theme-toggle-text">Dark</span>
+              </label>
             </div>
 
             <!-- User Menu -->
