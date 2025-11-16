@@ -5,31 +5,83 @@
 /* Manual theme switching via data-theme attribute */
 [data-theme="dark"],
 html[data-theme="dark"] {
-  --surface-primary: #181820;
-  --surface-secondary: #232336;
-  --surface-tertiary: #2c2c47;
-  --color-text-primary: #f8f8f8;
-  --color-text-secondary: #cccccc;
-  --color-text-tertiary: #888888;
-  --color-border-strong: #50506b;
-  --color-border-medium: #2c2c47;
+  /* Surface Colors - Dark Mode (Design System Compliant) */
+  --surface-primary: var(--primitive-neutral-900);
+  --surface-secondary: var(--primitive-neutral-800);
+  --surface-tertiary: var(--primitive-neutral-700);
+  --surface-inverse: var(--primitive-neutral-50);
+
+  /* Text Colors - Dark Mode (Design System Compliant) */
+  --color-text-primary: var(--primitive-neutral-100);
+  --color-text-secondary: var(--primitive-neutral-300);
+  --color-text-tertiary: var(--primitive-neutral-500);
+  --color-text-disabled: var(--primitive-neutral-700);
+  --color-text-inverse: var(--primitive-neutral-900);
+  --color-text-on-surface: var(--primitive-neutral-100);
+
+  /* Icon Colors - Dark Mode (WCAG AA Compliant) */
+  --icon-color-primary: var(--primitive-neutral-100);
+  --icon-color-secondary: var(--primitive-neutral-100);
+  --icon-color-tertiary: var(--primitive-neutral-100);
+  --icon-color-disabled: var(--primitive-neutral-700);
+  --icon-color-on-primary: var(--color-text-on-primary);
+
+  /* Border Colors - Dark Mode (Design System Compliant) */
+  --color-border-primary: var(--primitive-neutral-700);
+  --color-border-secondary: var(--primitive-neutral-800);
+  --color-border-subtle: var(--primitive-neutral-900);
+  --color-border-strong: var(--primitive-neutral-500);
+  --color-border-medium: var(--primitive-neutral-700);
+
+  /* Brand Colors - Dark Mode */
+  --color-brand-primary: var(--primitive-primary-600);
+  --color-brand-primary-hover: var(--primitive-primary-500);
+  --color-brand-primary-active: var(--primitive-primary-400);
+
+  /* Chart Colors - Dark Mode */
   --chart-bar-fill: var(--color-brand-primary);
-  --chart-bar-bg: #232336;
+  --chart-bar-bg: var(--primitive-neutral-800);
 }
 
 /* Class-based theme switching */
 .dark,
 html.dark {
-  --surface-primary: #181820;
-  --surface-secondary: #232336;
-  --surface-tertiary: #2c2c47;
-  --color-text-primary: #f8f8f8;
-  --color-text-secondary: #cccccc;
-  --color-text-tertiary: #888888;
-  --color-border-strong: #50506b;
-  --color-border-medium: #2c2c47;
+  /* Surface Colors - Dark Mode (Design System Compliant) */
+  --surface-primary: var(--primitive-neutral-900);
+  --surface-secondary: var(--primitive-neutral-800);
+  --surface-tertiary: var(--primitive-neutral-700);
+  --surface-inverse: var(--primitive-neutral-50);
+
+  /* Text Colors - Dark Mode (Design System Compliant) */
+  --color-text-primary: var(--primitive-neutral-100);
+  --color-text-secondary: var(--primitive-neutral-300);
+  --color-text-tertiary: var(--primitive-neutral-500);
+  --color-text-disabled: var(--primitive-neutral-700);
+  --color-text-inverse: var(--primitive-neutral-900);
+  --color-text-on-surface: var(--primitive-neutral-100);
+
+  /* Icon Colors - Dark Mode (WCAG AA Compliant) */
+  --icon-color-primary: var(--primitive-neutral-100);
+  --icon-color-secondary: var(--primitive-neutral-100);
+  --icon-color-tertiary: var(--primitive-neutral-100);
+  --icon-color-disabled: var(--primitive-neutral-700);
+  --icon-color-on-primary: var(--color-text-on-primary);
+
+  /* Border Colors - Dark Mode (Design System Compliant) */
+  --color-border-primary: var(--primitive-neutral-700);
+  --color-border-secondary: var(--primitive-neutral-800);
+  --color-border-subtle: var(--primitive-neutral-900);
+  --color-border-strong: var(--primitive-neutral-500);
+  --color-border-medium: var(--primitive-neutral-700);
+
+  /* Brand Colors - Dark Mode */
+  --color-brand-primary: var(--primitive-primary-600);
+  --color-brand-primary-hover: var(--primitive-primary-500);
+  --color-brand-primary-active: var(--primitive-primary-400);
+
+  /* Chart Colors - Dark Mode */
   --chart-bar-fill: var(--color-brand-primary);
-  --chart-bar-bg: #232336;
+  --chart-bar-bg: var(--primitive-neutral-800);
 }
 
 /* System preference (only if no manual theme is set) */

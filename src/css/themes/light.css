@@ -5,45 +5,123 @@
 /* Manual theme switching via data-theme attribute */
 [data-theme="light"],
 html[data-theme="light"] {
+  /* Surface Colors - Light Mode (Design System Compliant) */
   --surface-primary: #ffffff;
-  --surface-secondary: #f8f9fa;
-  --surface-tertiary: #e9ecef;
-  --color-text-primary: #1a1a1a;
-  --color-text-secondary: #404040;
-  --color-text-tertiary: #6b6b6b;
-  --color-border-strong: #cccccc;
-  --color-border-medium: #e0e0e0;
+  --surface-secondary: var(--primitive-neutral-50);
+  --surface-tertiary: var(--primitive-neutral-100);
+  --surface-inverse: var(--primitive-neutral-900);
+
+  /* Text Colors - Light Mode (Design System Compliant) */
+  --color-text-primary: var(--primitive-neutral-900);
+  --color-text-secondary: var(--primitive-neutral-700);
+  --color-text-tertiary: var(--primitive-neutral-600);
+  --color-text-disabled: var(--primitive-neutral-400);
+  --color-text-inverse: var(--primitive-neutral-50);
+  --color-text-on-surface: var(--primitive-neutral-900);
+
+  /* Icon Colors - Light Mode (WCAG AA Compliant) */
+  --icon-color-primary: var(--primitive-neutral-900);
+  --icon-color-secondary: var(--primitive-neutral-700);
+  --icon-color-tertiary: var(--primitive-neutral-600);
+  --icon-color-disabled: var(--primitive-neutral-400);
+  --icon-color-on-primary: #ffffff;
+
+  /* Border Colors - Light Mode (Design System Compliant) */
+  --color-border-primary: var(--primitive-neutral-300);
+  --color-border-secondary: var(--primitive-neutral-200);
+  --color-border-subtle: var(--primitive-neutral-100);
+  --color-border-strong: var(--primitive-neutral-400);
+  --color-border-medium: var(--primitive-neutral-300);
+
+  /* Brand Colors - Light Mode */
+  --color-brand-primary: var(--primitive-primary-700);
+  --color-brand-primary-hover: var(--primitive-primary-800);
+  --color-brand-primary-active: var(--primitive-primary-900);
+
+  /* Chart Colors - Light Mode */
   --chart-bar-fill: var(--color-brand-primary);
-  --chart-bar-bg: #e9ecef;
+  --chart-bar-bg: var(--primitive-neutral-100);
 }
 
 /* Class-based theme switching */
 .light,
 html.light {
+  /* Surface Colors - Light Mode (Design System Compliant) */
   --surface-primary: #ffffff;
-  --surface-secondary: #f8f9fa;
-  --surface-tertiary: #e9ecef;
-  --color-text-primary: #1a1a1a;
-  --color-text-secondary: #404040;
-  --color-text-tertiary: #6b6b6b;
-  --color-border-strong: #cccccc;
-  --color-border-medium: #e0e0e0;
+  --surface-secondary: var(--primitive-neutral-50);
+  --surface-tertiary: var(--primitive-neutral-100);
+  --surface-inverse: var(--primitive-neutral-900);
+
+  /* Text Colors - Light Mode (Design System Compliant) */
+  --color-text-primary: var(--primitive-neutral-900);
+  --color-text-secondary: var(--primitive-neutral-700);
+  --color-text-tertiary: var(--primitive-neutral-600);
+  --color-text-disabled: var(--primitive-neutral-400);
+  --color-text-inverse: var(--primitive-neutral-50);
+  --color-text-on-surface: var(--primitive-neutral-900);
+
+  /* Icon Colors - Light Mode (WCAG AA Compliant) */
+  --icon-color-primary: var(--primitive-neutral-900);
+  --icon-color-secondary: var(--primitive-neutral-700);
+  --icon-color-tertiary: var(--primitive-neutral-600);
+  --icon-color-disabled: var(--primitive-neutral-400);
+  --icon-color-on-primary: #ffffff;
+
+  /* Border Colors - Light Mode (Design System Compliant) */
+  --color-border-primary: var(--primitive-neutral-300);
+  --color-border-secondary: var(--primitive-neutral-200);
+  --color-border-subtle: var(--primitive-neutral-100);
+  --color-border-strong: var(--primitive-neutral-400);
+  --color-border-medium: var(--primitive-neutral-300);
+
+  /* Brand Colors - Light Mode */
+  --color-brand-primary: var(--primitive-primary-700);
+  --color-brand-primary-hover: var(--primitive-primary-800);
+  --color-brand-primary-active: var(--primitive-primary-900);
+
+  /* Chart Colors - Light Mode */
   --chart-bar-fill: var(--color-brand-primary);
-  --chart-bar-bg: #e9ecef;
+  --chart-bar-bg: var(--primitive-neutral-100);
 }
 
 /* System preference (only if no manual theme is set) */
 @media (prefers-color-scheme: light) {
   :root:not([data-theme]):not(.dark) {
+    /* Surface Colors - Light Mode (Design System Compliant) */
     --surface-primary: #ffffff;
-    --surface-secondary: #f8f9fa;
-    --surface-tertiary: #e9ecef;
-    --color-text-primary: #1a1a1a;
-    --color-text-secondary: #404040;
-    --color-text-tertiary: #6b6b6b;
-    --color-border-strong: #cccccc;
-    --color-border-medium: #e0e0e0;
+    --surface-secondary: var(--primitive-neutral-50);
+    --surface-tertiary: var(--primitive-neutral-100);
+    --surface-inverse: var(--primitive-neutral-900);
+
+    /* Text Colors - Light Mode (Design System Compliant) */
+    --color-text-primary: var(--primitive-neutral-900);
+    --color-text-secondary: var(--primitive-neutral-700);
+    --color-text-tertiary: var(--primitive-neutral-600);
+    --color-text-disabled: var(--primitive-neutral-400);
+    --color-text-inverse: var(--primitive-neutral-50);
+    --color-text-on-surface: var(--primitive-neutral-900);
+
+    /* Icon Colors - Light Mode (WCAG AA Compliant) */
+    --icon-color-primary: var(--primitive-neutral-900);
+    --icon-color-secondary: var(--primitive-neutral-700);
+    --icon-color-tertiary: var(--primitive-neutral-600);
+    --icon-color-disabled: var(--primitive-neutral-400);
+    --icon-color-on-primary: #ffffff;
+
+    /* Border Colors - Light Mode (Design System Compliant) */
+    --color-border-primary: var(--primitive-neutral-300);
+    --color-border-secondary: var(--primitive-neutral-200);
+    --color-border-subtle: var(--primitive-neutral-100);
+    --color-border-strong: var(--primitive-neutral-400);
+    --color-border-medium: var(--primitive-neutral-300);
+
+    /* Brand Colors - Light Mode */
+    --color-brand-primary: var(--primitive-primary-700);
+    --color-brand-primary-hover: var(--primitive-primary-800);
+    --color-brand-primary-active: var(--primitive-primary-900);
+
+    /* Chart Colors - Light Mode */
     --chart-bar-fill: var(--color-brand-primary);
-    --chart-bar-bg: #e9ecef;
+    --chart-bar-bg: var(--primitive-neutral-100);
   }
 }
