@@ -87,9 +87,9 @@
    ================================================================ */
 
 .theme-toggle-input:checked + .theme-toggle-slider {
-  background: linear-gradient(135deg, #10c96b 0%, #0ea55a 100%);
-  border-color: #10c96b;
-  box-shadow: 
+  background: var(--gradient-primary);
+  border-color: var(--color-primary);
+  box-shadow:
     0 0 0 2px rgba(16, 201, 107, 0.2),
     0 2px 8px rgba(16, 201, 107, 0.3);
 }

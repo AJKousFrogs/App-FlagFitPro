@@ -77,7 +77,7 @@ html[data-theme="light"] {
   transform: translateY(-50%);
   width: 3px;
   height: 0;
-  background: linear-gradient(180deg, #10c96b, #0ab85a);
+  background: var(--gradient-primary);
   border-radius: 0 2px 2px 0;
   transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -168,7 +168,7 @@ html[data-theme="light"] .sidebar-icon:hover {
 
 /* Training Hub Card */
 .training-hub-card {
-  background: linear-gradient(135deg, #10c96b 0%, #0ab85a 100%);
+  background: var(--gradient-primary);
   color: white;
   border-radius: 16px;
   padding: 24px;
@@ -327,16 +327,12 @@ html[data-theme="light"] .sidebar-icon:hover {
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, #10c96b 0%, #0ab85a 100%);
+  background: var(--gradient-primary);
 }
 
 body[data-theme="dark"] .hero-card,
 html[data-theme="dark"] .hero-card {
-  background: linear-gradient(
-    135deg,
-    rgba(16, 201, 107, 0.15) 0%,
-    rgba(10, 184, 90, 0.08) 100%
-  );
+  background: var(--gradient-dark-card);
   border-color: rgba(16, 201, 107, 0.3);
 }
 
@@ -718,8 +714,8 @@ html[data-theme="light"] .header-icon:hover {
 }
 
 .theme-toggle-input:checked + .theme-toggle-slider {
-  background: linear-gradient(135deg, #10c96b 0%, #0ab85a 100%);
-  border-color: #10c96b;
+  background: var(--gradient-primary);
+  border-color: var(--color-primary);
   box-shadow:
     0 4px 12px rgba(16, 201, 107, 0.35),
     0 2px 6px rgba(16, 201, 107, 0.25),
@@ -1035,7 +1031,7 @@ html[data-theme="light"] .chart-card:hover {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #10c96b 0%, #0ab85a 100%);
+  background: var(--gradient-primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1565,7 +1561,7 @@ html[data-theme="light"] .notification-panel {
 
 .notification-header {
   padding: 20px 24px 16px 24px;
-  background: linear-gradient(135deg, #10c96b 0%, #0ab85a 100%);
+  background: var(--gradient-primary);
   color: #ffffff;
   display: flex;
   justify-content: space-between;
@@ -2045,7 +2041,7 @@ body[data-theme="light"] .chatbot-container {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #10c96b 0%, #0ab85a 100%);
+  background: var(--gradient-primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2694,9 +2690,9 @@ body[data-theme="light"] .period-btn:hover {
 }
 
 .period-btn.active {
-  background: linear-gradient(135deg, #10c96b 0%, #0ab85a 100%);
+  background: var(--gradient-primary);
   color: #ffffff;
-  border-color: #10c96b;
+  border-color: var(--color-primary);
   font-weight: var(--font-weight-semibold, 600);
   box-shadow:
     0 4px 12px rgba(16, 201, 107, 0.35),
@@ -2705,7 +2701,7 @@ body[data-theme="light"] .period-btn:hover {
 }
 
 .period-btn.active:hover {
-  background: linear-gradient(135deg, #0ab85a 0%, #10c96b 100%);
+  background: var(--gradient-primary);
   transform: translateY(-2px) scale(1.02);
   box-shadow:
     0 6px 16px rgba(16, 201, 107, 0.4),
