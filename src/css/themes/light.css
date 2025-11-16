@@ -1,55 +1,57 @@
 /* ================================================================
    LIGHT THEME - FlagFit Pro
    Comprehensive light theme with proper contrast and accessibility
+   Design System Compliant - Uses primitive tokens for maintainability
    ================================================================ */
 
 /* Manual theme switching via data-theme attribute */
 [data-theme="light"],
 html[data-theme="light"] {
-  /* Surface Colors - Clean and professional */
+  /* Surface Colors - Light Mode (Design System Compliant) */
   --surface-primary: #ffffff;
-  --surface-secondary: #f8fafc;
-  --surface-tertiary: #f1f5f9;
-  --surface-quaternary: #e2e8f0;
+  --surface-secondary: var(--primitive-neutral-50);        /* #fafafa */
+  --surface-tertiary: var(--primitive-neutral-100);        /* #f5f5f5 */
+  --surface-quaternary: var(--primitive-neutral-200);      /* #f0f0f0 - for layered UI */
   --surface-elevated: #ffffff;
-  --surface-inverse: #0f0f14;
-  
-  /* Text Colors - High contrast for accessibility */
-  --color-text-primary: #0f172a;
-  --color-text-secondary: #334155;
-  --color-text-tertiary: #64748b;
-  --color-text-disabled: #cbd5e1;
-  --color-text-inverse: #ffffff;
-  --color-text-on-surface: var(--color-text-primary);
-  
-  /* Icon Colors - Clear hierarchy */
-  --icon-color-primary: #0f172a;
-  --icon-color-secondary: #334155;
-  --icon-color-tertiary: #64748b;
-  --icon-color-disabled: #cbd5e1;
+  --surface-inverse: var(--primitive-neutral-900);         /* #171717 */
+
+  /* Text Colors - Light Mode (Design System Compliant) */
+  --color-text-primary: var(--primitive-neutral-900);      /* #171717 */
+  --color-text-secondary: var(--primitive-neutral-700);    /* #404040 */
+  --color-text-tertiary: var(--primitive-neutral-600);     /* #737373 */
+  --color-text-disabled: var(--primitive-neutral-400);     /* #d4d4d4 */
+  --color-text-inverse: var(--primitive-neutral-50);       /* #fafafa */
+  --color-text-on-surface: var(--primitive-neutral-900);   /* #171717 */
+
+  /* Icon Colors - Light Mode (WCAG AA Compliant) */
+  --icon-color-primary: var(--primitive-neutral-900);      /* #171717 */
+  --icon-color-secondary: var(--primitive-neutral-700);    /* #404040 */
+  --icon-color-tertiary: var(--primitive-neutral-600);     /* #737373 */
+  --icon-color-disabled: var(--primitive-neutral-400);     /* #d4d4d4 */
   --icon-color-on-primary: #ffffff;
-  --icon-color-brand: var(--color-brand-primary);
-  
-  /* Border Colors - Subtle but defined */
-  --color-border-primary: #e2e8f0;
-  --color-border-secondary: #f1f5f9;
-  --color-border-subtle: #f8fafc;
-  --color-border-strong: #cbd5e1;
-  --color-border-focus: var(--color-brand-primary);
-  
-  /* Brand Colors - Optimized for light backgrounds */
-  --color-brand-primary: #10c96b;
-  --color-brand-primary-hover: #0ea55a;
-  --color-brand-primary-active: #0d8f4f;
-  --color-brand-primary-alpha-10: rgba(16, 201, 107, 0.1);
-  --color-brand-primary-alpha-20: rgba(16, 201, 107, 0.2);
-  
-  /* Chart Colors */
+  --icon-color-brand: var(--primitive-primary-700);        /* #089949 */
+
+  /* Border Colors - Light Mode (Design System Compliant) */
+  --color-border-primary: var(--primitive-neutral-300);    /* #e5e5e5 */
+  --color-border-secondary: var(--primitive-neutral-200);  /* #f0f0f0 */
+  --color-border-subtle: var(--primitive-neutral-100);     /* #f5f5f5 */
+  --color-border-strong: var(--primitive-neutral-400);     /* #d4d4d4 */
+  --color-border-medium: var(--primitive-neutral-300);     /* #e5e5e5 */
+  --color-border-focus: var(--primitive-primary-700);      /* #089949 */
+
+  /* Brand Colors - Light Mode */
+  --color-brand-primary: var(--primitive-primary-700);     /* #089949 */
+  --color-brand-primary-hover: var(--primitive-primary-800); /* #067a3c */
+  --color-brand-primary-active: var(--primitive-primary-900); /* #036d35 */
+  --color-brand-primary-alpha-10: rgba(8, 153, 73, 0.1);
+  --color-brand-primary-alpha-20: rgba(8, 153, 73, 0.2);
+
+  /* Chart Colors - Light Mode */
   --chart-bar-fill: var(--color-brand-primary);
-  --chart-bar-bg: var(--surface-tertiary);
-  
-  /* Status Colors */
-  --status-success-600: #16a34a;
+  --chart-bar-bg: var(--primitive-neutral-100);            /* #f5f5f5 */
+
+  /* Status Colors - Light Mode */
+  --status-success-600: var(--primitive-primary-700);      /* #089949 */
   --status-warning-500: #f59e0b;
   --status-error-500: #dc2626;
   --status-info-500: #2563eb;
@@ -58,50 +60,51 @@ html[data-theme="light"] {
 /* Class-based theme switching */
 .light,
 html.light {
-  /* Surface Colors - Clean and professional */
+  /* Surface Colors - Light Mode (Design System Compliant) */
   --surface-primary: #ffffff;
-  --surface-secondary: #f8fafc;
-  --surface-tertiary: #f1f5f9;
-  --surface-quaternary: #e2e8f0;
+  --surface-secondary: var(--primitive-neutral-50);        /* #fafafa */
+  --surface-tertiary: var(--primitive-neutral-100);        /* #f5f5f5 */
+  --surface-quaternary: var(--primitive-neutral-200);      /* #f0f0f0 - for layered UI */
   --surface-elevated: #ffffff;
-  --surface-inverse: #0f0f14;
-  
-  /* Text Colors - High contrast for accessibility */
-  --color-text-primary: #0f172a;
-  --color-text-secondary: #334155;
-  --color-text-tertiary: #64748b;
-  --color-text-disabled: #cbd5e1;
-  --color-text-inverse: #ffffff;
-  --color-text-on-surface: var(--color-text-primary);
-  
-  /* Icon Colors - Clear hierarchy */
-  --icon-color-primary: #0f172a;
-  --icon-color-secondary: #334155;
-  --icon-color-tertiary: #64748b;
-  --icon-color-disabled: #cbd5e1;
+  --surface-inverse: var(--primitive-neutral-900);         /* #171717 */
+
+  /* Text Colors - Light Mode (Design System Compliant) */
+  --color-text-primary: var(--primitive-neutral-900);      /* #171717 */
+  --color-text-secondary: var(--primitive-neutral-700);    /* #404040 */
+  --color-text-tertiary: var(--primitive-neutral-600);     /* #737373 */
+  --color-text-disabled: var(--primitive-neutral-400);     /* #d4d4d4 */
+  --color-text-inverse: var(--primitive-neutral-50);       /* #fafafa */
+  --color-text-on-surface: var(--primitive-neutral-900);   /* #171717 */
+
+  /* Icon Colors - Light Mode (WCAG AA Compliant) */
+  --icon-color-primary: var(--primitive-neutral-900);      /* #171717 */
+  --icon-color-secondary: var(--primitive-neutral-700);    /* #404040 */
+  --icon-color-tertiary: var(--primitive-neutral-600);     /* #737373 */
+  --icon-color-disabled: var(--primitive-neutral-400);     /* #d4d4d4 */
   --icon-color-on-primary: #ffffff;
-  --icon-color-brand: var(--color-brand-primary);
-  
-  /* Border Colors - Subtle but defined */
-  --color-border-primary: #e2e8f0;
-  --color-border-secondary: #f1f5f9;
-  --color-border-subtle: #f8fafc;
-  --color-border-strong: #cbd5e1;
-  --color-border-focus: var(--color-brand-primary);
-  
-  /* Brand Colors - Optimized for light backgrounds */
-  --color-brand-primary: #10c96b;
-  --color-brand-primary-hover: #0ea55a;
-  --color-brand-primary-active: #0d8f4f;
-  --color-brand-primary-alpha-10: rgba(16, 201, 107, 0.1);
-  --color-brand-primary-alpha-20: rgba(16, 201, 107, 0.2);
-  
-  /* Chart Colors */
+  --icon-color-brand: var(--primitive-primary-700);        /* #089949 */
+
+  /* Border Colors - Light Mode (Design System Compliant) */
+  --color-border-primary: var(--primitive-neutral-300);    /* #e5e5e5 */
+  --color-border-secondary: var(--primitive-neutral-200);  /* #f0f0f0 */
+  --color-border-subtle: var(--primitive-neutral-100);     /* #f5f5f5 */
+  --color-border-strong: var(--primitive-neutral-400);     /* #d4d4d4 */
+  --color-border-medium: var(--primitive-neutral-300);     /* #e5e5e5 */
+  --color-border-focus: var(--primitive-primary-700);      /* #089949 */
+
+  /* Brand Colors - Light Mode */
+  --color-brand-primary: var(--primitive-primary-700);     /* #089949 */
+  --color-brand-primary-hover: var(--primitive-primary-800); /* #067a3c */
+  --color-brand-primary-active: var(--primitive-primary-900); /* #036d35 */
+  --color-brand-primary-alpha-10: rgba(8, 153, 73, 0.1);
+  --color-brand-primary-alpha-20: rgba(8, 153, 73, 0.2);
+
+  /* Chart Colors - Light Mode */
   --chart-bar-fill: var(--color-brand-primary);
-  --chart-bar-bg: var(--surface-tertiary);
-  
-  /* Status Colors */
-  --status-success-600: #16a34a;
+  --chart-bar-bg: var(--primitive-neutral-100);            /* #f5f5f5 */
+
+  /* Status Colors - Light Mode */
+  --status-success-600: var(--primitive-primary-700);      /* #089949 */
   --status-warning-500: #f59e0b;
   --status-error-500: #dc2626;
   --status-info-500: #2563eb;
@@ -281,15 +284,53 @@ html[data-theme="light"] body {
 /* System preference (only if no manual theme is set) */
 @media (prefers-color-scheme: light) {
   :root:not([data-theme]):not(.dark) {
+    /* Surface Colors - Light Mode (Design System Compliant) */
     --surface-primary: #ffffff;
-    --surface-secondary: #f8f9fa;
-    --surface-tertiary: #e9ecef;
-    --color-text-primary: #1a1a1a;
-    --color-text-secondary: #404040;
-    --color-text-tertiary: #6b6b6b;
-    --color-border-strong: #cccccc;
-    --color-border-medium: #e0e0e0;
+    --surface-secondary: var(--primitive-neutral-50);
+    --surface-tertiary: var(--primitive-neutral-100);
+    --surface-quaternary: var(--primitive-neutral-200);
+    --surface-elevated: #ffffff;
+    --surface-inverse: var(--primitive-neutral-900);
+
+    /* Text Colors - Light Mode (Design System Compliant) */
+    --color-text-primary: var(--primitive-neutral-900);
+    --color-text-secondary: var(--primitive-neutral-700);
+    --color-text-tertiary: var(--primitive-neutral-600);
+    --color-text-disabled: var(--primitive-neutral-400);
+    --color-text-inverse: var(--primitive-neutral-50);
+    --color-text-on-surface: var(--primitive-neutral-900);
+
+    /* Icon Colors - Light Mode (WCAG AA Compliant) */
+    --icon-color-primary: var(--primitive-neutral-900);
+    --icon-color-secondary: var(--primitive-neutral-700);
+    --icon-color-tertiary: var(--primitive-neutral-600);
+    --icon-color-disabled: var(--primitive-neutral-400);
+    --icon-color-on-primary: #ffffff;
+    --icon-color-brand: var(--primitive-primary-700);
+
+    /* Border Colors - Light Mode (Design System Compliant) */
+    --color-border-primary: var(--primitive-neutral-300);
+    --color-border-secondary: var(--primitive-neutral-200);
+    --color-border-subtle: var(--primitive-neutral-100);
+    --color-border-strong: var(--primitive-neutral-400);
+    --color-border-medium: var(--primitive-neutral-300);
+    --color-border-focus: var(--primitive-primary-700);
+
+    /* Brand Colors - Light Mode */
+    --color-brand-primary: var(--primitive-primary-700);
+    --color-brand-primary-hover: var(--primitive-primary-800);
+    --color-brand-primary-active: var(--primitive-primary-900);
+    --color-brand-primary-alpha-10: rgba(8, 153, 73, 0.1);
+    --color-brand-primary-alpha-20: rgba(8, 153, 73, 0.2);
+
+    /* Chart Colors - Light Mode */
     --chart-bar-fill: var(--color-brand-primary);
-    --chart-bar-bg: #e9ecef;
+    --chart-bar-bg: var(--primitive-neutral-100);
+
+    /* Status Colors - Light Mode */
+    --status-success-600: var(--primitive-primary-700);
+    --status-warning-500: #f59e0b;
+    --status-error-500: #dc2626;
+    --status-info-500: #2563eb;
   }
 }

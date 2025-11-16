@@ -97,9 +97,32 @@
   --color-border-secondary: var(--color-border);
   --border-subtle: var(--color-border);
   
+  /* Primitive Neutral Palette (Design System Compliant) */
+  --primitive-neutral-50: #fafafa;
+  --primitive-neutral-100: #f5f5f5;
+  --primitive-neutral-200: #f0f0f0;
+  --primitive-neutral-300: #e5e5e5;
+  --primitive-neutral-400: #d4d4d4;
+  --primitive-neutral-500: #a3a3a3;
+  --primitive-neutral-600: #737373;
+  --primitive-neutral-700: #404040;
+  --primitive-neutral-800: #262626;
+  --primitive-neutral-900: #171717;
+  --primitive-neutral-950: #0a0a0a;
+
+  /* Primitive Primary/Brand Palette (Design System Compliant) */
+  --primitive-primary-50: #f0f9f7;
+  --primitive-primary-100: #d0f0eb;
+  --primitive-primary-200: #a0e4d7;
+  --primitive-primary-300: #70d8c3;
+  --primitive-primary-400: #40ccaf;
+  --primitive-primary-500: #10c96b;
+  --primitive-primary-600: #0ab85a;
+  --primitive-primary-700: #089949;
+  --primitive-primary-800: #067a3c;
+  --primitive-primary-900: #036d35;
+
   /* Primitive aliases (most commonly used) */
-  --primitive-primary-500: var(--color-primary);
-  --primitive-primary-600: var(--color-primary-600);
   --primitive-success-500: var(--color-success);
 
   /* Brand color aliases */
