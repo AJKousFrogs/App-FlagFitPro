@@ -41,12 +41,7 @@ html[data-theme="light"] .sidebar {
   width: 48px;
   height: 48px;
   border-radius: 16px;
-  background: linear-gradient(
-    135deg,
-    #10c96b 0%,
-    #0ab85a 50%,
-    #089949 100%
-  );
+  background: var(--gradient-primary);
   display: flex;
   align-items: center;
   justify-content: center;
