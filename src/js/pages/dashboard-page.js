@@ -1,7 +1,7 @@
 // Dashboard Page JavaScript
 // Handles all interactive elements on the dashboard
 
-import { apiClient } from "../../api-config.js";
+import { apiClient, API_ENDPOINTS } from "../../api-config.js";
 import { authManager } from "../../auth-manager.js";
 import { logger } from "../../logger.js";
 
@@ -18,17 +18,15 @@ class DashboardPage {
       trainingLoad: null,
     };
     this.supplements = {
-      creatine: { taken: false, time: null },
       "beta-alanine": { taken: false, time: null },
       caffeine: { taken: false, time: null },
-      nitrate: { taken: false, time: null },
-      iron: { taken: false, time: null },
       calcium: { taken: false, time: null },
-      "vitamin-d": { taken: false, time: null },
+      creatine: { taken: false, time: null },
+      iron: { taken: false, time: null },
+      magnesium: { taken: false, time: null },
+      nitrate: { taken: false, time: null },
       protein: { taken: false, time: null },
-      electrolytes: { taken: false, time: null },
-      "sports-drink": { taken: false, time: null },
-      carbohydrates: { taken: false, time: null },
+      "vitamin-d": { taken: false, time: null },
     };
     this.init();
   }
@@ -101,7 +99,7 @@ class DashboardPage {
 
     try {
       // Try to get notifications from API
-      const response = await apiClient.get("/api/dashboard/notifications");
+      const response = await apiClient.get(API_ENDPOINTS.dashboard.notifications);
       if (response.success && response.data) {
         this.renderNotifications(response.data);
       } else {
@@ -228,7 +226,13 @@ class DashboardPage {
     // Training Session Start Button
     const startSessionBtn = document.querySelector(".btn-start-session");
     if (startSessionBtn) {
-      startSessionBtn.addEventListener("click", (e) => this.handleStartSession(e));
+      logger.debug("✅ Found START SESSION button, attaching event listener");
+      startSessionBtn.addEventListener("click", (e) => {
+        logger.debug("🖱️ START SESSION button clicked");
+        this.handleStartSession(e);
+      });
+    } else {
+      logger.warn("⚠️ START SESSION button not found!");
     }
 
     // Supplement Buttons
@@ -319,7 +323,7 @@ class DashboardPage {
 
       // Save to API (or localStorage for demo)
       try {
-        await apiClient.post("/api/wellness/checkin", wellnessCheckIn);
+        await apiClient.post(API_ENDPOINTS.wellness.checkin, wellnessCheckIn);
         logger.success("Wellness check-in submitted successfully");
       } catch (apiError) {
         // Fallback to localStorage for demo/testing
@@ -353,19 +357,29 @@ class DashboardPage {
 
   async handleStartSession(e) {
     e.preventDefault();
-    const button = e.target;
-    const originalText = button.textContent;
-
-    // Disable button and show loading state
-    button.disabled = true;
-    button.textContent = "Starting...";
-    button.style.opacity = "0.7";
+    e.stopPropagation();
+    logger.debug("🚀 handleStartSession called");
 
     try {
+      // Handle case where button might be inside a label or wrapper
+      const button = e.target.closest(".btn-start-session") || e.target;
+      if (!button || !button.classList.contains("btn-start-session")) {
+        logger.error("❌ Could not find button element");
+        return;
+      }
+
+      const originalText = button.textContent;
+
+      // Disable button and show loading state
+      button.disabled = true;
+      button.textContent = "Starting...";
+      button.style.opacity = "0.7";
+
       // Get current user
       const user = authManager.getCurrentUser();
       if (!user) {
-        throw new Error("User not authenticated");
+        logger.warn("⚠️ User not authenticated, using demo mode");
+        // Continue with demo mode instead of throwing error
       }
 
       // Get training session details
@@ -374,12 +388,14 @@ class DashboardPage {
       const coach = document.querySelector(".training-info")?.textContent || "Coach: Ales Zaksek";
 
       const sessionData = {
-        userId: user.id || user.email,
+        userId: user ? (user.id || user.email) : "demo-user",
         sessionType: trainingType,
         coach: coach.replace("Coach: ", ""),
         startTime: new Date().toISOString(),
         scheduledTime: trainingTime,
       };
+
+      logger.debug("📝 Session data:", sessionData);
 
       // Save session start
       try {
@@ -393,21 +409,36 @@ class DashboardPage {
         localStorage.setItem("trainingSessions", JSON.stringify(saved));
       }
 
-      // Show success and redirect to training page
+      // Store session data for training-schedule page
+      const sessionDate = this.formatDateForInput(this.selectedDate);
+      localStorage.setItem("currentTrainingSession", JSON.stringify({
+        ...sessionData,
+        date: sessionDate,
+        status: "in_progress"
+      }));
+
+      // Show success and redirect to training schedule page
       this.showNotification("Training session started! Redirecting...", "success");
 
-      // Redirect to training page after short delay
+      // Redirect to training schedule page with date parameter
       setTimeout(() => {
-        window.location.href = "/training.html";
+        logger.debug("🔄 Redirecting to training schedule page");
+        const dateParam = sessionDate;
+        const sessionParam = encodeURIComponent(sessionData.sessionType);
+        window.location.href = `/training-schedule.html?date=${dateParam}&session=${sessionParam}`;
       }, 1000);
     } catch (error) {
-      logger.error("Failed to start training session:", error);
+      logger.error("❌ Failed to start training session:", error);
+      console.error("Start session error:", error);
       this.showNotification("Failed to start session. Please try again.", "error");
 
       // Reset button
-      button.disabled = false;
-      button.textContent = originalText;
-      button.style.opacity = "1";
+      const button = e.target.closest(".btn-start-session") || e.target;
+      if (button) {
+        button.disabled = false;
+        button.textContent = "START SESSION";
+        button.style.opacity = "1";
+      }
     }
   }
 
@@ -475,12 +506,12 @@ class DashboardPage {
 
       try {
         if (isChecked) {
-          await apiClient.post("/api/supplements/log", supplementData);
+          await apiClient.post(API_ENDPOINTS.supplements.log, supplementData);
           logger.success(`Logged ${supplementName} intake`);
           this.showNotification(`${supplementName} logged! ✓`, "success");
         } else {
           // Optionally handle "untaken" action
-          await apiClient.post("/api/supplements/log", { ...supplementData, action: "untake" });
+          await apiClient.post(API_ENDPOINTS.supplements.log, { ...supplementData, action: "untake" });
           logger.info(`Unmarked ${supplementName}`);
         }
       } catch (apiError) {
@@ -766,7 +797,7 @@ class DashboardPage {
 
       // Try API first
       try {
-        const response = await apiClient.get(`/api/wellness/checkin?date=${dateStr}`);
+        const response = await apiClient.get(API_ENDPOINTS.wellness.checkin, { date: dateStr });
         if (response && response.data) {
           const wellness = response.data;
           this.wellnessData = {
@@ -860,7 +891,7 @@ class DashboardPage {
 
       // Try API first
       try {
-        const response = await apiClient.get(`/api/supplements/log?date=${dateStr}`);
+        const response = await apiClient.get(API_ENDPOINTS.supplements.log, { date: dateStr });
         if (response && response.data && Array.isArray(response.data)) {
           response.data.forEach((log) => {
             if (log.supplement && this.supplements[log.supplement]) {

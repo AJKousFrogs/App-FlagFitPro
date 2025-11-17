@@ -14,7 +14,7 @@
   height: 100%;
   flex: 1;
   min-height: 0;
-  background: var(--surface-secondary);
+  background: var(--surface-secondary) !important;
   overflow: hidden;
 }
 
@@ -396,7 +396,7 @@
 }
 
 .message.own .message-time {
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.7); /* Keep for contrast on brand color */
 }
 
 .message-text {
@@ -451,11 +451,11 @@
 }
 
 .message.own .message-status {
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.7); /* Keep for contrast on brand color */
 }
 
 .message.own .status-read {
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.9); /* Keep for contrast on brand color */
 }
 
 /* ================================================================
@@ -658,8 +658,8 @@
 .send-btn svg {
   width: 18px;
   height: 18px;
-  color: #ffffff;
-  stroke: #ffffff;
+  color: var(--color-text-on-primary);
+  stroke: var(--color-text-on-primary);
   fill: none;
 }
 
@@ -701,41 +701,115 @@
 }
 
 /* ================================================================
-   DARK THEME ADJUSTMENTS
+   THEME ADJUSTMENTS (Light and Dark)
    ================================================================ */
 
-[data-theme="dark"] .channels-sidebar,
-[data-theme="dark"] .chat-header,
-[data-theme="dark"] .message-content,
-[data-theme="dark"] .message-input-container {
-  background: var(--surface-primary);
-  border-color: var(--color-border-secondary);
+/* Light Theme */
+body[data-theme="light"] .chat-container,
+html[data-theme="light"] .chat-container {
+  background: var(--surface-secondary) !important; /* #fafafa in light theme */
 }
 
-[data-theme="dark"] .chat-area,
-[data-theme="dark"] .messages-container {
-  background: var(--surface-secondary);
+body[data-theme="light"] .channels-sidebar,
+html[data-theme="light"] .channels-sidebar,
+body[data-theme="light"] .chat-header,
+html[data-theme="light"] .chat-header,
+body[data-theme="light"] .message-content,
+html[data-theme="light"] .message-content,
+body[data-theme="light"] .message-input-container,
+html[data-theme="light"] .message-input-container {
+  background: var(--surface-primary) !important; /* #ffffff in light theme */
+  border-color: var(--color-border-secondary) !important;
 }
 
-[data-theme="dark"] .channel-search,
-[data-theme="dark"] .message-input {
-  background: var(--surface-secondary);
-  border-color: var(--color-border-secondary);
+body[data-theme="light"] .chat-area,
+html[data-theme="light"] .chat-area,
+body[data-theme="light"] .messages-container,
+html[data-theme="light"] .messages-container {
+  background: var(--surface-secondary) !important; /* #fafafa in light theme */
 }
 
-[data-theme="dark"] .channel-search:focus,
-[data-theme="dark"] .message-input:focus {
-  background: var(--surface-primary);
+body[data-theme="light"] .channel-search,
+html[data-theme="light"] .channel-search,
+body[data-theme="light"] .message-input,
+html[data-theme="light"] .message-input {
+  background: var(--surface-secondary) !important;
+  border-color: var(--color-border-secondary) !important;
+  color: var(--color-text-primary) !important;
 }
 
-[data-theme="dark"] .channel-item:hover,
-[data-theme="dark"] .chat-action-btn:hover {
-  background: var(--surface-secondary);
+body[data-theme="light"] .channel-search:focus,
+html[data-theme="light"] .channel-search:focus,
+body[data-theme="light"] .message-input:focus,
+html[data-theme="light"] .message-input:focus {
+  background: var(--surface-primary) !important;
 }
 
-[data-theme="dark"] .message-actions {
-  background: var(--surface-primary);
-  border-color: var(--color-border-secondary);
+body[data-theme="light"] .channel-item:hover,
+html[data-theme="light"] .channel-item:hover,
+body[data-theme="light"] .chat-action-btn:hover,
+html[data-theme="light"] .chat-action-btn:hover {
+  background: var(--surface-tertiary) !important;
+}
+
+body[data-theme="light"] .message-actions,
+html[data-theme="light"] .message-actions {
+  background: var(--surface-primary) !important;
+  border-color: var(--color-border-secondary) !important;
+}
+
+/* Dark Theme */
+body[data-theme="dark"] .chat-container,
+html[data-theme="dark"] .chat-container {
+  background: var(--surface-secondary) !important; /* #262626 in dark theme */
+}
+
+body[data-theme="dark"] .channels-sidebar,
+html[data-theme="dark"] .channels-sidebar,
+body[data-theme="dark"] .chat-header,
+html[data-theme="dark"] .chat-header,
+body[data-theme="dark"] .message-content,
+html[data-theme="dark"] .message-content,
+body[data-theme="dark"] .message-input-container,
+html[data-theme="dark"] .message-input-container {
+  background: var(--surface-primary) !important; /* #171717 in dark theme */
+  border-color: var(--color-border-secondary) !important;
+}
+
+body[data-theme="dark"] .chat-area,
+html[data-theme="dark"] .chat-area,
+body[data-theme="dark"] .messages-container,
+html[data-theme="dark"] .messages-container {
+  background: var(--surface-secondary) !important; /* #262626 in dark theme */
+}
+
+body[data-theme="dark"] .channel-search,
+html[data-theme="dark"] .channel-search,
+body[data-theme="dark"] .message-input,
+html[data-theme="dark"] .message-input {
+  background: var(--surface-secondary) !important;
+  border-color: var(--color-border-secondary) !important;
+  color: var(--color-text-primary) !important;
+}
+
+body[data-theme="dark"] .channel-search:focus,
+html[data-theme="dark"] .channel-search:focus,
+body[data-theme="dark"] .message-input:focus,
+html[data-theme="dark"] .message-input:focus {
+  background: var(--surface-primary) !important;
+}
+
+body[data-theme="dark"] .channel-item:hover,
+html[data-theme="dark"] .channel-item:hover,
+body[data-theme="dark"] .chat-action-btn:hover,
+html[data-theme="dark"] .chat-action-btn:hover {
+  background: var(--surface-tertiary) !important;
+}
+
+body[data-theme="dark"] .message-actions,
+html[data-theme="dark"] .message-actions {
+  background: var(--surface-primary) !important;
+  border-color: var(--color-border-secondary) !important;
 }
 
 /* ================================================================

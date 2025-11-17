@@ -101,11 +101,13 @@ export class PerformanceCharts {
       const script = document.createElement("script");
       script.src =
         "https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js";
+      script.crossOrigin = "anonymous";
       script.onload = () => {
         // Load Chart.js date adapter
         const dateScript = document.createElement("script");
         dateScript.src =
           "https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js";
+        dateScript.crossOrigin = "anonymous";
         dateScript.onload = resolve;
         dateScript.onerror = reject;
         document.head.appendChild(dateScript);

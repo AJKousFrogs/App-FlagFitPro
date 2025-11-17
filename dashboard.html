@@ -18,8 +18,7 @@
     <!-- Chatbot Component Styles -->
     <link rel="stylesheet" href="./src/css/components/chatbot.css" />
     <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@1.0.445/dist/umd/lucide.js" 
-            integrity="sha384-QUHo9yIHF1gPrLIKJyuJ6l2VzF5YNGFCk2sT3dSsGmBjDrPyYlqVjdJsJ8e6JkX2" 
+    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js" 
             crossorigin="anonymous" defer></script>
     <script src="./src/icon-helper.js" defer></script>
     <script src="./src/theme-switcher.js" defer></script>
@@ -260,12 +259,11 @@
                   type="checkbox" 
                   id="theme-toggle" 
                   class="theme-toggle-input"
-                  checked
                 >
                 <span class="theme-toggle-slider">
                   <span class="theme-toggle-dot"></span>
                 </span>
-                <span class="theme-toggle-text">Dark</span>
+                <span class="theme-toggle-text">Light</span>
               </label>
             </div>
 
@@ -359,7 +357,7 @@
                 <div class="training-time">🕒 18:30 — Speed & Agility</div>
                 <div class="training-info">Coach: Ales Zaksek</div>
                 <div class="training-info">Duration: 70 min</div>
-                <button class="btn-start-session">START SESSION</button>
+                <button type="button" class="btn-start-session">START SESSION</button>
               </div>
             </div>
 
@@ -394,17 +392,7 @@
             <div class="supplements-card">
               <h3>SUPPLEMENTS</h3>
               <div class="supplements-list">
-                <!-- Performance Supplements -->
-                <div class="supplement-item" data-supplement="creatine">
-                  <span class="supplement-name">Creatine Monohydrate</span>
-                  <label class="supplement-toggle">
-                    <input type="checkbox" class="supplement-toggle-input" checked>
-                    <span class="supplement-toggle-slider">
-                      <span class="supplement-toggle-icon check-icon">✓</span>
-                      <span class="supplement-toggle-icon x-icon">✕</span>
-                    </span>
-                  </label>
-                </div>
+                <!-- Supplements in alphabetical order -->
                 <div class="supplement-item" data-supplement="beta-alanine">
                   <span class="supplement-name">Beta-Alanine</span>
                   <label class="supplement-toggle">
@@ -425,28 +413,6 @@
                     </span>
                   </label>
                 </div>
-                <div class="supplement-item" data-supplement="nitrate">
-                  <span class="supplement-name">Nitrate (Beetroot)</span>
-                  <label class="supplement-toggle">
-                    <input type="checkbox" class="supplement-toggle-input">
-                    <span class="supplement-toggle-slider">
-                      <span class="supplement-toggle-icon check-icon">✓</span>
-                      <span class="supplement-toggle-icon x-icon">✕</span>
-                    </span>
-                  </label>
-                </div>
-                
-                <!-- Medical Supplements -->
-                <div class="supplement-item" data-supplement="iron">
-                  <span class="supplement-name">Iron</span>
-                  <label class="supplement-toggle">
-                    <input type="checkbox" class="supplement-toggle-input">
-                    <span class="supplement-toggle-slider">
-                      <span class="supplement-toggle-icon check-icon">✓</span>
-                      <span class="supplement-toggle-icon x-icon">✕</span>
-                    </span>
-                  </label>
-                </div>
                 <div class="supplement-item" data-supplement="calcium">
                   <span class="supplement-name">Calcium</span>
                   <label class="supplement-toggle">
@@ -457,8 +423,18 @@
                     </span>
                   </label>
                 </div>
-                <div class="supplement-item" data-supplement="vitamin-d">
-                  <span class="supplement-name">Vitamin D</span>
+                <div class="supplement-item" data-supplement="creatine">
+                  <span class="supplement-name">Creatine Monohydrate</span>
+                  <label class="supplement-toggle">
+                    <input type="checkbox" class="supplement-toggle-input" checked>
+                    <span class="supplement-toggle-slider">
+                      <span class="supplement-toggle-icon check-icon">✓</span>
+                      <span class="supplement-toggle-icon x-icon">✕</span>
+                    </span>
+                  </label>
+                </div>
+                <div class="supplement-item" data-supplement="iron">
+                  <span class="supplement-name">Iron</span>
                   <label class="supplement-toggle">
                     <input type="checkbox" class="supplement-toggle-input">
                     <span class="supplement-toggle-slider">
@@ -467,8 +443,26 @@
                     </span>
                   </label>
                 </div>
-                
-                <!-- Sports Foods -->
+                <div class="supplement-item" data-supplement="magnesium">
+                  <span class="supplement-name">Magnesium</span>
+                  <label class="supplement-toggle">
+                    <input type="checkbox" class="supplement-toggle-input">
+                    <span class="supplement-toggle-slider">
+                      <span class="supplement-toggle-icon check-icon">✓</span>
+                      <span class="supplement-toggle-icon x-icon">✕</span>
+                    </span>
+                  </label>
+                </div>
+                <div class="supplement-item" data-supplement="nitrate">
+                  <span class="supplement-name">Nitrate (Beetroot)</span>
+                  <label class="supplement-toggle">
+                    <input type="checkbox" class="supplement-toggle-input">
+                    <span class="supplement-toggle-slider">
+                      <span class="supplement-toggle-icon check-icon">✓</span>
+                      <span class="supplement-toggle-icon x-icon">✕</span>
+                    </span>
+                  </label>
+                </div>
                 <div class="supplement-item" data-supplement="protein">
                   <span class="supplement-name">Protein</span>
                   <label class="supplement-toggle">
@@ -479,28 +473,8 @@
                     </span>
                   </label>
                 </div>
-                <div class="supplement-item" data-supplement="electrolytes">
-                  <span class="supplement-name">Electrolytes</span>
-                  <label class="supplement-toggle">
-                    <input type="checkbox" class="supplement-toggle-input">
-                    <span class="supplement-toggle-slider">
-                      <span class="supplement-toggle-icon check-icon">✓</span>
-                      <span class="supplement-toggle-icon x-icon">✕</span>
-                    </span>
-                  </label>
-                </div>
-                <div class="supplement-item" data-supplement="sports-drink">
-                  <span class="supplement-name">Sports Drink</span>
-                  <label class="supplement-toggle">
-                    <input type="checkbox" class="supplement-toggle-input">
-                    <span class="supplement-toggle-slider">
-                      <span class="supplement-toggle-icon check-icon">✓</span>
-                      <span class="supplement-toggle-icon x-icon">✕</span>
-                    </span>
-                  </label>
-                </div>
-                <div class="supplement-item" data-supplement="carbohydrates">
-                  <span class="supplement-name">Carbohydrates</span>
+                <div class="supplement-item" data-supplement="vitamin-d">
+                  <span class="supplement-name">Vitamin D</span>
                   <label class="supplement-toggle">
                     <input type="checkbox" class="supplement-toggle-input">
                     <span class="supplement-toggle-slider">

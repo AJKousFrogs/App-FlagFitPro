@@ -9,14 +9,18 @@ export class MockAuth {
     this.isLoggedIn = false;
     this.currentUser = null;
     this.loginAttempts = new Map(); // Track login attempts by email
-    
+
     // Security warning for production
     if (!config.ENABLE_MOCK_AUTH) {
       logger.error("MockAuth should not be instantiated when ENABLE_MOCK_AUTH is false");
       throw new Error("Mock authentication is disabled in this environment");
     }
-    
-    logger.warn("🚨 MOCK AUTHENTICATION ACTIVE - FOR DEVELOPMENT ONLY");
+
+    // Only log once per session to avoid console spam
+    if (!window._mockAuthWarningShown) {
+      logger.debug("🚨 MOCK AUTHENTICATION ACTIVE - FOR DEVELOPMENT ONLY");
+      window._mockAuthWarningShown = true;
+    }
   }
 
   async login(credentials) {
@@ -72,7 +76,7 @@ export class MockAuth {
 
       // Generate a more realistic demo token
       const token = this.generateDemoToken();
-      
+
       // Reset login attempts on successful login
       this.loginAttempts.delete(credentials.email);
 
@@ -92,10 +96,10 @@ export class MockAuth {
       };
     } catch (error) {
       logger.error("Mock login error:", error);
-      
+
       // Increment login attempts
       this.loginAttempts.set(credentials.email, attempts + 1);
-      
+
       return {
         success: false,
         error: "Authentication failed. Please try again.",
@@ -123,7 +127,7 @@ export class MockAuth {
       iss: "flagfit-demo"
     }));
     const signature = btoa("demo-signature-" + Date.now());
-    
+
     return `${header}.${payload}.${signature}`;
   }
 

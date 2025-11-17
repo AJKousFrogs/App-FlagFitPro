@@ -283,6 +283,54 @@
   fill: none;
 }
 
+/* Ensure all header icons (including Lucide SVGs) are visible */
+.top-bar .header-icon [data-lucide],
+.top-bar .header-icon svg,
+.top-bar .header-icon i[data-lucide] {
+  color: inherit;
+  stroke: currentColor;
+  fill: none;
+}
+
+.top-bar .header-icon svg {
+  width: 100%;
+  height: 100%;
+  stroke: currentColor;
+  fill: none;
+}
+
+/* Search icon styling */
+.top-bar .search-icon [data-lucide],
+.top-bar .search-icon svg,
+.top-bar .search-icon i[data-lucide] {
+  color: inherit;
+  stroke: currentColor;
+  fill: none;
+}
+
+.top-bar .search-icon svg {
+  width: 100%;
+  height: 100%;
+  stroke: currentColor;
+  fill: none;
+}
+
+/* Mobile menu toggle icon */
+.top-bar .mobile-menu-toggle [data-lucide],
+.top-bar .mobile-menu-toggle svg,
+.top-bar .mobile-menu-toggle i[data-lucide] {
+  color: inherit;
+  stroke: currentColor;
+  fill: none;
+}
+
+.top-bar .mobile-menu-toggle svg {
+  width: 100%;
+  height: 100%;
+  stroke: currentColor;
+  fill: none;
+}
+
 .top-bar .header-icon:hover {
   background: var(--surface-tertiary) !important;
   transform: translateY(-1px) !important;
@@ -913,7 +961,7 @@
 }
 
 /* ============================================================================
-   DARK MODE (using your existing theme system)
+   THEME SUPPORT (Light and Dark)
    ========================================================================== */
 
 [data-theme="dark"] .hero-card {
@@ -925,35 +973,72 @@
   border-color: rgba(var(--primitive-primary-rgb), 0.3);
 }
 
-/* Dark theme for fixed header */
-body[data-theme="dark"] .top-bar,
-html[data-theme="dark"] .top-bar {
-  background: rgba(16, 16, 20, 0.95);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 1px 20px rgba(0, 0, 0, 0.1);
+/* Light theme for top bar - ensure light background */
+body[data-theme="light"] .top-bar,
+html[data-theme="light"] .top-bar {
+  background: var(--surface-primary) !important; /* #ffffff in light theme */
+  border-bottom: 1px solid var(--color-border-primary) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
 }
 
-/* Dark theme search */
+/* Dark theme for top bar - ensure dark background */
+body[data-theme="dark"] .top-bar,
+html[data-theme="dark"] .top-bar {
+  background: var(--surface-primary) !important; /* #171717 in dark theme */
+  border-bottom: 1px solid var(--color-border-primary) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Light theme search input */
+body[data-theme="light"] .top-bar .search-input,
+html[data-theme="light"] .top-bar .search-input {
+  background: var(--surface-primary) !important;
+  border-color: var(--color-border-primary) !important;
+  color: var(--color-text-primary) !important;
+}
+
+body[data-theme="light"] .top-bar .search-input:focus,
+html[data-theme="light"] .top-bar .search-input:focus {
+  background: var(--surface-primary) !important;
+  border-color: var(--color-brand-primary) !important;
+}
+
+/* Dark theme search input */
 body[data-theme="dark"] .top-bar .search-input,
 html[data-theme="dark"] .top-bar .search-input {
-  background: rgba(255, 255, 255, 0.1) !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
-  color: white !important;
+  background: var(--surface-secondary) !important;
+  border-color: var(--color-border-primary) !important;
+  color: var(--color-text-primary) !important;
 }
 
 body[data-theme="dark"] .top-bar .search-input:focus,
 html[data-theme="dark"] .top-bar .search-input:focus {
-  background: rgba(255, 255, 255, 0.15) !important;
+  background: var(--surface-tertiary) !important;
+  border-color: var(--color-brand-primary) !important;
 }
 
+/* Light theme header icons */
+body[data-theme="light"] .top-bar .header-icon,
+html[data-theme="light"] .top-bar .header-icon {
+  background: var(--surface-secondary) !important;
+  color: var(--icon-color-primary) !important;
+}
+
+body[data-theme="light"] .top-bar .header-icon:hover,
+html[data-theme="light"] .top-bar .header-icon:hover {
+  background: var(--surface-tertiary) !important;
+}
+
+/* Dark theme header icons */
 body[data-theme="dark"] .top-bar .header-icon,
 html[data-theme="dark"] .top-bar .header-icon {
-  background: rgba(255, 255, 255, 0.08) !important;
+  background: var(--surface-secondary) !important;
+  color: var(--icon-color-primary) !important;
 }
 
 body[data-theme="dark"] .top-bar .header-icon:hover,
 html[data-theme="dark"] .top-bar .header-icon:hover {
-  background: rgba(255, 255, 255, 0.12) !important;
+  background: var(--surface-tertiary) !important;
 }
 
 /* Dark theme scroll-to-top button */
@@ -973,11 +1058,18 @@ html[data-theme="dark"] .scroll-to-top:hover {
     0 3px 6px rgba(0, 0, 0, 0.3);
 }
 
+/* Light theme toggle styles */
+body[data-theme="light"] .top-bar .theme-toggle-slider,
+html[data-theme="light"] .top-bar .theme-toggle-slider {
+  background: var(--surface-tertiary) !important;
+  border-color: var(--color-border-primary) !important;
+}
+
 /* Dark theme toggle styles */
 body[data-theme="dark"] .top-bar .theme-toggle-slider,
 html[data-theme="dark"] .top-bar .theme-toggle-slider {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.15);
+  background: var(--surface-tertiary) !important;
+  border-color: var(--color-border-primary) !important;
 }
 
 body[data-theme="dark"] .top-bar .theme-toggle-dot,

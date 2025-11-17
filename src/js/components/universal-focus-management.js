@@ -14,11 +14,11 @@ class UniversalFocusManagement {
       enableAriaLiveRegions: true,
       ...options
     };
-    
+
     this.focusableElements = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
     this.focusTraps = new Map();
     this.currentFocusedElement = null;
-    
+
     this.init();
   }
 
@@ -35,6 +35,18 @@ class UniversalFocusManagement {
   setupSkipLinks() {
     if (!this.options.enableSkipLinks) return;
 
+    // Skip skip links on auth pages (login, register, reset-password)
+    // These pages don't have navigation to skip, so skip links are unnecessary
+    const currentPath = window.location.pathname.toLowerCase();
+    const authPages = ['/login', '/register', '/reset-password'];
+    const isAuthPage = authPages.some(page => currentPath.includes(page) || currentPath.endsWith(page + '.html'));
+
+    if (isAuthPage) {
+      // Remove any existing skip links that might have been created before
+      document.querySelectorAll('.skip-link').forEach(link => link.remove());
+      return; // Don't create skip links on auth pages
+    }
+
     // Create skip to main content link
     const skipLink = document.createElement('a');
     skipLink.href = '#main-content';
@@ -46,7 +58,7 @@ class UniversalFocusManagement {
     document.body.insertBefore(skipLink, document.body.firstChild);
 
     // Ensure main content has ID
-    let mainContent = document.getElementById('main-content') || 
+    let mainContent = document.getElementById('main-content') ||
                      document.querySelector('main') ||
                      document.querySelector('.main-content') ||
                      document.querySelector('#content');
@@ -81,7 +93,7 @@ class UniversalFocusManagement {
       skipToNav.className = 'skip-link';
       skipToNav.textContent = 'Skip to navigation';
       skipToNav.setAttribute('aria-label', 'Skip to navigation');
-      
+
       if (!nav.id) nav.id = 'navigation';
       document.body.insertBefore(skipToNav, skipLink.nextSibling);
     }
@@ -92,12 +104,12 @@ class UniversalFocusManagement {
         e.preventDefault();
         const targetId = e.target.getAttribute('href').slice(1);
         const target = document.getElementById(targetId);
-        
+
         if (target) {
           target.setAttribute('tabindex', '-1');
           target.focus();
           target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          
+
           // Remove tabindex after focus
           target.addEventListener('blur', () => {
             target.removeAttribute('tabindex');
@@ -240,7 +252,7 @@ class UniversalFocusManagement {
               node.matches('.modal, .dialog, .popup, [role="dialog"], [role="alertdialog"]') ||
               node.querySelector('.modal, .dialog, .popup, [role="dialog"], [role="alertdialog"]')
             )) {
-              const modal = node.matches('.modal, .dialog, .popup, [role="dialog"], [role="alertdialog"]') ? node : 
+              const modal = node.matches('.modal, .dialog, .popup, [role="dialog"], [role="alertdialog"]') ? node :
                           node.querySelector('.modal, .dialog, .popup, [role="dialog"], [role="alertdialog"]');
               this.trapFocus(modal);
             }
@@ -271,13 +283,13 @@ class UniversalFocusManagement {
   fixTabOrder() {
     // Ensure logical tab order across the page
     const interactiveElements = document.querySelectorAll(this.focusableElements);
-    
+
     interactiveElements.forEach((element, index) => {
       // Remove any existing tabindex that might interfere
       if (element.getAttribute('tabindex') === '0') {
         element.removeAttribute('tabindex');
       }
-      
+
       // Ensure hidden elements are not focusable
       if (element.offsetParent === null && !element.matches('.sr-only')) {
         element.setAttribute('tabindex', '-1');
@@ -292,7 +304,7 @@ class UniversalFocusManagement {
 
   fixNavigationTabOrder() {
     const navItems = document.querySelectorAll('.nav-item, .navigation-link, nav a');
-    
+
     navItems.forEach((item, index) => {
       // Ensure nav items are properly focusable
       if (!item.matches('a, button, [tabindex]')) {
@@ -304,10 +316,10 @@ class UniversalFocusManagement {
 
   fixFormTabOrder() {
     const forms = document.querySelectorAll('form');
-    
+
     forms.forEach(form => {
       const formElements = form.querySelectorAll(this.focusableElements);
-      
+
       // Ensure proper tab order within forms
       formElements.forEach((element, index) => {
         if (element.type === 'hidden') {
@@ -319,17 +331,17 @@ class UniversalFocusManagement {
 
   fixTableTabOrder() {
     const tables = document.querySelectorAll('table');
-    
+
     tables.forEach(table => {
       // Make tables navigable with arrow keys
       const cells = table.querySelectorAll('th, td');
-      
+
       cells.forEach(cell => {
         if (cell.querySelector(this.focusableElements)) {
           // Cell contains focusable content
           return;
         }
-        
+
         // Make cell focusable if it's interactive
         if (cell.matches('.clickable, [onclick]') || cell.closest('tr').matches('.clickable, [onclick]')) {
           cell.setAttribute('tabindex', '0');
@@ -380,22 +392,22 @@ class UniversalFocusManagement {
   releaseFocusTrap(element, handler, previousFocus) {
     element.removeEventListener('keydown', handler);
     this.focusTraps.delete(element);
-    
+
     if (previousFocus && previousFocus.focus) {
       previousFocus.focus();
     }
   }
 
   focusMainContent() {
-    const mainContent = document.getElementById('main-content') || 
+    const mainContent = document.getElementById('main-content') ||
                        document.querySelector('main') ||
                        document.querySelector('.main-content');
-    
+
     if (mainContent) {
       mainContent.setAttribute('tabindex', '-1');
       mainContent.focus();
       this.announce('Main content focused');
-      
+
       mainContent.addEventListener('blur', () => {
         mainContent.removeAttribute('tabindex');
       }, { once: true });
@@ -407,7 +419,7 @@ class UniversalFocusManagement {
                       document.querySelector('nav') ||
                       document.querySelector('.nav') ||
                       document.querySelector('.sidebar');
-    
+
     if (navigation) {
       const firstNavItem = navigation.querySelector(this.focusableElements);
       if (firstNavItem) {
@@ -419,7 +431,7 @@ class UniversalFocusManagement {
 
   focusSearch() {
     const searchInput = document.querySelector('input[type="search"], input[name*="search"], #search, .search-input');
-    
+
     if (searchInput) {
       searchInput.focus();
       this.announce('Search field focused');
@@ -428,12 +440,12 @@ class UniversalFocusManagement {
 
   focusMainHeading() {
     const mainHeading = document.querySelector('h1, .page-title, .main-title');
-    
+
     if (mainHeading) {
       mainHeading.setAttribute('tabindex', '-1');
       mainHeading.focus();
       this.announce(`Main heading: ${mainHeading.textContent.trim()}`);
-      
+
       mainHeading.addEventListener('blur', () => {
         mainHeading.removeAttribute('tabindex');
       }, { once: true });
@@ -468,7 +480,7 @@ class UniversalFocusManagement {
 
   handleArrowNavigation(e) {
     const currentElement = document.activeElement;
-    
+
     // Check if we're in a specific navigable component
     if (this.handleTableNavigation(e, currentElement)) return;
     if (this.handleMenuNavigation(e, currentElement)) return;
@@ -583,11 +595,11 @@ class UniversalFocusManagement {
 
   announceElementInfo(element) {
     let announcement = '';
-    
+
     // Get element type and role
     const role = element.getAttribute('role') || element.tagName.toLowerCase();
     const type = element.type || '';
-    
+
     // Build announcement based on element type
     if (element.matches('button')) {
       announcement = `Button: ${element.textContent.trim() || element.getAttribute('aria-label') || 'Unlabeled button'}`;
@@ -613,7 +625,7 @@ class UniversalFocusManagement {
     if (element.getAttribute('aria-expanded')) {
       announcement += element.getAttribute('aria-expanded') === 'true' ? '. Expanded' : '. Collapsed';
     }
-    
+
     if (element.hasAttribute('aria-pressed')) {
       announcement += element.getAttribute('aria-pressed') === 'true' ? '. Pressed' : '. Not pressed';
     }
@@ -652,13 +664,13 @@ class UniversalFocusManagement {
   announce(message, priority = 'polite') {
     const liveRegionId = priority === 'assertive' ? 'aria-live-assertive' : 'aria-live-polite';
     const liveRegion = document.getElementById(liveRegionId);
-    
+
     if (liveRegion) {
       liveRegion.textContent = '';
       setTimeout(() => {
         liveRegion.textContent = message;
       }, 100);
-      
+
       // Clear after announcement
       setTimeout(() => {
         liveRegion.textContent = '';

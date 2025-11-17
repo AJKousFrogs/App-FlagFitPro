@@ -18,7 +18,7 @@ const projectRoot = path.join(__dirname, '..');
 // Known external resources with their SRI hashes
 const EXTERNAL_RESOURCES = {
     'https://unpkg.com/lucide@latest': {
-        url: 'https://unpkg.com/lucide@1.0.445/dist/umd/lucide.js',
+        url: 'https://cdn.jsdelivr.net/npm/lucide@1.0.445/dist/umd/lucide.js',
         integrity: 'sha384-QUHo9yIHF1gPrLIKJyuJ6l2VzF5YNGFCk2sT3dSsGmBjDrPyYlqVjdJsJ8e6JkX2',
         crossorigin: 'anonymous'
     },
@@ -35,7 +35,6 @@ const CSP_DIRECTIVES = {
     'script-src': [
         "'self'",
         "'unsafe-inline'", // Required for inline event handlers - consider removing
-        "https://unpkg.com",
         "https://cdn.jsdelivr.net"
     ],
     'style-src': [
@@ -111,10 +110,10 @@ class SecurityHeadersManager {
     updateScriptSRI(htmlContent) {
         let updated = htmlContent;
         
-        // Replace unpkg.com lucide references
+        // Replace unpkg.com lucide references with jsdelivr
         updated = updated.replace(
             /<script\s+src\s*=\s*["']https:\/\/unpkg\.com\/lucide@latest["']/g,
-            `<script src="https://unpkg.com/lucide@1.0.445/dist/umd/lucide.js" integrity="sha384-QUHo9yIHF1gPrLIKJyuJ6l2VzF5YNGFCk2sT3dSsGmBjDrPyYlqVjdJsJ8e6JkX2" crossorigin="anonymous"`
+            `<script src="https://cdn.jsdelivr.net/npm/lucide@1.0.445/dist/umd/lucide.js" integrity="sha384-QUHo9yIHF1gPrLIKJyuJ6l2VzF5YNGFCk2sT3dSsGmBjDrPyYlqVjdJsJ8e6JkX2" crossorigin="anonymous"`
         );
         
         // Add missing integrity attributes to external scripts

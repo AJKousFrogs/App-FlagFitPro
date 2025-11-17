@@ -16,7 +16,7 @@
 .main-content {
   margin-left: 250px;
   width: calc(100% - 250px); /* ✅ Use width instead of max-width */
-  padding: var(--spacing-layout-md, 32px) var(--spacing-layout-lg, 40px);
+  padding: calc(64px + var(--spacing-layout-md, 32px)) var(--spacing-layout-lg, 40px) var(--spacing-layout-md, 32px);
   box-sizing: border-box;
 }
 .stat-card {
@@ -57,9 +57,18 @@
   gap: var(--space-6);
 }
 
+/* Tablet: 2 columns */
 @media (min-width: 769px) and (max-width: 1024px) {
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Mobile: Stack vertically */
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
   }
 }
 
@@ -708,6 +717,24 @@
   border-top: 1px solid var(--color-border-secondary);
 }
 
+/* Tablet: Adjust layout */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .training-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* AI-Powered Position Training - 2 columns on tablet */
+  .position-training-section .u-display-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+}
+
+/* Mobile and Tablet: Sidebar hidden */
 @media (max-width: 1024px) {
   .sidebar {
     position: fixed;
@@ -722,19 +749,42 @@
 
   .main-content {
     margin-left: 0;
-    width: 100%; /* ✅ Full width on mobile */
-    padding: var(--spacing-layout-xs, 20px) var(--spacing-component-lg, 24px);
+    width: 100%; /* ✅ Full width on mobile/tablet */
+    padding: calc(64px + var(--spacing-layout-xs, 16px)) var(--spacing-component-md, 16px) var(--spacing-layout-xs, 16px);
   }
 
   .training-grid {
     grid-template-columns: 1fr;
+    gap: var(--space-4);
   }
 }
 
 /* Very small mobile devices */
 @media (max-width: 480px) {
   .main-content {
-    padding: var(--spacing-layout-xs, 16px) var(--spacing-component-md, 16px);
+    padding: calc(56px + var(--spacing-layout-xs, 12px)) var(--spacing-component-sm, 12px) var(--spacing-layout-xs, 12px);
+  }
+
+  .hero-main-title {
+    font-size: var(--text-xl);
+  }
+
+  .workout-card {
+    padding: var(--space-4);
+  }
+
+  .workout-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .stat-card {
+    padding: var(--space-4);
+  }
+
+  .progress-stats {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
   }
 }
 
@@ -749,23 +799,7 @@
 
   .search-box {
     width: 100%;
-  }
-
-  .stats-grid {
-    grid-template-columns: repeat(4, 280px);
-    gap: var(--space-4);
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-
-  .stats-grid::-webkit-scrollbar {
-    display: none;
-  }
-
-  .stat-card {
-    scroll-snap-align: start;
+    max-width: 100%;
   }
 
   .hero-section {
@@ -783,30 +817,75 @@
   }
 
   .weekly-schedule-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
   }
 
   .custom-schedule-cta .u-display-flex {
     flex-direction: column;
     text-align: center;
+    gap: var(--space-4);
   }
 
   .cta-content {
     margin-bottom: var(--space-4);
+    width: 100%;
+  }
+
+  .cta-content h2 {
+    font-size: var(--text-lg);
+    margin-bottom: var(--space-2);
+  }
+
+  .cta-content p {
+    font-size: var(--text-sm);
+  }
+
+  .cta-card .btn-primary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* AI-Powered Position Training - Stack on mobile */
+  .position-training-section .u-display-grid,
+  .position-training-section [style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Ensure workout cards in AI section stack properly */
+  .position-training-section .workout-card {
+    width: 100%;
   }
 }
 
 @media (max-width: 480px) {
   .weekly-schedule-grid {
     grid-template-columns: 1fr;
+    gap: var(--space-2);
+  }
+
+  .day-card {
+    padding: var(--space-3);
   }
 
   .schedule-builder-content {
     padding: var(--space-4);
+    max-height: 95vh;
   }
 
   .game-day-selector {
     grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-2);
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .section-header .btn {
+    width: 100%;
   }
 }
 

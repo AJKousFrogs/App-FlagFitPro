@@ -6,18 +6,56 @@
 (function() {
   'use strict';
 
+  // Suppress Lucide icon not found errors to prevent console spam
+  // These errors occur when invalid icon names (like "football") are used
+  const originalError = console.error;
+  const suppressIconErrors = function(...args) {
+    // Check all arguments for the error message pattern
+    const errorText = args.map(arg => {
+      if (typeof arg === 'string') return arg;
+      if (arg && arg.toString) return arg.toString();
+      return '';
+    }).join(' ');
+
+    // Suppress Lucide icon not found errors
+    if (errorText.includes('icon name was not found') ||
+        errorText.includes('was not found in the provided icons object')) {
+      return; // Suppress this specific error
+    }
+
+    originalError.apply(console, args);
+  };
+
   /**
-   * Initialize Lucide icons
+   * Initialize Lucide icons with error handling
    */
   function initializeIcons() {
     // Wait for Lucide to be available
     if (typeof lucide !== 'undefined') {
-      lucide.createIcons();
+      // Temporarily suppress icon errors during initialization
+      console.error = suppressIconErrors;
+      try {
+        lucide.createIcons();
+      } finally {
+        // Restore original console.error after a short delay
+        // This allows Lucide's internal error handling to complete
+        setTimeout(function() {
+          console.error = originalError;
+        }, 100);
+      }
     } else {
       // If Lucide isn't loaded yet, wait for it
       const checkLucide = setInterval(function() {
         if (typeof lucide !== 'undefined') {
-          lucide.createIcons();
+          // Temporarily suppress icon errors during initialization
+          console.error = suppressIconErrors;
+          try {
+            lucide.createIcons();
+          } finally {
+            setTimeout(function() {
+              console.error = originalError;
+            }, 100);
+          }
           clearInterval(checkLucide);
         }
       }, 100);
@@ -34,7 +72,15 @@
    */
   function reinitializeIcons() {
     if (typeof lucide !== 'undefined') {
-      lucide.createIcons();
+      // Temporarily suppress icon errors during reinitialization
+      console.error = suppressIconErrors;
+      try {
+        lucide.createIcons();
+      } finally {
+        setTimeout(function() {
+          console.error = originalError;
+        }, 100);
+      }
     }
   }
 

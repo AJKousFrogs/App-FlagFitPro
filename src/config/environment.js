@@ -7,63 +7,76 @@
 const getEnvironment = () => {
   const hostname = window.location.hostname;
   const protocol = window.location.protocol;
-  
+
   // Production environments
   if (hostname.includes('.netlify.app') || hostname.includes('flagfit-pro.com')) {
     return 'production';
   }
-  
+
   // Staging environments
   if (hostname.includes('staging') || hostname.includes('dev')) {
     return 'staging';
   }
-  
+
   // Local development
   if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname.includes('192.168')) {
     return 'development';
   }
-  
+
   // Default to development for safety
   return 'development';
 };
 
 const ENV = getEnvironment();
 
+// Helper to safely access process.env in browser
+const getEnvVar = (key, defaultValue = '') => {
+  // Check if process exists and has env property (Node.js environment)
+  if (typeof process !== 'undefined' && process.env) {
+    return process.env[key] || defaultValue;
+  }
+  // For browser environment, check window._env or return default
+  if (typeof window !== 'undefined' && window._env) {
+    return window._env[key] || defaultValue;
+  }
+  return defaultValue;
+};
+
 // Environment-specific configurations
 const configs = {
   development: {
-    API_BASE_URL: 'http://localhost:3001/api',
+    API_BASE_URL: 'mock://api', // Use mock API by default in development
     DATABASE_URL: 'http://localhost:5432',
     ENABLE_MOCK_AUTH: true,
     ENABLE_DEBUG_LOGS: true,
     ENABLE_ANALYTICS: false,
-    YOUTUBE_API_KEY: process.env.YOUTUBE_API_KEY || '',
-    POCKETBASE_URL: process.env.POCKETBASE_URL || 'http://localhost:8090',
-    NEON_DATABASE_URL: process.env.NEON_DATABASE_URL || '',
+    YOUTUBE_API_KEY: getEnvVar('YOUTUBE_API_KEY', ''),
+    POCKETBASE_URL: getEnvVar('POCKETBASE_URL', 'http://localhost:8090'),
+    NEON_DATABASE_URL: getEnvVar('NEON_DATABASE_URL', ''),
     ENABLE_SECURE_STORAGE: false, // Disable for local dev
   },
-  
+
   staging: {
-    API_BASE_URL: process.env.REACT_APP_API_URL || 'https://api-staging.flagfit-pro.com',
-    DATABASE_URL: process.env.DATABASE_URL,
+    API_BASE_URL: getEnvVar('REACT_APP_API_URL', 'https://api-staging.flagfit-pro.com'),
+    DATABASE_URL: getEnvVar('DATABASE_URL', ''),
     ENABLE_MOCK_AUTH: false,
     ENABLE_DEBUG_LOGS: true,
     ENABLE_ANALYTICS: true,
-    YOUTUBE_API_KEY: process.env.YOUTUBE_API_KEY || '',
-    POCKETBASE_URL: process.env.POCKETBASE_URL || '',
-    NEON_DATABASE_URL: process.env.NEON_DATABASE_URL || '',
+    YOUTUBE_API_KEY: getEnvVar('YOUTUBE_API_KEY', ''),
+    POCKETBASE_URL: getEnvVar('POCKETBASE_URL', ''),
+    NEON_DATABASE_URL: getEnvVar('NEON_DATABASE_URL', ''),
     ENABLE_SECURE_STORAGE: true,
   },
-  
+
   production: {
-    API_BASE_URL: process.env.REACT_APP_API_URL || 'https://api.flagfit-pro.com',
-    DATABASE_URL: process.env.DATABASE_URL,
+    API_BASE_URL: getEnvVar('REACT_APP_API_URL', 'https://api.flagfit-pro.com'),
+    DATABASE_URL: getEnvVar('DATABASE_URL', ''),
     ENABLE_MOCK_AUTH: false,
     ENABLE_DEBUG_LOGS: false,
     ENABLE_ANALYTICS: true,
-    YOUTUBE_API_KEY: process.env.YOUTUBE_API_KEY || '',
-    POCKETBASE_URL: process.env.POCKETBASE_URL || '',
-    NEON_DATABASE_URL: process.env.NEON_DATABASE_URL || '',
+    YOUTUBE_API_KEY: getEnvVar('YOUTUBE_API_KEY', ''),
+    POCKETBASE_URL: getEnvVar('POCKETBASE_URL', ''),
+    NEON_DATABASE_URL: getEnvVar('NEON_DATABASE_URL', ''),
     ENABLE_SECURE_STORAGE: true,
   }
 };
@@ -74,7 +87,7 @@ const config = configs[ENV];
 // Validation for required environment variables
 const validateConfig = () => {
   const errors = [];
-  
+
   if (ENV === 'production') {
     if (!config.API_BASE_URL) {
       errors.push('API_BASE_URL is required in production');
@@ -86,7 +99,7 @@ const validateConfig = () => {
       errors.push('POCKETBASE_URL is required in production');
     }
   }
-  
+
   if (errors.length > 0) {
     console.error('Environment configuration errors:', errors);
     // Don't throw in production to avoid breaking the app

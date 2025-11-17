@@ -50,6 +50,7 @@
 [data-theme="dark"] .nav-item-icon svg {
   color: inherit;
   stroke: currentColor;
+  fill: none;
 }
 
 [data-theme="dark"] .nav-item.active .nav-item-icon {
@@ -106,6 +107,7 @@
 [data-theme="dark"] .header-icon svg {
   color: var(--icon-color-primary);
   stroke: currentColor;
+  fill: none;
 }
 
 /* ================================================================

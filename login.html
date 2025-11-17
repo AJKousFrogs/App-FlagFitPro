@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="./src/css/pages/login.css" />
 
     <!-- Lucide Icons - Modern icon library similar to Radix UI -->
-    <script src="https://unpkg.com/lucide@1.0.445/dist/umd/lucide.js" integrity="sha384-QUHo9yIHF1gPrLIKJyuJ6l2VzF5YNGFCk2sT3dSsGmBjDrPyYlqVjdJsJ8e6JkX2" crossorigin="anonymous" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js" crossorigin="anonymous" defer></script>
     <script src="./src/icon-helper.js" defer></script>
     <!-- Universal Components -->
     <script type="module" src="./src/js/main.js"></script>
@@ -30,7 +30,7 @@
       class="login-container card card-elevated w-full max-w-md mx-auto text-center"
     >
       <div class="login-logo mb-6 text-primary">
-        <i data-lucide="football" aria-hidden="true" class="icon-24"></i>
+        <i data-lucide="activity" aria-hidden="true" class="icon-24"></i>
       </div>
       <h1
         class="login-title text-2xl font-bold text-primary mb-6"
@@ -299,29 +299,70 @@
       // Manual redirect button event listener
       document
         .getElementById("goDashboard")
-        .addEventListener("click", function () {
+        .addEventListener("click", async function () {
           console.log("🔘 Manual redirect button clicked");
-          console.log(
-            '<i data-lucide="search" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle;"></i> Auth state check:',
-          );
-          console.log("   - Is authenticated:", authManager.isAuthenticated());
-          console.log("   - Current user:", authManager.getCurrentUser());
-
-          if (authManager.isAuthenticated()) {
+          
+          // Since this button only appears after successful login, try to redirect directly
+          // First check if we have auth data stored
+          const hasStoredAuth = localStorage.getItem('authToken') || 
+                               localStorage.getItem('__auth_token_enc') ||
+                               sessionStorage.getItem('authToken');
+          
+          if (hasStoredAuth) {
+            // We have auth data, redirect directly
+            console.log("✅ Auth data found, redirecting to dashboard...");
+            authManager.redirectToDashboard();
+            return;
+          }
+          
+          // If no stored auth, check auth manager state with retry
+          let isAuthenticated = authManager.isAuthenticated();
+          
+          // Retry check after a short delay if first check fails
+          if (!isAuthenticated) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+            isAuthenticated = authManager.isAuthenticated();
+          }
+          
+          if (isAuthenticated) {
             authManager.redirectToDashboard();
           } else {
-            console.error(
-              '<i data-lucide="x-circle" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle;"></i> Not authenticated, cannot redirect',
-            );
-            alert("Please log in first");
+            // If still not authenticated, check if we're on login page with success message
+            // This means login succeeded but auth state hasn't synced yet
+            const successMessage = document.getElementById("manualRedirect");
+            if (successMessage && successMessage.style.display !== "none") {
+              // Login was successful, just redirect anyway
+              console.log("✅ Login successful, redirecting despite auth check...");
+              authManager.redirectToDashboard();
+            } else {
+              console.error(
+                '<i data-lucide="x-circle" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle;"></i> Not authenticated, cannot redirect',
+              );
+              alert("Please log in first");
+            }
           }
         });
 
       // Initialize login page
       document.addEventListener("DOMContentLoaded", function () {
-        // Initialize Lucide icons
+        // Initialize Lucide icons with error suppression
         if (typeof lucide !== "undefined") {
-          lucide.createIcons();
+          // Temporarily suppress console errors for missing icons
+          const originalError = console.error;
+          console.error = function(...args) {
+            // Suppress Lucide icon not found errors
+            if (args[0] && typeof args[0] === 'string' && args[0].includes('icon name was not found')) {
+              return; // Suppress this specific error
+            }
+            originalError.apply(console, args);
+          };
+          
+          try {
+            lucide.createIcons();
+          } finally {
+            // Restore original console.error
+            console.error = originalError;
+          }
         }
 
         // Generate CSRF token

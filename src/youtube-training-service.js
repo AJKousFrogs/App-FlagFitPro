@@ -1,10 +1,13 @@
 // YouTube Training Video Service
 // Integrates with YouTube Data API v3 for flag football and sprinting training videos
 
+import { config } from './config/environment.js';
+import { logger } from './logger.js';
+
 class YouTubeTrainingService {
   constructor() {
-    // For production, these would be environment variables
-    this.apiKey = process.env.YOUTUBE_API_KEY || "YOUR_YOUTUBE_API_KEY_HERE";
+    // Get API key from environment config (browser-safe)
+    this.apiKey = config.YOUTUBE_API_KEY || "YOUR_YOUTUBE_API_KEY_HERE";
     this.baseUrl = "https://www.googleapis.com/youtube/v3";
     this.channelAllowlist = [
       "UCblfuW_4rakIf2h6aqANefA", // World Athletics

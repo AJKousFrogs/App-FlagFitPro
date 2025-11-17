@@ -1,6 +1,39 @@
 // Theme Switcher - Toggle between light and dark mode
 // Handles theme switching and persistence
 
+// Optional logger - use if available, otherwise fallback to console
+let logger;
+try {
+  // Try to import logger if available
+  if (typeof window !== 'undefined' && window.logger) {
+    logger = window.logger;
+  } else {
+    // Create a simple logger fallback
+    logger = {
+      debug: (...args) => {
+        if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+          console.log(...args);
+        }
+      },
+      info: (...args) => console.log(...args),
+      warn: (...args) => console.warn(...args),
+      error: (...args) => console.error(...args)
+    };
+  }
+} catch (e) {
+  // Fallback logger if import fails
+  logger = {
+    debug: (...args) => {
+      if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+        console.log(...args);
+      }
+    },
+    info: (...args) => console.log(...args),
+    warn: (...args) => console.warn(...args),
+    error: (...args) => console.error(...args)
+  };
+}
+
 class ThemeSwitcher {
   constructor() {
     this.currentTheme = localStorage.getItem("theme") || "light";
@@ -8,10 +41,19 @@ class ThemeSwitcher {
   }
 
   init() {
+    // Wait for DOM to be ready if needed
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => this.initializeTheme());
+    } else {
+      this.initializeTheme();
+    }
+  }
+
+  initializeTheme() {
     // Apply saved theme on load
     this.applyTheme(this.currentTheme);
 
-    // Create toggle switch if it doesn't exist
+    // Create toggle switch or attach listeners to existing one
     this.createToggleSwitch();
 
     // Listen for system preference changes
@@ -26,11 +68,30 @@ class ThemeSwitcher {
   }
 
   createToggleSwitch() {
-    // Check if toggle already exists (either theme-toggle or header-theme-toggle)
-    if (
-      document.getElementById("theme-toggle") ||
-      document.getElementById("header-theme-toggle")
-    ) {
+    // Check if toggle already exists in HTML - attach listeners instead of creating
+    const existingToggle = document.getElementById("theme-toggle");
+    const headerToggle = document.getElementById("header-theme-toggle");
+
+    if (existingToggle || headerToggle) {
+      // Toggle already exists in HTML - attach event listeners and initialize state
+      const toggle = existingToggle || headerToggle;
+
+      // Initialize toggle state based on saved theme
+      toggle.checked = this.currentTheme === "dark";
+
+      // Update toggle text and visual state
+      this.updateToggleText(this.currentTheme);
+
+      // Remove any existing listeners to avoid duplicates
+      const newToggle = toggle.cloneNode(true);
+      toggle.parentNode.replaceChild(newToggle, toggle);
+
+      // Add event listener to the new toggle
+      newToggle.addEventListener("change", (e) => {
+        const newTheme = e.target.checked ? "dark" : "light";
+        this.switchTheme(newTheme);
+      });
+
       return;
     }
 
@@ -187,11 +248,22 @@ class ThemeSwitcher {
 // Initialize theme switcher
 let themeSwitcher;
 if (typeof window !== "undefined") {
-  document.addEventListener("DOMContentLoaded", () => {
-    themeSwitcher = new ThemeSwitcher();
-    // Make instance available globally for other scripts
-    window.themeSwitcher = themeSwitcher;
-  });
+  // Since script is loaded with defer, DOM is already ready
+  // But check just in case it's not
+  if (document.readyState === 'loading') {
+    document.addEventListener("DOMContentLoaded", () => {
+      if (!themeSwitcher) {
+        themeSwitcher = new ThemeSwitcher();
+        window.themeSwitcher = themeSwitcher;
+      }
+    });
+  } else {
+    // DOM is already ready
+    if (!themeSwitcher) {
+      themeSwitcher = new ThemeSwitcher();
+      window.themeSwitcher = themeSwitcher;
+    }
+  }
 }
 
 // Export for module use

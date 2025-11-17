@@ -22,19 +22,19 @@
 /* Dark Theme Sidebar */
 body[data-theme="dark"] .sidebar,
 html[data-theme="dark"] .sidebar {
-  background: #1a1a1a;
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--surface-primary) !important; /* #171717 in dark theme */
+  border-right: 1px solid var(--color-border-primary) !important;
   box-shadow:
     4px 0 24px rgba(0, 0, 0, 0.3),
-    inset -1px 0 0 rgba(255, 255, 255, 0.05);
+    inset -1px 0 0 rgba(255, 255, 255, 0.05) !important;
 }
 
 /* Light Theme Sidebar */
 body[data-theme="light"] .sidebar,
 html[data-theme="light"] .sidebar {
-  background: #ffffff;
-  border-right: 1px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  background: var(--surface-primary) !important; /* #ffffff in light theme */
+  border-right: 1px solid var(--color-border-primary) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
 }
 
 .sidebar-logo {
@@ -99,7 +99,7 @@ html[data-theme="light"] .sidebar {
 }
 
 .nav-item:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--surface-secondary);
   color: var(--color-text-primary);
   transform: translateX(4px);
 }
@@ -109,8 +109,8 @@ html[data-theme="light"] .sidebar {
 }
 
 .nav-item.active {
-  background: rgba(16, 201, 107, 0.1);
-  color: var(--primitive-primary-500);
+  background: var(--color-brand-primary-alpha-10);
+  color: var(--color-brand-primary);
 }
 
 .nav-item.active::before {
@@ -119,8 +119,8 @@ html[data-theme="light"] .sidebar {
 }
 
 .nav-item.active .nav-item-icon {
-  background: rgba(16, 201, 107, 0.15);
-  color: var(--primitive-primary-500);
+  background: var(--color-brand-primary-alpha-10);
+  color: var(--color-brand-primary);
 }
 
 .nav-item-icon {
@@ -144,36 +144,36 @@ html[data-theme="light"] .sidebar {
 
 body[data-theme="dark"] .nav-item,
 html[data-theme="dark"] .nav-item {
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--color-text-secondary) !important;
 }
 
 body[data-theme="dark"] .nav-item:hover,
 html[data-theme="dark"] .nav-item:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.9);
+  background: var(--surface-secondary) !important;
+  color: var(--color-text-primary) !important;
 }
 
 body[data-theme="dark"] .nav-item.active,
 html[data-theme="dark"] .nav-item.active {
-  background: rgba(16, 201, 107, 0.15);
-  color: var(--primitive-primary-500);
+  background: var(--color-brand-primary-alpha-10) !important;
+  color: var(--color-brand-primary) !important;
 }
 
 body[data-theme="light"] .nav-item,
 html[data-theme="light"] .nav-item {
-  color: rgba(0, 0, 0, 0.6);
+  color: var(--color-text-secondary) !important;
 }
 
 body[data-theme="light"] .nav-item:hover,
 html[data-theme="light"] .nav-item:hover {
-  background: rgba(0, 0, 0, 0.05);
-  color: rgba(0, 0, 0, 0.9);
+  background: var(--surface-secondary) !important;
+  color: var(--color-text-primary) !important;
 }
 
 body[data-theme="light"] .nav-item.active,
 html[data-theme="light"] .nav-item.active {
-  background: rgba(16, 201, 107, 0.1);
-  color: var(--primitive-primary-500);
+  background: var(--color-brand-primary-alpha-10) !important;
+  color: var(--color-brand-primary) !important;
 }
 
 /* Page-specific styles that can't be replaced with utilities */

@@ -6,84 +6,65 @@
 
 /**
  * 15-Minute Daily Morning Mobility Routine
- * Should be done every morning, regardless of training day
+ * Different routine for each day of the week
  * All levels - critical for injury prevention
  */
 export const MORNING_MOBILITY_ROUTINE = {
     title: "15 Minute Full Body DAILY Mobility Routine",
-    description: "Complete this every morning to optimize movement quality and prevent injuries",
+    description: "Complete this every morning to optimize movement quality and prevent injuries. Each day has a different routine to keep your body moving in all planes.",
     duration: 15,
     frequency: "Daily (7 days/week)",
     level: "All levels",
 
-    exercises: [
-        {
-            name: "Hip Circles",
-            duration: "10 each direction",
-            sets: 1,
-            focus: "Hip mobility and activation",
-            cues: ["Control the movement", "Full range of motion", "Both directions"]
+    // Day-specific routines with YouTube video links
+    dailyRoutines: {
+        monday: {
+            dayName: "Monday",
+            videoId: "IWNnTJFwi3s",
+            videoUrl: "https://www.youtube.com/watch?v=IWNnTJFwi3s&list=PLIconE7hKrWGw8lprYWFeU5k2QbuKdSuf&index=1",
+            focus: "Full body activation and hip mobility"
         },
-        {
-            name: "Leg Swings (all directions)",
-            duration: "10 each",
-            sets: 1,
-            variations: ["Front-to-back", "Side-to-side", "Diagonal"],
-            focus: "Dynamic hip mobility",
-            cues: ["Relaxed leg", "Control with core", "Gradually increase range"]
+        tuesday: {
+            dayName: "Tuesday",
+            videoId: "-RTXH86dKnM",
+            videoUrl: "https://www.youtube.com/watch?v=-RTXH86dKnM&list=PLIconE7hKrWGw8lprYWFeU5k2QbuKdSuf&index=2",
+            focus: "Lower body chain and ankle mobility"
         },
-        {
-            name: "Ankle Circles",
-            duration: "10 each direction",
-            sets: 1,
-            focus: "Ankle mobility",
-            cues: ["Point toes and rotate", "Both directions", "Each ankle"]
+        wednesday: {
+            dayName: "Wednesday",
+            videoId: "WsOAJeifb_A",
+            videoUrl: "https://www.youtube.com/watch?v=WsOAJeifb_A&list=PLIconE7hKrWGw8lprYWFeU5k2QbuKdSuf&index=3",
+            focus: "Spinal mobility and core activation"
         },
-        {
-            name: "Dynamic Quad Stretches",
-            duration: "30s each",
-            sets: 1,
-            focus: "Quadriceps flexibility",
-            cues: ["Pull heel to glute", "Keep knees together", "Stand tall"]
+        thursday: {
+            dayName: "Thursday",
+            videoId: "e9mJR6h3H4Y",
+            videoUrl: "https://www.youtube.com/watch?v=e9mJR6h3H4Y&list=PLIconE7hKrWGw8lprYWFeU5k2QbuKdSuf&index=4",
+            focus: "Hip flexor and quad mobility"
         },
-        {
-            name: "Walking Lunges",
-            reps: "10 each leg",
-            sets: 1,
-            focus: "Hip flexor and quad activation",
-            cues: ["Back knee nearly touches ground", "Upright torso", "Control the movement"]
+        friday: {
+            dayName: "Friday",
+            videoId: "xGsbfQ6ZBH8",
+            videoUrl: "https://www.youtube.com/watch?v=xGsbfQ6ZBH8&list=PLIconE7hKrWGw8lprYWFeU5k2QbuKdSuf&index=5",
+            focus: "Shoulder and thoracic spine mobility"
         },
-        {
-            name: "World's Greatest Stretch",
-            reps: "5 each side",
-            sets: 1,
-            focus: "Full body mobility",
-            cues: [
-                "Lunge position",
-                "Elbow to instep",
-                "Rotate and reach up",
-                "Hold each position"
-            ],
-            description: "The single best full-body mobility exercise"
+        saturday: {
+            dayName: "Saturday",
+            videoId: "EY8ks1HIdPM",
+            videoUrl: "https://www.youtube.com/watch?v=EY8ks1HIdPM&list=PLIconE7hKrWGw8lprYWFeU5k2QbuKdSuf&index=6",
+            focus: "Active recovery and movement flow"
         },
-        {
-            name: "Glute Bridges",
-            reps: 10,
-            sets: 2,
-            focus: "Glute activation",
-            cues: ["Squeeze glutes at top", "Hold 2 seconds", "Controlled descent"]
-        },
-        {
-            name: "Bodyweight Squats",
-            reps: 10,
-            sets: 1,
-            focus: "Movement pattern reinforcement",
-            cues: ["Chest up", "Knees track over toes", "Full depth if possible"]
+        sunday: {
+            dayName: "Sunday",
+            videoId: "1pnP0SyPPAw",
+            videoUrl: "https://www.youtube.com/watch?v=1pnP0SyPPAw&list=PLIconE7hKrWGw8lprYWFeU5k2QbuKdSuf&index=7",
+            focus: "Complete recovery and restoration"
         }
-    ],
+    },
 
     notes: [
         "This is NON-NEGOTIABLE for injury prevention",
+        "Each day has a different routine - follow the video for your current day",
         "Do it even on rest days",
         "Takes only 15 minutes - no excuses",
         "Best done right after waking up"
@@ -458,62 +439,124 @@ export const SUNDAY_RECOVERY_PROTOCOL = {
         {
             title: "Additional Recovery Modalities",
             duration: "20-30 minutes",
-            purpose: "Enhance recovery and prepare for next week",
+            purpose: "Daily recovery practices to enhance recovery and prevent injury",
 
-            activities: [
+            exercises: [
                 {
-                    name: "Foam rolling",
-                    duration: "15 minutes",
-                    focus: "Full body",
-                    areas: [
-                        "Calves",
-                        "Hamstrings",
-                        "Quads",
-                        "IT band",
-                        "Glutes",
-                        "Lower back",
-                        "Upper back"
-                    ],
-                    technique: "Slow, controlled, pause on tender spots"
-                },
-                {
-                    name: "Light walk",
-                    duration: "20 minutes",
-                    intensity: "Easy pace",
-                    purpose: "Active recovery, blood flow",
-                    cues: ["Relaxed", "Enjoy movement", "Light conversation pace"]
-                },
-                {
-                    name: "Visualization/mental training",
-                    duration: "10 minutes",
-                    purpose: "Mental recovery and preparation",
-                    activities: [
-                        "Review week's training",
-                        "Visualize upcoming week",
-                        "Mental rehearsal of key movements",
-                        "Gratitude practice"
+                    category: "Daily Recovery",
+                    exercises: [
+                        {
+                            name: "Foam rolling",
+                            frequency: "Daily",
+                            duration: "10-15 minutes",
+                            focus: "Full body recovery",
+                            areas: [
+                                "Calves",
+                                "Hamstrings",
+                                "Quads",
+                                "IT band",
+                                "Glutes",
+                                "Lower back",
+                                "Upper back"
+                            ],
+                            cues: [
+                                "Slow, controlled rolling",
+                                "Pause on tender spots for 30-60 seconds",
+                                "Breathe deeply through discomfort",
+                                "Work each area thoroughly"
+                            ],
+                            importance: "Critical for daily recovery - do not skip"
+                        },
+                        {
+                            name: "Massage gun",
+                            frequency: "When needed (before foam rolling)",
+                            duration: "5-10 minutes",
+                            timing: "Use before foam rolling session",
+                            focus: "Major muscle groups and tender areas",
+                            cues: [
+                                "Start with low intensity",
+                                "Move slowly over muscle belly",
+                                "Avoid bones and joints",
+                                "Use heated attachment if available"
+                            ],
+                            note: "Helps prepare tissues for deeper foam rolling work"
+                        }
                     ]
                 },
                 {
-                    name: "Compression therapy",
-                    optional: true,
-                    duration: "15-30 minutes",
-                    equipment: "Compression boots or tight leggings",
-                    benefits: "Enhanced blood flow and recovery"
-                },
-                {
-                    name: "Massage gun",
-                    optional: true,
-                    duration: "10-15 minutes",
-                    preference: "Heated if possible",
-                    focus: "Major muscle groups, tender areas"
-                },
-                {
-                    name: "TENS/EMS",
-                    optional: true,
-                    duration: "15-20 minutes",
-                    purpose: "Muscle recovery and pain relief",
-                    note: "Follow device instructions"
+                    category: "Weekly Recovery",
+                    exercises: [
+                        {
+                            name: "Compression boots",
+                            frequency: "2x per week (or daily if available)",
+                            duration: "15-30 minutes",
+                            intensity: "Moderate pressure",
+                            benefits: [
+                                "Enhanced blood flow",
+                                "Reduced muscle soreness",
+                                "Faster recovery between sessions"
+                            ],
+                            cues: [
+                                "Start with lower pressure",
+                                "Gradually increase to comfortable level",
+                                "Use after training sessions or before bed"
+                            ],
+                            note: "Daily use is ideal if equipment is available"
+                        },
+                        {
+                            name: "Self massage",
+                            frequency: "2x per week",
+                            duration: "15-20 minutes",
+                            focus: "Targeted areas",
+                            techniques: [
+                                "Hands and thumbs for deep pressure",
+                                "Tennis ball for trigger points",
+                                "Lacrosse ball for feet and glutes"
+                            ],
+                            areas: [
+                                "Feet and calves",
+                                "Hip flexors",
+                                "Glutes",
+                                "Upper back and shoulders"
+                            ],
+                            cues: [
+                                "Work slowly and methodically",
+                                "Find and release trigger points",
+                                "Breathe through discomfort"
+                            ]
+                        },
+                        {
+                            name: "Fascia IASTM tools",
+                            frequency: "1x per week",
+                            duration: "10-15 minutes",
+                            purpose: "Fascial release and mobility",
+                            tools: [
+                                "Gua sha tool",
+                                "IASTM scraper",
+                                "Metal or plastic tool"
+                            ],
+                            technique: [
+                                "Apply light pressure",
+                                "Move tool along muscle fibers",
+                                "Work in one direction",
+                                "Use lotion or oil for smooth gliding"
+                            ],
+                            areas: [
+                                "IT band",
+                                "Calves",
+                                "Shins",
+                                "Forearms",
+                                "Upper back"
+                            ],
+                            cues: [
+                                "Light pressure - not painful",
+                                "Work slowly",
+                                "Redness is normal",
+                                "Avoid if skin is irritated"
+                            ],
+                            note: "Advanced technique - learn proper form before use"
+                        }
+                    ]
                 }
             ]
         }

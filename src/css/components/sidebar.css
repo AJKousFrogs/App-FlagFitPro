@@ -72,6 +72,22 @@ html[data-theme="light"] .sidebar {
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
+/* Ensure sidebar logo icon is visible */
+.sidebar-logo [data-lucide],
+.sidebar-logo svg,
+.sidebar-logo i[data-lucide] {
+  color: white;
+  stroke: currentColor;
+  fill: none;
+}
+
+.sidebar-logo svg {
+  width: 100%;
+  height: 100%;
+  stroke: currentColor;
+  fill: none;
+}
+
 .sidebar-logo::before {
   content: "";
   position: absolute;
@@ -299,6 +315,23 @@ html[data-theme="light"] .sidebar .nav-item.active {
   justify-content: center;
   flex-shrink: 0;
   transition: all 0.3s ease;
+  color: inherit;
+}
+
+/* Ensure Lucide icons inherit color and have proper stroke */
+.sidebar .nav-item .nav-item-icon [data-lucide],
+.sidebar .nav-item .nav-item-icon svg,
+.sidebar .nav-item-icon i[data-lucide] {
+  color: inherit;
+  stroke: currentColor;
+  fill: none;
+}
+
+.sidebar .nav-item .nav-item-icon svg {
+  width: 100%;
+  height: 100%;
+  stroke: currentColor;
+  fill: none;
 }
 
 /* Text: single, consistent size/weight with responsive scaling */

@@ -2137,7 +2137,7 @@ export const WEEKLY_SCHEDULES = {
                 },
               ],
             },
-          },
+          ],
           equipment: ["Low box", "jump rope"],
         },
         saturday: {

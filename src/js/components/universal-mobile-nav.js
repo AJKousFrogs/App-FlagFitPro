@@ -13,13 +13,34 @@ class UniversalMobileNav {
   }
 
   init() {
+    // Skip initialization on auth pages (login, register, reset-password)
+    const currentPath = window.location.pathname.toLowerCase();
+    const authPages = ['/login', '/register', '/reset-password'];
+    const isAuthPage = authPages.some(page => currentPath.includes(page) || currentPath.endsWith(page + '.html'));
+
+    if (isAuthPage) {
+      // Auth pages don't have sidebars, so skip initialization silently
+      return;
+    }
+
     // Find elements (they might have different IDs across pages)
     this.sidebar = document.getElementById('sidebar') || document.querySelector('.sidebar');
     this.toggle = document.getElementById('mobile-menu-toggle') || document.querySelector('.mobile-menu-toggle');
     this.overlay = document.getElementById('sidebar-overlay') || document.querySelector('.sidebar-overlay, .menu-scrim');
 
+    // Only warn and create fallback if we're on a page that should have navigation
+    // Pages without sidebars (like some standalone pages) shouldn't trigger warnings
+    const hasAnyNav = document.querySelector('nav, .sidebar, .navigation, [role="navigation"]');
+
     if (!this.sidebar || !this.toggle) {
-      console.warn('Mobile nav elements not found - creating fallback');
+      // Only warn if there's some navigation element present (meaning we should have mobile nav)
+      if (hasAnyNav) {
+        // Suppress warning in development to reduce console noise
+        const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        if (!isDevelopment) {
+          console.warn('Mobile nav elements not found - creating fallback');
+        }
+      }
       this.createFallbackElements();
     }
 
@@ -133,7 +154,7 @@ class UniversalMobileNav {
     // Ensure sidebar has proper ARIA attributes
     this.sidebar.setAttribute('role', 'navigation');
     this.sidebar.setAttribute('aria-label', 'Main navigation');
-    
+
     // Set up focus trapping when open
     this.setupFocusTrap();
   }
@@ -185,18 +206,18 @@ class UniversalMobileNav {
     this.isOpen = true;
     this.sidebar.classList.add('is-open');
     this.overlay?.classList.add('is-visible');
-    
+
     // Update ARIA states
     this.toggle?.setAttribute('aria-expanded', 'true');
     this.overlay?.setAttribute('aria-hidden', 'false');
-    
+
     // Prevent body scroll
     document.body.style.overflow = 'hidden';
-    
+
     // Focus first navigation item
     const firstNavItem = this.sidebar.querySelector('.nav-item, a');
     firstNavItem?.focus();
-    
+
     // Announce to screen readers
     this.announceToScreenReader('Navigation menu opened');
   }
@@ -207,14 +228,14 @@ class UniversalMobileNav {
     this.isOpen = false;
     this.sidebar.classList.remove('is-open');
     this.overlay?.classList.remove('is-visible');
-    
+
     // Update ARIA states
     this.toggle?.setAttribute('aria-expanded', 'false');
     this.overlay?.setAttribute('aria-hidden', 'true');
-    
+
     // Restore body scroll
     document.body.style.overflow = '';
-    
+
     // Announce to screen readers
     this.announceToScreenReader('Navigation menu closed');
   }
@@ -225,9 +246,9 @@ class UniversalMobileNav {
     announcement.setAttribute('aria-atomic', 'true');
     announcement.className = 'sr-only';
     announcement.textContent = message;
-    
+
     document.body.appendChild(announcement);
-    
+
     // Remove after announcement
     setTimeout(() => {
       document.body.removeChild(announcement);
@@ -252,13 +273,18 @@ class UniversalMobileNav {
   }
 }
 
-// Auto-initialize on page load
+// Auto-initialize on page load (skip auth pages)
 document.addEventListener('DOMContentLoaded', () => {
-  window.universalMobileNav = new UniversalMobileNav();
-  
-  // Set active navigation based on current page
-  const currentPath = window.location.pathname;
-  window.universalMobileNav.updateActiveNavigation(currentPath);
+  const currentPath = window.location.pathname.toLowerCase();
+  const authPages = ['/login', '/register', '/reset-password'];
+  const isAuthPage = authPages.some(page => currentPath.includes(page) || currentPath.endsWith(page + '.html'));
+
+  if (!isAuthPage) {
+    window.universalMobileNav = new UniversalMobileNav();
+
+    // Set active navigation based on current page
+    window.universalMobileNav.updateActiveNavigation(currentPath);
+  }
 });
 
 // Export for module usage

@@ -110,6 +110,12 @@
 @import url("./inline-styles-extracted.css") layer(utilities);
 
 /* ================================================================
+   LAYER 10.5: RESPONSIVE FIXES
+   Global responsive fixes for mobile, tablet, and desktop alignment
+   ================================================================ */
+@import url("./responsive-fixes.css") layer(utilities);
+
+/* ================================================================
    LAYER 11: HOOKS
    JavaScript hooks (.js-*) - no styles
    ================================================================ */
@@ -162,6 +168,35 @@ svg.lucide {
   color: var(--color-brand-primary);
   width: 1.5em;
   height: 1.5em;
+}
+
+/* Ensure all Lucide SVG icons inherit color and have proper stroke */
+i[data-lucide] svg,
+svg.lucide,
+[data-lucide] svg,
+i[data-lucide] > svg {
+  stroke: currentColor !important;
+  fill: none !important;
+  color: inherit;
+}
+
+/* Ensure icons inherit color from parent */
+.nav-item-icon svg,
+.header-icon svg,
+.sidebar-logo svg,
+.search-icon svg,
+.mobile-menu-toggle svg {
+  stroke: currentColor !important;
+  fill: none !important;
+  color: inherit;
+}
+
+/* Global rule for all Lucide SVG elements */
+svg.lucide,
+[data-lucide] svg,
+i[data-lucide] svg {
+  stroke: currentColor !important;
+  fill: none !important;
 }
 
 /* Chart Styles */

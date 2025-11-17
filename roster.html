@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="./src/css/pages/roster.css" />
 
     <!-- Lucide Icons - Modern icon library similar to Radix UI -->
-    <script src="https://unpkg.com/lucide@1.0.445/dist/umd/lucide.js" integrity="sha384-QUHo9yIHF1gPrLIKJyuJ6l2VzF5YNGFCk2sT3dSsGmBjDrPyYlqVjdJsJ8e6JkX2" crossorigin="anonymous" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js" crossorigin="anonymous" defer>
     <script src="./src/icon-helper.js" defer></script>
     <script src="./src/theme-switcher.js" defer></script>
     <script src="./src/nav-highlight.js" defer></script>
@@ -225,10 +225,15 @@
         <!-- Team Header Card -->
         <div class="card card-elevated">
           <div class="card-body">
+            <div class="u-text-body-sm u-text-secondary u-margin-bottom-4" style="line-height: 1.4; font-weight: 500;">
+              <span>International</span>
+              <span style="margin: 0 var(--space-1, 4px); opacity: 0.5;">•</span>
+              <span>Flag Football</span>
+            </div>
             <h2 class="u-text-heading-lg u-font-weight-700 u-text-primary u-margin-bottom-8">
               International Flag Football Team
             </h2>
-            <p class="u-text-body-md u-text-secondary u-margin-0">
+            <p class="u-text-body-md u-text-secondary u-margin-0" style="line-height: 1.6;">
               Meet our world-class athletes and coaching staff representing 12 countries
             </p>
           </div>

@@ -1,13 +1,13 @@
 // Training Page JavaScript Module
 import { authManager } from '../../auth-manager.js';
 import { REAL_TEAM_DATA, getAllPlayers, getStaffMember } from '../../real-team-data.js';
-import { 
+import {
   initializeLucideIcons,
   announceToScreenReader,
   debounce,
   saveToStorage,
   getFromStorage
-} from '../../utils/shared.js';
+} from '../utils/shared.js';
 import TrainingVideoComponent from '../../training-video-component.js';
 // Services
 import { storageService } from '../services/storageService.js';
@@ -507,7 +507,7 @@ async function handleAIChat(e) {
 window.openQBTrainingModule = function() {
     try {
         logger.info('Opening QB Training Module');
-        
+
         // Get current user data for training analysis
         const state = trainingPageState.getState();
         const playerData = {
@@ -545,7 +545,7 @@ window.openQBTrainingModule = function() {
 window.openDBTrainingModule = function() {
     try {
         logger.info('Opening DB Training Module');
-        
+
         // Get current user data for training analysis
         const state = trainingPageState.getState();
         const playerData = {
@@ -594,20 +594,20 @@ function createTrainingPlanModal(title, plan) {
     const modal = document.createElement('div');
     modal.className = 'modal-overlay';
     modal.style.cssText = `
-        position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
-        background: rgba(0,0,0,0.8); display: none; align-items: center; 
+        position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.8); display: none; align-items: center;
         justify-content: center; z-index: 10000; padding: 20px;
     `;
 
     const modalContent = document.createElement('div');
     modalContent.style.cssText = `
-        background: white; border-radius: 12px; max-width: 800px; 
+        background: white; border-radius: 12px; max-width: 800px;
         max-height: 90vh; overflow-y: auto; padding: 24px; width: 100%;
     `;
 
     const header = document.createElement('div');
     header.style.cssText = `display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;`;
-    
+
     const titleEl = document.createElement('h2');
     titleEl.textContent = title;
     titleEl.style.cssText = `margin: 0; color: var(--color-text-primary);`;
@@ -615,7 +615,7 @@ function createTrainingPlanModal(title, plan) {
     const closeBtn = document.createElement('button');
     closeBtn.textContent = '×';
     closeBtn.style.cssText = `
-        background: none; border: none; font-size: 24px; cursor: pointer; 
+        background: none; border: none; font-size: 24px; cursor: pointer;
         padding: 8px; border-radius: 4px;
     `;
     closeBtn.onclick = () => modal.remove();
@@ -664,8 +664,8 @@ function formatTrainingPlan(plan) {
                 </ul>
             </div>
             <div style="margin-top: 20px;">
-                <button onclick="this.closest('.modal-overlay').remove()" 
-                        class="btn btn-primary" 
+                <button onclick="this.closest('.modal-overlay').remove()"
+                        class="btn btn-primary"
                         style="padding: 12px 24px; border: none; border-radius: 6px; background: var(--color-primary); color: white; cursor: pointer;">
                     Start Training Plan
                 </button>
