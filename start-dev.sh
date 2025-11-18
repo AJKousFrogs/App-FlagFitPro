@@ -1,36 +1,35 @@
 #!/bin/bash
 
-# Enhanced Development Server Startup Script
-# Starts localhost with hot reload and immediate bug fixing
+# Start development servers with hot reload
+# Backend: nodemon for hot reload
+# Frontend: Angular CLI has built-in hot reload
 
-echo "🔥 Starting Flag Football App Development Server..."
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-
-# Check if node_modules exists
-if [ ! -d "node_modules" ]; then
-    echo "📦 Installing dependencies..."
-    npm install
-fi
-
-# Check if port 4000 is in use
-if lsof -Pi :4000 -sTCP:LISTEN -t >/dev/null ; then
-    echo "⚠️  Port 4000 is already in use. Attempting to kill existing process..."
-    lsof -ti:4000 | xargs kill -9 2>/dev/null
-    sleep 1
-fi
-
-# Check if port 3001 is in use (API server)
-if lsof -Pi :3001 -sTCP:LISTEN -t >/dev/null ; then
-    echo "⚠️  Port 3001 is already in use. Attempting to kill existing process..."
-    lsof -ti:3001 | xargs kill -9 2>/dev/null
-    sleep 1
-fi
-
-# Start the enhanced dev server with bug fixing
-echo ""
-echo "🚀 Starting enhanced dev server with hot reload & bug fixing..."
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "🚀 Starting FlagFit Pro Development Servers..."
 echo ""
 
-npm run dev:bugfix
+# Start backend server with nodemon (hot reload)
+echo "📦 Starting backend server on port 3001 (with hot reload)..."
+cd "$(dirname "$0")"
+nodemon server.js --watch . --ext js,json --ignore node_modules/ --ignore angular/ --ignore "*.backup" &
+BACKEND_PID=$!
 
+# Wait a moment for backend to start
+sleep 2
+
+# Start Angular frontend (has built-in hot reload)
+echo "⚡ Starting Angular frontend on port 4200 (with hot reload)..."
+cd angular
+npm start &
+FRONTEND_PID=$!
+
+echo ""
+echo "✅ Servers starting..."
+echo ""
+echo "📊 Backend API: http://localhost:3001"
+echo "🌐 Frontend App: http://localhost:4200"
+echo ""
+echo "Press Ctrl+C to stop all servers"
+echo ""
+
+# Wait for user interrupt
+wait
