@@ -737,12 +737,12 @@ class TrainingVideoComponent extends ComponentWithCleanup {
     this.currentVideos = [];
     this.selectedVideo = null;
     this.currentCategory = null;
-    
+
     if (this.container) {
-      this.container.innerHTML = '';
+      this.container.innerHTML = "";
     }
-    
-    logger.debug('TrainingVideoComponent destroyed and cleaned up');
+
+    logger.debug("TrainingVideoComponent destroyed and cleaned up");
   }
 }
 

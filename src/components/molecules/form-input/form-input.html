@@ -18,6 +18,7 @@
     name="username"
     class="form-input"
     placeholder="Enter your username"
+    autocomplete="username"
   />
 </div>
 
@@ -30,6 +31,7 @@
     name="email"
     class="form-input"
     placeholder="athlete@example.com"
+    autocomplete="email"
   />
   <small class="form-hint">We'll never share your email</small>
 </div>
@@ -43,6 +45,7 @@
     name="password"
     class="form-input error"
     value="pass"
+    autocomplete="current-password"
   />
   <div class="form-error" role="alert">
     Password must be at least 8 characters
@@ -58,6 +61,7 @@
     name="phone"
     class="form-input success"
     value="+1 234 567 8900"
+    autocomplete="tel"
   />
   <small class="form-success">Phone verified!</small>
 </div>
@@ -68,7 +72,7 @@
     <span>Athlete Name</span>
     <span class="required-indicator" aria-label="required">*</span>
   </label>
-  <input type="text" id="name" name="name" class="form-input" required />
+  <input type="text" id="name" name="name" class="form-input" required autocomplete="name" />
 </div>
 
 <!-- Disabled Input -->
@@ -77,6 +81,7 @@
   <input
     type="text"
     id="disabled"
+    name="disabled"
     class="form-input"
     value="Cannot edit"
     disabled
@@ -106,6 +111,7 @@
       name="search"
       class="form-input"
       placeholder="Search athletes..."
+      autocomplete="off"
       style="padding-left: 40px"
     />
   </div>

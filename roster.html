@@ -18,7 +18,11 @@
     <link rel="stylesheet" href="./src/css/pages/roster.css" />
 
     <!-- Lucide Icons - Modern icon library similar to Radix UI -->
-    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js" crossorigin="anonymous" defer>
+    <script
+      src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
     <script src="./src/icon-helper.js" defer></script>
     <script src="./src/theme-switcher.js" defer></script>
     <script src="./src/nav-highlight.js" defer></script>
@@ -30,19 +34,16 @@
     <div class="dashboard-container">
       <!-- Mobile Overlay/Scrim (for closing sidebar on mobile) -->
       <div class="menu-scrim" aria-hidden="true" onclick="closeMenu()"></div>
-      
+
       <!-- Unified Sidebar Navigation -->
-      <div class="sidebar">
+      <div class="sidebar" id="sidebar">
         <div
           class="sidebar-logo"
           onclick="window.location.href='/dashboard.html'"
           title="FlagFit Pro"
           aria-label="Go to dashboard"
         >
-          <i
-            data-lucide="activity"
-            class="icon-20 icon-inline"
-          ></i>
+          <i data-lucide="activity" class="icon-20 icon-inline"></i>
         </div>
 
         <nav class="nav-section" aria-label="Dashboard navigation">
@@ -53,10 +54,7 @@
             id="nav-dashboard"
           >
             <span class="nav-item-icon">
-              <i
-                data-lucide="layout-dashboard"
-                class="icon-24"
-              ></i>
+              <i data-lucide="layout-dashboard" class="icon-24"></i>
             </span>
             <span class="nav-item-label">Overview</span>
           </a>
@@ -67,10 +65,7 @@
             id="nav-analytics"
           >
             <span class="nav-item-icon">
-              <i
-                data-lucide="bar-chart-3"
-                class="icon-24"
-              ></i>
+              <i data-lucide="bar-chart-3" class="icon-24"></i>
             </span>
             <span class="nav-item-label">Analytics</span>
           </a>
@@ -120,19 +115,13 @@
             id="nav-community"
           >
             <span class="nav-item-icon">
-              <i
-                data-lucide="message-circle"
-                class="icon-24"
-              ></i>
+              <i data-lucide="message-circle" class="icon-24"></i>
             </span>
             <span class="nav-item-label">Community</span>
           </a>
           <a href="/chat.html" class="nav-item" aria-label="Chat" id="nav-chat">
             <span class="nav-item-icon">
-              <i
-                data-lucide="message-square"
-                class="icon-24"
-              ></i>
+              <i data-lucide="message-square" class="icon-24"></i>
             </span>
             <span class="nav-item-label">Chat</span>
           </a>
@@ -164,6 +153,13 @@
         </nav>
       </div>
 
+      <!-- Sidebar Overlay for Mobile -->
+      <div
+        class="sidebar-overlay"
+        id="sidebar-overlay"
+        aria-hidden="true"
+      ></div>
+
       <!-- Top Bar -->
       <div class="top-bar" role="banner">
         <div class="header-left">
@@ -179,16 +175,24 @@
           >
             <i data-lucide="menu" class="icon-20"></i>
           </button>
-          
+
           <div class="page-title-section">
             <h1 class="page-title">
-              <i data-lucide="users" class="icon-18" style="display: inline-block; vertical-align: middle; margin-right: var(--primitive-space-8);"></i>
+              <i
+                data-lucide="users"
+                class="icon-18"
+                style="
+                  display: inline-block;
+                  vertical-align: middle;
+                  margin-right: var(--primitive-space-8);
+                "
+              ></i>
               Team Roster
             </h1>
             <p class="page-subtitle">International Flag Football Team</p>
           </div>
         </div>
-        
+
         <div class="header-right">
           <!-- Notifications -->
           <div class="header-icon-wrap">
@@ -203,7 +207,11 @@
               <i data-lucide="bell" class="icon-18"></i>
               <span id="notification-badge" class="badge" hidden>3</span>
             </button>
-            <span id="notification-live" class="sr-only" aria-live="polite"></span>
+            <span
+              id="notification-live"
+              class="sr-only"
+              aria-live="polite"
+            ></span>
           </div>
 
           <!-- Settings -->
@@ -238,7 +246,9 @@
               aria-controls="user-menu"
               aria-expanded="false"
             >
-              <div class="user-avatar" id="user-avatar" aria-hidden="true">U</div>
+              <div class="user-avatar" id="user-avatar" aria-hidden="true">
+                U
+              </div>
             </button>
 
             <!-- User Menu Dropdown -->
@@ -267,31 +277,44 @@
         </div>
       </div>
 
-      <main
-        class="main-content u-flex-1 u-min-width-0 u-bg-primary"
-      >
+      <main class="main-content u-flex-1 u-min-width-0 u-bg-primary">
         <!-- Team Header Card -->
         <div class="card card-elevated">
           <div class="card-body">
-            <div class="u-text-body-sm u-text-secondary u-margin-bottom-4" style="line-height: 1.4; font-weight: 500;">
+            <div
+              class="u-text-body-sm u-text-secondary u-margin-bottom-4"
+              style="line-height: 1.4; font-weight: 500"
+            >
               <span>International</span>
-              <span style="margin: 0 var(--space-1, 4px); opacity: 0.5;">•</span>
+              <span style="margin: 0 var(--space-1, 4px); opacity: 0.5">•</span>
               <span>Flag Football</span>
             </div>
-            <h2 class="u-text-heading-lg u-font-weight-700 u-text-primary u-margin-bottom-8">
+            <h2
+              class="u-text-heading-lg u-font-weight-700 u-text-primary u-margin-bottom-8"
+            >
               International Flag Football Team
             </h2>
-            <p class="u-text-body-md u-text-secondary u-margin-0" style="line-height: 1.6;">
-              Meet our world-class athletes and coaching staff representing 12 countries
+            <p
+              class="u-text-body-md u-text-secondary u-margin-0"
+              style="line-height: 1.6"
+            >
+              Meet our world-class athletes and coaching staff representing 12
+              countries
             </p>
           </div>
         </div>
 
-    <!-- Team Overview Stats -->
+        <!-- Team Overview Stats -->
         <div class="card">
           <div class="card-header">
-            <h2 class="card-title u-display-flex u-align-center u-gap-8 u-margin-0">
-              <i data-lucide="trophy" class="icon-20" style="color: var(--color-brand-primary);"></i>
+            <h2
+              class="card-title u-display-flex u-align-center u-gap-8 u-margin-0"
+            >
+              <i
+                data-lucide="trophy"
+                class="icon-20"
+                style="color: var(--color-brand-primary)"
+              ></i>
               Team Overview
             </h2>
           </div>
@@ -299,17 +322,25 @@
             <div
               class="team-overview u-display-grid"
               id="team-overview"
-              style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))"
+              style="
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+              "
             >
               <!-- Stats will be populated by JavaScript -->
             </div>
           </div>
         </div>
 
-    <!-- Coaching Staff -->
+        <!-- Coaching Staff -->
         <div class="position-section">
-          <h2 class="u-text-heading-xl u-font-weight-700 u-text-primary u-display-flex u-align-center u-gap-8">
-            <i data-lucide="users" class="icon-24" style="color: var(--color-brand-primary);"></i>
+          <h2
+            class="u-text-heading-xl u-font-weight-700 u-text-primary u-display-flex u-align-center u-gap-8"
+          >
+            <i
+              data-lucide="users"
+              class="icon-24"
+              style="color: var(--color-brand-primary)"
+            ></i>
             Coaching Staff & Support
           </h2>
           <div
@@ -321,7 +352,7 @@
           </div>
         </div>
 
-    <!-- Players by Position -->
+        <!-- Players by Position -->
         <div id="players-by-position">
           <!-- Position sections will be populated by JavaScript -->
         </div>
@@ -618,7 +649,7 @@
 
         return `
                 <div class="card card-interactive u-position-relative">
-                    ${player.isPrimary ? `<div class="card-accent-bar"></div>` : ''}
+                    ${player.isPrimary ? `<div class="card-accent-bar"></div>` : ""}
                     <div class="card-body">
                         <div class="player-header u-display-flex u-align-center u-gap-16 u-margin-bottom-16">
                             <div class="player-jersey u-radius-full u-display-flex u-align-center u-justify-center u-font-weight-700 u-text-body-lg" style="width: 56px; height: 56px; background: var(--gradient-primary); color: white;">
@@ -693,6 +724,49 @@
 
         return { value: "—", label: "Secondary Stat" };
       }
+
+      // Sidebar toggle functionality for mobile menu
+      function toggleSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        const overlay = document.getElementById("sidebar-overlay");
+        const toggleBtn = document.getElementById("mobile-menu-toggle");
+
+        if (!sidebar) return;
+
+        const isOpen =
+          sidebar.classList.contains("open") ||
+          sidebar.classList.contains("mobile-open");
+
+        if (isOpen) {
+          sidebar.classList.remove("open", "mobile-open");
+          if (overlay) overlay.classList.remove("active");
+          document.body.classList.remove("sidebar-open", "menu-open");
+          if (toggleBtn) {
+            toggleBtn.setAttribute("aria-expanded", "false");
+          }
+          // Return focus to toggle button
+          if (toggleBtn) toggleBtn.focus();
+        } else {
+          sidebar.classList.add("open", "mobile-open");
+          if (overlay) overlay.classList.add("active");
+          document.body.classList.add("sidebar-open", "menu-open");
+          if (toggleBtn) {
+            toggleBtn.setAttribute("aria-expanded", "true");
+          }
+          // Focus first nav item for accessibility
+          const firstNavItem = sidebar.querySelector(".nav-item");
+          if (firstNavItem) firstNavItem.focus();
+        }
+      }
+
+      // Alias for menu-scrim close functionality
+      function closeMenu() {
+        toggleSidebar();
+      }
+
+      // Make functions globally available for onclick handlers
+      window.toggleSidebar = toggleSidebar;
+      window.closeMenu = closeMenu;
     </script>
 
     <!-- Footer -->

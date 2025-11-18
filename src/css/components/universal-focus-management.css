@@ -45,7 +45,9 @@
 .keyboard-navigation *:focus {
   outline: 3px solid var(--color-brand-primary);
   outline-offset: 3px;
-  box-shadow: 0 0 0 1px #ffffff, 0 0 8px rgba(16, 201, 107, 0.3);
+  box-shadow:
+    0 0 0 1px #ffffff,
+    0 0 8px rgba(16, 201, 107, 0.3);
 }
 
 /* Remove focus outline for mouse users */
@@ -88,7 +90,7 @@ a:focus-visible {
 }
 
 .has-focus::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -2px;
   left: -2px;
@@ -137,7 +139,7 @@ a:focus-visible {
 .tab-button:focus-visible,
 .tab-nav-item:focus-visible,
 [role="tab"]:focus-visible {
-  box-shadow: 
+  box-shadow:
     0 0 0 2px #ffffff,
     0 0 0 4px var(--color-brand-primary);
 }
@@ -154,7 +156,9 @@ a:focus-visible {
 }
 
 .dropdown-menu:focus-within {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 0 0 2px var(--color-brand-primary);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.15),
+    0 0 0 2px var(--color-brand-primary);
 }
 
 /* ================================================================
@@ -177,7 +181,7 @@ a:focus-visible {
 }
 
 .focus-trapped::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -4px;
   left: -4px;
@@ -307,17 +311,17 @@ a:focus-visible {
   .skip-link {
     border: 3px solid #ffffff;
   }
-  
+
   *:focus,
   .keyboard-navigation *:focus {
     outline-width: 4px;
     outline-offset: 2px;
   }
-  
+
   .has-focus::before {
     border-width: 3px;
   }
-  
+
   .keyboard-help {
     border-width: 3px;
     background: #ffffff;
@@ -335,11 +339,11 @@ a:focus-visible {
   .keyboard-help {
     transition: none;
   }
-  
+
   .focus-ring-animation {
     animation: none;
   }
-  
+
   *:focus {
     transition: none;
   }
@@ -353,29 +357,29 @@ a:focus-visible {
   .has-focus {
     background: rgba(16, 201, 107, 0.1);
   }
-  
+
   .keyboard-navigation .nav-item:focus,
   .keyboard-navigation .navigation-link:focus {
     background: rgba(16, 201, 107, 0.2);
   }
-  
+
   .keyboard-navigation .table td:focus,
   .keyboard-navigation .table th:focus {
     background: rgba(16, 201, 107, 0.15);
   }
-  
+
   .dropdown-item:focus,
   .menu-item:focus {
     background: var(--color-brand-primary);
     color: #ffffff;
   }
-  
+
   .keyboard-help {
     background: var(--surface-primary-dark, #1f1f1f);
     color: var(--text-primary-dark, #ffffff);
     border-color: var(--border-default-dark, #404040);
   }
-  
+
   .keyboard-help .shortcut {
     background: var(--surface-secondary-dark, #2a2a2a);
     color: var(--text-secondary-dark, #a3a3a3);
@@ -387,12 +391,11 @@ a:focus-visible {
    ================================================================ */
 
 @media (max-width: 768px) {
+  /* Hide skip link on mobile devices - not needed for touch navigation */
   .skip-link {
-    font-size: var(--font-size-base, 16px);
-    padding: var(--spacing-3, 12px) var(--spacing-4, 16px);
-    left: var(--spacing-2, 8px);
+    display: none !important;
   }
-  
+
   .keyboard-help {
     position: fixed;
     bottom: 0;
@@ -402,12 +405,14 @@ a:focus-visible {
     border-radius: var(--radius-lg, 12px) var(--radius-lg, 12px) 0 0;
     transform: translateY(100%);
   }
-  
+
   .keyboard-navigation *:focus {
     outline-offset: 1px;
-    box-shadow: 0 0 0 1px #ffffff, 0 0 4px rgba(16, 201, 107, 0.5);
+    box-shadow:
+      0 0 0 1px #ffffff,
+      0 0 4px rgba(16, 201, 107, 0.5);
   }
-  
+
   /* Larger touch targets for focus elements */
   .keyboard-navigation button:focus,
   .keyboard-navigation a:focus,
@@ -427,7 +432,7 @@ a:focus-visible {
   .sr-only {
     display: none !important;
   }
-  
+
   *:focus {
     outline: none !important;
     box-shadow: none !important;

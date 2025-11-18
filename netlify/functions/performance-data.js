@@ -128,17 +128,19 @@ async function handleMeasurements(method, userId, body, query) {
       const page = parseInt(query?.page || "1", 10);
       const limit = Math.min(parseInt(query?.limit || "50", 10), 100); // Max 100 per page
       const offset = (page - 1) * limit;
-      
-      let measurements = mockDB.measurements.filter(
+
+      const measurements = mockDB.measurements.filter(
         (m) => m.userId === userId && isWithinTimeframe(m.timestamp, timeframe),
       );
-      
+
       // Sort by timestamp descending (newest first)
-      measurements.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-      
+      measurements.sort(
+        (a, b) => new Date(b.timestamp) - new Date(a.timestamp),
+      );
+
       const total = measurements.length;
       const paginatedMeasurements = measurements.slice(offset, offset + limit);
-      
+
       return {
         statusCode: 200,
         body: JSON.stringify({
@@ -210,7 +212,7 @@ async function handlePerformanceTests(method, userId, body, query) {
 
       // Sort by timestamp descending (newest first)
       tests.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-      
+
       const total = tests.length;
       const paginatedTests = tests.slice(offset, offset + limit);
 

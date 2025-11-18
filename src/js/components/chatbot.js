@@ -19,7 +19,7 @@ class FlagFitChatbot {
       nutrition: [],
       speed: [],
       injury: [],
-      recovery: []
+      recovery: [],
     };
     this.questionPools = this.initializeQuestionPools();
   }
@@ -27,7 +27,17 @@ class FlagFitChatbot {
   initializeKnowledgeBase() {
     return {
       psychology: {
-        keywords: ["mental", "psychology", "mindset", "confidence", "anxiety", "stress", "focus", "motivation", "mental health"],
+        keywords: [
+          "mental",
+          "psychology",
+          "mindset",
+          "confidence",
+          "anxiety",
+          "stress",
+          "focus",
+          "motivation",
+          "mental health",
+        ],
         responses: [
           "Mental preparation is crucial for peak performance. Try visualization techniques before games - imagine yourself executing plays perfectly.",
           "Confidence comes from preparation. Focus on what you can control: your effort, attitude, and preparation.",
@@ -37,7 +47,19 @@ class FlagFitChatbot {
         ],
       },
       nutrition: {
-        keywords: ["nutrition", "diet", "food", "eat", "meal", "protein", "carbs", "hydration", "supplement", "pre-workout", "post-workout"],
+        keywords: [
+          "nutrition",
+          "diet",
+          "food",
+          "eat",
+          "meal",
+          "protein",
+          "carbs",
+          "hydration",
+          "supplement",
+          "pre-workout",
+          "post-workout",
+        ],
         responses: [
           "For flag football, prioritize lean proteins (chicken, fish, eggs), complex carbs (sweet potatoes, quinoa), and healthy fats (avocado, nuts).",
           "Pre-workout: Eat 2-3 hours before training. Include carbs for energy and a small amount of protein.",
@@ -70,7 +92,16 @@ class FlagFitChatbot {
         },
       },
       speed: {
-        keywords: ["speed", "sprint", "fast", "acceleration", "agility", "quickness", "40 yard", "speed training"],
+        keywords: [
+          "speed",
+          "sprint",
+          "fast",
+          "acceleration",
+          "agility",
+          "quickness",
+          "40 yard",
+          "speed training",
+        ],
         responses: [
           "Speed development requires a combination of strength, technique, and power. Focus on sprint mechanics: drive phase, maximum velocity, and deceleration.",
           "For acceleration: Practice 10-20 yard sprints with proper forward lean (45-degree angle) and powerful arm drive.",
@@ -80,7 +111,18 @@ class FlagFitChatbot {
         ],
       },
       injury: {
-        keywords: ["injury", "hurt", "pain", "sprain", "strain", "achilles", "knee", "shoulder", "ankle", "hamstring"],
+        keywords: [
+          "injury",
+          "hurt",
+          "pain",
+          "sprain",
+          "strain",
+          "achilles",
+          "knee",
+          "shoulder",
+          "ankle",
+          "hamstring",
+        ],
         responses: [
           "For acute injuries, follow RICE: Rest, Ice (15-20 min every 2-3 hours), Compression, Elevation.",
           "If you experience sharp pain, swelling, or inability to bear weight, consult a healthcare professional immediately.",
@@ -90,7 +132,16 @@ class FlagFitChatbot {
         ],
       },
       recovery: {
-        keywords: ["recovery", "rest", "sleep", "sore", "fatigue", "regeneration", "rest day", "overtraining"],
+        keywords: [
+          "recovery",
+          "rest",
+          "sleep",
+          "sore",
+          "fatigue",
+          "regeneration",
+          "rest day",
+          "overtraining",
+        ],
         responses: [
           "Recovery is when adaptation happens. Aim for 7-9 hours of quality sleep per night for optimal recovery.",
           "Active recovery (light walking, stretching, yoga) can be more effective than complete rest on off days.",
@@ -100,7 +151,15 @@ class FlagFitChatbot {
         ],
       },
       training: {
-        keywords: ["training", "workout", "exercise", "drill", "practice", "session", "program"],
+        keywords: [
+          "training",
+          "workout",
+          "exercise",
+          "drill",
+          "practice",
+          "session",
+          "program",
+        ],
         responses: [
           "Effective training follows periodization: base building, strength phase, power phase, and maintenance.",
           "For flag football, focus on: speed/agility (40%), strength (30%), skill work (20%), and recovery (10%).",
@@ -296,7 +355,7 @@ class FlagFitChatbot {
         "How do I develop a winning mindset?",
         "What are effective goal-setting techniques for athletes?",
         "How can I overcome self-doubt and build confidence?",
-        "What mental preparation routines do elite athletes use?"
+        "What mental preparation routines do elite athletes use?",
       ],
       nutrition: [
         "What should I eat before and after training?",
@@ -308,7 +367,7 @@ class FlagFitChatbot {
         "What foods help with muscle recovery?",
         "How do I plan meals around my training schedule?",
         "What's the best post-workout nutrition?",
-        "How can I improve my energy levels through nutrition?"
+        "How can I improve my energy levels through nutrition?",
       ],
       speed: [
         "How can I improve my speed and acceleration?",
@@ -320,7 +379,7 @@ class FlagFitChatbot {
         "How often should I do speed training?",
         "What techniques improve running form?",
         "How do I increase my top speed?",
-        "What's the best way to train acceleration?"
+        "What's the best way to train acceleration?",
       ],
       injury: [
         "How do I prevent and treat common flag football injuries?",
@@ -332,7 +391,7 @@ class FlagFitChatbot {
         "How can I prevent overuse injuries?",
         "What's the RICE method for injuries?",
         "How do I know if I need to see a doctor?",
-        "What exercises strengthen injury-prone areas?"
+        "What exercises strengthen injury-prone areas?",
       ],
       recovery: [
         "What are the best recovery strategies after training?",
@@ -344,8 +403,8 @@ class FlagFitChatbot {
         "What recovery methods work best together?",
         "How can I speed up muscle recovery?",
         "What's the best post-training recovery routine?",
-        "How do I know if I'm recovering properly?"
-      ]
+        "How do I know if I'm recovering properly?",
+      ],
     };
   }
 
@@ -359,7 +418,7 @@ class FlagFitChatbot {
     }
 
     // Get questions that haven't been asked yet
-    const availableQuestions = pool.filter(q => !asked.includes(q));
+    const availableQuestions = pool.filter((q) => !asked.includes(q));
 
     // Select a random question from available ones
     let selectedQuestion;
@@ -407,7 +466,10 @@ class FlagFitChatbot {
     } catch (error) {
       logger.error("Error getting response:", error);
       this.hideTypingIndicator();
-      this.addMessage("bot", "I apologize, but I'm having trouble processing your question right now. Please try rephrasing it.");
+      this.addMessage(
+        "bot",
+        "I apologize, but I'm having trouble processing your question right now. Please try rephrasing it.",
+      );
     }
   }
 
@@ -429,63 +491,80 @@ class FlagFitChatbot {
 
       // Try knowledge base first (if available)
       try {
-        const { knowledgeBaseService } = await import("../services/knowledge-base-service.js");
+        const { knowledgeBaseService } = await import(
+          "../services/knowledge-base-service.js"
+        );
 
         // Search knowledge base
         knowledgeEntry = await knowledgeBaseService.searchKnowledgeBase(
           userMessage,
-          parsedQuestion.entities.supplements[0] ? 'supplement' :
-          parsedQuestion.entities.injuries[0] ? 'injury' :
-          parsedQuestion.entities.recovery[0] ? 'recovery_method' :
-          parsedQuestion.entities.training[0] ? 'training_method' :
-          parsedQuestion.entities.psychology[0] ? 'psychology' : null
+          parsedQuestion.entities.supplements[0]
+            ? "supplement"
+            : parsedQuestion.entities.injuries[0]
+              ? "injury"
+              : parsedQuestion.entities.recovery[0]
+                ? "recovery_method"
+                : parsedQuestion.entities.training[0]
+                  ? "training_method"
+                  : parsedQuestion.entities.psychology[0]
+                    ? "psychology"
+                    : null,
         );
 
         // If no knowledge entry, search articles
         if (!knowledgeEntry) {
-          articles = await knowledgeBaseService.searchArticles(
-            userMessage,
-            [
-              ...parsedQuestion.entities.supplements,
-              ...parsedQuestion.entities.injuries,
-              ...parsedQuestion.entities.recovery,
-              ...parsedQuestion.entities.training,
-              ...parsedQuestion.entities.psychology
-            ]
-          );
+          articles = await knowledgeBaseService.searchArticles(userMessage, [
+            ...parsedQuestion.entities.supplements,
+            ...parsedQuestion.entities.injuries,
+            ...parsedQuestion.entities.recovery,
+            ...parsedQuestion.entities.training,
+            ...parsedQuestion.entities.psychology,
+          ]);
         }
 
         // Generate intelligent answer
         if (knowledgeEntry || articles.length > 0) {
-          let answer = answerGenerator.generateAnswer(parsedQuestion, knowledgeEntry, articles);
+          let answer = answerGenerator.generateAnswer(
+            parsedQuestion,
+            knowledgeEntry,
+            articles,
+          );
 
           // Enhance the answer
           try {
-            const { responseEnhancer } = await import("../utils/response-enhancer.js");
-            answer = responseEnhancer.enhanceResponse(
-              answer,
-              userMessage,
-              { isFirstMessage: this.messages.length === 0 }
+            const { responseEnhancer } = await import(
+              "../utils/response-enhancer.js"
             );
+            answer = responseEnhancer.enhanceResponse(answer, userMessage, {
+              isFirstMessage: this.messages.length === 0,
+            });
 
             // Add disclaimers if needed
-            const topic = parsedQuestion.entities.supplements[0] ||
-                         parsedQuestion.entities.injuries[0] ||
-                         parsedQuestion.entities.recovery[0] || '';
+            const topic =
+              parsedQuestion.entities.supplements[0] ||
+              parsedQuestion.entities.injuries[0] ||
+              parsedQuestion.entities.recovery[0] ||
+              "";
             answer = responseEnhancer.addDisclaimers(answer, topic);
-          } catch (e) {
+          } catch {
             // Continue without enhancement if unavailable
           }
 
           return answer;
         }
       } catch (error) {
-        logger.debug("Knowledge base service unavailable, using local knowledge:", error);
+        logger.debug(
+          "Knowledge base service unavailable, using local knowledge:",
+          error,
+        );
       }
 
       // Fallback to local knowledge with intelligent parsing
-      return await this.getLocalResponse(parsedQuestion, userMessage, lowerMessage);
-
+      return await this.getLocalResponse(
+        parsedQuestion,
+        userMessage,
+        lowerMessage,
+      );
     } catch (error) {
       logger.error("Error in intelligent response:", error);
       // Ultimate fallback
@@ -500,15 +579,23 @@ class FlagFitChatbot {
       parsedQuestion = {
         intent: this.detectSimpleIntent(lowerMessage),
         entities: this.extractSimpleEntities(lowerMessage, userMessage),
-        original: userMessage
+        original: userMessage,
       };
     }
 
     // Parse specific questions with numbers/measurements
-    const heightMatch = userMessage.match(/(\d+)\s*(?:cm|centimeters?|m|meters?|'|ft|feet)/i);
-    const weightMatch = userMessage.match(/(\d+)\s*(?:kg|kilograms?|lbs?|pounds?)/i);
-    const height = heightMatch ? this.normalizeHeight(parseInt(heightMatch[1]), heightMatch[0]) : null;
-    const weight = weightMatch ? this.normalizeWeight(parseInt(weightMatch[1]), weightMatch[0]) : null;
+    const heightMatch = userMessage.match(
+      /(\d+)\s*(?:cm|centimeters?|m|meters?|'|ft|feet)/i,
+    );
+    const weightMatch = userMessage.match(
+      /(\d+)\s*(?:kg|kilograms?|lbs?|pounds?)/i,
+    );
+    const height = heightMatch
+      ? this.normalizeHeight(parseInt(heightMatch[1]), heightMatch[0])
+      : null;
+    const weight = weightMatch
+      ? this.normalizeWeight(parseInt(weightMatch[1]), weightMatch[0])
+      : null;
 
     // Update parsed question with extracted body stats if not already present
     if (!parsedQuestion.entities.bodyStats) {
@@ -524,15 +611,29 @@ class FlagFitChatbot {
     // Try to use answer generator for better structured responses
     try {
       const { answerGenerator } = await import("../utils/answer-generator.js");
-      const { responseEnhancer } = await import("../utils/response-enhancer.js");
+      const { responseEnhancer } = await import(
+        "../utils/response-enhancer.js"
+      );
 
       // Create a mock knowledge entry from local knowledge base
-      const localKnowledge = this.getLocalKnowledgeEntry(parsedQuestion, lowerMessage);
+      const localKnowledge = this.getLocalKnowledgeEntry(
+        parsedQuestion,
+        lowerMessage,
+      );
 
       if (localKnowledge) {
-        let answer = answerGenerator.generateAnswer(parsedQuestion, localKnowledge, []);
+        let answer = answerGenerator.generateAnswer(
+          parsedQuestion,
+          localKnowledge,
+          [],
+        );
         answer = responseEnhancer.enhanceResponse(answer, userMessage);
-        answer = responseEnhancer.addDisclaimers(answer, parsedQuestion.entities.supplements[0] || parsedQuestion.entities.injuries[0] || '');
+        answer = responseEnhancer.addDisclaimers(
+          answer,
+          parsedQuestion.entities.supplements[0] ||
+            parsedQuestion.entities.injuries[0] ||
+            "",
+        );
         return answer;
       }
     } catch (e) {
@@ -548,31 +649,59 @@ class FlagFitChatbot {
       }
     }
 
-    if (lowerMessage.includes("iron") && (lowerMessage.includes("how much") || lowerMessage.includes("dose") || lowerMessage.includes("take") || lowerMessage.includes("need"))) {
+    if (
+      lowerMessage.includes("iron") &&
+      (lowerMessage.includes("how much") ||
+        lowerMessage.includes("dose") ||
+        lowerMessage.includes("take") ||
+        lowerMessage.includes("need"))
+    ) {
       return "**Iron Requirements for Athletes:**\n\n• **Adult males:** 8mg/day (RDA), but athletes typically need 10-15mg/day\n• **Adult females:** 18mg/day (RDA), athletes may need 20-25mg/day\n• **Best sources:** Lean red meat, dark poultry, beans, lentils, spinach, fortified cereals\n• **Absorption tip:** Pair with vitamin C (citrus fruits) to enhance absorption\n• **Avoid:** Taking with coffee/tea or calcium supplements (reduces absorption)\n\n**Important:** If you're experiencing fatigue or suspect deficiency, get your ferritin levels checked. Always consult a healthcare provider before supplementing.";
     }
 
     if (lowerMessage.includes("protein") && weight) {
       const nutritionData = this.knowledgeBase.nutrition;
-      if (nutritionData.specificAnswers && nutritionData.specificAnswers.protein) {
+      if (
+        nutritionData.specificAnswers &&
+        nutritionData.specificAnswers.protein
+      ) {
         return nutritionData.specificAnswers.protein(weight);
       }
     }
 
-    if (lowerMessage.includes("protein") && (lowerMessage.includes("how much") || lowerMessage.includes("need"))) {
+    if (
+      lowerMessage.includes("protein") &&
+      (lowerMessage.includes("how much") || lowerMessage.includes("need"))
+    ) {
       return "**Protein Requirements for Flag Football Athletes:**\n\n• **General recommendation:** 1.6-2.2g per kg of body weight per day\n• **For muscle building:** Up to 2.2g/kg\n• **Distribution:** Spread across 4-5 meals\n• **Post-workout:** 20-30g within 30 minutes\n• **Pre-sleep:** 20-30g casein protein for overnight recovery\n\n**Best sources:** Chicken breast, fish, eggs, Greek yogurt, lean beef, whey protein, plant-based options.";
     }
 
-    if (lowerMessage.includes("creatine") && (lowerMessage.includes("how much") || lowerMessage.includes("dose") || lowerMessage.includes("take"))) {
+    if (
+      lowerMessage.includes("creatine") &&
+      (lowerMessage.includes("how much") ||
+        lowerMessage.includes("dose") ||
+        lowerMessage.includes("take"))
+    ) {
       const nutritionData = this.knowledgeBase.nutrition;
-      if (nutritionData.specificAnswers && nutritionData.specificAnswers.creatine) {
+      if (
+        nutritionData.specificAnswers &&
+        nutritionData.specificAnswers.creatine
+      ) {
         return nutritionData.specificAnswers.creatine();
       }
     }
 
-    if (lowerMessage.includes("magnesium") && (lowerMessage.includes("how much") || lowerMessage.includes("dose") || lowerMessage.includes("take"))) {
+    if (
+      lowerMessage.includes("magnesium") &&
+      (lowerMessage.includes("how much") ||
+        lowerMessage.includes("dose") ||
+        lowerMessage.includes("take"))
+    ) {
       const nutritionData = this.knowledgeBase.nutrition;
-      if (nutritionData.specificAnswers && nutritionData.specificAnswers.magnesium) {
+      if (
+        nutritionData.specificAnswers &&
+        nutritionData.specificAnswers.magnesium
+      ) {
         return nutritionData.specificAnswers.magnesium();
       }
     }
@@ -584,7 +713,9 @@ class FlagFitChatbot {
     for (const [category, data] of Object.entries(this.knowledgeBase)) {
       if (!data.keywords) continue;
 
-      const keywordMatches = data.keywords.filter((keyword) => lowerMessage.includes(keyword)).length;
+      const keywordMatches = data.keywords.filter((keyword) =>
+        lowerMessage.includes(keyword),
+      ).length;
       const matchScore = keywordMatches / data.keywords.length;
 
       if (matchScore > bestMatchScore) {
@@ -606,33 +737,53 @@ class FlagFitChatbot {
   }
 
   detectSimpleIntent(lowerMessage) {
-    if (lowerMessage.match(/how much|how many|dose|dosage|take|consume/i)) return 'dosage';
-    if (lowerMessage.match(/when|timing|best time/i)) return 'timing';
-    if (lowerMessage.match(/safe|dangerous|risk|warning/i)) return 'safety';
-    if (lowerMessage.match(/how do|how to|how can/i)) return 'how_to';
-    if (lowerMessage.match(/what is|what are|explain|tell about/i)) return 'what_is';
-    if (lowerMessage.match(/why|reason|benefit/i)) return 'why';
-    if (lowerMessage.match(/protocol|routine|schedule/i)) return 'protocol';
-    return 'general';
+    if (lowerMessage.match(/how much|how many|dose|dosage|take|consume/i))
+      return "dosage";
+    if (lowerMessage.match(/when|timing|best time/i)) return "timing";
+    if (lowerMessage.match(/safe|dangerous|risk|warning/i)) return "safety";
+    if (lowerMessage.match(/how do|how to|how can/i)) return "how_to";
+    if (lowerMessage.match(/what is|what are|explain|tell about/i))
+      return "what_is";
+    if (lowerMessage.match(/why|reason|benefit/i)) return "why";
+    if (lowerMessage.match(/protocol|routine|schedule/i)) return "protocol";
+    return "general";
   }
 
-  extractSimpleEntities(lowerMessage, originalMessage) {
+  extractSimpleEntities(lowerMessage, _originalMessage) {
     return {
-      supplements: ['iron', 'creatine', 'protein', 'magnesium', 'vitamin d'].filter(s => lowerMessage.includes(s)),
-      injuries: ['ankle', 'hamstring', 'acl', 'shoulder'].filter(i => lowerMessage.includes(i)),
-      recovery: ['sauna', 'cold', 'massage', 'ice'].filter(r => lowerMessage.includes(r)),
-      training: ['speed', 'agility', 'strength'].filter(t => lowerMessage.includes(t)),
-      psychology: ['anxiety', 'confidence', 'mental'].filter(p => lowerMessage.includes(p)),
-      bodyStats: {}
+      supplements: [
+        "iron",
+        "creatine",
+        "protein",
+        "magnesium",
+        "vitamin d",
+      ].filter((s) => lowerMessage.includes(s)),
+      injuries: ["ankle", "hamstring", "acl", "shoulder"].filter((i) =>
+        lowerMessage.includes(i),
+      ),
+      recovery: ["sauna", "cold", "massage", "ice"].filter((r) =>
+        lowerMessage.includes(r),
+      ),
+      training: ["speed", "agility", "strength"].filter((t) =>
+        lowerMessage.includes(t),
+      ),
+      psychology: ["anxiety", "confidence", "mental"].filter((p) =>
+        lowerMessage.includes(p),
+      ),
+      bodyStats: {},
     };
   }
 
   normalizeHeight(value, unit) {
     const lowerUnit = unit.toLowerCase();
-    if (lowerUnit.includes('ft') || lowerUnit.includes('feet') || lowerUnit.includes("'")) {
+    if (
+      lowerUnit.includes("ft") ||
+      lowerUnit.includes("feet") ||
+      lowerUnit.includes("'")
+    ) {
       return Math.round(value * 30.48);
     }
-    if (lowerUnit.includes('m') && !lowerUnit.includes('cm')) {
+    if (lowerUnit.includes("m") && !lowerUnit.includes("cm")) {
       return Math.round(value * 100);
     }
     return value;
@@ -640,15 +791,15 @@ class FlagFitChatbot {
 
   normalizeWeight(value, unit) {
     const lowerUnit = unit.toLowerCase();
-    if (lowerUnit.includes('lb') || lowerUnit.includes('pound')) {
+    if (lowerUnit.includes("lb") || lowerUnit.includes("pound")) {
       return Math.round(value * 0.453592);
     }
     return value;
   }
 
-  getLocalKnowledgeEntry(parsedQuestion, lowerMessage) {
+  getLocalKnowledgeEntry(parsedQuestion, _lowerMessage) {
     // Create a knowledge entry structure from local knowledge base
-    const intent = parsedQuestion.intent;
+    // const _intent = parsedQuestion.intent; // Reserved for future use
     const entities = parsedQuestion.entities;
 
     // Check for supplements
@@ -656,50 +807,77 @@ class FlagFitChatbot {
       const supplement = entities.supplements[0].toLowerCase();
       const nutritionData = this.knowledgeBase.nutrition;
 
-      if (nutritionData.specificAnswers && nutritionData.specificAnswers[supplement]) {
+      if (
+        nutritionData.specificAnswers &&
+        nutritionData.specificAnswers[supplement]
+      ) {
         const bodyStats = parsedQuestion.entities.bodyStats || {};
 
-        if (supplement === 'iron' && (bodyStats.height || bodyStats.weight)) {
+        if (supplement === "iron" && (bodyStats.height || bodyStats.weight)) {
           return {
-            entry_type: 'supplement',
-            topic: 'iron_supplementation',
-            answer: nutritionData.specificAnswers.iron(bodyStats.height || 180, bodyStats.weight || 80),
-            dosage_guidelines: { recommended_dosage: '10-15mg/day for athletes' },
-            safety_warnings: ['Consult healthcare provider before supplementing', 'Excess iron can be harmful'],
-            best_practices: ['Pair with vitamin C', 'Avoid with coffee/tea', 'Take separately from calcium']
+            entry_type: "supplement",
+            topic: "iron_supplementation",
+            answer: nutritionData.specificAnswers.iron(
+              bodyStats.height || 180,
+              bodyStats.weight || 80,
+            ),
+            dosage_guidelines: {
+              recommended_dosage: "10-15mg/day for athletes",
+            },
+            safety_warnings: [
+              "Consult healthcare provider before supplementing",
+              "Excess iron can be harmful",
+            ],
+            best_practices: [
+              "Pair with vitamin C",
+              "Avoid with coffee/tea",
+              "Take separately from calcium",
+            ],
           };
         }
 
-        if (supplement === 'protein' && bodyStats.weight) {
+        if (supplement === "protein" && bodyStats.weight) {
           return {
-            entry_type: 'supplement',
-            topic: 'protein_requirements',
+            entry_type: "supplement",
+            topic: "protein_requirements",
             answer: nutritionData.specificAnswers.protein(bodyStats.weight),
-            dosage_guidelines: { recommended_dosage: `${Math.round(bodyStats.weight * 1.6)}g/day` },
-            best_practices: ['Spread across 4-5 meals', 'Post-workout: 20-30g', 'Pre-sleep: 20-30g casein']
+            dosage_guidelines: {
+              recommended_dosage: `${Math.round(bodyStats.weight * 1.6)}g/day`,
+            },
+            best_practices: [
+              "Spread across 4-5 meals",
+              "Post-workout: 20-30g",
+              "Pre-sleep: 20-30g casein",
+            ],
           };
         }
 
-        if (supplement === 'creatine') {
+        if (supplement === "creatine") {
           return {
-            entry_type: 'supplement',
-            topic: 'creatine_supplementation',
+            entry_type: "supplement",
+            topic: "creatine_supplementation",
             answer: nutritionData.specificAnswers.creatine(),
             dosage_guidelines: {
-              loading_phase: '20g/day (5g × 4) for 5-7 days',
-              maintenance: '3-5g/day'
+              loading_phase: "20g/day (5g × 4) for 5-7 days",
+              maintenance: "3-5g/day",
             },
-            best_practices: ['Take with carbs post-workout', 'Stay hydrated', 'No need to cycle']
+            best_practices: [
+              "Take with carbs post-workout",
+              "Stay hydrated",
+              "No need to cycle",
+            ],
           };
         }
 
-        if (supplement === 'magnesium') {
+        if (supplement === "magnesium") {
           return {
-            entry_type: 'supplement',
-            topic: 'magnesium_supplementation',
+            entry_type: "supplement",
+            topic: "magnesium_supplementation",
             answer: nutritionData.specificAnswers.magnesium(),
-            dosage_guidelines: { recommended_dosage: '500-600mg/day for athletes' },
-            best_practices: ['Use citrate or glycinate form', 'Take with food']
+            dosage_guidelines: {
+              recommended_dosage: "500-600mg/day for athletes",
+            },
+            best_practices: ["Use citrate or glycinate form", "Take with food"],
           };
         }
       }
@@ -757,7 +935,7 @@ class FlagFitChatbot {
 
     // Wrap consecutive list items in ul tags
     formatted = formatted.replace(/(<li>.*?<\/li>(?:<br>)?)+/g, (match) => {
-      return `<ul style='margin: 8px 0; padding-left: 20px;'>${match.replace(/<br>/g, '')}</ul>`;
+      return `<ul style='margin: 8px 0; padding-left: 20px;'>${match.replace(/<br>/g, "")}</ul>`;
     });
 
     return formatted;
@@ -828,4 +1006,3 @@ export const flagFitChatbot = new FlagFitChatbot();
 
 // Make it globally available
 window.flagFitChatbot = flagFitChatbot;
-

@@ -168,6 +168,9 @@ svg.lucide {
   color: var(--color-brand-primary);
   width: 1.5em;
   height: 1.5em;
+  filter: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
 }
 
 /* Ensure all Lucide SVG icons inherit color and have proper stroke */
@@ -178,6 +181,9 @@ i[data-lucide] > svg {
   stroke: currentColor !important;
   fill: none !important;
   color: inherit;
+  filter: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
 }
 
 /* Ensure icons inherit color from parent */
@@ -189,6 +195,9 @@ i[data-lucide] > svg {
   stroke: currentColor !important;
   fill: none !important;
   color: inherit;
+  filter: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
 }
 
 /* Global rule for all Lucide SVG elements */
@@ -197,6 +206,9 @@ svg.lucide,
 i[data-lucide] svg {
   stroke: currentColor !important;
   fill: none !important;
+  filter: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
 }
 
 /* Chart Styles */

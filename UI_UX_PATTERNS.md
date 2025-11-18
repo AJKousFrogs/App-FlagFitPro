@@ -1,6 +1,6 @@
 # 🎨 FlagFit Pro - UI/UX Patterns Guide
 
-*Comprehensive design system for data visualization and mobile-first responsive patterns*
+_Comprehensive design system for data visualization and mobile-first responsive patterns_
 
 ---
 
@@ -21,7 +21,7 @@ This guide provides complete patterns for building FlagFit Pro's user interface,
   --color-brand-secondary: #89c300;
   --color-brand-tertiary: #cc9610;
   --color-brand-primary-alpha-10: rgba(16, 201, 107, 0.1);
-  
+
   /* Status Colors */
   --status-success-50: #f0fff4;
   --status-success-600: #16a34a;
@@ -31,7 +31,7 @@ This guide provides complete patterns for building FlagFit Pro's user interface,
   --status-error-500: #ef4444;
   --status-error-600: #dc2626;
   --status-error-700: #b91c1c;
-  
+
   /* Neutral Colors */
   --surface-primary: #ffffff;
   --surface-secondary: #f8fafc;
@@ -55,7 +55,7 @@ This guide provides complete patterns for building FlagFit Pro's user interface,
   --font-size-xl: 20px;
   --font-size-2xl: 24px;
   --font-size-3xl: 30px;
-  
+
   /* Font Weights */
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
@@ -68,18 +68,24 @@ This guide provides complete patterns for building FlagFit Pro's user interface,
 ```css
 :root {
   /* Mobile-First Breakpoints */
-  --breakpoint-xs: 320px;   /* Portrait phones */
-  --breakpoint-sm: 480px;   /* Landscape phones */
-  --breakpoint-md: 768px;   /* Tablets */
-  --breakpoint-lg: 1024px;  /* Small laptops */
-  --breakpoint-xl: 1280px;  /* Desktops */
+  --breakpoint-xs: 320px; /* Portrait phones */
+  --breakpoint-sm: 480px; /* Landscape phones */
+  --breakpoint-md: 768px; /* Tablets */
+  --breakpoint-lg: 1024px; /* Small laptops */
+  --breakpoint-xl: 1280px; /* Desktops */
   --breakpoint-2xl: 1536px; /* Large desktops */
 }
 
 /* Media Query Usage */
-@media (min-width: 480px) { /* sm and up */ }
-@media (min-width: 768px) { /* md and up */ }
-@media (min-width: 1024px) { /* lg and up */ }
+@media (min-width: 480px) {
+  /* sm and up */
+}
+@media (min-width: 768px) {
+  /* md and up */
+}
+@media (min-width: 1024px) {
+  /* lg and up */
+}
 ```
 
 ### **Spacing System**
@@ -109,6 +115,7 @@ This guide provides complete patterns for building FlagFit Pro's user interface,
 **Use Case**: Track performance trends over time (speed, strength, endurance)
 
 **HTML Structure**:
+
 ```html
 <div class="chart-container">
   <div class="chart-header">
@@ -123,22 +130,32 @@ This guide provides complete patterns for building FlagFit Pro's user interface,
       </span>
     </div>
   </div>
-  
+
   <div class="chart-legend">
     <button class="legend-item legend-item--active" data-series="player">
-      <span class="legend-indicator" style="background: var(--color-brand-primary)"></span>
+      <span
+        class="legend-indicator"
+        style="background: var(--color-brand-primary)"
+      ></span>
       <span class="legend-label">Your Time</span>
     </button>
     <button class="legend-item" data-series="team">
-      <span class="legend-indicator" style="background: var(--text-tertiary)"></span>
+      <span
+        class="legend-indicator"
+        style="background: var(--text-tertiary)"
+      ></span>
       <span class="legend-label">Team Average</span>
     </button>
   </div>
-  
-  <div class="chart-canvas" role="img" aria-label="Line chart showing 40-yard dash improvement from 4.64s to 4.52s over 12 weeks">
+
+  <div
+    class="chart-canvas"
+    role="img"
+    aria-label="Line chart showing 40-yard dash improvement from 4.64s to 4.52s over 12 weeks"
+  >
     <canvas id="performance-line-chart"></canvas>
   </div>
-  
+
   <div class="chart-footer">
     <span class="chart-caption">Last 12 weeks • Updated 2 hours ago</span>
   </div>
@@ -146,6 +163,7 @@ This guide provides complete patterns for building FlagFit Pro's user interface,
 ```
 
 **CSS Styles**:
+
 ```css
 .chart-container {
   background: var(--surface-primary);
@@ -214,11 +232,11 @@ This guide provides complete patterns for building FlagFit Pro's user interface,
     flex-direction: column;
     gap: var(--spacing-3);
   }
-  
+
   .chart-metric {
     align-items: flex-start;
   }
-  
+
   .chart-canvas {
     height: 240px;
   }
@@ -226,84 +244,85 @@ This guide provides complete patterns for building FlagFit Pro's user interface,
 ```
 
 **Chart.js v4.4+ Configuration**:
+
 ```javascript
 const performanceLineChart = {
-  type: 'line',
+  type: "line",
   data: {
-    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'],
+    labels: ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6"],
     datasets: [
       {
-        label: 'Your Time',
-        data: [4.64, 4.62, 4.60, 4.59, 4.58, 4.52],
-        borderColor: '#10c96b',
-        backgroundColor: 'rgba(16, 201, 107, 0.1)',
+        label: "Your Time",
+        data: [4.64, 4.62, 4.6, 4.59, 4.58, 4.52],
+        borderColor: "#10c96b",
+        backgroundColor: "rgba(16, 201, 107, 0.1)",
         borderWidth: 3,
         pointRadius: 6,
         pointHoverRadius: 8,
-        pointBackgroundColor: '#10c96b',
-        pointBorderColor: '#fff',
+        pointBackgroundColor: "#10c96b",
+        pointBorderColor: "#fff",
         pointBorderWidth: 2,
         tension: 0.3,
-        fill: true
+        fill: true,
       },
       {
-        label: 'Team Average',
-        data: [4.70, 4.69, 4.68, 4.67, 4.66, 4.63],
-        borderColor: '#d4d4d4',
-        backgroundColor: 'transparent',
+        label: "Team Average",
+        data: [4.7, 4.69, 4.68, 4.67, 4.66, 4.63],
+        borderColor: "#d4d4d4",
+        backgroundColor: "transparent",
         borderWidth: 2,
         borderDash: [5, 5],
         pointRadius: 0,
         tension: 0.3,
-        fill: false
-      }
-    ]
+        fill: false,
+      },
+    ],
   },
   options: {
     responsive: true,
     maintainAspectRatio: false,
     interaction: {
-      mode: 'index',
-      intersect: false
+      mode: "index",
+      intersect: false,
     },
     plugins: {
       legend: {
-        display: false
+        display: false,
       },
       tooltip: {
-        backgroundColor: '#ffffff',
-        titleColor: '#171717',
-        bodyColor: '#404040',
-        borderColor: '#e5e5e5',
+        backgroundColor: "#ffffff",
+        titleColor: "#171717",
+        bodyColor: "#404040",
+        borderColor: "#e5e5e5",
         borderWidth: 1,
-        padding: 12
-      }
+        padding: 12,
+      },
     },
     scales: {
       y: {
         beginAtZero: false,
         ticks: {
-          callback: function(value) {
-            return value.toFixed(2) + 's';
+          callback: function (value) {
+            return value.toFixed(2) + "s";
           },
-          color: '#737373',
-          font: { size: 12 }
+          color: "#737373",
+          font: { size: 12 },
         },
         grid: {
-          color: '#f0f0f0',
-          drawBorder: false
-        }
+          color: "#f0f0f0",
+          drawBorder: false,
+        },
       },
       x: {
         ticks: {
-          color: '#737373',
+          color: "#737373",
           font: { size: 12 },
-          maxRotation: 0
+          maxRotation: 0,
         },
-        grid: { display: false }
-      }
-    }
-  }
+        grid: { display: false },
+      },
+    },
+  },
 };
 ```
 
@@ -312,17 +331,18 @@ const performanceLineChart = {
 **Use Case**: Show athlete's skill levels across multiple dimensions
 
 **HTML Structure**:
+
 ```html
 <div class="chart-container">
   <div class="chart-header">
     <h3 class="chart-title">Skills Assessment</h3>
     <button class="btn-secondary btn-sm">View Details</button>
   </div>
-  
+
   <div class="radar-chart-wrapper">
     <canvas id="skills-radar-chart"></canvas>
   </div>
-  
+
   <div class="skills-summary">
     <div class="skill-item">
       <span class="skill-name">Speed</span>
@@ -341,22 +361,32 @@ const performanceLineChart = {
 ```
 
 **Chart.js Radar Configuration**:
+
 ```javascript
 const radarChartConfig = {
-  type: 'radar',
+  type: "radar",
   data: {
-    labels: ['Speed', 'Agility', 'Strength', 'Endurance', 'Technique', 'Game IQ'],
-    datasets: [{
-      label: 'Current Level',
-      data: [85, 78, 72, 88, 75, 82],
-      backgroundColor: 'rgba(16, 201, 107, 0.2)',
-      borderColor: '#10c96b',
-      borderWidth: 2,
-      pointBackgroundColor: '#10c96b',
-      pointBorderColor: '#fff',
-      pointBorderWidth: 2,
-      pointRadius: 4
-    }]
+    labels: [
+      "Speed",
+      "Agility",
+      "Strength",
+      "Endurance",
+      "Technique",
+      "Game IQ",
+    ],
+    datasets: [
+      {
+        label: "Current Level",
+        data: [85, 78, 72, 88, 75, 82],
+        backgroundColor: "rgba(16, 201, 107, 0.2)",
+        borderColor: "#10c96b",
+        borderWidth: 2,
+        pointBackgroundColor: "#10c96b",
+        pointBorderColor: "#fff",
+        pointBorderWidth: 2,
+        pointRadius: 4,
+      },
+    ],
   },
   options: {
     responsive: true,
@@ -368,27 +398,28 @@ const radarChartConfig = {
         beginAtZero: true,
         ticks: {
           stepSize: 20,
-          color: '#737373'
+          color: "#737373",
         },
         grid: {
-          color: '#f0f0f0'
+          color: "#f0f0f0",
         },
         pointLabels: {
-          color: '#404040',
-          font: { size: 13, weight: '500' }
-        }
-      }
+          color: "#404040",
+          font: { size: 13, weight: "500" },
+        },
+      },
     },
     plugins: {
-      legend: { display: false }
-    }
-  }
+      legend: { display: false },
+    },
+  },
 };
 ```
 
 ### **3. Performance Stats Cards**
 
 **HTML Structure**:
+
 ```html
 <div class="stat-cards-grid">
   <div class="stat-card stat-card--primary">
@@ -404,7 +435,7 @@ const radarChartConfig = {
       </span>
     </div>
   </div>
-  
+
   <div class="stat-card">
     <div class="stat-icon">
       <svg width="24" height="24"><use href="#icon-activity"></use></svg>
@@ -418,7 +449,7 @@ const radarChartConfig = {
       </span>
     </div>
   </div>
-  
+
   <div class="stat-card">
     <div class="stat-icon">
       <svg width="24" height="24"><use href="#icon-target"></use></svg>
@@ -438,6 +469,7 @@ const radarChartConfig = {
 ```
 
 **CSS Styles**:
+
 ```css
 .stat-cards-grid {
   display: grid;
@@ -474,7 +506,11 @@ const radarChartConfig = {
 }
 
 .stat-card--primary {
-  background: linear-gradient(135deg, var(--color-brand-primary) 0%, #0ea55a 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-brand-primary) 0%,
+    #0ea55a 100%
+  );
   color: #ffffff;
   border-color: transparent;
 }
@@ -549,10 +585,10 @@ const radarChartConfig = {
 ```css
 :root {
   /* Touch target sizes */
-  --touch-target-min: 44px;         /* iOS minimum */
-  --touch-target-comfortable: 48px;  /* Comfortable size */
-  --touch-target-large: 56px;       /* Primary actions */
-  --touch-spacing-min: 8px;         /* Minimum between targets */
+  --touch-target-min: 44px; /* iOS minimum */
+  --touch-target-comfortable: 48px; /* Comfortable size */
+  --touch-target-large: 56px; /* Primary actions */
+  --touch-spacing-min: 8px; /* Minimum between targets */
 }
 
 /* Button hierarchy */
@@ -591,36 +627,41 @@ const radarChartConfig = {
 ### **Bottom Navigation**
 
 **HTML Structure**:
+
 ```html
 <nav class="bottom-nav" role="navigation" aria-label="Main navigation">
-  <a href="/dashboard" class="bottom-nav-item bottom-nav-item--active" aria-current="page">
+  <a
+    href="/dashboard"
+    class="bottom-nav-item bottom-nav-item--active"
+    aria-current="page"
+  >
     <svg class="bottom-nav-icon" width="24" height="24">
       <use href="#icon-home"></use>
     </svg>
     <span class="bottom-nav-label">Home</span>
   </a>
-  
+
   <a href="/training" class="bottom-nav-item">
     <svg class="bottom-nav-icon" width="24" height="24">
       <use href="#icon-activity"></use>
     </svg>
     <span class="bottom-nav-label">Training</span>
   </a>
-  
+
   <a href="/analytics" class="bottom-nav-item">
     <svg class="bottom-nav-icon" width="24" height="24">
       <use href="#icon-bar-chart"></use>
     </svg>
     <span class="bottom-nav-label">Analytics</span>
   </a>
-  
+
   <a href="/roster" class="bottom-nav-item">
     <svg class="bottom-nav-icon" width="24" height="24">
       <use href="#icon-users"></use>
     </svg>
     <span class="bottom-nav-label">Team</span>
   </a>
-  
+
   <a href="/profile" class="bottom-nav-item">
     <svg class="bottom-nav-icon" width="24" height="24">
       <use href="#icon-user"></use>
@@ -631,6 +672,7 @@ const radarChartConfig = {
 ```
 
 **CSS Styles**:
+
 ```css
 .bottom-nav {
   position: fixed;
@@ -695,6 +737,7 @@ const radarChartConfig = {
 ### **Mobile Form Optimization**
 
 **HTML Structure**:
+
 ```html
 <form class="mobile-form">
   <div class="form-group">
@@ -710,7 +753,7 @@ const radarChartConfig = {
       required
     />
   </div>
-  
+
   <div class="form-group">
     <label for="email" class="form-label">Email Address</label>
     <input
@@ -724,7 +767,7 @@ const radarChartConfig = {
       required
     />
   </div>
-  
+
   <div class="form-group">
     <label for="weight" class="form-label">Weight (lbs)</label>
     <input
@@ -739,7 +782,7 @@ const radarChartConfig = {
       max="400"
     />
   </div>
-  
+
   <div class="form-group">
     <label for="position" class="form-label">Position</label>
     <select id="position" name="position" class="form-select">
@@ -750,7 +793,7 @@ const radarChartConfig = {
       <option value="db">Defensive Back</option>
     </select>
   </div>
-  
+
   <button type="submit" class="btn-primary btn-lg btn-full-width">
     Save Athlete
   </button>
@@ -758,6 +801,7 @@ const radarChartConfig = {
 ```
 
 **CSS Styles**:
+
 ```css
 .mobile-form {
   padding: var(--spacing-4);
@@ -864,10 +908,11 @@ const radarChartConfig = {
 ### **Horizontal Scroll Cards**
 
 **HTML Structure**:
+
 ```html
 <div class="horizontal-scroll-container">
   <h3 class="section-title">Recent Workouts</h3>
-  
+
   <div class="horizontal-scroll">
     <div class="workout-card">
       <h4 class="workout-title">Speed Training</h4>
@@ -877,7 +922,7 @@ const radarChartConfig = {
         <span class="stat">High intensity</span>
       </div>
     </div>
-    
+
     <div class="workout-card">
       <h4 class="workout-title">Agility Drills</h4>
       <p class="workout-date">Yesterday</p>
@@ -886,13 +931,14 @@ const radarChartConfig = {
         <span class="stat">Medium intensity</span>
       </div>
     </div>
-    
+
     <!-- More cards -->
   </div>
 </div>
 ```
 
 **CSS Styles**:
+
 ```css
 .horizontal-scroll-container {
   margin: var(--spacing-6) 0;
@@ -1035,8 +1081,12 @@ const radarChartConfig = {
 }
 
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 .skeleton-text {
@@ -1059,11 +1109,13 @@ const radarChartConfig = {
 ## ♿ Accessibility Guidelines
 
 ### **Color Contrast**
+
 - Text on background: 4.5:1 minimum
 - Large text (18px+): 3:1 minimum
 - Interactive elements: 3:1 minimum
 
 ### **Focus Management**
+
 ```css
 .focus-visible {
   outline: 2px solid var(--color-brand-primary);
@@ -1077,6 +1129,7 @@ const radarChartConfig = {
 ```
 
 ### **Screen Reader Support**
+
 ```html
 <!-- Chart accessibility -->
 <div role="img" aria-label="Chart showing performance improvement over time">
@@ -1085,12 +1138,20 @@ const radarChartConfig = {
 
 <!-- Hidden data table for screen readers -->
 <table class="visually-hidden">
-  <caption>Performance data by week</caption>
+  <caption>
+    Performance data by week
+  </caption>
   <thead>
-    <tr><th>Week</th><th>Time (seconds)</th></tr>
+    <tr>
+      <th>Week</th>
+      <th>Time (seconds)</th>
+    </tr>
   </thead>
   <tbody>
-    <tr><td>Week 1</td><td>4.64</td></tr>
+    <tr>
+      <td>Week 1</td>
+      <td>4.64</td>
+    </tr>
   </tbody>
 </table>
 
@@ -1101,6 +1162,7 @@ const radarChartConfig = {
 ```
 
 ### **Utility Classes**
+
 ```css
 .visually-hidden {
   position: absolute;
@@ -1161,7 +1223,8 @@ const radarChartConfig = {
 
 /* Full-screen modal */
 .modal-fullscreen {
-  padding: var(--safe-area-top) var(--safe-area-right) var(--safe-area-bottom) var(--safe-area-left);
+  padding: var(--safe-area-top) var(--safe-area-right) var(--safe-area-bottom)
+    var(--safe-area-left);
 }
 ```
 
@@ -1170,32 +1233,34 @@ const radarChartConfig = {
 ## 🚀 Performance Best Practices
 
 ### **Lazy Loading**
+
 ```javascript
 // Intersection Observer for charts
-const chartObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      loadChart(entry.target);
-      chartObserver.unobserve(entry.target);
-    }
-  });
-}, { rootMargin: '50px' });
+const chartObserver = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        loadChart(entry.target);
+        chartObserver.unobserve(entry.target);
+      }
+    });
+  },
+  { rootMargin: "50px" },
+);
 
 // Observe all chart containers
-document.querySelectorAll('.chart-canvas').forEach(chart => {
+document.querySelectorAll(".chart-canvas").forEach((chart) => {
   chartObserver.observe(chart);
 });
 ```
 
 ### **Image Optimization**
+
 ```html
 <!-- Responsive images -->
 <img
   src="athlete-400.webp"
-  srcset="
-    athlete-400.webp 400w,
-    athlete-800.webp 800w
-  "
+  srcset="athlete-400.webp 400w, athlete-800.webp 800w"
   sizes="
     (max-width: 480px) 100vw,
     (max-width: 768px) 50vw,
@@ -1212,6 +1277,7 @@ document.querySelectorAll('.chart-canvas').forEach(chart => {
 ## ✅ Quality Checklist
 
 ### **Mobile Testing**
+
 - [ ] Touch targets ≥ 44px
 - [ ] Forms prevent zoom (font-size ≥ 16px)
 - [ ] Safe areas respected
@@ -1220,6 +1286,7 @@ document.querySelectorAll('.chart-canvas').forEach(chart => {
 - [ ] Gestures don't interfere with browser
 
 ### **Performance**
+
 - [ ] Charts load in < 500ms
 - [ ] Images optimized and lazy-loaded
 - [ ] No layout shift during loading
@@ -1227,6 +1294,7 @@ document.querySelectorAll('.chart-canvas').forEach(chart => {
 - [ ] Bundle size minimized
 
 ### **Accessibility**
+
 - [ ] Color contrast ≥ 4.5:1
 - [ ] Keyboard navigation works
 - [ ] Screen reader support
@@ -1234,6 +1302,7 @@ document.querySelectorAll('.chart-canvas').forEach(chart => {
 - [ ] Semantic HTML structure
 
 ### **Cross-Device**
+
 - [ ] iPhone SE (375×667)
 - [ ] iPhone 14 Pro (393×852)
 - [ ] Samsung Galaxy (360×760)
@@ -1246,4 +1315,4 @@ document.querySelectorAll('.chart-canvas').forEach(chart => {
 **Version**: 2.0  
 **Maintained By**: FlagFit Pro Design Team
 
-*This guide combines data visualization excellence with mobile-first responsive design for optimal athletic performance tracking.*
+_This guide combines data visualization excellence with mobile-first responsive design for optimal athletic performance tracking._

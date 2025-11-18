@@ -19,8 +19,6 @@ export class ErrorHandler {
   }
 
   static handleError(event) {
-    const isDevelopment = window.location.hostname === "localhost";
-
     logger.error("Global error caught:", event.error);
 
     // Show user-friendly error message
@@ -30,8 +28,6 @@ export class ErrorHandler {
   }
 
   static handlePromiseRejection(event) {
-    const isDevelopment = window.location.hostname === "localhost";
-
     logger.error("Unhandled promise rejection:", event.reason);
 
     // Prevent the default browser error handling
@@ -53,8 +49,6 @@ export class ErrorHandler {
 
   // API Error handling
   static handleApiError(error, context = "") {
-    const isDevelopment = window.location.hostname === "localhost";
-
     logger.error(`API Error ${context}:`, error);
 
     let message = "Something went wrong. Please try again.";
@@ -90,40 +84,47 @@ export class ErrorHandler {
       // Create or update error message element
       let errorElement = document.getElementById(`${field}-error`);
       if (!errorElement) {
-        errorElement = document.createElement('div');
+        errorElement = document.createElement("div");
         errorElement.id = `${field}-error`;
-        errorElement.className = 'field-error';
-        errorElement.setAttribute('role', 'alert');
+        errorElement.className = "field-error";
+        errorElement.setAttribute("role", "alert");
         fieldElement.parentElement.appendChild(errorElement);
       }
 
       // Associate error with field
-      const existingAriaDescribedBy = fieldElement.getAttribute('aria-describedby') || '';
+      const existingAriaDescribedBy =
+        fieldElement.getAttribute("aria-describedby") || "";
       const errorId = `${field}-error`;
       if (!existingAriaDescribedBy.includes(errorId)) {
-        fieldElement.setAttribute('aria-describedby', 
-          existingAriaDescribedBy ? `${existingAriaDescribedBy} ${errorId}` : errorId);
+        fieldElement.setAttribute(
+          "aria-describedby",
+          existingAriaDescribedBy
+            ? `${existingAriaDescribedBy} ${errorId}`
+            : errorId,
+        );
       }
-      
-      fieldElement.setAttribute('aria-invalid', 'true');
+
+      fieldElement.setAttribute("aria-invalid", "true");
       errorElement.textContent = message;
-      errorElement.style.display = 'block';
+      errorElement.style.display = "block";
 
       // Add error styling
-      fieldElement.classList.add('has-error');
+      fieldElement.classList.add("has-error");
       fieldElement.style.borderColor = "#ef4444";
       fieldElement.style.boxShadow = "0 0 0 3px rgba(239, 68, 68, 0.1)";
 
       // Remove error styling after user starts typing
       const removeError = () => {
-        fieldElement.classList.remove('has-error');
+        fieldElement.classList.remove("has-error");
         fieldElement.style.borderColor = "";
         fieldElement.style.boxShadow = "";
-        fieldElement.removeAttribute('aria-invalid');
-        const describedBy = fieldElement.getAttribute('aria-describedby') || '';
-        fieldElement.setAttribute('aria-describedby', 
-          describedBy.replace(errorId, '').trim());
-        errorElement.style.display = 'none';
+        fieldElement.removeAttribute("aria-invalid");
+        const describedBy = fieldElement.getAttribute("aria-describedby") || "";
+        fieldElement.setAttribute(
+          "aria-describedby",
+          describedBy.replace(errorId, "").trim(),
+        );
+        errorElement.style.display = "none";
         fieldElement.removeEventListener("input", removeError);
       };
       fieldElement.addEventListener("input", removeError);
@@ -204,8 +205,8 @@ export class ErrorHandler {
     }, 100);
 
     // Setup retry button
-    const retryBtn = notification.querySelector('.retry-btn');
-    retryBtn.addEventListener('click', () => {
+    const retryBtn = notification.querySelector(".retry-btn");
+    retryBtn.addEventListener("click", () => {
       notification.remove();
       if (retryCallback) {
         retryCallback();

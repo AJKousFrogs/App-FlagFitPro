@@ -1,26 +1,33 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>FlagFit Pro - Advanced Analytics Dashboard</title>
     <link
       rel="icon"
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
     />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
     <!-- New Modular CSS Architecture -->
-    <link rel="stylesheet" href="./src/css/main.css">
+    <link rel="stylesheet" href="./src/css/main.css" />
     <!-- Page-specific styles -->
     <link rel="stylesheet" href="./src/css/pages/analytics.css" />
 
     <!-- Tailwind CSS - Uses your design tokens -->
-    <link rel="stylesheet" href="./src/css/tailwind.css">
+    <link rel="stylesheet" href="./src/css/tailwind.css" />
     <!-- Lucide Icons - Modern icon library similar to Radix UI -->
-    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js" crossorigin="anonymous" defer>
+    <script
+      src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
     <script src="./src/icon-helper.js" defer></script>
     <script src="./src/icon-accessibility-fix.js" defer></script>
     <script src="./src/theme-switcher.js" defer></script>
@@ -29,871 +36,1118 @@
     <!-- Universal Components -->
     <script type="module" src="./src/js/main.js"></script>
     <!-- Chart.js with multiple CDN fallbacks -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js" crossorigin="anonymous" defer></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
     <script>
-        // Improved fallback system
-        window.addEventListener('load', function() {
-            if (typeof Chart === 'undefined') {
-                console.log('Loading Chart.js fallback...');
-                const fallbackScript = document.createElement('script');
-                fallbackScript.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js';
-                fallbackScript.crossOrigin = 'anonymous';
-                fallbackScript.onload = function() {
-                    console.log('Chart.js fallback loaded successfully');
-                    if (window.initAnalyticsCharts) window.initAnalyticsCharts();
-                };
-                fallbackScript.onerror = function() {
-                    console.warn('Chart.js fallback also failed, using mock charts');
-                    if (window.initMockCharts) window.initMockCharts();
-                };
-                document.head.appendChild(fallbackScript);
-            } else {
-                console.log('Chart.js loaded successfully');
-                if (window.initAnalyticsCharts) window.initAnalyticsCharts();
-            }
-        });
+      // Improved fallback system
+      window.addEventListener("load", function () {
+        if (typeof Chart === "undefined") {
+          console.log("Loading Chart.js fallback...");
+          const fallbackScript = document.createElement("script");
+          fallbackScript.src =
+            "https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js";
+          fallbackScript.crossOrigin = "anonymous";
+          fallbackScript.onload = function () {
+            console.log("Chart.js fallback loaded successfully");
+            if (window.initAnalyticsCharts) window.initAnalyticsCharts();
+          };
+          fallbackScript.onerror = function () {
+            console.warn("Chart.js fallback also failed, using mock charts");
+            if (window.initMockCharts) window.initMockCharts();
+          };
+          document.head.appendChild(fallbackScript);
+        } else {
+          console.log("Chart.js loaded successfully");
+          if (window.initAnalyticsCharts) window.initAnalyticsCharts();
+        }
+      });
     </script>
 
     <!-- Date adapter with fallback -->
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js" crossorigin="anonymous" defer></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
 
     <!-- Polyfills for older browsers -->
     <script>
-        // Array.from polyfill for IE
-        if (!Array.from) {
-            Array.from = function(array) {
-                return Array.prototype.slice.call(array);
-            };
-        }
-        
-        // Promise polyfill for older browsers
-        if (!window.Promise) {
-            document.write('<script src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js" crossorigin="anonymous"><\/script>');
-        }
-        
-        // Fetch polyfill for older browsers
-        if (!window.fetch) {
-            document.write('<script src="https://cdn.jsdelivr.net/npm/whatwg-fetch@3.6.2/dist/fetch.umd.js" crossorigin="anonymous"><\/script>');
-        }
-    </script>
+      // Array.from polyfill for IE
+      if (!Array.from) {
+        Array.from = function (array) {
+          return Array.prototype.slice.call(array);
+        };
+      }
 
-</head>
-<body>
+      // Promise polyfill for older browsers
+      if (!window.Promise) {
+        document.write(
+          '<script src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js" crossorigin="anonymous"><\/script>',
+        );
+      }
+
+      // Fetch polyfill for older browsers
+      if (!window.fetch) {
+        document.write(
+          '<script src="https://cdn.jsdelivr.net/npm/whatwg-fetch@3.6.2/dist/fetch.umd.js" crossorigin="anonymous"><\/script>',
+        );
+      }
+    </script>
+  </head>
+  <body>
     <!-- Skip link for accessibility -->
     <a href="#main-content" class="skip-link">Skip to main content</a>
 
     <div class="dashboard-container">
-    <!-- Mobile Overlay/Scrim (for closing sidebar on mobile) -->
-    <div class="menu-scrim" aria-hidden="true" onclick="closeMenu()"></div>
-    
-    <!-- Unified Sidebar Navigation -->
+      <!-- Mobile Overlay/Scrim (for closing sidebar on mobile) -->
+      <div class="menu-scrim" aria-hidden="true" onclick="closeMenu()"></div>
+
+      <!-- Unified Sidebar Navigation -->
+      <div
+        class="sidebar"
+        id="sidebar"
+        role="navigation"
+        aria-label="Main navigation"
+      >
         <div
-          class="sidebar"
-          id="sidebar"
-          role="navigation"
-          aria-label="Main navigation"
+          class="sidebar-logo"
+          onclick="window.location.href='/dashboard.html'"
+          title="FlagFit Pro"
+          aria-label="Go to dashboard"
         >
-          <div
-            class="sidebar-logo"
-            onclick="window.location.href='/dashboard.html'"
-            title="FlagFit Pro"
-            aria-label="Go to dashboard"
+          <i data-lucide="activity" class="icon-20 icon-inline"></i>
+        </div>
+
+        <nav class="nav-section" aria-label="Dashboard navigation">
+          <a
+            href="/dashboard.html"
+            class="nav-item"
+            aria-label="Dashboard Overview"
+            id="nav-dashboard"
           >
-            <i
-              data-lucide="activity"
-              class="icon-20 icon-inline"
-            ></i>
+            <span class="nav-item-icon">
+              <i data-lucide="layout-dashboard" class="icon-24"></i>
+            </span>
+            <span class="nav-item-label">Overview</span>
+          </a>
+          <a
+            href="/analytics.html"
+            class="nav-item active"
+            aria-label="Analytics"
+            id="nav-analytics"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="bar-chart-3" class="icon-24"></i>
+            </span>
+            <span class="nav-item-label">Analytics</span>
+          </a>
+          <a
+            href="/performance-tracking.html"
+            class="nav-item"
+            aria-label="Performance Tracking"
+            id="nav-performance-tracking"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="target" class="icon-24"></i>
+            </span>
+            <span class="nav-item-label">Performance</span>
+          </a>
+        </nav>
+
+        <nav class="nav-section" aria-label="Team navigation">
+          <a
+            href="/roster.html"
+            class="nav-item"
+            aria-label="Team Roster"
+            id="nav-roster"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="users" class="icon-24"></i>
+            </span>
+            <span class="nav-item-label">Roster</span>
+          </a>
+          <a
+            href="/training.html"
+            class="nav-item"
+            aria-label="Training"
+            id="nav-training"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="zap" class="icon-24"></i>
+            </span>
+            <span class="nav-item-label">Training</span>
+          </a>
+          <a
+            href="/tournaments.html"
+            class="nav-item"
+            aria-label="Tournaments"
+            id="nav-tournaments"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="trophy" class="icon-24"></i>
+            </span>
+            <span class="nav-item-label">Tournaments</span>
+          </a>
+        </nav>
+
+        <nav class="nav-section" aria-label="Community navigation">
+          <a
+            href="/community.html"
+            class="nav-item"
+            aria-label="Community"
+            id="nav-community"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="message-circle" class="icon-24"></i>
+            </span>
+            <span class="nav-item-label">Community</span>
+          </a>
+          <a href="/chat.html" class="nav-item" aria-label="Chat" id="nav-chat">
+            <span class="nav-item-icon">
+              <i data-lucide="message-square" class="icon-24"></i>
+            </span>
+            <span class="nav-item-label">Chat</span>
+          </a>
+        </nav>
+
+        <nav class="nav-section" aria-label="Personal navigation">
+          <a
+            href="/settings.html"
+            class="nav-item"
+            aria-label="Settings"
+            id="nav-settings"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="settings" class="icon-24"></i>
+            </span>
+            <span class="nav-item-label">Settings</span>
+          </a>
+          <a
+            href="/profile.html"
+            class="nav-item"
+            aria-label="Profile"
+            id="nav-profile"
+          >
+            <span class="nav-item-icon">
+              <i data-lucide="user" class="icon-24"></i>
+            </span>
+            <span class="nav-item-label">Profile</span>
+          </a>
+        </nav>
+      </div>
+
+      <!-- Sidebar Overlay for Mobile -->
+      <div
+        class="sidebar-overlay"
+        id="sidebar-overlay"
+        aria-hidden="true"
+      ></div>
+
+      <main
+        class="main-content u-flex-1 u-min-width-0 u-overflow-x-hidden u-overflow-y-auto u-padding-24 u-bg-primary"
+        id="main-content"
+      >
+        <!-- Top Bar -->
+        <div class="top-bar" role="banner">
+          <div class="header-left">
+            <!-- Mobile Menu Toggle Button -->
+            <button
+              id="mobile-menu-toggle"
+              class="mobile-menu-toggle"
+              type="button"
+              aria-label="Open menu"
+              aria-expanded="false"
+              aria-controls="sidebar"
+              onclick="toggleSidebar()"
+            >
+              <i data-lucide="menu" class="icon-20"></i>
+            </button>
+
+            <div class="page-title-section">
+              <h1 class="page-title">
+                <i
+                  data-lucide="bar-chart-3"
+                  class="icon-18"
+                  style="
+                    display: inline-block;
+                    vertical-align: middle;
+                    margin-right: var(--primitive-space-8);
+                  "
+                ></i>
+                FlagFit Pro Analytics
+              </h1>
+              <p class="page-subtitle">
+                Advanced Performance Analytics & Team Insights
+              </p>
+            </div>
           </div>
 
-          <nav class="nav-section" aria-label="Dashboard navigation">
-            <a
-              href="/dashboard.html"
-              class="nav-item"
-              aria-label="Dashboard Overview"
-              id="nav-dashboard"
-            >
-              <span class="nav-item-icon">
-              <i
-                data-lucide="layout-dashboard"
-                class="icon-24"
-              ></i>
-              </span>
-              <span class="nav-item-label">Overview</span>
-            </a>
-            <a
-              href="/analytics.html"
-              class="nav-item active"
-              aria-label="Analytics"
-              id="nav-analytics"
-            >
-              <span class="nav-item-icon">
-              <i
-                data-lucide="bar-chart-3"
-                class="icon-24"
-              ></i>
-              </span>
-              <span class="nav-item-label">Analytics</span>
-            </a>
-            <a
-              href="/performance-tracking.html"
-              class="nav-item"
-              aria-label="Performance Tracking"
-              id="nav-performance-tracking"
-            >
-              <span class="nav-item-icon">
-                <i data-lucide="target" class="icon-24"></i>
-              </span>
-              <span class="nav-item-label">Performance</span>
-            </a>
-          </nav>
+          <div class="header-right">
+            <!-- Notifications -->
+            <div class="header-icon-wrap">
+              <button
+                id="notification-bell"
+                class="header-icon"
+                type="button"
+                aria-label="Notifications"
+                aria-controls="notification-panel"
+                aria-expanded="false"
+              >
+                <i data-lucide="bell" class="icon-18"></i>
+                <span id="notification-badge" class="badge" hidden>3</span>
+              </button>
+              <span
+                id="notification-live"
+                class="sr-only"
+                aria-live="polite"
+              ></span>
+            </div>
 
-          <nav class="nav-section" aria-label="Team navigation">
-            <a
-              href="/roster.html"
-              class="nav-item"
-              aria-label="Team Roster"
-              id="nav-roster"
-            >
-              <span class="nav-item-icon">
-                <i data-lucide="users" class="icon-24"></i>
-              </span>
-              <span class="nav-item-label">Roster</span>
-            </a>
-            <a
-              href="/training.html"
-              class="nav-item"
-              aria-label="Training"
-              id="nav-training"
-            >
-              <span class="nav-item-icon">
-                <i data-lucide="zap" class="icon-24"></i>
-              </span>
-              <span class="nav-item-label">Training</span>
-            </a>
-            <a
-              href="/tournaments.html"
-              class="nav-item"
-              aria-label="Tournaments"
-              id="nav-tournaments"
-            >
-              <span class="nav-item-icon">
-                <i data-lucide="trophy" class="icon-24"></i>
-              </span>
-              <span class="nav-item-label">Tournaments</span>
-            </a>
-          </nav>
+            <!-- Settings -->
+            <button class="header-icon" type="button" aria-label="Settings">
+              <i data-lucide="settings" class="icon-18"></i>
+            </button>
 
-          <nav class="nav-section" aria-label="Community navigation">
-            <a
-              href="/community.html"
-              class="nav-item"
-              aria-label="Community"
-              id="nav-community"
-            >
-              <span class="nav-item-icon">
-                <i
-                  data-lucide="message-circle"
-                  class="icon-24"
-                ></i>
-              </span>
-              <span class="nav-item-label">Community</span>
-            </a>
-            <a href="/chat.html" class="nav-item" aria-label="Chat" id="nav-chat">
-              <span class="nav-item-icon">
-                <i
-                  data-lucide="message-square"
-                  class="icon-24"
-                ></i>
-              </span>
-              <span class="nav-item-label">Chat</span>
-            </a>
-          </nav>
+            <!-- Theme Toggle -->
+            <div class="theme-toggle-container" aria-label="Theme toggle">
+              <label class="theme-toggle-label" title="Toggle theme">
+                <input
+                  type="checkbox"
+                  id="header-theme-toggle"
+                  class="theme-toggle-input"
+                  aria-label="Toggle theme"
+                />
+                <span class="theme-toggle-slider">
+                  <span class="theme-toggle-dot" id="theme-toggle-dot"></span>
+                </span>
+                <span class="theme-toggle-text">🌙 Dark</span>
+              </label>
+            </div>
 
-          <nav class="nav-section" aria-label="Personal navigation">
-            <a
-              href="/settings.html"
-              class="nav-item"
-              aria-label="Settings"
-              id="nav-settings"
-            >
-              <span class="nav-item-icon">
-                <i data-lucide="settings" class="icon-24"></i>
-              </span>
-              <span class="nav-item-label">Settings</span>
-            </a>
-            <a
-              href="/profile.html"
-              class="nav-item"
-              aria-label="Profile"
-              id="nav-profile"
-            >
-              <span class="nav-item-icon">
-                <i data-lucide="user" class="icon-24"></i>
-              </span>
-              <span class="nav-item-label">Profile</span>
-            </a>
-          </nav>
+            <!-- User Menu -->
+            <div class="user-menu-wrapper">
+              <button
+                id="user-menu-button"
+                class="user-menu"
+                type="button"
+                aria-label="User menu"
+                aria-haspopup="menu"
+                aria-controls="user-menu"
+                aria-expanded="false"
+              >
+                <div class="user-avatar" id="user-avatar" aria-hidden="true">
+                  U
+                </div>
+              </button>
+
+              <!-- User Menu Dropdown -->
+              <ul id="user-menu" class="user-menu-dropdown" role="menu" hidden>
+                <li role="menuitem">
+                  <a href="/profile" class="user-menu-item">
+                    <i data-lucide="user" class="icon-16"></i>
+                    <span>Profile</span>
+                  </a>
+                </li>
+                <li role="menuitem">
+                  <a href="/settings" class="user-menu-item">
+                    <i data-lucide="settings" class="icon-16"></i>
+                    <span>Settings</span>
+                  </a>
+                </li>
+                <li role="separator" class="user-menu-separator"></li>
+                <li role="menuitem">
+                  <a
+                    href="/logout"
+                    class="user-menu-item user-menu-item-danger"
+                  >
+                    <i data-lucide="log-out" class="icon-16"></i>
+                    <span>Logout</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
 
-    <!-- Sidebar Overlay for Mobile -->
-        <div
-          class="sidebar-overlay"
-          id="sidebar-overlay"
-          aria-hidden="true"
-        ></div>
-
-        <main class="main-content u-flex-1 u-min-width-0 u-overflow-x-hidden u-overflow-y-auto u-padding-24 u-bg-primary" id="main-content">
-            <!-- Top Bar -->
-            <div class="top-bar" role="banner">
-                <div class="header-left">
-                    <!-- Mobile Menu Toggle Button -->
-                    <button
-                        id="mobile-menu-toggle"
-                        class="mobile-menu-toggle"
-                        type="button"
-                        aria-label="Open menu"
-                        aria-expanded="false"
-                        aria-controls="sidebar"
-                        onclick="toggleSidebar()"
-                    >
-                        <i data-lucide="menu" class="icon-20"></i>
-                    </button>
-                    
-                    <div class="page-title-section">
-                        <h1 class="page-title">
-                            <i data-lucide="bar-chart-3" class="icon-18" style="display: inline-block; vertical-align: middle; margin-right: var(--primitive-space-8);"></i>
-                            FlagFit Pro Analytics
-                        </h1>
-                        <p class="page-subtitle">Advanced Performance Analytics & Team Insights</p>
-                    </div>
-                </div>
-                
-                <div class="header-right">
-                    <!-- Notifications -->
-                    <div class="header-icon-wrap">
-                        <button
-                            id="notification-bell"
-                            class="header-icon"
-                            type="button"
-                            aria-label="Notifications"
-                            aria-controls="notification-panel"
-                            aria-expanded="false"
-                        >
-                            <i data-lucide="bell" class="icon-18"></i>
-                            <span id="notification-badge" class="badge" hidden>3</span>
-                        </button>
-                        <span id="notification-live" class="sr-only" aria-live="polite"></span>
-                    </div>
-
-                    <!-- Settings -->
-                    <button class="header-icon" type="button" aria-label="Settings">
-                        <i data-lucide="settings" class="icon-18"></i>
-                    </button>
-
-                    <!-- Theme Toggle -->
-                    <div class="theme-toggle-container" aria-label="Theme toggle">
-                        <label class="theme-toggle-label" title="Toggle theme">
-                            <input
-                                type="checkbox"
-                                id="header-theme-toggle"
-                                class="theme-toggle-input"
-                                aria-label="Toggle theme"
-                            />
-                            <span class="theme-toggle-slider">
-                                <span class="theme-toggle-dot" id="theme-toggle-dot"></span>
-                            </span>
-                            <span class="theme-toggle-text">🌙 Dark</span>
-                        </label>
-                    </div>
-
-                    <!-- User Menu -->
-                    <div class="user-menu-wrapper">
-                        <button
-                            id="user-menu-button"
-                            class="user-menu"
-                            type="button"
-                            aria-label="User menu"
-                            aria-haspopup="menu"
-                            aria-controls="user-menu"
-                            aria-expanded="false"
-                        >
-                            <div class="user-avatar" id="user-avatar" aria-hidden="true">U</div>
-                        </button>
-
-                        <!-- User Menu Dropdown -->
-                        <ul id="user-menu" class="user-menu-dropdown" role="menu" hidden>
-                            <li role="menuitem">
-                                <a href="/profile" class="user-menu-item">
-                                    <i data-lucide="user" class="icon-16"></i>
-                                    <span>Profile</span>
-                                </a>
-                            </li>
-                            <li role="menuitem">
-                                <a href="/settings" class="user-menu-item">
-                                    <i data-lucide="settings" class="icon-16"></i>
-                                    <span>Settings</span>
-                                </a>
-                            </li>
-                            <li role="separator" class="user-menu-separator"></li>
-                            <li role="menuitem">
-                                <a href="/logout" class="user-menu-item user-menu-item-danger">
-                                    <i data-lucide="log-out" class="icon-16"></i>
-                                    <span>Logout</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="analytics-container u-margin-y-auto">
-
-    <!-- Key Metrics Overview -->
-        <div class="metrics-grid">
+        <div class="analytics-container u-margin-y-auto">
+          <!-- Key Metrics Overview -->
+          <div class="metrics-grid">
             <div class="metric-card">
-                <div class="metric-icon" aria-hidden="true"><i data-lucide="bar-chart-3" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></div>
-                <div class="metric-value">87%</div>
-                <div class="metric-label">Overall Performance</div>
-                <div class="metric-trend trend-positive">+5.2% this week</div>
+              <div class="metric-icon" aria-hidden="true">
+                <i
+                  data-lucide="bar-chart-3"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    color: var(--icon-color-primary);
+                    stroke: var(--icon-color-primary);
+                  "
+                ></i>
+              </div>
+              <div class="metric-value">87%</div>
+              <div class="metric-label">Overall Performance</div>
+              <div class="metric-trend trend-positive">+5.2% this week</div>
             </div>
             <div class="metric-card">
-                <div class="metric-icon" aria-hidden="true"><i data-lucide="users" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></div>
-                <div class="metric-value">8.4</div>
-                <div class="metric-label">Team Chemistry</div>
-                <div class="metric-trend trend-positive">+0.6 improvement</div>
+              <div class="metric-icon" aria-hidden="true">
+                <i
+                  data-lucide="users"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    color: var(--icon-color-primary);
+                    stroke: var(--icon-color-primary);
+                  "
+                ></i>
+              </div>
+              <div class="metric-value">8.4</div>
+              <div class="metric-label">Team Chemistry</div>
+              <div class="metric-trend trend-positive">+0.6 improvement</div>
             </div>
             <div class="metric-card">
-                <div class="metric-icon" aria-hidden="true"><i data-lucide="zap" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></div>
-                <div class="metric-value">4.52s</div>
-                <div class="metric-label">40-Yard Dash</div>
-                <div class="metric-trend trend-positive">-0.13s faster</div>
+              <div class="metric-icon" aria-hidden="true">
+                <i
+                  data-lucide="zap"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    color: var(--icon-color-primary);
+                    stroke: var(--icon-color-primary);
+                  "
+                ></i>
+              </div>
+              <div class="metric-value">4.52s</div>
+              <div class="metric-label">40-Yard Dash</div>
+              <div class="metric-trend trend-positive">-0.13s faster</div>
             </div>
             <div class="metric-card">
-                <div class="metric-icon" aria-hidden="true"><i data-lucide="trophy" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></div>
-                <div class="metric-value">73%</div>
-                <div class="metric-label">Olympic Qualification</div>
-                <div class="metric-trend trend-positive">+8% progress</div>
+              <div class="metric-icon" aria-hidden="true">
+                <i
+                  data-lucide="trophy"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    color: var(--icon-color-primary);
+                    stroke: var(--icon-color-primary);
+                  "
+                ></i>
+              </div>
+              <div class="metric-value">73%</div>
+              <div class="metric-label">Olympic Qualification</div>
+              <div class="metric-trend trend-positive">+8% progress</div>
             </div>
-        </div>
+          </div>
 
-    <!-- Charts Grid -->
-        <div class="charts-grid">
+          <!-- Charts Grid -->
+          <div class="charts-grid">
             <!-- Performance Trends Chart -->
             <div class="chart-card">
-                <div class="chart-header">
-                    <h3 class="chart-title">Performance Trends</h3>
-                    <div class="chart-actions">
-                        <button class="btn btn-secondary" type="button">Export</button>
-                        <button class="btn btn-primary" type="button">Customize</button>
-                    </div>
+              <div class="chart-header">
+                <h3 class="chart-title">Performance Trends</h3>
+                <div class="chart-actions">
+                  <button class="btn btn-secondary" type="button">
+                    Export
+                  </button>
+                  <button class="btn btn-primary" type="button">
+                    Customize
+                  </button>
                 </div>
-                <div class="chart-container">
-                    <canvas id="performanceTrendsChart" role="img" aria-label="Performance trends chart showing weekly performance scores"></canvas>
+              </div>
+              <div class="chart-container">
+                <canvas
+                  id="performanceTrendsChart"
+                  role="img"
+                  aria-label="Performance trends chart showing weekly performance scores"
+                ></canvas>
+              </div>
+              <div class="chart-insights">
+                <div class="insight-item">
+                  <div class="insight-value">91</div>
+                  <div class="insight-label">Current Score</div>
                 </div>
-                <div class="chart-insights">
-                    <div class="insight-item">
-                        <div class="insight-value">91</div>
-                        <div class="insight-label">Current Score</div>
-                    </div>
-                    <div class="insight-item">
-                        <div class="insight-value">+13</div>
-                        <div class="insight-label">Total Improvement</div>
-                    </div>
-                    <div class="insight-item">
-                        <div class="insight-value">+5.2%</div>
-                        <div class="insight-label">Weekly Trend</div>
-                    </div>
+                <div class="insight-item">
+                  <div class="insight-value">+13</div>
+                  <div class="insight-label">Total Improvement</div>
                 </div>
+                <div class="insight-item">
+                  <div class="insight-value">+5.2%</div>
+                  <div class="insight-label">Weekly Trend</div>
+                </div>
+              </div>
             </div>
 
             <!-- Team Chemistry Radar Chart -->
             <div class="chart-card">
-                <div class="chart-header">
-                    <h3 class="chart-title">Team Chemistry Analysis</h3>
-                    <div class="chart-actions">
-                        <button class="btn btn-secondary" type="button">Details</button>
-                        <button class="btn btn-primary" type="button">Improve</button>
-                    </div>
+              <div class="chart-header">
+                <h3 class="chart-title">Team Chemistry Analysis</h3>
+                <div class="chart-actions">
+                  <button class="btn btn-secondary" type="button">
+                    Details
+                  </button>
+                  <button class="btn btn-primary" type="button">Improve</button>
                 </div>
-                <div class="chart-container">
-                    <canvas id="teamChemistryChart" role="img" aria-label="Team chemistry radar chart showing communication, coordination, trust, cohesion, leadership, and adaptability scores"></canvas>
+              </div>
+              <div class="chart-container">
+                <canvas
+                  id="teamChemistryChart"
+                  role="img"
+                  aria-label="Team chemistry radar chart showing communication, coordination, trust, cohesion, leadership, and adaptability scores"
+                ></canvas>
+              </div>
+              <div class="chart-insights">
+                <div class="insight-item">
+                  <div class="insight-value">8.4</div>
+                  <div class="insight-label">Overall Score</div>
                 </div>
-                <div class="chart-insights">
-                    <div class="insight-item">
-                        <div class="insight-value">8.4</div>
-                        <div class="insight-label">Overall Score</div>
-                    </div>
-                    <div class="insight-item">
-                        <div class="insight-value">9.1</div>
-                        <div class="insight-label">Trust Level</div>
-                    </div>
-                    <div class="insight-item">
-                        <div class="insight-value">7.5</div>
-                        <div class="insight-label">Leadership</div>
-                    </div>
+                <div class="insight-item">
+                  <div class="insight-value">9.1</div>
+                  <div class="insight-label">Trust Level</div>
                 </div>
+                <div class="insight-item">
+                  <div class="insight-value">7.5</div>
+                  <div class="insight-label">Leadership</div>
+                </div>
+              </div>
             </div>
 
             <!-- Training Distribution Chart -->
             <div class="chart-card">
-                <div class="chart-header">
-                    <h3 class="chart-title">Training Session Distribution</h3>
-                    <div class="chart-actions">
-                        <button class="btn btn-secondary" type="button">Filter</button>
-                        <button class="btn btn-primary" type="button">Schedule</button>
-                    </div>
+              <div class="chart-header">
+                <h3 class="chart-title">Training Session Distribution</h3>
+                <div class="chart-actions">
+                  <button class="btn btn-secondary" type="button">
+                    Filter
+                  </button>
+                  <button class="btn btn-primary" type="button">
+                    Schedule
+                  </button>
                 </div>
-                <div class="chart-container">
-                    <canvas id="trainingDistributionChart" role="img" aria-label="Training distribution doughnut chart showing different types of training sessions"></canvas>
+              </div>
+              <div class="chart-container">
+                <canvas
+                  id="trainingDistributionChart"
+                  role="img"
+                  aria-label="Training distribution doughnut chart showing different types of training sessions"
+                ></canvas>
+              </div>
+              <div class="chart-insights">
+                <div class="insight-item">
+                  <div class="insight-value">30</div>
+                  <div class="insight-label">Agility Sessions</div>
                 </div>
-                <div class="chart-insights">
-                    <div class="insight-item">
-                        <div class="insight-value">30</div>
-                        <div class="insight-label">Agility Sessions</div>
-                    </div>
-                    <div class="insight-item">
-                        <div class="insight-value">25</div>
-                        <div class="insight-label">Speed Sessions</div>
-                    </div>
-                    <div class="insight-item">
-                        <div class="insight-value">20</div>
-                        <div class="insight-label">Technical Sessions</div>
-                    </div>
+                <div class="insight-item">
+                  <div class="insight-value">25</div>
+                  <div class="insight-label">Speed Sessions</div>
                 </div>
+                <div class="insight-item">
+                  <div class="insight-value">20</div>
+                  <div class="insight-label">Technical Sessions</div>
+                </div>
+              </div>
             </div>
 
             <!-- Position Performance Chart -->
             <div class="chart-card">
-                <div class="chart-header">
-                    <h3 class="chart-title">Position Performance Comparison</h3>
-                    <div class="chart-actions">
-                        <button class="btn btn-secondary" type="button">Benchmarks</button>
-                        <button class="btn btn-primary" type="button">Optimize</button>
-                    </div>
+              <div class="chart-header">
+                <h3 class="chart-title">Position Performance Comparison</h3>
+                <div class="chart-actions">
+                  <button class="btn btn-secondary" type="button">
+                    Benchmarks
+                  </button>
+                  <button class="btn btn-primary" type="button">
+                    Optimize
+                  </button>
                 </div>
-                <div class="chart-container">
-                    <canvas id="positionPerformanceChart" role="img" aria-label="Position performance bar chart comparing quarterback, wide receiver, running back, defensive back, and rusher performance"></canvas>
+              </div>
+              <div class="chart-container">
+                <canvas
+                  id="positionPerformanceChart"
+                  role="img"
+                  aria-label="Position performance bar chart comparing quarterback, wide receiver, running back, defensive back, and rusher performance"
+                ></canvas>
+              </div>
+              <div class="chart-insights">
+                <div class="insight-item">
+                  <div class="insight-value">94</div>
+                  <div class="insight-label">Lorenzo S. #21</div>
                 </div>
-                <div class="chart-insights">
-                    <div class="insight-item">
-                        <div class="insight-value">94</div>
-                        <div class="insight-label">Lorenzo S. #21</div>
-                    </div>
-                    <div class="insight-item">
-                        <div class="insight-value">91</div>
-                        <div class="insight-label">Aljosa K. #55</div>
-                    </div>
-                    <div class="insight-item">
-                        <div class="insight-value">89</div>
-                        <div class="insight-label">Vince M. #10</div>
-                    </div>
+                <div class="insight-item">
+                  <div class="insight-value">91</div>
+                  <div class="insight-label">Aljosa K. #55</div>
                 </div>
+                <div class="insight-item">
+                  <div class="insight-value">89</div>
+                  <div class="insight-label">Vince M. #10</div>
+                </div>
+              </div>
             </div>
 
             <!-- Olympic Progress Chart -->
             <div class="chart-card">
-                <div class="chart-header">
-                    <h3 class="chart-title">Olympic Qualification Progress</h3>
-                    <div class="chart-actions">
-                        <button class="btn btn-secondary" type="button">Timeline</button>
-                        <button class="btn btn-primary" type="button">Strategy</button>
-                    </div>
+              <div class="chart-header">
+                <h3 class="chart-title">Olympic Qualification Progress</h3>
+                <div class="chart-actions">
+                  <button class="btn btn-secondary" type="button">
+                    Timeline
+                  </button>
+                  <button class="btn btn-primary" type="button">
+                    Strategy
+                  </button>
                 </div>
-                <div class="chart-container">
-                    <canvas id="olympicProgressChart" role="img" aria-label="Olympic qualification progress gauge showing 73% qualified"></canvas>
+              </div>
+              <div class="chart-container">
+                <canvas
+                  id="olympicProgressChart"
+                  role="img"
+                  aria-label="Olympic qualification progress gauge showing 73% qualified"
+                ></canvas>
+              </div>
+              <div class="chart-insights">
+                <div class="insight-item">
+                  <div class="insight-value">73%</div>
+                  <div class="insight-label">Qualified</div>
                 </div>
-                <div class="chart-insights">
-                    <div class="insight-item">
-                        <div class="insight-value">73%</div>
-                        <div class="insight-label">Qualified</div>
-                    </div>
-                    <div class="insight-item">
-                        <div class="insight-value">124</div>
-                        <div class="insight-label">Days Left</div>
-                    </div>
-                    <div class="insight-item">
-                        <div class="insight-value">8th</div>
-                        <div class="insight-label">World Ranking</div>
-                    </div>
+                <div class="insight-item">
+                  <div class="insight-value">124</div>
+                  <div class="insight-label">Days Left</div>
                 </div>
+                <div class="insight-item">
+                  <div class="insight-value">8th</div>
+                  <div class="insight-label">World Ranking</div>
+                </div>
+              </div>
             </div>
 
             <!-- Injury Risk Chart -->
             <div class="chart-card">
-                <div class="chart-header">
-                    <h3 class="chart-title">Team Injury Risk Assessment</h3>
-                    <div class="chart-actions">
-                        <button class="btn btn-secondary" type="button">Prevention</button>
-                        <button class="btn btn-primary" type="button">Monitor</button>
-                    </div>
+              <div class="chart-header">
+                <h3 class="chart-title">Team Injury Risk Assessment</h3>
+                <div class="chart-actions">
+                  <button class="btn btn-secondary" type="button">
+                    Prevention
+                  </button>
+                  <button class="btn btn-primary" type="button">Monitor</button>
                 </div>
-                <div class="chart-container">
-                    <canvas id="injuryRiskChart" role="img" aria-label="Injury risk assessment chart showing low, medium, and high risk percentages"></canvas>
+              </div>
+              <div class="chart-container">
+                <canvas
+                  id="injuryRiskChart"
+                  role="img"
+                  aria-label="Injury risk assessment chart showing low, medium, and high risk percentages"
+                ></canvas>
+              </div>
+              <div class="chart-insights">
+                <div class="insight-item">
+                  <div class="insight-value">75%</div>
+                  <div class="insight-label">Low Risk</div>
                 </div>
-                <div class="chart-insights">
-                    <div class="insight-item">
-                        <div class="insight-value">75%</div>
-                        <div class="insight-label">Low Risk</div>
-                    </div>
-                    <div class="insight-item">
-                        <div class="insight-value">20%</div>
-                        <div class="insight-label">Medium Risk</div>
-                    </div>
-                    <div class="insight-item">
-                        <div class="insight-value">5%</div>
-                        <div class="insight-label">High Risk</div>
-                    </div>
+                <div class="insight-item">
+                  <div class="insight-value">20%</div>
+                  <div class="insight-label">Medium Risk</div>
                 </div>
+                <div class="insight-item">
+                  <div class="insight-value">5%</div>
+                  <div class="insight-label">High Risk</div>
+                </div>
+              </div>
             </div>
-        </div>
+          </div>
 
-    <!-- Full Width Charts -->
-        <div class="charts-grid full-width-chart">
+          <!-- Full Width Charts -->
+          <div class="charts-grid full-width-chart">
             <!-- Speed Development Chart -->
             <div class="chart-card">
-                <div class="chart-header">
-                    <h3 class="chart-title">Speed Development Progress</h3>
-                    <div class="chart-controls">
-                        <div class="control-group">
-                            <label class="control-label" for="timePeriod">Time Period:</label>
-                            <select class="control-select" id="timePeriod">
-                                <option>Last 7 Weeks</option>
-                                <option>Last 30 Days</option>
-                                <option>Season Progress</option>
-                            </select>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label" for="metrics">Metrics:</label>
-                            <select class="control-select" id="metrics">
-                                <option>40-Yard & 10-Yard</option>
-                                <option>All Sprint Distances</option>
-                                <option>Agility Tests</option>
-                            </select>
-                        </div>
-                    </div>
+              <div class="chart-header">
+                <h3 class="chart-title">Speed Development Progress</h3>
+                <div class="chart-controls">
+                  <div class="control-group">
+                    <label class="control-label" for="timePeriod"
+                      >Time Period:</label
+                    >
+                    <select class="control-select" id="timePeriod">
+                      <option>Last 7 Weeks</option>
+                      <option>Last 30 Days</option>
+                      <option>Season Progress</option>
+                    </select>
+                  </div>
+                  <div class="control-group">
+                    <label class="control-label" for="metrics">Metrics:</label>
+                    <select class="control-select" id="metrics">
+                      <option>40-Yard & 10-Yard</option>
+                      <option>All Sprint Distances</option>
+                      <option>Agility Tests</option>
+                    </select>
+                  </div>
                 </div>
-                <div class="chart-container">
-                    <canvas id="speedDevelopmentChart" role="img" aria-label="Speed development line chart showing 40-yard and 10-yard sprint times over weeks"></canvas>
+              </div>
+              <div class="chart-container">
+                <canvas
+                  id="speedDevelopmentChart"
+                  role="img"
+                  aria-label="Speed development line chart showing 40-yard and 10-yard sprint times over weeks"
+                ></canvas>
+              </div>
+              <div class="chart-insights">
+                <div class="insight-item">
+                  <div class="insight-value">4.46s</div>
+                  <div class="insight-label">Best 40-Yard</div>
                 </div>
-                <div class="chart-insights">
-                    <div class="insight-item">
-                        <div class="insight-value">4.46s</div>
-                        <div class="insight-label">Best 40-Yard</div>
-                    </div>
-                    <div class="insight-item">
-                        <div class="insight-value">1.54s</div>
-                        <div class="insight-label">Best 10-Yard</div>
-                    </div>
-                    <div class="insight-item">
-                        <div class="insight-value">-0.19s</div>
-                        <div class="insight-label">Total Improvement</div>
-                    </div>
-                    <div class="insight-item">
-                        <div class="insight-value">4.40s</div>
-                        <div class="insight-label">Olympic Target</div>
-                    </div>
+                <div class="insight-item">
+                  <div class="insight-value">1.54s</div>
+                  <div class="insight-label">Best 10-Yard</div>
                 </div>
+                <div class="insight-item">
+                  <div class="insight-value">-0.19s</div>
+                  <div class="insight-label">Total Improvement</div>
+                </div>
+                <div class="insight-item">
+                  <div class="insight-value">4.40s</div>
+                  <div class="insight-label">Olympic Target</div>
+                </div>
+              </div>
             </div>
-        </div>
+          </div>
 
-    <!-- User Engagement Funnel -->
-        <div class="charts-grid full-width-chart">
+          <!-- User Engagement Funnel -->
+          <div class="charts-grid full-width-chart">
             <div class="chart-card">
-                <div class="chart-header">
-                    <h3 class="chart-title">User Engagement Funnel</h3>
-                    <div class="chart-controls">
-                        <div class="control-group">
-                            <label class="control-label" for="dateRange">Date Range:</label>
-                            <select class="control-select" id="dateRange">
-                                <option>Last 30 Days</option>
-                                <option>Last 90 Days</option>
-                                <option>This Season</option>
-                            </select>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label" for="userSegment">User Segment:</label>
-                            <select class="control-select" id="userSegment">
-                                <option>All Users</option>
-                                <option>Elite Players</option>
-                                <option>Amateur Players</option>
-                            </select>
-                        </div>
-                    </div>
+              <div class="chart-header">
+                <h3 class="chart-title">User Engagement Funnel</h3>
+                <div class="chart-controls">
+                  <div class="control-group">
+                    <label class="control-label" for="dateRange"
+                      >Date Range:</label
+                    >
+                    <select class="control-select" id="dateRange">
+                      <option>Last 30 Days</option>
+                      <option>Last 90 Days</option>
+                      <option>This Season</option>
+                    </select>
+                  </div>
+                  <div class="control-group">
+                    <label class="control-label" for="userSegment"
+                      >User Segment:</label
+                    >
+                    <select class="control-select" id="userSegment">
+                      <option>All Users</option>
+                      <option>Elite Players</option>
+                      <option>Amateur Players</option>
+                    </select>
+                  </div>
                 </div>
-                <div class="chart-container">
-                    <canvas id="engagementFunnelChart" role="img" aria-label="User engagement funnel chart showing user journey from app opens to goal achievement"></canvas>
+              </div>
+              <div class="chart-container">
+                <canvas
+                  id="engagementFunnelChart"
+                  role="img"
+                  aria-label="User engagement funnel chart showing user journey from app opens to goal achievement"
+                ></canvas>
+              </div>
+              <div class="chart-insights">
+                <div class="insight-item">
+                  <div class="insight-value">32%</div>
+                  <div class="insight-label">Goal Achievement</div>
                 </div>
-                <div class="chart-insights">
-                    <div class="insight-item">
-                        <div class="insight-value">32%</div>
-                        <div class="insight-label">Goal Achievement</div>
-                    </div>
-                    <div class="insight-item">
-                        <div class="insight-value">68%</div>
-                        <div class="insight-label">Session Completion</div>
-                    </div>
-                    <div class="insight-item">
-                        <div class="insight-value">85%</div>
-                        <div class="insight-label">Dashboard Engagement</div>
-                    </div>
+                <div class="insight-item">
+                  <div class="insight-value">68%</div>
+                  <div class="insight-label">Session Completion</div>
                 </div>
+                <div class="insight-item">
+                  <div class="insight-value">85%</div>
+                  <div class="insight-label">Dashboard Engagement</div>
+                </div>
+              </div>
             </div>
+          </div>
         </div>
-        </main>
+      </main>
     </div>
 
     <script>
-        // Analytics Dashboard Chart Initialization
-        let charts = {};
+      // Analytics Dashboard Chart Initialization
+      let charts = {};
 
-        // Wait for DOM and Chart.js to be ready
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize Lucide icons
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
-            // Check if Chart.js is loaded
-            if (typeof Chart === 'undefined') {
-                console.error('<i data-lucide="x-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Chart.js not loaded');
-                return;
-            }
+      // Wait for DOM and Chart.js to be ready
+      document.addEventListener("DOMContentLoaded", function () {
+        // Initialize Lucide icons
+        if (typeof lucide !== "undefined") {
+          lucide.createIcons();
+        }
+        // Check if Chart.js is loaded
+        if (typeof Chart === "undefined") {
+          console.error(
+            '<i data-lucide="x-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Chart.js not loaded',
+          );
+          return;
+        }
 
-            console.log('🚀 Initializing FlagFit Pro Analytics Dashboard...');
-            
-            setTimeout(() => {
-                initializeAllCharts();
-            }, 100);
+        console.log("🚀 Initializing FlagFit Pro Analytics Dashboard...");
+
+        setTimeout(() => {
+          initializeAllCharts();
+        }, 100);
+      });
+
+      function initializeAllCharts() {
+        try {
+          initPerformanceTrendsChart();
+          initTeamChemistryChart();
+          initTrainingDistributionChart();
+          initPositionPerformanceChart();
+          initOlympicProgressChart();
+          initInjuryRiskChart();
+          initSpeedDevelopmentChart();
+          initEngagementFunnelChart();
+          console.log(
+            '<i data-lucide="check-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> All charts initialized successfully!',
+          );
+        } catch (error) {
+          console.error(
+            '<i data-lucide="x-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Error initializing charts:',
+            error,
+          );
+        }
+      }
+
+      function initPerformanceTrendsChart() {
+        const ctx = document.getElementById("performanceTrendsChart");
+        if (!ctx) return;
+
+        charts.performanceTrends = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: [
+              "Week 1",
+              "Week 2",
+              "Week 3",
+              "Week 4",
+              "Week 5",
+              "Week 6",
+              "Week 7",
+            ],
+            datasets: [
+              {
+                label: "Performance Score",
+                data: [78, 82, 85, 79, 88, 91, 87],
+                borderColor: "var(--primary-500)",
+                backgroundColor: "rgba(8, 153, 73, 0.1)",
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              y: { beginAtZero: true, max: 100 },
+            },
+          },
         });
+      }
 
-        function initializeAllCharts() {
-            try {
-                initPerformanceTrendsChart();
-                initTeamChemistryChart();
-                initTrainingDistributionChart();
-                initPositionPerformanceChart();
-                initOlympicProgressChart();
-                initInjuryRiskChart();
-                initSpeedDevelopmentChart();
-                initEngagementFunnelChart();
-                console.log('<i data-lucide="check-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> All charts initialized successfully!');
-            } catch (error) {
-                console.error('<i data-lucide="x-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Error initializing charts:', error);
-            }
-        }
+      function initTeamChemistryChart() {
+        const ctx = document.getElementById("teamChemistryChart");
+        if (!ctx) return;
 
-        function initPerformanceTrendsChart() {
-            const ctx = document.getElementById('performanceTrendsChart');
-            if (!ctx) return;
-            
-            charts.performanceTrends = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7'],
-                    datasets: [{
-                        label: 'Performance Score',
-                        data: [78, 82, 85, 79, 88, 91, 87],
-                        borderColor: 'var(--primary-500)',
-                        backgroundColor: 'rgba(8, 153, 73, 0.1)',
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: { beginAtZero: true, max: 100 }
-                    }
-                }
-            });
-        }
-
-        function initTeamChemistryChart() {
-            const ctx = document.getElementById('teamChemistryChart');
-            if (!ctx) return;
-            
-            charts.teamChemistry = new Chart(ctx, {
-                type: 'radar',
-                data: {
-                    labels: ['Communication', 'Coordination', 'Trust', 'Cohesion', 'Leadership', 'Adaptability'],
-                    datasets: [{
-                        label: 'Team Chemistry',
-                        data: [8.4, 9.1, 7.5, 8.8, 9.2, 8.0],
-                        borderColor: 'var(--primary-500)',
-                        backgroundColor: 'rgba(16, 201, 107, 0.2)',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        r: { beginAtZero: true, max: 10 }
-                    }
-                }
-            });
-        }
-
-        function initTrainingDistributionChart() {
-            const ctx = document.getElementById('trainingDistributionChart');
-            if (!ctx) return;
-            
-            charts.trainingDistribution = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Speed Training', 'Strength', 'Agility', 'Endurance', 'Technique'],
-                    datasets: [{
-                        data: [25, 20, 22, 18, 15],
-                        backgroundColor: ['var(--primary-500)', 'var(--primary-500)', 'var(--tertiary-500)', 'var(--error-500)', 'var(--primary-500)']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false
-                }
-            });
-        }
-
-        function initPositionPerformanceChart() {
-            const ctx = document.getElementById('positionPerformanceChart');
-            if (!ctx) return;
-            
-            // Real team roster: Vince Machi #10, Lorenzo Scaperotta #21, Aleks Bordon #9, etc.
-            charts.positionPerformance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Vince M. #10', 'Lorenzo S. #21', 'Aleks B. #9', 'Aljosa K. #55', 'Nils J. #7'],
-                    datasets: [{
-                        label: 'Performance Score',
-                        data: [89, 94, 87, 91, 85],
-                        backgroundColor: ['var(--primary-500)', 'var(--primary-500)', 'var(--tertiary-500)', 'var(--error-500)', 'var(--primary-500)']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: { beginAtZero: true, max: 100 }
-                    }
-                }
-            });
-        }
-
-        function initOlympicProgressChart() {
-            const ctx = document.getElementById('olympicProgressChart');
-            if (!ctx) return;
-            
-            charts.olympicProgress = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Qualified', 'Remaining'],
-                    datasets: [{
-                        data: [73, 27],
-                        backgroundColor: ['var(--primary-500)', '#E5E7EB'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '70%',
-                    plugins: {
-                        legend: { display: false }
-                    }
-                }
-            });
-        }
-
-        function initInjuryRiskChart() {
-            const ctx = document.getElementById('injuryRiskChart');
-            if (!ctx) return;
-            
-            charts.injuryRisk = new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels: ['Low Risk', 'Medium Risk', 'High Risk'],
-                    datasets: [{
-                        data: [60, 30, 10],
-                        backgroundColor: ['var(--primary-500)', 'var(--tertiary-500)', 'var(--error-500)']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false
-                }
-            });
-        }
-
-        function initSpeedDevelopmentChart() {
-            const ctx = document.getElementById('speedDevelopmentChart');
-            if (!ctx) return;
-            
-            charts.speedDevelopment = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'],
-                    datasets: [{
-                        label: '40-yard Dash',
-                        data: [5.2, 5.1, 4.9, 4.8, 4.7, 4.52],
-                        borderColor: 'var(--primary-500)',
-                        tension: 0.4
-                    }, {
-                        label: '10-yard Split',
-                        data: [1.8, 1.75, 1.7, 1.68, 1.65, 1.62],
-                        borderColor: 'var(--primary-500)',
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: { beginAtZero: false, min: 1.5, max: 5.5 }
-                    }
-                }
-            });
-        }
-
-        function initEngagementFunnelChart() {
-            const ctx = document.getElementById('engagementFunnelChart');
-            if (!ctx) return;
-            
-            charts.engagementFunnel = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['App Opens', 'Training Started', 'Session Completed', 'Goals Set', 'Goals Achieved'],
-                    datasets: [{
-                        label: 'Users',
-                        data: [1000, 780, 680, 450, 320],
-                        backgroundColor: 'var(--primary-500)'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    indexAxis: 'y',
-                    scales: {
-                        x: { beginAtZero: true }
-                    }
-                }
-            });
-        }
-
-        // Button interactions
-        document.addEventListener('DOMContentLoaded', () => {
-            const buttons = document.querySelectorAll('.btn');
-            buttons.forEach(button => {
-                button.addEventListener('click', (e) => {
-                    const action = e.target.textContent.toLowerCase();
-                    console.log(`Button clicked: ${action}`);
-                    // Add button functionality here
-                });
-            });
+        charts.teamChemistry = new Chart(ctx, {
+          type: "radar",
+          data: {
+            labels: [
+              "Communication",
+              "Coordination",
+              "Trust",
+              "Cohesion",
+              "Leadership",
+              "Adaptability",
+            ],
+            datasets: [
+              {
+                label: "Team Chemistry",
+                data: [8.4, 9.1, 7.5, 8.8, 9.2, 8.0],
+                borderColor: "var(--primary-500)",
+                backgroundColor: "rgba(16, 201, 107, 0.2)",
+                borderWidth: 2,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              r: { beginAtZero: true, max: 10 },
+            },
+          },
         });
+      }
+
+      function initTrainingDistributionChart() {
+        const ctx = document.getElementById("trainingDistributionChart");
+        if (!ctx) return;
+
+        charts.trainingDistribution = new Chart(ctx, {
+          type: "doughnut",
+          data: {
+            labels: [
+              "Speed Training",
+              "Strength",
+              "Agility",
+              "Endurance",
+              "Technique",
+            ],
+            datasets: [
+              {
+                data: [25, 20, 22, 18, 15],
+                backgroundColor: [
+                  "var(--primary-500)",
+                  "var(--primary-500)",
+                  "var(--tertiary-500)",
+                  "var(--error-500)",
+                  "var(--primary-500)",
+                ],
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+          },
+        });
+      }
+
+      function initPositionPerformanceChart() {
+        const ctx = document.getElementById("positionPerformanceChart");
+        if (!ctx) return;
+
+        // Real team roster: Vince Machi #10, Lorenzo Scaperotta #21, Aleks Bordon #9, etc.
+        charts.positionPerformance = new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels: [
+              "Vince M. #10",
+              "Lorenzo S. #21",
+              "Aleks B. #9",
+              "Aljosa K. #55",
+              "Nils J. #7",
+            ],
+            datasets: [
+              {
+                label: "Performance Score",
+                data: [89, 94, 87, 91, 85],
+                backgroundColor: [
+                  "var(--primary-500)",
+                  "var(--primary-500)",
+                  "var(--tertiary-500)",
+                  "var(--error-500)",
+                  "var(--primary-500)",
+                ],
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: { beginAtZero: true, max: 100 },
+            },
+          },
+        });
+      }
+
+      function initOlympicProgressChart() {
+        const ctx = document.getElementById("olympicProgressChart");
+        if (!ctx) return;
+
+        charts.olympicProgress = new Chart(ctx, {
+          type: "doughnut",
+          data: {
+            labels: ["Qualified", "Remaining"],
+            datasets: [
+              {
+                data: [73, 27],
+                backgroundColor: ["var(--primary-500)", "#E5E7EB"],
+                borderWidth: 0,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: "70%",
+            plugins: {
+              legend: { display: false },
+            },
+          },
+        });
+      }
+
+      function initInjuryRiskChart() {
+        const ctx = document.getElementById("injuryRiskChart");
+        if (!ctx) return;
+
+        charts.injuryRisk = new Chart(ctx, {
+          type: "pie",
+          data: {
+            labels: ["Low Risk", "Medium Risk", "High Risk"],
+            datasets: [
+              {
+                data: [60, 30, 10],
+                backgroundColor: [
+                  "var(--primary-500)",
+                  "var(--tertiary-500)",
+                  "var(--error-500)",
+                ],
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+          },
+        });
+      }
+
+      function initSpeedDevelopmentChart() {
+        const ctx = document.getElementById("speedDevelopmentChart");
+        if (!ctx) return;
+
+        charts.speedDevelopment = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: [
+              "Week 1",
+              "Week 2",
+              "Week 3",
+              "Week 4",
+              "Week 5",
+              "Week 6",
+            ],
+            datasets: [
+              {
+                label: "40-yard Dash",
+                data: [5.2, 5.1, 4.9, 4.8, 4.7, 4.52],
+                borderColor: "var(--primary-500)",
+                tension: 0.4,
+              },
+              {
+                label: "10-yard Split",
+                data: [1.8, 1.75, 1.7, 1.68, 1.65, 1.62],
+                borderColor: "var(--primary-500)",
+                tension: 0.4,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: { beginAtZero: false, min: 1.5, max: 5.5 },
+            },
+          },
+        });
+      }
+
+      function initEngagementFunnelChart() {
+        const ctx = document.getElementById("engagementFunnelChart");
+        if (!ctx) return;
+
+        charts.engagementFunnel = new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels: [
+              "App Opens",
+              "Training Started",
+              "Session Completed",
+              "Goals Set",
+              "Goals Achieved",
+            ],
+            datasets: [
+              {
+                label: "Users",
+                data: [1000, 780, 680, 450, 320],
+                backgroundColor: "var(--primary-500)",
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: "y",
+            scales: {
+              x: { beginAtZero: true },
+            },
+          },
+        });
+      }
+
+      // Button interactions
+      document.addEventListener("DOMContentLoaded", () => {
+        const buttons = document.querySelectorAll(".btn");
+        buttons.forEach((button) => {
+          button.addEventListener("click", (e) => {
+            const action = e.target.textContent.toLowerCase();
+            console.log(`Button clicked: ${action}`);
+            // Add button functionality here
+          });
+        });
+      });
+
+      // Sidebar toggle functionality for mobile menu
+      function toggleSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        const overlay = document.getElementById("sidebar-overlay");
+        const toggleBtn = document.getElementById("mobile-menu-toggle");
+
+        if (!sidebar) return;
+
+        const isOpen =
+          sidebar.classList.contains("open") ||
+          sidebar.classList.contains("mobile-open");
+
+        if (isOpen) {
+          sidebar.classList.remove("open", "mobile-open");
+          if (overlay) overlay.classList.remove("active");
+          document.body.classList.remove("sidebar-open", "menu-open");
+          if (toggleBtn) {
+            toggleBtn.setAttribute("aria-expanded", "false");
+          }
+          // Return focus to toggle button
+          if (toggleBtn) toggleBtn.focus();
+        } else {
+          sidebar.classList.add("open", "mobile-open");
+          if (overlay) overlay.classList.add("active");
+          document.body.classList.add("sidebar-open", "menu-open");
+          if (toggleBtn) {
+            toggleBtn.setAttribute("aria-expanded", "true");
+          }
+          // Focus first nav item for accessibility
+          const firstNavItem = sidebar.querySelector(".nav-item");
+          if (firstNavItem) firstNavItem.focus();
+        }
+      }
+
+      // Alias for menu-scrim close functionality
+      function closeMenu() {
+        toggleSidebar();
+      }
+
+      // Make functions globally available for onclick handlers
+      window.toggleSidebar = toggleSidebar;
+      window.closeMenu = closeMenu;
     </script>
-    </div>
 
     <!-- Footer -->
     <footer role="contentinfo" class="main-footer">
@@ -927,5 +1181,5 @@
         <p>&copy; 2025 FlagFit Pro. All rights reserved.</p>
       </div>
     </footer>
-</body>
+  </body>
 </html>

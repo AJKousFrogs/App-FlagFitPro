@@ -13,6 +13,7 @@ This document outlines the analysis and implementation plan for adapting the com
 **Status:** ✅ COMPLETE
 
 #### WR/DB Program Config
+
 - ✅ Complete metadata from training document
 - ✅ Detailed phase breakdown (Foundation, Strength, Power, Competition)
 - ✅ Training philosophy and principles
@@ -22,6 +23,7 @@ This document outlines the analysis and implementation plan for adapting the com
 - ✅ Key features and specifications
 
 #### QB Program Config
+
 - ✅ Comprehensive dual-track approach documentation
 - ✅ Evidence-based research citations (5 key studies)
 - ✅ 320-throw challenge details
@@ -38,6 +40,7 @@ This document outlines the analysis and implementation plan for adapting the com
 ### Current State of Codebase
 
 #### Strengths ✅
+
 1. **Modern Architecture:**
    - Modular service layer (`/src/js/services/`)
    - State management (`training-page-state.js`)
@@ -58,6 +61,7 @@ This document outlines the analysis and implementation plan for adapting the com
 #### Gaps Identified ❌
 
 ##### WR/DB Program Data (`/src/training-program-data.js`)
+
 1. **Missing Weeks 2-14 detailed schedules**
    - Currently only Week 1 has complete day-by-day breakdown
    - Need 13 more weeks × 7 days = 91 detailed workout sessions
@@ -80,6 +84,7 @@ This document outlines the analysis and implementation plan for adapting the com
    - Movement assessment templates
 
 ##### QB Program Data (`/src/qb-training-program-data.js`)
+
 1. **Missing Complete Week Schedules:**
    - Need all 14 weeks with dual-track structure
    - Lower body (from WR/DB) + QB-specific upper body
@@ -111,6 +116,7 @@ This document outlines the analysis and implementation plan for adapting the com
 ### Phase 1: Data Structure Enhancement (Priority: HIGH)
 
 #### Task 1.1: Create Shared Protocols Module
+
 **File:** `/src/js/data/shared-protocols.js`
 
 ```javascript
@@ -121,23 +127,31 @@ export const DAILY_PROTOCOLS = {
   },
   universalWarmup: {
     duration: 20,
-    phases: [/* 3 phases with exercises */]
+    phases: [
+      /* 3 phases with exercises */
+    ],
   },
   sundayRecovery: {
     duration: 60,
     // ... complete protocol
-  }
+  },
 };
 
 export const QB_PROTOCOLS = {
   enhancedWarmup: {
     duration: 30,
-    phases: [/* QB-specific phases */]
+    phases: [
+      /* QB-specific phases */
+    ],
   },
   armCare: {
-    daily: {/* ... */},
-    weekly: {/* ... */}
-  }
+    daily: {
+      /* ... */
+    },
+    weekly: {
+      /* ... */
+    },
+  },
 };
 ```
 
@@ -147,12 +161,14 @@ export const QB_PROTOCOLS = {
 ---
 
 #### Task 1.2: Complete WR/DB Weekly Schedules
+
 **File:** `/src/training-program-data.js` (Update)
 
 **Current:** Week 1 complete (~500 lines)
 **Needed:** Weeks 2-14 (13 weeks × ~400 lines = ~5,200 lines)
 
 **Structure for each week:**
+
 ```javascript
 week2: {
   weekNumber: 2,
@@ -167,6 +183,7 @@ week2: {
 ```
 
 **Recommendation:**
+
 - Create helper functions to reduce repetition
 - Extract common workout blocks
 - Use templates for similar sessions
@@ -176,12 +193,14 @@ week2: {
 ---
 
 #### Task 1.3: Complete QB Weekly Schedules
+
 **File:** `/src/qb-training-program-data.js` (Update)
 
 **Current:** Basic structure, no detailed weeks
 **Needed:** All 14 weeks with dual-track
 
 **Structure for each week:**
+
 ```javascript
 week1: {
   weekNumber: 1,
@@ -215,16 +234,19 @@ week1: {
 ### Phase 2: Exercise Library Enhancement (Priority: MEDIUM)
 
 #### Task 2.1: Expand WR/DB Exercise Library
+
 **File:** `/src/training-program-data.js` (EXERCISE_LIBRARY section)
 
 **Current:** Basic structure exists
 **Needed:**
+
 - Add all exercises from training document (~100+ exercises)
 - Proper categorization
 - Coaching cues, safety notes
 - Progression levels
 
 **Categories to expand:**
+
 - Sprint drills (15+ exercises)
 - Plyometrics (20+ exercises)
 - Strength training (30+ exercises)
@@ -236,12 +258,14 @@ week1: {
 ---
 
 #### Task 2.2: Create QB-Specific Exercise Library
+
 **File:** `/src/qb-training-program-data.js` (QB_EXERCISE_LIBRARY section)
 
 **Current:** Basic structure with 6 exercises
 **Needed:** Expand to 40+ QB-specific exercises
 
 **Categories:**
+
 - Rotator Cuff (8 exercises)
 - Shoulder Mobility (10 exercises)
 - Hip Flexor Flexibility (6 exercises)
@@ -256,9 +280,11 @@ week1: {
 ### Phase 3: Protocol Integration (Priority: MEDIUM)
 
 #### Task 3.1: Nutrition Guidelines Module
+
 **File:** `/src/js/data/nutrition-protocols.js`
 
 **Content from documents:**
+
 - Daily nutrition framework (training days vs rest days)
 - Hydration protocols
 - Supplementation guidelines
@@ -269,9 +295,11 @@ week1: {
 ---
 
 #### Task 3.2: Injury Prevention Module
+
 **File:** `/src/js/data/injury-prevention.js`
 
 **Content:**
+
 - Daily injury prevention routines
 - Red flags to watch
 - Common issues and solutions
@@ -285,9 +313,11 @@ week1: {
 ### Phase 4: UI/Component Updates (Priority: HIGH for UX)
 
 #### Task 4.1: Update Program Modal Component
+
 **File:** `/src/js/components/program-modal.js`
 
 **Enhancements Needed:**
+
 1. **Week Navigator:**
    - Allow browsing all 14 weeks
    - Show current week highlight
@@ -313,9 +343,11 @@ week1: {
 ---
 
 #### Task 4.2: Create Exercise Detail Modal
+
 **File:** `/src/js/components/exercise-modal.js` (NEW)
 
 **Features:**
+
 - Exercise name, category, difficulty
 - Setup instructions
 - Step-by-step execution
@@ -329,9 +361,11 @@ week1: {
 ---
 
 #### Task 4.3: Protocol Checklist Component
+
 **File:** `/src/js/components/protocol-checklist.js` (NEW)
 
 **Purpose:** Daily/weekly protocol tracking
+
 - Morning mobility checklist
 - Warm-up completion
 - Cool-down tracking
@@ -344,9 +378,11 @@ week1: {
 ### Phase 5: Service Layer Updates (Priority: MEDIUM)
 
 #### Task 5.1: Enhanced Workout Service
+
 **File:** `/src/js/services/workoutService.js` (Update)
 
 **New Methods Needed:**
+
 ```javascript
 // Get specific week workout
 getWeekWorkout(program, weekNumber);
@@ -369,9 +405,11 @@ trackProtocolCompletion(protocol, date);
 ---
 
 #### Task 5.2: Assessment Tracking Service
+
 **File:** `/src/js/services/assessmentService.js` (NEW)
 
 **Purpose:** Track performance assessments
+
 - Schedule assessments based on program
 - Record results
 - Compare to baseline and expected results
@@ -386,9 +424,11 @@ trackProtocolCompletion(protocol, date);
 ### Recommended Approach: Phased Implementation
 
 #### **Sprint 1: Foundation (Week 1-2)**
+
 **Goal:** Get basic structure working end-to-end
 
 **Tasks:**
+
 1. ✅ Update program configs (DONE)
 2. Create shared protocols module
 3. Complete WR/DB Weeks 1-4 (Foundation phase)
@@ -400,9 +440,11 @@ trackProtocolCompletion(protocol, date);
 ---
 
 #### **Sprint 2: Strength Phase (Week 3-4)**
+
 **Goal:** Complete strength development weeks
 
 **Tasks:**
+
 1. Complete WR/DB Weeks 5-8
 2. Complete QB Weeks 3-8
 3. Add exercise library enhancements
@@ -413,9 +455,11 @@ trackProtocolCompletion(protocol, date);
 ---
 
 #### **Sprint 3: Power & Competition (Week 5-6)**
+
 **Goal:** Complete all weeks
 
 **Tasks:**
+
 1. Complete WR/DB Weeks 9-14
 2. Complete QB Weeks 9-14
 3. Full exercise library
@@ -426,9 +470,11 @@ trackProtocolCompletion(protocol, date);
 ---
 
 #### **Sprint 4: Polish & Advanced Features (Week 7)**
+
 **Goal:** Enhanced UX and tracking
 
 **Tasks:**
+
 1. Assessment tracking service
 2. Nutrition and injury prevention modules
 3. Advanced modal features
@@ -456,8 +502,8 @@ week2: {
           sets: 4,
           reps: 10,
           // ... full object
-        }
-      ]
+        },
+      ];
     }
   }
 }
@@ -474,11 +520,11 @@ week2: {
               ref: "rdls", // Reference to EXERCISE_LIBRARY
               sets: 4,
               reps: 10,
-              load: "30% BW"
-            }
-          ]
-        }
-      ]
+              load: "30% BW",
+            },
+          ],
+        },
+      ];
     }
   }
 }
@@ -522,17 +568,20 @@ week1: {
 ## 📝 File Size Estimates
 
 ### Current Files
+
 - `/src/training-program-data.js`: ~3,700 lines
 - `/src/qb-training-program-data.js`: ~750 lines
 
 ### Estimated After Full Implementation
 
 **Option A: Verbose (everything in main files)**
+
 - `/src/training-program-data.js`: ~10,000-12,000 lines
 - `/src/qb-training-program-data.js`: ~8,000-10,000 lines
 - **Total:** ~18,000-22,000 lines
 
 **Option B: Modular (recommended)**
+
 - `/src/training-program-data.js`: ~4,500 lines (core + Week 1 templates)
 - `/src/qb-training-program-data.js`: ~2,500 lines (core + templates)
 - `/src/js/data/wr-db-weeks/`: ~5,500 lines (split across 13 files, one per week)
@@ -544,6 +593,7 @@ week1: {
 - **Total:** ~24,300 lines across organized structure
 
 **Recommendation:** Option B (Modular)
+
 - Better maintainability
 - Easier code review
 - Can lazy-load weeks as needed
@@ -556,6 +606,7 @@ week1: {
 If you need immediate value with minimal work:
 
 ### Quick Win #1: Complete Foundation Phase (Priority: HIGHEST)
+
 **Time:** 4-6 hours
 **Impact:** HIGH
 
@@ -568,11 +619,13 @@ If you need immediate value with minimal work:
 ---
 
 ### Quick Win #2: Enhanced Program Configs (Priority: HIGH)
+
 **Time:** 2 hours
 **Impact:** MEDIUM
 **Status:** ✅ DONE
 
 Already completed! The enhanced configs provide:
+
 - Much better program overview
 - Evidence-based info for QB program
 - Clear phase breakdown
@@ -581,10 +634,12 @@ Already completed! The enhanced configs provide:
 ---
 
 ### Quick Win #3: Shared Protocols Module (Priority: HIGH)
+
 **Time:** 3-4 hours
 **Impact:** HIGH
 
 Create the protocols module so users have:
+
 - Morning mobility routine
 - Universal warm-up
 - QB enhanced warm-up
@@ -597,22 +652,26 @@ Create the protocols module so users have:
 ## 🎯 Recommended Next Steps
 
 ### Immediate (This Session):
+
 1. ✅ Enhanced program configs - COMPLETE
 2. Create shared protocols module
 3. Begin WR/DB Weeks 2-4 implementation
 
 ### Short Term (Next 1-2 weeks):
+
 1. Complete Foundation phase for both programs
 2. Enhanced exercise library
 3. Basic UI improvements for week browsing
 
 ### Medium Term (3-4 weeks):
+
 1. Complete all 14 weeks
 2. Full exercise library
 3. Assessment tracking
 4. Advanced UI features
 
 ### Long Term (1-2 months):
+
 1. Video integrations for exercises
 2. Progress visualization
 3. Customization features
@@ -623,6 +682,7 @@ Create the protocols module so users have:
 ## 📊 Success Metrics
 
 ### MVP (Minimum Viable Product)
+
 - [x] Enhanced program configs
 - [ ] Weeks 1-4 complete for both programs
 - [ ] Daily protocols accessible
@@ -630,6 +690,7 @@ Create the protocols module so users have:
 - [ ] Basic week navigation in UI
 
 ### V1 (Full Feature)
+
 - [ ] All 14 weeks complete for both programs
 - [ ] Complete exercise library (100+ exercises)
 - [ ] All protocols integrated
@@ -637,6 +698,7 @@ Create the protocols module so users have:
 - [ ] Progress visualization
 
 ### V2 (Enhanced)
+
 - [ ] Video demonstrations
 - [ ] Personalization options
 - [ ] Mobile app integration
@@ -647,6 +709,7 @@ Create the protocols module so users have:
 ## 💡 Technical Recommendations
 
 ### Code Organization
+
 ```
 /src
   /js
@@ -674,11 +737,13 @@ Create the protocols module so users have:
 ```
 
 ### Build Optimization
+
 - Use code splitting for week data
 - Lazy load weeks as user navigates
 - Consider compression for production
 
 ### Testing Strategy
+
 - Unit tests for data structure validation
 - Integration tests for services
 - E2E tests for critical user flows
@@ -729,6 +794,6 @@ The training programs are comprehensive and well-structured in the documents. Th
 
 ---
 
-*Document created: 2025-11-16*
-*Last updated: 2025-11-16*
-*Author: Claude (AI Assistant)*
+_Document created: 2025-11-16_
+_Last updated: 2025-11-16_
+_Author: Claude (AI Assistant)_

@@ -1,6 +1,6 @@
 // Coach Page JavaScript Module
-import { authManager } from "../auth-manager.js";
-import { apiClient } from "../api-config.js";
+import { authManager } from "../../auth-manager.js";
+import { logger } from "../../logger.js";
 
 // Sample player data
 const playersData = [
@@ -87,14 +87,16 @@ async function initCoachDashboard() {
       .join("")
       .toUpperCase()
       .slice(0, 2);
-    
+
     // Check if elements exist before updating them
     const coachAvatar = document.getElementById("coachAvatar");
     const coachName = document.getElementById("coachName");
     const userAvatar = document.getElementById("user-avatar");
-    
+
     if (coachAvatar) coachAvatar.textContent = initials;
-    if (coachName) coachName.textContent = user.name || "Coach " + user.email?.split("@")[0] || "Coach Williams";
+    if (coachName)
+      coachName.textContent =
+        user.name || "Coach " + user.email?.split("@")[0] || "Coach Williams";
     if (userAvatar) userAvatar.textContent = initials;
   }
 
@@ -178,16 +180,14 @@ function createPlayerCard(player) {
 }
 
 function updateTeamStats() {
-  const activeCount = playersData.filter(
-    (p) => p.status === "active",
-  ).length;
+  const activeCount = playersData.filter((p) => p.status === "active").length;
   const availableCount = playersData.filter(
     (p) => p.status === "active" || p.status === "rest",
   ).length;
 
   const activePlayersCount = document.getElementById("activePlayersCount");
   const availableToday = document.getElementById("availableToday");
-  
+
   if (activePlayersCount) {
     activePlayersCount.textContent = playersData.length;
   }
@@ -454,9 +454,7 @@ function handleEditPlayer(event, playerId) {
   event.preventDefault();
   const name = document.getElementById("editPlayerName").value;
   const position = document.getElementById("editPlayerPosition").value;
-  const number = parseInt(
-    document.getElementById("editPlayerNumber").value,
-  );
+  const number = parseInt(document.getElementById("editPlayerNumber").value);
 
   // Check if number is already taken by another player
   const numberTaken = playersData.some(

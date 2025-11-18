@@ -20,7 +20,11 @@
     <link rel="stylesheet" href="./src/css/pages/register.css" />
 
     <!-- Lucide Icons - Modern icon library similar to Radix UI -->
-    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js" crossorigin="anonymous" defer>
+    <script
+      src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
     <script src="./src/icon-helper.js" defer></script>
     <!-- Universal Components -->
     <script type="module" src="./src/js/main.js"></script>
@@ -76,11 +80,19 @@
             class="form-input"
             placeholder="Enter your full name"
             required
+            autocomplete="name"
             aria-describedby="name-error name-success"
             aria-invalid="false"
           />
-          <div id="name-error" class="form-error" role="alert" style="display: none;"></div>
-          <small id="name-success" class="form-success" style="display: none;">Valid name</small>
+          <div
+            id="name-error"
+            class="form-error"
+            role="alert"
+            style="display: none"
+          ></div>
+          <small id="name-success" class="form-success" style="display: none"
+            >Valid name</small
+          >
         </div>
 
         <div class="form-group u-margin-bottom-20 u-text-left">
@@ -92,11 +104,19 @@
             class="form-input"
             placeholder="Enter your email"
             required
+            autocomplete="email"
             aria-describedby="email-error email-success"
             aria-invalid="false"
           />
-          <div id="email-error" class="form-error" role="alert" style="display: none;"></div>
-          <small id="email-success" class="form-success" style="display: none;">Valid email</small>
+          <div
+            id="email-error"
+            class="form-error"
+            role="alert"
+            style="display: none"
+          ></div>
+          <small id="email-success" class="form-success" style="display: none"
+            >Valid email</small
+          >
         </div>
 
         <div class="form-group u-margin-bottom-20 u-text-left">
@@ -108,22 +128,36 @@
             class="form-input"
             placeholder="Create a password"
             required
+            autocomplete="new-password"
             aria-describedby="password-error password-success password-requirements-register"
             aria-invalid="false"
           />
-          <div id="password-error" class="form-error" role="alert" style="display: none;"></div>
-          <small id="password-success" class="form-success" style="display: none;">Password is valid</small>
+          <div
+            id="password-error"
+            class="form-error"
+            role="alert"
+            style="display: none"
+          ></div>
+          <small
+            id="password-success"
+            class="form-success"
+            style="display: none"
+            >Password is valid</small
+          >
           <div
             id="password-requirements-register"
             class="password-requirements u-margin-top-4 u-text-body-sm u-text-tertiary"
             role="note"
           >
-            Password must be at least 8 characters and include uppercase, lowercase, number, and special character.
+            Password must be at least 8 characters and include uppercase,
+            lowercase, number, and special character.
           </div>
         </div>
 
         <div class="form-group u-margin-bottom-20 u-text-left">
-          <label for="confirmPassword" class="form-label required">Confirm Password</label>
+          <label for="confirmPassword" class="form-label required"
+            >Confirm Password</label
+          >
           <input
             type="password"
             id="confirmPassword"
@@ -131,11 +165,22 @@
             class="form-input"
             placeholder="Confirm your password"
             required
+            autocomplete="new-password"
             aria-describedby="confirmPassword-error confirmPassword-success"
             aria-invalid="false"
           />
-          <div id="confirmPassword-error" class="form-error" role="alert" style="display: none;"></div>
-          <small id="confirmPassword-success" class="form-success" style="display: none;">Passwords match</small>
+          <div
+            id="confirmPassword-error"
+            class="form-error"
+            role="alert"
+            style="display: none"
+          ></div>
+          <small
+            id="confirmPassword-success"
+            class="form-success"
+            style="display: none"
+            >Passwords match</small
+          >
         </div>
 
         <button
@@ -212,7 +257,8 @@
           // Show loading state
           const submitButton = this.querySelector('button[type="submit"]');
           const originalText = submitButton.innerHTML;
-          submitButton.innerHTML = '<span class="spinner-mini" style="display: inline-block; margin-right: 8px;"></span> Creating Account...';
+          submitButton.innerHTML =
+            '<span class="spinner-mini" style="display: inline-block; margin-right: 8px;"></span> Creating Account...';
           submitButton.disabled = true;
 
           const result = await authManager.register({
@@ -251,22 +297,26 @@
         }
 
         // Add real-time validation
-        document.getElementById("name").addEventListener("input", function() {
+        document.getElementById("name").addEventListener("input", function () {
           validateNameField(this.value);
         });
 
-        document.getElementById("email").addEventListener("input", function() {
+        document.getElementById("email").addEventListener("input", function () {
           validateEmailField(this.value);
         });
 
-        document.getElementById("password").addEventListener("input", function() {
-          validatePasswordField(this.value);
-        });
+        document
+          .getElementById("password")
+          .addEventListener("input", function () {
+            validatePasswordField(this.value);
+          });
 
-        document.getElementById("confirmPassword").addEventListener("input", function() {
-          const password = document.getElementById("password").value;
-          validateConfirmPasswordField(this.value, password);
-        });
+        document
+          .getElementById("confirmPassword")
+          .addEventListener("input", function () {
+            const password = document.getElementById("password").value;
+            validateConfirmPasswordField(this.value, password);
+          });
       });
 
       // Helper functions for inline validation
@@ -274,18 +324,18 @@
         const field = document.getElementById(fieldId);
         const errorDiv = document.getElementById(`${fieldId}-error`);
         const successDiv = document.getElementById(`${fieldId}-success`);
-        
+
         if (field) {
           field.classList.remove("success");
           field.classList.add("error");
           field.setAttribute("aria-invalid", "true");
         }
-        
+
         if (errorDiv) {
           errorDiv.textContent = message;
           errorDiv.style.display = "flex";
         }
-        
+
         if (successDiv) {
           successDiv.style.display = "none";
         }
@@ -295,17 +345,17 @@
         const field = document.getElementById(fieldId);
         const errorDiv = document.getElementById(`${fieldId}-error`);
         const successDiv = document.getElementById(`${fieldId}-success`);
-        
+
         if (field) {
           field.classList.remove("error");
           field.classList.add("success");
           field.setAttribute("aria-invalid", "false");
         }
-        
+
         if (errorDiv) {
           errorDiv.style.display = "none";
         }
-        
+
         if (successDiv) {
           successDiv.style.display = "flex";
         }
@@ -315,16 +365,16 @@
         const field = document.getElementById(fieldId);
         const errorDiv = document.getElementById(`${fieldId}-error`);
         const successDiv = document.getElementById(`${fieldId}-success`);
-        
+
         if (field) {
           field.classList.remove("error", "success");
           field.setAttribute("aria-invalid", "false");
         }
-        
+
         if (errorDiv) {
           errorDiv.style.display = "none";
         }
-        
+
         if (successDiv) {
           successDiv.style.display = "none";
         }
@@ -357,7 +407,10 @@
           showFieldSuccess("email");
           return true;
         } else {
-          showFieldError("email", "Please enter a valid email address (e.g., user@example.com)");
+          showFieldError(
+            "email",
+            "Please enter a valid email address (e.g., user@example.com)",
+          );
           return false;
         }
       }
@@ -369,7 +422,10 @@
         }
 
         if (password.length < 8) {
-          showFieldError("password", "Password must be at least 8 characters long.");
+          showFieldError(
+            "password",
+            "Password must be at least 8 characters long.",
+          );
           return false;
         }
 
@@ -379,18 +435,22 @@
         const hasSpecial = /[@$!%*?&]/.test(password);
 
         if (!hasUpperCase || !hasLowerCase || !hasNumbers || !hasSpecial) {
-          showFieldError("password", "Password must contain uppercase, lowercase, number, and special character (@$!%*?&).");
+          showFieldError(
+            "password",
+            "Password must contain uppercase, lowercase, number, and special character (@$!%*?&).",
+          );
           return false;
         }
 
         showFieldSuccess("password");
-        
+
         // Also validate confirm password if it has a value
-        const confirmPassword = document.getElementById("confirmPassword").value;
+        const confirmPassword =
+          document.getElementById("confirmPassword").value;
         if (confirmPassword) {
           validateConfirmPasswordField(confirmPassword, password);
         }
-        
+
         return true;
       }
 
@@ -405,7 +465,10 @@
         }
 
         if (confirmPassword !== password) {
-          showFieldError("confirmPassword", "Passwords do not match. Please enter the same password.");
+          showFieldError(
+            "confirmPassword",
+            "Passwords do not match. Please enter the same password.",
+          );
           return false;
         }
 
@@ -419,8 +482,14 @@
 
         // Name validation
         if (!name || name.trim().length < 2) {
-          showFieldError("name", "Please enter a valid full name (at least 2 characters).");
-          showMessage("errorMessage", "Please enter a valid full name (at least 2 characters).");
+          showFieldError(
+            "name",
+            "Please enter a valid full name (at least 2 characters).",
+          );
+          showMessage(
+            "errorMessage",
+            "Please enter a valid full name (at least 2 characters).",
+          );
           isValid = false;
         } else {
           showFieldSuccess("name");
@@ -434,7 +503,10 @@
         } else {
           const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
           if (!emailRegex.test(email)) {
-            showFieldError("email", "Please enter a valid email address (e.g., user@example.com)");
+            showFieldError(
+              "email",
+              "Please enter a valid email address (e.g., user@example.com)",
+            );
             showMessage("errorMessage", "Please enter a valid email address.");
             isValid = false;
           } else {
@@ -444,8 +516,14 @@
 
         // Password validation
         if (!password || password.length < 8) {
-          showFieldError("password", "Password must be at least 8 characters long.");
-          showMessage("errorMessage", "Password must be at least 8 characters long.");
+          showFieldError(
+            "password",
+            "Password must be at least 8 characters long.",
+          );
+          showMessage(
+            "errorMessage",
+            "Password must be at least 8 characters long.",
+          );
           isValid = false;
         } else {
           const hasUpperCase = /[A-Z]/.test(password);
@@ -454,8 +532,14 @@
           const hasSpecial = /[@$!%*?&]/.test(password);
 
           if (!hasUpperCase || !hasLowerCase || !hasNumbers || !hasSpecial) {
-            showFieldError("password", "Password must contain uppercase, lowercase, number, and special character (@$!%*?&).");
-            showMessage("errorMessage", "Password must contain at least one uppercase letter, one lowercase letter, and one number.");
+            showFieldError(
+              "password",
+              "Password must contain uppercase, lowercase, number, and special character (@$!%*?&).",
+            );
+            showMessage(
+              "errorMessage",
+              "Password must contain at least one uppercase letter, one lowercase letter, and one number.",
+            );
             isValid = false;
           } else {
             showFieldSuccess("password");
@@ -464,7 +548,10 @@
 
         // Password confirmation validation
         if (password !== confirmPassword) {
-          showFieldError("confirmPassword", "Passwords do not match. Please enter the same password.");
+          showFieldError(
+            "confirmPassword",
+            "Passwords do not match. Please enter the same password.",
+          );
           showMessage("errorMessage", "Passwords do not match.");
           isValid = false;
         } else if (confirmPassword) {

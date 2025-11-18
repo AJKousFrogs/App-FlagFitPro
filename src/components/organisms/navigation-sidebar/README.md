@@ -11,15 +11,30 @@ Copy the HTML from `navigation-sidebar.html` into your page. The sidebar is typi
 ## HTML Structure
 
 ```html
-<div class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
+<div
+  class="sidebar"
+  id="sidebar"
+  role="navigation"
+  aria-label="Main navigation"
+>
   <!-- Logo/Brand -->
-  <div class="sidebar-logo" onclick="window.location.href='/dashboard.html'" title="FlagFit Pro" aria-label="Go to dashboard">
+  <div
+    class="sidebar-logo"
+    onclick="window.location.href='/dashboard.html'"
+    title="FlagFit Pro"
+    aria-label="Go to dashboard"
+  >
     <i data-lucide="activity" class="icon-20 icon-inline"></i>
   </div>
 
   <!-- Navigation Sections -->
   <nav class="nav-section" aria-label="Dashboard navigation">
-    <a href="/dashboard.html" class="nav-item" aria-label="Dashboard Overview" id="nav-dashboard">
+    <a
+      href="/dashboard.html"
+      class="nav-item"
+      aria-label="Dashboard Overview"
+      id="nav-dashboard"
+    >
       <span class="nav-item-icon">
         <i data-lucide="layout-dashboard" class="icon-24"></i>
       </span>
@@ -34,13 +49,16 @@ Copy the HTML from `navigation-sidebar.html` into your page. The sidebar is typi
 ## CSS Classes
 
 ### Container
+
 - `.sidebar` - Main container (fixed positioning)
 - `.menu-scrim` - Mobile overlay/scrim for closing sidebar
 
 ### Logo
+
 - `.sidebar-logo` - Logo container (clickable div)
 
 ### Navigation Sections
+
 - `.nav-section` - Navigation group container (semantic `<nav>`)
 - `.nav-item` - Navigation link
 - `.nav-item.active` - Active/current page state
@@ -48,6 +66,7 @@ Copy the HTML from `navigation-sidebar.html` into your page. The sidebar is typi
 - `.nav-item-label` - Text label span
 
 ### Icon Utilities
+
 - `.icon-20` - 20px icon size (logo)
 - `.icon-24` - 24px icon size (navigation items)
 - `.icon-inline` - Icon display utility
@@ -102,7 +121,7 @@ On mobile, the sidebar typically:
 To mark a navigation item as active, add the `.active` class:
 
 ```html
-<a href="/dashboard.html" class="nav-item active" id="nav-dashboard">
+<a href="/dashboard.html" class="nav-item active" id="nav-dashboard"></a>
 ```
 
 ## Notes

@@ -255,27 +255,29 @@ export class PerformanceUtils {
   // Clean up will-change after animation completes
   static setupWillChangeCleanup() {
     // Remove will-change after animation completes
-    document.addEventListener('animationend', (e) => {
+    document.addEventListener("animationend", (e) => {
       const target = e.target;
-      if (target.classList.contains('u-animate-fade-in') ||
-          target.classList.contains('u-animate-fade-out') ||
-          target.classList.contains('u-animate-slide-in-up') ||
-          target.classList.contains('u-animate-slide-in-down') ||
-          target.classList.contains('u-animate-slide-in-left') ||
-          target.classList.contains('u-animate-slide-in-right') ||
-          target.classList.contains('u-animate-scale-in') ||
-          target.classList.contains('u-animate-shake') ||
-          target.classList.contains('u-animate-fade-in-up') ||
-          target.classList.contains('u-animate-slide-in-right')) {
-        target.style.willChange = 'auto';
+      if (
+        target.classList.contains("u-animate-fade-in") ||
+        target.classList.contains("u-animate-fade-out") ||
+        target.classList.contains("u-animate-slide-in-up") ||
+        target.classList.contains("u-animate-slide-in-down") ||
+        target.classList.contains("u-animate-slide-in-left") ||
+        target.classList.contains("u-animate-slide-in-right") ||
+        target.classList.contains("u-animate-scale-in") ||
+        target.classList.contains("u-animate-shake") ||
+        target.classList.contains("u-animate-fade-in-up") ||
+        target.classList.contains("u-animate-slide-in-right")
+      ) {
+        target.style.willChange = "auto";
       }
     });
 
     // Remove will-change after transition completes
-    document.addEventListener('transitionend', (e) => {
+    document.addEventListener("transitionend", (e) => {
       const target = e.target;
-      if (target.classList.contains('u-transition-transform')) {
-        target.style.willChange = 'auto';
+      if (target.classList.contains("u-transition-transform")) {
+        target.style.willChange = "auto";
       }
     });
   }
@@ -316,9 +318,13 @@ export class PerformanceUtils {
           logger.debug("Page Load Performance:", {
             domContentLoaded: `${perfData.domContentLoadedEventEnd - perfData.domContentLoadedEventStart}ms`,
             loadComplete: `${perfData.loadEventEnd - perfData.loadEventStart}ms`,
-            totalLoadTime: `${perfData.loadEventEnd && perfData.navigationStart
-              ? perfData.loadEventEnd - perfData.navigationStart
-              : (perfData.domContentLoadedEventEnd - perfData.domContentLoadedEventStart) + (perfData.loadEventEnd - perfData.loadEventStart)}ms`
+            totalLoadTime: `${
+              perfData.loadEventEnd && perfData.navigationStart
+                ? perfData.loadEventEnd - perfData.navigationStart
+                : perfData.domContentLoadedEventEnd -
+                  perfData.domContentLoadedEventStart +
+                  (perfData.loadEventEnd - perfData.loadEventStart)
+            }ms`,
           });
         }
       }, 100);

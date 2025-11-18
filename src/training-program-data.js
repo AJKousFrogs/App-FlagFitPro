@@ -790,14 +790,16 @@ export const WEEKLY_SCHEDULES = {
                   reps: 10,
                   rest: "90s",
                   load: "28-32% BW",
-                  notes: "Slight load increase from Week 1. Focus on hamstring stretch",
+                  notes:
+                    "Slight load increase from Week 1. Focus on hamstring stretch",
                 },
                 {
                   name: "Nordic Curls (Assisted)",
                   sets: 4,
                   reps: "AMRAP",
                   rest: "2 min",
-                  notes: "Add 4th set. Aim for more reps or less assistance than Week 1",
+                  notes:
+                    "Add 4th set. Aim for more reps or less assistance than Week 1",
                 },
                 {
                   name: "Hip Thrusts",
@@ -869,7 +871,11 @@ export const WEEKLY_SCHEDULES = {
               ],
             },
           ],
-          equipment: ["Barbell/dumbbells", "resistance bands", "elevated surface"],
+          equipment: [
+            "Barbell/dumbbells",
+            "resistance bands",
+            "elevated surface",
+          ],
         },
         tuesday: {
           title: "Sprint Mechanics + Tempo Conditioning",
@@ -1150,7 +1156,8 @@ export const WEEKLY_SCHEDULES = {
                   duration: "4s max effort",
                   rest: "2 min",
                   load: "Submaximal",
-                  notes: "Push UP into bar with 80-85% effort. Introduction to isometrics",
+                  notes:
+                    "Push UP into bar with 80-85% effort. Introduction to isometrics",
                 },
                 {
                   name: "Isometric Deadlift Pull (Below Knee)",
@@ -1217,7 +1224,13 @@ export const WEEKLY_SCHEDULES = {
               ],
             },
           ],
-          equipment: ["Squat rack", "box", "medicine ball", "agility ladder", "cones"],
+          equipment: [
+            "Squat rack",
+            "box",
+            "medicine ball",
+            "agility ladder",
+            "cones",
+          ],
         },
         saturday: {
           title: "Sprint Work + Acceleration",
@@ -1236,7 +1249,8 @@ export const WEEKLY_SCHEDULES = {
                     distance: "20m",
                     intensity: "80%",
                     rest: "2 min",
-                    notes: "Intensity increase from Week 1. Volume increase to 8 sets",
+                    notes:
+                      "Intensity increase from Week 1. Volume increase to 8 sets",
                   },
                   {
                     name: "Build-Up Runs",
@@ -1413,7 +1427,11 @@ export const WEEKLY_SCHEDULES = {
               ],
             },
           ],
-          equipment: ["Barbell/dumbbells", "resistance bands", "elevated surface"],
+          equipment: [
+            "Barbell/dumbbells",
+            "resistance bands",
+            "elevated surface",
+          ],
         },
         tuesday: {
           title: "Sprint Mechanics Refinement + Conditioning",
@@ -1496,7 +1514,12 @@ export const WEEKLY_SCHEDULES = {
                   name: "Pogos (Bilateral → Single-Leg)",
                   variations: [
                     { name: "Bilateral pogos", sets: 3, duration: "30s" },
-                    { name: "Single-leg pogos", sets: 2, duration: "15s each", notes: "Introduction" },
+                    {
+                      name: "Single-leg pogos",
+                      sets: 2,
+                      duration: "15s each",
+                      notes: "Introduction",
+                    },
                   ],
                   rest: "60s between",
                 },
@@ -1527,7 +1550,11 @@ export const WEEKLY_SCHEDULES = {
                   duration: "10 min",
                   exercises: [
                     { name: "Couch stretch", sets: 3, duration: "90s each" },
-                    { name: "Standing quad stretch", sets: 2, duration: "60s each" },
+                    {
+                      name: "Standing quad stretch",
+                      sets: 2,
+                      duration: "60s each",
+                    },
                   ],
                 },
                 {
@@ -1545,7 +1572,11 @@ export const WEEKLY_SCHEDULES = {
                   exercises: [
                     { name: "Calf stretching", sets: 3, duration: "60s each" },
                     { name: "Ankle circles", reps: "20 each direction" },
-                    { name: "Dorsiflexion stretches", sets: 2, duration: "45s each" },
+                    {
+                      name: "Dorsiflexion stretches",
+                      sets: 2,
+                      duration: "45s each",
+                    },
                   ],
                 },
               ],
@@ -1621,7 +1652,8 @@ export const WEEKLY_SCHEDULES = {
                   reps: 5,
                   rest: "2 min",
                   boxHeight: "6 inches",
-                  notes: "Step off, stick landing, hold 3s. Focus on absorption",
+                  notes:
+                    "Step off, stick landing, hold 3s. Focus on absorption",
                 },
                 {
                   name: "Box Jumps",
@@ -1666,7 +1698,12 @@ export const WEEKLY_SCHEDULES = {
               ],
             },
           ],
-          equipment: ["Barbell/dumbbells", "plyo boxes", "mini hurdles", "space"],
+          equipment: [
+            "Barbell/dumbbells",
+            "plyo boxes",
+            "mini hurdles",
+            "space",
+          ],
         },
         friday: {
           title: "Power Expression + Change of Direction",
@@ -1681,8 +1718,16 @@ export const WEEKLY_SCHEDULES = {
                 {
                   name: "Isometric Squat Holds (Quarter + Parallel)",
                   positions: [
-                    { name: "Quarter squat", sets: 2, duration: "5s max effort" },
-                    { name: "Parallel squat", sets: 2, duration: "5s max effort" },
+                    {
+                      name: "Quarter squat",
+                      sets: 2,
+                      duration: "5s max effort",
+                    },
+                    {
+                      name: "Parallel squat",
+                      sets: 2,
+                      duration: "5s max effort",
+                    },
                   ],
                   rest: "2.5 min between sets",
                   notes: "85-90% effort. Progressing intensity",
@@ -1748,7 +1793,13 @@ export const WEEKLY_SCHEDULES = {
               ],
             },
           ],
-          equipment: ["Squat rack", "box", "medicine ball", "cones", "stopwatch"],
+          equipment: [
+            "Squat rack",
+            "box",
+            "medicine ball",
+            "cones",
+            "stopwatch",
+          ],
         },
         saturday: {
           title: "Sprint Acceleration Work",
@@ -1825,7 +1876,10 @@ export const WEEKLY_SCHEDULES = {
             { name: "Lower body chain stretching", duration: "25 min" },
             { name: "Foam rolling (comprehensive)", duration: "20 min" },
             { name: "Light walk or easy bike", duration: "20 min" },
-            { name: "Visualization/mental prep for Week 4 testing", duration: "10 min" },
+            {
+              name: "Visualization/mental prep for Week 4 testing",
+              duration: "10 min",
+            },
           ],
         },
       },
@@ -1850,7 +1904,8 @@ export const WEEKLY_SCHEDULES = {
               exercises: [
                 {
                   name: "Back Squat Assessment",
-                  protocol: "Work up to 8RM at 40% BW (or max within load limit)",
+                  protocol:
+                    "Work up to 8RM at 40% BW (or max within load limit)",
                   rest: "3-4 min between sets",
                   notes: "Record weight and quality of movement",
                 },
@@ -1914,7 +1969,12 @@ export const WEEKLY_SCHEDULES = {
               ],
             },
           ],
-          equipment: ["Barbell", "measuring tape", "jump mat or chalk", "timer"],
+          equipment: [
+            "Barbell",
+            "measuring tape",
+            "jump mat or chalk",
+            "timer",
+          ],
           notes: "Record all results for comparison at future assessments",
         },
         tuesday: {
@@ -1955,7 +2015,8 @@ export const WEEKLY_SCHEDULES = {
                   exercises: [
                     {
                       name: "Sprint Mechanics Assessment",
-                      notes: "Video analysis of mechanics. Check for dorsiflexion, knee drive, arm action",
+                      notes:
+                        "Video analysis of mechanics. Check for dorsiflexion, knee drive, arm action",
                     },
                     {
                       name: "Acceleration Drill Quality",
@@ -1975,7 +2036,8 @@ export const WEEKLY_SCHEDULES = {
                   name: "Pro Agility Test (5-10-5)",
                   attempts: 3,
                   rest: "3 min",
-                  notes: "Best of 3. Record time. Test both starting directions",
+                  notes:
+                    "Best of 3. Record time. Test both starting directions",
                 },
                 {
                   name: "L-Drill Test",
@@ -2026,7 +2088,8 @@ export const WEEKLY_SCHEDULES = {
               ],
             },
           ],
-          notes: "Reflect on Foundation phase progress. Review assessment results",
+          notes:
+            "Reflect on Foundation phase progress. Review assessment results",
         },
         thursday: {
           title: "Deload - Light Lower Body",
@@ -2133,7 +2196,11 @@ export const WEEKLY_SCHEDULES = {
                 {
                   name: "Core stability circuit",
                   rounds: 2,
-                  exercises: ["Plank 30s", "Side plank 20s each", "Dead bugs 10 each"],
+                  exercises: [
+                    "Plank 30s",
+                    "Side plank 20s each",
+                    "Dead bugs 10 each",
+                  ],
                 },
               ],
             },
@@ -2145,8 +2212,17 @@ export const WEEKLY_SCHEDULES = {
           type: "optional",
           duration: 30,
           activities: [
-            { name: "Light jog or walk", duration: "15-20 min", intensity: "Very easy" },
-            { name: "Sprint drills (technique only)", sets: "2-3", distance: "20m", intensity: "Submaximal" },
+            {
+              name: "Light jog or walk",
+              duration: "15-20 min",
+              intensity: "Very easy",
+            },
+            {
+              name: "Sprint drills (technique only)",
+              sets: "2-3",
+              distance: "20m",
+              intensity: "Submaximal",
+            },
             { name: "Stretching", duration: "10 min" },
           ],
           notes: "Optional session. Rest completely if feeling fatigued",
@@ -2160,9 +2236,13 @@ export const WEEKLY_SCHEDULES = {
             { name: "Lower body chain stretching", duration: "25 min" },
             { name: "Foam rolling (full body)", duration: "20 min" },
             { name: "Light walk", duration: "20 min" },
-            { name: "Mental preparation for Strength phase", duration: "15 min" },
+            {
+              name: "Mental preparation for Strength phase",
+              duration: "15 min",
+            },
           ],
-          notes: "Prepare for Strength Development phase starting next week. Review Foundation phase results and set goals for Weeks 5-8",
+          notes:
+            "Prepare for Strength Development phase starting next week. Review Foundation phase results and set goals for Weeks 5-8",
         },
       },
       weekSummary: {
@@ -2209,8 +2289,16 @@ export const WEEKLY_SCHEDULES = {
                 {
                   name: "Isometric Squat Holds (Multiple Positions)",
                   positions: [
-                    { name: "Quarter squat", sets: 3, duration: "6s max effort" },
-                    { name: "Parallel squat", sets: 2, duration: "6s max effort" },
+                    {
+                      name: "Quarter squat",
+                      sets: 3,
+                      duration: "6s max effort",
+                    },
+                    {
+                      name: "Parallel squat",
+                      sets: 2,
+                      duration: "6s max effort",
+                    },
                   ],
                   rest: "3 min between sets",
                   notes: "Maximum effort 90-95%. Builds neural drive",
@@ -2293,14 +2381,20 @@ export const WEEKLY_SCHEDULES = {
               ],
             },
           ],
-          equipment: ["Barbell/DBs", "squat rack with pins", "bands", "weight plates"],
+          equipment: [
+            "Barbell/DBs",
+            "squat rack with pins",
+            "bands",
+            "weight plates",
+          ],
         },
 
         tuesday: {
           title: "Sprint Intensity + Interval Introduction",
           type: "sprint",
           duration: 75,
-          warmup: "Standard Protocol (15 min) + Extended Sprint Drills (10 min)",
+          warmup:
+            "Standard Protocol (15 min) + Extended Sprint Drills (10 min)",
           blocks: [
             {
               title: "Block 1: High-Intensity Sprint Work",
@@ -2336,9 +2430,25 @@ export const WEEKLY_SCHEDULES = {
                 {
                   condition: "No track",
                   exercises: [
-                    { name: "Wall Sprint Drills", sets: 6, duration: "20s max", rest: "2 min" },
-                    { name: "Resistance Band Sprints", sets: 10, duration: "12s", rest: "2.5 min", notes: "Maximum effort" },
-                    { name: "First Step Explosions", sets: 12, distance: "10m", rest: "2 min" },
+                    {
+                      name: "Wall Sprint Drills",
+                      sets: 6,
+                      duration: "20s max",
+                      rest: "2 min",
+                    },
+                    {
+                      name: "Resistance Band Sprints",
+                      sets: 10,
+                      duration: "12s",
+                      rest: "2.5 min",
+                      notes: "Maximum effort",
+                    },
+                    {
+                      name: "First Step Explosions",
+                      sets: 12,
+                      distance: "10m",
+                      rest: "2 min",
+                    },
                   ],
                 },
               ],
@@ -2374,12 +2484,27 @@ export const WEEKLY_SCHEDULES = {
               title: "Block 3: Reactive Work",
               duration: 10,
               exercises: [
-                { name: "Single-leg pogos", sets: 3, duration: "20s each", rest: "60s" },
-                { name: "Jump rope double-unders", sets: 3, reps: "15-20", rest: "60s" },
+                {
+                  name: "Single-leg pogos",
+                  sets: 3,
+                  duration: "20s each",
+                  rest: "60s",
+                },
+                {
+                  name: "Jump rope double-unders",
+                  sets: 3,
+                  reps: "15-20",
+                  rest: "60s",
+                },
               ],
             },
           ],
-          equipment: ["Track or treadmill", "resistance bands", "jump rope", "cones"],
+          equipment: [
+            "Track or treadmill",
+            "resistance bands",
+            "jump rope",
+            "cones",
+          ],
         },
 
         wednesday: {
@@ -2423,7 +2548,8 @@ export const WEEKLY_SCHEDULES = {
                 {
                   name: "Complex: Squat + Depth Jump",
                   sets: 5,
-                  protocol: "3 squats @ 40% BW → immediately 3 depth jumps (8\" box)",
+                  protocol:
+                    '3 squats @ 40% BW → immediately 3 depth jumps (8" box)',
                   rest: "4 min",
                   notes: "Post-activation potentiation for explosive power",
                 },
@@ -2479,7 +2605,11 @@ export const WEEKLY_SCHEDULES = {
               ],
             },
           ],
-          equipment: ["Barbell/DBs", "plyo boxes (various heights)", "mini hurdles"],
+          equipment: [
+            "Barbell/DBs",
+            "plyo boxes (various heights)",
+            "mini hurdles",
+          ],
         },
 
         friday: {
@@ -2514,8 +2644,18 @@ export const WEEKLY_SCHEDULES = {
                 {
                   condition: "No track",
                   exercises: [
-                    { name: "Wall Sprint Drills", sets: 6, duration: "15s max", rest: "2.5 min" },
-                    { name: "Resistance Band Sprints (Heavy)", sets: 8, duration: "10s", rest: "3 min" },
+                    {
+                      name: "Wall Sprint Drills",
+                      sets: 6,
+                      duration: "15s max",
+                      rest: "2.5 min",
+                    },
+                    {
+                      name: "Resistance Band Sprints (Heavy)",
+                      sets: 8,
+                      duration: "10s",
+                      rest: "3 min",
+                    },
                   ],
                 },
               ],
@@ -2524,9 +2664,20 @@ export const WEEKLY_SCHEDULES = {
               title: "Block 2: Advanced Agility",
               duration: 25,
               exercises: [
-                { name: "Pro Agility (Timed)", sets: 6, rest: "3 min", notes: "Max effort, record times" },
+                {
+                  name: "Pro Agility (Timed)",
+                  sets: 6,
+                  rest: "3 min",
+                  notes: "Max effort, record times",
+                },
                 { name: "L-Drill", sets: 5, rest: "2.5 min" },
-                { name: "Reactive cone drills", sets: 8, duration: "15s", rest: "90s", notes: "Partner calls directions" },
+                {
+                  name: "Reactive cone drills",
+                  sets: 8,
+                  duration: "15s",
+                  rest: "90s",
+                  notes: "Partner calls directions",
+                },
               ],
             },
           ],
@@ -2587,7 +2738,8 @@ export const WEEKLY_SCHEDULES = {
       weekSummary: {
         lowerBodySessions: 4,
         sprintSessions: 3,
-        focus: "Maximum strength (40% BW squats), sprint intensity increase (90-95%), complex training introduction",
+        focus:
+          "Maximum strength (40% BW squats), sprint intensity increase (90-95%), complex training introduction",
       },
     },
 
@@ -2610,8 +2762,16 @@ export const WEEKLY_SCHEDULES = {
                 {
                   name: "Isometric Squat Holds (Multiple Angles)",
                   positions: [
-                    { name: "Quarter squat", sets: 3, duration: "6s max effort" },
-                    { name: "Parallel squat", sets: 3, duration: "6s max effort" },
+                    {
+                      name: "Quarter squat",
+                      sets: 3,
+                      duration: "6s max effort",
+                    },
+                    {
+                      name: "Parallel squat",
+                      sets: 3,
+                      duration: "6s max effort",
+                    },
                   ],
                   rest: "3 min between sets",
                   notes: "Consistency at 90-95% max effort",
@@ -2701,7 +2861,8 @@ export const WEEKLY_SCHEDULES = {
           title: "Maximum Speed + Interval Progression",
           type: "sprint",
           duration: 80,
-          warmup: "Standard Protocol (15 min) + Extended Sprint Drills (10 min)",
+          warmup:
+            "Standard Protocol (15 min) + Extended Sprint Drills (10 min)",
           blocks: [
             {
               title: "Block 1: Maximum Velocity Sprints",
@@ -2729,8 +2890,18 @@ export const WEEKLY_SCHEDULES = {
                 {
                   condition: "No track",
                   exercises: [
-                    { name: "Wall Sprint Drills", sets: 6, duration: "15s max", rest: "2.5 min" },
-                    { name: "Resistance Band Sprints (Heavy)", sets: 8, duration: "10s", rest: "3 min" },
+                    {
+                      name: "Wall Sprint Drills",
+                      sets: 6,
+                      duration: "15s max",
+                      rest: "2.5 min",
+                    },
+                    {
+                      name: "Resistance Band Sprints (Heavy)",
+                      sets: 8,
+                      duration: "10s",
+                      rest: "3 min",
+                    },
                   ],
                 },
               ],
@@ -2767,7 +2938,12 @@ export const WEEKLY_SCHEDULES = {
               duration: 10,
               exercises: [
                 { name: "Pogo jumps", sets: 4, duration: "20s", rest: "60s" },
-                { name: "Jump rope double-unders", sets: 3, reps: "20-25", rest: "60s" },
+                {
+                  name: "Jump rope double-unders",
+                  sets: 3,
+                  reps: "20-25",
+                  rest: "60s",
+                },
               ],
             },
           ],
@@ -2815,7 +2991,8 @@ export const WEEKLY_SCHEDULES = {
                 {
                   name: "Complex: Squat + Depth Jump",
                   sets: 5,
-                  protocol: "3 squats @ 40% BW → immediately 3 depth jumps (10\" box)",
+                  protocol:
+                    '3 squats @ 40% BW → immediately 3 depth jumps (10" box)',
                   rest: "4 min",
                   notes: "Box height increase from Week 5",
                 },
@@ -2870,7 +3047,7 @@ export const WEEKLY_SCHEDULES = {
               ],
             },
           ],
-          equipment: ["Barbell/DBs", "plyo boxes (10\", 24\")", "mini hurdles"],
+          equipment: ["Barbell/DBs", 'plyo boxes (10", 24")', "mini hurdles"],
         },
 
         friday: {
@@ -2905,8 +3082,18 @@ export const WEEKLY_SCHEDULES = {
                 {
                   condition: "No track",
                   exercises: [
-                    { name: "Wall Sprint Drills", sets: 8, duration: "15s max", rest: "2.5 min" },
-                    { name: "First Step Explosions", sets: 12, distance: "10m", rest: "2 min" },
+                    {
+                      name: "Wall Sprint Drills",
+                      sets: 8,
+                      duration: "15s max",
+                      rest: "2.5 min",
+                    },
+                    {
+                      name: "First Step Explosions",
+                      sets: 12,
+                      distance: "10m",
+                      rest: "2 min",
+                    },
                   ],
                 },
               ],
@@ -2994,7 +3181,8 @@ export const WEEKLY_SCHEDULES = {
       weekSummary: {
         lowerBodySessions: 4,
         sprintSessions: 3,
-        focus: "Maintain maximum loads, interval distance increase (150m), complex training variations, RSA volume to 10-12 sprints",
+        focus:
+          "Maintain maximum loads, interval distance increase (150m), complex training variations, RSA volume to 10-12 sprints",
       },
     },
 
@@ -3096,7 +3284,8 @@ export const WEEKLY_SCHEDULES = {
           title: "Maximum Velocity + Long Intervals",
           type: "sprint",
           duration: 85,
-          warmup: "Standard Protocol (15 min) + Extended Sprint Drills (10 min)",
+          warmup:
+            "Standard Protocol (15 min) + Extended Sprint Drills (10 min)",
           blocks: [
             {
               title: "Block 1: Peak Velocity Work",
@@ -3132,8 +3321,19 @@ export const WEEKLY_SCHEDULES = {
                 {
                   condition: "No track",
                   exercises: [
-                    { name: "Wall Sprint Drills", sets: 8, duration: "15s max", rest: "2.5 min" },
-                    { name: "Resistance Band Sprints", sets: 10, duration: "12s", rest: "3 min", notes: "Peak power" },
+                    {
+                      name: "Wall Sprint Drills",
+                      sets: 8,
+                      duration: "15s max",
+                      rest: "2.5 min",
+                    },
+                    {
+                      name: "Resistance Band Sprints",
+                      sets: 10,
+                      duration: "12s",
+                      rest: "3 min",
+                      notes: "Peak power",
+                    },
                   ],
                 },
               ],
@@ -3179,7 +3379,11 @@ export const WEEKLY_SCHEDULES = {
               title: "Block 1: Enhanced Mobility",
               duration: 35,
               exercises: [
-                { name: "Hip mobility circuit", duration: "15 min", notes: "Extended duration" },
+                {
+                  name: "Hip mobility circuit",
+                  duration: "15 min",
+                  notes: "Extended duration",
+                },
                 { name: "Ankle/calf mobility", duration: "12 min" },
                 { name: "Thoracic mobility", duration: "8 min" },
               ],
@@ -3210,7 +3414,8 @@ export const WEEKLY_SCHEDULES = {
                 {
                   name: "Complex: Squat + Reactive Depth Jump",
                   sets: 6,
-                  protocol: "3 squats @ 40% BW → immediately 3 depth jumps (10\" box) → stick + react up",
+                  protocol:
+                    '3 squats @ 40% BW → immediately 3 depth jumps (10" box) → stick + react up',
                   rest: "4-5 min",
                   notes: "Reactive component added - peak PAP",
                 },
@@ -3224,7 +3429,8 @@ export const WEEKLY_SCHEDULES = {
                 {
                   name: "Complex: Bulgarian Split Squat + Lateral Bound",
                   sets: 4,
-                  protocol: "5 reps each leg → immediately 4 lateral bounds each",
+                  protocol:
+                    "5 reps each leg → immediately 4 lateral bounds each",
                   rest: "3 min",
                   notes: "Multi-directional power",
                 },
@@ -3260,7 +3466,7 @@ export const WEEKLY_SCHEDULES = {
               ],
             },
           ],
-          equipment: ["Barbell/DBs", "plyo boxes (12\", 24-28\")", "hurdles"],
+          equipment: ["Barbell/DBs", 'plyo boxes (12", 24-28")', "hurdles"],
         },
 
         friday: {
@@ -3295,8 +3501,18 @@ export const WEEKLY_SCHEDULES = {
                 {
                   condition: "No track",
                   exercises: [
-                    { name: "Wall Sprint Drills", sets: 8, duration: "15s max", rest: "2.5 min" },
-                    { name: "Resistance Band Sprints", sets: 10, duration: "10s", rest: "3 min" },
+                    {
+                      name: "Wall Sprint Drills",
+                      sets: 8,
+                      duration: "15s max",
+                      rest: "2.5 min",
+                    },
+                    {
+                      name: "Resistance Band Sprints",
+                      sets: 10,
+                      duration: "10s",
+                      rest: "3 min",
+                    },
                   ],
                 },
               ],
@@ -3348,7 +3564,8 @@ export const WEEKLY_SCHEDULES = {
                     distance: "30m",
                     intensity: "Maximum effort each rep",
                     rest: "25s between sprints",
-                    notes: "Peak RSA volume. Track performance drop-off: (best time - worst time) / best time × 100%",
+                    notes:
+                      "Peak RSA volume. Track performance drop-off: (best time - worst time) / best time × 100%",
                   },
                 },
                 {
@@ -3384,7 +3601,8 @@ export const WEEKLY_SCHEDULES = {
       weekSummary: {
         lowerBodySessions: 4,
         sprintSessions: 3,
-        focus: "Peak strength (40% BW RDLs, 6 sets), maximum velocity emphasis (flying 30s), long intervals (200m), RSA peak (12-15 sprints)",
+        focus:
+          "Peak strength (40% BW RDLs, 6 sets), maximum velocity emphasis (flying 30s), long intervals (200m), RSA peak (12-15 sprints)",
       },
     },
 
@@ -3398,7 +3616,8 @@ export const WEEKLY_SCHEDULES = {
           title: "Strength & Power Assessment",
           type: "assessment",
           duration: 90,
-          warmup: "Extended Protocol (20 min) - thorough preparation for testing",
+          warmup:
+            "Extended Protocol (20 min) - thorough preparation for testing",
           blocks: [
             {
               title: "Block 1: Isometric Strength Assessment",
@@ -3465,7 +3684,7 @@ export const WEEKLY_SCHEDULES = {
                   record: "Best distance",
                 },
                 {
-                  name: "Depth Jump Test (10\" Box)",
+                  name: 'Depth Jump Test (10" Box)',
                   sets: 3,
                   rest: "2.5 min",
                   record: "Best reactive jump height",
@@ -3474,8 +3693,13 @@ export const WEEKLY_SCHEDULES = {
               ],
             },
           ],
-          equipment: ["Barbell/DBs", "measuring tape", "jump mat or wall marks"],
-          notes: "Record all results for comparison to Week 1 and future testing",
+          equipment: [
+            "Barbell/DBs",
+            "measuring tape",
+            "jump mat or wall marks",
+          ],
+          notes:
+            "Record all results for comparison to Week 1 and future testing",
         },
 
         tuesday: {
@@ -3565,7 +3789,11 @@ export const WEEKLY_SCHEDULES = {
               ],
             },
           ],
-          equipment: ["Cones", "stopwatch or electronic timing", "measuring tape"],
+          equipment: [
+            "Cones",
+            "stopwatch or electronic timing",
+            "measuring tape",
+          ],
           notes: "Compare all results to Week 1 baseline - track improvements",
         },
 
@@ -3741,14 +3969,19 @@ export const WEEKLY_SCHEDULES = {
             { name: "Lower body chain stretching", duration: "25 min" },
             { name: "Foam rolling (full body)", duration: "20 min" },
             { name: "Light walk or easy bike", duration: "25 min" },
-            { name: "Review assessment results + set Power phase goals", duration: "15 min" },
+            {
+              name: "Review assessment results + set Power phase goals",
+              duration: "15 min",
+            },
           ],
         },
       },
       weekSummary: {
-        assessmentFocus: "Mid-program testing (strength, power, speed, agility, mobility)",
+        assessmentFocus:
+          "Mid-program testing (strength, power, speed, agility, mobility)",
         deloadVolume: "50-60% of training loads",
-        notes: "Compare all results to Week 1. Prepare for Power phase transition (Weeks 9-12)",
+        notes:
+          "Compare all results to Week 1. Prepare for Power phase transition (Weeks 9-12)",
       },
       phaseSummary: {
         title: "Strength Development Phase Complete (Weeks 5-8)!",
@@ -3759,7 +3992,7 @@ export const WEEKLY_SCHEDULES = {
           "Complex training introduced (post-activation potentiation)",
           "Interval work progressed (100m → 150m → 200m @ 85-90%)",
           "RSA capacity built (8-10 → 12-15 sprints)",
-          "Advanced plyometrics introduced (depth jumps from 8-12\" boxes)",
+          'Advanced plyometrics introduced (depth jumps from 8-12" boxes)',
           "Maximum velocity work emphasized (flying 20s, flying 30s)",
         ],
         keyMetrics: {
@@ -3799,7 +4032,8 @@ export const WEEKLY_SCHEDULES = {
           title: "Explosive Power Development - Plyometric Focus",
           type: "power",
           duration: 85,
-          warmup: "Standard Protocol (15 min) + Extended Plyometric Prep (12 min)",
+          warmup:
+            "Standard Protocol (15 min) + Extended Plyometric Prep (12 min)",
           blocks: [
             {
               title: "Block 1: Reactive Plyometric Work",
@@ -3811,7 +4045,8 @@ export const WEEKLY_SCHEDULES = {
                   reps: 6,
                   rest: "3 min",
                   boxHeight: "12 inches",
-                  notes: "Step off, minimal ground contact, maximum reactive jump",
+                  notes:
+                    "Step off, minimal ground contact, maximum reactive jump",
                 },
                 {
                   name: "Reactive Box Jumps (Step Down + Immediate Jump)",
@@ -3879,14 +4114,15 @@ export const WEEKLY_SCHEDULES = {
               ],
             },
           ],
-          equipment: ["Plyo boxes (12\", 28-30\")", "hurdles", "barbell/DBs"],
+          equipment: ['Plyo boxes (12", 28-30")', "hurdles", "barbell/DBs"],
         },
 
         tuesday: {
           title: "Maximum Velocity + Speed Endurance",
           type: "sprint",
           duration: 85,
-          warmup: "Standard Protocol (15 min) + Extended Sprint Drills (12 min)",
+          warmup:
+            "Standard Protocol (15 min) + Extended Sprint Drills (12 min)",
           blocks: [
             {
               title: "Block 1: Maximum Velocity Development",
@@ -3900,7 +4136,8 @@ export const WEEKLY_SCHEDULES = {
                       sets: 6,
                       protocol: "40m build-up + 30m timed max sprint",
                       rest: "5 min",
-                      notes: "Peak velocity work - focus on mechanics at max speed",
+                      notes:
+                        "Peak velocity work - focus on mechanics at max speed",
                     },
                     {
                       name: "60m Sprints",
@@ -3923,8 +4160,18 @@ export const WEEKLY_SCHEDULES = {
                 {
                   condition: "No track",
                   exercises: [
-                    { name: "Wall Sprint Drills", sets: 8, duration: "15s max", rest: "2.5 min" },
-                    { name: "Resistance Band Sprints (Heavy)", sets: 12, duration: "10s", rest: "3 min" },
+                    {
+                      name: "Wall Sprint Drills",
+                      sets: 8,
+                      duration: "15s max",
+                      rest: "2.5 min",
+                    },
+                    {
+                      name: "Resistance Band Sprints (Heavy)",
+                      sets: 12,
+                      duration: "10s",
+                      rest: "3 min",
+                    },
                   ],
                 },
               ],
@@ -4001,7 +4248,8 @@ export const WEEKLY_SCHEDULES = {
                 {
                   name: "Complex: Squat + Reactive Depth Jump + Vertical Jump",
                   sets: 5,
-                  protocol: "3 squats @ 35% BW → 3 depth jumps → 2 max vertical jumps",
+                  protocol:
+                    "3 squats @ 35% BW → 3 depth jumps → 2 max vertical jumps",
                   rest: "4 min",
                   notes: "Triple complex for maximum power expression",
                 },
@@ -4042,7 +4290,11 @@ export const WEEKLY_SCHEDULES = {
               ],
             },
           ],
-          equipment: ["Barbell/DBs", "plyo boxes (various heights)", "measuring tape"],
+          equipment: [
+            "Barbell/DBs",
+            "plyo boxes (various heights)",
+            "measuring tape",
+          ],
         },
 
         friday: {
@@ -4077,8 +4329,18 @@ export const WEEKLY_SCHEDULES = {
                 {
                   condition: "No track",
                   exercises: [
-                    { name: "Wall Sprint Drills", sets: 8, duration: "15s max", rest: "2.5 min" },
-                    { name: "First Step Explosions", sets: 12, distance: "10m", rest: "2 min" },
+                    {
+                      name: "Wall Sprint Drills",
+                      sets: 8,
+                      duration: "15s max",
+                      rest: "2.5 min",
+                    },
+                    {
+                      name: "First Step Explosions",
+                      sets: 12,
+                      distance: "10m",
+                      rest: "2 min",
+                    },
                   ],
                 },
               ],
@@ -4130,7 +4392,8 @@ export const WEEKLY_SCHEDULES = {
                     distance: "30m",
                     intensity: "Maximum effort each rep",
                     rest: "25s between sprints",
-                    notes: "Approaching game capacity (40+ sprints). Track fatigue index",
+                    notes:
+                      "Approaching game capacity (40+ sprints). Track fatigue index",
                   },
                 },
                 {
@@ -4166,7 +4429,8 @@ export const WEEKLY_SCHEDULES = {
       weekSummary: {
         lowerBodySessions: 2,
         sprintSessions: 3,
-        focus: "Explosive power development, maximum velocity emphasis, reactive plyometrics, RSA volume 15-18 sprints",
+        focus:
+          "Explosive power development, maximum velocity emphasis, reactive plyometrics, RSA volume 15-18 sprints",
       },
     },
 
@@ -4180,7 +4444,8 @@ export const WEEKLY_SCHEDULES = {
           title: "Peak Reactive Power",
           type: "power",
           duration: 85,
-          warmup: "Standard Protocol (15 min) + Extended Plyometric Prep (12 min)",
+          warmup:
+            "Standard Protocol (15 min) + Extended Plyometric Prep (12 min)",
           blocks: [
             {
               title: "Block 1: Maximum Reactive Ability",
@@ -4192,7 +4457,8 @@ export const WEEKLY_SCHEDULES = {
                   reps: 6,
                   rest: "3 min",
                   boxHeight: "12-15 inches",
-                  notes: "Absolute minimal ground contact time, max reactive jump",
+                  notes:
+                    "Absolute minimal ground contact time, max reactive jump",
                 },
                 {
                   name: "Hurdle Hops (Speed Emphasis)",
@@ -4264,7 +4530,8 @@ export const WEEKLY_SCHEDULES = {
           title: "Maximum Velocity + Lactate Tolerance",
           type: "sprint",
           duration: 90,
-          warmup: "Standard Protocol (15 min) + Extended Sprint Drills (12 min)",
+          warmup:
+            "Standard Protocol (15 min) + Extended Sprint Drills (12 min)",
           blocks: [
             {
               title: "Block 1: Peak Velocity Development",
@@ -4300,8 +4567,18 @@ export const WEEKLY_SCHEDULES = {
                 {
                   condition: "No track",
                   exercises: [
-                    { name: "Wall Sprint Drills", sets: 8, duration: "15s max", rest: "3 min" },
-                    { name: "Resistance Band Sprints", sets: 12, duration: "12s", rest: "3 min" },
+                    {
+                      name: "Wall Sprint Drills",
+                      sets: 8,
+                      duration: "15s max",
+                      rest: "3 min",
+                    },
+                    {
+                      name: "Resistance Band Sprints",
+                      sets: 12,
+                      duration: "12s",
+                      rest: "3 min",
+                    },
                   ],
                 },
               ],
@@ -4408,7 +4685,7 @@ export const WEEKLY_SCHEDULES = {
                   sets: 6,
                   reps: "5",
                   rest: "2.5 min",
-                  protocol: "Step down from 12\", immediate jump to 30\"",
+                  protocol: 'Step down from 12", immediate jump to 30"',
                   notes: "Maximum reactive power",
                 },
                 {
@@ -4424,7 +4701,13 @@ export const WEEKLY_SCHEDULES = {
               title: "Block 3: Posterior Chain Maintenance",
               duration: 15,
               exercises: [
-                { name: "RDLs", sets: 3, reps: 8, rest: "2 min", load: "30% BW" },
+                {
+                  name: "RDLs",
+                  sets: 3,
+                  reps: 8,
+                  rest: "2 min",
+                  load: "30% BW",
+                },
                 { name: "Glute-Ham Raises", sets: 3, reps: 10, rest: "90s" },
               ],
             },
@@ -4464,8 +4747,18 @@ export const WEEKLY_SCHEDULES = {
                 {
                   condition: "No track",
                   exercises: [
-                    { name: "Wall Sprint Drills", sets: 8, duration: "15s max", rest: "2.5 min" },
-                    { name: "Resistance Band Sprints", sets: 10, duration: "10s", rest: "3 min" },
+                    {
+                      name: "Wall Sprint Drills",
+                      sets: 8,
+                      duration: "15s max",
+                      rest: "2.5 min",
+                    },
+                    {
+                      name: "Resistance Band Sprints",
+                      sets: 10,
+                      duration: "10s",
+                      rest: "3 min",
+                    },
                   ],
                 },
               ],
@@ -4517,7 +4810,8 @@ export const WEEKLY_SCHEDULES = {
                     distance: "30m",
                     intensity: "Maximum effort each rep",
                     rest: "25s between sprints",
-                    notes: "PEAK RSA volume. Simulates late-game fatigue. Track performance drop-off",
+                    notes:
+                      "PEAK RSA volume. Simulates late-game fatigue. Track performance drop-off",
                   },
                 },
                 {
@@ -4553,7 +4847,8 @@ export const WEEKLY_SCHEDULES = {
       weekSummary: {
         lowerBodySessions: 2,
         sprintSessions: 3,
-        focus: "Peak power output, maximum velocity development, multi-directional explosiveness, RSA peak 18-20 sprints",
+        focus:
+          "Peak power output, maximum velocity development, multi-directional explosiveness, RSA peak 18-20 sprints",
       },
     },
 
@@ -4676,8 +4971,18 @@ export const WEEKLY_SCHEDULES = {
                 {
                   condition: "No track",
                   exercises: [
-                    { name: "Wall Sprint Drills", sets: 8, duration: "15s max", rest: "2.5 min" },
-                    { name: "First Step Explosions", sets: 12, distance: "10m", rest: "2 min" },
+                    {
+                      name: "Wall Sprint Drills",
+                      sets: 8,
+                      duration: "15s max",
+                      rest: "2.5 min",
+                    },
+                    {
+                      name: "First Step Explosions",
+                      sets: 12,
+                      distance: "10m",
+                      rest: "2 min",
+                    },
                   ],
                 },
               ],
@@ -4754,7 +5059,7 @@ export const WEEKLY_SCHEDULES = {
                 {
                   name: "Box Jump + Pro Agility",
                   sets: 5,
-                  protocol: "3 box jumps (24\") → immediately Pro Agility drill",
+                  protocol: '3 box jumps (24") → immediately Pro Agility drill',
                   rest: "3 min",
                   notes: "Power to agility transition",
                 },
@@ -4778,7 +5083,12 @@ export const WEEKLY_SCHEDULES = {
               duration: 25,
               exercises: [
                 { name: "Pogo Jumps", sets: 4, duration: "20s", rest: "2 min" },
-                { name: "Hurdle Hops", sets: 4, reps: "10 hurdles", rest: "2 min" },
+                {
+                  name: "Hurdle Hops",
+                  sets: 4,
+                  reps: "10 hurdles",
+                  rest: "2 min",
+                },
                 { name: "Broad Jumps", sets: 4, reps: 4, rest: "2 min" },
               ],
             },
@@ -4817,8 +5127,18 @@ export const WEEKLY_SCHEDULES = {
                 {
                   condition: "No track",
                   exercises: [
-                    { name: "Wall Sprint Drills", sets: 8, duration: "15s max", rest: "2.5 min" },
-                    { name: "Resistance Band Sprints", sets: 10, duration: "10s", rest: "3 min" },
+                    {
+                      name: "Wall Sprint Drills",
+                      sets: 8,
+                      duration: "15s max",
+                      rest: "2.5 min",
+                    },
+                    {
+                      name: "Resistance Band Sprints",
+                      sets: 10,
+                      duration: "10s",
+                      rest: "3 min",
+                    },
                   ],
                 },
               ],
@@ -4829,7 +5149,12 @@ export const WEEKLY_SCHEDULES = {
               exercises: [
                 { name: "Pro Agility", sets: 6, rest: "3 min" },
                 { name: "L-Drill", sets: 5, rest: "2.5 min" },
-                { name: "Reactive Cone Drills", sets: 8, duration: "20s", rest: "2 min" },
+                {
+                  name: "Reactive Cone Drills",
+                  sets: 8,
+                  duration: "20s",
+                  rest: "2 min",
+                },
               ],
             },
           ],
@@ -4854,7 +5179,8 @@ export const WEEKLY_SCHEDULES = {
                     distance: "30m",
                     intensity: "Maximum effort each rep",
                     rest: "25s between sprints",
-                    notes: "Full game simulation. Capacity for 40+ sprint games. Track fatigue index",
+                    notes:
+                      "Full game simulation. Capacity for 40+ sprint games. Track fatigue index",
                   },
                 },
                 {
@@ -4890,7 +5216,8 @@ export const WEEKLY_SCHEDULES = {
       weekSummary: {
         lowerBodySessions: 2,
         sprintSessions: 3,
-        focus: "Power maintenance, game-specific conditioning, integrated power + agility work, RSA game simulation 20-22 sprints",
+        focus:
+          "Power maintenance, game-specific conditioning, integrated power + agility work, RSA game simulation 20-22 sprints",
       },
     },
 
@@ -4925,7 +5252,7 @@ export const WEEKLY_SCHEDULES = {
                   record: "Best distance. Compare to Weeks 1 & 8",
                 },
                 {
-                  name: "Depth Jump Test (12\" Box)",
+                  name: 'Depth Jump Test (12" Box)',
                   sets: 3,
                   rest: "3 min",
                   record: "Best reactive jump height",
@@ -5054,7 +5381,8 @@ export const WEEKLY_SCHEDULES = {
                 distance: "30m",
                 intensity: "Max effort each",
                 rest: "25s",
-                record: "All 10 times. Calculate fatigue index: (worst - best) / best × 100%",
+                record:
+                  "All 10 times. Calculate fatigue index: (worst - best) / best × 100%",
                 notes: "Compare to Week 8",
               },
             },
@@ -5224,16 +5552,21 @@ export const WEEKLY_SCHEDULES = {
             { name: "Lower body stretching", duration: "25 min" },
             { name: "Foam rolling", duration: "20 min" },
             { name: "Light walk/bike", duration: "25 min" },
-            { name: "Review assessment results + set Competition phase goals", duration: "15 min" },
+            {
+              name: "Review assessment results + set Competition phase goals",
+              duration: "15 min",
+            },
           ],
         },
       },
       weekSummary: {
         lowerBodySessions: 1,
         sprintSessions: 2,
-        assessmentFocus: "Power (jumps, reactive ability), strength, speed, agility, RSA",
+        assessmentFocus:
+          "Power (jumps, reactive ability), strength, speed, agility, RSA",
         deloadVolume: "50-60% of training loads",
-        notes: "Compare all results to Weeks 1 & 8. Prepare for Competition phase (Weeks 13-14)",
+        notes:
+          "Compare all results to Weeks 1 & 8. Prepare for Competition phase (Weeks 13-14)",
       },
       phaseSummary: {
         title: "Power Phase Complete (Weeks 9-12)!",
@@ -5247,10 +5580,12 @@ export const WEEKLY_SCHEDULES = {
           "Peak reactive ability (minimal ground contact times)",
         ],
         keyMetrics: {
-          powerGains: "Compare Week 12 to Week 8 to Week 1: vertical jump, broad jump, depth jump",
+          powerGains:
+            "Compare Week 12 to Week 8 to Week 1: vertical jump, broad jump, depth jump",
           speedGains: "10/20/40-yard sprints, flying 20m max velocity",
           agilityGains: "Pro Agility, L-drill, T-test times",
-          conditioningGains: "RSA capacity (20-22 sprints), fatigue index improvement",
+          conditioningGains:
+            "RSA capacity (20-22 sprints), fatigue index improvement",
           reactiveGains: "Pogo jump test, 10-jump test",
         },
         nextPhase: {
@@ -5295,7 +5630,8 @@ export const WEEKLY_SCHEDULES = {
                   reps: 4,
                   rest: "3 min",
                   boxHeight: "12 inches",
-                  notes: "50-60% volume, 100% intensity - maintain explosive ability",
+                  notes:
+                    "50-60% volume, 100% intensity - maintain explosive ability",
                 },
                 {
                   name: "Box Jumps",
@@ -5373,8 +5709,18 @@ export const WEEKLY_SCHEDULES = {
                 {
                   condition: "No track",
                   exercises: [
-                    { name: "Wall Sprint Drills", sets: 6, duration: "12s max", rest: "3 min" },
-                    { name: "First Step Explosions", sets: 8, distance: "10m", rest: "2 min" },
+                    {
+                      name: "Wall Sprint Drills",
+                      sets: 6,
+                      duration: "12s max",
+                      rest: "3 min",
+                    },
+                    {
+                      name: "First Step Explosions",
+                      sets: 8,
+                      distance: "10m",
+                      rest: "2 min",
+                    },
                   ],
                 },
               ],
@@ -5420,7 +5766,10 @@ export const WEEKLY_SCHEDULES = {
               duration: 20,
               exercises: [
                 { name: "Foam rolling (light)", duration: "12 min" },
-                { name: "Visualization + competition mental prep", duration: "15 min" },
+                {
+                  name: "Visualization + competition mental prep",
+                  duration: "15 min",
+                },
               ],
             },
           ],
@@ -5444,7 +5793,8 @@ export const WEEKLY_SCHEDULES = {
                   distance: "20-40 yards",
                   intensity: "Game speed (90-95%)",
                   rest: "3 min",
-                  notes: "Simulate game scenarios - routes, breakaways, pursuit angles",
+                  notes:
+                    "Simulate game scenarios - routes, breakaways, pursuit angles",
                 },
                 {
                   name: "Reactive Agility (Partner Calls)",
@@ -5460,7 +5810,12 @@ export const WEEKLY_SCHEDULES = {
               duration: 15,
               exercises: [
                 { name: "Pogo Jumps", sets: 3, duration: "15s", rest: "2 min" },
-                { name: "Lateral Bounds", sets: 3, reps: "4 each", rest: "2 min" },
+                {
+                  name: "Lateral Bounds",
+                  sets: 3,
+                  reps: "4 each",
+                  rest: "2 min",
+                },
               ],
             },
           ],
@@ -5546,15 +5901,20 @@ export const WEEKLY_SCHEDULES = {
             { name: "Lower body stretching", duration: "20 min" },
             { name: "Foam rolling", duration: "15 min" },
             { name: "Light walk", duration: "20 min" },
-            { name: "Competition visualization + strategy", duration: "20 min" },
+            {
+              name: "Competition visualization + strategy",
+              duration: "20 min",
+            },
           ],
         },
       },
       weekSummary: {
         lowerBodySessions: 1,
         sprintSessions: 4,
-        focus: "Taper (40-50% volume), maintain intensity (90-100%), competition simulation, mental preparation",
-        notes: "Quality over quantity. Stay sharp, stay fresh. Mental prep becomes priority.",
+        focus:
+          "Taper (40-50% volume), maintain intensity (90-100%), competition simulation, mental preparation",
+        notes:
+          "Quality over quantity. Stay sharp, stay fresh. Mental prep becomes priority.",
       },
     },
 
@@ -5635,8 +5995,18 @@ export const WEEKLY_SCHEDULES = {
                 {
                   condition: "No track",
                   exercises: [
-                    { name: "Wall Sprint Drills", sets: 5, duration: "10s", rest: "3 min" },
-                    { name: "First Step Explosions", sets: 6, distance: "10m", rest: "2 min" },
+                    {
+                      name: "Wall Sprint Drills",
+                      sets: 5,
+                      duration: "10s",
+                      rest: "3 min",
+                    },
+                    {
+                      name: "First Step Explosions",
+                      sets: 6,
+                      distance: "10m",
+                      rest: "2 min",
+                    },
                   ],
                 },
               ],
@@ -5657,7 +6027,11 @@ export const WEEKLY_SCHEDULES = {
               exercises: [
                 { name: "Hip mobility circuit (light)", duration: "10 min" },
                 { name: "Light stretching", duration: "10 min" },
-                { name: "Competition visualization", duration: "20 min", notes: "Primary focus" },
+                {
+                  name: "Competition visualization",
+                  duration: "20 min",
+                  notes: "Primary focus",
+                },
               ],
             },
           ],
@@ -5745,14 +6119,17 @@ export const WEEKLY_SCHEDULES = {
           title: "COMPETITION DAY or Final Preparation",
           type: "competition",
           preGameWarmup: "Extended warm-up protocol (20-25 min)",
-          notes: "Ready to compete. Trust your preparation. Execute the game plan.",
+          notes:
+            "Ready to compete. Trust your preparation. Execute the game plan.",
         },
       },
       weekSummary: {
         lowerBodySessions: 1,
         sprintSessions: 3,
-        focus: "Minimal volume (20-30% of peak), activation only, peak freshness, mental preparation",
-        notes: "Physical work is minimal. Mental preparation is priority. Ready to compete.",
+        focus:
+          "Minimal volume (20-30% of peak), activation only, peak freshness, mental preparation",
+        notes:
+          "Physical work is minimal. Mental preparation is priority. Ready to compete.",
       },
       programSummary: {
         title: "14-WEEK WR/DB OFFSEASON PROGRAM COMPLETE!",
@@ -5766,12 +6143,16 @@ export const WEEKLY_SCHEDULES = {
           "Taper for peak performance",
         ],
         keyProgression: {
-          strength: "Weeks 1-8: Foundation + Strength Development (25-40% BW loads)",
-          power: "Weeks 9-12: Power Phase (peak plyometrics, max velocity, RSA 20-22 sprints)",
-          taper: "Weeks 13-14: Competition Prep (volume reduction, intensity maintenance)",
+          strength:
+            "Weeks 1-8: Foundation + Strength Development (25-40% BW loads)",
+          power:
+            "Weeks 9-12: Power Phase (peak plyometrics, max velocity, RSA 20-22 sprints)",
+          taper:
+            "Weeks 13-14: Competition Prep (volume reduction, intensity maintenance)",
         },
         physicalReadiness: {
-          strength: "Maximum safe loads achieved, hamstring injury prevention optimized",
+          strength:
+            "Maximum safe loads achieved, hamstring injury prevention optimized",
           power: "Vertical jump, broad jump, reactive ability peaked",
           speed: "10/20/40-yard sprint times optimized, max velocity developed",
           agility: "Pro Agility, L-drill times improved",
@@ -6184,11 +6565,7 @@ export const EXERCISE_LIBRARY = {
       "Heavy band tibialis raise",
       "Weighted tibialis raise",
     ],
-    safetyNotes: [
-      "Start light",
-      "Control the movement",
-      "Don't overdo it",
-    ],
+    safetyNotes: ["Start light", "Control the movement", "Don't overdo it"],
   },
 
   "Push-Ups": {
@@ -6411,17 +6788,8 @@ export const EXERCISE_LIBRARY = {
       "Pull leg back under",
       "Maintain rhythm",
     ],
-    progressions: [
-      "B-March",
-      "B-Skip slow",
-      "B-Skip moderate",
-      "B-Skip fast",
-    ],
-    safetyNotes: [
-      "Master A-skip first",
-      "Start slowly",
-      "Focus on form",
-    ],
+    progressions: ["B-March", "B-Skip slow", "B-Skip moderate", "B-Skip fast"],
+    safetyNotes: ["Master A-skip first", "Start slowly", "Focus on form"],
   },
 
   "C-Skip": {
@@ -6444,17 +6812,8 @@ export const EXERCISE_LIBRARY = {
       "Tall posture",
       "Arm action",
     ],
-    progressions: [
-      "C-March",
-      "C-Skip slow",
-      "C-Skip moderate",
-      "C-Skip fast",
-    ],
-    safetyNotes: [
-      "Master A and B skip first",
-      "Start slowly",
-      "Focus on form",
-    ],
+    progressions: ["C-March", "C-Skip slow", "C-Skip moderate", "C-Skip fast"],
+    safetyNotes: ["Master A and B skip first", "Start slowly", "Focus on form"],
   },
 
   "High Knees": {
@@ -6483,11 +6842,7 @@ export const EXERCISE_LIBRARY = {
       "Fast high knees",
       "High knees moving forward",
     ],
-    safetyNotes: [
-      "Start slowly",
-      "Focus on form",
-      "Stop if you feel tight",
-    ],
+    safetyNotes: ["Start slowly", "Focus on form", "Stop if you feel tight"],
   },
 
   "Butt Kicks": {
@@ -6523,7 +6878,7 @@ export const EXERCISE_LIBRARY = {
     ],
   },
 
-  "Scissors": {
+  Scissors: {
     category: "Sprint",
     primaryMuscles: ["Hip Flexors", "Hamstrings"],
     secondaryMuscles: ["Core", "Calves"],
@@ -6549,11 +6904,7 @@ export const EXERCISE_LIBRARY = {
       "Fast scissors",
       "Scissors moving forward",
     ],
-    safetyNotes: [
-      "Start slowly",
-      "Focus on form",
-      "Stop if you feel tight",
-    ],
+    safetyNotes: ["Start slowly", "Focus on form", "Stop if you feel tight"],
   },
 
   "Toy Soldiers": {
@@ -6615,11 +6966,7 @@ export const EXERCISE_LIBRARY = {
       "Wall drill fast",
       "Wall drill with resistance",
     ],
-    safetyNotes: [
-      "Start slowly",
-      "Focus on form",
-      "Stop if you feel tight",
-    ],
+    safetyNotes: ["Start slowly", "Focus on form", "Stop if you feel tight"],
   },
 
   "Fast Leg Drill": {
@@ -6648,11 +6995,7 @@ export const EXERCISE_LIBRARY = {
       "Fast fast leg",
       "Fast leg moving forward",
     ],
-    safetyNotes: [
-      "Start slowly",
-      "Focus on form",
-      "Stop if you feel tight",
-    ],
+    safetyNotes: ["Start slowly", "Focus on form", "Stop if you feel tight"],
   },
 
   "Tempo Runs": {
@@ -6680,11 +7023,7 @@ export const EXERCISE_LIBRARY = {
       "Long tempo (400m)",
       "Extensive tempo",
     ],
-    safetyNotes: [
-      "Not maximum effort",
-      "Monitor fatigue",
-      "Proper recovery",
-    ],
+    safetyNotes: ["Not maximum effort", "Monitor fatigue", "Proper recovery"],
   },
 
   "Acceleration Mechanics": {
@@ -6713,11 +7052,7 @@ export const EXERCISE_LIBRARY = {
       "75% acceleration",
       "Full acceleration",
     ],
-    safetyNotes: [
-      "Proper warm-up",
-      "Focus on form",
-      "Don't rush progression",
-    ],
+    safetyNotes: ["Proper warm-up", "Focus on form", "Don't rush progression"],
   },
 
   "Build-Up Runs": {
@@ -6746,11 +7081,7 @@ export const EXERCISE_LIBRARY = {
       "Long build-up (60m)",
       "Extended build-up",
     ],
-    safetyNotes: [
-      "Proper warm-up",
-      "Focus on form",
-      "Don't rush",
-    ],
+    safetyNotes: ["Proper warm-up", "Focus on form", "Don't rush"],
   },
 
   "First Step Drills": {
@@ -6779,11 +7110,7 @@ export const EXERCISE_LIBRARY = {
       "4-point starts",
       "Moving starts",
     ],
-    safetyNotes: [
-      "Proper warm-up",
-      "Focus on form",
-      "Don't rush",
-    ],
+    safetyNotes: ["Proper warm-up", "Focus on form", "Don't rush"],
   },
 
   // Plyometric Exercises
@@ -6846,11 +7173,7 @@ export const EXERCISE_LIBRARY = {
       "High box step-ups",
       "Weighted box step-ups",
     ],
-    safetyNotes: [
-      "Ensure box is stable",
-      "Control the movement",
-      "Don't rush",
-    ],
+    safetyNotes: ["Ensure box is stable", "Control the movement", "Don't rush"],
   },
 
   "Broad Jumps": {
@@ -6912,11 +7235,7 @@ export const EXERCISE_LIBRARY = {
       "Large lateral bounds",
       "Weighted lateral bounds",
     ],
-    safetyNotes: [
-      "Start small",
-      "Focus on landing",
-      "Don't rush",
-    ],
+    safetyNotes: ["Start small", "Focus on landing", "Don't rush"],
   },
 
   "Jump Squats": {
@@ -6945,11 +7264,7 @@ export const EXERCISE_LIBRARY = {
       "Weighted jump squats",
       "Depth jump squats",
     ],
-    safetyNotes: [
-      "Land softly",
-      "Don't rush",
-      "Focus on form",
-    ],
+    safetyNotes: ["Land softly", "Don't rush", "Focus on form"],
   },
 
   "Medicine Ball Slams": {
@@ -6978,11 +7293,7 @@ export const EXERCISE_LIBRARY = {
       "Heavy medicine ball slams",
       "Rotational medicine ball slams",
     ],
-    safetyNotes: [
-      "Clear area",
-      "Control the ball",
-      "Don't rush",
-    ],
+    safetyNotes: ["Clear area", "Control the ball", "Don't rush"],
   },
 
   "Bilateral Pogos": {
@@ -7011,11 +7322,7 @@ export const EXERCISE_LIBRARY = {
       "Fast pogos",
       "Single-leg pogos",
     ],
-    safetyNotes: [
-      "Start slowly",
-      "Focus on form",
-      "Stop if ankles feel tight",
-    ],
+    safetyNotes: ["Start slowly", "Focus on form", "Stop if ankles feel tight"],
   },
 
   // Agility Exercises
@@ -7045,11 +7352,7 @@ export const EXERCISE_LIBRARY = {
       "Icky shuffle",
       "Advanced patterns",
     ],
-    safetyNotes: [
-      "Start slowly",
-      "Focus on form",
-      "Don't rush",
-    ],
+    safetyNotes: ["Start slowly", "Focus on form", "Don't rush"],
   },
 
   "Cone Weave": {
@@ -7078,11 +7381,7 @@ export const EXERCISE_LIBRARY = {
       "Fast cone weave",
       "Competition cone weave",
     ],
-    safetyNotes: [
-      "Proper warm-up",
-      "Focus on form",
-      "Don't rush",
-    ],
+    safetyNotes: ["Proper warm-up", "Focus on form", "Don't rush"],
   },
 
   // Recovery Exercises
@@ -7244,11 +7543,7 @@ export const EXERCISE_LIBRARY = {
       "Heavy band walks",
       "Single-leg band walks",
     ],
-    safetyNotes: [
-      "Control the movement",
-      "Don't rush",
-      "Focus on form",
-    ],
+    safetyNotes: ["Control the movement", "Don't rush", "Focus on form"],
   },
 
   "Jump Rope Singles": {
@@ -7277,11 +7572,7 @@ export const EXERCISE_LIBRARY = {
       "Fast jump rope",
       "Double unders",
     ],
-    safetyNotes: [
-      "Start slowly",
-      "Focus on form",
-      "Stop if ankles feel tight",
-    ],
+    safetyNotes: ["Start slowly", "Focus on form", "Stop if ankles feel tight"],
   },
 
   // Change of Direction & Deceleration Exercises
@@ -8292,7 +8583,8 @@ export const EXERCISE_LIBRARY = {
     secondaryMuscles: ["Hamstrings", "Calves", "Core"],
     equipment: ["Open space", "Weighted vest", "or Dumbbells"],
     difficulty: "advanced",
-    setup: "Feet shoulder-width apart, wearing weighted vest or holding weights",
+    setup:
+      "Feet shoulder-width apart, wearing weighted vest or holding weights",
     execution: [
       "Start in semi-squat position",
       "Swing arms forward explosively",

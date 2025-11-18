@@ -788,8 +788,7 @@ html[data-theme="light"] .theme-toggle-text {
   .main-content {
     margin-left: 0;
     width: 100%; /* Full width on tablet/mobile */
-    padding: var(--spacing-layout-xs, 20px)
-      var(--spacing-component-lg, 24px);
+    padding: var(--spacing-layout-xs, 20px) var(--spacing-component-lg, 24px);
   }
 }
 
@@ -2238,12 +2237,7 @@ html[data-theme="dark"] .stat-title {
 /* Light Theme Stat Title - Better contrast */
 body[data-theme="light"] .stat-title,
 html[data-theme="light"] .stat-title {
-  color: rgba(
-    0,
-    0,
-    0,
-    0.75
-  ); /* Increased from 0.65 for better readability */
+  color: rgba(0, 0, 0, 0.75); /* Increased from 0.65 for better readability */
 }
 
 .stat-card:hover .stat-title {
@@ -2341,7 +2335,10 @@ html[data-theme="light"] .stat-card:hover .stat-icon {
     -apple-system,
     BlinkMacSystemFont,
     sans-serif;
-  font-size: var(--font-size-5xl, 48px); /* Slightly larger for better prominence */
+  font-size: var(
+    --font-size-5xl,
+    48px
+  ); /* Slightly larger for better prominence */
   font-weight: var(--font-weight-extrabold, 800);
   margin-bottom: 16px;
   margin-top: 4px;
@@ -2372,11 +2369,7 @@ html[data-theme="dark"] .stat-value {
 /* Light Theme Stat Value */
 body[data-theme="light"] .stat-value,
 html[data-theme="light"] .stat-value {
-  background: linear-gradient(
-    135deg,
-    #1a1a1a 0%,
-    rgba(26, 26, 26, 0.9) 100%
-  );
+  background: linear-gradient(135deg, #1a1a1a 0%, rgba(26, 26, 26, 0.9) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -2427,7 +2420,10 @@ html[data-theme="light"] .stat-value {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: var(--font-size-sm, 14px); /* Slightly larger for better readability */
+  font-size: var(
+    --font-size-sm,
+    14px
+  ); /* Slightly larger for better readability */
   font-weight: var(--font-weight-semibold, 600);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
@@ -2462,7 +2458,10 @@ html[data-theme="light"] .stat-value {
 
 .stat-change.positive {
   color: var(--color-brand-primary);
-  font-weight: var(--font-weight-semibold, 600); /* Bolder for better visibility */
+  font-weight: var(
+    --font-weight-semibold,
+    600
+  ); /* Bolder for better visibility */
 }
 
 .stat-change.positive svg,
@@ -2473,7 +2472,10 @@ html[data-theme="light"] .stat-value {
 
 .stat-change.negative {
   color: #ef4444;
-  font-weight: var(--font-weight-semibold, 600); /* Bolder for better visibility */
+  font-weight: var(
+    --font-weight-semibold,
+    600
+  ); /* Bolder for better visibility */
 }
 
 .stat-change.negative svg,
@@ -2680,11 +2682,7 @@ body[data-theme="light"] .chart-title {
   transform: translateY(-50%);
   width: 4px;
   height: 24px;
-  background: linear-gradient(
-    180deg,
-    var(--primary-500),
-    var(--primary-600)
-  );
+  background: linear-gradient(180deg, var(--primary-500), var(--primary-600));
   border-radius: 2px;
   opacity: 1;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -2966,11 +2964,7 @@ body[data-theme="dark"] .upcoming-header h3 {
 }
 
 body[data-theme="light"] .upcoming-header h3 {
-  background: linear-gradient(
-    135deg,
-    #1a1a1a 0%,
-    rgba(26, 26, 26, 0.9) 100%
-  );
+  background: linear-gradient(135deg, #1a1a1a 0%, rgba(26, 26, 26, 0.9) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -3542,11 +3536,7 @@ body[data-theme="dark"] .performance-trends-title {
 }
 
 body[data-theme="light"] .performance-trends-title {
-  background: linear-gradient(
-    135deg,
-    #1a1a1a 0%,
-    rgba(26, 26, 26, 0.9) 100%
-  );
+  background: linear-gradient(135deg, #1a1a1a 0%, rgba(26, 26, 26, 0.9) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -5131,8 +5121,7 @@ html[data-theme="light"] .wellness-modal-footer {
   opacity: 0;
   transition:
     opacity var(--motion-duration-normal) var(--motion-easing-productive),
-    visibility var(--motion-duration-normal)
-      var(--motion-easing-productive);
+    visibility var(--motion-duration-normal) var(--motion-easing-productive);
   visibility: hidden;
   pointer-events: none;
 }
@@ -6179,17 +6168,17 @@ html[data-theme="light"] .section-card-footer .chat-input {
   .date-picker-header {
     flex-wrap: wrap;
   }
-  
+
   .date-picker-wrapper {
     max-width: 100%;
     order: 3;
     width: 100%;
   }
-  
+
   .date-nav-btn {
     order: 1;
   }
-  
+
   #next-day-btn {
     order: 2;
   }
@@ -6518,7 +6507,7 @@ html[data-theme="light"] .section-card-footer .chat-input {
 }
 
 .supplement-toggle-slider::before {
-  content: '';
+  content: "";
   position: absolute;
   height: 22px;
   width: 22px;
@@ -6629,7 +6618,7 @@ html[data-theme="light"] .section-card-footer .chat-input {
     bottom: var(--space-4);
     right: var(--space-4);
   }
-  
+
   .ai-chat-button {
     padding: var(--space-3) var(--space-4);
     font-size: var(--typography-body-sm-size);

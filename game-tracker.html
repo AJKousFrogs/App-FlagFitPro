@@ -16,15 +16,21 @@
     <!-- Page-specific styles -->
     <link rel="stylesheet" href="./src/css/pages/game-tracker.css" />
     <!-- Lucide Icons -->
-    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js" crossorigin="anonymous" defer>
-            integrity="sha384-QUHo9yIHF1gPrLIKJyuJ6l2VzF5YNGFCk2sT3dSsGmBjDrPyYlqVjdJsJ8e6JkX2"
-            crossorigin="anonymous" defer></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
     <script src="./src/icon-helper.js" defer></script>
     <script src="./src/theme-switcher.js" defer></script>
     <script src="./src/nav-highlight.js" defer></script>
     <script src="./src/components/organisms/top-bar/top-bar.js" defer></script>
     <!-- Game Tracker Page JavaScript -->
-    <script type="module" src="./src/js/pages/game-tracker-page.js" defer></script>
+    <script
+      type="module"
+      src="./src/js/pages/game-tracker-page.js"
+      defer
+    ></script>
   </head>
   <body>
     <div class="dashboard-container">
@@ -41,10 +47,7 @@
           title="FlagFit Pro"
           aria-label="Go to dashboard"
         >
-          <i
-            data-lucide="activity"
-            class="icon-20 icon-inline"
-          ></i>
+          <i data-lucide="activity" class="icon-20 icon-inline"></i>
         </div>
 
         <nav class="nav-section" aria-label="Main navigation">
@@ -137,10 +140,15 @@
             <div class="page-header-content">
               <div class="page-title-section">
                 <h1 class="page-title">
-                  <i data-lucide="clipboard-list" class="icon-28 icon-inline"></i>
+                  <i
+                    data-lucide="clipboard-list"
+                    class="icon-28 icon-inline"
+                  ></i>
                   Game Tracker
                 </h1>
-                <p class="page-subtitle">Track every play, drop, flag pull, and performance metric</p>
+                <p class="page-subtitle">
+                  Track every play, drop, flag pull, and performance metric
+                </p>
               </div>
               <div class="page-actions">
                 <button class="btn btn-secondary" id="view-games-btn">
@@ -168,7 +176,12 @@
                 <div class="form-grid">
                   <div class="form-group">
                     <label for="game-date">Game Date</label>
-                    <input type="date" id="game-date" class="form-control" required />
+                    <input
+                      type="date"
+                      id="game-date"
+                      class="form-control"
+                      required
+                    />
                   </div>
                   <div class="form-group">
                     <label for="game-time">Game Time</label>
@@ -176,11 +189,22 @@
                   </div>
                   <div class="form-group">
                     <label for="opponent-name">Opponent Team</label>
-                    <input type="text" id="opponent-name" class="form-control" placeholder="Blue Devils" required />
+                    <input
+                      type="text"
+                      id="opponent-name"
+                      class="form-control"
+                      placeholder="Blue Devils"
+                      required
+                    />
                   </div>
                   <div class="form-group">
                     <label for="location">Location</label>
-                    <input type="text" id="location" class="form-control" placeholder="Home Field" />
+                    <input
+                      type="text"
+                      id="location"
+                      class="form-control"
+                      placeholder="Home Field"
+                    />
                   </div>
                   <div class="form-group">
                     <label for="home-away">Home/Away</label>
@@ -205,7 +229,12 @@
                   </div>
                   <div class="form-group">
                     <label for="temperature">Temperature (°F)</label>
-                    <input type="number" id="temperature" class="form-control" placeholder="72" />
+                    <input
+                      type="number"
+                      id="temperature"
+                      class="form-control"
+                      placeholder="72"
+                    />
                   </div>
                   <div class="form-group">
                     <label for="field-conditions">Field Conditions</label>
@@ -228,7 +257,7 @@
           </div>
 
           <!-- Live Game Tracking Section (Hidden until game starts) -->
-          <div class="card" id="live-tracking-section" style="display: none;">
+          <div class="card" id="live-tracking-section" style="display: none">
             <div class="card-header">
               <div class="card-header-content">
                 <h2 class="card-title">
@@ -238,12 +267,24 @@
                 <div class="game-score">
                   <div class="score-input-group">
                     <label>Our Score:</label>
-                    <input type="number" id="team-score" class="score-input" value="0" min="0" />
+                    <input
+                      type="number"
+                      id="team-score"
+                      class="score-input"
+                      value="0"
+                      min="0"
+                    />
                   </div>
                   <span class="score-separator">-</span>
                   <div class="score-input-group">
                     <label>Opponent:</label>
-                    <input type="number" id="opponent-score" class="score-input" value="0" min="0" />
+                    <input
+                      type="number"
+                      id="opponent-score"
+                      class="score-input"
+                      value="0"
+                      min="0"
+                    />
                   </div>
                 </div>
               </div>
@@ -266,11 +307,18 @@
                 </div>
                 <div class="stat-box">
                   <div class="stat-label">Drops</div>
-                  <div class="stat-value stat-value-danger" id="total-drops">0</div>
+                  <div class="stat-value stat-value-danger" id="total-drops">
+                    0
+                  </div>
                 </div>
                 <div class="stat-box">
                   <div class="stat-label">Flag Pulls</div>
-                  <div class="stat-value stat-value-success" id="total-flag-pulls">0</div>
+                  <div
+                    class="stat-value stat-value-success"
+                    id="total-flag-pulls"
+                  >
+                    0
+                  </div>
                 </div>
               </div>
 
@@ -306,11 +354,26 @@
                       </div>
                       <div class="form-group">
                         <label for="distance">Distance (yards)</label>
-                        <input type="number" id="distance" class="form-control" placeholder="10" min="1" required />
+                        <input
+                          type="number"
+                          id="distance"
+                          class="form-control"
+                          placeholder="10"
+                          min="1"
+                          required
+                        />
                       </div>
                       <div class="form-group">
                         <label for="yard-line">Yard Line</label>
-                        <input type="number" id="yard-line" class="form-control" placeholder="50" min="1" max="100" required />
+                        <input
+                          type="number"
+                          id="yard-line"
+                          class="form-control"
+                          placeholder="50"
+                          min="1"
+                          max="100"
+                          required
+                        />
                       </div>
                     </div>
                   </div>
@@ -319,19 +382,35 @@
                   <div class="form-section">
                     <h4 class="form-section-title">Play Type</h4>
                     <div class="play-type-buttons">
-                      <button type="button" class="play-type-btn" data-type="pass">
+                      <button
+                        type="button"
+                        class="play-type-btn"
+                        data-type="pass"
+                      >
                         <i data-lucide="move" class="icon-20"></i>
                         Pass Play
                       </button>
-                      <button type="button" class="play-type-btn" data-type="run">
+                      <button
+                        type="button"
+                        class="play-type-btn"
+                        data-type="run"
+                      >
                         <i data-lucide="zap" class="icon-20"></i>
                         Run Play
                       </button>
-                      <button type="button" class="play-type-btn" data-type="flag_pull">
+                      <button
+                        type="button"
+                        class="play-type-btn"
+                        data-type="flag_pull"
+                      >
                         <i data-lucide="flag" class="icon-20"></i>
                         Flag Pull
                       </button>
-                      <button type="button" class="play-type-btn" data-type="other">
+                      <button
+                        type="button"
+                        class="play-type-btn"
+                        data-type="other"
+                      >
                         <i data-lucide="more-horizontal" class="icon-20"></i>
                         Other
                       </button>
@@ -340,18 +419,28 @@
                   </div>
 
                   <!-- Pass Play Details (Conditional) -->
-                  <div class="form-section" id="pass-play-section" style="display: none;">
+                  <div
+                    class="form-section"
+                    id="pass-play-section"
+                    style="display: none"
+                  >
                     <h4 class="form-section-title">Pass Play Details</h4>
                     <div class="form-grid">
                       <div class="form-group">
                         <label for="quarterback">Quarterback</label>
-                        <select id="quarterback" class="form-control player-select">
+                        <select
+                          id="quarterback"
+                          class="form-control player-select"
+                        >
                           <option value="">Select QB</option>
                         </select>
                       </div>
                       <div class="form-group">
                         <label for="receiver">Receiver</label>
-                        <select id="receiver" class="form-control player-select">
+                        <select
+                          id="receiver"
+                          class="form-control player-select"
+                        >
                           <option value="">Select Receiver</option>
                         </select>
                       </div>
@@ -372,7 +461,13 @@
                       </div>
                       <div class="form-group">
                         <label for="route-depth">Route Depth (yards)</label>
-                        <input type="number" id="route-depth" class="form-control" placeholder="10" min="0" />
+                        <input
+                          type="number"
+                          id="route-depth"
+                          class="form-control"
+                          placeholder="10"
+                          min="0"
+                        />
                       </div>
                     </div>
 
@@ -380,23 +475,43 @@
                     <div class="outcome-section">
                       <label class="outcome-label">Outcome:</label>
                       <div class="outcome-buttons">
-                        <button type="button" class="outcome-btn outcome-success" data-outcome="completion">
+                        <button
+                          type="button"
+                          class="outcome-btn outcome-success"
+                          data-outcome="completion"
+                        >
                           <i data-lucide="check-circle" class="icon-18"></i>
                           Completion
                         </button>
-                        <button type="button" class="outcome-btn outcome-danger" data-outcome="drop">
+                        <button
+                          type="button"
+                          class="outcome-btn outcome-danger"
+                          data-outcome="drop"
+                        >
                           <i data-lucide="x-circle" class="icon-18"></i>
                           Drop
                         </button>
-                        <button type="button" class="outcome-btn outcome-warning" data-outcome="incompletion">
+                        <button
+                          type="button"
+                          class="outcome-btn outcome-warning"
+                          data-outcome="incompletion"
+                        >
                           <i data-lucide="circle" class="icon-18"></i>
                           Incompletion
                         </button>
-                        <button type="button" class="outcome-btn outcome-danger" data-outcome="interception">
+                        <button
+                          type="button"
+                          class="outcome-btn outcome-danger"
+                          data-outcome="interception"
+                        >
                           <i data-lucide="alert-triangle" class="icon-18"></i>
                           Interception
                         </button>
-                        <button type="button" class="outcome-btn outcome-info" data-outcome="defended">
+                        <button
+                          type="button"
+                          class="outcome-btn outcome-info"
+                          data-outcome="defended"
+                        >
                           <i data-lucide="shield" class="icon-18"></i>
                           Defended
                         </button>
@@ -405,13 +520,15 @@
                     </div>
 
                     <!-- Drop Analysis (Conditional on drop) -->
-                    <div id="drop-analysis-section" style="display: none;">
+                    <div id="drop-analysis-section" style="display: none">
                       <div class="form-grid">
                         <div class="form-group">
                           <label for="drop-severity">Drop Severity</label>
                           <select id="drop-severity" class="form-control">
                             <option value="">Select severity</option>
-                            <option value="unforgivable">Unforgivable (Easy catch)</option>
+                            <option value="unforgivable">
+                              Unforgivable (Easy catch)
+                            </option>
                             <option value="should_catch">Should Catch</option>
                             <option value="difficult">Difficult</option>
                             <option value="contested">Contested</option>
@@ -422,12 +539,18 @@
                           <select id="drop-reason" class="form-control">
                             <option value="">Select reason</option>
                             <option value="hands">Hands issue</option>
-                            <option value="body_catch_attempt">Body catch attempt</option>
+                            <option value="body_catch_attempt">
+                              Body catch attempt
+                            </option>
                             <option value="distraction">Distraction</option>
-                            <option value="defender_contact">Defender contact</option>
+                            <option value="defender_contact">
+                              Defender contact
+                            </option>
                             <option value="sun">Sun in eyes</option>
                             <option value="wind">Wind</option>
-                            <option value="looked_upfield_early">Looked upfield early</option>
+                            <option value="looked_upfield_early">
+                              Looked upfield early
+                            </option>
                           </select>
                         </div>
                       </div>
@@ -448,29 +571,48 @@
                   </div>
 
                   <!-- Run Play Details (Conditional) -->
-                  <div class="form-section" id="run-play-section" style="display: none;">
+                  <div
+                    class="form-section"
+                    id="run-play-section"
+                    style="display: none"
+                  >
                     <h4 class="form-section-title">Run Play Details</h4>
                     <div class="form-grid">
                       <div class="form-group">
                         <label for="ball-carrier">Ball Carrier</label>
-                        <select id="ball-carrier" class="form-control player-select">
+                        <select
+                          id="ball-carrier"
+                          class="form-control player-select"
+                        >
                           <option value="">Select player</option>
                         </select>
                       </div>
                       <div class="form-group">
                         <label for="yards-gained">Yards Gained</label>
-                        <input type="number" id="yards-gained" class="form-control" placeholder="5" />
+                        <input
+                          type="number"
+                          id="yards-gained"
+                          class="form-control"
+                          placeholder="5"
+                        />
                       </div>
                     </div>
                   </div>
 
                   <!-- Flag Pull Details (Conditional) -->
-                  <div class="form-section" id="flag-pull-section" style="display: none;">
+                  <div
+                    class="form-section"
+                    id="flag-pull-section"
+                    style="display: none"
+                  >
                     <h4 class="form-section-title">Flag Pull Details</h4>
                     <div class="form-grid">
                       <div class="form-group">
                         <label for="defender">Defender</label>
-                        <select id="defender" class="form-control player-select">
+                        <select
+                          id="defender"
+                          class="form-control player-select"
+                        >
                           <option value="">Select defender</option>
                         </select>
                       </div>
@@ -486,11 +628,19 @@
                     <div class="outcome-section">
                       <label class="outcome-label">Outcome:</label>
                       <div class="outcome-buttons">
-                        <button type="button" class="outcome-btn outcome-success" data-flag-outcome="success">
+                        <button
+                          type="button"
+                          class="outcome-btn outcome-success"
+                          data-flag-outcome="success"
+                        >
                           <i data-lucide="check" class="icon-18"></i>
                           Successful Pull
                         </button>
-                        <button type="button" class="outcome-btn outcome-danger" data-flag-outcome="miss">
+                        <button
+                          type="button"
+                          class="outcome-btn outcome-danger"
+                          data-flag-outcome="miss"
+                        >
                           <i data-lucide="x" class="icon-18"></i>
                           Missed Pull
                         </button>
@@ -499,17 +649,21 @@
                     </div>
 
                     <!-- Miss Analysis (Conditional) -->
-                    <div id="miss-analysis-section" style="display: none;">
+                    <div id="miss-analysis-section" style="display: none">
                       <div class="form-group">
                         <label for="miss-reason">Miss Reason</label>
                         <select id="miss-reason" class="form-control">
                           <option value="">Select reason</option>
                           <option value="missed_grab">Missed grab</option>
                           <option value="faked_out">Faked out</option>
-                          <option value="out_of_position">Out of position</option>
+                          <option value="out_of_position">
+                            Out of position
+                          </option>
                           <option value="fell_down">Fell down</option>
                           <option value="too_slow">Too slow</option>
-                          <option value="wrong_angle">Wrong pursuit angle</option>
+                          <option value="wrong_angle">
+                            Wrong pursuit angle
+                          </option>
                         </select>
                       </div>
                     </div>
@@ -519,7 +673,12 @@
                   <div class="form-section">
                     <div class="form-group">
                       <label for="play-notes">Play Notes (Optional)</label>
-                      <textarea id="play-notes" class="form-control" rows="2" placeholder="Add any additional details about this play..."></textarea>
+                      <textarea
+                        id="play-notes"
+                        class="form-control"
+                        rows="2"
+                        placeholder="Add any additional details about this play..."
+                      ></textarea>
                     </div>
                   </div>
 
@@ -529,7 +688,11 @@
                       <i data-lucide="save" class="icon-18"></i>
                       Save Play
                     </button>
-                    <button type="button" class="btn btn-secondary" id="reset-play-btn">
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      id="reset-play-btn"
+                    >
                       <i data-lucide="rotate-ccw" class="icon-18"></i>
                       Reset
                     </button>
@@ -554,7 +717,7 @@
           </div>
 
           <!-- Game List Section (Initially hidden) -->
-          <div class="card" id="game-list-section" style="display: none;">
+          <div class="card" id="game-list-section" style="display: none">
             <div class="card-header">
               <h2 class="card-title">
                 <i data-lucide="list" class="icon-20 icon-inline"></i>

@@ -8,22 +8,22 @@ This comprehensive load management database provides evidence-based training loa
 
 ### Key Research Studies
 
-1. **Gabbett (2016)** - *British Journal of Sports Medicine*
+1. **Gabbett (2016)** - _British Journal of Sports Medicine_
    - ACWR >1.5 = 2-4x injury risk increase
    - Sweet spot: ACWR 0.8-1.3 for optimal adaptation
    - Sample: 2,537 athletes across multiple sports
 
-2. **Foster et al. (2001)** - *Journal of Strength and Conditioning Research*
+2. **Foster et al. (2001)** - _Journal of Strength and Conditioning Research_
    - Session RPE methodology validation
    - Training load quantification protocol
    - 98% correlation with objective measures
 
-3. **Hulin et al. (2016)** - *International Journal of Sports Physiology and Performance*
+3. **Hulin et al. (2016)** - _International Journal of Sports Physiology and Performance_
    - Training monotony and injury relationship
    - Strain calculation methodology
    - 3.2x injury risk with high monotony
 
-4. **Buchheit (2014)** - *International Journal of Sports Physiology and Performance*
+4. **Buchheit (2014)** - _International Journal of Sports Physiology and Performance_
    - Fitness-fatigue paradigm application
    - Training Stress Balance algorithms
    - HRV integration for load management
@@ -527,16 +527,16 @@ function calculateACWR(userId, date) {
   // Determine risk zone
   let riskZone, injuryRiskMultiplier;
   if (acwr < 0.8) {
-    riskZone = 'detraining';
+    riskZone = "detraining";
     injuryRiskMultiplier = 1.2; // Increased injury risk
   } else if (acwr >= 0.8 && acwr <= 1.3) {
-    riskZone = 'safe';
+    riskZone = "safe";
     injuryRiskMultiplier = 1.0; // Baseline risk
   } else if (acwr > 1.3 && acwr <= 1.5) {
-    riskZone = 'caution';
+    riskZone = "caution";
     injuryRiskMultiplier = 1.5;
   } else {
-    riskZone = 'danger';
+    riskZone = "danger";
     injuryRiskMultiplier = acwr > 1.8 ? 4.2 : 2.0;
   }
 
@@ -545,7 +545,7 @@ function calculateACWR(userId, date) {
     riskZone,
     injuryRiskMultiplier,
     acuteAverage,
-    chronicAverage
+    chronicAverage,
   };
 }
 ```
@@ -574,16 +574,16 @@ function calculateTrainingMonotony(userId, weekStartDate) {
 
   // Determine risk
   let monotonyRisk;
-  if (monotony < 1.5) monotonyRisk = 'low';
-  else if (monotony < 2.0) monotonyRisk = 'moderate';
-  else monotonyRisk = 'high'; // 3.2x injury risk
+  if (monotony < 1.5) monotonyRisk = "low";
+  else if (monotony < 2.0) monotonyRisk = "moderate";
+  else monotonyRisk = "high"; // 3.2x injury risk
 
   return {
     monotony,
     strain,
     monotonyRisk,
     meanLoad: mean,
-    loadVariation: stdDev
+    loadVariation: stdDev,
   };
 }
 ```
@@ -613,19 +613,19 @@ function calculateTSB(userId, date) {
   // Interpret TSB
   let interpretation, formScore;
   if (tsb > 10) {
-    interpretation = 'fresh'; // May be losing fitness
+    interpretation = "fresh"; // May be losing fitness
     formScore = 0.7;
   } else if (tsb >= 5 && tsb <= 10) {
-    interpretation = 'optimal'; // Competition ready
+    interpretation = "optimal"; // Competition ready
     formScore = 1.0;
   } else if (tsb >= -5 && tsb < 5) {
-    interpretation = 'neutral'; // Maintaining
+    interpretation = "neutral"; // Maintaining
     formScore = 0.85;
   } else if (tsb >= -15 && tsb < -5) {
-    interpretation = 'fatigued'; // Building fitness
+    interpretation = "fatigued"; // Building fitness
     formScore = 0.6;
   } else {
-    interpretation = 'overreached'; // High fatigue
+    interpretation = "overreached"; // High fatigue
     formScore = 0.4;
   }
 
@@ -635,7 +635,7 @@ function calculateTSB(userId, date) {
     tsb,
     interpretation,
     formScore,
-    predictedPerformance: formScore * 100
+    predictedPerformance: formScore * 100,
   };
 }
 ```
@@ -657,39 +657,39 @@ function calculateInjuryRisk(userId, date) {
 
   // Research-based weights (from meta-analysis)
   const weights = {
-    acwr: 0.31,        // Gabbett (2016)
-    sleep: 0.28,       // Milewski (2014)
-    loadSpike: 0.24,   // Hulin (2016)
-    monotony: 0.17,    // Foster (1998)
-    movement: 0.22,    // Kiesel (2007)
-    previousInjury: 0.24 // Williams (2013)
+    acwr: 0.31, // Gabbett (2016)
+    sleep: 0.28, // Milewski (2014)
+    loadSpike: 0.24, // Hulin (2016)
+    monotony: 0.17, // Foster (1998)
+    movement: 0.22, // Kiesel (2007)
+    previousInjury: 0.24, // Williams (2013)
   };
 
   // Calculate individual risk scores (0-1 scale)
   const acwrRisk = acwrData.acwr > 1.5 ? (acwrData.acwr - 1.3) / 0.7 : 0;
   const sleepRisk = sleepData.sleepDebt > 5 ? sleepData.sleepDebt / 10 : 0;
-  const monotonyRisk = monotonyData.monotony > 2.0 ? (monotonyData.monotony - 2.0) / 2.0 : 0;
+  const monotonyRisk =
+    monotonyData.monotony > 2.0 ? (monotonyData.monotony - 2.0) / 2.0 : 0;
 
   // Weighted composite score
-  const compositeRisk = (
+  const compositeRisk =
     acwrRisk * weights.acwr +
     sleepRisk * weights.sleep +
-    monotonyRisk * weights.monotony
-    // Add other factors...
-  );
+    monotonyRisk * weights.monotony;
+  // Add other factors...
 
   // Determine risk level
   let riskLevel;
-  if (compositeRisk < 0.2) riskLevel = 'low';
-  else if (compositeRisk < 0.4) riskLevel = 'moderate';
-  else if (compositeRisk < 0.7) riskLevel = 'high';
-  else riskLevel = 'critical';
+  if (compositeRisk < 0.2) riskLevel = "low";
+  else if (compositeRisk < 0.4) riskLevel = "moderate";
+  else if (compositeRisk < 0.7) riskLevel = "high";
+  else riskLevel = "critical";
 
   return {
     overallRisk: compositeRisk,
     riskLevel,
     topFactors: identifyTopRiskFactors(acwrRisk, sleepRisk, monotonyRisk),
-    recommendations: generateInterventions(riskLevel, acwrRisk, sleepRisk)
+    recommendations: generateInterventions(riskLevel, acwrRisk, sleepRisk),
   };
 }
 ```
@@ -740,9 +740,9 @@ const mlFeatures = {
 const dailyMonitoring = await loadManagement.getDailyStatus(userId);
 
 if (dailyMonitoring.readinessScore < 0.6) {
-  console.log('⚠️ Low readiness detected');
-  console.log('ACWR:', dailyMonitoring.acwr);
-  console.log('Recommendations:', dailyMonitoring.recommendations);
+  console.log("⚠️ Low readiness detected");
+  console.log("ACWR:", dailyMonitoring.acwr);
+  console.log("Recommendations:", dailyMonitoring.recommendations);
 
   // Auto-adjust training intensity
   adjustTrainingPlan(userId, -0.3); // Reduce by 30%
@@ -756,8 +756,8 @@ if (dailyMonitoring.readinessScore < 0.6) {
 const weeklyAnalysis = await loadManagement.analyzeWeek(userId, weekDate);
 
 if (weeklyAnalysis.monotony > 2.0) {
-  console.log('❌ High monotony detected - 3.2x injury risk');
-  console.log('Next week: Add variety to training');
+  console.log("❌ High monotony detected - 3.2x injury risk");
+  console.log("Next week: Add variety to training");
 
   // Generate varied training week
   generateVariedWeek(userId, weeklyAnalysis.recommendations);
@@ -770,9 +770,9 @@ if (weeklyAnalysis.monotony > 2.0) {
 // Real-time injury risk monitoring
 const injuryRisk = await loadManagement.calculateInjuryRisk(userId);
 
-if (injuryRisk.riskLevel === 'critical') {
-  console.log('🚨 CRITICAL INJURY RISK');
-  console.log('Risk factors:', injuryRisk.topFactors);
+if (injuryRisk.riskLevel === "critical") {
+  console.log("🚨 CRITICAL INJURY RISK");
+  console.log("Risk factors:", injuryRisk.topFactors);
 
   // Send alerts
   notifyAthlete(userId, injuryRisk);
@@ -789,13 +789,13 @@ if (injuryRisk.riskLevel === 'critical') {
 
 ### Key Study Results Integrated
 
-| Study | Finding | Implementation |
-|-------|---------|----------------|
-| Gabbett 2016 | ACWR >1.5 = 2-4x injury risk | ACWR monitoring with 1.3 threshold |
-| Hulin 2016 | Monotony >2.0 = 3.2x risk | Weekly monotony calculations |
-| Foster 2001 | sRPE reliable load measure | Session RPE protocol |
-| Milewski 2014 | <8hr sleep = 1.7x injury risk | Sleep integration with load |
-| Buchheit 2014 | TSB optimal at +5 to +10 | Fitness-fatigue modeling |
+| Study         | Finding                       | Implementation                     |
+| ------------- | ----------------------------- | ---------------------------------- |
+| Gabbett 2016  | ACWR >1.5 = 2-4x injury risk  | ACWR monitoring with 1.3 threshold |
+| Hulin 2016    | Monotony >2.0 = 3.2x risk     | Weekly monotony calculations       |
+| Foster 2001   | sRPE reliable load measure    | Session RPE protocol               |
+| Milewski 2014 | <8hr sleep = 1.7x injury risk | Sleep integration with load        |
+| Buchheit 2014 | TSB optimal at +5 to +10      | Fitness-fatigue modeling           |
 
 ### Expected Outcomes
 

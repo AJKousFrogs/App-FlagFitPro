@@ -1,8 +1,8 @@
 // YouTube Training Video Service
 // Integrates with YouTube Data API v3 for flag football and sprinting training videos
 
-import { config } from './config/environment.js';
-import { logger } from './logger.js';
+import { config } from "./config/environment.js";
+import { logger } from "./logger.js";
 
 class YouTubeTrainingService {
   constructor() {

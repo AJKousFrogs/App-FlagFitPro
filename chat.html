@@ -23,32 +23,36 @@
     <!-- Page-specific styles -->
     <link rel="stylesheet" href="./src/css/pages/chat.css" />
 
-
     <!-- Lucide Icons - Modern icon library similar to Radix UI -->
-    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js" crossorigin="anonymous" defer>
+    <script
+      src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
     <script src="./src/icon-helper.js" defer></script>
     <script src="./src/theme-switcher.js" defer></script>
     <!-- Universal Components -->
     <script type="module" src="./src/js/main.js"></script>
-
   </head>
   <body>
     <div class="dashboard-container">
       <!-- Mobile Overlay/Scrim (for closing sidebar on mobile) -->
       <div class="menu-scrim" aria-hidden="true" onclick="closeMenu()"></div>
-      
+
       <!-- Unified Sidebar Navigation -->
-      <div class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
+      <div
+        class="sidebar"
+        id="sidebar"
+        role="navigation"
+        aria-label="Main navigation"
+      >
         <div
           class="sidebar-logo"
           onclick="window.location.href='/dashboard.html'"
           title="FlagFit Pro"
           aria-label="Go to dashboard"
         >
-          <i
-            data-lucide="activity"
-            class="icon-20 icon-inline"
-          ></i>
+          <i data-lucide="activity" class="icon-20 icon-inline"></i>
         </div>
 
         <nav class="nav-section" aria-label="Dashboard navigation">
@@ -59,10 +63,7 @@
             id="nav-dashboard"
           >
             <span class="nav-item-icon">
-              <i
-                data-lucide="layout-dashboard"
-                class="icon-24"
-              ></i>
+              <i data-lucide="layout-dashboard" class="icon-24"></i>
             </span>
             <span class="nav-item-label">Overview</span>
           </a>
@@ -73,10 +74,7 @@
             id="nav-analytics"
           >
             <span class="nav-item-icon">
-              <i
-                data-lucide="bar-chart-3"
-                class="icon-24"
-              ></i>
+              <i data-lucide="bar-chart-3" class="icon-24"></i>
             </span>
             <span class="nav-item-label">Analytics</span>
           </a>
@@ -126,10 +124,7 @@
             id="nav-community"
           >
             <span class="nav-item-icon">
-              <i
-                data-lucide="message-circle"
-                class="icon-24"
-              ></i>
+              <i data-lucide="message-circle" class="icon-24"></i>
             </span>
             <span class="nav-item-label">Community</span>
           </a>
@@ -140,10 +135,7 @@
             id="nav-chat"
           >
             <span class="nav-item-icon">
-              <i
-                data-lucide="message-square"
-                class="icon-24"
-              ></i>
+              <i data-lucide="message-square" class="icon-24"></i>
             </span>
             <span class="nav-item-label">Chat</span>
           </a>
@@ -190,7 +182,7 @@
           >
             <i data-lucide="menu" class="icon-20"></i>
           </button>
-          
+
           <!-- Global Search (combobox pattern) -->
           <div class="search-box">
             <label for="global-search" class="sr-only"
@@ -202,6 +194,7 @@
 
             <input
               id="global-search"
+              name="search"
               class="search-input"
               type="text"
               placeholder="Search for players, teams & more"
@@ -280,7 +273,9 @@
               aria-controls="user-menu"
               aria-expanded="false"
             >
-              <div class="user-avatar" id="user-avatar" aria-hidden="true">U</div>
+              <div class="user-avatar" id="user-avatar" aria-hidden="true">
+                U
+              </div>
             </button>
 
             <!-- User Menu Dropdown -->
@@ -327,13 +322,25 @@
             </p>
           </div>
           <div class="chat-actions u-display-flex u-gap-8">
-            <button class="chat-action-btn" id="voiceCallBtn" aria-label="Start voice call">
+            <button
+              class="chat-action-btn"
+              id="voiceCallBtn"
+              aria-label="Start voice call"
+            >
               <i data-lucide="phone" class="icon-16"></i>
             </button>
-            <button class="chat-action-btn" id="videoCallBtn" aria-label="Start video call">
+            <button
+              class="chat-action-btn"
+              id="videoCallBtn"
+              aria-label="Start video call"
+            >
               <i data-lucide="video" class="icon-16"></i>
             </button>
-            <button class="chat-action-btn" id="channelSettingsBtn" aria-label="Channel settings">
+            <button
+              class="chat-action-btn"
+              id="channelSettingsBtn"
+              aria-label="Channel settings"
+            >
               <i data-lucide="settings" class="icon-16"></i>
             </button>
           </div>
@@ -352,8 +359,8 @@
 
             <div class="channels-list" id="channelsList">
               <div class="channel-category">Team Channels</div>
-              <div 
-                class="channel-item active" 
+              <div
+                class="channel-item active"
                 data-channel="team-general"
                 role="button"
                 tabindex="0"
@@ -368,8 +375,8 @@
                 </div>
               </div>
 
-              <div 
-                class="channel-item" 
+              <div
+                class="channel-item"
                 data-channel="strategy"
                 role="button"
                 tabindex="0"
@@ -380,11 +387,13 @@
                   <div class="channel-name">strategy</div>
                   <div class="channel-preview">New play formations</div>
                 </div>
-                <span class="unread-count" aria-label="3 unread messages">3</span>
+                <span class="unread-count" aria-label="3 unread messages"
+                  >3</span
+                >
               </div>
 
-              <div 
-                class="channel-item" 
+              <div
+                class="channel-item"
                 data-channel="training"
                 role="button"
                 tabindex="0"
@@ -398,8 +407,8 @@
               </div>
 
               <div class="channel-category">Direct Messages</div>
-              <div 
-                class="channel-item" 
+              <div
+                class="channel-item"
                 data-channel="coach-mike"
                 role="button"
                 tabindex="0"
@@ -413,8 +422,8 @@
                 <div class="online-status" aria-label="Online"></div>
               </div>
 
-              <div 
-                class="channel-item" 
+              <div
+                class="channel-item"
                 data-channel="sarah-captain"
                 role="button"
                 tabindex="0"
@@ -425,7 +434,9 @@
                   <div class="channel-name">Sarah (Captain)</div>
                   <div class="channel-preview">Team meeting tomorrow?</div>
                 </div>
-                <span class="unread-count" aria-label="1 unread message">1</span>
+                <span class="unread-count" aria-label="1 unread message"
+                  >1</span
+                >
               </div>
             </div>
           </aside>
@@ -438,12 +449,18 @@
               aria-live="polite"
               aria-label="Chat messages"
             >
-              <div class="message" role="article" aria-label="Message from Coach Mike at 2:30 PM">
+              <div
+                class="message"
+                role="article"
+                aria-label="Message from Coach Mike at 2:30 PM"
+              >
                 <div class="message-avatar">CM</div>
                 <div class="message-content">
                   <div class="message-header">
                     <span class="message-author">Coach Mike</span>
-                    <span class="message-time" aria-label="Today at 2:30 PM">Today at 2:30 PM</span>
+                    <span class="message-time" aria-label="Today at 2:30 PM"
+                      >Today at 2:30 PM</span
+                    >
                   </div>
                   <div class="message-text">
                     Great training session everyone! I saw some real
@@ -454,11 +471,21 @@
                       class="icon-16 inline-block align-middle"
                     ></i>
                   </div>
-                  <div class="message-actions" role="toolbar" aria-label="Message actions">
-                    <button class="action-btn-mini" aria-label="React to message">
+                  <div
+                    class="message-actions"
+                    role="toolbar"
+                    aria-label="Message actions"
+                  >
+                    <button
+                      class="action-btn-mini"
+                      aria-label="React to message"
+                    >
                       <i data-lucide="smile" class="icon-14"></i>
                     </button>
-                    <button class="action-btn-mini" aria-label="Reply to message">
+                    <button
+                      class="action-btn-mini"
+                      aria-label="Reply to message"
+                    >
                       <i data-lucide="reply" class="icon-14"></i>
                     </button>
                     <button class="action-btn-mini" aria-label="More options">
@@ -496,25 +523,44 @@
                 </div>
               </div>
 
-              <div class="message own" role="article" aria-label="Your message at 3:15 PM">
+              <div
+                class="message own"
+                role="article"
+                aria-label="Your message at 3:15 PM"
+              >
                 <div class="message-avatar">ME</div>
                 <div class="message-content">
                   <div class="message-header">
                     <span class="message-author">You</span>
-                    <span class="message-time" aria-label="Today at 3:15 PM">Today at 3:15 PM</span>
+                    <span class="message-time" aria-label="Today at 3:15 PM"
+                      >Today at 3:15 PM</span
+                    >
                   </div>
                   <div class="message-text">
                     I'm in! Let's meet at the field around 6 PM?
                   </div>
                   <div class="message-status">
-                    <i data-lucide="check-check" class="status-read icon-14"></i>
+                    <i
+                      data-lucide="check-check"
+                      class="status-read icon-14"
+                    ></i>
                     <span class="message-time">3:15 PM</span>
                   </div>
-                  <div class="message-actions" role="toolbar" aria-label="Message actions">
-                    <button class="action-btn-mini" aria-label="React to message">
+                  <div
+                    class="message-actions"
+                    role="toolbar"
+                    aria-label="Message actions"
+                  >
+                    <button
+                      class="action-btn-mini"
+                      aria-label="React to message"
+                    >
                       <i data-lucide="smile" class="icon-14"></i>
                     </button>
-                    <button class="action-btn-mini" aria-label="Reply to message">
+                    <button
+                      class="action-btn-mini"
+                      aria-label="Reply to message"
+                    >
                       <i data-lucide="reply" class="icon-14"></i>
                     </button>
                     <button class="action-btn-mini" aria-label="More options">

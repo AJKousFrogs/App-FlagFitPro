@@ -299,7 +299,6 @@ describe("API Configuration - Comprehensive Tests", () => {
 
   describe("Request Caching", () => {
     it("should cache GET requests when enabled", async () => {
-
       // Mock cache implementation
       const cache = new Map();
       apiConfig.getFromCache = vi

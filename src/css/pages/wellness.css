@@ -1,7 +1,11 @@
 /* Wellness Page Specific Styles */
 
 .wellness-hero {
-  background: linear-gradient(135deg, var(--color-primary-subtle), var(--color-success-subtle));
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-subtle),
+    var(--color-success-subtle)
+  );
   border-radius: var(--radius-xl);
   overflow: hidden;
 }
@@ -125,16 +129,16 @@
     grid-template-columns: 1fr;
     gap: var(--space-4);
   }
-  
+
   .recovery-section,
   .coming-soon-section {
     padding: var(--space-6);
   }
-  
+
   .wellness-hero {
     margin-bottom: var(--space-8);
   }
-  
+
   .wellness-card {
     padding: var(--space-5);
   }
@@ -148,10 +152,11 @@
     background: var(--color-surface-secondary);
     border-color: var(--color-border-secondary);
   }
-  
+
   .wellness-hero {
-    background: linear-gradient(135deg, 
-      rgba(59, 130, 246, 0.1), 
+    background: linear-gradient(
+      135deg,
+      rgba(59, 130, 246, 0.1),
       rgba(16, 201, 107, 0.1)
     );
   }
@@ -180,9 +185,10 @@
 
 /* Loading states */
 .wellness-loading {
-  background: linear-gradient(90deg, 
-    var(--color-background) 0%, 
-    var(--color-border-light) 50%, 
+  background: linear-gradient(
+    90deg,
+    var(--color-background) 0%,
+    var(--color-border-light) 50%,
     var(--color-background) 100%
   );
   background-size: 200% 100%;

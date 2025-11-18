@@ -1,6 +1,8 @@
 // Performance Data API Integration
 // Handles backend connectivity for athlete performance tracking and trend analysis
 
+import { logger } from "./logger.js";
+
 export class PerformanceAPI {
   constructor() {
     this.baseUrl =

@@ -5,7 +5,7 @@ import { apiClient, auth } from "./api-config.js";
 import { loadingManager } from "./loading-manager.js";
 import { logger } from "./logger.js";
 import { secureStorage } from "./secure-storage.js";
-import { config, security } from "./config/environment.js";
+import { config } from "./config/environment.js";
 
 // Import mock authentication for development/demo environments
 let mockAuth = null;
@@ -105,7 +105,7 @@ class AuthManager {
     if (this.isInitializing) {
       if (isDevelopment)
         logger.debug(
-          "⏳ Still initializing, deferring auth check to page logic"
+          "⏳ Still initializing, deferring auth check to page logic",
         );
       return;
     }
@@ -308,12 +308,14 @@ class AuthManager {
             logger.debug("Final auth check before redirect:", {
               tokenExists: !!this.token,
               userExists: !!this.user,
-              isAuthenticated: this.isAuthenticated()
+              isAuthenticated: this.isAuthenticated(),
             });
 
             // Double-check auth state with a brief delay
             if (this.isAuthenticated()) {
-              logger.debug("Authentication confirmed, proceeding with redirect");
+              logger.debug(
+                "Authentication confirmed, proceeding with redirect",
+              );
               this.redirectToDashboard();
             } else {
               logger.warn("Auth state invalid at redirect time");
@@ -322,7 +324,9 @@ class AuthManager {
 
               // Try again after loading
               if (this.isAuthenticated()) {
-                logger.success("Auth restored from storage, proceeding with redirect");
+                logger.success(
+                  "Auth restored from storage, proceeding with redirect",
+                );
                 this.redirectToDashboard();
               } else {
                 logger.error("Unable to restore authentication");
@@ -518,7 +522,7 @@ class AuthManager {
     if (!this._lastAuthLogTime) {
       this._lastAuthLogTime = 0;
     }
-    const shouldLog = isDevelopment && (now - this._lastAuthLogTime > 1000);
+    const shouldLog = isDevelopment && now - this._lastAuthLogTime > 1000;
 
     if (shouldLog) {
       logger.debug("🔍 Checking authentication state...");
@@ -544,9 +548,7 @@ class AuthManager {
           "❌ SECURITY VIOLATION: Demo token detected in production environment",
         );
         this.clearAuth();
-        this.showError(
-          "Security violation detected. Please contact support.",
-        );
+        this.showError("Security violation detected. Please contact support.");
         return false;
       }
 
@@ -762,9 +764,10 @@ class AuthManager {
     await this.waitForInit();
 
     // Check if we have stored auth data first (might not be loaded yet)
-    const hasStoredAuth = localStorage.getItem('authToken') ||
-                          localStorage.getItem('__auth_token_enc') ||
-                          sessionStorage.getItem('authToken');
+    const hasStoredAuth =
+      localStorage.getItem("authToken") ||
+      localStorage.getItem("__auth_token_enc") ||
+      sessionStorage.getItem("authToken");
 
     logger.debug("🔍 Auth check after initialization:");
     logger.debug("   - Is authenticated:", this.isAuthenticated());
@@ -774,7 +777,9 @@ class AuthManager {
 
     // In development mode, allow access even if auth check fails (for testing)
     if (isDevelopment && hasStoredAuth && !this.isAuthenticated()) {
-      logger.debug("⚠️ Development mode: Stored auth found but not loaded, allowing access");
+      logger.debug(
+        "⚠️ Development mode: Stored auth found but not loaded, allowing access",
+      );
       // Try to reload auth from storage
       this.loadStoredAuth();
       return true;
@@ -782,7 +787,9 @@ class AuthManager {
 
     // In development mode, allow access without auth for testing
     if (isDevelopment && !hasStoredAuth) {
-      logger.debug("⚠️ Development mode: No auth found, allowing access for testing");
+      logger.debug(
+        "⚠️ Development mode: No auth found, allowing access for testing",
+      );
       return true;
     }
 

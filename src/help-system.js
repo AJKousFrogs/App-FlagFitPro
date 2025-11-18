@@ -5,45 +5,53 @@ export class HelpSystem {
   constructor() {
     this.faqs = [
       {
-        question: 'How do I start a training session?',
-        answer: 'Navigate to the Training page from the sidebar, select a training program, and click "Start Session". You can track your progress in real-time.',
-        category: 'Training'
+        question: "How do I start a training session?",
+        answer:
+          'Navigate to the Training page from the sidebar, select a training program, and click "Start Session". You can track your progress in real-time.',
+        category: "Training",
       },
       {
-        question: 'How do I add team members to my roster?',
-        answer: 'Go to the Roster page and click "Add Player". Fill in the player\'s information and save. You can also import players from a CSV file.',
-        category: 'Team Management'
+        question: "How do I add team members to my roster?",
+        answer:
+          'Go to the Roster page and click "Add Player". Fill in the player\'s information and save. You can also import players from a CSV file.',
+        category: "Team Management",
       },
       {
-        question: 'How do I join a tournament?',
-        answer: 'Visit the Tournaments page to see upcoming events. Click on a tournament to view details and register your team.',
-        category: 'Tournaments'
+        question: "How do I join a tournament?",
+        answer:
+          "Visit the Tournaments page to see upcoming events. Click on a tournament to view details and register your team.",
+        category: "Tournaments",
       },
       {
-        question: 'How do I track my performance?',
-        answer: 'Your performance metrics are displayed on the Dashboard. Visit the Analytics page for detailed charts and insights.',
-        category: 'Analytics'
+        question: "How do I track my performance?",
+        answer:
+          "Your performance metrics are displayed on the Dashboard. Visit the Analytics page for detailed charts and insights.",
+        category: "Analytics",
       },
       {
-        question: 'Can I customize my dashboard?',
-        answer: 'Currently, the dashboard layout is fixed, but we\'re working on customization features. Stay tuned for updates!',
-        category: 'Settings'
+        question: "Can I customize my dashboard?",
+        answer:
+          "Currently, the dashboard layout is fixed, but we're working on customization features. Stay tuned for updates!",
+        category: "Settings",
       },
       {
-        question: 'How do I reset my password?',
-        answer: 'Click "Forgot Password" on the login page, enter your email, and follow the instructions sent to your inbox.',
-        category: 'Account'
+        question: "How do I reset my password?",
+        answer:
+          'Click "Forgot Password" on the login page, enter your email, and follow the instructions sent to your inbox.',
+        category: "Account",
       },
       {
-        question: 'What keyboard shortcuts are available?',
-        answer: 'Press ? to see all available keyboard shortcuts. Common shortcuts include G+D for Dashboard, G+T for Training, and / to focus search.',
-        category: 'Navigation'
+        question: "What keyboard shortcuts are available?",
+        answer:
+          "Press ? to see all available keyboard shortcuts. Common shortcuts include G+D for Dashboard, G+T for Training, and / to focus search.",
+        category: "Navigation",
       },
       {
-        question: 'How do I contact support?',
-        answer: 'You can reach support through the Help menu, or email support@flagfitpro.com. We typically respond within 24 hours.',
-        category: 'Support'
-      }
+        question: "How do I contact support?",
+        answer:
+          "You can reach support through the Help menu, or email support@flagfitpro.com. We typically respond within 24 hours.",
+        category: "Support",
+      },
     ];
 
     this.init();
@@ -52,60 +60,60 @@ export class HelpSystem {
   init() {
     // Add help menu to navigation if not present
     this.addHelpMenu();
-    
+
     // Initialize contextual help tooltips
     this.initContextualHelp();
   }
 
   addHelpMenu() {
     // Check if help menu already exists
-    if (document.getElementById('help-menu-item')) return;
+    if (document.getElementById("help-menu-item")) return;
 
     // Find navigation sidebar
-    const sidebar = document.querySelector('.sidebar');
+    const sidebar = document.querySelector(".sidebar");
     if (!sidebar) return;
 
     // Find settings section or create help section
-    let helpSection = sidebar.querySelector('.nav-section:last-child');
+    let helpSection = sidebar.querySelector(".nav-section:last-child");
     if (!helpSection) {
-      helpSection = document.createElement('div');
-      helpSection.className = 'nav-section';
+      helpSection = document.createElement("div");
+      helpSection.className = "nav-section";
       sidebar.appendChild(helpSection);
     }
 
-    const helpItem = document.createElement('a');
-    helpItem.id = 'help-menu-item';
-    helpItem.href = '#';
-    helpItem.className = 'nav-item';
+    const helpItem = document.createElement("a");
+    helpItem.id = "help-menu-item";
+    helpItem.href = "#";
+    helpItem.className = "nav-item";
     helpItem.innerHTML = `
       <div class="nav-item-icon">
         <i data-lucide="help-circle" aria-hidden="true"></i>
       </div>
       <span>Help</span>
     `;
-    helpItem.addEventListener('click', (e) => {
+    helpItem.addEventListener("click", (e) => {
       e.preventDefault();
       this.showHelpModal();
     });
 
     helpSection.appendChild(helpItem);
 
-    if (typeof lucide !== 'undefined') {
+    if (typeof lucide !== "undefined") {
       lucide.createIcons();
     }
   }
 
   showHelpModal() {
     // Remove existing modal
-    const existing = document.getElementById('help-modal');
+    const existing = document.getElementById("help-modal");
     if (existing) existing.remove();
 
-    const modal = document.createElement('div');
-    modal.id = 'help-modal';
-    modal.className = 'help-modal';
-    modal.setAttribute('role', 'dialog');
-    modal.setAttribute('aria-labelledby', 'help-title');
-    modal.setAttribute('aria-modal', 'true');
+    const modal = document.createElement("div");
+    modal.id = "help-modal";
+    modal.className = "help-modal";
+    modal.setAttribute("role", "dialog");
+    modal.setAttribute("aria-labelledby", "help-title");
+    modal.setAttribute("aria-modal", "true");
 
     modal.innerHTML = `
       <div class="help-overlay"></div>
@@ -141,7 +149,7 @@ export class HelpSystem {
 
     document.body.appendChild(modal);
 
-    if (typeof lucide !== 'undefined') {
+    if (typeof lucide !== "undefined") {
       lucide.createIcons();
     }
 
@@ -150,20 +158,23 @@ export class HelpSystem {
   }
 
   renderFAQ() {
-    const categories = [...new Set(this.faqs.map(faq => faq.category))];
-    
+    const categories = [...new Set(this.faqs.map((faq) => faq.category))];
+
     return `
       <div class="help-search">
         <input type="search" placeholder="Search FAQs..." id="faq-search" aria-label="Search FAQs">
         <i data-lucide="search" aria-hidden="true"></i>
       </div>
       <div class="help-faq-list">
-        ${categories.map(category => `
+        ${categories
+          .map(
+            (category) => `
           <div class="help-faq-category">
             <h3>${category}</h3>
             ${this.faqs
-              .filter(faq => faq.category === category)
-              .map((faq, index) => `
+              .filter((faq) => faq.category === category)
+              .map(
+                (faq, _index) => `
                 <div class="help-faq-item" data-faq-index="${this.faqs.indexOf(faq)}">
                   <button class="help-faq-question" aria-expanded="false">
                     <span>${faq.question}</span>
@@ -173,9 +184,13 @@ export class HelpSystem {
                     ${faq.answer}
                   </div>
                 </div>
-              `).join('')}
+              `,
+              )
+              .join("")}
           </div>
-        `).join('')}
+        `,
+          )
+          .join("")}
       </div>
     `;
   }
@@ -296,114 +311,123 @@ export class HelpSystem {
   }
 
   attachHelpListeners(modal) {
-    const closeBtn = modal.querySelector('.help-close');
-    const overlay = modal.querySelector('.help-overlay');
-    const tabs = modal.querySelectorAll('.help-tab');
-    const faqItems = modal.querySelectorAll('.help-faq-item');
-    const searchInput = modal.querySelector('#faq-search');
+    const closeBtn = modal.querySelector(".help-close");
+    const overlay = modal.querySelector(".help-overlay");
+    const tabs = modal.querySelectorAll(".help-tab");
+    const faqItems = modal.querySelectorAll(".help-faq-item");
+    const searchInput = modal.querySelector("#faq-search");
 
-    closeBtn.addEventListener('click', () => this.closeHelpModal(modal));
-    overlay.addEventListener('click', () => this.closeHelpModal(modal));
+    closeBtn.addEventListener("click", () => this.closeHelpModal(modal));
+    overlay.addEventListener("click", () => this.closeHelpModal(modal));
 
-    tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
         const tabName = tab.dataset.tab;
         this.switchTab(tabName, modal);
       });
     });
 
-    faqItems.forEach(item => {
-      const question = item.querySelector('.help-faq-question');
-      question.addEventListener('click', () => {
-        const answer = item.querySelector('.help-faq-answer');
-        const isExpanded = question.getAttribute('aria-expanded') === 'true';
-        
-        question.setAttribute('aria-expanded', !isExpanded);
-        answer.style.display = isExpanded ? 'none' : 'block';
-        
-        const icon = question.querySelector('i');
+    faqItems.forEach((item) => {
+      const question = item.querySelector(".help-faq-question");
+      question.addEventListener("click", () => {
+        const answer = item.querySelector(".help-faq-answer");
+        const isExpanded = question.getAttribute("aria-expanded") === "true";
+
+        question.setAttribute("aria-expanded", !isExpanded);
+        answer.style.display = isExpanded ? "none" : "block";
+
+        const icon = question.querySelector("i");
         if (icon) {
-          icon.setAttribute('data-lucide', isExpanded ? 'chevron-down' : 'chevron-up');
-          if (typeof lucide !== 'undefined') lucide.createIcons();
+          icon.setAttribute(
+            "data-lucide",
+            isExpanded ? "chevron-down" : "chevron-up",
+          );
+          if (typeof lucide !== "undefined") lucide.createIcons();
         }
       });
     });
 
     if (searchInput) {
-      searchInput.addEventListener('input', (e) => {
+      searchInput.addEventListener("input", (e) => {
         this.filterFAQs(e.target.value, modal);
       });
     }
 
     // Contact form
-    const contactForm = modal.querySelector('#contact-form');
+    const contactForm = modal.querySelector("#contact-form");
     if (contactForm) {
-      contactForm.addEventListener('submit', (e) => {
+      contactForm.addEventListener("submit", (e) => {
         e.preventDefault();
         this.handleContactSubmit(contactForm);
       });
     }
 
     // Keyboard navigation
-    modal.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
+    modal.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
         this.closeHelpModal(modal);
       }
     });
   }
 
   switchTab(tabName, modal) {
-    const tabs = modal.querySelectorAll('.help-tab');
-    const contents = modal.querySelectorAll('.help-tab-content');
+    const tabs = modal.querySelectorAll(".help-tab");
+    const contents = modal.querySelectorAll(".help-tab-content");
 
-    tabs.forEach(tab => {
-      tab.classList.toggle('active', tab.dataset.tab === tabName);
+    tabs.forEach((tab) => {
+      tab.classList.toggle("active", tab.dataset.tab === tabName);
     });
 
-    contents.forEach(content => {
-      content.style.display = content.id === `help-${tabName}` ? 'block' : 'none';
+    contents.forEach((content) => {
+      content.style.display =
+        content.id === `help-${tabName}` ? "block" : "none";
     });
 
-    if (typeof lucide !== 'undefined') {
+    if (typeof lucide !== "undefined") {
       lucide.createIcons();
     }
   }
 
   filterFAQs(query, modal) {
-    const faqItems = modal.querySelectorAll('.help-faq-item');
+    const faqItems = modal.querySelectorAll(".help-faq-item");
     const lowerQuery = query.toLowerCase();
 
-    faqItems.forEach(item => {
-      const question = item.querySelector('.help-faq-question span').textContent;
-      const answer = item.querySelector('.help-faq-answer').textContent;
-      const matches = question.toLowerCase().includes(lowerQuery) || 
-                     answer.toLowerCase().includes(lowerQuery);
-      
-      item.style.display = matches ? 'block' : 'none';
+    faqItems.forEach((item) => {
+      const question = item.querySelector(
+        ".help-faq-question span",
+      ).textContent;
+      const answer = item.querySelector(".help-faq-answer").textContent;
+      const matches =
+        question.toLowerCase().includes(lowerQuery) ||
+        answer.toLowerCase().includes(lowerQuery);
+
+      item.style.display = matches ? "block" : "none";
     });
   }
 
   handleContactSubmit(form) {
-    const subject = form.querySelector('#contact-subject').value;
-    const message = form.querySelector('#contact-message').value;
-    
+    const subject = form.querySelector("#contact-subject").value;
+    const message = form.querySelector("#contact-message").value;
+
     // In a real app, this would send to a backend
-    alert(`Thank you! Your message has been sent.\n\nSubject: ${subject}\n\nWe'll get back to you soon.`);
+    alert(
+      `Thank you! Your message has been sent.\n\nSubject: ${subject}\n\nMessage: ${message}\n\nWe'll get back to you soon.`,
+    );
     form.reset();
   }
 
   closeHelpModal(modal) {
-    modal.style.opacity = '0';
+    modal.style.opacity = "0";
     setTimeout(() => modal.remove(), 300);
   }
 
   initContextualHelp() {
     // Add help icons to complex features
-    const helpTriggers = document.querySelectorAll('[data-help]');
-    helpTriggers.forEach(trigger => {
-      trigger.addEventListener('click', (e) => {
+    const helpTriggers = document.querySelectorAll("[data-help]");
+    helpTriggers.forEach((trigger) => {
+      trigger.addEventListener("click", (e) => {
         e.preventDefault();
-        const helpTopic = trigger.getAttribute('data-help');
+        const helpTopic = trigger.getAttribute("data-help");
         this.showContextualHelp(helpTopic, trigger);
       });
     });
@@ -411,31 +435,33 @@ export class HelpSystem {
 
   showContextualHelp(topic, element) {
     // Show tooltip or modal with contextual help
-    const tooltip = document.createElement('div');
-    tooltip.className = 'help-tooltip';
+    const tooltip = document.createElement("div");
+    tooltip.className = "help-tooltip";
     tooltip.textContent = this.getContextualHelpText(topic);
-    
+
     const rect = element.getBoundingClientRect();
     tooltip.style.top = `${rect.bottom + 8}px`;
     tooltip.style.left = `${rect.left}px`;
-    
+
     document.body.appendChild(tooltip);
-    
+
     setTimeout(() => tooltip.remove(), 5000);
   }
 
   getContextualHelpText(topic) {
     const helpTexts = {
-      'training': 'Start a training session by selecting a program and clicking "Start Session"',
-      'roster': 'Add players to your roster by clicking "Add Player" and filling in their information',
-      'analytics': 'View detailed performance metrics and trends in the Analytics section',
-      'tournaments': 'Browse and register for upcoming tournaments'
+      training:
+        'Start a training session by selecting a program and clicking "Start Session"',
+      roster:
+        'Add players to your roster by clicking "Add Player" and filling in their information',
+      analytics:
+        "View detailed performance metrics and trends in the Analytics section",
+      tournaments: "Browse and register for upcoming tournaments",
     };
-    
-    return helpTexts[topic] || 'Help information not available';
+
+    return helpTexts[topic] || "Help information not available";
   }
 }
 
 // Initialize help system
 export const helpSystem = new HelpSystem();
-

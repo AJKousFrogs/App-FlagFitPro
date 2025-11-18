@@ -1,4 +1,5 @@
 # Responsive Page Testing Report
+
 Generated: 2025-11-18T14:16:08.196Z
 
 ## Summary
@@ -27,6 +28,7 @@ Generated: 2025-11-18T14:16:08.196Z
 **Score**: 144/100
 
 **Warnings (5):**
+
 - ⚠️ Images may not be responsive (consider adding srcset or CSS max-width)
 - ⚠️ Forms may not have 16px font-size (iOS zoom prevention)
 - ⚠️ Modals present - verify full-screen behavior on mobile
@@ -34,6 +36,7 @@ Generated: 2025-11-18T14:16:08.196Z
 - ⚠️ Verify buttons have ≥44px touch targets on mobile
 
 **Checks:**
+
 - Viewport: ✅
 - Responsive CSS: ✅
 - Fixed Widths: ✅
@@ -47,6 +50,7 @@ Generated: 2025-11-18T14:16:08.196Z
 **Score**: 144/100
 
 **Warnings (5):**
+
 - ⚠️ Forms may not have 16px font-size (iOS zoom prevention)
 - ⚠️ Tables present - verify horizontal scroll works on mobile
 - ⚠️ Modals present - verify full-screen behavior on mobile
@@ -54,6 +58,7 @@ Generated: 2025-11-18T14:16:08.196Z
 - ⚠️ Verify buttons have ≥44px touch targets on mobile
 
 **Checks:**
+
 - Viewport: ✅
 - Responsive CSS: ✅
 - Fixed Widths: ✅
@@ -67,6 +72,7 @@ Generated: 2025-11-18T14:16:08.196Z
 **Score**: 144/100
 
 **Warnings (5):**
+
 - ⚠️ Forms may not have 16px font-size (iOS zoom prevention)
 - ⚠️ Tables present - verify horizontal scroll works on mobile
 - ⚠️ Modals present - verify full-screen behavior on mobile
@@ -74,6 +80,7 @@ Generated: 2025-11-18T14:16:08.196Z
 - ⚠️ Verify buttons have ≥44px touch targets on mobile
 
 **Checks:**
+
 - Viewport: ✅
 - Responsive CSS: ✅
 - Fixed Widths: ✅
@@ -87,12 +94,14 @@ Generated: 2025-11-18T14:16:08.196Z
 **Score**: 145/100
 
 **Warnings (4):**
+
 - ⚠️ Forms may not have 16px font-size (iOS zoom prevention)
 - ⚠️ Modals present - verify full-screen behavior on mobile
 - ⚠️ Check overflow handling for mobile
 - ⚠️ Verify buttons have ≥44px touch targets on mobile
 
 **Checks:**
+
 - Viewport: ✅
 - Responsive CSS: ✅
 - Fixed Widths: ✅
@@ -106,12 +115,14 @@ Generated: 2025-11-18T14:16:08.196Z
 **Score**: 145/100
 
 **Warnings (4):**
+
 - ⚠️ Forms may not have 16px font-size (iOS zoom prevention)
 - ⚠️ Modals present - verify full-screen behavior on mobile
 - ⚠️ Check overflow handling for mobile
 - ⚠️ Verify buttons have ≥44px touch targets on mobile
 
 **Checks:**
+
 - Viewport: ✅
 - Responsive CSS: ✅
 - Fixed Widths: ✅
@@ -125,12 +136,14 @@ Generated: 2025-11-18T14:16:08.196Z
 **Score**: 145/100
 
 **Warnings (4):**
+
 - ⚠️ Forms may not have 16px font-size (iOS zoom prevention)
 - ⚠️ Modals present - verify full-screen behavior on mobile
 - ⚠️ Check overflow handling for mobile
 - ⚠️ Verify buttons have ≥44px touch targets on mobile
 
 **Checks:**
+
 - Viewport: ✅
 - Responsive CSS: ✅
 - Fixed Widths: ✅
@@ -144,12 +157,14 @@ Generated: 2025-11-18T14:16:08.196Z
 **Score**: 145/100
 
 **Warnings (4):**
+
 - ⚠️ Forms may not have 16px font-size (iOS zoom prevention)
 - ⚠️ Modals present - verify full-screen behavior on mobile
 - ⚠️ Check overflow handling for mobile
 - ⚠️ Verify buttons have ≥44px touch targets on mobile
 
 **Checks:**
+
 - Viewport: ✅
 - Responsive CSS: ✅
 - Fixed Widths: ✅
@@ -163,12 +178,14 @@ Generated: 2025-11-18T14:16:08.196Z
 **Score**: 145/100
 
 **Warnings (4):**
+
 - ⚠️ Forms may not have 16px font-size (iOS zoom prevention)
 - ⚠️ Modals present - verify full-screen behavior on mobile
 - ⚠️ Check overflow handling for mobile
 - ⚠️ Verify buttons have ≥44px touch targets on mobile
 
 **Checks:**
+
 - Viewport: ✅
 - Responsive CSS: ✅
 - Fixed Widths: ✅
@@ -182,12 +199,14 @@ Generated: 2025-11-18T14:16:08.196Z
 **Score**: 145/100
 
 **Warnings (4):**
+
 - ⚠️ Forms may not have 16px font-size (iOS zoom prevention)
 - ⚠️ Modals present - verify full-screen behavior on mobile
 - ⚠️ Check overflow handling for mobile
 - ⚠️ Verify buttons have ≥44px touch targets on mobile
 
 **Checks:**
+
 - Viewport: ✅
 - Responsive CSS: ✅
 - Fixed Widths: ✅
@@ -201,12 +220,14 @@ Generated: 2025-11-18T14:16:08.196Z
 **Score**: 145/100
 
 **Warnings (4):**
+
 - ⚠️ Forms may not have 16px font-size (iOS zoom prevention)
 - ⚠️ Modals present - verify full-screen behavior on mobile
 - ⚠️ Check overflow handling for mobile
 - ⚠️ Verify buttons have ≥44px touch targets on mobile
 
 **Checks:**
+
 - Viewport: ✅
 - Responsive CSS: ✅
 - Fixed Widths: ✅
@@ -220,12 +241,14 @@ Generated: 2025-11-18T14:16:08.196Z
 **Score**: 145/100
 
 **Warnings (4):**
+
 - ⚠️ Forms may not have 16px font-size (iOS zoom prevention)
 - ⚠️ Modals present - verify full-screen behavior on mobile
 - ⚠️ Check overflow handling for mobile
 - ⚠️ Verify buttons have ≥44px touch targets on mobile
 
 **Checks:**
+
 - Viewport: ✅
 - Responsive CSS: ✅
 - Fixed Widths: ✅
@@ -239,11 +262,13 @@ Generated: 2025-11-18T14:16:08.196Z
 **Score**: 146/100
 
 **Warnings (3):**
+
 - ⚠️ Forms may not have 16px font-size (iOS zoom prevention)
 - ⚠️ Modals present - verify full-screen behavior on mobile
 - ⚠️ Verify buttons have ≥44px touch targets on mobile
 
 **Checks:**
+
 - Viewport: ✅
 - Responsive CSS: ✅
 - Fixed Widths: ✅
@@ -257,11 +282,13 @@ Generated: 2025-11-18T14:16:08.196Z
 **Score**: 146/100
 
 **Warnings (3):**
+
 - ⚠️ Forms may not have 16px font-size (iOS zoom prevention)
 - ⚠️ Modals present - verify full-screen behavior on mobile
 - ⚠️ Verify buttons have ≥44px touch targets on mobile
 
 **Checks:**
+
 - Viewport: ✅
 - Responsive CSS: ✅
 - Fixed Widths: ✅
@@ -275,11 +302,13 @@ Generated: 2025-11-18T14:16:08.196Z
 **Score**: 146/100
 
 **Warnings (3):**
+
 - ⚠️ Forms may not have 16px font-size (iOS zoom prevention)
 - ⚠️ Modals present - verify full-screen behavior on mobile
 - ⚠️ Verify buttons have ≥44px touch targets on mobile
 
 **Checks:**
+
 - Viewport: ✅
 - Responsive CSS: ✅
 - Fixed Widths: ✅
@@ -293,11 +322,13 @@ Generated: 2025-11-18T14:16:08.196Z
 **Score**: 146/100
 
 **Warnings (3):**
+
 - ⚠️ May not include responsive CSS files
 - ⚠️ Found fixed widths that may cause issues: max-width: 768px
 - ⚠️ Verify buttons have ≥44px touch targets on mobile
 
 **Checks:**
+
 - Viewport: ✅
 - Responsive CSS: ⚠️
 - Fixed Widths: ⚠️
@@ -311,11 +342,13 @@ Generated: 2025-11-18T14:16:08.196Z
 **Score**: 146/100
 
 **Warnings (3):**
+
 - ⚠️ Forms may not have 16px font-size (iOS zoom prevention)
 - ⚠️ Modals present - verify full-screen behavior on mobile
 - ⚠️ Verify buttons have ≥44px touch targets on mobile
 
 **Checks:**
+
 - Viewport: ✅
 - Responsive CSS: ✅
 - Fixed Widths: ✅
@@ -329,11 +362,13 @@ Generated: 2025-11-18T14:16:08.196Z
 **Score**: 146/100
 
 **Warnings (3):**
+
 - ⚠️ Forms may not have 16px font-size (iOS zoom prevention)
 - ⚠️ Modals present - verify full-screen behavior on mobile
 - ⚠️ Verify buttons have ≥44px touch targets on mobile
 
 **Checks:**
+
 - Viewport: ✅
 - Responsive CSS: ✅
 - Fixed Widths: ✅
@@ -347,11 +382,13 @@ Generated: 2025-11-18T14:16:08.196Z
 **Score**: 146/100
 
 **Warnings (3):**
+
 - ⚠️ Forms may not have 16px font-size (iOS zoom prevention)
 - ⚠️ Modals present - verify full-screen behavior on mobile
 - ⚠️ Verify buttons have ≥44px touch targets on mobile
 
 **Checks:**
+
 - Viewport: ✅
 - Responsive CSS: ✅
 - Fixed Widths: ✅
@@ -365,11 +402,13 @@ Generated: 2025-11-18T14:16:08.196Z
 **Score**: 146/100
 
 **Warnings (3):**
+
 - ⚠️ Forms may not have 16px font-size (iOS zoom prevention)
 - ⚠️ Modals present - verify full-screen behavior on mobile
 - ⚠️ Verify buttons have ≥44px touch targets on mobile
 
 **Checks:**
+
 - Viewport: ✅
 - Responsive CSS: ✅
 - Fixed Widths: ⚠️
@@ -383,10 +422,12 @@ Generated: 2025-11-18T14:16:08.196Z
 **Score**: 148/100
 
 **Warnings (2):**
+
 - ⚠️ Forms may not have 16px font-size (iOS zoom prevention)
 - ⚠️ Verify buttons have ≥44px touch targets on mobile
 
 **Checks:**
+
 - Viewport: ✅
 - Responsive CSS: ✅
 - Fixed Widths: ✅
@@ -400,10 +441,12 @@ Generated: 2025-11-18T14:16:08.196Z
 **Score**: 148/100
 
 **Warnings (2):**
+
 - ⚠️ Forms may not have 16px font-size (iOS zoom prevention)
 - ⚠️ Verify buttons have ≥44px touch targets on mobile
 
 **Checks:**
+
 - Viewport: ✅
 - Responsive CSS: ✅
 - Fixed Widths: ✅
@@ -417,10 +460,12 @@ Generated: 2025-11-18T14:16:08.196Z
 **Score**: 148/100
 
 **Warnings (2):**
+
 - ⚠️ Forms may not have 16px font-size (iOS zoom prevention)
 - ⚠️ Verify buttons have ≥44px touch targets on mobile
 
 **Checks:**
+
 - Viewport: ✅
 - Responsive CSS: ✅
 - Fixed Widths: ✅
@@ -434,10 +479,12 @@ Generated: 2025-11-18T14:16:08.196Z
 **Score**: 148/100
 
 **Warnings (2):**
+
 - ⚠️ Forms may not have 16px font-size (iOS zoom prevention)
 - ⚠️ Verify buttons have ≥44px touch targets on mobile
 
 **Checks:**
+
 - Viewport: ✅
 - Responsive CSS: ✅
 - Fixed Widths: ✅
@@ -451,10 +498,12 @@ Generated: 2025-11-18T14:16:08.196Z
 **Score**: 148/100
 
 **Warnings (2):**
+
 - ⚠️ Forms may not have 16px font-size (iOS zoom prevention)
 - ⚠️ Verify buttons have ≥44px touch targets on mobile
 
 **Checks:**
+
 - Viewport: ✅
 - Responsive CSS: ✅
 - Fixed Widths: ✅
@@ -468,10 +517,12 @@ Generated: 2025-11-18T14:16:08.196Z
 **Score**: 148/100
 
 **Warnings (2):**
+
 - ⚠️ Forms may not have 16px font-size (iOS zoom prevention)
 - ⚠️ Verify buttons have ≥44px touch targets on mobile
 
 **Checks:**
+
 - Viewport: ✅
 - Responsive CSS: ✅
 - Fixed Widths: ✅
@@ -485,9 +536,11 @@ Generated: 2025-11-18T14:16:08.196Z
 **Score**: 149/100
 
 **Warnings (1):**
+
 - ⚠️ Verify buttons have ≥44px touch targets on mobile
 
 **Checks:**
+
 - Viewport: ✅
 - Responsive CSS: ✅
 - Fixed Widths: ✅
@@ -501,9 +554,11 @@ Generated: 2025-11-18T14:16:08.196Z
 **Score**: 149/100
 
 **Warnings (1):**
+
 - ⚠️ Verify buttons have ≥44px touch targets on mobile
 
 **Checks:**
+
 - Viewport: ✅
 - Responsive CSS: ✅
 - Fixed Widths: ✅
@@ -531,4 +586,4 @@ Generated: 2025-11-18T14:16:08.196Z
 
 ---
 
-*Report generated by test-responsive-pages.js*
+_Report generated by test-responsive-pages.js_

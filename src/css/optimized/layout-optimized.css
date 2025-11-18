@@ -299,7 +299,11 @@
 }
 
 .hero-card {
-  background: linear-gradient(135deg, var(--color-primary-600), var(--color-primary-700));
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-600),
+    var(--color-primary-700)
+  );
   color: white;
   padding: var(--spacing-5xl);
   border-radius: var(--radius-2xl);
@@ -434,7 +438,11 @@
 }
 
 .ai-chat-button {
-  background: linear-gradient(135deg, var(--color-primary-600), var(--color-primary-700));
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-600),
+    var(--color-primary-700)
+  );
   color: white;
   border: none;
   border-radius: var(--radius-full);
@@ -458,11 +466,11 @@
   .training-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .weekly-schedule-grid {
     grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
   }
-  
+
   .search-box {
     width: 16rem;
   }
@@ -472,7 +480,7 @@
   .dashboard-container {
     position: relative;
   }
-  
+
   .sidebar {
     position: fixed;
     top: 0;
@@ -481,58 +489,58 @@
     z-index: var(--z-modal);
     transition: left 0.3s ease;
   }
-  
+
   .sidebar.open,
   .sidebar.mobile-open {
     left: 0;
   }
-  
+
   .main-content {
     padding: var(--spacing-lg);
   }
-  
+
   .mobile-menu-toggle {
     display: flex;
   }
-  
+
   .search-box {
     width: 12rem;
   }
-  
+
   .stats-grid {
     grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
     gap: var(--spacing-lg);
   }
-  
+
   .weekly-schedule-grid {
     grid-template-columns: repeat(auto-fit, minmax(6rem, 1fr));
     gap: var(--spacing-sm);
   }
-  
+
   .hero-card {
     padding: var(--spacing-3xl);
     text-align: left;
   }
-  
+
   .hero-main-title {
     font-size: var(--font-size-3xl);
   }
-  
+
   .section-header {
     flex-direction: column;
     align-items: flex-start;
     gap: var(--spacing-md);
   }
-  
+
   .header-right {
     gap: var(--spacing-sm);
   }
-  
+
   .ai-chat-bubble {
     bottom: var(--spacing-lg);
     right: var(--spacing-lg);
   }
-  
+
   .footer-content {
     grid-template-columns: 1fr;
     gap: var(--spacing-2xl);
@@ -543,32 +551,32 @@
   .main-content {
     padding: var(--spacing-md);
   }
-  
+
   .search-box {
     width: 10rem;
   }
-  
+
   .header-left {
     gap: var(--spacing-md);
   }
-  
+
   .header-right {
     gap: var(--spacing-xs);
   }
-  
+
   .stats-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .weekly-schedule-grid {
     grid-template-columns: repeat(7, minmax(0, 1fr));
     font-size: var(--font-size-xs);
   }
-  
+
   .hero-card {
     padding: var(--spacing-2xl);
   }
-  
+
   .hero-main-title {
     font-size: var(--font-size-2xl);
   }
@@ -583,11 +591,11 @@
     transition: none !important;
     animation: none !important;
   }
-  
+
   .sidebar {
     transition: none;
   }
-  
+
   .ai-chat-button:hover {
     transform: none;
   }
@@ -604,13 +612,13 @@
   .main-footer {
     display: none !important;
   }
-  
+
   .main-content {
     padding: 0;
     background: white;
     color: black;
   }
-  
+
   .dashboard-container {
     display: block;
   }

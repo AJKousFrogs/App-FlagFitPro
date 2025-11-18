@@ -3,6 +3,7 @@
 
 import nodemailer from "nodemailer";
 import { randomBytes } from "crypto";
+import { logger } from "./logger.js";
 
 class EmailService {
   constructor() {

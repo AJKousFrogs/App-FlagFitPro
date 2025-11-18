@@ -8,7 +8,11 @@
  * - Training Load = Session RPE × Duration (Foster et al. 2001)
  * - 98% correlation with objective measures
  * - GPS data is optional enhancement, not required
- *
+ */
+
+import { logger } from "../logger.js";
+
+/**
  * Implements:
  * - Acute:Chronic Workload Ratio (ACWR) - Gabbett (2016)
  * - Training Monotony & Strain - Foster (1998), Hulin (2016)
@@ -27,19 +31,19 @@ export class LoadManagementService {
         safe: { min: 0.8, max: 1.3, riskMultiplier: 1.0 },
         caution: { min: 1.3, max: 1.5, riskMultiplier: 1.5 },
         danger: { min: 1.5, riskMultiplier: 2.0 },
-        critical: { min: 1.8, riskMultiplier: 4.2 }
+        critical: { min: 1.8, riskMultiplier: 4.2 },
       },
       // Monotony Thresholds (Hulin 2016)
       monotony: {
         low: { max: 1.5, riskMultiplier: 1.0 },
         moderate: { min: 1.5, max: 2.0, riskMultiplier: 2.0 },
-        high: { min: 2.0, riskMultiplier: 3.2 }
+        high: { min: 2.0, riskMultiplier: 3.2 },
       },
       // Load Progression Safety (Gabbett 2016)
       loadProgression: {
-        safe: { max: 0.10 }, // 10% weekly increase
-        caution: { min: 0.10, max: 0.15 },
-        risk: { min: 0.15 }
+        safe: { max: 0.1 }, // 10% weekly increase
+        caution: { min: 0.1, max: 0.15 },
+        risk: { min: 0.15 },
       },
       // TSB Zones (Buchheit 2014)
       tsb: {
@@ -47,8 +51,8 @@ export class LoadManagementService {
         optimal: { min: 5, max: 10, formScore: 1.0 },
         neutral: { min: -5, max: 5, formScore: 0.85 },
         fatigued: { min: -15, max: -5, formScore: 0.6 },
-        overreached: { max: -15, formScore: 0.4 }
-      }
+        overreached: { max: -15, formScore: 0.4 },
+      },
     };
   }
 
@@ -73,11 +77,12 @@ export class LoadManagementService {
       if (chronicAverage === 0) {
         return {
           acwr: 0,
-          riskZone: 'insufficient_data',
+          riskZone: "insufficient_data",
           injuryRiskMultiplier: 1.0,
           acuteAverage: 0,
           chronicAverage: 0,
-          recommendation: 'Insufficient training history. Build chronic load gradually.'
+          recommendation:
+            "Insufficient training history. Build chronic load gradually.",
         };
       }
 
@@ -99,10 +104,10 @@ export class LoadManagementService {
         acuteLoads: acuteLoads.length,
         chronicLoads: chronicLoads.length,
         recommendation,
-        calculationDate: date
+        calculationDate: date,
       };
     } catch (error) {
-      logger.error('Error calculating ACWR:', error);
+      logger.error("Error calculating ACWR:", error);
       throw error;
     }
   }
@@ -116,15 +121,33 @@ export class LoadManagementService {
     const thresholds = this.researchThresholds.acwr;
 
     if (acwr < thresholds.detraining.max) {
-      return { riskZone: 'detraining', injuryRiskMultiplier: thresholds.detraining.riskMultiplier };
+      return {
+        riskZone: "detraining",
+        injuryRiskMultiplier: thresholds.detraining.riskMultiplier,
+      };
     } else if (acwr >= thresholds.safe.min && acwr <= thresholds.safe.max) {
-      return { riskZone: 'safe', injuryRiskMultiplier: thresholds.safe.riskMultiplier };
-    } else if (acwr > thresholds.caution.min && acwr <= thresholds.caution.max) {
-      return { riskZone: 'caution', injuryRiskMultiplier: thresholds.caution.riskMultiplier };
+      return {
+        riskZone: "safe",
+        injuryRiskMultiplier: thresholds.safe.riskMultiplier,
+      };
+    } else if (
+      acwr > thresholds.caution.min &&
+      acwr <= thresholds.caution.max
+    ) {
+      return {
+        riskZone: "caution",
+        injuryRiskMultiplier: thresholds.caution.riskMultiplier,
+      };
     } else if (acwr >= thresholds.critical.min) {
-      return { riskZone: 'critical', injuryRiskMultiplier: thresholds.critical.riskMultiplier };
+      return {
+        riskZone: "critical",
+        injuryRiskMultiplier: thresholds.critical.riskMultiplier,
+      };
     } else {
-      return { riskZone: 'danger', injuryRiskMultiplier: thresholds.danger.riskMultiplier };
+      return {
+        riskZone: "danger",
+        injuryRiskMultiplier: thresholds.danger.riskMultiplier,
+      };
     }
   }
 
@@ -136,18 +159,18 @@ export class LoadManagementService {
    */
   generateACWRRecommendation(acwr, riskZone) {
     switch (riskZone) {
-      case 'detraining':
-        return 'ACWR below 0.8 indicates detraining. Gradually increase training load to rebuild fitness safely.';
-      case 'safe':
-        return 'ACWR in optimal zone (0.8-1.3). Continue current training progression.';
-      case 'caution':
-        return 'ACWR elevated (1.3-1.5). Monitor closely and consider reducing load by 10-20%.';
-      case 'danger':
-        return 'ACWR high (>1.5). 2-4x injury risk. Reduce training load by 20-30% immediately.';
-      case 'critical':
-        return 'ACWR critical (>1.8). 4.2x injury risk. Mandatory load reduction of 30-50%.';
+      case "detraining":
+        return "ACWR below 0.8 indicates detraining. Gradually increase training load to rebuild fitness safely.";
+      case "safe":
+        return "ACWR in optimal zone (0.8-1.3). Continue current training progression.";
+      case "caution":
+        return "ACWR elevated (1.3-1.5). Monitor closely and consider reducing load by 10-20%.";
+      case "danger":
+        return "ACWR high (>1.5). 2-4x injury risk. Reduce training load by 20-30% immediately.";
+      case "critical":
+        return "ACWR critical (>1.8). 4.2x injury risk. Mandatory load reduction of 30-50%.";
       default:
-        return 'Monitor training load progression carefully.';
+        return "Monitor training load progression carefully.";
     }
   }
 
@@ -158,7 +181,10 @@ export class LoadManagementService {
    * @param {Date} weekStartDate - Start of week
    * @returns {Promise<Object>} Monotony and strain calculations
    */
-  async calculateTrainingMonotony(userId, weekStartDate = this.getWeekStart(new Date())) {
+  async calculateTrainingMonotony(
+    userId,
+    weekStartDate = this.getWeekStart(new Date()),
+  ) {
     try {
       // Get 7 days of training loads
       const weeklyLoads = await this.getWeeklyLoads(userId, weekStartDate);
@@ -167,10 +193,11 @@ export class LoadManagementService {
         return {
           monotony: 0,
           strain: 0,
-          monotonyRisk: 'insufficient_data',
+          monotonyRisk: "insufficient_data",
           meanLoad: 0,
           loadVariation: 0,
-          recommendation: 'Insufficient data for monotony calculation. Need at least 3 training days.'
+          recommendation:
+            "Insufficient data for monotony calculation. Need at least 3 training days.",
         };
       }
 
@@ -183,10 +210,11 @@ export class LoadManagementService {
         return {
           monotony: mean > 0 ? Infinity : 0,
           strain: mean * (mean > 0 ? Infinity : 0),
-          monotonyRisk: 'very_high',
+          monotonyRisk: "very_high",
           meanLoad: mean,
           loadVariation: 0,
-          recommendation: 'Zero load variation detected. High monotony risk. Add training variety immediately.'
+          recommendation:
+            "Zero load variation detected. High monotony risk. Add training variety immediately.",
         };
       }
 
@@ -208,10 +236,13 @@ export class LoadManagementService {
         loadVariation: parseFloat(stdDev.toFixed(2)),
         totalLoad,
         weeklyLoads,
-        recommendation: this.generateMonotonyRecommendation(monotony, monotonyRisk)
+        recommendation: this.generateMonotonyRecommendation(
+          monotony,
+          monotonyRisk,
+        ),
       };
     } catch (error) {
-      logger.error('Error calculating monotony:', error);
+      logger.error("Error calculating monotony:", error);
       throw error;
     }
   }
@@ -225,11 +256,11 @@ export class LoadManagementService {
     const thresholds = this.researchThresholds.monotony;
 
     if (monotony < thresholds.low.max) {
-      return 'low';
+      return "low";
     } else if (monotony < thresholds.moderate.max) {
-      return 'moderate';
+      return "moderate";
     } else {
-      return 'high'; // 3.2x injury risk
+      return "high"; // 3.2x injury risk
     }
   }
 
@@ -241,14 +272,14 @@ export class LoadManagementService {
    */
   generateMonotonyRecommendation(monotony, riskLevel) {
     switch (riskLevel) {
-      case 'low':
-        return 'Low monotony - good training variety. Maintain current approach.';
-      case 'moderate':
-        return 'Moderate monotony detected. Consider adding more training variety.';
-      case 'high':
-        return 'High monotony (>2.0) - 3.2x injury risk. Urgently add training variety and rest days.';
+      case "low":
+        return "Low monotony - good training variety. Maintain current approach.";
+      case "moderate":
+        return "Moderate monotony detected. Consider adding more training variety.";
+      case "high":
+        return "High monotony (>2.0) - 3.2x injury risk. Urgently add training variety and rest days.";
       default:
-        return 'Monitor training variety to prevent monotony.';
+        return "Monitor training variety to prevent monotony.";
     }
   }
 
@@ -269,9 +300,9 @@ export class LoadManagementService {
           ctl: 0,
           atl: 0,
           tsb: 0,
-          interpretation: 'insufficient_data',
+          interpretation: "insufficient_data",
           formScore: 0.5,
-          recommendation: 'Insufficient training history for TSB calculation.'
+          recommendation: "Insufficient training history for TSB calculation.",
         };
       }
 
@@ -296,10 +327,10 @@ export class LoadManagementService {
         interpretation,
         formScore: parseFloat(formScore.toFixed(2)),
         predictedPerformance: parseFloat((formScore * 100).toFixed(1)),
-        recommendation: this.generateTSBRecommendation(tsb, interpretation)
+        recommendation: this.generateTSBRecommendation(tsb, interpretation),
       };
     } catch (error) {
-      logger.error('Error calculating TSB:', error);
+      logger.error("Error calculating TSB:", error);
       throw error;
     }
   }
@@ -314,8 +345,8 @@ export class LoadManagementService {
     if (trainingHistory.length === 0) return 0;
 
     // Sort by date (oldest first)
-    const sorted = [...trainingHistory].sort((a, b) =>
-      new Date(a.date) - new Date(b.date)
+    const sorted = [...trainingHistory].sort(
+      (a, b) => new Date(a.date) - new Date(b.date),
     );
 
     // Calculate decay factor
@@ -344,15 +375,30 @@ export class LoadManagementService {
     const thresholds = this.researchThresholds.tsb;
 
     if (tsb > thresholds.fresh.min) {
-      return { interpretation: 'fresh', formScore: thresholds.fresh.formScore };
+      return { interpretation: "fresh", formScore: thresholds.fresh.formScore };
     } else if (tsb >= thresholds.optimal.min && tsb <= thresholds.optimal.max) {
-      return { interpretation: 'optimal', formScore: thresholds.optimal.formScore };
+      return {
+        interpretation: "optimal",
+        formScore: thresholds.optimal.formScore,
+      };
     } else if (tsb >= thresholds.neutral.min && tsb < thresholds.neutral.max) {
-      return { interpretation: 'neutral', formScore: thresholds.neutral.formScore };
-    } else if (tsb >= thresholds.fatigued.min && tsb < thresholds.fatigued.max) {
-      return { interpretation: 'fatigued', formScore: thresholds.fatigued.formScore };
+      return {
+        interpretation: "neutral",
+        formScore: thresholds.neutral.formScore,
+      };
+    } else if (
+      tsb >= thresholds.fatigued.min &&
+      tsb < thresholds.fatigued.max
+    ) {
+      return {
+        interpretation: "fatigued",
+        formScore: thresholds.fatigued.formScore,
+      };
     } else {
-      return { interpretation: 'overreached', formScore: thresholds.overreached.formScore };
+      return {
+        interpretation: "overreached",
+        formScore: thresholds.overreached.formScore,
+      };
     }
   }
 
@@ -364,18 +410,18 @@ export class LoadManagementService {
    */
   generateTSBRecommendation(tsb, interpretation) {
     switch (interpretation) {
-      case 'fresh':
-        return 'TSB >10 indicates freshness but potential fitness loss. Consider maintaining training load.';
-      case 'optimal':
-        return 'TSB 5-10 is optimal for competition. Peak performance window.';
-      case 'neutral':
-        return 'TSB -5 to +5 indicates neutral form. Good for maintaining fitness.';
-      case 'fatigued':
-        return 'TSB -5 to -15 indicates fatigue. Building fitness but monitor recovery.';
-      case 'overreached':
-        return 'TSB <-15 indicates overreaching. High fatigue risk. Reduce load and prioritize recovery.';
+      case "fresh":
+        return "TSB >10 indicates freshness but potential fitness loss. Consider maintaining training load.";
+      case "optimal":
+        return "TSB 5-10 is optimal for competition. Peak performance window.";
+      case "neutral":
+        return "TSB -5 to +5 indicates neutral form. Good for maintaining fitness.";
+      case "fatigued":
+        return "TSB -5 to -15 indicates fatigue. Building fitness but monitor recovery.";
+      case "overreached":
+        return "TSB <-15 indicates overreaching. High fatigue risk. Reduce load and prioritize recovery.";
       default:
-        return 'Monitor TSB trends for optimal performance timing.';
+        return "Monitor TSB trends for optimal performance timing.";
     }
   }
 
@@ -389,50 +435,48 @@ export class LoadManagementService {
   async calculateInjuryRisk(userId, date = new Date()) {
     try {
       // Get all risk factors
-      const [acwrData, monotonyData, recoveryData, sleepData] = await Promise.all([
-        this.calculateACWR(userId, date),
-        this.calculateTrainingMonotony(userId, this.getWeekStart(date)),
-        this.getRecoveryStatus(userId, date),
-        this.getSleepMetrics(userId, date, 7)
-      ]);
+      const [acwrData, monotonyData, recoveryData, sleepData] =
+        await Promise.all([
+          this.calculateACWR(userId, date),
+          this.calculateTrainingMonotony(userId, this.getWeekStart(date)),
+          this.getRecoveryStatus(userId, date),
+          this.getSleepMetrics(userId, date, 7),
+        ]);
 
       // Research-based weights (from meta-analysis)
       const weights = {
-        acwr: 0.31,        // Gabbett (2016)
-        sleep: 0.28,       // Milewski (2014)
-        loadSpike: 0.24,   // Hulin (2016)
-        monotony: 0.17,    // Foster (1998)
-        recovery: 0.22     // General recovery research
+        acwr: 0.31, // Gabbett (2016)
+        sleep: 0.28, // Milewski (2014)
+        loadSpike: 0.24, // Hulin (2016)
+        monotony: 0.17, // Foster (1998)
+        recovery: 0.22, // General recovery research
       };
 
       // Calculate individual risk scores (0-1 scale)
-      const acwrRisk = acwrData.acwr > 1.3
-        ? Math.min(1, (acwrData.acwr - 1.3) / 0.7)
-        : 0;
+      const acwrRisk =
+        acwrData.acwr > 1.3 ? Math.min(1, (acwrData.acwr - 1.3) / 0.7) : 0;
 
-      const sleepRisk = sleepData?.sleepDebt > 5
-        ? Math.min(1, sleepData.sleepDebt / 10)
-        : 0;
+      const sleepRisk =
+        sleepData?.sleepDebt > 5 ? Math.min(1, sleepData.sleepDebt / 10) : 0;
 
-      const monotonyRisk = monotonyData.monotony > 2.0
-        ? Math.min(1, (monotonyData.monotony - 2.0) / 2.0)
-        : 0;
+      const monotonyRisk =
+        monotonyData.monotony > 2.0
+          ? Math.min(1, (monotonyData.monotony - 2.0) / 2.0)
+          : 0;
 
-      const recoveryRisk = recoveryData?.recoveryScore < 0.5
-        ? 1 - recoveryData.recoveryScore
-        : 0;
+      const recoveryRisk =
+        recoveryData?.recoveryScore < 0.5 ? 1 - recoveryData.recoveryScore : 0;
 
       // Calculate load spike risk
       const loadSpikeRisk = await this.calculateLoadSpikeRisk(userId, date);
 
       // Weighted composite score
-      const compositeRisk = (
+      const compositeRisk =
         acwrRisk * weights.acwr +
         sleepRisk * weights.sleep +
         loadSpikeRisk * weights.loadSpike +
         monotonyRisk * weights.monotony +
-        recoveryRisk * weights.recovery
-      );
+        recoveryRisk * weights.recovery;
 
       // Determine risk level
       const riskLevel = this.interpretRiskLevel(compositeRisk);
@@ -443,7 +487,7 @@ export class LoadManagementService {
         sleep: sleepRisk,
         loadSpike: loadSpikeRisk,
         monotony: monotonyRisk,
-        recovery: recoveryRisk
+        recovery: recoveryRisk,
       });
 
       // Generate interventions
@@ -451,7 +495,7 @@ export class LoadManagementService {
         acwr: acwrRisk,
         sleep: sleepRisk,
         monotony: monotonyRisk,
-        recovery: recoveryRisk
+        recovery: recoveryRisk,
       });
 
       return {
@@ -464,14 +508,14 @@ export class LoadManagementService {
           sleep: parseFloat(sleepRisk.toFixed(3)),
           loadSpike: parseFloat(loadSpikeRisk.toFixed(3)),
           monotony: parseFloat(monotonyRisk.toFixed(3)),
-          recovery: parseFloat(recoveryRisk.toFixed(3))
+          recovery: parseFloat(recoveryRisk.toFixed(3)),
         },
         acwrData,
         monotonyData,
-        assessmentDate: date
+        assessmentDate: date,
       };
     } catch (error) {
-      logger.error('Error calculating injury risk:', error);
+      logger.error("Error calculating injury risk:", error);
       throw error;
     }
   }
@@ -482,10 +526,10 @@ export class LoadManagementService {
    * @returns {string} Risk level
    */
   interpretRiskLevel(risk) {
-    if (risk < 0.2) return 'low';
-    if (risk < 0.4) return 'moderate';
-    if (risk < 0.7) return 'high';
-    return 'critical';
+    if (risk < 0.2) return "low";
+    if (risk < 0.4) return "moderate";
+    if (risk < 0.7) return "high";
+    return "critical";
   }
 
   /**
@@ -498,7 +542,10 @@ export class LoadManagementService {
       .filter(([_, value]) => value > 0.1)
       .sort(([_, a], [__, b]) => b - a)
       .slice(0, 3)
-      .map(([factor, value]) => ({ factor, score: parseFloat(value.toFixed(3)) }));
+      .map(([factor, value]) => ({
+        factor,
+        score: parseFloat(value.toFixed(3)),
+      }));
   }
 
   /**
@@ -512,41 +559,41 @@ export class LoadManagementService {
 
     if (risks.acwr > 0.3) {
       interventions.push({
-        priority: 'high',
-        action: 'Reduce training load by 20-30%',
-        reason: 'ACWR elevated - high injury risk'
+        priority: "high",
+        action: "Reduce training load by 20-30%",
+        reason: "ACWR elevated - high injury risk",
       });
     }
 
     if (risks.sleep > 0.3) {
       interventions.push({
-        priority: 'high',
-        action: 'Increase sleep by 1-2 hours per night',
-        reason: 'Sleep debt contributing to injury risk'
+        priority: "high",
+        action: "Increase sleep by 1-2 hours per night",
+        reason: "Sleep debt contributing to injury risk",
       });
     }
 
     if (risks.monotony > 0.3) {
       interventions.push({
-        priority: 'medium',
-        action: 'Add training variety and rest days',
-        reason: 'High monotony increases injury risk 3.2x'
+        priority: "medium",
+        action: "Add training variety and rest days",
+        reason: "High monotony increases injury risk 3.2x",
       });
     }
 
     if (risks.recovery > 0.3) {
       interventions.push({
-        priority: 'high',
-        action: 'Prioritize recovery protocols',
-        reason: 'Poor recovery status detected'
+        priority: "high",
+        action: "Prioritize recovery protocols",
+        reason: "Poor recovery status detected",
       });
     }
 
-    if (riskLevel === 'critical') {
+    if (riskLevel === "critical") {
       interventions.unshift({
-        priority: 'critical',
-        action: 'MANDATORY REST DAY - No training today',
-        reason: 'Critical injury risk level'
+        priority: "critical",
+        action: "MANDATORY REST DAY - No training today",
+        reason: "Critical injury risk level",
       });
     }
 
@@ -561,16 +608,25 @@ export class LoadManagementService {
    */
   async calculateLoadSpikeRisk(userId, date) {
     try {
-      const currentWeekLoads = await this.getWeeklyLoads(userId, this.getWeekStart(date));
+      const currentWeekLoads = await this.getWeeklyLoads(
+        userId,
+        this.getWeekStart(date),
+      );
       const previousWeekLoads = await this.getWeeklyLoads(
         userId,
-        this.getWeekStart(new Date(date.getTime() - 7 * 24 * 60 * 60 * 1000))
+        this.getWeekStart(new Date(date.getTime() - 7 * 24 * 60 * 60 * 1000)),
       );
 
       if (previousWeekLoads.length === 0) return 0;
 
-      const currentTotal = currentWeekLoads.reduce((sum, load) => sum + load, 0);
-      const previousTotal = previousWeekLoads.reduce((sum, load) => sum + load, 0);
+      const currentTotal = currentWeekLoads.reduce(
+        (sum, load) => sum + load,
+        0,
+      );
+      const previousTotal = previousWeekLoads.reduce(
+        (sum, load) => sum + load,
+        0,
+      );
 
       if (previousTotal === 0) return 0;
 
@@ -583,7 +639,7 @@ export class LoadManagementService {
 
       return 0;
     } catch (error) {
-      logger.error('Error calculating load spike risk:', error);
+      logger.error("Error calculating load spike risk:", error);
       return 0;
     }
   }
@@ -619,7 +675,7 @@ export class LoadManagementService {
 
       const response = await this.apiClient.get(
         `/api/load-management/training-loads`,
-        { userId, startDate, endDate }
+        { userId, startDate, endDate },
       );
       return response.loads || [];
     }
@@ -670,7 +726,7 @@ export class LoadManagementService {
     // Placeholder - should integrate with recovery tracking system
     return {
       recoveryScore: 0.7,
-      fatigueLevel: 0.3
+      fatigueLevel: 0.3,
     };
   }
 
@@ -685,7 +741,7 @@ export class LoadManagementService {
     // Placeholder - should integrate with sleep tracking system
     return {
       sleepDebt: 0,
-      averageSleepHours: 8
+      averageSleepHours: 8,
     };
   }
 
@@ -716,7 +772,9 @@ export class LoadManagementService {
   calculateStandardDeviation(values) {
     if (values.length === 0) return 0;
     const mean = this.calculateMean(values);
-    const variance = values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / values.length;
+    const variance =
+      values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) /
+      values.length;
     return Math.sqrt(variance);
   }
 
@@ -739,17 +797,21 @@ export class LoadManagementService {
    * @returns {Object} Training load metric ready for database
    */
   createLoadEntryFromRPE(sessionData) {
-    const { sessionRPE, durationMinutes, sessionDate, sessionType } = sessionData;
+    const { sessionRPE, durationMinutes, sessionDate, sessionType } =
+      sessionData;
 
     if (!sessionRPE || !durationMinutes) {
-      throw new Error('Session RPE and duration are required');
+      throw new Error("Session RPE and duration are required");
     }
 
-    const trainingLoad = this.calculateTrainingLoad(sessionRPE, durationMinutes);
+    const trainingLoad = this.calculateTrainingLoad(
+      sessionRPE,
+      durationMinutes,
+    );
 
     return {
-      session_date: sessionDate || new Date().toISOString().split('T')[0],
-      session_type: sessionType || 'practice',
+      session_date: sessionDate || new Date().toISOString().split("T")[0],
+      session_type: sessionType || "practice",
       session_duration: durationMinutes,
       session_rpe: sessionRPE,
       training_load: trainingLoad,
@@ -768,4 +830,3 @@ export class LoadManagementService {
 
 // Export singleton instance
 export const loadManagementService = new LoadManagementService();
-

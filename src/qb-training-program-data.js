@@ -734,7 +734,8 @@ export const QB_WEEKLY_SCHEDULES = {
           title: "Lower Body Foundation + QB Arm Strength Introduction",
           type: "dual-track",
           duration: 95,
-          warmup: "QB Enhanced Warm-Up (30 min) - Includes shoulder complex activation",
+          warmup:
+            "QB Enhanced Warm-Up (30 min) - Includes shoulder complex activation",
 
           blocks: [
             {
@@ -794,7 +795,8 @@ export const QB_WEEKLY_SCHEDULES = {
                   sets: 3,
                   reps: "15 each arm",
                   rest: "45s",
-                  notes: "CRITICAL - 30% of throwing power. Elbow stays at side",
+                  notes:
+                    "CRITICAL - 30% of throwing power. Elbow stays at side",
                 },
                 {
                   name: "Band Internal Rotation",
@@ -849,7 +851,12 @@ export const QB_WEEKLY_SCHEDULES = {
               ],
             },
           ],
-          equipment: ["Barbell/DBs", "bands", "medicine ball", "elevated surface"],
+          equipment: [
+            "Barbell/DBs",
+            "bands",
+            "medicine ball",
+            "elevated surface",
+          ],
         },
 
         tuesday: {
@@ -909,7 +916,8 @@ export const QB_WEEKLY_SCHEDULES = {
                   name: "Sleeper Stretch",
                   sets: 4,
                   duration: "60s each arm",
-                  notes: "MANDATORY post-throwing. Prevents posterior shoulder tightness",
+                  notes:
+                    "MANDATORY post-throwing. Prevents posterior shoulder tightness",
                 },
                 {
                   name: "Doorway Pec Stretch",
@@ -967,7 +975,11 @@ export const QB_WEEKLY_SCHEDULES = {
               title: "Block 1: General Mobility (Same as WR/DB)",
               duration: 15,
               exercises: [
-                { name: "World's Greatest Stretch", sets: 2, reps: "5 each side" },
+                {
+                  name: "World's Greatest Stretch",
+                  sets: 2,
+                  reps: "5 each side",
+                },
                 { name: "90/90 Hip Stretches", sets: 2, duration: "60s each" },
                 { name: "Foam Rolling", duration: "10 min" },
               ],
@@ -1233,11 +1245,13 @@ export const QB_WEEKLY_SCHEDULES = {
                   distance: "10-15 yards",
                   intensity: "60-70% effort",
                   rest: "Minimal between throws",
-                  notes: "Building endurance, NOT power. Maintain mechanics under fatigue",
+                  notes:
+                    "Building endurance, NOT power. Maintain mechanics under fatigue",
                 },
                 coolDown: "Light tosses (5 throws)",
               },
-              notes: "Week 1 baseline: 50-80 total throws. Progressive overload in coming weeks",
+              notes:
+                "Week 1 baseline: 50-80 total throws. Progressive overload in coming weeks",
             },
             {
               title: "Block 4: Arm Care",
@@ -1284,8 +1298,18 @@ export const QB_WEEKLY_SCHEDULES = {
                 {
                   condition: "No track",
                   exercises: [
-                    { name: "Wall Drills", sets: 4, duration: "30s each leg", rest: "90s" },
-                    { name: "Resistance Band Sprint Simulation", sets: 6, duration: "10s", rest: "2 min" },
+                    {
+                      name: "Wall Drills",
+                      sets: 4,
+                      duration: "30s each leg",
+                      rest: "90s",
+                    },
+                    {
+                      name: "Resistance Band Sprint Simulation",
+                      sets: 6,
+                      duration: "10s",
+                      rest: "2 min",
+                    },
                   ],
                 },
               ],
@@ -1304,9 +1328,21 @@ export const QB_WEEKLY_SCHEDULES = {
                 {
                   phase: "Main Work - Mechanics Practice",
                   drills: [
-                    { name: "Footwork patterns", throws: "5-8", notes: "Various drops" },
-                    { name: "Accuracy targets", throws: "5-8", notes: "Hit specific targets" },
-                    { name: "Release variety", throws: "5-8", notes: "Different arm angles" },
+                    {
+                      name: "Footwork patterns",
+                      throws: "5-8",
+                      notes: "Various drops",
+                    },
+                    {
+                      name: "Accuracy targets",
+                      throws: "5-8",
+                      notes: "Hit specific targets",
+                    },
+                    {
+                      name: "Release variety",
+                      throws: "5-8",
+                      notes: "Different arm angles",
+                    },
                   ],
                 },
                 {
@@ -1316,7 +1352,12 @@ export const QB_WEEKLY_SCHEDULES = {
               ],
             },
           ],
-          equipment: ["Track or wall space", "bands", "football", "targets/cones"],
+          equipment: [
+            "Track or wall space",
+            "bands",
+            "football",
+            "targets/cones",
+          ],
         },
 
         sunday: {
@@ -1379,7 +1420,8 @@ export const QB_WEEKLY_SCHEDULES = {
         totalThrows: "80-120",
         lowerBodySessions: 4,
         qbSpecificSessions: 6,
-        focus: "Foundation building, movement quality, throwing mechanics introduction",
+        focus:
+          "Foundation building, movement quality, throwing mechanics introduction",
       },
     },
 
@@ -1538,7 +1580,12 @@ export const QB_WEEKLY_SCHEDULES = {
                 { name: "A-Skip", sets: 3, distance: "25m", rest: "45s" },
                 { name: "B-Skip", sets: 3, distance: "20m", rest: "60s" },
                 { name: "High Knees", sets: 3, distance: "25m", rest: "45s" },
-                { name: "Wall Drills", sets: 4, duration: "25s each leg", rest: "60s" },
+                {
+                  name: "Wall Drills",
+                  sets: 4,
+                  duration: "25s each leg",
+                  rest: "60s",
+                },
               ],
             },
             {
@@ -1620,7 +1667,13 @@ export const QB_WEEKLY_SCHEDULES = {
               ],
             },
           ],
-          equipment: ["Track or treadmill", "bands", "foam roller", "football", "light DBs"],
+          equipment: [
+            "Track or treadmill",
+            "bands",
+            "foam roller",
+            "football",
+            "light DBs",
+          ],
         },
 
         wednesday: {
@@ -1634,7 +1687,11 @@ export const QB_WEEKLY_SCHEDULES = {
               title: "Block 1: General Mobility",
               duration: 15,
               exercises: [
-                { name: "World's Greatest Stretch", sets: 2, reps: "5 each side" },
+                {
+                  name: "World's Greatest Stretch",
+                  sets: 2,
+                  reps: "5 each side",
+                },
                 { name: "90/90 Hip Stretches", sets: 2, duration: "60s each" },
                 { name: "Foam Rolling", duration: "10 min" },
               ],
@@ -1667,7 +1724,8 @@ export const QB_WEEKLY_SCHEDULES = {
                 },
                 {
                   name: "Thomas Test Assessment",
-                  notes: "Check hip flexor tightness. Thigh should be below horizontal",
+                  notes:
+                    "Check hip flexor tightness. Thigh should be below horizontal",
                 },
               ],
             },
@@ -1718,7 +1776,14 @@ export const QB_WEEKLY_SCHEDULES = {
               ],
             },
           ],
-          equipment: ["Yoga mat", "foam roller", "DBs", "bands", "cable machine", "couch/bench"],
+          equipment: [
+            "Yoga mat",
+            "foam roller",
+            "DBs",
+            "bands",
+            "cable machine",
+            "couch/bench",
+          ],
         },
 
         thursday: {
@@ -1795,7 +1860,12 @@ export const QB_WEEKLY_SCHEDULES = {
                   sets: 4,
                   reps: "5 throws each",
                   rest: "90s",
-                  drills: ["3-step drop", "5-step drop", "Rollout", "Sprint out"],
+                  drills: [
+                    "3-step drop",
+                    "5-step drop",
+                    "Rollout",
+                    "Sprint out",
+                  ],
                   notes: "20 throws total",
                 },
                 {
@@ -1833,7 +1903,13 @@ export const QB_WEEKLY_SCHEDULES = {
               title: "Block 1: Lower Body Power",
               duration: 20,
               exercises: [
-                { name: "Box Jumps", sets: 4, reps: 4, rest: "2 min", boxHeight: "15 inches" },
+                {
+                  name: "Box Jumps",
+                  sets: 4,
+                  reps: 4,
+                  rest: "2 min",
+                  boxHeight: "15 inches",
+                },
                 { name: "Medicine Ball Slams", sets: 4, reps: 8, rest: "90s" },
                 { name: "Jump Squats", sets: 4, reps: 6, rest: "2 min" },
               ],
@@ -1877,7 +1953,8 @@ export const QB_WEEKLY_SCHEDULES = {
                   distance: "12-18 yards",
                   intensity: "65-70% effort",
                   rest: "Minimal between throws",
-                  notes: "Focus on maintaining mechanics under increasing fatigue",
+                  notes:
+                    "Focus on maintaining mechanics under increasing fatigue",
                 },
                 coolDown: "Light tosses (5 throws)",
               },
@@ -1929,8 +2006,18 @@ export const QB_WEEKLY_SCHEDULES = {
                 {
                   condition: "No track",
                   exercises: [
-                    { name: "Wall Drills", sets: 5, duration: "30s each leg", rest: "90s" },
-                    { name: "Resistance Band Sprints", sets: 8, duration: "15s", rest: "2 min" },
+                    {
+                      name: "Wall Drills",
+                      sets: 5,
+                      duration: "30s each leg",
+                      rest: "90s",
+                    },
+                    {
+                      name: "Resistance Band Sprints",
+                      sets: 8,
+                      duration: "15s",
+                      rest: "2 min",
+                    },
                   ],
                 },
               ],
@@ -1949,9 +2036,21 @@ export const QB_WEEKLY_SCHEDULES = {
                 {
                   phase: "Main Work",
                   drills: [
-                    { name: "Footwork patterns", throws: "8-10", notes: "Various drops + throws" },
-                    { name: "Moving pocket throws", throws: "5-8", notes: "Slide in pocket + throw" },
-                    { name: "Accuracy challenge", throws: "8-10", notes: "Hit 8/10 targets" },
+                    {
+                      name: "Footwork patterns",
+                      throws: "8-10",
+                      notes: "Various drops + throws",
+                    },
+                    {
+                      name: "Moving pocket throws",
+                      throws: "5-8",
+                      notes: "Slide in pocket + throw",
+                    },
+                    {
+                      name: "Accuracy challenge",
+                      throws: "8-10",
+                      notes: "Hit 8/10 targets",
+                    },
                   ],
                 },
                 {
@@ -1961,7 +2060,12 @@ export const QB_WEEKLY_SCHEDULES = {
               ],
             },
           ],
-          equipment: ["Track or wall space", "bands", "football", "targets/cones"],
+          equipment: [
+            "Track or wall space",
+            "bands",
+            "football",
+            "targets/cones",
+          ],
         },
 
         sunday: {
@@ -2024,7 +2128,8 @@ export const QB_WEEKLY_SCHEDULES = {
         totalThrows: "100-120",
         lowerBodySessions: 4,
         qbSpecificSessions: 6,
-        focus: "Volume progression, throwing endurance building, arm care emphasis",
+        focus:
+          "Volume progression, throwing endurance building, arm care emphasis",
       },
     },
 
@@ -2156,8 +2261,19 @@ export const QB_WEEKLY_SCHEDULES = {
               qbSpecific: true,
               exercises: [
                 { name: "Plank Series", sets: 3, duration: "60s", rest: "60s" },
-                { name: "Medicine Ball Rotational Throws", sets: 3, reps: "10 each side", rest: "60s", load: "10 lbs" },
-                { name: "Anti-Rotation Press (Pallof Press)", sets: 3, reps: "10 each side", rest: "60s" },
+                {
+                  name: "Medicine Ball Rotational Throws",
+                  sets: 3,
+                  reps: "10 each side",
+                  rest: "60s",
+                  load: "10 lbs",
+                },
+                {
+                  name: "Anti-Rotation Press (Pallof Press)",
+                  sets: 3,
+                  reps: "10 each side",
+                  rest: "60s",
+                },
               ],
             },
           ],
@@ -2178,8 +2294,18 @@ export const QB_WEEKLY_SCHEDULES = {
                 { name: "A-Skip", sets: 4, distance: "30m", rest: "45s" },
                 { name: "B-Skip", sets: 4, distance: "25m", rest: "60s" },
                 { name: "C-Skip", sets: 3, distance: "20m", rest: "60s" },
-                { name: "Ankling Drill", sets: 3, distance: "20m", rest: "45s" },
-                { name: "Wall Sprint Drills", sets: 4, duration: "15s max effort", rest: "90s" },
+                {
+                  name: "Ankling Drill",
+                  sets: 3,
+                  distance: "20m",
+                  rest: "45s",
+                },
+                {
+                  name: "Wall Sprint Drills",
+                  sets: 4,
+                  duration: "15s max effort",
+                  rest: "90s",
+                },
               ],
             },
             {
@@ -2255,13 +2381,27 @@ export const QB_WEEKLY_SCHEDULES = {
               qbSpecific: true,
               throwingVolume: "20-25 throws",
               protocol: [
-                { distance: "5-15 yards", throws: "10-12", intensity: "50-60%" },
-                { distance: "20-30 yards", throws: "8-10", intensity: "70-75%" },
+                {
+                  distance: "5-15 yards",
+                  throws: "10-12",
+                  intensity: "50-60%",
+                },
+                {
+                  distance: "20-30 yards",
+                  throws: "8-10",
+                  intensity: "70-75%",
+                },
                 { notes: "Increased distance from previous weeks" },
               ],
             },
-          },
-          equipment: ["Track or treadmill", "bands", "foam roller", "football", "light DBs"],
+          ],
+          equipment: [
+            "Track or treadmill",
+            "bands",
+            "foam roller",
+            "football",
+            "light DBs",
+          ],
         },
 
         wednesday: {
@@ -2276,21 +2416,36 @@ export const QB_WEEKLY_SCHEDULES = {
               duration: 30,
               exercises: [
                 {
+                  name: "Couch stretch",
+                  sets: 4,
+                  duration: "2 min each",
+                },
+                {
+                  name: "Standing quad stretch",
+                  sets: 3,
+                  duration: "75s each",
+                },
+                {
                   name: "Hip Flexor Complex",
                   duration: "15 min",
-                  exercises: [
-                    { name: "Couch stretch", sets: 4, duration: "2 min each" },
-                    { name: "Standing quad stretch", sets: 3, duration: "75s each" },
-                  ],
+                },
+                {
+                  name: "Pigeon pose",
+                  sets: 3,
+                  duration: "2 min each",
+                },
+                {
+                  name: "90/90 stretch",
+                  sets: 3,
+                  duration: "75s each",
+                },
+                {
+                  name: "90/90 flow",
+                  reps: "20 transitions",
                 },
                 {
                   name: "Hip Rotation Complex",
                   duration: "12 min",
-                  exercises: [
-                    { name: "Pigeon pose", sets: 3, duration: "2 min each" },
-                    { name: "90/90 stretch", sets: 3, duration: "75s each" },
-                    { name: "90/90 flow", reps: "20 transitions" },
-                  ],
                 },
               ],
             },
@@ -2347,8 +2502,15 @@ export const QB_WEEKLY_SCHEDULES = {
                 { name: "Foam Rolling Full Body", duration: "15 min" },
               ],
             },
-          },
-          equipment: ["Yoga mat", "foam roller", "DBs", "bands", "cable machine", "couch/bench"],
+          ],
+          equipment: [
+            "Yoga mat",
+            "foam roller",
+            "DBs",
+            "bands",
+            "cable machine",
+            "couch/bench",
+          ],
         },
 
         thursday: {
@@ -2430,7 +2592,13 @@ export const QB_WEEKLY_SCHEDULES = {
                   sets: 5,
                   reps: "5 throws each",
                   rest: "2 min",
-                  drills: ["3-step", "5-step", "7-step", "Bootleg", "Sprint out"],
+                  drills: [
+                    "3-step",
+                    "5-step",
+                    "7-step",
+                    "Bootleg",
+                    "Sprint out",
+                  ],
                   notes: "25 throws total. Full game simulation",
                 },
                 {
@@ -2458,7 +2626,7 @@ export const QB_WEEKLY_SCHEDULES = {
                 { name: "Forearm/wrist work", duration: "3 min" },
               ],
             },
-          },
+          ],
           equipment: ["Barbell/DBs", "boxes", "football", "bands", "targets"],
         },
 
@@ -2529,11 +2697,13 @@ export const QB_WEEKLY_SCHEDULES = {
                   distance: "15-20 yards",
                   intensity: "65-75% effort",
                   rest: "Minimal",
-                  notes: "Peak volume for Foundation phase. Maintain mechanics under extended fatigue",
+                  notes:
+                    "Peak volume for Foundation phase. Maintain mechanics under extended fatigue",
                 },
                 coolDown: "Light tosses (5-8 throws)",
               },
-              notes: "Week 3 peak: 80-100 total throws. Preparing for tournament endurance",
+              notes:
+                "Week 3 peak: 80-100 total throws. Preparing for tournament endurance",
             },
             {
               title: "Block 4: Extended Arm Care",
@@ -2544,8 +2714,14 @@ export const QB_WEEKLY_SCHEDULES = {
                 { name: "Comprehensive shoulder mobility", duration: "8 min" },
               ],
             },
-          },
-          equipment: ["Squat rack", "box", "medicine ball", "football", "bands"],
+          ],
+          equipment: [
+            "Squat rack",
+            "box",
+            "medicine ball",
+            "football",
+            "bands",
+          ],
         },
 
         saturday: {
@@ -2586,8 +2762,18 @@ export const QB_WEEKLY_SCHEDULES = {
                 {
                   condition: "No track",
                   exercises: [
-                    { name: "Wall Sprint Drills", sets: 5, duration: "20s max", rest: "2 min" },
-                    { name: "Resistance Band Sprints", sets: 10, duration: "15s", rest: "2 min" },
+                    {
+                      name: "Wall Sprint Drills",
+                      sets: 5,
+                      duration: "20s max",
+                      rest: "2 min",
+                    },
+                    {
+                      name: "Resistance Band Sprints",
+                      sets: 10,
+                      duration: "15s",
+                      rest: "2 min",
+                    },
                   ],
                 },
               ],
@@ -2606,9 +2792,21 @@ export const QB_WEEKLY_SCHEDULES = {
                 {
                   phase: "Game Simulation",
                   drills: [
-                    { name: "Quick game", throws: "8-10", notes: "3-step drops, quick release" },
-                    { name: "Intermediate routes", throws: "8-10", notes: "5-step, 15-20 yards" },
-                    { name: "Pressure situations", throws: "6-8", notes: "Throw under simulated pressure" },
+                    {
+                      name: "Quick game",
+                      throws: "8-10",
+                      notes: "3-step drops, quick release",
+                    },
+                    {
+                      name: "Intermediate routes",
+                      throws: "8-10",
+                      notes: "5-step, 15-20 yards",
+                    },
+                    {
+                      name: "Pressure situations",
+                      throws: "6-8",
+                      notes: "Throw under simulated pressure",
+                    },
                   ],
                 },
                 {
@@ -2673,18 +2871,25 @@ export const QB_WEEKLY_SCHEDULES = {
               duration: 15,
               activities: [
                 { name: "Light walk", duration: "20 min" },
-                { name: "Visualization for Week 4 assessments", duration: "15 min" },
-                { name: "Review Foundation phase progress", notes: "Reflect on improvements" },
+                {
+                  name: "Visualization for Week 4 assessments",
+                  duration: "15 min",
+                },
+                {
+                  name: "Review Foundation phase progress",
+                  notes: "Reflect on improvements",
+                },
               ],
             },
-          },
+          ],
         },
       },
       weekSummary: {
         totalThrows: "120-150",
         lowerBodySessions: 4,
         qbSpecificSessions: 6,
-        focus: "Peak Foundation loads, throwing volume peak, comprehensive mobility work",
+        focus:
+          "Peak Foundation loads, throwing volume peak, comprehensive mobility work",
       },
     },
 
@@ -2795,7 +3000,14 @@ export const QB_WEEKLY_SCHEDULES = {
               ],
             },
           ],
-          equipment: ["Barbell", "DBs", "bands", "medicine ball", "measuring tape", "timer"],
+          equipment: [
+            "Barbell",
+            "DBs",
+            "bands",
+            "medicine ball",
+            "measuring tape",
+            "timer",
+          ],
           notes: "Record all results for comparison at Week 8 and Week 14",
         },
 
@@ -2838,7 +3050,8 @@ export const QB_WEEKLY_SCHEDULES = {
                   exercises: [
                     {
                       name: "Sprint Mechanics Assessment",
-                      notes: "Video analysis - dorsiflexion, knee drive, arm action",
+                      notes:
+                        "Video analysis - dorsiflexion, knee drive, arm action",
                     },
                   ],
                 },
@@ -2863,7 +3076,8 @@ export const QB_WEEKLY_SCHEDULES = {
                 },
                 {
                   name: "Hip Flexor Flexibility Test (Thomas Test)",
-                  protocol: "Lie supine, pull one knee to chest, assess other leg",
+                  protocol:
+                    "Lie supine, pull one knee to chest, assess other leg",
                   target: "Thigh below horizontal = good flexibility",
                   notes: "CRITICAL - tight hip flexors reduce velocity 15-20%",
                 },
@@ -2899,7 +3113,12 @@ export const QB_WEEKLY_SCHEDULES = {
               ],
             },
           ],
-          equipment: ["Cones", "stopwatch/timing gates", "measuring tape", "goniometer"],
+          equipment: [
+            "Cones",
+            "stopwatch/timing gates",
+            "measuring tape",
+            "goniometer",
+          ],
           notes: "QB mobility assessment is CRITICAL for velocity development",
         },
 
@@ -2919,9 +3138,11 @@ export const QB_WEEKLY_SCHEDULES = {
                 {
                   name: "Velocity Test",
                   throws: "10-12",
-                  protocol: "Progressive warm-up, then max velocity throws from pocket",
+                  protocol:
+                    "Progressive warm-up, then max velocity throws from pocket",
                   distance: "15 yards",
-                  notes: "Measure peak velocity with radar gun if available. Record best 3",
+                  notes:
+                    "Measure peak velocity with radar gun if available. Record best 3",
                 },
                 {
                   name: "Accuracy Under Fresh Conditions",
@@ -2932,7 +3153,12 @@ export const QB_WEEKLY_SCHEDULES = {
                 {
                   name: "Footwork Mechanics Assessment",
                   throws: "15-20",
-                  drills: ["3-step drops", "5-step drops", "7-step drops", "Rollouts"],
+                  drills: [
+                    "3-step drops",
+                    "5-step drops",
+                    "7-step drops",
+                    "Rollouts",
+                  ],
                   notes: "Video analysis - assess mechanics quality",
                 },
                 {
@@ -2940,7 +3166,8 @@ export const QB_WEEKLY_SCHEDULES = {
                   throws: "5-8 easy",
                 },
               ],
-              notes: "Baseline throwing assessment - compare to Week 8 and Week 14",
+              notes:
+                "Baseline throwing assessment - compare to Week 8 and Week 14",
             },
             {
               title: "Block 2: Throwing Endurance Test",
@@ -2952,9 +3179,11 @@ export const QB_WEEKLY_SCHEDULES = {
                 throws: "20-30 continuous",
                 distance: "15 yards",
                 intensity: "70% effort",
-                notes: "Assess mechanics breakdown under moderate fatigue. Track accuracy decline",
+                notes:
+                  "Assess mechanics breakdown under moderate fatigue. Track accuracy decline",
               },
-              assessment: "Record when mechanics begin to break down, accuracy percentage",
+              assessment:
+                "Record when mechanics begin to break down, accuracy percentage",
             },
             {
               title: "Block 3: Comprehensive Arm Care",
@@ -2967,9 +3196,15 @@ export const QB_WEEKLY_SCHEDULES = {
                 { name: "Forearm/wrist recovery", duration: "5 min" },
               ],
             },
-          },
-          equipment: ["Football", "targets", "radar gun (optional)", "video camera"],
-          notes: "Foundation throwing baseline - record all metrics for future comparison",
+          ],
+          equipment: [
+            "Football",
+            "targets",
+            "radar gun (optional)",
+            "video camera",
+          ],
+          notes:
+            "Foundation throwing baseline - record all metrics for future comparison",
         },
 
         thursday: {
@@ -3016,12 +3251,17 @@ export const QB_WEEKLY_SCHEDULES = {
               title: "Block 3: Light Movement",
               duration: 15,
               activities: [
-                { name: "Easy bike or walk", duration: "20 min", intensity: "Very light" },
+                {
+                  name: "Easy bike or walk",
+                  duration: "20 min",
+                  intensity: "Very light",
+                },
                 { name: "Foam rolling", duration: "15 min" },
               ],
             },
-          },
-          notes: "Reflect on Foundation phase progress. Review assessment results",
+          ],
+          notes:
+            "Reflect on Foundation phase progress. Review assessment results",
         },
 
         friday: {
@@ -3113,11 +3353,15 @@ export const QB_WEEKLY_SCHEDULES = {
               qbSpecific: true,
               throwingVolume: "15-25 throws",
               protocol: [
-                { distance: "5-15 yards", throws: "15-25", intensity: "40-50%" },
+                {
+                  distance: "5-15 yards",
+                  throws: "15-25",
+                  intensity: "40-50%",
+                },
                 { notes: "Very light, focus on mechanics only" },
               ],
             },
-          },
+          ],
           equipment: ["Light DBs", "bands", "football (optional)"],
           notes: "Recovery week - movement quality, not intensity",
         },
@@ -3168,7 +3412,10 @@ export const QB_WEEKLY_SCHEDULES = {
               throwingVolume: "0-20 throws",
               protocol: [
                 { distance: "5-15 yards", throws: "0-20", intensity: "40-50%" },
-                { notes: "Optional. If arm feels good, light throwing. Otherwise rest" },
+                {
+                  notes:
+                    "Optional. If arm feels good, light throwing. Otherwise rest",
+                },
               ],
             },
             {
@@ -3178,11 +3425,15 @@ export const QB_WEEKLY_SCHEDULES = {
                 {
                   name: "Core stability circuit",
                   rounds: 2,
-                  exercises: ["Plank 30s", "Side plank 20s each", "Dead bugs 10 each"],
+                  exercises: [
+                    "Plank 30s",
+                    "Side plank 20s each",
+                    "Dead bugs 10 each",
+                  ],
                 },
               ],
             },
-          },
+          ],
           equipment: ["Low box", "bands", "football (optional)"],
           notes: "Optional session. Complete rest if feeling fatigued",
         },
@@ -3236,13 +3487,23 @@ export const QB_WEEKLY_SCHEDULES = {
               duration: 15,
               activities: [
                 { name: "Light walk", duration: "20 min" },
-                { name: "Review Foundation phase achievements", duration: "10 min" },
-                { name: "Set goals for Strength phase (Weeks 5-8)", duration: "10 min" },
-                { name: "Visualization for increased throwing volume", duration: "10 min" },
+                {
+                  name: "Review Foundation phase achievements",
+                  duration: "10 min",
+                },
+                {
+                  name: "Set goals for Strength phase (Weeks 5-8)",
+                  duration: "10 min",
+                },
+                {
+                  name: "Visualization for increased throwing volume",
+                  duration: "10 min",
+                },
               ],
             },
-          },
-          notes: "Prepare for Strength Development phase. Review all assessment results.",
+          ],
+          notes:
+            "Prepare for Strength Development phase. Review all assessment results.",
         },
       },
       weekSummary: {
@@ -3256,7 +3517,8 @@ export const QB_WEEKLY_SCHEDULES = {
         ],
         lowerBodySessions: 3,
         qbSpecificSessions: 5,
-        focus: "Baseline assessment, deload for recovery, Foundation phase completion",
+        focus:
+          "Baseline assessment, deload for recovery, Foundation phase completion",
       },
       phaseSummary: {
         title: "Foundation Phase Complete (Weeks 1-4)!",
@@ -3272,7 +3534,8 @@ export const QB_WEEKLY_SCHEDULES = {
           totalThrows: "300-440 throws over 4 weeks",
           progressiveVolume: "Week 1: 80-120, Week 2: 100-120, Week 3: 120-150",
           armStrength: "Band resistance progressed, rotator cuff strengthened",
-          mobility: "Shoulder ROM improved, hip flexors loosened (critical for velocity)",
+          mobility:
+            "Shoulder ROM improved, hip flexors loosened (critical for velocity)",
         },
         nextPhase: {
           name: "Strength Development (Weeks 5-8)",
@@ -3299,7 +3562,8 @@ export const QB_WEEKLY_SCHEDULES = {
       weekNumber: 5,
       dateRange: "December 29, 2025 - January 4, 2026",
       phase: "Strength Development",
-      focus: "Maximum strength building + throwing volume increase + long toss introduction",
+      focus:
+        "Maximum strength building + throwing volume increase + long toss introduction",
       throwingVolume: "150-180 throws",
       days: {
         monday: {
@@ -3318,8 +3582,16 @@ export const QB_WEEKLY_SCHEDULES = {
                 {
                   name: "Isometric Squat Holds (Multiple Positions)",
                   positions: [
-                    { name: "Quarter squat", sets: 3, duration: "6s max effort" },
-                    { name: "Parallel squat", sets: 2, duration: "6s max effort" },
+                    {
+                      name: "Quarter squat",
+                      sets: 3,
+                      duration: "6s max effort",
+                    },
+                    {
+                      name: "Parallel squat",
+                      sets: 2,
+                      duration: "6s max effort",
+                    },
                   ],
                   rest: "3 min between sets",
                   notes: "Maximum effort 90-95%. Builds neural drive",
@@ -3382,7 +3654,8 @@ export const QB_WEEKLY_SCHEDULES = {
                   reps: "12-15 each",
                   rest: "90s",
                   resistance: "Medium-heavy band",
-                  notes: "Rotator cuff strength correlates with velocity (r=0.72)",
+                  notes:
+                    "Rotator cuff strength correlates with velocity (r=0.72)",
                 },
                 {
                   name: "Tricep Extensions (Overhead)",
@@ -3402,7 +3675,8 @@ export const QB_WEEKLY_SCHEDULES = {
               ],
             },
             {
-              title: "Block 4: QB-Specific - Shoulder Mobility + Hip Flexor Work",
+              title:
+                "Block 4: QB-Specific - Shoulder Mobility + Hip Flexor Work",
               track: "QB-Specific Mobility",
               duration: 20,
               qbSpecific: true,
@@ -3438,7 +3712,8 @@ export const QB_WEEKLY_SCHEDULES = {
           title: "QB Throwing Day 1 - Long Toss Introduction + Velocity Work",
           type: "throwing",
           duration: 90,
-          warmup: "QB Enhanced warm-up (30 min) + Progressive throwing warm-up (35+ throws)",
+          warmup:
+            "QB Enhanced warm-up (30 min) + Progressive throwing warm-up (35+ throws)",
           throwingVolume: "70-90 throws",
 
           blocks: [
@@ -3450,7 +3725,8 @@ export const QB_WEEKLY_SCHEDULES = {
               exercises: [
                 {
                   name: "Progressive Throwing Warm-Up",
-                  protocol: "5y → 10y → 15y → 20y → 30y → 40y (35-40 throws total)",
+                  protocol:
+                    "5y → 10y → 15y → 20y → 30y → 40y (35-40 throws total)",
                   notes: "Standard QB throwing warm-up protocol",
                   throws: "35-40",
                 },
@@ -3473,7 +3749,8 @@ export const QB_WEEKLY_SCHEDULES = {
                   ],
                   throws: "21 throws",
                   rest: "45-60s between throws at 50y",
-                  notes: "INTRODUCTION to long toss. Builds arm strength + velocity. Keep mechanics clean",
+                  notes:
+                    "INTRODUCTION to long toss. Builds arm strength + velocity. Keep mechanics clean",
                 },
               ],
             },
@@ -3492,7 +3769,8 @@ export const QB_WEEKLY_SCHEDULES = {
                 {
                   name: "Throwing Mechanics at 20y",
                   throws: "15-20",
-                  focus: "Hip rotation, shoulder external rotation, follow-through",
+                  focus:
+                    "Hip rotation, shoulder external rotation, follow-through",
                   rest: "30s between throws",
                 },
               ],
@@ -3529,13 +3807,17 @@ export const QB_WEEKLY_SCHEDULES = {
                 {
                   name: "Comprehensive Shoulder Mobility Circuit",
                   duration: "15 min",
-                  focus: "Sleeper stretch, doorway pec stretch, wall slides, band pull-aparts",
+                  focus:
+                    "Sleeper stretch, doorway pec stretch, wall slides, band pull-aparts",
                   notes: "Critical for throwing shoulder health",
                 },
                 {
                   name: "Hip Flexor Flexibility Work",
                   duration: "10 min",
-                  exercises: ["Couch stretch 2×90s each", "Kneeling hip flexor stretch 2×60s each"],
+                  exercises: [
+                    "Couch stretch 2×90s each",
+                    "Kneeling hip flexor stretch 2×60s each",
+                  ],
                   notes: "Prevents velocity loss",
                 },
                 {
@@ -3576,7 +3858,8 @@ export const QB_WEEKLY_SCHEDULES = {
                 {
                   name: "Complex: Squat + Depth Jump",
                   sets: 5,
-                  protocol: "3 squats @ 40% BW → immediately 3 depth jumps (8\" box)",
+                  protocol:
+                    '3 squats @ 40% BW → immediately 3 depth jumps (8" box)',
                   rest: "4 min",
                   notes: "Post-activation potentiation for explosive power",
                 },
@@ -3630,7 +3913,8 @@ export const QB_WEEKLY_SCHEDULES = {
                 {
                   name: "Ball Toss Endurance Drill (Lightweight)",
                   throws: "20-25",
-                  protocol: "Continuous throwing at 15-20y, focus on mechanics maintenance",
+                  protocol:
+                    "Continuous throwing at 15-20y, focus on mechanics maintenance",
                   rest: "Minimal rest between throws",
                   notes: "Building throwing endurance toward 320-throw goal",
                 },
@@ -3672,7 +3956,10 @@ export const QB_WEEKLY_SCHEDULES = {
                 {
                   name: "Stationary Accuracy Work",
                   throws: "15-20",
-                  distances: ["15y: 10 throws to targets", "25y: 5-10 throws to targets"],
+                  distances: [
+                    "15y: 10 throws to targets",
+                    "25y: 5-10 throws to targets",
+                  ],
                   notes: "Track accuracy percentage. Goal: 85%+",
                 },
                 {
@@ -3714,17 +4001,28 @@ export const QB_WEEKLY_SCHEDULES = {
                 {
                   name: "Comprehensive Shoulder Mobility",
                   duration: "15 min",
-                  exercises: ["Sleeper stretch", "Doorway pec stretch", "Wall slides", "Band pull-aparts"],
+                  exercises: [
+                    "Sleeper stretch",
+                    "Doorway pec stretch",
+                    "Wall slides",
+                    "Band pull-aparts",
+                  ],
                 },
                 {
                   name: "Rotator Cuff Maintenance",
                   duration: "10 min",
-                  exercises: ["Band external rotation 2×15 each", "I-Y-T raises 2×10 each"],
+                  exercises: [
+                    "Band external rotation 2×15 each",
+                    "I-Y-T raises 2×10 each",
+                  ],
                 },
                 {
                   name: "Hip Flexor Work",
                   duration: "10 min",
-                  exercises: ["Couch stretch 2×90s each", "Thoracic extension work"],
+                  exercises: [
+                    "Couch stretch 2×90s each",
+                    "Thoracic extension work",
+                  ],
                 },
               ],
             },
@@ -3736,12 +4034,17 @@ export const QB_WEEKLY_SCHEDULES = {
           title: "QB Complete Recovery",
           type: "recovery",
           duration: 75,
-          protocol: "QB Sunday Recovery Protocol (45 min universal + 30 min QB-specific)",
+          protocol:
+            "QB Sunday Recovery Protocol (45 min universal + 30 min QB-specific)",
           activities: [
             { name: "Lower body chain stretching", duration: "25 min" },
             { name: "Foam rolling (full body)", duration: "20 min" },
             { name: "Light walk or bike", duration: "20 min" },
-            { name: "QB shoulder + hip mobility work", duration: "20 min", qbSpecific: true },
+            {
+              name: "QB shoulder + hip mobility work",
+              duration: "20 min",
+              qbSpecific: true,
+            },
             { name: "Visualization", duration: "10 min" },
           ],
         },
@@ -3750,8 +4053,10 @@ export const QB_WEEKLY_SCHEDULES = {
         lowerBodySessions: 2,
         throwingSessions: 2,
         totalThrows: "150-180 throws",
-        focus: "Maximum strength (40% BW squats), long toss introduction, throwing volume increase, arm strength progression",
-        qbSpecificNotes: "Long toss introduced at 40-50y. Arm endurance work begins. Shoulder/hip mobility emphasized daily.",
+        focus:
+          "Maximum strength (40% BW squats), long toss introduction, throwing volume increase, arm strength progression",
+        qbSpecificNotes:
+          "Long toss introduced at 40-50y. Arm endurance work begins. Shoulder/hip mobility emphasized daily.",
       },
     },
 
@@ -3759,7 +4064,8 @@ export const QB_WEEKLY_SCHEDULES = {
       weekNumber: 6,
       dateRange: "January 5-11, 2026",
       phase: "Strength Development",
-      focus: "Maximum strength maintenance + throwing volume progression + long toss expansion",
+      focus:
+        "Maximum strength maintenance + throwing volume progression + long toss expansion",
       throwingVolume: "180-220 throws",
       days: {
         monday: {
@@ -3778,8 +4084,16 @@ export const QB_WEEKLY_SCHEDULES = {
                 {
                   name: "Isometric Squat Holds (Multiple Angles)",
                   positions: [
-                    { name: "Quarter squat", sets: 3, duration: "6s max effort" },
-                    { name: "Parallel squat", sets: 3, duration: "6s max effort" },
+                    {
+                      name: "Quarter squat",
+                      sets: 3,
+                      duration: "6s max effort",
+                    },
+                    {
+                      name: "Parallel squat",
+                      sets: 3,
+                      duration: "6s max effort",
+                    },
                   ],
                   rest: "3 min between sets",
                 },
@@ -3876,7 +4190,13 @@ export const QB_WEEKLY_SCHEDULES = {
             },
           ],
           postSessionProtocol: "QB Daily Arm Care (15-20 min)",
-          equipment: ["Barbell/DBs", "squat rack", "bands", "medicine ball", "foam roller"],
+          equipment: [
+            "Barbell/DBs",
+            "squat rack",
+            "bands",
+            "medicine ball",
+            "foam roller",
+          ],
         },
 
         tuesday: {
@@ -3919,7 +4239,8 @@ export const QB_WEEKLY_SCHEDULES = {
                   ],
                   throws: "30 throws",
                   rest: "60s between throws at 55y",
-                  notes: "Distance + volume increase. Building arm strength + velocity",
+                  notes:
+                    "Distance + volume increase. Building arm strength + velocity",
                 },
               ],
             },
@@ -4013,7 +4334,7 @@ export const QB_WEEKLY_SCHEDULES = {
                 {
                   name: "Complex: Squat + Depth Jump",
                   sets: 5,
-                  protocol: "3 squats @ 40% BW → 3 depth jumps (10\" box)",
+                  protocol: '3 squats @ 40% BW → 3 depth jumps (10" box)',
                   rest: "4 min",
                 },
                 {
@@ -4071,7 +4392,8 @@ export const QB_WEEKLY_SCHEDULES = {
                   name: "Ball Toss Endurance Drill",
                   throws: "25-35",
                   protocol: "Continuous throwing at 15-20y, mechanics focus",
-                  notes: "Volume increase from Week 5. Building toward 320-throw capacity",
+                  notes:
+                    "Volume increase from Week 5. Building toward 320-throw capacity",
                 },
               ],
             },
@@ -4165,7 +4487,11 @@ export const QB_WEEKLY_SCHEDULES = {
             { name: "Lower body stretching", duration: "25 min" },
             { name: "Foam rolling", duration: "20 min" },
             { name: "Light walk/bike", duration: "20 min" },
-            { name: "QB shoulder + hip work", duration: "20 min", qbSpecific: true },
+            {
+              name: "QB shoulder + hip work",
+              duration: "20 min",
+              qbSpecific: true,
+            },
             { name: "Visualization", duration: "10 min" },
           ],
         },
@@ -4174,8 +4500,10 @@ export const QB_WEEKLY_SCHEDULES = {
         lowerBodySessions: 2,
         throwingSessions: 2,
         totalThrows: "180-220 throws",
-        focus: "Maintain maximum loads, long toss to 55y, throwing volume progression, complex training variations",
-        qbSpecificNotes: "Long toss expanded to 55y. Throwing endurance building. Arm strength work intensified.",
+        focus:
+          "Maintain maximum loads, long toss to 55y, throwing volume progression, complex training variations",
+        qbSpecificNotes:
+          "Long toss expanded to 55y. Throwing endurance building. Arm strength work intensified.",
       },
     },
 
@@ -4183,7 +4511,8 @@ export const QB_WEEKLY_SCHEDULES = {
       weekNumber: 7,
       dateRange: "January 12-18, 2026",
       phase: "Strength Development",
-      focus: "Peak strength + throwing volume peak + long toss maximum distance",
+      focus:
+        "Peak strength + throwing volume peak + long toss maximum distance",
       throwingVolume: "220-250 throws",
       days: {
         monday: {
@@ -4345,7 +4674,8 @@ export const QB_WEEKLY_SCHEDULES = {
                   ],
                   throws: "40 throws",
                   rest: "60-90s between throws at 60y",
-                  notes: "PEAK long toss week. 60y is maximum for phase. Builds max arm strength + velocity",
+                  notes:
+                    "PEAK long toss week. 60y is maximum for phase. Builds max arm strength + velocity",
                 },
               ],
             },
@@ -4399,9 +4729,7 @@ export const QB_WEEKLY_SCHEDULES = {
               title: "Block 3: Recovery",
               track: "Universal Recovery",
               duration: 10,
-              exercises: [
-                { name: "Foam rolling", duration: "15 min" },
-              ],
+              exercises: [{ name: "Foam rolling", duration: "15 min" }],
             },
           ],
           equipment: ["Yoga mat", "foam roller", "bands"],
@@ -4424,7 +4752,8 @@ export const QB_WEEKLY_SCHEDULES = {
                 {
                   name: "Complex: Squat + Reactive Depth Jump",
                   sets: 6,
-                  protocol: "3 squats @ 40% BW → 3 depth jumps (10\" box) → stick + react up",
+                  protocol:
+                    '3 squats @ 40% BW → 3 depth jumps (10" box) → stick + react up',
                   rest: "4-5 min",
                   notes: "Peak PAP work",
                 },
@@ -4477,7 +4806,8 @@ export const QB_WEEKLY_SCHEDULES = {
                   name: "Ball Toss Endurance Drill (Peak Volume)",
                   throws: "35-40",
                   protocol: "Continuous throwing at 15-20y with minimal rest",
-                  notes: "PEAK throwing endurance for Strength phase. Building toward 320-throw goal",
+                  notes:
+                    "PEAK throwing endurance for Strength phase. Building toward 320-throw goal",
                 },
               ],
             },
@@ -4571,7 +4901,11 @@ export const QB_WEEKLY_SCHEDULES = {
             { name: "Lower body stretching", duration: "25 min" },
             { name: "Foam rolling", duration: "20 min" },
             { name: "Light walk/bike", duration: "20 min" },
-            { name: "QB shoulder + hip work", duration: "20 min", qbSpecific: true },
+            {
+              name: "QB shoulder + hip work",
+              duration: "20 min",
+              qbSpecific: true,
+            },
             { name: "Visualization", duration: "10 min" },
           ],
         },
@@ -4580,8 +4914,10 @@ export const QB_WEEKLY_SCHEDULES = {
         lowerBodySessions: 2,
         throwingSessions: 2,
         totalThrows: "220-250 throws",
-        focus: "Peak strength (40% BW RDLs 6×5), long toss to 60y (peak), throwing volume peak, arm strength peak",
-        qbSpecificNotes: "PEAK WEEK. Long toss to 60y. Throwing endurance 35-40 throws continuous. Arm strength at maximum for phase.",
+        focus:
+          "Peak strength (40% BW RDLs 6×5), long toss to 60y (peak), throwing volume peak, arm strength peak",
+        qbSpecificNotes:
+          "PEAK WEEK. Long toss to 60y. Throwing endurance 35-40 throws continuous. Arm strength at maximum for phase.",
       },
     },
 
@@ -4678,7 +5014,12 @@ export const QB_WEEKLY_SCHEDULES = {
             },
           ],
           postSessionProtocol: "QB Daily Arm Care (15-20 min)",
-          equipment: ["Barbell/DBs", "bands", "medicine ball", "measuring tape"],
+          equipment: [
+            "Barbell/DBs",
+            "bands",
+            "medicine ball",
+            "measuring tape",
+          ],
         },
 
         tuesday: {
@@ -4769,7 +5110,13 @@ export const QB_WEEKLY_SCHEDULES = {
           ],
           totalThrows: "120-140 throws (assessment)",
           postSessionProtocol: "QB Daily Arm Care (20 min - extended)",
-          equipment: ["Footballs", "radar gun", "targets", "stopwatch", "measuring tools"],
+          equipment: [
+            "Footballs",
+            "radar gun",
+            "targets",
+            "stopwatch",
+            "measuring tools",
+          ],
         },
 
         wednesday: {
@@ -4927,8 +5274,15 @@ export const QB_WEEKLY_SCHEDULES = {
             { name: "Lower body stretching", duration: "25 min" },
             { name: "Foam rolling", duration: "20 min" },
             { name: "Light walk/bike", duration: "20 min" },
-            { name: "QB shoulder + hip work", duration: "20 min", qbSpecific: true },
-            { name: "Review assessment results + set Power phase goals", duration: "15 min" },
+            {
+              name: "QB shoulder + hip work",
+              duration: "20 min",
+              qbSpecific: true,
+            },
+            {
+              name: "Review assessment results + set Power phase goals",
+              duration: "15 min",
+            },
           ],
         },
       },
@@ -4936,9 +5290,11 @@ export const QB_WEEKLY_SCHEDULES = {
         lowerBodySessions: 1,
         throwingSessions: 2,
         totalThrows: "165-195 throws (includes assessment)",
-        assessmentFocus: "Strength, power, arm strength, throwing velocity, accuracy, endurance, mobility",
+        assessmentFocus:
+          "Strength, power, arm strength, throwing velocity, accuracy, endurance, mobility",
         deloadVolume: "50-60% of training loads",
-        notes: "Compare all results to Week 1. Prepare for Power phase (Weeks 9-12)",
+        notes:
+          "Compare all results to Week 1. Prepare for Power phase (Weeks 9-12)",
       },
       phaseSummary: {
         title: "QB Strength Development Phase Complete (Weeks 5-8)!",
@@ -4954,11 +5310,15 @@ export const QB_WEEKLY_SCHEDULES = {
         ],
         keyMetrics: {
           totalThrows: "610-850 throws over 4 weeks",
-          throwingProgression: "Week 5: 150-180, Week 6: 180-220, Week 7: 220-250",
+          throwingProgression:
+            "Week 5: 150-180, Week 6: 180-220, Week 7: 220-250",
           longTossProgression: "40y → 50y → 55y → 60y (peak)",
-          strengthGains: "Compare Week 8 to Week 1: squats, RDLs, Nordic curls, arm strength",
-          throwingGains: "Velocity (+3-5 mph goal), accuracy (85%+ goal), endurance (100+ throw capacity)",
-          mobilityGains: "Shoulder ROM, hip flexor flexibility (critical for velocity)",
+          strengthGains:
+            "Compare Week 8 to Week 1: squats, RDLs, Nordic curls, arm strength",
+          throwingGains:
+            "Velocity (+3-5 mph goal), accuracy (85%+ goal), endurance (100+ throw capacity)",
+          mobilityGains:
+            "Shoulder ROM, hip flexor flexibility (critical for velocity)",
         },
         nextPhase: {
           name: "Power Phase (Weeks 9-12)",
@@ -5124,7 +5484,8 @@ export const QB_WEEKLY_SCHEDULES = {
                   ],
                   throws: "36 throws",
                   rest: "60-90s between throws at 60y",
-                  notes: "Maintain peak distance from Strength phase. Focus on velocity",
+                  notes:
+                    "Maintain peak distance from Strength phase. Focus on velocity",
                 },
               ],
             },
@@ -5180,9 +5541,7 @@ export const QB_WEEKLY_SCHEDULES = {
               title: "Block 3: Recovery",
               track: "Universal Recovery",
               duration: 15,
-              exercises: [
-                { name: "Foam rolling", duration: "15 min" },
-              ],
+              exercises: [{ name: "Foam rolling", duration: "15 min" }],
             },
           ],
           equipment: ["Yoga mat", "foam roller", "bands"],
@@ -5205,7 +5564,8 @@ export const QB_WEEKLY_SCHEDULES = {
                 {
                   name: "Complex: Squat + Reactive Depth Jump + Vertical Jump",
                   sets: 5,
-                  protocol: "3 squats @ 35% BW → 3 depth jumps → 2 max vertical jumps",
+                  protocol:
+                    "3 squats @ 35% BW → 3 depth jumps → 2 max vertical jumps",
                   rest: "4 min",
                   notes: "Triple complex for maximum power",
                 },
@@ -5250,8 +5610,10 @@ export const QB_WEEKLY_SCHEDULES = {
                 {
                   name: "Game Simulation Throwing (High Volume)",
                   throws: "100-105",
-                  protocol: "Full game scenario work, all routes, all distances",
-                  notes: "Building toward 320-throw tournament capacity. Track accuracy + mechanics",
+                  protocol:
+                    "Full game scenario work, all routes, all distances",
+                  notes:
+                    "Building toward 320-throw tournament capacity. Track accuracy + mechanics",
                 },
               ],
             },
@@ -5344,7 +5706,11 @@ export const QB_WEEKLY_SCHEDULES = {
             { name: "Lower body stretching", duration: "25 min" },
             { name: "Foam rolling", duration: "20 min" },
             { name: "Light walk/bike", duration: "20 min" },
-            { name: "QB shoulder + hip work", duration: "20 min", qbSpecific: true },
+            {
+              name: "QB shoulder + hip work",
+              duration: "20 min",
+              qbSpecific: true,
+            },
             { name: "Visualization", duration: "10 min" },
           ],
         },
@@ -5353,8 +5719,10 @@ export const QB_WEEKLY_SCHEDULES = {
         lowerBodySessions: 2,
         throwingSessions: 3,
         totalThrows: "250-280 throws",
-        focus: "Power development, throwing volume increase, long toss maintenance at 60y, game simulation",
-        qbSpecificNotes: "Volume increase to 250-280 throws. High-volume game simulation introduced.",
+        focus:
+          "Power development, throwing volume increase, long toss maintenance at 60y, game simulation",
+        qbSpecificNotes:
+          "Volume increase to 250-280 throws. High-volume game simulation introduced.",
       },
     },
 
@@ -5549,9 +5917,7 @@ export const QB_WEEKLY_SCHEDULES = {
               title: "Block 3: Recovery",
               track: "Universal Recovery",
               duration: 15,
-              exercises: [
-                { name: "Foam rolling", duration: "15 min" },
-              ],
+              exercises: [{ name: "Foam rolling", duration: "15 min" }],
             },
           ],
           equipment: ["Yoga mat", "foam roller", "bands"],
@@ -5603,7 +5969,7 @@ export const QB_WEEKLY_SCHEDULES = {
                   sets: 6,
                   reps: "5",
                   rest: "2.5 min",
-                  protocol: "Step down from 12\", immediate jump to 30\"",
+                  protocol: 'Step down from 12", immediate jump to 30"',
                 },
                 {
                   name: "Pogo Jumps + Sprint",
@@ -5627,13 +5993,15 @@ export const QB_WEEKLY_SCHEDULES = {
                   name: "Tournament Simulation (Game 1)",
                   throws: "110-115",
                   protocol: "Full game simulation: 4 quarters worth of throws",
-                  notes: "Simulating tournament game. Track mechanics breakdown point. Goal: maintain accuracy through full volume",
+                  notes:
+                    "Simulating tournament game. Track mechanics breakdown point. Goal: maintain accuracy through full volume",
                 },
               ],
             },
           ],
           totalThrows: "140-150 throws",
-          postSessionProtocol: "QB Daily Arm Care (20 min - extended) + Ice if needed",
+          postSessionProtocol:
+            "QB Daily Arm Care (20 min - extended) + Ice if needed",
           equipment: ["Plyo boxes", "footballs", "targets"],
         },
 
@@ -5719,7 +6087,11 @@ export const QB_WEEKLY_SCHEDULES = {
             { name: "Lower body stretching", duration: "25 min" },
             { name: "Foam rolling", duration: "20 min" },
             { name: "Light walk/bike", duration: "20 min" },
-            { name: "QB shoulder + hip work", duration: "20 min", qbSpecific: true },
+            {
+              name: "QB shoulder + hip work",
+              duration: "20 min",
+              qbSpecific: true,
+            },
             { name: "Mental preparation", duration: "10 min" },
           ],
         },
@@ -5728,8 +6100,10 @@ export const QB_WEEKLY_SCHEDULES = {
         lowerBodySessions: 2,
         throwingSessions: 3,
         totalThrows: "280-300 throws",
-        focus: "Peak power output, throwing volume 280-300 throws, tournament simulation (110+ throw sessions)",
-        qbSpecificNotes: "APPROACHING tournament volume. Tournament simulation introduced. Monitor arm health closely.",
+        focus:
+          "Peak power output, throwing volume 280-300 throws, tournament simulation (110+ throw sessions)",
+        qbSpecificNotes:
+          "APPROACHING tournament volume. Tournament simulation introduced. Monitor arm health closely.",
       },
     },
 
@@ -5881,14 +6255,18 @@ export const QB_WEEKLY_SCHEDULES = {
                 {
                   name: "Comprehensive Route Work (PEAK VOLUME)",
                   throws: "90-105",
-                  routes: ["Full route tree, all distances, all game scenarios"],
-                  notes: "PEAK VOLUME SESSION. Track accuracy through fatigue. Goal: 85%+ accuracy throughout",
+                  routes: [
+                    "Full route tree, all distances, all game scenarios",
+                  ],
+                  notes:
+                    "PEAK VOLUME SESSION. Track accuracy through fatigue. Goal: 85%+ accuracy throughout",
                 },
               ],
             },
           ],
           totalThrows: "157-177 throws",
-          postSessionProtocol: "QB Daily Arm Care (25 min - EXTENDED) + Ice if needed",
+          postSessionProtocol:
+            "QB Daily Arm Care (25 min - EXTENDED) + Ice if needed",
           equipment: ["Footballs", "targets", "measuring tape"],
           notes: "CRITICAL: Monitor arm closely. This is peak volume session.",
         },
@@ -5916,7 +6294,11 @@ export const QB_WEEKLY_SCHEDULES = {
               duration: 35,
               qbSpecific: true,
               exercises: [
-                { name: "Comprehensive shoulder mobility", duration: "20 min", notes: "Extended duration - peak week" },
+                {
+                  name: "Comprehensive shoulder mobility",
+                  duration: "20 min",
+                  notes: "Extended duration - peak week",
+                },
                 { name: "Hip flexor flexibility", duration: "12 min" },
                 { name: "Thoracic mobility", duration: "8 min" },
               ],
@@ -5951,7 +6333,7 @@ export const QB_WEEKLY_SCHEDULES = {
                 {
                   name: "Box Jump + Pro Agility",
                   sets: 5,
-                  protocol: "3 box jumps (24\") → immediately Pro Agility drill",
+                  protocol: '3 box jumps (24") → immediately Pro Agility drill',
                   rest: "3 min",
                   notes: "Power to agility transition",
                 },
@@ -5969,7 +6351,12 @@ export const QB_WEEKLY_SCHEDULES = {
               duration: 20,
               exercises: [
                 { name: "Pogo Jumps", sets: 4, duration: "20s", rest: "2 min" },
-                { name: "Hurdle Hops", sets: 4, reps: "10 hurdles", rest: "2 min" },
+                {
+                  name: "Hurdle Hops",
+                  sets: 4,
+                  reps: "10 hurdles",
+                  rest: "2 min",
+                },
               ],
             },
             {
@@ -5991,15 +6378,18 @@ export const QB_WEEKLY_SCHEDULES = {
                     "15-min break: QB arm care protocol",
                     "Game 2: 55-65 throws (4 quarters)",
                   ],
-                  notes: "PEAK SIMULATION. Simulates tournament weekend. Track mechanics + accuracy through both games. Goal: maintain 85%+ accuracy",
+                  notes:
+                    "PEAK SIMULATION. Simulates tournament weekend. Track mechanics + accuracy through both games. Goal: maintain 85%+ accuracy",
                 },
               ],
             },
           ],
           totalThrows: "140-160 throws",
-          postSessionProtocol: "QB Daily Arm Care (25 min - EXTENDED) + Ice + Comprehensive shoulder work",
+          postSessionProtocol:
+            "QB Daily Arm Care (25 min - EXTENDED) + Ice + Comprehensive shoulder work",
           equipment: ["Plyo boxes", "footballs", "targets", "cones"],
-          notes: "PEAK VOLUME WEEK. This is tournament simulation. Monitor arm health very closely.",
+          notes:
+            "PEAK VOLUME WEEK. This is tournament simulation. Monitor arm health very closely.",
         },
 
         friday: {
@@ -6057,7 +6447,11 @@ export const QB_WEEKLY_SCHEDULES = {
               duration: 50,
               qbSpecific: true,
               exercises: [
-                { name: "Shoulder mobility circuit", duration: "20 min", notes: "Extended - peak week recovery" },
+                {
+                  name: "Shoulder mobility circuit",
+                  duration: "20 min",
+                  notes: "Extended - peak week recovery",
+                },
                 { name: "Rotator cuff maintenance", duration: "15 min" },
                 { name: "Hip flexor work", duration: "10 min" },
                 { name: "Light stretching", duration: "10 min" },
@@ -6077,8 +6471,15 @@ export const QB_WEEKLY_SCHEDULES = {
             { name: "Lower body stretching", duration: "25 min" },
             { name: "Foam rolling", duration: "20 min" },
             { name: "Light walk/bike", duration: "20 min" },
-            { name: "QB shoulder + hip work", duration: "20 min", qbSpecific: true },
-            { name: "Visualization + tournament mental prep", duration: "15 min" },
+            {
+              name: "QB shoulder + hip work",
+              duration: "20 min",
+              qbSpecific: true,
+            },
+            {
+              name: "Visualization + tournament mental prep",
+              duration: "15 min",
+            },
           ],
         },
       },
@@ -6086,8 +6487,10 @@ export const QB_WEEKLY_SCHEDULES = {
         lowerBodySessions: 2,
         throwingSessions: 3,
         totalThrows: "300-320 throws (PEAK)",
-        focus: "PEAK throwing volume (300-320 throws), full tournament simulation (2-game back-to-back), power maintenance",
-        qbSpecificNotes: "PEAK WEEK. 300-320 total throws. Full tournament simulation achieved. Ready for competition. CRITICAL arm care this week.",
+        focus:
+          "PEAK throwing volume (300-320 throws), full tournament simulation (2-game back-to-back), power maintenance",
+        qbSpecificNotes:
+          "PEAK WEEK. 300-320 total throws. Full tournament simulation achieved. Ready for competition. CRITICAL arm care this week.",
       },
     },
 
@@ -6125,7 +6528,7 @@ export const QB_WEEKLY_SCHEDULES = {
                   record: "Best distance. Compare to Weeks 1 & 8",
                 },
                 {
-                  name: "Depth Jump Test (12\" Box)",
+                  name: 'Depth Jump Test (12" Box)',
                   sets: 3,
                   rest: "3 min",
                   record: "Best reactive jump height",
@@ -6178,7 +6581,12 @@ export const QB_WEEKLY_SCHEDULES = {
             },
           ],
           postSessionProtocol: "QB Daily Arm Care (15 min)",
-          equipment: ["Barbell/DBs", "bands", "medicine ball", "measuring tape"],
+          equipment: [
+            "Barbell/DBs",
+            "bands",
+            "medicine ball",
+            "measuring tape",
+          ],
         },
 
         tuesday: {
@@ -6252,7 +6660,8 @@ export const QB_WEEKLY_SCHEDULES = {
                 {
                   name: "Accuracy Assessment (Game Distances)",
                   throws: "30",
-                  protocol: "30 throws to targets at game distances (10y, 15y, 20y, 30y)",
+                  protocol:
+                    "30 throws to targets at game distances (10y, 15y, 20y, 30y)",
                   record: "Accuracy percentage by distance",
                   notes: "Goal: 90%+ at short/medium, 85%+ at deep",
                 },
@@ -6261,15 +6670,23 @@ export const QB_WEEKLY_SCHEDULES = {
                   throws: "50-60",
                   protocol: "Continuous throwing until mechanics breakdown",
                   record: "Total throws maintaining quality mechanics",
-                  notes: "Compare to Week 1. Goal: 150+ throws capacity before breakdown",
+                  notes:
+                    "Compare to Week 1. Goal: 150+ throws capacity before breakdown",
                 },
               ],
             },
           ],
           totalThrows: "135-155 throws (assessment)",
           postSessionProtocol: "QB Daily Arm Care (25 min - extended)",
-          equipment: ["Footballs", "radar gun", "targets", "stopwatch", "measuring tools"],
-          notes: "COMPREHENSIVE throwing assessment. Compare all metrics to Weeks 1 & 8",
+          equipment: [
+            "Footballs",
+            "radar gun",
+            "targets",
+            "stopwatch",
+            "measuring tools",
+          ],
+          notes:
+            "COMPREHENSIVE throwing assessment. Compare all metrics to Weeks 1 & 8",
         },
 
         wednesday: {
@@ -6427,8 +6844,15 @@ export const QB_WEEKLY_SCHEDULES = {
             { name: "Lower body stretching", duration: "25 min" },
             { name: "Foam rolling", duration: "20 min" },
             { name: "Light walk/bike", duration: "20 min" },
-            { name: "QB shoulder + hip work", duration: "20 min", qbSpecific: true },
-            { name: "Review assessment results + set Competition phase goals", duration: "15 min" },
+            {
+              name: "QB shoulder + hip work",
+              duration: "20 min",
+              qbSpecific: true,
+            },
+            {
+              name: "Review assessment results + set Competition phase goals",
+              duration: "15 min",
+            },
           ],
         },
       },
@@ -6436,9 +6860,11 @@ export const QB_WEEKLY_SCHEDULES = {
         lowerBodySessions: 1,
         throwingSessions: 2,
         totalThrows: "180-210 throws (includes assessment)",
-        assessmentFocus: "Power, strength, arm strength, throwing velocity, accuracy, endurance, mobility",
+        assessmentFocus:
+          "Power, strength, arm strength, throwing velocity, accuracy, endurance, mobility",
         deloadVolume: "50-60% of training loads",
-        notes: "Compare all results to Weeks 1 & 8. Prepare for Competition phase (Weeks 13-14)",
+        notes:
+          "Compare all results to Weeks 1 & 8. Prepare for Competition phase (Weeks 13-14)",
       },
       phaseSummary: {
         title: "QB Power Phase Complete (Weeks 9-12)!",
@@ -6454,10 +6880,13 @@ export const QB_WEEKLY_SCHEDULES = {
         ],
         keyMetrics: {
           totalThrows: "930-1000 throws over 4 weeks (PEAK PHASE)",
-          throwingProgression: "Week 9: 250-280, Week 10: 280-300, Week 11: 300-320 (PEAK)",
+          throwingProgression:
+            "Week 9: 250-280, Week 10: 280-300, Week 11: 300-320 (PEAK)",
           longTossMaintenance: "60y maintained throughout (velocity emphasis)",
-          powerGains: "Compare Week 12 to Week 8 to Week 1: vertical jump, broad jump, depth jump",
-          throwingGains: "Velocity (+5-8 mph goal), accuracy (90%+ goal), endurance (150+ throw capacity goal)",
+          powerGains:
+            "Compare Week 12 to Week 8 to Week 1: vertical jump, broad jump, depth jump",
+          throwingGains:
+            "Velocity (+5-8 mph goal), accuracy (90%+ goal), endurance (150+ throw capacity goal)",
           tournamentReadiness: "Full 2-game simulation achieved in Week 11",
         },
         nextPhase: {
@@ -6629,7 +7058,10 @@ export const QB_WEEKLY_SCHEDULES = {
               title: "Block 1: Light Mobility + Arm Care",
               duration: 30,
               exercises: [
-                { name: "Shoulder mobility circuit (light)", duration: "15 min" },
+                {
+                  name: "Shoulder mobility circuit (light)",
+                  duration: "15 min",
+                },
                 { name: "Hip flexor flexibility", duration: "10 min" },
                 { name: "Light stretching", duration: "10 min" },
               ],
@@ -6639,7 +7071,10 @@ export const QB_WEEKLY_SCHEDULES = {
               duration: 25,
               exercises: [
                 { name: "Foam rolling (light)", duration: "12 min" },
-                { name: "Tournament visualization + strategy", duration: "20 min" },
+                {
+                  name: "Tournament visualization + strategy",
+                  duration: "20 min",
+                },
               ],
             },
           ],
@@ -6662,8 +7097,18 @@ export const QB_WEEKLY_SCHEDULES = {
               duration: 20,
               exercises: [
                 { name: "Pogo Jumps", sets: 3, duration: "15s", rest: "2 min" },
-                { name: "Lateral Bounds", sets: 3, reps: "4 each", rest: "2 min" },
-                { name: "Single-Leg Bounds (Light)", sets: 3, distance: "20m each", rest: "2 min" },
+                {
+                  name: "Lateral Bounds",
+                  sets: 3,
+                  reps: "4 each",
+                  rest: "2 min",
+                },
+                {
+                  name: "Single-Leg Bounds (Light)",
+                  sets: 3,
+                  distance: "20m each",
+                  rest: "2 min",
+                },
               ],
             },
             {
@@ -6684,7 +7129,7 @@ export const QB_WEEKLY_SCHEDULES = {
                 },
               ],
             },
-          },
+          ],
           totalThrows: "45-55 throws",
           postSessionProtocol: "QB Daily Arm Care (15 min)",
           equipment: ["Plyo boxes", "footballs", "targets"],
@@ -6772,7 +7217,11 @@ export const QB_WEEKLY_SCHEDULES = {
             { name: "Lower body stretching", duration: "20 min" },
             { name: "Foam rolling", duration: "15 min" },
             { name: "Light walk", duration: "20 min" },
-            { name: "QB shoulder + hip work", duration: "15 min", qbSpecific: true },
+            {
+              name: "QB shoulder + hip work",
+              duration: "15 min",
+              qbSpecific: true,
+            },
             { name: "Tournament visualization + strategy", duration: "20 min" },
           ],
         },
@@ -6781,8 +7230,10 @@ export const QB_WEEKLY_SCHEDULES = {
         lowerBodySessions: 2,
         throwingSessions: 3,
         totalThrows: "138-168 throws (40-50% reduction from peak)",
-        focus: "Taper (40-50% volume), maintain intensity, mental preparation priority",
-        qbSpecificNotes: "Significant throwing volume reduction. Quality over quantity. Stay fresh for competition.",
+        focus:
+          "Taper (40-50% volume), maintain intensity, mental preparation priority",
+        qbSpecificNotes:
+          "Significant throwing volume reduction. Quality over quantity. Stay fresh for competition.",
       },
     },
 
@@ -6797,7 +7248,8 @@ export const QB_WEEKLY_SCHEDULES = {
           title: "QB Light Power Activation",
           type: "power",
           duration: 50,
-          warmup: "QB Enhanced warm-up (20 min) + Light plyometric prep (5 min)",
+          warmup:
+            "QB Enhanced warm-up (20 min) + Light plyometric prep (5 min)",
           dualTrack: true,
 
           blocks: [
@@ -6890,7 +7342,11 @@ export const QB_WEEKLY_SCHEDULES = {
               exercises: [
                 { name: "Shoulder mobility (light)", duration: "12 min" },
                 { name: "Hip flexor flexibility", duration: "8 min" },
-                { name: "Tournament visualization", duration: "25 min", notes: "PRIMARY FOCUS" },
+                {
+                  name: "Tournament visualization",
+                  duration: "25 min",
+                  notes: "PRIMARY FOCUS",
+                },
               ],
             },
           ],
@@ -6925,7 +7381,7 @@ export const QB_WEEKLY_SCHEDULES = {
                 },
               ],
             },
-          },
+          ],
           totalThrows: "25-35 throws",
           postSessionProtocol: "QB Daily Arm Care (15 min)",
           equipment: ["Footballs", "targets"],
@@ -6978,15 +7434,18 @@ export const QB_WEEKLY_SCHEDULES = {
           type: "competition",
           preGameWarmup: "Extended QB warm-up protocol (30-35 min)",
           betweenGames: "QB Between-Game Protocol (8-12 min)",
-          notes: "Ready for 320-throw tournament weekend. Trust your preparation. Execute the game plan.",
+          notes:
+            "Ready for 320-throw tournament weekend. Trust your preparation. Execute the game plan.",
         },
       },
       weekSummary: {
         lowerBodySessions: 1,
         throwingSessions: 3,
         totalThrows: "85-110 throws (70% reduction from peak)",
-        focus: "Minimal volume (20-30% of peak), activation only, peak freshness, mental preparation",
-        qbSpecificNotes: "Physical work is minimal. Mental preparation is priority. Arm is fresh and ready for 320-throw tournament.",
+        focus:
+          "Minimal volume (20-30% of peak), activation only, peak freshness, mental preparation",
+        qbSpecificNotes:
+          "Physical work is minimal. Mental preparation is priority. Arm is fresh and ready for 320-throw tournament.",
       },
       programSummary: {
         title: "14-WEEK QB ELITE TRAINING PROGRAM COMPLETE!",
@@ -7002,26 +7461,37 @@ export const QB_WEEKLY_SCHEDULES = {
           "Taper for peak freshness",
         ],
         keyProgression: {
-          foundation: "Weeks 1-4: 80-150 throws/week, foundation building, long toss introduction",
-          strength: "Weeks 5-8: 150-250 throws/week, long toss to 60y, arm strength peak",
-          power: "Weeks 9-12: 250-320 throws/week (PEAK), tournament simulation, throwing endurance peaked",
-          taper: "Weeks 13-14: 100-120 → 60-80 throws, volume reduction, intensity maintenance",
+          foundation:
+            "Weeks 1-4: 80-150 throws/week, foundation building, long toss introduction",
+          strength:
+            "Weeks 5-8: 150-250 throws/week, long toss to 60y, arm strength peak",
+          power:
+            "Weeks 9-12: 250-320 throws/week (PEAK), tournament simulation, throwing endurance peaked",
+          taper:
+            "Weeks 13-14: 100-120 → 60-80 throws, volume reduction, intensity maintenance",
         },
         tournamentReadiness: {
           throwingCapacity: "320-throw weekend capacity ACHIEVED",
           simulation: "Full 2-game back-to-back simulation completed (Week 11)",
-          armStrength: "Rotator cuff, lats, triceps strength peaked (evidence-based)",
-          velocity: "Long toss 60y maintained, velocity development optimized (Goal: +5-8 mph)",
-          accuracy: "Precision throwing maintained through high volume (Goal: 90%+)",
-          mobility: "Shoulder ROM optimal, hip flexors loosened (prevents 15-20% velocity loss)",
+          armStrength:
+            "Rotator cuff, lats, triceps strength peaked (evidence-based)",
+          velocity:
+            "Long toss 60y maintained, velocity development optimized (Goal: +5-8 mph)",
+          accuracy:
+            "Precision throwing maintained through high volume (Goal: 90%+)",
+          mobility:
+            "Shoulder ROM optimal, hip flexors loosened (prevents 15-20% velocity loss)",
           freshness: "Proper taper executed, arm is fresh and ready",
         },
         evidenceBasedResults: {
-          rotatorCuff: "External rotation strength correlates with velocity (r=0.72)",
+          rotatorCuff:
+            "External rotation strength correlates with velocity (r=0.72)",
           backStrength: "Lats provide 18% of throwing power - developed",
-          hipFlexors: "Flexibility optimized (tight hip flexors reduce velocity 15-20%)",
+          hipFlexors:
+            "Flexibility optimized (tight hip flexors reduce velocity 15-20%)",
           thoracicMobility: "Extension adds 8-12 mph velocity - maintained",
-          armStrength: "Triceps (23% of velocity) + biceps (deceleration) developed",
+          armStrength:
+            "Triceps (23% of velocity) + biceps (deceleration) developed",
         },
         nextSteps: [
           "COMPETE with confidence in your 320-throw capacity",

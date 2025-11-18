@@ -19,9 +19,14 @@
 .main-content {
   margin-left: 250px;
   width: calc(100% - 250px); /* ✅ Use width instead of max-width */
-  padding-top: calc(64px + var(--space-6, 24px)) !important; /* Override header.css: 64px header + 24px spacing */
+  padding-top: calc(
+    64px + var(--space-6, 24px)
+  ) !important; /* Override header.css: 64px header + 24px spacing */
   padding-right: var(--space-6, 24px);
-  padding-bottom: var(--space-8, 48px); /* Extra bottom padding to prevent content cutoff */
+  padding-bottom: var(
+    --space-8,
+    48px
+  ); /* Extra bottom padding to prevent content cutoff */
   padding-left: var(--space-6, 24px);
   box-sizing: border-box;
 }
@@ -30,7 +35,9 @@
   .main-content {
     margin-left: 0;
     width: 100%; /* ✅ Full width on mobile */
-    padding-top: calc(64px + var(--space-5, 20px)) !important; /* Override header.css */
+    padding-top: calc(
+      64px + var(--space-5, 20px)
+    ) !important; /* Override header.css */
     padding-right: var(--space-5, 20px);
     padding-bottom: var(--space-8, 48px); /* Extra bottom padding */
     padding-left: var(--space-5, 20px);
@@ -39,7 +46,9 @@
 
 @media (max-width: 768px) {
   .main-content {
-    padding-top: calc(56px + var(--space-4, 16px)) !important; /* Override header.css mobile rule */
+    padding-top: calc(
+      56px + var(--space-4, 16px)
+    ) !important; /* Override header.css mobile rule */
     padding-right: var(--space-4, 16px);
     padding-bottom: var(--space-8, 48px); /* Extra bottom padding */
     padding-left: var(--space-4, 16px);
@@ -289,11 +298,11 @@
     grid-template-columns: 1fr;
     gap: var(--space-3, 12px);
   }
-  
+
   .team-overview .card-body {
     padding: var(--space-5, 20px);
   }
-  
+
   .team-overview .overview-value {
     font-size: var(--text-2xl, 24px);
   }

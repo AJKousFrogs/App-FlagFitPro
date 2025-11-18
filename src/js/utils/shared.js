@@ -1,12 +1,14 @@
 // Shared Utilities Module - FlagFit Pro
 // Common functions used across multiple page modules
 
+import { logger } from "../../logger.js";
+
 // ================================================================
 // DOM UTILITIES
 // ================================================================
 
 export function escapeHtml(text) {
-  if (!text) return '';
+  if (!text) return "";
   const div = document.createElement("div");
   div.textContent = text;
   return div.innerHTML;
@@ -37,7 +39,7 @@ export function initializeLucideIcons(container = document) {
   }
 }
 
-export function createElementWithClass(tag, className, innerHTML = '') {
+export function createElementWithClass(tag, className, innerHTML = "") {
   const element = document.createElement(tag);
   if (className) element.className = className;
   if (innerHTML) element.innerHTML = innerHTML;
@@ -45,7 +47,7 @@ export function createElementWithClass(tag, className, innerHTML = '') {
 }
 
 // ================================================================
-// TIME AND DATE UTILITIES  
+// TIME AND DATE UTILITIES
 // ================================================================
 
 export function formatTime(timestamp) {
@@ -71,7 +73,7 @@ export function getTimeAgo(timestamp) {
   const date = new Date(timestamp);
   const diffInSeconds = Math.floor((now - date) / 1000);
 
-  if (diffInSeconds < 60) return 'Just now';
+  if (diffInSeconds < 60) return "Just now";
   if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
   if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
   return `${Math.floor(diffInSeconds / 86400)}d ago`;
@@ -87,7 +89,7 @@ export function validateEmail(email) {
 }
 
 export function validateRequired(value, fieldName) {
-  if (!value || value.toString().trim() === '') {
+  if (!value || value.toString().trim() === "") {
     return `${fieldName} is required`;
   }
   return null;
@@ -110,28 +112,28 @@ export function validateLength(value, minLength, maxLength, fieldName) {
 export function showFieldError(fieldId, message) {
   const field = document.getElementById(fieldId);
   if (!field) return;
-  
+
   clearFieldState(fieldId);
-  field.classList.add('error');
-  
-  const errorDiv = createElementWithClass('div', 'field-error', message);
+  field.classList.add("error");
+
+  const errorDiv = createElementWithClass("div", "field-error", message);
   field.parentNode.appendChild(errorDiv);
 }
 
 export function showFieldSuccess(fieldId) {
   const field = document.getElementById(fieldId);
   if (!field) return;
-  
+
   clearFieldState(fieldId);
-  field.classList.add('success');
+  field.classList.add("success");
 }
 
 export function clearFieldState(fieldId) {
   const field = document.getElementById(fieldId);
   if (!field) return;
-  
-  field.classList.remove('error', 'success');
-  const existingError = field.parentNode.querySelector('.field-error');
+
+  field.classList.remove("error", "success");
+  const existingError = field.parentNode.querySelector(".field-error");
   if (existingError) {
     existingError.remove();
   }
@@ -140,10 +142,10 @@ export function clearFieldState(fieldId) {
 export function getFormData(formId) {
   const form = document.getElementById(formId);
   if (!form) return null;
-  
+
   const formData = new FormData(form);
   const data = {};
-  for (let [key, value] of formData.entries()) {
+  for (const [key, value] of formData.entries()) {
     data[key] = value;
   }
   return data;
@@ -158,7 +160,7 @@ export function saveToStorage(key, data) {
     localStorage.setItem(key, JSON.stringify(data));
     return true;
   } catch (error) {
-    logger.warn('Failed to save to localStorage:', error);
+    logger.warn("Failed to save to localStorage:", error);
     return false;
   }
 }
@@ -168,7 +170,7 @@ export function getFromStorage(key, defaultValue = null) {
     const data = localStorage.getItem(key);
     return data ? JSON.parse(data) : defaultValue;
   } catch (error) {
-    logger.warn('Failed to get from localStorage:', error);
+    logger.warn("Failed to get from localStorage:", error);
     return defaultValue;
   }
 }
@@ -178,7 +180,7 @@ export function removeFromStorage(key) {
     localStorage.removeItem(key);
     return true;
   } catch (error) {
-    logger.warn('Failed to remove from localStorage:', error);
+    logger.warn("Failed to remove from localStorage:", error);
     return false;
   }
 }
@@ -220,10 +222,10 @@ export function capitalize(str) {
 }
 
 export function kebabCase(str) {
-  return str.toLowerCase().replace(/\s+/g, '-');
+  return str.toLowerCase().replace(/\s+/g, "-");
 }
 
-export function truncate(str, length = 50, suffix = '...') {
+export function truncate(str, length = 50, suffix = "...") {
   if (str.length <= length) return str;
   return str.substring(0, length) + suffix;
 }
@@ -233,9 +235,9 @@ export function truncate(str, length = 50, suffix = '...') {
 // ================================================================
 
 export function formatNumber(num, decimals = 0) {
-  return Number(num).toLocaleString('en-US', {
+  return Number(num).toLocaleString("en-US", {
     minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals
+    maximumFractionDigits: decimals,
   });
 }
 
@@ -265,13 +267,13 @@ export function debounce(func, wait) {
 
 export function throttle(func, limit) {
   let inThrottle;
-  return function() {
+  return function () {
     const args = arguments;
     const context = this;
     if (!inThrottle) {
       func.apply(context, args);
       inThrottle = true;
-      setTimeout(() => inThrottle = false, limit);
+      setTimeout(() => (inThrottle = false), limit);
     }
   };
 }
@@ -280,7 +282,7 @@ export function throttle(func, limit) {
 // UI UTILITIES
 // ================================================================
 
-export function showLoading(element, text = 'Loading...') {
+export function showLoading(element, text = "Loading...") {
   if (!element) return;
   element.innerHTML = `<span aria-hidden="true">⏳</span> ${text}`;
   element.disabled = true;
@@ -293,7 +295,7 @@ export function hideLoading(element, originalText) {
 }
 
 export function createModal(title, content, actions = []) {
-  const modal = createElementWithClass('div', 'modal');
+  const modal = createElementWithClass("div", "modal");
   modal.innerHTML = `
     <div class="modal-overlay" onclick="closeModal()"></div>
     <div class="modal-content">
@@ -307,22 +309,26 @@ export function createModal(title, content, actions = []) {
         ${content}
       </div>
       <div class="modal-actions">
-        ${actions.map(action => `
+        ${actions
+          .map(
+            (action) => `
           <button class="${action.class}" onclick="${action.onclick}">
             ${action.text}
           </button>
-        `).join('')}
+        `,
+          )
+          .join("")}
       </div>
     </div>
   `;
-  
+
   document.body.appendChild(modal);
   initializeLucideIcons(modal);
   return modal;
 }
 
 export function closeModal() {
-  const modal = document.querySelector('.modal');
+  const modal = document.querySelector(".modal");
   if (modal) {
     modal.remove();
   }
@@ -335,13 +341,13 @@ window.closeModal = closeModal;
 // ACCESSIBILITY UTILITIES
 // ================================================================
 
-export function announceToScreenReader(message, priority = 'polite') {
-  const announcement = createElementWithClass('div', 'sr-only');
-  announcement.setAttribute('aria-live', priority);
+export function announceToScreenReader(message, priority = "polite") {
+  const announcement = createElementWithClass("div", "sr-only");
+  announcement.setAttribute("aria-live", priority);
   announcement.textContent = message;
-  
+
   document.body.appendChild(announcement);
-  
+
   setTimeout(() => {
     announcement.remove();
   }, 1000);
@@ -357,7 +363,7 @@ export function focusElement(elementId) {
 export function setAriaLabel(elementId, label) {
   const element = document.getElementById(elementId);
   if (element) {
-    element.setAttribute('aria-label', label);
+    element.setAttribute("aria-label", label);
   }
 }
 
@@ -369,18 +375,18 @@ export function getMessageStatusHtml(status) {
   const statusIcons = {
     sent: "check",
     delivered: "check-check",
-    read: "check-check"
+    read: "check-check",
   };
-  
+
   const statusClasses = {
     sent: "status-sent",
     delivered: "status-delivered",
-    read: "status-read"
+    read: "status-read",
   };
-  
+
   const icon = statusIcons[status] || "check";
   const statusClass = statusClasses[status] || "status-sent";
-  
+
   return `
     <div class="message-status">
       <i data-lucide="${icon}" class="${statusClass} icon-14"></i>
@@ -415,59 +421,59 @@ export const utils = {
   scrollToBottom,
   initializeLucideIcons,
   createElementWithClass,
-  
+
   // Time
   formatTime,
   formatDateTime,
   getTimeAgo,
-  
+
   // Validation
   validateEmail,
   validateRequired,
   validateLength,
-  
+
   // Forms
   showFieldError,
   showFieldSuccess,
   clearFieldState,
   getFormData,
-  
+
   // Storage
   saveToStorage,
   getFromStorage,
   removeFromStorage,
-  
+
   // Arrays
   shuffleArray,
   getRandomItem,
   groupBy,
-  
+
   // Strings
   capitalize,
   kebabCase,
   truncate,
-  
+
   // Numbers
   formatNumber,
   formatPercentage,
   clamp,
-  
+
   // Events
   debounce,
   throttle,
-  
+
   // UI
   showLoading,
   hideLoading,
   createModal,
   closeModal,
-  
+
   // Accessibility
   announceToScreenReader,
   focusElement,
   setAriaLabel,
-  
+
   // Messages
   getMessageStatusHtml,
-  getMessageActionsHtml
+  getMessageActionsHtml,
 };

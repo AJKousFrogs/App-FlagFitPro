@@ -1,7 +1,8 @@
 // Knowledge Base Service
 // Queries the evidence-based knowledge database for chatbot responses
 
-import { apiClient } from "../api-config.js";
+import { apiClient } from "../../api-config.js";
+import { logger } from "../../logger.js";
 
 class KnowledgeBaseService {
   constructor() {
@@ -17,7 +18,7 @@ class KnowledgeBaseService {
    */
   async searchKnowledgeBase(query, category = null) {
     // Check cache first
-    const cacheKey = `${query}_${category || 'all'}`;
+    const cacheKey = `${query}_${category || "all"}`;
     const cached = this.cache.get(cacheKey);
     if (cached && Date.now() - cached.timestamp < this.cacheTimeout) {
       return cached.data;
@@ -31,7 +32,7 @@ class KnowledgeBaseService {
         // Cache the result
         this.cache.set(cacheKey, {
           data: response.data[0],
-          timestamp: Date.now()
+          timestamp: Date.now(),
         });
 
         return response.data[0];
@@ -103,7 +104,7 @@ class KnowledgeBaseService {
         evidenceStrength: kbEntry.evidence_strength,
         supportingArticles: kbEntry.supporting_articles?.length || 0,
         citations: kbEntry.supporting_articles || [],
-        source: 'knowledge_base'
+        source: "knowledge_base",
       };
     }
 
@@ -115,17 +116,17 @@ class KnowledgeBaseService {
       const answer = this.synthesizeAnswerFromArticles(articles, question);
       return {
         answer,
-        summary: articles[0].abstract?.substring(0, 200) || '',
-        evidenceStrength: articles[0].evidence_level || 'C',
+        summary: articles[0].abstract?.substring(0, 200) || "",
+        evidenceStrength: articles[0].evidence_level || "C",
         supportingArticles: articles.length,
-        citations: articles.map(a => ({
+        citations: articles.map((a) => ({
           title: a.title,
           authors: a.authors,
           year: a.publication_year,
           journal: a.journal,
-          doi: a.doi
+          doi: a.doi,
         })),
-        source: 'articles'
+        source: "articles",
       };
     }
 
@@ -139,13 +140,12 @@ class KnowledgeBaseService {
     // Simple synthesis - can be improved with NLP
     const keyFindings = articles
       .slice(0, 3)
-      .map(a => a.key_findings || a.abstract?.substring(0, 300))
-      .filter(f => f)
-      .join('\n\n');
+      .map((a) => a.key_findings || a.abstract?.substring(0, 300))
+      .filter((f) => f)
+      .join("\n\n");
 
     return `Based on ${articles.length} research articles:\n\n${keyFindings}\n\n*For more details, consult the original research articles.*`;
   }
 }
 
 export const knowledgeBaseService = new KnowledgeBaseService();
-

@@ -1,16 +1,26 @@
-import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { CardModule } from 'primeng/card';
-import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
-import { MessageModule } from 'primeng/message';
-import { MessageService } from 'primeng/api';
-import { ToastModule } from 'primeng/toast';
+import {
+  Component,
+  inject,
+  signal,
+  ChangeDetectionStrategy,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { Router, RouterModule } from "@angular/router";
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from "@angular/forms";
+import { CardModule } from "primeng/card";
+import { ButtonModule } from "primeng/button";
+import { InputTextModule } from "primeng/inputtext";
+import { MessageModule } from "primeng/message";
+import { MessageService } from "primeng/api";
+import { ToastModule } from "primeng/toast";
 
 @Component({
-  selector: 'app-reset-password',
+  selector: "app-reset-password",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
@@ -21,7 +31,7 @@ import { ToastModule } from 'primeng/toast';
     ButtonModule,
     InputTextModule,
     MessageModule,
-    ToastModule
+    ToastModule,
   ],
   providers: [MessageService],
   template: `
@@ -45,9 +55,10 @@ import { ToastModule } from 'primeng/toast';
               formControlName="email"
               placeholder="Enter your email"
               [class.ng-invalid]="isFieldInvalid('email')"
-              autocomplete="email">
+              autocomplete="email"
+            />
             <small class="p-error" *ngIf="isFieldInvalid('email')">
-              {{ getFieldError('email') }}
+              {{ getFieldError("email") }}
             </small>
           </div>
 
@@ -57,7 +68,8 @@ import { ToastModule } from 'primeng/toast';
             icon="pi pi-send"
             [loading]="isLoading()"
             [disabled]="resetForm.invalid"
-            styleClass="w-full mb-4">
+            styleClass="w-full mb-4"
+          >
           </p-button>
         </form>
 
@@ -65,77 +77,81 @@ import { ToastModule } from 'primeng/toast';
           <span>Or</span>
         </div>
 
-        <a [routerLink]="['/login']" class="reset-password-login-link">Back to Sign In</a>
+        <a [routerLink]="['/login']" class="reset-password-login-link"
+          >Back to Sign In</a
+        >
       </p-card>
     </div>
   `,
-  styles: [`
-    .reset-password-page {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: var(--space-6);
-      background: var(--surface-secondary);
-    }
+  styles: [
+    `
+      .reset-password-page {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding: var(--space-6);
+        background: var(--surface-secondary);
+      }
 
-    .reset-password-card {
-      width: 100%;
-      max-width: 400px;
-    }
+      .reset-password-card {
+        width: 100%;
+        max-width: 400px;
+      }
 
-    .reset-password-logo {
-      text-align: center;
-      margin-bottom: var(--space-4);
-      color: var(--color-brand-primary);
-      font-size: 3rem;
-    }
+      .reset-password-logo {
+        text-align: center;
+        margin-bottom: var(--space-4);
+        color: var(--color-brand-primary);
+        font-size: 3rem;
+      }
 
-    .reset-password-title {
-      text-align: center;
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--color-brand-primary);
-      margin-bottom: var(--space-6);
-    }
+      .reset-password-title {
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--color-brand-primary);
+        margin-bottom: var(--space-6);
+      }
 
-    .reset-password-divider {
-      text-align: center;
-      position: relative;
-      color: var(--text-secondary);
-    }
+      .reset-password-divider {
+        text-align: center;
+        position: relative;
+        color: var(--text-secondary);
+      }
 
-    .reset-password-divider::before,
-    .reset-password-divider::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      width: 45%;
-      height: 1px;
-      background: var(--p-surface-200);
-    }
+      .reset-password-divider::before,
+      .reset-password-divider::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        width: 45%;
+        height: 1px;
+        background: var(--p-surface-200);
+      }
 
-    .reset-password-divider::before {
-      left: 0;
-    }
+      .reset-password-divider::before {
+        left: 0;
+      }
 
-    .reset-password-divider::after {
-      right: 0;
-    }
+      .reset-password-divider::after {
+        right: 0;
+      }
 
-    .reset-password-login-link {
-      display: block;
-      text-align: center;
-      color: var(--color-brand-primary);
-      font-weight: 600;
-      text-decoration: none;
-    }
+      .reset-password-login-link {
+        display: block;
+        text-align: center;
+        color: var(--color-brand-primary);
+        font-weight: 600;
+        text-decoration: none;
+      }
 
-    .required::after {
-      content: ' *';
-      color: var(--color-warning);
-    }
-  `]
+      .required::after {
+        content: " *";
+        color: var(--color-warning);
+      }
+    `,
+  ],
 })
 export class ResetPasswordComponent {
   private fb = inject(FormBuilder);
@@ -147,7 +163,7 @@ export class ResetPasswordComponent {
 
   constructor() {
     this.resetForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]]
+      email: ["", [Validators.required, Validators.email]],
     });
   }
 
@@ -158,13 +174,13 @@ export class ResetPasswordComponent {
 
   getFieldError(fieldName: string): string {
     const field = this.resetForm.get(fieldName);
-    if (field?.hasError('required')) {
-      return 'Email is required';
+    if (field?.hasError("required")) {
+      return "Email is required";
     }
-    if (field?.hasError('email')) {
-      return 'Please enter a valid email address';
+    if (field?.hasError("email")) {
+      return "Please enter a valid email address";
     }
-    return '';
+    return "";
   }
 
   onSubmit(): void {
@@ -179,15 +195,14 @@ export class ResetPasswordComponent {
     // Reset password API call - implementation pending
     setTimeout(() => {
       this.messageService.add({
-        severity: 'success',
-        summary: 'Success',
-        detail: 'Password reset link sent to your email!'
+        severity: "success",
+        summary: "Success",
+        detail: "Password reset link sent to your email!",
       });
       this.isLoading.set(false);
       setTimeout(() => {
-        this.router.navigate(['/login']);
+        this.router.navigate(["/login"]);
       }, 2000);
     }, 1000);
   }
 }
-

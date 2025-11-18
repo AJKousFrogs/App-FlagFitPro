@@ -345,7 +345,9 @@
   font-weight: var(--font-weight-semibold);
   font-size: var(--text-xs);
   flex-shrink: 0;
-  transition: opacity var(--transition-base), visibility var(--transition-base);
+  transition:
+    opacity var(--transition-base),
+    visibility var(--transition-base);
 }
 
 .message-content {
@@ -370,7 +372,8 @@
 .message.own .message-content {
   background: var(--color-primary);
   color: var(--color-text-on-primary);
-  border-radius: var(--radius-lg) var(--radius-lg) var(--space-xs) var(--radius-lg);
+  border-radius: var(--radius-lg) var(--radius-lg) var(--space-xs)
+    var(--radius-lg);
 }
 
 .message-header {
@@ -470,7 +473,9 @@
   gap: var(--space-1);
   opacity: 0;
   visibility: hidden;
-  transition: opacity var(--transition-base), visibility var(--transition-base);
+  transition:
+    opacity var(--transition-base),
+    visibility var(--transition-base);
   background: var(--surface-primary);
   border: 1px solid var(--color-border-secondary);
   border-radius: var(--radius-md);
@@ -690,7 +695,9 @@
 }
 
 @keyframes typingDot {
-  0%, 60%, 100% {
+  0%,
+  60%,
+  100% {
     transform: translateY(0);
     opacity: 0.4;
   }
@@ -1031,4 +1038,3 @@ html[data-theme="dark"] .message-actions {
   background: var(--surface-tertiary);
   border-color: var(--color-interactive-primary);
 }
-

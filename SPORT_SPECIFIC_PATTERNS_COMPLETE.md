@@ -16,29 +16,29 @@ This section defines the key performance metrics and benchmarks used to evaluate
 
 #### Speed & Agility
 
-| Metric | Benchmark | Description |
-|--------|-----------|-------------|
-| **40-Yard Dash** | 4.6s | Measures straight-line speed and acceleration |
-| **3-Cone Drill** | 6.8s | Tests agility, change of direction, and body control |
-| **Shuttle Run** | 4.3s | Evaluates lateral quickness and acceleration/deceleration |
+| Metric           | Benchmark | Description                                               |
+| ---------------- | --------- | --------------------------------------------------------- |
+| **40-Yard Dash** | 4.6s      | Measures straight-line speed and acceleration             |
+| **3-Cone Drill** | 6.8s      | Tests agility, change of direction, and body control      |
+| **Shuttle Run**  | 4.3s      | Evaluates lateral quickness and acceleration/deceleration |
 
 #### Explosiveness & Power
 
-| Metric | Benchmark | Description |
-|--------|-----------|-------------|
-| **Vertical Jump** | 1.1m (box jumping) | Measures lower body explosiveness and power |
-| **Broad Jump** | — | Tests horizontal power and lower body strength |
+| Metric            | Benchmark          | Description                                    |
+| ----------------- | ------------------ | ---------------------------------------------- |
+| **Vertical Jump** | 1.1m (box jumping) | Measures lower body explosiveness and power    |
+| **Broad Jump**    | —                  | Tests horizontal power and lower body strength |
 
 #### Strength & Endurance
 
-| Metric | Benchmark | Description |
-|--------|-----------|-------------|
-| **Hamstring Curls** | 10 reps | Tests posterior chain strength and injury prevention |
-| **Pull Ups** | 10 reps | Measures upper body pulling strength |
-| **Plank** | 3 minutes total | Core strength and stability |
-| | • Standard plank: 1.5 minutes | |
-| | • Side plank (each side): 45 seconds | |
-| **Copenhagen Plank** | 3 minutes (both legs) | Advanced core stability and hip strength |
+| Metric               | Benchmark                            | Description                                          |
+| -------------------- | ------------------------------------ | ---------------------------------------------------- |
+| **Hamstring Curls**  | 10 reps                              | Tests posterior chain strength and injury prevention |
+| **Pull Ups**         | 10 reps                              | Measures upper body pulling strength                 |
+| **Plank**            | 3 minutes total                      | Core strength and stability                          |
+|                      | • Standard plank: 1.5 minutes        |                                                      |
+|                      | • Side plank (each side): 45 seconds |                                                      |
+| **Copenhagen Plank** | 3 minutes (both legs)                | Advanced core stability and hip strength             |
 
 #### Additional Physical Attributes
 
@@ -113,9 +113,11 @@ When implementing performance tracking, consider using a scoring system:
 ## Player Profile Card
 
 ### Overview
+
 Compact card showing key player info, stats, and quick actions. Used in rosters, lineups, and search results.
 
 ### Layout
+
 ```
 ┌───────────────────────────────────┐
 │  [Photo]  Marcus Williams    [•] │
@@ -166,7 +168,7 @@ Compact card showing key player info, stats, and quick actions. Used in rosters,
       <svg><!-- three dots --></svg>
     </button>
   </div>
-  
+
   <div class="card-body">
     <div class="stat-bar">
       <div class="stat-label">
@@ -174,31 +176,52 @@ Compact card showing key player info, stats, and quick actions. Used in rosters,
         <span class="stat-name">Speed</span>
       </div>
       <div class="stat-progress">
-        <div class="stat-fill" style="width: 92%;" role="progressbar" aria-valuenow="92" aria-valuemin="0" aria-valuemax="100"></div>
+        <div
+          class="stat-fill"
+          style="width: 92%;"
+          role="progressbar"
+          aria-valuenow="92"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        ></div>
       </div>
     </div>
-    
+
     <div class="stat-bar">
       <div class="stat-label">
         <span class="stat-value">88</span>
         <span class="stat-name">Hands</span>
       </div>
       <div class="stat-progress">
-        <div class="stat-fill" style="width: 88%;" role="progressbar" aria-valuenow="88" aria-valuemin="0" aria-valuemax="100"></div>
+        <div
+          class="stat-fill"
+          style="width: 88%;"
+          role="progressbar"
+          aria-valuenow="88"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        ></div>
       </div>
     </div>
-    
+
     <div class="stat-bar">
       <div class="stat-label">
         <span class="stat-value">85</span>
         <span class="stat-name">Route</span>
       </div>
       <div class="stat-progress">
-        <div class="stat-fill" style="width: 85%;" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
+        <div
+          class="stat-fill"
+          style="width: 85%;"
+          role="progressbar"
+          aria-valuenow="85"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        ></div>
       </div>
     </div>
   </div>
-  
+
   <div class="card-footer">
     <button class="btn btn-primary btn-sm">View Profile</button>
     <button class="btn btn-secondary btn-sm">Message</button>
@@ -398,7 +421,11 @@ Compact card showing key player info, stats, and quick actions. Used in rosters,
 
 .stat-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--color-brand-primary), var(--color-brand-primary-hover));
+  background: linear-gradient(
+    90deg,
+    var(--color-brand-primary),
+    var(--color-brand-primary-hover)
+  );
   border-radius: var(--radius-full);
   transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -420,9 +447,11 @@ Compact card showing key player info, stats, and quick actions. Used in rosters,
 ## Attendance Tracker
 
 ### Overview
+
 Quick-entry interface for marking player attendance at training sessions. Optimized for speed and touch input.
 
 ### Layout
+
 ```
 ┌────────────────────────────────────────────┐
 │ Training Session - Nov 15, 2025            │
@@ -455,7 +484,7 @@ Quick-entry interface for marking player attendance at training sessions. Optimi
       <span class="summary-count total">15</span>
     </div>
   </div>
-  
+
   <div class="attendance-list">
     <div class="attendance-row present">
       <button class="status-toggle present" aria-label="Mark absent">
@@ -467,7 +496,7 @@ Quick-entry interface for marking player attendance at training sessions. Optimi
       </div>
       <span class="status-badge present">Present</span>
     </div>
-    
+
     <div class="attendance-row present">
       <button class="status-toggle present" aria-label="Mark absent">
         <svg class="status-icon"><!-- checkmark --></svg>
@@ -478,7 +507,7 @@ Quick-entry interface for marking player attendance at training sessions. Optimi
       </div>
       <span class="status-badge present">Present</span>
     </div>
-    
+
     <div class="attendance-row present">
       <button class="status-toggle present" aria-label="Mark absent">
         <svg class="status-icon"><!-- checkmark --></svg>
@@ -489,7 +518,7 @@ Quick-entry interface for marking player attendance at training sessions. Optimi
       </div>
       <span class="status-badge present">Present</span>
     </div>
-    
+
     <div class="attendance-row absent">
       <button class="status-toggle absent" aria-label="Mark present">
         <svg class="status-icon"><!-- X --></svg>
@@ -500,7 +529,7 @@ Quick-entry interface for marking player attendance at training sessions. Optimi
       </div>
       <span class="status-badge absent">Absent</span>
     </div>
-    
+
     <div class="attendance-row excused">
       <button class="status-toggle excused" aria-label="Mark present">
         <span class="status-icon">E</span>
@@ -511,7 +540,7 @@ Quick-entry interface for marking player attendance at training sessions. Optimi
       </div>
       <span class="status-badge excused">Excused</span>
     </div>
-    
+
     <div class="attendance-row late">
       <button class="status-toggle late" aria-label="Mark present">
         <span class="status-icon">L</span>
@@ -523,7 +552,7 @@ Quick-entry interface for marking player attendance at training sessions. Optimi
       <span class="status-badge late">Late</span>
     </div>
   </div>
-  
+
   <div class="tracker-footer">
     <button class="btn btn-secondary">Mark All Present</button>
     <button class="btn btn-primary">Save Attendance</button>
@@ -719,11 +748,11 @@ Quick-entry interface for marking player attendance at training sessions. Optimi
   .status-badge {
     display: none; /* Hide text badges on mobile, status color is clear */
   }
-  
+
   .tracker-footer {
     flex-direction: column;
   }
-  
+
   .tracker-footer .btn {
     width: 100%;
   }
@@ -738,121 +767,131 @@ class AttendanceTracker {
     this.attendanceData = {};
     this.init();
   }
-  
+
   init() {
-    document.querySelectorAll('.status-toggle').forEach(btn => {
-      btn.addEventListener('click', this.toggleStatus.bind(this));
+    document.querySelectorAll(".status-toggle").forEach((btn) => {
+      btn.addEventListener("click", this.toggleStatus.bind(this));
     });
-    
-    document.querySelector('.tracker-footer .btn-secondary').addEventListener('click', 
-      this.markAllPresent.bind(this));
-    
-    document.querySelector('.tracker-footer .btn-primary').addEventListener('click', 
-      this.saveAttendance.bind(this));
+
+    document
+      .querySelector(".tracker-footer .btn-secondary")
+      .addEventListener("click", this.markAllPresent.bind(this));
+
+    document
+      .querySelector(".tracker-footer .btn-primary")
+      .addEventListener("click", this.saveAttendance.bind(this));
   }
-  
+
   toggleStatus(e) {
     const btn = e.currentTarget;
-    const row = btn.closest('.attendance-row');
-    
+    const row = btn.closest(".attendance-row");
+
     // Cycle through statuses: absent -> present -> late -> excused -> absent
-    let currentStatus = 'absent';
-    if (btn.classList.contains('present')) currentStatus = 'present';
-    else if (btn.classList.contains('late')) currentStatus = 'late';
-    else if (btn.classList.contains('excused')) currentStatus = 'excused';
-    
+    let currentStatus = "absent";
+    if (btn.classList.contains("present")) currentStatus = "present";
+    else if (btn.classList.contains("late")) currentStatus = "late";
+    else if (btn.classList.contains("excused")) currentStatus = "excused";
+
     let nextStatus;
-    switch(currentStatus) {
-      case 'absent': nextStatus = 'present'; break;
-      case 'present': nextStatus = 'late'; break;
-      case 'late': nextStatus = 'excused'; break;
-      case 'excused': nextStatus = 'absent'; break;
+    switch (currentStatus) {
+      case "absent":
+        nextStatus = "present";
+        break;
+      case "present":
+        nextStatus = "late";
+        break;
+      case "late":
+        nextStatus = "excused";
+        break;
+      case "excused":
+        nextStatus = "absent";
+        break;
     }
-    
+
     this.updateRowStatus(row, nextStatus);
     this.updateSummary();
-    
+
     // Haptic feedback
-    if ('vibrate' in navigator) {
+    if ("vibrate" in navigator) {
       navigator.vibrate(50);
     }
   }
-  
+
   updateRowStatus(row, status) {
-    const btn = row.querySelector('.status-toggle');
-    const badge = row.querySelector('.status-badge');
-    const icon = btn.querySelector('.status-icon');
-    
+    const btn = row.querySelector(".status-toggle");
+    const badge = row.querySelector(".status-badge");
+    const icon = btn.querySelector(".status-icon");
+
     // Remove all status classes
-    ['present', 'absent', 'late', 'excused'].forEach(s => {
+    ["present", "absent", "late", "excused"].forEach((s) => {
       row.classList.remove(s);
       btn.classList.remove(s);
       badge.classList.remove(s);
     });
-    
+
     // Add new status
     row.classList.add(status);
     btn.classList.add(status);
     badge.classList.add(status);
-    
+
     // Update badge text
     badge.textContent = status.charAt(0).toUpperCase() + status.slice(1);
-    
+
     // Update icon
-    if (status === 'present') {
-      icon.innerHTML = '<svg><!-- checkmark --></svg>';
-      btn.setAttribute('aria-label', 'Mark absent');
-    } else if (status === 'absent') {
-      icon.innerHTML = '<svg><!-- X --></svg>';
-      btn.setAttribute('aria-label', 'Mark present');
-    } else if (status === 'late') {
-      icon.textContent = 'L';
-      btn.setAttribute('aria-label', 'Mark excused');
-    } else if (status === 'excused') {
-      icon.textContent = 'E';
-      btn.setAttribute('aria-label', 'Mark absent');
+    if (status === "present") {
+      icon.innerHTML = "<svg><!-- checkmark --></svg>";
+      btn.setAttribute("aria-label", "Mark absent");
+    } else if (status === "absent") {
+      icon.innerHTML = "<svg><!-- X --></svg>";
+      btn.setAttribute("aria-label", "Mark present");
+    } else if (status === "late") {
+      icon.textContent = "L";
+      btn.setAttribute("aria-label", "Mark excused");
+    } else if (status === "excused") {
+      icon.textContent = "E";
+      btn.setAttribute("aria-label", "Mark absent");
     }
   }
-  
+
   markAllPresent() {
-    document.querySelectorAll('.attendance-row').forEach(row => {
-      this.updateRowStatus(row, 'present');
+    document.querySelectorAll(".attendance-row").forEach((row) => {
+      this.updateRowStatus(row, "present");
     });
     this.updateSummary();
   }
-  
+
   updateSummary() {
-    const total = document.querySelectorAll('.attendance-row').length;
-    const present = document.querySelectorAll('.attendance-row.present').length;
-    
-    document.querySelector('.summary-count.present').textContent = present;
-    document.querySelector('.summary-count.total').textContent = total;
+    const total = document.querySelectorAll(".attendance-row").length;
+    const present = document.querySelectorAll(".attendance-row.present").length;
+
+    document.querySelector(".summary-count.present").textContent = present;
+    document.querySelector(".summary-count.total").textContent = total;
   }
-  
+
   saveAttendance() {
     // Collect attendance data
     const data = [];
-    document.querySelectorAll('.attendance-row').forEach(row => {
-      const name = row.querySelector('.player-name').textContent;
-      const number = row.querySelector('.player-number').textContent;
-      let status = 'absent';
-      if (row.classList.contains('present')) status = 'present';
-      else if (row.classList.contains('late')) status = 'late';
-      else if (row.classList.contains('excused')) status = 'excused';
-      
+    document.querySelectorAll(".attendance-row").forEach((row) => {
+      const name = row.querySelector(".player-name").textContent;
+      const number = row.querySelector(".player-number").textContent;
+      let status = "absent";
+      if (row.classList.contains("present")) status = "present";
+      else if (row.classList.contains("late")) status = "late";
+      else if (row.classList.contains("excused")) status = "excused";
+
       data.push({ name, number, status });
     });
-    
-    console.log('Saving attendance:', data);
-    
+
+    console.log("Saving attendance:", data);
+
     // Show success feedback
-    this.showToast('Attendance saved successfully');
+    this.showToast("Attendance saved successfully");
   }
-  
+
   showToast(message) {
     // Simple toast notification
-    const toast = document.createElement('div');
-    toast.className = 'toast-notification';
+    const toast = document.createElement("div");
+    toast.className = "toast-notification";
     toast.textContent = message;
     toast.style.cssText = `
       position: fixed;
@@ -867,9 +906,9 @@ class AttendanceTracker {
       box-shadow: 0 4px 12px rgba(0,0,0,0.2);
       z-index: 9999;
     `;
-    
+
     document.body.appendChild(toast);
-    
+
     setTimeout(() => {
       toast.remove();
     }, 3000);
@@ -885,9 +924,11 @@ new AttendanceTracker();
 ## Video Analysis Player
 
 ### Overview
+
 Video player optimized for analyzing game footage and drill performance. Features frame-by-frame control, drawing tools, and annotations.
 
 ### Layout
+
 ```
 ┌──────────────────────────────────────────────┐
 │ [◄◄] [◄] [▶] [▶▶]  00:45 / 03:22  [🎨] [💬] │
@@ -921,22 +962,34 @@ Video player optimized for analyzing game footage and drill performance. Feature
       <button class="control-btn" id="frameForwardBtn" aria-label="Next frame">
         <svg><!-- step forward --></svg>
       </button>
-      <button class="control-btn" id="fastForwardBtn" aria-label="Fast forward 5 seconds">
+      <button
+        class="control-btn"
+        id="fastForwardBtn"
+        aria-label="Fast forward 5 seconds"
+      >
         <svg><!-- fast forward --></svg>
       </button>
     </div>
-    
+
     <div class="time-display">
       <span class="current-time">00:45</span>
       <span class="time-separator">/</span>
       <span class="total-time">03:22</span>
     </div>
-    
+
     <div class="tool-controls">
-      <button class="control-btn tool-btn" id="drawBtn" aria-label="Drawing tools">
+      <button
+        class="control-btn tool-btn"
+        id="drawBtn"
+        aria-label="Drawing tools"
+      >
         <svg><!-- pen --></svg>
       </button>
-      <button class="control-btn tool-btn" id="commentBtn" aria-label="Add comment">
+      <button
+        class="control-btn tool-btn"
+        id="commentBtn"
+        aria-label="Add comment"
+      >
         <svg><!-- message --></svg>
       </button>
       <button class="control-btn" id="speedBtn" aria-label="Playback speed">
@@ -947,29 +1000,33 @@ Video player optimized for analyzing game footage and drill performance. Feature
       </button>
     </div>
   </div>
-  
+
   <div class="video-container">
     <video id="analysisVideo" class="analysis-video">
-      <source src="/videos/drill-analysis.mp4" type="video/mp4">
+      <source src="/videos/drill-analysis.mp4" type="video/mp4" />
       Your browser does not support video playback.
     </video>
-    
+
     <canvas id="drawingCanvas" class="drawing-canvas"></canvas>
-    
+
     <div class="annotation-markers">
-      <button class="annotation-marker" style="left: 25%; top: 30%;" data-timestamp="45">
+      <button
+        class="annotation-marker"
+        style="left: 25%; top: 30%;"
+        data-timestamp="45"
+      >
         <svg><!-- comment icon --></svg>
       </button>
     </div>
   </div>
-  
+
   <div class="timeline-container">
-    <input 
-      type="range" 
-      id="videoTimeline" 
+    <input
+      type="range"
+      id="videoTimeline"
       class="timeline-slider"
-      min="0" 
-      max="202" 
+      min="0"
+      max="202"
       value="45"
       aria-label="Video timeline"
     />
@@ -978,18 +1035,20 @@ Video player optimized for analyzing game footage and drill performance. Feature
       <div class="marker" style="left: 58%;" data-timestamp="117"></div>
     </div>
   </div>
-  
+
   <div class="notes-panel">
     <label for="videoNotes" class="notes-label">
       <svg><!-- clipboard --></svg>
       Notes:
     </label>
-    <textarea 
-      id="videoNotes" 
+    <textarea
+      id="videoNotes"
       class="notes-textarea"
       placeholder="Add your analysis notes..."
       rows="3"
-    >Good route running, footwork needs work</textarea>
+    >
+Good route running, footwork needs work</textarea
+    >
   </div>
 </div>
 ```
@@ -1129,7 +1188,7 @@ Video player optimized for analyzing game footage and drill performance. Feature
   color: white;
   cursor: pointer;
   pointer-events: auto;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   transition: transform 0.2s ease;
 }
 
@@ -1167,7 +1226,7 @@ Video player optimized for analyzing game footage and drill performance. Feature
   border-radius: var(--radius-full);
   background: var(--color-brand-primary);
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .timeline-slider::-moz-range-thumb {
@@ -1177,7 +1236,7 @@ Video player optimized for analyzing game footage and drill performance. Feature
   background: var(--color-brand-primary);
   cursor: pointer;
   border: none;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .timeline-markers {
@@ -1247,14 +1306,14 @@ Video player optimized for analyzing game footage and drill performance. Feature
   .player-controls {
     flex-wrap: wrap;
   }
-  
+
   .time-display {
     order: -1;
     width: 100%;
     justify-content: center;
     margin-bottom: var(--spacing-2);
   }
-  
+
   .control-btn {
     width: 36px;
     height: 36px;
@@ -1267,190 +1326,210 @@ Video player optimized for analyzing game footage and drill performance. Feature
 ```javascript
 class VideoAnalysisPlayer {
   constructor() {
-    this.video = document.getElementById('analysisVideo');
-    this.canvas = document.getElementById('drawingCanvas');
-    this.ctx = this.canvas.getContext('2d');
-    this.timeline = document.getElementById('videoTimeline');
+    this.video = document.getElementById("analysisVideo");
+    this.canvas = document.getElementById("drawingCanvas");
+    this.ctx = this.canvas.getContext("2d");
+    this.timeline = document.getElementById("videoTimeline");
     this.playSpeed = 1;
     this.isDrawing = false;
     this.drawingEnabled = false;
-    
+
     this.init();
   }
-  
+
   init() {
     // Set canvas dimensions
     this.canvas.width = this.video.clientWidth;
     this.canvas.height = this.video.clientHeight;
-    
+
     // Playback controls
-    document.getElementById('playPauseBtn').addEventListener('click', 
-      this.togglePlayPause.bind(this));
-    document.getElementById('rewindBtn').addEventListener('click', 
-      () => this.skip(-5));
-    document.getElementById('fastForwardBtn').addEventListener('click', 
-      () => this.skip(5));
-    document.getElementById('frameBackBtn').addEventListener('click', 
-      () => this.frameStep(-1));
-    document.getElementById('frameForwardBtn').addEventListener('click', 
-      () => this.frameStep(1));
-    
+    document
+      .getElementById("playPauseBtn")
+      .addEventListener("click", this.togglePlayPause.bind(this));
+    document
+      .getElementById("rewindBtn")
+      .addEventListener("click", () => this.skip(-5));
+    document
+      .getElementById("fastForwardBtn")
+      .addEventListener("click", () => this.skip(5));
+    document
+      .getElementById("frameBackBtn")
+      .addEventListener("click", () => this.frameStep(-1));
+    document
+      .getElementById("frameForwardBtn")
+      .addEventListener("click", () => this.frameStep(1));
+
     // Timeline
-    this.timeline.addEventListener('input', this.seekVideo.bind(this));
-    this.video.addEventListener('timeupdate', this.updateTimeline.bind(this));
-    this.video.addEventListener('loadedmetadata', this.setupTimeline.bind(this));
-    
+    this.timeline.addEventListener("input", this.seekVideo.bind(this));
+    this.video.addEventListener("timeupdate", this.updateTimeline.bind(this));
+    this.video.addEventListener(
+      "loadedmetadata",
+      this.setupTimeline.bind(this),
+    );
+
     // Tools
-    document.getElementById('drawBtn').addEventListener('click', 
-      this.toggleDrawing.bind(this));
-    document.getElementById('speedBtn').addEventListener('click', 
-      this.cyclePlaybackSpeed.bind(this));
-    document.getElementById('fullscreenBtn').addEventListener('click', 
-      this.toggleFullscreen.bind(this));
-    
+    document
+      .getElementById("drawBtn")
+      .addEventListener("click", this.toggleDrawing.bind(this));
+    document
+      .getElementById("speedBtn")
+      .addEventListener("click", this.cyclePlaybackSpeed.bind(this));
+    document
+      .getElementById("fullscreenBtn")
+      .addEventListener("click", this.toggleFullscreen.bind(this));
+
     // Drawing
-    this.canvas.addEventListener('mousedown', this.startDrawing.bind(this));
-    this.canvas.addEventListener('mousemove', this.draw.bind(this));
-    this.canvas.addEventListener('mouseup', this.stopDrawing.bind(this));
-    this.canvas.addEventListener('mouseleave', this.stopDrawing.bind(this));
-    
+    this.canvas.addEventListener("mousedown", this.startDrawing.bind(this));
+    this.canvas.addEventListener("mousemove", this.draw.bind(this));
+    this.canvas.addEventListener("mouseup", this.stopDrawing.bind(this));
+    this.canvas.addEventListener("mouseleave", this.stopDrawing.bind(this));
+
     // Keyboard shortcuts
-    document.addEventListener('keydown', this.handleKeyboard.bind(this));
+    document.addEventListener("keydown", this.handleKeyboard.bind(this));
   }
-  
+
   togglePlayPause() {
-    const btn = document.getElementById('playPauseBtn');
-    
+    const btn = document.getElementById("playPauseBtn");
+
     if (this.video.paused) {
       this.video.play();
-      btn.innerHTML = '<svg><!-- pause icon --></svg>';
-      btn.setAttribute('aria-label', 'Pause');
+      btn.innerHTML = "<svg><!-- pause icon --></svg>";
+      btn.setAttribute("aria-label", "Pause");
     } else {
       this.video.pause();
-      btn.innerHTML = '<svg><!-- play icon --></svg>';
-      btn.setAttribute('aria-label', 'Play');
+      btn.innerHTML = "<svg><!-- play icon --></svg>";
+      btn.setAttribute("aria-label", "Play");
     }
   }
-  
+
   skip(seconds) {
-    this.video.currentTime = Math.max(0, Math.min(this.video.duration, 
-      this.video.currentTime + seconds));
+    this.video.currentTime = Math.max(
+      0,
+      Math.min(this.video.duration, this.video.currentTime + seconds),
+    );
   }
-  
+
   frameStep(direction) {
     this.video.pause();
     // Assume 30 fps
     const frameTime = 1 / 30;
-    this.video.currentTime = Math.max(0, Math.min(this.video.duration, 
-      this.video.currentTime + (frameTime * direction)));
+    this.video.currentTime = Math.max(
+      0,
+      Math.min(
+        this.video.duration,
+        this.video.currentTime + frameTime * direction,
+      ),
+    );
   }
-  
+
   seekVideo(e) {
     const time = parseFloat(e.target.value);
     this.video.currentTime = time;
   }
-  
+
   updateTimeline() {
     this.timeline.value = this.video.currentTime;
-    
+
     // Update time display
-    document.querySelector('.current-time').textContent = 
-      this.formatTime(this.video.currentTime);
+    document.querySelector(".current-time").textContent = this.formatTime(
+      this.video.currentTime,
+    );
   }
-  
+
   setupTimeline() {
     this.timeline.max = Math.floor(this.video.duration);
-    document.querySelector('.total-time').textContent = 
-      this.formatTime(this.video.duration);
+    document.querySelector(".total-time").textContent = this.formatTime(
+      this.video.duration,
+    );
   }
-  
+
   formatTime(seconds) {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
-    return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
   }
-  
+
   toggleDrawing() {
-    const btn = document.getElementById('drawBtn');
+    const btn = document.getElementById("drawBtn");
     this.drawingEnabled = !this.drawingEnabled;
-    
+
     if (this.drawingEnabled) {
-      this.canvas.classList.add('active');
-      btn.classList.add('active');
+      this.canvas.classList.add("active");
+      btn.classList.add("active");
       this.video.pause();
     } else {
-      this.canvas.classList.remove('active');
-      btn.classList.remove('active');
+      this.canvas.classList.remove("active");
+      btn.classList.remove("active");
     }
   }
-  
+
   startDrawing(e) {
     if (!this.drawingEnabled) return;
     this.isDrawing = true;
-    
+
     const rect = this.canvas.getBoundingClientRect();
     this.ctx.beginPath();
     this.ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
   }
-  
+
   draw(e) {
     if (!this.isDrawing || !this.drawingEnabled) return;
-    
+
     const rect = this.canvas.getBoundingClientRect();
     this.ctx.lineWidth = 3;
-    this.ctx.strokeStyle = '#10c96b';
-    this.ctx.lineCap = 'round';
+    this.ctx.strokeStyle = "#10c96b";
+    this.ctx.lineCap = "round";
     this.ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
     this.ctx.stroke();
   }
-  
+
   stopDrawing() {
     this.isDrawing = false;
   }
-  
+
   cyclePlaybackSpeed() {
     const speeds = [0.5, 0.75, 1, 1.25, 1.5, 2];
     const currentIndex = speeds.indexOf(this.playSpeed);
     const nextIndex = (currentIndex + 1) % speeds.length;
     this.playSpeed = speeds[nextIndex];
     this.video.playbackRate = this.playSpeed;
-    
-    document.getElementById('speedBtn').textContent = `${this.playSpeed}x`;
+
+    document.getElementById("speedBtn").textContent = `${this.playSpeed}x`;
   }
-  
+
   toggleFullscreen() {
-    const container = document.querySelector('.video-analysis-player');
-    
+    const container = document.querySelector(".video-analysis-player");
+
     if (!document.fullscreenElement) {
       container.requestFullscreen();
     } else {
       document.exitFullscreen();
     }
   }
-  
+
   handleKeyboard(e) {
-    switch(e.key) {
-      case ' ':
+    switch (e.key) {
+      case " ":
         e.preventDefault();
         this.togglePlayPause();
         break;
-      case 'ArrowLeft':
+      case "ArrowLeft":
         e.preventDefault();
         this.skip(-5);
         break;
-      case 'ArrowRight':
+      case "ArrowRight":
         e.preventDefault();
         this.skip(5);
         break;
-      case ',':
+      case ",":
         e.preventDefault();
         this.frameStep(-1);
         break;
-      case '.':
+      case ".":
         e.preventDefault();
         this.frameStep(1);
         break;
-      case 'f':
+      case "f":
         e.preventDefault();
         this.toggleFullscreen();
         break;
@@ -1467,9 +1546,11 @@ new VideoAnalysisPlayer();
 ## Game Stats Tracker (Live Entry)
 
 ### Overview
+
 Quick-entry interface for tracking stats during live games. Optimized for one-handed operation and speed.
 
 ### Layout
+
 ```
 ┌────────────────────────────────────┐
 │ Q2  12:45  Frogs 14 - 10 Eagles   │
@@ -1509,7 +1590,7 @@ Quick-entry interface for tracking stats during live games. Optimized for one-ha
       <span class="team-name away">Eagles</span>
     </div>
   </div>
-  
+
   <div class="player-selector">
     <select id="playerSelect" class="player-select">
       <option value="12" selected>#12 Marcus Williams</option>
@@ -1519,7 +1600,7 @@ Quick-entry interface for tracking stats during live games. Optimized for one-ha
       <option value="55">#55 Chris Martinez</option>
     </select>
   </div>
-  
+
   <div class="stat-buttons-container">
     <div class="stat-category">
       <h3 class="category-title">Offense</h3>
@@ -1547,7 +1628,7 @@ Quick-entry interface for tracking stats during live games. Optimized for one-ha
       </div>
     </div>
   </div>
-  
+
   <div class="recent-stats">
     <h3 class="recent-title">Recent</h3>
     <div class="stat-entries">
@@ -1560,7 +1641,7 @@ Quick-entry interface for tracking stats during live games. Optimized for one-ha
           <svg><!-- trash --></svg>
         </button>
       </div>
-      
+
       <div class="stat-entry">
         <span class="entry-time">13:02</span>
         <span class="entry-player">#8</span>
@@ -1569,7 +1650,7 @@ Quick-entry interface for tracking stats during live games. Optimized for one-ha
           <svg><!-- trash --></svg>
         </button>
       </div>
-      
+
       <div class="stat-entry">
         <span class="entry-time">13:15</span>
         <span class="entry-player">#3</span>
@@ -1580,7 +1661,7 @@ Quick-entry interface for tracking stats during live games. Optimized for one-ha
       </div>
     </div>
   </div>
-  
+
   <div class="tracker-actions">
     <button class="btn btn-secondary btn-block" id="undoBtn">
       <svg><!-- undo --></svg>
@@ -1851,6 +1932,7 @@ Quick-entry interface for tracking stats during live games. Optimized for one-ha
 ### Mobile-First Considerations
 
 All patterns are optimized for mobile use:
+
 - **Touch targets**: Minimum 48×48px (larger for game-time use)
 - **One-handed operation**: Critical controls within thumb reach
 - **Offline-first**: All patterns work without internet
@@ -1868,6 +1950,7 @@ All patterns are optimized for mobile use:
 ### Data Persistence
 
 All patterns should implement local storage:
+
 - Auto-save draft workouts every 30 seconds
 - Cache attendance records offline
 - Store video annotations locally
@@ -1884,19 +1967,19 @@ All patterns should implement local storage:
 
 ## Quick Reference: When to Use Each Pattern
 
-| Pattern | Use Case | Priority |
-|---------|----------|----------|
-| **Performance Charts** | Show progress over time | Critical |
+| Pattern                 | Use Case                                  | Priority |
+| ----------------------- | ----------------------------------------- | -------- |
+| **Performance Charts**  | Show progress over time                   | Critical |
 | **Performance Metrics** | Track speed, agility, strength benchmarks | Critical |
-| **Radar Chart** | Multi-skill assessment | High |
-| **Progress Rings** | Goal tracking | High |
-| **Workout Builder** | Session planning | Critical |
-| **Timer** | During practice | Critical |
-| **Lineup Builder** | Game preparation | High |
-| **Player Card** | Roster management | Medium |
-| **Attendance** | Track participation | High |
-| **Video Player** | Film review | Medium |
-| **Stats Tracker** | Live game entry | High |
+| **Radar Chart**         | Multi-skill assessment                    | High     |
+| **Progress Rings**      | Goal tracking                             | High     |
+| **Workout Builder**     | Session planning                          | Critical |
+| **Timer**               | During practice                           | Critical |
+| **Lineup Builder**      | Game preparation                          | High     |
+| **Player Card**         | Roster management                         | Medium   |
+| **Attendance**          | Track participation                       | High     |
+| **Video Player**        | Film review                               | Medium   |
+| **Stats Tracker**       | Live game entry                           | High     |
 
 ---
 
@@ -1909,4 +1992,3 @@ All patterns should implement local storage:
 5. **Optimize for your team**: Customize stat categories, drill libraries
 
 These patterns give you everything you need to build a complete flag football team management app. Focus on the Critical and High priority patterns first, then add Medium priority features based on your team's specific needs.
-

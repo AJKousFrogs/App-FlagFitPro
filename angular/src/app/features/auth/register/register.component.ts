@@ -1,18 +1,28 @@
-import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { CardModule } from 'primeng/card';
-import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
-import { MessageModule } from 'primeng/message';
-import { MessageService } from 'primeng/api';
-import { ToastModule } from 'primeng/toast';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { AuthService } from '../../../core/services/auth.service';
+import {
+  Component,
+  inject,
+  signal,
+  ChangeDetectionStrategy,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { Router, RouterModule } from "@angular/router";
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from "@angular/forms";
+import { CardModule } from "primeng/card";
+import { ButtonModule } from "primeng/button";
+import { InputTextModule } from "primeng/inputtext";
+import { MessageModule } from "primeng/message";
+import { MessageService } from "primeng/api";
+import { ToastModule } from "primeng/toast";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { AuthService } from "../../../core/services/auth.service";
 
 @Component({
-  selector: 'app-register',
+  selector: "app-register",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
@@ -23,7 +33,7 @@ import { AuthService } from '../../../core/services/auth.service';
     ButtonModule,
     InputTextModule,
     MessageModule,
-    ToastModule
+    ToastModule,
   ],
   providers: [MessageService],
   template: `
@@ -46,9 +56,10 @@ import { AuthService } from '../../../core/services/auth.service';
               pInputText
               formControlName="name"
               placeholder="Enter your full name"
-              [class.ng-invalid]="isFieldInvalid('name')">
+              [class.ng-invalid]="isFieldInvalid('name')"
+            />
             <small class="p-error" *ngIf="isFieldInvalid('name')">
-              {{ getFieldError('name') }}
+              {{ getFieldError("name") }}
             </small>
           </div>
 
@@ -61,9 +72,10 @@ import { AuthService } from '../../../core/services/auth.service';
               formControlName="email"
               placeholder="Enter your email"
               [class.ng-invalid]="isFieldInvalid('email')"
-              autocomplete="email">
+              autocomplete="email"
+            />
             <small class="p-error" *ngIf="isFieldInvalid('email')">
-              {{ getFieldError('email') }}
+              {{ getFieldError("email") }}
             </small>
           </div>
 
@@ -76,17 +88,21 @@ import { AuthService } from '../../../core/services/auth.service';
               formControlName="password"
               placeholder="Create a password"
               [class.ng-invalid]="isFieldInvalid('password')"
-              autocomplete="new-password">
+              autocomplete="new-password"
+            />
             <small class="p-error" *ngIf="isFieldInvalid('password')">
-              {{ getFieldError('password') }}
+              {{ getFieldError("password") }}
             </small>
             <small class="p-text-secondary mt-2">
-              Password must be at least 8 characters and include uppercase, lowercase, number, and special character.
+              Password must be at least 8 characters and include uppercase,
+              lowercase, number, and special character.
             </small>
           </div>
 
           <div class="p-field mb-4">
-            <label for="confirmPassword" class="p-label required">Confirm Password</label>
+            <label for="confirmPassword" class="p-label required"
+              >Confirm Password</label
+            >
             <input
               id="confirmPassword"
               type="password"
@@ -94,9 +110,10 @@ import { AuthService } from '../../../core/services/auth.service';
               formControlName="confirmPassword"
               placeholder="Confirm your password"
               [class.ng-invalid]="isFieldInvalid('confirmPassword')"
-              autocomplete="new-password">
+              autocomplete="new-password"
+            />
             <small class="p-error" *ngIf="isFieldInvalid('confirmPassword')">
-              {{ getFieldError('confirmPassword') }}
+              {{ getFieldError("confirmPassword") }}
             </small>
           </div>
 
@@ -106,7 +123,8 @@ import { AuthService } from '../../../core/services/auth.service';
             icon="pi pi-user-plus"
             [loading]="isLoading()"
             [disabled]="registerForm.invalid"
-            styleClass="w-full mb-4">
+            styleClass="w-full mb-4"
+          >
           </p-button>
         </form>
 
@@ -114,77 +132,81 @@ import { AuthService } from '../../../core/services/auth.service';
           <span>Or</span>
         </div>
 
-        <a [routerLink]="['/login']" class="register-login-link">Already have an account? Sign in</a>
+        <a [routerLink]="['/login']" class="register-login-link"
+          >Already have an account? Sign in</a
+        >
       </p-card>
     </div>
   `,
-  styles: [`
-    .register-page {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: var(--space-6);
-      background: var(--surface-secondary);
-    }
+  styles: [
+    `
+      .register-page {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding: var(--space-6);
+        background: var(--surface-secondary);
+      }
 
-    .register-card {
-      width: 100%;
-      max-width: 450px;
-    }
+      .register-card {
+        width: 100%;
+        max-width: 450px;
+      }
 
-    .register-logo {
-      text-align: center;
-      margin-bottom: var(--space-4);
-      color: var(--color-brand-primary);
-      font-size: 3rem;
-    }
+      .register-logo {
+        text-align: center;
+        margin-bottom: var(--space-4);
+        color: var(--color-brand-primary);
+        font-size: 3rem;
+      }
 
-    .register-title {
-      text-align: center;
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--color-brand-primary);
-      margin-bottom: var(--space-6);
-    }
+      .register-title {
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--color-brand-primary);
+        margin-bottom: var(--space-6);
+      }
 
-    .register-divider {
-      text-align: center;
-      position: relative;
-      color: var(--text-secondary);
-    }
+      .register-divider {
+        text-align: center;
+        position: relative;
+        color: var(--text-secondary);
+      }
 
-    .register-divider::before,
-    .register-divider::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      width: 45%;
-      height: 1px;
-      background: var(--p-surface-200);
-    }
+      .register-divider::before,
+      .register-divider::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        width: 45%;
+        height: 1px;
+        background: var(--p-surface-200);
+      }
 
-    .register-divider::before {
-      left: 0;
-    }
+      .register-divider::before {
+        left: 0;
+      }
 
-    .register-divider::after {
-      right: 0;
-    }
+      .register-divider::after {
+        right: 0;
+      }
 
-    .register-login-link {
-      display: block;
-      text-align: center;
-      color: var(--color-brand-primary);
-      font-weight: 600;
-      text-decoration: none;
-    }
+      .register-login-link {
+        display: block;
+        text-align: center;
+        color: var(--color-brand-primary);
+        font-weight: 600;
+        text-decoration: none;
+      }
 
-    .required::after {
-      content: ' *';
-      color: var(--color-warning);
-    }
-  `]
+      .required::after {
+        content: " *";
+        color: var(--color-warning);
+      }
+    `,
+  ],
 })
 export class RegisterComponent {
   private fb = inject(FormBuilder);
@@ -196,23 +218,35 @@ export class RegisterComponent {
   isLoading = signal(false);
 
   constructor() {
-    this.registerForm = this.fb.group({
-      name: ['', [Validators.required]],
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [
-        Validators.required,
-        Validators.minLength(8),
-        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
-      ]],
-      confirmPassword: ['', [Validators.required]]
-    }, { validators: this.passwordMatchValidator });
+    this.registerForm = this.fb.group(
+      {
+        name: ["", [Validators.required]],
+        email: ["", [Validators.required, Validators.email]],
+        password: [
+          "",
+          [
+            Validators.required,
+            Validators.minLength(8),
+            Validators.pattern(
+              /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+            ),
+          ],
+        ],
+        confirmPassword: ["", [Validators.required]],
+      },
+      { validators: this.passwordMatchValidator },
+    );
   }
 
   passwordMatchValidator(form: FormGroup) {
-    const password = form.get('password');
-    const confirmPassword = form.get('confirmPassword');
-    
-    if (password && confirmPassword && password.value !== confirmPassword.value) {
+    const password = form.get("password");
+    const confirmPassword = form.get("confirmPassword");
+
+    if (
+      password &&
+      confirmPassword &&
+      password.value !== confirmPassword.value
+    ) {
       confirmPassword.setErrors({ passwordMismatch: true });
       return { passwordMismatch: true };
     }
@@ -226,22 +260,22 @@ export class RegisterComponent {
 
   getFieldError(fieldName: string): string {
     const field = this.registerForm.get(fieldName);
-    if (field?.hasError('required')) {
+    if (field?.hasError("required")) {
       return `${fieldName} is required`;
     }
-    if (field?.hasError('email')) {
-      return 'Please enter a valid email address';
+    if (field?.hasError("email")) {
+      return "Please enter a valid email address";
     }
-    if (field?.hasError('minlength')) {
-      return 'Password must be at least 8 characters';
+    if (field?.hasError("minlength")) {
+      return "Password must be at least 8 characters";
     }
-    if (field?.hasError('pattern')) {
-      return 'Password must contain uppercase, lowercase, number, and special character';
+    if (field?.hasError("pattern")) {
+      return "Password must contain uppercase, lowercase, number, and special character";
     }
-    if (field?.hasError('passwordMismatch')) {
-      return 'Passwords do not match';
+    if (field?.hasError("passwordMismatch")) {
+      return "Passwords do not match";
     }
-    return '';
+    return "";
   }
 
   onSubmit(): void {
@@ -254,38 +288,38 @@ export class RegisterComponent {
     const registerData = {
       name: this.registerForm.value.name,
       email: this.registerForm.value.email,
-      password: this.registerForm.value.password
+      password: this.registerForm.value.password,
     };
 
-    this.authService.register(registerData)
+    this.authService
+      .register(registerData)
       .pipe(takeUntilDestroyed())
       .subscribe({
         next: (response) => {
           if (response.success) {
             this.messageService.add({
-              severity: 'success',
-              summary: 'Success',
-              detail: 'Account created successfully!'
+              severity: "success",
+              summary: "Success",
+              detail: "Account created successfully!",
             });
-            this.router.navigate(['/dashboard']);
+            this.router.navigate(["/dashboard"]);
           } else {
             this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: response.error || 'Registration failed'
+              severity: "error",
+              summary: "Error",
+              detail: response.error || "Registration failed",
             });
           }
           this.isLoading.set(false);
         },
         error: (error) => {
           this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: error.message || 'Registration failed. Please try again.'
+            severity: "error",
+            summary: "Error",
+            detail: error.message || "Registration failed. Please try again.",
           });
           this.isLoading.set(false);
-        }
+        },
       });
   }
 }
-

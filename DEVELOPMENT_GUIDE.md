@@ -1,6 +1,6 @@
 # 🚀 FlagFit Pro - Development Guide
 
-*Complete setup, environment configuration, and deployment guide*
+_Complete setup, environment configuration, and deployment guide_
 
 ---
 
@@ -67,6 +67,7 @@ npm run dev
    - Service role key → `SUPABASE_SERVICE_KEY`
 
 **Database Schema:**
+
 ```sql
 -- Users table
 CREATE TABLE users (
@@ -91,11 +92,13 @@ CREATE TABLE training_sessions (
 #### **Analytics & Monitoring**
 
 **Google Analytics 4**
+
 1. Go to [analytics.google.com](https://analytics.google.com)
 2. Create property for your app
 3. Get Measurement ID → `VITE_GOOGLE_ANALYTICS_ID`
 
 **Sentry (Error Tracking)**
+
 1. Sign up at [sentry.io](https://sentry.io)
 2. Create new project
 3. Copy DSN → `VITE_SENTRY_DSN`
@@ -103,6 +106,7 @@ CREATE TABLE training_sessions (
 #### **AI & ML Services**
 
 **OpenAI (Performance Predictions)**
+
 1. Go to [platform.openai.com](https://platform.openai.com)
 2. Create API key
 3. Add to `OPENAI_API_KEY`
@@ -202,6 +206,7 @@ CYPRESS_BASE_URL=http://localhost:4173
 #### **Step 1: Repository Setup**
 
 1. Push code to GitHub:
+
 ```bash
 git add .
 git commit -m "Production ready deployment"
@@ -211,6 +216,7 @@ git push origin main
 #### **Step 2: Netlify Configuration**
 
 **netlify.toml**
+
 ```toml
 [build]
   command = "npm run build"
@@ -238,6 +244,7 @@ git push origin main
 #### **Step 3: Environment Variables in Netlify**
 
 **Required Variables:**
+
 ```bash
 # Core
 SUPABASE_URL=https://your-project.supabase.co
@@ -276,6 +283,7 @@ VITE_ENABLE_DEBUG_LOGS=false
 ### **Vercel Deployment (Alternative)**
 
 **vercel.json**
+
 ```json
 {
   "builds": [
@@ -338,6 +346,7 @@ npm run type-check
 ### **Pre-Production Testing Checklist**
 
 #### **Functionality Testing:**
+
 - [ ] User registration/login works
 - [ ] Dashboard loads with real data
 - [ ] Training modules function correctly
@@ -347,6 +356,7 @@ npm run type-check
 - [ ] Search functionality active
 
 #### **Performance Testing:**
+
 - [ ] Page load time < 2 seconds
 - [ ] Lighthouse score > 90
 - [ ] Bundle size optimized
@@ -354,6 +364,7 @@ npm run type-check
 - [ ] API responses < 500ms
 
 #### **Security Testing:**
+
 - [ ] No console errors in production
 - [ ] JWT tokens working properly
 - [ ] CORS configured correctly
@@ -361,6 +372,7 @@ npm run type-check
 - [ ] Input validation working
 
 #### **Mobile Testing:**
+
 - [ ] Responsive design works
 - [ ] Touch interactions smooth
 - [ ] Forms prevent zoom
@@ -374,6 +386,7 @@ npm run type-check
 ### **Common Development Issues**
 
 #### **Database Connection Failed**
+
 ```bash
 # Check environment variables
 echo $SUPABASE_URL
@@ -384,6 +397,7 @@ curl -H "apikey: $SUPABASE_ANON_KEY" $SUPABASE_URL/rest/v1/
 ```
 
 #### **Build Failures**
+
 ```bash
 # Clear cache
 npm run clean
@@ -398,6 +412,7 @@ npm run build -- --analyze
 ```
 
 #### **Authentication Issues**
+
 ```bash
 # Verify JWT secret length
 node -e "console.log(process.env.JWT_SECRET?.length || 'Not set')"
@@ -412,12 +427,14 @@ curl -X POST localhost:5173/api/auth/login \
 ### **Production Deployment Issues**
 
 #### **Site Not Loading**
+
 1. Check Netlify build logs
 2. Verify environment variables are set
 3. Check for console errors in browser
 4. Verify API endpoints are accessible
 
 #### **API Calls Failing**
+
 1. Check CORS configuration
 2. Verify API base URL in environment
 3. Check Supabase service status
@@ -430,30 +447,32 @@ curl -X POST localhost:5173/api/auth/login \
 ### **Production Monitoring Setup**
 
 **Error Tracking (Sentry):**
+
 ```javascript
 // main.js
-import * as Sentry from '@sentry/browser';
+import * as Sentry from "@sentry/browser";
 
 if (import.meta.env.PROD) {
   Sentry.init({
     dsn: import.meta.env.VITE_SENTRY_DSN,
     environment: import.meta.env.VITE_APP_ENV,
-    tracesSampleRate: 0.1
+    tracesSampleRate: 0.1,
   });
 }
 ```
 
 **Analytics (Google Analytics 4):**
+
 ```javascript
 // analytics.js
-import { gtag } from 'gtag';
+import { gtag } from "gtag";
 
 export function trackEvent(action, category, label, value) {
   if (import.meta.env.PROD) {
-    gtag('event', action, {
+    gtag("event", action, {
       event_category: category,
       event_label: label,
-      value: value
+      value: value,
     });
   }
 }
@@ -462,6 +481,7 @@ export function trackEvent(action, category, label, value) {
 ### **Performance Monitoring**
 
 **Key Metrics to Track:**
+
 - Page load time
 - API response times
 - User engagement
@@ -469,6 +489,7 @@ export function trackEvent(action, category, label, value) {
 - Bundle size
 
 **Alerts Setup:**
+
 - Error rate > 5%
 - Page load time > 3 seconds
 - API failures
@@ -481,6 +502,7 @@ export function trackEvent(action, category, label, value) {
 ### **Environment Security**
 
 1. **Never commit secrets:**
+
 ```bash
 # Add to .gitignore
 .env.local
@@ -490,12 +512,14 @@ export function trackEvent(action, category, label, value) {
 ```
 
 2. **Use strong secrets:**
+
 ```bash
 # Generate secure JWT secret
 node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
 ```
 
 3. **Rotate keys regularly:**
+
 - JWT secrets: Every 6 months
 - API keys: Every 12 months
 - Database credentials: Every 12 months
@@ -518,12 +542,14 @@ node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
 ## 📞 Support & Resources
 
 ### **Documentation Links**
+
 - [Supabase Docs](https://supabase.com/docs)
 - [Netlify Functions](https://docs.netlify.com/functions/overview/)
 - [Vite Environment Variables](https://vitejs.dev/guide/env-and-mode.html)
 - [Sentry Error Tracking](https://docs.sentry.io/platforms/javascript/)
 
 ### **Development Team**
+
 - **Repository**: [GitHub](https://github.com/AJKous31/app-new-flag)
 - **Issues**: Create issue with appropriate label
 - **Discussions**: Use GitHub Discussions
@@ -557,4 +583,4 @@ npm run env:validate    # Validate environment
 **Version**: 2.0  
 **Maintained By**: FlagFit Pro Development Team
 
-*This guide consolidates environment setup, configuration, and deployment processes for streamlined development workflow.*
+_This guide consolidates environment setup, configuration, and deployment processes for streamlined development workflow._

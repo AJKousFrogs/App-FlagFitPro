@@ -55,9 +55,9 @@ app.post("/api/auth/login", (req, res) => {
         id: "1",
         email: req.body.email || "user@example.com",
         name: "Test User",
-        role: "player"
-      }
-    }
+        role: "player",
+      },
+    },
   });
 });
 
@@ -70,9 +70,9 @@ app.post("/api/auth/register", (req, res) => {
         id: "1",
         email: req.body.email,
         name: req.body.name,
-        role: "player"
-      }
-    }
+        role: "player",
+      },
+    },
   });
 });
 
@@ -83,8 +83,8 @@ app.get("/api/auth/me", (req, res) => {
       id: "1",
       email: "user@example.com",
       name: "Test User",
-      role: "player"
-    }
+      role: "player",
+    },
   });
 });
 
@@ -101,11 +101,11 @@ app.get("/dashboard", (req, res) => {
         trainingSessions: 24,
         performanceScore: 85,
         dayStreak: 7,
-        tournaments: 3
+        tournaments: 3,
       },
       upcomingSessions: [],
-      recentActivity: []
-    }
+      recentActivity: [],
+    },
   });
 });
 
@@ -117,9 +117,9 @@ app.get("/api/dashboard/overview", (req, res) => {
         trainingSessions: 24,
         performanceScore: 85,
         dayStreak: 7,
-        tournaments: 3
-      }
-    }
+        tournaments: 3,
+      },
+    },
   });
 });
 
@@ -129,8 +129,8 @@ app.get("/training-stats", (req, res) => {
     success: true,
     data: {
       weeklyStats: [],
-      achievements: []
-    }
+      achievements: [],
+    },
   });
 });
 
@@ -141,8 +141,8 @@ app.get("/api/analytics/summary", (req, res) => {
     data: {
       performanceTrends: [],
       teamChemistry: [],
-      trainingDistribution: []
-    }
+      trainingDistribution: [],
+    },
   });
 });
 
@@ -150,7 +150,7 @@ app.get("/api/analytics/summary", (req, res) => {
 app.get("/api/tournaments", (req, res) => {
   res.json({
     success: true,
-    data: []
+    data: [],
   });
 });
 
@@ -158,7 +158,7 @@ app.get("/api/tournaments", (req, res) => {
 app.get("/api/community/feed", (req, res) => {
   res.json({
     success: true,
-    data: []
+    data: [],
   });
 });
 
@@ -168,8 +168,8 @@ app.post("/api/community/posts", (req, res) => {
     data: {
       id: Date.now().toString(),
       ...req.body,
-      createdAt: new Date().toISOString()
-    }
+      createdAt: new Date().toISOString(),
+    },
   });
 });
 
@@ -180,8 +180,8 @@ app.post("/api/wellness/checkin", (req, res) => {
     data: {
       id: Date.now().toString(),
       ...req.body,
-      createdAt: new Date().toISOString()
-    }
+      createdAt: new Date().toISOString(),
+    },
   });
 });
 
@@ -191,8 +191,8 @@ app.get("/api/coach/dashboard", (req, res) => {
     success: true,
     data: {
       teamMembers: [],
-      stats: {}
-    }
+      stats: {},
+    },
   });
 });
 
@@ -203,8 +203,8 @@ app.post("/api/tournaments/createGame", (req, res) => {
     data: {
       id: Date.now().toString(),
       ...req.body,
-      createdAt: new Date().toISOString()
-    }
+      createdAt: new Date().toISOString(),
+    },
   });
 });
 
@@ -214,8 +214,8 @@ app.get("/api/training/workouts/:id", (req, res) => {
     success: true,
     data: {
       id: req.params.id,
-      exercises: []
-    }
+      exercises: [],
+    },
   });
 });
 
@@ -224,8 +224,8 @@ app.put("/api/training/workouts/:id", (req, res) => {
     success: true,
     data: {
       id: req.params.id,
-      ...req.body
-    }
+      ...req.body,
+    },
   });
 });
 

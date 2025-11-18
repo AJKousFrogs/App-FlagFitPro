@@ -195,7 +195,6 @@ export class EnhancedChartConfig {
 
   // Get enhanced scale configuration
   getScaleConfig(type = "y", options = {}) {
-
     const baseConfig = {
       grid: {
         color: this.colors.grid,

@@ -161,7 +161,10 @@ html[data-theme="light"] .sidebar {
   text-decoration: none;
   font-size: var(--typography-body-md-size, 1rem);
   font-weight: var(--font-weight-medium, 500);
-  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
   white-space: nowrap;
 }
 
@@ -178,7 +181,7 @@ html[data-theme="light"] .sidebar {
   .sidebar-link:hover {
     background: transparent;
   }
-  
+
   .sidebar-link:active {
     background: var(--surface-secondary);
     transform: scale(0.98);
@@ -233,7 +236,7 @@ html[data-theme="light"] .sidebar {
 
 /* Left border indicator for nav items */
 .sidebar .nav-item::before {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
   top: 50%;
@@ -347,9 +350,12 @@ html[data-theme="light"] .sidebar .nav-item.active {
 /* Responsive text sizing for mobile */
 @media (max-width: 768px) {
   .sidebar-link {
-    font-size: var(--typography-body-md-size, 1rem); /* ✅ Minimum 16px on mobile */
+    font-size: var(
+      --typography-body-md-size,
+      1rem
+    ); /* ✅ Minimum 16px on mobile */
   }
-  
+
   .sidebar-title {
     font-size: var(--typography-heading-sm-size, 1.125rem);
   }
@@ -401,17 +407,17 @@ body.menu-open .menu-scrim {
   body.menu-open .sidebar {
     transform: translateX(0);
   }
-  
+
   /* Ensure touch targets remain adequate on mobile */
   .sidebar-link {
     min-height: 48px; /* ✅ Larger touch target on mobile */
     padding: var(--primitive-space-14, 14px) var(--primitive-space-16, 16px);
   }
-  
+
   .sidebar-header {
     padding: var(--primitive-space-16, 16px) var(--primitive-space-12, 12px);
   }
-  
+
   .sidebar-title {
     font-size: var(--typography-heading-sm-size, 1.125rem);
   }
@@ -430,7 +436,7 @@ body.menu-open .menu-scrim {
     transition: transform 0.2s ease;
     z-index: var(--z-index-modal, 1400);
   }
-  
+
   body.menu-open .sidebar {
     transform: translateX(0);
   }

@@ -1,7 +1,9 @@
 # Complete MIME Type Error Fix
+
 ## "Expected a JavaScript module script" Error Resolution
 
 **Error:**
+
 ```
 Failed to load module script: Expected a JavaScript-or-Wasm module script but the server responded with a MIME type of "text/html".
 ```
@@ -11,11 +13,13 @@ Failed to load module script: Expected a JavaScript-or-Wasm module script but th
 ## Root Causes Identified
 
 ### 1. ✅ Fixed: Incorrect Import Path
+
 **File:** `src/js/pages/settings-page.js`  
 **Issue:** Wrong relative path  
 **Fix:** Changed `'../real-team-data.js'` → `'../../real-team-data.js'`
 
 ### 2. ✅ Fixed: Server Serving HTML for Missing JS Files
+
 **File:** `simple-server.js`  
 **Issue:** Server returns `index.html` for ALL 404s, including missing `.js` files  
 **Fix:** Return proper 404 for missing `.js`, `.css`, `.mjs` files instead of serving HTML
@@ -25,17 +29,19 @@ Failed to load module script: Expected a JavaScript-or-Wasm module script but th
 ## Fixes Applied
 
 ### Fix #1: Import Path Correction
+
 ```javascript
 // BEFORE (WRONG)
-import { REAL_TEAM_DATA } from '../real-team-data.js';
+import { REAL_TEAM_DATA } from "../real-team-data.js";
 // Looks for: src/js/real-team-data.js ❌
 
 // AFTER (CORRECT)
-import { REAL_TEAM_DATA } from '../../real-team-data.js';
+import { REAL_TEAM_DATA } from "../../real-team-data.js";
 // Looks for: src/real-team-data.js ✅
 ```
 
 ### Fix #2: Server Configuration Update
+
 ```javascript
 // BEFORE (PROBLEM)
 if (err) {
@@ -62,14 +68,17 @@ if (err) {
 ## Verification
 
 ### Import Paths Checked ✅
+
 - ✅ `src/js/pages/settings-page.js` - Fixed to `../../real-team-data.js`
 - ✅ `src/js/pages/training-page.js` - Already correct `../../real-team-data.js`
 - ✅ `roster.html` - Already correct `./src/real-team-data.js`
 
 ### File Exists ✅
+
 - ✅ `src/real-team-data.js` exists and is accessible
 
 ### Server Configuration ✅
+
 - ✅ Server now returns proper 404 for missing JS files
 - ✅ Server still serves index.html for HTML routes (SPA support)
 
@@ -78,6 +87,7 @@ if (err) {
 ## Testing Steps
 
 1. **Restart Dev Server**
+
    ```bash
    # Stop current server (Ctrl+C)
    # Start server again
@@ -110,6 +120,7 @@ if (err) {
 ## Why This Happened
 
 ### The Problem Chain:
+
 1. **Incorrect import path** → Browser requests wrong file
 2. **File doesn't exist** → Server returns 404
 3. **Server serves HTML** → Returns `index.html` instead of 404
@@ -117,6 +128,7 @@ if (err) {
 5. **MIME type mismatch** → Error thrown
 
 ### The Solution:
+
 1. ✅ **Fix import path** → Browser requests correct file
 2. ✅ **File exists** → Server finds file
 3. ✅ **Server returns JS** → Proper MIME type
@@ -127,31 +139,35 @@ if (err) {
 ## Prevention
 
 ### 1. Use Absolute Paths (Recommended)
+
 Consider using import maps for better path resolution:
 
 ```html
 <script type="importmap">
-{
-  "imports": {
-    "@/": "/src/",
-    "@/data/": "/src/real-team-data.js"
+  {
+    "imports": {
+      "@/": "/src/",
+      "@/data/": "/src/real-team-data.js"
+    }
   }
-}
 </script>
 ```
 
 Then use:
+
 ```javascript
-import { REAL_TEAM_DATA } from '@/data/';
+import { REAL_TEAM_DATA } from "@/data/";
 ```
 
 ### 2. Verify Paths Relative to File Location
+
 - From `src/js/pages/file.js`:
   - `../` = `src/js/`
   - `../../` = `src/`
   - `../../real-team-data.js` = `src/real-team-data.js` ✅
 
 ### 3. Server Best Practices
+
 - Return proper 404s for missing assets (JS, CSS, images)
 - Only serve fallback HTML for HTML routes (SPA routing)
 - Set correct MIME types for all file types
@@ -176,18 +192,20 @@ import { REAL_TEAM_DATA } from '@/data/';
 **Status:** ✅ **FIXED**
 
 Both issues have been resolved:
+
 1. Import path corrected
 2. Server configuration updated
 
 **Next Steps:**
+
 1. Restart dev server
 2. Clear browser cache
 3. Reload page
 4. Error should be resolved
 
 If error persists:
+
 1. Check browser console for exact file path being requested
 2. Verify file exists at that path
 3. Check Network tab for actual response
 4. Ensure server is restarted with new code
-

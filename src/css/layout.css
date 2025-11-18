@@ -149,7 +149,7 @@
   .grid-sidebar {
     grid-template-columns: 1fr;
   }
-  
+
   .grid-auto {
     grid-template-columns: 1fr;
   }
@@ -160,7 +160,7 @@
   .grid-3 {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .grid-sidebar {
     grid-template-columns: 1fr;
   }
@@ -321,7 +321,7 @@
   .l-grid-2 {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .l-grid-3,
   .l-grid-4 {
     grid-template-columns: repeat(2, 1fr);
@@ -333,15 +333,15 @@
   .l-grid-2 {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .l-grid-3 {
     grid-template-columns: repeat(3, 1fr);
   }
-  
+
   .l-grid-4 {
     grid-template-columns: repeat(4, 1fr);
   }
-  
+
   /* Reduce vertical spacing */
   .l-grid {
     gap: var(--spacing-component-sm);
@@ -388,7 +388,7 @@
   .l-grid {
     gap: var(--spacing-component-lg);
   }
-  
+
   .l-page-sidebar .l-main {
     padding: var(--spacing-layout-lg);
   }
@@ -399,7 +399,7 @@
   .l-container {
     max-width: 1600px;
   }
-  
+
   .l-grid {
     gap: var(--spacing-component-xl);
   }

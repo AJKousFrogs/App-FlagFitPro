@@ -44,6 +44,7 @@ The parser detects 8 types of intents:
 ### Entity Extraction
 
 Extracts:
+
 - **Supplements**: iron, creatine, protein, magnesium, vitamin D, etc.
 - **Injuries**: ankle sprain, hamstring strain, ACL, shoulder impingement
 - **Recovery methods**: sauna, cold therapy, massage, compression
@@ -65,23 +66,27 @@ Extracts:
 Each intent has a specialized answer generator:
 
 #### Dosage Answers
+
 - Calculates personalized dosages based on body stats
 - Provides standard recommendations
 - Includes loading/maintenance phases
 - Adds safety warnings and best practices
 
 #### Timing Answers
+
 - Pre-workout recommendations
 - Post-workout timing
 - Meal timing
 - Bedtime protocols
 
 #### Safety Answers
+
 - Warnings and contraindications
 - Safe practices
 - When to consult professionals
 
 #### How-To Answers
+
 - Step-by-step protocols
 - Best practices
 - Practical applications
@@ -91,6 +96,7 @@ Each intent has a specialized answer generator:
 The system personalizes answers when body stats are provided:
 
 **Example:**
+
 - Question: "I am 190cm 89kg, how much iron do I have to take daily?"
 - Answer includes:
   - Personalized calculation: 12mg/day (based on stats)
@@ -102,6 +108,7 @@ The system personalizes answers when body stats are provided:
 ### Multi-Source Synthesis
 
 When multiple sources are available:
+
 1. Prioritizes knowledge base entries (structured data)
 2. Falls back to research articles (raw data)
 3. Synthesizes information from multiple articles
@@ -126,6 +133,7 @@ When multiple sources are available:
 ### Follow-Up Suggestions
 
 Automatically suggests related questions:
+
 - "Want to know more?"
 - Related topics
 - Next steps
@@ -133,6 +141,7 @@ Automatically suggests related questions:
 ### Disclaimers
 
 Adds appropriate disclaimers:
+
 - Medical disclaimers for supplements/injuries
 - Professional consultation reminders
 - Safety warnings
@@ -168,24 +177,25 @@ Adds appropriate disclaimers:
    - Format with markdown
 
 5. **Return Answer**
+
    ```
    **Recommended Dosage for Iron:**
-   
+
    **Personalized for you (190cm / 89kg):**
    • **Daily iron:** 12mg (athletes need 1.5× RDA)
-   
+
    **Important considerations:**
    • Get iron from food sources first...
    • Vitamin C enhances absorption...
    • Avoid taking with coffee/tea...
-   
+
    **⚠️ Safety Warnings:**
    • Always consult with a sports nutritionist...
-   
+
    **💡 Best Practices:**
    • Pair with vitamin C
    • Avoid with coffee/tea
-   
+
    ---
    **Evidence Level:** A | **Consensus:** high | **Sources:** 15 research articles
    ```
@@ -226,6 +236,7 @@ Test the chatbot with various question types:
 ## Summary
 
 The chatbot now provides:
+
 - ✅ Intelligent question understanding
 - ✅ Personalized answers based on body stats
 - ✅ Evidence-based responses with citations
@@ -235,4 +246,3 @@ The chatbot now provides:
 - ✅ Fast, cached responses
 
 The system is production-ready and provides high-quality, evidence-based answers for flag football athletes chasing Olympic dreams!
-

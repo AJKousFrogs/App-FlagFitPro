@@ -100,7 +100,11 @@
 
 .progress-bar {
   height: 100%;
-  background: linear-gradient(90deg, var(--color-brand-primary), var(--color-brand-primary-hover));
+  background: linear-gradient(
+    90deg,
+    var(--color-brand-primary),
+    var(--color-brand-primary-hover)
+  );
   border-radius: 4px;
   transition: width 0.3s ease;
 }
@@ -205,7 +209,8 @@
 /* @keyframes spin - Consolidated to animations.css */
 
 @keyframes skeleton-pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
@@ -387,6 +392,8 @@
     max-height: 100vh !important;
   }
 }
+
+.command-palette-content {
   z-index: 1;
   overflow: hidden;
   display: flex;
@@ -502,4 +509,3 @@
     opacity: 1;
   }
 }
-

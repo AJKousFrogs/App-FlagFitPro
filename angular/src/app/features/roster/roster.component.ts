@@ -1,9 +1,15 @@
-import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { CardModule } from 'primeng/card';
-import { TagModule } from 'primeng/tag';
-import { MainLayoutComponent } from '../../shared/components/layout/main-layout.component';
-import { ApiService, API_ENDPOINTS } from '../../core/services/api.service';
+import {
+  Component,
+  OnInit,
+  inject,
+  signal,
+  ChangeDetectionStrategy,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { CardModule } from "primeng/card";
+import { TagModule } from "primeng/tag";
+import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 
 interface TeamStat {
   value: string;
@@ -30,15 +36,10 @@ interface Player {
 }
 
 @Component({
-  selector: 'app-roster',
+  selector: "app-roster",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CommonModule,
-    CardModule,
-    TagModule,
-    MainLayoutComponent
-  ],
+  imports: [CommonModule, CardModule, TagModule, MainLayoutComponent],
   template: `
     <app-main-layout>
       <div class="roster-page">
@@ -51,7 +52,8 @@ interface Player {
           </div>
           <h2 class="team-title">International Flag Football Team</h2>
           <p class="team-description">
-            Meet our world-class athletes and coaching staff representing 12 countries
+            Meet our world-class athletes and coaching staff representing 12
+            countries
           </p>
         </p-card>
 
@@ -64,7 +66,10 @@ interface Player {
             </h2>
           </ng-template>
           <div class="team-overview-grid">
-            <div *ngFor="let stat of teamStats(); trackBy: trackByStatLabel" class="overview-stat">
+            <div
+              *ngFor="let stat of teamStats(); trackBy: trackByStatLabel"
+              class="overview-stat"
+            >
               <div class="overview-value">{{ stat.value }}</div>
               <div class="overview-label">{{ stat.label }}</div>
             </div>
@@ -78,7 +83,10 @@ interface Player {
             Coaching Staff & Support
           </h2>
           <div class="roster-grid">
-            <p-card *ngFor="let member of coachingStaff(); trackBy: trackByMemberName" class="staff-card">
+            <p-card
+              *ngFor="let member of coachingStaff(); trackBy: trackByMemberName"
+              class="staff-card"
+            >
               <div class="player-header">
                 <div class="player-jersey">
                   {{ getInitials(member.name) }}
@@ -86,12 +94,16 @@ interface Player {
                 <div class="player-info">
                   <h3 class="player-name">{{ member.name }}</h3>
                   <div class="player-position">{{ member.position }}</div>
-                  <div class="player-meta">{{ member.experience }} experience</div>
+                  <div class="player-meta">
+                    {{ member.experience }} experience
+                  </div>
                 </div>
               </div>
               <div class="stats-grid">
                 <div class="stat-item">
-                  <div class="stat-value">{{ getYears(member.experience) }}</div>
+                  <div class="stat-value">
+                    {{ getYears(member.experience) }}
+                  </div>
                   <div class="stat-label">Years</div>
                 </div>
                 <div class="stat-item">
@@ -99,9 +111,18 @@ interface Player {
                   <div class="stat-label">Country</div>
                 </div>
               </div>
-              <div *ngIf="member.achievements && member.achievements.length > 0" class="achievements">
+              <div
+                *ngIf="member.achievements && member.achievements.length > 0"
+                class="achievements"
+              >
                 <div class="achievements-title">Key Achievements:</div>
-                <div *ngFor="let achievement of member.achievements.slice(0, 2); trackBy: trackByAchievement" class="achievement-item">
+                <div
+                  *ngFor="
+                    let achievement of member.achievements.slice(0, 2);
+                    trackBy: trackByAchievement
+                  "
+                  class="achievement-item"
+                >
                   • {{ achievement }}
                 </div>
               </div>
@@ -110,15 +131,30 @@ interface Player {
         </div>
 
         <!-- Players by Position -->
-        <div *ngFor="let positionGroup of playersByPosition(); trackBy: trackByPosition" class="position-section">
+        <div
+          *ngFor="
+            let positionGroup of playersByPosition();
+            trackBy: trackByPosition
+          "
+          class="position-section"
+        >
           <h2 class="section-title">
             <i [class]="getPositionIcon(positionGroup.position)"></i>
             {{ positionGroup.position }}
           </h2>
           <div class="roster-grid">
-            <p-card *ngFor="let player of positionGroup.players; trackBy: trackByPlayerJersey" class="player-card">
+            <p-card
+              *ngFor="
+                let player of positionGroup.players;
+                trackBy: trackByPlayerJersey
+              "
+              class="player-card"
+            >
               <div class="player-header">
-                <div class="player-jersey" [style.background]="getJerseyColor(player.position)">
+                <div
+                  class="player-jersey"
+                  [style.background]="getJerseyColor(player.position)"
+                >
                   {{ player.jersey }}
                 </div>
                 <div class="player-info">
@@ -142,10 +178,15 @@ interface Player {
                 </div>
               </div>
               <div *ngIf="player.stats" class="player-stats">
-                <p-tag *ngFor="let stat of getPlayerStats(player); trackBy: trackByStatKey" 
-                      [value]="stat.label + ': ' + stat.value" 
-                      severity="info"
-                      styleClass="mr-2 mb-2"></p-tag>
+                <p-tag
+                  *ngFor="
+                    let stat of getPlayerStats(player);
+                    trackBy: trackByStatKey
+                  "
+                  [value]="stat.label + ': ' + stat.value"
+                  severity="info"
+                  styleClass="mr-2 mb-2"
+                ></p-tag>
               </div>
             </p-card>
           </div>
@@ -153,262 +194,270 @@ interface Player {
       </div>
     </app-main-layout>
   `,
-  styles: [`
-    .roster-page {
-      padding: var(--space-6);
-    }
+  styles: [
+    `
+      .roster-page {
+        padding: var(--space-6);
+      }
 
-    .team-header-card {
-      margin-bottom: var(--space-6);
-    }
+      .team-header-card {
+        margin-bottom: var(--space-6);
+      }
 
-    .team-badge {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: var(--text-secondary);
-      margin-bottom: var(--space-4);
-    }
+      .team-badge {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--text-secondary);
+        margin-bottom: var(--space-4);
+      }
 
-    .separator {
-      opacity: 0.5;
-    }
+      .separator {
+        opacity: 0.5;
+      }
 
-    .team-title {
-      font-size: 2rem;
-      font-weight: 700;
-      margin-bottom: var(--space-4);
-      color: var(--text-primary);
-    }
+      .team-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: var(--space-4);
+        color: var(--text-primary);
+      }
 
-    .team-description {
-      font-size: 1rem;
-      color: var(--text-secondary);
-      line-height: 1.6;
-      margin: 0;
-    }
+      .team-description {
+        font-size: 1rem;
+        color: var(--text-secondary);
+        line-height: 1.6;
+        margin: 0;
+      }
 
-    .overview-card {
-      margin-bottom: var(--space-8);
-    }
+      .overview-card {
+        margin-bottom: var(--space-8);
+      }
 
-    .card-title {
-      display: flex;
-      align-items: center;
-      gap: var(--space-3);
-      font-size: 1.5rem;
-      font-weight: 700;
-      margin: 0;
-      color: var(--text-primary);
-    }
+      .card-title {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0;
+        color: var(--text-primary);
+      }
 
-    .card-title i {
-      color: var(--color-brand-primary);
-    }
-
-    .team-overview-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: var(--space-4);
-    }
-
-    .overview-stat {
-      text-align: center;
-      padding: var(--space-4);
-      background: var(--p-surface-50);
-      border-radius: var(--p-border-radius);
-      transition: transform 0.2s;
-    }
-
-    .overview-stat:hover {
-      transform: translateY(-2px);
-    }
-
-    .overview-value {
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--color-brand-primary);
-      margin-bottom: var(--space-2);
-    }
-
-    .overview-label {
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-      font-weight: 500;
-    }
-
-    .position-section {
-      margin-bottom: var(--space-8);
-    }
-
-    .section-title {
-      display: flex;
-      align-items: center;
-      gap: var(--space-3);
-      font-size: 1.5rem;
-      font-weight: 700;
-      margin-bottom: var(--space-6);
-      color: var(--text-primary);
-    }
-
-    .section-title i {
-      color: var(--color-brand-primary);
-    }
-
-    .roster-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: var(--space-6);
-    }
-
-    .staff-card,
-    .player-card {
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .staff-card:hover,
-    .player-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    .player-header {
-      display: flex;
-      align-items: center;
-      gap: var(--space-4);
-      margin-bottom: var(--space-4);
-    }
-
-    .player-jersey {
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 1.125rem;
-      color: white;
-      background: linear-gradient(135deg, var(--color-brand-primary), var(--color-brand-secondary));
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      flex-shrink: 0;
-    }
-
-    .player-info {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .player-name {
-      font-size: 1.125rem;
-      font-weight: 600;
-      margin-bottom: var(--space-1);
-      color: var(--text-primary);
-    }
-
-    .player-position {
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-      font-weight: 500;
-      margin-bottom: var(--space-1);
-    }
-
-    .player-meta {
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--space-3);
-      margin-top: var(--space-4);
-    }
-
-    .stat-item {
-      text-align: center;
-      padding: var(--space-3);
-      background: var(--p-surface-50);
-      border-radius: var(--p-border-radius);
-    }
-
-    .stat-value {
-      font-weight: 700;
-      font-size: 1.125rem;
-      color: var(--color-brand-primary);
-      margin-bottom: var(--space-1);
-    }
-
-    .stat-label {
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-    }
-
-    .achievements {
-      margin-top: var(--space-4);
-      padding-top: var(--space-4);
-      border-top: 1px solid var(--p-surface-200);
-    }
-
-    .achievements-title {
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-      font-weight: 500;
-      margin-bottom: var(--space-2);
-    }
-
-    .achievement-item {
-      font-size: 0.75rem;
-      color: var(--text-primary);
-      margin-bottom: var(--space-1);
-    }
-
-    .player-details {
-      display: flex;
-      gap: var(--space-4);
-      margin-top: var(--space-4);
-      padding-top: var(--space-4);
-      border-top: 1px solid var(--p-surface-200);
-    }
-
-    .detail-item {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-1);
-    }
-
-    .detail-label {
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-    }
-
-    .detail-value {
-      font-size: 0.875rem;
-      font-weight: 600;
-      color: var(--text-primary);
-    }
-
-    .player-stats {
-      margin-top: var(--space-4);
-      padding-top: var(--space-4);
-      border-top: 1px solid var(--p-surface-200);
-    }
-
-    @media (max-width: 768px) {
-      .roster-grid {
-        grid-template-columns: 1fr;
+      .card-title i {
+        color: var(--color-brand-primary);
       }
 
       .team-overview-grid {
-        grid-template-columns: repeat(2, 1fr);
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: var(--space-4);
       }
-    }
-  `]
+
+      .overview-stat {
+        text-align: center;
+        padding: var(--space-4);
+        background: var(--p-surface-50);
+        border-radius: var(--p-border-radius);
+        transition: transform 0.2s;
+      }
+
+      .overview-stat:hover {
+        transform: translateY(-2px);
+      }
+
+      .overview-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--color-brand-primary);
+        margin-bottom: var(--space-2);
+      }
+
+      .overview-label {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      .position-section {
+        margin-bottom: var(--space-8);
+      }
+
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: var(--space-6);
+        color: var(--text-primary);
+      }
+
+      .section-title i {
+        color: var(--color-brand-primary);
+      }
+
+      .roster-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: var(--space-6);
+      }
+
+      .staff-card,
+      .player-card {
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+      }
+
+      .staff-card:hover,
+      .player-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .player-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-4);
+        margin-bottom: var(--space-4);
+      }
+
+      .player-jersey {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1.125rem;
+        color: white;
+        background: linear-gradient(
+          135deg,
+          var(--color-brand-primary),
+          var(--color-brand-secondary)
+        );
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        flex-shrink: 0;
+      }
+
+      .player-info {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .player-name {
+        font-size: 1.125rem;
+        font-weight: 600;
+        margin-bottom: var(--space-1);
+        color: var(--text-primary);
+      }
+
+      .player-position {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+        margin-bottom: var(--space-1);
+      }
+
+      .player-meta {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-3);
+        margin-top: var(--space-4);
+      }
+
+      .stat-item {
+        text-align: center;
+        padding: var(--space-3);
+        background: var(--p-surface-50);
+        border-radius: var(--p-border-radius);
+      }
+
+      .stat-value {
+        font-weight: 700;
+        font-size: 1.125rem;
+        color: var(--color-brand-primary);
+        margin-bottom: var(--space-1);
+      }
+
+      .stat-label {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+      }
+
+      .achievements {
+        margin-top: var(--space-4);
+        padding-top: var(--space-4);
+        border-top: 1px solid var(--p-surface-200);
+      }
+
+      .achievements-title {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+        margin-bottom: var(--space-2);
+      }
+
+      .achievement-item {
+        font-size: 0.75rem;
+        color: var(--text-primary);
+        margin-bottom: var(--space-1);
+      }
+
+      .player-details {
+        display: flex;
+        gap: var(--space-4);
+        margin-top: var(--space-4);
+        padding-top: var(--space-4);
+        border-top: 1px solid var(--p-surface-200);
+      }
+
+      .detail-item {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-1);
+      }
+
+      .detail-label {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+      }
+
+      .detail-value {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+
+      .player-stats {
+        margin-top: var(--space-4);
+        padding-top: var(--space-4);
+        border-top: 1px solid var(--p-surface-200);
+      }
+
+      @media (max-width: 768px) {
+        .roster-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .team-overview-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+    `,
+  ],
 })
 export class RosterComponent implements OnInit {
   private apiService = inject(ApiService);
@@ -424,111 +473,114 @@ export class RosterComponent implements OnInit {
   loadRosterData(): void {
     // Load team stats
     this.teamStats.set([
-      { value: '20', label: 'Total Players' },
-      { value: '12', label: 'Countries Represented' },
-      { value: '26', label: 'Average Age' },
-      { value: '15-3', label: 'Win-Loss Record' },
-      { value: '8.7', label: 'Olympic Qualification Score' }
+      { value: "20", label: "Total Players" },
+      { value: "12", label: "Countries Represented" },
+      { value: "26", label: "Average Age" },
+      { value: "15-3", label: "Win-Loss Record" },
+      { value: "8.7", label: "Olympic Qualification Score" },
     ]);
 
     // Load coaching staff
     this.coachingStaff.set([
       {
-        name: 'John Smith',
-        position: 'Head Coach',
-        country: 'USA',
-        experience: '15 years',
-        achievements: ['World Championship 2023', 'Olympic Gold 2020']
+        name: "John Smith",
+        position: "Head Coach",
+        country: "USA",
+        experience: "15 years",
+        achievements: ["World Championship 2023", "Olympic Gold 2020"],
       },
       {
-        name: 'Maria Garcia',
-        position: 'Strength & Conditioning',
-        country: 'Spain',
-        experience: '10 years',
-        achievements: ['Elite Performance Specialist']
+        name: "Maria Garcia",
+        position: "Strength & Conditioning",
+        country: "Spain",
+        experience: "10 years",
+        achievements: ["Elite Performance Specialist"],
       },
       {
-        name: 'David Chen',
-        position: 'Technical Director',
-        country: 'China',
-        experience: '12 years',
-        achievements: ['Technical Excellence Award']
-      }
+        name: "David Chen",
+        position: "Technical Director",
+        country: "China",
+        experience: "12 years",
+        achievements: ["Technical Excellence Award"],
+      },
     ]);
 
     // Load players by position
     this.playersByPosition.set([
       {
-        position: 'Quarterback',
+        position: "Quarterback",
         players: [
           {
-            name: 'Alex Johnson',
-            position: 'QB',
-            jersey: '10',
-            country: 'USA',
+            name: "Alex Johnson",
+            position: "QB",
+            jersey: "10",
+            country: "USA",
             age: 28,
-            height: '6\'2"',
-            weight: '210 lbs',
-            stats: { completion: '85%', touchdowns: 24 }
+            height: "6'2\"",
+            weight: "210 lbs",
+            stats: { completion: "85%", touchdowns: 24 },
           },
           {
-            name: 'Luis Rodriguez',
-            position: 'QB',
-            jersey: '7',
-            country: 'Mexico',
+            name: "Luis Rodriguez",
+            position: "QB",
+            jersey: "7",
+            country: "Mexico",
             age: 26,
-            height: '6\'0"',
-            weight: '195 lbs',
-            stats: { completion: '82%', touchdowns: 18 }
-          }
-        ]
+            height: "6'0\"",
+            weight: "195 lbs",
+            stats: { completion: "82%", touchdowns: 18 },
+          },
+        ],
       },
       {
-        position: 'Wide Receiver',
+        position: "Wide Receiver",
         players: [
           {
-            name: 'Sarah Williams',
-            position: 'WR',
-            jersey: '21',
-            country: 'Canada',
+            name: "Sarah Williams",
+            position: "WR",
+            jersey: "21",
+            country: "Canada",
             age: 24,
-            height: '5\'10"',
-            weight: '180 lbs',
-            stats: { receptions: 45, yards: 680 }
-          }
-        ]
-      }
+            height: "5'10\"",
+            weight: "180 lbs",
+            stats: { receptions: 45, yards: 680 },
+          },
+        ],
+      },
     ]);
   }
 
   getInitials(name: string): string {
-    return name.split(' ').map(n => n[0]).join('');
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("");
   }
 
   getYears(experience: string): string {
-    return experience.split(' ')[0];
+    return experience.split(" ")[0];
   }
 
   getPositionIcon(position: string): string {
     const icons: Record<string, string> = {
-      'Quarterback': 'pi pi-user',
-      'Wide Receiver': 'pi pi-users',
-      'Running Back': 'pi pi-bolt',
-      'Defensive Back': 'pi pi-shield',
-      'Rusher': 'pi pi-forward'
+      Quarterback: "pi pi-user",
+      "Wide Receiver": "pi pi-users",
+      "Running Back": "pi pi-bolt",
+      "Defensive Back": "pi pi-shield",
+      Rusher: "pi pi-forward",
     };
-    return icons[position] || 'pi pi-user';
+    return icons[position] || "pi pi-user";
   }
 
   getJerseyColor(position: string): string {
     const colors: Record<string, string> = {
-      'QB': 'linear-gradient(135deg, #089949, #10c96b)',
-      'WR': 'linear-gradient(135deg, #3498db, #2980b9)',
-      'RB': 'linear-gradient(135deg, #e74c3c, #c0392b)',
-      'DB': 'linear-gradient(135deg, #9b59b6, #8e44ad)',
-      'Rusher': 'linear-gradient(135deg, #f39c12, #e67e22)'
+      QB: "linear-gradient(135deg, #089949, #10c96b)",
+      WR: "linear-gradient(135deg, #3498db, #2980b9)",
+      RB: "linear-gradient(135deg, #e74c3c, #c0392b)",
+      DB: "linear-gradient(135deg, #9b59b6, #8e44ad)",
+      Rusher: "linear-gradient(135deg, #f39c12, #e67e22)",
     };
-    return colors[position] || 'linear-gradient(135deg, #089949, #10c96b)';
+    return colors[position] || "linear-gradient(135deg, #089949, #10c96b)";
   }
 
   getPlayerStats(player: Player): any[] {
@@ -536,7 +588,7 @@ export class RosterComponent implements OnInit {
     return Object.entries(player.stats).map(([key, value]) => ({
       label: key.charAt(0).toUpperCase() + key.slice(1),
       value: value,
-      key: key
+      key: key,
     }));
   }
 

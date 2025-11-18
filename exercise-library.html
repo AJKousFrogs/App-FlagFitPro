@@ -32,7 +32,11 @@
     <!-- Preconnect to jsdelivr for faster icon loading -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net" />
     <!-- Lucide Icons - Modern icon library similar to Radix UI -->
-    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js" crossorigin="anonymous" defer>
+    <script
+      src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
     <script src="./src/icon-helper.js" defer></script>
     <script src="./src/theme-switcher.js" defer></script>
     <script src="./src/nav-highlight.js" defer></script>
@@ -194,6 +198,7 @@
 
             <input
               id="global-search"
+              name="search"
               class="search-input"
               type="text"
               placeholder="Search for players, teams & more"
@@ -274,7 +279,7 @@
       </div>
 
       <main class="main-content">
-    <!-- Header -->
+        <!-- Header -->
         <div class="header-section">
           <h1>📚 Exercise Library</h1>
           <p>
@@ -283,7 +288,7 @@
           </p>
         </div>
 
-    <!-- Stats Section -->
+        <!-- Stats Section -->
         <div class="stats-section">
           <div class="stats-grid">
             <div class="stat-card">
@@ -305,7 +310,7 @@
           </div>
         </div>
 
-    <!-- Search and Filter -->
+        <!-- Search and Filter -->
         <div class="search-filter-section">
           <div class="search-bar">
             <span class="search-icon"
@@ -347,7 +352,7 @@
           </div>
         </div>
 
-    <!-- Exercise Grid -->
+        <!-- Exercise Grid -->
         <div class="exercise-grid" id="exerciseGrid">
           <!-- Exercises will be populated by JavaScript -->
         </div>
@@ -377,7 +382,7 @@
         if (typeof lucide !== "undefined") {
           lucide.createIcons();
         }
-        
+
         // Show loading indicator
         const exerciseGrid = document.getElementById("exerciseGrid");
         if (exerciseGrid) {
@@ -396,7 +401,7 @@
           // Import modules with error handling
           const authModule = await import("./src/auth-manager.js");
           const { authManager } = authModule;
-          
+
           // Wait for auth manager to initialize (with timeout)
           await authManager.waitForInit(5000);
 
@@ -414,7 +419,9 @@
           );
 
           // Import exercise library page module
-          const exerciseModule = await import("./src/js/pages/exercise-library-page.js");
+          const exerciseModule = await import(
+            "./src/js/pages/exercise-library-page.js"
+          );
           const { exerciseLibraryPage } = exerciseModule;
 
           // Initialize optimized exercise library page
@@ -443,7 +450,8 @@
 
       // Global function for opening exercise modal
       window.openExerciseModal = function (exerciseName) {
-        const library = window.COMPLETE_EXERCISE_LIBRARY || COMPLETE_EXERCISE_LIBRARY;
+        const library =
+          window.COMPLETE_EXERCISE_LIBRARY || COMPLETE_EXERCISE_LIBRARY;
         const exercise = library[exerciseName];
         if (!exercise) return;
 

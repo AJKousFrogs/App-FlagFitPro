@@ -20,7 +20,11 @@
     <link rel="stylesheet" href="./src/css/pages/login.css" />
 
     <!-- Lucide Icons - Modern icon library similar to Radix UI -->
-    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js" crossorigin="anonymous" defer></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
     <script src="./src/icon-helper.js" defer></script>
     <!-- Universal Components -->
     <script type="module" src="./src/js/main.js"></script>
@@ -32,9 +36,7 @@
       <div class="login-logo mb-6 text-primary">
         <i data-lucide="activity" aria-hidden="true" class="icon-24"></i>
       </div>
-      <h1
-        class="login-title text-2xl font-bold text-primary mb-6"
-      >
+      <h1 class="login-title text-2xl font-bold text-primary mb-6">
         Sign in to FlagFit Pro
       </h1>
 
@@ -61,15 +63,21 @@
         style="display: none"
       >
         <p class="mb-3">
-          <i data-lucide="check-circle" aria-hidden="true" class="icon-18"></i> Login successful!
+          <i data-lucide="check-circle" aria-hidden="true" class="icon-18"></i>
+          Login successful!
         </p>
-        <button type="button" id="goDashboard" class="btn btn-primary btn-sm flex items-center gap-2">
-          Go to Dashboard <i data-lucide="chevron-right" aria-hidden="true" class="icon-18"></i>
+        <button
+          type="button"
+          id="goDashboard"
+          class="btn btn-primary btn-sm flex items-center gap-2"
+        >
+          Go to Dashboard
+          <i data-lucide="chevron-right" aria-hidden="true" class="icon-18"></i>
         </button>
       </div>
 
       <form id="loginForm">
-    <!-- CSRF Protection -->
+        <!-- CSRF Protection -->
         <input type="hidden" id="csrfToken" name="_token" value="" />
 
         <div class="form-group">
@@ -85,8 +93,15 @@
             aria-describedby="email-error email-success"
             aria-invalid="false"
           />
-          <div id="email-error" class="form-error" role="alert" style="display: none;"></div>
-          <small id="email-success" class="form-success" style="display: none;">Valid email</small>
+          <div
+            id="email-error"
+            class="form-error"
+            role="alert"
+            style="display: none"
+          ></div>
+          <small id="email-success" class="form-success" style="display: none"
+            >Valid email</small
+          >
         </div>
 
         <div class="form-group">
@@ -102,14 +117,25 @@
             aria-describedby="password-error password-success password-requirements password-strength"
             aria-invalid="false"
           />
-          <div id="password-error" class="form-error" role="alert" style="display: none;"></div>
-          <small id="password-success" class="form-success" style="display: none;">Password is valid</small>
+          <div
+            id="password-error"
+            class="form-error"
+            role="alert"
+            style="display: none"
+          ></div>
+          <small
+            id="password-success"
+            class="form-success"
+            style="display: none"
+            >Password is valid</small
+          >
           <div
             id="password-requirements"
             class="password-requirements form-hint mt-2"
             role="note"
           >
-            Password must be at least 8 characters and include uppercase, lowercase, number, and special character (@$!%*?&).
+            Password must be at least 8 characters and include uppercase,
+            lowercase, number, and special character (@$!%*?&).
           </div>
           <div
             id="passwordStrength"
@@ -123,11 +149,11 @@
         <div
           class="login-form-options flex justify-between items-center mb-6 text-sm"
         >
-          <div
-            class="login-checkbox-group flex items-center gap-2"
-          >
+          <div class="login-checkbox-group flex items-center gap-2">
             <input type="checkbox" id="remember" name="remember" />
-            <label for="remember" class="text-primary cursor-pointer">Remember me</label>
+            <label for="remember" class="text-primary cursor-pointer"
+              >Remember me</label
+            >
           </div>
           <a
             href="/reset-password.html"
@@ -164,14 +190,10 @@
         class="login-sponsors mt-8 pt-6"
         style="border-top: 1px solid var(--color-border-secondary)"
       >
-        <div
-          class="login-sponsors-title text-sm text-muted mb-4"
-        >
+        <div class="login-sponsors-title text-sm text-muted mb-4">
           Proudly sponsored by
         </div>
-        <div
-          class="login-sponsor-logos flex justify-center gap-4 flex-wrap"
-        >
+        <div class="login-sponsor-logos flex justify-center gap-4 flex-wrap">
           <div
             class="login-sponsor-logo text-xs text-muted py-2 px-4 rounded-full bg-surface-secondary"
             style="border: 1px solid var(--color-border-secondary)"
@@ -219,7 +241,8 @@
           // Show loading state
           const submitButton = this.querySelector('button[type="submit"]');
           const originalText = submitButton.innerHTML;
-          submitButton.innerHTML = '<span class="spinner-mini" style="display: inline-block; margin-right: 8px;"></span> Signing in...';
+          submitButton.innerHTML =
+            '<span class="spinner-mini" style="display: inline-block; margin-right: 8px;"></span> Signing in...';
           submitButton.disabled = true;
 
           if (window.location.hostname === "localhost") {
@@ -301,29 +324,30 @@
         .getElementById("goDashboard")
         .addEventListener("click", async function () {
           console.log("🔘 Manual redirect button clicked");
-          
+
           // Since this button only appears after successful login, try to redirect directly
           // First check if we have auth data stored
-          const hasStoredAuth = localStorage.getItem('authToken') || 
-                               localStorage.getItem('__auth_token_enc') ||
-                               sessionStorage.getItem('authToken');
-          
+          const hasStoredAuth =
+            localStorage.getItem("authToken") ||
+            localStorage.getItem("__auth_token_enc") ||
+            sessionStorage.getItem("authToken");
+
           if (hasStoredAuth) {
             // We have auth data, redirect directly
             console.log("✅ Auth data found, redirecting to dashboard...");
             authManager.redirectToDashboard();
             return;
           }
-          
+
           // If no stored auth, check auth manager state with retry
           let isAuthenticated = authManager.isAuthenticated();
-          
+
           // Retry check after a short delay if first check fails
           if (!isAuthenticated) {
-            await new Promise(resolve => setTimeout(resolve, 100));
+            await new Promise((resolve) => setTimeout(resolve, 100));
             isAuthenticated = authManager.isAuthenticated();
           }
-          
+
           if (isAuthenticated) {
             authManager.redirectToDashboard();
           } else {
@@ -332,7 +356,9 @@
             const successMessage = document.getElementById("manualRedirect");
             if (successMessage && successMessage.style.display !== "none") {
               // Login was successful, just redirect anyway
-              console.log("✅ Login successful, redirecting despite auth check...");
+              console.log(
+                "✅ Login successful, redirecting despite auth check...",
+              );
               authManager.redirectToDashboard();
             } else {
               console.error(
@@ -349,14 +375,18 @@
         if (typeof lucide !== "undefined") {
           // Temporarily suppress console errors for missing icons
           const originalError = console.error;
-          console.error = function(...args) {
+          console.error = function (...args) {
             // Suppress Lucide icon not found errors
-            if (args[0] && typeof args[0] === 'string' && args[0].includes('icon name was not found')) {
+            if (
+              args[0] &&
+              typeof args[0] === "string" &&
+              args[0].includes("icon name was not found")
+            ) {
               return; // Suppress this specific error
             }
             originalError.apply(console, args);
           };
-          
+
           try {
             lucide.createIcons();
           } finally {
@@ -385,15 +415,13 @@
         }
 
         // Add real-time validation
-        document
-          .getElementById("email")
-          .addEventListener("input", function() {
-            validateEmailField(this.value);
-          });
+        document.getElementById("email").addEventListener("input", function () {
+          validateEmailField(this.value);
+        });
 
         document
           .getElementById("password")
-          .addEventListener("input", function() {
+          .addEventListener("input", function () {
             validatePasswordField(this.value);
             checkPasswordStrength();
           });
@@ -418,18 +446,18 @@
         const field = document.getElementById(fieldId);
         const errorDiv = document.getElementById(`${fieldId}-error`);
         const successDiv = document.getElementById(`${fieldId}-success`);
-        
+
         if (field) {
           field.classList.remove("success");
           field.classList.add("error");
           field.setAttribute("aria-invalid", "true");
         }
-        
+
         if (errorDiv) {
           errorDiv.textContent = message;
           errorDiv.style.display = "flex";
         }
-        
+
         if (successDiv) {
           successDiv.style.display = "none";
         }
@@ -439,17 +467,17 @@
         const field = document.getElementById(fieldId);
         const errorDiv = document.getElementById(`${fieldId}-error`);
         const successDiv = document.getElementById(`${fieldId}-success`);
-        
+
         if (field) {
           field.classList.remove("error");
           field.classList.add("success");
           field.setAttribute("aria-invalid", "false");
         }
-        
+
         if (errorDiv) {
           errorDiv.style.display = "none";
         }
-        
+
         if (successDiv) {
           successDiv.style.display = "flex";
         }
@@ -459,16 +487,16 @@
         const field = document.getElementById(fieldId);
         const errorDiv = document.getElementById(`${fieldId}-error`);
         const successDiv = document.getElementById(`${fieldId}-success`);
-        
+
         if (field) {
           field.classList.remove("error", "success");
           field.setAttribute("aria-invalid", "false");
         }
-        
+
         if (errorDiv) {
           errorDiv.style.display = "none";
         }
-        
+
         if (successDiv) {
           successDiv.style.display = "none";
         }
@@ -486,7 +514,10 @@
           showFieldSuccess("email");
           return true;
         } else {
-          showFieldError("email", "Please enter a valid email address (e.g., user@example.com)");
+          showFieldError(
+            "email",
+            "Please enter a valid email address (e.g., user@example.com)",
+          );
           return false;
         }
       }
@@ -499,7 +530,10 @@
         }
 
         if (password.length < 8) {
-          showFieldError("password", "Password must be at least 8 characters long.");
+          showFieldError(
+            "password",
+            "Password must be at least 8 characters long.",
+          );
           return false;
         }
 
@@ -509,7 +543,10 @@
           showFieldSuccess("password");
           return true;
         } else {
-          showFieldError("password", "Password must contain uppercase, lowercase, number, and special character (@$!%*?&).");
+          showFieldError(
+            "password",
+            "Password must contain uppercase, lowercase, number, and special character (@$!%*?&).",
+          );
           return false;
         }
       }
@@ -526,7 +563,10 @@
         } else {
           const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
           if (!emailRegex.test(email)) {
-            showFieldError("email", "Please enter a valid email address (e.g., user@example.com)");
+            showFieldError(
+              "email",
+              "Please enter a valid email address (e.g., user@example.com)",
+            );
             showMessage("errorMessage", "Please enter a valid email address.");
             isValid = false;
           } else {
@@ -540,15 +580,27 @@
           showMessage("errorMessage", "Please enter your password.");
           isValid = false;
         } else if (password.length < 8) {
-          showFieldError("password", "Password must be at least 8 characters long.");
-          showMessage("errorMessage", "Password must be at least 8 characters long.");
+          showFieldError(
+            "password",
+            "Password must be at least 8 characters long.",
+          );
+          showMessage(
+            "errorMessage",
+            "Password must be at least 8 characters long.",
+          );
           isValid = false;
         } else {
           const passwordRegex =
             /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
           if (!passwordRegex.test(password)) {
-            showFieldError("password", "Password must contain uppercase, lowercase, number, and special character (@$!%*?&).");
-            showMessage("errorMessage", "Password must contain uppercase, lowercase, number, and special character.");
+            showFieldError(
+              "password",
+              "Password must contain uppercase, lowercase, number, and special character (@$!%*?&).",
+            );
+            showMessage(
+              "errorMessage",
+              "Password must contain uppercase, lowercase, number, and special character.",
+            );
             isValid = false;
           } else {
             showFieldSuccess("password");

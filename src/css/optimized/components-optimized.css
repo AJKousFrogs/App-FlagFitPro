@@ -381,7 +381,7 @@
 }
 
 .tabs-trigger.active::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: -1px;
   left: 0;
@@ -594,7 +594,7 @@
     margin: var(--spacing-sm);
     max-width: calc(100% - 2rem);
   }
-  
+
   .sidebar {
     width: 100%;
     height: auto;
@@ -604,21 +604,21 @@
     z-index: var(--z-modal);
     transition: left 0.3s ease;
   }
-  
+
   .sidebar.open {
     left: 0;
   }
-  
+
   .stat-card {
     padding: var(--spacing-lg);
   }
-  
+
   .tabs-list {
     overflow-x: auto;
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
-  
+
   .tabs-list::-webkit-scrollbar {
     display: none;
   }

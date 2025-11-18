@@ -3,11 +3,13 @@
 ## 🚀 Current Status
 
 ### ✅ Backend Server
+
 - **Running on**: http://localhost:3001
 - **Status**: ✅ Active
 - **API Endpoints**: ✅ Configured with mock data
 
 ### ⏳ Angular Frontend
+
 - **Compiling on**: http://localhost:4200
 - **Status**: Building (first compile takes time)
 - **API Connection**: ✅ Configured to connect to http://localhost:3001
@@ -15,12 +17,14 @@
 ## 📋 Setup Summary
 
 ### 1. Backend Server (Port 3001)
+
 ```bash
 cd /Users/aljosakous/Documents/GitHub/app-new-flag
 node server.js
 ```
 
 **API Endpoints Available:**
+
 - `/api/health` - Health check
 - `/api/auth/*` - Authentication endpoints
 - `/api/dashboard/*` - Dashboard data
@@ -32,12 +36,14 @@ node server.js
 - `/api/coach/*` - Coach dashboard
 
 ### 2. Angular Frontend (Port 4200)
+
 ```bash
 cd /Users/aljosakous/Documents/GitHub/app-new-flag/angular
 npm start
 ```
 
 **Configuration:**
+
 - Environment: `src/environments/environment.ts`
 - API URL: `http://localhost:3001`
 - CORS: Enabled on backend
@@ -45,11 +51,13 @@ npm start
 ## 🧪 Testing API Connections
 
 ### Test Backend Health
+
 ```bash
 curl http://localhost:3001/api/health
 ```
 
 Expected response:
+
 ```json
 {
   "status": "OK",
@@ -59,11 +67,13 @@ Expected response:
 ```
 
 ### Test Authentication Endpoint
+
 ```bash
 curl http://localhost:3001/api/auth/me
 ```
 
 Expected response:
+
 ```json
 {
   "success": true,
@@ -77,6 +87,7 @@ Expected response:
 ```
 
 ### Test Login Endpoint
+
 ```bash
 curl -X POST http://localhost:3001/api/auth/login \
   -H "Content-Type: application/json" \
@@ -84,6 +95,7 @@ curl -X POST http://localhost:3001/api/auth/login \
 ```
 
 Expected response:
+
 ```json
 {
   "success": true,
@@ -111,6 +123,7 @@ Once Angular finishes compiling:
 ## 🐛 Troubleshooting
 
 ### Backend Not Responding
+
 ```bash
 # Check if server is running
 lsof -ti:3001
@@ -122,6 +135,7 @@ node server.js
 ```
 
 ### Angular Not Compiling
+
 ```bash
 # Check Angular process
 ps aux | grep "ng serve"
@@ -132,10 +146,12 @@ npm start
 ```
 
 ### CORS Errors
+
 - Backend has CORS enabled: `app.use(cors())`
 - If issues persist, check browser console for specific errors
 
 ### API Connection Errors
+
 - Verify backend is running: `curl http://localhost:3001/api/health`
 - Check Angular environment: `angular/src/environments/environment.ts`
 - Verify API service: `angular/src/app/core/services/api.service.ts`
@@ -169,4 +185,3 @@ All API endpoints return responses in this format:
 ```
 
 The Angular `ApiService` expects this format and handles it automatically.
-

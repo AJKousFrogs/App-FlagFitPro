@@ -20,8 +20,7 @@
   cursor: pointer;
   border-bottom: 2px solid transparent;
   margin-bottom: -2px;
-  transition: all var(--motion-duration-fast)
-    var(--motion-easing-productive);
+  transition: all var(--motion-duration-fast) var(--motion-easing-productive);
   font-size: var(--typography-body-md-size);
   font-weight: var(--typography-label-md-weight);
   display: flex;
@@ -74,8 +73,7 @@
   text-align: left;
   font-size: var(--typography-body-md-size);
   font-weight: var(--typography-label-md-weight);
-  transition: all var(--motion-duration-fast)
-    var(--motion-easing-productive);
+  transition: all var(--motion-duration-fast) var(--motion-easing-productive);
 }
 .accordion-trigger:hover {
   background: var(--surface-secondary);
@@ -120,8 +118,7 @@
   visibility: hidden;
   transition:
     opacity var(--motion-duration-normal) var(--motion-easing-expressive),
-    visibility var(--motion-duration-normal)
-      var(--motion-easing-expressive);
+    visibility var(--motion-duration-normal) var(--motion-easing-expressive);
 }
 .modal-overlay.open {
   opacity: 1;

@@ -164,10 +164,9 @@
   .sidebar-section {
     padding: var(--space-4);
   }
-  
+
   .trending-item:hover {
     margin: 0 calc(-1 * var(--space-4));
     padding: var(--space-3) var(--space-4);
   }
 }
-

@@ -97,7 +97,7 @@ class TestAutomation {
     // Install dependencies if needed
     try {
       await this.execCommand("npm ci", { timeout: 120000 });
-    } catch (_error) {
+    } catch {
       console.log("Installing dependencies...");
       await this.execCommand("npm install", { timeout: 180000 });
     }
@@ -127,7 +127,7 @@ class TestAutomation {
       });
 
       console.log("✅ Test database ready");
-    } catch (_error) {
+    } catch {
       console.log("⚠️ Database setup failed, using mock data");
     }
   }
@@ -146,7 +146,7 @@ class TestAutomation {
           recursive: true,
           force: true,
         });
-      } catch (_error) {
+      } catch {
         // Directory might not exist, ignore
       }
     }
@@ -173,7 +173,7 @@ class TestAutomation {
           "npx eslint . --ext .js,.jsx,.ts,.tsx --format json --output-file eslint-report.json",
         );
         lintResults.eslint.passed = true;
-      } catch (error) {
+      } catch {
         const report = await this.readJsonFile("eslint-report.json");
         lintResults.eslint.errors =
           report?.filter((r) => r.errorCount > 0) || [];
@@ -709,7 +709,7 @@ Generated on ${new Date(this.testResults.timestamp).toLocaleString()}
     for (const file of tempFiles) {
       try {
         await fs.unlink(path.join(projectRoot, file));
-      } catch (_error) {
+      } catch {
         // File might not exist
       }
     }
@@ -778,7 +778,7 @@ Generated on ${new Date(this.testResults.timestamp).toLocaleString()}
         "utf8",
       );
       return JSON.parse(content);
-    } catch (_error) {
+    } catch {
       return null;
     }
   }
@@ -792,7 +792,7 @@ Generated on ${new Date(this.testResults.timestamp).toLocaleString()}
         if (response.ok) {
           return true;
         }
-      } catch (_error) {
+      } catch {
         // Server not ready yet
       }
 

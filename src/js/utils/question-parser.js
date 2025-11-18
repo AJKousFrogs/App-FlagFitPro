@@ -12,7 +12,7 @@ export class QuestionParser {
         /how.*take/i,
         /how.*consume/i,
         /recommended.*amount/i,
-        /daily.*intake/i
+        /daily.*intake/i,
       ],
       timing: [
         /when.*take/i,
@@ -20,7 +20,7 @@ export class QuestionParser {
         /best.*time/i,
         /before.*after/i,
         /pre.*post/i,
-        /timing/i
+        /timing/i,
       ],
       safety: [
         /safe/i,
@@ -29,7 +29,7 @@ export class QuestionParser {
         /risk/i,
         /warning/i,
         /contraindication/i,
-        /harmful/i
+        /harmful/i,
       ],
       comparison: [
         /better/i,
@@ -38,7 +38,7 @@ export class QuestionParser {
         /versus/i,
         /difference/i,
         /compare/i,
-        /which.*better/i
+        /which.*better/i,
       ],
       how_to: [
         /how.*do/i,
@@ -47,30 +47,24 @@ export class QuestionParser {
         /how.*improve/i,
         /how.*increase/i,
         /how.*reduce/i,
-        /how.*avoid/i
+        /how.*avoid/i,
       ],
       what_is: [
         /what.*is/i,
         /what.*are/i,
         /explain/i,
         /tell.*about/i,
-        /describe/i
+        /describe/i,
       ],
-      why: [
-        /why/i,
-        /reason/i,
-        /cause/i,
-        /benefit/i,
-        /advantage/i
-      ],
+      why: [/why/i, /reason/i, /cause/i, /benefit/i, /advantage/i],
       protocol: [
         /protocol/i,
         /routine/i,
         /schedule/i,
         /program/i,
         /plan/i,
-        /method/i
-      ]
+        /method/i,
+      ],
     };
 
     this.entityPatterns = {
@@ -85,7 +79,7 @@ export class QuestionParser {
         /glutamine/i,
         /omega\s*3/i,
         /zinc/i,
-        /calcium/i
+        /calcium/i,
       ],
       injuries: [
         /ankle\s*sprain/i,
@@ -96,7 +90,7 @@ export class QuestionParser {
         /back\s*pain/i,
         /tendonitis/i,
         /tendinitis/i,
-        /concussion/i
+        /concussion/i,
       ],
       recovery: [
         /sauna/i,
@@ -107,7 +101,7 @@ export class QuestionParser {
         /foam\s*roll/i,
         /compression/i,
         /sleep/i,
-        /recovery/i
+        /recovery/i,
       ],
       training: [
         /speed\s*training/i,
@@ -116,7 +110,7 @@ export class QuestionParser {
         /endurance/i,
         /plyometric/i,
         /sprint/i,
-        /cardio/i
+        /cardio/i,
       ],
       psychology: [
         /anxiety/i,
@@ -125,13 +119,13 @@ export class QuestionParser {
         /psychology/i,
         /visualization/i,
         /focus/i,
-        /motivation/i
+        /motivation/i,
       ],
       body_stats: {
         height: /(\d+)\s*(?:cm|centimeters?|m|meters?|'|ft|feet|inches?)/i,
         weight: /(\d+)\s*(?:kg|kilograms?|lbs?|pounds?)/i,
-        age: /(\d+)\s*(?:years?|yrs?|yo)/i
-      }
+        age: /(\d+)\s*(?:years?|yrs?|yo)/i,
+      },
     };
   }
 
@@ -144,7 +138,7 @@ export class QuestionParser {
       entities: this.extractEntities(lowerQuestion, question),
       context: this.extractContext(lowerQuestion),
       questionType: this.classifyQuestion(question),
-      priority: this.determinePriority(lowerQuestion)
+      priority: this.determinePriority(lowerQuestion),
     };
   }
 
@@ -152,12 +146,12 @@ export class QuestionParser {
     const intents = [];
 
     for (const [intent, patterns] of Object.entries(this.intentPatterns)) {
-      if (patterns.some(pattern => pattern.test(lowerQuestion))) {
+      if (patterns.some((pattern) => pattern.test(lowerQuestion))) {
         intents.push(intent);
       }
     }
 
-    return intents.length > 0 ? intents[0] : 'general';
+    return intents.length > 0 ? intents[0] : "general";
   }
 
   extractEntities(lowerQuestion, originalQuestion) {
@@ -167,7 +161,7 @@ export class QuestionParser {
       recovery: [],
       training: [],
       psychology: [],
-      bodyStats: {}
+      bodyStats: {},
     };
 
     // Extract supplements
@@ -211,15 +205,25 @@ export class QuestionParser {
     }
 
     // Extract body stats
-    const heightMatch = originalQuestion.match(this.entityPatterns.body_stats.height);
-    const weightMatch = originalQuestion.match(this.entityPatterns.body_stats.weight);
+    const heightMatch = originalQuestion.match(
+      this.entityPatterns.body_stats.height,
+    );
+    const weightMatch = originalQuestion.match(
+      this.entityPatterns.body_stats.weight,
+    );
     const ageMatch = originalQuestion.match(this.entityPatterns.body_stats.age);
 
     if (heightMatch) {
-      entities.bodyStats.height = this.normalizeHeight(parseInt(heightMatch[1]), heightMatch[0]);
+      entities.bodyStats.height = this.normalizeHeight(
+        parseInt(heightMatch[1]),
+        heightMatch[0],
+      );
     }
     if (weightMatch) {
-      entities.bodyStats.weight = this.normalizeWeight(parseInt(weightMatch[1]), weightMatch[0]);
+      entities.bodyStats.weight = this.normalizeWeight(
+        parseInt(weightMatch[1]),
+        weightMatch[0],
+      );
     }
     if (ageMatch) {
       entities.bodyStats.age = parseInt(ageMatch[1]);
@@ -230,10 +234,14 @@ export class QuestionParser {
 
   normalizeHeight(value, unit) {
     const lowerUnit = unit.toLowerCase();
-    if (lowerUnit.includes('ft') || lowerUnit.includes('feet') || lowerUnit.includes("'")) {
+    if (
+      lowerUnit.includes("ft") ||
+      lowerUnit.includes("feet") ||
+      lowerUnit.includes("'")
+    ) {
       return Math.round(value * 30.48); // Convert feet to cm
     }
-    if (lowerUnit.includes('m') && !lowerUnit.includes('cm')) {
+    if (lowerUnit.includes("m") && !lowerUnit.includes("cm")) {
       return Math.round(value * 100); // Convert meters to cm
     }
     return value; // Already in cm
@@ -241,7 +249,7 @@ export class QuestionParser {
 
   normalizeWeight(value, unit) {
     const lowerUnit = unit.toLowerCase();
-    if (lowerUnit.includes('lb') || lowerUnit.includes('pound')) {
+    if (lowerUnit.includes("lb") || lowerUnit.includes("pound")) {
       return Math.round(value * 0.453592); // Convert lbs to kg
     }
     return value; // Already in kg
@@ -249,30 +257,43 @@ export class QuestionParser {
 
   extractContext(lowerQuestion) {
     const context = {
-      urgency: 'normal',
-      specificity: 'general',
+      urgency: "normal",
+      specificity: "general",
       timeFrame: null,
-      comparison: false
+      comparison: false,
     };
 
     // Urgency indicators
-    if (lowerQuestion.includes('urgent') || lowerQuestion.includes('emergency') || lowerQuestion.includes('severe')) {
-      context.urgency = 'high';
+    if (
+      lowerQuestion.includes("urgent") ||
+      lowerQuestion.includes("emergency") ||
+      lowerQuestion.includes("severe")
+    ) {
+      context.urgency = "high";
     }
 
     // Specificity
-    if (lowerQuestion.includes('specific') || lowerQuestion.includes('exact') || lowerQuestion.includes('precise')) {
-      context.specificity = 'high';
+    if (
+      lowerQuestion.includes("specific") ||
+      lowerQuestion.includes("exact") ||
+      lowerQuestion.includes("precise")
+    ) {
+      context.specificity = "high";
     }
 
     // Time frame
-    const timeFrameMatch = lowerQuestion.match(/(daily|weekly|monthly|per day|per week|per month)/i);
+    const timeFrameMatch = lowerQuestion.match(
+      /(daily|weekly|monthly|per day|per week|per month)/i,
+    );
     if (timeFrameMatch) {
       context.timeFrame = timeFrameMatch[0].toLowerCase();
     }
 
     // Comparison
-    context.comparison = lowerQuestion.includes('vs') || lowerQuestion.includes('versus') || lowerQuestion.includes('better');
+    context.comparison =
+      lowerQuestion.includes("vs") ||
+      lowerQuestion.includes("versus") ||
+      lowerQuestion.includes("better");
 
     return context;
   }
@@ -280,29 +301,36 @@ export class QuestionParser {
   classifyQuestion(question) {
     const lower = question.toLowerCase();
 
-    if (lower.startsWith('what')) return 'definition';
-    if (lower.startsWith('how')) return 'method';
-    if (lower.startsWith('why')) return 'explanation';
-    if (lower.startsWith('when')) return 'timing';
-    if (lower.startsWith('where')) return 'location';
-    if (lower.startsWith('who')) return 'person';
-    if (lower.startsWith('which')) return 'choice';
-    if (lower.startsWith('should')) return 'advice';
-    if (lower.startsWith('can') || lower.startsWith('could')) return 'capability';
+    if (lower.startsWith("what")) return "definition";
+    if (lower.startsWith("how")) return "method";
+    if (lower.startsWith("why")) return "explanation";
+    if (lower.startsWith("when")) return "timing";
+    if (lower.startsWith("where")) return "location";
+    if (lower.startsWith("who")) return "person";
+    if (lower.startsWith("which")) return "choice";
+    if (lower.startsWith("should")) return "advice";
+    if (lower.startsWith("can") || lower.startsWith("could"))
+      return "capability";
 
-    return 'general';
+    return "general";
   }
 
   determinePriority(lowerQuestion) {
-    if (lowerQuestion.includes('urgent') || lowerQuestion.includes('emergency') || lowerQuestion.includes('severe')) {
-      return 'high';
+    if (
+      lowerQuestion.includes("urgent") ||
+      lowerQuestion.includes("emergency") ||
+      lowerQuestion.includes("severe")
+    ) {
+      return "high";
     }
-    if (lowerQuestion.includes('important') || lowerQuestion.includes('critical')) {
-      return 'medium';
+    if (
+      lowerQuestion.includes("important") ||
+      lowerQuestion.includes("critical")
+    ) {
+      return "medium";
     }
-    return 'normal';
+    return "normal";
   }
 }
 
 export const questionParser = new QuestionParser();
-

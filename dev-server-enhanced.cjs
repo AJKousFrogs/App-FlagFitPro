@@ -118,10 +118,7 @@ const bugFixer = {
       }
 
       // Detect undefined variables
-      if (
-        line.match(/\b(undefined|null)\s*[!=]==/) &&
-        !line.includes("//")
-      ) {
+      if (line.match(/\b(undefined|null)\s*[!=]==/) && !line.includes("//")) {
         bugs.push({
           file: filePath,
           line: lineNum,
@@ -344,7 +341,9 @@ server.listen(PORT, () => {
   console.log(`🔥 Hot reload enabled for: HTML, CSS, JS files`);
   console.log(`🐛 Bug detection & auto-fixing enabled`);
   console.log(`📱 Access your app: http://localhost:${PORT}`);
-  console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`);
+  console.log(
+    `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`,
+  );
 });
 
 // Graceful shutdown
@@ -361,4 +360,3 @@ process.on("SIGINT", () => {
   server.close();
   process.exit(0);
 });
-

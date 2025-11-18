@@ -1,19 +1,25 @@
-import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { CardModule } from 'primeng/card';
-import { ButtonModule } from 'primeng/button';
-import { TagModule } from 'primeng/tag';
-import { ProgressBarModule } from 'primeng/progressbar';
-import { TabViewModule } from 'primeng/tabview';
-import { MainLayoutComponent } from '../../shared/components/layout/main-layout.component';
-import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
-import { ApiService, API_ENDPOINTS } from '../../core/services/api.service';
+import {
+  Component,
+  OnInit,
+  inject,
+  signal,
+  ChangeDetectionStrategy,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { CardModule } from "primeng/card";
+import { ButtonModule } from "primeng/button";
+import { TagModule } from "primeng/tag";
+import { ProgressBarModule } from "primeng/progressbar";
+import { TabViewModule } from "primeng/tabview";
+import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 
 interface Tournament {
   id: string;
   title: string;
   subtitle: string;
-  status: 'upcoming' | 'ongoing' | 'completed' | 'registration';
+  status: "upcoming" | "ongoing" | "completed" | "registration";
   date: string;
   duration: string;
   location: string;
@@ -25,7 +31,7 @@ interface Tournament {
 }
 
 @Component({
-  selector: 'app-tournaments',
+  selector: "app-tournaments",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
@@ -36,12 +42,16 @@ interface Tournament {
     ProgressBarModule,
     TabViewModule,
     MainLayoutComponent,
-    PageHeaderComponent
+    PageHeaderComponent,
   ],
   template: `
     <app-main-layout>
       <div class="tournaments-page">
-        <app-page-header title="Official Tournament Schedule 2026-2027" subtitle="International Flag Football Season featuring 7 major tournaments across Europe" icon="pi-trophy">
+        <app-page-header
+          title="Official Tournament Schedule 2026-2027"
+          subtitle="International Flag Football Season featuring 7 major tournaments across Europe"
+          icon="pi-trophy"
+        >
           <p-button label="Next Tournament" icon="pi pi-calendar"></p-button>
         </app-page-header>
 
@@ -49,10 +59,18 @@ interface Tournament {
         <p-tabView>
           <p-tabPanel header="2026 Season" leftIcon="pi pi-calendar">
             <div class="tournaments-grid">
-              <p-card *ngFor="let tournament of tournaments2026(); trackBy: trackByTournamentId" class="tournament-card">
+              <p-card
+                *ngFor="
+                  let tournament of tournaments2026();
+                  trackBy: trackByTournamentId
+                "
+                class="tournament-card"
+              >
                 <div class="tournament-header">
-                  <p-tag [value]="getStatusLabel(tournament.status)" 
-                        [severity]="getStatusSeverity(tournament.status)"></p-tag>
+                  <p-tag
+                    [value]="getStatusLabel(tournament.status)"
+                    [severity]="getStatusSeverity(tournament.status)"
+                  ></p-tag>
                   <h3 class="tournament-title">{{ tournament.title }}</h3>
                   <p class="tournament-subtitle">{{ tournament.subtitle }}</p>
                 </div>
@@ -86,20 +104,34 @@ interface Tournament {
                         <i class="pi pi-users"></i>
                       </div>
                       <div>
-                        <div class="info-value">{{ tournament.teamsRegistered }}/{{ tournament.teamsMax }}</div>
+                        <div class="info-value">
+                          {{ tournament.teamsRegistered }}/{{
+                            tournament.teamsMax
+                          }}
+                        </div>
                         <div class="info-label">Teams</div>
                       </div>
                     </div>
                   </div>
-                  <div *ngIf="tournament.progress !== undefined" class="tournament-progress">
+                  <div
+                    *ngIf="tournament.progress !== undefined"
+                    class="tournament-progress"
+                  >
                     <div class="progress-label">
                       <span>Opens in</span>
                       <span>{{ tournament.daysUntil }} days</span>
                     </div>
-                    <p-progressBar [value]="tournament.progress" [showValue]="false"></p-progressBar>
+                    <p-progressBar
+                      [value]="tournament.progress"
+                      [showValue]="false"
+                    ></p-progressBar>
                   </div>
                   <div class="tournament-actions">
-                    <p-button label="Set Reminder" [outlined]="true" size="small"></p-button>
+                    <p-button
+                      label="Set Reminder"
+                      [outlined]="true"
+                      size="small"
+                    ></p-button>
                     <p-button label="View Details" size="small"></p-button>
                   </div>
                 </div>
@@ -108,10 +140,18 @@ interface Tournament {
           </p-tabPanel>
           <p-tabPanel header="2027 Season" leftIcon="pi pi-calendar">
             <div class="tournaments-grid">
-              <p-card *ngFor="let tournament of tournaments2027(); trackBy: trackByTournamentId" class="tournament-card">
+              <p-card
+                *ngFor="
+                  let tournament of tournaments2027();
+                  trackBy: trackByTournamentId
+                "
+                class="tournament-card"
+              >
                 <div class="tournament-header">
-                  <p-tag [value]="getStatusLabel(tournament.status)" 
-                        [severity]="getStatusSeverity(tournament.status)"></p-tag>
+                  <p-tag
+                    [value]="getStatusLabel(tournament.status)"
+                    [severity]="getStatusSeverity(tournament.status)"
+                  ></p-tag>
                   <h3 class="tournament-title">{{ tournament.title }}</h3>
                   <p class="tournament-subtitle">{{ tournament.subtitle }}</p>
                 </div>
@@ -145,13 +185,21 @@ interface Tournament {
                         <i class="pi pi-users"></i>
                       </div>
                       <div>
-                        <div class="info-value">{{ tournament.teamsRegistered }}/{{ tournament.teamsMax }}</div>
+                        <div class="info-value">
+                          {{ tournament.teamsRegistered }}/{{
+                            tournament.teamsMax
+                          }}
+                        </div>
                         <div class="info-label">Teams</div>
                       </div>
                     </div>
                   </div>
                   <div class="tournament-actions">
-                    <p-button label="Set Reminder" [outlined]="true" size="small"></p-button>
+                    <p-button
+                      label="Set Reminder"
+                      [outlined]="true"
+                      size="small"
+                    ></p-button>
                     <p-button label="View Details" size="small"></p-button>
                   </div>
                 </div>
@@ -162,144 +210,148 @@ interface Tournament {
       </div>
     </app-main-layout>
   `,
-  styles: [`
-    .tournaments-page {
-      padding: var(--space-6);
-    }
+  styles: [
+    `
+      .tournaments-page {
+        padding: var(--space-6);
+      }
 
-    .page-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: var(--space-6);
-      padding: var(--space-5);
-      background: var(--surface-primary);
-      border-radius: var(--p-border-radius);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    }
-
-    .header-content {
-      flex: 1;
-    }
-
-    .page-title {
-      display: flex;
-      align-items: center;
-      gap: var(--space-3);
-      font-size: 1.5rem;
-      font-weight: 600;
-      margin-bottom: var(--space-2);
-      color: var(--text-primary);
-    }
-
-    .page-subtitle {
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-      margin: 0;
-    }
-
-    .tournaments-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-      gap: var(--space-6);
-      margin-top: var(--space-6);
-    }
-
-    .tournament-card {
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .tournament-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    .tournament-header {
-      margin-bottom: var(--space-4);
-    }
-
-    .tournament-title {
-      font-size: 1.25rem;
-      font-weight: 600;
-      margin: var(--space-2) 0;
-      color: var(--text-primary);
-    }
-
-    .tournament-subtitle {
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-      margin: 0;
-    }
-
-    .tournament-info {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: var(--space-4);
-      margin-bottom: var(--space-4);
-    }
-
-    .info-item {
-      display: flex;
-      align-items: flex-start;
-      gap: var(--space-3);
-    }
-
-    .info-icon {
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--p-surface-50);
-      border-radius: var(--p-border-radius);
-      color: var(--color-brand-primary);
-      flex-shrink: 0;
-    }
-
-    .info-value {
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: var(--space-1);
-    }
-
-    .info-label {
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-    }
-
-    .tournament-progress {
-      margin-bottom: var(--space-4);
-    }
-
-    .progress-label {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-      margin-bottom: var(--space-2);
-    }
-
-    .tournament-actions {
-      display: flex;
-      gap: var(--space-3);
-    }
-
-    @media (max-width: 768px) {
       .page-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: var(--space-4);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--space-6);
+        padding: var(--space-5);
+        background: var(--surface-primary);
+        border-radius: var(--p-border-radius);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
+
+      .header-content {
+        flex: 1;
+      }
+
+      .page-title {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: var(--space-2);
+        color: var(--text-primary);
+      }
+
+      .page-subtitle {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        margin: 0;
       }
 
       .tournaments-grid {
-        grid-template-columns: 1fr;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: var(--space-6);
+        margin-top: var(--space-6);
+      }
+
+      .tournament-card {
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+      }
+
+      .tournament-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .tournament-header {
+        margin-bottom: var(--space-4);
+      }
+
+      .tournament-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin: var(--space-2) 0;
+        color: var(--text-primary);
+      }
+
+      .tournament-subtitle {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        margin: 0;
       }
 
       .tournament-info {
-        grid-template-columns: 1fr;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-4);
+        margin-bottom: var(--space-4);
       }
-    }
-  `]
+
+      .info-item {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--space-3);
+      }
+
+      .info-icon {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--p-surface-50);
+        border-radius: var(--p-border-radius);
+        color: var(--color-brand-primary);
+        flex-shrink: 0;
+      }
+
+      .info-value {
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: var(--space-1);
+      }
+
+      .info-label {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+      }
+
+      .tournament-progress {
+        margin-bottom: var(--space-4);
+      }
+
+      .progress-label {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        margin-bottom: var(--space-2);
+      }
+
+      .tournament-actions {
+        display: flex;
+        gap: var(--space-3);
+      }
+
+      @media (max-width: 768px) {
+        .page-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: var(--space-4);
+        }
+
+        .tournaments-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .tournament-info {
+          grid-template-columns: 1fr;
+        }
+      }
+    `,
+  ],
 })
 export class TournamentsComponent implements OnInit {
   private apiService = inject(ApiService);
@@ -315,72 +367,72 @@ export class TournamentsComponent implements OnInit {
     // Load 2026 tournaments
     this.tournaments2026.set([
       {
-        id: '1',
-        title: 'Summer Slam',
-        subtitle: 'International Championship',
-        status: 'ongoing',
-        date: 'Jun 15-30',
-        duration: '2 weeks',
-        location: 'Berlin, Germany',
-        prizePool: '$15,000',
+        id: "1",
+        title: "Summer Slam",
+        subtitle: "International Championship",
+        status: "ongoing",
+        date: "Jun 15-30",
+        duration: "2 weeks",
+        location: "Berlin, Germany",
+        prizePool: "$15,000",
         teamsRegistered: 18,
         teamsMax: 24,
         daysUntil: 0,
-        progress: 75
+        progress: 75,
       },
       {
-        id: '2',
-        title: 'European Cup',
-        subtitle: 'Regional Qualifier',
-        status: 'registration',
-        date: 'Aug 1-15',
-        duration: '2 weeks',
-        location: 'Paris, France',
-        prizePool: '$10,000',
+        id: "2",
+        title: "European Cup",
+        subtitle: "Regional Qualifier",
+        status: "registration",
+        date: "Aug 1-15",
+        duration: "2 weeks",
+        location: "Paris, France",
+        prizePool: "$10,000",
         teamsRegistered: 12,
         teamsMax: 20,
         daysUntil: 30,
-        progress: 0
-      }
+        progress: 0,
+      },
     ]);
 
     // Load 2027 tournaments
     this.tournaments2027.set([
       {
-        id: '3',
-        title: 'Winter League',
-        subtitle: 'Indoor Flag Football',
-        status: 'upcoming',
-        date: 'Dec 1-15',
-        duration: '2 weeks',
-        location: 'Chicago, USA',
-        prizePool: '$7,500',
+        id: "3",
+        title: "Winter League",
+        subtitle: "Indoor Flag Football",
+        status: "upcoming",
+        date: "Dec 1-15",
+        duration: "2 weeks",
+        location: "Chicago, USA",
+        prizePool: "$7,500",
         teamsRegistered: 0,
         teamsMax: 24,
         daysUntil: 60,
-        progress: 0
-      }
+        progress: 0,
+      },
     ]);
   }
 
   getStatusLabel(status: string): string {
     const labels: Record<string, string> = {
-      'upcoming': 'Coming Soon',
-      'ongoing': 'In Progress',
-      'completed': 'Completed',
-      'registration': 'Registration Open'
+      upcoming: "Coming Soon",
+      ongoing: "In Progress",
+      completed: "Completed",
+      registration: "Registration Open",
     };
     return labels[status] || status;
   }
 
   getStatusSeverity(status: string): string {
     const severities: Record<string, string> = {
-      'upcoming': 'info',
-      'ongoing': 'success',
-      'completed': 'secondary',
-      'registration': 'warning'
+      upcoming: "info",
+      ongoing: "success",
+      completed: "secondary",
+      registration: "warning",
     };
-    return severities[status] || 'info';
+    return severities[status] || "info";
   }
 
   trackByTournamentId(index: number, tournament: Tournament): string {

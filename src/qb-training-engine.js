@@ -6,6 +6,7 @@ import {
   QB_ASSESSMENTS,
 } from "./qb-training-program-data.js";
 import { TrainingProgramEngine } from "./training-program-engine.js";
+import { logger } from "./logger.js";
 
 export class QBTrainingEngine extends TrainingProgramEngine {
   constructor() {

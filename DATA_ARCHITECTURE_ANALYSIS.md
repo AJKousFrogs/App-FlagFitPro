@@ -1,6 +1,7 @@
 # FlagFit Pro - Comprehensive Data Architecture Analysis
 
 ## Executive Summary
+
 FlagFit Pro is a sophisticated flag football training and performance analytics platform with a hybrid database architecture (Neon PostgreSQL for advanced analytics + PocketBase for real-time events). The system tracks comprehensive athlete data including physical assessments, training load, performance metrics, player development, and team dynamics.
 
 ---
@@ -8,6 +9,7 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
 ## 1. CURRENT DATA MODELS & DATABASE SCHEMAS
 
 ### 1.1 Core User & Team Data
+
 - **Users Table**: User profiles with positions (QB, WR, RB, DB, LB, K, FLEX), experience levels, physical stats
 - **Teams Table**: Team management with member tracking, roles (player, coach, assistant_coach, admin)
 - **Team Members Table**: Team relationships with position assignments and jersey numbers
@@ -15,6 +17,7 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
 ### 1.2 Sports-Specific Data Being Tracked
 
 #### Player Demographics & Classification
+
 - **Player Profiles**: Comprehensive player data including:
   - Position (primary and secondary)
   - Sports background (multi-sport athlete analysis)
@@ -24,6 +27,7 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
   - Player archetypes (elite_speed_demon, complete_athlete, technical_specialist)
 
 #### Physical Assessment System
+
 - **Physical Assessment Protocols**: Standardized tests for:
   - Speed tests: 10-yard sprint, 40-yard dash
   - Agility tests: Pro-agility (5-10-5 shuttle), L-drill
@@ -38,6 +42,7 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
   - Assessor observations and technique notes
 
 #### Technical Skills Assessment
+
 - **Technical Skill Assessments**: Position-specific skills including:
   - Route running precision
   - Evasion effectiveness
@@ -48,6 +53,7 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
   - Video analysis support
 
 #### Cognitive Assessment
+
 - **Cognitive Assessments**: Mental performance including:
   - Reaction time tests
   - Decision-making drills
@@ -61,7 +67,9 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
 ## 2. STATISTICS & ANALYTICS FEATURES
 
 ### 2.1 Training Analytics
+
 **Training Analytics Table**:
+
 - Training type tracking (agility, passing, catching, strength, conditioning)
 - Session duration and exercises completed
 - Difficulty levels and performance scores
@@ -71,6 +79,7 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
 - Equipment used tracking
 
 **Training Session Logs**:
+
 - Detailed session data including:
   - Session type (speed, agility, technical, recovery, combined)
   - Sprint times for various distances
@@ -83,7 +92,9 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
   - Technique quality rating
 
 ### 2.2 Performance Metrics & Tracking
+
 **Performance Analytics System** captures:
+
 - Performance trends over time (speed, agility, strength, endurance, overall)
 - Test result tracking:
   - 40-yard dash times
@@ -97,12 +108,14 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
 - Trend analysis (improving, declining, stable)
 
 **Performance Tests Results**:
+
 - Monthly assessment snapshots
 - Historical progression tracking
 - Improvement percentages calculated
 - Comparison against personal records
 
 ### 2.3 Wellness & Recovery Tracking
+
 - Sleep hours (6-9 hour range)
 - Energy levels (1-10 scale)
 - Muscle soreness (1-5 scale)
@@ -112,6 +125,7 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
 - Daily wellness data collection
 
 ### 2.4 Body Composition Tracking
+
 - Weight tracking
 - Body fat percentage
 - Muscle mass percentage
@@ -123,7 +137,9 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
 - Weekly measurement intervals
 
 ### 2.5 Training Load Management (Advanced)
+
 **Training Load Metrics Table** (Advanced Science-Based):
+
 - Session RPE (Rate of Perceived Exertion) - 0-10 scale
 - Training Load calculation (RPE × Duration)
 - Flag Football specific metrics:
@@ -133,6 +149,7 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
   - Contact intensity score (flag pull intensity)
 
 **ACWR (Acute:Chronic Workload Ratio) Calculations**:
+
 - Acute load (7-day rolling average)
 - Chronic load (28-day rolling average)
 - ACWR ratio with zones (safe, caution, danger, detraining)
@@ -140,6 +157,7 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
 - Training status (optimal, undertraining, overreaching, overtraining)
 
 **Training Stress Balance (Fitness-Fatigue Model)**:
+
 - Daily training stress scores
 - Weekly/monthly stress accumulation
 - Recovery scores
@@ -147,7 +165,9 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
 - Readiness scores
 
 ### 2.6 Analytics Event Tracking
+
 **Analytics Events Table**:
+
 - User interactions tracking
 - Event types (page_view, feature_usage, goal_created, etc.)
 - Feature usage metrics
@@ -157,6 +177,7 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
 - User agent data
 
 **User Behavior Analytics**:
+
 - Page sequences and journey mapping
 - Session duration
 - Total page views
@@ -171,11 +192,13 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
 ## 3. AI/ML CAPABILITIES IMPLEMENTED
 
 ### 3.1 ML Performance Predictor System
+
 **Location**: `/src/ml-performance-predictor.js`
 
 #### Implemented Models:
 
 **1. Sprint Performance Prediction Model**
+
 - **Type**: Linear regression
 - **Features**: Current speed, training load, recovery score, biomechanics, weather
 - **Accuracy**: 87.4%
@@ -183,6 +206,7 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
 - **Output**: Predicted sprint time, improvement estimates, acceleration/top speed/agility factors
 
 **2. Route Running Skill Progression Model**
+
 - **Type**: Multi-class classification
 - **Features**: Practice reps, success rate, complexity level, cognitive load, fatigue
 - **Accuracy**: 89.2%
@@ -190,6 +214,7 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
 - **Output**: Current/projected skill levels per route type, improvement rates, practice hours needed
 
 **3. Decision-Making Prediction Model**
+
 - **Type**: Neural network (simplified)
 - **Features**: Reaction time, field vision, pressure handling, experience, game situation
 - **Accuracy**: 82.3%
@@ -198,12 +223,14 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
 - **DB Scenarios**: Route anticipation, flag pull timing, coverage responsibility, help defense
 
 **4. Cognitive Load Assessment**
+
 - Current cognitive load evaluation
 - Optimal load identification
 - Load status classification
 - Training recommendations based on load
 
 ### 3.2 Predictive Analytics Features
+
 - Position-specific speed factors (QB: 0.85, WR: 1.0, DB: 0.95, RB: 0.9, LB: 0.8, DL: 0.7)
 - Age adjustment factors for young vs veteran athletes
 - Injury risk scoring and prediction
@@ -211,6 +238,7 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
 - Training load recommendations
 
 ### 3.3 Performance Prediction & Recommendations
+
 - 2-6 week improvement timelines
 - Acceleration development recommendations
 - Agility enhancement programs
@@ -223,6 +251,7 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
 ## 4. DASHBOARD & REPORTING FEATURES
 
 ### 4.1 Dashboard Pages (Available)
+
 - **Main Dashboard** (`dashboard.html`): Overview of key metrics
 - **Performance Tracking Dashboard** (`performance-tracking.html`): Detailed performance data
 - **Analytics Dashboard** (`enhanced-analytics.html`): Advanced analytics and trends
@@ -230,7 +259,9 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
 - **Coach Page** (`coach-page.js`): Player management interface
 
 ### 4.2 Charts & Visualizations
+
 **Performance Trend Charts**:
+
 - Line charts with multi-metric overlay:
   - Overall performance score
   - Speed metrics
@@ -240,18 +271,21 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
 - 6-month trend view with customizable timeframes (7d, 30d, 90d, 6m, 12m)
 
 **Wellness Charts**:
+
 - Multi-axis charts with:
   - Sleep hours (hours axis)
   - Energy, soreness, stress (1-10 scale)
 - 30-day rolling window
 
 **Body Composition Charts**:
+
 - Dual-axis display:
   - Weight (lbs) on left axis
   - Body fat (%) on right axis
 - Historical progression tracking
 
 **Performance Overview Radar Chart**:
+
 - 5-dimensional assessment:
   - Speed
   - Agility
@@ -261,6 +295,7 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
 - Current performance visualization
 
 ### 4.3 Dashboard Components
+
 - Performance overview cards
 - Weekly/monthly statistics
 - Training load indicators
@@ -274,7 +309,9 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
 ## 5. PLAYER PERFORMANCE TRACKING
 
 ### 5.1 Individual Player Development
+
 **Player Development Progress View** (Materialized):
+
 - Average physical ratings (latest 30 days)
 - Average technical scores
 - Average cognitive ratings
@@ -283,6 +320,7 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
 - Position assignment with archetype matching
 
 **Player Talent Evaluations**:
+
 - Overall talent scores (0-100)
 - Potential ceiling rating (1-10)
 - Coachability rating (1-10)
@@ -296,7 +334,9 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
 - Scholarship potential assessments
 
 ### 5.2 Position Performance Comparison
+
 **Position Performance Comparison View** (Materialized):
+
 - Average 10-yard sprint time by position
 - Average L-drill time by position
 - Average technical skill scores by position
@@ -304,7 +344,9 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
 - Position benchmarking
 
 ### 5.3 Performance Analytics by Player
+
 **Player Performance Analytics**:
+
 - Analysis periods (monthly, seasonal, annual, program_completion)
 - Improvement percentages:
   - Speed improvement
@@ -319,7 +361,9 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
 - Key insights and recommendations
 
 ### 5.4 Multi-Sport Athlete Tracking
+
 **Multi-Sport Athlete Analysis**:
+
 - Sports background tracking
 - Sport crossover effectiveness scores
 - Skills transfer assessment
@@ -334,24 +378,29 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
 ## 6. GAME STATISTICS & EVENT TRACKING
 
 ### 6.1 Game-Related Data
+
 **Training Sessions with Game Support**:
+
 - Session type supports "game" type tracking
 - Contact intensity scoring (flag pull intensity, 1-10 scale)
 - Game status tracking through performance metrics
 - Performance scoring system integrated
 
 **Player Game Status Table**:
+
 - Game date tracking
 - Fatigue score (per game)
 - Injury risk score assessment
 - Status monitoring for injury prevention
 
 **Position-Specific Metrics**:
+
 - Position-based performance metrics
 - Metric names and values by position
 - Position-specific benchmarks
 
 ### 6.2 Event Tracking
+
 - Analytics events for user interactions
 - Feature usage events
 - Page navigation events
@@ -364,7 +413,9 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
 ## 7. QUARTERBACK-SPECIFIC FEATURES
 
 ### 7.1 QB Training Program
+
 **QB Training Engine** (`qb-training-engine.js`):
+
 - Dual-track training system:
   - Lower body foundation training
   - QB-specific upper body training
@@ -372,6 +423,7 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
 - Week-by-week customization
 
 **QB Metrics Tracked**:
+
 - Throwing volume tracking (weekly volume and targets)
 - Velocity progression tracking
 - Throwing accuracy monitoring
@@ -380,12 +432,14 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
 - Weekly throw counts and distances
 
 **QB Assessments**:
+
 - Pre-program assessments
 - Weekly assessments
 - Monthly assessments
 - Comprehensive QB-specific evaluation
 
 **QB Arm Care Program**:
+
 - Daily mobility work
 - Recovery protocols
 - Arm care schedules
@@ -396,7 +450,9 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
 ## 8. ADVANCED ANALYTICS & KNOWLEDGE BASE
 
 ### 8.1 Evidence-Based Knowledge Base
+
 **Research Articles Database**:
+
 - 100+ peer-reviewed articles
 - Covers topics:
   - Injury prevention and treatment
@@ -407,6 +463,7 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
   - Sport-specific research
 
 **Knowledge Base Features**:
+
 - Evidence strength classification (strong, moderate, limited)
 - Structured protocols (dosage, frequency, duration)
 - Sport specificity tagging (flag football focus)
@@ -414,6 +471,7 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
 - Safety warnings and contraindications
 
 ### 8.2 Load Management Science
+
 - Evidence-based on 87 peer-reviewed studies with 12,453 athletes
 - ACWR (Acute:Chronic Workload Ratio) monitoring
 - Injury risk prediction algorithms
@@ -425,13 +483,16 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
 ## 9. DATA PERSISTENCE & INTEGRATION
 
 ### 9.1 Storage Strategy
+
 - **PostgreSQL (Neon)**: Advanced analytics, complex queries, historical data
 - **PocketBase**: Real-time events, quick lookups
 - **localStorage**: Client-side caching and offline support
 - **Secure Storage**: Sensitive performance data encryption
 
 ### 9.2 API Architecture
+
 **Performance API Endpoints**:
+
 - `/athlete/measurements` - Physical measurements
 - `/athlete/performance-tests` - Test results
 - `/athlete/wellness` - Wellness data
@@ -440,6 +501,7 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
 - `/athlete/trends` - Analytics and trends
 
 ### 9.3 Real-Time Features
+
 - WebSocket support (ws@8.14.2)
 - Session tracking
 - Live performance updates
@@ -450,6 +512,7 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
 ## 10. KEY METRICS & CALCULATIONS
 
 ### 10.1 Performance Scores
+
 - **Speed Score**: Calculated from 40-yard dash (100 - (time - 4.0) × 25)
 - **Agility Score**: Calculated from pro-agility time (100 - (time - 4.0) × 30)
 - **Strength Score**: Calculated from squat/bench press averages
@@ -457,6 +520,7 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
 - **Overall Score**: Average of all component scores (0-100)
 
 ### 10.2 Training Load Calculations
+
 - **Training Load** = Session RPE × Duration
 - **Acute Load** = 7-day rolling average
 - **Chronic Load** = 28-day rolling average
@@ -465,6 +529,7 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
 - **Training Strain** = Weekly load × Monotony
 
 ### 10.3 Improvement Metrics
+
 - Absolute change (current - previous)
 - Percentage change ((current - previous) / previous × 100)
 - Improvement status (improved/declined)
@@ -475,6 +540,7 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
 ## 11. FRONTEND COMPONENTS & PAGES
 
 ### 11.1 Main Pages Implemented
+
 - **Dashboard Page** (`dashboard-page.js`): Central hub with key metrics
 - **Training Page** (`training-page.js`): Program progression and workout tracking
 - **Coach Page** (`coach-page.js`): Team and player management
@@ -483,6 +549,7 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
 - **Exercise Library** (`exercise-library-page.js`): Exercise database and guidance
 
 ### 11.2 Chart Integration
+
 - Chart.js integration for all visualizations
 - Responsive design with aspect ratio maintenance
 - Interactive legends
@@ -589,6 +656,7 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
 ## 13. SUMMARY OF DATA COVERAGE
 
 ### Sports Data Tracked
+
 - **Physical Metrics**: 40+ different assessments (speed, agility, power, strength)
 - **Performance**: Test results, improvements, benchmarking
 - **Wellness**: Sleep, energy, soreness, stress, nutrition, hydration
@@ -599,6 +667,7 @@ FlagFit Pro is a sophisticated flag football training and performance analytics 
 - **Game Data**: Fatigue, injury risk, game status, competition readiness
 
 ### Analytics Capabilities
+
 - Predictive models for performance (87-89% accuracy)
 - Load management with injury risk prediction
 - Player development tracking and progression

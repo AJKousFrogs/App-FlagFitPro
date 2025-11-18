@@ -53,7 +53,7 @@ const breakpoints = {
 
 function checkPage(pagePath) {
   const fullPath = path.join(__dirname, "..", pagePath);
-  
+
   if (!fs.existsSync(fullPath)) {
     return {
       page: pagePath,
@@ -107,7 +107,8 @@ function checkPage(pagePath) {
   }
 
   // Check for fixed widths in inline styles
-  const fixedWidthPattern = /(?:width|min-width|max-width):\s*(\d+)px(?!\s*[;}]|\s*\/\*)/gi;
+  const fixedWidthPattern =
+    /(?:width|min-width|max-width):\s*(\d+)px(?!\s*[;}]|\s*\/\*)/gi;
   const fixedWidthMatches = content.match(fixedWidthPattern);
   if (fixedWidthMatches) {
     checks.hasFixedWidths = true;
@@ -120,7 +121,9 @@ function checkPage(pagePath) {
       return false;
     });
     if (problematicWidths.length > 0) {
-      warnings.push(`Found fixed widths that may cause issues: ${problematicWidths.join(", ")}`);
+      warnings.push(
+        `Found fixed widths that may cause issues: ${problematicWidths.join(", ")}`,
+      );
     }
   }
 
@@ -128,7 +131,9 @@ function checkPage(pagePath) {
   if (content.includes("<img")) {
     checks.hasImages = true;
     if (!content.includes("srcset") && !content.includes("max-width: 100%")) {
-      warnings.push("Images may not be responsive (consider adding srcset or CSS max-width)");
+      warnings.push(
+        "Images may not be responsive (consider adding srcset or CSS max-width)",
+      );
     }
   }
 
@@ -136,7 +141,10 @@ function checkPage(pagePath) {
   if (content.includes("<form") || content.includes("<input")) {
     checks.hasForms = true;
     // Check if forms have proper mobile handling
-    if (!content.includes("font-size: 16px") && !content.includes("font-size: 1rem")) {
+    if (
+      !content.includes("font-size: 16px") &&
+      !content.includes("font-size: 1rem")
+    ) {
       warnings.push("Forms may not have 16px font-size (iOS zoom prevention)");
     }
   }
@@ -158,14 +166,20 @@ function checkPage(pagePath) {
   }
 
   // Check for common responsive issues
-  if (content.includes("overflow-x: hidden") || content.includes("overflow-x:hidden")) {
+  if (
+    content.includes("overflow-x: hidden") ||
+    content.includes("overflow-x:hidden")
+  ) {
     // Good - prevents horizontal scroll
   } else if (content.includes("overflow")) {
     warnings.push("Check overflow handling for mobile");
   }
 
   // Check for touch targets
-  if (content.includes("min-height: 44px") || content.includes("min-height:44px")) {
+  if (
+    content.includes("min-height: 44px") ||
+    content.includes("min-height:44px")
+  ) {
     // Good - touch targets
   } else if (content.includes("button") || content.includes(".btn")) {
     warnings.push("Verify buttons have ≥44px touch targets on mobile");
@@ -197,7 +211,7 @@ function generateReport(results) {
   const totalIssues = results.reduce((sum, r) => sum + r.issues.length, 0);
   const totalWarnings = results.reduce((sum, r) => sum + r.warnings.length, 0);
   const avgScore = Math.round(
-    results.reduce((sum, r) => sum + r.score, 0) / totalPages
+    results.reduce((sum, r) => sum + r.score, 0) / totalPages,
   );
 
   let report = `# Responsive Page Testing Report
@@ -215,7 +229,7 @@ Generated: ${timestamp}
 ## Test Breakpoints
 
 ${Object.entries(breakpoints)
-  .map(([key, bp]) => `- **${bp.name}**: ${bp.width}×${bp.height}px`)
+  .map(([_key, bp]) => `- **${bp.name}**: ${bp.width}×${bp.height}px`)
   .join("\n")}
 
 ## Page Results
@@ -309,23 +323,27 @@ console.log("RESPONSIVE PAGE TESTING SUMMARY");
 console.log("=".repeat(80));
 console.log(`Total Pages: ${results.length}`);
 console.log(
-  `Pages with Issues: ${results.filter((r) => r.issues.length > 0).length}`
+  `Pages with Issues: ${results.filter((r) => r.issues.length > 0).length}`,
 );
 console.log(
-  `Pages with Warnings: ${results.filter((r) => r.warnings.length > 0).length}`
+  `Pages with Warnings: ${results.filter((r) => r.warnings.length > 0).length}`,
 );
 console.log(
-  `Total Issues: ${results.reduce((sum, r) => sum + r.issues.length, 0)}`
+  `Total Issues: ${results.reduce((sum, r) => sum + r.issues.length, 0)}`,
 );
 console.log(
-  `Total Warnings: ${results.reduce((sum, r) => sum + r.warnings.length, 0)}`
+  `Total Warnings: ${results.reduce((sum, r) => sum + r.warnings.length, 0)}`,
 );
 console.log("=".repeat(80));
 console.log("\n");
 
 // Print page results
 results.forEach((result) => {
-  if (result.issues.length > 0 || result.warnings.length > 0 || !result.exists) {
+  if (
+    result.issues.length > 0 ||
+    result.warnings.length > 0 ||
+    !result.exists
+  ) {
     const status = result.exists
       ? result.issues.length === 0
         ? "⚠️"
@@ -348,4 +366,3 @@ const report = generateReport(results);
 fs.writeFileSync(reportPath, report, "utf8");
 
 console.log(`\n📊 Full report saved to: RESPONSIVE_PAGE_TEST_REPORT.md\n`);
-

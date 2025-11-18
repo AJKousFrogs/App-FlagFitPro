@@ -36,8 +36,12 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* ================================================================
@@ -57,8 +61,12 @@
 }
 
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 /* Skeleton shapes */
@@ -309,7 +317,7 @@
 }
 
 .btn-loading::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -400,7 +408,7 @@
 .loading-spinner::before,
 .skeleton-loader::before,
 .loading-overlay::before {
-  content: 'Loading...';
+  content: "Loading...";
   position: absolute;
   left: -9999px;
   width: 1px;
@@ -427,9 +435,9 @@
   .btn-loading::after {
     animation: none;
   }
-  
+
   .loading-spinner::after {
-    content: '⏳';
+    content: "⏳";
     position: absolute;
     top: 50%;
     left: 50%;
@@ -438,7 +446,7 @@
     border: none;
     background: none;
   }
-  
+
   .skeleton-loader {
     background: var(--surface-tertiary, #f1f5f9);
   }
@@ -458,15 +466,15 @@
     );
     background-size: 200% 100%;
   }
-  
+
   .loading-overlay {
     background: rgba(0, 0, 0, 0.8);
   }
-  
+
   .skeleton-table-header {
     background: var(--surface-secondary-dark, #2a2a2a);
   }
-  
+
   .skeleton-stat-card,
   .skeleton-chart-container,
   .skeleton-table {
@@ -483,26 +491,26 @@
     grid-template-columns: 1fr;
     gap: var(--spacing-3, 12px);
   }
-  
+
   .skeleton-chart-area {
     height: 240px;
   }
-  
+
   .skeleton-chart-header {
     flex-direction: column;
     align-items: flex-start;
     gap: var(--spacing-3, 12px);
   }
-  
+
   .skeleton-chart-legend {
     flex-wrap: wrap;
     gap: var(--spacing-3, 12px);
   }
-  
+
   .skeleton-table {
     font-size: var(--font-size-sm, 14px);
   }
-  
+
   .skeleton-table-header th,
   .skeleton-table-row td {
     padding: var(--spacing-2, 8px) var(--spacing-3, 12px);
@@ -519,7 +527,7 @@
 }
 
 .is-loading::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -534,7 +542,7 @@
 }
 
 .is-loading::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -554,5 +562,7 @@
 }
 
 @keyframes fadeIn {
-  to { opacity: 1; }
+  to {
+    opacity: 1;
+  }
 }

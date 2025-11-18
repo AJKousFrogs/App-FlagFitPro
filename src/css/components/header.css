@@ -711,7 +711,7 @@
     min-width: 0;
     max-width: none;
   }
-  
+
   /* Ensure search input is readable and doesn't trigger iOS zoom */
   .top-bar .search-input {
     font-size: var(--text-base); /* ✅ Explicit 16px to prevent iOS zoom */
@@ -735,7 +735,7 @@
     width: 44px;
     height: 44px;
   }
-  
+
   /* Mobile menu toggle should remain visible */
   .top-bar .mobile-menu-toggle {
     display: flex;
@@ -750,26 +750,26 @@
     padding: var(--space-2) var(--space-2);
     gap: var(--space-2);
   }
-  
+
   .top-bar .header-left {
     gap: var(--space-1);
   }
-  
+
   .top-bar .header-right {
     gap: var(--space-1);
   }
-  
+
   /* Search box should adapt to available space */
   .top-bar .search-box {
     min-width: 0;
     flex: 1;
   }
-  
+
   /* Ensure text doesn't get too small */
   .top-bar .search-input::placeholder {
     font-size: var(--text-sm);
   }
-  
+
   /* Ensure search input remains usable */
   .top-bar .search-input {
     font-size: var(--text-base); /* Prevent iOS zoom */
@@ -783,13 +783,13 @@
     height: 48px;
     padding: var(--space-2) var(--space-4);
   }
-  
+
   .hero-section {
     grid-template-columns: repeat(2, 1fr);
     padding: var(--spacing-layout-sm);
     gap: var(--space-4);
   }
-  
+
   /* Reduce vertical spacing in landscape */
   .l-main {
     padding-top: var(--spacing-component-md);
@@ -986,7 +986,9 @@ body[data-theme="dark"] .top-bar,
 html[data-theme="dark"] .top-bar {
   background: var(--surface-primary) !important; /* #171717 in dark theme */
   border-bottom: 1px solid var(--color-border-primary) !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 20px rgba(0, 0, 0, 0.1) !important;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.3),
+    0 1px 20px rgba(0, 0, 0, 0.1) !important;
 }
 
 /* Light theme search input */
@@ -1079,4 +1081,3 @@ html[data-theme="dark"] .top-bar .theme-toggle-dot {
     0 2px 4px rgba(0, 0, 0, 0.2),
     0 1px 2px rgba(0, 0, 0, 0.15);
 }
-

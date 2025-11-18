@@ -1,7 +1,7 @@
 // Accessibility utilities for FlagFit Pro
 // Provides comprehensive accessibility features and enhancements
 
-import { logger } from './logger.js';
+import { logger } from "./logger.js";
 
 export class AccessibilityUtils {
   static focusManagement = {

@@ -16,8 +16,14 @@
     />
     <!-- New Modular CSS Architecture -->
     <link rel="stylesheet" href="./src/css/main.css" />
+    <!-- Page-specific styles -->
+    <link rel="stylesheet" href="./src/css/pages/workout.css" />
     <script src="./src/theme-switcher.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js" crossorigin="anonymous" defer>
+    <script
+      src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
     <script src="./src/icon-helper.js" defer></script>
     <!-- Universal Components -->
     <script type="module" src="./src/js/main.js"></script>
@@ -25,20 +31,8 @@
   <body>
     <div class="back-nav">
       <a href="/training.html" class="back-link">
-        <span
-          ><i
-            data-lucide="chevron-left"
-            style="
-              width: 16px;
-              height: 16px;
-              display: inline-block;
-              vertical-align: middle;
-              color: var(--icon-color-primary);
-              stroke: var(--icon-color-primary);
-            "
-          ></i
-        ></span>
-        Back to Training
+        <i data-lucide="chevron-left" class="icon-16"></i>
+        <span>Back to Training</span>
       </a>
     </div>
 
@@ -52,39 +46,20 @@
       </div>
 
       <div class="exercise-list" id="exerciseList">
-    <!-- Exercises will be loaded here -->
+        <!-- Exercises will be loaded here -->
       </div>
 
       <div class="workout-controls">
-        <button
-          class="btn btn-primary btn-md"
-          id="startBtn"
-          onclick="startWorkout()"
-        >
+        <button class="btn btn-primary btn-md" id="startBtn" onclick="startWorkout()">
           Start Workout
         </button>
-        <button
-          class="btn btn-secondary btn-md"
-          id="pauseBtn"
-          onclick="pauseWorkout()"
-          style="display: none"
-        >
+        <button class="btn btn-secondary btn-md" id="pauseBtn" onclick="pauseWorkout()" style="display: none">
           Pause
         </button>
-        <button
-          class="btn btn-secondary btn-md"
-          id="stopBtn"
-          onclick="stopWorkout()"
-          style="display: none"
-        >
+        <button class="btn btn-secondary btn-md" id="stopBtn" onclick="stopWorkout()" style="display: none">
           Stop
         </button>
-        <button
-          class="btn btn-primary btn-md"
-          id="completeBtn"
-          onclick="completeWorkout()"
-          style="display: none"
-        >
+        <button class="btn btn-primary btn-md" id="completeBtn" onclick="completeWorkout()" style="display: none">
           Complete
         </button>
       </div>
@@ -101,15 +76,16 @@
       let elapsedTime = 0;
 
       // Initialize workout page
-      document.addEventListener("DOMContentLoaded", function () {
+      document.addEventListener("DOMContentLoaded", async function () {
         // Initialize Lucide icons
         if (typeof lucide !== "undefined") {
           lucide.createIcons();
         }
-        // Check authentication
-        if (!authManager.isAuthenticated()) {
-          window.location.href = "/login.html";
-          return;
+        
+        // Check authentication (wait for auth manager to initialize)
+        const isAuthenticated = await authManager.requireAuth();
+        if (!isAuthenticated) {
+          return; // requireAuth() already handles redirect
         }
 
         // Load workout session
@@ -268,7 +244,7 @@
                         ${
                           !exercise.completed
                             ? `<button class="btn btn-primary btn-sm" onclick="completeExercise(${index})">Complete</button>`
-                            : `<span style="color: var(--color-status-success); font-weight: var(--font-weight-semibold);">✓ Done</span>`
+                            : `<span class="exercise-completed-badge">✓ Done</span>`
                         }
                     </div>
                 `;

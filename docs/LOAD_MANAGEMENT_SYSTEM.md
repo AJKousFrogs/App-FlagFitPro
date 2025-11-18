@@ -19,22 +19,22 @@ All calculations (ACWR, Monotony, TSB, Injury Risk) work with just Session RPE a
 
 ### Key Research Studies
 
-1. **Gabbett (2016)** - *British Journal of Sports Medicine*
+1. **Gabbett (2016)** - _British Journal of Sports Medicine_
    - ACWR >1.5 = 2-4x injury risk increase
    - Sweet spot: ACWR 0.8-1.3 for optimal adaptation
    - Sample: 2,537 athletes across multiple sports
 
-2. **Foster et al. (2001)** - *Journal of Strength and Conditioning Research*
+2. **Foster et al. (2001)** - _Journal of Strength and Conditioning Research_
    - Session RPE methodology validation
    - Training load quantification protocol
    - 98% correlation with objective measures
 
-3. **Hulin et al. (2016)** - *International Journal of Sports Physiology and Performance*
+3. **Hulin et al. (2016)** - _International Journal of Sports Physiology and Performance_
    - Training monotony and injury relationship
    - Strain calculation methodology
    - 3.2x injury risk with high monotony
 
-4. **Buchheit (2014)** - *International Journal of Sports Physiology and Performance*
+4. **Buchheit (2014)** - _International Journal of Sports Physiology and Performance_
    - Fitness-fatigue paradigm application
    - Training Stress Balance algorithms
    - HRV integration for load management
@@ -48,6 +48,7 @@ All calculations (ACWR, Monotony, TSB, Injury Risk) work with just Session RPE a
 **Location**: `database/migrations/027_load_management_system.sql`
 
 **Tables Created**:
+
 1. `training_load_metrics` - Core training load tracking
 2. `acwr_calculations` - ACWR calculations and interpretations
 3. `training_stress_balance` - Fitness-Fatigue model (CTL/ATL/TSB)
@@ -74,6 +75,7 @@ Comprehensive training load tracking with calculated metrics:
 **Minimum Required Fields**: `session_rpe`, `session_duration`, `session_date` - everything else is optional!
 
 **Key Indexes**:
+
 - `idx_training_load_user_date` - User and date queries
 - `idx_training_load_acwr` - ACWR filtering
 - `idx_training_load_risk` - Risk level queries
@@ -148,6 +150,7 @@ Research studies database:
 **Method**: `calculateACWR(userId, date)`
 
 **Algorithm**:
+
 ```javascript
 // Get 7-day (acute) and 28-day (chronic) training loads
 acuteAverage = sum(acuteLoads) / 7
@@ -169,6 +172,7 @@ if (acwr ≥ 1.8) → critical (4.2x risk)
 **Method**: `calculateTrainingMonotony(userId, weekStartDate)`
 
 **Algorithm**:
+
 ```javascript
 // Get 7 days of training loads
 mean = average(weeklyLoads)
@@ -189,6 +193,7 @@ if (monotony ≥ 2.0) → high risk (3.2x injury risk)
 **Method**: `calculateTSB(userId, date)`
 
 **Algorithm**:
+
 ```javascript
 // Exponentially Weighted Moving Average
 CTL = EWMA(trainingHistory, 42 days)  // Fitness
@@ -210,6 +215,7 @@ if (TSB < -15) → overreached (formScore: 0.4)
 **Method**: `calculateInjuryRisk(userId, date)`
 
 **Algorithm**:
+
 ```javascript
 // Research-based weights
 weights = {
@@ -246,31 +252,35 @@ if (risk ≥ 0.7) → critical
 **Location**: `src/services/LoadManagementService.js`
 
 **Usage**:
+
 ```javascript
-import { LoadManagementService } from './services/LoadManagementService.js';
+import { LoadManagementService } from "./services/LoadManagementService.js";
 
 const loadService = new LoadManagementService(apiClient);
 
 // Calculate ACWR
 const acwrData = await loadService.calculateACWR(userId, date);
-console.log('ACWR:', acwrData.acwr);
-console.log('Risk Zone:', acwrData.riskZone);
+console.log("ACWR:", acwrData.acwr);
+console.log("Risk Zone:", acwrData.riskZone);
 
 // Calculate Monotony
-const monotonyData = await loadService.calculateTrainingMonotony(userId, weekStart);
-console.log('Monotony:', monotonyData.monotony);
-console.log('Strain:', monotonyData.strain);
+const monotonyData = await loadService.calculateTrainingMonotony(
+  userId,
+  weekStart,
+);
+console.log("Monotony:", monotonyData.monotony);
+console.log("Strain:", monotonyData.strain);
 
 // Calculate TSB
 const tsbData = await loadService.calculateTSB(userId, date);
-console.log('TSB:', tsbData.tsb);
-console.log('Form Score:', tsbData.formScore);
+console.log("TSB:", tsbData.tsb);
+console.log("Form Score:", tsbData.formScore);
 
 // Calculate Injury Risk
 const riskData = await loadService.calculateInjuryRisk(userId, date);
-console.log('Overall Risk:', riskData.overallRisk);
-console.log('Risk Level:', riskData.riskLevel);
-console.log('Top Factors:', riskData.topFactors);
+console.log("Overall Risk:", riskData.overallRisk);
+console.log("Risk Level:", riskData.riskLevel);
+console.log("Top Factors:", riskData.topFactors);
 ```
 
 ### Backend API Endpoints
@@ -280,21 +290,25 @@ console.log('Top Factors:', riskData.topFactors);
 **Endpoints**:
 
 1. **ACWR Calculation**
+
    ```
    GET /.netlify/functions/load-management/acwr?date=2024-01-15
    ```
 
 2. **Monotony Calculation**
+
    ```
    GET /.netlify/functions/load-management/monotony?weekStart=2024-01-08
    ```
 
 3. **TSB Calculation**
+
    ```
    GET /.netlify/functions/load-management/tsb?date=2024-01-15
    ```
 
 4. **Injury Risk Assessment**
+
    ```
    GET /.netlify/functions/load-management/injury-risk?date=2024-01-15
    ```
@@ -313,16 +327,16 @@ console.log('Top Factors:', riskData.topFactors);
 ### Minimal Data Entry (Session RPE Only)
 
 ```javascript
-import { LoadManagementService } from './services/LoadManagementService.js';
+import { LoadManagementService } from "./services/LoadManagementService.js";
 
 const loadService = new LoadManagementService();
 
 // After each training session, collect:
 const sessionData = {
-  sessionRPE: 7,           // How hard was it? (0-10 scale)
-  durationMinutes: 60,     // How long? (minutes)
-  sessionDate: '2024-01-15',
-  sessionType: 'practice'
+  sessionRPE: 7, // How hard was it? (0-10 scale)
+  durationMinutes: 60, // How long? (minutes)
+  sessionDate: "2024-01-15",
+  sessionType: "practice",
 };
 
 // Calculate training load
@@ -342,11 +356,11 @@ const loadEntry = loadService.createLoadEntryFromRPE(sessionData);
 // Add subjective metrics if you track them
 const enhancedData = {
   ...sessionData,
-  perceivedRecovery: 6,      // How recovered? (0-10)
-  muscleSoreness: 4,          // How sore? (0-10)
-  sleepQuality: 7,            // Sleep quality last night (0-10)
-  routesRun: 25,              // Manual count (optional)
-  sprints: 12                 // Manual count (optional)
+  perceivedRecovery: 6, // How recovered? (0-10)
+  muscleSoreness: 4, // How sore? (0-10)
+  sleepQuality: 7, // Sleep quality last night (0-10)
+  routesRun: 25, // Manual count (optional)
+  sprints: 12, // Manual count (optional)
 };
 ```
 
@@ -358,11 +372,11 @@ const enhancedData = {
 // Check athlete readiness and adjust training
 const dailyMonitoring = await loadService.calculateInjuryRisk(userId);
 
-if (dailyMonitoring.riskLevel === 'critical') {
-  console.log('🚨 CRITICAL INJURY RISK');
-  console.log('Risk factors:', dailyMonitoring.topFactors);
-  console.log('Recommendations:', dailyMonitoring.recommendations);
-  
+if (dailyMonitoring.riskLevel === "critical") {
+  console.log("🚨 CRITICAL INJURY RISK");
+  console.log("Risk factors:", dailyMonitoring.topFactors);
+  console.log("Recommendations:", dailyMonitoring.recommendations);
+
   // Auto-adjust training intensity
   adjustTrainingPlan(userId, -0.3); // Reduce by 30%
 }
@@ -373,12 +387,15 @@ if (dailyMonitoring.riskLevel === 'critical') {
 ```javascript
 // End of week analysis
 const weekStart = getWeekStart(new Date());
-const weeklyAnalysis = await loadService.calculateTrainingMonotony(userId, weekStart);
+const weeklyAnalysis = await loadService.calculateTrainingMonotony(
+  userId,
+  weekStart,
+);
 
 if (weeklyAnalysis.monotony > 2.0) {
-  console.log('❌ High monotony detected - 3.2x injury risk');
-  console.log('Next week: Add variety to training');
-  
+  console.log("❌ High monotony detected - 3.2x injury risk");
+  console.log("Next week: Add variety to training");
+
   // Generate varied training week
   generateVariedWeek(userId, weeklyAnalysis.recommendations);
 }
@@ -390,13 +407,13 @@ if (weeklyAnalysis.monotony > 2.0) {
 // Check TSB for competition timing
 const tsbData = await loadService.calculateTSB(userId, competitionDate);
 
-if (tsbData.interpretation === 'optimal') {
-  console.log('✅ Optimal competition readiness');
-  console.log('Form Score:', tsbData.formScore);
-  console.log('Predicted Performance:', tsbData.predictedPerformance + '%');
+if (tsbData.interpretation === "optimal") {
+  console.log("✅ Optimal competition readiness");
+  console.log("Form Score:", tsbData.formScore);
+  console.log("Predicted Performance:", tsbData.predictedPerformance + "%");
 } else {
-  console.log('⚠️ Suboptimal readiness:', tsbData.interpretation);
-  console.log('Recommendation:', tsbData.recommendation);
+  console.log("⚠️ Suboptimal readiness:", tsbData.interpretation);
+  console.log("Recommendation:", tsbData.recommendation);
 }
 ```
 
@@ -406,13 +423,13 @@ if (tsbData.interpretation === 'optimal') {
 // Monitor ACWR for safe progression
 const acwrData = await loadService.calculateACWR(userId);
 
-if (acwrData.riskZone === 'safe') {
-  console.log('✅ Safe to progress');
-  console.log('Current ACWR:', acwrData.acwr);
-  console.log('Can increase load by 5-10%');
-} else if (acwrData.riskZone === 'danger') {
-  console.log('⚠️ Load reduction required');
-  console.log('Reduce by:', acwrData.recommendation);
+if (acwrData.riskZone === "safe") {
+  console.log("✅ Safe to progress");
+  console.log("Current ACWR:", acwrData.acwr);
+  console.log("Can increase load by 5-10%");
+} else if (acwrData.riskZone === "danger") {
+  console.log("⚠️ Load reduction required");
+  console.log("Reduce by:", acwrData.recommendation);
 }
 ```
 
@@ -422,13 +439,13 @@ if (acwrData.riskZone === 'safe') {
 
 ### Key Study Results Integrated
 
-| Study | Finding | Implementation |
-|-------|---------|----------------|
-| Gabbett 2016 | ACWR >1.5 = 2-4x injury risk | ACWR monitoring with 1.3 threshold |
-| Hulin 2016 | Monotony >2.0 = 3.2x risk | Weekly monotony calculations |
-| Foster 2001 | sRPE reliable load measure | Session RPE protocol |
-| Milewski 2014 | <8hr sleep = 1.7x injury risk | Sleep integration with load |
-| Buchheit 2014 | TSB optimal at +5 to +10 | Fitness-fatigue modeling |
+| Study         | Finding                       | Implementation                     |
+| ------------- | ----------------------------- | ---------------------------------- |
+| Gabbett 2016  | ACWR >1.5 = 2-4x injury risk  | ACWR monitoring with 1.3 threshold |
+| Hulin 2016    | Monotony >2.0 = 3.2x risk     | Weekly monotony calculations       |
+| Foster 2001   | sRPE reliable load measure    | Session RPE protocol               |
+| Milewski 2014 | <8hr sleep = 1.7x injury risk | Sleep integration with load        |
+| Buchheit 2014 | TSB optimal at +5 to +10      | Fitness-fatigue modeling           |
 
 ### Expected Outcomes
 
@@ -454,16 +471,16 @@ psql $DATABASE_URL
 Or using Node.js:
 
 ```javascript
-const { Pool } = require('pg');
-const fs = require('fs');
+const { Pool } = require("pg");
+const fs = require("fs");
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL
+  connectionString: process.env.DATABASE_URL,
 });
 
 const migrationSQL = fs.readFileSync(
-  'database/migrations/027_load_management_system.sql',
-  'utf8'
+  "database/migrations/027_load_management_system.sql",
+  "utf8",
 );
 
 await pool.query(migrationSQL);
@@ -473,14 +490,14 @@ await pool.query(migrationSQL);
 
 ```sql
 -- Check tables created
-SELECT table_name 
-FROM information_schema.tables 
-WHERE table_schema = 'public' 
+SELECT table_name
+FROM information_schema.tables
+WHERE table_schema = 'public'
 AND table_name LIKE '%load%' OR table_name LIKE '%acwr%' OR table_name LIKE '%tsb%';
 
 -- Check indexes
-SELECT indexname, tablename 
-FROM pg_indexes 
+SELECT indexname, tablename
+FROM pg_indexes
 WHERE tablename IN (
   'training_load_metrics',
   'acwr_calculations',
@@ -523,15 +540,15 @@ WHERE tablename IN (
 
 ## References
 
-1. Gabbett, T. J. (2016). The training—injury prevention paradox: should athletes be training smarter and harder? *British Journal of Sports Medicine*, 50(5), 273-280.
+1. Gabbett, T. J. (2016). The training—injury prevention paradox: should athletes be training smarter and harder? _British Journal of Sports Medicine_, 50(5), 273-280.
 
-2. Foster, C., et al. (2001). A new approach to monitoring exercise training. *Journal of Strength and Conditioning Research*, 15(1), 109-115.
+2. Foster, C., et al. (2001). A new approach to monitoring exercise training. _Journal of Strength and Conditioning Research_, 15(1), 109-115.
 
-3. Hulin, B. T., et al. (2016). The acute:chronic workload ratio predicts injury: high chronic workload may decrease injury risk in elite rugby league players. *British Journal of Sports Medicine*, 50(4), 231-236.
+3. Hulin, B. T., et al. (2016). The acute:chronic workload ratio predicts injury: high chronic workload may decrease injury risk in elite rugby league players. _British Journal of Sports Medicine_, 50(4), 231-236.
 
-4. Buchheit, M. (2014). Monitoring training status with HR measures: do all roads lead to Rome? *Frontiers in Physiology*, 5, 73.
+4. Buchheit, M. (2014). Monitoring training status with HR measures: do all roads lead to Rome? _Frontiers in Physiology_, 5, 73.
 
-5. Milewski, M. D., et al. (2014). Chronic lack of sleep is associated with increased sports injuries in adolescent athletes. *Journal of Pediatric Orthopaedics*, 34(2), 129-133.
+5. Milewski, M. D., et al. (2014). Chronic lack of sleep is associated with increased sports injuries in adolescent athletes. _Journal of Pediatric Orthopaedics_, 34(2), 129-133.
 
 ---
 
@@ -545,4 +562,3 @@ For questions or issues with the load management system:
 4. Review research thresholds in the service code
 
 This load management system transforms your algorithm from good to world-class by adding the critical missing piece for safe, optimal athletic development.
-

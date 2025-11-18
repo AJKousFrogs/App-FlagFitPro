@@ -1,5 +1,6 @@
 # FlagFit Pro - Comprehensive Design System Documentation
-*Updated: December 2025 - Version 7.0 - Angular 19 + PrimeNG Edition*
+
+_Updated: December 2025 - Version 7.0 - Angular 19 + PrimeNG Edition_
 
 ## Table of Contents
 
@@ -112,19 +113,19 @@ src/
 
 ```typescript
 // app.config.ts
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
-import { provideRouter } from '@angular/router';
-import { provideAnimations } from '@angular/platform-browser/animations';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { routes } from './app.routes';
+import { ApplicationConfig, provideZoneChangeDetection } from "@angular/core";
+import { provideRouter } from "@angular/router";
+import { provideAnimations } from "@angular/platform-browser/animations";
+import { provideHttpClient, withInterceptors } from "@angular/common/http";
+import { routes } from "./app.routes";
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideAnimations(),
-    provideHttpClient(withInterceptors([]))
-  ]
+    provideHttpClient(withInterceptors([])),
+  ],
 };
 ```
 
@@ -409,9 +410,9 @@ export type DesignTokens = typeof designTokens;
 }
 
 h1 {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: var(--font-heading-2xl);
-  line-height: 1.0;
+  line-height: 1;
   font-weight: 700;
   color: var(--text-primary);
   margin-top: 0;
@@ -419,7 +420,7 @@ h1 {
 }
 
 h2 {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: var(--font-heading-xl);
   line-height: 1.25;
   font-weight: 600;
@@ -429,7 +430,7 @@ h2 {
 }
 
 h3 {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: var(--font-heading-lg);
   line-height: 1.25;
   font-weight: 600;
@@ -439,7 +440,7 @@ h3 {
 }
 
 h4 {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: var(--font-heading-md);
   line-height: 1.375;
   font-weight: 500;
@@ -449,7 +450,7 @@ h4 {
 }
 
 h5 {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: var(--font-body-lg);
   line-height: 1.625;
   font-weight: 500;
@@ -459,7 +460,7 @@ h5 {
 }
 
 h6 {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: var(--font-body-md);
   line-height: 1.5;
   font-weight: 500;
@@ -473,11 +474,11 @@ h6 {
 
 ```typescript
 // src/app/shared/components/typography/typography.component.ts
-import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, Input } from "@angular/core";
+import { CommonModule } from "@angular/common";
 
 @Component({
-  selector: 'app-heading',
+  selector: "app-heading",
   standalone: true,
   imports: [CommonModule],
   template: `
@@ -500,18 +501,26 @@ import { CommonModule } from '@angular/common';
       <ng-content></ng-content>
     </h6>
   `,
-  styles: [`
-    :host {
-      display: block;
-    }
-  `]
+  styles: [
+    `
+      :host {
+        display: block;
+      }
+    `,
+  ],
 })
 export class HeadingComponent {
   @Input() level: 1 | 2 | 3 | 4 | 5 | 6 = 1;
-  @Input() size?: 'display-2xl' | 'display-xl' | 'heading-2xl' | 'heading-xl' | 'heading-lg' | 'heading-md';
+  @Input() size?:
+    | "display-2xl"
+    | "display-xl"
+    | "heading-2xl"
+    | "heading-xl"
+    | "heading-lg"
+    | "heading-md";
 
   get classes(): string {
-    const sizeClass = this.size ? `text-${this.size}` : '';
+    const sizeClass = this.size ? `text-${this.size}` : "";
     return sizeClass;
   }
 }
@@ -590,11 +599,11 @@ The design system uses an 8-point grid system for consistent spacing:
 
 ```typescript
 // Using Angular Flex Layout or CSS Grid
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component } from "@angular/core";
+import { CommonModule } from "@angular/common";
 
 @Component({
-  selector: 'app-dashboard-layout',
+  selector: "app-dashboard-layout",
   standalone: true,
   imports: [CommonModule],
   template: `
@@ -609,19 +618,21 @@ import { CommonModule } from '@angular/common';
       </div>
     </div>
   `,
-  styles: [`
-    .dashboard-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: var(--space-6);
-      padding: var(--space-6);
-    }
-  `]
+  styles: [
+    `
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: var(--space-6);
+        padding: var(--space-6);
+      }
+    `,
+  ],
 })
 export class DashboardLayoutComponent {
   items = [
-    { title: 'Card 1', content: 'Content 1' },
-    { title: 'Card 2', content: 'Content 2' },
+    { title: "Card 1", content: "Content 1" },
+    { title: "Card 2", content: "Content 2" },
   ];
 }
 ```
@@ -641,12 +652,12 @@ PrimeNG provides comprehensive button components with multiple variants and size
 interface ButtonProps {
   label?: string;
   icon?: string;
-  iconPos?: 'left' | 'right' | 'top' | 'bottom';
+  iconPos?: "left" | "right" | "top" | "bottom";
   loading?: boolean;
   loadingIcon?: string;
   disabled?: boolean;
-  severity?: 'secondary' | 'success' | 'info' | 'warn' | 'danger' | 'help';
-  size?: 'small' | 'large';
+  severity?: "secondary" | "success" | "info" | "warn" | "danger" | "help";
+  size?: "small" | "large";
   rounded?: boolean;
   raised?: boolean;
   text?: boolean;
@@ -660,13 +671,25 @@ interface ButtonProps {
 
 ```html
 <!-- Primary Button -->
-<p-button label="Start Training" icon="pi pi-play" (onClick)="startTraining()"></p-button>
+<p-button
+  label="Start Training"
+  icon="pi pi-play"
+  (onClick)="startTraining()"
+></p-button>
 
 <!-- Secondary Button -->
-<p-button label="View Stats" severity="secondary" icon="pi pi-chart-bar"></p-button>
+<p-button
+  label="View Stats"
+  severity="secondary"
+  icon="pi pi-chart-bar"
+></p-button>
 
 <!-- Outlined Button -->
-<p-button label="Learn More" [outlined]="true" icon="pi pi-info-circle"></p-button>
+<p-button
+  label="Learn More"
+  [outlined]="true"
+  icon="pi pi-info-circle"
+></p-button>
 
 <!-- Text Button -->
 <p-button label="Cancel" [text]="true" icon="pi pi-times"></p-button>
@@ -679,20 +702,24 @@ interface ButtonProps {
 <p-button label="Large" size="large"></p-button>
 
 <!-- Icon Only -->
-<p-button icon="pi pi-check" [rounded]="true" [text]="true" 
-          ariaLabel="Confirm"></p-button>
+<p-button
+  icon="pi pi-check"
+  [rounded]="true"
+  [text]="true"
+  ariaLabel="Confirm"
+></p-button>
 ```
 
 #### Angular Component Example
 
 ```typescript
 // src/app/shared/components/button/button.component.ts
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { ButtonModule } from 'primeng/button';
-import { CommonModule } from '@angular/common';
+import { Component, Input, Output, EventEmitter } from "@angular/core";
+import { ButtonModule } from "primeng/button";
+import { CommonModule } from "@angular/common";
 
 @Component({
-  selector: 'app-button',
+  selector: "app-button",
   standalone: true,
   imports: [ButtonModule, CommonModule],
   template: `
@@ -707,19 +734,20 @@ import { CommonModule } from '@angular/common';
       [outlined]="outlined"
       [text]="text"
       [rounded]="rounded"
-      (onClick)="handleClick($event)">
+      (onClick)="handleClick($event)"
+    >
       <ng-content></ng-content>
     </p-button>
-  `
+  `,
 })
 export class AppButtonComponent {
   @Input() label?: string;
   @Input() icon?: string;
-  @Input() iconPos: 'left' | 'right' | 'top' | 'bottom' = 'left';
+  @Input() iconPos: "left" | "right" | "top" | "bottom" = "left";
   @Input() loading = false;
   @Input() disabled = false;
-  @Input() severity?: 'secondary' | 'success' | 'info' | 'warn' | 'danger';
-  @Input() size?: 'small' | 'large';
+  @Input() severity?: "secondary" | "success" | "info" | "warn" | "danger";
+  @Input() size?: "small" | "large";
   @Input() outlined = false;
   @Input() text = false;
   @Input() rounded = false;
@@ -743,14 +771,18 @@ PrimeNG provides comprehensive form components with built-in validation.
 <!-- Basic Input -->
 <div class="p-field">
   <label for="email" class="p-label">Email Address</label>
-  <input 
-    id="email" 
-    type="text" 
-    pInputText 
+  <input
+    id="email"
+    type="text"
+    pInputText
     [(ngModel)]="email"
     class="p-inputtext-lg"
-    [class.ng-invalid]="emailForm.get('email')?.invalid && emailForm.get('email')?.touched">
-  <small class="p-error" *ngIf="emailForm.get('email')?.invalid && emailForm.get('email')?.touched">
+    [class.ng-invalid]="emailForm.get('email')?.invalid && emailForm.get('email')?.touched"
+  />
+  <small
+    class="p-error"
+    *ngIf="emailForm.get('email')?.invalid && emailForm.get('email')?.touched"
+  >
     Please enter a valid email address
   </small>
 </div>
@@ -758,7 +790,7 @@ PrimeNG provides comprehensive form components with built-in validation.
 <!-- With Icon -->
 <span class="p-input-icon-left">
   <i class="pi pi-search"></i>
-  <input type="text" pInputText placeholder="Search" [(ngModel)]="searchText">
+  <input type="text" pInputText placeholder="Search" [(ngModel)]="searchText" />
 </span>
 ```
 
@@ -774,16 +806,17 @@ PrimeNG provides comprehensive form components with built-in validation.
   [showClear]="true"
   [filter]="true"
   filterBy="name"
-  [loading]="loading">
+  [loading]="loading"
+>
 </p-dropdown>
 ```
 
 ```typescript
 // Component TypeScript
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { DropdownModule } from 'primeng/dropdown';
-import { InputTextModule } from 'primeng/inputtext';
+import { Component } from "@angular/core";
+import { FormsModule } from "@angular/forms";
+import { DropdownModule } from "primeng/dropdown";
+import { InputTextModule } from "primeng/inputtext";
 
 interface Athlete {
   id: number;
@@ -792,7 +825,7 @@ interface Athlete {
 }
 
 @Component({
-  selector: 'app-athlete-selector',
+  selector: "app-athlete-selector",
   standalone: true,
   imports: [FormsModule, DropdownModule, InputTextModule],
   template: `
@@ -801,16 +834,17 @@ interface Athlete {
       [(ngModel)]="selectedAthlete"
       optionLabel="name"
       placeholder="Select an athlete"
-      [filter]="true">
+      [filter]="true"
+    >
     </p-dropdown>
-  `
+  `,
 })
 export class AthleteSelectorComponent {
   selectedAthlete: Athlete | null = null;
   athletes: Athlete[] = [
-    { id: 1, name: 'John Smith', position: 'QB' },
-    { id: 2, name: 'Sarah Johnson', position: 'WR' },
-    { id: 3, name: 'Mike Davis', position: 'DB' }
+    { id: 1, name: "John Smith", position: "QB" },
+    { id: 2, name: "Sarah Johnson", position: "WR" },
+    { id: 3, name: "Mike Davis", position: "DB" },
   ];
 }
 ```
@@ -824,7 +858,8 @@ export class AthleteSelectorComponent {
   [showIcon]="true"
   dateFormat="mm/dd/yy"
   placeholder="Select training date"
-  [showButtonBar]="true">
+  [showButtonBar]="true"
+>
 </p-calendar>
 ```
 
@@ -837,42 +872,49 @@ export class AthleteSelectorComponent {
   optionLabel="label"
   placeholder="Select positions"
   [showClear]="true"
-  [filter]="true">
+  [filter]="true"
+>
 </p-multiSelect>
 ```
 
 #### Reactive Forms Example
 
 ```typescript
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { InputTextModule } from 'primeng/inputtext';
-import { CalendarModule } from 'primeng/calendar';
-import { DropdownModule } from 'primeng/dropdown';
-import { ButtonModule } from 'primeng/button';
+import { Component } from "@angular/core";
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from "@angular/forms";
+import { InputTextModule } from "primeng/inputtext";
+import { CalendarModule } from "primeng/calendar";
+import { DropdownModule } from "primeng/dropdown";
+import { ButtonModule } from "primeng/button";
 
 @Component({
-  selector: 'app-training-form',
+  selector: "app-training-form",
   standalone: true,
   imports: [
     ReactiveFormsModule,
     InputTextModule,
     CalendarModule,
     DropdownModule,
-    ButtonModule
+    ButtonModule,
   ],
   template: `
     <form [formGroup]="trainingForm" (ngSubmit)="onSubmit()">
       <div class="p-field">
         <label for="sessionName" class="p-label required">Session Name</label>
-        <input 
+        <input
           id="sessionName"
           type="text"
           pInputText
           formControlName="sessionName"
-          [class.ng-invalid]="isFieldInvalid('sessionName')">
+          [class.ng-invalid]="isFieldInvalid('sessionName')"
+        />
         <small class="p-error" *ngIf="isFieldInvalid('sessionName')">
-          {{ getFieldError('sessionName') }}
+          {{ getFieldError("sessionName") }}
         </small>
       </div>
 
@@ -883,10 +925,11 @@ import { ButtonModule } from 'primeng/button';
           formControlName="trainingDate"
           [minDate]="today"
           [showIcon]="true"
-          dateFormat="mm/dd/yy">
+          dateFormat="mm/dd/yy"
+        >
         </p-calendar>
         <small class="p-error" *ngIf="isFieldInvalid('trainingDate')">
-          {{ getFieldError('trainingDate') }}
+          {{ getFieldError("trainingDate") }}
         </small>
       </div>
 
@@ -897,36 +940,38 @@ import { ButtonModule } from 'primeng/button';
           [options]="athletes"
           formControlName="athlete"
           optionLabel="name"
-          placeholder="Select an athlete">
+          placeholder="Select an athlete"
+        >
         </p-dropdown>
         <small class="p-error" *ngIf="isFieldInvalid('athlete')">
-          {{ getFieldError('athlete') }}
+          {{ getFieldError("athlete") }}
         </small>
       </div>
 
-      <p-button 
-        type="submit" 
+      <p-button
+        type="submit"
         label="Create Session"
         [disabled]="trainingForm.invalid"
-        [loading]="isSubmitting">
+        [loading]="isSubmitting"
+      >
       </p-button>
     </form>
-  `
+  `,
 })
 export class TrainingFormComponent {
   trainingForm: FormGroup;
   today = new Date();
   athletes = [
-    { id: 1, name: 'John Smith' },
-    { id: 2, name: 'Sarah Johnson' }
+    { id: 1, name: "John Smith" },
+    { id: 2, name: "Sarah Johnson" },
   ];
   isSubmitting = false;
 
   constructor(private fb: FormBuilder) {
     this.trainingForm = this.fb.group({
-      sessionName: ['', [Validators.required, Validators.minLength(3)]],
+      sessionName: ["", [Validators.required, Validators.minLength(3)]],
       trainingDate: [null, Validators.required],
-      athlete: [null, Validators.required]
+      athlete: [null, Validators.required],
     });
   }
 
@@ -937,13 +982,13 @@ export class TrainingFormComponent {
 
   getFieldError(fieldName: string): string {
     const field = this.trainingForm.get(fieldName);
-    if (field?.hasError('required')) {
+    if (field?.hasError("required")) {
       return `${fieldName} is required`;
     }
-    if (field?.hasError('minlength')) {
-      return `${fieldName} must be at least ${field.errors?.['minlength'].requiredLength} characters`;
+    if (field?.hasError("minlength")) {
+      return `${fieldName} must be at least ${field.errors?.["minlength"].requiredLength} characters`;
     }
-    return '';
+    return "";
   }
 
   onSubmit(): void {
@@ -963,7 +1008,7 @@ export class TrainingFormComponent {
 ```html
 <p-card>
   <ng-template pTemplate="header">
-    <img alt="Card" src="assets/images/card-header.jpg">
+    <img alt="Card" src="assets/images/card-header.jpg" />
   </ng-template>
   <p>Card content goes here</p>
   <ng-template pTemplate="footer">
@@ -978,7 +1023,11 @@ export class TrainingFormComponent {
 **Status**: ✅ **Stable** - Using PrimeNG Dialog Component
 
 ```html
-<p-button (click)="showDialog()" label="Show Dialog" icon="pi pi-external-link"></p-button>
+<p-button
+  (click)="showDialog()"
+  label="Show Dialog"
+  icon="pi pi-external-link"
+></p-button>
 
 <p-dialog
   [(visible)]="displayDialog"
@@ -986,22 +1035,28 @@ export class TrainingFormComponent {
   [style]="{width: '50vw'}"
   [draggable]="false"
   [resizable]="false"
-  header="Training Session Details">
+  header="Training Session Details"
+>
   <p>Dialog content goes here</p>
   <ng-template pTemplate="footer">
-    <p-button label="Cancel" icon="pi pi-times" (onClick)="displayDialog=false" [text]="true"></p-button>
+    <p-button
+      label="Cancel"
+      icon="pi pi-times"
+      (onClick)="displayDialog=false"
+      [text]="true"
+    ></p-button>
     <p-button label="Save" icon="pi pi-check" (onClick)="save()"></p-button>
   </ng-template>
 </p-dialog>
 ```
 
 ```typescript
-import { Component } from '@angular/core';
-import { DialogModule } from 'primeng/dialog';
-import { ButtonModule } from 'primeng/button';
+import { Component } from "@angular/core";
+import { DialogModule } from "primeng/dialog";
+import { ButtonModule } from "primeng/button";
 
 @Component({
-  selector: 'app-training-modal',
+  selector: "app-training-modal",
   standalone: true,
   imports: [DialogModule, ButtonModule],
   template: `
@@ -1009,11 +1064,12 @@ import { ButtonModule } from 'primeng/button';
       [(visible)]="displayDialog"
       [modal]="true"
       header="Create Training Session"
-      [style]="{width: '50vw'}">
+      [style]="{ width: '50vw' }"
+    >
       <!-- Form content -->
       <p-button label="Save" (onClick)="save()"></p-button>
     </p-dialog>
-  `
+  `,
 })
 export class TrainingModalComponent {
   displayDialog = false;
@@ -1034,48 +1090,42 @@ export class TrainingModalComponent {
 **Status**: ✅ **Stable** - Using PrimeNG Toast Service
 
 ```typescript
-import { Component } from '@angular/core';
-import { MessageService } from 'primeng/api';
-import { ToastModule } from 'primeng/toast';
-import { ButtonModule } from 'primeng/button';
+import { Component } from "@angular/core";
+import { MessageService } from "primeng/api";
+import { ToastModule } from "primeng/toast";
+import { ButtonModule } from "primeng/button";
 
 @Component({
-  selector: 'app-notification-example',
+  selector: "app-notification-example",
   standalone: true,
   imports: [ToastModule, ButtonModule],
   providers: [MessageService],
   template: `
     <p-toast></p-toast>
-    
-    <p-button 
-      label="Show Success" 
-      (onClick)="showSuccess()"
-      severity="success">
+
+    <p-button label="Show Success" (onClick)="showSuccess()" severity="success">
     </p-button>
-    
-    <p-button 
-      label="Show Error" 
-      (onClick)="showError()"
-      severity="danger">
+
+    <p-button label="Show Error" (onClick)="showError()" severity="danger">
     </p-button>
-  `
+  `,
 })
 export class NotificationExampleComponent {
   constructor(private messageService: MessageService) {}
 
   showSuccess(): void {
     this.messageService.add({
-      severity: 'success',
-      summary: 'Success',
-      detail: 'Training session created successfully'
+      severity: "success",
+      summary: "Success",
+      detail: "Training session created successfully",
     });
   }
 
   showError(): void {
     this.messageService.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: 'Failed to save training session'
+      severity: "error",
+      summary: "Error",
+      detail: "Failed to save training session",
     });
   }
 }
@@ -1096,22 +1146,20 @@ export class NotificationExampleComponent {
   [selectionMode]="'multiple'"
   [(selection)]="selectedAthletes"
   [loading]="loading"
-  dataKey="id">
-  
+  dataKey="id"
+>
   <ng-template pTemplate="caption">
     <div class="flex justify-content-between align-items-center">
       <span class="p-input-icon-left">
         <i class="pi pi-search"></i>
-        <input 
-          type="text" 
-          pInputText 
+        <input
+          type="text"
+          pInputText
           placeholder="Search athletes"
-          (input)="table.filterGlobal($event.target.value, 'contains')">
+          (input)="table.filterGlobal($event.target.value, 'contains')"
+        />
       </span>
-      <p-button 
-        label="Add Athlete" 
-        icon="pi pi-plus"
-        (onClick)="addAthlete()">
+      <p-button label="Add Athlete" icon="pi pi-plus" (onClick)="addAthlete()">
       </p-button>
     </div>
   </ng-template>
@@ -1146,24 +1194,28 @@ export class NotificationExampleComponent {
       <td>{{ athlete.position }}</td>
       <td>{{ athlete.sessions }}</td>
       <td>
-        <p-tag [value]="athlete.performance + '%'" 
-               [severity]="getPerformanceSeverity(athlete.performance)">
+        <p-tag
+          [value]="athlete.performance + '%'"
+          [severity]="getPerformanceSeverity(athlete.performance)"
+        >
         </p-tag>
       </td>
       <td>
-        <p-button 
-          icon="pi pi-eye" 
+        <p-button
+          icon="pi pi-eye"
           [text]="true"
           [rounded]="true"
           (onClick)="viewAthlete(athlete)"
-          ariaLabel="View details">
+          ariaLabel="View details"
+        >
         </p-button>
-        <p-button 
-          icon="pi pi-pencil" 
+        <p-button
+          icon="pi pi-pencil"
           [text]="true"
           [rounded]="true"
           (onClick)="editAthlete(athlete)"
-          ariaLabel="Edit">
+          ariaLabel="Edit"
+        >
         </p-button>
       </td>
     </tr>
@@ -1178,12 +1230,12 @@ export class NotificationExampleComponent {
 ```
 
 ```typescript
-import { Component } from '@angular/core';
-import { TableModule } from 'primeng/table';
-import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
-import { TagModule } from 'primeng/tag';
-import { CommonModule } from '@angular/common';
+import { Component } from "@angular/core";
+import { TableModule } from "primeng/table";
+import { ButtonModule } from "primeng/button";
+import { InputTextModule } from "primeng/inputtext";
+import { TagModule } from "primeng/tag";
+import { CommonModule } from "@angular/common";
 
 interface Athlete {
   id: number;
@@ -1194,38 +1246,62 @@ interface Athlete {
 }
 
 @Component({
-  selector: 'app-athletes-table',
+  selector: "app-athletes-table",
   standalone: true,
-  imports: [TableModule, ButtonModule, InputTextModule, TagModule, CommonModule],
-  template: `<!-- Template from above -->`
+  imports: [
+    TableModule,
+    ButtonModule,
+    InputTextModule,
+    TagModule,
+    CommonModule,
+  ],
+  template: `<!-- Template from above -->`,
 })
 export class AthletesTableComponent {
   athletes: Athlete[] = [
-    { id: 1, name: 'John Smith', position: 'Quarterback', sessions: 24, performance: 85 },
-    { id: 2, name: 'Sarah Johnson', position: 'Wide Receiver', sessions: 18, performance: 92 },
-    { id: 3, name: 'Mike Davis', position: 'Defensive Back', sessions: 20, performance: 78 }
+    {
+      id: 1,
+      name: "John Smith",
+      position: "Quarterback",
+      sessions: 24,
+      performance: 85,
+    },
+    {
+      id: 2,
+      name: "Sarah Johnson",
+      position: "Wide Receiver",
+      sessions: 18,
+      performance: 92,
+    },
+    {
+      id: 3,
+      name: "Mike Davis",
+      position: "Defensive Back",
+      sessions: 20,
+      performance: 78,
+    },
   ];
-  
+
   selectedAthletes: Athlete[] = [];
   loading = false;
 
   getPerformanceSeverity(performance: number): string {
-    if (performance >= 85) return 'success';
-    if (performance >= 70) return 'info';
-    if (performance >= 55) return 'warn';
-    return 'danger';
+    if (performance >= 85) return "success";
+    if (performance >= 70) return "info";
+    if (performance >= 55) return "warn";
+    return "danger";
   }
 
   viewAthlete(athlete: Athlete): void {
-    console.log('View', athlete);
+    console.log("View", athlete);
   }
 
   editAthlete(athlete: Athlete): void {
-    console.log('Edit', athlete);
+    console.log("Edit", athlete);
   }
 
   addAthlete(): void {
-    console.log('Add athlete');
+    console.log("Add athlete");
   }
 }
 ```
@@ -1239,15 +1315,15 @@ export class AthletesTableComponent {
   <p-tabPanel header="Stats" leftIcon="pi pi-chart-bar">
     <p>Stats content goes here</p>
   </p-tabPanel>
-  
+
   <p-tabPanel header="Training" leftIcon="pi pi-calendar">
     <p>Training content goes here</p>
   </p-tabPanel>
-  
+
   <p-tabPanel header="Nutrition" leftIcon="pi pi-apple">
     <p>Nutrition content goes here</p>
   </p-tabPanel>
-  
+
   <p-tabPanel header="Performance" leftIcon="pi pi-chart-line">
     <p>Performance content goes here</p>
   </p-tabPanel>
@@ -1280,11 +1356,11 @@ export class AthletesTableComponent {
   <p-accordionTab header="Training Schedule" [selected]="true">
     <p>Training schedule content</p>
   </p-accordionTab>
-  
+
   <p-accordionTab header="Performance Metrics">
     <p>Performance metrics content</p>
   </p-accordionTab>
-  
+
   <p-accordionTab header="Nutrition Plan">
     <p>Nutrition plan content</p>
   </p-accordionTab>
@@ -1296,14 +1372,19 @@ export class AthletesTableComponent {
 ### Card with Form
 
 ```typescript
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { CardModule } from 'primeng/card';
-import { InputTextModule } from 'primeng/inputtext';
-import { ButtonModule } from 'primeng/button';
+import { Component } from "@angular/core";
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from "@angular/forms";
+import { CardModule } from "primeng/card";
+import { InputTextModule } from "primeng/inputtext";
+import { ButtonModule } from "primeng/button";
 
 @Component({
-  selector: 'app-athlete-form-card',
+  selector: "app-athlete-form-card",
   standalone: true,
   imports: [CardModule, ReactiveFormsModule, InputTextModule, ButtonModule],
   template: `
@@ -1311,39 +1392,46 @@ import { ButtonModule } from 'primeng/button';
       <form [formGroup]="athleteForm" (ngSubmit)="onSubmit()">
         <div class="p-field">
           <label for="name" class="p-label">Name</label>
-          <input id="name" type="text" pInputText formControlName="name">
+          <input id="name" type="text" pInputText formControlName="name" />
         </div>
-        
+
         <div class="p-field">
           <label for="position" class="p-label">Position</label>
-          <input id="position" type="text" pInputText formControlName="position">
+          <input
+            id="position"
+            type="text"
+            pInputText
+            formControlName="position"
+          />
         </div>
-        
+
         <ng-template pTemplate="footer">
-          <p-button 
-            label="Cancel" 
-            icon="pi pi-times" 
+          <p-button
+            label="Cancel"
+            icon="pi pi-times"
             [text]="true"
-            (onClick)="cancel()">
+            (onClick)="cancel()"
+          >
           </p-button>
-          <p-button 
+          <p-button
             type="submit"
-            label="Save" 
+            label="Save"
             icon="pi pi-check"
-            [disabled]="athleteForm.invalid">
+            [disabled]="athleteForm.invalid"
+          >
           </p-button>
         </ng-template>
       </form>
     </p-card>
-  `
+  `,
 })
 export class AthleteFormCardComponent {
   athleteForm: FormGroup;
 
   constructor(private fb: FormBuilder) {
     this.athleteForm = this.fb.group({
-      name: ['', Validators.required],
-      position: ['', Validators.required]
+      name: ["", Validators.required],
+      position: ["", Validators.required],
     });
   }
 
@@ -1362,70 +1450,85 @@ export class AthleteFormCardComponent {
 ### Dashboard Layout Pattern
 
 ```typescript
-import { Component } from '@angular/core';
-import { CardModule } from 'primeng/card';
-import { ChartModule } from 'primeng/chart';
-import { CommonModule } from '@angular/common';
+import { Component } from "@angular/core";
+import { CardModule } from "primeng/card";
+import { ChartModule } from "primeng/chart";
+import { CommonModule } from "@angular/common";
 
 @Component({
-  selector: 'app-dashboard',
+  selector: "app-dashboard",
   standalone: true,
   imports: [CardModule, ChartModule, CommonModule],
   template: `
     <div class="dashboard-grid">
       <div class="grid-item" *ngFor="let card of dashboardCards">
         <p-card [header]="card.title">
-          <p-chart 
+          <p-chart
             *ngIf="card.chartData"
-            [type]="card.chartType" 
+            [type]="card.chartType"
             [data]="card.chartData"
-            [options]="chartOptions">
+            [options]="chartOptions"
+          >
           </p-chart>
           <p *ngIf="!card.chartData">{{ card.content }}</p>
         </p-card>
       </div>
     </div>
   `,
-  styles: [`
-    .dashboard-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: var(--space-6);
-      padding: var(--space-6);
-    }
-  `]
+  styles: [
+    `
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: var(--space-6);
+        padding: var(--space-6);
+      }
+    `,
+  ],
 })
 export class DashboardComponent {
   dashboardCards = [
-    { title: 'Performance Overview', chartType: 'line', chartData: this.getLineChartData() },
-    { title: 'Training Sessions', chartType: 'bar', chartData: this.getBarChartData() },
-    { title: 'Quick Stats', content: 'Stats content here' }
+    {
+      title: "Performance Overview",
+      chartType: "line",
+      chartData: this.getLineChartData(),
+    },
+    {
+      title: "Training Sessions",
+      chartType: "bar",
+      chartData: this.getBarChartData(),
+    },
+    { title: "Quick Stats", content: "Stats content here" },
   ];
 
   chartOptions = {
     responsive: true,
-    maintainAspectRatio: false
+    maintainAspectRatio: false,
   };
 
   getLineChartData() {
     return {
-      labels: ['Jan', 'Feb', 'Mar', 'Apr'],
-      datasets: [{
-        label: 'Performance',
-        data: [65, 72, 80, 85],
-        borderColor: '#089949'
-      }]
+      labels: ["Jan", "Feb", "Mar", "Apr"],
+      datasets: [
+        {
+          label: "Performance",
+          data: [65, 72, 80, 85],
+          borderColor: "#089949",
+        },
+      ],
     };
   }
 
   getBarChartData() {
     return {
-      labels: ['Week 1', 'Week 2', 'Week 3'],
-      datasets: [{
-        label: 'Sessions',
-        data: [12, 15, 18],
-        backgroundColor: '#10c96b'
-      }]
+      labels: ["Week 1", "Week 2", "Week 3"],
+      datasets: [
+        {
+          label: "Sessions",
+          data: [12, 15, 18],
+          backgroundColor: "#10c96b",
+        },
+      ],
     };
   }
 }
@@ -1462,18 +1565,18 @@ npm install lucide-angular
 ```
 
 ```typescript
-import { Component } from '@angular/core';
-import { LucideAngularModule, Play, Pause, Stop } from 'lucide-angular';
+import { Component } from "@angular/core";
+import { LucideAngularModule, Play, Pause, Stop } from "lucide-angular";
 
 @Component({
-  selector: 'app-icon-example',
+  selector: "app-icon-example",
   standalone: true,
   imports: [LucideAngularModule],
   template: `
     <lucide-play [size]="24" [color]="'#089949'"></lucide-play>
     <lucide-pause [size]="24"></lucide-pause>
     <lucide-stop [size]="24"></lucide-stop>
-  `
+  `,
 })
 export class IconExampleComponent {}
 ```
@@ -1485,22 +1588,28 @@ export class IconExampleComponent {}
 Angular provides built-in animation support. Use with PrimeNG components:
 
 ```typescript
-import { Component } from '@angular/core';
-import { trigger, transition, style, animate } from '@angular/animations';
+import { Component } from "@angular/core";
+import { trigger, transition, style, animate } from "@angular/animations";
 
 @Component({
-  selector: 'app-animated-card',
+  selector: "app-animated-card",
   standalone: true,
   animations: [
-    trigger('fadeIn', [
-      transition(':enter', [
-        style({ opacity: 0, transform: 'translateY(20px)' }),
-        animate('300ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+    trigger("fadeIn", [
+      transition(":enter", [
+        style({ opacity: 0, transform: "translateY(20px)" }),
+        animate(
+          "300ms ease-out",
+          style({ opacity: 1, transform: "translateY(0)" }),
+        ),
       ]),
-      transition(':leave', [
-        animate('200ms ease-in', style({ opacity: 0, transform: 'translateY(-20px)' }))
-      ])
-    ])
+      transition(":leave", [
+        animate(
+          "200ms ease-in",
+          style({ opacity: 0, transform: "translateY(-20px)" }),
+        ),
+      ]),
+    ]),
   ],
   template: `
     <div [@fadeIn]>
@@ -1508,7 +1617,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
         <p>This card fades in on enter</p>
       </p-card>
     </div>
-  `
+  `,
 })
 export class AnimatedCardComponent {}
 ```
@@ -1529,16 +1638,23 @@ PrimeNG components include built-in accessibility features:
 ```html
 <!-- Proper Label Association -->
 <label for="email" class="p-label">Email</label>
-<input id="email" type="email" pInputText [(ngModel)]="email" 
-       aria-describedby="email-help" aria-required="true">
+<input
+  id="email"
+  type="email"
+  pInputText
+  [(ngModel)]="email"
+  aria-describedby="email-help"
+  aria-required="true"
+/>
 <small id="email-help" class="p-error">Please enter a valid email</small>
 
 <!-- Button with Aria Label -->
-<p-button 
-  icon="pi pi-check" 
+<p-button
+  icon="pi pi-check"
   [rounded]="true"
   ariaLabel="Confirm action"
-  (onClick)="confirm()">
+  (onClick)="confirm()"
+>
 </p-button>
 
 <!-- Table with Proper Headers -->
@@ -1557,42 +1673,45 @@ PrimeNG components include built-in accessibility features:
 ### Angular Reactive Forms Validation
 
 ```typescript
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { InputTextModule } from 'primeng/inputtext';
-import { MessageModule } from 'primeng/message';
+import { Component } from "@angular/core";
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from "@angular/forms";
+import { InputTextModule } from "primeng/inputtext";
+import { MessageModule } from "primeng/message";
 
 @Component({
-  selector: 'app-validated-form',
+  selector: "app-validated-form",
   standalone: true,
   imports: [ReactiveFormsModule, InputTextModule, MessageModule],
   template: `
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <div class="p-field">
         <label for="email" class="p-label required">Email</label>
-        <input 
+        <input
           id="email"
           type="email"
           pInputText
           formControlName="email"
           [class.ng-invalid]="isFieldInvalid('email')"
-          aria-describedby="email-error">
-        <small 
-          id="email-error"
-          class="p-error" 
-          *ngIf="isFieldInvalid('email')">
-          {{ getFieldError('email') }}
+          aria-describedby="email-error"
+        />
+        <small id="email-error" class="p-error" *ngIf="isFieldInvalid('email')">
+          {{ getFieldError("email") }}
         </small>
       </div>
     </form>
-  `
+  `,
 })
 export class ValidatedFormComponent {
   form: FormGroup;
 
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
-      email: ['', [Validators.required, Validators.email]]
+      email: ["", [Validators.required, Validators.email]],
     });
   }
 
@@ -1603,13 +1722,13 @@ export class ValidatedFormComponent {
 
   getFieldError(fieldName: string): string {
     const field = this.form.get(fieldName);
-    if (field?.hasError('required')) {
+    if (field?.hasError("required")) {
       return `${fieldName} is required`;
     }
-    if (field?.hasError('email')) {
-      return 'Please enter a valid email address';
+    if (field?.hasError("email")) {
+      return "Please enter a valid email address";
     }
-    return '';
+    return "";
   }
 
   onSubmit(): void {
@@ -1653,9 +1772,9 @@ npm install primeicons @angular/animations
 
 ```typescript
 // In your component
-import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
-import { TableModule } from 'primeng/table';
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
+import { TableModule } from "primeng/table";
 // ... other modules
 ```
 
@@ -1693,13 +1812,13 @@ import { TableModule } from 'primeng/table';
 1. **OnPush Change Detection**:
 
 ```typescript
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from "@angular/core";
 
 @Component({
-  selector: 'app-performance-component',
+  selector: "app-performance-component",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<!-- Template -->`
+  template: `<!-- Template -->`,
 })
 export class PerformanceComponent {}
 ```
@@ -1710,18 +1829,19 @@ export class PerformanceComponent {}
 // app.routes.ts
 export const routes: Routes = [
   {
-    path: 'dashboard',
-    loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent)
-  }
+    path: "dashboard",
+    loadComponent: () =>
+      import("./features/dashboard/dashboard.component").then(
+        (m) => m.DashboardComponent,
+      ),
+  },
 ];
 ```
 
 3. **TrackBy Functions**:
 
 ```html
-<div *ngFor="let item of items; trackBy: trackById">
-  {{ item.name }}
-</div>
+<div *ngFor="let item of items; trackBy: trackById">{{ item.name }}</div>
 ```
 
 ```typescript

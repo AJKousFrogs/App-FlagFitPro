@@ -14,11 +14,13 @@ Quick reference for testing responsiveness across devices.
 ## Mobile Testing (320px - 768px)
 
 ### Viewport & Meta Tags
+
 - [ ] Viewport meta tag present: `width=device-width, initial-scale=1.0`
 - [ ] No horizontal scrolling on any page
 - [ ] Content fits within viewport without zooming
 
 ### Navigation
+
 - [ ] Mobile menu toggle visible and functional
 - [ ] Sidebar hidden by default (slides in when opened)
 - [ ] Sidebar overlay closes on outside click
@@ -26,6 +28,7 @@ Quick reference for testing responsiveness across devices.
 - [ ] All navigation links accessible
 
 ### Forms & Inputs
+
 - [ ] Input fields have ≥16px font-size (prevents iOS zoom)
 - [ ] Form fields don't overflow container
 - [ ] Submit buttons have ≥44px touch targets
@@ -33,6 +36,7 @@ Quick reference for testing responsiveness across devices.
 - [ ] Date/time pickers usable on mobile
 
 ### Content Layout
+
 - [ ] Text readable without zooming (minimum 14px)
 - [ ] Headings scale appropriately
 - [ ] Images scale to fit container
@@ -41,6 +45,7 @@ Quick reference for testing responsiveness across devices.
 - [ ] Tables scroll horizontally (if needed)
 
 ### Components
+
 - [ ] Modals full-screen on mobile
 - [ ] Dropdowns don't overflow viewport
 - [ ] Tooltips/tooltips positioned correctly
@@ -49,6 +54,7 @@ Quick reference for testing responsiveness across devices.
 - [ ] Loading states visible
 
 ### Specific Pages
+
 - [ ] Dashboard: Stats cards stack properly
 - [ ] Dashboard: Chatbot doesn't overflow
 - [ ] Chat: Channels sidebar hidden, messages full-width
@@ -61,6 +67,7 @@ Quick reference for testing responsiveness across devices.
 ## Tablet Testing (769px - 1024px)
 
 ### Layout
+
 - [ ] Sidebar behavior appropriate (collapsed or visible)
 - [ ] Content uses 2-column layouts where appropriate
 - [ ] Cards display in 2-column grid
@@ -68,12 +75,14 @@ Quick reference for testing responsiveness across devices.
 - [ ] Content doesn't stretch too wide
 
 ### Navigation
+
 - [ ] Navigation accessible without hamburger menu
 - [ ] Sidebar can be toggled if needed
 - [ ] Search box usable width
 - [ ] Header icons properly spaced
 
 ### Content
+
 - [ ] Text readable and properly sized
 - [ ] Images display at appropriate size
 - [ ] Tables display without horizontal scroll (if possible)
@@ -81,6 +90,7 @@ Quick reference for testing responsiveness across devices.
 - [ ] Modals centered and appropriately sized
 
 ### Specific Pages
+
 - [ ] Dashboard: 2-column stats grid
 - [ ] Chat: Sidebar visible, messages area adequate
 - [ ] Tables: Display without scroll (or scrollable)
@@ -91,6 +101,7 @@ Quick reference for testing responsiveness across devices.
 ## Desktop Testing (1025px+)
 
 ### Layout
+
 - [ ] Content max-width respected (no excessive stretching)
 - [ ] Sidebar always visible
 - [ ] Multi-column grids display properly
@@ -98,12 +109,14 @@ Quick reference for testing responsiveness across devices.
 - [ ] Proper use of white space
 
 ### Navigation
+
 - [ ] Full navigation visible
 - [ ] Hover states work correctly
 - [ ] Dropdowns positioned correctly
 - [ ] Search box full-width available
 
 ### Content
+
 - [ ] Text readable (not too small or too large)
 - [ ] Images display at optimal size
 - [ ] Tables display fully without scroll
@@ -111,6 +124,7 @@ Quick reference for testing responsiveness across devices.
 - [ ] Modals centered and appropriately sized
 
 ### Specific Pages
+
 - [ ] Dashboard: Full grid layouts
 - [ ] Chat: Sidebar + messages side-by-side
 - [ ] Tables: Full width display
@@ -121,6 +135,7 @@ Quick reference for testing responsiveness across devices.
 ## Cross-Device Issues to Check
 
 ### Common Problems
+
 - [ ] **Horizontal Scroll:** No horizontal scrolling on any device
 - [ ] **Content Overflow:** All content visible without scrolling
 - [ ] **Touch Targets:** All interactive elements ≥44px on mobile
@@ -133,6 +148,7 @@ Quick reference for testing responsiveness across devices.
 - [ ] **Error States:** Error messages visible and readable
 
 ### Breakpoint Transitions
+
 - [ ] Smooth transitions between breakpoints
 - [ ] No layout jumps or shifts
 - [ ] Content reflows naturally
@@ -144,18 +160,21 @@ Quick reference for testing responsiveness across devices.
 ## Device-Specific Testing
 
 ### iOS (Safari)
+
 - [ ] No zoom on input focus (16px+ font-size)
 - [ ] Safe area respected (notch/status bar)
 - [ ] Touch scrolling smooth
 - [ ] Pull-to-refresh doesn't break layout
 
 ### Android (Chrome)
+
 - [ ] Address bar doesn't cover content
 - [ ] Touch scrolling smooth
 - [ ] Keyboard doesn't cover inputs
 - [ ] Back button works correctly
 
 ### Tablet-Specific
+
 - [ ] Portrait orientation works
 - [ ] Landscape orientation works
 - [ ] Rotation doesn't break layout
@@ -199,6 +218,7 @@ Test these specific pages for common issues:
 ## Browser DevTools Testing
 
 ### Chrome DevTools
+
 1. Open DevTools (F12)
 2. Toggle device toolbar (Ctrl+Shift+M)
 3. Test these viewports:
@@ -209,6 +229,7 @@ Test these specific pages for common issues:
    - Desktop (1280px+)
 
 ### Firefox DevTools
+
 1. Open DevTools (F12)
 2. Click responsive design mode icon
 3. Test same viewports as Chrome
@@ -237,10 +258,10 @@ Test these specific pages for common issues:
 ## Reporting Issues
 
 When reporting responsive issues, include:
+
 1. Device/browser/OS
 2. Viewport dimensions
 3. Screenshot or screen recording
 4. Steps to reproduce
 5. Expected vs actual behavior
 6. Console errors (if any)
-

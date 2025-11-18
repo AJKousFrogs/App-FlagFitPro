@@ -27,7 +27,7 @@ body {
   * {
     max-width: 100vw;
   }
-  
+
   .l-container,
   .l-container-sm,
   .l-container-md,
@@ -69,7 +69,7 @@ h1,
   font-family: var(--primitive-font-display);
   font-size: var(--font-heading-2xl); /* 2.5rem / 40px - Design System */
   font-weight: 700; /* Design System */
-  line-height: 1.0; /* Design System */
+  line-height: 1; /* Design System */
   color: var(--color-text-primary);
   margin: 0 0 var(--space-6) 0; /* Design System spacing */
 }
@@ -178,14 +178,14 @@ p:last-child {
   .u-text-body-sm {
     font-size: max(16px, var(--typography-body-md-size, 1rem));
   }
-  
+
   .form-help,
   .form-error,
   .form-success,
   .form-hint {
     font-size: max(14px, var(--typography-body-sm-size, 0.875rem));
   }
-  
+
   /* Ensure small text is still readable */
   .u-text-body-sm,
   .text-sm {
@@ -199,8 +199,10 @@ p:last-child {
   .text-content {
     max-width: 65ch; /* Optimal reading width */
   }
-  
-  h1, h2, h3 {
+
+  h1,
+  h2,
+  h3 {
     max-width: 70ch;
   }
 }
@@ -267,6 +269,18 @@ svg {
   height: auto;
 }
 
+/* Remove shadows from all SVG icons */
+svg[data-lucide],
+[data-lucide] svg,
+i[data-lucide] svg,
+svg.lucide,
+.icon-inline svg,
+.icon-inline [data-lucide] {
+  filter: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
 img {
   border-style: none;
 }
@@ -281,7 +295,7 @@ img {
     height: auto;
     object-fit: contain;
   }
-  
+
   /* Card and hero images should cover appropriately */
   .card img,
   .hero-card img {
@@ -332,6 +346,13 @@ button:disabled {
 
 .skip-link:focus {
   top: 0;
+}
+
+/* Hide skip link on mobile devices - not needed for touch navigation */
+@media (max-width: 1024px) {
+  .skip-link {
+    display: none !important;
+  }
 }
 
 /* Focus visible styles */

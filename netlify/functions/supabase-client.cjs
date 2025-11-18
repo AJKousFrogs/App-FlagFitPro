@@ -329,7 +329,7 @@ const db = {
         .limit(limit);
 
       if (error) throw error;
-      
+
       // Transform database format to frontend format
       return (data || []).map((notif) => ({
         id: notif.id,

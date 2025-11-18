@@ -14,30 +14,46 @@
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    
+
     <!-- Security Headers -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https: wss:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'">
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    <meta http-equiv="X-Frame-Options" content="DENY">
-    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
-    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
-    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
-    
+    <!-- Note: frame-ancestors and X-Frame-Options must be set via HTTP headers, not meta tags -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https: wss:; base-uri 'self'; form-action 'self'"
+    />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <!-- Note: X-Frame-Options must be set via HTTP header, not meta tag -->
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+    <meta
+      http-equiv="Referrer-Policy"
+      content="strict-origin-when-cross-origin"
+    />
+    <meta
+      http-equiv="Permissions-Policy"
+      content="camera=(), microphone=(), geolocation=(), payment=()"
+    />
+
     <!-- CSS -->
     <link rel="stylesheet" href="./src/css/main.css" />
     <link rel="stylesheet" href="./src/css/pages/wellness.css" />
 
     <!-- Icons -->
-    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js" crossorigin="anonymous" defer>
-            integrity="sha384-QUHo9yIHF1gPrLIKJyuJ6l2VzF5YNGFCk2sT3dSsGmBjDrPyYlqVjdJsJ8e6JkX2" 
-            crossorigin="anonymous" defer></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
     <script src="./src/icon-helper.js" defer></script>
     <script src="./src/theme-switcher.js" defer></script>
     <script src="./src/nav-highlight.js" defer></script>
     <!-- Universal Components -->
     <script type="module" src="./src/js/main.js"></script>
+    <!-- Sidebar Utilities -->
+    <script src="./src/js/utils/sidebar-utils.js"></script>
   </head>
   <body>
+    <!-- Skip link for accessibility -->
+    <a href="#main-content" class="skip-link" aria-label="Skip to main content">Skip to main content</a>
     <div class="dashboard-container">
       <!-- Sidebar Overlay for Mobile -->
       <div
@@ -46,7 +62,7 @@
         aria-hidden="true"
         onclick="toggleSidebar()"
       ></div>
-      
+
       <!-- Unified Sidebar Navigation -->
       <div class="sidebar" id="sidebar">
         <div
@@ -59,13 +75,23 @@
         </div>
 
         <nav class="nav-section" aria-label="Dashboard navigation">
-          <a href="/dashboard.html" class="nav-item" aria-label="Dashboard Overview" id="nav-dashboard">
+          <a
+            href="/dashboard.html"
+            class="nav-item"
+            aria-label="Dashboard Overview"
+            id="nav-dashboard"
+          >
             <span class="nav-item-icon">
               <i data-lucide="layout-dashboard" class="icon-24"></i>
             </span>
             <span class="nav-item-label">Overview</span>
           </a>
-          <a href="/analytics.html" class="nav-item" aria-label="Analytics" id="nav-analytics">
+          <a
+            href="/analytics.html"
+            class="nav-item"
+            aria-label="Analytics"
+            id="nav-analytics"
+          >
             <span class="nav-item-icon">
               <i data-lucide="bar-chart-3" class="icon-24"></i>
             </span>
@@ -74,25 +100,45 @@
         </nav>
 
         <nav class="nav-section" aria-label="Team navigation">
-          <a href="/roster.html" class="nav-item" aria-label="Team Roster" id="nav-roster">
+          <a
+            href="/roster.html"
+            class="nav-item"
+            aria-label="Team Roster"
+            id="nav-roster"
+          >
             <span class="nav-item-icon">
               <i data-lucide="users" class="icon-24"></i>
             </span>
             <span class="nav-item-label">Roster</span>
           </a>
-          <a href="/training.html" class="nav-item" aria-label="Training" id="nav-training">
+          <a
+            href="/training.html"
+            class="nav-item"
+            aria-label="Training"
+            id="nav-training"
+          >
             <span class="nav-item-icon">
               <i data-lucide="zap" class="icon-24"></i>
             </span>
             <span class="nav-item-label">Training</span>
           </a>
-          <a href="/tournaments.html" class="nav-item" aria-label="Tournaments" id="nav-tournaments">
+          <a
+            href="/tournaments.html"
+            class="nav-item"
+            aria-label="Tournaments"
+            id="nav-tournaments"
+          >
             <span class="nav-item-icon">
               <i data-lucide="trophy" class="icon-24"></i>
             </span>
             <span class="nav-item-label">Tournaments</span>
           </a>
-          <a href="/wellness.html" class="nav-item active" aria-label="Wellness" id="nav-wellness">
+          <a
+            href="/wellness.html"
+            class="nav-item active"
+            aria-label="Wellness"
+            id="nav-wellness"
+          >
             <span class="nav-item-icon">
               <i data-lucide="heart" class="icon-24"></i>
             </span>
@@ -101,7 +147,12 @@
         </nav>
 
         <nav class="nav-section" aria-label="Community navigation">
-          <a href="/community.html" class="nav-item" aria-label="Community" id="nav-community">
+          <a
+            href="/community.html"
+            class="nav-item"
+            aria-label="Community"
+            id="nav-community"
+          >
             <span class="nav-item-icon">
               <i data-lucide="message-circle" class="icon-24"></i>
             </span>
@@ -116,13 +167,23 @@
         </nav>
 
         <nav class="nav-section" aria-label="Personal navigation">
-          <a href="/settings.html" class="nav-item" aria-label="Settings" id="nav-settings">
+          <a
+            href="/settings.html"
+            class="nav-item"
+            aria-label="Settings"
+            id="nav-settings"
+          >
             <span class="nav-item-icon">
               <i data-lucide="settings" class="icon-24"></i>
             </span>
             <span class="nav-item-label">Settings</span>
           </a>
-          <a href="/profile.html" class="nav-item" aria-label="Profile" id="nav-profile">
+          <a
+            href="/profile.html"
+            class="nav-item"
+            aria-label="Profile"
+            id="nav-profile"
+          >
             <span class="nav-item-icon">
               <i data-lucide="user" class="icon-24"></i>
             </span>
@@ -131,7 +192,10 @@
         </nav>
       </div>
 
-      <main class="main-content u-flex-1 u-min-width-0 u-overflow-x-hidden u-overflow-y-auto u-padding-24 u-bg-primary">
+      <main
+        id="main-content"
+        class="main-content u-flex-1 u-min-width-0 u-overflow-x-hidden u-overflow-y-auto u-padding-24 u-bg-primary"
+      >
         <!-- Top Bar -->
         <div class="top-bar" role="banner">
           <div class="header-left">
@@ -146,14 +210,17 @@
             >
               <i data-lucide="menu" class="icon-20"></i>
             </button>
-            
+
             <div class="search-box">
-              <label for="global-search" class="sr-only">Search wellness resources</label>
+              <label for="global-search" class="sr-only"
+                >Search wellness resources</label
+              >
               <span class="search-icon" aria-hidden="true">
                 <i data-lucide="search" class="icon-16"></i>
               </span>
               <input
                 id="global-search"
+                name="search"
                 class="search-input"
                 type="text"
                 placeholder="Search recovery tips, nutrition guides..."
@@ -161,9 +228,19 @@
                 aria-autocomplete="list"
                 aria-haspopup="listbox"
                 aria-expanded="false"
+                aria-owns="search-results"
+                aria-controls="search-results"
+                aria-activedescendant=""
                 autocomplete="off"
                 inputmode="search"
               />
+              <div id="search-status" class="sr-only" aria-live="polite"></div>
+              <div
+                id="search-results"
+                class="search-results"
+                role="listbox"
+                hidden
+              ></div>
             </div>
           </div>
 
@@ -180,7 +257,11 @@
                 <i data-lucide="bell" class="icon-18"></i>
                 <span id="notification-badge" class="badge" hidden>3</span>
               </button>
-              <span id="notification-live" class="sr-only" aria-live="polite"></span>
+              <span
+                id="notification-live"
+                class="sr-only"
+                aria-live="polite"
+              ></span>
             </div>
 
             <button class="header-icon" type="button" aria-label="Settings">
@@ -235,7 +316,10 @@
                 </li>
                 <li role="separator" class="user-menu-separator"></li>
                 <li role="menuitem">
-                  <a href="/logout" class="user-menu-item user-menu-item-danger">
+                  <a
+                    href="/logout"
+                    class="user-menu-item user-menu-item-danger"
+                  >
                     <i data-lucide="log-out" class="icon-16"></i>
                     <span>Logout</span>
                   </a>
@@ -248,12 +332,13 @@
         <!-- Wellness Content -->
         <div class="wellness-hero mb-16">
           <div class="hero-card">
-            <div class="u-text-body-sm u-text-secondary u-font-weight-500 u-margin-bottom-8" style="text-transform: uppercase; letter-spacing: 0.5px;">
+            <div
+              class="u-text-body-sm u-text-secondary u-font-weight-500 u-margin-bottom-8"
+              style="text-transform: uppercase; letter-spacing: 0.5px"
+            >
               Wellness & Recovery
             </div>
-            <h1 class="hero-main-title mb-8">
-              Your Health Dashboard
-            </h1>
+            <h1 class="hero-main-title mb-8">Your Health Dashboard</h1>
             <p class="u-text-heading-md u-text-secondary m-0">
               Monitor recovery, nutrition, and mental wellness
             </p>
@@ -264,68 +349,140 @@
         <div class="wellness-grid u-display-grid u-gap-24 u-margin-bottom-64">
           <!-- Recovery Score -->
           <div class="wellness-card u-radius-xl u-padding-24 u-shadow-sm">
-            <div class="card-header u-display-flex u-justify-between u-align-center u-margin-bottom-16">
-              <h3 class="card-title u-text-heading-lg u-font-weight-700">Recovery Score</h3>
-              <div class="wellness-icon" style="background: var(--color-success-subtle); color: var(--color-success);">
+            <div
+              class="card-header u-display-flex u-justify-between u-align-center u-margin-bottom-16"
+            >
+              <h3 class="card-title u-text-heading-lg u-font-weight-700">
+                Recovery Score
+              </h3>
+              <div
+                class="wellness-icon"
+                style="
+                  background: var(--color-success-subtle);
+                  color: var(--color-success);
+                "
+              >
                 <i data-lucide="heart" class="icon-20"></i>
               </div>
             </div>
-            <div class="wellness-value u-text-display-lg u-font-weight-700 u-text-primary u-margin-bottom-8">
+            <div
+              class="wellness-value u-text-display-lg u-font-weight-700 u-text-primary u-margin-bottom-8"
+            >
               87<span class="u-text-body-lg u-text-secondary">/100</span>
             </div>
-            <div class="wellness-progress u-width-full u-height-6 u-bg-secondary u-radius-sm u-margin-y-8">
-              <div class="u-height-full u-radius-sm" style="width: 87%; background: var(--color-success);"></div>
+            <div
+              class="wellness-progress u-width-full u-height-6 u-bg-secondary u-radius-sm u-margin-y-8"
+            >
+              <div
+                class="u-height-full u-radius-sm"
+                style="width: 87%; background: var(--color-success)"
+              ></div>
             </div>
-            <p class="u-text-body-sm u-text-secondary">Excellent recovery state</p>
+            <p class="u-text-body-sm u-text-secondary">
+              Excellent recovery state
+            </p>
           </div>
 
           <!-- Sleep Quality -->
           <div class="wellness-card u-radius-xl u-padding-24 u-shadow-sm">
-            <div class="card-header u-display-flex u-justify-between u-align-center u-margin-bottom-16">
-              <h3 class="card-title u-text-heading-lg u-font-weight-700">Sleep Quality</h3>
-              <div class="wellness-icon" style="background: var(--color-primary-subtle); color: var(--color-primary);">
+            <div
+              class="card-header u-display-flex u-justify-between u-align-center u-margin-bottom-16"
+            >
+              <h3 class="card-title u-text-heading-lg u-font-weight-700">
+                Sleep Quality
+              </h3>
+              <div
+                class="wellness-icon"
+                style="
+                  background: var(--color-primary-subtle);
+                  color: var(--color-primary);
+                "
+              >
                 <i data-lucide="moon" class="icon-20"></i>
               </div>
             </div>
-            <div class="wellness-value u-text-display-lg u-font-weight-700 u-text-primary u-margin-bottom-8">
+            <div
+              class="wellness-value u-text-display-lg u-font-weight-700 u-text-primary u-margin-bottom-8"
+            >
               8.2<span class="u-text-body-lg u-text-secondary">hrs</span>
             </div>
-            <div class="wellness-progress u-width-full u-height-6 u-bg-secondary u-radius-sm u-margin-y-8">
-              <div class="u-height-full u-radius-sm" style="width: 91%; background: var(--color-primary);"></div>
+            <div
+              class="wellness-progress u-width-full u-height-6 u-bg-secondary u-radius-sm u-margin-y-8"
+            >
+              <div
+                class="u-height-full u-radius-sm"
+                style="width: 91%; background: var(--color-primary)"
+              ></div>
             </div>
-            <p class="u-text-body-sm u-text-secondary">Above recommended 8 hours</p>
+            <p class="u-text-body-sm u-text-secondary">
+              Above recommended 8 hours
+            </p>
           </div>
 
           <!-- Hydration -->
           <div class="wellness-card u-radius-xl u-padding-24 u-shadow-sm">
-            <div class="card-header u-display-flex u-justify-between u-align-center u-margin-bottom-16">
-              <h3 class="card-title u-text-heading-lg u-font-weight-700">Hydration</h3>
-              <div class="wellness-icon" style="background: var(--color-info-subtle); color: var(--color-info);">
+            <div
+              class="card-header u-display-flex u-justify-between u-align-center u-margin-bottom-16"
+            >
+              <h3 class="card-title u-text-heading-lg u-font-weight-700">
+                Hydration
+              </h3>
+              <div
+                class="wellness-icon"
+                style="
+                  background: var(--color-info-subtle);
+                  color: var(--color-info);
+                "
+              >
                 <i data-lucide="droplets" class="icon-20"></i>
               </div>
             </div>
-            <div class="wellness-value u-text-display-lg u-font-weight-700 u-text-primary u-margin-bottom-8">
+            <div
+              class="wellness-value u-text-display-lg u-font-weight-700 u-text-primary u-margin-bottom-8"
+            >
               2.1<span class="u-text-body-lg u-text-secondary">L</span>
             </div>
-            <div class="wellness-progress u-width-full u-height-6 u-bg-secondary u-radius-sm u-margin-y-8">
-              <div class="u-height-full u-radius-sm" style="width: 70%; background: var(--color-info);"></div>
+            <div
+              class="wellness-progress u-width-full u-height-6 u-bg-secondary u-radius-sm u-margin-y-8"
+            >
+              <div
+                class="u-height-full u-radius-sm"
+                style="width: 70%; background: var(--color-info)"
+              ></div>
             </div>
             <p class="u-text-body-sm u-text-secondary">Goal: 3.0L daily</p>
           </div>
 
           <!-- Stress Level -->
           <div class="wellness-card u-radius-xl u-padding-24 u-shadow-sm">
-            <div class="card-header u-display-flex u-justify-between u-align-center u-margin-bottom-16">
-              <h3 class="card-title u-text-heading-lg u-font-weight-700">Stress Level</h3>
-              <div class="wellness-icon" style="background: var(--color-warning-subtle); color: var(--color-warning);">
+            <div
+              class="card-header u-display-flex u-justify-between u-align-center u-margin-bottom-16"
+            >
+              <h3 class="card-title u-text-heading-lg u-font-weight-700">
+                Stress Level
+              </h3>
+              <div
+                class="wellness-icon"
+                style="
+                  background: var(--color-warning-subtle);
+                  color: var(--color-warning);
+                "
+              >
                 <i data-lucide="brain" class="icon-20"></i>
               </div>
             </div>
-            <div class="wellness-value u-text-display-lg u-font-weight-700 u-text-primary u-margin-bottom-8">
+            <div
+              class="wellness-value u-text-display-lg u-font-weight-700 u-text-primary u-margin-bottom-8"
+            >
               Low
             </div>
-            <div class="wellness-progress u-width-full u-height-6 u-bg-secondary u-radius-sm u-margin-y-8">
-              <div class="u-height-full u-radius-sm" style="width: 25%; background: var(--color-success);"></div>
+            <div
+              class="wellness-progress u-width-full u-height-6 u-bg-secondary u-radius-sm u-margin-y-8"
+            >
+              <div
+                class="u-height-full u-radius-sm"
+                style="width: 25%; background: var(--color-success)"
+              ></div>
             </div>
             <p class="u-text-body-sm u-text-secondary">Optimal stress levels</p>
           </div>
@@ -333,18 +490,35 @@
 
         <!-- Recovery Recommendations -->
         <div class="recovery-section u-margin-bottom-64">
-          <h2 class="section-title u-text-heading-lg u-font-weight-700 u-margin-bottom-24">
+          <h2
+            class="section-title u-text-heading-lg u-font-weight-700 u-margin-bottom-24"
+          >
             <i data-lucide="target" class="icon-20 icon-inline"></i>
             Today's Recovery Plan
           </h2>
-          
-          <div class="u-display-grid u-gap-16" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
-            <div class="recommendation-card u-padding-20 u-bg-primary u-radius-lg u-border-secondary">
-              <div class="recommendation-header u-display-flex u-align-center u-gap-12 u-margin-bottom-12">
-                <div class="recommendation-icon" style="background: var(--color-success-subtle); color: var(--color-success);">
+
+          <div
+            class="u-display-grid u-gap-16"
+            style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr))"
+          >
+            <div
+              class="recommendation-card u-padding-20 u-bg-primary u-radius-lg u-border-secondary"
+            >
+              <div
+                class="recommendation-header u-display-flex u-align-center u-gap-12 u-margin-bottom-12"
+              >
+                <div
+                  class="recommendation-icon"
+                  style="
+                    background: var(--color-success-subtle);
+                    color: var(--color-success);
+                  "
+                >
                   <i data-lucide="bed" class="icon-16"></i>
                 </div>
-                <h4 class="u-text-heading-sm u-font-weight-600">Sleep Optimization</h4>
+                <h4 class="u-text-heading-sm u-font-weight-600">
+                  Sleep Optimization
+                </h4>
               </div>
               <p class="u-text-body-sm u-text-secondary u-margin-bottom-12">
                 Maintain 8+ hours of quality sleep for optimal recovery
@@ -352,12 +526,24 @@
               <button class="btn btn-sm btn-tertiary">Set Sleep Goals</button>
             </div>
 
-            <div class="recommendation-card u-padding-20 u-bg-primary u-radius-lg u-border-secondary">
-              <div class="recommendation-header u-display-flex u-align-center u-gap-12 u-margin-bottom-12">
-                <div class="recommendation-icon" style="background: var(--color-info-subtle); color: var(--color-info);">
+            <div
+              class="recommendation-card u-padding-20 u-bg-primary u-radius-lg u-border-secondary"
+            >
+              <div
+                class="recommendation-header u-display-flex u-align-center u-gap-12 u-margin-bottom-12"
+              >
+                <div
+                  class="recommendation-icon"
+                  style="
+                    background: var(--color-info-subtle);
+                    color: var(--color-info);
+                  "
+                >
                   <i data-lucide="apple" class="icon-16"></i>
                 </div>
-                <h4 class="u-text-heading-sm u-font-weight-600">Nutrition Focus</h4>
+                <h4 class="u-text-heading-sm u-font-weight-600">
+                  Nutrition Focus
+                </h4>
               </div>
               <p class="u-text-body-sm u-text-secondary u-margin-bottom-12">
                 Post-workout protein within 30 minutes for muscle recovery
@@ -365,12 +551,24 @@
               <button class="btn btn-sm btn-tertiary">View Meal Plans</button>
             </div>
 
-            <div class="recommendation-card u-padding-20 u-bg-primary u-radius-lg u-border-secondary">
-              <div class="recommendation-header u-display-flex u-align-center u-gap-12 u-margin-bottom-12">
-                <div class="recommendation-icon" style="background: var(--color-warning-subtle); color: var(--color-warning);">
+            <div
+              class="recommendation-card u-padding-20 u-bg-primary u-radius-lg u-border-secondary"
+            >
+              <div
+                class="recommendation-header u-display-flex u-align-center u-gap-12 u-margin-bottom-12"
+              >
+                <div
+                  class="recommendation-icon"
+                  style="
+                    background: var(--color-warning-subtle);
+                    color: var(--color-warning);
+                  "
+                >
                   <i data-lucide="stretch-horizontal" class="icon-16"></i>
                 </div>
-                <h4 class="u-text-heading-sm u-font-weight-600">Active Recovery</h4>
+                <h4 class="u-text-heading-sm u-font-weight-600">
+                  Active Recovery
+                </h4>
               </div>
               <p class="u-text-body-sm u-text-secondary u-margin-bottom-12">
                 15-minute mobility session to enhance flexibility
@@ -382,28 +580,63 @@
 
         <!-- Coming Soon Features -->
         <div class="coming-soon-section">
-          <h2 class="section-title u-text-heading-lg u-font-weight-700 u-margin-bottom-24">
+          <h2
+            class="section-title u-text-heading-lg u-font-weight-700 u-margin-bottom-24"
+          >
             <i data-lucide="sparkles" class="icon-20 icon-inline"></i>
             Coming Soon
           </h2>
-          
-          <div class="u-display-grid u-gap-16" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
-            <div class="feature-preview u-padding-20 u-bg-secondary u-radius-lg u-text-center">
-              <i data-lucide="smartphone" class="icon-32 u-margin-bottom-12" style="color: var(--color-primary);"></i>
-              <h4 class="u-text-heading-sm u-font-weight-600 u-margin-bottom-8">Wearable Integration</h4>
-              <p class="u-text-body-sm u-text-secondary">Connect fitness trackers for real-time health monitoring</p>
+
+          <div
+            class="u-display-grid u-gap-16"
+            style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr))"
+          >
+            <div
+              class="feature-preview u-padding-20 u-bg-secondary u-radius-lg u-text-center"
+            >
+              <i
+                data-lucide="smartphone"
+                class="icon-32 u-margin-bottom-12"
+                style="color: var(--color-primary)"
+              ></i>
+              <h4 class="u-text-heading-sm u-font-weight-600 u-margin-bottom-8">
+                Wearable Integration
+              </h4>
+              <p class="u-text-body-sm u-text-secondary">
+                Connect fitness trackers for real-time health monitoring
+              </p>
             </div>
 
-            <div class="feature-preview u-padding-20 u-bg-secondary u-radius-lg u-text-center">
-              <i data-lucide="calendar-heart" class="icon-32 u-margin-bottom-12" style="color: var(--color-success);"></i>
-              <h4 class="u-text-heading-sm u-font-weight-600 u-margin-bottom-8">Wellness Calendar</h4>
-              <p class="u-text-body-sm u-text-secondary">Track wellness activities and recovery sessions</p>
+            <div
+              class="feature-preview u-padding-20 u-bg-secondary u-radius-lg u-text-center"
+            >
+              <i
+                data-lucide="calendar-heart"
+                class="icon-32 u-margin-bottom-12"
+                style="color: var(--color-success)"
+              ></i>
+              <h4 class="u-text-heading-sm u-font-weight-600 u-margin-bottom-8">
+                Wellness Calendar
+              </h4>
+              <p class="u-text-body-sm u-text-secondary">
+                Track wellness activities and recovery sessions
+              </p>
             </div>
 
-            <div class="feature-preview u-padding-20 u-bg-secondary u-radius-lg u-text-center">
-              <i data-lucide="brain-circuit" class="icon-32 u-margin-bottom-12" style="color: var(--color-warning);"></i>
-              <h4 class="u-text-heading-sm u-font-weight-600 u-margin-bottom-8">AI Health Insights</h4>
-              <p class="u-text-body-sm u-text-secondary">Personalized wellness recommendations powered by AI</p>
+            <div
+              class="feature-preview u-padding-20 u-bg-secondary u-radius-lg u-text-center"
+            >
+              <i
+                data-lucide="brain-circuit"
+                class="icon-32 u-margin-bottom-12"
+                style="color: var(--color-warning)"
+              ></i>
+              <h4 class="u-text-heading-sm u-font-weight-600 u-margin-bottom-8">
+                AI Health Insights
+              </h4>
+              <p class="u-text-body-sm u-text-secondary">
+                Personalized wellness recommendations powered by AI
+              </p>
             </div>
           </div>
         </div>
@@ -412,37 +645,37 @@
 
     <!-- JavaScript -->
     <script type="module">
-      import { authManager } from './src/auth-manager.js';
-      import { logger } from './src/logger.js';
+      import { authManager } from "./src/auth-manager.js";
+      import { logger } from "./src/logger.js";
 
       // Check authentication
       if (!authManager.isAuthenticated()) {
-        window.location.href = '/login.html';
+        window.location.href = "/login.html";
       }
 
       // Initialize icons
-      document.addEventListener('DOMContentLoaded', () => {
-        if (typeof lucide !== 'undefined') {
+      document.addEventListener("DOMContentLoaded", () => {
+        if (typeof lucide !== "undefined") {
           lucide.createIcons();
         }
       });
 
       // Sidebar toggle functionality
-      window.toggleSidebar = function() {
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebar-overlay');
-        const isOpen = sidebar.classList.contains('open');
-        
+      window.toggleSidebar = function () {
+        const sidebar = document.getElementById("sidebar");
+        const overlay = document.getElementById("sidebar-overlay");
+        const isOpen = sidebar.classList.contains("open");
+
         if (isOpen) {
-          sidebar.classList.remove('open');
-          overlay.classList.remove('active');
+          sidebar.classList.remove("open");
+          overlay.classList.remove("active");
         } else {
-          sidebar.classList.add('open');
-          overlay.classList.add('active');
+          sidebar.classList.add("open");
+          overlay.classList.add("active");
         }
       };
 
-      logger.info('Wellness page initialized');
+      logger.info("Wellness page initialized");
     </script>
 
     <!-- Footer -->

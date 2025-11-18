@@ -16,13 +16,19 @@
     <!-- Page-specific styles -->
     <link rel="stylesheet" href="./src/css/pages/coach-dashboard.css" />
     <!-- Lucide Icons -->
-    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js" crossorigin="anonymous" defer>
+    <script
+      src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
     <script src="./src/icon-helper.js" defer></script>
     <script src="./src/theme-switcher.js" defer></script>
     <script src="./src/nav-highlight.js" defer></script>
     <script src="./src/components/organisms/top-bar/top-bar.js" defer></script>
     <!-- Universal Components -->
     <script type="module" src="./src/js/main.js"></script>
+    <!-- Sidebar Utilities -->
+    <script src="./src/js/utils/sidebar-utils.js"></script>
   </head>
   <body>
     <div class="dashboard-container">
@@ -39,10 +45,7 @@
           title="FlagFit Pro"
           aria-label="Go to coach dashboard"
         >
-          <i
-            data-lucide="activity"
-            class="icon-20 icon-inline"
-          ></i>
+          <i data-lucide="activity" class="icon-20 icon-inline"></i>
         </div>
 
         <nav class="nav-section" aria-label="Main navigation">
@@ -136,7 +139,7 @@
       <main
         class="main-content flex-1 min-w-0 overflow-x-hidden overflow-y-auto bg-surface-primary min-h-screen transition-bg"
       >
-    <!-- Top Bar -->
+        <!-- Top Bar -->
         <div class="top-bar" role="banner">
           <div class="header-left">
             <!-- Mobile Hamburger Menu Button -->
@@ -144,10 +147,10 @@
               id="mobile-menu-toggle"
               class="mobile-menu-toggle"
               type="button"
-              aria-label="Toggle navigation menu"
+              aria-label="Open menu"
               aria-expanded="false"
               aria-controls="sidebar"
-              onclick="toggleSidebar()" aria-label="Toggle sidebar navigation"
+              onclick="toggleSidebar()"
             >
               <i data-lucide="menu" class="icon-20"></i>
             </button>
@@ -162,6 +165,7 @@
 
               <input
                 id="global-search"
+                name="search"
                 class="search-input"
                 type="text"
                 placeholder="Search for players, teams & more"
@@ -171,6 +175,7 @@
                 aria-expanded="false"
                 aria-owns="search-results"
                 aria-controls="search-results"
+                aria-activedescendant=""
                 autocomplete="off"
                 inputmode="search"
               />
@@ -214,35 +219,63 @@
 
             <!-- Theme Toggle -->
             <div class="theme-toggle-container" aria-label="Theme toggle">
-              <!-- JS inserts switch; fallback below -->
-              <button
-                class="theme-toggle-fallback"
-                type="button"
-                data-theme-toggle
-                hidden
-              >
-                Theme
-              </button>
+              <label class="theme-toggle-label" title="Toggle theme">
+                <input
+                  type="checkbox"
+                  id="header-theme-toggle"
+                  class="theme-toggle-input"
+                  aria-label="Toggle theme"
+                />
+                <span class="theme-toggle-slider">
+                  <span class="theme-toggle-dot" id="theme-toggle-dot"></span>
+                </span>
+                <span class="theme-toggle-text">🌙 Dark</span>
+              </label>
             </div>
 
             <!-- User Menu -->
-            <button
-              id="user-menu-button"
-              class="user-menu"
-              type="button"
-              aria-label="User menu"
-              aria-haspopup="menu"
-              aria-controls="user-menu"
-              aria-expanded="false"
-            >
-              <div class="user-avatar" id="user-avatar" aria-hidden="true">
-                JD
-              </div>
-            </button>
+            <div class="user-menu-wrapper">
+              <button
+                id="user-menu-button"
+                class="user-menu"
+                type="button"
+                aria-label="User menu"
+                aria-haspopup="menu"
+                aria-controls="user-menu"
+                aria-expanded="false"
+              >
+                <div class="user-avatar" id="user-avatar" aria-hidden="true">
+                  JD
+                </div>
+              </button>
+
+              <!-- User Menu Dropdown -->
+              <ul id="user-menu" class="user-menu-dropdown" role="menu" hidden>
+                <li role="menuitem">
+                  <a href="/profile" class="user-menu-item">
+                    <i data-lucide="user" class="icon-16"></i>
+                    <span>Profile</span>
+                  </a>
+                </li>
+                <li role="menuitem">
+                  <a href="/settings" class="user-menu-item">
+                    <i data-lucide="settings" class="icon-16"></i>
+                    <span>Settings</span>
+                  </a>
+                </li>
+                <li role="separator" class="user-menu-separator"></li>
+                <li role="menuitem">
+                  <a href="/logout" class="user-menu-item user-menu-item-danger">
+                    <i data-lucide="log-out" class="icon-16"></i>
+                    <span>Logout</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
 
-    <!-- Coach Dashboard Content -->
+        <!-- Coach Dashboard Content -->
         <div class="coach-dashboard-layout">
           <div class="coach-dashboard-header">
             <h1>COACH DASHBOARD</h1>
@@ -325,7 +358,9 @@
               <ul class="injury-list">
                 <li class="injury-item">
                   <span class="injury-player">Player 2:</span>
-                  <span class="injury-description">Hamstring tightness (5/10)</span>
+                  <span class="injury-description"
+                    >Hamstring tightness (5/10)</span
+                  >
                 </li>
                 <li class="injury-item">
                   <span class="injury-player">Player 4:</span>
@@ -402,7 +437,7 @@
         </button>
       </div>
       <div id="notification-list" class="notification-list">
-    <!-- Notifications will be populated by JavaScript -->
+        <!-- Notifications will be populated by JavaScript -->
       </div>
       <div class="notification-actions">
         <button class="notification-action-btn" onclick="markAllAsRead()">

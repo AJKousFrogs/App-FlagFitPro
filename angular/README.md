@@ -58,6 +58,7 @@ angular/
 ## 🎨 Design System
 
 The application uses a custom design system built on:
+
 - **PrimeNG**: UI component library
 - **SCSS**: Styling with CSS custom properties
 - **Design Tokens**: Semantic token system for theming
@@ -80,6 +81,7 @@ All API connections from the original HTML files are integrated:
 ### API Configuration
 
 The API service auto-detects the environment:
+
 - **Development**: Uses mock API or localhost:3001
 - **Netlify**: Uses Netlify Functions
 - **Production**: Auto-detects based on hostname
@@ -138,6 +140,7 @@ ng generate service core/services/my-service
 ### API Endpoints
 
 All API endpoints are preserved from the original `api-config.js`:
+
 - Authentication endpoints
 - Dashboard endpoints
 - Training endpoints
@@ -148,19 +151,20 @@ All API endpoints are preserved from the original `api-config.js`:
 
 ### Component Mapping
 
-| Original HTML | Angular Component | Status |
-|-------------|------------------|--------|
-| `index.html` | `LandingComponent` | ✅ |
-| `login.html` | `LoginComponent` | ✅ |
-| `register.html` | `RegisterComponent` | ✅ |
-| `dashboard.html` | `DashboardComponent` | ✅ |
-| `training.html` | `TrainingComponent` | 🚧 |
-| `analytics.html` | `AnalyticsComponent` | 🚧 |
-| ... | ... | ... |
+| Original HTML    | Angular Component    | Status |
+| ---------------- | -------------------- | ------ |
+| `index.html`     | `LandingComponent`   | ✅     |
+| `login.html`     | `LoginComponent`     | ✅     |
+| `register.html`  | `RegisterComponent`  | ✅     |
+| `dashboard.html` | `DashboardComponent` | ✅     |
+| `training.html`  | `TrainingComponent`  | 🚧     |
+| `analytics.html` | `AnalyticsComponent` | 🚧     |
+| ...              | ...                  | ...    |
 
 ## 🔐 Authentication
 
 The authentication system includes:
+
 - JWT token management
 - CSRF protection
 - Session management
@@ -186,6 +190,7 @@ The authentication system includes:
 ## 🤝 Contributing
 
 When adding new features:
+
 1. Follow Angular style guide
 2. Use PrimeNG components when possible
 3. Follow the design system tokens
@@ -196,4 +201,3 @@ When adding new features:
 ## 📄 License
 
 MIT License - See LICENSE file for details
-

@@ -14,14 +14,16 @@ export class MemoizationCache {
   generateKey(...args) {
     try {
       return JSON.stringify(args);
-    } catch (error) {
+    } catch (_error) {
       // Fallback for non-serializable arguments
-      return args.map((arg) => {
-        if (typeof arg === "object" && arg !== null) {
-          return JSON.stringify(arg);
-        }
-        return String(arg);
-      }).join("::");
+      return args
+        .map((arg) => {
+          if (typeof arg === "object" && arg !== null) {
+            return JSON.stringify(arg);
+          }
+          return String(arg);
+        })
+        .join("::");
     }
   }
 
@@ -108,7 +110,9 @@ export function memoize(fn, options = {}) {
   const cache = new MemoizationCache(maxSize, ttl);
 
   const memoized = function (...args) {
-    const key = keyGenerator ? keyGenerator(...args) : cache.generateKey(...args);
+    const key = keyGenerator
+      ? keyGenerator(...args)
+      : cache.generateKey(...args);
     const cached = cache.get(key);
 
     if (cached !== null) {
@@ -135,17 +139,15 @@ export function memoize(fn, options = {}) {
 
 // Async memoize for async functions
 export function memoizeAsync(fn, options = {}) {
-  const {
-    maxSize = 100,
-    ttl = 15 * 60 * 1000,
-    keyGenerator,
-  } = options;
+  const { maxSize = 100, ttl = 15 * 60 * 1000, keyGenerator } = options;
 
   const cache = new MemoizationCache(maxSize, ttl);
   const pending = new Map(); // Track pending promises
 
   const memoized = async function (...args) {
-    const key = keyGenerator ? keyGenerator(...args) : cache.generateKey(...args);
+    const key = keyGenerator
+      ? keyGenerator(...args)
+      : cache.generateKey(...args);
 
     // Check cache first
     const cached = cache.get(key);
@@ -170,7 +172,7 @@ export function memoizeAsync(fn, options = {}) {
       (error) => {
         pending.delete(key);
         throw error;
-      }
+      },
     );
 
     pending.set(key, promise);
@@ -216,10 +218,13 @@ export function weakMemoize(fn) {
 
 // Global cache cleanup interval (runs every 5 minutes)
 if (typeof window !== "undefined") {
-  setInterval(() => {
-    // Clear expired entries from all caches
-    // This is a global cleanup that can be called by individual caches
-  }, 5 * 60 * 1000);
+  setInterval(
+    () => {
+      // Clear expired entries from all caches
+      // This is a global cleanup that can be called by individual caches
+    },
+    5 * 60 * 1000,
+  );
 }
 
 export default {
@@ -228,4 +233,3 @@ export default {
   memoizeAsync,
   weakMemoize,
 };
-

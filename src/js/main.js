@@ -5,10 +5,10 @@
  */
 
 // Import all universal components
-import { UniversalMobileNav } from './components/universal-mobile-nav.js';
-import { UniversalFormValidator } from './components/universal-form-validator.js';
-import { UniversalChartAccessibility } from './components/universal-chart-accessibility.js';
-import { UniversalFocusManagement } from './components/universal-focus-management.js';
+import { UniversalMobileNav } from "./components/universal-mobile-nav.js";
+import { UniversalFormValidator } from "./components/universal-form-validator.js";
+import { UniversalChartAccessibility } from "./components/universal-chart-accessibility.js";
+import { UniversalFocusManagement } from "./components/universal-focus-management.js";
 
 // Global application state
 window.FlagFitApp = {
@@ -19,13 +19,13 @@ window.FlagFitApp = {
     accessibility: {
       enabled: true,
       announcements: true,
-      reducedMotion: false
+      reducedMotion: false,
     },
     mobile: {
       breakpoint: 768,
-      touchTargetSize: 44
-    }
-  }
+      touchTargetSize: 44,
+    },
+  },
 };
 
 // Initialize application
@@ -33,7 +33,7 @@ class FlagFitApplication {
   constructor() {
     this.initialized = false;
     this.components = new Map();
-    
+
     this.init();
   }
 
@@ -41,8 +41,10 @@ class FlagFitApplication {
     if (this.initialized) return;
 
     // Wait for DOM to be ready
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', () => this.initializeComponents());
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", () =>
+        this.initializeComponents(),
+      );
     } else {
       this.initializeComponents();
     }
@@ -52,109 +54,125 @@ class FlagFitApplication {
     try {
       // Detect user preferences
       this.detectUserPreferences();
-      
+
       // Initialize universal components
       this.initializeUniversalComponents();
-      
+
       // Initialize page-specific functionality
       this.initializePageSpecific();
-      
+
       // Setup global error handling
       this.setupErrorHandling();
-      
+
       // Setup performance monitoring
       this.setupPerformanceMonitoring();
-      
+
       this.initialized = true;
-      this.log('FlagFit application initialized successfully');
-      
+      this.log("FlagFit application initialized successfully");
+
       // Dispatch initialization event
-      document.dispatchEvent(new CustomEvent('flagfit:initialized', {
-        detail: { app: this }
-      }));
-      
+      document.dispatchEvent(
+        new CustomEvent("flagfit:initialized", {
+          detail: { app: this },
+        }),
+      );
     } catch (error) {
-      console.error('Failed to initialize FlagFit application:', error);
+      console.error("Failed to initialize FlagFit application:", error);
     }
   }
 
   detectUserPreferences() {
     // Detect reduced motion preference
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
     window.FlagFitApp.config.accessibility.reducedMotion = prefersReducedMotion;
-    
+
     if (prefersReducedMotion) {
-      document.documentElement.setAttribute('data-reduced-motion', 'true');
+      document.documentElement.setAttribute("data-reduced-motion", "true");
     }
 
     // Detect high contrast preference
-    const prefersHighContrast = window.matchMedia('(prefers-contrast: high)').matches;
+    const prefersHighContrast = window.matchMedia(
+      "(prefers-contrast: high)",
+    ).matches;
     if (prefersHighContrast) {
-      document.documentElement.setAttribute('data-high-contrast', 'true');
+      document.documentElement.setAttribute("data-high-contrast", "true");
     }
 
     // Detect dark mode preference
-    const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const prefersDarkMode = window.matchMedia(
+      "(prefers-color-scheme: dark)",
+    ).matches;
     if (prefersDarkMode) {
-      document.documentElement.setAttribute('data-theme', 'dark');
+      document.documentElement.setAttribute("data-theme", "dark");
     }
 
     // Detect touch capability
-    const hasTouchCapability = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    const hasTouchCapability =
+      "ontouchstart" in window || navigator.maxTouchPoints > 0;
     if (hasTouchCapability) {
-      document.documentElement.setAttribute('data-touch', 'true');
+      document.documentElement.setAttribute("data-touch", "true");
     }
   }
 
   initializeUniversalComponents() {
     // Initialize mobile navigation
-    if (document.querySelector('.sidebar, .mobile-menu-toggle, nav')) {
-      this.components.set('mobileNav', new UniversalMobileNav());
-      window.FlagFitApp.components.mobileNav = this.components.get('mobileNav');
+    if (document.querySelector(".sidebar, .mobile-menu-toggle, nav")) {
+      this.components.set("mobileNav", new UniversalMobileNav());
+      window.FlagFitApp.components.mobileNav = this.components.get("mobileNav");
     }
 
     // Initialize form validation for pages with forms
-    const forms = document.querySelectorAll('form');
+    const forms = document.querySelectorAll("form");
     if (forms.length > 0) {
       forms.forEach((form, index) => {
         const validator = new UniversalFormValidator(form);
         this.components.set(`formValidator${index}`, validator);
       });
-      window.FlagFitApp.components.formValidators = Array.from(this.components.values())
-        .filter(comp => comp instanceof UniversalFormValidator);
+      window.FlagFitApp.components.formValidators = Array.from(
+        this.components.values(),
+      ).filter((comp) => comp instanceof UniversalFormValidator);
     }
 
     // Initialize chart accessibility for pages with charts
-    const charts = document.querySelectorAll('canvas[id*="chart"], canvas[id*="Chart"], .chart-canvas canvas');
+    const charts = document.querySelectorAll(
+      'canvas[id*="chart"], canvas[id*="Chart"], .chart-canvas canvas',
+    );
     if (charts.length > 0) {
-      this.components.set('chartAccessibility', new UniversalChartAccessibility());
-      window.FlagFitApp.components.chartAccessibility = this.components.get('chartAccessibility');
+      this.components.set(
+        "chartAccessibility",
+        new UniversalChartAccessibility(),
+      );
+      window.FlagFitApp.components.chartAccessibility =
+        this.components.get("chartAccessibility");
     }
 
     // Initialize focus management (always active)
-    this.components.set('focusManagement', new UniversalFocusManagement());
-    window.FlagFitApp.components.focusManagement = this.components.get('focusManagement');
+    this.components.set("focusManagement", new UniversalFocusManagement());
+    window.FlagFitApp.components.focusManagement =
+      this.components.get("focusManagement");
   }
 
   initializePageSpecific() {
     // Get current page from URL or body class
     const currentPage = this.getCurrentPage();
-    
+
     switch (currentPage) {
-      case 'dashboard':
+      case "dashboard":
         this.initializeDashboard();
         break;
-      case 'analytics':
-      case 'enhanced-analytics':
+      case "analytics":
+      case "enhanced-analytics":
         this.initializeAnalytics();
         break;
-      case 'training':
+      case "training":
         this.initializeTraining();
         break;
-      case 'community':
+      case "community":
         this.initializeCommunity();
         break;
-      case 'settings':
+      case "settings":
         this.initializeSettings();
         break;
       default:
@@ -166,80 +184,88 @@ class FlagFitApplication {
   getCurrentPage() {
     // Try to determine current page from various sources
     const pathname = window.location.pathname;
-    const filename = pathname.split('/').pop().replace('.html', '');
-    
+    const filename = pathname.split("/").pop().replace(".html", "");
+
     // Check body class
     const bodyClass = document.body.className;
-    const pageClasses = ['dashboard', 'analytics', 'training', 'community', 'settings'];
-    
+    const pageClasses = [
+      "dashboard",
+      "analytics",
+      "training",
+      "community",
+      "settings",
+    ];
+
     for (const pageClass of pageClasses) {
       if (bodyClass.includes(pageClass)) {
         return pageClass;
       }
     }
-    
+
     // Check filename
-    if (filename && filename !== 'index') {
+    if (filename && filename !== "index") {
       return filename;
     }
-    
+
     // Default fallback
-    return 'generic';
+    return "generic";
   }
 
   initializeDashboard() {
-    this.log('Initializing dashboard-specific functionality');
-    
+    this.log("Initializing dashboard-specific functionality");
+
     // Initialize dashboard charts if not already done
     this.initializeChartsIfNeeded();
-    
+
     // Setup real-time updates
     this.setupRealtimeUpdates();
   }
 
   initializeAnalytics() {
-    this.log('Initializing analytics-specific functionality');
-    
+    this.log("Initializing analytics-specific functionality");
+
     // Enhanced chart interactions
     this.initializeChartsIfNeeded();
-    
+
     // Setup analytics filters
     this.setupAnalyticsFilters();
   }
 
   initializeTraining() {
-    this.log('Initializing training-specific functionality');
-    
+    this.log("Initializing training-specific functionality");
+
     // Setup training module interactions
     this.setupTrainingModules();
   }
 
   initializeCommunity() {
-    this.log('Initializing community-specific functionality');
-    
+    this.log("Initializing community-specific functionality");
+
     // Setup community interactions
     this.setupCommunityFeatures();
   }
 
   initializeSettings() {
-    this.log('Initializing settings-specific functionality');
-    
+    this.log("Initializing settings-specific functionality");
+
     // Setup settings form handling
     this.setupSettingsHandling();
   }
 
   initializeGeneric() {
-    this.log('Initializing generic page functionality');
-    
+    this.log("Initializing generic page functionality");
+
     // Setup common interactions
     this.setupCommonInteractions();
   }
 
   initializeChartsIfNeeded() {
     // Additional chart setup beyond accessibility
-    const charts = document.querySelectorAll('canvas[id*="chart"], canvas[id*="Chart"]');
-    
-    charts.forEach(chart => {
+    const charts = document.querySelectorAll(
+      'canvas[id*="chart"], canvas[id*="Chart"]',
+    );
+
+    charts.forEach((chart) => {
       // Setup chart resize handling
       const resizeObserver = new ResizeObserver(() => {
         if (chart.chart && chart.chart.resize) {
@@ -253,15 +279,17 @@ class FlagFitApplication {
   setupRealtimeUpdates() {
     // Setup real-time data updates for dashboard
     // This would connect to WebSockets or polling mechanisms
-    this.log('Real-time updates initialized');
+    this.log("Real-time updates initialized");
   }
 
   setupAnalyticsFilters() {
     // Setup analytics filter interactions
-    const filterButtons = document.querySelectorAll('.filter-btn, .analytics-filter');
-    
-    filterButtons.forEach(btn => {
-      btn.addEventListener('click', (e) => {
+    const filterButtons = document.querySelectorAll(
+      ".filter-btn, .analytics-filter",
+    );
+
+    filterButtons.forEach((btn) => {
+      btn.addEventListener("click", (e) => {
         e.preventDefault();
         // Handle filter logic
         this.handleAnalyticsFilter(btn);
@@ -271,10 +299,12 @@ class FlagFitApplication {
 
   setupTrainingModules() {
     // Setup training module interactions
-    const trainingCards = document.querySelectorAll('.training-card, .exercise-card');
-    
-    trainingCards.forEach(card => {
-      card.addEventListener('click', (e) => {
+    const trainingCards = document.querySelectorAll(
+      ".training-card, .exercise-card",
+    );
+
+    trainingCards.forEach((card) => {
+      card.addEventListener("click", (_e) => {
         // Handle training module selection
         this.handleTrainingModuleSelect(card);
       });
@@ -283,10 +313,10 @@ class FlagFitApplication {
 
   setupCommunityFeatures() {
     // Setup community-specific features
-    const postButtons = document.querySelectorAll('.post-btn, .comment-btn');
-    
-    postButtons.forEach(btn => {
-      btn.addEventListener('click', (e) => {
+    const postButtons = document.querySelectorAll(".post-btn, .comment-btn");
+
+    postButtons.forEach((btn) => {
+      btn.addEventListener("click", (e) => {
         // Handle community interactions
         this.handleCommunityInteraction(btn);
       });
@@ -295,10 +325,12 @@ class FlagFitApplication {
 
   setupSettingsHandling() {
     // Setup settings form handling
-    const settingsForm = document.querySelector('.settings-form, #settings-form');
-    
+    const settingsForm = document.querySelector(
+      ".settings-form, #settings-form",
+    );
+
     if (settingsForm) {
-      settingsForm.addEventListener('submit', (e) => {
+      settingsForm.addEventListener("submit", (e) => {
         e.preventDefault();
         this.handleSettingsSave(settingsForm);
       });
@@ -313,25 +345,29 @@ class FlagFitApplication {
   }
 
   setupTooltips() {
-    const tooltipElements = document.querySelectorAll('[data-tooltip], [title]');
-    
-    tooltipElements.forEach(element => {
+    const tooltipElements = document.querySelectorAll(
+      "[data-tooltip], [title]",
+    );
+
+    tooltipElements.forEach((element) => {
       // Basic tooltip functionality
-      element.addEventListener('mouseenter', (e) => {
+      element.addEventListener("mouseenter", (e) => {
         this.showTooltip(e.target);
       });
-      
-      element.addEventListener('mouseleave', (e) => {
+
+      element.addEventListener("mouseleave", (_e) => {
         this.hideTooltip();
       });
     });
   }
 
   setupDropdowns() {
-    const dropdownToggles = document.querySelectorAll('.dropdown-toggle, [data-toggle="dropdown"]');
-    
-    dropdownToggles.forEach(toggle => {
-      toggle.addEventListener('click', (e) => {
+    const dropdownToggles = document.querySelectorAll(
+      '.dropdown-toggle, [data-toggle="dropdown"]',
+    );
+
+    dropdownToggles.forEach((toggle) => {
+      toggle.addEventListener("click", (e) => {
         e.preventDefault();
         this.toggleDropdown(toggle);
       });
@@ -339,12 +375,15 @@ class FlagFitApplication {
   }
 
   setupModals() {
-    const modalTriggers = document.querySelectorAll('[data-toggle="modal"], .modal-trigger');
-    
-    modalTriggers.forEach(trigger => {
-      trigger.addEventListener('click', (e) => {
+    const modalTriggers = document.querySelectorAll(
+      '[data-toggle="modal"], .modal-trigger',
+    );
+
+    modalTriggers.forEach((trigger) => {
+      trigger.addEventListener("click", (e) => {
         e.preventDefault();
-        const targetModal = trigger.getAttribute('data-target') || trigger.getAttribute('href');
+        const targetModal =
+          trigger.getAttribute("data-target") || trigger.getAttribute("href");
         this.showModal(targetModal);
       });
     });
@@ -352,20 +391,21 @@ class FlagFitApplication {
 
   setupErrorHandling() {
     // Global error handling
-    window.addEventListener('error', (e) => {
-      this.handleError('JavaScript Error', e.error);
+    window.addEventListener("error", (e) => {
+      this.handleError("JavaScript Error", e.error);
     });
 
-    window.addEventListener('unhandledrejection', (e) => {
-      this.handleError('Promise Rejection', e.reason);
+    window.addEventListener("unhandledrejection", (e) => {
+      this.handleError("Promise Rejection", e.reason);
     });
   }
 
   setupPerformanceMonitoring() {
     // Basic performance monitoring
-    if ('performance' in window) {
-      window.addEventListener('load', () => {
-        const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+    if ("performance" in window) {
+      window.addEventListener("load", () => {
+        const loadTime =
+          performance.timing.loadEventEnd - performance.timing.navigationStart;
         this.log(`Page load time: ${loadTime}ms`);
       });
     }
@@ -387,14 +427,15 @@ class FlagFitApplication {
     this.log(`Community interaction: ${button.textContent}`);
   }
 
-  handleSettingsSave(form) {
+  handleSettingsSave(_form) {
     // Settings save logic
-    this.log('Settings form submitted');
+    this.log("Settings form submitted");
   }
 
   showTooltip(element) {
     // Tooltip display logic
-    const content = element.getAttribute('data-tooltip') || element.getAttribute('title');
+    const content =
+      element.getAttribute("data-tooltip") || element.getAttribute("title");
     if (content) {
       // Create and show tooltip
     }
@@ -402,7 +443,7 @@ class FlagFitApplication {
 
   hideTooltip() {
     // Hide tooltip logic
-    const existingTooltip = document.querySelector('.tooltip');
+    const existingTooltip = document.querySelector(".tooltip");
     if (existingTooltip) {
       existingTooltip.remove();
     }
@@ -410,11 +451,12 @@ class FlagFitApplication {
 
   toggleDropdown(toggle) {
     // Dropdown toggle logic
-    const dropdown = toggle.nextElementSibling || 
-                    document.querySelector(toggle.getAttribute('data-target'));
-    
+    const dropdown =
+      toggle.nextElementSibling ||
+      document.querySelector(toggle.getAttribute("data-target"));
+
     if (dropdown) {
-      dropdown.classList.toggle('show');
+      dropdown.classList.toggle("show");
     }
   }
 
@@ -422,7 +464,7 @@ class FlagFitApplication {
     // Modal display logic
     const modal = document.querySelector(target);
     if (modal) {
-      modal.classList.add('show');
+      modal.classList.add("show");
       // Focus trap will be handled by focus management component
     }
   }
@@ -431,13 +473,13 @@ class FlagFitApplication {
     if (window.FlagFitApp.config.debug) {
       console.error(`${type}:`, error);
     }
-    
+
     // Report error to analytics service if available
     if (window.analytics && window.analytics.track) {
-      window.analytics.track('error', {
+      window.analytics.track("error", {
         type: type,
         message: error.message || error,
-        page: this.getCurrentPage()
+        page: this.getCurrentPage(),
       });
     }
   }
@@ -459,7 +501,7 @@ class FlagFitApplication {
 
   enableDebugMode() {
     window.FlagFitApp.config.debug = true;
-    this.log('Debug mode enabled');
+    this.log("Debug mode enabled");
   }
 
   disableDebugMode() {
@@ -468,16 +510,16 @@ class FlagFitApplication {
 
   destroy() {
     // Cleanup all components
-    this.components.forEach(component => {
-      if (component.destroy && typeof component.destroy === 'function') {
+    this.components.forEach((component) => {
+      if (component.destroy && typeof component.destroy === "function") {
         component.destroy();
       }
     });
-    
+
     this.components.clear();
     this.initialized = false;
-    
-    this.log('FlagFit application destroyed');
+
+    this.log("FlagFit application destroyed");
   }
 }
 

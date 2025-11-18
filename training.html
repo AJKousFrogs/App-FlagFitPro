@@ -23,7 +23,11 @@
     <link rel="stylesheet" href="./src/css/components/modal.css" />
 
     <!-- Lucide Icons - Modern icon library similar to Radix UI -->
-    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js" crossorigin="anonymous" defer></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
     <script src="./src/icon-helper.js" defer></script>
     <script src="./src/theme-switcher.js" defer></script>
     <script src="./src/nav-highlight.js" defer></script>
@@ -33,15 +37,17 @@
     <!-- Preload Chatbot Component -->
     <script type="module">
       // Preload chatbot for faster access
-      import('./src/js/components/chatbot.js').then((module) => {
-        // Ensure chatbot is available globally
-        if (module.flagFitChatbot) {
-          window.flagFitChatbot = module.flagFitChatbot;
-          console.log('Chatbot loaded successfully');
-        }
-      }).catch((error) => {
-        console.warn('Chatbot preload failed:', error);
-      });
+      import("./src/js/components/chatbot.js")
+        .then((module) => {
+          // Ensure chatbot is available globally
+          if (module.flagFitChatbot) {
+            window.flagFitChatbot = module.flagFitChatbot;
+            console.log("Chatbot loaded successfully");
+          }
+        })
+        .catch((error) => {
+          console.warn("Chatbot preload failed:", error);
+        });
     </script>
   </head>
   <body>
@@ -53,7 +59,7 @@
         aria-hidden="true"
         onclick="toggleSidebar()"
       ></div>
-      
+
       <!-- Unified Sidebar Navigation -->
       <div class="sidebar" id="sidebar">
         <div
@@ -62,10 +68,7 @@
           title="FlagFit Pro"
           aria-label="Go to dashboard"
         >
-          <i
-            data-lucide="activity"
-            class="icon-20 icon-inline"
-          ></i>
+          <i data-lucide="activity" class="icon-20 icon-inline"></i>
         </div>
 
         <nav class="nav-section" aria-label="Dashboard navigation">
@@ -76,10 +79,7 @@
             id="nav-dashboard"
           >
             <span class="nav-item-icon">
-              <i
-                data-lucide="layout-dashboard"
-                class="icon-24"
-              ></i>
+              <i data-lucide="layout-dashboard" class="icon-24"></i>
             </span>
             <span class="nav-item-label">Overview</span>
           </a>
@@ -90,10 +90,7 @@
             id="nav-analytics"
           >
             <span class="nav-item-icon">
-              <i
-                data-lucide="bar-chart-3"
-                class="icon-24"
-              ></i>
+              <i data-lucide="bar-chart-3" class="icon-24"></i>
             </span>
             <span class="nav-item-label">Analytics</span>
           </a>
@@ -143,19 +140,13 @@
             id="nav-community"
           >
             <span class="nav-item-icon">
-              <i
-                data-lucide="message-circle"
-                class="icon-24"
-              ></i>
+              <i data-lucide="message-circle" class="icon-24"></i>
             </span>
             <span class="nav-item-label">Community</span>
           </a>
           <a href="/chat.html" class="nav-item" aria-label="Chat" id="nav-chat">
             <span class="nav-item-icon">
-              <i
-                data-lucide="message-square"
-                class="icon-24"
-              ></i>
+              <i data-lucide="message-square" class="icon-24"></i>
             </span>
             <span class="nav-item-label">Chat</span>
           </a>
@@ -190,7 +181,7 @@
       <main
         class="main-content u-flex-1 u-min-width-0 u-overflow-x-hidden u-overflow-y-auto u-padding-24 u-bg-primary"
       >
-    <!-- Top Bar -->
+        <!-- Top Bar -->
         <div class="top-bar" role="banner">
           <div class="header-left">
             <!-- Mobile Hamburger Menu Button -->
@@ -216,6 +207,7 @@
 
               <input
                 id="global-search"
+                name="search"
                 class="search-input"
                 type="text"
                 placeholder="Search workouts, exercises, videos..."
@@ -315,7 +307,10 @@
                 </li>
                 <li role="separator" class="user-menu-separator"></li>
                 <li role="menuitem">
-                  <a href="/logout" class="user-menu-item user-menu-item-danger">
+                  <a
+                    href="/logout"
+                    class="user-menu-item user-menu-item-danger"
+                  >
                     <i data-lucide="log-out" class="icon-16"></i>
                     <span>Logout</span>
                   </a>
@@ -325,46 +320,42 @@
           </div>
         </div>
 
-    <!-- Welcome Section (Hero) -->
-        <div
-          class="hero-section mb-16"
-        >
+        <!-- Welcome Section (Hero) -->
+        <div class="hero-section u-margin-bottom-16">
           <div class="hero-card">
-            <div class="u-text-body-sm u-text-secondary u-font-weight-500 u-margin-bottom-8" style="text-transform: uppercase; letter-spacing: 0.5px;">
+            <div class="u-text-body-sm u-text-secondary u-font-weight-500 u-margin-bottom-8 u-text-uppercase">
               Training Hub
             </div>
-            <h1
-              class="hero-main-title mb-8"
-            >
+            <h1 class="hero-main-title u-margin-bottom-8">
               Welcome back, <span id="user-display-name-training">Alex</span>!
             </h1>
-            <p class="u-text-heading-md u-text-secondary m-0">
+            <p class="u-text-heading-md u-text-secondary u-m-0">
               Ready to dominate today?
             </p>
-            <div class="u-text-body-sm u-text-secondary u-font-weight-500 u-margin-top-12" style="opacity: 0.7;">
+            <div class="u-text-body-sm u-text-secondary u-font-weight-500 u-margin-top-12 u-opacity-70">
               Your Weekly Performance Snapshot
             </div>
           </div>
         </div>
 
-    <!-- Custom Schedule Builder CTA -->
+        <!-- Custom Schedule Builder CTA -->
         <div class="custom-schedule-cta u-margin-bottom-32">
           <div class="cta-card u-radius-xl u-padding-24 u-shadow-sm">
-            <div class="u-display-flex u-align-center u-justify-between u-flex-wrap u-gap-16">
+            <div
+              class="u-display-flex u-align-center u-justify-between u-flex-wrap u-gap-16"
+            >
               <div class="cta-content">
                 <h2 class="u-text-heading-lg u-font-weight-700 u-margin-bottom-8">
-                  <i data-lucide="calendar-plus" class="icon-20 icon-inline" style="color: var(--color-brand-primary);"></i>
+                  <i data-lucide="calendar-plus" class="icon-20 icon-inline icon-inline--primary"></i>
                   Build Your Custom Training Schedule
                 </h2>
-                <p class="u-text-body-md u-margin-bottom-0" style="max-width: 600px;">
-                  Join 20 players from 12 nations who follow personalized training plans. Create a schedule that fits your game days, timezone, and goals.
+                <p class="u-text-body-md u-margin-bottom-0 u-max-width-full">
+                  Join 20 players from 12 nations who follow personalized
+                  training plans. Create a schedule that fits your game days,
+                  timezone, and goals.
                 </p>
               </div>
-              <button 
-                class="btn btn-primary btn-md" 
-                onclick="openCustomScheduleBuilder()"
-                style="white-space: nowrap;"
-              >
+              <button class="btn btn-primary btn-md u-whitespace-nowrap" onclick="openCustomScheduleBuilder()">
                 <i data-lucide="plus" class="icon-16 icon-inline"></i>
                 Create Schedule
               </button>
@@ -372,228 +363,96 @@
           </div>
         </div>
 
-    <!-- Training Stats Grid -->
-        <div
-          class="stats-grid u-display-grid u-gap-24 u-margin-bottom-64"
-        >
+        <!-- Training Stats Grid -->
+        <div class="stats-grid u-display-grid u-gap-24 u-margin-bottom-64">
           <div class="stat-card u-radius-xl u-padding-24 u-shadow-sm">
-            <div
-              class="stat-header u-display-flex u-justify-between u-align-center u-margin-bottom-16"
-            >
-              <span
-                class="stat-title u-text-body-sm u-font-weight-500 u-text-secondary"
-                >This Week</span
-              >
-              <div
-                class="stat-icon u-radius-lg u-display-flex u-align-center u-justify-center"
-                style="
-                  background: var(--color-success-subtle);
-                  color: var(--color-success);
-                "
-              >
-                <i
-                  data-lucide="zap"
-                  style="
-                    width: 16px;
-                    height: 16px;
-                    display: inline-block;
-                    vertical-align: middle;
-                    color: var(--icon-color-primary);
-                    stroke: var(--icon-color-primary);
-                  "
-                ></i>
+            <div class="stat-header u-display-flex u-justify-between u-align-center u-margin-bottom-16">
+              <span class="stat-title u-text-body-sm u-font-weight-500 u-text-secondary">This Week</span>
+              <div class="stat-icon stat-icon--success u-radius-lg u-display-flex u-align-center u-justify-center">
+                <i data-lucide="zap" class="icon-16 icon-inline icon-inline--primary"></i>
               </div>
             </div>
-            <div
-              class="stat-value u-text-display-lg u-font-weight-700 u-text-primary u-margin-bottom-8"
-            >
+            <div class="stat-value u-text-display-lg u-font-weight-700 u-text-primary u-margin-bottom-8">
               4<span class="u-text-body-lg u-text-secondary">/7</span>
             </div>
-            <div
-              class="u-width-full u-height-6 u-bg-secondary u-radius-sm u-margin-y-8"
-            >
-              <div
-                class="u-height-full u-radius-sm"
-                style="
-                  width: 57%;
-                  background: linear-gradient(
-                    90deg,
-                    var(--color-success),
-                    var(--color-success-400)
-                  );
-                  transition: width 0.5s ease;
-                "
-              ></div>
+            <div class="u-width-full u-height-6 u-bg-secondary u-radius-sm u-margin-y-8">
+              <div class="u-height-full u-radius-sm stat-progress-bar" style="width: 57%"></div>
             </div>
-            <div
-              class="stat-change positive u-display-flex u-align-center u-gap-4 u-text-body-sm u-text-success"
-            >
+            <div class="stat-change positive u-display-flex u-align-center u-gap-4 u-text-body-sm u-text-success">
               <span>🔥</span>
               <span>Sessions Completed</span>
             </div>
-            <div class="u-text-body-xs u-text-secondary u-margin-top-8" style="opacity: 0.7;">
+            <div class="u-text-body-xs u-text-secondary u-margin-top-8 u-opacity-70">
               +2 sessions vs last week
             </div>
           </div>
 
           <div class="stat-card u-radius-xl u-padding-24 u-shadow-sm">
-            <div
-              class="stat-header u-display-flex u-justify-between u-align-center u-margin-bottom-16"
-            >
-              <span
-                class="stat-title u-text-body-sm u-font-weight-500 u-text-secondary"
-                >Current Streak</span
-              >
-              <div
-                class="stat-icon u-radius-lg u-display-flex u-align-center u-justify-center"
-                style="
-                  background: rgba(245, 158, 11, 0.1);
-                  color: var(--color-brand-secondary);
-                  margin-top: 2px;
-                "
-              >
-                <i
-                  data-lucide="target"
-                  style="
-                    width: 16px;
-                    height: 16px;
-                    display: inline-block;
-                    vertical-align: middle;
-                    color: var(--icon-color-primary);
-                    stroke: var(--icon-color-primary);
-                  "
-                ></i>
+            <div class="stat-header u-display-flex u-justify-between u-align-center u-margin-bottom-16">
+              <span class="stat-title u-text-body-sm u-font-weight-500 u-text-secondary">Current Streak</span>
+              <div class="stat-icon stat-icon--warning u-radius-lg u-display-flex u-align-center u-justify-center">
+                <i data-lucide="target" class="icon-16 icon-inline icon-inline--primary"></i>
               </div>
             </div>
-            <div
-              class="stat-value u-text-display-lg u-font-weight-700 u-text-primary u-margin-bottom-8"
-            >
+            <div class="stat-value u-text-display-lg u-font-weight-700 u-text-primary u-margin-bottom-8">
               12<span class="u-text-body-lg u-text-secondary"> days</span>
             </div>
-            <div
-              class="stat-change positive u-display-flex u-align-center u-gap-4 u-text-body-sm u-text-success"
-            >
-              <span
-                ><i
-                  data-lucide="bar-chart-3"
-                  style="
-                    width: 16px;
-                    height: 16px;
-                    display: inline-block;
-                    vertical-align: middle;
-                    color: var(--icon-color-primary);
-                    stroke: var(--icon-color-primary);
-                  "
-                ></i
-              ></span>
+            <div class="stat-change positive u-display-flex u-align-center u-gap-4 u-text-body-sm u-text-success">
+              <span><i data-lucide="bar-chart-3" class="icon-16 icon-inline icon-inline--primary"></i></span>
               <span>Personal best streak!</span>
             </div>
-            <div class="u-text-body-xs u-text-secondary u-margin-top-8" style="opacity: 0.7;">
+            <div class="u-text-body-xs u-text-secondary u-margin-top-8 u-opacity-70">
               Record streak: 14 days
             </div>
           </div>
 
           <div class="stat-card u-radius-xl u-padding-24 u-shadow-sm">
-            <div
-              class="stat-header u-display-flex u-justify-between u-align-center u-margin-bottom-16"
-            >
-              <span
-                class="stat-title u-text-body-sm u-font-weight-500 u-text-secondary"
-                >Total Hours</span
-              >
-              <div
-                class="stat-icon u-radius-lg u-display-flex u-align-center u-justify-center"
-                style="
-                  background: rgba(16, 201, 107, 0.1);
-                  color: var(--color-brand-primary);
-                "
-              >
+            <div class="stat-header u-display-flex u-justify-between u-align-center u-margin-bottom-16">
+              <span class="stat-title u-text-body-sm u-font-weight-500 u-text-secondary">Total Hours</span>
+              <div class="stat-icon stat-icon--primary u-radius-lg u-display-flex u-align-center u-justify-center">
                 ⏱️
               </div>
             </div>
-            <div
-              class="stat-value u-text-display-lg u-font-weight-700 u-text-primary u-margin-bottom-8"
-            >
+            <div class="stat-value u-text-display-lg u-font-weight-700 u-text-primary u-margin-bottom-8">
               28.5<span class="u-text-body-lg u-text-secondary">h</span>
             </div>
-            <div
-              class="stat-change positive u-display-flex u-align-center u-gap-4 u-text-body-sm u-text-success"
-            >
+            <div class="stat-change positive u-display-flex u-align-center u-gap-4 u-text-body-sm u-text-success">
               <span>⬆️</span>
               <span>+4.2h this week</span>
             </div>
-            <div class="u-text-body-xs u-text-secondary u-margin-top-8" style="opacity: 0.7;">
+            <div class="u-text-body-xs u-text-secondary u-margin-top-8 u-opacity-70">
               Last week: 24.3h
             </div>
           </div>
 
           <div class="stat-card u-radius-xl u-padding-24 u-shadow-sm">
-            <div
-              class="stat-header u-display-flex u-justify-between u-align-center u-margin-bottom-16"
-            >
-              <span
-                class="stat-title u-text-body-sm u-font-weight-500 u-text-secondary"
-                >Next Session</span
-              >
-              <div
-                class="stat-icon u-radius-lg u-display-flex u-align-center u-justify-center"
-                style="
-                  background: rgba(137, 195, 0, 0.1);
-                  color: var(--color-brand-secondary);
-                "
-              >
+            <div class="stat-header u-display-flex u-justify-between u-align-center u-margin-bottom-16">
+              <span class="stat-title u-text-body-sm u-font-weight-500 u-text-secondary">Next Session</span>
+              <div class="stat-icon stat-icon--secondary u-radius-lg u-display-flex u-align-center u-justify-center">
                 🏃
               </div>
             </div>
-            <div
-              class="stat-value u-text-display-lg u-font-weight-700 u-text-primary u-margin-bottom-8"
-            >
+            <div class="stat-value u-text-display-lg u-font-weight-700 u-text-primary u-margin-bottom-8">
               Olympic Prep
             </div>
-            <div
-              class="stat-change u-display-flex u-align-center u-gap-4 u-text-body-sm u-text-secondary"
-            >
-              <span
-                ><i
-                  data-lucide="calendar"
-                  style="
-                    width: 16px;
-                    height: 16px;
-                    display: inline-block;
-                    vertical-align: middle;
-                    color: var(--icon-color-primary);
-                    stroke: var(--icon-color-primary);
-                  "
-                ></i
-              ></span>
+            <div class="stat-change u-display-flex u-align-center u-gap-4 u-text-body-sm u-text-secondary">
+              <span><i data-lucide="calendar" class="icon-16 icon-inline icon-inline--primary"></i></span>
               <span>Today at 3:00 PM</span>
             </div>
-            <div class="u-text-body-xs u-text-secondary u-margin-top-8" style="opacity: 0.7;">
+            <div class="u-text-body-xs u-text-secondary u-margin-top-8 u-opacity-70">
               Speed focus
             </div>
           </div>
         </div>
 
-    <!-- Weekly Schedule View -->
+        <!-- Weekly Schedule View -->
         <div class="weekly-schedule-section u-margin-bottom-64">
           <div class="section-header u-margin-bottom-24">
-            <h2
-              class="section-title u-text-heading-lg u-font-weight-700 u-text-primary"
-            >
-              <i
-                data-lucide="calendar"
-                style="
-                  width: 20px;
-                  height: 20px;
-                  display: inline-block;
-                  vertical-align: middle;
-                  color: var(--icon-color-primary);
-                  stroke: var(--icon-color-primary);
-                "
-              ></i>
+            <h2 class="section-title u-text-heading-lg u-font-weight-700 u-text-primary">
+              <i data-lucide="calendar" class="icon-20 icon-inline icon-inline--primary"></i>
               Weekly Training Schedule
             </h2>
-            <button 
+            <button
               class="btn btn-secondary btn-md"
               onclick="toggleScheduleView()"
             >
@@ -602,69 +461,37 @@
             </button>
           </div>
 
-          <div class="weekly-schedule-grid u-display-grid u-gap-16" id="weekly-schedule-grid">
+          <div
+            class="weekly-schedule-grid u-display-grid u-gap-16"
+            id="weekly-schedule-grid"
+          >
             <!-- Days will be populated by JavaScript -->
           </div>
         </div>
 
-    <!-- Training Grid -->
-        <div
-          class="training-grid u-display-grid u-gap-24 grid-1-1"
-        >
+        <!-- Training Grid -->
+        <div class="training-grid u-display-grid u-gap-24 grid-1-1">
           <!-- Workouts Section -->
           <div class="workouts-section">
             <div class="section-header u-margin-bottom-24">
-              <h2
-                class="section-title u-text-heading-lg u-font-weight-700 u-text-primary"
-              >
-                <i
-                  data-lucide="zap"
-                  style="
-                    width: 16px;
-                    height: 16px;
-                    display: inline-block;
-                    vertical-align: middle;
-                    color: var(--icon-color-primary);
-                    stroke: var(--icon-color-primary);
-                  "
-                ></i>
+              <h2 class="section-title u-text-heading-lg u-font-weight-700 u-text-primary">
+                <i data-lucide="zap" class="icon-16 icon-inline icon-inline--primary"></i>
                 Available Workouts
               </h2>
             </div>
 
-            <div
-              class="workout-card u-display-flex u-align-center u-gap-16 u-padding-20 u-bg-primary u-radius-lg u-border-secondary u-margin-bottom-16"
-              data-workout-type="speed"
-              style="
-                cursor: pointer;
-                border: 1px solid var(--color-border-secondary);
-                transition: all var(--motion-duration-normal);
-              "
-            >
-              <div
-                class="workout-icon u-width-56 u-height-56 u-radius-lg u-display-flex u-align-center u-justify-center"
-                style="
-                  background: var(--speed-training);
-                  color: var(--color-text-primary);
-                  font-size: 24px;
-                "
-              >
+            <div class="workout-card u-display-flex u-align-center u-gap-16 u-padding-20 u-bg-primary u-radius-lg u-border-secondary u-margin-bottom-16" data-workout-type="speed">
+              <div class="workout-icon workout-icon--speed u-width-56 u-height-56 u-radius-lg u-display-flex u-align-center u-justify-center">
                 🏃
               </div>
               <div class="workout-content u-flex-1">
-                <h3
-                  class="workout-title u-text-heading-md u-font-weight-600 u-text-primary u-margin-bottom-4"
-                >
+                <h3 class="workout-title u-text-heading-md u-font-weight-600 u-text-primary u-margin-bottom-4">
                   Speed Training
                 </h3>
-                <p
-                  class="workout-description u-text-body-sm u-text-secondary u-margin-bottom-8"
-                >
+                <p class="workout-description u-text-body-sm u-text-secondary u-margin-bottom-8">
                   Sprint intervals and agility drills
                 </p>
-                <div
-                  class="workout-meta u-display-flex u-gap-16 u-text-caption u-text-secondary"
-                >
+                <div class="workout-meta u-display-flex u-gap-16 u-text-caption u-text-secondary u-flex-wrap">
                   <span>⏱️ 45 min</span>
                   <span>🔥 High intensity</span>
                   <span>📍 Track required</span>
@@ -673,49 +500,18 @@
               <button class="btn btn-primary btn-md">Start</button>
             </div>
 
-            <div
-              class="workout-card u-display-flex u-align-center u-gap-16 u-padding-20 u-bg-primary u-radius-lg u-border-secondary u-margin-bottom-16"
-              data-workout-type="strength"
-              style="
-                cursor: pointer;
-                border: 1px solid var(--color-border-secondary);
-                transition: all var(--motion-duration-normal);
-              "
-            >
-              <div
-                class="workout-icon u-width-56 u-height-56 u-radius-lg u-display-flex u-align-center u-justify-center"
-                style="
-                  background: var(--strength-training);
-                  color: var(--color-text-primary);
-                  font-size: 24px;
-                "
-              >
-                <i
-                  data-lucide="dumbbell"
-                  style="
-                    width: 16px;
-                    height: 16px;
-                    display: inline-block;
-                    vertical-align: middle;
-                    color: var(--icon-color-primary);
-                    stroke: var(--icon-color-primary);
-                  "
-                ></i>
+            <div class="workout-card u-display-flex u-align-center u-gap-16 u-padding-20 u-bg-primary u-radius-lg u-border-secondary u-margin-bottom-16" data-workout-type="strength">
+              <div class="workout-icon workout-icon--strength u-width-56 u-height-56 u-radius-lg u-display-flex u-align-center u-justify-center">
+                <i data-lucide="dumbbell" class="icon-16 icon-inline icon-inline--primary"></i>
               </div>
               <div class="workout-content u-flex-1">
-                <h3
-                  class="workout-title u-text-heading-md u-font-weight-600 u-text-primary u-margin-bottom-4"
-                >
+                <h3 class="workout-title u-text-heading-md u-font-weight-600 u-text-primary u-margin-bottom-4">
                   Strength Training
                 </h3>
-                <p
-                  class="workout-description u-text-body-sm u-text-secondary u-margin-bottom-8"
-                >
+                <p class="workout-description u-text-body-sm u-text-secondary u-margin-bottom-8">
                   Core and functional strength
                 </p>
-                <div
-                  class="workout-meta u-display-flex u-gap-16 u-text-caption u-text-secondary"
-                >
+                <div class="workout-meta u-display-flex u-gap-16 u-text-caption u-text-secondary u-flex-wrap">
                   <span>⏱️ 60 min</span>
                   <span>🔥 Medium intensity</span>
                   <span>🏋️ Gym access</span>
@@ -724,39 +520,18 @@
               <button class="btn btn-primary btn-md">Start</button>
             </div>
 
-            <div
-              class="workout-card u-display-flex u-align-center u-gap-16 u-padding-20 u-bg-primary u-radius-lg u-border-secondary u-margin-bottom-16"
-              data-workout-type="agility"
-              style="
-                cursor: pointer;
-                border: 1px solid var(--color-border-secondary);
-                transition: all var(--motion-duration-normal);
-              "
-            >
-              <div
-                class="workout-icon u-width-56 u-height-56 u-radius-lg u-display-flex u-align-center u-justify-center"
-                style="
-                  background: var(--agility-training);
-                  color: var(--color-text-primary);
-                  font-size: 24px;
-                "
-              >
+            <div class="workout-card u-display-flex u-align-center u-gap-16 u-padding-20 u-bg-primary u-radius-lg u-border-secondary u-margin-bottom-16" data-workout-type="agility">
+              <div class="workout-icon workout-icon--agility u-width-56 u-height-56 u-radius-lg u-display-flex u-align-center u-justify-center">
                 🤸
               </div>
               <div class="workout-content u-flex-1">
-                <h3
-                  class="workout-title u-text-heading-md u-font-weight-600 u-text-primary u-margin-bottom-4"
-                >
+                <h3 class="workout-title u-text-heading-md u-font-weight-600 u-text-primary u-margin-bottom-4">
                   Agility Training
                 </h3>
-                <p
-                  class="workout-description u-text-body-sm u-text-secondary u-margin-bottom-8"
-                >
+                <p class="workout-description u-text-body-sm u-text-secondary u-margin-bottom-8">
                   Cone drills and quick movements
                 </p>
-                <div
-                  class="workout-meta u-display-flex u-gap-16 u-text-caption u-text-secondary"
-                >
+                <div class="workout-meta u-display-flex u-gap-16 u-text-caption u-text-secondary u-flex-wrap">
                   <span>⏱️ 30 min</span>
                   <span>🔥 Medium intensity</span>
                   <span>⚽ Field access</span>
@@ -765,39 +540,18 @@
               <button class="btn btn-primary btn-md">Start</button>
             </div>
 
-            <div
-              class="workout-card u-display-flex u-align-center u-gap-16 u-padding-20 u-bg-primary u-radius-lg u-border-secondary u-margin-bottom-16"
-              data-workout-type="endurance"
-              style="
-                cursor: pointer;
-                border: 1px solid var(--color-border-secondary);
-                transition: all var(--motion-duration-normal);
-              "
-            >
-              <div
-                class="workout-icon u-width-56 u-height-56 u-radius-lg u-display-flex u-align-center u-justify-center"
-                style="
-                  background: var(--endurance-training);
-                  color: var(--color-text-primary);
-                  font-size: 24px;
-                "
-              >
+            <div class="workout-card u-display-flex u-align-center u-gap-16 u-padding-20 u-bg-primary u-radius-lg u-border-secondary u-margin-bottom-16" data-workout-type="endurance">
+              <div class="workout-icon workout-icon--endurance u-width-56 u-height-56 u-radius-lg u-display-flex u-align-center u-justify-center">
                 ❤️
               </div>
               <div class="workout-content u-flex-1">
-                <h3
-                  class="workout-title u-text-heading-md u-font-weight-600 u-text-primary u-margin-bottom-4"
-                >
+                <h3 class="workout-title u-text-heading-md u-font-weight-600 u-text-primary u-margin-bottom-4">
                   Endurance Training
                 </h3>
-                <p
-                  class="workout-description u-text-body-sm u-text-secondary u-margin-bottom-8"
-                >
+                <p class="workout-description u-text-body-sm u-text-secondary u-margin-bottom-8">
                   Cardio and stamina building
                 </p>
-                <div
-                  class="workout-meta u-display-flex u-gap-16 u-text-caption u-text-secondary"
-                >
+                <div class="workout-meta u-display-flex u-gap-16 u-text-caption u-text-secondary u-flex-wrap">
                   <span>⏱️ 50 min</span>
                   <span>🔥 Low intensity</span>
                   <span>🏃 Anywhere</span>
@@ -806,200 +560,61 @@
               <button class="btn btn-primary btn-md">Start</button>
             </div>
 
-            <div
-              class="workout-card"
-              onclick="openOffseasonProgram()"
-              style="cursor: pointer; border: 2px solid var(--primary-500)"
-            >
-              <div
-                class="workout-icon"
-                style="
-                  background: linear-gradient(
-                    135deg,
-                    var(--primary-500),
-                    var(--primary-600)
-                  );
-                  color: var(--dark-text-primary);
-                "
-              >
-                <i
-                  data-lucide="trophy"
-                  style="
-                    width: 16px;
-                    height: 16px;
-                    display: inline-block;
-                    vertical-align: middle;
-                    color: var(--icon-color-primary);
-                    stroke: var(--icon-color-primary);
-                  "
-                ></i>
+            <div class="workout-card u-display-flex u-align-center u-gap-16 u-padding-20 u-bg-primary u-radius-lg u-border-brand-primary u-margin-bottom-16" onclick="openOffseasonProgram()">
+              <div class="workout-icon workout-icon--program u-width-56 u-height-56 u-radius-lg u-display-flex u-align-center u-justify-center">
+                <i data-lucide="trophy" class="icon-16 icon-inline icon-inline--primary"></i>
               </div>
-              <div class="workout-content">
-                <h3 class="workout-title">14-Week WR/DB Program</h3>
-                <p class="workout-description">
+              <div class="workout-content u-flex-1">
+                <h3 class="workout-title u-text-heading-md u-font-weight-600 u-text-primary u-margin-bottom-4">14-Week WR/DB Program</h3>
+                <p class="workout-description u-text-body-sm u-text-secondary u-margin-bottom-8">
                   Complete WR/DB performance optimization program
                 </p>
-                <div class="workout-meta">
-                  <span
-                    ><i
-                      data-lucide="calendar"
-                      style="
-                        width: 16px;
-                        height: 16px;
-                        display: inline-block;
-                        vertical-align: middle;
-                        color: var(--icon-color-primary);
-                        stroke: var(--icon-color-primary);
-                      "
-                    ></i>
-                    14 weeks</span
-                  >
-                  <span
-                    ><i
-                      data-lucide="target"
-                      style="
-                        width: 16px;
-                        height: 16px;
-                        display: inline-block;
-                        vertical-align: middle;
-                        color: var(--icon-color-primary);
-                        stroke: var(--icon-color-primary);
-                      "
-                    ></i>
-                    Olympic-level training</span
-                  >
-                  <span
-                    ><i
-                      data-lucide="zap"
-                      style="
-                        width: 16px;
-                        height: 16px;
-                        display: inline-block;
-                        vertical-align: middle;
-                        color: var(--icon-color-primary);
-                        stroke: var(--icon-color-primary);
-                      "
-                    ></i>
-                    Nov 2025 - Feb 2026</span
-                  >
+                <div class="workout-meta u-display-flex u-gap-16 u-text-caption u-text-secondary u-flex-wrap">
+                  <span><i data-lucide="calendar" class="icon-16 icon-inline icon-inline--primary"></i> 14 weeks</span>
+                  <span><i data-lucide="target" class="icon-16 icon-inline icon-inline--primary"></i> Olympic-level training</span>
+                  <span><i data-lucide="zap" class="icon-16 icon-inline icon-inline--primary"></i> Nov 2025 - Feb 2026</span>
                 </div>
               </div>
-              <button class="btn btn-primary btn-md">View Program</button>
+              <button class="btn btn-primary btn-md" onclick="openOffseasonProgram()">View Program</button>
             </div>
 
-            <div
-              class="workout-card"
-              onclick="openQBProgram()"
-              style="cursor: pointer; border: 2px solid var(--primary-500)"
-            >
-              <div
-                class="workout-icon"
-                style="
-                  background: linear-gradient(
-                    135deg,
-                    var(--primary-500),
-                    var(--primary-700)
-                  );
-                  color: var(--dark-text-primary);
-                "
-              >
-                <i
-                  data-lucide="target"
-                  style="
-                    width: 16px;
-                    height: 16px;
-                    display: inline-block;
-                    vertical-align: middle;
-                    color: var(--icon-color-primary);
-                    stroke: var(--icon-color-primary);
-                  "
-                ></i>
+            <div class="workout-card u-display-flex u-align-center u-gap-16 u-padding-20 u-bg-primary u-radius-lg u-border-brand-primary u-margin-bottom-16" onclick="openQBProgram()">
+              <div class="workout-icon workout-icon--program u-width-56 u-height-56 u-radius-lg u-display-flex u-align-center u-justify-center">
+                <i data-lucide="target" class="icon-16 icon-inline icon-inline--primary"></i>
               </div>
-              <div class="workout-content">
-                <h3 class="workout-title">14-Week Elite QB Program</h3>
-                <p class="workout-description">
+              <div class="workout-content u-flex-1">
+                <h3 class="workout-title u-text-heading-md u-font-weight-600 u-text-primary u-margin-bottom-4">14-Week Elite QB Program</h3>
+                <p class="workout-description u-text-body-sm u-text-secondary u-margin-bottom-8">
                   Complete quarterback development for 320 throws/weekend
                 </p>
-                <div class="workout-meta">
-                  <span
-                    ><i
-                      data-lucide="calendar"
-                      style="
-                        width: 16px;
-                        height: 16px;
-                        display: inline-block;
-                        vertical-align: middle;
-                        color: var(--icon-color-primary);
-                        stroke: var(--icon-color-primary);
-                      "
-                    ></i>
-                    14 weeks</span
-                  >
-                  <span
-                    ><i
-                      data-lucide="target"
-                      style="
-                        width: 16px;
-                        height: 16px;
-                        display: inline-block;
-                        vertical-align: middle;
-                        color: var(--icon-color-primary);
-                        stroke: var(--icon-color-primary);
-                      "
-                    ></i>
-                    320 throws capacity</span
-                  >
-                  <span
-                    ><i
-                      data-lucide="zap"
-                      style="
-                        width: 16px;
-                        height: 16px;
-                        display: inline-block;
-                        vertical-align: middle;
-                        color: var(--icon-color-primary);
-                        stroke: var(--icon-color-primary);
-                      "
-                    ></i>
-                    Dual-track training</span
-                  >
+                <div class="workout-meta u-display-flex u-gap-16 u-text-caption u-text-secondary u-flex-wrap">
+                  <span><i data-lucide="calendar" class="icon-16 icon-inline icon-inline--primary"></i> 14 weeks</span>
+                  <span><i data-lucide="target" class="icon-16 icon-inline icon-inline--primary"></i> 320 throws capacity</span>
+                  <span><i data-lucide="zap" class="icon-16 icon-inline icon-inline--primary"></i> Dual-track training</span>
                 </div>
               </div>
-              <button class="btn btn-primary btn-md">View Program</button>
+              <button class="btn btn-primary btn-md" onclick="openQBProgram()">View Program</button>
             </div>
 
             <!-- AI-Powered Position Training Section -->
             <div class="position-training-section u-margin-top-32">
               <div class="section-header u-margin-bottom-24">
                 <h2 class="section-title u-text-heading-lg u-font-weight-700 u-text-primary">
-                  <i data-lucide="brain" class="icon-20 icon-inline" style="color: var(--color-brand-primary);"></i>
+                  <i data-lucide="brain" class="icon-20 icon-inline icon-inline--primary"></i>
                   AI-Powered Position Training
                 </h2>
                 <p class="u-text-body-md u-text-secondary u-margin-bottom-0">
-                  Specialized training modules powered by machine learning for position-specific skill development
+                  Specialized training modules powered by machine learning for
+                  position-specific skill development
                 </p>
               </div>
 
-              <div class="u-display-grid u-gap-16" style="grid-template-columns: 1fr 1fr;">
+              <div
+                class="u-display-grid u-gap-16 position-training-grid"
+              >
                 <!-- QB Training Module -->
-                <div
-                  class="workout-card u-display-flex u-align-center u-gap-16 u-padding-20 u-bg-primary u-radius-lg u-border-secondary"
-                  onclick="openQBTrainingModule()"
-                  style="
-                    cursor: pointer;
-                    border: 2px solid var(--color-success);
-                    transition: all var(--motion-duration-normal);
-                    background: linear-gradient(135deg, rgba(16, 201, 107, 0.05), rgba(16, 201, 107, 0.1));
-                  "
-                >
-                  <div
-                    class="workout-icon u-width-56 u-height-56 u-radius-lg u-display-flex u-align-center u-justify-center"
-                    style="
-                      background: linear-gradient(135deg, var(--color-success), var(--color-success-600));
-                      color: white;
-                      font-size: 24px;
-                    "
-                  >
+                <div class="workout-card workout-card--ai-qb u-display-flex u-align-center u-gap-16 u-padding-20 u-radius-lg u-margin-bottom-16" onclick="openQBTrainingModule()">
+                  <div class="workout-icon u-width-56 u-height-56 u-radius-lg u-display-flex u-align-center u-justify-center">
                     🎯
                   </div>
                   <div class="workout-content u-flex-1">
@@ -1009,7 +624,7 @@
                     <p class="workout-description u-text-body-sm u-text-secondary u-margin-bottom-8">
                       Accuracy, decision-making, missed throws, pressure handling
                     </p>
-                    <div class="workout-meta u-display-flex u-gap-16 u-text-caption u-text-secondary">
+                    <div class="workout-meta u-display-flex u-gap-16 u-text-caption u-text-secondary u-flex-wrap">
                       <span>🤖 AI-Powered</span>
                       <span>🎯 4 Focus Areas</span>
                       <span>📊 Performance Analytics</span>
@@ -1019,24 +634,8 @@
                 </div>
 
                 <!-- DB Training Module -->
-                <div
-                  class="workout-card u-display-flex u-align-center u-gap-16 u-padding-20 u-bg-primary u-radius-lg u-border-secondary"
-                  onclick="openDBTrainingModule()"
-                  style="
-                    cursor: pointer;
-                    border: 2px solid var(--color-primary);
-                    transition: all var(--motion-duration-normal);
-                    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(59, 130, 246, 0.1));
-                  "
-                >
-                  <div
-                    class="workout-icon u-width-56 u-height-56 u-radius-lg u-display-flex u-align-center u-justify-center"
-                    style="
-                      background: linear-gradient(135deg, var(--color-primary), var(--color-primary-600));
-                      color: white;
-                      font-size: 24px;
-                    "
-                  >
+                <div class="workout-card workout-card--ai-db u-display-flex u-align-center u-gap-16 u-padding-20 u-radius-lg u-margin-bottom-16" onclick="openDBTrainingModule()">
+                  <div class="workout-icon u-width-56 u-height-56 u-radius-lg u-display-flex u-align-center u-justify-center">
                     🛡️
                   </div>
                   <div class="workout-content u-flex-1">
@@ -1046,7 +645,7 @@
                     <p class="workout-description u-text-body-sm u-text-secondary u-margin-bottom-8">
                       Flag pulls, coverage, 1v1 scenarios, route recognition
                     </p>
-                    <div class="workout-meta u-display-flex u-gap-16 u-text-caption u-text-secondary">
+                    <div class="workout-meta u-display-flex u-gap-16 u-text-caption u-text-secondary u-flex-wrap">
                       <span>🤖 AI-Powered</span>
                       <span>🛡️ 3 Core Skills</span>
                       <span>📈 Progress Tracking</span>
@@ -1056,25 +655,8 @@
                 </div>
 
                 <!-- Enhanced Analytics Link -->
-                <div
-                  class="workout-card u-display-flex u-align-center u-gap-16 u-padding-20 u-bg-primary u-radius-lg u-border-secondary"
-                  onclick="openEnhancedAnalytics()"
-                  style="
-                    cursor: pointer;
-                    border: 2px solid var(--color-warning);
-                    transition: all var(--motion-duration-normal);
-                    background: linear-gradient(135deg, rgba(249, 115, 22, 0.05), rgba(249, 115, 22, 0.1));
-                    grid-column: 1 / -1;
-                  "
-                >
-                  <div
-                    class="workout-icon u-width-56 u-height-56 u-radius-lg u-display-flex u-align-center u-justify-center"
-                    style="
-                      background: linear-gradient(135deg, var(--color-warning), var(--color-warning-600));
-                      color: white;
-                      font-size: 24px;
-                    "
-                  >
+                <div class="workout-card workout-card--ai-analytics u-display-flex u-align-center u-gap-16 u-padding-20 u-radius-lg u-margin-bottom-16" onclick="openEnhancedAnalytics()">
+                  <div class="workout-icon u-width-56 u-height-56 u-radius-lg u-display-flex u-align-center u-justify-center">
                     🧠
                   </div>
                   <div class="workout-content u-flex-1">
@@ -1084,7 +666,7 @@
                     <p class="workout-description u-text-body-sm u-text-secondary u-margin-bottom-8">
                       ML predictions, performance forecasting, injury prevention insights
                     </p>
-                    <div class="workout-meta u-display-flex u-gap-16 u-text-caption u-text-secondary">
+                    <div class="workout-meta u-display-flex u-gap-16 u-text-caption u-text-secondary u-flex-wrap">
                       <span>🧠 ML Predictions</span>
                       <span>📊 Real-time Analytics</span>
                       <span>🔮 Performance Forecasting</span>
@@ -1107,18 +689,8 @@
             <!-- Progress Section -->
             <div class="progress-section">
               <div class="section-header">
-                <h2 class="section-title">
-                  <i
-                    data-lucide="bar-chart-3"
-                    style="
-                      width: 16px;
-                      height: 16px;
-                      display: inline-block;
-                      vertical-align: middle;
-                      color: var(--icon-color-primary);
-                      stroke: var(--icon-color-primary);
-                    "
-                  ></i>
+                <h2 class="section-title u-text-heading-lg u-font-weight-700 u-text-primary">
+                  <i data-lucide="bar-chart-3" class="icon-16 icon-inline icon-inline--primary"></i>
                   Training Progress
                 </h2>
               </div>
@@ -1144,35 +716,16 @@
             <!-- Achievements Section -->
             <div class="achievements-section">
               <div class="section-header">
-                <h2 class="section-title">
-                  <i
-                    data-lucide="trophy"
-                    style="
-                      width: 16px;
-                      height: 16px;
-                      display: inline-block;
-                      vertical-align: middle;
-                      color: var(--icon-color-primary);
-                      stroke: var(--icon-color-primary);
-                    "
-                  ></i>
+                <h2 class="section-title u-text-heading-lg u-font-weight-700 u-text-primary">
+                  <i data-lucide="trophy" class="icon-16 icon-inline icon-inline--primary"></i>
                   Recent Achievements
                 </h2>
               </div>
 
               <div class="achievement-item">
-                <div
-                  class="achievement-icon"
-                  style="
-                    background: linear-gradient(
-                      135deg,
-                      var(--tertiary-400),
-                      var(--tertiary-500)
-                    );
-                  "
-                >
-                  🏃
-                </div>
+                  <div class="achievement-icon achievement-icon--tertiary">
+                    🏃
+                  </div>
                 <div class="achievement-content">
                   <div class="achievement-title">
                     Speed Demon
@@ -1185,28 +738,9 @@
               </div>
 
               <div class="achievement-item">
-                <div
-                  class="achievement-icon"
-                  style="
-                    background: linear-gradient(
-                      135deg,
-                      var(--success-400),
-                      var(--primary-500)
-                    );
-                  "
-                >
-                  <i
-                    data-lucide="dumbbell"
-                    style="
-                      width: 16px;
-                      height: 16px;
-                      display: inline-block;
-                      vertical-align: middle;
-                      color: var(--icon-color-primary);
-                      stroke: var(--icon-color-primary);
-                    "
-                  ></i>
-                </div>
+                  <div class="achievement-icon achievement-icon--success">
+                    <i data-lucide="dumbbell" class="icon-16 icon-inline icon-inline--primary"></i>
+                  </div>
                 <div class="achievement-content">
                   <div class="achievement-title">Strength Builder</div>
                   <div class="achievement-description">
@@ -1216,28 +750,9 @@
               </div>
 
               <div class="achievement-item">
-                <div
-                  class="achievement-icon"
-                  style="
-                    background: linear-gradient(
-                      135deg,
-                      var(--primary-400),
-                      var(--primary-600)
-                    );
-                  "
-                >
-                  <i
-                    data-lucide="target"
-                    style="
-                      width: 16px;
-                      height: 16px;
-                      display: inline-block;
-                      vertical-align: middle;
-                      color: var(--icon-color-primary);
-                      stroke: var(--icon-color-primary);
-                    "
-                  ></i>
-                </div>
+                  <div class="achievement-icon achievement-icon--primary">
+                    <i data-lucide="target" class="icon-16 icon-inline icon-inline--primary"></i>
+                  </div>
                 <div class="achievement-content">
                   <div class="achievement-title">Consistency King</div>
                   <div class="achievement-description">
@@ -1247,18 +762,9 @@
               </div>
 
               <div class="achievement-item">
-                <div
-                  class="achievement-icon"
-                  style="
-                    background: linear-gradient(
-                      135deg,
-                      var(--secondary-400),
-                      var(--secondary-600)
-                    );
-                  "
-                >
-                  🔥
-                </div>
+                  <div class="achievement-icon achievement-icon--secondary">
+                    🔥
+                  </div>
                 <div class="achievement-content">
                   <div class="achievement-title">Endurance Master</div>
                   <div class="achievement-description">

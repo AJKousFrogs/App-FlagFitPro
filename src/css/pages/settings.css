@@ -21,11 +21,12 @@
 
 /* Top Bar styles are now in src/css/components/header.css */
 .main-content {
-  margin-left: 64px;
-  margin-top: 70px;
+  margin-left: 250px; /* Sidebar width */
+  margin-top: 0; /* Removed - padding-top handles spacing */
   flex: 1;
-  padding: 32px;
+  padding: var(--space-8);
   background: var(--dark-bg-primary);
+  width: calc(100% - 250px); /* Prevent overflow */
 }
 
 .page-header {
@@ -33,6 +34,8 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: var(--space-8);
+  flex-wrap: wrap;
+  gap: var(--space-4);
 }
 
 .page-title-section h1 {
@@ -51,6 +54,7 @@
   display: grid;
   gap: var(--space-6);
   max-width: 800px;
+  width: 100%;
 }
 
 .settings-section {
@@ -59,6 +63,8 @@
   padding: var(--space-6);
   border: 1px solid var(--dark-border);
   box-shadow: var(--shadow-sm);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .section-header {
@@ -87,7 +93,9 @@
   justify-content: space-between;
   align-items: center;
   padding: var(--space-4) 0;
-  border: 1px solid var(--dark-border);
+  border-bottom: 1px solid var(--dark-border);
+  gap: var(--space-4);
+  flex-wrap: wrap;
 }
 
 .setting-item:last-child {
@@ -114,6 +122,13 @@
   border-radius: 24px;
   cursor: pointer;
   transition: background-color 0.3s;
+  flex-shrink: 0;
+  /* Ensure touch target is at least 44px */
+  min-width: 48px;
+  min-height: 24px;
+  /* Add padding for better touch target */
+  padding: 10px 0;
+  box-sizing: content-box;
 }
 
 .toggle-switch.active {
@@ -153,8 +168,10 @@
   padding: var(--space-3);
   border: 1px solid var(--dark-border);
   border-radius: var(--radius-lg);
-  font-size: var(--text-sm);
+  font-size: var(--text-base); /* 16px minimum for iOS zoom prevention */
+  min-height: 44px; /* Touch target compliance */
   transition: all var(--transition-fast);
+  box-sizing: border-box;
 }
 
 .form-input:focus {
@@ -163,14 +180,17 @@
   box-shadow: 0 0 0 3px rgba(16, 201, 107, 0.1);
 }
 
-.select-input {
+.select-input,
+.form-select {
   width: 100%;
   padding: var(--space-3);
   border: 1px solid var(--dark-border);
   border-radius: var(--radius-lg);
-  font-size: var(--text-sm);
+  font-size: var(--text-base); /* 16px minimum for iOS zoom prevention */
   background: var(--dark-text-primary);
   cursor: pointer;
+  min-height: 44px; /* Touch target compliance */
+  box-sizing: border-box;
 }
 
 .danger-zone {
@@ -192,6 +212,9 @@
   font-weight: var(--font-medium);
   cursor: pointer;
   transition: all var(--transition-fast);
+  min-height: 44px; /* Touch target compliance */
+  min-width: 44px;
+  box-sizing: border-box;
 }
 
 .btn-danger:hover {
@@ -199,6 +222,11 @@
   transform: translateY(-1px);
 }
 
+/* ================================================================
+   RESPONSIVE BREAKPOINTS
+   ================================================================ */
+
+/* Tablet and below (1024px and below) */
 @media (max-width: 1024px) {
   .sidebar {
     transform: translateX(-100%);
@@ -211,5 +239,136 @@
 
   .main-content {
     margin-left: 0;
+    width: 100%;
+    padding: var(--space-6);
+  }
+}
+
+/* Mobile (768px and below) */
+@media (max-width: 768px) {
+  .main-content {
+    padding: var(--space-4);
+    margin-top: 0;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
+  }
+
+  .page-header .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .page-title-section h1 {
+    font-size: var(--text-2xl);
+  }
+
+  .page-title-section p {
+    font-size: var(--text-base);
+  }
+
+  .settings-grid {
+    max-width: 100%;
+    gap: var(--space-4);
+  }
+
+  .settings-section {
+    padding: var(--space-4);
+  }
+
+  .section-header {
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .section-title {
+    font-size: var(--text-base);
+  }
+
+  .setting-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-3) 0;
+  }
+
+  .setting-info {
+    width: 100%;
+  }
+
+  .setting-info h3 {
+    font-size: var(--text-base);
+  }
+
+  .setting-info p {
+    font-size: var(--text-sm);
+  }
+
+  .toggle-switch {
+    align-self: flex-end;
+    margin-top: var(--space-2);
+  }
+
+  .form-group {
+    margin-bottom: var(--space-3);
+  }
+
+  .form-group label {
+    font-size: var(--text-base);
+  }
+
+    .form-input,
+  .form-select,
+  .select-input {
+    font-size: var(--text-base); /* Ensure 16px on mobile */
+    min-height: 44px;
+  }
+
+  .btn-danger {
+    width: 100%;
+    min-height: 44px;
+  }
+}
+
+/* Small mobile (480px and below) */
+@media (max-width: 480px) {
+  .main-content {
+    padding: var(--space-3);
+  }
+
+  .page-header {
+    margin-bottom: var(--space-4);
+  }
+
+  .page-title-section h1 {
+    font-size: var(--text-xl);
+    line-height: 1.2;
+  }
+
+  .settings-grid {
+    gap: var(--space-3);
+  }
+
+  .settings-section {
+    padding: var(--space-3);
+    border-radius: var(--radius-lg);
+  }
+
+  .section-header {
+    padding-bottom: var(--space-2);
+    margin-bottom: var(--space-3);
+  }
+
+  .setting-item {
+    padding: var(--space-2) 0;
+  }
+
+  .form-input,
+  .form-select,
+  .select-input {
+    padding: var(--space-2) var(--space-3);
   }
 }

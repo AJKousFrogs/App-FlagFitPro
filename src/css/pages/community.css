@@ -199,7 +199,7 @@ html[data-theme="light"] .nav-item.active {
   .community-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .sidebar-content {
     order: -1;
   }

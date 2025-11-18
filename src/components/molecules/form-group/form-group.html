@@ -26,6 +26,7 @@
     name="field2"
     class="form-input"
     placeholder="email@example.com"
+    autocomplete="email"
   />
   <small class="form-hint">We'll never share your email</small>
 </div>
@@ -33,7 +34,7 @@
 <!-- Form Group with Error -->
 <div class="form-group">
   <label for="field3" class="form-label required">Password</label>
-  <input type="password" id="field3" name="field3" class="form-input error" />
+  <input type="password" id="field3" name="field3" class="form-input error" autocomplete="current-password" />
   <div class="form-error" role="alert">
     Password must be at least 8 characters
   </div>
@@ -49,6 +50,7 @@
       name="first-name"
       class="form-input"
       required
+      autocomplete="given-name"
     />
   </div>
 
@@ -60,12 +62,13 @@
       name="last-name"
       class="form-input"
       required
+      autocomplete="family-name"
     />
   </div>
 
   <div class="form-group">
     <label for="email" class="form-label">Email</label>
-    <input type="email" id="email" name="email" class="form-input" required />
+    <input type="email" id="email" name="email" class="form-input" required autocomplete="email" />
   </div>
 
   <div

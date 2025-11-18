@@ -331,7 +331,8 @@
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
@@ -344,28 +345,27 @@
   .post {
     padding: var(--space-4);
   }
-  
+
   .post-header {
     gap: var(--space-3);
   }
-  
+
   .post-avatar {
     width: 40px;
     height: 40px;
   }
-  
+
   .engagement-actions {
     flex-direction: column;
   }
-  
+
   .action-btn {
     width: 100%;
     justify-content: center;
   }
-  
+
   .comment-avatar {
     width: 28px;
     height: 28px;
   }
 }
-

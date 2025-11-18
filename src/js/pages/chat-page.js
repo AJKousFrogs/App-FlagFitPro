@@ -14,7 +14,7 @@ import {
   getMessageActionsHtml,
   saveToStorage,
   getFromStorage,
-  announceToScreenReader
+  announceToScreenReader,
 } from "../utils/shared.js";
 
 let currentChannel = "team-general";
@@ -61,7 +61,9 @@ async function ensureChannelExists(channelName) {
   if (!channelsList) return;
 
   // Check if channel already exists
-  const existingChannel = channelsList.querySelector(`[data-channel="${channelName}"]`);
+  const existingChannel = channelsList.querySelector(
+    `[data-channel="${channelName}"]`,
+  );
   if (existingChannel) {
     return; // Channel already exists
   }
@@ -82,8 +84,9 @@ function createAIAssistantChannel() {
   if (!channelsList) return;
 
   // Find where to insert (after Direct Messages category or at end)
-  const dmCategory = Array.from(channelsList.querySelectorAll(".channel-category"))
-    .find(cat => cat.textContent.includes("Direct Messages"));
+  const dmCategory = Array.from(
+    channelsList.querySelectorAll(".channel-category"),
+  ).find((cat) => cat.textContent.includes("Direct Messages"));
 
   // Create channel item
   const channelItem = document.createElement("div");
@@ -144,7 +147,9 @@ function selectChannelByName(channelName) {
   } else {
     // Channel doesn't exist yet, wait a bit and try again
     setTimeout(() => {
-      const retryItem = document.querySelector(`[data-channel="${channelName}"]`);
+      const retryItem = document.querySelector(
+        `[data-channel="${channelName}"]`,
+      );
       if (retryItem) {
         selectChannel(retryItem);
       }
@@ -169,9 +174,9 @@ function cleanupChatPage() {
 }
 
 // Cleanup on page unload
-if (typeof window !== 'undefined') {
-  window.addEventListener('beforeunload', cleanupChatPage);
-  window.addEventListener('pagehide', cleanupChatPage);
+if (typeof window !== "undefined") {
+  window.addEventListener("beforeunload", cleanupChatPage);
+  window.addEventListener("pagehide", cleanupChatPage);
 }
 
 function setupMessageInput() {
@@ -254,15 +259,26 @@ function setupChannelSettings() {
   const userRole = authManager.getUserRole();
 
   // Check if user is a coach, moderator, or admin
-  const canCreateChannels = ['coach', 'moderator', 'admin', 'assistant_coach'].includes(userRole?.toLowerCase());
+  const canCreateChannels = [
+    "coach",
+    "moderator",
+    "admin",
+    "assistant_coach",
+  ].includes(userRole?.toLowerCase());
 
   if (canCreateChannels) {
     settingsBtn.addEventListener("click", openChannelSettings);
-    settingsBtn.setAttribute("aria-label", "Channel settings - Create new channel");
+    settingsBtn.setAttribute(
+      "aria-label",
+      "Channel settings - Create new channel",
+    );
   } else {
     // Disable button for regular players
     settingsBtn.disabled = true;
-    settingsBtn.setAttribute("aria-label", "Channel settings - Only coaches and moderators can create channels");
+    settingsBtn.setAttribute(
+      "aria-label",
+      "Channel settings - Only coaches and moderators can create channels",
+    );
     settingsBtn.style.opacity = "0.5";
     settingsBtn.style.cursor = "not-allowed";
   }
@@ -270,21 +286,24 @@ function setupChannelSettings() {
 
 function isModeratorOrCoach() {
   const userRole = authManager.getUserRole()?.toLowerCase();
-  return ['coach', 'moderator', 'admin', 'assistant_coach'].includes(userRole);
+  return ["coach", "moderator", "admin", "assistant_coach"].includes(userRole);
 }
 
 function openChannelSettings() {
   if (!isModeratorOrCoach()) {
-    AccessibilityUtils.announce('Only coaches and moderators can create channels.', 'polite');
+    AccessibilityUtils.announce(
+      "Only coaches and moderators can create channels.",
+      "polite",
+    );
     return;
   }
 
   // Create modal for channel creation
-  const modal = document.createElement('div');
-  modal.className = 'channel-create-modal';
-  modal.setAttribute('role', 'dialog');
-  modal.setAttribute('aria-labelledby', 'channel-modal-title');
-  modal.setAttribute('aria-modal', 'true');
+  const modal = document.createElement("div");
+  modal.className = "channel-create-modal";
+  modal.setAttribute("role", "dialog");
+  modal.setAttribute("aria-labelledby", "channel-modal-title");
+  modal.setAttribute("aria-modal", "true");
 
   modal.innerHTML = `
     <div class="channel-modal-overlay" onclick="closeChannelModal()"></div>
@@ -364,7 +383,7 @@ function openChannelSettings() {
 }
 
 function closeChannelModal() {
-  const modal = document.querySelector('.channel-create-modal');
+  const modal = document.querySelector(".channel-create-modal");
   if (modal) {
     modal.remove();
   }
@@ -377,29 +396,40 @@ async function handleChannelCreation(e) {
   e.preventDefault();
 
   const form = e.target;
-  const channelName = document.getElementById("channelName").value.trim().toLowerCase();
-  const channelDescription = document.getElementById("channelDescription").value.trim();
+  const channelName = document
+    .getElementById("channelName")
+    .value.trim()
+    .toLowerCase();
+  const channelDescription = document
+    .getElementById("channelDescription")
+    .value.trim();
   const channelType = document.getElementById("channelType").value;
 
   if (!channelName) {
-    AccessibilityUtils.announce('Channel name is required.', 'polite');
+    AccessibilityUtils.announce("Channel name is required.", "polite");
     return;
   }
 
   // Validate channel name format
   if (!/^[a-z0-9-]+$/.test(channelName)) {
-    AccessibilityUtils.announce('Channel name can only contain lowercase letters, numbers, and hyphens.', 'polite');
+    AccessibilityUtils.announce(
+      "Channel name can only contain lowercase letters, numbers, and hyphens.",
+      "polite",
+    );
     return;
   }
 
   // Check if channel already exists
-  const existingChannels = document.querySelectorAll('.channel-item');
-  const channelExists = Array.from(existingChannels).some(item =>
-    item.dataset.channel === channelName
+  const existingChannels = document.querySelectorAll(".channel-item");
+  const channelExists = Array.from(existingChannels).some(
+    (item) => item.dataset.channel === channelName,
   );
 
   if (channelExists) {
-    AccessibilityUtils.announce(`Channel "${channelName}" already exists.`, 'polite');
+    AccessibilityUtils.announce(
+      `Channel "${channelName}" already exists.`,
+      "polite",
+    );
     return;
   }
 
@@ -411,36 +441,40 @@ async function handleChannelCreation(e) {
       name: channelName,
       description: channelDescription,
       type: channelType,
-      createdBy: user?.email || 'unknown',
+      createdBy: user?.email || "unknown",
       createdAt: new Date().toISOString(),
-      members: [user?.email || 'unknown']
+      members: [user?.email || "unknown"],
     };
 
     // Save to localStorage
-    const channels = JSON.parse(localStorage.getItem('chat_channels') || '[]');
+    const channels = JSON.parse(localStorage.getItem("chat_channels") || "[]");
     channels.push(newChannel);
-    localStorage.setItem('chat_channels', JSON.stringify(channels));
+    localStorage.setItem("chat_channels", JSON.stringify(channels));
 
     // Add channel to UI
     addChannelToSidebar(newChannel);
 
     // Announce success
-    AccessibilityUtils.announce(`Channel "${channelName}" created successfully.`, 'polite');
+    AccessibilityUtils.announce(
+      `Channel "${channelName}" created successfully.`,
+      "polite",
+    );
 
     // Close modal
     closeChannelModal();
 
     // Switch to new channel
     setTimeout(() => {
-      const newChannelItem = document.querySelector(`[data-channel="${channelName}"]`);
+      const newChannelItem = document.querySelector(
+        `[data-channel="${channelName}"]`,
+      );
       if (newChannelItem) {
         selectChannel(newChannelItem);
       }
     }, 100);
-
   } catch (error) {
-    logger.error('Failed to create channel:', error);
-    ErrorHandler.handleError(error, 'Failed to create channel');
+    logger.error("Failed to create channel:", error);
+    ErrorHandler.handleError(error, "Failed to create channel");
   }
 }
 
@@ -449,14 +483,16 @@ function addChannelToSidebar(channel) {
   if (!channelsList) return;
 
   // Find where to insert (after Team Channels category)
-  const teamChannelsCategory = channelsList.querySelector('.channel-category');
+  const teamChannelsCategory = channelsList.querySelector(".channel-category");
   let insertAfter = teamChannelsCategory;
 
   // Find the last team channel item
-  const teamChannels = Array.from(channelsList.querySelectorAll('.channel-item'));
-  const lastTeamChannel = teamChannels.find(item => {
+  const teamChannels = Array.from(
+    channelsList.querySelectorAll(".channel-item"),
+  );
+  const lastTeamChannel = teamChannels.find((item) => {
     const nextSibling = item.nextElementSibling;
-    return nextSibling && nextSibling.classList.contains('channel-category');
+    return nextSibling && nextSibling.classList.contains("channel-category");
   });
 
   if (lastTeamChannel) {
@@ -464,18 +500,18 @@ function addChannelToSidebar(channel) {
   }
 
   // Create channel item
-  const channelItem = document.createElement('div');
-  channelItem.className = 'channel-item';
+  const channelItem = document.createElement("div");
+  channelItem.className = "channel-item";
   channelItem.dataset.channel = channel.name;
-  channelItem.setAttribute('role', 'button');
-  channelItem.setAttribute('tabindex', '0');
-  channelItem.setAttribute('aria-label', `Channel: ${channel.name}`);
+  channelItem.setAttribute("role", "button");
+  channelItem.setAttribute("tabindex", "0");
+  channelItem.setAttribute("aria-label", `Channel: ${channel.name}`);
 
   channelItem.innerHTML = `
     <span class="channel-icon">#</span>
     <div class="channel-info">
       <div class="channel-name">${channel.name}</div>
-      ${channel.description ? `<div class="channel-preview">${escapeHtml(channel.description)}</div>` : ''}
+      ${channel.description ? `<div class="channel-preview">${escapeHtml(channel.description)}</div>` : ""}
     </div>
   `;
 
@@ -506,27 +542,30 @@ async function startGoogleMeetCall() {
     const channelName = currentChannel;
 
     // Use Google Meet's instant meeting creation URL
-    const meetUrl = 'https://meet.google.com/new';
+    const meetUrl = "https://meet.google.com/new";
 
     // Create a meeting name based on channel
-    const meetingName = `${channelName.replace(/-/g, ' ')} - ${new Date().toLocaleDateString()}`;
+    const meetingName = `${channelName.replace(/-/g, " ")} - ${new Date().toLocaleDateString()}`;
 
     // Post meeting info to chat
     const meetingMessage = `🎥 Starting Google Meet call for ${meetingName}\n\nClick the link to join: ${meetUrl}`;
 
     // Add meeting message to UI
-    addMessageToUI({
-      author: user?.email || 'system',
-      authorName: user?.name || 'System',
-      text: meetingMessage,
-      timestamp: new Date().toISOString(),
-    }, false);
+    addMessageToUI(
+      {
+        author: user?.email || "system",
+        authorName: user?.name || "System",
+        text: meetingMessage,
+        timestamp: new Date().toISOString(),
+      },
+      false,
+    );
 
     // Save to storage
     saveMessageToStorage({
       channel: currentChannel,
-      author: user?.email || 'system',
-      authorName: user?.name || 'System',
+      author: user?.email || "system",
+      authorName: user?.name || "System",
       text: meetingMessage,
       timestamp: new Date().toISOString(),
     });
@@ -534,27 +573,32 @@ async function startGoogleMeetCall() {
     // Open Google Meet in new window/tab
     const meetWindow = window.open(
       meetUrl,
-      '_blank',
-      'width=1280,height=720,menubar=no,toolbar=no,location=no,status=no'
+      "_blank",
+      "width=1280,height=720,menubar=no,toolbar=no,location=no,status=no",
     );
 
     if (!meetWindow) {
       // If popup blocked, try direct navigation
-      AccessibilityUtils.announce('Popup blocked. Opening Google Meet in new tab.', 'polite');
-      window.open(meetUrl, '_blank');
+      AccessibilityUtils.announce(
+        "Popup blocked. Opening Google Meet in new tab.",
+        "polite",
+      );
+      window.open(meetUrl, "_blank");
     }
 
     // Announce to screen readers
-    announceToScreenReader(`Google Meet call started. Meeting link posted to chat.`, 'polite');
+    announceToScreenReader(
+      `Google Meet call started. Meeting link posted to chat.`,
+      "polite",
+    );
 
     scrollToBottom("messagesContainer");
-
   } catch (error) {
-    logger.error('Failed to start Google Meet call:', error);
-    ErrorHandler.handleError(error, 'Failed to start video call');
+    logger.error("Failed to start Google Meet call:", error);
+    ErrorHandler.handleError(error, "Failed to start video call");
 
     // Fallback: Open Google Meet directly
-    window.open('https://meet.google.com/new', '_blank');
+    window.open("https://meet.google.com/new", "_blank");
   }
 }
 
@@ -587,7 +631,9 @@ function selectChannel(item) {
 
 async function loadMessages() {
   try {
-    const response = await apiClient.get(`/api/chat/messages/${currentChannel}`);
+    const response = await apiClient.get(
+      `/api/chat/messages/${currentChannel}`,
+    );
 
     if (response.success && response.data.messages) {
       updateMessagesContainer(response.data.messages);
@@ -638,7 +684,10 @@ function updateMessagesContainer(messages) {
     const messageDiv = document.createElement("div");
     messageDiv.className = `message ${isOwn ? "own" : ""} ${groupedClass}`;
     messageDiv.setAttribute("role", "article");
-    messageDiv.setAttribute("aria-label", `Message from ${isOwn ? "You" : msg.authorName} at ${formatTime(msg.timestamp)}`);
+    messageDiv.setAttribute(
+      "aria-label",
+      `Message from ${isOwn ? "You" : msg.authorName} at ${formatTime(msg.timestamp)}`,
+    );
 
     messageDiv.innerHTML = `
       <div class="message-avatar">${getInitials(msg.authorName || msg.author)}</div>
@@ -795,10 +844,7 @@ function loadMessagesFromStorage() {
     container.innerHTML = "";
 
     storedMessages.forEach((msg) => {
-      addMessageToUI(
-        msg,
-        msg.author === authManager.getCurrentUser()?.email,
-      );
+      addMessageToUI(msg, msg.author === authManager.getCurrentUser()?.email);
     });
 
     scrollToBottom("messagesContainer");
@@ -827,11 +873,13 @@ function simulateTeamResponse(originalMessage) {
   ];
 
   // Select random response that makes sense
-  const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+  const randomResponse =
+    responses[Math.floor(Math.random() * responses.length)];
 
   // Add typing indicator first
   const typingIndicator = document.getElementById("typingIndicator");
-  typingIndicator.querySelector("span").textContent = `${randomResponse.author} is typing`;
+  typingIndicator.querySelector("span").textContent =
+    `${randomResponse.author} is typing`;
   typingIndicator.classList.add("visible");
 
   setTimeout(() => {
@@ -873,9 +921,14 @@ function addMessageToUI(message, isOwn = false) {
   const messageDiv = document.createElement("div");
   messageDiv.className = `message ${isOwn ? "own" : ""} ${shouldGroup ? "grouped" : ""}`;
   messageDiv.setAttribute("role", "article");
-  messageDiv.setAttribute("aria-label", `Message from ${isOwn ? "You" : message.authorName} at ${formatTime(message.timestamp)}`);
+  messageDiv.setAttribute(
+    "aria-label",
+    `Message from ${isOwn ? "You" : message.authorName} at ${formatTime(message.timestamp)}`,
+  );
 
-  const statusHtml = isOwn ? getMessageStatusHtml(message.status || "sent") : "";
+  const statusHtml = isOwn
+    ? getMessageStatusHtml(message.status || "sent")
+    : "";
   const actionsHtml = getMessageActionsHtml(isOwn);
 
   messageDiv.innerHTML = `
@@ -896,7 +949,6 @@ function addMessageToUI(message, isOwn = false) {
   // Initialize Lucide icons
   initializeLucideIcons(messageDiv);
 }
-
 
 function simulateNewMessages() {
   if (Math.random() < 0.3) {
@@ -944,8 +996,6 @@ function simulateTyping() {
   }
 }
 
-
-
 function updateMessageStatus(status) {
   const messages = document.querySelectorAll(".message.own");
   if (messages.length > 0) {
@@ -955,13 +1005,13 @@ function updateMessageStatus(status) {
       const statusIcons = {
         sent: "check",
         delivered: "check-check",
-        read: "check-check"
+        read: "check-check",
       };
 
       const statusClasses = {
         sent: "status-sent",
         delivered: "status-delivered",
-        read: "status-read"
+        read: "status-read",
       };
 
       const icon = statusIcons[status] || "check";
@@ -976,6 +1026,57 @@ function updateMessageStatus(status) {
     }
   }
 }
+
+// Global function exports for onclick handlers
+window.toggleSidebar = function () {
+  // Use the universal mobile nav instance if available
+  if (window.universalMobileNav) {
+    window.universalMobileNav.toggleSidebar();
+  } else if (window.FlagFitApp?.components?.mobileNav) {
+    window.FlagFitApp.components.mobileNav.toggleSidebar();
+  } else {
+    // Fallback implementation
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.querySelector(".menu-scrim");
+    const toggle = document.getElementById("mobile-menu-toggle");
+    
+    if (sidebar) {
+      const isOpen = sidebar.classList.contains("is-open");
+      if (isOpen) {
+        sidebar.classList.remove("is-open");
+        overlay?.classList.remove("is-visible");
+        toggle?.setAttribute("aria-expanded", "false");
+        document.body.style.overflow = "";
+      } else {
+        sidebar.classList.add("is-open");
+        overlay?.classList.add("is-visible");
+        toggle?.setAttribute("aria-expanded", "true");
+        document.body.style.overflow = "hidden";
+      }
+    }
+  }
+};
+
+window.closeMenu = function () {
+  // Alias for toggleSidebar to close menu
+  if (window.universalMobileNav) {
+    window.universalMobileNav.closeSidebar();
+  } else if (window.FlagFitApp?.components?.mobileNav) {
+    window.FlagFitApp.components.mobileNav.closeSidebar();
+  } else {
+    // Fallback implementation
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.querySelector(".menu-scrim");
+    const toggle = document.getElementById("mobile-menu-toggle");
+    
+    if (sidebar) {
+      sidebar.classList.remove("is-open");
+      overlay?.classList.remove("is-visible");
+      toggle?.setAttribute("aria-expanded", "false");
+      document.body.style.overflow = "";
+    }
+  }
+};
 
 // Initialize when page loads
 document.addEventListener("DOMContentLoaded", initChatPage);

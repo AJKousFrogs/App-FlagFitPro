@@ -8,27 +8,27 @@ This comprehensive biomechanics database provides evidence-based movement analys
 
 ### Key Research Studies
 
-1. **Kiesel et al. (2007)** - *North American Journal of Sports Physical Therapy*
+1. **Kiesel et al. (2007)** - _North American Journal of Sports Physical Therapy_
    - FMS score <14 = 4x injury risk
    - FMS screening = 23% injury reduction with intervention
    - Sample: 433 professional football players
 
-2. **Plisky et al. (2006)** - *Journal of Orthopedic & Sports Physical Therapy*
+2. **Plisky et al. (2006)** - _Journal of Orthopedic & Sports Physical Therapy_
    - Y-Balance asymmetry >4cm = 2.5x injury risk
    - Composite reach <94% = 6.5x higher injury risk in basketball
    - Intervention reduces risk by 32%
 
-3. **Morin et al. (2015)** - *Scandinavian Journal of Medicine & Science in Sports*
+3. **Morin et al. (2015)** - _Scandinavian Journal of Medicine & Science in Sports_
    - Force-velocity profiling for sprint optimization
    - Individualized training based on profile = 7.2% sprint improvement
    - Validated with 97 athletes across multiple sports
 
-4. **Hewett et al. (1999)** - *The American Journal of Sports Medicine*
+4. **Hewett et al. (1999)** - _The American Journal of Sports Medicine_
    - Neuromuscular training = 88% reduction in ACL injuries
    - Landing mechanics screening identifies high-risk athletes
    - Sample: 1,263 female athletes, 6-week intervention
 
-5. **Delaney et al. (2016)** - *British Journal of Sports Medicine*
+5. **Delaney et al. (2016)** - _British Journal of Sports Medicine_
    - Change of direction deficit (CODD) predicts performance
    - Cutting mechanics training = 12% COD improvement
    - Asymmetry >10% = injury risk factor
@@ -698,17 +698,18 @@ function calculateBiomechanicalInjuryRisk(userId) {
 
   // Research-based weights
   const weights = {
-    fms: 0.30,              // Kiesel et al. (2007)
-    yBalance: 0.25,         // Plisky et al. (2006)
-    sprintAsymmetry: 0.15,  // Delaney et al. (2016)
-    codAsymmetry: 0.15,     // Hewitt et al. (1999)
-    landingMechanics: 0.15  // Combined research
+    fms: 0.3, // Kiesel et al. (2007)
+    yBalance: 0.25, // Plisky et al. (2006)
+    sprintAsymmetry: 0.15, // Delaney et al. (2016)
+    codAsymmetry: 0.15, // Hewitt et al. (1999)
+    landingMechanics: 0.15, // Combined research
   };
 
   // Calculate individual risk scores (0-1 scale)
-  const fmsRisk = fms.totalScore < 14 ?
-    (14 - fms.totalScore) / 14 * 4.0 : // 4x risk multiplier
-    0;
+  const fmsRisk =
+    fms.totalScore < 14
+      ? ((14 - fms.totalScore) / 14) * 4.0 // 4x risk multiplier
+      : 0;
 
   const yBalanceRisk = calculateYBalanceRisk(yBalance);
   /* Based on Plisky (2006):
@@ -716,31 +717,33 @@ function calculateBiomechanicalInjuryRisk(userId) {
   - Composite <94% = 6.5x risk
   */
 
-  const sprintAsymmetryRisk = sprintAsymmetry.contactTimeAsymmetry > 10 ?
-    sprintAsymmetry.contactTimeAsymmetry / 20 :
-    0;
+  const sprintAsymmetryRisk =
+    sprintAsymmetry.contactTimeAsymmetry > 10
+      ? sprintAsymmetry.contactTimeAsymmetry / 20
+      : 0;
 
-  const codAsymmetryRisk = codAsymmetry.turnTimeAsymmetry > 10 ?
-    codAsymmetry.turnTimeAsymmetry / 20 :
-    0;
+  const codAsymmetryRisk =
+    codAsymmetry.turnTimeAsymmetry > 10
+      ? codAsymmetry.turnTimeAsymmetry / 20
+      : 0;
 
   const landingRisk = landingMechanics.aclRiskScore;
 
   // Weighted composite score
-  const compositeRisk = (
+  const compositeRisk =
     fmsRisk * weights.fms +
     yBalanceRisk * weights.yBalance +
     sprintAsymmetryRisk * weights.sprintAsymmetry +
     codAsymmetryRisk * weights.codAsymmetry +
-    landingRisk * weights.landingMechanics
-  );
+    landingRisk * weights.landingMechanics;
 
   // Expected injury risk reduction with intervention
   // Based on Kiesel (2007): 23% reduction
   // Based on Plisky (2006): 32% reduction
-  const expectedReduction = compositeRisk > 0.4 ?
-    0.28 : // 28% average reduction for high-risk
-    0.15;  // 15% for moderate-risk
+  const expectedReduction =
+    compositeRisk > 0.4
+      ? 0.28 // 28% average reduction for high-risk
+      : 0.15; // 15% for moderate-risk
 
   return {
     overallRisk: compositeRisk,
@@ -750,11 +753,11 @@ function calculateBiomechanicalInjuryRisk(userId) {
       yBalance: yBalanceRisk,
       sprintAsymmetry: sprintAsymmetryRisk,
       codAsymmetry: codAsymmetryRisk,
-      landing: landingRisk
+      landing: landingRisk,
     },
     topRiskFactors: identifyTopRiskFactors(compositeRisk),
     expectedReduction: expectedReduction,
-    interventionPriority: prioritizeInterventions(compositeRisk)
+    interventionPriority: prioritizeInterventions(compositeRisk),
   };
 }
 
@@ -783,7 +786,8 @@ function calculateYBalanceRisk(yBalance) {
  * Based on Morin et al. (2015)
  */
 function analyzeForceVelocityProfile(sprintBiomechanics) {
-  const { theoreticalMaxForce, theoreticalMaxVelocity, maxPowerOutput } = sprintBiomechanics;
+  const { theoreticalMaxForce, theoreticalMaxVelocity, maxPowerOutput } =
+    sprintBiomechanics;
 
   // Calculate optimal F-V relationship for flag football
   // (More velocity-oriented than traditional football)
@@ -791,56 +795,63 @@ function analyzeForceVelocityProfile(sprintBiomechanics) {
   const optimalVelocity = 9.5; // m/s (typical for speed athletes)
 
   // Calculate deficits
-  const forceDeficit = Math.max(0, (optimalForce - theoreticalMaxForce) / optimalForce);
-  const velocityDeficit = Math.max(0, (optimalVelocity - theoreticalMaxVelocity) / optimalVelocity);
+  const forceDeficit = Math.max(
+    0,
+    (optimalForce - theoreticalMaxForce) / optimalForce,
+  );
+  const velocityDeficit = Math.max(
+    0,
+    (optimalVelocity - theoreticalMaxVelocity) / optimalVelocity,
+  );
 
   // Determine profile type
   let profileType, primaryFocus, trainingMethods;
 
-  if (forceDeficit > 0.15 && velocityDeficit <= 0.10) {
-    profileType = 'force_deficient';
-    primaryFocus = 'force_production';
+  if (forceDeficit > 0.15 && velocityDeficit <= 0.1) {
+    profileType = "force_deficient";
+    primaryFocus = "force_production";
     trainingMethods = [
-      'heavy_squats_85-95%',
-      'sled_pushes_heavy',
-      'hill_sprints_steep',
-      'power_cleans',
-      'weighted_jumps'
+      "heavy_squats_85-95%",
+      "sled_pushes_heavy",
+      "hill_sprints_steep",
+      "power_cleans",
+      "weighted_jumps",
     ];
-  } else if (velocityDeficit > 0.15 && forceDeficit <= 0.10) {
-    profileType = 'velocity_deficient';
-    primaryFocus = 'velocity_development';
+  } else if (velocityDeficit > 0.15 && forceDeficit <= 0.1) {
+    profileType = "velocity_deficient";
+    primaryFocus = "velocity_development";
     trainingMethods = [
-      'overspeed_towing',
-      'assisted_sprints_downhill',
-      'high_velocity_lifts_30-50%',
-      'plyometrics_reactive',
-      'flying_sprints'
+      "overspeed_towing",
+      "assisted_sprints_downhill",
+      "high_velocity_lifts_30-50%",
+      "plyometrics_reactive",
+      "flying_sprints",
     ];
   } else if (forceDeficit > 0.15 && velocityDeficit > 0.15) {
-    profileType = 'balanced_deficient';
-    primaryFocus = 'concurrent_development';
+    profileType = "balanced_deficient";
+    primaryFocus = "concurrent_development";
     trainingMethods = [
-      'mixed_intensity_training',
-      'contrast_training',
-      'maximal_strength_and_speed',
-      'varied_sprint_distances'
+      "mixed_intensity_training",
+      "contrast_training",
+      "maximal_strength_and_speed",
+      "varied_sprint_distances",
     ];
   } else {
-    profileType = 'well_balanced';
-    primaryFocus = 'maintenance_refinement';
+    profileType = "well_balanced";
+    primaryFocus = "maintenance_refinement";
     trainingMethods = [
-      'technique_refinement',
-      'position_specific_drills',
-      'maintenance_lifting',
-      'sport_specific_speed'
+      "technique_refinement",
+      "position_specific_drills",
+      "maintenance_lifting",
+      "sport_specific_speed",
     ];
   }
 
   // Expected improvement (based on Morin et al. 2015)
-  const improvementPotential = forceDeficit > 0.20 || velocityDeficit > 0.20 ?
-    0.072 : // 7.2% with significant deficit
-    0.035;  // 3.5% with minor deficit
+  const improvementPotential =
+    forceDeficit > 0.2 || velocityDeficit > 0.2
+      ? 0.072 // 7.2% with significant deficit
+      : 0.035; // 3.5% with minor deficit
 
   return {
     profileType,
@@ -849,7 +860,7 @@ function analyzeForceVelocityProfile(sprintBiomechanics) {
     primaryFocus,
     trainingMethods,
     improvementPotential,
-    timeline: '8-12 weeks'
+    timeline: "8-12 weeks",
   };
 }
 ```
@@ -870,39 +881,39 @@ function prioritizeCorrectiveInterventions(userId) {
   // FMS Score <14 = Highest priority (4x injury risk)
   if (fms.totalScore < 14) {
     interventions.push({
-      priority: 'CRITICAL',
-      issue: 'FMS score below injury threshold',
+      priority: "CRITICAL",
+      issue: "FMS score below injury threshold",
       riskMultiplier: 4.0,
       focus: fms.identifiedDysfunctions,
       exercises: fms.correctiveExercises,
-      expectedTimeline: '4-6 weeks',
-      expectedRiskReduction: 0.23 // 23% based on Kiesel (2007)
+      expectedTimeline: "4-6 weeks",
+      expectedRiskReduction: 0.23, // 23% based on Kiesel (2007)
     });
   }
 
   // Y-Balance asymmetry >4cm = High priority (2.5x risk)
   if (yBalance.compositeAsymmetryPct > 4) {
     interventions.push({
-      priority: 'HIGH',
-      issue: 'Y-Balance asymmetry exceeds threshold',
+      priority: "HIGH",
+      issue: "Y-Balance asymmetry exceeds threshold",
       riskMultiplier: 2.5,
       focus: yBalance.limitingDirections,
       exercises: yBalance.correctiveExercises,
-      expectedTimeline: '3-4 weeks',
-      expectedRiskReduction: 0.32 // 32% based on Plisky (2006)
+      expectedTimeline: "3-4 weeks",
+      expectedRiskReduction: 0.32, // 32% based on Plisky (2006)
     });
   }
 
   // Sprint asymmetry >10% = Moderate priority
   if (asymmetries.sprintContactTimeAsymmetry > 10) {
     interventions.push({
-      priority: 'MODERATE',
-      issue: 'Sprint mechanics asymmetry',
+      priority: "MODERATE",
+      issue: "Sprint mechanics asymmetry",
       riskMultiplier: 1.5,
-      focus: ['unilateral_strength', 'movement_symmetry'],
-      exercises: ['single_leg_squats', 'single_leg_rdl', 'unilateral_plyos'],
-      expectedTimeline: '4-6 weeks',
-      expectedRiskReduction: 0.15
+      focus: ["unilateral_strength", "movement_symmetry"],
+      exercises: ["single_leg_squats", "single_leg_rdl", "unilateral_plyos"],
+      expectedTimeline: "4-6 weeks",
+      expectedRiskReduction: 0.15,
     });
   }
 
@@ -917,8 +928,13 @@ function prioritizeCorrectiveInterventions(userId) {
 
   return {
     interventions,
-    totalExpectedRiskReduction: interventions.reduce((sum, i) => sum + i.expectedRiskReduction, 0),
-    estimatedTotalTimeline: Math.max(...interventions.map(i => parseInt(i.expectedTimeline)))
+    totalExpectedRiskReduction: interventions.reduce(
+      (sum, i) => sum + i.expectedRiskReduction,
+      0,
+    ),
+    estimatedTotalTimeline: Math.max(
+      ...interventions.map((i) => parseInt(i.expectedTimeline)),
+    ),
   };
 }
 ```
@@ -961,7 +977,7 @@ const biomechanicsMLFeatures = {
 
   // Composite Scores
   biomechanical_injury_risk: 0.28,
-  movement_quality_score: 0.76
+  movement_quality_score: 0.76,
 };
 
 // Expected ML model improvements:
@@ -1009,21 +1025,25 @@ const biomechanicsMLFeatures = {
 **€300-€600 Sport-Science Tooling Budget**:
 
 **Essential Assessments (€200-€300)**:
+
 - FMS certification + kit: €100-€150
 - Y-Balance Test kit: €100-€150
 - ROI: 23-32% injury reduction = huge cost savings
 
 **Performance Enhancement (€100-€200)**:
+
 - Timing gates for sprint analysis: €150-€200
 - High-speed camera (smartphone app): €0-€50
 - ROI: 7.2% sprint improvement + personalized training
 
 **Advanced (€200+)**:
+
 - Force plates (entry-level): €500+ (community shared resource)
 - Wearable IMU sensors: €200-€400
 - Video analysis software: €50-€100/year
 
 **Total System ROI**:
+
 - Injury prevention: €2,000-€5,000 saved per injury avoided
 - Performance optimization: 5-10% overall improvement
 - Personalized training: Eliminates wasted training time

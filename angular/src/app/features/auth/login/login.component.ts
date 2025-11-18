@@ -1,19 +1,29 @@
-import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { CardModule } from 'primeng/card';
-import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
-import { CheckboxModule } from 'primeng/checkbox';
-import { MessageModule } from 'primeng/message';
-import { MessageService } from 'primeng/api';
-import { ToastModule } from 'primeng/toast';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { AuthService } from '../../../core/services/auth.service';
+import {
+  Component,
+  inject,
+  signal,
+  ChangeDetectionStrategy,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { Router, RouterModule } from "@angular/router";
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from "@angular/forms";
+import { CardModule } from "primeng/card";
+import { ButtonModule } from "primeng/button";
+import { InputTextModule } from "primeng/inputtext";
+import { CheckboxModule } from "primeng/checkbox";
+import { MessageModule } from "primeng/message";
+import { MessageService } from "primeng/api";
+import { ToastModule } from "primeng/toast";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { AuthService } from "../../../core/services/auth.service";
 
 @Component({
-  selector: 'app-login',
+  selector: "app-login",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
@@ -25,7 +35,7 @@ import { AuthService } from '../../../core/services/auth.service';
     InputTextModule,
     CheckboxModule,
     MessageModule,
-    ToastModule
+    ToastModule,
   ],
   providers: [MessageService],
   template: `
@@ -40,7 +50,8 @@ import { AuthService } from '../../../core/services/auth.service';
         </ng-template>
 
         <div class="alert alert-info mb-4" *ngIf="isDemoMode">
-          <strong>Demo Mode:</strong> This login accepts any email and password for testing purposes.
+          <strong>Demo Mode:</strong> This login accepts any email and password
+          for testing purposes.
         </div>
 
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
@@ -55,9 +66,10 @@ import { AuthService } from '../../../core/services/auth.service';
               formControlName="email"
               placeholder="Enter your email"
               [class.ng-invalid]="isFieldInvalid('email')"
-              autocomplete="email">
+              autocomplete="email"
+            />
             <small class="p-error" *ngIf="isFieldInvalid('email')">
-              {{ getFieldError('email') }}
+              {{ getFieldError("email") }}
             </small>
           </div>
 
@@ -70,18 +82,24 @@ import { AuthService } from '../../../core/services/auth.service';
               formControlName="password"
               placeholder="Enter your password"
               [class.ng-invalid]="isFieldInvalid('password')"
-              autocomplete="current-password">
+              autocomplete="current-password"
+            />
             <small class="p-error" *ngIf="isFieldInvalid('password')">
-              {{ getFieldError('password') }}
+              {{ getFieldError("password") }}
             </small>
           </div>
 
           <div class="login-form-options mb-4">
             <div class="flex align-items-center">
-              <p-checkbox formControlName="remember" inputId="remember"></p-checkbox>
+              <p-checkbox
+                formControlName="remember"
+                inputId="remember"
+              ></p-checkbox>
               <label for="remember" class="ml-2">Remember me</label>
             </div>
-            <a [routerLink]="['/reset-password']" class="text-primary">Forgot your password?</a>
+            <a [routerLink]="['/reset-password']" class="text-primary"
+              >Forgot your password?</a
+            >
           </div>
 
           <p-button
@@ -90,7 +108,8 @@ import { AuthService } from '../../../core/services/auth.service';
             icon="pi pi-lock"
             [loading]="isLoading()"
             [disabled]="loginForm.invalid"
-            styleClass="w-full">
+            styleClass="w-full"
+          >
           </p-button>
         </form>
 
@@ -98,93 +117,97 @@ import { AuthService } from '../../../core/services/auth.service';
           <span>Or</span>
         </div>
 
-        <a [routerLink]="['/register']" class="login-create-link">create a new account</a>
+        <a [routerLink]="['/register']" class="login-create-link"
+          >create a new account</a
+        >
       </p-card>
     </div>
   `,
-  styles: [`
-    .login-page {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: var(--space-6);
-      background: var(--surface-secondary);
-    }
+  styles: [
+    `
+      .login-page {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding: var(--space-6);
+        background: var(--surface-secondary);
+      }
 
-    .login-card {
-      width: 100%;
-      max-width: 400px;
-    }
+      .login-card {
+        width: 100%;
+        max-width: 400px;
+      }
 
-    .login-logo {
-      text-align: center;
-      margin-bottom: var(--space-4);
-      color: var(--color-brand-primary);
-      font-size: 3rem;
-    }
+      .login-logo {
+        text-align: center;
+        margin-bottom: var(--space-4);
+        color: var(--color-brand-primary);
+        font-size: 3rem;
+      }
 
-    .login-title {
-      text-align: center;
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--color-brand-primary);
-      margin-bottom: var(--space-6);
-    }
+      .login-title {
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--color-brand-primary);
+        margin-bottom: var(--space-6);
+      }
 
-    .login-form-options {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+      .login-form-options {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
 
-    .login-divider {
-      text-align: center;
-      position: relative;
-      color: var(--text-secondary);
-    }
+      .login-divider {
+        text-align: center;
+        position: relative;
+        color: var(--text-secondary);
+      }
 
-    .login-divider::before,
-    .login-divider::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      width: 45%;
-      height: 1px;
-      background: var(--p-surface-200);
-    }
+      .login-divider::before,
+      .login-divider::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        width: 45%;
+        height: 1px;
+        background: var(--p-surface-200);
+      }
 
-    .login-divider::before {
-      left: 0;
-    }
+      .login-divider::before {
+        left: 0;
+      }
 
-    .login-divider::after {
-      right: 0;
-    }
+      .login-divider::after {
+        right: 0;
+      }
 
-    .login-create-link {
-      display: block;
-      text-align: center;
-      color: var(--color-brand-primary);
-      font-weight: 600;
-      text-decoration: none;
-    }
+      .login-create-link {
+        display: block;
+        text-align: center;
+        color: var(--color-brand-primary);
+        font-weight: 600;
+        text-decoration: none;
+      }
 
-    .alert {
-      padding: var(--space-3);
-      border-radius: var(--p-border-radius);
-    }
+      .alert {
+        padding: var(--space-3);
+        border-radius: var(--p-border-radius);
+      }
 
-    .alert-info {
-      background: var(--p-primary-50);
-      color: var(--p-primary-700);
-    }
+      .alert-info {
+        background: var(--p-primary-50);
+        color: var(--p-primary-700);
+      }
 
-    .required::after {
-      content: ' *';
-      color: var(--color-warning);
-    }
-  `]
+      .required::after {
+        content: " *";
+        color: var(--color-warning);
+      }
+    `,
+  ],
 })
 export class LoginComponent {
   private fb = inject(FormBuilder);
@@ -194,25 +217,26 @@ export class LoginComponent {
 
   loginForm: FormGroup;
   isLoading = signal(false);
-  csrfToken = signal('');
+  csrfToken = signal("");
   isDemoMode = false;
 
   constructor() {
     this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(8)]],
-      remember: [false]
+      email: ["", [Validators.required, Validators.email]],
+      password: ["", [Validators.required, Validators.minLength(8)]],
+      remember: [false],
     });
 
     // Check if demo mode
-    if (typeof window !== 'undefined') {
-      this.isDemoMode = window.location.hostname === 'localhost' || 
-                        window.location.hostname === '127.0.0.1';
-      
+    if (typeof window !== "undefined") {
+      this.isDemoMode =
+        window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1";
+
       if (this.isDemoMode) {
         this.loginForm.patchValue({
-          email: 'test@flagfitpro.com',
-          password: 'TestDemo123!'
+          email: "test@flagfitpro.com",
+          password: "TestDemo123!",
         });
       }
     }
@@ -224,7 +248,7 @@ export class LoginComponent {
   ngOnInit(): void {
     // Redirect if already authenticated
     if (this.authService.checkAuth()) {
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(["/dashboard"]);
     }
   }
 
@@ -235,16 +259,16 @@ export class LoginComponent {
 
   getFieldError(fieldName: string): string {
     const field = this.loginForm.get(fieldName);
-    if (field?.hasError('required')) {
+    if (field?.hasError("required")) {
       return `${fieldName} is required`;
     }
-    if (field?.hasError('email')) {
-      return 'Please enter a valid email address';
+    if (field?.hasError("email")) {
+      return "Please enter a valid email address";
     }
-    if (field?.hasError('minlength')) {
-      return 'Password must be at least 8 characters';
+    if (field?.hasError("minlength")) {
+      return "Password must be at least 8 characters";
     }
-    return '';
+    return "";
   }
 
   onSubmit(): void {
@@ -256,35 +280,35 @@ export class LoginComponent {
     this.isLoading.set(true);
     const credentials = this.loginForm.value;
 
-    this.authService.login(credentials)
+    this.authService
+      .login(credentials)
       .pipe(takeUntilDestroyed())
       .subscribe({
         next: (response: any) => {
           if (response.success) {
             this.messageService.add({
-              severity: 'success',
-              summary: 'Success',
-              detail: 'Login successful!'
+              severity: "success",
+              summary: "Success",
+              detail: "Login successful!",
             });
-            this.router.navigate(['/dashboard']);
+            this.router.navigate(["/dashboard"]);
           } else {
             this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: response.error || 'Invalid email or password'
+              severity: "error",
+              summary: "Error",
+              detail: response.error || "Invalid email or password",
             });
           }
           this.isLoading.set(false);
         },
         error: (error: any) => {
           this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: error.message || 'Login failed. Please try again.'
+            severity: "error",
+            summary: "Error",
+            detail: error.message || "Login failed. Please try again.",
           });
           this.isLoading.set(false);
-        }
+        },
       });
   }
 }
-

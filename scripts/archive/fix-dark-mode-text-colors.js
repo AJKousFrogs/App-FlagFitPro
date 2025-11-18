@@ -102,7 +102,7 @@ function fixDarkTextColors(content) {
   // Fix buttons with dark text
   updated = updated.replace(
     /style="([^"]*?)background[^"]*?color:\s*#([1-4][0-9a-fA-F]{5}|[1-9a-fA-F][0-9a-fA-F]{2})([^"]*?)"/gi,
-    (match, before, color, after) => {
+    (match, before, color, _after) => {
       const upperColor = `#${color.toUpperCase()}`;
       if (
         darkTextColors[upperColor] &&

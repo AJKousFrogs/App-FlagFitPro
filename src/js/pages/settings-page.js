@@ -1,27 +1,24 @@
 // Settings Page JavaScript Module
-import { authManager } from '../auth-manager.js';
-import { REAL_TEAM_DATA, getAllPlayers } from '../../real-team-data.js';
-import { 
+import { authManager } from "../../auth-manager.js";
+import { getAllPlayers } from "../../real-team-data.js";
+import { logger } from "../../logger.js";
+import {
   initializeLucideIcons,
-  validateEmail,
-  validateRequired,
-  validateLength,
   showFieldError,
   showFieldSuccess,
   clearFieldState,
-  saveToStorage,
   getFromStorage,
-  announceToScreenReader
-} from '../utils/shared.js';
+  announceToScreenReader,
+} from "../utils/shared.js";
 
 // Initialize settings page
 document.addEventListener("DOMContentLoaded", async function () {
   // Initialize Lucide icons
   initializeLucideIcons();
-  
+
   // Wait for auth manager to initialize
   await authManager.waitForInit();
-  
+
   // Check authentication - allow demo access in development
   const isDevelopment =
     window.location.hostname === "localhost" ||
@@ -29,17 +26,13 @@ document.addEventListener("DOMContentLoaded", async function () {
   const isAuthenticated = authManager.isAuthenticated();
 
   if (!isAuthenticated && !isDevelopment) {
-    logger.debug(
-      "User not authenticated, redirecting to login"
-    );
+    logger.debug("User not authenticated, redirecting to login");
     window.location.href = "/login.html";
     return;
   }
 
   if (!isAuthenticated && isDevelopment) {
-    logger.debug(
-      "Development mode: Loading settings without authentication"
-    );
+    logger.debug("Development mode: Loading settings without authentication");
   }
 
   // Load user settings
@@ -49,17 +42,21 @@ document.addEventListener("DOMContentLoaded", async function () {
   initializeWithRealPlayerData();
 
   // Add real-time validation
-  document.getElementById("displayName")?.addEventListener("input", function() {
-    validateNameField(this.value);
-  });
+  document
+    .getElementById("displayName")
+    ?.addEventListener("input", function () {
+      validateNameField(this.value);
+    });
 
-  document.getElementById("email")?.addEventListener("input", function() {
+  document.getElementById("email")?.addEventListener("input", function () {
     validateEmailField(this.value);
   });
 
-  document.getElementById("newPassword")?.addEventListener("input", function() {
-    validatePasswordField(this.value);
-  });
+  document
+    .getElementById("newPassword")
+    ?.addEventListener("input", function () {
+      validatePasswordField(this.value);
+    });
 });
 
 function loadUserSettings() {
@@ -69,7 +66,7 @@ function loadUserSettings() {
     // Populate form fields with user data
     const displayNameField = document.getElementById("displayName");
     const emailField = document.getElementById("email");
-    
+
     if (displayNameField) {
       displayNameField.value = user.name || "";
     }
@@ -123,9 +120,11 @@ function loadUserSettings() {
 
   // Load profile data from user_profile (takes precedence)
   try {
-    const profileData = JSON.parse(localStorage.getItem('user_profile') || '{}');
-    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-    
+    const profileData = JSON.parse(
+      localStorage.getItem("user_profile") || "{}",
+    );
+    const userData = JSON.parse(localStorage.getItem("userData") || "{}");
+
     // Load position (prefer profileData)
     if (profileData.position) {
       const positionField = document.getElementById("position");
@@ -133,24 +132,26 @@ function loadUserSettings() {
         positionField.value = profileData.position;
       }
     }
-    
+
     // Load jersey number
     if (profileData.jerseyNumber || profileData.jersey_number) {
       const jerseyInput = document.getElementById("jerseyNumber");
       if (jerseyInput) {
-        jerseyInput.value = profileData.jerseyNumber || profileData.jersey_number;
+        jerseyInput.value =
+          profileData.jerseyNumber || profileData.jersey_number;
       }
     }
-    
+
     // Load experience level
     if (profileData.experienceLevel || profileData.experience_level) {
       const expInput = document.getElementById("experienceLevel");
       if (expInput) {
-        expInput.value = profileData.experienceLevel || profileData.experience_level;
+        expInput.value =
+          profileData.experienceLevel || profileData.experience_level;
       }
     }
   } catch (error) {
-    logger.warn('Error loading profile data:', error);
+    logger.warn("Error loading profile data:", error);
   }
 }
 
@@ -191,7 +192,10 @@ function validateEmailField(email) {
     showFieldSuccess("email");
     return true;
   } else {
-    showFieldError("email", "Please enter a valid email address (e.g., user@example.com)");
+    showFieldError(
+      "email",
+      "Please enter a valid email address (e.g., user@example.com)",
+    );
     return false;
   }
 }
@@ -203,14 +207,20 @@ function validatePasswordField(password) {
   }
 
   if (password.length < 8) {
-    showFieldError("newPassword", "Password must be at least 8 characters long.");
+    showFieldError(
+      "newPassword",
+      "Password must be at least 8 characters long.",
+    );
     return false;
   }
 
   const passwordRegex =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
   if (!passwordRegex.test(password)) {
-    showFieldError("newPassword", "Password must contain uppercase, lowercase, number, and special character (@$!%*?&).");
+    showFieldError(
+      "newPassword",
+      "Password must contain uppercase, lowercase, number, and special character (@$!%*?&).",
+    );
     return false;
   }
 
@@ -234,11 +244,61 @@ function validateNameField(name) {
 }
 
 // Global function exports for onclick handlers
+window.toggleSidebar = function () {
+  // Use the universal mobile nav instance if available
+  if (window.universalMobileNav) {
+    window.universalMobileNav.toggleSidebar();
+  } else if (window.FlagFitApp?.components?.mobileNav) {
+    window.FlagFitApp.components.mobileNav.toggleSidebar();
+  } else {
+    // Fallback implementation
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.querySelector(".menu-scrim");
+    const toggle = document.getElementById("mobile-menu-toggle");
+    
+    if (sidebar) {
+      const isOpen = sidebar.classList.contains("is-open");
+      if (isOpen) {
+        sidebar.classList.remove("is-open");
+        overlay?.classList.remove("is-visible");
+        toggle?.setAttribute("aria-expanded", "false");
+        document.body.style.overflow = "";
+      } else {
+        sidebar.classList.add("is-open");
+        overlay?.classList.add("is-visible");
+        toggle?.setAttribute("aria-expanded", "true");
+        document.body.style.overflow = "hidden";
+      }
+    }
+  }
+};
+
+window.closeMenu = function () {
+  // Alias for toggleSidebar to close menu
+  if (window.universalMobileNav) {
+    window.universalMobileNav.closeSidebar();
+  } else if (window.FlagFitApp?.components?.mobileNav) {
+    window.FlagFitApp.components.mobileNav.closeSidebar();
+  } else {
+    // Fallback implementation
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.querySelector(".menu-scrim");
+    const toggle = document.getElementById("mobile-menu-toggle");
+    
+    if (sidebar) {
+      sidebar.classList.remove("is-open");
+      overlay?.classList.remove("is-visible");
+      toggle?.setAttribute("aria-expanded", "false");
+      document.body.style.overflow = "";
+    }
+  }
+};
+
 window.toggleSetting = function (element) {
   element.classList.toggle("active");
 };
 
-window.saveSettings = async function () {
+window.saveSettings = async function (event) {
   // Collect all settings
   const settings = {
     displayName: document.getElementById("displayName").value,
@@ -287,33 +347,38 @@ window.saveSettings = async function () {
   // Also save profile data to user_profile for profile page
   const profileData = {
     position: document.getElementById("position").value,
-    jerseyNumber: parseInt(document.getElementById("jerseyNumber")?.value || 0) || null,
+    jerseyNumber:
+      parseInt(document.getElementById("jerseyNumber")?.value || 0) || null,
     experienceLevel: document.getElementById("experienceLevel")?.value || null,
     updatedAt: new Date().toISOString(),
   };
 
   // Get existing profile data
-  const existingProfile = JSON.parse(localStorage.getItem('user_profile') || '{}');
+  const existingProfile = JSON.parse(
+    localStorage.getItem("user_profile") || "{}",
+  );
   const updatedProfile = { ...existingProfile, ...profileData };
-  localStorage.setItem('user_profile', JSON.stringify(updatedProfile));
+  localStorage.setItem("user_profile", JSON.stringify(updatedProfile));
 
   // Update userData name if displayName changed
-  const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+  const userData = JSON.parse(localStorage.getItem("userData") || "{}");
   if (settings.displayName && settings.displayName !== userData.name) {
     userData.name = settings.displayName;
-    localStorage.setItem('userData', JSON.stringify(userData));
+    localStorage.setItem("userData", JSON.stringify(userData));
   }
 
   // Try to save to API
   try {
-    const { apiClient } = await import('./src/api-config.js');
-    await apiClient.put('/api/user/profile', updatedProfile);
+    const { apiClient } = await import("./src/api-config.js");
+    await apiClient.put("/api/user/profile", updatedProfile);
   } catch (error) {
-    logger.warn('Could not save to API, saved locally:', error);
+    logger.warn("Could not save to API, saved locally:", error);
   }
 
   // Show success message
-  const button = event.target;
+  const button =
+    event?.target || document.querySelector('button[onclick*="saveSettings"]');
+  if (!button) return;
   const originalText = button.innerHTML;
   button.innerHTML =
     '<span><i data-lucide="check-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span> Saved!';
@@ -390,7 +455,7 @@ function showDeleteAccountModal() {
             <div style="margin-bottom: 1.5rem;">
                 <label style="display: block; margin-bottom: 0.5rem; font-weight: var(--font-weight-medium, 500);">Type "DELETE" to confirm:</label>
                 <input type="text" id="deleteConfirmation" style="width: 100%; padding: 0.75rem; border: 2px solid var(--error); border-radius: 6px; font-family: monospace;"
-                       placeholder="Type DELETE here" oninput="validateDeleteInput(this)">
+                       placeholder="Type DELETE here" autocomplete="off" oninput="validateDeleteInput(this)">
             </div>
             <div style="display: flex; gap: 1rem; justify-content: flex-end;">
                 <button onclick="this.closest('div').remove()" style="padding: 0.75rem 1.5rem; border: 1px solid var(--dark-border); background: var(--dark-text-primary); border-radius: 6px; cursor: pointer;">Cancel</button>
@@ -452,9 +517,7 @@ window.confirmAccountDeletion = function () {
       );
       window.location.href = "/index.html";
     } catch (error) {
-      alert(
-        "Error deleting account. Please try again or contact support.",
-      );
+      alert("Error deleting account. Please try again or contact support.");
       deleteButton.innerHTML = "Delete Account";
       deleteButton.disabled = false;
     }

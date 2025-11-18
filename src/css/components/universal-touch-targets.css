@@ -10,17 +10,17 @@
 
 :root {
   /* Touch target sizes - following iOS and Android guidelines */
-  --touch-target-min: 44px;         /* iOS minimum */
+  --touch-target-min: 44px; /* iOS minimum */
   --touch-target-comfortable: 48px; /* Android/comfortable size */
-  --touch-target-large: 56px;       /* Primary actions */
-  --touch-spacing-min: 8px;         /* Minimum spacing between targets */
-  
+  --touch-target-large: 56px; /* Primary actions */
+  --touch-spacing-min: 8px; /* Minimum spacing between targets */
+
   /* Button hierarchy */
   --button-height-sm: var(--touch-target-min);
   --button-height-md: var(--touch-target-comfortable);
   --button-height-lg: var(--touch-target-large);
   --button-height-xl: 64px;
-  
+
   /* Interactive element padding */
   --interactive-padding-sm: 8px 12px;
   --interactive-padding-md: 12px 16px;
@@ -43,44 +43,44 @@ input[type="reset"],
   /* Ensure minimum touch target size */
   min-height: var(--touch-target-min);
   min-width: var(--touch-target-min);
-  
+
   /* Add comfortable padding */
   padding: var(--interactive-padding-md);
-  
+
   /* Ensure elements are touchable */
   cursor: pointer;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
-  
+
   /* Smooth interactions */
   transition: all var(--motion-duration-fast, 200ms) ease;
-  
+
   /* Prevent text selection on buttons */
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
-  
+
   /* Ensure proper display for inline elements */
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--spacing-2, 8px);
-  
+
   /* Prevent shrinking */
   flex-shrink: 0;
-  
+
   /* Typography */
   font-size: var(--font-size-base, 16px);
   font-weight: var(--font-weight-medium, 500);
   text-decoration: none;
   text-align: center;
-  
+
   /* Border and background */
   border-radius: var(--radius-md, 8px);
   border: 1px solid transparent;
   background: transparent;
   color: inherit;
-  
+
   /* Box sizing */
   box-sizing: border-box;
 }
@@ -454,13 +454,13 @@ tr.clickable td {
   select {
     min-height: var(--touch-target-comfortable);
   }
-  
+
   /* Increase spacing between touch targets */
   .btn + .btn,
   .nav-item + .nav-item {
     margin-left: var(--touch-spacing-min);
   }
-  
+
   /* Enhanced visual feedback for touch */
   button:active,
   .btn:active,
@@ -468,7 +468,7 @@ tr.clickable td {
     transform: scale(0.98);
     background-color: var(--surface-secondary, #f8fafc);
   }
-  
+
   /* Remove hover states that don't work on touch */
   .btn-primary:hover {
     background: var(--color-brand-primary);
@@ -526,7 +526,7 @@ button:disabled,
 
 .btn.loading::after,
 .btn-loading::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -550,15 +550,15 @@ button:disabled,
   select {
     border-width: 2px;
   }
-  
+
   .btn-primary {
     border: 2px solid var(--color-brand-primary);
   }
-  
+
   .btn-secondary {
     border: 2px solid var(--text-primary, #171717);
   }
-  
+
   button:focus-visible,
   .btn:focus-visible {
     outline-width: 3px;
@@ -576,18 +576,18 @@ button:disabled,
   .card-interactive {
     transition: none;
   }
-  
+
   button:active,
   .btn:active {
     transform: none;
   }
-  
+
   .btn.loading::after {
     animation: none;
   }
-  
+
   .btn.loading::after {
-    content: '⏳';
+    content: "⏳";
     border: none;
     background: none;
     font-size: 16px;
@@ -604,20 +604,20 @@ button:disabled,
     color: var(--text-primary-dark, #ffffff);
     border-color: var(--border-default-dark, #404040);
   }
-  
+
   .btn-secondary:hover {
     background: var(--surface-secondary-dark, #2a2a2a);
   }
-  
+
   .nav-item {
     color: var(--text-secondary-dark, #a3a3a3);
   }
-  
+
   .nav-item:hover {
     background: var(--surface-secondary-dark, #2a2a2a);
     color: var(--text-primary-dark, #ffffff);
   }
-  
+
   .dropdown-item:hover,
   .menu-item:hover {
     background: var(--surface-secondary-dark, #2a2a2a);

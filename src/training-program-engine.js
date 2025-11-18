@@ -2,6 +2,7 @@
 // Handles workout progression, phase transitions, and exercise variations
 
 import { WEEKLY_SCHEDULES } from "./training-program-data.js";
+import { logger } from "./logger.js";
 
 export class TrainingProgramEngine {
   constructor() {

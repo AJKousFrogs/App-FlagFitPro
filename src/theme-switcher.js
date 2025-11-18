@@ -5,32 +5,38 @@
 let logger;
 try {
   // Try to import logger if available
-  if (typeof window !== 'undefined' && window.logger) {
+  if (typeof window !== "undefined" && window.logger) {
     logger = window.logger;
   } else {
     // Create a simple logger fallback
     logger = {
       debug: (...args) => {
-        if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+        if (
+          typeof window !== "undefined" &&
+          window.location.hostname === "localhost"
+        ) {
           console.log(...args);
         }
       },
       info: (...args) => console.log(...args),
       warn: (...args) => console.warn(...args),
-      error: (...args) => console.error(...args)
+      error: (...args) => console.error(...args),
     };
   }
 } catch (e) {
   // Fallback logger if import fails
   logger = {
     debug: (...args) => {
-      if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+      if (
+        typeof window !== "undefined" &&
+        window.location.hostname === "localhost"
+      ) {
         console.log(...args);
       }
     },
     info: (...args) => console.log(...args),
     warn: (...args) => console.warn(...args),
-    error: (...args) => console.error(...args)
+    error: (...args) => console.error(...args),
   };
 }
 
@@ -42,8 +48,10 @@ class ThemeSwitcher {
 
   init() {
     // Wait for DOM to be ready if needed
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', () => this.initializeTheme());
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", () =>
+        this.initializeTheme(),
+      );
     } else {
       this.initializeTheme();
     }
@@ -250,7 +258,7 @@ let themeSwitcher;
 if (typeof window !== "undefined") {
   // Since script is loaded with defer, DOM is already ready
   // But check just in case it's not
-  if (document.readyState === 'loading') {
+  if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => {
       if (!themeSwitcher) {
         themeSwitcher = new ThemeSwitcher();

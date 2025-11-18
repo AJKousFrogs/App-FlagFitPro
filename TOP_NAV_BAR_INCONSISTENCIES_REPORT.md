@@ -1,6 +1,7 @@
 # Top Navigation Bar Inconsistencies Report
 
 ## Overview
+
 This report documents inconsistencies found across different pages' top navigation bar implementations compared to the standard template (`src/components/organisms/top-bar/top-bar.html`).
 
 ---
@@ -8,9 +9,11 @@ This report documents inconsistencies found across different pages' top navigati
 ## 1. Mobile Menu Toggle Button
 
 ### Issue
+
 The mobile menu toggle button is missing on several pages.
 
 ### Standard Template
+
 ```html
 <button
   id="mobile-menu-toggle"
@@ -26,12 +29,14 @@ The mobile menu toggle button is missing on several pages.
 ```
 
 ### Pages WITH mobile menu toggle:
+
 - ✅ `dashboard.html` (line 189-199)
 - ✅ `wellness.html` (line 138-148)
 - ✅ `training.html` (line 197-207)
 - ✅ `top-bar.html` template (line 13-23)
 
 ### Pages MISSING mobile menu toggle:
+
 - ❌ `roster.html` - Missing entirely
 - ❌ `analytics.html` - Missing entirely
 - ❌ `settings.html` - Missing entirely
@@ -39,6 +44,7 @@ The mobile menu toggle button is missing on several pages.
 - ❌ `chat.html` - Missing entirely
 
 ### Inconsistency Details:
+
 - **dashboard.html**: Uses `onclick="toggleSidebar()"` instead of `onclick="openMenu()"`
 - **dashboard.html**: Has duplicate `aria-label` attributes (line 193, 196)
 - **wellness.html**: Uses `onclick="toggleSidebar()"` instead of `onclick="openMenu()"`
@@ -49,12 +55,16 @@ The mobile menu toggle button is missing on several pages.
 ## 2. Search Box Implementation
 
 ### Issue
+
 Different pages have different search box implementations or no search box at all.
 
 ### Standard Template
+
 ```html
 <div class="search-box">
-  <label for="global-search" class="sr-only">Search for players, teams and more</label>
+  <label for="global-search" class="sr-only"
+    >Search for players, teams and more</label
+  >
   <span class="search-icon" aria-hidden="true">
     <i data-lucide="search" class="icon-16"></i>
   </span>
@@ -79,6 +89,7 @@ Different pages have different search box implementations or no search box at al
 ```
 
 ### Pages WITH search box:
+
 - ✅ `dashboard.html` - Standard implementation
 - ✅ `settings.html` - Standard implementation
 - ✅ `community.html` - Standard implementation
@@ -87,10 +98,12 @@ Different pages have different search box implementations or no search box at al
 - ✅ `training.html` - **Different placeholder**: "Search workouts, exercises, videos..."
 
 ### Pages WITHOUT search box (using page title instead):
+
 - ❌ `roster.html` - Uses `page-title-section` instead
 - ❌ `analytics.html` - Uses `page-title-section` instead
 
 ### Inconsistency Details:
+
 - **Placeholder text variations**:
   - Standard: "Search for players, teams & more"
   - `wellness.html`: "Search recovery tips, nutrition guides..."
@@ -103,9 +116,11 @@ Different pages have different search box implementations or no search box at al
 ## 3. User Menu Dropdown
 
 ### Issue
+
 The user menu dropdown is missing on most pages. Only the template has the full dropdown implementation.
 
 ### Standard Template
+
 ```html
 <div class="user-menu-wrapper">
   <button id="user-menu-button" class="user-menu" type="button" ...>
@@ -128,9 +143,11 @@ The user menu dropdown is missing on most pages. Only the template has the full 
 ```
 
 ### Pages WITH dropdown menu:
+
 - ✅ `top-bar.html` template (line 108-143)
 
 ### Pages WITHOUT dropdown menu (button only):
+
 - ❌ `dashboard.html` - Button only, no dropdown
 - ❌ `roster.html` - Button only, no dropdown
 - ❌ `analytics.html` - Button only, no dropdown
@@ -141,8 +158,9 @@ The user menu dropdown is missing on most pages. Only the template has the full 
 - ❌ `training.html` - Button only, no dropdown
 
 ### Additional Inconsistencies:
+
 - **User avatar wrapper**: Template uses `<div class="user-menu-wrapper">`, but other pages don't wrap the button
-- **User avatar initials**: 
+- **User avatar initials**:
   - Template: "U"
   - `dashboard.html`: "JD"
   - `wellness.html`: "JD"
@@ -153,9 +171,11 @@ The user menu dropdown is missing on most pages. Only the template has the full 
 ## 4. Theme Toggle Implementation
 
 ### Issue
+
 Different theme toggle implementations across pages.
 
 ### Standard Template
+
 ```html
 <div class="theme-toggle-container" aria-label="Theme toggle">
   <label class="theme-toggle-label" title="Toggle theme">
@@ -174,10 +194,12 @@ Different theme toggle implementations across pages.
 ```
 
 ### Pages WITH full theme toggle:
+
 - ✅ `top-bar.html` template (line 92-105)
 - ✅ `dashboard.html` (line 262-274) - **Different**: Uses "Light" instead of "🌙 Dark", different ID
 
 ### Pages WITH fallback button only:
+
 - ❌ `roster.html` - Fallback button (hidden)
 - ❌ `analytics.html` - Fallback button (hidden)
 - ❌ `settings.html` - Fallback button (hidden)
@@ -187,6 +209,7 @@ Different theme toggle implementations across pages.
 - ❌ `training.html` - Fallback button (hidden)
 
 ### Inconsistency Details:
+
 - **dashboard.html**: Uses `id="theme-toggle"` instead of `id="header-theme-toggle"`
 - **dashboard.html**: Uses `for="theme-toggle"` on label instead of no `for` attribute
 - **dashboard.html**: Text says "Light" instead of "🌙 Dark"
@@ -197,14 +220,17 @@ Different theme toggle implementations across pages.
 ## 5. Notification Badge Values
 
 ### Issue
+
 Different default notification badge values across pages.
 
 ### Standard Template
+
 ```html
 <span id="notification-badge" class="badge" hidden>3</span>
 ```
 
 ### Notification Badge Values:
+
 - `top-bar.html` template: **3**
 - `dashboard.html`: **3**
 - `roster.html`: **3**
@@ -220,9 +246,11 @@ Different default notification badge values across pages.
 ## 6. Settings Button
 
 ### Issue
+
 Settings button implementation is consistent, but may have different click handlers.
 
 ### Standard Template
+
 ```html
 <button class="header-icon" type="button" aria-label="Settings">
   <i data-lucide="settings" class="icon-18"></i>
@@ -230,6 +258,7 @@ Settings button implementation is consistent, but may have different click handl
 ```
 
 ### Status:
+
 - ✅ All pages have consistent settings button implementation
 - ⚠️ No click handlers or links defined (may need functionality added)
 
@@ -238,19 +267,20 @@ Settings button implementation is consistent, but may have different click handl
 ## 7. Notification Button Wrapper
 
 ### Issue
+
 Inconsistent use of `header-icon-wrap` wrapper.
 
 ### Standard Template
+
 ```html
 <div class="header-icon-wrap">
-  <button id="notification-bell" class="header-icon" ...>
-    ...
-  </button>
+  <button id="notification-bell" class="header-icon" ...>...</button>
   <span id="notification-live" class="sr-only" aria-live="polite"></span>
 </div>
 ```
 
 ### Pages WITH wrapper:
+
 - ✅ `top-bar.html` template
 - ✅ `dashboard.html`
 - ✅ `roster.html`
@@ -262,6 +292,7 @@ Inconsistent use of `header-icon-wrap` wrapper.
 - ✅ `training.html`
 
 ### Status:
+
 - ✅ Consistent across all pages
 
 ---
@@ -269,14 +300,17 @@ Inconsistent use of `header-icon-wrap` wrapper.
 ## 8. Special Case: game-tracker.html
 
 ### Issue
+
 Uses a custom component instead of standard HTML.
 
 ### Implementation:
+
 ```html
 <top-bar></top-bar>
 ```
 
 ### Status:
+
 - ⚠️ Uses web component - needs verification that it matches standard template
 
 ---
@@ -284,16 +318,19 @@ Uses a custom component instead of standard HTML.
 ## Summary of Critical Issues
 
 ### High Priority:
+
 1. **Missing mobile menu toggle** on 5+ pages (roster, analytics, settings, community, chat)
 2. **Missing user menu dropdown** on all pages except template
 3. **Inconsistent theme toggle** - most pages only have hidden fallback button
 
 ### Medium Priority:
+
 4. **Inconsistent search placeholder text** across pages
 5. **Missing search box** on roster and analytics pages (replaced with page title)
 6. **Different notification badge defaults** (2 vs 3)
 
 ### Low Priority:
+
 7. **Different user avatar initials** (U vs JD)
 8. **Inconsistent function names** (`openMenu()` vs `toggleSidebar()`)
 
@@ -307,4 +344,3 @@ Uses a custom component instead of standard HTML.
 4. **Standardize search**: Either use search box or page title consistently per page type
 5. **Standardize notification badge**: Use consistent default value (3)
 6. **Create shared component**: Consider creating a reusable component to avoid future inconsistencies
-

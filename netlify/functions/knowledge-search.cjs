@@ -1,28 +1,28 @@
 // Netlify Function: Knowledge Base Search
 // Searches the evidence-based knowledge database
 
-const { Pool } = require('pg');
+const { Pool } = require("pg");
 
 exports.handler = async (event, context) => {
   // CORS headers
   const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Content-Type': 'application/json'
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Content-Type": "application/json",
   };
 
-  if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 200, headers, body: '' };
+  if (event.httpMethod === "OPTIONS") {
+    return { statusCode: 200, headers, body: "" };
   }
 
   const pool = new Pool({
     connectionString: process.env.DATABASE_URL || process.env.NEON_DATABASE_URL,
-    ssl: { rejectUnauthorized: false }
+    ssl: { rejectUnauthorized: false },
   });
 
   try {
-    if (event.httpMethod === 'POST') {
+    if (event.httpMethod === "POST") {
       const { query, category, limit = 5 } = JSON.parse(event.body);
 
       // Search knowledge base entries
@@ -38,13 +38,13 @@ exports.handler = async (event, context) => {
           kbe.answer ILIKE $1
           OR kbe.question ILIKE $1
           OR kbe.topic ILIKE $1
-          ${category ? `AND kbe.entry_type = $2` : ''}
+          ${category ? `AND kbe.entry_type = $2` : ""}
         GROUP BY kbe.id
         ORDER BY kbe.evidence_strength DESC, kbe.query_count DESC
-        LIMIT $${category ? '3' : '2'}
+        LIMIT $${category ? "3" : "2"}
       `;
 
-      const params = category 
+      const params = category
         ? [`%${query}%`, category, limit]
         : [`%${query}%`, limit];
 
@@ -55,15 +55,16 @@ exports.handler = async (event, context) => {
         headers,
         body: JSON.stringify({
           success: true,
-          data: result.rows
-        })
+          data: result.rows,
+        }),
       };
     }
 
-    if (event.httpMethod === 'GET') {
-      const topic = event.path.split('/').pop();
+    if (event.httpMethod === "GET") {
+      const topic = event.path.split("/").pop();
 
-      const result = await pool.query(`
+      const result = await pool.query(
+        `
         SELECT 
           kbe.*,
           array_agg(DISTINCT ra.id) as supporting_articles
@@ -72,35 +73,36 @@ exports.handler = async (event, context) => {
         LEFT JOIN research_articles ra ON ra.id = article_id
         WHERE kbe.topic = $1
         GROUP BY kbe.id
-      `, [topic]);
+      `,
+        [topic],
+      );
 
       return {
         statusCode: 200,
         headers,
         body: JSON.stringify({
           success: true,
-          data: result.rows[0] || null
-        })
+          data: result.rows[0] || null,
+        }),
       };
     }
 
     return {
       statusCode: 405,
       headers,
-      body: JSON.stringify({ error: 'Method not allowed' })
+      body: JSON.stringify({ error: "Method not allowed" }),
     };
   } catch (error) {
-    console.error('Knowledge search error:', error);
+    console.error("Knowledge search error:", error);
     return {
       statusCode: 500,
       headers,
       body: JSON.stringify({
         success: false,
-        error: error.message
-      })
+        error: error.message,
+      }),
     };
   } finally {
     await pool.end();
   }
 };
-

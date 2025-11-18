@@ -98,15 +98,15 @@ body {
     padding: var(--space-6) var(--space-4);
     margin: var(--space-4);
   }
-  
+
   .login-title {
     font-size: var(--text-xl);
   }
-  
+
   .login-logo {
     margin-bottom: var(--space-4);
   }
-  
+
   .login-title {
     margin-bottom: var(--space-4);
   }

@@ -12,7 +12,10 @@ a[class*="text-brand"],
 
 /* For buttons, use darker green background */
 .btn-primary {
-  background: var(--primitive-primary-700, #089949); /* 4.8:1 contrast on white */
+  background: var(
+    --primitive-primary-700,
+    #089949
+  ); /* 4.8:1 contrast on white */
   text-decoration: none; /* Remove underline on buttons */
 }
 
@@ -32,4 +35,3 @@ a[class*="text-brand"],
   color: var(--color-brand-primary, #10c96b);
   text-decoration: none; /* Green on dark is fine */
 }
-

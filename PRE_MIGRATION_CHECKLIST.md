@@ -1,5 +1,6 @@
 # Pre-Migration Checklist
-*Before Starting Angular 19 + PrimeNG Migration*
+
+_Before Starting Angular 19 + PrimeNG Migration_
 
 ## ✅ Completed Tasks
 
@@ -12,9 +13,11 @@
 ## 🔄 Critical Decisions Needed
 
 ### 1. Project Structure Decision
+
 **Question**: Should we create a new Angular project or migrate incrementally?
 
 **Options**:
+
 - **A**: Create new Angular project alongside existing (Recommended)
   - Pros: Clean start, no breaking changes, can migrate incrementally
   - Cons: Two codebases temporarily
@@ -25,27 +28,32 @@
 **Recommendation**: Option A - Create new Angular project in `angular/` directory
 
 ### 2. Backend API Strategy
+
 **Question**: Keep Express backend or migrate to Angular Universal/SSR?
 
 **Current State**: Express backend with Netlify Functions
 **Recommendation**: Keep Express backend, create Angular HTTP services
 
 ### 3. Database Connection
+
 **Question**: How to handle database connections in Angular?
 
 **Current**: Direct PostgreSQL connection in Express
 **Recommendation**: Keep Express backend, Angular calls Express API
 
 ### 4. Authentication Flow
+
 **Question**: JWT storage and refresh strategy?
 
 **Current**: JWT in localStorage
-**Recommendation**: 
+**Recommendation**:
+
 - Store JWT in Angular service
 - Use HTTP interceptor for token injection
 - Implement refresh token logic
 
 ### 5. Routing Strategy
+
 **Question**: File-based routing vs Angular Router?
 
 **Current**: File-based (`dashboard.html`, `login.html`)
@@ -56,18 +64,21 @@
 ### Phase 1: Angular Project Initialization
 
 - [ ] **Create Angular 19 project**
+
   ```bash
   ng new flagfit-pro-angular --routing --style=scss --standalone
   cd flagfit-pro-angular
   ```
 
 - [ ] **Install PrimeNG**
+
   ```bash
   ng add primeng
   npm install primeicons @angular/animations
   ```
 
 - [ ] **Install Additional Dependencies**
+
   ```bash
   npm install chart.js lucide-angular
   npm install @angular/common @angular/forms
@@ -249,4 +260,3 @@ Migration is successful when:
 **Next Step**: Initialize Angular project and set up core infrastructure before migrating HTML files.
 
 **Estimated Time**: 2-3 days for setup, then 4-6 weeks for full migration
-

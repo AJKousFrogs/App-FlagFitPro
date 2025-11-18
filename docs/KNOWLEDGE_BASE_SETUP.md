@@ -46,6 +46,7 @@ node scripts/fetch-research-articles.js
 ```
 
 This will:
+
 - Search for articles across all categories (injuries, nutrition, recovery, training, psychology)
 - Fetch from Europe PMC and Semantic Scholar
 - Insert articles into the database
@@ -58,6 +59,7 @@ node scripts/process-knowledge-base.js
 ```
 
 This will:
+
 - Extract structured knowledge from articles
 - Create knowledge base entries for supplements, injuries, recovery methods, etc.
 - Link articles to knowledge entries
@@ -67,7 +69,7 @@ This will:
 The chatbot automatically queries the knowledge base when available. Update `src/js/components/chatbot.js` to use the knowledge base service:
 
 ```javascript
-import { knowledgeBaseService } from '../services/knowledge-base-service.js';
+import { knowledgeBaseService } from "../services/knowledge-base-service.js";
 
 // In getResponse method:
 const kbAnswer = await knowledgeBaseService.getEvidenceBasedAnswer(userMessage);
@@ -79,6 +81,7 @@ if (kbAnswer) {
 ## Categories Covered
 
 ### 1. Injuries
+
 - Ankle sprains
 - Hamstring strains
 - ACL injuries
@@ -87,6 +90,7 @@ if (kbAnswer) {
 - Rehabilitation protocols
 
 ### 2. Nutrition & Supplements
+
 - Iron supplementation
 - Protein requirements
 - Creatine protocols
@@ -96,6 +100,7 @@ if (kbAnswer) {
 - Hydration strategies
 
 ### 3. Recovery Methods
+
 - Sauna therapy protocols
 - Cold water immersion
 - Cryotherapy
@@ -105,6 +110,7 @@ if (kbAnswer) {
 - Active recovery
 
 ### 4. Training
+
 - Speed training
 - Agility training
 - Strength training periodization
@@ -113,6 +119,7 @@ if (kbAnswer) {
 - Overtraining prevention
 
 ### 5. Sports Psychology
+
 - Performance anxiety management
 - Visualization techniques
 - Confidence building
@@ -133,6 +140,7 @@ node scripts/fetch-research-articles.js
 ### Quality Control
 
 Articles are automatically:
+
 - Filtered for open access only
 - Categorized by topic
 - Rated by evidence level (A/B/C)
@@ -165,7 +173,7 @@ POST /api/knowledge/search
 ### Get Specific Entry
 
 ```javascript
-GET /api/knowledge/entry/iron_supplementation
+GET / api / knowledge / entry / iron_supplementation;
 ```
 
 ### Search Articles
@@ -216,7 +224,7 @@ POST /api/knowledge/articles
 ## Support
 
 For issues or questions, check:
+
 - Database logs
 - Script output logs
 - API response errors
-

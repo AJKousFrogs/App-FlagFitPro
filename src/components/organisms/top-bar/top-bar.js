@@ -6,6 +6,14 @@
 (function () {
   "use strict";
 
+  // Logger fallback - use window.logger if available, otherwise console
+  const logger = window.logger || {
+    error: (...args) => console.error(...args),
+    warn: (...args) => console.warn(...args),
+    info: (...args) => console.info(...args),
+    debug: (...args) => console.debug(...args),
+  };
+
   // Global function stubs (can be overridden by other scripts)
   window.performGlobalSearch =
     window.performGlobalSearch ||
@@ -357,7 +365,6 @@
     const topBar = document.querySelector(".top-bar");
     if (!topBar) return;
 
-    let lastScrollY = window.scrollY;
     let ticking = false;
 
     function updateScrollEffects() {
@@ -397,7 +404,6 @@
     const scrollButton = document.getElementById("scroll-to-top");
     if (!scrollButton) return;
 
-    let lastScrollY = window.scrollY;
     let ticking = false;
 
     function updateScrollButton() {
@@ -426,8 +432,6 @@
 
     // Smooth scroll to top on click
     scrollButton.addEventListener("click", () => {
-      const headerHeight = window.innerWidth <= 768 ? 56 : 64;
-      
       window.scrollTo({
         top: 0,
         behavior: "smooth",

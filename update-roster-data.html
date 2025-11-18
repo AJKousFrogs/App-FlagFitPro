@@ -1,337 +1,523 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Update Team Roster Data - FlagFit Pro</title>
     <link
       rel="icon"
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
     />
     <!-- New Modular CSS Architecture -->
-    <link rel="stylesheet" href="./src/css/main.css">
+    <link rel="stylesheet" href="./src/css/main.css" />
     <script src="./src/theme-switcher.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js" crossorigin="anonymous" defer>
+    <script
+      src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
     <script src="./src/icon-helper.js" defer></script>
     <!-- Universal Components -->
     <script type="module" src="./src/js/main.js"></script>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <div class="header">
-            <h1 style="color: var(--dark-text-primary); margin-bottom: var(--space-2);"><i data-lucide="football" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Update Team Roster Data</h1>
-            <p style="color: var(--dark-text-secondary); font-size: var(--text-lg);">Replace demo data with your real team information</p>
+      <div class="header">
+        <h1
+          style="color: var(--dark-text-primary); margin-bottom: var(--space-2)"
+        >
+          <i
+            data-lucide="football"
+            style="
+              width: 16px;
+              height: 16px;
+              display: inline-block;
+              vertical-align: middle;
+              color: var(--icon-color-primary);
+              stroke: var(--icon-color-primary);
+            "
+          ></i>
+          Update Team Roster Data
+        </h1>
+        <p style="color: var(--dark-text-secondary); font-size: var(--text-lg)">
+          Replace demo data with your real team information
+        </p>
+      </div>
+
+      <div class="instructions">
+        <h3>
+          <i
+            data-lucide="clipboard-list"
+            style="
+              width: 16px;
+              height: 16px;
+              display: inline-block;
+              vertical-align: middle;
+              color: var(--icon-color-primary);
+              stroke: var(--icon-color-primary);
+            "
+          ></i>
+          Instructions:
+        </h3>
+        <ol>
+          <li>Fill out your team information below</li>
+          <li>Add/edit player data for each team member</li>
+          <li>Copy the generated code at the bottom</li>
+          <li>Replace the demo data in your dashboard.html file</li>
+        </ol>
+      </div>
+
+      <!-- Team Information -->
+      <div class="team-info-card">
+        <h2>Team Information</h2>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Team Name</label>
+            <input
+              type="text"
+              id="teamName"
+              class="form-input"
+              placeholder="e.g., Thunder Bolts"
+              value="Flag Football Team"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">League</label>
+            <input
+              type="text"
+              id="league"
+              class="form-input"
+              placeholder="e.g., City Recreation League"
+              value="Your League"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Division</label>
+            <input
+              type="text"
+              id="division"
+              class="form-input"
+              placeholder="e.g., Adult Division A"
+              value="Your Division"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Coach Name</label>
+            <input
+              type="text"
+              id="coachName"
+              class="form-input"
+              placeholder="e.g., John Smith"
+              value="Coach Name"
+            />
+          </div>
         </div>
-        
-        <div class="instructions">
-            <h3><i data-lucide="clipboard-list" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Instructions:</h3>
-            <ol>
-                <li>Fill out your team information below</li>
-                <li>Add/edit player data for each team member</li>
-                <li>Copy the generated code at the bottom</li>
-                <li>Replace the demo data in your dashboard.html file</li>
-            </ol>
-        </div>
-        
-    <!-- Team Information -->
-        <div class="team-info-card">
-            <h2>Team Information</h2>
-            <div class="form-row">
-                <div class="form-group">
-                    <label class="form-label">Team Name</label>
-                    <input type="text" id="teamName" class="form-input" placeholder="e.g., Thunder Bolts" value="Flag Football Team">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">League</label>
-                    <input type="text" id="league" class="form-input" placeholder="e.g., City Recreation League" value="Your League">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Division</label>
-                    <input type="text" id="division" class="form-input" placeholder="e.g., Adult Division A" value="Your Division">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Coach Name</label>
-                    <input type="text" id="coachName" class="form-input" placeholder="e.g., John Smith" value="Coach Name">
-                </div>
+      </div>
+
+      <!-- Add Player Form -->
+      <div class="player-form-card">
+        <h2>Add New Player</h2>
+        <form id="playerForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="playerName" class="form-label required"
+                >Player Name</label
+              >
+              <input
+                type="text"
+                id="playerName"
+                name="playerName"
+                class="form-input"
+                placeholder="First Last"
+                required
+                autocomplete="name"
+                aria-describedby="playerName-error playerName-success"
+                aria-invalid="false"
+              />
+              <div
+                id="playerName-error"
+                class="form-error"
+                role="alert"
+                style="display: none"
+              ></div>
+              <small
+                id="playerName-success"
+                class="form-success"
+                style="display: none"
+                >Valid name</small
+              >
             </div>
-        </div>
-        
-    <!-- Add Player Form -->
-        <div class="player-form-card">
-            <h2>Add New Player</h2>
-            <form id="playerForm">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="playerName" class="form-label required">Player Name</label>
-                        <input type="text" id="playerName" name="playerName" class="form-input" placeholder="First Last" required aria-describedby="playerName-error playerName-success" aria-invalid="false">
-                        <div id="playerName-error" class="form-error" role="alert" style="display: none;"></div>
-                        <small id="playerName-success" class="form-success" style="display: none;">Valid name</small>
-                    </div>
-                    <div class="form-group">
-                        <label for="jerseyNumber" class="form-label required">Jersey Number</label>
-                        <input type="number" id="jerseyNumber" name="jerseyNumber" class="form-input" min="0" max="99" required aria-describedby="jerseyNumber-error jerseyNumber-success" aria-invalid="false">
-                        <div id="jerseyNumber-error" class="form-error" role="alert" style="display: none;"></div>
-                        <small id="jerseyNumber-success" class="form-success" style="display: none;">Valid jersey number</small>
-                    </div>
-                    <div class="form-group">
-                        <label for="position" class="form-label required">Position</label>
-                        <select id="position" name="position" class="form-input form-select" required aria-describedby="position-error position-success" aria-invalid="false">
-                            <option value="">Select Position</option>
-                            <option value="QB">Quarterback (QB)</option>
-                            <option value="RB">Running Back (RB)</option>
-                            <option value="WR">Wide Receiver (WR)</option>
-                            <option value="DB">Defensive Back (DB)</option>
-                        </select>
-                        <div id="position-error" class="form-error" role="alert" style="display: none;"></div>
-                        <small id="position-success" class="form-success" style="display: none;">Position selected</small>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Height</label>
-                        <input type="text" id="height" class="form-input" placeholder="e.g., 6'1\"">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Weight</label>
-                        <input type="text" id="weight" class="form-input" placeholder="e.g., 185 lbs">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Class</label>
-                        <select id="class" class="form-select">
-                            <option value="">Select Class</option>
-                            <option value="Freshman">Freshman</option>
-                            <option value="Sophomore">Sophomore</option>
-                            <option value="Junior">Junior</option>
-                            <option value="Senior">Senior</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Age</label>
-                        <input type="number" id="age" class="form-input" min="16" max="30">
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Hometown</label>
-                        <input type="text" id="hometown" class="form-input" placeholder="City, State">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Is Starter?</label>
-                        <input type="checkbox" id="isStarter" style="margin-right: 8px;">
-                        <label for="isStarter">Starting lineup</label>
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-primary btn-md">Add Player</button>
-            </form>
-        </div>
-        
-    <!-- Current Roster -->
-        <div class="team-info-card">
-            <h2>Current Roster (<span id="playerCount">0</span> players)</h2>
-            <div id="currentRoster" class="players-grid">
-                <!-- Players will be displayed here -->
+            <div class="form-group">
+              <label for="jerseyNumber" class="form-label required"
+                >Jersey Number</label
+              >
+              <input
+                type="number"
+                id="jerseyNumber"
+                name="jerseyNumber"
+                class="form-input"
+                min="0"
+                max="99"
+                required
+                aria-describedby="jerseyNumber-error jerseyNumber-success"
+                aria-invalid="false"
+              />
+              <div
+                id="jerseyNumber-error"
+                class="form-error"
+                role="alert"
+                style="display: none"
+              ></div>
+              <small
+                id="jerseyNumber-success"
+                class="form-success"
+                style="display: none"
+                >Valid jersey number</small
+              >
             </div>
-        </div>
-        
-    <!-- Export Section -->
-        <div class="export-section">
-            <h2>Generated Code</h2>
-            <p>Copy this code and replace the demo data in your dashboard.html file:</p>
-            <button onclick="generateCode()" class="btn btn-primary btn-md" style="margin-bottom: var(--space-4);">Generate Updated Code</button>
-            <div id="generatedCode" class="generated-code">
-                // Click "Generate Updated Code" button to see the code
+            <div class="form-group">
+              <label for="position" class="form-label required">Position</label>
+              <select
+                id="position"
+                name="position"
+                class="form-input form-select"
+                required
+                aria-describedby="position-error position-success"
+                aria-invalid="false"
+              >
+                <option value="">Select Position</option>
+                <option value="QB">Quarterback (QB)</option>
+                <option value="RB">Running Back (RB)</option>
+                <option value="WR">Wide Receiver (WR)</option>
+                <option value="DB">Defensive Back (DB)</option>
+              </select>
+              <div
+                id="position-error"
+                class="form-error"
+                role="alert"
+                style="display: none"
+              ></div>
+              <small
+                id="position-success"
+                class="form-success"
+                style="display: none"
+                >Position selected</small
+              >
             </div>
-            <button onclick="copyToClipboard()" class="btn btn-secondary btn-md" style="margin-top: var(--space-4);">Copy to Clipboard</button>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Height</label>
+              <input
+                type="text"
+                id="height"
+                class="form-input"
+                placeholder="e.g., 6'1&quot;"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Weight</label>
+              <input
+                type="text"
+                id="weight"
+                class="form-input"
+                placeholder="e.g., 185 lbs"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Class</label>
+              <select id="class" class="form-select">
+                <option value="">Select Class</option>
+                <option value="Freshman">Freshman</option>
+                <option value="Sophomore">Sophomore</option>
+                <option value="Junior">Junior</option>
+                <option value="Senior">Senior</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Age</label>
+              <input
+                type="number"
+                id="age"
+                class="form-input"
+                min="16"
+                max="30"
+              />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Hometown</label>
+              <input
+                type="text"
+                id="hometown"
+                class="form-input"
+                placeholder="City, State"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Is Starter?</label>
+              <input type="checkbox" id="isStarter" style="margin-right: 8px" />
+              <label for="isStarter">Starting lineup</label>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-md">
+            Add Player
+          </button>
+        </form>
+      </div>
+
+      <!-- Current Roster -->
+      <div class="team-info-card">
+        <h2>Current Roster (<span id="playerCount">0</span> players)</h2>
+        <div id="currentRoster" class="players-grid">
+          <!-- Players will be displayed here -->
         </div>
+      </div>
+
+      <!-- Export Section -->
+      <div class="export-section">
+        <h2>Generated Code</h2>
+        <p>
+          Copy this code and replace the demo data in your dashboard.html file:
+        </p>
+        <button
+          onclick="generateCode()"
+          class="btn btn-primary btn-md"
+          style="margin-bottom: var(--space-4)"
+        >
+          Generate Updated Code
+        </button>
+        <div id="generatedCode" class="generated-code">
+          // Click "Generate Updated Code" button to see the code
+        </div>
+        <button
+          onclick="copyToClipboard()"
+          class="btn btn-secondary btn-md"
+          style="margin-top: var(--space-4)"
+        >
+          Copy to Clipboard
+        </button>
+      </div>
     </div>
 
     <script>
-        let teamRoster = [
-            // Start with placeholder data that matches current structure
-            { name: "Enter Player Name", number: 1, position: "QB", height: "6'0\"", weight: "180 lbs", class: "Senior" }
-        ];
-        
-        // Helper functions for inline validation
-        function showFieldError(fieldId, message) {
-            const field = document.getElementById(fieldId);
-            const errorDiv = document.getElementById(`${fieldId}-error`);
-            const successDiv = document.getElementById(`${fieldId}-success`);
-            
-            if (field) {
-                field.classList.remove("success");
-                field.classList.add("error");
-                field.setAttribute("aria-invalid", "true");
-            }
-            
-            if (errorDiv) {
-                errorDiv.textContent = message;
-                errorDiv.style.display = "flex";
-            }
-            
-            if (successDiv) {
-                successDiv.style.display = "none";
-            }
+      let teamRoster = [
+        // Start with placeholder data that matches current structure
+        {
+          name: "Enter Player Name",
+          number: 1,
+          position: "QB",
+          height: "6'0\"",
+          weight: "180 lbs",
+          class: "Senior",
+        },
+      ];
+
+      // Helper functions for inline validation
+      function showFieldError(fieldId, message) {
+        const field = document.getElementById(fieldId);
+        const errorDiv = document.getElementById(`${fieldId}-error`);
+        const successDiv = document.getElementById(`${fieldId}-success`);
+
+        if (field) {
+          field.classList.remove("success");
+          field.classList.add("error");
+          field.setAttribute("aria-invalid", "true");
         }
 
-        function showFieldSuccess(fieldId) {
-            const field = document.getElementById(fieldId);
-            const errorDiv = document.getElementById(`${fieldId}-error`);
-            const successDiv = document.getElementById(`${fieldId}-success`);
-            
-            if (field) {
-                field.classList.remove("error");
-                field.classList.add("success");
-                field.setAttribute("aria-invalid", "false");
-            }
-            
-            if (errorDiv) {
-                errorDiv.style.display = "none";
-            }
-            
-            if (successDiv) {
-                successDiv.style.display = "flex";
-            }
+        if (errorDiv) {
+          errorDiv.textContent = message;
+          errorDiv.style.display = "flex";
         }
 
-        function clearFieldState(fieldId) {
-            const field = document.getElementById(fieldId);
-            const errorDiv = document.getElementById(`${fieldId}-error`);
-            const successDiv = document.getElementById(`${fieldId}-success`);
-            
-            if (field) {
-                field.classList.remove("error", "success");
-                field.setAttribute("aria-invalid", "false");
-            }
-            
-            if (errorDiv) {
-                errorDiv.style.display = "none";
-            }
-            
-            if (successDiv) {
-                successDiv.style.display = "none";
-            }
+        if (successDiv) {
+          successDiv.style.display = "none";
+        }
+      }
+
+      function showFieldSuccess(fieldId) {
+        const field = document.getElementById(fieldId);
+        const errorDiv = document.getElementById(`${fieldId}-error`);
+        const successDiv = document.getElementById(`${fieldId}-success`);
+
+        if (field) {
+          field.classList.remove("error");
+          field.classList.add("success");
+          field.setAttribute("aria-invalid", "false");
         }
 
-        // Real-time validation functions
-        function validatePlayerName(name) {
-            if (!name || name.trim() === "") {
-                clearFieldState("playerName");
-                return false;
-            }
-
-            if (name.trim().length < 2) {
-                showFieldError("playerName", "Name must be at least 2 characters long.");
-                return false;
-            }
-
-            showFieldSuccess("playerName");
-            return true;
+        if (errorDiv) {
+          errorDiv.style.display = "none";
         }
 
-        function validateJerseyNumber(number) {
-            if (!number || number === "") {
-                clearFieldState("jerseyNumber");
-                return false;
-            }
+        if (successDiv) {
+          successDiv.style.display = "flex";
+        }
+      }
 
-            const num = parseInt(number);
-            if (isNaN(num) || num < 0 || num > 99) {
-                showFieldError("jerseyNumber", "Jersey number must be between 0 and 99.");
-                return false;
-            }
+      function clearFieldState(fieldId) {
+        const field = document.getElementById(fieldId);
+        const errorDiv = document.getElementById(`${fieldId}-error`);
+        const successDiv = document.getElementById(`${fieldId}-success`);
 
-            // Check for duplicate jersey numbers
-            if (teamRoster.find(p => p.number === num)) {
-                showFieldError("jerseyNumber", "Jersey number already exists. Please choose a different number.");
-                return false;
-            }
-
-            showFieldSuccess("jerseyNumber");
-            return true;
+        if (field) {
+          field.classList.remove("error", "success");
+          field.setAttribute("aria-invalid", "false");
         }
 
-        function validatePosition(position) {
-            if (!position || position === "") {
-                clearFieldState("position");
-                return false;
-            }
-
-            showFieldSuccess("position");
-            return true;
+        if (errorDiv) {
+          errorDiv.style.display = "none";
         }
-        
-        // Form submission
-        document.getElementById('playerForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            addPlayer();
+
+        if (successDiv) {
+          successDiv.style.display = "none";
+        }
+      }
+
+      // Real-time validation functions
+      function validatePlayerName(name) {
+        if (!name || name.trim() === "") {
+          clearFieldState("playerName");
+          return false;
+        }
+
+        if (name.trim().length < 2) {
+          showFieldError(
+            "playerName",
+            "Name must be at least 2 characters long.",
+          );
+          return false;
+        }
+
+        showFieldSuccess("playerName");
+        return true;
+      }
+
+      function validateJerseyNumber(number) {
+        if (!number || number === "") {
+          clearFieldState("jerseyNumber");
+          return false;
+        }
+
+        const num = parseInt(number);
+        if (isNaN(num) || num < 0 || num > 99) {
+          showFieldError(
+            "jerseyNumber",
+            "Jersey number must be between 0 and 99.",
+          );
+          return false;
+        }
+
+        // Check for duplicate jersey numbers
+        if (teamRoster.find((p) => p.number === num)) {
+          showFieldError(
+            "jerseyNumber",
+            "Jersey number already exists. Please choose a different number.",
+          );
+          return false;
+        }
+
+        showFieldSuccess("jerseyNumber");
+        return true;
+      }
+
+      function validatePosition(position) {
+        if (!position || position === "") {
+          clearFieldState("position");
+          return false;
+        }
+
+        showFieldSuccess("position");
+        return true;
+      }
+
+      // Form submission
+      document
+        .getElementById("playerForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          addPlayer();
         });
-        
-        function addPlayer() {
-            const name = document.getElementById('playerName').value;
-            const number = parseInt(document.getElementById('jerseyNumber').value);
-            const position = document.getElementById('position').value;
-            const height = document.getElementById('height').value || "6'0\"";
-            const weight = document.getElementById('weight').value || "180 lbs";
-            const classYear = document.getElementById('class').value || "Senior";
-            const age = parseInt(document.getElementById('age').value) || 21;
-            const hometown = document.getElementById('hometown').value || "City, State";
-            const isStarter = document.getElementById('isStarter').checked;
-            
-            let isValid = true;
 
-            // Validate required fields
-            if (!name || name.trim().length < 2) {
-                showFieldError("playerName", "Please enter a valid player name (at least 2 characters).");
-                isValid = false;
-            } else {
-                showFieldSuccess("playerName");
-            }
+      function addPlayer() {
+        const name = document.getElementById("playerName").value;
+        const number = parseInt(document.getElementById("jerseyNumber").value);
+        const position = document.getElementById("position").value;
+        const height = document.getElementById("height").value || "6'0\"";
+        const weight = document.getElementById("weight").value || "180 lbs";
+        const classYear = document.getElementById("class").value || "Senior";
+        const age = parseInt(document.getElementById("age").value) || 21;
+        const hometown =
+          document.getElementById("hometown").value || "City, State";
+        const isStarter = document.getElementById("isStarter").checked;
 
-            if (!number || isNaN(number) || number < 0 || number > 99) {
-                showFieldError("jerseyNumber", "Please enter a valid jersey number (0-99).");
-                isValid = false;
-            } else if (teamRoster.find(p => p.number === number)) {
-                showFieldError("jerseyNumber", "Jersey number already exists. Please choose a different number.");
-                isValid = false;
-            } else {
-                showFieldSuccess("jerseyNumber");
-            }
+        let isValid = true;
 
-            if (!position || position === "") {
-                showFieldError("position", "Please select a position.");
-                isValid = false;
-            } else {
-                showFieldSuccess("position");
-            }
-
-            if (!isValid) {
-                return;
-            }
-            
-            const player = {
-                name,
-                number,
-                position,
-                height,
-                weight,
-                class: classYear,
-                age,
-                hometown,
-                isStarter
-            };
-            
-            teamRoster.push(player);
-            updateRosterDisplay();
-            document.getElementById('playerForm').reset();
+        // Validate required fields
+        if (!name || name.trim().length < 2) {
+          showFieldError(
+            "playerName",
+            "Please enter a valid player name (at least 2 characters).",
+          );
+          isValid = false;
+        } else {
+          showFieldSuccess("playerName");
         }
-        
-        function updateRosterDisplay() {
-            const container = document.getElementById('currentRoster');
-            const playerCount = document.getElementById('playerCount');
-            
-            playerCount.textContent = teamRoster.length;
-            
-            container.innerHTML = teamRoster.map(player => `
+
+        if (!number || isNaN(number) || number < 0 || number > 99) {
+          showFieldError(
+            "jerseyNumber",
+            "Please enter a valid jersey number (0-99).",
+          );
+          isValid = false;
+        } else if (teamRoster.find((p) => p.number === number)) {
+          showFieldError(
+            "jerseyNumber",
+            "Jersey number already exists. Please choose a different number.",
+          );
+          isValid = false;
+        } else {
+          showFieldSuccess("jerseyNumber");
+        }
+
+        if (!position || position === "") {
+          showFieldError("position", "Please select a position.");
+          isValid = false;
+        } else {
+          showFieldSuccess("position");
+        }
+
+        if (!isValid) {
+          return;
+        }
+
+        const player = {
+          name,
+          number,
+          position,
+          height,
+          weight,
+          class: classYear,
+          age,
+          hometown,
+          isStarter,
+        };
+
+        teamRoster.push(player);
+        updateRosterDisplay();
+        document.getElementById("playerForm").reset();
+      }
+
+      function updateRosterDisplay() {
+        const container = document.getElementById("currentRoster");
+        const playerCount = document.getElementById("playerCount");
+
+        playerCount.textContent = teamRoster.length;
+
+        container.innerHTML = teamRoster
+          .map(
+            (player) => `
                 <div class="player-card position-${player.position}">
                     <div class="player-header">
                         <div class="jersey-number">${player.number}</div>
@@ -346,26 +532,28 @@
                     </div>
                     <div style="font-size: var(--text-sm); color: var(--dark-text-secondary);">
                         ${player.height} • ${player.weight}<br>
-                        ${player.hometown}${player.isStarter ? ' • STARTER' : ''}
+                        ${player.hometown}${player.isStarter ? " • STARTER" : ""}
                     </div>
                 </div>
-            `).join('');
-        }
-        
-        function removePlayer(number) {
-            teamRoster = teamRoster.filter(p => p.number !== number);
-            updateRosterDisplay();
-        }
-        
-        function generateCode() {
-            const teamName = document.getElementById('teamName').value;
-            const league = document.getElementById('league').value;
-            const division = document.getElementById('division').value;
-            const coachName = document.getElementById('coachName').value;
-            
-            const code = `// Updated Team Roster Data - Replace this in your dashboard.html
+            `,
+          )
+          .join("");
+      }
+
+      function removePlayer(number) {
+        teamRoster = teamRoster.filter((p) => p.number !== number);
+        updateRosterDisplay();
+      }
+
+      function generateCode() {
+        const teamName = document.getElementById("teamName").value;
+        const league = document.getElementById("league").value;
+        const division = document.getElementById("division").value;
+        const coachName = document.getElementById("coachName").value;
+
+        const code = `// Updated Team Roster Data - Replace this in your dashboard.html
 const teamRoster = [
-${teamRoster.map(player => `    { name: "${player.name}", number: ${player.number}, position: "${player.position}", height: "${player.height}", weight: "${player.weight}", class: "${player.class}" }`).join(',\n')}
+${teamRoster.map((player) => `    { name: "${player.name}", number: ${player.number}, position: "${player.position}", height: "${player.height}", weight: "${player.weight}", class: "${player.class}" }`).join(",\n")}
 ];
 
 // Team Information
@@ -375,33 +563,39 @@ const teamInfo = {
     division: "${division}",
     coach: "${coachName}",
     totalPlayers: ${teamRoster.length},
-    starters: ${teamRoster.filter(p => p.isStarter).length}
+    starters: ${teamRoster.filter((p) => p.isStarter).length}
 };`;
-            
-            document.getElementById('generatedCode').textContent = code;
-        }
-        
-        function copyToClipboard() {
-            const code = document.getElementById('generatedCode').textContent;
-            navigator.clipboard.writeText(code).then(() => {
-                alert('Code copied to clipboard!');
-            });
-        }
-        
-        // Initialize display
-        updateRosterDisplay();
 
-        // Add real-time validation
-        document.getElementById('playerName').addEventListener('input', function() {
-            validatePlayerName(this.value);
+        document.getElementById("generatedCode").textContent = code;
+      }
+
+      function copyToClipboard() {
+        const code = document.getElementById("generatedCode").textContent;
+        navigator.clipboard.writeText(code).then(() => {
+          alert("Code copied to clipboard!");
+        });
+      }
+
+      // Initialize display
+      updateRosterDisplay();
+
+      // Add real-time validation
+      document
+        .getElementById("playerName")
+        .addEventListener("input", function () {
+          validatePlayerName(this.value);
         });
 
-        document.getElementById('jerseyNumber').addEventListener('input', function() {
-            validateJerseyNumber(this.value);
+      document
+        .getElementById("jerseyNumber")
+        .addEventListener("input", function () {
+          validateJerseyNumber(this.value);
         });
 
-        document.getElementById('position').addEventListener('change', function() {
-            validatePosition(this.value);
+      document
+        .getElementById("position")
+        .addEventListener("change", function () {
+          validatePosition(this.value);
         });
     </script>
 
@@ -437,5 +631,5 @@ const teamInfo = {
         <p>&copy; 2025 FlagFit Pro. All rights reserved.</p>
       </div>
     </footer>
-</body>
+  </body>
 </html>

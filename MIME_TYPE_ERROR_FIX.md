@@ -1,7 +1,9 @@
 # MIME Type Error Fix
+
 ## Understanding and Resolving "Expected a JavaScript module script" Error
 
 **Error Message:**
+
 ```
 Failed to load module script: Expected a JavaScript-or-Wasm module script but the server responded with a MIME type of "text/html". Strict MIME type checking is enforced for module scripts per HTML spec.
 ```
@@ -11,6 +13,7 @@ Failed to load module script: Expected a JavaScript-or-Wasm module script but th
 ## What This Error Means
 
 This error occurs when:
+
 1. **The browser requests a `.js` file** (like `real-team-data.js`)
 2. **The server returns HTML instead** (usually a 404 error page)
 3. **The browser expects JavaScript** but gets HTML
@@ -21,20 +24,23 @@ This error occurs when:
 ## Root Causes
 
 ### 1. **Incorrect Import Path** ✅ FIXED
+
 **Problem:** Import path doesn't resolve to the actual file location
 
 **Example:**
+
 ```javascript
 // WRONG - File doesn't exist at this path
-import { REAL_TEAM_DATA } from '../real-team-data.js';
+import { REAL_TEAM_DATA } from "../real-team-data.js";
 // Looking for: src/js/real-team-data.js (doesn't exist)
 
 // CORRECT - File exists at this path
-import { REAL_TEAM_DATA } from '../../real-team-data.js';
+import { REAL_TEAM_DATA } from "../../real-team-data.js";
 // Looking for: src/real-team-data.js (exists!)
 ```
 
 **Fix Applied:**
+
 - ✅ Fixed `src/js/pages/settings-page.js` import path
 - ✅ Verified `src/js/pages/training-page.js` import path (already correct)
 
@@ -45,20 +51,23 @@ import { REAL_TEAM_DATA } from '../../real-team-data.js';
 If the path is correct but you still get the error, check:
 
 #### Server MIME Type Configuration
+
 Your server needs to serve `.js` files with `application/javascript` MIME type.
 
 **Check `simple-server.js`:**
+
 ```javascript
 const mimeTypes = {
-  ".js": "application/javascript",  // ✅ Correct
+  ".js": "application/javascript", // ✅ Correct
   // ...
 };
 ```
 
 **Check `server.js`:**
+
 ```javascript
 if (path.endsWith(".js")) {
-  res.setHeader("Content-Type", "application/javascript");  // ✅ Correct
+  res.setHeader("Content-Type", "application/javascript"); // ✅ Correct
 }
 ```
 
@@ -75,6 +84,7 @@ When a file doesn't exist, some servers return an HTML 404 page. The browser see
 ## How to Debug
 
 ### Step 1: Verify File Exists
+
 ```bash
 # Check if file exists
 ls -la src/real-team-data.js
@@ -84,12 +94,14 @@ find . -name "real-team-data.js" -type f
 ```
 
 ### Step 2: Check Import Paths
+
 ```bash
 # Find all imports
 grep -r "real-team-data.js" src/
 ```
 
 ### Step 3: Test in Browser DevTools
+
 1. Open DevTools (F12)
 2. Go to Network tab
 3. Reload page
@@ -100,6 +112,7 @@ grep -r "real-team-data.js" src/
    - **Response:** Should be JavaScript code (not HTML)
 
 ### Step 4: Check Server Logs
+
 Look for 404 errors in server console when loading the page.
 
 ---
@@ -109,14 +122,16 @@ Look for 404 errors in server console when loading the page.
 ### ✅ Fixed Import Path in `settings-page.js`
 
 **Before:**
+
 ```javascript
-import { REAL_TEAM_DATA, getAllPlayers } from '../real-team-data.js';
+import { REAL_TEAM_DATA, getAllPlayers } from "../real-team-data.js";
 // ❌ Looking for: src/js/real-team-data.js (doesn't exist)
 ```
 
 **After:**
+
 ```javascript
-import { REAL_TEAM_DATA, getAllPlayers } from '../../real-team-data.js';
+import { REAL_TEAM_DATA, getAllPlayers } from "../../real-team-data.js";
 // ✅ Looking for: src/real-team-data.js (exists!)
 ```
 
@@ -130,24 +145,27 @@ import { REAL_TEAM_DATA, getAllPlayers } from '../../real-team-data.js';
 ## Prevention Tips
 
 ### 1. Use Absolute Paths (Recommended)
+
 Consider using import maps or absolute paths from project root:
 
 ```html
 <script type="importmap">
-{
-  "imports": {
-    "@/": "/src/",
-    "@/data/": "/src/real-team-data.js"
+  {
+    "imports": {
+      "@/": "/src/",
+      "@/data/": "/src/real-team-data.js"
+    }
   }
-}
 </script>
 ```
 
 ### 2. Verify Paths Relative to File Location
+
 - `src/js/pages/file.js` → `../../real-team-data.js` = `src/real-team-data.js` ✅
 - `src/js/pages/file.js` → `../real-team-data.js` = `src/js/real-team-data.js` ❌
 
 ### 3. Use Path Aliases
+
 Configure path aliases in your build tool or use import maps.
 
 ---
@@ -180,8 +198,8 @@ Configure path aliases in your build tool or use import maps.
 **Status:** ✅ Fixed
 
 The error should now be resolved. If you still see it:
+
 1. Clear browser cache
 2. Restart dev server
 3. Verify file exists at `src/real-team-data.js`
 4. Check Network tab in DevTools for actual request/response
-

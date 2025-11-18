@@ -1,16 +1,16 @@
 // API Configuration for FlagFit Pro
 // Handles different environments (development, production, Netlify)
 
-import { config, apiEndpoints } from './config/environment.js';
-import { logger } from './logger.js';
+import { config, apiEndpoints } from "./config/environment.js";
+import { logger } from "./logger.js";
 
 const getApiBaseUrl = () => {
   // Use environment configuration for API base URL
   const envBaseUrl = config.API_BASE_URL;
 
   // If we have a configured API URL, use it
-  if (envBaseUrl && envBaseUrl !== 'mock://api') {
-    logger.debug('Using configured API URL:', envBaseUrl);
+  if (envBaseUrl && envBaseUrl !== "mock://api") {
+    logger.debug("Using configured API URL:", envBaseUrl);
     return envBaseUrl;
   }
 
@@ -21,7 +21,7 @@ const getApiBaseUrl = () => {
   ) {
     // Use Netlify Functions for production
     const netlifyUrl = window.location.origin + "/.netlify/functions";
-    logger.debug('Using Netlify Functions:', netlifyUrl);
+    logger.debug("Using Netlify Functions:", netlifyUrl);
     return netlifyUrl;
   }
 
@@ -32,7 +32,7 @@ const getApiBaseUrl = () => {
   ) {
     // Netlify Dev environment
     const netlifyDevUrl = "http://localhost:8888/.netlify/functions";
-    logger.debug('Using Netlify Dev:', netlifyDevUrl);
+    logger.debug("Using Netlify Dev:", netlifyDevUrl);
     return netlifyDevUrl;
   }
 
@@ -55,8 +55,8 @@ export const API_BASE_URL = getApiBaseUrl();
 // Helper function to normalize endpoints - remove /api/ prefix if base URL already includes /api
 const normalizeEndpoint = (endpoint) => {
   // If endpoint starts with /api/ and base URL already ends with /api, remove the /api prefix
-  if (endpoint.startsWith('/api/') && API_BASE_URL.endsWith('/api')) {
-    return endpoint.replace(/^\/api/, '');
+  if (endpoint.startsWith("/api/") && API_BASE_URL.endsWith("/api")) {
+    return endpoint.replace(/^\/api/, "");
   }
   return endpoint;
 };
@@ -85,7 +85,9 @@ export const API_ENDPOINTS = {
       ? "/dashboard"
       : normalizeEndpoint("/api/dashboard/overview"),
     trainingCalendar: normalizeEndpoint("/api/dashboard/training-calendar"),
-    olympicQualification: normalizeEndpoint("/api/dashboard/olympic-qualification"),
+    olympicQualification: normalizeEndpoint(
+      "/api/dashboard/olympic-qualification",
+    ),
     sponsorRewards: normalizeEndpoint("/api/dashboard/sponsor-rewards"),
     wearables: normalizeEndpoint("/api/dashboard/wearables"),
     teamChemistry: normalizeEndpoint("/api/dashboard/team-chemistry"),
@@ -110,8 +112,12 @@ export const API_ENDPOINTS = {
   analytics: {
     performanceTrends: normalizeEndpoint("/api/analytics/performance-trends"),
     teamChemistry: normalizeEndpoint("/api/analytics/team-chemistry"),
-    trainingDistribution: normalizeEndpoint("/api/analytics/training-distribution"),
-    positionPerformance: normalizeEndpoint("/api/analytics/position-performance"),
+    trainingDistribution: normalizeEndpoint(
+      "/api/analytics/training-distribution",
+    ),
+    positionPerformance: normalizeEndpoint(
+      "/api/analytics/position-performance",
+    ),
     injuryRisk: normalizeEndpoint("/api/analytics/injury-risk"),
     speedDevelopment: normalizeEndpoint("/api/analytics/speed-development"),
     userEngagement: normalizeEndpoint("/api/analytics/user-engagement"),
@@ -133,8 +139,10 @@ export const API_ENDPOINTS = {
   community: {
     feed: normalizeEndpoint("/api/community/feed"),
     createPost: normalizeEndpoint("/api/community/posts"),
-    getComments: (postId) => normalizeEndpoint(`/api/community/posts/${postId}/comments`),
-    likePost: (postId) => normalizeEndpoint(`/api/community/posts/${postId}/like`),
+    getComments: (postId) =>
+      normalizeEndpoint(`/api/community/posts/${postId}/comments`),
+    likePost: (postId) =>
+      normalizeEndpoint(`/api/community/posts/${postId}/like`),
     leaderboard: normalizeEndpoint("/api/community/leaderboard"),
     challenges: normalizeEndpoint("/api/community/challenges"),
     health: normalizeEndpoint("/api/community/health"),
@@ -143,9 +151,12 @@ export const API_ENDPOINTS = {
   // Tournaments
   tournaments: {
     list: normalizeEndpoint("/api/tournaments"),
-    details: (tournamentId) => normalizeEndpoint(`/api/tournaments/${tournamentId}`),
-    register: (tournamentId) => normalizeEndpoint(`/api/tournaments/${tournamentId}/register`),
-    bracket: (tournamentId) => normalizeEndpoint(`/api/tournaments/${tournamentId}/bracket`),
+    details: (tournamentId) =>
+      normalizeEndpoint(`/api/tournaments/${tournamentId}`),
+    register: (tournamentId) =>
+      normalizeEndpoint(`/api/tournaments/${tournamentId}/register`),
+    bracket: (tournamentId) =>
+      normalizeEndpoint(`/api/tournaments/${tournamentId}/bracket`),
     health: normalizeEndpoint("/api/tournaments/health"),
   },
 
@@ -159,9 +170,10 @@ export const API_ENDPOINTS = {
     search: API_BASE_URL.includes("netlify/functions")
       ? "/knowledge-search"
       : normalizeEndpoint("/api/knowledge/search"),
-    entry: (topic) => API_BASE_URL.includes("netlify/functions")
-      ? `/knowledge-search?topic=${topic}`
-      : normalizeEndpoint(`/api/knowledge/entry/${topic}`),
+    entry: (topic) =>
+      API_BASE_URL.includes("netlify/functions")
+        ? `/knowledge-search?topic=${topic}`
+        : normalizeEndpoint(`/api/knowledge/entry/${topic}`),
     articles: API_BASE_URL.includes("netlify/functions")
       ? "/knowledge-search"
       : normalizeEndpoint("/api/knowledge/articles"),
@@ -283,17 +295,17 @@ export class ApiClient {
       this.activeRequests.delete(requestId);
 
       // Handle abort error
-      if (error.name === 'AbortError') {
+      if (error.name === "AbortError") {
         logger.debug(`Request cancelled: ${endpoint}`);
-        throw new Error('Request cancelled');
+        throw new Error("Request cancelled");
       }
 
       // Check if this is a connection error (server not running)
       const isConnectionError =
-        error.message.includes('Failed to fetch') ||
-        error.message.includes('ERR_CONNECTION_REFUSED') ||
-        error.message.includes('ERR_NETWORK') ||
-        error.name === 'TypeError';
+        error.message.includes("Failed to fetch") ||
+        error.message.includes("ERR_CONNECTION_REFUSED") ||
+        error.message.includes("ERR_NETWORK") ||
+        error.name === "TypeError";
 
       // Fallback to mock data in development if real API fails
       if (this.baseUrl.includes("localhost") || this.baseUrl === "mock://api") {
@@ -301,7 +313,9 @@ export class ApiClient {
         if (!isConnectionError) {
           logger.error(`API request failed: ${endpoint}`, error);
         } else {
-          logger.debug(`API server not available, using mock data for: ${endpoint}`);
+          logger.debug(
+            `API server not available, using mock data for: ${endpoint}`,
+          );
         }
 
         if (!this.mockApi) {
@@ -483,10 +497,13 @@ export const coach = {
 export const knowledge = {
   search: (query, category = null, limit = 5) =>
     apiClient.post(API_ENDPOINTS.knowledge.search, { query, category, limit }),
-  getEntry: (topic) =>
-    apiClient.get(API_ENDPOINTS.knowledge.entry(topic)),
+  getEntry: (topic) => apiClient.get(API_ENDPOINTS.knowledge.entry(topic)),
   searchArticles: (query, categories = [], limit = 10) =>
-    apiClient.post(API_ENDPOINTS.knowledge.articles, { query, categories, limit }),
+    apiClient.post(API_ENDPOINTS.knowledge.articles, {
+      query,
+      categories,
+      limit,
+    }),
 };
 
 // Export default client

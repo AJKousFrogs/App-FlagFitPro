@@ -3,12 +3,13 @@
 
 class Logger {
   constructor() {
-    this.isDevelopment = 
-      window.location.hostname === 'localhost' ||
-      window.location.hostname === '127.0.0.1' ||
-      window.location.hostname.includes('netlify') && window.location.search.includes('debug=true');
-    
-    this.logLevel = this.isDevelopment ? 'debug' : 'error';
+    this.isDevelopment =
+      window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1" ||
+      (window.location.hostname.includes("netlify") &&
+        window.location.search.includes("debug=true"));
+
+    this.logLevel = this.isDevelopment ? "debug" : "error";
     this.logs = [];
     this.maxLogs = 100;
   }
@@ -20,52 +21,52 @@ class Logger {
 
   // Check if level should be logged
   shouldLog(level) {
-    if (this.logLevel === 'silent') return false;
-    
-    const levels = ['debug', 'info', 'warn', 'error'];
+    if (this.logLevel === "silent") return false;
+
+    const levels = ["debug", "info", "warn", "error"];
     const currentLevelIndex = levels.indexOf(this.logLevel);
     const messageLevelIndex = levels.indexOf(level);
-    
+
     return messageLevelIndex >= currentLevelIndex;
   }
 
   // Debug logging (development only)
   debug(...args) {
-    if (!this.shouldLog('debug')) return;
-    
+    if (!this.shouldLog("debug")) return;
+
     if (this.isDevelopment) {
-      console.log('🔍 [DEBUG]', ...args);
+      console.log("🔍 [DEBUG]", ...args);
     }
-    
-    this.addToHistory('debug', args);
+
+    this.addToHistory("debug", args);
   }
 
   // Info logging
   info(...args) {
-    if (!this.shouldLog('info')) return;
-    
+    if (!this.shouldLog("info")) return;
+
     if (this.isDevelopment) {
-      console.log('ℹ️ [INFO]', ...args);
+      console.log("ℹ️ [INFO]", ...args);
     }
-    
-    this.addToHistory('info', args);
+
+    this.addToHistory("info", args);
   }
 
   // Warning logging
   warn(...args) {
-    if (!this.shouldLog('warn')) return;
-    
-    console.warn('⚠️ [WARN]', ...args);
-    this.addToHistory('warn', args);
+    if (!this.shouldLog("warn")) return;
+
+    console.warn("⚠️ [WARN]", ...args);
+    this.addToHistory("warn", args);
   }
 
   // Error logging (always logged)
   error(...args) {
-    if (!this.shouldLog('error')) return;
-    
-    console.error('❌ [ERROR]', ...args);
-    this.addToHistory('error', args);
-    
+    if (!this.shouldLog("error")) return;
+
+    console.error("❌ [ERROR]", ...args);
+    this.addToHistory("error", args);
+
     // In production, could send to error tracking service
     if (!this.isDevelopment) {
       // Example: Send to error tracking service
@@ -75,13 +76,13 @@ class Logger {
 
   // Success logging (info level)
   success(...args) {
-    if (!this.shouldLog('info')) return;
-    
+    if (!this.shouldLog("info")) return;
+
     if (this.isDevelopment) {
-      console.log('✅ [SUCCESS]', ...args);
+      console.log("✅ [SUCCESS]", ...args);
     }
-    
-    this.addToHistory('info', args);
+
+    this.addToHistory("info", args);
   }
 
   // Add log to history
@@ -89,10 +90,10 @@ class Logger {
     this.logs.push({
       level,
       timestamp: new Date().toISOString(),
-      message: args.join(' '),
-      args
+      message: args.join(" "),
+      args,
     });
-    
+
     // Keep only last N logs
     if (this.logs.length > this.maxLogs) {
       this.logs.shift();
@@ -102,7 +103,7 @@ class Logger {
   // Get log history
   getHistory(level = null) {
     if (level) {
-      return this.logs.filter(log => log.level === level);
+      return this.logs.filter((log) => log.level === level);
     }
     return this.logs;
   }
@@ -143,4 +144,3 @@ export const logger = new Logger();
 
 // Export class for custom instances
 export default Logger;
-

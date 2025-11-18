@@ -12,7 +12,9 @@ export class MockAuth {
 
     // Security warning for production
     if (!config.ENABLE_MOCK_AUTH) {
-      logger.error("MockAuth should not be instantiated when ENABLE_MOCK_AUTH is false");
+      logger.error(
+        "MockAuth should not be instantiated when ENABLE_MOCK_AUTH is false",
+      );
       throw new Error("Mock authentication is disabled in this environment");
     }
 
@@ -25,7 +27,9 @@ export class MockAuth {
 
   async login(credentials) {
     // Simulate realistic API delay
-    await new Promise((resolve) => setTimeout(resolve, 800 + Math.random() * 400));
+    await new Promise((resolve) =>
+      setTimeout(resolve, 800 + Math.random() * 400),
+    );
 
     // Basic validation
     if (!credentials?.email || !credentials?.password) {
@@ -113,19 +117,21 @@ export class MockAuth {
     return localPart
       .replace(/[._-]/g, " ")
       .split(" ")
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join(" ");
   }
 
   generateDemoToken() {
     // Generate a more realistic-looking JWT-style token for demo
     const header = btoa(JSON.stringify({ alg: "HS256", typ: "JWT" }));
-    const payload = btoa(JSON.stringify({
-      sub: this.currentUser?.id || "demo-user",
-      iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + 3600, // 1 hour
-      iss: "flagfit-demo"
-    }));
+    const payload = btoa(
+      JSON.stringify({
+        sub: this.currentUser?.id || "demo-user",
+        iat: Math.floor(Date.now() / 1000),
+        exp: Math.floor(Date.now() / 1000) + 3600, // 1 hour
+        iss: "flagfit-demo",
+      }),
+    );
     const signature = btoa("demo-signature-" + Date.now());
 
     return `${header}.${payload}.${signature}`;

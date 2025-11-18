@@ -122,7 +122,7 @@ class HealthChecker {
             }
           }
         }
-      } catch (_auditError) {
+      } catch {
         deps.issues.push("Could not run security audit");
       }
 
@@ -201,7 +201,7 @@ class HealthChecker {
         } else {
           tests.issues.push("No tests found or executed");
         }
-      } catch (_testError) {
+      } catch {
         tests.issues.push("Tests failed to run or completed with errors");
         this.results.criticalIssues.push("Test suite execution failed");
       }

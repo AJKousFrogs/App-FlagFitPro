@@ -91,7 +91,11 @@ async function calculateACWR(userId, date) {
   chronicStartDate.setDate(chronicStartDate.getDate() - 28);
 
   const acuteLoads = await getTrainingLoads(userId, acuteStartDate, endDate);
-  const chronicLoads = await getTrainingLoads(userId, chronicStartDate, endDate);
+  const chronicLoads = await getTrainingLoads(
+    userId,
+    chronicStartDate,
+    endDate,
+  );
 
   const acuteAverage =
     acuteLoads.length > 0
@@ -150,7 +154,11 @@ async function calculateMonotony(userId, weekStartDate) {
   const weekEndDate = new Date(weekStartDate);
   weekEndDate.setDate(weekEndDate.getDate() + 7);
 
-  const weeklyLoads = await getTrainingLoads(userId, weekStartDate, weekEndDate);
+  const weeklyLoads = await getTrainingLoads(
+    userId,
+    weekStartDate,
+    weekEndDate,
+  );
 
   if (weeklyLoads.length < 3) {
     return {
@@ -261,7 +269,7 @@ function calculateEWMA(trainingHistory, timeConstant) {
   if (trainingHistory.length === 0) return 0;
 
   const sorted = [...trainingHistory].sort(
-    (a, b) => new Date(a.date) - new Date(b.date)
+    (a, b) => new Date(a.date) - new Date(b.date),
   );
 
   const decayFactor = Math.exp(-1 / timeConstant);
@@ -534,4 +542,3 @@ exports.handler = async (event, _context) => {
     };
   }
 };
-

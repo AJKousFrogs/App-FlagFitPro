@@ -64,7 +64,11 @@
 
 .onboarding-progress-bar {
   height: 100%;
-  background: linear-gradient(90deg, var(--color-brand-primary), var(--color-brand-primary-hover));
+  background: linear-gradient(
+    90deg,
+    var(--color-brand-primary),
+    var(--color-brand-primary-hover)
+  );
   border-radius: 2px;
   transition: width 0.3s ease;
 }
@@ -237,7 +241,8 @@
 }
 
 @keyframes bounce {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
@@ -284,4 +289,3 @@
     max-width: none;
   }
 }
-

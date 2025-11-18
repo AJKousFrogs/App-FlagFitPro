@@ -9,6 +9,7 @@ npm run dev:bugfix
 ```
 
 Or use the convenience script:
+
 ```bash
 ./start-dev.sh
 ```
@@ -32,11 +33,13 @@ Or use the convenience script:
 ## 🔥 Features
 
 ### Hot Reload
+
 - Automatically reloads browser when HTML, CSS, or JS files change
 - CSS changes reload without full page refresh
 - WebSocket-based for instant updates
 
 ### Bug Detection & Auto-Fixing
+
 - **ESLint Integration**: Automatically runs ESLint and fixes issues on file save
 - **Common Bug Detection**:
   - Console.log statements (warnings)
@@ -46,6 +49,7 @@ Or use the convenience script:
 - **Auto-Fix**: Automatically fixes formatting issues and ESLint errors
 
 ### File Watching
+
 - Watches all `.html`, `.css`, `.js` files
 - Watches `src/` directory recursively
 - Ignores `node_modules/`, `tests/`, and backup files
@@ -100,6 +104,7 @@ lsof -ti:3001 | xargs kill -9
 ```
 
 Or use the startup script which handles this automatically:
+
 ```bash
 ./start-dev.sh
 ```
@@ -116,4 +121,3 @@ Or use the startup script which handles this automatically:
 - ESLint config: `eslint.config.js`
 - Server config: `dev-server-enhanced.cjs`
 - API server: `server.js`
-

@@ -24,8 +24,11 @@
     <!-- Chatbot Component Styles -->
     <link rel="stylesheet" href="./src/css/components/chatbot.css" />
     <!-- Lucide Icons -->
-    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js" 
-            crossorigin="anonymous" defer></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
     <script src="./src/icon-helper.js" defer></script>
     <script src="./src/theme-switcher.js" defer></script>
     <script src="./src/nav-highlight.js" defer></script>
@@ -37,18 +40,22 @@
     <!-- Preload Chatbot Component -->
     <script type="module">
       // Preload chatbot for faster access
-      import('./src/js/components/chatbot.js').then((module) => {
-        // Ensure chatbot is available globally
-        if (module.flagFitChatbot) {
-          window.flagFitChatbot = module.flagFitChatbot;
-          console.log('Chatbot loaded successfully');
-        }
-      }).catch((error) => {
-        console.warn('Chatbot preload failed:', error);
-      });
+      import("./src/js/components/chatbot.js")
+        .then((module) => {
+          // Ensure chatbot is available globally
+          if (module.flagFitChatbot) {
+            window.flagFitChatbot = module.flagFitChatbot;
+            console.log("Chatbot loaded successfully");
+          }
+        })
+        .catch((error) => {
+          console.warn("Chatbot preload failed:", error);
+        });
     </script>
   </head>
   <body>
+    <!-- Skip link for accessibility -->
+    <a href="#main-content" class="skip-link" aria-label="Skip to main content">Skip to main content</a>
     <div class="dashboard-container">
       <!-- Unified Sidebar Navigation -->
       <div
@@ -63,10 +70,7 @@
           title="FlagFit Pro"
           aria-label="Go to dashboard"
         >
-          <i
-            data-lucide="activity"
-            class="icon-20 icon-inline"
-          ></i>
+          <i data-lucide="activity" class="icon-20 icon-inline"></i>
         </div>
 
         <nav class="nav-section" aria-label="Main navigation">
@@ -180,9 +184,10 @@
       ></div>
 
       <main
+        id="main-content"
         class="main-content flex-1 min-w-0 overflow-x-hidden overflow-y-auto bg-surface-primary min-h-screen transition-bg"
       >
-    <!-- Top Bar -->
+        <!-- Top Bar -->
         <div class="top-bar" role="banner">
           <div class="header-left">
             <!-- Mobile Hamburger Menu Button -->
@@ -208,6 +213,7 @@
 
               <input
                 id="global-search"
+                name="search"
                 class="search-input"
                 type="text"
                 placeholder="Search for players, teams & more"
@@ -261,12 +267,12 @@
             <!-- Theme Toggle -->
             <div class="theme-toggle-container" aria-label="Theme toggle">
               <label class="theme-toggle-label" title="Toggle theme">
-                <input 
-                  type="checkbox" 
-                  id="header-theme-toggle" 
+                <input
+                  type="checkbox"
+                  id="header-theme-toggle"
                   class="theme-toggle-input"
                   aria-label="Toggle theme"
-                >
+                />
                 <span class="theme-toggle-slider">
                   <span class="theme-toggle-dot" id="theme-toggle-dot"></span>
                 </span>
@@ -306,7 +312,10 @@
                 </li>
                 <li role="separator" class="user-menu-separator"></li>
                 <li role="menuitem">
-                  <a href="/logout" class="user-menu-item user-menu-item-danger">
+                  <a
+                    href="/logout"
+                    class="user-menu-item user-menu-item-danger"
+                  >
                     <i data-lucide="log-out" class="icon-16"></i>
                     <span>Logout</span>
                   </a>
@@ -316,7 +325,7 @@
           </div>
         </div>
 
-    <!-- Player Dashboard Content -->
+        <!-- Player Dashboard Content -->
         <div class="dashboard-main-layout">
           <!-- Center: Main Dashboard -->
           <div class="dashboard-center">
@@ -329,19 +338,42 @@
             <!-- Date Picker -->
             <div class="date-picker-container">
               <div class="date-picker-header">
-                <button class="date-nav-btn" id="prev-day-btn" aria-label="Previous day" title="Previous day">
+                <button
+                  class="date-nav-btn"
+                  id="prev-day-btn"
+                  aria-label="Previous day"
+                  title="Previous day"
+                >
                   <i data-lucide="chevron-left" class="icon-20"></i>
                 </button>
                 <div class="date-picker-wrapper">
-                  <input type="date" id="dashboard-date-picker" class="date-picker-input" aria-label="Select date">
-                  <button class="date-today-btn" id="today-btn" title="Go to today">Today</button>
+                  <input
+                    type="date"
+                    id="dashboard-date-picker"
+                    class="date-picker-input"
+                    aria-label="Select date"
+                  />
+                  <button
+                    class="date-today-btn"
+                    id="today-btn"
+                    title="Go to today"
+                  >
+                    Today
+                  </button>
                 </div>
-                <button class="date-nav-btn" id="next-day-btn" aria-label="Next day" title="Next day">
+                <button
+                  class="date-nav-btn"
+                  id="next-day-btn"
+                  aria-label="Next day"
+                  title="Next day"
+                >
                   <i data-lucide="chevron-right" class="icon-20"></i>
                 </button>
               </div>
               <div class="date-status" id="date-status">
-                <span class="date-indicator today-indicator" id="date-indicator">Today</span>
+                <span class="date-indicator today-indicator" id="date-indicator"
+                  >Today</span
+                >
                 <span class="date-info" id="date-info"></span>
               </div>
             </div>
@@ -353,28 +385,56 @@
                 <div class="wellness-metric">
                   <label for="energy-slider">Energy (1–10):</label>
                   <div class="slider-container">
-                    <input type="range" id="energy-slider" min="1" max="10" value="6" class="wellness-slider">
+                    <input
+                      type="range"
+                      id="energy-slider"
+                      min="1"
+                      max="10"
+                      value="6"
+                      class="wellness-slider"
+                    />
                     <span class="slider-value">6</span>
                   </div>
                 </div>
                 <div class="wellness-metric">
                   <label for="sleep-slider">Sleep (1–10):</label>
                   <div class="slider-container">
-                    <input type="range" id="sleep-slider" min="1" max="10" value="7" class="wellness-slider">
+                    <input
+                      type="range"
+                      id="sleep-slider"
+                      min="1"
+                      max="10"
+                      value="7"
+                      class="wellness-slider"
+                    />
                     <span class="slider-value">7</span>
                   </div>
                 </div>
                 <div class="wellness-metric">
                   <label for="mood-slider">Mood (1–10):</label>
                   <div class="slider-container">
-                    <input type="range" id="mood-slider" min="1" max="10" value="4" class="wellness-slider">
+                    <input
+                      type="range"
+                      id="mood-slider"
+                      min="1"
+                      max="10"
+                      value="4"
+                      class="wellness-slider"
+                    />
                     <span class="slider-value">4</span>
                   </div>
                 </div>
                 <div class="wellness-metric">
                   <label for="training-load-slider">Load (1–10):</label>
                   <div class="slider-container">
-                    <input type="range" id="training-load-slider" min="1" max="10" value="7" class="wellness-slider">
+                    <input
+                      type="range"
+                      id="training-load-slider"
+                      min="1"
+                      max="10"
+                      value="7"
+                      class="wellness-slider"
+                    />
                     <span class="slider-value">7</span>
                   </div>
                 </div>
@@ -389,7 +449,9 @@
                 <div class="training-time">🕒 18:30 — Speed & Agility</div>
                 <div class="training-info">Coach: Ales Zaksek</div>
                 <div class="training-info">Duration: 70 min</div>
-                <button type="button" class="btn-start-session">START SESSION</button>
+                <button type="button" class="btn-start-session">
+                  START SESSION
+                </button>
               </div>
             </div>
 
@@ -428,7 +490,7 @@
                 <div class="supplement-item" data-supplement="beta-alanine">
                   <span class="supplement-name">Beta-Alanine</span>
                   <label class="supplement-toggle">
-                    <input type="checkbox" class="supplement-toggle-input">
+                    <input type="checkbox" class="supplement-toggle-input" />
                     <span class="supplement-toggle-slider">
                       <span class="supplement-toggle-icon check-icon">✓</span>
                       <span class="supplement-toggle-icon x-icon">✕</span>
@@ -438,7 +500,7 @@
                 <div class="supplement-item" data-supplement="caffeine">
                   <span class="supplement-name">Caffeine</span>
                   <label class="supplement-toggle">
-                    <input type="checkbox" class="supplement-toggle-input">
+                    <input type="checkbox" class="supplement-toggle-input" />
                     <span class="supplement-toggle-slider">
                       <span class="supplement-toggle-icon check-icon">✓</span>
                       <span class="supplement-toggle-icon x-icon">✕</span>
@@ -448,7 +510,7 @@
                 <div class="supplement-item" data-supplement="calcium">
                   <span class="supplement-name">Calcium</span>
                   <label class="supplement-toggle">
-                    <input type="checkbox" class="supplement-toggle-input">
+                    <input type="checkbox" class="supplement-toggle-input" />
                     <span class="supplement-toggle-slider">
                       <span class="supplement-toggle-icon check-icon">✓</span>
                       <span class="supplement-toggle-icon x-icon">✕</span>
@@ -458,7 +520,11 @@
                 <div class="supplement-item" data-supplement="creatine">
                   <span class="supplement-name">Creatine Monohydrate</span>
                   <label class="supplement-toggle">
-                    <input type="checkbox" class="supplement-toggle-input" checked>
+                    <input
+                      type="checkbox"
+                      class="supplement-toggle-input"
+                      checked
+                    />
                     <span class="supplement-toggle-slider">
                       <span class="supplement-toggle-icon check-icon">✓</span>
                       <span class="supplement-toggle-icon x-icon">✕</span>
@@ -468,7 +534,7 @@
                 <div class="supplement-item" data-supplement="iron">
                   <span class="supplement-name">Iron</span>
                   <label class="supplement-toggle">
-                    <input type="checkbox" class="supplement-toggle-input">
+                    <input type="checkbox" class="supplement-toggle-input" />
                     <span class="supplement-toggle-slider">
                       <span class="supplement-toggle-icon check-icon">✓</span>
                       <span class="supplement-toggle-icon x-icon">✕</span>
@@ -478,7 +544,7 @@
                 <div class="supplement-item" data-supplement="magnesium">
                   <span class="supplement-name">Magnesium</span>
                   <label class="supplement-toggle">
-                    <input type="checkbox" class="supplement-toggle-input">
+                    <input type="checkbox" class="supplement-toggle-input" />
                     <span class="supplement-toggle-slider">
                       <span class="supplement-toggle-icon check-icon">✓</span>
                       <span class="supplement-toggle-icon x-icon">✕</span>
@@ -488,7 +554,7 @@
                 <div class="supplement-item" data-supplement="nitrate">
                   <span class="supplement-name">Nitrate (Beetroot)</span>
                   <label class="supplement-toggle">
-                    <input type="checkbox" class="supplement-toggle-input">
+                    <input type="checkbox" class="supplement-toggle-input" />
                     <span class="supplement-toggle-slider">
                       <span class="supplement-toggle-icon check-icon">✓</span>
                       <span class="supplement-toggle-icon x-icon">✕</span>
@@ -498,7 +564,7 @@
                 <div class="supplement-item" data-supplement="protein">
                   <span class="supplement-name">Protein</span>
                   <label class="supplement-toggle">
-                    <input type="checkbox" class="supplement-toggle-input">
+                    <input type="checkbox" class="supplement-toggle-input" />
                     <span class="supplement-toggle-slider">
                       <span class="supplement-toggle-icon check-icon">✓</span>
                       <span class="supplement-toggle-icon x-icon">✕</span>
@@ -508,7 +574,7 @@
                 <div class="supplement-item" data-supplement="vitamin-d">
                   <span class="supplement-name">Vitamin D</span>
                   <label class="supplement-toggle">
-                    <input type="checkbox" class="supplement-toggle-input">
+                    <input type="checkbox" class="supplement-toggle-input" />
                     <span class="supplement-toggle-slider">
                       <span class="supplement-toggle-icon check-icon">✓</span>
                       <span class="supplement-toggle-icon x-icon">✕</span>
@@ -520,9 +586,7 @@
 
             <!-- AI Chat Floating Bubble -->
             <div class="ai-chat-bubble">
-              <button class="ai-chat-button">
-                💬 "Ask FlagFit Assistant"
-              </button>
+              <button class="ai-chat-button">💬 "Ask FlagFit Assistant"</button>
             </div>
           </div>
         </div>
@@ -544,7 +608,7 @@
         </button>
       </div>
       <div id="notification-list" class="notification-list">
-    <!-- Notifications will be populated by JavaScript -->
+        <!-- Notifications will be populated by JavaScript -->
       </div>
       <div class="notification-actions">
         <button class="notification-action-btn" onclick="markAllAsRead()">

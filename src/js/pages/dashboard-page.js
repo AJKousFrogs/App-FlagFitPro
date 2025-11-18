@@ -58,7 +58,9 @@ class DashboardPage {
 
     if (!sidebar) return;
 
-    const isOpen = sidebar.classList.contains("open") || sidebar.classList.contains("mobile-open");
+    const isOpen =
+      sidebar.classList.contains("open") ||
+      sidebar.classList.contains("mobile-open");
 
     if (isOpen) {
       sidebar.classList.remove("open", "mobile-open");
@@ -99,26 +101,33 @@ class DashboardPage {
 
     try {
       // Try to get notifications from API
-      const response = await apiClient.get(API_ENDPOINTS.dashboard.notifications);
-      
+      const response = await apiClient.get(
+        API_ENDPOINTS.dashboard.notifications,
+      );
+
       // Extract notifications array from response
       let notifications = null;
       if (response && response.success && response.data) {
         // Handle different response formats
         if (Array.isArray(response.data)) {
           notifications = response.data;
-        } else if (response.data.notifications && Array.isArray(response.data.notifications)) {
+        } else if (
+          response.data.notifications &&
+          Array.isArray(response.data.notifications)
+        ) {
           notifications = response.data.notifications;
         } else if (response.data.data && Array.isArray(response.data.data)) {
           notifications = response.data.data;
         }
       }
-      
+
       // Use extracted notifications or fallback to mock
       if (notifications && Array.isArray(notifications)) {
         this.renderNotifications(notifications);
       } else {
-        logger.debug("No valid notifications array in response, using mock data");
+        logger.debug(
+          "No valid notifications array in response, using mock data",
+        );
         this.renderNotifications(this.getMockNotifications());
       }
     } catch (error) {
@@ -162,12 +171,16 @@ class DashboardPage {
 
     // Ensure notifications is an array
     if (!Array.isArray(notifications)) {
-      logger.warn("renderNotifications called with non-array data:", notifications);
+      logger.warn(
+        "renderNotifications called with non-array data:",
+        notifications,
+      );
       notifications = [];
     }
 
     if (notifications.length === 0) {
-      notificationList.innerHTML = '<div class="notification-empty">No notifications</div>';
+      notificationList.innerHTML =
+        '<div class="notification-empty">No notifications</div>';
       return;
     }
 
@@ -188,14 +201,16 @@ class DashboardPage {
       .join("");
 
     // Add click handlers for mark as read
-    notificationList.querySelectorAll(".notification-mark-read").forEach((btn) => {
-      btn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const item = btn.closest(".notification-item");
-        const id = item.dataset.id;
-        this.markNotificationAsRead(id);
+    notificationList
+      .querySelectorAll(".notification-mark-read")
+      .forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const item = btn.closest(".notification-item");
+          const id = item.dataset.id;
+          this.markNotificationAsRead(id);
+        });
       });
-    });
   }
 
   getNotificationIcon(type) {
@@ -266,7 +281,9 @@ class DashboardPage {
     }
 
     // Settings Button in Header
-    const settingsBtn = document.querySelector(".header-icon[aria-label='Settings']");
+    const settingsBtn = document.querySelector(
+      ".header-icon[aria-label='Settings']",
+    );
     if (settingsBtn) {
       settingsBtn.addEventListener("click", () => {
         window.location.href = "/settings.html";
@@ -326,14 +343,26 @@ class DashboardPage {
     try {
       // Get current user
       const user = authManager.getCurrentUser();
-      if (!user) {
+
+      // Check if we're in development mode
+      const isDevelopment =
+        window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1";
+
+      if (!user && !isDevelopment) {
         throw new Error("User not authenticated");
+      }
+
+      if (!user && isDevelopment) {
+        logger.debug(
+          "Development mode: Submitting wellness check-in without authentication",
+        );
       }
 
       // Prepare wellness data for selected date
       const dateStr = this.formatDateForInput(this.selectedDate);
       const wellnessCheckIn = {
-        userId: user.id || user.email,
+        userId: user ? user.id || user.email : "demo-user",
         date: dateStr,
         energy: this.wellnessData.energy,
         sleep: this.wellnessData.sleep,
@@ -349,15 +378,20 @@ class DashboardPage {
       } catch (apiError) {
         // Fallback to localStorage for demo/testing
         logger.warn("API unavailable, saving to localStorage:", apiError);
-        const saved = JSON.parse(localStorage.getItem("wellnessCheckIns") || "[]");
+        const saved = JSON.parse(
+          localStorage.getItem("wellnessCheckIns") || "[]",
+        );
         // Remove existing entry for this date
-        const filtered = saved.filter(w => w.date !== dateStr);
+        const filtered = saved.filter((w) => w.date !== dateStr);
         filtered.push(wellnessCheckIn);
         localStorage.setItem("wellnessCheckIns", JSON.stringify(filtered));
       }
 
       // Show success message
-      this.showNotification("Wellness check-in submitted successfully! ✓", "success");
+      this.showNotification(
+        "Wellness check-in submitted successfully! ✓",
+        "success",
+      );
 
       // Reset button after delay
       setTimeout(() => {
@@ -367,7 +401,10 @@ class DashboardPage {
       }, 1500);
     } catch (error) {
       logger.error("Failed to submit wellness check-in:", error);
-      this.showNotification("Failed to submit check-in. Please try again.", "error");
+      this.showNotification(
+        "Failed to submit check-in. Please try again.",
+        "error",
+      );
 
       // Reset button
       button.disabled = false;
@@ -404,12 +441,17 @@ class DashboardPage {
       }
 
       // Get training session details
-      const trainingTime = document.querySelector(".training-time")?.textContent || "18:30";
-      const trainingType = trainingTime.includes("Speed & Agility") ? "Speed & Agility" : "Training";
-      const coach = document.querySelector(".training-info")?.textContent || "Coach: Ales Zaksek";
+      const trainingTime =
+        document.querySelector(".training-time")?.textContent || "18:30";
+      const trainingType = trainingTime.includes("Speed & Agility")
+        ? "Speed & Agility"
+        : "Training";
+      const coach =
+        document.querySelector(".training-info")?.textContent ||
+        "Coach: Ales Zaksek";
 
       const sessionData = {
-        userId: user ? (user.id || user.email) : "demo-user",
+        userId: user ? user.id || user.email : "demo-user",
         sessionType: trainingType,
         coach: coach.replace("Coach: ", ""),
         startTime: new Date().toISOString(),
@@ -425,21 +467,29 @@ class DashboardPage {
       } catch (apiError) {
         // Fallback to localStorage
         logger.warn("API unavailable, saving to localStorage:", apiError);
-        const saved = JSON.parse(localStorage.getItem("trainingSessions") || "[]");
+        const saved = JSON.parse(
+          localStorage.getItem("trainingSessions") || "[]",
+        );
         saved.push({ ...sessionData, status: "in_progress" });
         localStorage.setItem("trainingSessions", JSON.stringify(saved));
       }
 
       // Store session data for training-schedule page
       const sessionDate = this.formatDateForInput(this.selectedDate);
-      localStorage.setItem("currentTrainingSession", JSON.stringify({
-        ...sessionData,
-        date: sessionDate,
-        status: "in_progress"
-      }));
+      localStorage.setItem(
+        "currentTrainingSession",
+        JSON.stringify({
+          ...sessionData,
+          date: sessionDate,
+          status: "in_progress",
+        }),
+      );
 
       // Show success and redirect to training schedule page
-      this.showNotification("Training session started! Redirecting...", "success");
+      this.showNotification(
+        "Training session started! Redirecting...",
+        "success",
+      );
 
       // Redirect to training schedule page with date parameter
       setTimeout(() => {
@@ -451,7 +501,10 @@ class DashboardPage {
     } catch (error) {
       logger.error("❌ Failed to start training session:", error);
       console.error("Start session error:", error);
-      this.showNotification("Failed to start session. Please try again.", "error");
+      this.showNotification(
+        "Failed to start session. Please try again.",
+        "error",
+      );
 
       // Reset button
       const button = e.target.closest(".btn-start-session") || e.target;
@@ -503,10 +556,12 @@ class DashboardPage {
 
       // Get current user (may be null if not authenticated)
       const user = authManager.getCurrentUser();
-      
+
       // Get supplement display name
       const supplementItem = toggleInput.closest(".supplement-item");
-      const supplementName = supplementItem?.querySelector(".supplement-name")?.textContent.trim() || supplementKey;
+      const supplementName =
+        supplementItem?.querySelector(".supplement-name")?.textContent.trim() ||
+        supplementKey;
 
       // Update supplement state
       this.supplements[supplementKey] = {
@@ -516,10 +571,12 @@ class DashboardPage {
 
       // Save to API or localStorage for selected date
       const dateStr = this.formatDateForInput(this.selectedDate);
-      
+
       // Use user ID if available, otherwise use a fallback identifier
-      const userId = user ? (user.id || user.email) : (localStorage.getItem("userId") || "anonymous");
-      
+      const userId = user
+        ? user.id || user.email
+        : localStorage.getItem("userId") || "anonymous";
+
       const supplementData = {
         userId: userId,
         supplement: supplementKey,
@@ -538,7 +595,10 @@ class DashboardPage {
             this.showNotification(`${supplementName} logged! ✓`, "success");
           } else {
             // Optionally handle "untaken" action
-            await apiClient.post(API_ENDPOINTS.supplements.log, { ...supplementData, action: "untake" });
+            await apiClient.post(API_ENDPOINTS.supplements.log, {
+              ...supplementData,
+              action: "untake",
+            });
             logger.info(`Unmarked ${supplementName}`);
           }
           return; // Successfully saved to API, exit early
@@ -554,8 +614,12 @@ class DashboardPage {
       const saved = JSON.parse(localStorage.getItem("supplementLogs") || "[]");
 
       // Remove existing entry for this supplement on selected date
-      const filtered = saved.filter(log => {
-        const logDate = log.date || (log.timestamp ? new Date(log.timestamp).toISOString().split("T")[0] : null);
+      const filtered = saved.filter((log) => {
+        const logDate =
+          log.date ||
+          (log.timestamp
+            ? new Date(log.timestamp).toISOString().split("T")[0]
+            : null);
         return !(log.supplement === supplementKey && logDate === dateStr);
       });
 
@@ -572,7 +636,10 @@ class DashboardPage {
       // State is now managed per-date, no need to save global state
     } catch (error) {
       logger.error("Failed to log supplement:", error);
-      this.showNotification("Failed to log supplement. Please try again.", "error");
+      this.showNotification(
+        "Failed to log supplement. Please try again.",
+        "error",
+      );
 
       // Revert toggle on error
       toggleInput.checked = !isChecked;
@@ -606,11 +673,16 @@ class DashboardPage {
       logger.error("Chatbot error details:", error);
 
       // Try to use global chatbot if available
-      if (window.flagFitChatbot && typeof window.flagFitChatbot.open === "function") {
+      if (
+        window.flagFitChatbot &&
+        typeof window.flagFitChatbot.open === "function"
+      ) {
         window.flagFitChatbot.open();
       } else {
         // Last resort: show alert
-        alert("AI Assistant Chat\n\nAsk me about:\n• Sports psychology & mental training\n• Nutrition & supplements\n• Speed & agility development\n• Injury prevention & treatment\n• Recovery strategies\n• Training programs");
+        alert(
+          "AI Assistant Chat\n\nAsk me about:\n• Sports psychology & mental training\n• Nutrition & supplements\n• Speed & agility development\n• Injury prevention & treatment\n• Recovery strategies\n• Training programs",
+        );
       }
     }
   }
@@ -684,7 +756,12 @@ class DashboardPage {
   }
 
   formatDateForDisplay(date) {
-    const options = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
+    const options = {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
     return date.toLocaleDateString("en-US", options);
   }
 
@@ -793,8 +870,11 @@ class DashboardPage {
     const info = document.getElementById("date-info");
     if (!info) return;
 
-    const hasWellness = wellnessLoaded && Object.values(this.wellnessData).some(v => v !== null);
-    const hasSupplements = supplementsLoaded && Object.values(this.supplements).some(s => s.taken);
+    const hasWellness =
+      wellnessLoaded &&
+      Object.values(this.wellnessData).some((v) => v !== null);
+    const hasSupplements =
+      supplementsLoaded && Object.values(this.supplements).some((s) => s.taken);
 
     // Remove any existing status classes
     info.classList.remove("has-data", "no-data");
@@ -831,7 +911,9 @@ class DashboardPage {
 
       // Try API first
       try {
-        const response = await apiClient.get(API_ENDPOINTS.wellness.checkin, { date: dateStr });
+        const response = await apiClient.get(API_ENDPOINTS.wellness.checkin, {
+          date: dateStr,
+        });
         if (response && response.data) {
           const wellness = response.data;
           this.wellnessData = {
@@ -849,7 +931,9 @@ class DashboardPage {
       }
 
       // Load from localStorage
-      const saved = JSON.parse(localStorage.getItem("wellnessCheckIns") || "[]");
+      const saved = JSON.parse(
+        localStorage.getItem("wellnessCheckIns") || "[]",
+      );
       const wellnessForDate = saved.find((w) => w.date === dateStr);
 
       if (wellnessForDate) {
@@ -925,7 +1009,9 @@ class DashboardPage {
 
       // Try API first
       try {
-        const response = await apiClient.get(API_ENDPOINTS.supplements.log, { date: dateStr });
+        const response = await apiClient.get(API_ENDPOINTS.supplements.log, {
+          date: dateStr,
+        });
         if (response && response.data && Array.isArray(response.data)) {
           response.data.forEach((log) => {
             if (log.supplement && this.supplements[log.supplement]) {
@@ -947,7 +1033,11 @@ class DashboardPage {
       // Load from localStorage
       const saved = JSON.parse(localStorage.getItem("supplementLogs") || "[]");
       const supplementsForDate = saved.filter((s) => {
-        const logDate = s.date || (s.timestamp ? new Date(s.timestamp).toISOString().split("T")[0] : null);
+        const logDate =
+          s.date ||
+          (s.timestamp
+            ? new Date(s.timestamp).toISOString().split("T")[0]
+            : null);
         return logDate === dateStr && s.taken;
       });
 
@@ -1059,4 +1149,3 @@ const dashboardPage = new DashboardPage();
 
 // Export for potential external use
 export default dashboardPage;
-

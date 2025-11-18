@@ -3,8 +3,8 @@
  * Handles connections to different database systems (Neon PostgreSQL, PocketBase, etc.)
  */
 
-import { config } from '../config/environment.js';
-import { logger } from '../logger.js';
+import { config } from "../config/environment.js";
+import { logger } from "../logger.js";
 
 class DatabaseConnection {
   constructor() {
@@ -22,8 +22,8 @@ class DatabaseConnection {
    */
   async initialize() {
     try {
-      logger.debug('Initializing database connections...');
-      
+      logger.debug("Initializing database connections...");
+
       // Initialize Neon PostgreSQL connection if configured
       if (config.NEON_DATABASE_URL) {
         await this.initializeNeonConnection();
@@ -35,17 +35,20 @@ class DatabaseConnection {
       }
 
       // Check if at least one connection is available
-      this.isConnected = this.connectionStatus.neon || this.connectionStatus.pocketbase;
+      this.isConnected =
+        this.connectionStatus.neon || this.connectionStatus.pocketbase;
 
       if (this.isConnected) {
-        logger.success('Database connections initialized successfully');
+        logger.success("Database connections initialized successfully");
       } else {
-        logger.warn('No database connections available - using fallback storage');
+        logger.warn(
+          "No database connections available - using fallback storage",
+        );
       }
 
       return this.isConnected;
     } catch (error) {
-      logger.error('Failed to initialize database connections:', error);
+      logger.error("Failed to initialize database connections:", error);
       this.isConnected = false;
       return false;
     }
@@ -58,11 +61,11 @@ class DatabaseConnection {
     try {
       // In a browser environment, we can't directly connect to PostgreSQL
       // This would typically be handled by a backend API
-      logger.debug('Configuring Neon PostgreSQL connection...');
-      
+      logger.debug("Configuring Neon PostgreSQL connection...");
+
       // Validate connection URL format
       if (!this.validateNeonUrl(config.NEON_DATABASE_URL)) {
-        throw new Error('Invalid Neon database URL format');
+        throw new Error("Invalid Neon database URL format");
       }
 
       // Store configuration for API calls
@@ -74,15 +77,15 @@ class DatabaseConnection {
 
       // Test connection via API endpoint
       const pingResult = await this.pingNeonDatabase();
-      
+
       if (pingResult) {
         this.connectionStatus.neon = true;
-        logger.success('Neon PostgreSQL connection verified');
+        logger.success("Neon PostgreSQL connection verified");
       } else {
-        throw new Error('Neon database ping failed');
+        throw new Error("Neon database ping failed");
       }
     } catch (error) {
-      logger.error('Failed to initialize Neon connection:', error);
+      logger.error("Failed to initialize Neon connection:", error);
       this.connectionStatus.neon = false;
     }
   }
@@ -92,30 +95,32 @@ class DatabaseConnection {
    */
   async initializePocketBaseConnection() {
     try {
-      logger.debug('Initializing PocketBase connection...');
-      
+      logger.debug("Initializing PocketBase connection...");
+
       // Import PocketBase SDK if available
-      if (typeof window !== 'undefined' && window.PocketBase) {
-        this.pocketbaseConnection = new window.PocketBase(config.POCKETBASE_URL);
+      if (typeof window !== "undefined" && window.PocketBase) {
+        this.pocketbaseConnection = new window.PocketBase(
+          config.POCKETBASE_URL,
+        );
       } else {
         // Dynamic import for PocketBase
-        const { default: PocketBase } = await import('pocketbase');
+        const { default: PocketBase } = await import("pocketbase");
         this.pocketbaseConnection = new PocketBase(config.POCKETBASE_URL);
       }
 
       // Test connection
       const health = await this.pocketbaseConnection.health.check();
-      
-      if (health.status === 'OK') {
+
+      if (health.status === "OK") {
         this.connectionStatus.pocketbase = true;
-        logger.success('PocketBase connection established');
+        logger.success("PocketBase connection established");
       } else {
-        throw new Error('PocketBase health check failed');
+        throw new Error("PocketBase health check failed");
       }
     } catch (error) {
-      logger.error('Failed to initialize PocketBase connection:', error);
+      logger.error("Failed to initialize PocketBase connection:", error);
       this.connectionStatus.pocketbase = false;
-      
+
       // Fallback to REST API calls
       this.pocketbaseConnection = {
         url: config.POCKETBASE_URL,
@@ -128,10 +133,10 @@ class DatabaseConnection {
    * Validate Neon database URL format
    */
   validateNeonUrl(url) {
-    if (!url || typeof url !== 'string') {
+    if (!url || typeof url !== "string") {
       return false;
     }
-    
+
     // Basic validation for PostgreSQL connection string
     const pgRegex = /^postgres(ql)?:\/\/[^:]+:[^@]+@[^:]+:\d+\/[^?]+(\?.*)?$/i;
     return pgRegex.test(url);
@@ -142,10 +147,10 @@ class DatabaseConnection {
    */
   async pingNeonDatabase() {
     try {
-      const response = await fetch('/api/database/ping', {
-        method: 'GET',
+      const response = await fetch("/api/database/ping", {
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
 
@@ -154,10 +159,10 @@ class DatabaseConnection {
         this.neonConnection.lastPing = new Date().toISOString();
         return data.success;
       }
-      
+
       return false;
     } catch (error) {
-      logger.error('Database ping failed:', error);
+      logger.error("Database ping failed:", error);
       return false;
     }
   }
@@ -167,15 +172,15 @@ class DatabaseConnection {
    */
   async executeNeonQuery(query, params = []) {
     if (!this.connectionStatus.neon) {
-      throw new Error('Neon database connection not available');
+      throw new Error("Neon database connection not available");
     }
 
     try {
-      const response = await fetch('/api/database/query', {
-        method: 'POST',
+      const response = await fetch("/api/database/query", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
         },
         body: JSON.stringify({
           query,
@@ -189,7 +194,7 @@ class DatabaseConnection {
 
       return await response.json();
     } catch (error) {
-      logger.error('Failed to execute Neon query:', error);
+      logger.error("Failed to execute Neon query:", error);
       throw error;
     }
   }
@@ -218,7 +223,7 @@ class DatabaseConnection {
       VALUES ($1, $2, $3, $4, $5, $6, NOW())
       RETURNING id;
     `;
-    
+
     const params = [
       eventData.user_id,
       eventData.event_type,
@@ -238,21 +243,26 @@ class DatabaseConnection {
     try {
       if (this.pocketbaseConnection.restFallback) {
         // Use REST API fallback
-        const response = await fetch(`${config.POCKETBASE_URL}/api/collections/analytics_events/records`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
+        const response = await fetch(
+          `${config.POCKETBASE_URL}/api/collections/analytics_events/records`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(eventData),
           },
-          body: JSON.stringify(eventData),
-        });
+        );
 
         return await response.json();
       } else {
         // Use PocketBase SDK
-        return await this.pocketbaseConnection.collection('analytics_events').create(eventData);
+        return await this.pocketbaseConnection
+          .collection("analytics_events")
+          .create(eventData);
       }
     } catch (error) {
-      logger.error('Failed to insert analytics event to PocketBase:', error);
+      logger.error("Failed to insert analytics event to PocketBase:", error);
       throw error;
     }
   }
@@ -262,9 +272,9 @@ class DatabaseConnection {
    */
   async insertAnalyticsEventLocal(eventData) {
     try {
-      const key = 'flagfit_analytics_events';
-      const existing = JSON.parse(localStorage.getItem(key) || '[]');
-      
+      const key = "flagfit_analytics_events";
+      const existing = JSON.parse(localStorage.getItem(key) || "[]");
+
       const event = {
         ...eventData,
         id: Date.now() + Math.random(),
@@ -272,18 +282,18 @@ class DatabaseConnection {
       };
 
       existing.push(event);
-      
+
       // Keep only last 1000 events to prevent storage overflow
       if (existing.length > 1000) {
         existing.splice(0, existing.length - 1000);
       }
 
       localStorage.setItem(key, JSON.stringify(existing));
-      
-      logger.debug('Analytics event stored locally:', event.event_type);
+
+      logger.debug("Analytics event stored locally:", event.event_type);
       return { success: true, id: event.id };
     } catch (error) {
-      logger.error('Failed to store analytics event locally:', error);
+      logger.error("Failed to store analytics event locally:", error);
       throw error;
     }
   }
@@ -295,8 +305,11 @@ class DatabaseConnection {
     return {
       connected: this.isConnected,
       connections: this.connectionStatus,
-      primary: this.connectionStatus.neon ? 'neon' : 
-               this.connectionStatus.pocketbase ? 'pocketbase' : 'local',
+      primary: this.connectionStatus.neon
+        ? "neon"
+        : this.connectionStatus.pocketbase
+          ? "pocketbase"
+          : "local",
     };
   }
 
@@ -305,9 +318,12 @@ class DatabaseConnection {
    */
   async disconnect() {
     try {
-      if (this.pocketbaseConnection && !this.pocketbaseConnection.restFallback) {
+      if (
+        this.pocketbaseConnection &&
+        !this.pocketbaseConnection.restFallback
+      ) {
         // PocketBase doesn't require explicit disconnect
-        logger.debug('PocketBase connection closed');
+        logger.debug("PocketBase connection closed");
       }
 
       this.neonConnection = null;
@@ -315,9 +331,9 @@ class DatabaseConnection {
       this.isConnected = false;
       this.connectionStatus = { neon: false, pocketbase: false };
 
-      logger.debug('All database connections closed');
+      logger.debug("All database connections closed");
     } catch (error) {
-      logger.error('Error closing database connections:', error);
+      logger.error("Error closing database connections:", error);
     }
   }
 }
@@ -326,11 +342,11 @@ class DatabaseConnection {
 export const dbConnection = new DatabaseConnection();
 
 // Auto-initialize in browser environment
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   // Initialize when DOM is ready
-  document.addEventListener('DOMContentLoaded', () => {
-    dbConnection.initialize().catch(error => {
-      logger.error('Failed to auto-initialize database connections:', error);
+  document.addEventListener("DOMContentLoaded", () => {
+    dbConnection.initialize().catch((error) => {
+      logger.error("Failed to auto-initialize database connections:", error);
     });
   });
 }

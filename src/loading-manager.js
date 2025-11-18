@@ -1,7 +1,7 @@
 // Loading Manager for FlagFit Pro
 // Provides consistent loading states, skeleton screens, and progress indicators
 
-import { SecureDOMUtils } from './secure-dom-utils.js';
+import { SecureDOMUtils } from "./secure-dom-utils.js";
 
 export class LoadingManager {
   constructor() {
@@ -9,35 +9,40 @@ export class LoadingManager {
   }
 
   // Show loading overlay with optional cancellation
-  showLoading(message = 'Loading...', id = null, cancellable = false, onCancel = null) {
+  showLoading(
+    message = "Loading...",
+    id = null,
+    cancellable = false,
+    onCancel = null,
+  ) {
     const loaderId = id || `loader-${Date.now()}`;
-    
-    const overlay = document.createElement('div');
-    overlay.className = 'loading-overlay';
+
+    const overlay = document.createElement("div");
+    overlay.className = "loading-overlay";
     overlay.id = loaderId;
-    overlay.setAttribute('role', 'status');
-    overlay.setAttribute('aria-live', 'polite');
-    overlay.setAttribute('aria-label', message);
+    overlay.setAttribute("role", "status");
+    overlay.setAttribute("aria-live", "polite");
+    overlay.setAttribute("aria-label", message);
 
     // Create spinner
-    const spinner = SecureDOMUtils.createElement(overlay, 'div', {
-      className: 'loading-spinner'
+    const spinner = SecureDOMUtils.createElement(overlay, "div", {
+      className: "loading-spinner",
     });
 
     // Create message
-    const messageEl = SecureDOMUtils.createElement(overlay, 'div', {
-      className: 'loading-message',
-      textContent: message
+    const messageEl = SecureDOMUtils.createElement(overlay, "div", {
+      className: "loading-message",
+      textContent: message,
     });
 
     // Add cancel button if needed
     let cancelBtn = null;
     if (cancellable) {
-      cancelBtn = SecureDOMUtils.createElement(overlay, 'button', {
-        className: 'loading-cancel-btn',
-        textContent: 'Cancel',
+      cancelBtn = SecureDOMUtils.createElement(overlay, "button", {
+        className: "loading-cancel-btn",
+        textContent: "Cancel",
         attributes: {
-          'aria-label': 'Cancel loading',
+          "aria-label": "Cancel loading",
           style: `
             margin-top: 1rem;
             padding: 0.5rem 1rem;
@@ -47,14 +52,14 @@ export class LoadingManager {
             border-radius: 4px;
             cursor: pointer;
             font-size: 0.875rem;
-          `
-        }
+          `,
+        },
       });
     }
 
     // Add cancel handler
     if (cancellable && onCancel && cancelBtn) {
-      cancelBtn.addEventListener('click', () => {
+      cancelBtn.addEventListener("click", () => {
         if (onCancel) onCancel();
         this.hideLoading(loaderId);
       });
@@ -71,7 +76,7 @@ export class LoadingManager {
     if (id) {
       const loader = this.activeLoaders.get(id);
       if (loader) {
-        loader.style.opacity = '0';
+        loader.style.opacity = "0";
         setTimeout(() => {
           loader.remove();
           this.activeLoaders.delete(id);
@@ -80,7 +85,7 @@ export class LoadingManager {
     } else {
       // Hide all loaders
       this.activeLoaders.forEach((loader) => {
-        loader.style.opacity = '0';
+        loader.style.opacity = "0";
         setTimeout(() => loader.remove(), 300);
       });
       this.activeLoaders.clear();
@@ -89,7 +94,7 @@ export class LoadingManager {
 
   // Show skeleton screen
   showSkeleton(container, count = 1) {
-    if (typeof container === 'string') {
+    if (typeof container === "string") {
       container = document.querySelector(container);
     }
 
@@ -97,31 +102,31 @@ export class LoadingManager {
 
     const skeletons = [];
     for (let i = 0; i < count; i++) {
-      const skeleton = SecureDOMUtils.createElement(container, 'div', {
-        className: 'skeleton-item'
+      const skeleton = SecureDOMUtils.createElement(container, "div", {
+        className: "skeleton-item",
       });
-      
+
       // Create skeleton header
-      SecureDOMUtils.createElement(skeleton, 'div', {
-        className: 'skeleton-header'
+      SecureDOMUtils.createElement(skeleton, "div", {
+        className: "skeleton-header",
       });
-      
+
       // Create skeleton body
-      const skeletonBody = SecureDOMUtils.createElement(skeleton, 'div', {
-        className: 'skeleton-body'
+      const skeletonBody = SecureDOMUtils.createElement(skeleton, "div", {
+        className: "skeleton-body",
       });
-      
+
       // Create skeleton lines
-      SecureDOMUtils.createElement(skeletonBody, 'div', {
-        className: 'skeleton-line'
+      SecureDOMUtils.createElement(skeletonBody, "div", {
+        className: "skeleton-line",
       });
-      SecureDOMUtils.createElement(skeletonBody, 'div', {
-        className: 'skeleton-line'
+      SecureDOMUtils.createElement(skeletonBody, "div", {
+        className: "skeleton-line",
       });
-      SecureDOMUtils.createElement(skeletonBody, 'div', {
-        className: 'skeleton-line short'
+      SecureDOMUtils.createElement(skeletonBody, "div", {
+        className: "skeleton-line short",
       });
-      
+
       skeletons.push(skeleton);
     }
 
@@ -131,19 +136,19 @@ export class LoadingManager {
   // Hide skeleton screens
   hideSkeleton(skeletons) {
     if (Array.isArray(skeletons)) {
-      skeletons.forEach(skeleton => {
-        skeleton.style.opacity = '0';
+      skeletons.forEach((skeleton) => {
+        skeleton.style.opacity = "0";
         setTimeout(() => skeleton.remove(), 300);
       });
     } else if (skeletons) {
-      skeletons.style.opacity = '0';
+      skeletons.style.opacity = "0";
       setTimeout(() => skeletons.remove(), 300);
     }
   }
 
   // Show progress bar
   showProgress(container, current, total, message = null) {
-    if (typeof container === 'string') {
+    if (typeof container === "string") {
       container = document.querySelector(container);
     }
 
@@ -152,34 +157,34 @@ export class LoadingManager {
     const progressId = `progress-${Date.now()}`;
     const percentage = Math.round((current / total) * 100);
 
-    const progressBar = SecureDOMUtils.createElement(container, 'div', {
-      className: 'progress-container',
-      attributes: { id: progressId }
+    const progressBar = SecureDOMUtils.createElement(container, "div", {
+      className: "progress-container",
+      attributes: { id: progressId },
     });
-    
+
     // Add message if provided
     if (message) {
-      SecureDOMUtils.createElement(progressBar, 'div', {
-        className: 'progress-message',
-        textContent: message
+      SecureDOMUtils.createElement(progressBar, "div", {
+        className: "progress-message",
+        textContent: message,
       });
     }
-    
+
     // Create progress bar wrapper
-    const wrapper = SecureDOMUtils.createElement(progressBar, 'div', {
-      className: 'progress-bar-wrapper'
+    const wrapper = SecureDOMUtils.createElement(progressBar, "div", {
+      className: "progress-bar-wrapper",
     });
-    
+
     // Create progress bar
-    SecureDOMUtils.createElement(wrapper, 'div', {
-      className: 'progress-bar',
-      attributes: { style: `width: ${percentage}%` }
+    SecureDOMUtils.createElement(wrapper, "div", {
+      className: "progress-bar",
+      attributes: { style: `width: ${percentage}%` },
     });
-    
+
     // Create progress text
-    SecureDOMUtils.createElement(progressBar, 'div', {
-      className: 'progress-text',
-      textContent: `${current} of ${total} (${percentage}%)`
+    SecureDOMUtils.createElement(progressBar, "div", {
+      className: "progress-text",
+      textContent: `${current} of ${total} (${percentage}%)`,
     });
     return progressId;
   }
@@ -190,59 +195,63 @@ export class LoadingManager {
     if (!progressBar) return;
 
     const percentage = Math.round((current / total) * 100);
-    const bar = progressBar.querySelector('.progress-bar');
-    const text = progressBar.querySelector('.progress-text');
+    const bar = progressBar.querySelector(".progress-bar");
+    const text = progressBar.querySelector(".progress-text");
 
     if (bar) bar.style.width = `${percentage}%`;
-    if (text) SecureDOMUtils.setTextContent(text, `${current} of ${total} (${percentage}%)`);
+    if (text)
+      SecureDOMUtils.setTextContent(
+        text,
+        `${current} of ${total} (${percentage}%)`,
+      );
   }
 
   // Show inline loading state
   setLoadingState(element, isLoading, message = null) {
-    if (typeof element === 'string') {
+    if (typeof element === "string") {
       element = document.querySelector(element);
     }
 
     if (!element) return;
 
     if (isLoading) {
-      element.classList.add('is-loading');
-      element.setAttribute('aria-busy', 'true');
+      element.classList.add("is-loading");
+      element.setAttribute("aria-busy", "true");
       if (message) {
-        element.setAttribute('aria-label', message);
+        element.setAttribute("aria-label", message);
       }
     } else {
-      element.classList.remove('is-loading');
-      element.removeAttribute('aria-busy');
-      element.removeAttribute('aria-label');
+      element.classList.remove("is-loading");
+      element.removeAttribute("aria-busy");
+      element.removeAttribute("aria-label");
     }
   }
 
   // Show saving indicator
-  showSaving(element, message = 'Saving...') {
-    if (typeof element === 'string') {
+  showSaving(element, message = "Saving...") {
+    if (typeof element === "string") {
       element = document.querySelector(element);
     }
 
     if (!element) return;
 
     const savingId = `saving-${Date.now()}`;
-    const indicator = SecureDOMUtils.createElement(element, 'div', {
-      className: 'saving-indicator',
-      attributes: { id: savingId }
-    });
-    
-    // Create icon element
-    SecureDOMUtils.createElement(indicator, 'i', {
-      attributes: { 'data-lucide': 'loader-2' }
-    });
-    
-    // Create message span
-    SecureDOMUtils.createElement(indicator, 'span', {
-      textContent: message
+    const indicator = SecureDOMUtils.createElement(element, "div", {
+      className: "saving-indicator",
+      attributes: { id: savingId },
     });
 
-    if (typeof lucide !== 'undefined') {
+    // Create icon element
+    SecureDOMUtils.createElement(indicator, "i", {
+      attributes: { "data-lucide": "loader-2" },
+    });
+
+    // Create message span
+    SecureDOMUtils.createElement(indicator, "span", {
+      textContent: message,
+    });
+
+    if (typeof lucide !== "undefined") {
       lucide.createIcons();
     }
 
@@ -253,7 +262,7 @@ export class LoadingManager {
   hideSaving(savingId) {
     const indicator = document.getElementById(savingId);
     if (indicator) {
-      indicator.style.opacity = '0';
+      indicator.style.opacity = "0";
       setTimeout(() => indicator.remove(), 300);
     }
   }
@@ -261,4 +270,3 @@ export class LoadingManager {
 
 // Global instance
 export const loadingManager = new LoadingManager();
-

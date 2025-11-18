@@ -7,12 +7,14 @@ Built a comprehensive evidence-based knowledge database system that fetches 100-
 ## 📦 What Was Created
 
 ### 1. Database Schema (`028_evidence_based_knowledge_base.sql`)
+
 - **`research_articles`** table - Stores raw research articles
 - **`knowledge_base_entries`** table - Processed, structured knowledge
 - **Search indexes** - Full-text search capabilities
 - **Triggers** - Auto-update search indexes
 
 ### 2. Data Fetching Script (`scripts/fetch-research-articles.js`)
+
 - Fetches from **Europe PMC** (PubMed + open access)
 - Fetches from **Semantic Scholar** API
 - Searches across 5 categories:
@@ -26,6 +28,7 @@ Built a comprehensive evidence-based knowledge database system that fetches 100-
 - Deduplicates by DOI
 
 ### 3. Knowledge Processing Script (`scripts/process-knowledge-base.js`)
+
 - Extracts structured knowledge from articles
 - Creates knowledge base entries for:
   - Supplements (iron, creatine, protein, magnesium, etc.)
@@ -37,18 +40,21 @@ Built a comprehensive evidence-based knowledge database system that fetches 100-
 - Determines evidence strength and consensus
 
 ### 4. Knowledge Base Service (`src/js/services/knowledge-base-service.js`)
+
 - Client-side service for querying knowledge base
 - Caching for performance
 - Fallback to local knowledge if API unavailable
 - Synthesizes answers from multiple articles
 
 ### 5. API Endpoint (`netlify/functions/knowledge-search.cjs`)
+
 - Netlify function for knowledge base queries
 - Full-text search support
 - Category filtering
 - Returns structured answers with citations
 
 ### 6. Chatbot Integration
+
 - Updated chatbot to query knowledge base first
 - Falls back to local knowledge if needed
 - Shows evidence level and citation counts
@@ -82,6 +88,7 @@ node scripts/process-knowledge-base.js
 ### Topics Covered
 
 ✅ **Injuries**
+
 - Ankle sprains
 - Hamstring strains
 - ACL injuries
@@ -90,6 +97,7 @@ node scripts/process-knowledge-base.js
 - Rehabilitation
 
 ✅ **Nutrition & Supplements**
+
 - Iron supplementation
 - Protein requirements
 - Creatine protocols
@@ -99,6 +107,7 @@ node scripts/process-knowledge-base.js
 - Hydration
 
 ✅ **Recovery Methods**
+
 - Sauna therapy
 - Cold water immersion
 - Cryotherapy
@@ -107,6 +116,7 @@ node scripts/process-knowledge-base.js
 - Sleep optimization
 
 ✅ **Training**
+
 - Speed training
 - Agility training
 - Strength periodization
@@ -114,6 +124,7 @@ node scripts/process-knowledge-base.js
 - Load monitoring
 
 ✅ **Sports Psychology**
+
 - Performance anxiety
 - Visualization
 - Confidence building
@@ -131,6 +142,7 @@ The chatbot can now answer questions like:
 - "How does cold therapy help recovery?"
 
 All answers are backed by:
+
 - **Evidence level** (A/B/C)
 - **Number of supporting articles**
 - **Citation information**
@@ -146,6 +158,7 @@ All answers are backed by:
 ## 🎓 Evidence Quality
 
 Articles are automatically:
+
 - ✅ Filtered for open access only
 - ✅ Categorized by topic
 - ✅ Rated by evidence level
@@ -173,4 +186,3 @@ Articles are automatically:
 ## ✨ Result
 
 The FlagFit AI chatbot now has access to a comprehensive, evidence-based knowledge database covering all aspects of athletic performance, nutrition, recovery, training, and psychology - specifically tailored for flag football athletes chasing Olympic dreams!
-

@@ -5,8 +5,8 @@
 
 class GameStatsService {
   constructor() {
-    this.storageKey = 'flagfit_games';
-    this.currentGameKey = 'flagfit_current_game';
+    this.storageKey = "flagfit_games";
+    this.currentGameKey = "flagfit_current_game";
   }
 
   /**
@@ -19,21 +19,21 @@ class GameStatsService {
       const games = this.getAllGames();
 
       // Find existing game by ID
-      const existingIndex = games.findIndex(g => g.gameId === game.gameId);
+      const existingIndex = games.findIndex((g) => g.gameId === game.gameId);
 
       if (existingIndex >= 0) {
         // Update existing game
         games[existingIndex] = {
           ...games[existingIndex],
           ...game,
-          updatedAt: new Date().toISOString()
+          updatedAt: new Date().toISOString(),
         };
       } else {
         // Add new game
         games.push({
           ...game,
           createdAt: game.createdAt || new Date().toISOString(),
-          updatedAt: new Date().toISOString()
+          updatedAt: new Date().toISOString(),
         });
       }
 
@@ -45,7 +45,7 @@ class GameStatsService {
 
       return true;
     } catch (error) {
-      console.error('Error saving game:', error);
+      console.error("Error saving game:", error);
       return false;
     }
   }
@@ -58,9 +58,9 @@ class GameStatsService {
   getGame(gameId) {
     try {
       const games = this.getAllGames();
-      return games.find(g => g.gameId === gameId) || null;
+      return games.find((g) => g.gameId === gameId) || null;
     } catch (error) {
-      console.error('Error getting game:', error);
+      console.error("Error getting game:", error);
       return null;
     }
   }
@@ -74,7 +74,7 @@ class GameStatsService {
       const gamesJson = localStorage.getItem(this.storageKey);
       return gamesJson ? JSON.parse(gamesJson) : [];
     } catch (error) {
-      console.error('Error loading games:', error);
+      console.error("Error loading games:", error);
       return [];
     }
   }
@@ -88,7 +88,7 @@ class GameStatsService {
       const gameJson = localStorage.getItem(this.currentGameKey);
       return gameJson ? JSON.parse(gameJson) : null;
     } catch (error) {
-      console.error('Error loading current game:', error);
+      console.error("Error loading current game:", error);
       return null;
     }
   }
@@ -101,11 +101,11 @@ class GameStatsService {
   deleteGame(gameId) {
     try {
       const games = this.getAllGames();
-      const filteredGames = games.filter(g => g.gameId !== gameId);
+      const filteredGames = games.filter((g) => g.gameId !== gameId);
       localStorage.setItem(this.storageKey, JSON.stringify(filteredGames));
       return true;
     } catch (error) {
-      console.error('Error deleting game:', error);
+      console.error("Error deleting game:", error);
       return false;
     }
   }
@@ -118,7 +118,7 @@ class GameStatsService {
    */
   getGamesByDateRange(startDate, endDate) {
     const games = this.getAllGames();
-    return games.filter(game => {
+    return games.filter((game) => {
       const gameDate = new Date(game.gameDate);
       return gameDate >= startDate && gameDate <= endDate;
     });
@@ -154,15 +154,15 @@ class GameStatsService {
       flagPullAttempts: 0,
       flagPulls: 0,
       flagPullSuccessRate: 0,
-      missedFlagPulls: 0
+      missedFlagPulls: 0,
     };
 
-    games.forEach(game => {
+    games.forEach((game) => {
       if (!game.plays) return;
 
       let playerInGame = false;
 
-      game.plays.forEach(play => {
+      game.plays.forEach((play) => {
         // Check if player was involved in this play
         const isQB = play.quarterbackId === playerId;
         const isReceiver = play.receiverId === playerId;
@@ -174,31 +174,34 @@ class GameStatsService {
         }
 
         // Passing stats
-        if (isQB && play.playType === 'pass') {
+        if (isQB && play.playType === "pass") {
           stats.passAttempts++;
-          if (play.outcome === 'completion') stats.completions++;
-          if (play.outcome === 'interception') stats.interceptions++;
-          if (play.throwAccuracy === 'bad' || play.throwAccuracy === 'terrible') {
+          if (play.outcome === "completion") stats.completions++;
+          if (play.outcome === "interception") stats.interceptions++;
+          if (
+            play.throwAccuracy === "bad" ||
+            play.throwAccuracy === "terrible"
+          ) {
             stats.badThrows++;
           }
           // You could track yards here if added to play data
         }
 
         // Receiving stats
-        if (isReceiver && play.playType === 'pass') {
+        if (isReceiver && play.playType === "pass") {
           stats.targets++;
-          if (play.outcome === 'completion') stats.receptions++;
+          if (play.outcome === "completion") stats.receptions++;
           if (play.isDrop) stats.drops++;
         }
 
         // Rushing stats
-        if (isBallCarrier && play.playType === 'run') {
+        if (isBallCarrier && play.playType === "run") {
           stats.rushingAttempts++;
           stats.rushingYards += play.yardsGained || 0;
         }
 
         // Defensive stats
-        if (isDefender && play.playType === 'flag_pull') {
+        if (isDefender && play.playType === "flag_pull") {
           stats.flagPullAttempts++;
           if (play.isSuccessful) {
             stats.flagPulls++;
@@ -213,7 +216,10 @@ class GameStatsService {
 
     // Calculate percentages
     if (stats.passAttempts > 0) {
-      stats.completionPercentage = ((stats.completions / stats.passAttempts) * 100).toFixed(1);
+      stats.completionPercentage = (
+        (stats.completions / stats.passAttempts) *
+        100
+      ).toFixed(1);
     }
 
     if (stats.targets > 0) {
@@ -221,7 +227,10 @@ class GameStatsService {
     }
 
     if (stats.flagPullAttempts > 0) {
-      stats.flagPullSuccessRate = ((stats.flagPulls / stats.flagPullAttempts) * 100).toFixed(1);
+      stats.flagPullSuccessRate = (
+        (stats.flagPulls / stats.flagPullAttempts) *
+        100
+      ).toFixed(1);
     }
 
     return stats;
@@ -236,10 +245,10 @@ class GameStatsService {
     const games = this.getAllGames();
     const drops = [];
 
-    games.forEach(game => {
+    games.forEach((game) => {
       if (!game.plays) return;
 
-      game.plays.forEach(play => {
+      game.plays.forEach((play) => {
         if (play.receiverId === playerId && play.isDrop) {
           drops.push({
             gameId: game.gameId,
@@ -250,7 +259,7 @@ class GameStatsService {
             routeType: play.routeType,
             dropSeverity: play.dropSeverity,
             dropReason: play.dropReason,
-            throwAccuracy: play.throwAccuracy
+            throwAccuracy: play.throwAccuracy,
           });
         }
       });
@@ -261,9 +270,10 @@ class GameStatsService {
     const reasonCounts = {};
     const routeCounts = {};
 
-    drops.forEach(drop => {
+    drops.forEach((drop) => {
       // Count by severity
-      severityCounts[drop.dropSeverity] = (severityCounts[drop.dropSeverity] || 0) + 1;
+      severityCounts[drop.dropSeverity] =
+        (severityCounts[drop.dropSeverity] || 0) + 1;
 
       // Count by reason
       reasonCounts[drop.dropReason] = (reasonCounts[drop.dropReason] || 0) + 1;
@@ -279,7 +289,7 @@ class GameStatsService {
       byReason: reasonCounts,
       byRoute: routeCounts,
       mostCommonReason: this.getMostCommon(reasonCounts),
-      mostCommonRoute: this.getMostCommon(routeCounts)
+      mostCommonRoute: this.getMostCommon(routeCounts),
     };
   }
 
@@ -292,11 +302,11 @@ class GameStatsService {
     const games = this.getAllGames();
     const attempts = [];
 
-    games.forEach(game => {
+    games.forEach((game) => {
       if (!game.plays) return;
 
-      game.plays.forEach(play => {
-        if (play.defenderId === playerId && play.playType === 'flag_pull') {
+      game.plays.forEach((play) => {
+        if (play.defenderId === playerId && play.playType === "flag_pull") {
           attempts.push({
             gameId: game.gameId,
             gameDate: game.gameDate,
@@ -304,20 +314,21 @@ class GameStatsService {
             playNumber: play.playNumber,
             quarter: play.quarter,
             isSuccessful: play.isSuccessful,
-            missReason: play.missReason
+            missReason: play.missReason,
           });
         }
       });
     });
 
-    const successful = attempts.filter(a => a.isSuccessful).length;
-    const missed = attempts.filter(a => !a.isSuccessful).length;
+    const successful = attempts.filter((a) => a.isSuccessful).length;
+    const missed = attempts.filter((a) => !a.isSuccessful).length;
 
     // Analyze miss reasons
     const missReasons = {};
-    attempts.forEach(attempt => {
+    attempts.forEach((attempt) => {
       if (!attempt.isSuccessful && attempt.missReason) {
-        missReasons[attempt.missReason] = (missReasons[attempt.missReason] || 0) + 1;
+        missReasons[attempt.missReason] =
+          (missReasons[attempt.missReason] || 0) + 1;
       }
     });
 
@@ -325,10 +336,13 @@ class GameStatsService {
       totalAttempts: attempts.length,
       successful: successful,
       missed: missed,
-      successRate: attempts.length > 0 ? ((successful / attempts.length) * 100).toFixed(1) : 0,
+      successRate:
+        attempts.length > 0
+          ? ((successful / attempts.length) * 100).toFixed(1)
+          : 0,
       attempts: attempts,
       missReasons: missReasons,
-      mostCommonMissReason: this.getMostCommon(missReasons)
+      mostCommonMissReason: this.getMostCommon(missReasons),
     };
   }
 
@@ -341,11 +355,11 @@ class GameStatsService {
     const games = this.getAllGames();
     const throws = [];
 
-    games.forEach(game => {
+    games.forEach((game) => {
       if (!game.plays) return;
 
-      game.plays.forEach(play => {
-        if (play.quarterbackId === playerId && play.playType === 'pass') {
+      game.plays.forEach((play) => {
+        if (play.quarterbackId === playerId && play.playType === "pass") {
           throws.push({
             gameId: game.gameId,
             gameDate: game.gameDate,
@@ -355,7 +369,7 @@ class GameStatsService {
             routeType: play.routeType,
             outcome: play.outcome,
             throwAccuracy: play.throwAccuracy,
-            isDrop: play.isDrop
+            isDrop: play.isDrop,
           });
         }
       });
@@ -363,31 +377,34 @@ class GameStatsService {
 
     // Analyze by route type
     const byRoute = {};
-    throws.forEach(t => {
+    throws.forEach((t) => {
       if (!byRoute[t.routeType]) {
         byRoute[t.routeType] = {
           attempts: 0,
           completions: 0,
           incompletions: 0,
           drops: 0,
-          badThrows: 0
+          badThrows: 0,
         };
       }
 
       byRoute[t.routeType].attempts++;
-      if (t.outcome === 'completion') byRoute[t.routeType].completions++;
-      if (t.outcome !== 'completion') byRoute[t.routeType].incompletions++;
+      if (t.outcome === "completion") byRoute[t.routeType].completions++;
+      if (t.outcome !== "completion") byRoute[t.routeType].incompletions++;
       if (t.isDrop) byRoute[t.routeType].drops++;
-      if (t.throwAccuracy === 'bad' || t.throwAccuracy === 'terrible') {
+      if (t.throwAccuracy === "bad" || t.throwAccuracy === "terrible") {
         byRoute[t.routeType].badThrows++;
       }
     });
 
     // Calculate completion % by route
-    Object.keys(byRoute).forEach(route => {
+    Object.keys(byRoute).forEach((route) => {
       const data = byRoute[route];
       if (data.attempts > 0) {
-        data.completionPercentage = ((data.completions / data.attempts) * 100).toFixed(1);
+        data.completionPercentage = (
+          (data.completions / data.attempts) *
+          100
+        ).toFixed(1);
         data.badThrowRate = ((data.badThrows / data.attempts) * 100).toFixed(1);
       }
     });
@@ -395,7 +412,7 @@ class GameStatsService {
     return {
       totalThrows: throws.length,
       throws: throws,
-      byRoute: byRoute
+      byRoute: byRoute,
     };
   }
 
@@ -421,20 +438,20 @@ class GameStatsService {
       rushingAttempts: 0,
       totalYards: 0,
       flagPullAttempts: 0,
-      flagPulls: 0
+      flagPulls: 0,
     };
 
-    game.plays.forEach(play => {
-      if (play.playType === 'pass') {
+    game.plays.forEach((play) => {
+      if (play.playType === "pass") {
         stats.passAttempts++;
-        if (play.outcome === 'completion') stats.completions++;
+        if (play.outcome === "completion") stats.completions++;
         else stats.incompletions++;
         if (play.isDrop) stats.drops++;
-        if (play.outcome === 'interception') stats.interceptions++;
-      } else if (play.playType === 'run') {
+        if (play.outcome === "interception") stats.interceptions++;
+      } else if (play.playType === "run") {
         stats.rushingAttempts++;
         stats.totalYards += play.yardsGained || 0;
-      } else if (play.playType === 'flag_pull') {
+      } else if (play.playType === "flag_pull") {
         stats.flagPullAttempts++;
         if (play.isSuccessful) stats.flagPulls++;
       }
@@ -442,12 +459,18 @@ class GameStatsService {
 
     // Calculate percentages
     if (stats.passAttempts > 0) {
-      stats.completionPercentage = ((stats.completions / stats.passAttempts) * 100).toFixed(1);
+      stats.completionPercentage = (
+        (stats.completions / stats.passAttempts) *
+        100
+      ).toFixed(1);
       stats.dropRate = ((stats.drops / stats.passAttempts) * 100).toFixed(1);
     }
 
     if (stats.flagPullAttempts > 0) {
-      stats.flagPullSuccessRate = ((stats.flagPulls / stats.flagPullAttempts) * 100).toFixed(1);
+      stats.flagPullSuccessRate = (
+        (stats.flagPulls / stats.flagPullAttempts) *
+        100
+      ).toFixed(1);
     }
 
     return stats;
@@ -462,7 +485,7 @@ class GameStatsService {
     let maxCount = 0;
     let mostCommon = null;
 
-    Object.keys(counts).forEach(key => {
+    Object.keys(counts).forEach((key) => {
       if (counts[key] > maxCount) {
         maxCount = counts[key];
         mostCommon = key;
@@ -502,7 +525,7 @@ class GameStatsService {
       localStorage.setItem(this.storageKey, JSON.stringify(games));
       return true;
     } catch (error) {
-      console.error('Error importing games:', error);
+      console.error("Error importing games:", error);
       return false;
     }
   }
@@ -517,7 +540,7 @@ class GameStatsService {
       localStorage.removeItem(this.currentGameKey);
       return true;
     } catch (error) {
-      console.error('Error clearing games:', error);
+      console.error("Error clearing games:", error);
       return false;
     }
   }

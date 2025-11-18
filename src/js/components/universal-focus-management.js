@@ -12,10 +12,11 @@ class UniversalFocusManagement {
       enableFocusIndicators: true,
       enableKeyboardShortcuts: true,
       enableAriaLiveRegions: true,
-      ...options
+      ...options,
     };
 
-    this.focusableElements = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+    this.focusableElements =
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
     this.focusTraps = new Map();
     this.currentFocusedElement = null;
 
@@ -38,82 +39,90 @@ class UniversalFocusManagement {
     // Skip skip links on auth pages (login, register, reset-password)
     // These pages don't have navigation to skip, so skip links are unnecessary
     const currentPath = window.location.pathname.toLowerCase();
-    const authPages = ['/login', '/register', '/reset-password'];
-    const isAuthPage = authPages.some(page => currentPath.includes(page) || currentPath.endsWith(page + '.html'));
+    const authPages = ["/login", "/register", "/reset-password"];
+    const isAuthPage = authPages.some(
+      (page) =>
+        currentPath.includes(page) || currentPath.endsWith(page + ".html"),
+    );
 
     if (isAuthPage) {
       // Remove any existing skip links that might have been created before
-      document.querySelectorAll('.skip-link').forEach(link => link.remove());
+      document.querySelectorAll(".skip-link").forEach((link) => link.remove());
       return; // Don't create skip links on auth pages
     }
 
     // Create skip to main content link
-    const skipLink = document.createElement('a');
-    skipLink.href = '#main-content';
-    skipLink.className = 'skip-link';
-    skipLink.textContent = 'Skip to main content';
-    skipLink.setAttribute('aria-label', 'Skip to main content');
+    const skipLink = document.createElement("a");
+    skipLink.href = "#main-content";
+    skipLink.className = "skip-link";
+    skipLink.textContent = "Skip to main content";
+    skipLink.setAttribute("aria-label", "Skip to main content");
 
     // Insert at the very beginning of the body
     document.body.insertBefore(skipLink, document.body.firstChild);
 
     // Ensure main content has ID
-    let mainContent = document.getElementById('main-content') ||
-                     document.querySelector('main') ||
-                     document.querySelector('.main-content') ||
-                     document.querySelector('#content');
+    let mainContent =
+      document.getElementById("main-content") ||
+      document.querySelector("main") ||
+      document.querySelector(".main-content") ||
+      document.querySelector("#content");
 
     if (mainContent && !mainContent.id) {
-      mainContent.id = 'main-content';
+      mainContent.id = "main-content";
     } else if (!mainContent) {
       // Find the main content area heuristically
       const contentSelectors = [
-        '.container',
-        '.content',
-        '.page-content',
-        '.dashboard',
-        '.analytics-content',
-        'section:first-of-type'
+        ".container",
+        ".content",
+        ".page-content",
+        ".dashboard",
+        ".analytics-content",
+        "section:first-of-type",
       ];
 
       for (const selector of contentSelectors) {
         mainContent = document.querySelector(selector);
         if (mainContent) {
-          mainContent.id = 'main-content';
+          mainContent.id = "main-content";
           break;
         }
       }
     }
 
     // Add skip link to navigation
-    const nav = document.querySelector('nav, .nav, .navigation, .sidebar');
+    const nav = document.querySelector("nav, .nav, .navigation, .sidebar");
     if (nav && mainContent) {
-      const skipToNav = document.createElement('a');
-      skipToNav.href = '#navigation';
-      skipToNav.className = 'skip-link';
-      skipToNav.textContent = 'Skip to navigation';
-      skipToNav.setAttribute('aria-label', 'Skip to navigation');
+      const skipToNav = document.createElement("a");
+      skipToNav.href = "#navigation";
+      skipToNav.className = "skip-link";
+      skipToNav.textContent = "Skip to navigation";
+      skipToNav.setAttribute("aria-label", "Skip to navigation");
 
-      if (!nav.id) nav.id = 'navigation';
+      if (!nav.id) nav.id = "navigation";
       document.body.insertBefore(skipToNav, skipLink.nextSibling);
     }
 
     // Handle skip link activation
-    document.addEventListener('click', (e) => {
-      if (e.target.classList.contains('skip-link')) {
+    document.addEventListener("click", (e) => {
+      if (e.target.classList.contains("skip-link")) {
         e.preventDefault();
-        const targetId = e.target.getAttribute('href').slice(1);
+        const targetId = e.target.getAttribute("href").slice(1);
         const target = document.getElementById(targetId);
 
         if (target) {
-          target.setAttribute('tabindex', '-1');
+          target.setAttribute("tabindex", "-1");
           target.focus();
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          target.scrollIntoView({ behavior: "smooth", block: "start" });
 
           // Remove tabindex after focus
-          target.addEventListener('blur', () => {
-            target.removeAttribute('tabindex');
-          }, { once: true });
+          target.addEventListener(
+            "blur",
+            () => {
+              target.removeAttribute("tabindex");
+            },
+            { once: true },
+          );
         }
       }
     });
@@ -125,27 +134,27 @@ class UniversalFocusManagement {
     // Track if user is navigating with keyboard
     let isKeyboardNavigation = false;
 
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Tab') {
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Tab") {
         isKeyboardNavigation = true;
-        document.body.classList.add('keyboard-navigation');
+        document.body.classList.add("keyboard-navigation");
       }
     });
 
-    document.addEventListener('mousedown', () => {
+    document.addEventListener("mousedown", () => {
       isKeyboardNavigation = false;
-      document.body.classList.remove('keyboard-navigation');
+      document.body.classList.remove("keyboard-navigation");
     });
 
     // Enhanced focus indicators for interactive elements
-    document.addEventListener('focusin', (e) => {
+    document.addEventListener("focusin", (e) => {
       if (isKeyboardNavigation) {
         this.currentFocusedElement = e.target;
         this.announceElementInfo(e.target);
       }
     });
 
-    document.addEventListener('focusout', () => {
+    document.addEventListener("focusout", () => {
       this.currentFocusedElement = null;
     });
   }
@@ -153,23 +162,23 @@ class UniversalFocusManagement {
   setupKeyboardShortcuts() {
     if (!this.options.enableKeyboardShortcuts) return;
 
-    document.addEventListener('keydown', (e) => {
+    document.addEventListener("keydown", (e) => {
       // Handle keyboard shortcuts
       if (e.altKey) {
         switch (e.key) {
-          case 'm':
+          case "m":
             e.preventDefault();
             this.focusMainContent();
             break;
-          case 'n':
+          case "n":
             e.preventDefault();
             this.focusNavigation();
             break;
-          case 's':
+          case "s":
             e.preventDefault();
             this.focusSearch();
             break;
-          case '1':
+          case "1":
             e.preventDefault();
             this.focusMainHeading();
             break;
@@ -177,12 +186,12 @@ class UniversalFocusManagement {
       }
 
       // Handle escape key for closing modals/dropdowns
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         this.handleEscape();
       }
 
       // Handle arrow navigation for certain components
-      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+      if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
         this.handleArrowNavigation(e);
       }
     });
@@ -192,47 +201,49 @@ class UniversalFocusManagement {
     if (!this.options.enableAriaLiveRegions) return;
 
     // Create polite live region if it doesn't exist
-    if (!document.getElementById('aria-live-polite')) {
-      const politeRegion = document.createElement('div');
-      politeRegion.id = 'aria-live-polite';
-      politeRegion.className = 'sr-only';
-      politeRegion.setAttribute('aria-live', 'polite');
-      politeRegion.setAttribute('aria-atomic', 'true');
+    if (!document.getElementById("aria-live-polite")) {
+      const politeRegion = document.createElement("div");
+      politeRegion.id = "aria-live-polite";
+      politeRegion.className = "sr-only";
+      politeRegion.setAttribute("aria-live", "polite");
+      politeRegion.setAttribute("aria-atomic", "true");
       document.body.appendChild(politeRegion);
     }
 
     // Create assertive live region if it doesn't exist
-    if (!document.getElementById('aria-live-assertive')) {
-      const assertiveRegion = document.createElement('div');
-      assertiveRegion.id = 'aria-live-assertive';
-      assertiveRegion.className = 'sr-only';
-      assertiveRegion.setAttribute('aria-live', 'assertive');
-      assertiveRegion.setAttribute('aria-atomic', 'true');
+    if (!document.getElementById("aria-live-assertive")) {
+      const assertiveRegion = document.createElement("div");
+      assertiveRegion.id = "aria-live-assertive";
+      assertiveRegion.className = "sr-only";
+      assertiveRegion.setAttribute("aria-live", "assertive");
+      assertiveRegion.setAttribute("aria-atomic", "true");
       document.body.appendChild(assertiveRegion);
     }
   }
 
   setupFocusTracking() {
     // Track focus changes for better accessibility
-    document.addEventListener('focusin', (e) => {
+    document.addEventListener("focusin", (e) => {
       // Remove any existing focus indicators
-      document.querySelectorAll('.has-focus').forEach(el => {
-        el.classList.remove('has-focus');
+      document.querySelectorAll(".has-focus").forEach((el) => {
+        el.classList.remove("has-focus");
       });
 
       // Add focus indicator to current element's container
-      const container = e.target.closest('.form-group, .nav-item, .btn-group, .card');
+      const container = e.target.closest(
+        ".form-group, .nav-item, .btn-group, .card",
+      );
       if (container) {
-        container.classList.add('has-focus');
+        container.classList.add("has-focus");
       }
     });
 
-    document.addEventListener('focusout', () => {
+    document.addEventListener("focusout", () => {
       // Remove focus indicators after a short delay
       setTimeout(() => {
         if (!this.currentFocusedElement) {
-          document.querySelectorAll('.has-focus').forEach(el => {
-            el.classList.remove('has-focus');
+          document.querySelectorAll(".has-focus").forEach((el) => {
+            el.classList.remove("has-focus");
           });
         }
       }, 100);
@@ -248,12 +259,22 @@ class UniversalFocusManagement {
         mutation.addedNodes.forEach((node) => {
           if (node.nodeType === Node.ELEMENT_NODE) {
             // Check if it's a modal
-            if (node.matches && (
-              node.matches('.modal, .dialog, .popup, [role="dialog"], [role="alertdialog"]') ||
-              node.querySelector('.modal, .dialog, .popup, [role="dialog"], [role="alertdialog"]')
-            )) {
-              const modal = node.matches('.modal, .dialog, .popup, [role="dialog"], [role="alertdialog"]') ? node :
-                          node.querySelector('.modal, .dialog, .popup, [role="dialog"], [role="alertdialog"]');
+            if (
+              node.matches &&
+              (node.matches(
+                '.modal, .dialog, .popup, [role="dialog"], [role="alertdialog"]',
+              ) ||
+                node.querySelector(
+                  '.modal, .dialog, .popup, [role="dialog"], [role="alertdialog"]',
+                ))
+            ) {
+              const modal = node.matches(
+                '.modal, .dialog, .popup, [role="dialog"], [role="alertdialog"]',
+              )
+                ? node
+                : node.querySelector(
+                    '.modal, .dialog, .popup, [role="dialog"], [role="alertdialog"]',
+                  );
               this.trapFocus(modal);
             }
           }
@@ -263,15 +284,21 @@ class UniversalFocusManagement {
 
     observer.observe(document.body, {
       childList: true,
-      subtree: true
+      subtree: true,
     });
 
     // Also check for existing modals that become visible
-    document.addEventListener('click', (e) => {
+    document.addEventListener("click", (e) => {
       // Check if a modal trigger was clicked
-      if (e.target.matches('[data-toggle="modal"], [data-bs-toggle="modal"], .modal-trigger')) {
+      if (
+        e.target.matches(
+          '[data-toggle="modal"], [data-bs-toggle="modal"], .modal-trigger',
+        )
+      ) {
         setTimeout(() => {
-          const visibleModal = document.querySelector('.modal:not([style*="display: none"]), .dialog:not([style*="display: none"])');
+          const visibleModal = document.querySelector(
+            '.modal:not([style*="display: none"]), .dialog:not([style*="display: none"])',
+          );
           if (visibleModal) {
             this.trapFocus(visibleModal);
           }
@@ -282,17 +309,19 @@ class UniversalFocusManagement {
 
   fixTabOrder() {
     // Ensure logical tab order across the page
-    const interactiveElements = document.querySelectorAll(this.focusableElements);
+    const interactiveElements = document.querySelectorAll(
+      this.focusableElements,
+    );
 
-    interactiveElements.forEach((element, index) => {
+    interactiveElements.forEach((element, _index) => {
       // Remove any existing tabindex that might interfere
-      if (element.getAttribute('tabindex') === '0') {
-        element.removeAttribute('tabindex');
+      if (element.getAttribute("tabindex") === "0") {
+        element.removeAttribute("tabindex");
       }
 
       // Ensure hidden elements are not focusable
-      if (element.offsetParent === null && !element.matches('.sr-only')) {
-        element.setAttribute('tabindex', '-1');
+      if (element.offsetParent === null && !element.matches(".sr-only")) {
+        element.setAttribute("tabindex", "-1");
       }
     });
 
@@ -303,48 +332,53 @@ class UniversalFocusManagement {
   }
 
   fixNavigationTabOrder() {
-    const navItems = document.querySelectorAll('.nav-item, .navigation-link, nav a');
+    const navItems = document.querySelectorAll(
+      ".nav-item, .navigation-link, nav a",
+    );
 
-    navItems.forEach((item, index) => {
+    navItems.forEach((item, _index) => {
       // Ensure nav items are properly focusable
-      if (!item.matches('a, button, [tabindex]')) {
-        item.setAttribute('tabindex', '0');
-        item.setAttribute('role', 'button');
+      if (!item.matches("a, button, [tabindex]")) {
+        item.setAttribute("tabindex", "0");
+        item.setAttribute("role", "button");
       }
     });
   }
 
   fixFormTabOrder() {
-    const forms = document.querySelectorAll('form');
+    const forms = document.querySelectorAll("form");
 
-    forms.forEach(form => {
+    forms.forEach((form) => {
       const formElements = form.querySelectorAll(this.focusableElements);
 
       // Ensure proper tab order within forms
-      formElements.forEach((element, index) => {
-        if (element.type === 'hidden') {
-          element.setAttribute('tabindex', '-1');
+      formElements.forEach((element, _index) => {
+        if (element.type === "hidden") {
+          element.setAttribute("tabindex", "-1");
         }
       });
     });
   }
 
   fixTableTabOrder() {
-    const tables = document.querySelectorAll('table');
+    const tables = document.querySelectorAll("table");
 
-    tables.forEach(table => {
+    tables.forEach((table) => {
       // Make tables navigable with arrow keys
-      const cells = table.querySelectorAll('th, td');
+      const cells = table.querySelectorAll("th, td");
 
-      cells.forEach(cell => {
+      cells.forEach((cell) => {
         if (cell.querySelector(this.focusableElements)) {
           // Cell contains focusable content
           return;
         }
 
         // Make cell focusable if it's interactive
-        if (cell.matches('.clickable, [onclick]') || cell.closest('tr').matches('.clickable, [onclick]')) {
-          cell.setAttribute('tabindex', '0');
+        if (
+          cell.matches(".clickable, [onclick]") ||
+          cell.closest("tr").matches(".clickable, [onclick]")
+        ) {
+          cell.setAttribute("tabindex", "0");
         }
       });
     });
@@ -366,7 +400,7 @@ class UniversalFocusManagement {
     firstFocusable.focus();
 
     const trapFocusHandler = (e) => {
-      if (e.key === 'Tab') {
+      if (e.key === "Tab") {
         if (e.shiftKey) {
           // Shift + Tab
           if (document.activeElement === firstFocusable) {
@@ -380,17 +414,17 @@ class UniversalFocusManagement {
             firstFocusable.focus();
           }
         }
-      } else if (e.key === 'Escape') {
+      } else if (e.key === "Escape") {
         this.releaseFocusTrap(element, trapFocusHandler, previousFocus);
       }
     };
 
-    element.addEventListener('keydown', trapFocusHandler);
+    element.addEventListener("keydown", trapFocusHandler);
     this.focusTraps.set(element, { handler: trapFocusHandler, previousFocus });
   }
 
   releaseFocusTrap(element, handler, previousFocus) {
-    element.removeEventListener('keydown', handler);
+    element.removeEventListener("keydown", handler);
     this.focusTraps.delete(element);
 
     if (previousFocus && previousFocus.focus) {
@@ -399,64 +433,80 @@ class UniversalFocusManagement {
   }
 
   focusMainContent() {
-    const mainContent = document.getElementById('main-content') ||
-                       document.querySelector('main') ||
-                       document.querySelector('.main-content');
+    const mainContent =
+      document.getElementById("main-content") ||
+      document.querySelector("main") ||
+      document.querySelector(".main-content");
 
     if (mainContent) {
-      mainContent.setAttribute('tabindex', '-1');
+      mainContent.setAttribute("tabindex", "-1");
       mainContent.focus();
-      this.announce('Main content focused');
+      this.announce("Main content focused");
 
-      mainContent.addEventListener('blur', () => {
-        mainContent.removeAttribute('tabindex');
-      }, { once: true });
+      mainContent.addEventListener(
+        "blur",
+        () => {
+          mainContent.removeAttribute("tabindex");
+        },
+        { once: true },
+      );
     }
   }
 
   focusNavigation() {
-    const navigation = document.getElementById('navigation') ||
-                      document.querySelector('nav') ||
-                      document.querySelector('.nav') ||
-                      document.querySelector('.sidebar');
+    const navigation =
+      document.getElementById("navigation") ||
+      document.querySelector("nav") ||
+      document.querySelector(".nav") ||
+      document.querySelector(".sidebar");
 
     if (navigation) {
       const firstNavItem = navigation.querySelector(this.focusableElements);
       if (firstNavItem) {
         firstNavItem.focus();
-        this.announce('Navigation focused');
+        this.announce("Navigation focused");
       }
     }
   }
 
   focusSearch() {
-    const searchInput = document.querySelector('input[type="search"], input[name*="search"], #search, .search-input');
+    const searchInput = document.querySelector(
+      'input[type="search"], input[name*="search"], #search, .search-input',
+    );
 
     if (searchInput) {
       searchInput.focus();
-      this.announce('Search field focused');
+      this.announce("Search field focused");
     }
   }
 
   focusMainHeading() {
-    const mainHeading = document.querySelector('h1, .page-title, .main-title');
+    const mainHeading = document.querySelector("h1, .page-title, .main-title");
 
     if (mainHeading) {
-      mainHeading.setAttribute('tabindex', '-1');
+      mainHeading.setAttribute("tabindex", "-1");
       mainHeading.focus();
       this.announce(`Main heading: ${mainHeading.textContent.trim()}`);
 
-      mainHeading.addEventListener('blur', () => {
-        mainHeading.removeAttribute('tabindex');
-      }, { once: true });
+      mainHeading.addEventListener(
+        "blur",
+        () => {
+          mainHeading.removeAttribute("tabindex");
+        },
+        { once: true },
+      );
     }
   }
 
   handleEscape() {
     // Close any open modals, dropdowns, or menus
-    const openModals = document.querySelectorAll('.modal.show, .modal[style*="block"], .dialog:not([hidden])');
-    openModals.forEach(modal => {
-      const closeBtn = modal.querySelector('.close, .modal-close, [data-dismiss="modal"]');
+    const openModals = document.querySelectorAll(
+      '.modal.show, .modal[style*="block"], .dialog:not([hidden])',
+    );
+    openModals.forEach((modal) => {
+      const closeBtn = modal.querySelector(
+        '.close, .modal-close, [data-dismiss="modal"]',
+      );
       if (closeBtn) {
         closeBtn.click();
       } else if (this.focusTraps.has(modal)) {
@@ -466,15 +516,19 @@ class UniversalFocusManagement {
     });
 
     // Close dropdowns
-    const openDropdowns = document.querySelectorAll('.dropdown.show, .dropdown-menu.show');
-    openDropdowns.forEach(dropdown => {
-      dropdown.classList.remove('show');
+    const openDropdowns = document.querySelectorAll(
+      ".dropdown.show, .dropdown-menu.show",
+    );
+    openDropdowns.forEach((dropdown) => {
+      dropdown.classList.remove("show");
     });
 
     // Close mobile menu
-    const mobileMenu = document.querySelector('.mobile-menu.show, .sidebar.show');
+    const mobileMenu = document.querySelector(
+      ".mobile-menu.show, .sidebar.show",
+    );
     if (mobileMenu) {
-      mobileMenu.classList.remove('show');
+      mobileMenu.classList.remove("show");
     }
   }
 
@@ -488,36 +542,37 @@ class UniversalFocusManagement {
   }
 
   handleTableNavigation(e, currentElement) {
-    const cell = currentElement.closest('td, th');
+    const cell = currentElement.closest("td, th");
     if (!cell) return false;
 
-    const table = cell.closest('table');
-    const row = cell.closest('tr');
+    const table = cell.closest("table");
+    const row = cell.closest("tr");
     const cellIndex = Array.from(row.children).indexOf(cell);
-    const rowIndex = Array.from(table.querySelectorAll('tr')).indexOf(row);
+    const rowIndex = Array.from(table.querySelectorAll("tr")).indexOf(row);
 
     let targetCell;
 
     switch (e.key) {
-      case 'ArrowUp':
-        const previousRow = table.querySelectorAll('tr')[rowIndex - 1];
+      case "ArrowUp":
+        const previousRow = table.querySelectorAll("tr")[rowIndex - 1];
         targetCell = previousRow?.children[cellIndex];
         break;
-      case 'ArrowDown':
-        const nextRow = table.querySelectorAll('tr')[rowIndex + 1];
+      case "ArrowDown":
+        const nextRow = table.querySelectorAll("tr")[rowIndex + 1];
         targetCell = nextRow?.children[cellIndex];
         break;
-      case 'ArrowLeft':
+      case "ArrowLeft":
         targetCell = cell.previousElementSibling;
         break;
-      case 'ArrowRight':
+      case "ArrowRight":
         targetCell = cell.nextElementSibling;
         break;
     }
 
     if (targetCell) {
       e.preventDefault();
-      const focusable = targetCell.querySelector(this.focusableElements) || targetCell;
+      const focusable =
+        targetCell.querySelector(this.focusableElements) || targetCell;
       focusable.focus();
       return true;
     }
@@ -526,20 +581,24 @@ class UniversalFocusManagement {
   }
 
   handleMenuNavigation(e, currentElement) {
-    const menuItem = currentElement.closest('.menu-item, .dropdown-item, .nav-item');
+    const menuItem = currentElement.closest(
+      ".menu-item, .dropdown-item, .nav-item",
+    );
     if (!menuItem) return false;
 
-    const menu = menuItem.closest('.menu, .dropdown-menu, .nav');
-    const items = Array.from(menu.querySelectorAll('.menu-item, .dropdown-item, .nav-item'));
+    const menu = menuItem.closest(".menu, .dropdown-menu, .nav");
+    const items = Array.from(
+      menu.querySelectorAll(".menu-item, .dropdown-item, .nav-item"),
+    );
     const currentIndex = items.indexOf(menuItem);
 
     let targetIndex;
 
     switch (e.key) {
-      case 'ArrowUp':
+      case "ArrowUp":
         targetIndex = currentIndex > 0 ? currentIndex - 1 : items.length - 1;
         break;
-      case 'ArrowDown':
+      case "ArrowDown":
         targetIndex = currentIndex < items.length - 1 ? currentIndex + 1 : 0;
         break;
       default:
@@ -548,7 +607,9 @@ class UniversalFocusManagement {
 
     if (targetIndex !== undefined && items[targetIndex]) {
       e.preventDefault();
-      const focusable = items[targetIndex].querySelector(this.focusableElements) || items[targetIndex];
+      const focusable =
+        items[targetIndex].querySelector(this.focusableElements) ||
+        items[targetIndex];
       focusable.focus();
       return true;
     }
@@ -557,26 +618,30 @@ class UniversalFocusManagement {
   }
 
   handleTabNavigation(e, currentElement) {
-    const tabButton = currentElement.closest('.tab-button, .tab-nav-item, [role="tab"]');
+    const tabButton = currentElement.closest(
+      '.tab-button, .tab-nav-item, [role="tab"]',
+    );
     if (!tabButton) return false;
 
     const tabList = tabButton.closest('.tab-list, .tab-nav, [role="tablist"]');
-    const tabs = Array.from(tabList.querySelectorAll('.tab-button, .tab-nav-item, [role="tab"]'));
+    const tabs = Array.from(
+      tabList.querySelectorAll('.tab-button, .tab-nav-item, [role="tab"]'),
+    );
     const currentIndex = tabs.indexOf(tabButton);
 
     let targetIndex;
 
     switch (e.key) {
-      case 'ArrowLeft':
+      case "ArrowLeft":
         targetIndex = currentIndex > 0 ? currentIndex - 1 : tabs.length - 1;
         break;
-      case 'ArrowRight':
+      case "ArrowRight":
         targetIndex = currentIndex < tabs.length - 1 ? currentIndex + 1 : 0;
         break;
-      case 'Home':
+      case "Home":
         targetIndex = 0;
         break;
-      case 'End':
+      case "End":
         targetIndex = tabs.length - 1;
         break;
       default:
@@ -594,59 +659,65 @@ class UniversalFocusManagement {
   }
 
   announceElementInfo(element) {
-    let announcement = '';
+    let announcement = "";
 
     // Get element type and role
-    const role = element.getAttribute('role') || element.tagName.toLowerCase();
-    const type = element.type || '';
+    const _role = element.getAttribute("role") || element.tagName.toLowerCase();
+    const type = element.type || "";
 
     // Build announcement based on element type
-    if (element.matches('button')) {
-      announcement = `Button: ${element.textContent.trim() || element.getAttribute('aria-label') || 'Unlabeled button'}`;
-    } else if (element.matches('a')) {
-      announcement = `Link: ${element.textContent.trim() || element.getAttribute('aria-label') || 'Unlabeled link'}`;
-    } else if (element.matches('input')) {
+    if (element.matches("button")) {
+      announcement = `Button: ${element.textContent.trim() || element.getAttribute("aria-label") || "Unlabeled button"}`;
+    } else if (element.matches("a")) {
+      announcement = `Link: ${element.textContent.trim() || element.getAttribute("aria-label") || "Unlabeled link"}`;
+    } else if (element.matches("input")) {
       const label = this.getElementLabel(element);
       announcement = `${type} input: ${label}`;
-    } else if (element.matches('select')) {
+    } else if (element.matches("select")) {
       const label = this.getElementLabel(element);
       announcement = `Select: ${label}`;
-    } else if (element.matches('textarea')) {
+    } else if (element.matches("textarea")) {
       const label = this.getElementLabel(element);
       announcement = `Text area: ${label}`;
     }
 
     // Add current value for form elements
-    if (element.matches('input, select, textarea') && element.value) {
+    if (element.matches("input, select, textarea") && element.value) {
       announcement += `. Current value: ${element.value}`;
     }
 
     // Add state information
-    if (element.getAttribute('aria-expanded')) {
-      announcement += element.getAttribute('aria-expanded') === 'true' ? '. Expanded' : '. Collapsed';
+    if (element.getAttribute("aria-expanded")) {
+      announcement +=
+        element.getAttribute("aria-expanded") === "true"
+          ? ". Expanded"
+          : ". Collapsed";
     }
 
-    if (element.hasAttribute('aria-pressed')) {
-      announcement += element.getAttribute('aria-pressed') === 'true' ? '. Pressed' : '. Not pressed';
+    if (element.hasAttribute("aria-pressed")) {
+      announcement +=
+        element.getAttribute("aria-pressed") === "true"
+          ? ". Pressed"
+          : ". Not pressed";
     }
 
     if (announcement) {
-      this.announce(announcement, 'polite');
+      this.announce(announcement, "polite");
     }
   }
 
   getElementLabel(element) {
     // Try multiple ways to get the element's label
-    const labelId = element.getAttribute('aria-labelledby');
+    const labelId = element.getAttribute("aria-labelledby");
     if (labelId) {
       const labelElement = document.getElementById(labelId);
       if (labelElement) return labelElement.textContent.trim();
     }
 
-    const ariaLabel = element.getAttribute('aria-label');
+    const ariaLabel = element.getAttribute("aria-label");
     if (ariaLabel) return ariaLabel;
 
-    const placeholder = element.getAttribute('placeholder');
+    const placeholder = element.getAttribute("placeholder");
     if (placeholder) return placeholder;
 
     // Find associated label
@@ -655,25 +726,26 @@ class UniversalFocusManagement {
       if (label) return label.textContent.trim();
     }
 
-    const parentLabel = element.closest('label');
+    const parentLabel = element.closest("label");
     if (parentLabel) return parentLabel.textContent.trim();
 
-    return element.name || 'Unlabeled';
+    return element.name || "Unlabeled";
   }
 
-  announce(message, priority = 'polite') {
-    const liveRegionId = priority === 'assertive' ? 'aria-live-assertive' : 'aria-live-polite';
+  announce(message, priority = "polite") {
+    const liveRegionId =
+      priority === "assertive" ? "aria-live-assertive" : "aria-live-polite";
     const liveRegion = document.getElementById(liveRegionId);
 
     if (liveRegion) {
-      liveRegion.textContent = '';
+      liveRegion.textContent = "";
       setTimeout(() => {
         liveRegion.textContent = message;
       }, 100);
 
       // Clear after announcement
       setTimeout(() => {
-        liveRegion.textContent = '';
+        liveRegion.textContent = "";
       }, 5000);
     }
   }
@@ -706,21 +778,21 @@ class UniversalFocusManagement {
   destroy() {
     // Clean up all event listeners and focus traps
     this.focusTraps.forEach((trapInfo, element) => {
-      element.removeEventListener('keydown', trapInfo.handler);
+      element.removeEventListener("keydown", trapInfo.handler);
     });
     this.focusTraps.clear();
 
     // Remove skip links
-    document.querySelectorAll('.skip-link').forEach(link => link.remove());
+    document.querySelectorAll(".skip-link").forEach((link) => link.remove());
 
     // Remove live regions
-    document.getElementById('aria-live-polite')?.remove();
-    document.getElementById('aria-live-assertive')?.remove();
+    document.getElementById("aria-live-polite")?.remove();
+    document.getElementById("aria-live-assertive")?.remove();
   }
 }
 
 // Auto-initialize on page load
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
   window.focusManagement = new UniversalFocusManagement();
 });
 

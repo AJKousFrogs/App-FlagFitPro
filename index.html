@@ -19,11 +19,12 @@
     <!-- Page-specific styles -->
     <link rel="stylesheet" href="./src/css/pages/index.css" />
 
-
     <!-- Lucide Icons - Modern icon library similar to Radix UI -->
-    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js" crossorigin="anonymous" defer>
-            integrity="sha384-QUHo9yIHF1gPrLIKJyuJ6l2VzF5YNGFCk2sT3dSsGmBjDrPyYlqVjdJsJ8e6JkX2" 
-            crossorigin="anonymous" defer></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
     <script src="./src/icon-helper.js" defer></script>
     <script src="./src/theme-switcher.js" defer></script>
     <!-- Universal Components -->
@@ -37,7 +38,7 @@
         <div class="hero-gradient-2"></div>
         <div class="hero-pattern"></div>
       </div>
-      
+
       <div class="hero-container">
         <div class="hero-content">
           <div class="hero-logo-wrapper">
@@ -46,23 +47,20 @@
             </div>
             <div class="hero-badge">🏆 Pro Platform</div>
           </div>
-          
+
           <h1 class="hero-title">
             Elevate Your
             <span class="hero-title-accent">Flag Football</span>
             Game
           </h1>
-          
+
           <p class="hero-description">
-            The ultimate training and competition platform for serious players. 
-            Track performance, join tournaments, and connect with a community 
+            The ultimate training and competition platform for serious players.
+            Track performance, join tournaments, and connect with a community
             that shares your passion for the game.
           </p>
 
-          <div
-            id="actionButtons"
-            class="hero-actions"
-          >
+          <div id="actionButtons" class="hero-actions">
             <a href="/register.html" class="btn-hero btn-hero-primary">
               <span>Get Started Free</span>
               <i data-lucide="arrow-right"></i>
@@ -97,7 +95,8 @@
         <div class="features-header">
           <h2 class="features-title">Everything You Need to Excel</h2>
           <p class="features-subtitle">
-            Powerful tools designed to help you train smarter, compete better, and grow faster
+            Powerful tools designed to help you train smarter, compete better,
+            and grow faster
           </p>
         </div>
 
@@ -110,7 +109,8 @@
             </div>
             <h3 class="feature-card-title">Performance Analytics</h3>
             <p class="feature-card-description">
-              Track every training session and game statistic. Get insights that help you identify strengths and areas for improvement.
+              Track every training session and game statistic. Get insights that
+              help you identify strengths and areas for improvement.
             </p>
             <div class="feature-card-link">
               <span>Learn more</span>
@@ -126,7 +126,8 @@
             </div>
             <h3 class="feature-card-title">Tournament System</h3>
             <p class="feature-card-description">
-              Join competitive tournaments, climb leaderboards, and compete against the best players in your region.
+              Join competitive tournaments, climb leaderboards, and compete
+              against the best players in your region.
             </p>
             <div class="feature-card-link">
               <span>Learn more</span>
@@ -142,7 +143,8 @@
             </div>
             <h3 class="feature-card-title">Community Hub</h3>
             <p class="feature-card-description">
-              Connect with players, coaches, and teams. Share strategies, celebrate wins, and build lasting relationships.
+              Connect with players, coaches, and teams. Share strategies,
+              celebrate wins, and build lasting relationships.
             </p>
             <div class="feature-card-link">
               <span>Learn more</span>
@@ -158,7 +160,8 @@
             </div>
             <h3 class="feature-card-title">Training Programs</h3>
             <p class="feature-card-description">
-              Access structured workouts and skill development plans designed by professional coaches and trainers.
+              Access structured workouts and skill development plans designed by
+              professional coaches and trainers.
             </p>
             <div class="feature-card-link">
               <span>Learn more</span>
@@ -171,8 +174,10 @@
 
     <script type="module">
       // Add timeout wrapper to prevent page freeze
-      const initTimeout = setTimeout(function() {
-        console.warn("Page initialization timeout - forcing page to be responsive");
+      const initTimeout = setTimeout(function () {
+        console.warn(
+          "Page initialization timeout - forcing page to be responsive",
+        );
       }, 10000); // 10 second safety timeout
 
       document.addEventListener("DOMContentLoaded", function () {
@@ -186,14 +191,16 @@
                 // Wait for Lucide with timeout
                 let attempts = 0;
                 const maxAttempts = 50; // 5 seconds max
-                const checkLucide = setInterval(function() {
+                const checkLucide = setInterval(function () {
                   attempts++;
                   if (typeof lucide !== "undefined") {
                     clearInterval(checkLucide);
                     lucide.createIcons();
                   } else if (attempts >= maxAttempts) {
                     clearInterval(checkLucide);
-                    console.warn("Lucide icons failed to load - page will continue without icons");
+                    console.warn(
+                      "Lucide icons failed to load - page will continue without icons",
+                    );
                   }
                 }, 100);
               }
@@ -201,16 +208,16 @@
               console.error("Error initializing icons:", error);
             }
           }
-          
+
           // Initialize icons (non-blocking)
           setTimeout(initIcons, 0);
-          
+
           // Ensure action buttons are visible
           const actionButtons = document.getElementById("actionButtons");
           if (actionButtons) {
             actionButtons.style.display = "flex";
           }
-          
+
           // Clear timeout on successful initialization
           clearTimeout(initTimeout);
         } catch (error) {
@@ -218,9 +225,9 @@
           clearTimeout(initTimeout);
         }
       });
-      
+
       // Fallback: if DOMContentLoaded never fires, clear timeout after 15 seconds
-      setTimeout(function() {
+      setTimeout(function () {
         clearTimeout(initTimeout);
       }, 15000);
     </script>
@@ -234,8 +241,8 @@
             <span>FlagFit Pro</span>
           </div>
           <p class="footer-tagline">
-            Professional flag football training and analytics platform. 
-            Elevate your game with data-driven insights.
+            Professional flag football training and analytics platform. Elevate
+            your game with data-driven insights.
           </p>
           <div class="footer-social">
             <a href="#" class="footer-social-link" aria-label="Twitter">
@@ -249,7 +256,7 @@
             </a>
           </div>
         </div>
-        
+
         <div class="footer-links">
           <div class="footer-link-group">
             <h4 class="footer-link-title">Platform</h4>
@@ -262,7 +269,7 @@
               </ul>
             </nav>
           </div>
-          
+
           <div class="footer-link-group">
             <h4 class="footer-link-title">Community</h4>
             <nav aria-label="Community navigation">
@@ -273,7 +280,7 @@
               </ul>
             </nav>
           </div>
-          
+
           <div class="footer-link-group">
             <h4 class="footer-link-title">Support</h4>
             <nav aria-label="Support navigation">
@@ -286,7 +293,7 @@
           </div>
         </div>
       </div>
-      
+
       <div class="footer-bottom">
         <p class="footer-copyright">
           &copy; 2025 FlagFit Pro. All rights reserved.

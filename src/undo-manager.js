@@ -1,6 +1,8 @@
 // Undo Manager for FlagFit Pro
 // Provides undo functionality and confirmation dialogs
 
+import { logger } from "./logger.js";
+
 export class UndoManager {
   constructor() {
     this.actionHistory = [];
@@ -11,7 +13,7 @@ export class UndoManager {
 
   init() {
     // Listen for delete actions
-    document.addEventListener('click', (e) => {
+    document.addEventListener("click", (e) => {
       const deleteBtn = e.target.closest('[data-action="delete"]');
       if (deleteBtn) {
         e.preventDefault();
@@ -22,26 +24,26 @@ export class UndoManager {
 
   // Handle delete action with confirmation
   handleDelete(button) {
-    const itemName = button.getAttribute('data-item-name') || 'this item';
-    const itemId = button.getAttribute('data-item-id');
-    const itemType = button.getAttribute('data-item-type') || 'item';
-    const onConfirm = button.getAttribute('data-on-confirm');
+    const itemName = button.getAttribute("data-item-name") || "this item";
+    const itemId = button.getAttribute("data-item-id");
+    const itemType = button.getAttribute("data-item-type") || "item";
+    const onConfirm = button.getAttribute("data-on-confirm");
 
     // Show confirmation dialog
     this.showConfirmationDialog({
-      title: 'Confirm Deletion',
+      title: "Confirm Deletion",
       message: `Are you sure you want to delete "${itemName}"? This action can be undone.`,
-      confirmText: 'Delete',
-      cancelText: 'Cancel',
+      confirmText: "Delete",
+      cancelText: "Cancel",
       onConfirm: () => {
         // Store action for undo
         const action = {
-          type: 'delete',
+          type: "delete",
           itemId,
           itemName,
           itemType,
           timestamp: Date.now(),
-          data: this.getItemData(itemId, itemType)
+          data: this.getItemData(itemId, itemType),
         };
 
         this.addToHistory(action);
@@ -49,38 +51,38 @@ export class UndoManager {
         // Execute delete
         if (onConfirm) {
           try {
-            const callback = new Function('return ' + onConfirm)();
-            if (typeof callback === 'function') {
+            const callback = new Function("return " + onConfirm)();
+            if (typeof callback === "function") {
               callback();
             }
           } catch (e) {
-            logger.error('Error executing delete callback:', e);
+            logger.error("Error executing delete callback:", e);
           }
         }
 
         // Show undo notification
         this.showUndoNotification(action);
-      }
+      },
     });
   }
 
   // Show confirmation dialog
   showConfirmationDialog(options) {
     const {
-      title = 'Confirm Action',
-      message = 'Are you sure?',
-      confirmText = 'Confirm',
-      cancelText = 'Cancel',
+      title = "Confirm Action",
+      message = "Are you sure?",
+      confirmText = "Confirm",
+      cancelText = "Cancel",
       onConfirm,
       onCancel,
-      destructive = false
+      destructive = false,
     } = options;
 
-    const modal = document.createElement('div');
-    modal.className = 'confirmation-modal';
-    modal.setAttribute('role', 'dialog');
-    modal.setAttribute('aria-labelledby', 'confirmation-title');
-    modal.setAttribute('aria-modal', 'true');
+    const modal = document.createElement("div");
+    modal.className = "confirmation-modal";
+    modal.setAttribute("role", "dialog");
+    modal.setAttribute("aria-labelledby", "confirmation-title");
+    modal.setAttribute("aria-modal", "true");
 
     modal.innerHTML = `
       <div class="confirmation-overlay"></div>
@@ -93,38 +95,38 @@ export class UndoManager {
         </div>
         <div class="confirmation-footer">
           <button class="btn btn-secondary confirmation-cancel">${cancelText}</button>
-          <button class="btn ${destructive ? 'btn-danger' : 'btn-primary'} confirmation-confirm">${confirmText}</button>
+          <button class="btn ${destructive ? "btn-danger" : "btn-primary"} confirmation-confirm">${confirmText}</button>
         </div>
       </div>
     `;
 
     document.body.appendChild(modal);
 
-    const confirmBtn = modal.querySelector('.confirmation-confirm');
-    const cancelBtn = modal.querySelector('.confirmation-cancel');
-    const overlay = modal.querySelector('.confirmation-overlay');
+    const confirmBtn = modal.querySelector(".confirmation-confirm");
+    const cancelBtn = modal.querySelector(".confirmation-cancel");
+    const overlay = modal.querySelector(".confirmation-overlay");
 
-    confirmBtn.addEventListener('click', () => {
+    confirmBtn.addEventListener("click", () => {
       if (onConfirm) onConfirm();
       this.closeConfirmation(modal);
     });
 
-    cancelBtn.addEventListener('click', () => {
+    cancelBtn.addEventListener("click", () => {
       if (onCancel) onCancel();
       this.closeConfirmation(modal);
     });
 
-    overlay.addEventListener('click', () => {
+    overlay.addEventListener("click", () => {
       if (onCancel) onCancel();
       this.closeConfirmation(modal);
     });
 
     // Keyboard navigation
-    modal.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
+    modal.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
         if (onCancel) onCancel();
         this.closeConfirmation(modal);
-      } else if (e.key === 'Enter' && e.target === modal) {
+      } else if (e.key === "Enter" && e.target === modal) {
         if (onConfirm) onConfirm();
         this.closeConfirmation(modal);
       }
@@ -137,9 +139,9 @@ export class UndoManager {
   trapFocus(modal) {
     // Store previous focus
     this.previousFocus = document.activeElement;
-    
+
     const focusableElements = modal.querySelectorAll(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
     );
     const firstElement = focusableElements[0];
     const lastElement = focusableElements[focusableElements.length - 1];
@@ -150,7 +152,7 @@ export class UndoManager {
     }
 
     const handleKeyDown = (e) => {
-      if (e.key !== 'Tab') return;
+      if (e.key !== "Tab") return;
 
       if (e.shiftKey) {
         if (document.activeElement === firstElement) {
@@ -165,24 +167,24 @@ export class UndoManager {
       }
     };
 
-    modal.addEventListener('keydown', handleKeyDown);
-    
+    modal.addEventListener("keydown", handleKeyDown);
+
     // Store handler for cleanup
     modal._focusTrapHandler = handleKeyDown;
   }
 
   closeConfirmation(modal) {
     // Restore focus before closing
-    if (this.previousFocus && typeof this.previousFocus.focus === 'function') {
+    if (this.previousFocus && typeof this.previousFocus.focus === "function") {
       this.previousFocus.focus();
     }
-    
+
     // Clean up focus trap
     if (modal._focusTrapHandler) {
-      modal.removeEventListener('keydown', modal._focusTrapHandler);
+      modal.removeEventListener("keydown", modal._focusTrapHandler);
     }
-    
-    modal.style.opacity = '0';
+
+    modal.style.opacity = "0";
     setTimeout(() => modal.remove(), 300);
   }
 
@@ -195,7 +197,7 @@ export class UndoManager {
 
     // Auto-remove after timeout
     setTimeout(() => {
-      const index = this.actionHistory.findIndex(a => a === action);
+      const index = this.actionHistory.findIndex((a) => a === action);
       if (index !== -1) {
         this.actionHistory.splice(index, 1);
       }
@@ -204,8 +206,8 @@ export class UndoManager {
 
   // Show undo notification
   showUndoNotification(action) {
-    const notification = document.createElement('div');
-    notification.className = 'undo-notification';
+    const notification = document.createElement("div");
+    notification.className = "undo-notification";
     notification.innerHTML = `
       <div class="undo-notification-content">
         <span>${action.itemName} deleted</span>
@@ -215,22 +217,24 @@ export class UndoManager {
 
     document.body.appendChild(notification);
 
-    const undoBtn = notification.querySelector('.undo-button');
-    undoBtn.addEventListener('click', () => {
+    const undoBtn = notification.querySelector(".undo-button");
+    undoBtn.addEventListener("click", () => {
       this.undoAction(action);
       notification.remove();
     });
 
     // Auto-remove after timeout
     setTimeout(() => {
-      notification.style.opacity = '0';
+      notification.style.opacity = "0";
       setTimeout(() => notification.remove(), 300);
     }, this.undoTimeout);
   }
 
   // Undo action
   undoAction(action) {
-    const index = this.actionHistory.findIndex(a => a.timestamp === action.timestamp);
+    const index = this.actionHistory.findIndex(
+      (a) => a.timestamp === action.timestamp,
+    );
     if (index === -1) return;
 
     // Restore item
@@ -250,7 +254,7 @@ export class UndoManager {
     if (element) {
       return {
         html: element.outerHTML,
-        data: element.dataset
+        data: element.dataset,
       };
     }
     return null;
@@ -261,14 +265,14 @@ export class UndoManager {
     // This would typically restore from storage or DOM
     if (action.data && action.data.html) {
       // Restore logic here
-      logger.debug('Restoring item:', action.itemName);
+      logger.debug("Restoring item:", action.itemName);
     }
   }
 
   // Show success notification
   showSuccessNotification(message) {
-    const notification = document.createElement('div');
-    notification.className = 'success-notification';
+    const notification = document.createElement("div");
+    notification.className = "success-notification";
     notification.innerHTML = `
       <div class="success-notification-content">
         <i data-lucide="check-circle" aria-hidden="true"></i>
@@ -278,12 +282,12 @@ export class UndoManager {
 
     document.body.appendChild(notification);
 
-    if (typeof lucide !== 'undefined') {
+    if (typeof lucide !== "undefined") {
       lucide.createIcons();
     }
 
     setTimeout(() => {
-      notification.style.opacity = '0';
+      notification.style.opacity = "0";
       setTimeout(() => notification.remove(), 300);
     }, 3000);
   }
@@ -291,4 +295,3 @@ export class UndoManager {
 
 // Global instance
 export const undoManager = new UndoManager();
-

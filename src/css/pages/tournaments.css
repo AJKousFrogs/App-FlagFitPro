@@ -224,8 +224,7 @@ html[data-theme="light"] .nav-item.active {
 .tournament-card {
   background: var(--surface-primary);
   overflow: hidden;
-  transition: all var(--motion-duration-normal)
-    var(--motion-easing-productive);
+  transition: all var(--motion-duration-normal) var(--motion-easing-productive);
 }
 .tournament-card:hover {
   transform: translateY(-5px);

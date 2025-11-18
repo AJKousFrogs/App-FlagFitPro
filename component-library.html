@@ -20,10 +20,14 @@
     <!-- Page-specific styles -->
     <link rel="stylesheet" href="./src/css/pages/component-library.css" />
 
-        <link rel="stylesheet" href="./src/css/component-library.css" />
+    <link rel="stylesheet" href="./src/css/component-library.css" />
 
     <!-- Lucide Icons -->
-    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js" crossorigin="anonymous" defer>
+    <script
+      src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
     <script src="./src/icon-helper.js" defer></script>
     <script src="./src/theme-switcher.js" defer></script>
     <!-- Universal Components -->
@@ -77,7 +81,7 @@
 
       <!-- Main Content -->
       <main class="library-main">
-    <!-- Introduction -->
+        <!-- Introduction -->
         <div class="library-section">
           <h2>FlagFit Pro Component Library</h2>
           <p>
@@ -92,7 +96,7 @@
           </p>
         </div>
 
-    <!-- ATOMS SECTION -->
+        <!-- ATOMS SECTION -->
         <section id="atoms" class="library-section">
           <h2>Atoms</h2>
           <p>Basic building blocks that cannot be broken down further.</p>
@@ -627,7 +631,7 @@
           </div>
         </section>
 
-    <!-- MOLECULES SECTION -->
+        <!-- MOLECULES SECTION -->
         <section id="molecules" class="library-section">
           <h2>Molecules</h2>
           <p>Combinations of atoms that form functional units.</p>
@@ -689,20 +693,20 @@
               <summary>Show HTML</summary>
               <pre><code>&lt;div class="form-group"&gt;
   &lt;label for="username" class="form-label"&gt;Username&lt;/label&gt;
-  &lt;input type="text" id="username" name="username" class="form-input" placeholder="Enter your username"&gt;
+  &lt;input type="text" id="username" name="username" class="form-input" placeholder="Enter your username" autocomplete="username"&gt;
 &lt;/div&gt;
 
 &lt;!-- With Helper Text --&gt;
 &lt;div class="form-group"&gt;
   &lt;label for="email" class="form-label"&gt;Email Address&lt;/label&gt;
-  &lt;input type="email" id="email" name="email" class="form-input" placeholder="athlete@example.com"&gt;
+  &lt;input type="email" id="email" name="email" class="form-input" placeholder="athlete@example.com" autocomplete="email"&gt;
   &lt;small class="form-hint"&gt;We'll never share your email&lt;/small&gt;
 &lt;/div&gt;
 
 &lt;!-- With Error --&gt;
 &lt;div class="form-group"&gt;
   &lt;label for="password" class="form-label required"&gt;Password&lt;/label&gt;
-  &lt;input type="password" id="password" name="password" class="form-input error"&gt;
+  &lt;input type="password" id="password" name="password" class="form-input error" autocomplete="current-password"&gt;
   &lt;div class="form-error" role="alert"&gt;Password must be at least 8 characters&lt;/div&gt;
 &lt;/div&gt;</code></pre>
             </details>
@@ -785,7 +789,9 @@
               <h4>Variants</h4>
               <ul>
                 <li><code>.card</code> - Default card</li>
-                <li><code>.card-elevated</code> - Higher shadow, high contrast</li>
+                <li>
+                  <code>.card-elevated</code> - Higher shadow, high contrast
+                </li>
                 <li><code>.card-interactive</code> - Hover effects</li>
               </ul>
               <h4>Structure</h4>
@@ -826,13 +832,13 @@
               <summary>Show HTML</summary>
               <pre><code>&lt;div class="search-bar"&gt;
   &lt;i data-lucide="search" style="width: 20px; height: 20px;"&gt;&lt;/i&gt;
-  &lt;input type="search" class="search-input" placeholder="Search athletes, teams..."&gt;
+  &lt;input type="search" id="search-basic" name="search" class="search-input" placeholder="Search athletes, teams..." autocomplete="off"&gt;
 &lt;/div&gt;</code></pre>
             </details>
           </div>
         </section>
 
-    <!-- ORGANISMS SECTION -->
+        <!-- ORGANISMS SECTION -->
         <section id="organisms" class="library-section">
           <h2>Organisms</h2>
           <p>Complex components combining molecules and atoms.</p>
@@ -886,7 +892,7 @@
           </div>
         </section>
 
-    <!-- TEMPLATES SECTION -->
+        <!-- TEMPLATES SECTION -->
         <section id="templates" class="library-section">
           <h2>Templates</h2>
           <p>Full page layouts combining organisms.</p>

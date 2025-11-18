@@ -8,40 +8,39 @@ export const DEFAULT_CHART_OPTIONS = {
   plugins: {
     legend: {
       display: true,
-      position: 'top' as const
+      position: "top" as const,
     },
     tooltip: {
-      enabled: true
-    }
+      enabled: true,
+    },
   },
   scales: {
     x: {
-      display: true
+      display: true,
     },
     y: {
-      display: true
-    }
-  }
+      display: true,
+    },
+  },
 };
 
 export const LINE_CHART_OPTIONS = {
   ...DEFAULT_CHART_OPTIONS,
   elements: {
     line: {
-      tension: 0.4
-    }
-  }
+      tension: 0.4,
+    },
+  },
 };
 
 export const BAR_CHART_OPTIONS = {
-  ...DEFAULT_CHART_OPTIONS
+  ...DEFAULT_CHART_OPTIONS,
 };
 
 export const DOUGHNUT_CHART_OPTIONS = {
   ...DEFAULT_CHART_OPTIONS,
   scales: {
     x: { display: false },
-    y: { display: false }
-  }
+    y: { display: false },
+  },
 };
-

@@ -1,6 +1,8 @@
 // Performance Analytics System
 // Comprehensive player statistics, tracking, and analytics for flag football training
 
+import { logger } from "./logger.js";
+
 export class PerformanceAnalytics {
   constructor() {
     this.storageKey = "flagfit_performance_data";

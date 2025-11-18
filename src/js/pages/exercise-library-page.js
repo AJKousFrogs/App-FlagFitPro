@@ -1,5 +1,6 @@
 // Exercise Library Page - Optimized with pagination, debouncing, and DocumentFragment
 import { debounce } from "../utils/shared.js";
+import { logger } from "../../logger.js";
 
 export class ExerciseLibraryPage {
   constructor() {
@@ -24,13 +25,16 @@ export class ExerciseLibraryPage {
       // Add timeout to prevent hanging
       const importPromise = import("../../training-program-data.js");
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("Import timeout after 10 seconds")), 10000)
+        setTimeout(
+          () => reject(new Error("Import timeout after 10 seconds")),
+          10000,
+        ),
       );
 
       const module = await Promise.race([importPromise, timeoutPromise]);
       const { EXERCISE_LIBRARY } = module;
 
-      if (!EXERCISE_LIBRARY || typeof EXERCISE_LIBRARY !== 'object') {
+      if (!EXERCISE_LIBRARY || typeof EXERCISE_LIBRARY !== "object") {
         throw new Error("Invalid exercise library data");
       }
 
@@ -45,7 +49,9 @@ export class ExerciseLibraryPage {
       }, 0);
     } catch (error) {
       logger.error("Failed to load exercise library:", error);
-      this.showError(`Failed to load exercise library: ${error.message}. Please refresh the page.`);
+      this.showError(
+        `Failed to load exercise library: ${error.message}. Please refresh the page.`,
+      );
     }
   }
 
@@ -109,7 +115,10 @@ export class ExerciseLibraryPage {
       paginationContainer = document.createElement("div");
       paginationContainer.id = "exercisePagination";
       paginationContainer.className = "pagination-container";
-      exerciseGrid.parentNode.insertBefore(paginationContainer, exerciseGrid.nextSibling);
+      exerciseGrid.parentNode.insertBefore(
+        paginationContainer,
+        exerciseGrid.nextSibling,
+      );
     }
 
     this.updatePaginationControls();
@@ -119,7 +128,9 @@ export class ExerciseLibraryPage {
     const paginationContainer = document.getElementById("exercisePagination");
     if (!paginationContainer) return;
 
-    const totalPages = Math.ceil(this.filteredExercises.length / this.itemsPerPage);
+    const totalPages = Math.ceil(
+      this.filteredExercises.length / this.itemsPerPage,
+    );
 
     if (totalPages <= 1) {
       paginationContainer.innerHTML = "";
@@ -133,7 +144,7 @@ export class ExerciseLibraryPage {
       <div class="pagination-info">
         Showing ${this.currentPage * this.itemsPerPage + 1}-${Math.min(
           (this.currentPage + 1) * this.itemsPerPage,
-          this.filteredExercises.length
+          this.filteredExercises.length,
         )} of ${this.filteredExercises.length} exercises
       </div>
       <div class="pagination-controls">
@@ -153,6 +164,9 @@ export class ExerciseLibraryPage {
     const handlePaginationClick = (e) => {
       const btn = e.target.closest("[data-action]");
       if (!btn || btn.hasAttribute("disabled")) return;
+
+      const exerciseGrid = document.getElementById("exerciseGrid");
+      if (!exerciseGrid) return;
 
       const action = btn.dataset.action;
       if (action === "prev" && this.currentPage > 0) {
@@ -183,7 +197,8 @@ export class ExerciseLibraryPage {
     this.filteredExercises = this.allExercises.filter(([name, exercise]) => {
       // Apply category filter
       const categoryMatch =
-        this.currentFilter === "all" || exercise.category === this.currentFilter;
+        this.currentFilter === "all" ||
+        exercise.category === this.currentFilter;
 
       // Apply search filter
       const searchMatch =
@@ -191,10 +206,10 @@ export class ExerciseLibraryPage {
         name.toLowerCase().includes(this.searchTerm) ||
         exercise.category.toLowerCase().includes(this.searchTerm) ||
         exercise.primaryMuscles?.some((muscle) =>
-          muscle.toLowerCase().includes(this.searchTerm)
+          muscle.toLowerCase().includes(this.searchTerm),
         ) ||
         exercise.equipment?.some((equip) =>
-          equip.toLowerCase().includes(this.searchTerm)
+          equip.toLowerCase().includes(this.searchTerm),
         );
 
       return categoryMatch && searchMatch;
@@ -252,10 +267,16 @@ export class ExerciseLibraryPage {
 
     const icon = this.getExerciseIcon(exercise.category);
     const primaryMuscles = (exercise.primaryMuscles || [])
-      .map((muscle) => `<span class="muscle-tag primary">${this.escapeHtml(muscle)}</span>`)
+      .map(
+        (muscle) =>
+          `<span class="muscle-tag primary">${this.escapeHtml(muscle)}</span>`,
+      )
       .join("");
     const secondaryMuscles = (exercise.secondaryMuscles || [])
-      .map((muscle) => `<span class="muscle-tag">${this.escapeHtml(muscle)}</span>`)
+      .map(
+        (muscle) =>
+          `<span class="muscle-tag">${this.escapeHtml(muscle)}</span>`,
+      )
       .join("");
     const equipment = (exercise.equipment || []).slice(0, 2).join(", ");
     const equipmentMore = (exercise.equipment || []).length > 2 ? "..." : "";
@@ -274,8 +295,10 @@ export class ExerciseLibraryPage {
         <p class="exercise-description">${this.escapeHtml(exercise.setup || "")}</p>
         <div class="exercise-meta">
           <span class="difficulty-badge difficulty-${exercise.difficulty || "intermediate"}">
-            ${(exercise.difficulty || "intermediate").charAt(0).toUpperCase() +
-              (exercise.difficulty || "intermediate").slice(1)}
+            ${
+              (exercise.difficulty || "intermediate").charAt(0).toUpperCase() +
+              (exercise.difficulty || "intermediate").slice(1)
+            }
           </span>
           <div class="equipment-list">${equipment}${equipmentMore}</div>
         </div>
@@ -309,11 +332,11 @@ export class ExerciseLibraryPage {
     const categories = [...new Set(exercises.map(([_, ex]) => ex.category))];
     const totalProgressions = exercises.reduce(
       (total, [_, ex]) => total + (ex.progressions?.length || 0),
-      0
+      0,
     );
     const totalSafetyNotes = exercises.reduce(
       (total, [_, ex]) => total + (ex.safetyNotes?.length || 0),
-      0
+      0,
     );
 
     const totalExercisesEl = document.getElementById("totalExercises");
@@ -323,7 +346,8 @@ export class ExerciseLibraryPage {
 
     if (totalExercisesEl) totalExercisesEl.textContent = exercises.length;
     if (categoriesCountEl) categoriesCountEl.textContent = categories.length;
-    if (progressionsCountEl) progressionsCountEl.textContent = totalProgressions;
+    if (progressionsCountEl)
+      progressionsCountEl.textContent = totalProgressions;
     if (safetyNotesCountEl) safetyNotesCountEl.textContent = totalSafetyNotes;
   }
 
@@ -398,13 +422,13 @@ export class ExerciseLibraryPage {
           <div>
             <h4 style="margin-bottom: var(--space-2);">Primary Muscles</h4>
             <div class="muscle-tags">
-              ${(exercise.primaryMuscles || []).map(m => `<span class="muscle-tag primary">${this.escapeHtml(m)}</span>`).join("")}
+              ${(exercise.primaryMuscles || []).map((m) => `<span class="muscle-tag primary">${this.escapeHtml(m)}</span>`).join("")}
             </div>
           </div>
           <div>
             <h4 style="margin-bottom: var(--space-2);">Equipment Needed</h4>
             <ul style="list-style: none; padding: 0;">
-              ${(exercise.equipment || []).map(item => `<li>• ${this.escapeHtml(item)}</li>`).join("")}
+              ${(exercise.equipment || []).map((item) => `<li>• ${this.escapeHtml(item)}</li>`).join("")}
             </ul>
           </div>
         </div>
@@ -416,33 +440,45 @@ export class ExerciseLibraryPage {
       <div class="instruction-section">
         <h3 class="instruction-title"><i data-lucide="zap"></i> Execution</h3>
         <ol class="instruction-list">
-          ${(exercise.execution || []).map(step => `<li>${this.escapeHtml(step)}</li>`).join("")}
+          ${(exercise.execution || []).map((step) => `<li>${this.escapeHtml(step)}</li>`).join("")}
         </ol>
       </div>
-      ${exercise.progressions ? `
+      ${
+        exercise.progressions
+          ? `
         <div class="instruction-section">
           <h3 class="instruction-title"><i data-lucide="bar-chart-3"></i> Progressions</h3>
           <div class="progressions-grid">
-            ${exercise.progressions.map((progression, index) => `
+            ${exercise.progressions
+              .map(
+                (progression, index) => `
               <div class="progression-card">
                 <div class="progression-level">Level ${index + 1}</div>
                 <div>${this.escapeHtml(progression)}</div>
               </div>
-            `).join("")}
+            `,
+              )
+              .join("")}
           </div>
         </div>
-      ` : ""}
-      ${exercise.safetyNotes ? `
+      `
+          : ""
+      }
+      ${
+        exercise.safetyNotes
+          ? `
         <div class="safety-notes">
           <div class="safety-title">
             <span>⚠️</span>
             <span>Safety Notes</span>
           </div>
           <ul style="margin: 0; padding-left: var(--space-4);">
-            ${exercise.safetyNotes.map(note => `<li>${this.escapeHtml(note)}</li>`).join("")}
+            ${exercise.safetyNotes.map((note) => `<li>${this.escapeHtml(note)}</li>`).join("")}
           </ul>
         </div>
-      ` : ""}
+      `
+          : ""
+      }
     `;
 
     while (tempDiv.firstChild) {
@@ -487,5 +523,5 @@ export class ExerciseLibraryPage {
 export const exerciseLibraryPage = new ExerciseLibraryPage();
 
 // Expose openExerciseModal globally for onclick handlers
-window.openExerciseModal = (name) => exerciseLibraryPage.openExerciseModal(name);
-
+window.openExerciseModal = (name) =>
+  exerciseLibraryPage.openExerciseModal(name);

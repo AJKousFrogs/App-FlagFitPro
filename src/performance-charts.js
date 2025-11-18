@@ -2,6 +2,7 @@
 // Creates interactive charts for athlete performance data using Chart.js
 
 import { performanceAPI } from "./performance-api.js";
+import { logger } from "./logger.js";
 
 export class PerformanceCharts {
   constructor() {

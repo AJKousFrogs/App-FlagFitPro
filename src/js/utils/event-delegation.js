@@ -3,6 +3,8 @@
  * Helper functions for efficient event handling
  */
 
+import { logger } from "../../logger.js";
+
 /**
  * Set up event delegation on a container
  * @param {HTMLElement|string} container - Container element or selector
@@ -12,35 +14,36 @@
  * @param {Object} options - Additional options
  */
 export function delegate(container, selector, event, handler, options = {}) {
-    const containerElement = typeof container === 'string'
-        ? document.querySelector(container)
-        : container;
+  const containerElement =
+    typeof container === "string"
+      ? document.querySelector(container)
+      : container;
 
-    if (!containerElement) {
-        logger.warn(`Container not found: ${container}`);
-        return () => {}; // Return no-op cleanup function
+  if (!containerElement) {
+    logger.warn(`Container not found: ${container}`);
+    return () => {}; // Return no-op cleanup function
+  }
+
+  const eventHandler = (e) => {
+    const target = e.target.closest(selector);
+    if (target && containerElement.contains(target)) {
+      handler(e, target);
     }
+  };
 
-    const eventHandler = (e) => {
-        const target = e.target.closest(selector);
-        if (target && containerElement.contains(target)) {
-            handler(e, target);
-        }
-    };
+  containerElement.addEventListener(event, eventHandler, options);
 
-    containerElement.addEventListener(event, eventHandler, options);
-
-    // Return cleanup function
-    return () => {
-        containerElement.removeEventListener(event, eventHandler, options);
-    };
+  // Return cleanup function
+  return () => {
+    containerElement.removeEventListener(event, eventHandler, options);
+  };
 }
 
 /**
  * Set up click delegation
  */
 export function delegateClick(container, selector, handler, options = {}) {
-    return delegate(container, selector, 'click', handler, options);
+  return delegate(container, selector, "click", handler, options);
 }
 
 /**
@@ -49,14 +52,15 @@ export function delegateClick(container, selector, handler, options = {}) {
  * @param {Array} delegations - Array of {selector, event, handler} objects
  */
 export function delegateMultiple(container, delegations) {
-    const cleanupFunctions = delegations.map(({ selector, event, handler, options }) =>
-        delegate(container, selector, event, handler, options)
-    );
+  const cleanupFunctions = delegations.map(
+    ({ selector, event, handler, options }) =>
+      delegate(container, selector, event, handler, options),
+  );
 
-    // Return cleanup function for all delegations
-    return () => {
-        cleanupFunctions.forEach(cleanup => cleanup());
-    };
+  // Return cleanup function for all delegations
+  return () => {
+    cleanupFunctions.forEach((cleanup) => cleanup());
+  };
 }
 
 /**
@@ -65,15 +69,15 @@ export function delegateMultiple(container, delegations) {
  * @param {number} wait - Wait time in milliseconds
  */
 export function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
     };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
 }
 
 /**
@@ -82,13 +86,12 @@ export function debounce(func, wait) {
  * @param {number} limit - Time limit in milliseconds
  */
 export function throttle(func, limit) {
-    let inThrottle;
-    return function executedFunction(...args) {
-        if (!inThrottle) {
-            func.apply(this, args);
-            inThrottle = true;
-            setTimeout(() => inThrottle = false, limit);
-        }
-    };
+  let inThrottle;
+  return function executedFunction(...args) {
+    if (!inThrottle) {
+      func.apply(this, args);
+      inThrottle = true;
+      setTimeout(() => (inThrottle = false), limit);
+    }
+  };
 }
-

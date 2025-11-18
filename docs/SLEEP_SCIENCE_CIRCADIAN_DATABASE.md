@@ -8,27 +8,27 @@ This comprehensive sleep science database provides evidence-based sleep optimiza
 
 ### Key Research Studies
 
-1. **Mah et al. (2011)** - *SLEEP*
+1. **Mah et al. (2011)** - _SLEEP_
    - Sleep extension (+110 min) = 9% sprint improvement, 9.2% free throw accuracy
    - Sample: Stanford basketball players, 5-7 week intervention
    - DOI: 10.5665/SLEEP.1132
 
-2. **Milewski et al. (2014)** - *Journal of Pediatric Orthopedics*
+2. **Milewski et al. (2014)** - _Journal of Pediatric Orthopedics_
    - <8 hours sleep = 1.7x injury risk in adolescent athletes
    - Sleep most significant predictor of injury
    - Sample: 112 athletes aged 12-18
 
-3. **Fullagar et al. (2015)** - *Sports Medicine*
+3. **Fullagar et al. (2015)** - _Sports Medicine_
    - Meta-analysis: Sleep deprivation = 11% decrease in performance
    - Cognitive function most impacted (decision making, reaction time)
    - Recovery rate slowed by 24-48 hours
 
-4. **Halson (2014)** - *Sports Medicine*
+4. **Halson (2014)** - _Sports Medicine_
    - Sleep quality impacts HRV, testosterone, cortisol
    - Deep sleep critical for muscle protein synthesis
    - REM sleep essential for motor skill consolidation
 
-5. **Bonnar et al. (2018)** - *Sleep Medicine Reviews*
+5. **Bonnar et al. (2018)** - _Sleep Medicine Reviews_
    - Sleep interventions: 3.0% performance improvement (moderate effect)
    - Napping strategies: 11.4% sprint improvement
    - Optimal sleep: 8-10 hours for elite athletes
@@ -736,19 +736,19 @@ function calculateSleepDebt(userId, date) {
   // Determine severity
   let severity, injuryRisk, performanceImpact;
   if (cumulativeDebt < 3) {
-    severity = 'none';
+    severity = "none";
     injuryRisk = 1.0; // Baseline
     performanceImpact = 0;
   } else if (cumulativeDebt < 7) {
-    severity = 'mild';
+    severity = "mild";
     injuryRisk = 1.3;
     performanceImpact = -0.03; // -3%
   } else if (cumulativeDebt < 14) {
-    severity = 'moderate';
+    severity = "moderate";
     injuryRisk = 1.7; // Based on Milewski (2014)
     performanceImpact = -0.07; // -7%
   } else {
-    severity = 'severe';
+    severity = "severe";
     injuryRisk = 2.0;
     performanceImpact = -0.11; // Based on Fullagar (2015)
   }
@@ -759,7 +759,7 @@ function calculateSleepDebt(userId, date) {
     severity,
     injuryRisk,
     performanceImpact,
-    recommendedRecovery: calculateRecoveryNeeded(cumulativeDebt)
+    recommendedRecovery: calculateRecoveryNeeded(cumulativeDebt),
   };
 }
 
@@ -773,7 +773,7 @@ function calculateRecoveryNeeded(debt) {
   return {
     extraSleep: extraSleepPerNight,
     days: daysNeeded,
-    protocol: 'sleep_extension'
+    protocol: "sleep_extension",
   };
 }
 ```
@@ -787,46 +787,47 @@ function calculateRecoveryNeeded(debt) {
  */
 function calculateSleepQualityScore(sleepData) {
   const weights = {
-    efficiency: 0.30,      // Most important (Halson 2014)
-    duration: 0.25,        // Critical minimum (Mah 2011)
-    deepSleep: 0.20,       // Recovery essential (Dattilo 2011)
-    remSleep: 0.15,        // Skill consolidation (Walker 2005)
-    fragmentation: 0.10    // Continuity matters (Bonnet 1985)
+    efficiency: 0.3, // Most important (Halson 2014)
+    duration: 0.25, // Critical minimum (Mah 2011)
+    deepSleep: 0.2, // Recovery essential (Dattilo 2011)
+    remSleep: 0.15, // Skill consolidation (Walker 2005)
+    fragmentation: 0.1, // Continuity matters (Bonnet 1985)
   };
 
   // Efficiency score (target: >85%)
   const efficiencyScore = Math.min(1, sleepData.efficiency / 90);
 
   // Duration score (target: 8-9 hours for athletes)
-  const durationScore = sleepData.duration >= 8 ?
-    Math.min(1, sleepData.duration / 9) :
-    sleepData.duration / 8;
+  const durationScore =
+    sleepData.duration >= 8
+      ? Math.min(1, sleepData.duration / 9)
+      : sleepData.duration / 8;
 
   // Deep sleep score (target: 15-25%)
-  const deepSleepPct = (sleepData.deepSleepMinutes / sleepData.totalSleepMinutes) * 100;
-  const deepSleepScore = deepSleepPct >= 15 ?
-    Math.min(1, deepSleepPct / 20) :
-    deepSleepPct / 15;
+  const deepSleepPct =
+    (sleepData.deepSleepMinutes / sleepData.totalSleepMinutes) * 100;
+  const deepSleepScore =
+    deepSleepPct >= 15 ? Math.min(1, deepSleepPct / 20) : deepSleepPct / 15;
 
   // REM sleep score (target: 20-25%)
-  const remSleepPct = (sleepData.remSleepMinutes / sleepData.totalSleepMinutes) * 100;
-  const remSleepScore = remSleepPct >= 20 ?
-    Math.min(1, remSleepPct / 25) :
-    remSleepPct / 20;
+  const remSleepPct =
+    (sleepData.remSleepMinutes / sleepData.totalSleepMinutes) * 100;
+  const remSleepScore =
+    remSleepPct >= 20 ? Math.min(1, remSleepPct / 25) : remSleepPct / 20;
 
   // Fragmentation score (lower is better)
-  const fragmentationScore = sleepData.awakenings <= 2 ?
-    1.0 :
-    Math.max(0, 1 - ((sleepData.awakenings - 2) * 0.15));
+  const fragmentationScore =
+    sleepData.awakenings <= 2
+      ? 1.0
+      : Math.max(0, 1 - (sleepData.awakenings - 2) * 0.15);
 
   // Weighted composite score
-  const qualityScore = (
+  const qualityScore =
     efficiencyScore * weights.efficiency +
     durationScore * weights.duration +
     deepSleepScore * weights.deepSleep +
     remSleepScore * weights.remSleep +
-    fragmentationScore * weights.fragmentation
-  );
+    fragmentationScore * weights.fragmentation;
 
   // Recovery score (0-1 scale)
   const recoveryScore = qualityScore * (sleepData.duration / 8);
@@ -839,17 +840,17 @@ function calculateSleepQualityScore(sleepData) {
       duration: durationScore,
       deepSleep: deepSleepScore,
       remSleep: remSleepScore,
-      fragmentation: fragmentationScore
+      fragmentation: fragmentationScore,
     },
-    interpretation: interpretQualityScore(qualityScore)
+    interpretation: interpretQualityScore(qualityScore),
   };
 }
 
 function interpretQualityScore(score) {
-  if (score >= 0.85) return 'excellent';
-  if (score >= 0.75) return 'good';
-  if (score >= 0.65) return 'fair';
-  return 'poor';
+  if (score >= 0.85) return "excellent";
+  if (score >= 0.75) return "good";
+  if (score >= 0.65) return "fair";
+  return "poor";
 }
 ```
 
@@ -865,15 +866,15 @@ function calculateCircadianAlignment(userId, competitionTime) {
 
   // Optimal performance windows by chronotype
   const optimalWindows = {
-    extreme_morning: { start: 9, end: 14 },   // 9am-2pm
-    morning: { start: 10, end: 15 },          // 10am-3pm
-    intermediate: { start: 11, end: 17 },     // 11am-5pm
-    evening: { start: 14, end: 20 },          // 2pm-8pm
-    extreme_evening: { start: 16, end: 22 }   // 4pm-10pm
+    extreme_morning: { start: 9, end: 14 }, // 9am-2pm
+    morning: { start: 10, end: 15 }, // 10am-3pm
+    intermediate: { start: 11, end: 17 }, // 11am-5pm
+    evening: { start: 14, end: 20 }, // 2pm-8pm
+    extreme_evening: { start: 16, end: 22 }, // 4pm-10pm
   };
 
   const userOptimal = optimalWindows[chronotype.type];
-  const compHour = parseInt(competitionTime.split(':')[0]);
+  const compHour = parseInt(competitionTime.split(":")[0]);
 
   // Calculate misalignment (hours from optimal window)
   let misalignment = 0;
@@ -895,25 +896,30 @@ function calculateCircadianAlignment(userId, competitionTime) {
     performanceImpact,
     phaseShiftNeeded,
     daysNeededForShift: Math.ceil(phaseShiftNeeded / 0.5), // ~30 min shift per day
-    intervention: phaseShiftNeeded > 0 ? generatePhaseShiftProtocol(phaseShiftNeeded) : null
+    intervention:
+      phaseShiftNeeded > 0
+        ? generatePhaseShiftProtocol(phaseShiftNeeded)
+        : null,
   };
 }
 
 function generatePhaseShiftProtocol(hoursToShift) {
-  const direction = hoursToShift > 0 ? 'advance' : 'delay';
+  const direction = hoursToShift > 0 ? "advance" : "delay";
   const magnitude = Math.abs(hoursToShift);
 
   return {
     direction,
     magnitude,
     dailyShift: 30, // minutes per day
-    lightTherapy: direction === 'advance' ?
-      { timing: 'morning', intensity: 10000, duration: 30 } :
-      { timing: 'evening', intensity: 2500, duration: 60 },
-    melatonin: direction === 'advance' ?
-      { timing: 'early_evening', dose: 0.5 } :
-      { timing: 'late_night', dose: 0.3 },
-    startDate: calculateStartDate(magnitude)
+    lightTherapy:
+      direction === "advance"
+        ? { timing: "morning", intensity: 10000, duration: 30 }
+        : { timing: "evening", intensity: 2500, duration: 60 },
+    melatonin:
+      direction === "advance"
+        ? { timing: "early_evening", dose: 0.5 }
+        : { timing: "late_night", dose: 0.3 },
+    startDate: calculateStartDate(magnitude),
   };
 }
 ```
@@ -931,7 +937,10 @@ function generateSleepExtensionProtocol(userId, targetDate) {
   const currentDebt = calculateSleepDebt(userId);
 
   // Target extension: baseline + 1-2 hours
-  const targetExtension = Math.min(2, Math.max(1, sleepNeed - baseline.avgDuration + 0.5));
+  const targetExtension = Math.min(
+    2,
+    Math.max(1, sleepNeed - baseline.avgDuration + 0.5),
+  );
 
   // Protocol duration: typically 5-7 weeks for maximum effect
   const daysUntilTarget = calculateDaysBetween(new Date(), targetDate);
@@ -943,12 +952,15 @@ function generateSleepExtensionProtocol(userId, targetDate) {
   // Generate weekly targets
   const weeklyTargets = [];
   for (let week = 1; week <= Math.ceil(protocolDuration / 7); week++) {
-    const targetHours = baseline.avgDuration + (weeklyIncrement * week);
+    const targetHours = baseline.avgDuration + weeklyIncrement * week;
     weeklyTargets.push({
       week,
-      targetDuration: Math.min(targetHours, baseline.avgDuration + targetExtension),
-      bedtimeAdvance: (weeklyIncrement * week) * 60, // minutes earlier
-      strategy: week === 1 ? 'gradual_adjustment' : 'maintain_and_build'
+      targetDuration: Math.min(
+        targetHours,
+        baseline.avgDuration + targetExtension,
+      ),
+      bedtimeAdvance: weeklyIncrement * week * 60, // minutes earlier
+      strategy: week === 1 ? "gradual_adjustment" : "maintain_and_build",
     });
   }
 
@@ -959,7 +971,7 @@ function generateSleepExtensionProtocol(userId, targetDate) {
     reactionTimeImprovement: 0.05, // 5% faster
     moodImprovement: 0.15, // 15% better mood scores
     fatigueReduction: 0.18, // 18% less fatigue
-    timeToEffect: 21 // days to see full effect
+    timeToEffect: 21, // days to see full effect
   };
 
   return {
@@ -970,10 +982,15 @@ function generateSleepExtensionProtocol(userId, targetDate) {
     expectedOutcomes,
     implementation: {
       bedtimeAdjustment: `Move bedtime earlier by ${Math.round(targetExtension * 60)} minutes`,
-      wakeTimeAdjustment: 'Maintain consistent wake time',
-      napStrategy: 'Consider 20-30 min power nap if needed',
-      monitoring: ['daily_sleep_duration', 'sleep_quality', 'morning_readiness', 'performance_metrics']
-    }
+      wakeTimeAdjustment: "Maintain consistent wake time",
+      napStrategy: "Consider 20-30 min power nap if needed",
+      monitoring: [
+        "daily_sleep_duration",
+        "sleep_quality",
+        "morning_readiness",
+        "performance_metrics",
+      ],
+    },
   };
 }
 ```
@@ -1013,7 +1030,7 @@ const sleepMLFeatures = {
 
   // Contextual
   training_load_previous_day: 320,
-  days_until_competition: 5
+  days_until_competition: 5,
 };
 
 // Expected improvement in ML accuracy
@@ -1031,6 +1048,7 @@ const sleepMLFeatures = {
 Based on research ROI:
 
 **Tier 1: Essential (€500-€800)**
+
 - Sleep tracking wearable (Oura Ring, WHOOP): €300-€450
   - ROI: Objective sleep data = 5-10% performance improvement
 - Blackout curtains + sleep mask: €100-€150
@@ -1039,6 +1057,7 @@ Based on research ROI:
   - ROI: 8-12% sleep efficiency improvement
 
 **Tier 2: High-Impact (€400-€700)**
+
 - Smart thermostat for bedroom: €150-€250
   - ROI: Temperature optimization = 7% better deep sleep
 - Light therapy box (10,000 lux): €100-€200
@@ -1049,6 +1068,7 @@ Based on research ROI:
   - ROI: Sleep continuity improvement
 
 **Tier 3: Advanced (€400-€700)**
+
 - Professional sleep assessment: €200-€400
   - ROI: Personalized protocol = 8-12% optimization
 - Cooling mattress topper: €150-€300
@@ -1057,6 +1077,7 @@ Based on research ROI:
   - ROI: Sleep onset and quality improvement
 
 **Expected Total ROI**:
+
 - Performance improvement: 10-15%
 - Injury risk reduction: 40-50%
 - Recovery optimization: 25-30%

@@ -1,11 +1,13 @@
 # Angular 19 + PrimeNG Migration Plan
-*FlagFit Pro - Complete Migration Strategy*
+
+_FlagFit Pro - Complete Migration Strategy_
 
 ## 📋 Pre-Migration Checklist
 
 Before starting the HTML rewrite, we need to:
 
 ### ✅ Completed
+
 - [x] Design System Documentation updated for Angular 19 + PrimeNG
 - [x] Understanding of current project structure
 - [x] Component inventory completed
@@ -44,7 +46,9 @@ Before starting the HTML rewrite, we need to:
 ## 📊 Current Project Inventory
 
 ### HTML Files (59 total)
+
 **Main Pages (33):**
+
 - index.html (Landing page)
 - login.html, register.html, reset-password.html (Auth)
 - dashboard.html (Main dashboard)
@@ -63,20 +67,24 @@ Before starting the HTML rewrite, we need to:
 - component-library.html (Component showcase)
 
 **Component Templates (26):**
-- src/components/atoms/* (8 components)
-- src/components/molecules/* (7 components)
-- src/components/organisms/* (5 components)
-- src/components/templates/* (3 layouts)
+
+- src/components/atoms/\* (8 components)
+- src/components/molecules/\* (7 components)
+- src/components/organisms/\* (5 components)
+- src/components/templates/\* (3 layouts)
 
 ### JavaScript Files
+
 **Main Scripts:**
+
 - src/js/main.js (Application initialization)
-- src/js/pages/* (9 page-specific scripts)
-- src/js/components/* (6 component scripts)
-- src/js/services/* (6 service files)
-- src/js/utils/* (6 utility files)
+- src/js/pages/\* (9 page-specific scripts)
+- src/js/components/\* (6 component scripts)
+- src/js/services/\* (6 service files)
+- src/js/utils/\* (6 utility files)
 
 **Core Services:**
+
 - auth-manager.js
 - api-config.js
 - error-handler.js
@@ -84,10 +92,11 @@ Before starting the HTML rewrite, we need to:
 - training-program-engine.js
 
 ### CSS Files
+
 - src/css/main.css (Main stylesheet)
-- src/css/components/* (20+ component styles)
-- src/css/pages/* (25+ page styles)
-- src/css/themes/* (3 theme files)
+- src/css/components/\* (20+ component styles)
+- src/css/pages/\* (25+ page styles)
+- src/css/themes/\* (3 theme files)
 
 ## 🏗️ Proposed Angular Structure
 
@@ -156,6 +165,7 @@ flagfit-pro-angular/
 ## 🔄 Migration Phases
 
 ### Phase 1: Project Setup (Week 1)
+
 1. Initialize Angular 19 project
 2. Install PrimeNG and configure theme
 3. Set up routing structure
@@ -164,6 +174,7 @@ flagfit-pro-angular/
 6. Configure build and dev server
 
 ### Phase 2: Core Components (Week 2)
+
 1. Migrate shared components:
    - Sidebar navigation
    - Header/Top bar
@@ -174,6 +185,7 @@ flagfit-pro-angular/
 3. Set up theme system
 
 ### Phase 3: Auth Module (Week 2-3)
+
 1. Login component
 2. Register component
 3. Reset password component
@@ -181,12 +193,14 @@ flagfit-pro-angular/
 5. Auth service integration
 
 ### Phase 4: Dashboard Module (Week 3-4)
+
 1. Dashboard component
 2. Stats cards
 3. Charts integration
 4. Performance widgets
 
 ### Phase 5: Feature Modules (Week 4-8)
+
 1. Training module (training, schedule, QB training)
 2. Analytics module
 3. Roster module
@@ -197,6 +211,7 @@ flagfit-pro-angular/
 8. Profile/Settings module
 
 ### Phase 6: Polish & Testing (Week 9-10)
+
 1. Component testing
 2. E2E testing
 3. Performance optimization
@@ -206,6 +221,7 @@ flagfit-pro-angular/
 ## 🎯 Migration Priorities
 
 ### High Priority (Must Have)
+
 1. ✅ Design System Documentation
 2. ⏳ Angular project setup
 3. ⏳ Core services (Auth, API)
@@ -214,12 +230,14 @@ flagfit-pro-angular/
 6. ⏳ Dashboard module
 
 ### Medium Priority (Should Have)
+
 1. Training module
 2. Analytics module
 3. Roster module
 4. Profile/Settings
 
 ### Low Priority (Nice to Have)
+
 1. Component library showcase page
 2. Advanced features
 3. Performance optimizations
@@ -228,22 +246,23 @@ flagfit-pro-angular/
 
 ### Vanilla HTML → Angular Component Mapping
 
-| Current HTML | Angular Component | PrimeNG Component |
-|-------------|-------------------|-------------------|
-| `index.html` | `LandingComponent` | Custom + PrimeNG Card |
-| `login.html` | `LoginComponent` | PrimeNG Form Components |
-| `dashboard.html` | `DashboardComponent` | PrimeNG Card, Chart |
-| `training.html` | `TrainingComponent` | PrimeNG TabView, Card |
-| `analytics.html` | `AnalyticsComponent` | PrimeNG Chart, Table |
-| `roster.html` | `RosterComponent` | PrimeNG Table |
-| `tournaments.html` | `TournamentsComponent` | PrimeNG Card, Calendar |
-| `community.html` | `CommunityComponent` | PrimeNG Card, TabView |
-| `chat.html` | `ChatComponent` | Custom Chat UI |
-| `profile.html` | `ProfileComponent` | PrimeNG Form Components |
+| Current HTML       | Angular Component      | PrimeNG Component       |
+| ------------------ | ---------------------- | ----------------------- |
+| `index.html`       | `LandingComponent`     | Custom + PrimeNG Card   |
+| `login.html`       | `LoginComponent`       | PrimeNG Form Components |
+| `dashboard.html`   | `DashboardComponent`   | PrimeNG Card, Chart     |
+| `training.html`    | `TrainingComponent`    | PrimeNG TabView, Card   |
+| `analytics.html`   | `AnalyticsComponent`   | PrimeNG Chart, Table    |
+| `roster.html`      | `RosterComponent`      | PrimeNG Table           |
+| `tournaments.html` | `TournamentsComponent` | PrimeNG Card, Calendar  |
+| `community.html`   | `CommunityComponent`   | PrimeNG Card, TabView   |
+| `chat.html`        | `ChatComponent`        | Custom Chat UI          |
+| `profile.html`     | `ProfileComponent`     | PrimeNG Form Components |
 
 ## 🔧 Technical Decisions Needed
 
 ### 1. State Management
+
 - **Option A**: Angular Signals (Recommended for Angular 19)
 - **Option B**: NgRx (For complex state)
 - **Option C**: Services with RxJS (Simple approach)
@@ -251,12 +270,14 @@ flagfit-pro-angular/
 **Recommendation**: Start with Services + RxJS, migrate to Signals if needed
 
 ### 2. Form Handling
+
 - **Option A**: Reactive Forms (Recommended)
 - **Option B**: Template-driven Forms
 
 **Recommendation**: Reactive Forms for all forms
 
 ### 3. Styling Approach
+
 - **Option A**: SCSS with CSS Custom Properties (Recommended)
 - **Option B**: Tailwind CSS
 - **Option C**: Angular Material Theming
@@ -264,6 +285,7 @@ flagfit-pro-angular/
 **Recommendation**: SCSS with CSS Custom Properties (matches current design system)
 
 ### 4. Icon System
+
 - **Option A**: PrimeIcons only
 - **Option B**: PrimeIcons + Lucide Angular (Recommended)
 - **Option C**: Custom icon components
@@ -271,6 +293,7 @@ flagfit-pro-angular/
 **Recommendation**: PrimeIcons + Lucide Angular for flexibility
 
 ### 5. Chart Library
+
 - **Option A**: PrimeNG Charts (Chart.js wrapper) (Recommended)
 - **Option B**: ng2-charts
 - **Option C**: Custom Chart.js integration
@@ -297,4 +320,3 @@ flagfit-pro-angular/
 
 **Status**: Ready to begin migration
 **Last Updated**: December 2025
-

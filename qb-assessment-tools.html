@@ -18,9 +18,14 @@
     <link rel="stylesheet" href="./src/css/main.css" />
     <!-- Page-specific styles -->
     <script src="./src/theme-switcher.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js" crossorigin="anonymous" defer>
-    <!-- Universal Components -->
-    <script type="module" src="./src/js/main.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"
+      crossorigin="anonymous"
+      defer
+    >
+      <!-- Universal Components -->
+      <script type="module" src="./src/js/main.js">
+    </script>
   </head>
   <body>
     <div class="container l-container u-margin-x-auto u-padding-20">
@@ -64,7 +69,7 @@
         class="assessment-grid u-display-grid u-gap-20 u-margin-bottom-30"
         style="grid-template-columns: repeat(auto-fit, minmax(350px, 1fr))"
       >
-    <!-- Throwing Velocity Assessment -->
+        <!-- Throwing Velocity Assessment -->
         <div class="assessment-card u-radius-lg u-padding-24">
           <div
             class="card-header u-display-flex u-align-center u-margin-bottom-20"
@@ -124,20 +129,20 @@
           <button
             class="btn btn-primary btn-md"
             onclick="openVelocityTest()"
-            style="width: 100%; margin-top: var(--space-4);"
+            style="width: 100%; margin-top: var(--space-4)"
           >
             Conduct Velocity Test
           </button>
           <button
             class="btn btn-secondary btn-md"
             onclick="viewVelocityHistory()"
-            style="width: 100%; margin-top: var(--space-4);"
+            style="width: 100%; margin-top: var(--space-4)"
           >
             View History
           </button>
         </div>
 
-    <!-- Shoulder Mobility Assessment -->
+        <!-- Shoulder Mobility Assessment -->
         <div class="assessment-card u-radius-lg u-padding-24">
           <div
             class="card-header u-display-flex u-align-center u-margin-bottom-20"
@@ -199,20 +204,20 @@
           <button
             class="btn btn-primary btn-md"
             onclick="openMobilityTest()"
-            style="width: 100%; margin-top: var(--space-4);"
+            style="width: 100%; margin-top: var(--space-4)"
           >
             Assess Mobility
           </button>
           <button
             class="btn btn-secondary btn-md"
             onclick="viewMobilityProtocols()"
-            style="width: 100%; margin-top: var(--space-4);"
+            style="width: 100%; margin-top: var(--space-4)"
           >
             View Protocols
           </button>
         </div>
 
-    <!-- Throwing Endurance -->
+        <!-- Throwing Endurance -->
         <div class="assessment-card u-radius-lg u-padding-24">
           <div
             class="card-header u-display-flex u-align-center u-margin-bottom-20"
@@ -284,20 +289,20 @@
           <button
             class="btn btn-primary btn-md"
             onclick="openEnduranceTest()"
-            style="width: 100%; margin-top: var(--space-4);"
+            style="width: 100%; margin-top: var(--space-4)"
           >
             Start Endurance Test
           </button>
           <button
             class="btn btn-secondary btn-md"
             onclick="viewEnduranceHistory()"
-            style="width: 100%; margin-top: var(--space-4);"
+            style="width: 100%; margin-top: var(--space-4)"
           >
             View History
           </button>
         </div>
 
-    <!-- Rotator Cuff Strength -->
+        <!-- Rotator Cuff Strength -->
         <div class="assessment-card u-radius-lg u-padding-24">
           <div
             class="card-header u-display-flex u-align-center u-margin-bottom-20"
@@ -369,14 +374,14 @@
           <button
             class="btn btn-primary btn-md"
             onclick="openStrengthTest()"
-            style="width: 100%; margin-top: var(--space-4);"
+            style="width: 100%; margin-top: var(--space-4)"
           >
             Test Strength
           </button>
           <button
             class="btn btn-secondary btn-md"
             onclick="viewStrengthProtocols()"
-            style="width: 100%; margin-top: var(--space-4);"
+            style="width: 100%; margin-top: var(--space-4)"
           >
             View Protocols
           </button>
@@ -437,7 +442,7 @@
 
         <button
           class="btn btn-primary btn-md"
-          style="width: 100%; margin-top: var(--space-5);"
+          style="width: 100%; margin-top: var(--space-5)"
           onclick="startTournamentSim()"
         >
           Start Tournament Simulation
@@ -558,7 +563,13 @@
     <div
       id="velocityModal"
       class="modal u-position-fixed u-display-none"
-      style="z-index: var(--z-index-modal, 1400); left: 0; top: 0; width: 100%; height: 100%"
+      style="
+        z-index: var(--z-index-modal, 1400);
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+      "
     >
       <div
         class="modal-content u-bg-primary u-padding-30 u-radius-lg u-width-full"
@@ -572,7 +583,11 @@
         <span
           class="close u-text-tertiary u-text-heading-xl u-font-weight-700"
           onclick="closeModal('velocityModal')"
-          style="float: right; font-size: var(--font-size-3xl, 1.875rem); cursor: pointer"
+          style="
+            float: right;
+            font-size: var(--font-size-3xl, 1.875rem);
+            cursor: pointer;
+          "
           >&times;</span
         >
         <h2 class="u-text-heading-lg u-margin-bottom-12">
@@ -671,7 +686,7 @@
         <button
           class="btn btn-primary btn-md"
           onclick="saveVelocityTest()"
-          style="width: 100%; margin-top: var(--space-4);"
+          style="width: 100%; margin-top: var(--space-4)"
         >
           Save Assessment
         </button>
@@ -682,7 +697,13 @@
     <div
       id="mobilityModal"
       class="modal u-position-fixed u-display-none"
-      style="z-index: var(--z-index-modal, 1400); left: 0; top: 0; width: 100%; height: 100%"
+      style="
+        z-index: var(--z-index-modal, 1400);
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+      "
     >
       <div
         class="modal-content u-bg-primary u-padding-30 u-radius-lg u-width-full"
@@ -696,7 +717,11 @@
         <span
           class="close u-text-tertiary u-text-heading-xl u-font-weight-700"
           onclick="closeModal('mobilityModal')"
-          style="float: right; font-size: var(--font-size-3xl, 1.875rem); cursor: pointer"
+          style="
+            float: right;
+            font-size: var(--font-size-3xl, 1.875rem);
+            cursor: pointer;
+          "
           >&times;</span
         >
         <h2 class="u-text-heading-lg u-margin-bottom-12">
@@ -783,7 +808,7 @@
         <button
           class="btn btn-primary btn-md"
           onclick="saveMobilityTest()"
-          style="width: 100%; margin-top: var(--space-4);"
+          style="width: 100%; margin-top: var(--space-4)"
         >
           Save Assessment
         </button>

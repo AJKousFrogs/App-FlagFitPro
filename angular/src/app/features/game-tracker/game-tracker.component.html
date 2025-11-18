@@ -1,0 +1,715 @@
+<app-main-layout>
+  <div class="game-tracker-page">
+    <app-page-header
+      title="Game Tracker"
+      subtitle="Track every play, drop, flag pull, and performance metric"
+      icon="pi-list"
+    >
+      <div class="header-actions">
+        <p-button
+          label="View Games"
+          icon="pi pi-list"
+          [outlined]="true"
+          (onClick)="viewGames()"
+        ></p-button>
+        <p-button
+          label="New Game"
+          icon="pi pi-plus"
+          (onClick)="openNewGame()"
+        ></p-button>
+      </div>
+    </app-page-header>
+
+    <!-- Game Setup Form -->
+    <p-card *ngIf="showGameForm()" class="game-form-card">
+      <ng-template pTemplate="header">
+        <h3>Game Setup</h3>
+      </ng-template>
+      <form [formGroup]="gameForm" (ngSubmit)="submitGame()">
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="gameDate">Game Date</label>
+            <p-calendar
+              id="gameDate"
+              formControlName="gameDate"
+              dateFormat="mm/dd/yy"
+              [showIcon]="true"
+            ></p-calendar>
+          </div>
+          <div class="form-field">
+            <label for="gameTime">Game Time</label>
+            <input
+              id="gameTime"
+              type="time"
+              pInputText
+              formControlName="gameTime"
+            />
+          </div>
+          <div class="form-field">
+            <label for="opponent">Opponent Team</label>
+            <input
+              id="opponent"
+              type="text"
+              pInputText
+              formControlName="opponent"
+              placeholder="Blue Devils"
+            />
+          </div>
+          <div class="form-field">
+            <label for="location">Location</label>
+            <input
+              id="location"
+              type="text"
+              pInputText
+              formControlName="location"
+              placeholder="Home Field"
+            />
+          </div>
+          <div class="form-field">
+            <label for="homeAway">Home/Away</label>
+            <p-dropdown
+              id="homeAway"
+              formControlName="homeAway"
+              [options]="homeAwayOptions"
+              optionLabel="label"
+              optionValue="value"
+            >
+            </p-dropdown>
+          </div>
+          <div class="form-field">
+            <label for="weather">Weather Conditions</label>
+            <p-dropdown
+              id="weather"
+              formControlName="weather"
+              [options]="weatherOptions"
+              optionLabel="label"
+              optionValue="value"
+            >
+            </p-dropdown>
+          </div>
+          <div class="form-field">
+            <label for="temperature">Temperature (°F)</label>
+            <p-inputNumber
+              id="temperature"
+              formControlName="temperature"
+              [min]="0"
+              [max]="120"
+              [showButtons]="true"
+            >
+            </p-inputNumber>
+          </div>
+          <div class="form-field">
+            <label for="fieldConditions">Field Conditions</label>
+            <p-dropdown
+              id="fieldConditions"
+              formControlName="fieldConditions"
+              [options]="fieldConditionOptions"
+              optionLabel="label"
+              optionValue="value"
+            >
+            </p-dropdown>
+          </div>
+        </div>
+        <div class="form-actions">
+          <p-button
+            label="Cancel"
+            [outlined]="true"
+            (onClick)="cancelGame()"
+          ></p-button>
+          <p-button
+            label="Start Game"
+            type="submit"
+            [disabled]="gameForm.invalid"
+          ></p-button>
+        </div>
+      </form>
+    </p-card>
+
+    <!-- Active Game Play Tracker -->
+    <p-card *ngIf="activeGameId()" class="play-tracker-card">
+      <ng-template pTemplate="header">
+        <div class="game-header-content">
+          <h3>Track Play - {{ getActiveGameOpponent() }}</h3>
+          <div class="score-display">
+            <div class="score-group">
+              <label>Our Score:</label>
+              <p-inputNumber
+                [ngModel]="teamScore()"
+                (ngModelChange)="teamScore.set($event); updateScore()"
+                [ngModelOptions]="{ standalone: true }"
+                [min]="0"
+                [showButtons]="true"
+                styleClass="score-input"
+              >
+              </p-inputNumber>
+            </div>
+            <span class="score-separator">-</span>
+            <div class="score-group">
+              <label>Opponent:</label>
+              <p-inputNumber
+                [ngModel]="opponentScore()"
+                (ngModelChange)="opponentScore.set($event); updateScore()"
+                [ngModelOptions]="{ standalone: true }"
+                [min]="0"
+                [showButtons]="true"
+                styleClass="score-input"
+              >
+              </p-inputNumber>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+
+      <!-- Quick Stats Summary -->
+      <div class="quick-stats-grid">
+        <div class="stat-box">
+          <div class="stat-label">Total Plays</div>
+          <div class="stat-value">{{ getTotalPlays() }}</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Completions</div>
+          <div class="stat-value">{{ getTotalCompletions() }}</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Drops</div>
+          <div class="stat-value stat-value-danger">{{ getTotalDrops() }}</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Flag Pulls</div>
+          <div class="stat-value stat-value-success">
+            {{ getTotalFlagPulls() }}
+          </div>
+        </div>
+      </div>
+
+      <form [formGroup]="playForm" (ngSubmit)="submitPlay()">
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="half">Half</label>
+            <p-dropdown
+              id="half"
+              formControlName="half"
+              [options]="halfOptions"
+              optionLabel="label"
+              optionValue="value"
+            >
+            </p-dropdown>
+          </div>
+          <div class="form-field">
+            <label for="timeRemaining">Time Remaining (seconds)</label>
+            <p-inputNumber
+              id="timeRemaining"
+              formControlName="timeRemaining"
+              [min]="0"
+              [max]="1200"
+              [showButtons]="true"
+            >
+            </p-inputNumber>
+          </div>
+          <div class="form-field">
+            <label for="down">Down</label>
+            <p-inputNumber
+              id="down"
+              formControlName="down"
+              [min]="1"
+              [max]="4"
+              [showButtons]="true"
+            >
+            </p-inputNumber>
+          </div>
+          <div class="form-field">
+            <label for="distance">Distance (yards)</label>
+            <p-inputNumber
+              id="distance"
+              formControlName="distance"
+              [min]="0"
+              [showButtons]="true"
+            >
+            </p-inputNumber>
+          </div>
+          <div class="form-field">
+            <label for="yardLine">Yard Line</label>
+            <p-inputNumber
+              id="yardLine"
+              formControlName="yardLine"
+              [min]="1"
+              [max]="100"
+              [showButtons]="true"
+            >
+            </p-inputNumber>
+          </div>
+        </div>
+
+        <!-- Play Type Selection -->
+        <div class="play-type-section">
+          <label class="play-type-label">Play Type</label>
+          <div class="play-type-options">
+            <div class="play-type-option">
+              <p-radioButton
+                name="playType"
+                value="pass_play"
+                formControlName="playType"
+                inputId="pass_play"
+              >
+              </p-radioButton>
+              <label for="pass_play" class="play-type-label-text"
+                >Pass Play</label
+              >
+            </div>
+            <div class="play-type-option">
+              <p-radioButton
+                name="playType"
+                value="run_play"
+                formControlName="playType"
+                inputId="run_play"
+              >
+              </p-radioButton>
+              <label for="run_play" class="play-type-label-text"
+                >Run Play</label
+              >
+            </div>
+            <div class="play-type-option">
+              <p-radioButton
+                name="playType"
+                value="flag_pull"
+                formControlName="playType"
+                inputId="flag_pull"
+              >
+              </p-radioButton>
+              <label for="flag_pull" class="play-type-label-text"
+                >Flag Pull</label
+              >
+            </div>
+            <div class="play-type-option">
+              <p-radioButton
+                name="playType"
+                value="interception"
+                formControlName="playType"
+                inputId="interception"
+              >
+              </p-radioButton>
+              <label for="interception" class="play-type-label-text"
+                >Interception</label
+              >
+            </div>
+            <div class="play-type-option">
+              <p-radioButton
+                name="playType"
+                value="pass_deflection"
+                formControlName="playType"
+                inputId="pass_deflection"
+              >
+              </p-radioButton>
+              <label for="pass_deflection" class="play-type-label-text"
+                >Pass Deflection</label
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Pass Play Details -->
+        <div
+          *ngIf="playForm.get('playType')?.value === 'pass_play'"
+          class="play-details-section"
+        >
+          <h4>Pass Play Details</h4>
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="quarterbackId">Quarterback</label>
+              <p-dropdown
+                id="quarterbackId"
+                formControlName="quarterbackId"
+                [options]="players()"
+                optionLabel="name"
+                optionValue="id"
+                placeholder="Select QB"
+                [filter]="true"
+              >
+              </p-dropdown>
+            </div>
+            <div class="form-field">
+              <label for="receiverId">Receiver</label>
+              <p-dropdown
+                id="receiverId"
+                formControlName="receiverId"
+                [options]="players()"
+                optionLabel="name"
+                optionValue="id"
+                placeholder="Select Receiver"
+                [filter]="true"
+              >
+              </p-dropdown>
+            </div>
+            <div class="form-field">
+              <label for="routeType">Route Type</label>
+              <p-dropdown
+                id="routeType"
+                formControlName="routeType"
+                [options]="routeTypeOptions"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Select route"
+              >
+              </p-dropdown>
+            </div>
+            <div class="form-field">
+              <label for="routeDepth">Route Depth (yards)</label>
+              <p-inputNumber
+                id="routeDepth"
+                formControlName="routeDepth"
+                [min]="0"
+                [showButtons]="true"
+              >
+              </p-inputNumber>
+            </div>
+            <div class="form-field">
+              <label for="snapAccuracy">Snap Accuracy</label>
+              <p-dropdown
+                id="snapAccuracy"
+                formControlName="snapAccuracy"
+                [options]="accuracyOptions"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Select accuracy"
+              >
+              </p-dropdown>
+            </div>
+            <div class="form-field">
+              <label for="throwAccuracy">Throw Accuracy</label>
+              <p-dropdown
+                id="throwAccuracy"
+                formControlName="throwAccuracy"
+                [options]="accuracyOptions"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Select accuracy"
+              >
+              </p-dropdown>
+            </div>
+          </div>
+
+          <!-- Pass Outcome Selection -->
+          <div class="outcome-section">
+            <label class="outcome-label">Outcome:</label>
+            <div class="outcome-buttons">
+              <button
+                *ngFor="let outcome of passOutcomeOptions"
+                type="button"
+                class="outcome-btn outcome-{{ outcome.severity }}"
+                [class.active]="
+                  playForm.get('outcome')?.value === outcome.value
+                "
+                (click)="playForm.patchValue({ outcome: outcome.value })"
+              >
+                {{ outcome.label }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Drop Analysis (Conditional) -->
+          <div
+            *ngIf="playForm.get('outcome')?.value === 'drop'"
+            class="drop-analysis-section"
+          >
+            <div class="form-grid">
+              <div class="form-field">
+                <label for="dropSeverity">Drop Severity</label>
+                <p-dropdown
+                  id="dropSeverity"
+                  formControlName="dropSeverity"
+                  [options]="dropSeverityOptions"
+                  optionLabel="label"
+                  optionValue="value"
+                  placeholder="Select severity"
+                >
+                </p-dropdown>
+              </div>
+              <div class="form-field">
+                <label for="dropReason">Drop Reason</label>
+                <p-dropdown
+                  id="dropReason"
+                  formControlName="dropReason"
+                  [options]="dropReasonOptions"
+                  optionLabel="label"
+                  optionValue="value"
+                  placeholder="Select reason"
+                >
+                </p-dropdown>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Run Play Details -->
+        <div
+          *ngIf="playForm.get('playType')?.value === 'run_play'"
+          class="play-details-section"
+        >
+          <h4>Run Play Details</h4>
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="ballCarrierId">Ball Carrier</label>
+              <p-dropdown
+                id="ballCarrierId"
+                formControlName="ballCarrierId"
+                [options]="players()"
+                optionLabel="name"
+                optionValue="id"
+                placeholder="Select player"
+                [filter]="true"
+              >
+              </p-dropdown>
+            </div>
+            <div class="form-field">
+              <label for="yardsGained">Yards Gained</label>
+              <p-inputNumber
+                id="yardsGained"
+                formControlName="yardsGained"
+                [min]="0"
+                [showButtons]="true"
+              >
+              </p-inputNumber>
+            </div>
+          </div>
+        </div>
+
+        <!-- Flag Pull Details -->
+        <div
+          *ngIf="playForm.get('playType')?.value === 'flag_pull'"
+          class="play-details-section"
+        >
+          <h4>Flag Pull Details</h4>
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="defenderId">Defender</label>
+              <p-dropdown
+                id="defenderId"
+                formControlName="defenderId"
+                [options]="players()"
+                optionLabel="name"
+                optionValue="id"
+                placeholder="Select defender"
+                [filter]="true"
+              >
+              </p-dropdown>
+            </div>
+            <div class="form-field">
+              <label for="ballCarrierIdFlag">Ball Carrier</label>
+              <p-dropdown
+                id="ballCarrierIdFlag"
+                formControlName="ballCarrierIdFlag"
+                [options]="players()"
+                optionLabel="name"
+                optionValue="id"
+                placeholder="Select carrier"
+                [filter]="true"
+              >
+              </p-dropdown>
+            </div>
+            <div class="form-field">
+              <label for="isSuccessful">Successful Pull</label>
+              <p-dropdown
+                id="isSuccessful"
+                formControlName="isSuccessful"
+                [options]="successOptions"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Select outcome"
+              >
+              </p-dropdown>
+            </div>
+          </div>
+
+          <!-- Miss Analysis (Conditional) -->
+          <div
+            *ngIf="playForm.get('isSuccessful')?.value === false"
+            class="miss-analysis-section"
+          >
+            <div class="form-field">
+              <label for="missReason">Miss Reason</label>
+              <p-dropdown
+                id="missReason"
+                formControlName="missReason"
+                [options]="missReasonOptions"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Select reason"
+              >
+              </p-dropdown>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interception Details -->
+        <div
+          *ngIf="playForm.get('playType')?.value === 'interception'"
+          class="play-details-section"
+        >
+          <h4>Interception Details</h4>
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="interceptorId">Interceptor</label>
+              <p-dropdown
+                id="interceptorId"
+                formControlName="interceptorId"
+                [options]="players()"
+                optionLabel="name"
+                optionValue="id"
+                placeholder="Select interceptor"
+                [filter]="true"
+              >
+              </p-dropdown>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pass Deflection Details -->
+        <div
+          *ngIf="playForm.get('playType')?.value === 'pass_deflection'"
+          class="play-details-section"
+        >
+          <h4>Pass Deflection Details</h4>
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="deflectedBy">Deflected By</label>
+              <p-dropdown
+                id="deflectedBy"
+                formControlName="deflectedBy"
+                [options]="players()"
+                optionLabel="name"
+                optionValue="id"
+                placeholder="Select defender"
+                [filter]="true"
+              >
+              </p-dropdown>
+            </div>
+          </div>
+        </div>
+
+        <!-- Play Notes -->
+        <div class="form-section">
+          <div class="form-field">
+            <label for="playNotes">Play Notes (Optional)</label>
+            <textarea
+              id="playNotes"
+              pInputTextarea
+              formControlName="playNotes"
+              rows="2"
+              placeholder="Add any additional details about this play..."
+            >
+            </textarea>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <p-button
+            label="Cancel"
+            [outlined]="true"
+            type="button"
+            (onClick)="cancelPlay()"
+          ></p-button>
+          <p-button
+            label="Save Play"
+            type="submit"
+            [disabled]="playForm.invalid"
+          ></p-button>
+        </div>
+      </form>
+    </p-card>
+
+    <!-- Recent Plays -->
+    <p-card
+      *ngIf="activeGameId() && plays().length > 0"
+      class="plays-list-card"
+    >
+      <ng-template pTemplate="header">
+        <h3>Recent Plays</h3>
+      </ng-template>
+      <p-table [value]="plays()" [paginator]="true" [rows]="10">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Half</th>
+            <th>Time</th>
+            <th>Play Type</th>
+            <th>Details</th>
+            <th>Actions</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-play>
+          <tr>
+            <td>{{ play.half }}</td>
+            <td>{{ formatTime(play.timeRemaining) }}</td>
+            <td>
+              <p-tag
+                [value]="formatPlayType(play.playType)"
+                [severity]="getPlayTypeSeverity(play.playType)"
+              >
+              </p-tag>
+            </td>
+            <td>{{ getPlayDetails(play) }}</td>
+            <td>
+              <p-button
+                icon="pi pi-trash"
+                [text]="true"
+                [rounded]="true"
+                (onClick)="deletePlay(play.id)"
+                ariaLabel="Delete play"
+              >
+              </p-button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-card>
+
+    <!-- Games List -->
+    <p-card class="games-list-card">
+      <ng-template pTemplate="header">
+        <h3>Recent Games</h3>
+      </ng-template>
+      <p-table [value]="games()" [paginator]="true" [rows]="10">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Date</th>
+            <th>Opponent</th>
+            <th>Location</th>
+            <th>Score</th>
+            <th>Result</th>
+            <th>Actions</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-game>
+          <tr [attr.data-game-id]="game.id">
+            <td>{{ game.date }}</td>
+            <td>{{ game.opponent }}</td>
+            <td>{{ game.location }}</td>
+            <td>{{ game.score }}</td>
+            <td>
+              <p-tag
+                [value]="game.result.toUpperCase()"
+                [severity]="getResultSeverity(game.result)"
+              >
+              </p-tag>
+            </td>
+            <td>
+              <p-button
+                icon="pi pi-play"
+                [text]="true"
+                [rounded]="true"
+                (onClick)="startTrackingGame(game.id)"
+                ariaLabel="Start tracking"
+              >
+              </p-button>
+              <p-button
+                icon="pi pi-eye"
+                [text]="true"
+                [rounded]="true"
+                ariaLabel="View details"
+              ></p-button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-card>
+  </div>
+</app-main-layout>

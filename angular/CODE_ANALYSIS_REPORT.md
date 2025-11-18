@@ -9,6 +9,7 @@ This report identifies redundancy, dead code, and legacy patterns that should be
 ## 🚨 Critical Issues
 
 ### 1. **Unused CommonModule Import in AppComponent**
+
 **Location**: `angular/src/app/app.component.ts:8`
 **Issue**: `CommonModule` is imported but not used. `RouterOutlet` is sufficient for standalone components.
 **Impact**: Unnecessary bundle size
@@ -16,10 +17,10 @@ This report identifies redundancy, dead code, and legacy patterns that should be
 
 ```typescript
 // Current (WRONG)
-imports: [RouterOutlet, CommonModule]
+imports: [RouterOutlet, CommonModule];
 
 // Should be
-imports: [RouterOutlet]
+imports: [RouterOutlet];
 ```
 
 ---
@@ -27,19 +28,24 @@ imports: [RouterOutlet]
 ## 🔴 Redundancy Issues
 
 ### 2. **Duplicate API Service Injection Pattern**
+
 **Location**: Multiple feature components
 **Issue**: Every component injects `ApiService` the same way. Consider creating a base component or using a shared service pattern.
-**Files Affected**: 
+**Files Affected**:
+
 - All 17 feature components
 - Pattern: `private apiService = inject(ApiService);`
 
-**Recommendation**: 
+**Recommendation**:
+
 - Create a base component class (if needed)
 - Or keep as-is (this is actually fine for Angular 19, but could be optimized)
 
 ### 3. **Repeated Chart Options Pattern**
+
 **Location**: Multiple components using PrimeNG Charts
 **Issue**: Same `chartOptions` object repeated across components:
+
 - `dashboard.component.ts`
 - `analytics.component.ts`
 - `performance-tracking.component.ts`
@@ -52,13 +58,15 @@ imports: [RouterOutlet]
 // Create: angular/src/app/shared/config/chart.config.ts
 export const DEFAULT_CHART_OPTIONS = {
   responsive: true,
-  maintainAspectRatio: false
+  maintainAspectRatio: false,
 };
 ```
 
 ### 4. **Duplicate Page Header Pattern**
+
 **Location**: All feature components
 **Issue**: Similar page header HTML structure repeated:
+
 ```html
 <div class="page-header">
   <div class="header-content">
@@ -70,6 +78,7 @@ export const DEFAULT_CHART_OPTIONS = {
 ```
 
 **Fix**: Create a reusable `PageHeaderComponent`:
+
 ```typescript
 // angular/src/app/shared/components/page-header/page-header.component.ts
 @Component({
@@ -90,8 +99,10 @@ export const DEFAULT_CHART_OPTIONS = {
 ```
 
 ### 5. **Repeated Stats Grid Pattern**
+
 **Location**: Multiple components
 **Issue**: Similar stats grid HTML/CSS repeated:
+
 - `dashboard.component.ts`
 - `profile.component.ts`
 - `wellness.component.ts`
@@ -104,18 +115,22 @@ export const DEFAULT_CHART_OPTIONS = {
 ## 💀 Dead Code Issues
 
 ### 6. **Unused Router Injection in HeaderComponent**
+
 **Location**: `angular/src/app/shared/components/header/header.component.ts:130`
 **Issue**: `Router` is injected but never used
 **Fix**: Remove if not needed, or use for navigation
 
 ### 7. **Unused EventEmitter in HeaderComponent**
+
 **Location**: `angular/src/app/shared/components/header/header.component.ts:133`
 **Issue**: `@Output() toggleSidebar` is defined but the event is never emitted in the template
 **Fix**: Remove or implement properly
 
 ### 8. **Unused AuthService Methods**
+
 **Location**: `angular/src/app/core/services/auth.service.ts`
 **Issue**: Several methods may be unused:
+
 - `redirectToDashboard()` - Check if used
 - `redirectToLogin()` - Check if used
 - `generateCsrfToken()` - Check if used
@@ -124,6 +139,7 @@ export const DEFAULT_CHART_OPTIONS = {
 **Action**: Audit usage across codebase
 
 ### 9. **Unused Title Property**
+
 **Location**: `angular/src/app/app.component.ts:21`
 **Issue**: `title = 'FlagFit Pro'` is never used
 **Fix**: Remove or use in template
@@ -133,7 +149,9 @@ export const DEFAULT_CHART_OPTIONS = {
 ## 🏛️ Legacy Code Patterns
 
 ### 10. **Constructor Instead of inject()**
-**Location**: 
+
+**Location**:
+
 - `angular/src/app/core/services/auth.service.ts:44`
 - `angular/src/app/features/auth/login/login.component.ts:198`
 - `angular/src/app/features/auth/register/register.component.ts:196`
@@ -143,6 +161,7 @@ export const DEFAULT_CHART_OPTIONS = {
 **Angular 19 Best Practice**: Use `inject()` for dependency injection, constructor only for initialization logic
 
 **Current**:
+
 ```typescript
 constructor() {
   this.loadStoredAuth();
@@ -150,6 +169,7 @@ constructor() {
 ```
 
 **Better** (if no DI needed):
+
 ```typescript
 constructor() {
   // Only initialization logic here
@@ -160,11 +180,13 @@ constructor() {
 **Note**: This is actually fine if constructor is only for initialization. But if injecting dependencies, use `inject()`.
 
 ### 11. **Missing OnPush Change Detection**
+
 **Location**: All components
 **Issue**: No components use `OnPush` change detection strategy
 **Angular 19 Best Practice**: Use `OnPush` for better performance
 
 **Fix**: Add to all components:
+
 ```typescript
 @Component({
   // ...
@@ -173,11 +195,13 @@ constructor() {
 ```
 
 ### 12. **Missing trackBy Functions**
+
 **Location**: All components with `*ngFor`
 **Issue**: No `trackBy` functions for `*ngFor` loops
 **Angular 19 Best Practice**: Always use `trackBy` for performance
 
 **Example**:
+
 ```typescript
 // Current
 <div *ngFor="let item of items()">
@@ -190,9 +214,11 @@ trackById(index: number, item: any): any {
 ```
 
 ### 13. **Console.log Statements in Production Code**
+
 **Location**: Multiple files (17 instances)
 **Issue**: Debug console statements left in code
 **Files**:
+
 - `workout.component.ts` (2)
 - `game-tracker.component.ts` (3)
 - `performance-tracking.component.ts` (1)
@@ -204,15 +230,18 @@ trackById(index: number, item: any): any {
 - `auth.service.ts` (1)
 - `api.service.ts` (1)
 
-**Fix**: 
+**Fix**:
+
 - Remove or replace with proper logging service
 - Use Angular's `console` only in development
 - Consider using a logging library
 
 ### 14. **TODO Comments Without Implementation**
+
 **Location**: 9 TODO comments found
 **Issue**: Placeholder TODOs without actual implementation
 **Files**:
+
 - `workout.component.ts`
 - `game-tracker.component.ts`
 - `performance-tracking.component.ts`
@@ -225,11 +254,13 @@ trackById(index: number, item: any): any {
 **Action**: Either implement or remove TODOs
 
 ### 15. **Legacy RxJS Patterns**
+
 **Location**: `auth.service.ts`
 **Issue**: Using `BehaviorSubject` import but not using it
 **Fix**: Remove unused import
 
 ### 16. **Unsubscribe Pattern Missing**
+
 **Location**: Components with subscriptions
 **Issue**: Some components subscribe without proper cleanup
 **Example**: `header.component.ts:141` - `logout().subscribe()` without unsubscribe
@@ -237,6 +268,7 @@ trackById(index: number, item: any): any {
 **Angular 19 Best Practice**: Use `takeUntilDestroyed()` or `DestroyRef`
 
 **Fix**:
+
 ```typescript
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -258,13 +290,14 @@ logout(): void {
 - **Console.log Statements**: 17
 - **TODO Comments**: 9
 - **Missing OnPush**: 23 components
-- **Missing trackBy**: ~50+ *ngFor loops
+- **Missing trackBy**: ~50+ \*ngFor loops
 
 ---
 
 ## 🎯 Priority Fixes
 
 ### High Priority
+
 1. ✅ Remove unused `CommonModule` from `app.component.ts`
 2. ✅ Add `OnPush` change detection to all components
 3. ✅ Add `trackBy` functions to all `*ngFor` loops
@@ -272,12 +305,14 @@ logout(): void {
 5. ✅ Fix subscription cleanup with `takeUntilDestroyed()`
 
 ### Medium Priority
+
 6. ✅ Create shared chart configuration
 7. ✅ Create reusable `PageHeaderComponent`
 8. ✅ Create reusable `StatsGridComponent`
 9. ✅ Audit and remove unused methods
 
 ### Low Priority
+
 10. ✅ Consider base component pattern (optional)
 11. ✅ Implement TODO items or remove comments
 
@@ -344,4 +379,3 @@ These can be fixed quickly:
 4. Add performance optimizations
 5. Clean up dead code
 6. Implement or remove TODOs
-
