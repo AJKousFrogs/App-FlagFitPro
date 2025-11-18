@@ -100,10 +100,25 @@ class DashboardPage {
     try {
       // Try to get notifications from API
       const response = await apiClient.get(API_ENDPOINTS.dashboard.notifications);
-      if (response.success && response.data) {
-        this.renderNotifications(response.data);
+      
+      // Extract notifications array from response
+      let notifications = null;
+      if (response && response.success && response.data) {
+        // Handle different response formats
+        if (Array.isArray(response.data)) {
+          notifications = response.data;
+        } else if (response.data.notifications && Array.isArray(response.data.notifications)) {
+          notifications = response.data.notifications;
+        } else if (response.data.data && Array.isArray(response.data.data)) {
+          notifications = response.data.data;
+        }
+      }
+      
+      // Use extracted notifications or fallback to mock
+      if (notifications && Array.isArray(notifications)) {
+        this.renderNotifications(notifications);
       } else {
-        // Fallback to mock notifications
+        logger.debug("No valid notifications array in response, using mock data");
         this.renderNotifications(this.getMockNotifications());
       }
     } catch (error) {
@@ -144,6 +159,12 @@ class DashboardPage {
   renderNotifications(notifications) {
     const notificationList = document.getElementById("notification-list");
     if (!notificationList) return;
+
+    // Ensure notifications is an array
+    if (!Array.isArray(notifications)) {
+      logger.warn("renderNotifications called with non-array data:", notifications);
+      notifications = [];
+    }
 
     if (notifications.length === 0) {
       notificationList.innerHTML = '<div class="notification-empty">No notifications</div>';
@@ -477,12 +498,12 @@ class DashboardPage {
     const now = new Date();
 
     try {
-      // Get current user
-      const user = authManager.getCurrentUser();
-      if (!user) {
-        throw new Error("User not authenticated");
-      }
+      // Wait for auth manager to initialize
+      await authManager.waitForInit();
 
+      // Get current user (may be null if not authenticated)
+      const user = authManager.getCurrentUser();
+      
       // Get supplement display name
       const supplementItem = toggleInput.closest(".supplement-item");
       const supplementName = supplementItem?.querySelector(".supplement-name")?.textContent.trim() || supplementKey;
@@ -495,8 +516,12 @@ class DashboardPage {
 
       // Save to API or localStorage for selected date
       const dateStr = this.formatDateForInput(this.selectedDate);
+      
+      // Use user ID if available, otherwise use a fallback identifier
+      const userId = user ? (user.id || user.email) : (localStorage.getItem("userId") || "anonymous");
+      
       const supplementData = {
-        userId: user.id || user.email,
+        userId: userId,
         supplement: supplementKey,
         supplementName: supplementName,
         date: dateStr,
@@ -504,35 +529,44 @@ class DashboardPage {
         timestamp: isChecked ? now.toISOString() : null,
       };
 
-      try {
-        if (isChecked) {
-          await apiClient.post(API_ENDPOINTS.supplements.log, supplementData);
-          logger.success(`Logged ${supplementName} intake`);
-          this.showNotification(`${supplementName} logged! ✓`, "success");
-        } else {
-          // Optionally handle "untaken" action
-          await apiClient.post(API_ENDPOINTS.supplements.log, { ...supplementData, action: "untake" });
-          logger.info(`Unmarked ${supplementName}`);
+      // Try API only if user is authenticated
+      if (user) {
+        try {
+          if (isChecked) {
+            await apiClient.post(API_ENDPOINTS.supplements.log, supplementData);
+            logger.success(`Logged ${supplementName} intake`);
+            this.showNotification(`${supplementName} logged! ✓`, "success");
+          } else {
+            // Optionally handle "untaken" action
+            await apiClient.post(API_ENDPOINTS.supplements.log, { ...supplementData, action: "untake" });
+            logger.info(`Unmarked ${supplementName}`);
+          }
+          return; // Successfully saved to API, exit early
+        } catch (apiError) {
+          logger.warn("API unavailable, saving to localStorage:", apiError);
+          // Fall through to localStorage save
         }
-      } catch (apiError) {
-        logger.warn("API unavailable, saving to localStorage:", apiError);
-        const saved = JSON.parse(localStorage.getItem("supplementLogs") || "[]");
+      } else {
+        logger.debug("User not authenticated, saving to localStorage");
+      }
 
-        // Remove existing entry for this supplement on selected date
-        const filtered = saved.filter(log => {
-          const logDate = log.date || (log.timestamp ? new Date(log.timestamp).toISOString().split("T")[0] : null);
-          return !(log.supplement === supplementKey && logDate === dateStr);
-        });
+      // Fallback to localStorage (for unauthenticated users or API failures)
+      const saved = JSON.parse(localStorage.getItem("supplementLogs") || "[]");
 
-        if (isChecked) {
-          filtered.push(supplementData);
-        }
+      // Remove existing entry for this supplement on selected date
+      const filtered = saved.filter(log => {
+        const logDate = log.date || (log.timestamp ? new Date(log.timestamp).toISOString().split("T")[0] : null);
+        return !(log.supplement === supplementKey && logDate === dateStr);
+      });
 
-        localStorage.setItem("supplementLogs", JSON.stringify(filtered));
+      if (isChecked) {
+        filtered.push(supplementData);
+      }
 
-        if (isChecked) {
-          this.showNotification(`${supplementName} logged! ✓`, "success");
-        }
+      localStorage.setItem("supplementLogs", JSON.stringify(filtered));
+
+      if (isChecked) {
+        this.showNotification(`${supplementName} logged! ✓`, "success");
       }
 
       // State is now managed per-date, no need to save global state

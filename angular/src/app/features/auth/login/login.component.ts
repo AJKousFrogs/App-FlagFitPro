@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -9,11 +9,13 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { MessageModule } from 'primeng/message';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     RouterModule,
@@ -254,33 +256,35 @@ export class LoginComponent {
     this.isLoading.set(true);
     const credentials = this.loginForm.value;
 
-    this.authService.login(credentials).subscribe({
-      next: (response) => {
-        if (response.success) {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Login successful!'
-          });
-          this.router.navigate(['/dashboard']);
-        } else {
+    this.authService.login(credentials)
+      .pipe(takeUntilDestroyed())
+      .subscribe({
+        next: (response: any) => {
+          if (response.success) {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: 'Login successful!'
+            });
+            this.router.navigate(['/dashboard']);
+          } else {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: response.error || 'Invalid email or password'
+            });
+          }
+          this.isLoading.set(false);
+        },
+        error: (error: any) => {
           this.messageService.add({
             severity: 'error',
             summary: 'Error',
-            detail: response.error || 'Invalid email or password'
+            detail: error.message || 'Login failed. Please try again.'
           });
+          this.isLoading.set(false);
         }
-        this.isLoading.set(false);
-      },
-      error: (error) => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: error.message || 'Login failed. Please try again.'
-        });
-        this.isLoading.set(false);
-      }
-    });
+      });
   }
 }
 

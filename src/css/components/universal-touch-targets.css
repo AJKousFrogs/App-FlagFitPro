@@ -104,9 +104,9 @@ input[type="reset"] {
 .btn-primary,
 .btn.btn-primary,
 button.primary {
-  background: var(--color-brand-primary, #10c96b);
+  background: var(--color-brand-primary);
   color: #ffffff;
-  border-color: var(--color-brand-primary, #10c96b);
+  border-color: var(--color-brand-primary);
   font-weight: var(--font-weight-semibold, 600);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
@@ -123,7 +123,7 @@ button.primary {
 }
 
 .btn-primary:focus-visible {
-  outline: 2px solid var(--color-brand-primary, #10c96b);
+  outline: 2px solid var(--color-brand-primary);
   outline-offset: 2px;
 }
 
@@ -315,7 +315,7 @@ button.secondary {
 
 .nav-item.active {
   background: var(--color-brand-primary-alpha-10, rgba(16, 201, 107, 0.1));
-  color: var(--color-brand-primary, #10c96b);
+  color: var(--color-brand-primary);
   font-weight: var(--font-weight-semibold, 600);
 }
 
@@ -339,7 +339,7 @@ input[type="radio"] {
   width: 20px;
   height: 20px;
   margin: 0;
-  accent-color: var(--color-brand-primary, #10c96b);
+  accent-color: var(--color-brand-primary);
   cursor: pointer;
 }
 
@@ -435,8 +435,8 @@ tr.clickable td {
 .tab-button.active,
 .tab-nav-item.active {
   background: var(--surface-primary, #ffffff);
-  border-bottom-color: var(--color-brand-primary, #10c96b);
-  color: var(--color-brand-primary, #10c96b);
+  border-bottom-color: var(--color-brand-primary);
+  color: var(--color-brand-primary);
   font-weight: var(--font-weight-semibold, 600);
 }
 
@@ -471,8 +471,8 @@ tr.clickable td {
   
   /* Remove hover states that don't work on touch */
   .btn-primary:hover {
-    background: var(--color-brand-primary, #10c96b);
-    border-color: var(--color-brand-primary, #10c96b);
+    background: var(--color-brand-primary);
+    border-color: var(--color-brand-primary);
   }
 }
 
@@ -487,7 +487,7 @@ select:focus-visible,
 textarea:focus-visible,
 .btn:focus-visible,
 .nav-item:focus-visible {
-  outline: 2px solid var(--color-brand-primary, #10c96b);
+  outline: 2px solid var(--color-brand-primary);
   outline-offset: 2px;
   position: relative;
   z-index: 1;
@@ -552,7 +552,7 @@ button:disabled,
   }
   
   .btn-primary {
-    border: 2px solid var(--color-brand-primary, #10c96b);
+    border: 2px solid var(--color-brand-primary);
   }
   
   .btn-secondary {

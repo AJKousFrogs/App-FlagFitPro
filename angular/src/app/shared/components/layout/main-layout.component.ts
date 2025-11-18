@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { SidebarComponent } from '../sidebar/sidebar.component';
@@ -7,6 +7,7 @@ import { HeaderComponent } from '../header/header.component';
 @Component({
   selector: 'app-main-layout',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, RouterOutlet, SidebarComponent, HeaderComponent],
   template: `
     <div class="dashboard-container">
@@ -39,7 +40,13 @@ import { HeaderComponent } from '../header/header.component';
       overflow-y: auto;
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 1024px) {
+      .main-content {
+        margin-left: 0;
+      }
+    }
+
+    @media (min-width: 769px) and (max-width: 1024px) {
       .main-content {
         margin-left: 0;
       }

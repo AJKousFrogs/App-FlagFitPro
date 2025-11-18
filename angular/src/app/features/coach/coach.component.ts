@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
@@ -6,6 +6,9 @@ import { ChartModule } from 'primeng/chart';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { MainLayoutComponent } from '../../shared/components/layout/main-layout.component';
+import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
+import { StatsGridComponent } from '../../shared/components/stats-grid/stats-grid.component';
+import { DEFAULT_CHART_OPTIONS } from '../../shared/config/chart.config';
 import { ApiService, API_ENDPOINTS } from '../../core/services/api.service';
 
 interface TeamMember {
@@ -20,6 +23,7 @@ interface TeamMember {
 @Component({
   selector: 'app-coach',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     CardModule,
@@ -27,33 +31,19 @@ interface TeamMember {
     ChartModule,
     TableModule,
     TagModule,
-    MainLayoutComponent
+    MainLayoutComponent,
+    PageHeaderComponent,
+    StatsGridComponent
   ],
   template: `
     <app-main-layout>
       <div class="coach-page">
-        <!-- Page Header -->
-        <div class="page-header">
-          <div class="header-content">
-            <h1 class="page-title">
-              <i class="pi pi-users"></i>
-              Coach Dashboard
-            </h1>
-            <p class="page-subtitle">Manage your team, track performance, and create training sessions</p>
-          </div>
+        <app-page-header title="Coach Dashboard" subtitle="Manage your team, track performance, and create training sessions" icon="pi-users">
           <p-button label="Create Session" icon="pi pi-plus" (onClick)="openCreateSession()"></p-button>
-        </div>
+        </app-page-header>
 
         <!-- Coach Stats -->
-        <div class="stats-grid">
-          <p-card *ngFor="let stat of stats()" class="stat-card">
-            <div class="stat-icon" [style.background]="stat.color + '20'" [style.color]="stat.color">
-              <i [class]="'pi ' + stat.icon"></i>
-            </div>
-            <div class="stat-value">{{ stat.value }}</div>
-            <div class="stat-label">{{ stat.label }}</div>
-          </p-card>
-        </div>
+        <app-stats-grid [stats]="stats()"></app-stats-grid>
 
         <!-- Team Performance Chart -->
         <p-card class="chart-card">
@@ -82,7 +72,7 @@ interface TeamMember {
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-member>
-              <tr>
+              <tr [attr.data-member-id]="member.id">
                 <td>{{ member.name }}</td>
                 <td>{{ member.position }}</td>
                 <td>
@@ -199,10 +189,7 @@ export class CoachComponent implements OnInit {
   teamChartData = signal<any>(null);
   teamMembers = signal<TeamMember[]>([]);
 
-  chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false
-  };
+  chartOptions = DEFAULT_CHART_OPTIONS;
 
   ngOnInit(): void {
     this.loadCoachData();
@@ -280,8 +267,7 @@ export class CoachComponent implements OnInit {
   }
 
   openCreateSession(): void {
-    // TODO: Open create session modal
-    console.log('Open create session');
+    // Open create session modal - implementation pending
   }
 
   getPerformanceSeverity(performance: number): string {
@@ -298,5 +284,9 @@ export class CoachComponent implements OnInit {
       'Inactive': 'danger'
     };
     return severities[status] || 'info';
+  }
+
+  trackByMemberId(index: number, member: TeamMember): string {
+    return member.id;
   }
 }

@@ -128,7 +128,7 @@ html[data-theme="light"] .sidebar-icon:hover {
     rgba(16, 201, 107, 0.2) 0%,
     rgba(16, 201, 107, 0.1) 100%
   );
-  color: var(--brand-green, var(--primitive-primary-500, #10c96b));
+  color: var(--color-brand-primary);
   box-shadow:
     0 2px 8px rgba(16, 201, 107, 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
@@ -228,7 +228,7 @@ html[data-theme="light"] .sidebar-icon:hover {
 
 .start-btn {
   background: white;
-  color: #10c96b;
+  color: var(--color-brand-primary);
   border: none;
   border-radius: 12px;
   padding: 12px 24px;
@@ -275,7 +275,7 @@ html[data-theme="light"] .sidebar-icon:hover {
 
 .day[data-status="today"] {
   background: #fff;
-  color: #10c96b;
+  color: var(--color-brand-primary);
 }
 
 .day[data-status="scheduled"] {
@@ -426,6 +426,12 @@ html[data-theme="light"] .hero-card {
   max-width: 600px;
 }
 
+@media (max-width: 768px) {
+  .header-left {
+    max-width: 100% !important;
+  }
+}
+
 /* Screen reader only class for accessibility */
 .sr-only {
   position: absolute;
@@ -498,7 +504,7 @@ html[data-theme="dark"] .search-input:focus {
     rgba(255, 255, 255, 0.12) 0%,
     rgba(255, 255, 255, 0.08) 100%
   );
-  border-color: var(--brand-green, var(--primitive-primary-500, #10c96b));
+  border-color: var(--color-brand-primary);
   opacity: 0.6;
   box-shadow:
     0 0 0 4px rgba(16, 201, 107, 0.15),
@@ -535,7 +541,7 @@ html[data-theme="light"] .search-input:focus {
     rgba(255, 255, 255, 1) 0%,
     rgba(255, 255, 255, 0.95) 100%
   );
-  border-color: var(--brand-green, var(--primitive-primary-500, #10c96b));
+  border-color: var(--color-brand-primary);
   opacity: 0.5;
   box-shadow:
     0 0 0 4px rgba(16, 201, 107, 0.1),
@@ -982,7 +988,7 @@ html[data-theme="dark"] .chart-card:hover {
     rgba(255, 255, 255, 0.08) 0%,
     rgba(255, 255, 255, 0.05) 100%
   );
-  border-color: var(--brand-green, var(--primitive-primary-500, #10c96b));
+  border-color: var(--color-brand-primary);
   opacity: 0.5;
   box-shadow:
     0 20px 60px rgba(0, 0, 0, 0.8),
@@ -1082,7 +1088,7 @@ html[data-theme="light"] .chart-card:hover {
 .metric-value {
   font-size: var(--font-size-4xl, 36px);
   font-weight: var(--font-weight-bold, 700);
-  color: #10c96b;
+  color: var(--color-brand-primary);
   margin-bottom: 8px;
 }
 
@@ -1099,7 +1105,7 @@ html[data-theme="light"] .chart-card:hover {
 }
 
 .metric-change.positive {
-  color: #10c96b;
+  color: var(--color-brand-primary);
 }
 
 .metric-change.negative {
@@ -1265,7 +1271,7 @@ p {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: #10c96b;
+  background: var(--color-brand-primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1461,7 +1467,7 @@ html[data-theme="light"] .header-btn {
 }
 
 .header-btn:hover {
-  border-color: #10c96b;
+  border-color: var(--color-brand-primary);
 }
 
 body[data-theme="dark"] .header-btn:hover,
@@ -1520,12 +1526,26 @@ html[data-theme="light"] .header-icon:hover {
   top: 80px;
   right: 20px;
   width: 380px;
+  max-width: calc(100vw - 40px);
   border-radius: 16px;
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7);
   z-index: var(--z-index-dropdown, 1000);
   display: none;
   overflow: hidden;
   border: 1px solid;
+}
+
+@media (max-width: 768px) {
+  .notification-panel {
+    width: 100% !important;
+    max-width: 100% !important;
+    right: 0 !important;
+    left: 0 !important;
+    top: 0 !important;
+    border-radius: 0 !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+  }
 }
 
 body[data-theme="dark"] .notification-panel,
@@ -2299,7 +2319,7 @@ html[data-theme="dark"] .stat-card:hover .stat-icon {
     rgba(16, 201, 107, 0.35) 0%,
     rgba(16, 201, 107, 0.25) 100%
   );
-  border-color: var(--brand-green, var(--primitive-primary-500, #10c96b));
+  border-color: var(--color-brand-primary);
   opacity: 0.5;
 }
 
@@ -2441,14 +2461,14 @@ html[data-theme="light"] .stat-value {
 }
 
 .stat-change.positive {
-  color: #10c96b;
+  color: var(--color-brand-primary);
   font-weight: var(--font-weight-semibold, 600); /* Bolder for better visibility */
 }
 
 .stat-change.positive svg,
 .stat-change.positive i {
-  color: #10c96b; /* Colored icon for prominence */
-  stroke: #10c96b;
+  color: var(--color-brand-primary); /* Colored icon for prominence */
+  stroke: var(--color-brand-primary);
 }
 
 .stat-change.negative {
@@ -2857,7 +2877,7 @@ html[data-theme="dark"] .upcoming-card:hover {
     rgba(255, 255, 255, 0.08) 0%,
     rgba(255, 255, 255, 0.05) 100%
   );
-  border-color: var(--brand-green, var(--primitive-primary-500, #10c96b));
+  border-color: var(--color-brand-primary);
   opacity: 0.5;
   box-shadow:
     0 20px 60px rgba(0, 0, 0, 0.8),
@@ -3015,7 +3035,7 @@ html[data-theme="dark"] .upcoming-item:hover {
     rgba(255, 255, 255, 0.1) 0%,
     rgba(255, 255, 255, 0.06) 100%
   );
-  border-color: var(--brand-green, var(--primitive-primary-500, #10c96b));
+  border-color: var(--color-brand-primary);
   opacity: 0.5;
   box-shadow:
     0 8px 24px rgba(0, 0, 0, 0.3),
@@ -3615,7 +3635,7 @@ body[data-theme="light"] .performance-timeframe-select:hover {
 }
 
 body[data-theme="light"] .performance-timeframe-select:focus {
-  border-color: var(--brand-green, var(--primitive-primary-500, #10c96b));
+  border-color: var(--color-brand-primary);
   opacity: 0.5;
   box-shadow:
     0 0 0 3px rgba(16, 201, 107, 0.12),
@@ -3637,7 +3657,7 @@ body[data-theme="dark"] .performance-timeframe-select:focus {
 }
 
 body[data-theme="light"] .performance-timeframe-select:focus {
-  border-color: var(--brand-green, var(--primitive-primary-500, #10c96b));
+  border-color: var(--color-brand-primary);
   opacity: 0.5;
   box-shadow:
     0 0 0 3px rgba(16, 201, 107, 0.08),
@@ -4846,7 +4866,7 @@ body[data-theme="dark"] .wellness-input:focus {
 }
 
 body[data-theme="light"] .wellness-input:focus {
-  border-color: var(--brand-green, var(--primitive-primary-500, #10c96b));
+  border-color: var(--color-brand-primary);
   opacity: 0.5;
   box-shadow:
     0 0 0 3px rgba(16, 201, 107, 0.08),
@@ -5423,7 +5443,7 @@ html[data-theme="light"] .section-card-footer {
   gap: 6px;
   font-size: var(--font-size-xs, 12px);
   font-weight: var(--font-weight-semibold, 600);
-  color: #10c96b;
+  color: var(--color-brand-primary);
   background: rgba(16, 201, 107, 0.1);
   padding: 4px 10px;
   border-radius: 12px;
@@ -5433,7 +5453,7 @@ html[data-theme="light"] .section-card-footer {
 .status-dot {
   width: 8px;
   height: 8px;
-  background: #10c96b;
+  background: var(--color-brand-primary);
   border-radius: 50%;
   animation: pulse 2s infinite;
 }

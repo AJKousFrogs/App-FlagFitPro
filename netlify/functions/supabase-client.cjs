@@ -317,7 +317,69 @@ const db = {
       return data;
     },
   },
+
+  // Notifications operations
+  notifications: {
+    async getUserNotifications(userId, limit = 20) {
+      const { data, error } = await supabaseAdmin
+        .from("notifications")
+        .select("*")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
+        .limit(limit);
+
+      if (error) throw error;
+      
+      // Transform database format to frontend format
+      return (data || []).map((notif) => ({
+        id: notif.id,
+        type: notif.notification_type || "general",
+        title: getNotificationTitle(notif.notification_type, notif.message),
+        message: notif.message,
+        time: getTimeAgo(notif.created_at),
+        read: notif.is_read || false,
+      }));
+    },
+
+    async markAsRead(userId, notificationId) {
+      const { data, error } = await supabaseAdmin
+        .from("notifications")
+        .update({ is_read: true })
+        .eq("id", notificationId)
+        .eq("user_id", userId)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+  },
 };
+
+// Helper functions for notifications
+function getNotificationTitle(type, message) {
+  const titles = {
+    training: "Training Session Reminder",
+    achievement: "New Achievement Unlocked",
+    team: "Team Update",
+    game: "Game Update",
+    general: "Notification",
+  };
+  return titles[type] || titles.general;
+}
+
+function getTimeAgo(dateString) {
+  const now = new Date();
+  const date = new Date(dateString);
+  const diffMs = now - date;
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffDays = Math.floor(diffHours / 24);
+
+  if (diffHours < 1) return "Just now";
+  if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
+  if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
+  return `${Math.floor(diffDays / 7)} week${Math.floor(diffDays / 7) > 1 ? "s" : ""} ago`;
+}
 
 // Helper function to check if environment variables are configured
 function checkEnvVars() {

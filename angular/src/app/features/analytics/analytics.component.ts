@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CardModule } from 'primeng/card';
@@ -6,6 +6,8 @@ import { ButtonModule } from 'primeng/button';
 import { ChartModule } from 'primeng/chart';
 import { DropdownModule } from 'primeng/dropdown';
 import { MainLayoutComponent } from '../../shared/components/layout/main-layout.component';
+import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
+import { DEFAULT_CHART_OPTIONS, LINE_CHART_OPTIONS, BAR_CHART_OPTIONS, DOUGHNUT_CHART_OPTIONS } from '../../shared/config/chart.config';
 import { ApiService, API_ENDPOINTS } from '../../core/services/api.service';
 
 interface Metric {
@@ -19,6 +21,7 @@ interface Metric {
 @Component({
   selector: 'app-analytics',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     FormsModule,
@@ -26,23 +29,17 @@ interface Metric {
     ButtonModule,
     ChartModule,
     DropdownModule,
-    MainLayoutComponent
+    MainLayoutComponent,
+    PageHeaderComponent
   ],
   template: `
     <app-main-layout>
       <div class="analytics-page">
-        <!-- Page Header -->
-        <div class="page-header">
-          <h1 class="page-title">
-            <i class="pi pi-chart-bar"></i>
-            FlagFit Pro Analytics
-          </h1>
-          <p class="page-subtitle">Advanced Performance Analytics & Team Insights</p>
-        </div>
+        <app-page-header title="FlagFit Pro Analytics" subtitle="Advanced Performance Analytics & Team Insights" icon="pi-chart-bar"></app-page-header>
 
         <!-- Key Metrics Overview -->
         <div class="metrics-grid">
-          <p-card *ngFor="let metric of metrics()" class="metric-card">
+          <p-card *ngFor="let metric of metrics(); trackBy: trackByMetricLabel" class="metric-card">
             <div class="metric-icon">
               <i [class]="'pi ' + metric.icon"></i>
             </div>
@@ -68,7 +65,7 @@ interface Metric {
               </div>
             </ng-template>
             <p-chart *ngIf="performanceChartData()" type="line" [data]="performanceChartData()" 
-                    [options]="chartOptions"></p-chart>
+                    [options]="lineChartOptions"></p-chart>
             <div class="chart-insights">
               <div class="insight-item">
                 <div class="insight-value">91</div>
@@ -126,7 +123,7 @@ interface Metric {
               </div>
             </ng-template>
             <p-chart *ngIf="distributionChartData()" type="doughnut" [data]="distributionChartData()" 
-                    [options]="doughnutChartOptions"></p-chart>
+                    [options]="DOUGHNUT_CHART_OPTIONS"></p-chart>
             <div class="chart-insights">
               <div class="insight-item">
                 <div class="insight-value">30</div>
@@ -155,7 +152,7 @@ interface Metric {
               </div>
             </ng-template>
             <p-chart *ngIf="positionChartData()" type="bar" [data]="positionChartData()" 
-                    [options]="barChartOptions"></p-chart>
+                    [options]="BAR_CHART_OPTIONS"></p-chart>
             <div class="chart-insights">
               <div class="insight-item">
                 <div class="insight-value">94</div>
@@ -187,7 +184,7 @@ interface Metric {
             </div>
           </ng-template>
           <p-chart *ngIf="speedChartData()" type="line" [data]="speedChartData()" 
-                  [options]="chartOptions"></p-chart>
+                  [options]="lineChartOptions"></p-chart>
           <div class="chart-insights">
             <div class="insight-item">
               <div class="insight-value">4.46s</div>
@@ -381,44 +378,16 @@ export class AnalyticsComponent implements OnInit {
   timePeriods = ['Last 7 Weeks', 'Last 30 Days', 'Season Progress'];
   metricOptions = ['40-Yard & 10-Yard', 'All Sprint Distances', 'Agility Tests'];
 
-  chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: false
-      }
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        max: 100
-      }
-    }
-  };
+  readonly lineChartOptions = LINE_CHART_OPTIONS;
+  readonly BAR_CHART_OPTIONS = BAR_CHART_OPTIONS;
+  readonly DOUGHNUT_CHART_OPTIONS = DOUGHNUT_CHART_OPTIONS;
 
   radarChartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
+    ...DEFAULT_CHART_OPTIONS,
     scales: {
       r: {
         beginAtZero: true,
         max: 10
-      }
-    }
-  };
-
-  doughnutChartOptions = {
-    responsive: true,
-    maintainAspectRatio: false
-  };
-
-  barChartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: false
       }
     }
   };
@@ -525,5 +494,9 @@ export class AnalyticsComponent implements OnInit {
         }
       ]
     });
+  }
+
+  trackByMetricLabel(index: number, metric: Metric): string {
+    return metric.label;
   }
 }

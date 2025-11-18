@@ -1,12 +1,14 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
-import { InputTextareaModule } from 'primeng/inputtextarea';
+import { InputTextarea } from 'primeng/inputtextarea';
 import { AvatarModule } from 'primeng/avatar';
 import { BadgeModule } from 'primeng/badge';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MainLayoutComponent } from '../../shared/components/layout/main-layout.component';
+import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
 import { ApiService, API_ENDPOINTS } from '../../core/services/api.service';
 
 interface Post {
@@ -20,6 +22,7 @@ interface Post {
   comments: number;
   shares: number;
   isLiked: boolean;
+  showComments?: boolean;
   commentsList?: Comment[];
 }
 
@@ -33,27 +36,24 @@ interface Comment {
 @Component({
   selector: 'app-community',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     FormsModule,
     CardModule,
     ButtonModule,
-    InputTextareaModule,
+    InputTextarea,
     AvatarModule,
     BadgeModule,
-    MainLayoutComponent
+    MainLayoutComponent,
+    PageHeaderComponent
   ],
   template: `
     <app-main-layout>
       <div class="community-page">
-        <!-- Page Header -->
-        <div class="page-header">
-          <div class="header-content">
-            <h1 class="page-title">Community Hub</h1>
-            <p class="page-subtitle">Connect with the flag football community</p>
-          </div>
+        <app-page-header title="Community Hub" subtitle="Connect with the flag football community">
           <p-button label="Create Post" icon="pi pi-plus" (onClick)="scrollToCreatePost()"></p-button>
-        </div>
+        </app-page-header>
 
         <div class="community-grid">
           <!-- Feed Container -->
@@ -80,7 +80,7 @@ interface Comment {
 
             <!-- Posts Feed -->
             <div class="posts-feed">
-              <p-card *ngFor="let post of posts()" class="post-card">
+              <p-card *ngFor="let post of posts(); trackBy: trackByPostId" class="post-card">
                 <div class="post-header">
                   <p-avatar [label]="post.authorInitials" styleClass="mr-2" shape="circle"></p-avatar>
                   <div class="post-info">
@@ -122,8 +122,8 @@ interface Comment {
                   </div>
                 </div>
                 <div *ngIf="post.showComments && post.commentsList" class="comments-section">
-                  <div *ngFor="let comment of post.commentsList" class="comment">
-                    <p-avatar [label]="comment.authorInitials" styleClass="mr-2" shape="circle" size="small"></p-avatar>
+                  <div *ngFor="let comment of post.commentsList; trackBy: trackByCommentAuthor" class="comment">
+                    <p-avatar [label]="comment.authorInitials" styleClass="mr-2" shape="circle"></p-avatar>
                     <div class="comment-content">
                       <div class="comment-author">{{ comment.author }}</div>
                       <div class="comment-text">{{ comment.content }}</div>
@@ -146,7 +146,7 @@ interface Comment {
                 </h3>
               </ng-template>
               <div class="leaderboard-list">
-                <div *ngFor="let entry of leaderboard()" class="leaderboard-item">
+                <div *ngFor="let entry of leaderboard(); trackBy: trackByLeaderboardRank" class="leaderboard-item">
                   <div class="rank">{{ entry.rank }}</div>
                   <p-avatar [label]="entry.initials" styleClass="mr-2" shape="circle"></p-avatar>
                   <div class="leaderboard-info">
@@ -166,7 +166,7 @@ interface Comment {
                 </h3>
               </ng-template>
               <div class="topics-list">
-                <div *ngFor="let topic of trendingTopics()" class="topic-item">
+                <div *ngFor="let topic of trendingTopics(); trackBy: trackByTopicName" class="topic-item">
                   <span class="topic-name">#{{ topic.name }}</span>
                   <span class="topic-count">{{ topic.count }} posts</span>
                 </div>
@@ -510,8 +510,17 @@ export class CommunityComponent implements OnInit {
       showComments: false
     };
 
-    this.posts.update(posts => [newPost, ...posts]);
-    this.newPostContent = '';
+    this.apiService.post(API_ENDPOINTS.community.createPost, newPost)
+      .pipe(takeUntilDestroyed())
+      .subscribe({
+        next: () => {
+          this.posts.update(posts => [newPost, ...posts]);
+          this.newPostContent = '';
+        },
+        error: () => {
+          // Error handled by error interceptor
+        }
+      });
   }
 
   toggleLike(post: Post): void {
@@ -525,5 +534,21 @@ export class CommunityComponent implements OnInit {
       // Load comments
       post.commentsList = [];
     }
+  }
+
+  trackByPostId(index: number, post: Post): string {
+    return post.id;
+  }
+
+  trackByCommentAuthor(index: number, comment: Comment): string {
+    return comment.author + comment.timeAgo;
+  }
+
+  trackByLeaderboardRank(index: number, entry: any): number {
+    return entry.rank;
+  }
+
+  trackByTopicName(index: number, topic: any): string {
+    return topic.name;
   }
 }

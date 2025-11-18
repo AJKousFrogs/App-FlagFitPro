@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
@@ -12,6 +12,7 @@ interface NavItem {
 @Component({
   selector: 'app-sidebar',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, RouterModule],
   template: `
     <div class="sidebar" [class.sidebar-open]="isOpen()" role="navigation" aria-label="Main navigation">
@@ -21,7 +22,7 @@ interface NavItem {
 
       <nav class="nav-section" aria-label="Main navigation">
         <a
-          *ngFor="let item of navItems"
+          *ngFor="let item of navItems; trackBy: trackByRoute"
           [routerLink]="item.route"
           routerLinkActive="active"
           [routerLinkActiveOptions]="{exact: false}"
@@ -144,6 +145,10 @@ export class SidebarComponent {
 
   closeSidebar(): void {
     this.isOpen.set(false);
+  }
+
+  trackByRoute(index: number, item: NavItem): string {
+    return item.route;
   }
 }
 

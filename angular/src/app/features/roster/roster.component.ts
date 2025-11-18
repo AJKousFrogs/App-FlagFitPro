@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { TagModule } from 'primeng/tag';
@@ -32,6 +32,7 @@ interface Player {
 @Component({
   selector: 'app-roster',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     CardModule,
@@ -63,7 +64,7 @@ interface Player {
             </h2>
           </ng-template>
           <div class="team-overview-grid">
-            <div *ngFor="let stat of teamStats()" class="overview-stat">
+            <div *ngFor="let stat of teamStats(); trackBy: trackByStatLabel" class="overview-stat">
               <div class="overview-value">{{ stat.value }}</div>
               <div class="overview-label">{{ stat.label }}</div>
             </div>
@@ -77,7 +78,7 @@ interface Player {
             Coaching Staff & Support
           </h2>
           <div class="roster-grid">
-            <p-card *ngFor="let member of coachingStaff()" class="staff-card">
+            <p-card *ngFor="let member of coachingStaff(); trackBy: trackByMemberName" class="staff-card">
               <div class="player-header">
                 <div class="player-jersey">
                   {{ getInitials(member.name) }}
@@ -100,7 +101,7 @@ interface Player {
               </div>
               <div *ngIf="member.achievements && member.achievements.length > 0" class="achievements">
                 <div class="achievements-title">Key Achievements:</div>
-                <div *ngFor="let achievement of member.achievements.slice(0, 2)" class="achievement-item">
+                <div *ngFor="let achievement of member.achievements.slice(0, 2); trackBy: trackByAchievement" class="achievement-item">
                   • {{ achievement }}
                 </div>
               </div>
@@ -109,13 +110,13 @@ interface Player {
         </div>
 
         <!-- Players by Position -->
-        <div *ngFor="let positionGroup of playersByPosition()" class="position-section">
+        <div *ngFor="let positionGroup of playersByPosition(); trackBy: trackByPosition" class="position-section">
           <h2 class="section-title">
             <i [class]="getPositionIcon(positionGroup.position)"></i>
             {{ positionGroup.position }}
           </h2>
           <div class="roster-grid">
-            <p-card *ngFor="let player of positionGroup.players" class="player-card">
+            <p-card *ngFor="let player of positionGroup.players; trackBy: trackByPlayerJersey" class="player-card">
               <div class="player-header">
                 <div class="player-jersey" [style.background]="getJerseyColor(player.position)">
                   {{ player.jersey }}
@@ -141,7 +142,7 @@ interface Player {
                 </div>
               </div>
               <div *ngIf="player.stats" class="player-stats">
-                <p-tag *ngFor="let stat of getPlayerStats(player)" 
+                <p-tag *ngFor="let stat of getPlayerStats(player); trackBy: trackByStatKey" 
                       [value]="stat.label + ': ' + stat.value" 
                       severity="info"
                       styleClass="mr-2 mb-2"></p-tag>
@@ -534,7 +535,32 @@ export class RosterComponent implements OnInit {
     if (!player.stats) return [];
     return Object.entries(player.stats).map(([key, value]) => ({
       label: key.charAt(0).toUpperCase() + key.slice(1),
-      value: value
+      value: value,
+      key: key
     }));
+  }
+
+  trackByStatLabel(index: number, stat: TeamStat): string {
+    return stat.label;
+  }
+
+  trackByMemberName(index: number, member: StaffMember): string {
+    return member.name;
+  }
+
+  trackByAchievement(index: number, achievement: string): string {
+    return achievement;
+  }
+
+  trackByPosition(index: number, positionGroup: any): string {
+    return positionGroup.position;
+  }
+
+  trackByPlayerJersey(index: number, player: Player): string {
+    return player.jersey;
+  }
+
+  trackByStatKey(index: number, stat: any): string {
+    return stat.key || index.toString();
   }
 }

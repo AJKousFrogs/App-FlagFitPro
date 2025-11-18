@@ -178,33 +178,70 @@
                 aria-expanded="false"
               >
                 <i data-lucide="bell" class="icon-18"></i>
-                <span id="notification-badge" class="badge" hidden>2</span>
+                <span id="notification-badge" class="badge" hidden>3</span>
               </button>
+              <span id="notification-live" class="sr-only" aria-live="polite"></span>
             </div>
 
             <button class="header-icon" type="button" aria-label="Settings">
               <i data-lucide="settings" class="icon-18"></i>
             </button>
 
+            <!-- Theme Toggle -->
             <div class="theme-toggle-container" aria-label="Theme toggle">
-              <button class="theme-toggle-fallback" type="button" data-theme-toggle hidden>
-                Theme
-              </button>
+              <label class="theme-toggle-label" title="Toggle theme">
+                <input
+                  type="checkbox"
+                  id="header-theme-toggle"
+                  class="theme-toggle-input"
+                  aria-label="Toggle theme"
+                />
+                <span class="theme-toggle-slider">
+                  <span class="theme-toggle-dot" id="theme-toggle-dot"></span>
+                </span>
+                <span class="theme-toggle-text">🌙 Dark</span>
+              </label>
             </div>
 
-            <button
-              id="user-menu-button"
-              class="user-menu"
-              type="button"
-              aria-label="User menu"
-              aria-haspopup="menu"
-              aria-controls="user-menu"
-              aria-expanded="false"
-            >
-              <div class="user-avatar" id="user-avatar" aria-hidden="true">
-                JD
-              </div>
-            </button>
+            <!-- User Menu -->
+            <div class="user-menu-wrapper">
+              <button
+                id="user-menu-button"
+                class="user-menu"
+                type="button"
+                aria-label="User menu"
+                aria-haspopup="menu"
+                aria-controls="user-menu"
+                aria-expanded="false"
+              >
+                <div class="user-avatar" id="user-avatar" aria-hidden="true">
+                  JD
+                </div>
+              </button>
+
+              <!-- User Menu Dropdown -->
+              <ul id="user-menu" class="user-menu-dropdown" role="menu" hidden>
+                <li role="menuitem">
+                  <a href="/profile" class="user-menu-item">
+                    <i data-lucide="user" class="icon-16"></i>
+                    <span>Profile</span>
+                  </a>
+                </li>
+                <li role="menuitem">
+                  <a href="/settings" class="user-menu-item">
+                    <i data-lucide="settings" class="icon-16"></i>
+                    <span>Settings</span>
+                  </a>
+                </li>
+                <li role="separator" class="user-menu-separator"></li>
+                <li role="menuitem">
+                  <a href="/logout" class="user-menu-item user-menu-item-danger">
+                    <i data-lucide="log-out" class="icon-16"></i>
+                    <span>Logout</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
 
@@ -421,7 +458,7 @@
             <ul>
               <li><a href="/dashboard.html">Dashboard</a></li>
               <li><a href="/training.html">Training</a></li>
-              <li><a href="/wellness.html">Wellness</a></li>
+              <li><a href="/roster.html">Roster</a></li>
               <li><a href="/analytics.html">Analytics</a></li>
             </ul>
           </nav>

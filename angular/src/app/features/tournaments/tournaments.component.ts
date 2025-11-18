@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
@@ -6,6 +6,7 @@ import { TagModule } from 'primeng/tag';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { TabViewModule } from 'primeng/tabview';
 import { MainLayoutComponent } from '../../shared/components/layout/main-layout.component';
+import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
 import { ApiService, API_ENDPOINTS } from '../../core/services/api.service';
 
 interface Tournament {
@@ -26,6 +27,7 @@ interface Tournament {
 @Component({
   selector: 'app-tournaments',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     CardModule,
@@ -33,30 +35,21 @@ interface Tournament {
     TagModule,
     ProgressBarModule,
     TabViewModule,
-    MainLayoutComponent
+    MainLayoutComponent,
+    PageHeaderComponent
   ],
   template: `
     <app-main-layout>
       <div class="tournaments-page">
-        <!-- Page Header -->
-        <div class="page-header">
-          <div class="header-content">
-            <h1 class="page-title">
-              <i class="pi pi-trophy"></i>
-              Official Tournament Schedule 2026-2027
-            </h1>
-            <p class="page-subtitle">
-              International Flag Football Season featuring 7 major tournaments across Europe
-            </p>
-          </div>
+        <app-page-header title="Official Tournament Schedule 2026-2027" subtitle="International Flag Football Season featuring 7 major tournaments across Europe" icon="pi-trophy">
           <p-button label="Next Tournament" icon="pi pi-calendar"></p-button>
-        </div>
+        </app-page-header>
 
         <!-- Tournament Tabs -->
         <p-tabView>
           <p-tabPanel header="2026 Season" leftIcon="pi pi-calendar">
             <div class="tournaments-grid">
-              <p-card *ngFor="let tournament of tournaments2026()" class="tournament-card">
+              <p-card *ngFor="let tournament of tournaments2026(); trackBy: trackByTournamentId" class="tournament-card">
                 <div class="tournament-header">
                   <p-tag [value]="getStatusLabel(tournament.status)" 
                         [severity]="getStatusSeverity(tournament.status)"></p-tag>
@@ -115,7 +108,7 @@ interface Tournament {
           </p-tabPanel>
           <p-tabPanel header="2027 Season" leftIcon="pi pi-calendar">
             <div class="tournaments-grid">
-              <p-card *ngFor="let tournament of tournaments2027()" class="tournament-card">
+              <p-card *ngFor="let tournament of tournaments2027(); trackBy: trackByTournamentId" class="tournament-card">
                 <div class="tournament-header">
                   <p-tag [value]="getStatusLabel(tournament.status)" 
                         [severity]="getStatusSeverity(tournament.status)"></p-tag>
@@ -388,5 +381,9 @@ export class TournamentsComponent implements OnInit {
       'registration': 'warning'
     };
     return severities[status] || 'info';
+  }
+
+  trackByTournamentId(index: number, tournament: Tournament): string {
+    return tournament.id;
   }
 }

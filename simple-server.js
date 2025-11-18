@@ -93,7 +93,14 @@ const server = http.createServer((req, res) => {
   // Check if file exists
   fs.access(filePath, fs.constants.F_OK, (err) => {
     if (err) {
-      // File not found - serve index.html for SPA routing
+      // File not found
+      // For JS/CSS files, return proper 404 (don't serve index.html)
+      if (ext === ".js" || ext === ".css" || ext === ".mjs") {
+        res.writeHead(404, { "Content-Type": "text/plain" });
+        res.end(`404 - File not found: ${pathname}`);
+        return;
+      }
+      // For other files (HTML routes), serve index.html for SPA routing
       const indexPath = path.join(__dirname, "index.html");
       fs.readFile(indexPath, (err, data) => {
         if (err) {

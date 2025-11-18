@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -8,11 +8,13 @@ import { InputTextModule } from 'primeng/inputtext';
 import { MessageModule } from 'primeng/message';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-register',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     RouterModule,
@@ -255,33 +257,35 @@ export class RegisterComponent {
       password: this.registerForm.value.password
     };
 
-    this.authService.register(registerData).subscribe({
-      next: (response) => {
-        if (response.success) {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Account created successfully!'
-          });
-          this.router.navigate(['/dashboard']);
-        } else {
+    this.authService.register(registerData)
+      .pipe(takeUntilDestroyed())
+      .subscribe({
+        next: (response) => {
+          if (response.success) {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: 'Account created successfully!'
+            });
+            this.router.navigate(['/dashboard']);
+          } else {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: response.error || 'Registration failed'
+            });
+          }
+          this.isLoading.set(false);
+        },
+        error: (error) => {
           this.messageService.add({
             severity: 'error',
             summary: 'Error',
-            detail: response.error || 'Registration failed'
+            detail: error.message || 'Registration failed. Please try again.'
           });
+          this.isLoading.set(false);
         }
-        this.isLoading.set(false);
-      },
-      error: (error) => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: error.message || 'Registration failed. Please try again.'
-        });
-        this.isLoading.set(false);
-      }
-    });
+      });
   }
 }
 

@@ -240,7 +240,7 @@ html[data-theme="light"] .sidebar {
   transform: translateY(-50%);
   width: 3px;
   height: 0;
-  background: var(--color-brand-primary, #10c96b);
+  background: var(--color-brand-primary);
   border-radius: 0 2px 2px 0;
   transition: height 0.3s ease;
 }
@@ -257,17 +257,17 @@ html[data-theme="light"] .sidebar {
 
 .sidebar .nav-item.active {
   background: rgba(16, 201, 107, 0.1);
-  color: var(--color-brand-primary, #10c96b);
+  color: var(--color-brand-primary);
 }
 
 .sidebar .nav-item.active::before {
   height: 80%;
-  background: var(--color-brand-primary, #10c96b);
+  background: var(--color-brand-primary);
 }
 
 .sidebar .nav-item.active .nav-item-icon {
   background: rgba(16, 201, 107, 0.15);
-  color: var(--color-brand-primary, #10c96b);
+  color: var(--color-brand-primary);
 }
 
 /* Theme-specific nav item styles */
@@ -285,7 +285,7 @@ html[data-theme="dark"] .sidebar .nav-item:hover {
 body[data-theme="dark"] .sidebar .nav-item.active,
 html[data-theme="dark"] .sidebar .nav-item.active {
   background: rgba(16, 201, 107, 0.15);
-  color: var(--color-brand-primary, #10c96b);
+  color: var(--color-brand-primary);
 }
 
 body[data-theme="light"] .sidebar .nav-item,
@@ -302,7 +302,7 @@ html[data-theme="light"] .sidebar .nav-item:hover {
 body[data-theme="light"] .sidebar .nav-item.active,
 html[data-theme="light"] .sidebar .nav-item.active {
   background: rgba(16, 201, 107, 0.1);
-  color: var(--color-brand-primary, #10c96b);
+  color: var(--color-brand-primary);
 }
 
 /* Icon sizing and alignment */
@@ -385,14 +385,14 @@ body.menu-open .menu-scrim {
 }
 
 /* Mobile slide-in (builds on what you already have) */
-@media (max-width: 1024px) {
+@media (max-width: 768px) {
   .sidebar {
     position: fixed;
     left: 0;
     top: 0;
     bottom: 0;
-    width: 280px;
-    max-width: 85vw; /* Prevent overflow on very small screens */
+    width: 85vw !important;
+    max-width: 280px !important;
     transform: translateX(-100%);
     transition: transform 0.2s ease;
     z-index: var(--z-index-modal, 1400);
@@ -417,13 +417,18 @@ body.menu-open .menu-scrim {
   }
 }
 
-/* Override inline styles for responsive sidebar */
-@media (max-width: 1024px) {
+/* Tablet - slide-in behavior */
+@media (min-width: 769px) and (max-width: 1024px) {
   .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
     width: 280px !important;
     max-width: 85vw !important;
     transform: translateX(-100%);
-    position: fixed !important;
+    transition: transform 0.2s ease;
+    z-index: var(--z-index-modal, 1400);
   }
   
   body.menu-open .sidebar {
@@ -431,7 +436,8 @@ body.menu-open .menu-scrim {
   }
 }
 
-/* Tablet portrait - icon-only sidebar option */
+/* Tablet portrait - icon-only sidebar option (optional, commented out to use slide-in instead) */
+/* Uncomment if you want icon-only sidebar on tablet
 @media (min-width: 769px) and (max-width: 1024px) {
   .sidebar {
     width: 64px !important;
@@ -440,15 +446,12 @@ body.menu-open .menu-scrim {
   
   .sidebar-title,
   .sidebar-link span {
-    display: none; /* Hide text, show icons only */
+    display: none;
   }
   
   .sidebar-link {
     justify-content: center;
     padding: var(--primitive-space-12, 12px);
   }
-  
-  .sidebar-header {
-    justify-content: center;
-  }
 }
+*/

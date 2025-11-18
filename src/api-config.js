@@ -89,7 +89,9 @@ export const API_ENDPOINTS = {
     sponsorRewards: normalizeEndpoint("/api/dashboard/sponsor-rewards"),
     wearables: normalizeEndpoint("/api/dashboard/wearables"),
     teamChemistry: normalizeEndpoint("/api/dashboard/team-chemistry"),
-    notifications: normalizeEndpoint("/api/dashboard/notifications"),
+    notifications: API_BASE_URL.includes("netlify/functions")
+      ? "/notifications"
+      : normalizeEndpoint("/api/dashboard/notifications"),
     dailyQuote: normalizeEndpoint("/api/dashboard/daily-quote"),
     health: normalizeEndpoint("/api/dashboard/health"),
   },

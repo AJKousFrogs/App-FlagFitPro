@@ -1,11 +1,16 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { ChartModule } from 'primeng/chart';
 import { CalendarModule } from 'primeng/calendar';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MainLayoutComponent } from '../../shared/components/layout/main-layout.component';
+import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
+import { StatsGridComponent } from '../../shared/components/stats-grid/stats-grid.component';
+import { DEFAULT_CHART_OPTIONS } from '../../shared/config/chart.config';
 import { ApiService, API_ENDPOINTS } from '../../core/services/api.service';
 
 interface WellnessMetric {
@@ -19,41 +24,28 @@ interface WellnessMetric {
 @Component({
   selector: 'app-wellness',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
+    FormsModule,
     CardModule,
     ButtonModule,
     ChartModule,
     CalendarModule,
     InputNumberModule,
-    MainLayoutComponent
+    MainLayoutComponent,
+    PageHeaderComponent,
+    StatsGridComponent
   ],
   template: `
     <app-main-layout>
       <div class="wellness-page">
-        <!-- Page Header -->
-        <div class="page-header">
-          <div class="header-content">
-            <h1 class="page-title">
-              <i class="pi pi-heart"></i>
-              Wellness & Recovery
-            </h1>
-            <p class="page-subtitle">Track your health, recovery, and wellness metrics</p>
-          </div>
+        <app-page-header title="Wellness & Recovery" subtitle="Track your health, recovery, and wellness metrics" icon="pi-heart">
           <p-button label="Log Check-in" icon="pi pi-plus" (onClick)="openCheckIn()"></p-button>
-        </div>
+        </app-page-header>
 
         <!-- Wellness Metrics -->
-        <div class="metrics-grid">
-          <p-card *ngFor="let metric of metrics()" class="metric-card">
-            <div class="metric-icon" [style.background]="metric.color + '20'" [style.color]="metric.color">
-              <i [class]="'pi ' + metric.icon"></i>
-            </div>
-            <div class="metric-value">{{ metric.value }}</div>
-            <div class="metric-label">{{ metric.label }}</div>
-            <div *ngIf="metric.trend" class="metric-trend">{{ metric.trend }}</div>
-          </p-card>
-        </div>
+        <app-stats-grid [stats]="wellnessStats()"></app-stats-grid>
 
         <!-- Wellness Charts -->
         <div class="charts-grid">
@@ -132,45 +124,6 @@ interface WellnessMetric {
       margin: 0;
     }
 
-    .metrics-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: var(--space-4);
-      margin-bottom: var(--space-6);
-    }
-
-    .metric-card {
-      text-align: center;
-    }
-
-    .metric-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto var(--space-4);
-      font-size: 1.5rem;
-    }
-
-    .metric-value {
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--text-primary);
-      margin-bottom: var(--space-2);
-    }
-
-    .metric-label {
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-      margin-bottom: var(--space-2);
-    }
-
-    .metric-trend {
-      font-size: 0.875rem;
-      color: var(--color-success);
-    }
 
     .charts-grid {
       display: grid;
@@ -216,6 +169,7 @@ export class WellnessComponent implements OnInit {
   private apiService = inject(ApiService);
 
   metrics = signal<WellnessMetric[]>([]);
+  wellnessStats = signal<any[]>([]);
   sleepChartData = signal<any>(null);
   recoveryChartData = signal<any>(null);
   checkInData = {
@@ -224,45 +178,46 @@ export class WellnessComponent implements OnInit {
     mood: 5
   };
 
-  chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false
-  };
+  chartOptions = DEFAULT_CHART_OPTIONS;
 
   ngOnInit(): void {
     this.loadWellnessData();
   }
 
   loadWellnessData(): void {
-    // Load metrics
-    this.metrics.set([
+    // Load stats for StatsGridComponent
+    this.wellnessStats.set([
       {
         label: 'Sleep Quality',
         value: '8.2h',
         icon: 'pi-moon',
         color: '#3498db',
-        trend: '+0.5h vs avg'
+        trend: '+0.5h vs avg',
+        trendType: 'positive'
       },
       {
         label: 'Recovery Score',
         value: '85%',
         icon: 'pi-heart',
         color: '#089949',
-        trend: '+5% today'
+        trend: '+5% today',
+        trendType: 'positive'
       },
       {
         label: 'Energy Level',
         value: '7.5',
         icon: 'pi-bolt',
         color: '#f1c40f',
-        trend: 'Good'
+        trend: 'Good',
+        trendType: 'positive'
       },
       {
         label: 'Stress Level',
         value: 'Low',
         icon: 'pi-shield',
         color: '#10c96b',
-        trend: 'Optimal'
+        trend: 'Optimal',
+        trendType: 'positive'
       }
     ]);
 
@@ -294,17 +249,20 @@ export class WellnessComponent implements OnInit {
   }
 
   submitCheckIn(): void {
-    // TODO: Submit check-in via API
-    console.log('Submitting check-in:', this.checkInData);
-    this.apiService.post(API_ENDPOINTS.wellness.checkin, this.checkInData).subscribe({
-      next: (response) => {
-        console.log('Check-in submitted:', response);
-        // Reset form
-        this.checkInData = { sleepHours: 0, energyLevel: 5, mood: 5 };
-      },
-      error: (error) => {
-        console.error('Error submitting check-in:', error);
-      }
-    });
+    this.apiService.post(API_ENDPOINTS.wellness.checkin, this.checkInData)
+      .pipe(takeUntilDestroyed())
+      .subscribe({
+        next: () => {
+          // Reset form
+          this.checkInData = { sleepHours: 0, energyLevel: 5, mood: 5 };
+        },
+        error: () => {
+          // Error handled by error interceptor
+        }
+      });
+  }
+
+  trackByMetricLabel(index: number, metric: WellnessMetric): string {
+    return metric.label;
   }
 }

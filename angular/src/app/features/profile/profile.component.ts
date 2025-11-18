@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { CardModule } from 'primeng/card';
@@ -7,12 +7,14 @@ import { AvatarModule } from 'primeng/avatar';
 import { TagModule } from 'primeng/tag';
 import { TabViewModule } from 'primeng/tabview';
 import { MainLayoutComponent } from '../../shared/components/layout/main-layout.component';
+import { StatsGridComponent } from '../../shared/components/stats-grid/stats-grid.component';
 import { AuthService } from '../../core/services/auth.service';
 import { ApiService, API_ENDPOINTS } from '../../core/services/api.service';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     RouterModule,
@@ -21,7 +23,8 @@ import { ApiService, API_ENDPOINTS } from '../../core/services/api.service';
     AvatarModule,
     TagModule,
     TabViewModule,
-    MainLayoutComponent
+    MainLayoutComponent,
+    StatsGridComponent
   ],
   template: `
     <app-main-layout>
@@ -47,12 +50,7 @@ import { ApiService, API_ENDPOINTS } from '../../core/services/api.service';
         </div>
 
         <!-- Profile Stats -->
-        <div class="profile-stats">
-          <p-card *ngFor="let stat of stats()" class="stat-card">
-            <div class="stat-value">{{ stat.value }}</div>
-            <div class="stat-label">{{ stat.label }}</div>
-          </p-card>
-        </div>
+        <app-stats-grid [stats]="stats()"></app-stats-grid>
 
         <!-- Profile Tabs -->
         <p-tabView>
@@ -63,7 +61,7 @@ import { ApiService, API_ENDPOINTS } from '../../core/services/api.service';
                   <h3>Recent Activity</h3>
                 </ng-template>
                 <div class="activity-list">
-                  <div *ngFor="let activity of activities()" class="activity-item">
+                  <div *ngFor="let activity of activities(); trackBy: trackByActivityTitle" class="activity-item">
                     <div class="activity-icon">{{ activity.icon }}</div>
                     <div class="activity-content">
                       <div class="activity-title">{{ activity.title }}</div>
@@ -76,7 +74,7 @@ import { ApiService, API_ENDPOINTS } from '../../core/services/api.service';
           </p-tabPanel>
           <p-tabPanel header="Achievements" leftIcon="pi pi-trophy">
             <div class="achievements-grid">
-              <p-card *ngFor="let achievement of achievements()" class="achievement-card">
+              <p-card *ngFor="let achievement of achievements(); trackBy: trackByAchievementTitle" class="achievement-card">
                 <div class="achievement-icon">{{ achievement.icon }}</div>
                 <h4 class="achievement-title">{{ achievement.title }}</h4>
                 <p class="achievement-description">{{ achievement.description }}</p>
@@ -90,7 +88,7 @@ import { ApiService, API_ENDPOINTS } from '../../core/services/api.service';
                 <h3>Performance Statistics</h3>
               </ng-template>
               <div class="stats-grid">
-                <div *ngFor="let stat of performanceStats()" class="performance-stat">
+                <div *ngFor="let stat of performanceStats(); trackBy: trackByPerformanceStatLabel" class="performance-stat">
                   <div class="stat-label">{{ stat.label }}</div>
                   <div class="stat-value">{{ stat.value }}</div>
                   <p-tag [value]="stat.trend" [severity]="stat.trendType"></p-tag>
@@ -358,5 +356,17 @@ export class ProfileComponent implements OnInit {
 
   getInitials(name: string): string {
     return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  }
+
+  trackByActivityTitle(index: number, activity: any): string {
+    return activity.title || index.toString();
+  }
+
+  trackByAchievementTitle(index: number, achievement: any): string {
+    return achievement.title || index.toString();
+  }
+
+  trackByPerformanceStatLabel(index: number, stat: any): string {
+    return stat.label || index.toString();
   }
 }

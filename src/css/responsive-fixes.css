@@ -162,6 +162,7 @@ object {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     width: 100%;
+    min-width: 320px !important; /* Reduced from 600px for better mobile fit */
   }
   
   /* Fix forms */
@@ -366,7 +367,7 @@ object {
   }
   
   table {
-    min-width: 600px !important; /* Ensure table doesn't collapse */
+    min-width: 320px !important; /* Reduced from 600px for better mobile fit */
   }
   
   /* Stack table cells on very small screens */
@@ -465,7 +466,8 @@ object {
   /* Search box adjustments */
   .search-box,
   .search-container {
-    max-width: 200px !important;
+    max-width: calc(100vw - 120px) !important; /* Account for icons and padding */
+    min-width: 150px !important;
     flex: 1 1 auto !important;
   }
   

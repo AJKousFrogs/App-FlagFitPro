@@ -8,6 +8,12 @@
       rel="icon"
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
     <!-- Design System CSS -->
     <link rel="stylesheet" href="./src/css/main.css" />
     <!-- Component CSS -->
@@ -184,10 +190,10 @@
               id="mobile-menu-toggle"
               class="mobile-menu-toggle"
               type="button"
-              aria-label="Toggle navigation menu"
+              aria-label="Open menu"
               aria-expanded="false"
               aria-controls="sidebar"
-              onclick="toggleSidebar()" aria-label="Toggle sidebar navigation"
+              onclick="toggleSidebar()"
             >
               <i data-lucide="menu" class="icon-20"></i>
             </button>
@@ -254,33 +260,59 @@
 
             <!-- Theme Toggle -->
             <div class="theme-toggle-container" aria-label="Theme toggle">
-              <label class="theme-toggle-label" for="theme-toggle" title="Toggle Dark/Light Mode">
+              <label class="theme-toggle-label" title="Toggle theme">
                 <input 
                   type="checkbox" 
-                  id="theme-toggle" 
+                  id="header-theme-toggle" 
                   class="theme-toggle-input"
+                  aria-label="Toggle theme"
                 >
                 <span class="theme-toggle-slider">
-                  <span class="theme-toggle-dot"></span>
+                  <span class="theme-toggle-dot" id="theme-toggle-dot"></span>
                 </span>
-                <span class="theme-toggle-text">Light</span>
+                <span class="theme-toggle-text">🌙 Dark</span>
               </label>
             </div>
 
             <!-- User Menu -->
-            <button
-              id="user-menu-button"
-              class="user-menu"
-              type="button"
-              aria-label="User menu"
-              aria-haspopup="menu"
-              aria-controls="user-menu"
-              aria-expanded="false"
-            >
-              <div class="user-avatar" id="user-avatar" aria-hidden="true">
-                JD
-              </div>
-            </button>
+            <div class="user-menu-wrapper">
+              <button
+                id="user-menu-button"
+                class="user-menu"
+                type="button"
+                aria-label="User menu"
+                aria-haspopup="menu"
+                aria-controls="user-menu"
+                aria-expanded="false"
+              >
+                <div class="user-avatar" id="user-avatar" aria-hidden="true">
+                  JD
+                </div>
+              </button>
+
+              <!-- User Menu Dropdown -->
+              <ul id="user-menu" class="user-menu-dropdown" role="menu" hidden>
+                <li role="menuitem">
+                  <a href="/profile" class="user-menu-item">
+                    <i data-lucide="user" class="icon-16"></i>
+                    <span>Profile</span>
+                  </a>
+                </li>
+                <li role="menuitem">
+                  <a href="/settings" class="user-menu-item">
+                    <i data-lucide="settings" class="icon-16"></i>
+                    <span>Settings</span>
+                  </a>
+                </li>
+                <li role="separator" class="user-menu-separator"></li>
+                <li role="menuitem">
+                  <a href="/logout" class="user-menu-item user-menu-item-danger">
+                    <i data-lucide="log-out" class="icon-16"></i>
+                    <span>Logout</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
 
@@ -530,7 +562,7 @@
           <p>Professional flag football training and analytics platform</p>
         </div>
         <div class="footer-section">
-          <h3>Quick Links</h3>
+          <h4>Quick Links</h4>
           <nav aria-label="Footer navigation">
             <ul>
               <li><a href="/dashboard.html">Dashboard</a></li>
@@ -541,7 +573,7 @@
           </nav>
         </div>
         <div class="footer-section">
-          <h3>Support</h3>
+          <h4>Support</h4>
           <nav aria-label="Support links">
             <ul>
               <li><a href="/settings.html">Settings</a></li>

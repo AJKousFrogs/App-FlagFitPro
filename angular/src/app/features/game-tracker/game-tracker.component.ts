@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CardModule } from 'primeng/card';
@@ -8,7 +8,9 @@ import { CalendarModule } from 'primeng/calendar';
 import { DropdownModule } from 'primeng/dropdown';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MainLayoutComponent } from '../../shared/components/layout/main-layout.component';
+import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
 import { ApiService, API_ENDPOINTS } from '../../core/services/api.service';
 
 interface Game {
@@ -23,6 +25,7 @@ interface Game {
 @Component({
   selector: 'app-game-tracker',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -33,26 +36,19 @@ interface Game {
     DropdownModule,
     TableModule,
     TagModule,
-    MainLayoutComponent
+    MainLayoutComponent,
+    PageHeaderComponent
   ],
   template: `
     <app-main-layout>
       <div class="game-tracker-page">
-        <!-- Page Header -->
-        <div class="page-header">
-          <div class="header-content">
-            <h1 class="page-title">
-              <i class="pi pi-list"></i>
-              Game Tracker
-            </h1>
-            <p class="page-subtitle">Track every play, drop, flag pull, and performance metric</p>
-          </div>
+        <app-page-header title="Game Tracker" subtitle="Track every play, drop, flag pull, and performance metric" icon="pi-list">
           <div class="header-actions">
             <p-button label="View Games" icon="pi pi-list" [outlined]="true" 
                      (onClick)="viewGames()"></p-button>
             <p-button label="New Game" icon="pi pi-plus" (onClick)="openNewGame()"></p-button>
           </div>
-        </div>
+        </app-page-header>
 
         <!-- Game Setup Form -->
         <p-card *ngIf="showGameForm()" class="game-form-card">
@@ -117,7 +113,7 @@ interface Game {
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-game>
-              <tr>
+              <tr [attr.data-game-id]="game.id">
                 <td>{{ game.date }}</td>
                 <td>{{ game.opponent }}</td>
                 <td>{{ game.location }}</td>
@@ -307,19 +303,18 @@ export class GameTrackerComponent implements OnInit {
     }
 
     const gameData = this.gameForm.value;
-    // TODO: Submit game via API
-    console.log('Submitting game:', gameData);
-    this.apiService.post(API_ENDPOINTS.tournaments.createGame, gameData).subscribe({
-      next: (response) => {
-        console.log('Game created:', response);
-        this.showGameForm.set(false);
-        this.gameForm.reset();
-        this.loadGames();
-      },
-      error: (error) => {
-        console.error('Error creating game:', error);
-      }
-    });
+    this.apiService.post('/api/tournaments/games', gameData)
+      .pipe(takeUntilDestroyed())
+      .subscribe({
+        next: () => {
+          this.showGameForm.set(false);
+          this.gameForm.reset();
+          this.loadGames();
+        },
+        error: () => {
+          // Error handled by error interceptor
+        }
+      });
   }
 
   viewGames(): void {
@@ -335,5 +330,9 @@ export class GameTrackerComponent implements OnInit {
       'tie': 'info'
     };
     return severities[result] || 'info';
+  }
+
+  trackByGameId(index: number, game: Game): string {
+    return game.id;
   }
 }

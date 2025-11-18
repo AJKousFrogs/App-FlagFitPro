@@ -1,6 +1,6 @@
 // Settings Page JavaScript Module
 import { authManager } from '../auth-manager.js';
-import { REAL_TEAM_DATA, getAllPlayers } from '../real-team-data.js';
+import { REAL_TEAM_DATA, getAllPlayers } from '../../real-team-data.js';
 import { 
   initializeLucideIcons,
   validateEmail,
@@ -176,67 +176,6 @@ function initializeWithRealPlayerData() {
 
   if (positionField && !positionField.value) {
     positionField.value = randomPlayer.position;
-  }
-}
-
-// Helper functions for inline validation
-function showFieldError(fieldId, message) {
-  const field = document.getElementById(fieldId);
-  const errorDiv = document.getElementById(`${fieldId}-error`);
-  const successDiv = document.getElementById(`${fieldId}-success`);
-  
-  if (field) {
-    field.classList.remove("success");
-    field.classList.add("error");
-    field.setAttribute("aria-invalid", "true");
-  }
-  
-  if (errorDiv) {
-    errorDiv.textContent = message;
-    errorDiv.style.display = "flex";
-  }
-  
-  if (successDiv) {
-    successDiv.style.display = "none";
-  }
-}
-
-function showFieldSuccess(fieldId) {
-  const field = document.getElementById(fieldId);
-  const errorDiv = document.getElementById(`${fieldId}-error`);
-  const successDiv = document.getElementById(`${fieldId}-success`);
-  
-  if (field) {
-    field.classList.remove("error");
-    field.classList.add("success");
-    field.setAttribute("aria-invalid", "false");
-  }
-  
-  if (errorDiv) {
-    errorDiv.style.display = "none";
-  }
-  
-  if (successDiv) {
-    successDiv.style.display = "flex";
-  }
-}
-
-function clearFieldState(fieldId) {
-  const field = document.getElementById(fieldId);
-  const errorDiv = document.getElementById(`${fieldId}-error`);
-  const successDiv = document.getElementById(`${fieldId}-success`);
-  
-  if (field) {
-    field.classList.remove("error", "success");
-    field.setAttribute("aria-invalid", "false");
-  }
-  
-  if (errorDiv) {
-    errorDiv.style.display = "none";
-  }
-  
-  if (successDiv) {
-    successDiv.style.display = "none";
   }
 }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CardModule } from 'primeng/card';
@@ -8,12 +8,15 @@ import { InputSwitchModule } from 'primeng/inputswitch';
 import { DropdownModule } from 'primeng/dropdown';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MainLayoutComponent } from '../../shared/components/layout/main-layout.component';
+import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-settings',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -23,21 +26,17 @@ import { AuthService } from '../../core/services/auth.service';
     InputSwitchModule,
     DropdownModule,
     ToastModule,
-    MainLayoutComponent
+    MainLayoutComponent,
+    PageHeaderComponent
   ],
   providers: [MessageService],
   template: `
     <p-toast></p-toast>
     <app-main-layout>
       <div class="settings-page">
-        <!-- Page Header -->
-        <div class="page-header">
-          <div class="page-title-section">
-            <h1>Settings</h1>
-            <p>Manage your account and application preferences</p>
-          </div>
+        <app-page-header title="Settings" subtitle="Manage your account and application preferences" icon="pi-cog">
           <p-button label="Save Changes" icon="pi pi-save" (onClick)="saveSettings()"></p-button>
-        </div>
+        </app-page-header>
 
         <!-- Settings Grid -->
         <div class="settings-grid">
@@ -286,9 +285,7 @@ export class SettingsComponent implements OnInit {
       preferences: this.preferencesForm.value
     };
 
-    // TODO: Save settings via API
-    console.log('Saving settings:', settings);
-
+    // Save settings via API - implementation pending
     this.messageService.add({
       severity: 'success',
       summary: 'Success',

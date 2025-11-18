@@ -12,7 +12,7 @@
   width: 24px;
   height: 24px;
   border: 2px solid var(--border-default, #e5e5e5);
-  border-top: 2px solid var(--color-brand-primary, #10c96b);
+  border-top: 2px solid var(--color-brand-primary);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -542,7 +542,7 @@
   width: 24px;
   height: 24px;
   border: 2px solid var(--border-default, #e5e5e5);
-  border-top: 2px solid var(--color-brand-primary, #10c96b);
+  border-top: 2px solid var(--color-brand-primary);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   z-index: 2;

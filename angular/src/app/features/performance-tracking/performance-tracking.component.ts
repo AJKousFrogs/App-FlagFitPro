@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
@@ -7,6 +7,9 @@ import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { CalendarModule } from 'primeng/calendar';
 import { MainLayoutComponent } from '../../shared/components/layout/main-layout.component';
+import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
+import { StatsGridComponent } from '../../shared/components/stats-grid/stats-grid.component';
+import { DEFAULT_CHART_OPTIONS } from '../../shared/config/chart.config';
 import { ApiService, API_ENDPOINTS } from '../../core/services/api.service';
 
 interface PerformanceMetric {
@@ -19,6 +22,7 @@ interface PerformanceMetric {
 @Component({
   selector: 'app-performance-tracking',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     CardModule,
@@ -27,33 +31,19 @@ interface PerformanceMetric {
     TableModule,
     TagModule,
     CalendarModule,
-    MainLayoutComponent
+    MainLayoutComponent,
+    PageHeaderComponent,
+    StatsGridComponent
   ],
   template: `
     <app-main-layout>
       <div class="performance-page">
-        <!-- Page Header -->
-        <div class="page-header">
-          <div class="header-content">
-            <h1 class="page-title">
-              <i class="pi pi-bullseye"></i>
-              Performance Tracking
-            </h1>
-            <p class="page-subtitle">Track and analyze your performance metrics over time</p>
-          </div>
+        <app-page-header title="Performance Tracking" subtitle="Track and analyze your performance metrics over time" icon="pi-bullseye">
           <p-button label="Log Performance" icon="pi pi-plus" (onClick)="openLogDialog()"></p-button>
-        </div>
+        </app-page-header>
 
         <!-- Performance Metrics -->
-        <div class="metrics-grid">
-          <p-card *ngFor="let metric of metrics()" class="metric-card">
-            <div class="metric-header">
-              <h3 class="metric-name">{{ metric.name }}</h3>
-              <p-tag [value]="metric.trend" [severity]="getTrendSeverity(metric.trendType)"></p-tag>
-            </div>
-            <div class="metric-value">{{ metric.value }}</div>
-          </p-card>
-        </div>
+        <app-stats-grid [stats]="performanceStats()"></app-stats-grid>
 
         <!-- Performance Charts -->
         <div class="charts-grid">
@@ -140,40 +130,6 @@ interface PerformanceMetric {
       margin: 0;
     }
 
-    .metrics-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: var(--space-4);
-      margin-bottom: var(--space-6);
-    }
-
-    .metric-card {
-      transition: transform 0.2s;
-    }
-
-    .metric-card:hover {
-      transform: translateY(-4px);
-    }
-
-    .metric-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: var(--space-3);
-    }
-
-    .metric-name {
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: var(--text-secondary);
-      margin: 0;
-    }
-
-    .metric-value {
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--text-primary);
-    }
 
     .charts-grid {
       display: grid;
@@ -201,45 +157,51 @@ export class PerformanceTrackingComponent implements OnInit {
   private apiService = inject(ApiService);
 
   metrics = signal<PerformanceMetric[]>([]);
+  performanceStats = signal<any[]>([]);
   performanceChartData = signal<any>(null);
   speedChartData = signal<any>(null);
   performanceHistory = signal<any[]>([]);
 
-  chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false
-  };
+  chartOptions = DEFAULT_CHART_OPTIONS;
 
   ngOnInit(): void {
     this.loadPerformanceData();
   }
 
   loadPerformanceData(): void {
-    // Load metrics
-    this.metrics.set([
+    // Load stats for StatsGridComponent
+    this.performanceStats.set([
       {
-        name: '40-Yard Dash',
+        label: '40-Yard Dash',
         value: '4.45s',
+        icon: 'pi-bolt',
+        color: '#089949',
         trend: '+0.05s',
-        trendType: 'down'
+        trendType: 'positive'
       },
       {
-        name: 'Vertical Jump',
+        label: 'Vertical Jump',
         value: '38"',
+        icon: 'pi-arrow-up',
+        color: '#10c96b',
         trend: '+2"',
-        trendType: 'up'
+        trendType: 'positive'
       },
       {
-        name: 'Broad Jump',
+        label: 'Broad Jump',
         value: '10\'2"',
+        icon: 'pi-arrow-right',
+        color: '#f1c40f',
         trend: '+6"',
-        trendType: 'up'
+        trendType: 'positive'
       },
       {
-        name: 'Bench Press',
+        label: 'Bench Press',
         value: '225 lbs',
+        icon: 'pi-weight',
+        color: '#e74c3c',
         trend: '+10 lbs',
-        trendType: 'up'
+        trendType: 'positive'
       }
     ]);
 
@@ -294,8 +256,7 @@ export class PerformanceTrackingComponent implements OnInit {
   }
 
   openLogDialog(): void {
-    // TODO: Open log performance dialog
-    console.log('Open log performance dialog');
+    // Open log performance dialog - implementation pending
   }
 
   getTrendSeverity(trendType: string): string {
@@ -312,5 +273,9 @@ export class PerformanceTrackingComponent implements OnInit {
     if (score >= 80) return 'info';
     if (score >= 70) return 'warn';
     return 'danger';
+  }
+
+  trackByMetricName(index: number, metric: PerformanceMetric): string {
+    return metric.name;
   }
 }

@@ -27,7 +27,7 @@
 .form-select:focus,
 .form-textarea:focus {
   outline: none;
-  border-color: var(--color-brand-primary, #10c96b);
+  border-color: var(--color-brand-primary);
   box-shadow: 0 0 0 3px var(--color-brand-primary-alpha-10, rgba(16, 201, 107, 0.1));
 }
 
@@ -257,7 +257,7 @@
   height: 20px;
   margin: 0;
   cursor: pointer;
-  accent-color: var(--color-brand-primary, #10c96b);
+  accent-color: var(--color-brand-primary);
 }
 
 .form-checkbox label,
@@ -299,7 +299,7 @@
   width: 24px;
   height: 24px;
   border: 2px solid var(--border-default, #e5e5e5);
-  border-top: 2px solid var(--color-brand-primary, #10c96b);
+  border-top: 2px solid var(--color-brand-primary);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -318,7 +318,7 @@
 .form-textarea:focus,
 button:focus,
 a:focus {
-  outline: 2px solid var(--color-brand-primary, #10c96b);
+  outline: 2px solid var(--color-brand-primary);
   outline-offset: 2px;
 }
 

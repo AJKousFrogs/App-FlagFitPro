@@ -130,7 +130,7 @@
    ================================================================ */
 
 .theme-toggle-input:focus-visible + .theme-toggle-slider {
-  outline: 2px solid var(--color-brand-primary, #10c96b);
+  outline: 2px solid var(--color-brand-primary);
   outline-offset: 2px;
 }
 
@@ -248,6 +248,6 @@
   }
   
   .theme-toggle-input:checked + .theme-toggle-slider {
-    border: 2px solid #10c96b;
+    border: 2px solid var(--color-brand-primary);
   }
 }

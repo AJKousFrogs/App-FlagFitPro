@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CardModule } from 'primeng/card';
@@ -7,6 +7,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { TagModule } from 'primeng/tag';
 import { PaginatorModule } from 'primeng/paginator';
 import { MainLayoutComponent } from '../../shared/components/layout/main-layout.component';
+import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
 import { ApiService, API_ENDPOINTS } from '../../core/services/api.service';
 
 interface Exercise {
@@ -22,6 +23,7 @@ interface Exercise {
 @Component({
   selector: 'app-exercise-library',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     FormsModule,
@@ -30,21 +32,13 @@ interface Exercise {
     InputTextModule,
     TagModule,
     PaginatorModule,
-    MainLayoutComponent
+    MainLayoutComponent,
+    PageHeaderComponent
   ],
   template: `
     <app-main-layout>
       <div class="exercise-library-page">
-        <!-- Page Header -->
-        <div class="page-header">
-          <div class="header-content">
-            <h1 class="page-title">
-              <i class="pi pi-book"></i>
-              Exercise Library
-            </h1>
-            <p class="page-subtitle">Browse and discover exercises for your training program</p>
-          </div>
-        </div>
+        <app-page-header title="Exercise Library" subtitle="Browse and discover exercises for your training program" icon="pi-book"></app-page-header>
 
         <!-- Search and Filters -->
         <p-card class="filters-card">
@@ -53,11 +47,11 @@ interface Exercise {
                    placeholder="Search exercises..." 
                    class="search-input">
             <div class="filter-tags">
-              <p-tag *ngFor="let category of categories" 
+              <p-tag *ngFor="let category of categories; trackBy: trackByCategory" 
                     [value]="category" 
                     [styleClass]="selectedCategory() === category ? 'selected' : ''"
                     (click)="filterByCategory(category)"
-                    style="cursor: pointer;">
+                    [style]="{'cursor': 'pointer'}">
               </p-tag>
             </div>
           </div>
@@ -65,7 +59,7 @@ interface Exercise {
 
         <!-- Exercises Grid -->
         <div class="exercises-grid">
-          <p-card *ngFor="let exercise of filteredExercises()" class="exercise-card">
+          <p-card *ngFor="let exercise of filteredExercises(); trackBy: trackByExerciseId" class="exercise-card">
             <div class="exercise-header">
               <h3 class="exercise-name">{{ exercise.name }}</h3>
               <p-tag [value]="exercise.difficulty" 
@@ -75,7 +69,7 @@ interface Exercise {
             <p class="exercise-category">{{ exercise.category }}</p>
             <p class="exercise-description">{{ exercise.description }}</p>
             <div class="exercise-tags">
-              <p-tag *ngFor="let group of exercise.muscleGroups" 
+              <p-tag *ngFor="let group of exercise.muscleGroups; trackBy: trackByMuscleGroup" 
                     [value]="group" severity="info" styleClass="mr-2">
               </p-tag>
             </div>
@@ -307,5 +301,17 @@ export class ExerciseLibraryComponent implements OnInit {
       'advanced': 'warn'
     };
     return severities[difficulty] || 'info';
+  }
+
+  trackByCategory(index: number, category: string): string {
+    return category;
+  }
+
+  trackByExerciseId(index: number, exercise: Exercise): string {
+    return exercise.id;
+  }
+
+  trackByMuscleGroup(index: number, group: string): string {
+    return group;
   }
 }

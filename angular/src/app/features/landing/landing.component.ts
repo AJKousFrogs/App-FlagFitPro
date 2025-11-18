@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { CardModule } from 'primeng/card';
@@ -7,6 +7,7 @@ import { ButtonModule } from 'primeng/button';
 @Component({
   selector: 'app-landing',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, RouterModule, CardModule, ButtonModule],
   template: `
     <section class="hero-section">
@@ -71,7 +72,7 @@ import { ButtonModule } from 'primeng/button';
         </div>
 
         <div class="features-grid">
-          <p-card *ngFor="let feature of features" class="feature-card">
+          <p-card *ngFor="let feature of features; trackBy: trackByFeatureId" class="feature-card">
             <ng-template pTemplate="header">
               <div class="feature-card-icon">
                 <div class="feature-icon-wrapper" [ngClass]="'feature-icon-' + feature.id">
@@ -323,5 +324,9 @@ export class LandingComponent {
       icon: 'pi-bolt'
     }
   ];
+
+  trackByFeatureId(index: number, feature: any): string {
+    return feature.id;
+  }
 }
 

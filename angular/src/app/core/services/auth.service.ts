@@ -1,6 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, BehaviorSubject, throwError } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import { ApiService, API_ENDPOINTS } from './api.service';
 
@@ -67,7 +67,8 @@ export class AuthService {
     return this.apiService.post(API_ENDPOINTS.auth.login, credentials).pipe(
       tap((response) => {
         if (response.success && response.data) {
-          const { token, user } = response.data;
+          const data = response.data as { token?: string; user?: User };
+          const { token, user } = data;
           
           if (token) {
             localStorage.setItem(this.TOKEN_KEY, token);
@@ -99,7 +100,8 @@ export class AuthService {
     return this.apiService.post(API_ENDPOINTS.auth.register, data).pipe(
       tap((response) => {
         if (response.success && response.data) {
-          const { token, user } = response.data;
+          const data = response.data as { token?: string; user?: User };
+          const { token, user } = data;
           
           if (token) {
             localStorage.setItem(this.TOKEN_KEY, token);
@@ -139,7 +141,7 @@ export class AuthService {
     return this.apiService.get(API_ENDPOINTS.auth.me).pipe(
       tap((response) => {
         if (response.success && response.data) {
-          const user = response.data;
+          const user = response.data as User;
           localStorage.setItem(this.USER_KEY, JSON.stringify(user));
           this.currentUser.set(user);
           this.isAuthenticated.set(true);

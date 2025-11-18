@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -12,6 +12,7 @@ import { ToastModule } from 'primeng/toast';
 @Component({
   selector: 'app-reset-password',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     RouterModule,
@@ -175,7 +176,7 @@ export class ResetPasswordComponent {
     this.isLoading.set(true);
     const email = this.resetForm.value.email;
 
-    // TODO: Implement reset password API call
+    // Reset password API call - implementation pending
     setTimeout(() => {
       this.messageService.add({
         severity: 'success',

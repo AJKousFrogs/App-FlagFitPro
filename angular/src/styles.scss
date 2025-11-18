@@ -1,11 +1,10 @@
-/* PrimeNG Theme */
-@import "primeng/resources/themes/lara-light-green/theme.css";
-@import "primeng/resources/primeng.css";
-@import "primeicons/primeicons.css";
+/* Design System Variables - SCSS files, using @use (must come before @import) */
+@use "./assets/styles/variables";
+@use "./assets/styles/theme";
 
-/* Design System Variables */
-@import "./assets/styles/variables";
-@import "./assets/styles/theme";
+/* PrimeNG Theme - PrimeNG v19 uses CSS-in-JS, styles are included via components */
+/* PrimeIcons - CSS file, must use @import */
+@import "primeicons/primeicons.css";
 
 /* Global Styles */
 * {

@@ -27,7 +27,7 @@
 .program-overview {
     margin-bottom: var(--space-xl);
     /* Override hero-card gradient with stronger, darker gradient for better contrast */
-    background: linear-gradient(135deg, #089949 0%, #067a3c 100%) !important;
+    background: var(--gradient-primary) !important;
     color: var(--color-text-inverse);
     position: relative;
     overflow: hidden;

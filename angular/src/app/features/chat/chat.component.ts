@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, inject, signal, ViewChild, ElementRef, AfterViewInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CardModule } from 'primeng/card';
@@ -23,11 +23,13 @@ interface Channel {
   name: string;
   members: number;
   online: number;
+  unread?: number;
 }
 
 @Component({
   selector: 'app-chat',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     FormsModule,
@@ -68,7 +70,7 @@ interface Channel {
                 <h3 class="section-title">Channels</h3>
               </ng-template>
               <div class="channels-list">
-                <div *ngFor="let channel of channels()" 
+                <div *ngFor="let channel of channels(); trackBy: trackByChannelId" 
                      class="channel-item"
                      [class.active]="channel.id === currentChannel().id"
                      (click)="selectChannel(channel)">
@@ -84,7 +86,7 @@ interface Channel {
           <div class="messages-area">
             <p-scrollPanel #scrollPanel styleClass="messages-scroll" [style]="{height: 'calc(100vh - 200px)'}">
               <div class="messages-list">
-                <div *ngFor="let message of messages()" 
+                <div *ngFor="let message of messages(); trackBy: trackByMessageId" 
                      class="message"
                      [class.message-own]="message.isOwn">
                   <p-avatar [label]="message.authorInitials" 
@@ -166,6 +168,15 @@ interface Channel {
       background: var(--p-surface-50);
       padding: var(--space-4);
       overflow-y: auto;
+    }
+
+    @media (max-width: 768px) {
+      .channels-sidebar {
+        width: 100% !important;
+        border-right: none;
+        border-bottom: 1px solid var(--p-surface-200);
+        max-height: 200px;
+      }
     }
 
     .channels-card {
@@ -390,5 +401,13 @@ export class ChatComponent implements OnInit, AfterViewInit {
     const colors = ['#089949', '#10c96b', '#f1c40f', '#e74c3c', '#3498db', '#9b59b6'];
     const index = initials.charCodeAt(0) % colors.length;
     return colors[index];
+  }
+
+  trackByChannelId(index: number, channel: Channel): string {
+    return channel.id;
+  }
+
+  trackByMessageId(index: number, message: Message): string {
+    return message.id;
   }
 }

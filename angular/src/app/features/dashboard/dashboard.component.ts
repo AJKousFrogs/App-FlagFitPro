@@ -1,42 +1,37 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { ChartModule } from 'primeng/chart';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MainLayoutComponent } from '../../shared/components/layout/main-layout.component';
+import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
+import { StatsGridComponent } from '../../shared/components/stats-grid/stats-grid.component';
+import { DEFAULT_CHART_OPTIONS } from '../../shared/config/chart.config';
 import { ApiService, API_ENDPOINTS } from '../../core/services/api.service';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     CardModule,
     ChartModule,
     ButtonModule,
     TagModule,
-    MainLayoutComponent
+    MainLayoutComponent,
+    PageHeaderComponent,
+    StatsGridComponent
   ],
   template: `
     <app-main-layout>
       <div class="dashboard-content">
-        <h1 class="dashboard-title">Dashboard</h1>
+        <app-page-header title="Dashboard" subtitle="Welcome back! Here's your performance overview."></app-page-header>
 
-        <div class="stats-grid">
-          <p-card *ngFor="let stat of stats()" class="stat-card">
-            <div class="stat-content">
-              <div class="stat-icon" [style.background]="stat.color + '20'" [style.color]="stat.color">
-                <i [class]="'pi ' + stat.icon"></i>
-              </div>
-              <div class="stat-info">
-                <div class="stat-value">{{ stat.value }}</div>
-                <div class="stat-label">{{ stat.label }}</div>
-              </div>
-            </div>
-          </p-card>
-        </div>
+        <app-stats-grid [stats]="stats()"></app-stats-grid>
 
         <div class="dashboard-grid">
           <p-card class="dashboard-card">
@@ -60,7 +55,7 @@ import { AuthService } from '../../core/services/auth.service';
               <h3>Recent Activity</h3>
             </ng-template>
             <div class="activity-list">
-              <div *ngFor="let activity of activities()" class="activity-item">
+              <div *ngFor="let activity of activities(); trackBy: trackByActivityId" class="activity-item">
                 <div class="activity-icon">
                   <i [class]="'pi ' + activity.icon"></i>
                 </div>
@@ -77,7 +72,7 @@ import { AuthService } from '../../core/services/auth.service';
               <h3>Upcoming Sessions</h3>
             </ng-template>
             <div class="sessions-list">
-              <div *ngFor="let session of upcomingSessions()" class="session-item">
+              <div *ngFor="let session of upcomingSessions(); trackBy: trackBySessionId" class="session-item">
                 <div class="session-date">
                   <div class="session-day">{{ session.day }}</div>
                   <div class="session-month">{{ session.month }}</div>
@@ -99,54 +94,6 @@ import { AuthService } from '../../core/services/auth.service';
       padding: var(--space-6);
     }
 
-    .dashboard-title {
-      font-size: 2rem;
-      font-weight: 700;
-      margin-bottom: var(--space-6);
-      color: var(--text-primary);
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: var(--space-4);
-      margin-bottom: var(--space-6);
-    }
-
-    .stat-card {
-      height: 100%;
-    }
-
-    .stat-content {
-      display: flex;
-      align-items: center;
-      gap: var(--space-4);
-    }
-
-    .stat-icon {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-    }
-
-    .stat-info {
-      flex: 1;
-    }
-
-    .stat-value {
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--text-primary);
-    }
-
-    .stat-label {
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-    }
 
     .dashboard-grid {
       display: grid;
@@ -259,15 +206,7 @@ export class DashboardComponent implements OnInit {
   activities = signal<any[]>([]);
   upcomingSessions = signal<any[]>([]);
 
-  chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: true
-      }
-    }
-  };
+  chartOptions = DEFAULT_CHART_OPTIONS;
 
   ngOnInit(): void {
     this.loadDashboardData();
@@ -277,18 +216,19 @@ export class DashboardComponent implements OnInit {
     const userId = this.authService.getUser()?.id;
 
     // Load dashboard overview
-    this.apiService.get(API_ENDPOINTS.dashboard.overview, { userId }).subscribe({
-      next: (response) => {
-        if (response.success && response.data) {
-          this.processDashboardData(response.data);
+    this.apiService.get(API_ENDPOINTS.dashboard.overview, { userId })
+      .pipe(takeUntilDestroyed())
+      .subscribe({
+        next: (response) => {
+          if (response.success && response.data) {
+            this.processDashboardData(response.data);
+          }
+        },
+        error: () => {
+          // Load mock data on error
+          this.loadMockData();
         }
-      },
-      error: (error) => {
-        console.error('Error loading dashboard:', error);
-        // Load mock data on error
-        this.loadMockData();
-      }
-    });
+      });
   }
 
   processDashboardData(data: any): void {
@@ -374,6 +314,14 @@ export class DashboardComponent implements OnInit {
       { day: '17', month: 'Jan', title: 'Strength Workout', time: '2:00 PM', status: 'Confirmed' },
       { day: '20', month: 'Jan', title: 'Game Practice', time: '9:00 AM', status: 'Pending' }
     ]);
+  }
+
+  trackByActivityId(index: number, activity: any): any {
+    return activity.id || index;
+  }
+
+  trackBySessionId(index: number, session: any): any {
+    return session.id || `${session.day}-${session.month}` || index;
   }
 
   getStatusSeverity(status: string): string {

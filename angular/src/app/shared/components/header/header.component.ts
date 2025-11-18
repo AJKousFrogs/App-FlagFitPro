@@ -1,14 +1,16 @@
-import { Component, signal, inject, Output, EventEmitter } from '@angular/core';
+import { Component, signal, inject, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-header',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, RouterModule, FormsModule, ButtonModule, InputTextModule],
   template: `
     <div class="top-bar" role="banner">
@@ -127,7 +129,6 @@ import { AuthService } from '../../../core/services/auth.service';
   `]
 })
 export class HeaderComponent {
-  private router = inject(Router);
   private authService = inject(AuthService);
   
   @Output() toggleSidebar = new EventEmitter<void>();
@@ -138,7 +139,13 @@ export class HeaderComponent {
   }
 
   logout(): void {
-    this.authService.logout().subscribe();
+    this.authService.logout()
+      .pipe(takeUntilDestroyed())
+      .subscribe({
+        error: () => {
+          // Error handled by error interceptor
+        }
+      });
   }
 }
 

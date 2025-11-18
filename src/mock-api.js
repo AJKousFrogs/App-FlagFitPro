@@ -194,6 +194,36 @@ export class MockApiClient {
       };
     }
 
+    // Notifications data
+    if (endpoint.includes("/notifications")) {
+      return [
+        {
+          id: 1,
+          type: "training",
+          title: "Training Session Reminder",
+          message: "Speed & Agility training starts in 30 minutes",
+          time: "5 minutes ago",
+          read: false,
+        },
+        {
+          id: 2,
+          type: "achievement",
+          title: "New Achievement Unlocked",
+          message: "You've completed 10 training sessions this month!",
+          time: "1 hour ago",
+          read: false,
+        },
+        {
+          id: 3,
+          type: "team",
+          title: "Team Update",
+          message: "New team member joined: Alex Johnson",
+          time: "2 hours ago",
+          read: false,
+        },
+      ];
+    }
+
     // Chat/messages data
     if (endpoint.includes("/messages")) {
       return {

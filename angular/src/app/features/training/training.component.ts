@@ -1,10 +1,11 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { MainLayoutComponent } from '../../shared/components/layout/main-layout.component';
+import { StatsGridComponent } from '../../shared/components/stats-grid/stats-grid.component';
 import { ApiService, API_ENDPOINTS } from '../../core/services/api.service';
 import { AuthService } from '../../core/services/auth.service';
 
@@ -33,13 +34,15 @@ interface Workout {
 @Component({
   selector: 'app-training',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     CardModule,
     ButtonModule,
     TagModule,
     ProgressBarModule,
-    MainLayoutComponent
+    MainLayoutComponent,
+    StatsGridComponent
   ],
   template: `
     <app-main-layout>
@@ -74,24 +77,7 @@ interface Workout {
         </p-card>
 
         <!-- Training Stats Grid -->
-        <div class="stats-grid">
-          <p-card *ngFor="let stat of stats()" class="stat-card">
-            <div class="stat-header">
-              <span class="stat-title">{{ stat.title }}</span>
-              <div class="stat-icon" [style.background]="stat.iconBg">
-                <i [class]="stat.icon"></i>
-              </div>
-            </div>
-            <div class="stat-value">{{ stat.value }}</div>
-            <div *ngIf="stat.progress !== undefined" class="stat-progress">
-              <p-progressBar [value]="stat.progress" [showValue]="false"></p-progressBar>
-            </div>
-            <div *ngIf="stat.change" class="stat-change" [class]="'stat-change-' + (stat.changeType || 'neutral')">
-              <span>{{ stat.change }}</span>
-            </div>
-            <div *ngIf="stat.subtitle" class="stat-subtitle">{{ stat.subtitle }}</div>
-          </p-card>
-        </div>
+        <app-stats-grid [stats]="trainingStats()"></app-stats-grid>
 
         <!-- Weekly Schedule -->
         <p-card class="schedule-card">
@@ -106,10 +92,10 @@ interface Workout {
             </div>
           </ng-template>
           <div class="weekly-schedule-grid">
-            <div *ngFor="let day of weeklySchedule()" class="schedule-day">
+            <div *ngFor="let day of weeklySchedule(); trackBy: trackByDayName" class="schedule-day">
               <div class="day-name">{{ day.name }}</div>
               <div class="day-sessions">
-                <div *ngFor="let session of day.sessions" class="session-item">
+                <div *ngFor="let session of day.sessions; trackBy: trackBySessionTime" class="session-item">
                   <div class="session-time">{{ session.time }}</div>
                   <div class="session-title">{{ session.title }}</div>
                 </div>
@@ -129,7 +115,7 @@ interface Workout {
               </h2>
             </ng-template>
             <div class="workouts-list">
-              <div *ngFor="let workout of workouts()" class="workout-card" 
+              <div *ngFor="let workout of workouts(); trackBy: trackByWorkoutTitle" class="workout-card" 
                    [style.border-color]="workout.iconBg">
                 <div class="workout-icon" [style.background]="workout.iconBg">
                   <i [class]="workout.icon"></i>
@@ -157,7 +143,7 @@ interface Workout {
               </h2>
             </ng-template>
             <div class="achievements-list">
-              <div *ngFor="let achievement of achievements()" class="achievement-item">
+              <div *ngFor="let achievement of achievements(); trackBy: trackByAchievementTitle" class="achievement-item">
                 <div class="achievement-icon">{{ achievement.icon }}</div>
                 <div class="achievement-content">
                   <div class="achievement-title">{{ achievement.title }}</div>
@@ -238,78 +224,6 @@ interface Workout {
       margin: 0;
     }
 
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: var(--space-6);
-      margin-bottom: var(--space-8);
-    }
-
-    .stat-card {
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .stat-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    .stat-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: var(--space-4);
-    }
-
-    .stat-title {
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-    }
-
-    .stat-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: var(--p-border-radius);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--color-brand-primary);
-    }
-
-    .stat-value {
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--text-primary);
-      margin-bottom: var(--space-4);
-    }
-
-    .stat-progress {
-      margin-bottom: var(--space-4);
-    }
-
-    .stat-change {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      font-size: 0.875rem;
-      margin-bottom: var(--space-2);
-    }
-
-    .stat-change-positive {
-      color: var(--color-success);
-    }
-
-    .stat-change-negative {
-      color: var(--color-warning);
-    }
-
-    .stat-subtitle {
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-      opacity: 0.7;
-    }
 
     .schedule-card {
       margin-bottom: var(--space-8);
@@ -468,10 +382,6 @@ interface Workout {
         grid-template-columns: 1fr;
       }
 
-      .stats-grid {
-        grid-template-columns: 1fr;
-      }
-
       .cta-content {
         flex-direction: column;
         align-items: stretch;
@@ -485,6 +395,7 @@ export class TrainingComponent implements OnInit {
 
   userName = signal('Alex');
   stats = signal<StatCard[]>([]);
+  trainingStats = signal<any[]>([]);
   weeklySchedule = signal<any[]>([]);
   workouts = signal<Workout[]>([]);
   achievements = signal<any[]>([]);
@@ -494,43 +405,39 @@ export class TrainingComponent implements OnInit {
   }
 
   loadTrainingData(): void {
-    // Load stats
-    this.stats.set([
+    // Load stats for StatsGridComponent
+    this.trainingStats.set([
       {
-        title: 'This Week',
-        value: '4',
-        subtitle: '/7',
-        progress: 57,
-        change: '🔥 Sessions Completed',
-        changeType: 'positive',
-        icon: 'pi pi-bolt',
-        iconBg: 'rgba(241, 196, 15, 0.1)'
+        label: 'This Week',
+        value: '4/7',
+        icon: 'pi-bolt',
+        color: '#f1c40f',
+        trend: '🔥 Sessions Completed',
+        trendType: 'positive'
       },
       {
-        title: 'Current Streak',
-        value: '12',
-        subtitle: ' days',
-        change: '📊 Personal best streak!',
-        changeType: 'positive',
-        icon: 'pi pi-bullseye',
-        iconBg: 'rgba(137, 195, 0, 0.1)'
+        label: 'Current Streak',
+        value: '12 days',
+        icon: 'pi-bullseye',
+        color: '#89c300',
+        trend: '📊 Personal best streak!',
+        trendType: 'positive'
       },
       {
-        title: 'Total Hours',
-        value: '28.5',
-        subtitle: 'h',
-        change: '⬆️ +4.2h this week',
-        changeType: 'positive',
-        icon: 'pi pi-clock',
-        iconBg: 'rgba(16, 201, 107, 0.1)'
+        label: 'Total Hours',
+        value: '28.5h',
+        icon: 'pi-clock',
+        color: '#10c96b',
+        trend: '⬆️ +4.2h this week',
+        trendType: 'positive'
       },
       {
-        title: 'Next Session',
+        label: 'Next Session',
         value: 'Olympic Prep',
-        change: '📅 Today at 3:00 PM',
-        changeType: 'neutral',
-        icon: 'pi pi-calendar',
-        iconBg: 'rgba(137, 195, 0, 0.1)'
+        icon: 'pi-calendar',
+        color: '#89c300',
+        trend: '📅 Today at 3:00 PM',
+        trendType: 'neutral'
       }
     ]);
 
@@ -588,17 +495,34 @@ export class TrainingComponent implements OnInit {
   }
 
   openScheduleBuilder(): void {
-    // TODO: Open schedule builder modal
-    console.log('Open schedule builder');
+    // Open schedule builder modal - implementation pending
   }
 
   toggleScheduleView(): void {
-    // TODO: Toggle schedule view
-    console.log('Toggle schedule view');
+    // Toggle schedule view - implementation pending
   }
 
   startWorkout(workout: Workout): void {
-    // TODO: Start workout
-    console.log('Start workout:', workout);
+    // Start workout - implementation pending
+  }
+
+  trackByStatTitle(index: number, stat: StatCard): string {
+    return stat.title;
+  }
+
+  trackByDayName(index: number, day: any): string {
+    return day.name;
+  }
+
+  trackBySessionTime(index: number, session: any): string {
+    return session.time || index.toString();
+  }
+
+  trackByWorkoutTitle(index: number, workout: Workout): string {
+    return workout.title;
+  }
+
+  trackByAchievementTitle(index: number, achievement: any): string {
+    return achievement.title || index.toString();
   }
 }

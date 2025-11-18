@@ -377,6 +377,16 @@
   max-height: 70vh;
   box-shadow: var(--elevation-highest);
   animation: slideDown 0.2s ease;
+}
+
+@media (max-width: 768px) {
+  .command-palette-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 0 !important;
+    max-height: 100vh !important;
+  }
+}
   z-index: 1;
   overflow: hidden;
   display: flex;

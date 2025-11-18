@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CardModule } from 'primeng/card';
@@ -6,7 +6,9 @@ import { ButtonModule } from 'primeng/button';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { CheckboxModule } from 'primeng/checkbox';
 import { TagModule } from 'primeng/tag';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MainLayoutComponent } from '../../shared/components/layout/main-layout.component';
+import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
 import { ApiService, API_ENDPOINTS } from '../../core/services/api.service';
 
 interface WorkoutExercise {
@@ -30,6 +32,7 @@ interface Workout {
 @Component({
   selector: 'app-workout',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     FormsModule,
@@ -38,22 +41,15 @@ interface Workout {
     InputNumberModule,
     CheckboxModule,
     TagModule,
-    MainLayoutComponent
+    MainLayoutComponent,
+    PageHeaderComponent
   ],
   template: `
     <app-main-layout>
       <div class="workout-page">
-        <!-- Page Header -->
-        <div class="page-header">
-          <div class="header-content">
-            <h1 class="page-title">
-              <i class="pi pi-bolt"></i>
-              Workout Tracker
-            </h1>
-            <p class="page-subtitle">Track your workouts and monitor your progress</p>
-          </div>
+        <app-page-header title="Workout Tracker" subtitle="Track your workouts and monitor your progress" icon="pi-bolt">
           <p-button label="New Workout" icon="pi pi-plus" (onClick)="createNewWorkout()"></p-button>
-        </div>
+        </app-page-header>
 
         <!-- Active Workout -->
         <p-card *ngIf="activeWorkout()" class="active-workout-card">
@@ -66,12 +62,12 @@ interface Workout {
             </div>
           </ng-template>
           <div class="exercises-list">
-            <div *ngFor="let exercise of activeWorkout()?.exercises" class="exercise-item">
+            <div *ngFor="let exercise of activeWorkout()?.exercises; trackBy: trackByExerciseId" class="exercise-item">
               <div class="exercise-info">
                 <h4>{{ exercise.name }}</h4>
                 <div class="exercise-details">
                   <span>{{ exercise.sets }} sets × {{ exercise.reps }} reps</span>
-                  <span *ngIf="exercise.weight">@ {{ exercise.weight }} lbs</span>
+                  <span *ngIf="exercise.weight">{{ exercise.weight }} lbs</span>
                 </div>
               </div>
               <div class="exercise-actions">
@@ -95,7 +91,7 @@ interface Workout {
             <h3>Workout History</h3>
           </ng-template>
           <div class="workouts-list">
-            <div *ngFor="let workout of workoutHistory()" class="workout-item">
+            <div *ngFor="let workout of workoutHistory(); trackBy: trackByWorkoutId" class="workout-item">
               <div class="workout-info">
                 <h4>{{ workout.name }}</h4>
                 <p class="workout-date">{{ workout.date }}</p>
@@ -311,15 +307,16 @@ export class WorkoutComponent implements OnInit {
     if (!this.activeWorkout()) return;
 
     const workout = this.activeWorkout()!;
-    // TODO: Save workout via API
-    this.apiService.put(`${API_ENDPOINTS.training.workouts}/${workout.id}`, workout).subscribe({
-      next: (response) => {
-        console.log('Workout saved:', response);
-      },
-      error: (error) => {
-        console.error('Error saving workout:', error);
-      }
-    });
+    this.apiService.put(`/api/training/workouts/${workout.id}`, workout)
+      .pipe(takeUntilDestroyed())
+      .subscribe({
+        next: () => {
+          // Workout saved successfully
+        },
+        error: () => {
+          // Error handled by error interceptor
+        }
+      });
   }
 
   completeWorkout(): void {
@@ -328,5 +325,13 @@ export class WorkoutComponent implements OnInit {
     const workout = { ...this.activeWorkout()!, completed: true };
     this.workoutHistory.update(history => [workout, ...history]);
     this.activeWorkout.set(null);
+  }
+
+  trackByExerciseId(index: number, exercise: WorkoutExercise): string {
+    return exercise.id;
+  }
+
+  trackByWorkoutId(index: number, workout: Workout): string {
+    return workout.id;
   }
 }
