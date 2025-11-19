@@ -43,3 +43,23 @@
   from = "/community"
   to = "/community.html"
   status = 301
+
+# API Routes for Analytics
+[[redirects]]
+  from = "/api/analytics/*"
+  to = "/.netlify/functions/analytics"
+  status = 200
+  force = true
+
+# API Routes for Games
+[[redirects]]
+  from = "/games"
+  to = "/.netlify/functions/games"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/games/*"
+  to = "/.netlify/functions/games"
+  status = 200
+  force = true

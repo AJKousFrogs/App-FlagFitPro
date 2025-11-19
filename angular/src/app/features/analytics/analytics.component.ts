@@ -958,7 +958,186 @@ export class AnalyticsComponent implements OnInit {
   }
 
   loadAnalyticsData(): void {
-    // Load metrics
+    const currentUser = this.authService.getUser();
+    if (!currentUser?.id) {
+      this.loadFallbackData();
+      return;
+    }
+
+    // Load analytics summary for metrics
+    this.apiService
+      .get(API_ENDPOINTS.analytics.summary, { userId: currentUser.id })
+      .subscribe({
+        next: (response) => {
+          if (response.success && response.data?.metrics) {
+            this.metrics.set(response.data.metrics);
+          } else {
+            this.loadFallbackMetrics();
+          }
+        },
+        error: () => {
+          this.loadFallbackMetrics();
+        },
+      });
+
+    // Load performance trends
+    this.apiService
+      .get(API_ENDPOINTS.analytics.performanceTrends, {
+        userId: currentUser.id,
+        weeks: 7,
+      })
+      .subscribe({
+        next: (response) => {
+          if (response.success && response.data) {
+            this.performanceChartData.set({
+              labels: response.data.labels,
+              datasets: [
+                {
+                  label: "Performance Score",
+                  data: response.data.values,
+                  borderColor: "#089949",
+                  backgroundColor: "rgba(8, 153, 73, 0.1)",
+                  borderWidth: 3,
+                  fill: true,
+                  tension: 0.4,
+                },
+              ],
+            });
+          } else {
+            this.loadFallbackPerformanceChart();
+          }
+        },
+        error: () => {
+          this.loadFallbackPerformanceChart();
+        },
+      });
+
+    // Load team chemistry
+    this.apiService
+      .get(API_ENDPOINTS.analytics.teamChemistry, { userId: currentUser.id })
+      .subscribe({
+        next: (response) => {
+          if (response.success && response.data) {
+            this.chemistryChartData.set({
+              labels: response.data.labels,
+              datasets: [
+                {
+                  label: "Team Chemistry",
+                  data: response.data.values,
+                  borderColor: "#089949",
+                  backgroundColor: "rgba(16, 201, 107, 0.2)",
+                  borderWidth: 2,
+                },
+              ],
+            });
+          } else {
+            this.loadFallbackChemistryChart();
+          }
+        },
+        error: () => {
+          this.loadFallbackChemistryChart();
+        },
+      });
+
+    // Load training distribution
+    this.apiService
+      .get(API_ENDPOINTS.analytics.trainingDistribution, {
+        userId: currentUser.id,
+        period: "30days",
+      })
+      .subscribe({
+        next: (response) => {
+          if (response.success && response.data) {
+            this.distributionChartData.set({
+              labels: response.data.labels,
+              datasets: [
+                {
+                  data: response.data.values,
+                  backgroundColor: [
+                    "#089949",
+                    "#10c89b",
+                    "#f1c40f",
+                    "#e74c3c",
+                    "#3498db",
+                  ],
+                },
+              ],
+            });
+          } else {
+            this.loadFallbackDistributionChart();
+          }
+        },
+        error: () => {
+          this.loadFallbackDistributionChart();
+        },
+      });
+
+    // Load position performance
+    this.apiService
+      .get(API_ENDPOINTS.analytics.positionPerformance, {
+        userId: currentUser.id,
+      })
+      .subscribe({
+        next: (response) => {
+          if (response.success && response.data) {
+            this.positionChartData.set({
+              labels: response.data.labels,
+              datasets: [
+                {
+                  label: "Performance",
+                  data: response.data.values,
+                  backgroundColor: "#089949",
+                },
+              ],
+            });
+          } else {
+            this.loadFallbackPositionChart();
+          }
+        },
+        error: () => {
+          this.loadFallbackPositionChart();
+        },
+      });
+
+    // Load speed development
+    this.apiService
+      .get(API_ENDPOINTS.analytics.speedDevelopment, {
+        userId: currentUser.id,
+        weeks: 7,
+      })
+      .subscribe({
+        next: (response) => {
+          if (response.success && response.data) {
+            this.speedChartData.set({
+              labels: response.data.labels,
+              datasets: response.data.datasets.map((ds: any) => ({
+                ...ds,
+                borderColor: ds.label.includes("40") ? "#089949" : "#10c96b",
+                backgroundColor: ds.label.includes("40")
+                  ? "rgba(8, 153, 73, 0.1)"
+                  : "rgba(16, 201, 107, 0.1)",
+              })),
+            });
+          } else {
+            this.loadFallbackSpeedChart();
+          }
+        },
+        error: () => {
+          this.loadFallbackSpeedChart();
+        },
+      });
+  }
+
+  loadFallbackData(): void {
+    this.loadFallbackMetrics();
+    this.loadFallbackPerformanceChart();
+    this.loadFallbackChemistryChart();
+    this.loadFallbackDistributionChart();
+    this.loadFallbackPositionChart();
+    this.loadFallbackSpeedChart();
+  }
+
+  loadFallbackMetrics(): void {
     this.metrics.set([
       {
         icon: "pi-chart-bar",
@@ -989,18 +1168,11 @@ export class AnalyticsComponent implements OnInit {
         trendType: "positive",
       },
     ]);
+  }
 
-    // Load charts
+  loadFallbackPerformanceChart(): void {
     this.performanceChartData.set({
-      labels: [
-        "Week 1",
-        "Week 2",
-        "Week 3",
-        "Week 4",
-        "Week 5",
-        "Week 6",
-        "Week 7",
-      ],
+      labels: ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6", "Week 7"],
       datasets: [
         {
           label: "Performance Score",
@@ -1013,16 +1185,11 @@ export class AnalyticsComponent implements OnInit {
         },
       ],
     });
+  }
 
+  loadFallbackChemistryChart(): void {
     this.chemistryChartData.set({
-      labels: [
-        "Communication",
-        "Coordination",
-        "Trust",
-        "Cohesion",
-        "Leadership",
-        "Adaptability",
-      ],
+      labels: ["Communication", "Coordination", "Trust", "Cohesion", "Leadership", "Adaptability"],
       datasets: [
         {
           label: "Team Chemistry",
@@ -1033,29 +1200,21 @@ export class AnalyticsComponent implements OnInit {
         },
       ],
     });
+  }
 
+  loadFallbackDistributionChart(): void {
     this.distributionChartData.set({
-      labels: [
-        "Speed Training",
-        "Strength",
-        "Agility",
-        "Endurance",
-        "Technique",
-      ],
+      labels: ["Speed Training", "Strength", "Agility", "Endurance", "Technique"],
       datasets: [
         {
           data: [30, 25, 20, 15, 10],
-          backgroundColor: [
-            "#089949",
-            "#10c89b",
-            "#f1c40f",
-            "#e74c3c",
-            "#3498db",
-          ],
+          backgroundColor: ["#089949", "#10c89b", "#f1c40f", "#e74c3c", "#3498db"],
         },
       ],
     });
+  }
 
+  loadFallbackPositionChart(): void {
     this.positionChartData.set({
       labels: ["QB", "WR", "RB", "DB", "Rusher"],
       datasets: [
@@ -1066,17 +1225,11 @@ export class AnalyticsComponent implements OnInit {
         },
       ],
     });
+  }
 
+  loadFallbackSpeedChart(): void {
     this.speedChartData.set({
-      labels: [
-        "Week 1",
-        "Week 2",
-        "Week 3",
-        "Week 4",
-        "Week 5",
-        "Week 6",
-        "Week 7",
-      ],
+      labels: ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6", "Week 7"],
       datasets: [
         {
           label: "40-Yard",

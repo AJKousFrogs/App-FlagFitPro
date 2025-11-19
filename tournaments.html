@@ -613,7 +613,7 @@
 
     <script type="module">
       import { authManager } from "./src/auth-manager.js";
-      import { apiClient } from "./src/api-config.js";
+      import { apiClient, API_ENDPOINTS } from "./src/api-config.js";
       import { PerformanceUtils } from "./src/performance-utils.js";
       import { AccessibilityUtils } from "./src/accessibility-utils.js";
       import {
@@ -696,7 +696,7 @@
             );
             
             response = await Promise.race([
-              apiClient.get("/api/tournaments"),
+              apiClient.get(API_ENDPOINTS.tournaments.list),
               timeoutPromise,
             ]);
             
@@ -1082,7 +1082,9 @@
         // Don't clear grid or show loading - keep local data visible
         // This is a background update that only happens if API returns better data
         try {
-          const response = await apiClient.get(`/api/tournaments?type=${type}`);
+          // Use centralized API endpoint configuration
+          const endpoint = API_ENDPOINTS.tournaments.list;
+          const response = await apiClient.get(endpoint, { type });
 
           // Only update if API returns valid data with correct structure
           if (response && response.success && response.data.tournaments && response.data.tournaments.length > 0) {
@@ -1118,9 +1120,17 @@
         try {
           authManager.showLoading("Processing...");
 
-          const response = await apiClient.post(
-            `/api/tournaments/${tournamentId}/${action}`,
-          );
+          // Use centralized API endpoint configuration
+          // Register endpoint uses GET with query parameters
+          let response;
+          if (action === "register") {
+            const endpoint = API_ENDPOINTS.tournaments.register(tournamentId);
+            response = await apiClient.get(endpoint);
+          } else {
+            // For other actions, use details endpoint
+            const endpoint = API_ENDPOINTS.tournaments.details(tournamentId);
+            response = await apiClient.post(endpoint, { action });
+          }
 
           if (response.success) {
             authManager.showSuccess(`Successfully ${action}ed for tournament!`);

@@ -210,6 +210,18 @@ export const API_ENDPOINTS = {
     log: normalizeEndpoint("/api/supplements/log"),
   },
 
+  // Games
+  games: {
+    list: normalizeEndpoint("/games"),
+    create: normalizeEndpoint("/games"),
+    get: (gameId) => normalizeEndpoint(`/games/${gameId}`),
+    update: (gameId) => normalizeEndpoint(`/games/${gameId}`),
+    stats: (gameId) => normalizeEndpoint(`/games/${gameId}/stats`),
+    plays: (gameId) => normalizeEndpoint(`/games/${gameId}/plays`),
+    playerStats: (gameId, playerId) =>
+      normalizeEndpoint(`/games/${gameId}/player-stats`),
+  },
+
   // General
   health: normalizeEndpoint("/api/health"),
 };

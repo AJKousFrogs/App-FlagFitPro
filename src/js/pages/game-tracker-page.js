@@ -206,8 +206,13 @@ class GameTrackerPage {
       createdAt: new Date().toISOString(),
     };
 
-    // Save game to localStorage
-    gameStatsService.saveGame(this.currentGame);
+    // Save game to backend (with localStorage fallback)
+    try {
+      await gameStatsService.saveGame(this.currentGame);
+    } catch (error) {
+      console.error("Error saving game:", error);
+      // Game is still saved to localStorage as fallback
+    }
 
     // Show live tracking section
     this.showLiveTracking();
@@ -256,12 +261,48 @@ class GameTrackerPage {
     this.loadGamesList();
   }
 
-  loadGamesList() {
-    const games = gameStatsService.getAllGames();
+  async loadGamesList() {
     const gamesList = document.getElementById("games-list");
 
     if (!gamesList) return;
 
+    // Show loading state
+    gamesList.innerHTML = `
+      <div class="empty-state">
+        <i data-lucide="loader" class="icon-48 spinning"></i>
+        <p>Loading games...</p>
+      </div>
+    `;
+    lucide.createIcons();
+
+    try {
+      // Try to load from backend (async)
+      const games = await gameStatsService.getAllGames();
+      this.renderGamesList(games, gamesList);
+    } catch (error) {
+      console.error("Error loading games:", error);
+      // Fallback to localStorage
+      const games = gameStatsService.getAllGamesSync();
+      this.renderGamesList(games, gamesList);
+    }
+  }
+
+  renderGamesList(games, gamesList) {
+    if (games.length === 0) {
+      gamesList.innerHTML = `
+        <div class="empty-state">
+          <i data-lucide="calendar" class="icon-48"></i>
+          <p>No games tracked yet</p>
+        </div>
+      `;
+      lucide.createIcons();
+      return;
+    }
+
+    this.renderGamesList(games, gamesList);
+  }
+
+  renderGamesList(games, gamesList) {
     if (games.length === 0) {
       gamesList.innerHTML = `
         <div class="empty-state">
@@ -487,8 +528,16 @@ class GameTrackerPage {
     this.plays.push(play);
     this.currentGame.plays = this.plays;
 
-    // Save to service
-    gameStatsService.saveGame(this.currentGame);
+    // Save play to backend
+    this.savePlayToBackend(play).catch((error) => {
+      console.error("Error saving play to backend:", error);
+      // Continue with local save
+    });
+
+    // Save game to service (localStorage + backend)
+    gameStatsService.saveGame(this.currentGame).catch((error) => {
+      console.error("Error saving game:", error);
+    });
 
     logger.info("Play saved:", play);
 
@@ -499,6 +548,47 @@ class GameTrackerPage {
 
     // Show success message
     this.showSuccessMessage("Play saved successfully!");
+  }
+
+  async savePlayToBackend(play) {
+    if (!this.currentGame || !this.currentGame.gameId) {
+      return;
+    }
+
+    try {
+      const { apiClient } = await import("../api-client.js");
+      const { API_ENDPOINTS } = await import("../../api-config.js");
+
+      const playData = {
+        teamId: this.currentGame.teamId,
+        quarter: play.quarter,
+        down: play.down,
+        distance: play.distance,
+        yardLine: play.yardLine,
+        playType: play.playType,
+        playCategory: "offensive", // or "defensive" based on play type
+        primaryPlayerId: play.quarterbackId || play.ballCarrierId || play.defenderId,
+        secondaryPlayerIds: play.receiverId ? [play.receiverId] : [],
+        playResult: play.outcome || (play.isSuccessful ? "flag_pull" : "missed"),
+        yardsGained: play.yardsGained || 0,
+        yardsAfterCatch: 0, // Could be calculated
+        isSuccessful: play.outcome === "completion" || play.isSuccessful || false,
+        isTurnover: play.outcome === "interception" || false,
+        notes: play.playNotes || null,
+      };
+
+      const response = await apiClient.post(
+        API_ENDPOINTS.games.plays(this.currentGame.gameId),
+        playData
+      );
+
+      if (response.success) {
+        logger.info("Play saved to backend:", response.data);
+      }
+    } catch (error) {
+      console.error("Error saving play to backend:", error);
+      throw error;
+    }
   }
 
   updateQuickStats() {
@@ -669,7 +759,7 @@ class GameTrackerPage {
     gameStatsService.saveGame(this.currentGame);
   }
 
-  handleEndGame() {
+  async handleEndGame() {
     if (!this.currentGame) return;
 
     if (
@@ -689,7 +779,28 @@ class GameTrackerPage {
         this.currentGame.gameResult = "tie";
       }
 
-      gameStatsService.saveGame(this.currentGame);
+      // Save final game state to backend
+      try {
+        await gameStatsService.saveGame(this.currentGame);
+        
+        // Update game scores in backend
+        if (this.currentGame.gameId && this.currentGame.gameId.startsWith("GAME_")) {
+          const { apiClient } = await import("../api-client.js");
+          const { API_ENDPOINTS } = await import("../../api-config.js");
+          
+          await apiClient.put(
+            API_ENDPOINTS.games.update(this.currentGame.gameId),
+            {
+              teamScore: this.currentGame.teamScore,
+              opponentScore: this.currentGame.opponentScore,
+              gameResult: this.currentGame.gameResult,
+            }
+          );
+        }
+      } catch (error) {
+        console.error("Error saving final game state:", error);
+        // Continue anyway - game is saved to localStorage
+      }
 
       this.showSuccessMessage("Game ended and saved successfully!");
 

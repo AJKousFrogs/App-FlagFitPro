@@ -1,35 +1,37 @@
 /**
  * Game Stats Service
  * Handles saving, loading, and analyzing game statistics
+ * Now uses backend API with localStorage fallback
  */
+
+import { apiClient } from "../api-client.js";
+import { API_ENDPOINTS } from "../../api-config.js";
 
 class GameStatsService {
   constructor() {
     this.storageKey = "flagfit_games";
     this.currentGameKey = "flagfit_current_game";
+    this.useBackend = true; // Toggle to use backend or localStorage
   }
 
   /**
-   * Save a game to localStorage
+   * Save a game to backend (with localStorage fallback)
    * @param {Object} game - Game object to save
-   * @returns {boolean} Success status
+   * @returns {Promise<boolean>} Success status
    */
-  saveGame(game) {
+  async saveGame(game) {
+    // Always save to localStorage as backup
     try {
       const games = this.getAllGames();
-
-      // Find existing game by ID
       const existingIndex = games.findIndex((g) => g.gameId === game.gameId);
 
       if (existingIndex >= 0) {
-        // Update existing game
         games[existingIndex] = {
           ...games[existingIndex],
           ...game,
           updatedAt: new Date().toISOString(),
         };
       } else {
-        // Add new game
         games.push({
           ...game,
           createdAt: game.createdAt || new Date().toISOString(),
@@ -37,17 +39,66 @@ class GameStatsService {
         });
       }
 
-      // Save to localStorage
       localStorage.setItem(this.storageKey, JSON.stringify(games));
-
-      // Also save as current game
       localStorage.setItem(this.currentGameKey, JSON.stringify(game));
-
-      return true;
     } catch (error) {
-      console.error("Error saving game:", error);
-      return false;
+      console.error("Error saving to localStorage:", error);
     }
+
+    // Try to save to backend
+    if (this.useBackend) {
+      try {
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+          console.warn("No auth token, skipping backend save");
+          return true; // Saved to localStorage
+        }
+
+        // Prepare game data for API
+        const gameData = {
+          teamId: game.teamId || `TEAM_${localStorage.getItem("userId")}`,
+          opponentName: game.opponentName,
+          gameDate: game.gameDate,
+          gameTime: game.gameTime,
+          location: game.location,
+          isHomeGame: game.isHomeGame,
+          weather: game.weather,
+          temperature: game.temperature,
+          fieldConditions: game.fieldConditions,
+          teamScore: game.teamScore || 0,
+          opponentScore: game.opponentScore || 0,
+        };
+
+        let response;
+        if (game.gameId && game.gameId.startsWith("GAME_")) {
+          // Update existing game
+          response = await apiClient.put(
+            API_ENDPOINTS.games.update(game.gameId),
+            gameData
+          );
+        } else {
+          // Create new game
+          response = await apiClient.post(
+            API_ENDPOINTS.games.create,
+            gameData
+          );
+        }
+
+        if (response.success) {
+          // Update local game with backend game_id
+          if (response.data && response.data.game_id) {
+            game.gameId = response.data.game_id;
+            localStorage.setItem(this.currentGameKey, JSON.stringify(game));
+          }
+          return true;
+        }
+      } catch (error) {
+        console.error("Error saving game to backend:", error);
+        // Continue with localStorage version
+      }
+    }
+
+    return true; // Saved to localStorage at least
   }
 
   /**
@@ -66,10 +117,61 @@ class GameStatsService {
   }
 
   /**
-   * Get all games
+   * Get all games from backend (with localStorage fallback)
+   * @returns {Promise<Array>} Array of game objects
+   */
+  async getAllGames() {
+    // Try backend first
+    if (this.useBackend) {
+      try {
+        const token = localStorage.getItem("authToken");
+        if (token) {
+          const response = await apiClient.get(API_ENDPOINTS.games.list);
+          if (response.success && response.data) {
+            // Transform backend data to frontend format
+            const games = response.data.map((g) => ({
+              gameId: g.game_id,
+              teamId: g.team_id,
+              opponentName: g.opponent_team_name,
+              gameDate: g.game_date,
+              gameTime: g.game_time,
+              location: g.location,
+              isHomeGame: g.is_home_game,
+              weather: g.weather_conditions,
+              temperature: g.temperature,
+              fieldConditions: g.field_conditions,
+              teamScore: g.team_score || 0,
+              opponentScore: g.opponent_score || 0,
+              createdAt: g.created_at,
+              updatedAt: g.updated_at,
+            }));
+
+            // Sync to localStorage
+            localStorage.setItem(this.storageKey, JSON.stringify(games));
+            return games;
+          }
+        }
+      } catch (error) {
+        console.error("Error loading games from backend:", error);
+        // Fall through to localStorage
+      }
+    }
+
+    // Fallback to localStorage
+    try {
+      const gamesJson = localStorage.getItem(this.storageKey);
+      return gamesJson ? JSON.parse(gamesJson) : [];
+    } catch (error) {
+      console.error("Error loading games from localStorage:", error);
+      return [];
+    }
+  }
+
+  /**
+   * Get all games (synchronous version for backward compatibility)
    * @returns {Array} Array of game objects
    */
-  getAllGames() {
+  getAllGamesSync() {
     try {
       const gamesJson = localStorage.getItem(this.storageKey);
       return gamesJson ? JSON.parse(gamesJson) : [];
