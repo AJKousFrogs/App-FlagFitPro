@@ -297,61 +297,58 @@
         </div>
 
         <header
-          class="header u-bg-primary u-padding-20 u-padding-x-30 u-radius-md u-shadow-sm u-margin-bottom-30 u-display-flex u-justify-between u-align-center"
+          class="card u-padding-24 u-margin-bottom-30"
+          style="background: var(--surface-primary); border: 1px solid var(--color-border-secondary);"
         >
-          <div>
-            <h1 class="u-text-heading-lg u-font-weight-600 u-text-primary">
-              Official Tournament Schedule 2026-2027
-              <i
-                data-lucide="trophy"
-                style="
-                  width: 16px;
-                  height: 16px;
-                  display: inline-block;
-                  vertical-align: middle;
-                  color: var(--icon-color-primary);
-                  stroke: var(--icon-color-primary);
-                "
-              ></i>
-            </h1>
-            <p class="u-text-body-sm u-text-secondary u-margin-top-4">
-              International Flag Football Season featuring 7 major tournaments
-              across Europe
-            </p>
-          </div>
-          <div>
-            <button class="btn btn-primary hover-lift" id="nextTournamentBtn">
-              Next Tournament
-            </button>
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-6); flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 0;">
+              <h1 style="font-size: var(--text-2xl); font-weight: var(--font-weight-bold); color: var(--color-text-primary); margin: 0 0 var(--space-2) 0; display: flex; align-items: center; gap: var(--space-3);">
+                <i data-lucide="trophy" style="width: 28px; height: 28px; color: var(--color-brand-primary);"></i>
+                Official Tournament Schedule 2026-2027
+              </h1>
+              <p style="font-size: var(--text-sm); color: var(--color-text-secondary); margin: 0;">
+                International Flag Football Season featuring 7 major tournaments across Europe
+              </p>
+            </div>
+            <div>
+              <button class="btn btn-primary btn-md" id="nextTournamentBtn" style="white-space: nowrap;">
+                <i data-lucide="calendar"></i>
+                <span>Next Tournament</span>
+              </button>
+            </div>
           </div>
         </header>
 
-        <div class="tournament-tabs u-display-flex u-gap-10 u-margin-bottom-30">
+        <div class="tournament-tabs" style="display: flex; gap: var(--space-2); margin-bottom: var(--space-8); flex-wrap: wrap; padding-bottom: var(--space-4); border-bottom: 1px solid var(--color-border-secondary);">
           <button
-            class="btn btn-ghost u-padding-y-12 u-padding-x-24 u-radius-md u-font-weight-500 active"
-            onclick="switchTab('2026')"
-            style="transition: all 0.3s ease"
+            class="btn btn-tertiary btn-sm tab-button active"
+            onclick="switchTab('2026', event)"
+            data-tab="2026"
+            style="position: relative;"
           >
             2026 Season
           </button>
           <button
-            class="btn btn-ghost u-padding-y-12 u-padding-x-24 u-radius-md u-font-weight-500"
-            onclick="switchTab('2027')"
-            style="transition: all 0.3s ease"
+            class="btn btn-tertiary btn-sm tab-button"
+            onclick="switchTab('2027', event)"
+            data-tab="2027"
+            style="position: relative;"
           >
             2027 Season
           </button>
           <button
-            class="btn btn-ghost u-padding-y-12 u-padding-x-24 u-radius-md u-font-weight-500"
-            onclick="switchTab('all')"
-            style="transition: all 0.3s ease"
+            class="btn btn-tertiary btn-sm tab-button"
+            onclick="switchTab('all', event)"
+            data-tab="all"
+            style="position: relative;"
           >
             All Tournaments
           </button>
           <button
-            class="btn btn-ghost u-padding-y-12 u-padding-x-24 u-radius-md u-font-weight-500"
-            onclick="switchTab('preparation')"
-            style="transition: all 0.3s ease"
+            class="btn btn-tertiary btn-sm tab-button"
+            onclick="switchTab('preparation', event)"
+            data-tab="preparation"
+            style="position: relative;"
           >
             Preparation
           </button>
@@ -360,7 +357,7 @@
         <section
           class="tournaments-grid u-display-grid u-gap-25 u-margin-bottom-30"
           id="tournamentsGrid"
-          style="grid-template-columns: repeat(auto-fill, minmax(350px, 1fr))"
+          style="grid-template-columns: repeat(auto-fill, minmax(360px, 1fr))"
         >
           <!-- Tournament cards will be populated by JavaScript -->
         </section>
@@ -368,23 +365,31 @@
         <!-- Loading state -->
         <div
           id="tournamentsLoading"
-          class="u-text-center u-padding-48 u-text-secondary"
-          style="display: none"
+          class="card"
+          style="display: none; text-align: center; padding: var(--space-16);"
         >
-          <div class="u-text-body-lg">Loading tournaments...</div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: var(--space-4);">
+            <div style="width: 48px; height: 48px; border: 3px solid var(--color-border-secondary); border-top-color: var(--color-brand-primary); border-radius: var(--radius-full); animation: spin 1s linear infinite;"></div>
+            <div style="font-size: var(--text-lg); color: var(--color-text-secondary); font-weight: var(--font-weight-medium);">
+              Loading tournaments...
+            </div>
+          </div>
         </div>
 
         <!-- Empty state -->
         <div
           id="tournamentsEmpty"
-          class="u-text-center u-padding-48 u-text-secondary"
-          style="display: none"
+          class="card"
+          style="display: none; text-align: center; padding: var(--space-16);"
         >
-          <div class="u-text-heading-md u-margin-bottom-8">
-            No tournaments found
-          </div>
-          <div class="u-text-body-md">
-            Check back later for upcoming tournaments.
+          <div style="display: flex; flex-direction: column; align-items: center; gap: var(--space-4);">
+            <i data-lucide="calendar-x" style="width: 64px; height: 64px; color: var(--color-text-tertiary); opacity: 0.5;"></i>
+            <div style="font-size: var(--text-xl); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); margin-bottom: var(--space-2);">
+              No tournaments found
+            </div>
+            <div style="font-size: var(--text-base); color: var(--color-text-secondary);">
+              Check back later for upcoming tournaments.
+            </div>
           </div>
         </div>
 
@@ -592,59 +597,15 @@
           </div>
         </section>
 
-        <section class="leaderboard">
-          <h3 class="leaderboard-title">Tournament Rankings</h3>
-          <div id="leaderboardList">
-            <div class="leaderboard-item">
-              <div class="rank first">1</div>
-              <div class="team-info">
-                <div class="team-name-lb">Thunder Bolts</div>
-                <div class="team-stats">
-                  5 wins • 0 losses • 145 points scored
-                </div>
-              </div>
-              <div class="points">2,500</div>
-            </div>
-            <div class="leaderboard-item">
-              <div class="rank second">2</div>
-              <div class="team-info">
-                <div class="team-name-lb">Storm Chasers</div>
-                <div class="team-stats">
-                  4 wins • 1 loss • 128 points scored
-                </div>
-              </div>
-              <div class="points">2,200</div>
-            </div>
-            <div class="leaderboard-item">
-              <div class="rank third">3</div>
-              <div class="team-info">
-                <div class="team-name-lb">Fire Eagles</div>
-                <div class="team-stats">
-                  4 wins • 1 loss • 112 points scored
-                </div>
-              </div>
-              <div class="points">2,100</div>
-            </div>
-            <div class="leaderboard-item">
-              <div class="rank other">4</div>
-              <div class="team-info">
-                <div class="team-name-lb">Ice Wolves</div>
-                <div class="team-stats">
-                  3 wins • 2 losses • 98 points scored
-                </div>
-              </div>
-              <div class="points">1,850</div>
-            </div>
-            <div class="leaderboard-item">
-              <div class="rank other">5</div>
-              <div class="team-info">
-                <div class="team-name-lb">Sky Hawks</div>
-                <div class="team-stats">
-                  3 wins • 2 losses • 89 points scored
-                </div>
-              </div>
-              <div class="points">1,720</div>
-            </div>
+        <section class="card leaderboard" style="margin-top: var(--space-8);">
+          <div class="card-header" style="border-bottom: 1px solid var(--color-border-secondary); padding: var(--space-6);">
+            <h3 style="font-size: var(--text-xl); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); margin: 0; display: flex; align-items: center; gap: var(--space-2);">
+              <i data-lucide="award" style="width: 24px; height: 24px; color: var(--color-brand-primary);"></i>
+              Tournament Rankings
+            </h3>
+          </div>
+          <div class="card-body" id="leaderboardList" style="padding: var(--space-6);">
+            <!-- Leaderboard items will be populated by JavaScript -->
           </div>
         </section>
       </main>
@@ -669,22 +630,27 @@
       async function initTournamentsPage() {
         if (!authManager.requireAuth()) return;
 
-        // Load real tournament data
+        // Initialize leaderboard with empty state
+        const leaderboard = document.getElementById("leaderboardList");
+        if (leaderboard && leaderboard.children.length === 0) {
+          updateLeaderboard([]);
+        }
+
+        // Load real tournament data immediately (synchronous, fast)
         loadRealTournamentData();
 
         // Initialize next tournament button
         initNextTournamentButton();
 
-        // Use performance monitoring for page load
-        await PerformanceUtils.measureAsyncPerformance(
-          "Tournament Page Load",
-          async () => {
-            await loadTournaments();
-          },
-        );
-
         // Setup optimized scroll handling for leaderboard
         setupOptimizedScrolling();
+
+        // Load API data in background (non-blocking)
+        // This allows the page to render immediately with local data
+        loadTournaments().catch((error) => {
+          console.warn("Background tournament data update failed:", error);
+          // Page already has local data, so this is non-critical
+        });
       }
 
       function setupOptimizedScrolling() {
@@ -709,12 +675,14 @@
       }
 
       async function loadTournaments() {
-        const loadingDiv = document.getElementById("tournamentsLoading");
+        // Only show loading if grid is empty (first load)
         const grid = document.getElementById("tournamentsGrid");
+        const isEmpty = !grid || grid.children.length === 0;
+        const loadingDiv = document.getElementById("tournamentsLoading");
 
-        // Show loading state
-        if (loadingDiv) loadingDiv.style.display = "block";
-        if (grid) grid.innerHTML = "";
+        if (isEmpty && loadingDiv) {
+          loadingDiv.style.display = "block";
+        }
 
         try {
           // Check cache first for faster loading
@@ -722,26 +690,54 @@
           let response = PerformanceUtils.getCachedResponse(cacheKey);
 
           if (!response) {
-            response = await apiClient.get("/api/tournaments");
+            // Use a timeout to prevent hanging on slow API
+            const timeoutPromise = new Promise((_, reject) =>
+              setTimeout(() => reject(new Error("API timeout")), 3000)
+            );
+            
+            response = await Promise.race([
+              apiClient.get("/api/tournaments"),
+              timeoutPromise,
+            ]);
+            
             // Cache successful responses for 5 minutes
-            if (response.success) {
+            if (response && response.success) {
               PerformanceUtils.cacheResponse(cacheKey, response, 5);
             }
           }
 
-          if (response.success && response.data.tournaments) {
-            updateTournamentsGrid(response.data.tournaments);
-          } else {
-            updateTournamentsGrid([]);
-          }
+          // Only update if we got valid data and it's different from local data
+          if (response && response.success && response.data.tournaments) {
+            // Validate API response structure - must have startDate or month field
+            const isValidTournamentData = response.data.tournaments.every(t => 
+              t.startDate || t.month || t.id?.includes('_2026') || t.id?.includes('_2027')
+            );
+            
+            // Only use API data if it matches expected structure
+            if (!isValidTournamentData) {
+              console.debug("API returned invalid tournament structure, keeping local data");
+              return; // Keep local data, ignore API response
+            }
+            
+            // Check if API data is different from what's currently displayed
+            const currentTournamentIds = Array.from(grid?.querySelectorAll('[data-tournament-id]') || [])
+              .map(el => el.getAttribute('data-tournament-id'));
+            const apiTournamentIds = response.data.tournaments.map(t => t.id);
+            
+            // Only update if data is different
+            if (JSON.stringify(currentTournamentIds.sort()) !== JSON.stringify(apiTournamentIds.sort())) {
+              updateTournamentsGrid(response.data.tournaments);
+            }
 
-          if (response.success && response.data.leaderboard) {
-            updateLeaderboard(response.data.leaderboard);
+            if (response.data.leaderboard && Array.isArray(response.data.leaderboard)) {
+              updateLeaderboard(response.data.leaderboard);
+            }
           }
         } catch (error) {
-          console.error("Failed to load tournaments:", error);
-          updateTournamentsGrid([]);
-          authManager.showError("Failed to load tournament data");
+          // Silently fail - we already have local data displayed
+          if (isEmpty) {
+            console.warn("Failed to load tournaments from API, using local data:", error);
+          }
         } finally {
           // Hide loading state
           if (loadingDiv) loadingDiv.style.display = "none";
@@ -751,7 +747,20 @@
       // Load real tournament data
       function loadRealTournamentData() {
         // Default to 2026 season
-        switchTab("2026");
+        const defaultTab = "2026";
+        // Set active tab styling
+        document.querySelectorAll(".tab-button").forEach((btn) => {
+          btn.classList.remove("active");
+          btn.style.color = "";
+          btn.style.fontWeight = "";
+        });
+        const activeTabBtn = document.querySelector(`[data-tab="${defaultTab}"]`);
+        if (activeTabBtn) {
+          activeTabBtn.classList.add("active");
+          activeTabBtn.style.color = "var(--color-brand-primary)";
+          activeTabBtn.style.fontWeight = "var(--font-weight-semibold)";
+        }
+        switchTab(defaultTab);
       }
 
       function initNextTournamentButton() {
@@ -760,14 +769,16 @@
 
         if (nextTournament) {
           const daysUntil = getDaysUntilTournament(nextTournament);
+          const btnText = btn.querySelector("span");
           if (daysUntil !== null) {
-            btn.textContent = `Next: ${nextTournament.name} (${daysUntil} days)`;
+            btnText.textContent = `Next: ${nextTournament.name} (${daysUntil} ${daysUntil === 1 ? 'day' : 'days'})`;
           } else {
-            btn.textContent = `Next: ${nextTournament.name} (${nextTournament.month})`;
+            btnText.textContent = `Next: ${nextTournament.name}${nextTournament.month ? ` (${nextTournament.month})` : ''}`;
           }
           btn.onclick = () => scrollToTournament(nextTournament.id);
         } else {
-          btn.textContent = "Season Complete";
+          const btnText = btn.querySelector("span");
+          btnText.textContent = "Season Complete";
           btn.disabled = true;
         }
       }
@@ -787,109 +798,206 @@
         const loadingDiv = document.getElementById("tournamentsLoading");
         const emptyDiv = document.getElementById("tournamentsEmpty");
 
+        // Safety check - ensure grid exists
+        if (!grid) {
+          console.error("Tournaments grid element not found");
+          return;
+        }
+
         // Hide loading and empty states
         if (loadingDiv) loadingDiv.style.display = "none";
         if (emptyDiv) emptyDiv.style.display = "none";
 
         // Show empty state if no tournaments
         if (!tournaments || tournaments.length === 0) {
-          if (emptyDiv) emptyDiv.style.display = "block";
+          if (emptyDiv) {
+            emptyDiv.style.display = "block";
+            // Initialize icons in empty state
+            if (typeof lucide !== 'undefined') {
+              setTimeout(() => lucide.createIcons(), 100);
+            }
+          }
           grid.innerHTML = "";
           return;
         }
+
+        // Debug log to verify tournaments are being passed
+        console.debug(`Rendering ${tournaments.length} tournaments`);
 
         grid.innerHTML = tournaments
           .map((tournament) => {
             const typeInfo = getTournamentTypeInfo(tournament.type);
             const daysUntil = getDaysUntilTournament(tournament);
             const preparation = getTournamentPreparation(tournament);
+            const statusClass = daysUntil !== null && daysUntil <= 7 ? "status-urgent" : daysUntil !== null && daysUntil <= 30 ? "status-soon" : "status-upcoming";
 
             return `
-                <div class="tournament-card u-radius-xl u-shadow-md" data-tournament-id="${tournament.id}" style="border: 1px solid var(--color-border-secondary);">
-                    <div class="tournament-header u-padding-20 u-text-primary" style="color: var(--color-text-on-surface);">
-                        <div class="tournament-status u-position-absolute u-padding-y-2 u-padding-x-12 u-radius-full u-text-caption u-font-weight-500" style="top: 15px; right: 15px; background: rgba(255, 255, 255, 0.2);">${tournament.type}</div>
-                        <div class="tournament-title u-text-heading-md u-font-weight-700 u-margin-bottom-8">${tournament.name} ${tournament.flag || ""}</div>
-                        <div class="tournament-subtitle u-text-body-sm" style="opacity: 0.9;">${tournament.description || ""}</div>
+                <div class="card card-elevated tournament-card" data-tournament-id="${tournament.id}">
+                    <div class="card-header tournament-card-header" style="background: linear-gradient(135deg, ${typeInfo.color}15 0%, ${typeInfo.color}08 100%); border-bottom: 2px solid ${typeInfo.color}40; position: relative; padding: var(--space-6);">
+                        <div class="tournament-status-badge" style="position: absolute; top: var(--space-4); right: var(--space-4); padding: var(--space-1) var(--space-3); background: ${typeInfo.color}; color: white; border-radius: var(--radius-full); font-size: var(--text-xs); font-weight: var(--font-weight-semibold); text-transform: uppercase; letter-spacing: var(--tracking-wide);">
+                            ${tournament.type}
+                        </div>
+                        <div style="display: flex; align-items: center; gap: var(--space-3); margin-top: var(--space-2);">
+                            <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; background: ${typeInfo.color}20; border-radius: var(--radius-lg); font-size: 24px;">
+                                ${typeInfo.icon}
+                            </div>
+                            <div style="flex: 1;">
+                                <h3 class="card-title" style="font-size: var(--text-xl); font-weight: var(--font-weight-bold); color: var(--color-text-primary); margin: 0 0 var(--space-1) 0; display: flex; align-items: center; gap: var(--space-2);">
+                                    ${tournament.name} ${tournament.flag || ""}
+                                </h3>
+                                <p style="font-size: var(--text-sm); color: var(--color-text-secondary); margin: 0;">
+                                    ${tournament.description || tournament.location || ""}
+                                </p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="tournament-body u-padding-25">
-                        <div class="tournament-info u-display-grid u-gap-15 u-margin-bottom-20" style="grid-template-columns: 1fr 1fr;">
-                            <div class="info-item u-display-flex u-align-center u-gap-10">
-                                <div class="info-icon date u-width-35 u-height-35 u-radius-md u-display-flex u-align-center u-justify-center" style="background: var(--color-brand-subtle); color: var(--color-brand-primary); font-size: 1.1rem;"><i data-lucide="calendar" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></div>
-                                <div>
-                                    <div class="u-text-body-sm u-font-weight-500 u-text-primary">${formatTournamentDate(tournament)}</div>
-                                    <div class="u-text-caption u-text-secondary">${daysUntil !== null ? `${daysUntil} days away` : "Date TBD"}</div>
+                    <div class="card-body" style="padding: var(--space-6);">
+                        <div class="tournament-info-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-4); margin-bottom: var(--space-6);">
+                            <div class="info-item" style="display: flex; align-items: flex-start; gap: var(--space-3);">
+                                <div class="info-icon" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: var(--color-brand-primary-subtle); border-radius: var(--radius-md); flex-shrink: 0;">
+                                    <i data-lucide="calendar" style="width: 18px; height: 18px; color: var(--color-brand-primary);"></i>
+                                </div>
+                                <div style="flex: 1; min-width: 0;">
+                                    <div style="font-size: var(--text-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); margin-bottom: var(--space-1);">
+                                        ${formatTournamentDate(tournament)}
+                                    </div>
+                                    <div style="font-size: var(--text-xs); color: var(--color-text-secondary);">
+                                        ${daysUntil !== null ? `${daysUntil} ${daysUntil === 1 ? 'day' : 'days'} away` : tournament.month ? `${tournament.month} 2027` : "Date TBD"}
+                                    </div>
                                 </div>
                             </div>
-                            <div class="info-item u-display-flex u-align-center u-gap-10">
-                                <div class="info-icon location u-width-35 u-height-35 u-radius-md u-display-flex u-align-center u-justify-center" style="background: #f3e5f5; color: #7b1fa2; font-size: 1.1rem;">📍</div>
-                                <div>
-                                    <div class="u-text-body-sm u-font-weight-500 u-text-primary">${tournament.location || "TBD"}</div>
-                                    <div class="u-text-caption u-text-secondary">${tournament.venue || "Venue TBD"}</div>
+                            <div class="info-item" style="display: flex; align-items: flex-start; gap: var(--space-3);">
+                                <div class="info-icon" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(139, 92, 246, 0.1); border-radius: var(--radius-md); flex-shrink: 0;">
+                                    <i data-lucide="map-pin" style="width: 18px; height: 18px; color: #8b5cf6;"></i>
+                                </div>
+                                <div style="flex: 1; min-width: 0;">
+                                    <div style="font-size: var(--text-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); margin-bottom: var(--space-1);">
+                                        ${tournament.location || "TBD"}
+                                    </div>
+                                    <div style="font-size: var(--text-xs); color: var(--color-text-secondary);">
+                                        ${tournament.venue || tournament.country || "Venue TBD"}
+                                    </div>
                                 </div>
                             </div>
-                            <div class="info-item u-display-flex u-align-center u-gap-10">
-                                <div class="info-icon prize u-width-35 u-height-35 u-radius-md u-display-flex u-align-center u-justify-center" style="background: #fff3e0; color: #f57c00; font-size: 1.1rem;">💰</div>
-                                <div>
-                                    <div class="u-text-body-sm u-font-weight-500 u-text-primary">${tournament.prizePool === "TBD" ? "TBD" : tournament.prizePool}</div>
-                                    <div class="u-text-caption u-text-secondary">Prize pool</div>
+                            <div class="info-item" style="display: flex; align-items: flex-start; gap: var(--space-3);">
+                                <div class="info-icon" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(245, 158, 11, 0.1); border-radius: var(--radius-md); flex-shrink: 0;">
+                                    <i data-lucide="award" style="width: 18px; height: 18px; color: #f59e0b;"></i>
+                                </div>
+                                <div style="flex: 1; min-width: 0;">
+                                    <div style="font-size: var(--text-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); margin-bottom: var(--space-1);">
+                                        ${tournament.prizePool === "TBD" ? "TBD" : tournament.prizePool}
+                                    </div>
+                                    <div style="font-size: var(--text-xs); color: var(--color-text-secondary);">
+                                        Prize pool
+                                    </div>
                                 </div>
                             </div>
-                            <div class="info-item u-display-flex u-align-center u-gap-10">
-                                <div class="info-icon teams u-width-35 u-height-35 u-radius-md u-display-flex u-align-center u-justify-center" style="background: var(--color-brand-subtle); color: var(--color-brand-primary); font-size: 1.1rem;"><i data-lucide="users" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></div>
-                                <div>
-                                    <div class="u-text-body-sm u-font-weight-500 u-text-primary">${tournament.expectedTeams === "TBD" ? "TBD" : tournament.expectedTeams + " teams"}</div>
-                                    <div class="u-text-caption u-text-secondary">${tournament.isInvitationOnly ? "Invitation Only" : "Expected"}</div>
+                            <div class="info-item" style="display: flex; align-items: flex-start; gap: var(--space-3);">
+                                <div class="info-icon" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: var(--color-brand-primary-subtle); border-radius: var(--radius-md); flex-shrink: 0;">
+                                    <i data-lucide="users" style="width: 18px; height: 18px; color: var(--color-brand-primary);"></i>
+                                </div>
+                                <div style="flex: 1; min-width: 0;">
+                                    <div style="font-size: var(--text-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); margin-bottom: var(--space-1);">
+                                        ${tournament.expectedTeams === "TBD" ? "TBD" : typeof tournament.expectedTeams === 'number' ? tournament.expectedTeams + " teams" : tournament.expectedTeams}
+                                    </div>
+                                    <div style="font-size: var(--text-xs); color: var(--color-text-secondary);">
+                                        ${tournament.isInvitationOnly ? "Invitation Only" : "Expected"}
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="tournament-progress u-margin-bottom-20">
-                            <div class="progress-label u-display-flex u-justify-between u-margin-bottom-8 u-text-body-sm u-text-primary">
-                                <span>Preparation: ${preparation.phase.replace("_", " ")}</span>
-                                <span>${tournament.qualificationPoints === "TBD" ? "Points TBD" : tournament.qualificationPoints + " pts"}</span>
+                        <div class="tournament-preparation" style="background: var(--surface-secondary); border-radius: var(--radius-lg); padding: var(--space-4); margin-bottom: var(--space-6); border: 1px solid var(--color-border-secondary);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-3);">
+                                <div style="display: flex; align-items: center; gap: var(--space-2);">
+                                    <i data-lucide="target" style="width: 16px; height: 16px; color: var(--color-brand-primary);"></i>
+                                    <span style="font-size: var(--text-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); text-transform: capitalize;">
+                                        ${preparation.phase.replace(/_/g, " ")}
+                                    </span>
+                                </div>
+                                ${tournament.qualificationPoints !== "TBD" ? `<span style="font-size: var(--text-xs); color: var(--color-text-secondary);">${tournament.qualificationPoints} pts</span>` : ""}
                             </div>
-                            <div class="u-bg-secondary u-padding-12 u-radius-lg u-margin-top-12">
-                                <div class="u-text-caption u-text-secondary u-margin-bottom-8">${preparation.description}</div>
-                                ${preparation.tasks
-                                  .slice(0, 2)
-                                  .map(
-                                    (task) =>
-                                      `<div class="u-text-caption u-text-secondary">• ${task}</div>`,
-                                  )
-                                  .join("")}
-                            </div>
+                            <p style="font-size: var(--text-xs); color: var(--color-text-secondary); margin: 0 0 var(--space-2) 0;">
+                                ${preparation.description}
+                            </p>
+                            <ul style="margin: 0; padding-left: var(--space-4); list-style: none;">
+                                ${preparation.tasks.slice(0, 2).map(task => `
+                                    <li style="font-size: var(--text-xs); color: var(--color-text-secondary); margin-bottom: var(--space-1); position: relative; padding-left: var(--space-3);">
+                                        <span style="position: absolute; left: 0; color: var(--color-brand-primary);">•</span>
+                                        ${task}
+                                    </li>
+                                `).join("")}
+                            </ul>
                         </div>
-                        <div class="tournament-actions u-display-flex u-gap-10">
+                        <div class="tournament-actions" style="display: flex; gap: var(--space-3);">
                             ${
                               tournament.isInvitationOnly
-                                ? '<button class="btn btn-secondary hover-lift-small u-flex-1" disabled>Invitation Only</button>'
-                                : `<button class="btn btn-primary hover-lift u-flex-1" onclick="viewTournamentDetails('${tournament.id}')">Register Interest</button>`
+                                ? '<button class="btn btn-secondary btn-md" disabled style="flex: 1;"><i data-lucide="lock"></i> Invitation Only</button>'
+                                : `<button class="btn btn-primary btn-md" onclick="viewTournamentDetails('${tournament.id}')" style="flex: 1;"><i data-lucide="user-plus"></i> Register Interest</button>`
                             }
-                            <button class="btn btn-secondary hover-lift-small u-flex-1" onclick="viewTournamentDetails('${tournament.id}')">View Details</button>
+                            <button class="btn btn-secondary btn-md" onclick="viewTournamentDetails('${tournament.id}')" style="flex: 1;"><i data-lucide="eye"></i> View Details</button>
                         </div>
                     </div>
                 </div>
             `;
           })
           .join("");
+        
+        // Initialize Lucide icons after rendering
+        if (typeof lucide !== 'undefined') {
+          lucide.createIcons();
+        }
       }
 
       function updateLeaderboard(teams) {
         const leaderboard = document.getElementById("leaderboardList");
 
+        if (!teams || teams.length === 0) {
+          leaderboard.innerHTML = `
+            <div style="text-align: center; padding: var(--space-8); color: var(--color-text-secondary);">
+              <i data-lucide="trophy" style="width: 48px; height: 48px; margin: 0 auto var(--space-4); display: block; opacity: 0.3;"></i>
+              <p style="margin: 0;">No rankings available yet</p>
+            </div>
+          `;
+          if (typeof lucide !== 'undefined') lucide.createIcons();
+          return;
+        }
+
         leaderboard.innerHTML = teams
           .map(
-            (team, index) => `
-                <div class="leaderboard-item">
-                    <div class="rank ${getRankClass(index + 1)}">${index + 1}</div>
-                    <div class="team-info">
-                        <div class="team-name-lb">${team.name}</div>
-                        <div class="team-stats">${team.wins} wins • ${team.losses} losses • ${team.pointsScored} points scored</div>
+            (team, index) => {
+              const rank = index + 1;
+              const rankClass = getRankClass(rank);
+              const rankColors = {
+                first: { bg: "linear-gradient(135deg, #ffd700 0%, #ffb300 100%)", color: "#000" },
+                second: { bg: "linear-gradient(135deg, #c0c0c0 0%, #a0a0a0 100%)", color: "#000" },
+                third: { bg: "linear-gradient(135deg, #cd7f32 0%, #b87333 100%)", color: "#fff" },
+                other: { bg: "var(--surface-secondary)", color: "var(--color-text-secondary)" }
+              };
+              const colors = rankColors[rankClass] || rankColors.other;
+              
+              return `
+                <div class="leaderboard-item" style="display: flex; align-items: center; gap: var(--space-4); padding: var(--space-4) 0; border-bottom: ${index < teams.length - 1 ? '1px solid var(--color-border-secondary)' : 'none'};">
+                    <div class="rank rank-${rankClass}" style="width: 40px; height: 40px; border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; font-weight: var(--font-weight-bold); font-size: var(--text-lg); background: ${colors.bg}; color: ${colors.color}; flex-shrink: 0;">
+                        ${rank}
                     </div>
-                    <div class="points">${team.points.toLocaleString()}</div>
+                    <div class="team-info" style="flex: 1; min-width: 0;">
+                        <div style="font-size: var(--text-base); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); margin-bottom: var(--space-1);">
+                            ${team.name}
+                        </div>
+                        <div style="font-size: var(--text-sm); color: var(--color-text-secondary);">
+                            ${team.wins} wins • ${team.losses} ${team.losses === 1 ? 'loss' : 'losses'} • ${team.pointsScored} points scored
+                        </div>
+                    </div>
+                    <div style="font-size: var(--text-lg); font-weight: var(--font-weight-bold); color: var(--color-brand-primary); flex-shrink: 0;">
+                        ${team.points.toLocaleString()}
+                    </div>
                 </div>
-            `,
+            `;
+            }
           )
           .join("");
+        
+        if (typeof lucide !== 'undefined') lucide.createIcons();
       }
 
       function getStatusColor(status) {
@@ -909,14 +1017,32 @@
         return "other";
       }
 
-      window.switchTab = function (tab) {
+      window.switchTab = function (tab, event) {
+        // Ensure grid exists before proceeding
+        const grid = document.getElementById("tournamentsGrid");
+        if (!grid) {
+          console.warn("Tournaments grid not found, retrying...");
+          setTimeout(() => switchTab(tab, event), 100);
+          return;
+        }
+
         // Remove active class from all tabs
         document
-          .querySelectorAll(".btn.btn-ghost")
-          .forEach((btn) => btn.classList.remove("active"));
+          .querySelectorAll(".tab-button")
+          .forEach((btn) => {
+            btn.classList.remove("active");
+            btn.style.color = "";
+            btn.style.fontWeight = "";
+          });
 
         // Add active class to clicked tab
-        event.target.classList.add("active");
+        // If called from click event, use event.target; otherwise find by data-tab attribute
+        const clickedTab = (event && event.target) || document.querySelector(`[data-tab="${tab}"]`);
+        if (clickedTab && clickedTab.classList) {
+          clickedTab.classList.add("active");
+          clickedTab.style.color = "var(--color-brand-primary)";
+          clickedTab.style.fontWeight = "var(--font-weight-semibold)";
+        }
 
         // Load tournaments based on tab
         let tournaments = [];
@@ -944,34 +1070,47 @@
             tournaments = getTournamentsByYear("2026");
         }
 
-        updateTournamentsGrid(tournaments);
+        // Render tournaments immediately with local data
+        // Always call updateTournamentsGrid - it handles empty arrays by showing empty state
+        updateTournamentsGrid(tournaments || []);
 
-        // Load tournaments for selected tab
+        // Load tournaments for selected tab in background (non-blocking)
         loadTournamentsByType(tab);
       };
 
       async function loadTournamentsByType(type) {
-        const loadingDiv = document.getElementById("tournamentsLoading");
-        const grid = document.getElementById("tournamentsGrid");
-
-        // Show loading state
-        if (loadingDiv) loadingDiv.style.display = "block";
-        if (grid) grid.innerHTML = "";
-
+        // Don't clear grid or show loading - keep local data visible
+        // This is a background update that only happens if API returns better data
         try {
           const response = await apiClient.get(`/api/tournaments?type=${type}`);
 
-          if (response.success) {
-            updateTournamentsGrid(response.data.tournaments || []);
-          } else {
-            updateTournamentsGrid([]);
+          // Only update if API returns valid data with correct structure
+          if (response && response.success && response.data.tournaments && response.data.tournaments.length > 0) {
+            // Validate API response structure - must have startDate or month field
+            const isValidTournamentData = response.data.tournaments.every(t => 
+              t.startDate || t.month || t.id?.includes('_2026') || t.id?.includes('_2027')
+            );
+            
+            // Only use API data if it matches expected structure
+            if (!isValidTournamentData) {
+              console.debug("API returned invalid tournament structure, keeping local data");
+              return; // Keep local data, ignore API response
+            }
+            
+            const grid = document.getElementById("tournamentsGrid");
+            const currentTournamentIds = Array.from(grid?.querySelectorAll('[data-tournament-id]') || [])
+              .map(el => el.getAttribute('data-tournament-id'));
+            const apiTournamentIds = response.data.tournaments.map(t => t.id);
+            
+            // Only update if data is different
+            if (JSON.stringify(currentTournamentIds.sort()) !== JSON.stringify(apiTournamentIds.sort())) {
+              updateTournamentsGrid(response.data.tournaments);
+            }
           }
+          // If API fails or returns empty, keep local data displayed (silent fail)
         } catch (error) {
-          console.error("Failed to load tournaments by type:", error);
-          updateTournamentsGrid([]);
-        } finally {
-          // Hide loading state
-          if (loadingDiv) loadingDiv.style.display = "none";
+          // Silently fail - local data is already displayed
+          console.debug("Background tournament update failed, using local data:", error);
         }
       }
 

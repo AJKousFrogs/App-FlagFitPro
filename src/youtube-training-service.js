@@ -107,6 +107,12 @@ class YouTubeTrainingService {
 
   // Get cached videos or fetch from YouTube
   async getTrainingVideos(category, maxResults = 12) {
+    // If API key is not configured, return fallback videos immediately
+    if (!this.isConfigured()) {
+      logger.debug(`📺 YouTube API key not configured, returning fallback videos for ${category}`);
+      return this.getFallbackVideos(category);
+    }
+
     const cacheKey = `${category}-${maxResults}`;
 
     // Check cache first
@@ -129,7 +135,10 @@ class YouTubeTrainingService {
 
       return videos;
     } catch (error) {
-      logger.error(`❌ Error fetching ${category} videos:`, error);
+      // Only log error if API key is configured (otherwise it's expected)
+      if (this.isConfigured()) {
+        logger.error(`❌ Error fetching ${category} videos:`, error);
+      }
 
       // Return fallback/demo videos if API fails
       return this.getFallbackVideos(category);
@@ -138,6 +147,12 @@ class YouTubeTrainingService {
 
   // Fetch videos from YouTube Data API
   async fetchVideosFromYouTube(category, maxResults) {
+    // Check if API key is configured before making API calls
+    if (!this.isConfigured()) {
+      logger.debug(`📺 YouTube API key not configured, using fallback videos for ${category}`);
+      throw new Error("YouTube API key not configured");
+    }
+
     const categories = this.getTrainingCategories();
     const categoryData = categories[category];
 
@@ -159,10 +174,13 @@ class YouTubeTrainingService {
         );
         allVideos.push(...videos);
       } catch (error) {
-        logger.warn(
-          `⚠️ Failed to fetch videos for "${keyword}":`,
-          error.message,
-        );
+        // Only log warning if API key is configured (otherwise it's expected)
+        if (this.isConfigured()) {
+          logger.warn(
+            `⚠️ Failed to fetch videos for "${keyword}":`,
+            error.message,
+          );
+        }
       }
     }
 
@@ -175,6 +193,11 @@ class YouTubeTrainingService {
 
   // Search YouTube for specific keywords
   async searchVideos(query, maxResults = 4) {
+    // Check if API key is configured before making API calls
+    if (!this.isConfigured()) {
+      throw new Error("YouTube API key not configured");
+    }
+
     const url = new URL(`${this.baseUrl}/search`);
     url.searchParams.set("part", "snippet");
     url.searchParams.set("q", query);
@@ -188,12 +211,18 @@ class YouTubeTrainingService {
     const response = await fetch(url);
 
     if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage = errorData.error?.message || response.statusText;
       throw new Error(
-        `YouTube API error: ${response.status} ${response.statusText}`,
+        `YouTube API error: ${response.status} ${errorMessage}`,
       );
     }
 
     const data = await response.json();
+
+    if (!data.items || data.items.length === 0) {
+      return [];
+    }
 
     return data.items.map((item) => ({
       id: item.id.videoId,
@@ -369,19 +398,32 @@ class YouTubeTrainingService {
 
   // Search for specific exercise or technique
   async searchSpecificExercise(exerciseName, maxResults = 6) {
+    // If API key is not configured, return fallback videos immediately
+    if (!this.isConfigured()) {
+      return this.getFallbackVideos("sprint-drills").slice(0, maxResults);
+    }
+
     const enhancedQuery = `${exerciseName} tutorial technique training`;
 
     try {
       const videos = await this.searchVideos(enhancedQuery, maxResults);
       return this.filterAndSortVideos(videos, maxResults);
     } catch (error) {
-      logger.error(`❌ Error searching for ${exerciseName}:`, error);
+      // Only log error if API key is configured (otherwise it's expected)
+      if (this.isConfigured()) {
+        logger.error(`❌ Error searching for ${exerciseName}:`, error);
+      }
       return this.getFallbackVideos("sprint-drills").slice(0, maxResults);
     }
   }
 
   // Get video details with additional metadata
   async getVideoDetails(videoId) {
+    // If API key is not configured, return null immediately
+    if (!this.isConfigured()) {
+      return null;
+    }
+
     try {
       const url = new URL(`${this.baseUrl}/videos`);
       url.searchParams.set("part", "snippet,statistics,contentDetails");
@@ -389,6 +431,11 @@ class YouTubeTrainingService {
       url.searchParams.set("key", this.apiKey);
 
       const response = await fetch(url);
+      
+      if (!response.ok) {
+        throw new Error(`YouTube API error: ${response.status}`);
+      }
+
       const data = await response.json();
 
       if (data.items && data.items.length > 0) {
@@ -408,7 +455,10 @@ class YouTubeTrainingService {
         };
       }
     } catch (error) {
-      logger.error(`❌ Error fetching video details for ${videoId}:`, error);
+      // Only log error if API key is configured (otherwise it's expected)
+      if (this.isConfigured()) {
+        logger.error(`❌ Error fetching video details for ${videoId}:`, error);
+      }
     }
 
     return null;

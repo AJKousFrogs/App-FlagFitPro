@@ -106,7 +106,6 @@
       "log-out": "Logout",
       "log-in": "Login",
       lock: "Sign in",
-      football: "FlagFit Pro",
       activity: "Activity",
       "layout-dashboard": "Dashboard",
       "bar-chart-3": "Analytics",

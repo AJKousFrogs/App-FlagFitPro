@@ -1,12 +1,12 @@
 // FlagFit AI Chatbot Component
 // Provides intelligent responses about sports psychology, nutrition, speed training, injuries, recovery, etc.
 
-// Simple logger fallback
-const logger = {
-  error: (...args) => logger.error(...args),
-  warn: (...args) => logger.warn(...args),
-  info: (...args) => logger.info(...args),
-  log: (...args) => logger.debug(...args),
+// Logger fallback - use window.logger if available, otherwise console
+const logger = window.logger || {
+  error: (...args) => console.error(...args),
+  warn: (...args) => console.warn(...args),
+  info: (...args) => console.info(...args),
+  debug: (...args) => console.debug(...args),
 };
 
 class FlagFitChatbot {
@@ -453,23 +453,43 @@ class FlagFitChatbot {
     this.addMessage("user", message);
     input.value = "";
     input.style.height = "auto";
-    document.getElementById("chatbot-send").disabled = true;
+    const sendBtn = document.getElementById("chatbot-send");
+    if (sendBtn) sendBtn.disabled = true;
 
     // Show typing indicator
     this.showTypingIndicator();
 
-    // Get response (now async)
+    // Get response (now async) - ensure we always get a response
     try {
-      const response = await this.getResponse(message);
+      const response = await Promise.race([
+        this.getResponse(message),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error("Timeout")), 10000)
+        )
+      ]);
       this.hideTypingIndicator();
-      this.addMessage("bot", response);
+      if (response && typeof response === 'string' && response.trim()) {
+        this.addMessage("bot", response);
+      } else {
+        // Fallback if response is empty
+        this.addMessage("bot", await this.getLocalResponse(null, message, message.toLowerCase()));
+      }
     } catch (error) {
       logger.error("Error getting response:", error);
       this.hideTypingIndicator();
-      this.addMessage(
-        "bot",
-        "I apologize, but I'm having trouble processing your question right now. Please try rephrasing it.",
-      );
+      // Always provide a helpful fallback response
+      try {
+        const fallbackResponse = await this.getLocalResponse(null, message, message.toLowerCase());
+        this.addMessage("bot", fallbackResponse);
+      } catch (fallbackError) {
+        logger.error("Fallback also failed:", fallbackError);
+        this.addMessage(
+          "bot",
+          "I apologize, but I'm having trouble processing your question right now. I can help with:\n• Sports psychology & mental training\n• Nutrition & supplements\n• Speed & agility development\n• Injury prevention & treatment\n• Recovery strategies\n• Training programs\n\nCould you try rephrasing your question?",
+        );
+      }
+    } finally {
+      if (sendBtn) sendBtn.disabled = false;
     }
   }
 
@@ -483,11 +503,27 @@ class FlagFitChatbot {
 
     try {
       // Import question parser and answer generator
-      const { questionParser } = await import("../utils/question-parser.js");
-      const { answerGenerator } = await import("../utils/answer-generator.js");
+      let questionParser, answerGenerator;
+      try {
+        const parserModule = await import("../utils/question-parser.js");
+        questionParser = parserModule.questionParser || new parserModule.QuestionParser();
+        
+        const generatorModule = await import("../utils/answer-generator.js");
+        answerGenerator = generatorModule.answerGenerator || new generatorModule.AnswerGenerator();
 
-      // Parse the question
-      parsedQuestion = questionParser.parse(userMessage);
+        // Parse the question
+        parsedQuestion = questionParser.parse(userMessage);
+      } catch (parseError) {
+        logger.debug("Question parser unavailable, using simple parsing:", parseError);
+        // Create simple parsed question
+        parsedQuestion = {
+          intent: this.detectSimpleIntent(lowerMessage),
+          entities: this.extractSimpleEntities(lowerMessage, userMessage),
+          original: userMessage,
+        };
+        questionParser = null;
+        answerGenerator = null;
+      }
 
       // Try knowledge base first (if available)
       try {
@@ -498,15 +534,15 @@ class FlagFitChatbot {
         // Search knowledge base
         knowledgeEntry = await knowledgeBaseService.searchKnowledgeBase(
           userMessage,
-          parsedQuestion.entities.supplements[0]
+          parsedQuestion.entities?.supplements?.[0]
             ? "supplement"
-            : parsedQuestion.entities.injuries[0]
+            : parsedQuestion.entities?.injuries?.[0]
               ? "injury"
-              : parsedQuestion.entities.recovery[0]
+              : parsedQuestion.entities?.recovery?.[0]
                 ? "recovery_method"
-                : parsedQuestion.entities.training[0]
+                : parsedQuestion.entities?.training?.[0]
                   ? "training_method"
-                  : parsedQuestion.entities.psychology[0]
+                  : parsedQuestion.entities?.psychology?.[0]
                     ? "psychology"
                     : null,
         );
@@ -514,16 +550,16 @@ class FlagFitChatbot {
         // If no knowledge entry, search articles
         if (!knowledgeEntry) {
           articles = await knowledgeBaseService.searchArticles(userMessage, [
-            ...parsedQuestion.entities.supplements,
-            ...parsedQuestion.entities.injuries,
-            ...parsedQuestion.entities.recovery,
-            ...parsedQuestion.entities.training,
-            ...parsedQuestion.entities.psychology,
+            ...(parsedQuestion.entities?.supplements || []),
+            ...(parsedQuestion.entities?.injuries || []),
+            ...(parsedQuestion.entities?.recovery || []),
+            ...(parsedQuestion.entities?.training || []),
+            ...(parsedQuestion.entities?.psychology || []),
           ]);
         }
 
-        // Generate intelligent answer
-        if (knowledgeEntry || articles.length > 0) {
+        // Generate intelligent answer if we have parser and generator
+        if (answerGenerator && (knowledgeEntry || articles.length > 0)) {
           let answer = answerGenerator.generateAnswer(
             parsedQuestion,
             knowledgeEntry,
@@ -541,9 +577,9 @@ class FlagFitChatbot {
 
             // Add disclaimers if needed
             const topic =
-              parsedQuestion.entities.supplements[0] ||
-              parsedQuestion.entities.injuries[0] ||
-              parsedQuestion.entities.recovery[0] ||
+              parsedQuestion.entities?.supplements?.[0] ||
+              parsedQuestion.entities?.injuries?.[0] ||
+              parsedQuestion.entities?.recovery?.[0] ||
               "";
             answer = responseEnhancer.addDisclaimers(answer, topic);
           } catch {
@@ -567,8 +603,14 @@ class FlagFitChatbot {
       );
     } catch (error) {
       logger.error("Error in intelligent response:", error);
-      // Ultimate fallback
-      return await this.getLocalResponse(null, userMessage, lowerMessage);
+      // Ultimate fallback - always return a helpful response
+      try {
+        return await this.getLocalResponse(null, userMessage, lowerMessage);
+      } catch (fallbackError) {
+        logger.error("Even fallback failed:", fallbackError);
+        // Last resort - return a generic helpful message
+        return "I understand you're asking about flag football training. I can help with:\n• Sports psychology & mental training\n• Nutrition & supplements\n• Speed & agility development\n• Injury prevention & treatment\n• Recovery strategies\n• Training programs\n\nCould you rephrase your question?";
+      }
     }
   }
 

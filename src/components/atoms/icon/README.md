@@ -28,7 +28,7 @@ Common sizes:
 
 ```html
 <i
-  data-lucide="football"
+  data-lucide="activity"
   style="width: 24px; height: 24px; color: var(--color-brand-primary);"
 ></i>
 ```
@@ -49,7 +49,7 @@ Use CSS variables for colors:
 - `menu` - Menu/Hamburger
 - `x` - Close
 - `play` - Play/Start
-- `football` - Football/Training
+- `activity` - Activity/Training
 - `trophy` - Achievements
 - `calendar` - Schedule
 - `bar-chart-3` - Analytics

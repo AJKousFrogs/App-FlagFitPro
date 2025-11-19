@@ -111,6 +111,7 @@ export const TOURNAMENT_SCHEDULE = {
       registrationDeadline: "TBD",
       prizePool: "TBD",
       qualificationPoints: "TBD",
+      note: "Date TBD January 2027",
     },
     {
       id: "flag_tech_2027",
@@ -129,6 +130,7 @@ export const TOURNAMENT_SCHEDULE = {
       registrationDeadline: "TBD",
       prizePool: "TBD",
       qualificationPoints: "TBD",
+      note: "Date TBD February 2027",
     },
   ],
 };
@@ -244,7 +246,21 @@ export const formatTournamentDate = (tournament) => {
     const month = startDate.toLocaleDateString("en-US", { month: "long" });
     const year = startDate.getFullYear();
 
-    return `${startDay}-${endDay} ${month} ${year}`;
+    // Format with ordinal suffixes (11th, 12th, etc.)
+    const getOrdinalSuffix = (day) => {
+      if (day > 3 && day < 21) return day + "th";
+      switch (day % 10) {
+        case 1: return day + "st";
+        case 2: return day + "nd";
+        case 3: return day + "rd";
+        default: return day + "th";
+      }
+    };
+
+    const startDayFormatted = getOrdinalSuffix(startDay);
+    const endDayFormatted = getOrdinalSuffix(endDay);
+
+    return `${startDayFormatted} - ${endDayFormatted} of ${month} ${year}`;
   }
 };
 

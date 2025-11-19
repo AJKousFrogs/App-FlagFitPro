@@ -601,6 +601,22 @@
    RESPONSIVE DESIGN
    ================================================================ */
 
+@media (max-width: 1024px) {
+  .landing-footer {
+    padding: var(--space-10) var(--space-4) var(--space-6);
+  }
+
+  .footer-content {
+    grid-template-columns: 1fr 2fr;
+    gap: var(--space-10);
+  }
+
+  .footer-links {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-5);
+  }
+}
+
 @media (max-width: 768px) {
   .hero-section {
     min-height: 80vh;
@@ -624,18 +640,53 @@
     grid-template-columns: 1fr;
   }
 
+  .landing-footer {
+    padding: var(--space-8) var(--space-4) var(--space-6);
+    margin-top: var(--space-12);
+  }
+
   .footer-content {
     grid-template-columns: 1fr;
     gap: var(--space-8);
+    margin-bottom: var(--space-6);
+  }
+
+  .footer-brand {
+    max-width: 100%;
+    text-align: center;
+  }
+
+  .footer-logo {
+    justify-content: center;
+  }
+
+  .footer-social {
+    justify-content: center;
   }
 
   .footer-links {
     grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  .footer-link-group {
+    text-align: center;
+  }
+
+  .footer-link-title {
+    margin-bottom: var(--space-3);
   }
 
   .footer-bottom {
     flex-direction: column;
     text-align: center;
+    gap: var(--space-3);
+    padding-top: var(--space-5);
+  }
+
+  .footer-legal {
+    justify-content: center;
+    flex-wrap: wrap;
   }
 
   .btn-hero {
@@ -655,5 +706,76 @@
 
   .features-title {
     font-size: 1.75rem;
+  }
+
+  .landing-footer {
+    padding: var(--space-6) var(--space-3) var(--space-4);
+  }
+
+  .footer-content {
+    gap: var(--space-6);
+    margin-bottom: var(--space-4);
+  }
+
+  .footer-brand {
+    text-align: left;
+  }
+
+  .footer-logo {
+    justify-content: flex-start;
+  }
+
+  .footer-social {
+    justify-content: flex-start;
+  }
+
+  .footer-link-group {
+    text-align: left;
+  }
+
+  .footer-links {
+    gap: var(--space-5);
+  }
+
+  .footer-link-title {
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-2);
+  }
+
+  .footer-link-list a {
+    font-size: var(--text-xs);
+  }
+
+  .footer-bottom {
+    padding-top: var(--space-4);
+    gap: var(--space-2);
+  }
+
+  .footer-copyright {
+    font-size: var(--text-xs);
+  }
+
+  .footer-legal {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+  }
+
+  .footer-legal a {
+    font-size: var(--text-xs);
+  }
+}
+
+@media (max-width: 360px) {
+  .landing-footer {
+    padding: var(--space-4) var(--space-2) var(--space-3);
+  }
+
+  .footer-content {
+    gap: var(--space-4);
+  }
+
+  .footer-links {
+    gap: var(--space-4);
   }
 }

@@ -7,7 +7,7 @@
   "use strict";
 
   // Suppress Lucide icon not found errors to prevent console spam
-  // These errors occur when invalid icon names (like "football") are used
+  // These errors occur when invalid icon names are used
   const originalError = console.error;
   let isSuppressingIconErrors = false;
   

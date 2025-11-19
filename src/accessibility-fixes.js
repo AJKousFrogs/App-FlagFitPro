@@ -106,7 +106,7 @@ function getIconLabel(iconName) {
     "log-out": "Logout",
     "log-in": "Login",
     lock: "Sign in",
-    football: "FlagFit Pro",
+    activity: "Activity",
   };
 
   return iconLabels[iconName] || null;

@@ -192,6 +192,10 @@ export class PerformanceUtils {
         link.as = "script";
       } else if (resource.type === "image") {
         link.as = "image";
+      } else if (resource.type === "module") {
+        // ES modules should use 'fetch' with crossorigin
+        link.as = "fetch";
+        link.crossOrigin = "anonymous";
       }
 
       document.head.appendChild(link);
@@ -299,10 +303,10 @@ export class PerformanceUtils {
     ); // Every 5 minutes
 
     // Preload critical resources with proper 'as' attributes
+    // Note: ES modules (auth-manager.js, api-config.js, error-handler.js) are loaded via ES6 imports
+    // and don't need preloading as they're already efficiently handled by the browser's module loader
+    // Only preload resources that are loaded as regular scripts or styles
     this.preloadResources([
-      { url: "/src/auth-manager.js", type: "script", as: "script" },
-      { url: "/src/api-config.js", type: "script", as: "script" },
-      { url: "/src/error-handler.js", type: "script", as: "script" },
       {
         url: "https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap",
         type: "style",

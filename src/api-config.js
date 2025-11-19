@@ -9,7 +9,7 @@ const getApiBaseUrl = () => {
   const envBaseUrl = config.API_BASE_URL;
 
   // If we have a configured API URL, use it
-  if (envBaseUrl && envBaseUrl !== "mock://api") {
+  if (envBaseUrl) {
     logger.debug("Using configured API URL:", envBaseUrl);
     return envBaseUrl;
   }
@@ -36,18 +36,21 @@ const getApiBaseUrl = () => {
     return netlifyDevUrl;
   }
 
-  // For local development, use mock API if no real API configured
+  // For local development, use Netlify Functions (or configured API)
   if (
     window.location.hostname === "localhost" ||
     window.location.hostname === "127.0.0.1"
   ) {
-    logger.debug("🎭 Local development detected - using mock API");
-    return "mock://api";
+    // Default to Netlify Functions for local dev
+    const localNetlifyUrl = "http://localhost:8888/.netlify/functions";
+    logger.debug("Local development - using Netlify Functions:", localNetlifyUrl);
+    return localNetlifyUrl;
   }
 
-  // Default fallback to mock for other static hosting
-  logger.warn("No API configuration found - falling back to mock API");
-  return "mock://api";
+  // Default fallback to Netlify Functions
+  const defaultUrl = window.location.origin + "/.netlify/functions";
+  logger.debug("Using default Netlify Functions URL:", defaultUrl);
+  return defaultUrl;
 };
 
 export const API_BASE_URL = getApiBaseUrl();
@@ -135,28 +138,46 @@ export const API_ENDPOINTS = {
     health: normalizeEndpoint("/api/coach/health"),
   },
 
-  // Community
+  // Community (Netlify Functions)
   community: {
-    feed: normalizeEndpoint("/api/community/feed"),
-    createPost: normalizeEndpoint("/api/community/posts"),
+    feed: API_BASE_URL.includes("netlify/functions")
+      ? "/community?feed=true"
+      : normalizeEndpoint("/api/community/feed"),
+    createPost: API_BASE_URL.includes("netlify/functions")
+      ? "/community"
+      : normalizeEndpoint("/api/community/posts"),
     getComments: (postId) =>
-      normalizeEndpoint(`/api/community/posts/${postId}/comments`),
+      API_BASE_URL.includes("netlify/functions")
+        ? `/community?postId=${postId}`
+        : normalizeEndpoint(`/api/community/posts/${postId}/comments`),
     likePost: (postId) =>
-      normalizeEndpoint(`/api/community/posts/${postId}/like`),
-    leaderboard: normalizeEndpoint("/api/community/leaderboard"),
+      API_BASE_URL.includes("netlify/functions")
+        ? `/community?like=${postId}`
+        : normalizeEndpoint(`/api/community/posts/${postId}/like`),
+    leaderboard: API_BASE_URL.includes("netlify/functions")
+      ? "/community?leaderboard=true"
+      : normalizeEndpoint("/api/community/leaderboard"),
     challenges: normalizeEndpoint("/api/community/challenges"),
     health: normalizeEndpoint("/api/community/health"),
   },
 
-  // Tournaments
+  // Tournaments (Netlify Functions)
   tournaments: {
-    list: normalizeEndpoint("/api/tournaments"),
+    list: API_BASE_URL.includes("netlify/functions")
+      ? "/tournaments"
+      : normalizeEndpoint("/api/tournaments"),
     details: (tournamentId) =>
-      normalizeEndpoint(`/api/tournaments/${tournamentId}`),
+      API_BASE_URL.includes("netlify/functions")
+        ? `/tournaments?id=${tournamentId}`
+        : normalizeEndpoint(`/api/tournaments/${tournamentId}`),
     register: (tournamentId) =>
-      normalizeEndpoint(`/api/tournaments/${tournamentId}/register`),
+      API_BASE_URL.includes("netlify/functions")
+        ? `/tournaments?register=${tournamentId}`
+        : normalizeEndpoint(`/api/tournaments/${tournamentId}/register`),
     bracket: (tournamentId) =>
-      normalizeEndpoint(`/api/tournaments/${tournamentId}/bracket`),
+      API_BASE_URL.includes("netlify/functions")
+        ? `/tournaments?bracket=${tournamentId}`
+        : normalizeEndpoint(`/api/tournaments/${tournamentId}/bracket`),
     health: normalizeEndpoint("/api/tournaments/health"),
   },
 
@@ -201,21 +222,6 @@ export class ApiClient {
       "Content-Type": "application/json",
       Accept: "application/json",
     };
-
-    // Import mock API for static deployment
-    this.mockApi = null;
-    if (this.baseUrl === "mock://api") {
-      this.initMockApi();
-    }
-  }
-
-  async initMockApi() {
-    try {
-      const { mockApiClient } = await import("./mock-api.js");
-      this.mockApi = mockApiClient;
-    } catch (error) {
-      logger.warn("Failed to load mock API:", error);
-    }
   }
 
   // Set authentication token
@@ -244,25 +250,6 @@ export class ApiClient {
     }
     const requestId = `${endpoint}_${Date.now()}`;
     this.activeRequests.set(requestId, controller);
-
-    // Use mock API if in static deployment mode
-    if (this.baseUrl === "mock://api") {
-      if (!this.mockApi) {
-        await this.initMockApi();
-      }
-
-      if (this.mockApi) {
-        if (options.method === "POST" || options.method === "PUT") {
-          const data = options.body ? JSON.parse(options.body) : {};
-          return await this.mockApi.post(endpoint, data);
-        } else {
-          return await this.mockApi.get(endpoint);
-        }
-      }
-
-      // Fallback for mock API
-      return { success: true, data: {} };
-    }
 
     // Real API request
     const url = `${this.baseUrl}${endpoint}`;
@@ -300,39 +287,8 @@ export class ApiClient {
         throw new Error("Request cancelled");
       }
 
-      // Check if this is a connection error (server not running)
-      const isConnectionError =
-        error.message.includes("Failed to fetch") ||
-        error.message.includes("ERR_CONNECTION_REFUSED") ||
-        error.message.includes("ERR_NETWORK") ||
-        error.name === "TypeError";
-
-      // Fallback to mock data in development if real API fails
-      if (this.baseUrl.includes("localhost") || this.baseUrl === "mock://api") {
-        // Only log error if it's not a simple connection refused (expected in dev)
-        if (!isConnectionError) {
-          logger.error(`API request failed: ${endpoint}`, error);
-        } else {
-          logger.debug(
-            `API server not available, using mock data for: ${endpoint}`,
-          );
-        }
-
-        if (!this.mockApi) {
-          await this.initMockApi();
-        }
-        if (this.mockApi) {
-          if (options.method === "POST" || options.method === "PUT") {
-            const data = options.body ? JSON.parse(options.body) : {};
-            return await this.mockApi.post(endpoint, data);
-          } else {
-            return await this.mockApi.get(endpoint);
-          }
-        }
-      } else {
-        // In production/staging, log all errors
-        logger.error(`API request failed: ${endpoint}`, error);
-      }
+      // Log all errors
+      logger.error(`API request failed: ${endpoint}`, error);
 
       throw error;
     }

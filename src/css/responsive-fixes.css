@@ -485,16 +485,43 @@ object {
    FOOTER RESPONSIVE FIXES
    ================================================================ */
 
-@media (max-width: 768px) {
+/* Desktop fixes - ensure proper grid layout */
+@media (min-width: 1025px) {
   .footer-content {
-    flex-direction: column !important;
+    display: grid !important;
+    grid-template-columns: 2fr 1fr 1fr !important;
+    gap: var(--space-xl) !important;
   }
 
   .footer-section {
-    flex: 1 1 100% !important;
-    min-width: 100% !important;
+    width: 100% !important;
     max-width: 100% !important;
-    margin-bottom: 24px !important;
+  }
+}
+
+/* Tablet fixes */
+@media (max-width: 1024px) {
+  .footer-content {
+    gap: var(--space-lg) !important;
+  }
+}
+
+/* Mobile fixes */
+@media (max-width: 768px) {
+  .main-footer,
+  .landing-footer {
+    padding-left: var(--space-md) !important;
+    padding-right: var(--space-md) !important;
+  }
+
+  .footer-content {
+    grid-template-columns: 1fr !important;
+    gap: var(--space-lg) !important;
+  }
+
+  .footer-section {
+    width: 100% !important;
+    margin-bottom: var(--space-md) !important;
   }
 
   .footer-section:last-child {
@@ -503,11 +530,52 @@ object {
 
   .footer-links {
     flex-direction: column !important;
-    gap: 24px !important;
+    grid-template-columns: 1fr !important;
+    gap: var(--space-lg) !important;
   }
 
   .footer-link-group {
     width: 100% !important;
+    margin-bottom: var(--space-md) !important;
+  }
+
+  .footer-link-group:last-child {
+    margin-bottom: 0 !important;
+  }
+
+  .footer-bottom {
+    text-align: center !important;
+    flex-direction: column !important;
+    gap: var(--space-sm) !important;
+  }
+
+  .footer-bottom p {
+    text-align: center !important;
+  }
+}
+
+/* Small mobile fixes */
+@media (max-width: 480px) {
+  .main-footer,
+  .landing-footer {
+    padding-left: var(--space-sm) !important;
+    padding-right: var(--space-sm) !important;
+  }
+
+  .footer-content {
+    gap: var(--space-md) !important;
+  }
+
+  .footer-section {
+    margin-bottom: var(--space-lg) !important;
+  }
+
+  .footer-links {
+    gap: var(--space-md) !important;
+  }
+
+  .footer-link-group {
+    margin-bottom: var(--space-lg) !important;
   }
 }
 

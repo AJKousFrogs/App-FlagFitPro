@@ -145,7 +145,7 @@ Different pages have different links in the "Quick Links" section.
   <div class="footer-content">
     <div class="footer-brand">
       <div class="footer-logo">
-        <i data-lucide="football"></i>
+        <i data-lucide="activity"></i>
         <span>FlagFit Pro</span>
       </div>
       <p class="footer-tagline">

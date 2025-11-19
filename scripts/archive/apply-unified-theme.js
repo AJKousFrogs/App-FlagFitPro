@@ -75,7 +75,7 @@ function applyUnifiedTheme(htmlContent, filePath) {
   const newSidebar = `        <!-- Sidebar - Icon Only -->
         <div class="sidebar">
             <div class="sidebar-logo" onclick="window.location.href='/dashboard.html'" title="FlagFit Pro">
-                <i data-lucide="football" style="width: 20px; height: 20px;"></i>
+                <i data-lucide="activity" style="width: 20px; height: 20px;"></i>
             </div>
             <a href="/dashboard.html" class="sidebar-icon ${fileName === "dashboard.html" ? "active" : ""}" title="Dashboard">
                 <i data-lucide="layout-dashboard" style="width: 20px; height: 20px;"></i>

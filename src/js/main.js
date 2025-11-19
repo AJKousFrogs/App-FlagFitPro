@@ -9,6 +9,7 @@ import { UniversalMobileNav } from "./components/universal-mobile-nav.js";
 import { UniversalFormValidator } from "./components/universal-form-validator.js";
 import { UniversalChartAccessibility } from "./components/universal-chart-accessibility.js";
 import { UniversalFocusManagement } from "./components/universal-focus-management.js";
+import { performGlobalSearch } from "./services/global-search-service.js";
 
 // Global application state
 window.FlagFitApp = {
@@ -117,6 +118,11 @@ class FlagFitApplication {
   }
 
   initializeUniversalComponents() {
+    // Initialize global search service
+    // Override the stub in top-bar.js with the actual implementation
+    // Ensure it's always available globally
+    window.performGlobalSearch = performGlobalSearch;
+    
     // Initialize mobile navigation
     if (document.querySelector(".sidebar, .mobile-menu-toggle, nav")) {
       this.components.set("mobileNav", new UniversalMobileNav());

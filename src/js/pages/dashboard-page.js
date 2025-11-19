@@ -496,7 +496,7 @@ class DashboardPage {
         logger.debug("🔄 Redirecting to training schedule page");
         const dateParam = sessionDate;
         const sessionParam = encodeURIComponent(sessionData.sessionType);
-        window.location.href = `/training-schedule.html?date=${dateParam}&session=${sessionParam}`;
+        window.location.href = `/training.html?date=${dateParam}&session=${sessionParam}#schedule`;
       }, 1000);
     } catch (error) {
       logger.error("❌ Failed to start training session:", error);

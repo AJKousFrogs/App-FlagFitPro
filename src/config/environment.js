@@ -51,9 +51,9 @@ const getEnvVar = (key, defaultValue = "") => {
 // Environment-specific configurations
 const configs = {
   development: {
-    API_BASE_URL: "mock://api", // Use mock API by default in development
+    API_BASE_URL: getEnvVar("API_BASE_URL", ""), // Use Netlify Functions or configured API
     DATABASE_URL: "http://localhost:5432",
-    ENABLE_MOCK_AUTH: true,
+    ENABLE_MOCK_AUTH: false,
     ENABLE_DEBUG_LOGS: true,
     ENABLE_ANALYTICS: false,
     YOUTUBE_API_KEY: getEnvVar("YOUTUBE_API_KEY", ""),

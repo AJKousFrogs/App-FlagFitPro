@@ -319,7 +319,7 @@ export class ExerciseLibraryPage {
       Core: '<i data-lucide="target" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>',
       Recovery: "🧘",
       Agility:
-        '<i data-lucide="football" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>',
+        '<i data-lucide="activity" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>',
     };
     return icons[category] || "🏋️‍♂️";
   }

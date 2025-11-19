@@ -256,6 +256,27 @@
   outline-offset: -2px;
 }
 
+.top-bar .result-label {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1);
+}
+
+.top-bar .result-description {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-1);
+  line-height: 1.4;
+}
+
+.top-bar .result-category {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: var(--font-weight-medium);
+}
+
 /* Header Icons - Buttons */
 .top-bar .header-icon-wrap {
   position: relative;

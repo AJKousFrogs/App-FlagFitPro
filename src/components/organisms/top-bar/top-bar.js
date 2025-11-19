@@ -15,15 +15,20 @@
   };
 
   // Global function stubs (can be overridden by other scripts)
-  window.performGlobalSearch =
-    window.performGlobalSearch ||
-    async function (query) {
-      // Fallback stub implementation
+  // main.js will override this with the real implementation
+  if (!window.performGlobalSearch) {
+    window.performGlobalSearch = async function (query) {
+      // Fallback stub implementation - returns empty array if query is empty
+      if (!query || !query.trim()) {
+        return [];
+      }
+      // Simple fallback results
       return [
         { label: `${query} – Player`, value: query, type: "player" },
         { label: `${query} – Team`, value: query, type: "team" },
       ];
     };
+  }
 
   window.toggleNotifications =
     window.toggleNotifications ||
@@ -84,8 +89,15 @@
     const render = (results = []) => {
       listbox.innerHTML = results
         .map(
-          (r, i) =>
-            `<div id="sr-${i}" role="option" class="result-item" aria-selected="${i === idx}">${r.label}</div>`,
+          (r, i) => {
+            const description = r.description ? `<div class="result-description">${r.description}</div>` : "";
+            const category = r.category ? `<div class="result-category">${r.category}</div>` : "";
+            return `<div id="sr-${i}" role="option" class="result-item" aria-selected="${i === idx}">
+              <div class="result-label">${r.label}</div>
+              ${description}
+              ${category}
+            </div>`;
+          },
         )
         .join("");
 

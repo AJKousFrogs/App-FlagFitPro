@@ -21,6 +21,7 @@
     <!-- Component Styles -->
     <link rel="stylesheet" href="./src/css/components/chatbot.css" />
     <link rel="stylesheet" href="./src/css/components/modal.css" />
+    <link rel="stylesheet" href="./src/css/components/ai-scheduler.css" />
 
     <!-- Lucide Icons - Modern icon library similar to Radix UI -->
     <script
@@ -271,7 +272,7 @@
                 <span class="theme-toggle-slider">
                   <span class="theme-toggle-dot" id="theme-toggle-dot"></span>
                 </span>
-                <span class="theme-toggle-text">🌙 Dark</span>
+                <span class="theme-toggle-text"><i data-lucide="moon" class="icon-14 icon-inline"></i> Dark</span>
               </label>
             </div>
 
@@ -338,30 +339,129 @@
           </div>
         </div>
 
-        <!-- Custom Schedule Builder CTA -->
+        <!-- Training Tabs Navigation -->
+        <div class="training-tabs-container u-margin-bottom-24">
+          <div class="training-tabs" role="tablist">
+            <button 
+              class="training-tab active" 
+              role="tab" 
+              aria-selected="true" 
+              aria-controls="tab-overview"
+              id="tab-btn-overview"
+              data-tab="overview"
+            >
+              <i data-lucide="layout-dashboard" class="icon-16 icon-inline"></i>
+              Overview
+            </button>
+            <button 
+              class="training-tab" 
+              role="tab" 
+              aria-selected="false" 
+              aria-controls="tab-schedule"
+              id="tab-btn-schedule"
+              data-tab="schedule"
+            >
+              <i data-lucide="calendar" class="icon-16 icon-inline"></i>
+              Schedule
+            </button>
+            <button 
+              class="training-tab" 
+              role="tab" 
+              aria-selected="false" 
+              aria-controls="tab-programs"
+              id="tab-btn-programs"
+              data-tab="programs"
+            >
+              <i data-lucide="trophy" class="icon-16 icon-inline"></i>
+              Programs
+            </button>
+            <button 
+              class="training-tab" 
+              role="tab" 
+              aria-selected="false" 
+              aria-controls="tab-videos"
+              id="tab-btn-videos"
+              data-tab="videos"
+            >
+              <i data-lucide="video" class="icon-16 icon-inline"></i>
+              Videos
+            </button>
+          </div>
+        </div>
+
+        <!-- Tab Content Containers -->
+        <!-- Overview Tab -->
+        <div id="tab-overview" class="tab-content active" role="tabpanel" aria-labelledby="tab-btn-overview">
+
+        <!-- AI-Powered Training Scheduler CTA -->
         <div class="custom-schedule-cta u-margin-bottom-32">
-          <div class="cta-card u-radius-xl u-padding-24 u-shadow-sm">
+          <div class="cta-card u-radius-xl u-padding-24 u-shadow-sm u-bg-gradient-primary">
             <div
               class="u-display-flex u-align-center u-justify-between u-flex-wrap u-gap-16"
             >
               <div class="cta-content">
-                <h2 class="u-text-heading-lg u-font-weight-700 u-margin-bottom-8">
-                  <i data-lucide="calendar-plus" class="icon-20 icon-inline icon-inline--primary"></i>
-                  Build Your Custom Training Schedule
+                <h2 class="u-text-heading-lg u-font-weight-700 u-margin-bottom-8 u-text-white">
+                  <i data-lucide="brain" class="icon-20 icon-inline"></i>
+                  AI-Powered Training Scheduler
                 </h2>
-                <p class="u-text-body-md u-margin-bottom-0 u-max-width-full">
-                  Join 20 players from 12 nations who follow personalized
-                  training plans. Create a schedule that fits your game days,
-                  timezone, and goals.
+                <p class="u-text-body-md u-margin-bottom-0 u-max-width-full u-text-white u-opacity-90">
+                  Intelligently adjust your training based on tournaments, practices, and league games. 
+                  Upload your schedule and get personalized periodization automatically.
                 </p>
+                <div class="u-display-flex u-gap-16 u-margin-top-12 u-flex-wrap">
+                  <span class="u-text-body-sm u-text-white u-opacity-80">
+                    <i data-lucide="trophy" class="icon-14 icon-inline"></i> Tournament-aware
+                  </span>
+                  <span class="u-text-body-sm u-text-white u-opacity-80">
+                    <i data-lucide="calendar" class="icon-14 icon-inline"></i> Practice integration
+                  </span>
+                  <span class="u-text-body-sm u-text-white u-opacity-80">
+                    <i data-lucide="zap" class="icon-14 icon-inline"></i> Auto periodization
+                  </span>
+                </div>
               </div>
-              <button class="btn btn-primary btn-md u-whitespace-nowrap" onclick="openCustomScheduleBuilder()">
-                <i data-lucide="plus" class="icon-16 icon-inline"></i>
-                Create Schedule
-              </button>
+              <div class="u-display-flex u-gap-12 u-flex-direction-column">
+                <button class="btn btn-white btn-md u-whitespace-nowrap" onclick="openAIScheduler()">
+                  <i data-lucide="sparkles" class="icon-16 icon-inline"></i>
+                  Open AI Scheduler
+                </button>
+                <button class="btn btn-secondary btn-md u-whitespace-nowrap" onclick="openCustomScheduleBuilder()">
+                  <i data-lucide="calendar-plus" class="icon-16 icon-inline"></i>
+                  Custom Schedule
+                </button>
+              </div>
             </div>
           </div>
         </div>
+
+    <!-- Workout Detail Modal -->
+    <div id="workoutModal" class="modal" style="display: none">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="modalTitle"></h2>
+          <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body" id="modalBody">
+          <!-- Workout details will be populated here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Scheduler Modal Container -->
+    <div id="ai-scheduler-modal" class="modal" style="display: none;">
+      <div class="modal-content modal-large">
+        <div class="modal-header">
+          <h2 class="u-text-heading-lg u-font-weight-700">
+            <i data-lucide="brain" class="icon-20 icon-inline icon-inline--primary"></i>
+            AI-Powered Training Scheduler
+          </h2>
+          <button class="modal-close" onclick="closeAIScheduler()">&times;</button>
+        </div>
+        <div class="modal-body" id="ai-scheduler-container">
+          <!-- AI Scheduler UI will be rendered here -->
+        </div>
+      </div>
+    </div>
 
         <!-- Training Stats Grid -->
         <div class="stats-grid u-display-grid u-gap-24 u-margin-bottom-64">
@@ -379,7 +479,7 @@
               <div class="u-height-full u-radius-sm stat-progress-bar" style="width: 57%"></div>
             </div>
             <div class="stat-change positive u-display-flex u-align-center u-gap-4 u-text-body-sm u-text-success">
-              <span>🔥</span>
+              <span><i data-lucide="flame" class="icon-16 icon-inline icon-inline--primary"></i></span>
               <span>Sessions Completed</span>
             </div>
             <div class="u-text-body-xs u-text-secondary u-margin-top-8 u-opacity-70">
@@ -410,14 +510,14 @@
             <div class="stat-header u-display-flex u-justify-between u-align-center u-margin-bottom-16">
               <span class="stat-title u-text-body-sm u-font-weight-500 u-text-secondary">Total Hours</span>
               <div class="stat-icon stat-icon--primary u-radius-lg u-display-flex u-align-center u-justify-center">
-                ⏱️
+                <i data-lucide="clock" class="icon-16 icon-inline icon-inline--primary"></i>
               </div>
             </div>
             <div class="stat-value u-text-display-lg u-font-weight-700 u-text-primary u-margin-bottom-8">
               28.5<span class="u-text-body-lg u-text-secondary">h</span>
             </div>
             <div class="stat-change positive u-display-flex u-align-center u-gap-4 u-text-body-sm u-text-success">
-              <span>⬆️</span>
+              <span><i data-lucide="trending-up" class="icon-16 icon-inline icon-inline--primary"></i></span>
               <span>+4.2h this week</span>
             </div>
             <div class="u-text-body-xs u-text-secondary u-margin-top-8 u-opacity-70">
@@ -429,7 +529,7 @@
             <div class="stat-header u-display-flex u-justify-between u-align-center u-margin-bottom-16">
               <span class="stat-title u-text-body-sm u-font-weight-500 u-text-secondary">Next Session</span>
               <div class="stat-icon stat-icon--secondary u-radius-lg u-display-flex u-align-center u-justify-center">
-                🏃
+                <i data-lucide="activity" class="icon-16 icon-inline icon-inline--primary"></i>
               </div>
             </div>
             <div class="stat-value u-text-display-lg u-font-weight-700 u-text-primary u-margin-bottom-8">
@@ -445,29 +545,6 @@
           </div>
         </div>
 
-        <!-- Weekly Schedule View -->
-        <div class="weekly-schedule-section u-margin-bottom-64">
-          <div class="section-header u-margin-bottom-24">
-            <h2 class="section-title u-text-heading-lg u-font-weight-700 u-text-primary">
-              <i data-lucide="calendar" class="icon-20 icon-inline icon-inline--primary"></i>
-              Weekly Training Schedule
-            </h2>
-            <button
-              class="btn btn-secondary btn-md"
-              onclick="toggleScheduleView()"
-            >
-              <i data-lucide="grid-3x3" class="icon-16 icon-inline"></i>
-              <span id="schedule-view-toggle">View Details</span>
-            </button>
-          </div>
-
-          <div
-            class="weekly-schedule-grid u-display-grid u-gap-16"
-            id="weekly-schedule-grid"
-          >
-            <!-- Days will be populated by JavaScript -->
-          </div>
-        </div>
 
         <!-- Training Grid -->
         <div class="training-grid u-display-grid u-gap-24 grid-1-1">
@@ -482,7 +559,7 @@
 
             <div class="workout-card u-display-flex u-align-center u-gap-16 u-padding-20 u-bg-primary u-radius-lg u-border-secondary u-margin-bottom-16" data-workout-type="speed">
               <div class="workout-icon workout-icon--speed u-width-56 u-height-56 u-radius-lg u-display-flex u-align-center u-justify-center">
-                🏃
+                <i data-lucide="activity" class="icon-24 icon-inline icon-inline--primary"></i>
               </div>
               <div class="workout-content u-flex-1">
                 <h3 class="workout-title u-text-heading-md u-font-weight-600 u-text-primary u-margin-bottom-4">
@@ -492,9 +569,9 @@
                   Sprint intervals and agility drills
                 </p>
                 <div class="workout-meta u-display-flex u-gap-16 u-text-caption u-text-secondary u-flex-wrap">
-                  <span>⏱️ 45 min</span>
-                  <span>🔥 High intensity</span>
-                  <span>📍 Track required</span>
+                  <span><i data-lucide="clock" class="icon-14 icon-inline icon-inline--primary"></i> 45 min</span>
+                  <span><i data-lucide="flame" class="icon-14 icon-inline icon-inline--primary"></i> High intensity</span>
+                  <span><i data-lucide="map-pin" class="icon-14 icon-inline icon-inline--primary"></i> Track required</span>
                 </div>
               </div>
               <button class="btn btn-primary btn-md">Start</button>
@@ -512,9 +589,9 @@
                   Core and functional strength
                 </p>
                 <div class="workout-meta u-display-flex u-gap-16 u-text-caption u-text-secondary u-flex-wrap">
-                  <span>⏱️ 60 min</span>
-                  <span>🔥 Medium intensity</span>
-                  <span>🏋️ Gym access</span>
+                  <span><i data-lucide="clock" class="icon-14 icon-inline icon-inline--primary"></i> 60 min</span>
+                  <span><i data-lucide="flame" class="icon-14 icon-inline icon-inline--primary"></i> Medium intensity</span>
+                  <span><i data-lucide="dumbbell" class="icon-14 icon-inline icon-inline--primary"></i> Gym access</span>
                 </div>
               </div>
               <button class="btn btn-primary btn-md">Start</button>
@@ -522,7 +599,7 @@
 
             <div class="workout-card u-display-flex u-align-center u-gap-16 u-padding-20 u-bg-primary u-radius-lg u-border-secondary u-margin-bottom-16" data-workout-type="agility">
               <div class="workout-icon workout-icon--agility u-width-56 u-height-56 u-radius-lg u-display-flex u-align-center u-justify-center">
-                🤸
+                <i data-lucide="zap" class="icon-24 icon-inline icon-inline--primary"></i>
               </div>
               <div class="workout-content u-flex-1">
                 <h3 class="workout-title u-text-heading-md u-font-weight-600 u-text-primary u-margin-bottom-4">
@@ -532,9 +609,9 @@
                   Cone drills and quick movements
                 </p>
                 <div class="workout-meta u-display-flex u-gap-16 u-text-caption u-text-secondary u-flex-wrap">
-                  <span>⏱️ 30 min</span>
-                  <span>🔥 Medium intensity</span>
-                  <span>⚽ Field access</span>
+                  <span><i data-lucide="clock" class="icon-14 icon-inline icon-inline--primary"></i> 30 min</span>
+                  <span><i data-lucide="flame" class="icon-14 icon-inline icon-inline--primary"></i> Medium intensity</span>
+                  <span><i data-lucide="activity" class="icon-14 icon-inline icon-inline--primary"></i> Field access</span>
                 </div>
               </div>
               <button class="btn btn-primary btn-md">Start</button>
@@ -542,7 +619,7 @@
 
             <div class="workout-card u-display-flex u-align-center u-gap-16 u-padding-20 u-bg-primary u-radius-lg u-border-secondary u-margin-bottom-16" data-workout-type="endurance">
               <div class="workout-icon workout-icon--endurance u-width-56 u-height-56 u-radius-lg u-display-flex u-align-center u-justify-center">
-                ❤️
+                <i data-lucide="heart" class="icon-24 icon-inline icon-inline--primary"></i>
               </div>
               <div class="workout-content u-flex-1">
                 <h3 class="workout-title u-text-heading-md u-font-weight-600 u-text-primary u-margin-bottom-4">
@@ -552,49 +629,14 @@
                   Cardio and stamina building
                 </p>
                 <div class="workout-meta u-display-flex u-gap-16 u-text-caption u-text-secondary u-flex-wrap">
-                  <span>⏱️ 50 min</span>
-                  <span>🔥 Low intensity</span>
-                  <span>🏃 Anywhere</span>
+                  <span><i data-lucide="clock" class="icon-14 icon-inline icon-inline--primary"></i> 50 min</span>
+                  <span><i data-lucide="flame" class="icon-14 icon-inline icon-inline--primary"></i> Low intensity</span>
+                  <span><i data-lucide="activity" class="icon-14 icon-inline icon-inline--primary"></i> Anywhere</span>
                 </div>
               </div>
               <button class="btn btn-primary btn-md">Start</button>
             </div>
 
-            <div class="workout-card u-display-flex u-align-center u-gap-16 u-padding-20 u-bg-primary u-radius-lg u-border-brand-primary u-margin-bottom-16" onclick="openOffseasonProgram()">
-              <div class="workout-icon workout-icon--program u-width-56 u-height-56 u-radius-lg u-display-flex u-align-center u-justify-center">
-                <i data-lucide="trophy" class="icon-16 icon-inline icon-inline--primary"></i>
-              </div>
-              <div class="workout-content u-flex-1">
-                <h3 class="workout-title u-text-heading-md u-font-weight-600 u-text-primary u-margin-bottom-4">14-Week WR/DB Program</h3>
-                <p class="workout-description u-text-body-sm u-text-secondary u-margin-bottom-8">
-                  Complete WR/DB performance optimization program
-                </p>
-                <div class="workout-meta u-display-flex u-gap-16 u-text-caption u-text-secondary u-flex-wrap">
-                  <span><i data-lucide="calendar" class="icon-16 icon-inline icon-inline--primary"></i> 14 weeks</span>
-                  <span><i data-lucide="target" class="icon-16 icon-inline icon-inline--primary"></i> Olympic-level training</span>
-                  <span><i data-lucide="zap" class="icon-16 icon-inline icon-inline--primary"></i> Nov 2025 - Feb 2026</span>
-                </div>
-              </div>
-              <button class="btn btn-primary btn-md" onclick="openOffseasonProgram()">View Program</button>
-            </div>
-
-            <div class="workout-card u-display-flex u-align-center u-gap-16 u-padding-20 u-bg-primary u-radius-lg u-border-brand-primary u-margin-bottom-16" onclick="openQBProgram()">
-              <div class="workout-icon workout-icon--program u-width-56 u-height-56 u-radius-lg u-display-flex u-align-center u-justify-center">
-                <i data-lucide="target" class="icon-16 icon-inline icon-inline--primary"></i>
-              </div>
-              <div class="workout-content u-flex-1">
-                <h3 class="workout-title u-text-heading-md u-font-weight-600 u-text-primary u-margin-bottom-4">14-Week Elite QB Program</h3>
-                <p class="workout-description u-text-body-sm u-text-secondary u-margin-bottom-8">
-                  Complete quarterback development for 320 throws/weekend
-                </p>
-                <div class="workout-meta u-display-flex u-gap-16 u-text-caption u-text-secondary u-flex-wrap">
-                  <span><i data-lucide="calendar" class="icon-16 icon-inline icon-inline--primary"></i> 14 weeks</span>
-                  <span><i data-lucide="target" class="icon-16 icon-inline icon-inline--primary"></i> 320 throws capacity</span>
-                  <span><i data-lucide="zap" class="icon-16 icon-inline icon-inline--primary"></i> Dual-track training</span>
-                </div>
-              </div>
-              <button class="btn btn-primary btn-md" onclick="openQBProgram()">View Program</button>
-            </div>
 
             <!-- AI-Powered Position Training Section -->
             <div class="position-training-section u-margin-top-32">
@@ -615,7 +657,7 @@
                 <!-- QB Training Module -->
                 <div class="workout-card workout-card--ai-qb u-display-flex u-align-center u-gap-16 u-padding-20 u-radius-lg u-margin-bottom-16" onclick="openQBTrainingModule()">
                   <div class="workout-icon u-width-56 u-height-56 u-radius-lg u-display-flex u-align-center u-justify-center">
-                    🎯
+                    <i data-lucide="target" class="icon-24 icon-inline icon-inline--primary"></i>
                   </div>
                   <div class="workout-content u-flex-1">
                     <h3 class="workout-title u-text-heading-md u-font-weight-600 u-text-primary u-margin-bottom-4">
@@ -625,9 +667,9 @@
                       Accuracy, decision-making, missed throws, pressure handling
                     </p>
                     <div class="workout-meta u-display-flex u-gap-16 u-text-caption u-text-secondary u-flex-wrap">
-                      <span>🤖 AI-Powered</span>
-                      <span>🎯 4 Focus Areas</span>
-                      <span>📊 Performance Analytics</span>
+                      <span><i data-lucide="bot" class="icon-14 icon-inline icon-inline--primary"></i> AI-Powered</span>
+                      <span><i data-lucide="target" class="icon-14 icon-inline icon-inline--primary"></i> 4 Focus Areas</span>
+                      <span><i data-lucide="bar-chart-3" class="icon-14 icon-inline icon-inline--primary"></i> Performance Analytics</span>
                     </div>
                   </div>
                   <button class="btn btn-success btn-md">Start QB Training</button>
@@ -636,7 +678,7 @@
                 <!-- DB Training Module -->
                 <div class="workout-card workout-card--ai-db u-display-flex u-align-center u-gap-16 u-padding-20 u-radius-lg u-margin-bottom-16" onclick="openDBTrainingModule()">
                   <div class="workout-icon u-width-56 u-height-56 u-radius-lg u-display-flex u-align-center u-justify-center">
-                    🛡️
+                    <i data-lucide="shield" class="icon-24 icon-inline icon-inline--primary"></i>
                   </div>
                   <div class="workout-content u-flex-1">
                     <h3 class="workout-title u-text-heading-md u-font-weight-600 u-text-primary u-margin-bottom-4">
@@ -646,9 +688,9 @@
                       Flag pulls, coverage, 1v1 scenarios, route recognition
                     </p>
                     <div class="workout-meta u-display-flex u-gap-16 u-text-caption u-text-secondary u-flex-wrap">
-                      <span>🤖 AI-Powered</span>
-                      <span>🛡️ 3 Core Skills</span>
-                      <span>📈 Progress Tracking</span>
+                      <span><i data-lucide="bot" class="icon-14 icon-inline icon-inline--primary"></i> AI-Powered</span>
+                      <span><i data-lucide="shield" class="icon-14 icon-inline icon-inline--primary"></i> 3 Core Skills</span>
+                      <span><i data-lucide="trending-up" class="icon-14 icon-inline icon-inline--primary"></i> Progress Tracking</span>
                     </div>
                   </div>
                   <button class="btn btn-primary btn-md">Start DB Training</button>
@@ -657,7 +699,7 @@
                 <!-- Enhanced Analytics Link -->
                 <div class="workout-card workout-card--ai-analytics u-display-flex u-align-center u-gap-16 u-padding-20 u-radius-lg u-margin-bottom-16" onclick="openEnhancedAnalytics()">
                   <div class="workout-icon u-width-56 u-height-56 u-radius-lg u-display-flex u-align-center u-justify-center">
-                    🧠
+                    <i data-lucide="brain" class="icon-24 icon-inline icon-inline--primary"></i>
                   </div>
                   <div class="workout-content u-flex-1">
                     <h3 class="workout-title u-text-heading-md u-font-weight-600 u-text-primary u-margin-bottom-4">
@@ -667,10 +709,10 @@
                       ML predictions, performance forecasting, injury prevention insights
                     </p>
                     <div class="workout-meta u-display-flex u-gap-16 u-text-caption u-text-secondary u-flex-wrap">
-                      <span>🧠 ML Predictions</span>
-                      <span>📊 Real-time Analytics</span>
-                      <span>🔮 Performance Forecasting</span>
-                      <span>⚕️ Injury Prevention</span>
+                      <span><i data-lucide="brain" class="icon-14 icon-inline icon-inline--primary"></i> ML Predictions</span>
+                      <span><i data-lucide="bar-chart-3" class="icon-14 icon-inline icon-inline--primary"></i> Real-time Analytics</span>
+                      <span><i data-lucide="sparkles" class="icon-14 icon-inline icon-inline--primary"></i> Performance Forecasting</span>
+                      <span><i data-lucide="heart-pulse" class="icon-14 icon-inline icon-inline--primary"></i> Injury Prevention</span>
                     </div>
                   </div>
                   <button class="btn btn-warning btn-md">Open Dashboard</button>
@@ -679,12 +721,274 @@
             </div>
           </div>
 
-          <!-- Training Videos Section -->
+        </div>
+
+        <!-- Schedule Tab -->
+        <div id="tab-schedule" class="tab-content" role="tabpanel" aria-labelledby="tab-btn-schedule">
+          <!-- Program Overview -->
+          <div class="hero-card program-overview u-margin-bottom-24">
+            <div class="hero-title" id="programTitle">
+              COMPLETE FLAG FOOTBALL OFFSEASON TRAINING PROGRAM
+            </div>
+            <div class="program-subtitle" id="programSubtitle">
+              WR/DB PERFORMANCE OPTIMIZATION
+            </div>
+            
+            <!-- AI Scheduler Integration Banner -->
+            <div class="ai-scheduler-banner u-margin-top-24 u-padding-20 u-radius-lg" style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); color: white;">
+              <div class="u-display-flex u-align-center u-justify-between u-flex-wrap u-gap-16">
+                <div class="u-flex-1">
+                  <h3 class="u-text-heading-md u-font-weight-700 u-margin-bottom-8 u-text-white">
+                    <i data-lucide="sparkles" class="icon-20 icon-inline"></i>
+                    Personalize Your Schedule with AI
+                  </h3>
+                  <p class="u-text-body-sm u-margin-bottom-0 u-text-white u-opacity-90">
+                    Upload your practice schedule, league games, and tournament dates. 
+                    Get automatic periodization adjustments based on your actual commitments.
+                  </p>
+                </div>
+                <button class="btn btn-white btn-md u-whitespace-nowrap" onclick="openAISchedulerPersonalize()">
+                  <i data-lucide="upload" class="icon-16 icon-inline"></i>
+                  Personalize Schedule
+                </button>
+              </div>
+            </div>
+
+            <div class="program-stats">
+              <div class="stat-card">
+                <div class="stat-value">14 Weeks</div>
+                <div class="stat-label">Duration</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value">5-6 Days</div>
+                <div class="stat-label">Per Week</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value">60-90 Min</div>
+                <div class="stat-label">Per Session</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value">40% BW</div>
+                <div class="stat-label">Max Load</div>
+              </div>
+            </div>
+
+            <div class="progress-indicator">
+              <span class="progress-text">Program Progress:</span>
+              <div class="phase-progress">
+                <div
+                  class="phase-progress-fill"
+                  id="programProgress"
+                  style="width: 0%"
+                ></div>
+              </div>
+              <span id="progressText">0% Complete</span>
+            </div>
+          </div>
+
+          <!-- Phase Selector -->
+          <div class="card card-elevated phase-selector u-margin-bottom-24">
+            <div class="phase-tabs">
+              <button class="btn btn-sm phase-tab active" data-phase="foundation">
+                Foundation (Weeks 1-4)
+              </button>
+              <button class="btn btn-sm phase-tab" data-phase="strength">
+                Strength (Weeks 5-8)
+              </button>
+              <button class="btn btn-sm phase-tab" data-phase="power">
+                Power (Weeks 9-12)
+              </button>
+              <button class="btn btn-sm phase-tab" data-phase="competition">
+                Competition (Weeks 13-14)
+              </button>
+            </div>
+
+            <div class="card-body phase-info" id="phaseInfo">
+              <!-- Phase info will be populated by JavaScript -->
+            </div>
+          </div>
+
+          <!-- Daily Protocols -->
+          <div class="card card-elevated protocols-section u-margin-bottom-24">
+            <div class="card-header">
+              <h2 class="protocols-title">
+                <i
+                  data-lucide="ruler"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    color: var(--icon-color-primary);
+                    stroke: var(--icon-color-primary);
+                  "
+                ></i>
+                Daily Protocols
+              </h2>
+            </div>
+            <div class="card-body">
+              <div class="protocol-grid">
+                <div class="card protocol-card">
+                  <div class="protocol-title">🌅 Morning Mobility</div>
+                  <div class="protocol-duration">15 minutes • Every day</div>
+                  <p>
+                    Full body mobility routine to prepare your body for training.
+                    Focus on ankle, knee, hip, and quad health.
+                  </p>
+                  <button
+                    class="btn btn-primary btn-md"
+                    onclick="showProtocolModal('morning-mobility')"
+                  >
+                    View Routine
+                  </button>
+                </div>
+                <div class="card protocol-card">
+                  <div class="protocol-title">🔥 Universal Warm-Up</div>
+                  <div class="protocol-duration">
+                    15-20 minutes • Before every session
+                  </div>
+                  <p>
+                    Comprehensive warm-up including general activation, lower body
+                    chain prep, and sprint drills.
+                  </p>
+                  <button
+                    class="btn btn-primary btn-md"
+                    onclick="showProtocolModal('warmup')"
+                  >
+                    View Warm-Up
+                  </button>
+                </div>
+                <div class="card protocol-card">
+                  <div class="protocol-title">
+                    <i
+                      data-lucide="heart-pulse"
+                      style="
+                        width: 16px;
+                        height: 16px;
+                        display: inline-block;
+                        vertical-align: middle;
+                        color: var(--icon-color-primary);
+                        stroke: var(--icon-color-primary);
+                      "
+                    ></i>
+                    Sunday Recovery
+                  </div>
+                  <div class="protocol-duration">45-60 minutes • Weekly</div>
+                  <p>
+                    Complete recovery protocol with stretching, foam rolling, and
+                    light activity.
+                  </p>
+                  <button
+                    class="btn btn-primary btn-md"
+                    onclick="showProtocolModal('recovery')"
+                  >
+                    View Protocol
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Weekly Schedule -->
+          <div class="card card-elevated weekly-schedule">
+            <div class="card-header schedule-header">
+              <div class="week-selector">
+                <div class="week-nav">
+                  <button class="btn btn-secondary btn-sm" id="prevWeek">
+                    <i
+                      data-lucide="chevron-left"
+                      style="
+                        width: 16px;
+                        height: 16px;
+                        display: inline-block;
+                        vertical-align: middle;
+                        color: var(--icon-color-primary);
+                        stroke: var(--icon-color-primary);
+                      "
+                    ></i>
+                    Previous
+                  </button>
+                  <button class="btn btn-secondary btn-sm" id="nextWeek">
+                    Next
+                    <i
+                      data-lucide="chevron-right"
+                      style="
+                        width: 16px;
+                        height: 16px;
+                        display: inline-block;
+                        vertical-align: middle;
+                        color: var(--icon-color-primary);
+                        stroke: var(--icon-color-primary);
+                      "
+                    ></i>
+                  </button>
+                </div>
+                <div class="current-week" id="currentWeek">
+                  Week 1 - Foundation Phase
+                </div>
+              </div>
+              <div class="week-dates" id="weekDates">December 1-7, 2025</div>
+            </div>
+
+            <div class="card-body daily-schedule">
+              <div class="day-grid" id="dayGrid">
+                <!-- Daily workouts will be populated by JavaScript -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Programs Tab -->
+        <div id="tab-programs" class="tab-content" role="tabpanel" aria-labelledby="tab-btn-programs">
+          <div class="programs-grid u-display-grid u-gap-24">
+            <!-- 14-Week WR/DB Program -->
+            <div class="workout-card u-display-flex u-align-center u-gap-16 u-padding-20 u-bg-primary u-radius-lg u-border-brand-primary u-margin-bottom-16" onclick="openOffseasonProgram()">
+              <div class="workout-icon workout-icon--program u-width-56 u-height-56 u-radius-lg u-display-flex u-align-center u-justify-center">
+                <i data-lucide="trophy" class="icon-16 icon-inline icon-inline--primary"></i>
+              </div>
+              <div class="workout-content u-flex-1">
+                <h3 class="workout-title u-text-heading-md u-font-weight-600 u-text-primary u-margin-bottom-4">14-Week WR/DB Program</h3>
+                <p class="workout-description u-text-body-sm u-text-secondary u-margin-bottom-8">
+                  Complete WR/DB performance optimization program
+                </p>
+                <div class="workout-meta u-display-flex u-gap-16 u-text-caption u-text-secondary u-flex-wrap">
+                  <span><i data-lucide="calendar" class="icon-16 icon-inline icon-inline--primary"></i> 14 weeks</span>
+                  <span><i data-lucide="target" class="icon-16 icon-inline icon-inline--primary"></i> Olympic-level training</span>
+                  <span><i data-lucide="zap" class="icon-16 icon-inline icon-inline--primary"></i> Nov 2025 - Feb 2026</span>
+                </div>
+              </div>
+              <button class="btn btn-primary btn-md" onclick="openOffseasonProgram()">View Program</button>
+            </div>
+
+            <!-- 14-Week Elite QB Program -->
+            <div class="workout-card u-display-flex u-align-center u-gap-16 u-padding-20 u-bg-primary u-radius-lg u-border-brand-primary u-margin-bottom-16" onclick="openQBProgram()">
+              <div class="workout-icon workout-icon--program u-width-56 u-height-56 u-radius-lg u-display-flex u-align-center u-justify-center">
+                <i data-lucide="target" class="icon-16 icon-inline icon-inline--primary"></i>
+              </div>
+              <div class="workout-content u-flex-1">
+                <h3 class="workout-title u-text-heading-md u-font-weight-600 u-text-primary u-margin-bottom-4">14-Week Elite QB Program</h3>
+                <p class="workout-description u-text-body-sm u-text-secondary u-margin-bottom-8">
+                  Complete quarterback development for 320 throws/weekend
+                </p>
+                <div class="workout-meta u-display-flex u-gap-16 u-text-caption u-text-secondary u-flex-wrap">
+                  <span><i data-lucide="calendar" class="icon-16 icon-inline icon-inline--primary"></i> 14 weeks</span>
+                  <span><i data-lucide="target" class="icon-16 icon-inline icon-inline--primary"></i> 320 throws capacity</span>
+                  <span><i data-lucide="zap" class="icon-16 icon-inline icon-inline--primary"></i> Dual-track training</span>
+                </div>
+              </div>
+              <button class="btn btn-primary btn-md" onclick="openQBProgram()">View Program</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Videos Tab -->
+        <div id="tab-videos" class="tab-content" role="tabpanel" aria-labelledby="tab-btn-videos">
           <div class="full-width-section">
             <div id="training-videos-container"></div>
           </div>
+        </div>
 
-          <!-- Progress & Achievements -->
+          <!-- Progress & Achievements (Overview Tab) -->
           <div>
             <!-- Progress Section -->
             <div class="progress-section">
@@ -724,7 +1028,7 @@
 
               <div class="achievement-item">
                   <div class="achievement-icon achievement-icon--tertiary">
-                    🏃
+                    <i data-lucide="activity" class="icon-16 icon-inline icon-inline--primary"></i>
                   </div>
                 <div class="achievement-content">
                   <div class="achievement-title">
@@ -763,7 +1067,7 @@
 
               <div class="achievement-item">
                   <div class="achievement-icon achievement-icon--secondary">
-                    🔥
+                    <i data-lucide="flame" class="icon-16 icon-inline icon-inline--primary"></i>
                   </div>
                 <div class="achievement-content">
                   <div class="achievement-title">Endurance Master</div>
@@ -781,12 +1085,473 @@
     <!-- AI Chat Floating Bubble -->
     <div class="ai-chat-bubble">
       <button class="ai-chat-button" id="ai-chat-button-training">
-        💬 "Ask FlagFit Assistant"
+        <i data-lucide="message-circle" class="icon-16 icon-inline"></i> "Ask FlagFit Assistant"
       </button>
     </div>
 
     <!-- Training Page JavaScript -->
     <script type="module" src="./src/js/pages/training-page.js"></script>
+    
+    <!-- Tab Switching and Schedule Functionality -->
+    <script type="module">
+      import {
+        TRAINING_PROGRAM,
+        WEEKLY_SCHEDULES,
+      } from "./src/training-program-data.js";
+      import {
+        MORNING_MOBILITY_ROUTINE,
+        UNIVERSAL_WARMUP,
+        SUNDAY_RECOVERY_PROTOCOL,
+      } from "./src/js/data/shared-protocols.js";
+
+      // Tab Switching Functionality
+      function initializeTabs() {
+        const tabs = document.querySelectorAll('.training-tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        // Check for hash in URL to open specific tab
+        const hash = window.location.hash.replace('#', '');
+        const defaultTab = hash || 'overview';
+        
+        tabs.forEach(tab => {
+          tab.addEventListener('click', () => {
+            const targetTab = tab.dataset.tab;
+            
+            // Update URL hash
+            window.location.hash = targetTab;
+            
+            // Remove active class from all tabs and contents
+            tabs.forEach(t => {
+              t.classList.remove('active');
+              t.setAttribute('aria-selected', 'false');
+            });
+            tabContents.forEach(content => {
+              content.classList.remove('active');
+            });
+            
+            // Add active class to clicked tab and corresponding content
+            tab.classList.add('active');
+            tab.setAttribute('aria-selected', 'true');
+            const targetContent = document.getElementById(`tab-${targetTab}`);
+            if (targetContent) {
+              targetContent.classList.add('active');
+            }
+            
+            // Reinitialize Lucide icons for new content
+            if (typeof lucide !== "undefined") {
+              setTimeout(() => lucide.createIcons(), 100);
+            }
+            
+            // Initialize schedule if switching to schedule tab
+            if (targetTab === 'schedule' && !window.scheduleInitialized) {
+              initializeTrainingSchedule();
+            }
+            
+            // Initialize videos if switching to videos tab
+            if (targetTab === 'videos' && typeof window.initializeTrainingVideos === 'function') {
+              window.initializeTrainingVideos();
+            }
+          });
+        });
+        
+        // Open default tab
+        const defaultTabBtn = document.querySelector(`[data-tab="${defaultTab}"]`);
+        if (defaultTabBtn) {
+          defaultTabBtn.click();
+        }
+      }
+
+      // Schedule functionality (from training-schedule.html)
+      let currentPhase = "foundation";
+      let currentWeek = 1;
+      window.scheduleInitialized = false;
+
+      function initializeTrainingSchedule() {
+        if (window.scheduleInitialized) return;
+        window.scheduleInitialized = true;
+        
+        console.log('Initializing training schedule...');
+
+        // Check for URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const dateParam = urlParams.get("date");
+        const currentSession = localStorage.getItem("currentTrainingSession");
+
+        if (dateParam || currentSession) {
+          const targetDate = dateParam
+            ? new Date(dateParam)
+            : currentSession
+              ? new Date(JSON.parse(currentSession).date)
+              : new Date();
+
+          const programStartDate = new Date("2025-12-01");
+          const daysDiff = Math.floor(
+            (targetDate - programStartDate) / (1000 * 60 * 60 * 24),
+          );
+          const weekNumber = Math.floor(daysDiff / 7) + 1;
+          currentWeek = Math.max(1, Math.min(14, weekNumber));
+        }
+
+        setupPhaseSelector();
+        setupWeekNavigation();
+        loadPhaseInfo(currentPhase);
+        loadWeeklySchedule(currentWeek);
+        updateProgramProgress();
+      }
+
+      function setupPhaseSelector() {
+        const phaseTabs = document.querySelectorAll(".phase-tab");
+        let isProcessing = false;
+
+        phaseTabs.forEach((tab) => {
+          tab.addEventListener("click", function (e) {
+            e.preventDefault();
+            if (isProcessing || this.dataset.phase === currentPhase) return;
+
+            isProcessing = true;
+            phaseTabs.forEach((t) => {
+              t.classList.remove("active");
+              t.disabled = true;
+            });
+            this.classList.add("active");
+            currentPhase = this.dataset.phase;
+
+            requestAnimationFrame(() => {
+              loadPhaseInfo(currentPhase);
+              updateWeekForPhase(currentPhase);
+              setTimeout(() => {
+                phaseTabs.forEach((t) => t.disabled = false);
+                isProcessing = false;
+              }, 100);
+            });
+          });
+        });
+      }
+
+      function setupWeekNavigation() {
+        const prevBtn = document.getElementById("prevWeek");
+        const nextBtn = document.getElementById("nextWeek");
+
+        if (prevBtn) prevBtn.addEventListener("click", () => {
+          if (currentWeek > 1) {
+            currentWeek--;
+            loadWeeklySchedule(currentWeek);
+            updatePhaseForWeek(currentWeek);
+          }
+        });
+
+        if (nextBtn) nextBtn.addEventListener("click", () => {
+          if (currentWeek < 14) {
+            currentWeek++;
+            loadWeeklySchedule(currentWeek);
+            updatePhaseForWeek(currentWeek);
+          }
+        });
+      }
+
+      function loadPhaseInfo(phase) {
+        const phaseData = TRAINING_PROGRAM.phases[phase];
+        const phaseInfoEl = document.getElementById("phaseInfo");
+        if (!phaseInfoEl || !phaseData) return;
+
+        phaseInfoEl.innerHTML = `
+          <div class="phase-title">${phaseData.title}</div>
+          <div style="margin-bottom: var(--space-3);">
+            <strong>Weeks ${phaseData.weeks}</strong> • ${phaseData.dateRange}
+          </div>
+          <div style="margin-bottom: var(--space-3);">
+            <strong>Goals:</strong>
+            <ul class="phase-goals">
+              ${phaseData.goals.map((goal) => `<li>${goal}</li>`).join("")}
+            </ul>
+          </div>
+          <div>
+            <strong>Training Priorities:</strong>
+            <ul class="phase-goals">
+              ${phaseData.priorities.map((priority) => `<li>${priority}</li>`).join("")}
+            </ul>
+          </div>
+        `;
+      }
+
+      function updateWeekForPhase(phase) {
+        const weekMap = { foundation: 1, strength: 5, power: 9, competition: 13 };
+        currentWeek = weekMap[phase];
+        loadWeeklySchedule(currentWeek);
+      }
+
+      function updatePhaseForWeek(week) {
+        let phase;
+        if (week <= 4) phase = "foundation";
+        else if (week <= 8) phase = "strength";
+        else if (week <= 12) phase = "power";
+        else phase = "competition";
+
+        if (phase !== currentPhase) {
+          currentPhase = phase;
+          document.querySelectorAll(".phase-tab").forEach((tab) => {
+            tab.classList.toggle("active", tab.dataset.phase === phase);
+          });
+          loadPhaseInfo(phase);
+        }
+      }
+
+      function loadWeeklySchedule(weekNumber) {
+        const currentWeekEl = document.getElementById("currentWeek");
+        const weekDatesEl = document.getElementById("weekDates");
+        const dayGridEl = document.getElementById("dayGrid");
+
+        if (!dayGridEl) return;
+
+        dayGridEl.style.opacity = "0.5";
+        dayGridEl.style.pointerEvents = "none";
+
+        let phase;
+        if (weekNumber <= 4) phase = "foundation";
+        else if (weekNumber <= 8) phase = "strength";
+        else if (weekNumber <= 12) phase = "power";
+        else phase = "competition";
+
+        const phaseTitle = TRAINING_PROGRAM.phases[phase].title;
+        if (currentWeekEl) currentWeekEl.textContent = `Week ${weekNumber} - ${phaseTitle}`;
+
+        const startDate = new Date("2025-12-01");
+        startDate.setDate(startDate.getDate() + (weekNumber - 1) * 7);
+        const endDate = new Date(startDate);
+        endDate.setDate(endDate.getDate() + 6);
+
+        if (weekDatesEl) {
+          weekDatesEl.textContent = `${startDate.toLocaleDateString("en-US", { month: "long", day: "numeric" })} - ${endDate.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}`;
+        }
+
+        const weekData = WEEKLY_SCHEDULES.foundation.week1;
+        const days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+        const dayNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+        dayGridEl.innerHTML = days.map((day, index) => {
+          const dayData = weekData.days[day];
+          if (!dayData) {
+            return `<div class="card day-card" data-day="${day}">
+              <div class="day-header"><div class="day-name">${dayNames[index]}</div>
+              <span class="workout-type recovery">No Data</span></div>
+              <div class="card-body rest-day"><p>No training data available.</p></div>
+            </div>`;
+          }
+
+          if (day === "sunday" || dayData.type === "recovery") {
+            return `<div class="card day-card" data-day="${day}">
+              <div class="day-header"><div class="day-name">${dayNames[index]}</div>
+              <span class="workout-type recovery">Recovery</span></div>
+              <div class="card-body rest-day">
+                <div class="rest-day-icon"><i data-lucide="heart-pulse"></i></div>
+                <h3>Recovery Day</h3><p>Complete recovery protocol</p>
+              </div>
+            </div>`;
+          }
+
+          return `<div class="card day-card" data-day="${day}">
+            <div class="day-header">
+              <div class="day-name">${dayNames[index]}</div>
+              <div class="workout-title">${dayData.title}</div>
+              <span class="workout-type ${dayData.type}">${dayData.type}</span>
+            </div>
+            <div class="card-body day-content">
+              <div class="workout-duration"><span>⏱️</span><span>${dayData.duration} minutes</span></div>
+              <button class="btn btn-primary btn-md" onclick="startWorkout('${day}', ${weekNumber})">Start Workout</button>
+            </div>
+          </div>`;
+        }).join("");
+
+        const prevBtn = document.getElementById("prevWeek");
+        const nextBtn = document.getElementById("nextWeek");
+        if (prevBtn) prevBtn.disabled = weekNumber <= 1;
+        if (nextBtn) nextBtn.disabled = weekNumber >= 14;
+
+        if (typeof lucide !== "undefined") {
+          requestAnimationFrame(() => {
+            lucide.createIcons();
+            dayGridEl.style.opacity = "1";
+            dayGridEl.style.pointerEvents = "auto";
+          });
+        } else {
+          dayGridEl.style.opacity = "1";
+          dayGridEl.style.pointerEvents = "auto";
+        }
+
+        updateProgramProgress();
+      }
+
+      function updateProgramProgress() {
+        const progressPercentage = Math.round((currentWeek / 14) * 100);
+        const progressFill = document.getElementById("programProgress");
+        const progressText = document.getElementById("progressText");
+        if (progressFill) progressFill.style.width = progressPercentage + "%";
+        if (progressText) progressText.textContent = progressPercentage + "% Complete";
+      }
+
+      // Protocol Modal (from training-schedule.html)
+      window.showProtocolModal = function (protocolType) {
+        const modal = document.getElementById("workoutModal");
+        const modalTitle = document.getElementById("modalTitle");
+        const modalBody = document.getElementById("modalBody");
+
+        if (!modal || !modalTitle || !modalBody) {
+          console.error("Modal elements not found");
+          return;
+        }
+
+        let protocolData;
+        switch (protocolType) {
+          case "morning-mobility":
+            protocolData = MORNING_MOBILITY_ROUTINE;
+            break;
+          case "warmup":
+            protocolData = UNIVERSAL_WARMUP;
+            break;
+          case "recovery":
+            protocolData = SUNDAY_RECOVERY_PROTOCOL;
+            break;
+          default:
+            console.error("Unknown protocol type:", protocolType);
+            return;
+        }
+
+        modalTitle.textContent = protocolData.title;
+
+        if (protocolType === "morning-mobility" && protocolData.dailyRoutines) {
+          const today = new Date();
+          const dayOfWeek = today.getDay();
+          const dayNames = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+          const currentDay = dayNames[dayOfWeek];
+          const currentRoutine = protocolData.dailyRoutines[currentDay];
+          const videoId = currentRoutine.videoId;
+
+          modalBody.innerHTML = `
+            <div style="margin-bottom: var(--space-4);">
+              <p style="font-size: var(--text-base); color: var(--color-text-secondary); margin-bottom: var(--space-3);">
+                ${protocolData.description || ""}
+              </p>
+              <div style="display: flex; gap: var(--space-4); flex-wrap: wrap; margin-bottom: var(--space-3); padding: var(--space-3); background: var(--surface-secondary); border-radius: var(--radius-md);">
+                <span><strong>Duration:</strong> ${protocolData.duration} minutes</span>
+                ${protocolData.frequency ? `<span><strong>Frequency:</strong> ${protocolData.frequency}</span>` : ""}
+              </div>
+            </div>
+            <div style="margin-bottom: var(--space-4); padding: var(--space-4); background: linear-gradient(135deg, var(--color-brand-primary) 0%, #067a3c 100%); border-radius: var(--radius-lg); color: white;">
+              <div style="font-size: var(--text-2xl); font-weight: var(--font-weight-bold); margin-bottom: var(--space-3);">
+                Today's Routine: ${currentRoutine.dayName}
+              </div>
+              <div style="font-size: var(--text-base); opacity: 0.95;">
+                <strong>Focus:</strong> ${currentRoutine.focus}
+              </div>
+            </div>
+            <div style="margin-bottom: var(--space-4);">
+              <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: var(--radius-lg);">
+                <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"
+                  src="https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen
+                  title="${currentRoutine.dayName} Morning Mobility Routine">
+                </iframe>
+              </div>
+              <div style="margin-top: var(--space-2); text-align: center;">
+                <a href="${currentRoutine.videoUrl}" target="_blank" rel="noopener noreferrer" 
+                   style="color: var(--color-brand-primary); text-decoration: none;">
+                  <i data-lucide="external-link"></i> Open in YouTube
+                </a>
+              </div>
+            </div>
+          `;
+        } else {
+          modalBody.innerHTML = `<p>${protocolData.description || ""}</p>`;
+        }
+
+        modal.style.display = "block";
+        const closeBtn = modal.querySelector(".modal-close");
+        if (closeBtn) {
+          closeBtn.onclick = () => modal.style.display = "none";
+        }
+        window.onclick = (event) => {
+          if (event.target === modal) modal.style.display = "none";
+        };
+
+        if (typeof lucide !== "undefined") {
+          setTimeout(() => lucide.createIcons(), 100);
+        }
+      };
+
+      // Initialize tabs on page load
+      document.addEventListener("DOMContentLoaded", () => {
+        initializeTabs();
+        
+        // Handle hash changes (back/forward browser buttons)
+        window.addEventListener('hashchange', () => {
+          const hash = window.location.hash.replace('#', '');
+          const tabBtn = document.querySelector(`[data-tab="${hash}"]`);
+          if (tabBtn) {
+            tabBtn.click();
+          }
+        });
+      });
+    </script>
+    
+    <!-- AI Scheduler Integration -->
+    <script type="module">
+      import AISchedulerUI from './src/js/components/ai-scheduler-ui.js';
+      
+      // Global function to open AI Scheduler for personalization (from schedule tab)
+      window.openAISchedulerPersonalize = function() {
+        // Switch to schedule tab first
+        const scheduleTab = document.querySelector('[data-tab="schedule"]');
+        if (scheduleTab) {
+          scheduleTab.click();
+          setTimeout(() => window.openAIScheduler(), 300);
+        } else {
+          window.openAIScheduler();
+        }
+      };
+
+      // Global function to open AI Scheduler
+      window.openAIScheduler = function() {
+        const modal = document.getElementById('ai-scheduler-modal');
+        const container = document.getElementById('ai-scheduler-container');
+        
+        if (!modal || !container) {
+          console.error('AI Scheduler modal elements not found');
+          return;
+        }
+        
+        // Initialize scheduler UI if not already initialized
+        if (!window.aiSchedulerUI) {
+          window.aiSchedulerUI = new AISchedulerUI('ai-scheduler-container');
+        }
+        
+        // Show modal
+        modal.style.display = 'block';
+        
+        // Initialize/refresh scheduler
+        window.aiSchedulerUI.init();
+        
+        // Prevent body scroll
+        document.body.style.overflow = 'hidden';
+      };
+      
+      // Global function to close AI Scheduler
+      window.closeAIScheduler = function() {
+        const modal = document.getElementById('ai-scheduler-modal');
+        if (modal) {
+          modal.style.display = 'none';
+          document.body.style.overflow = '';
+        }
+      };
+      
+      // Close modal when clicking outside
+      window.addEventListener('click', function(event) {
+        const modal = document.getElementById('ai-scheduler-modal');
+        if (event.target === modal) {
+          window.closeAIScheduler();
+        }
+      });
+    </script>
 
     <!-- Footer -->
     <footer role="contentinfo" class="main-footer">

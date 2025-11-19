@@ -648,7 +648,7 @@ window.openDBTrainingModule = function () {
 window.openEnhancedAnalytics = function () {
   try {
     logger.info("Opening Enhanced Analytics Dashboard");
-    window.location.href = "/enhanced-analytics.html";
+    window.location.href = "/analytics.html";
   } catch (error) {
     logger.error("Error opening enhanced analytics:", error);
     alert(
