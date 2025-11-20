@@ -10,10 +10,10 @@
 .tabs-list {
   display: flex;
   border-bottom: 2px solid var(--color-border-secondary);
-  gap: var(--spacing-component-xs);
+  gap: var(--space-xs);
 }
 .tabs-trigger {
-  padding: var(--spacing-component-md) var(--spacing-component-lg);
+  padding: var(--space-md) var(--space-6);
   border: none;
   background: transparent;
   color: var(--color-text-secondary);
@@ -25,7 +25,7 @@
   font-weight: var(--typography-label-md-weight);
   display: flex;
   align-items: center;
-  gap: var(--spacing-component-xs);
+  gap: var(--space-xs);
 }
 .tabs-trigger:hover {
   color: var(--color-text-primary);
@@ -41,7 +41,7 @@
   outline-offset: 2px;
 }
 .tabs-content {
-  padding: var(--spacing-component-lg) 0;
+  padding: var(--space-6) 0;
 }
 .tabs-panel {
   display: none;
@@ -62,7 +62,7 @@
 }
 .accordion-trigger {
   width: 100%;
-  padding: var(--spacing-component-md) var(--spacing-component-lg);
+  padding: var(--space-md) var(--space-6);
   border: none;
   background: transparent;
   color: var(--color-text-primary);
@@ -97,7 +97,7 @@
   max-height: 1000px;
 }
 .accordion-content {
-  padding: var(--spacing-component-md) var(--spacing-component-lg);
+  padding: var(--space-md) var(--space-6);
   padding-top: 0;
 }
 
@@ -139,21 +139,21 @@
   transform: scale(1);
 }
 .modal-header {
-  padding: var(--spacing-component-lg);
+  padding: var(--space-6);
   border-bottom: 1px solid var(--color-border-secondary);
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 .modal-body {
-  padding: var(--spacing-component-lg);
+  padding: var(--space-6);
   overflow-y: auto;
 }
 .modal-footer {
-  padding: var(--spacing-component-lg);
+  padding: var(--space-6);
   border-top: 1px solid var(--color-border-secondary);
   display: flex;
-  gap: var(--spacing-component-sm);
+  gap: var(--space-3);
   justify-content: flex-end;
 }
 .modal-close {

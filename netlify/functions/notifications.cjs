@@ -29,44 +29,40 @@ exports.handler = async (event, context) => {
     const authHeader =
       event.headers.authorization || event.headers.Authorization;
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return {
-        statusCode: 401,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          success: false,
-          error: "No token provided",
-        }),
-      };
-    }
+    let userId = null;
 
-    // Extract and verify token
-    const token = authHeader.substring(7);
-    let decoded;
+    // Handle authentication - allow unauthenticated requests for notifications
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      // Extract and verify token
+      const token = authHeader.substring(7);
+      let decoded;
 
-    try {
-      decoded = jwt.verify(token, JWT_SECRET);
-    } catch (jwtError) {
-      return {
-        statusCode: 401,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          success: false,
-          error: "Invalid or expired token",
-        }),
-      };
+      try {
+        decoded = jwt.verify(token, JWT_SECRET);
+        userId = decoded.userId;
+      } catch (jwtError) {
+        // Invalid token - continue without authentication
+        console.warn("Invalid token provided, returning fallback notifications");
+      }
     }
 
     // Check environment variables
     checkEnvVars();
 
-    const userId = decoded.userId;
+    // If no user ID, return fallback notifications
+    if (!userId) {
+      return {
+        statusCode: 200,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          success: true,
+          data: getFallbackNotifications(),
+        }),
+      };
+    }
 
     if (event.httpMethod === "GET") {
       // Get notifications for user

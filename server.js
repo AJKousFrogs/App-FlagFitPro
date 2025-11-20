@@ -119,8 +119,42 @@ app.get("/api/dashboard/overview", (req, res) => {
         dayStreak: 7,
         tournaments: 3,
       },
+      activities: [],
+      upcomingSessions: [],
+      performanceTrends: {
+        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+        data: [65, 72, 80, 85, 90, 88],
+      },
+      trainingDistribution: {
+        labels: ["Week 1", "Week 2", "Week 3", "Week 4"],
+        data: [12, 15, 18, 16],
+      },
     },
   });
+});
+
+// Also handle /dashboard endpoint for backward compatibility
+app.get("/dashboard", (req, res) => {
+  // Check if it's an API request (has Accept header for JSON)
+  const acceptHeader = req.headers.accept || "";
+  if (acceptHeader.includes("application/json")) {
+    res.json({
+      success: true,
+      data: {
+        stats: {
+          trainingSessions: 24,
+          performanceScore: 85,
+          dayStreak: 7,
+          tournaments: 3,
+        },
+        activities: [],
+        upcomingSessions: [],
+      },
+    });
+  } else {
+    // Serve HTML page
+    res.sendFile(path.join(__dirname, "dashboard.html"));
+  }
 });
 
 // Training endpoints

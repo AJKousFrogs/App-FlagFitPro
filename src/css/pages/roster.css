@@ -14,6 +14,45 @@
   position: relative;
 }
 
+/* AI Chat Floating Bubble */
+.ai-chat-bubble {
+  position: fixed;
+  bottom: var(--space-6, 24px);
+  right: var(--space-6, 24px);
+  z-index: 1000;
+}
+
+.ai-chat-button {
+  padding: var(--space-4, 16px) var(--space-6, 24px);
+  background: var(--color-brand-primary, #10c96b);
+  color: white;
+  border: none;
+  border-radius: var(--radius-xl, 12px);
+  font-size: var(--typography-body-md-size, 16px);
+  font-weight: var(--font-weight-medium, 500);
+  cursor: pointer;
+  box-shadow: var(--shadow-lg, 0 8px 24px rgba(0, 0, 0, 0.15));
+  transition: all var(--transition, 0.3s ease);
+}
+
+.ai-chat-button:hover {
+  background: var(--color-brand-primary-hover, #0ea55a);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-xl, 0 12px 32px rgba(0, 0, 0, 0.2));
+}
+
+@media (max-width: 768px) {
+  .ai-chat-bubble {
+    bottom: var(--space-4, 16px);
+    right: var(--space-4, 16px);
+  }
+
+  .ai-chat-button {
+    padding: var(--space-3, 12px) var(--space-4, 16px);
+    font-size: var(--typography-body-sm-size, 14px);
+  }
+}
+
 /* Page-specific styles that can't be replaced with utilities */
 /* Note: header.css sets padding-top: 64px !important, so we override it to add spacing */
 .main-content {

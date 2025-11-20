@@ -13,6 +13,26 @@
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
     Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https: wss:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
 
+# API Routes for Dashboard (must come before page redirects)
+[[redirects]]
+  from = "/api/dashboard/*"
+  to = "/.netlify/functions/dashboard"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/dashboard"
+  to = "/.netlify/functions/dashboard"
+  status = 200
+  force = true
+
+# API Routes for Dashboard Overview (specific endpoint)
+[[redirects]]
+  from = "/api/dashboard/overview"
+  to = "/.netlify/functions/dashboard"
+  status = 200
+  force = true
+
 # Handle direct page access (not SPA routing)
 [[redirects]]
   from = "/dashboard"
@@ -61,5 +81,103 @@
 [[redirects]]
   from = "/games/*"
   to = "/.netlify/functions/games"
+  status = 200
+  force = true
+
+# API Routes for Performance Metrics
+[[redirects]]
+  from = "/api/performance/metrics"
+  to = "/.netlify/functions/performance-metrics"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/performance/metrics/*"
+  to = "/.netlify/functions/performance-metrics"
+  status = 200
+  force = true
+
+# API Routes for Performance Heatmap
+[[redirects]]
+  from = "/api/performance/heatmap"
+  to = "/.netlify/functions/performance-heatmap"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/performance/heatmap/*"
+  to = "/.netlify/functions/performance-heatmap"
+  status = 200
+  force = true
+
+# API Routes for Training Sessions
+[[redirects]]
+  from = "/api/training/sessions"
+  to = "/.netlify/functions/training-sessions"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/training/sessions/*"
+  to = "/.netlify/functions/training-sessions"
+  status = 200
+  force = true
+
+# API Routes for Training Stats
+[[redirects]]
+  from = "/training-stats"
+  to = "/.netlify/functions/training-stats"
+  status = 200
+  force = true
+
+# API Routes for Community
+[[redirects]]
+  from = "/api/community/*"
+  to = "/.netlify/functions/community"
+  status = 200
+  force = true
+
+# API Routes for Tournaments
+[[redirects]]
+  from = "/api/tournaments"
+  to = "/.netlify/functions/tournaments"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/tournaments/*"
+  to = "/.netlify/functions/tournaments"
+  status = 200
+  force = true
+
+# API Routes for Auth
+[[redirects]]
+  from = "/auth-login"
+  to = "/.netlify/functions/auth-login"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/auth-register"
+  to = "/.netlify/functions/auth-register"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/auth-me"
+  to = "/.netlify/functions/auth-me"
+  status = 200
+  force = true
+
+# API Routes for Knowledge Search
+[[redirects]]
+  from = "/knowledge-search"
+  to = "/.netlify/functions/knowledge-search"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/knowledge-search/*"
+  to = "/.netlify/functions/knowledge-search"
   status = 200
   force = true

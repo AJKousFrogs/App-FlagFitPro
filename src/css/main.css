@@ -42,7 +42,6 @@
    ================================================================ */
 @import url("./layout.css") layer(layout);
 @import url("./layout-modern.css") layer(layout);
-@import url("./components/footer.css") layer(components);
 
 /* ================================================================
    LAYER 6.5: GRADIENTS
@@ -55,6 +54,7 @@
    Component-specific styles
    ================================================================ */
 @import url("./components/button.css") layer(components);
+@import url("./components/footer.css") layer(components);
 @import url("./components/card.css") layer(components);
 @import url("./components/badge.css") layer(components);
 @import url("./components/form.css") layer(components);

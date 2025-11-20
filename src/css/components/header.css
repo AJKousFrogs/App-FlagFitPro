@@ -807,14 +807,14 @@
 
   .hero-section {
     grid-template-columns: repeat(2, 1fr);
-    padding: var(--spacing-layout-sm);
+    padding: var(--space-md);
     gap: var(--space-4);
   }
 
   /* Reduce vertical spacing in landscape */
   .l-main {
-    padding-top: var(--spacing-component-md);
-    padding-bottom: var(--spacing-component-md);
+    padding-top: var(--space-md);
+    padding-bottom: var(--space-md);
   }
 }
 
@@ -824,8 +824,8 @@
 
 .hero-section {
   /* Spacing */
-  padding: var(--spacing-layout-sm) var(--primitive-space-16);
-  margin-bottom: var(--spacing-layout-md);
+  padding: var(--space-md) var(--space-md);
+  margin-bottom: var(--space-xl);
 
   /* Layout - mobile first */
   display: grid;
@@ -838,7 +838,7 @@
   .hero-section {
     grid-template-columns: 1fr 1fr;
     gap: var(--primitive-space-24);
-    padding: var(--spacing-layout-md) var(--primitive-space-24);
+    padding: var(--space-xl) var(--space-6);
   }
 }
 
@@ -846,8 +846,8 @@
 @media (min-width: 1024px) {
   .hero-section {
     grid-template-columns: 2fr 1fr;
-    gap: var(--spacing-component-md);
-    padding: var(--spacing-layout-md) var(--spacing-layout-lg);
+    gap: var(--space-md);
+    padding: var(--space-xl) var(--space-xl);
     margin-left: 0; /* ✅ Remove hard-coded margin */
   }
 }

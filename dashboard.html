@@ -442,6 +442,117 @@
               <button class="btn-submit-checkin">Submit</button>
             </div>
 
+            <!-- Injury Tracking Section -->
+            <div class="injury-tracking-card">
+              <h2>
+                <i data-lucide="alert-triangle" class="icon-20 icon-inline"></i>
+                INJURY TRACKING
+              </h2>
+              <p class="injury-description">
+                Log any injuries or pain to help adjust your training schedule and recovery plan.
+              </p>
+              
+              <!-- Active Injuries Display -->
+              <div id="active-injuries-list" class="active-injuries-list"></div>
+              
+              <!-- Injury Form -->
+              <div class="injury-form-container">
+                <button 
+                  type="button" 
+                  class="btn-add-injury" 
+                  id="btn-add-injury"
+                  aria-label="Add new injury"
+                >
+                  <i data-lucide="plus" class="icon-16 icon-inline"></i>
+                  Add Injury / Pain Report
+                </button>
+                
+                <form id="injury-form" class="injury-form" style="display: none;">
+                  <div class="form-group">
+                    <label for="injury-type">Injury Type / Body Part:</label>
+                    <select id="injury-type" name="injuryType" required>
+                      <option value="">Select body part...</option>
+                      <option value="ankle">Ankle</option>
+                      <option value="knee">Knee</option>
+                      <option value="hamstring">Hamstring</option>
+                      <option value="quadriceps">Quadriceps</option>
+                      <option value="calf">Calf</option>
+                      <option value="shoulder">Shoulder</option>
+                      <option value="elbow">Elbow</option>
+                      <option value="wrist">Wrist</option>
+                      <option value="back">Back</option>
+                      <option value="neck">Neck</option>
+                      <option value="hip">Hip</option>
+                      <option value="groin">Groin</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="injury-severity">Severity (1–10):</label>
+                    <div class="severity-container">
+                      <input
+                        type="range"
+                        id="injury-severity"
+                        name="severity"
+                        min="1"
+                        max="10"
+                        value="5"
+                        class="severity-slider"
+                        required
+                      />
+                      <span class="severity-value">5</span>
+                    </div>
+                    <div class="severity-labels">
+                      <span>Mild</span>
+                      <span>Moderate</span>
+                      <span>Severe</span>
+                    </div>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="injury-description">Description:</label>
+                    <textarea
+                      id="injury-description"
+                      name="description"
+                      rows="3"
+                      placeholder="Describe the injury, when it occurred, and any relevant details..."
+                      required
+                    ></textarea>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="injury-status">Status:</label>
+                    <select id="injury-status" name="status" required>
+                      <option value="active">Active (Currently affecting training)</option>
+                      <option value="recovering">Recovering (Improving)</option>
+                      <option value="monitoring">Monitoring (Minor, watching closely)</option>
+                    </select>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="injury-date">Date Started:</label>
+                    <input
+                      type="date"
+                      id="injury-date"
+                      name="startDate"
+                      required
+                    />
+                  </div>
+                  
+                  <div class="form-actions">
+                    <button type="submit" class="btn-submit-injury">
+                      <i data-lucide="save" class="icon-16 icon-inline"></i>
+                      Save Injury Report
+                    </button>
+                    <button type="button" class="btn-cancel-injury" id="btn-cancel-injury">
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
             <!-- Today's Training -->
             <div class="todays-training-card">
               <h2>TODAY'S TRAINING</h2>

@@ -17,7 +17,7 @@
   border: 2px solid var(--border-default, #e5e5e5);
   border-radius: var(--radius-md, 8px);
   background: var(--surface-primary, #ffffff);
-  color: var(--text-primary, #171717);
+  color: var(--color-text-primary);
   transition: all var(--motion-duration-fast, 200ms) ease;
   width: 100%;
   box-sizing: border-box;
@@ -72,7 +72,7 @@
   margin-bottom: var(--spacing-2, 8px);
   font-size: var(--font-size-base, 16px);
   font-weight: var(--font-weight-medium, 500);
-  color: var(--text-primary, #171717);
+  color: var(--color-text-primary);
   line-height: 1.4;
 }
 
@@ -133,7 +133,7 @@
 .form-help {
   margin-top: var(--spacing-2, 8px);
   font-size: var(--font-size-sm, 14px);
-  color: var(--text-secondary, #404040);
+  color: var(--color-text-secondary);
   line-height: 1.4;
 }
 
@@ -367,7 +367,7 @@ a:focus {
   .form-select,
   .form-textarea {
     background: var(--surface-primary-dark, #1f1f1f);
-    color: var(--text-primary-dark, #ffffff);
+    color: var(--color-text-primary);
     border-color: var(--border-default-dark, #404040);
   }
 
@@ -384,12 +384,12 @@ a:focus {
   }
 
   .form-label {
-    color: var(--text-primary-dark, #ffffff);
+    color: var(--color-text-primary);
   }
 
   .form-hint,
   .form-help {
-    color: var(--text-secondary-dark, #a3a3a3);
+    color: var(--color-text-secondary);
   }
 
   .password-strength {

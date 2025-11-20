@@ -355,7 +355,7 @@
    ================================================================ */
 
 .comments-section {
-  margin-top: var(--spacing-component-md, 16px);
+  margin-top: var(--space-md);
   padding-top: var(--space-4);
   border-top: 1px solid var(--color-border-secondary);
   display: none;
@@ -468,7 +468,7 @@
 
 .trending-item:hover {
   background: var(--surface-secondary);
-  margin: 0 calc(-1 * var(--spacing-component-lg, 24px));
+  margin: 0 calc(-1 * var(--space-6));
   padding: var(--space-3) var(--space-6);
   border-radius: var(--radius-md);
   cursor: pointer;

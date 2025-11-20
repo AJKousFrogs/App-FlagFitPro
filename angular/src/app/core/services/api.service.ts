@@ -136,7 +136,7 @@ export const API_ENDPOINTS = {
     csrf: "/api/auth/csrf",
   },
   dashboard: {
-    overview: "/dashboard",
+    overview: "/api/dashboard/overview",
     trainingCalendar: "/api/dashboard/training-calendar",
     olympicQualification: "/api/dashboard/olympic-qualification",
     sponsorRewards: "/api/dashboard/sponsor-rewards",
@@ -149,6 +149,17 @@ export const API_ENDPOINTS = {
   training: {
     stats: "/training-stats",
     complete: "/api/training/complete",
+    suggestions: "/api/training/suggestions",
+    sessions: "/api/training/sessions",
+    createSession: "/api/training/sessions",
+  },
+  performance: {
+    metrics: "/api/performance/metrics",
+    trends: "/api/performance/trends",
+    heatmap: "/api/performance/heatmap",
+  },
+  weather: {
+    current: "/api/weather/current",
   },
   analytics: {
     performanceTrends: "/api/analytics/performance-trends",
@@ -197,6 +208,33 @@ export const API_ENDPOINTS = {
   },
   supplements: {
     log: "/api/supplements/log",
+  },
+  nutrition: {
+    searchFoods: "/api/nutrition/search-foods",
+    addFood: "/api/nutrition/add-food",
+    goals: "/api/nutrition/goals",
+    meals: "/api/nutrition/meals",
+    aiSuggestions: "/api/nutrition/ai-suggestions",
+    performanceInsights: "/api/nutrition/performance-insights",
+  },
+  recovery: {
+    metrics: "/api/recovery/metrics",
+    protocols: "/api/recovery/protocols",
+    startSession: "/api/recovery/start-session",
+    completeSession: "/api/recovery/complete-session",
+    stopSession: "/api/recovery/stop-session",
+    researchInsights: "/api/recovery/research-insights",
+    weeklyTrends: "/api/recovery/weekly-trends",
+    protocolEffectiveness: "/api/recovery/protocol-effectiveness",
+  },
+  admin: {
+    healthMetrics: "/api/admin/health-metrics",
+    syncUSDA: "/api/admin/sync-usda",
+    syncResearch: "/api/admin/sync-research",
+    createBackup: "/api/admin/create-backup",
+    syncStatus: "/api/admin/sync-status",
+    usdaStats: "/api/admin/usda-stats",
+    researchStats: "/api/admin/research-stats",
   },
   health: "/api/health",
 };

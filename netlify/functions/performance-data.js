@@ -513,20 +513,67 @@ async function handleSupplements(method, userId, body, query) {
   }
 }
 
-// Injuries Handler
+// Injuries Handler - Updated to use Supabase with mockDB fallback
 async function handleInjuries(method, userId, body, query) {
   switch (method) {
     case "GET":
       const status = query?.status; // active, recovered, all
-      let injuries = mockDB.injuries.filter((i) => i.userId === userId);
+      
+      // Try Supabase first
+      try {
+        let queryBuilder = supabaseAdmin
+          .from("injuries")
+          .select("*")
+          .eq("user_id", userId)
+          .order("start_date", { ascending: false });
 
+        if (status && status !== "all") {
+          queryBuilder = queryBuilder.eq("status", status);
+        } else {
+          queryBuilder = queryBuilder.in("status", ["active", "recovering", "monitoring"]);
+        }
+
+        const { data: injuries, error: getError } = await queryBuilder;
+
+        if (!getError && injuries) {
+          const transformed = injuries.map(injury => ({
+            id: injury.id,
+            userId: injury.user_id,
+            type: injury.type,
+            severity: injury.severity,
+            description: injury.description,
+            status: injury.status,
+            startDate: injury.start_date,
+            recoveryDate: injury.recovery_date,
+            createdAt: injury.created_at,
+            updatedAt: injury.updated_at,
+          }));
+
+          return {
+            statusCode: 200,
+            headers: corsHeaders,
+            body: JSON.stringify({
+              success: true,
+              data: transformed,
+              statistics: calculateInjuryStatistics(transformed),
+            }),
+          };
+        }
+      } catch (dbError) {
+        console.warn("Database query failed, using mockDB fallback:", dbError);
+      }
+
+      // Fallback to mockDB
+      let injuries = mockDB.injuries.filter((i) => i.userId === userId);
       if (status && status !== "all") {
         injuries = injuries.filter((i) => i.status === status);
       }
 
       return {
         statusCode: 200,
+        headers: corsHeaders,
         body: JSON.stringify({
+          success: true,
           data: injuries,
           statistics: calculateInjuryStatistics(injuries),
         }),
@@ -534,6 +581,64 @@ async function handleInjuries(method, userId, body, query) {
 
     case "POST":
       const injuryData = JSON.parse(body);
+      
+      // Validate required fields
+      if (!injuryData.type || !injuryData.severity || !injuryData.startDate) {
+        return {
+          statusCode: 400,
+          headers: corsHeaders,
+          body: JSON.stringify({
+            error: "Missing required fields: type, severity, startDate",
+          }),
+        };
+      }
+
+      // Try Supabase first
+      try {
+        const newInjury = {
+          user_id: userId,
+          type: injuryData.type,
+          severity: parseInt(injuryData.severity),
+          description: injuryData.description || null,
+          status: injuryData.status || "active",
+          start_date: injuryData.startDate,
+          recovery_date: injuryData.recoveryDate || null,
+        };
+
+        const { data: insertedInjury, error: insertError } = await supabaseAdmin
+          .from("injuries")
+          .insert(newInjury)
+          .select()
+          .single();
+
+        if (!insertError && insertedInjury) {
+          const transformed = {
+            id: insertedInjury.id,
+            userId: insertedInjury.user_id,
+            type: insertedInjury.type,
+            severity: insertedInjury.severity,
+            description: insertedInjury.description,
+            status: insertedInjury.status,
+            startDate: insertedInjury.start_date,
+            recoveryDate: insertedInjury.recovery_date,
+            createdAt: insertedInjury.created_at,
+            updatedAt: insertedInjury.updated_at,
+          };
+
+          return {
+            statusCode: 201,
+            headers: corsHeaders,
+            body: JSON.stringify({
+              success: true,
+              data: transformed,
+            }),
+          };
+        }
+      } catch (dbError) {
+        console.warn("Database insert failed, using mockDB fallback:", dbError);
+      }
+
+      // Fallback to mockDB
       const newInjury = {
         id: generateId(),
         userId,
@@ -545,17 +650,73 @@ async function handleInjuries(method, userId, body, query) {
       mockDB.injuries.push(newInjury);
       return {
         statusCode: 201,
+        headers: corsHeaders,
         body: JSON.stringify({
           success: true,
-          id: newInjury.id,
+          data: newInjury,
         }),
       };
 
     case "PATCH":
+    case "PUT":
       const updateData = JSON.parse(body);
-      const pathSegments = query.path.split("/");
-      const injuryId = pathSegments[pathSegments.length - 1];
+      const pathSegments = query?.path?.split("/") || [];
+      const injuryId = pathSegments[pathSegments.length - 1] || query?.id;
 
+      if (!injuryId) {
+        return {
+          statusCode: 400,
+          headers: corsHeaders,
+          body: JSON.stringify({ error: "Injury ID required" }),
+        };
+      }
+
+      // Try Supabase first
+      try {
+        const updatePayload = {};
+        if (updateData.status) updatePayload.status = updateData.status;
+        if (updateData.severity) updatePayload.severity = parseInt(updateData.severity);
+        if (updateData.description !== undefined) updatePayload.description = updateData.description;
+        if (updateData.recoveryDate) updatePayload.recovery_date = updateData.recoveryDate;
+        if (updateData.type) updatePayload.type = updateData.type;
+        updatePayload.updated_at = new Date().toISOString();
+
+        const { data: updatedInjury, error: updateError } = await supabaseAdmin
+          .from("injuries")
+          .update(updatePayload)
+          .eq("id", injuryId)
+          .eq("user_id", userId)
+          .select()
+          .single();
+
+        if (!updateError && updatedInjury) {
+          const transformed = {
+            id: updatedInjury.id,
+            userId: updatedInjury.user_id,
+            type: updatedInjury.type,
+            severity: updatedInjury.severity,
+            description: updatedInjury.description,
+            status: updatedInjury.status,
+            startDate: updatedInjury.start_date,
+            recoveryDate: updatedInjury.recovery_date,
+            createdAt: updatedInjury.created_at,
+            updatedAt: updatedInjury.updated_at,
+          };
+
+          return {
+            statusCode: 200,
+            headers: corsHeaders,
+            body: JSON.stringify({
+              success: true,
+              data: transformed,
+            }),
+          };
+        }
+      } catch (dbError) {
+        console.warn("Database update failed, using mockDB fallback:", dbError);
+      }
+
+      // Fallback to mockDB
       const injuryIndex = mockDB.injuries.findIndex(
         (i) => i.id === injuryId && i.userId === userId,
       );
@@ -563,6 +724,7 @@ async function handleInjuries(method, userId, body, query) {
       if (injuryIndex === -1) {
         return {
           statusCode: 404,
+          headers: corsHeaders,
           body: JSON.stringify({ error: "Injury not found" }),
         };
       }
@@ -575,6 +737,7 @@ async function handleInjuries(method, userId, body, query) {
 
       return {
         statusCode: 200,
+        headers: corsHeaders,
         body: JSON.stringify({
           success: true,
           data: mockDB.injuries[injuryIndex],

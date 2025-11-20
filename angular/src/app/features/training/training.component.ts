@@ -10,10 +10,15 @@ import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { TagModule } from "primeng/tag";
 import { ProgressBarModule } from "primeng/progressbar";
+import { ToastModule } from "primeng/toast";
+import { MessageService } from "primeng/api";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
+import { TrainingBuilderComponent } from "../../shared/components/training-builder/training-builder.component";
+import { SwipeGestureDirective, SwipeEvent } from "../../shared/directives/swipe-gesture.directive";
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
+import { HeaderService } from "../../core/services/header.service";
 
 interface StatCard {
   title: string;
@@ -47,12 +52,22 @@ interface Workout {
     ButtonModule,
     TagModule,
     ProgressBarModule,
+    ToastModule,
     MainLayoutComponent,
     StatsGridComponent,
+    TrainingBuilderComponent,
+    SwipeGestureDirective,
   ],
   template: `
+    <p-toast></p-toast>
     <app-main-layout>
-      <div class="training-page">
+      <div
+        class="training-page"
+        [class.refreshing]="isRefreshing()"
+        appSwipeGesture
+        [enablePullToRefresh]="true"
+        (pullToRefresh)="refreshTrainingData()"
+      >
         <!-- Hero Section -->
         <div class="hero-section">
           <p-card class="hero-card">
@@ -65,27 +80,8 @@ interface Workout {
           </p-card>
         </div>
 
-        <!-- Custom Schedule Builder CTA -->
-        <p-card class="schedule-cta-card">
-          <div class="cta-content">
-            <div class="cta-text">
-              <h2>
-                <i class="pi pi-calendar-plus"></i>
-                Build Your Custom Training Schedule
-              </h2>
-              <p>
-                Join 20 players from 12 nations who follow personalized training
-                plans. Create a schedule that fits your game days, timezone, and
-                goals.
-              </p>
-            </div>
-            <p-button
-              label="Create Schedule"
-              icon="pi pi-plus"
-              (onClick)="openScheduleBuilder()"
-            ></p-button>
-          </div>
-        </p-card>
+        <!-- Smart Training Session Builder -->
+        <app-training-builder></app-training-builder>
 
         <!-- Training Stats Grid -->
         <app-stats-grid [stats]="trainingStats()"></app-stats-grid>
@@ -143,6 +139,11 @@ interface Workout {
                 *ngFor="let workout of workouts(); trackBy: trackByWorkoutTitle"
                 class="workout-card"
                 [style.border-color]="workout.iconBg"
+                [class.swiping-right]="swipingWorkoutId() === workout.title && swipeDirection() === 'right'"
+                [class.swiping-left]="swipingWorkoutId() === workout.title && swipeDirection() === 'left'"
+                appSwipeGesture
+                (swipeRight)="onSwipeRight($event, workout)"
+                (swipeLeft)="onSwipeLeft($event, workout)"
               >
                 <div class="workout-icon" [style.background]="workout.iconBg">
                   <i [class]="workout.icon"></i>
@@ -196,6 +197,38 @@ interface Workout {
     `
       .training-page {
         padding: var(--space-6);
+        position: relative;
+      }
+
+      .training-page::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--color-brand-primary);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.3s;
+        z-index: 10;
+      }
+
+      .training-page.refreshing::before {
+        transform: scaleX(1);
+        animation: refresh-indicator 1s ease-in-out;
+      }
+
+      @keyframes refresh-indicator {
+        0% {
+          transform: scaleX(0);
+        }
+        50% {
+          transform: scaleX(1);
+        }
+        100% {
+          transform: scaleX(0);
+        }
       }
 
       .hero-section {
@@ -347,11 +380,59 @@ interface Workout {
         border-radius: var(--p-border-radius);
         transition: all 0.2s;
         cursor: pointer;
+        position: relative;
+        overflow: hidden;
       }
 
       .workout-card:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .workout-card.swiping-right {
+        transform: translateX(100px);
+        opacity: 0.7;
+        background: rgba(16, 201, 107, 0.1);
+      }
+
+      .workout-card.swiping-left {
+        transform: translateX(-100px);
+        opacity: 0.7;
+        background: rgba(241, 196, 15, 0.1);
+      }
+
+      .workout-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        opacity: 0;
+        transition: opacity 0.2s;
+        pointer-events: none;
+      }
+
+      .workout-card.swiping-right::before {
+        content: "✓ Complete";
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(16, 201, 107, 0.9);
+        color: white;
+        font-weight: 600;
+        opacity: 1;
+      }
+
+      .workout-card.swiping-left::before {
+        content: "⏱ Postpone";
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(241, 196, 15, 0.9);
+        color: white;
+        font-weight: 600;
+        opacity: 1;
       }
 
       .workout-icon {
@@ -433,6 +514,8 @@ interface Workout {
 export class TrainingComponent implements OnInit {
   private apiService = inject(ApiService);
   private authService = inject(AuthService);
+  private messageService = inject(MessageService);
+  private headerService = inject(HeaderService);
 
   userName = signal("Alex");
   stats = signal<StatCard[]>([]);
@@ -440,8 +523,13 @@ export class TrainingComponent implements OnInit {
   weeklySchedule = signal<any[]>([]);
   workouts = signal<Workout[]>([]);
   achievements = signal<any[]>([]);
+  swipingWorkoutId = signal<string | null>(null);
+  swipeDirection = signal<"left" | "right" | null>(null);
+  isRefreshing = signal(false);
 
   ngOnInit(): void {
+    // Configure header for training page
+    this.headerService.setTrainingHeader();
     this.loadTrainingData();
   }
 
@@ -554,7 +642,12 @@ export class TrainingComponent implements OnInit {
   }
 
   openScheduleBuilder(): void {
-    // Open schedule builder modal - implementation pending
+    // Training builder is now integrated directly in the template
+    // Scroll to builder if needed
+    const builderElement = document.querySelector('app-training-builder');
+    if (builderElement) {
+      builderElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 
   toggleScheduleView(): void {
@@ -563,6 +656,65 @@ export class TrainingComponent implements OnInit {
 
   startWorkout(workout: Workout): void {
     // Start workout - implementation pending
+    this.messageService.add({
+      severity: "info",
+      summary: "Starting Workout",
+      detail: `Starting ${workout.title}`,
+    });
+  }
+
+  onSwipeRight(event: SwipeEvent, workout: Workout): void {
+    this.swipingWorkoutId.set(workout.title);
+    this.swipeDirection.set("right");
+    
+    setTimeout(() => {
+      this.markWorkoutComplete(workout);
+      this.swipingWorkoutId.set(null);
+      this.swipeDirection.set(null);
+    }, 300);
+  }
+
+  onSwipeLeft(event: SwipeEvent, workout: Workout): void {
+    this.swipingWorkoutId.set(workout.title);
+    this.swipeDirection.set("left");
+    
+    setTimeout(() => {
+      this.postponeWorkout(workout);
+      this.swipingWorkoutId.set(null);
+      this.swipeDirection.set(null);
+    }, 300);
+  }
+
+  markWorkoutComplete(workout: Workout): void {
+    this.messageService.add({
+      severity: "success",
+      summary: "Workout Completed",
+      detail: `${workout.title} marked as complete`,
+    });
+    // TODO: Update workout status in backend
+  }
+
+  postponeWorkout(workout: Workout): void {
+    this.messageService.add({
+      severity: "info",
+      summary: "Workout Postponed",
+      detail: `${workout.title} has been postponed`,
+    });
+    // TODO: Update workout status in backend
+  }
+
+  refreshTrainingData(): void {
+    this.isRefreshing.set(true);
+    this.loadTrainingData();
+    
+    setTimeout(() => {
+      this.isRefreshing.set(false);
+      this.messageService.add({
+        severity: "success",
+        summary: "Refreshed",
+        detail: "Training data has been refreshed",
+      });
+    }, 1000);
   }
 
   trackByStatTitle(index: number, stat: StatCard): string {

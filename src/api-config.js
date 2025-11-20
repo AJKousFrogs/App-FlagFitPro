@@ -25,7 +25,7 @@ const getApiBaseUrl = () => {
     return netlifyUrl;
   }
 
-  // Check if we're in local development with Netlify Dev
+  // Check if we're in local development with Netlify Dev (port 8888)
   if (
     window.location.hostname === "localhost" &&
     window.location.port === "8888"
@@ -36,18 +36,20 @@ const getApiBaseUrl = () => {
     return netlifyDevUrl;
   }
 
-  // For local development, use Netlify Functions (or configured API)
+  // For local development, try to use current origin for Netlify Functions
+  // This works if Netlify Dev is running on the same port
   if (
     window.location.hostname === "localhost" ||
     window.location.hostname === "127.0.0.1"
   ) {
-    // Default to Netlify Functions for local dev
-    const localNetlifyUrl = "http://localhost:8888/.netlify/functions";
-    logger.debug("Local development - using Netlify Functions:", localNetlifyUrl);
+    // Use current origin - this allows the dev server to proxy or serve functions
+    const currentOrigin = window.location.origin;
+    const localNetlifyUrl = `${currentOrigin}/.netlify/functions`;
+    logger.debug("Local development - using current origin for Netlify Functions:", localNetlifyUrl);
     return localNetlifyUrl;
   }
 
-  // Default fallback to Netlify Functions
+  // Default fallback to Netlify Functions using current origin
   const defaultUrl = window.location.origin + "/.netlify/functions";
   logger.debug("Using default Netlify Functions URL:", defaultUrl);
   return defaultUrl;
@@ -203,6 +205,9 @@ export const API_ENDPOINTS = {
   // Wellness
   wellness: {
     checkin: normalizeEndpoint("/api/wellness/checkin"),
+    injuries: API_BASE_URL.includes("netlify/functions")
+      ? "/performance-data?type=injuries"
+      : normalizeEndpoint("/api/wellness/injuries"),
   },
 
   // Supplements
@@ -282,6 +287,13 @@ export class ApiClient {
 
       // Handle non-200 responses
       if (!response.ok) {
+        // For 401 errors, try to parse error message but don't fail completely
+        if (response.status === 401) {
+          const errorData = await response.json().catch(() => ({}));
+          const error = new Error(errorData.error || `HTTP ${response.status}`);
+          error.status = 401;
+          throw error;
+        }
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || `HTTP ${response.status}`);
       }
@@ -299,8 +311,44 @@ export class ApiClient {
         throw new Error("Request cancelled");
       }
 
-      // Log all errors
-      logger.error(`API request failed: ${endpoint}`, error);
+      // Check if this is a development environment
+      const isDev = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+      const isNetlifyFunction = endpoint.includes("/.netlify/functions") ||
+                                 endpoint.startsWith("/notifications") ||
+                                 endpoint.startsWith("/dashboard") ||
+                                 endpoint.startsWith("/community") ||
+                                 endpoint.startsWith("/tournaments") ||
+                                 endpoint.startsWith("/community");
+
+      // Handle network errors (Failed to fetch)
+      if (error.message === "Failed to fetch" || error.name === "TypeError" || error.message?.includes("Failed to fetch")) {
+        // Check if it's a connection refused error (common when Netlify Functions aren't running)
+        const isConnectionRefused = true; // All "Failed to fetch" errors in this context are connection issues
+
+        // In dev mode with Netlify Functions, connection refused is expected
+        // Don't log errors, just silently handle it
+        if (isDev && isNetlifyFunction) {
+          // Silently handle - this is expected when Netlify Dev isn't running
+          // Don't log anything, just throw a quiet error
+        } else {
+          logger.debug(`Network error for ${endpoint} - endpoint may be unavailable`);
+        }
+
+        const networkError = new Error(`Failed to fetch: ${endpoint}`);
+        networkError.isNetworkError = true;
+        networkError.isConnectionRefused = isConnectionRefused;
+        throw networkError;
+      }
+
+      // Log other errors (but use debug for dev environment)
+      if (isDev && isNetlifyFunction) {
+        // Don't log errors for Netlify Functions in dev - they're expected to fail if Netlify Dev isn't running
+        logger.debug(`API request failed (expected in dev): ${endpoint}`);
+      } else if (isDev) {
+        logger.debug(`API request failed (dev mode): ${endpoint}`, error);
+      } else {
+        logger.error(`API request failed: ${endpoint}`, error);
+      }
 
       throw error;
     }

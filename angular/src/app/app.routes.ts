@@ -1,5 +1,6 @@
 import { Routes } from "@angular/router";
 import { authGuard } from "./core/guards/auth.guard";
+import { headerConfigGuard } from "./core/guards/header-config.guard";
 
 export const routes: Routes = [
   {
@@ -36,7 +37,7 @@ export const routes: Routes = [
       import("./features/dashboard/dashboard.component").then(
         (m) => m.DashboardComponent,
       ),
-    canActivate: [authGuard],
+    canActivate: [authGuard, headerConfigGuard],
   },
   {
     path: "training",
@@ -44,7 +45,7 @@ export const routes: Routes = [
       import("./features/training/training.component").then(
         (m) => m.TrainingComponent,
       ),
-    canActivate: [authGuard],
+    canActivate: [authGuard, headerConfigGuard],
   },
   {
     path: "analytics",
@@ -52,7 +53,7 @@ export const routes: Routes = [
       import("./features/analytics/analytics.component").then(
         (m) => m.AnalyticsComponent,
       ),
-    canActivate: [authGuard],
+    canActivate: [authGuard, headerConfigGuard],
   },
   {
     path: "roster",

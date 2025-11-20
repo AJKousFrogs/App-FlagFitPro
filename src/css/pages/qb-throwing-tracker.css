@@ -50,7 +50,7 @@ body {
 }
 
 .quick-log {
-  background: var(--dark-text-primary);
+  background: var(--surface-primary);
   border-radius: 12px;
   padding: 25px;
   margin-bottom: 30px;
@@ -59,19 +59,19 @@ body {
 .form-row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 15px;
-  margin-bottom: 15px;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
 }
 
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: var(--space-4);
 }
 
 .form-label {
   display: block;
   margin-bottom: 5px;
   font-weight: var(--font-weight-semibold, 600);
-  color: var(--dark-text-primary);
+  color: var(--color-text-primary);
 }
 
 .form-input,
@@ -95,7 +95,7 @@ body {
     var(--primary-500) 0%,
     var(--primary-600) 100%
   );
-  color: var(--dark-text-primary);
+  color: var(--color-text-primary);
   border: none;
   padding: 12px 25px;
   border-radius: 8px;
@@ -119,7 +119,7 @@ body {
 }
 
 .progress-section {
-  background: var(--dark-text-primary);
+  background: var(--surface-primary);
   border-radius: 12px;
   padding: 25px;
   margin-bottom: 30px;
@@ -165,7 +165,7 @@ body {
 }
 
 .session-log {
-  background: var(--dark-text-primary);
+  background: var(--surface-primary);
   border-radius: 12px;
   padding: 25px;
 }
@@ -173,8 +173,8 @@ body {
 .log-entry {
   border-left: 4px solid var(--primary-500);
   padding: 15px;
-  margin-bottom: 15px;
-  background: var(--dark-bg-secondary);
+  margin-bottom: var(--space-4);
+  background: var(--surface-secondary);
   border-radius: 0 8px 8px 0;
 }
 
@@ -192,7 +192,7 @@ body {
 
 .log-type {
   background: var(--primary-500);
-  color: var(--dark-text-primary);
+  color: var(--color-text-primary);
   padding: 4px 12px;
   border-radius: 20px;
   font-size: 0.8rem;
@@ -208,36 +208,36 @@ body {
 .log-stat {
   text-align: center;
   padding: 8px;
-  background: var(--dark-text-primary);
+  background: var(--surface-primary);
   border-radius: 6px;
 }
 
 .log-stat-number {
   font-size: var(--font-size-xl, 1.25rem);
   font-weight: var(--font-weight-bold, 700);
-  color: var(--dark-text-primary);
+  color: var(--color-text-primary);
 }
 
 .log-stat-label {
   font-size: var(--font-size-sm, 0.875rem);
-  color: var(--dark-text-secondary);
+  color: var(--color-text-secondary);
 }
 
 .chart-placeholder {
   width: 100%;
   height: 200px;
-  background: var(--dark-bg-secondary);
+  background: var(--surface-secondary);
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--dark-text-secondary);
+  color: var(--color-text-secondary);
   font-style: italic;
 }
 
 .warning-banner {
   background: linear-gradient(135deg, #ffc107 0%, #ff8c00 100%);
-  color: var(--dark-text-primary);
+  color: var(--color-text-primary);
   padding: 15px;
   border-radius: 8px;
   margin-bottom: 20px;
@@ -250,7 +250,7 @@ body {
 }
 
 .nav-links a {
-  color: var(--dark-text-primary);
+  color: var(--color-text-primary);
   text-decoration: none;
   margin: 0 15px;
   padding: 10px 20px;

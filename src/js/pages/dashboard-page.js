@@ -17,6 +17,7 @@ class DashboardPage {
       mood: null,
       trainingLoad: null,
     };
+    this.injuries = [];
     this.supplements = {
       "beta-alanine": { taken: false, time: null },
       caffeine: { taken: false, time: null },
@@ -131,7 +132,26 @@ class DashboardPage {
         this.renderNotifications(this.getMockNotifications());
       }
     } catch (error) {
-      logger.warn("Failed to load notifications, using mock data:", error);
+      // Handle specific error types gracefully
+      if (error.isConnectionRefused ||
+          (error.isNetworkError && error.message && error.message.includes("Failed to fetch"))) {
+        // Connection refused is expected when Netlify Functions aren't running
+        // Silently use mock data without logging
+        this.renderNotifications(this.getMockNotifications());
+        return;
+      }
+
+      if (error.isNetworkError || (error.message && error.message.includes("Failed to fetch"))) {
+        logger.debug(
+          "Network error loading notifications, using mock data",
+        );
+      } else if (error.status === 401 || (error.message && error.message.includes("401"))) {
+        logger.debug(
+          "Unauthorized - using mock notifications",
+        );
+      } else {
+        logger.warn("Failed to load notifications, using mock data:", error);
+      }
       this.renderNotifications(this.getMockNotifications());
     }
   }
@@ -258,6 +278,9 @@ class DashboardPage {
     if (submitBtn) {
       submitBtn.addEventListener("click", (e) => this.handleWellnessSubmit(e));
     }
+
+    // Injury Tracking Setup
+    this.setupInjuryTracking();
 
     // Training Session Start Button
     const startSessionBtn = document.querySelector(".btn-start-session");
@@ -1141,6 +1164,235 @@ class DashboardPage {
         notification.remove();
       }, 300);
     }, 3000);
+  }
+
+  setupInjuryTracking() {
+    // Setup injury form toggle
+    const addBtn = document.getElementById("btn-add-injury");
+    const cancelBtn = document.getElementById("btn-cancel-injury");
+    const injuryForm = document.getElementById("injury-form");
+
+    if (addBtn && injuryForm) {
+      addBtn.addEventListener("click", () => {
+        injuryForm.style.display = injuryForm.style.display === "none" ? "block" : "none";
+        addBtn.style.display = injuryForm.style.display === "none" ? "flex" : "none";
+      });
+    }
+
+    if (cancelBtn && injuryForm) {
+      cancelBtn.addEventListener("click", () => {
+        injuryForm.style.display = "none";
+        addBtn.style.display = "flex";
+        injuryForm.reset();
+      });
+    }
+
+    // Setup severity slider
+    const severitySlider = document.getElementById("injury-severity");
+    const severityValue = severitySlider?.parentElement.querySelector(".severity-value");
+    if (severitySlider && severityValue) {
+      severitySlider.addEventListener("input", (e) => {
+        severityValue.textContent = e.target.value;
+      });
+      severityValue.textContent = severitySlider.value;
+    }
+
+    // Setup injury form submission
+    if (injuryForm) {
+      injuryForm.addEventListener("submit", (e) => this.handleInjurySubmit(e));
+    }
+
+    // Set default date to today
+    const injuryDateInput = document.getElementById("injury-date");
+    if (injuryDateInput) {
+      injuryDateInput.value = this.formatDateForInput(new Date());
+    }
+
+    // Load existing injuries
+    this.loadInjuries();
+  }
+
+  async handleInjurySubmit(e) {
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
+
+    const injuryData = {
+      type: formData.get("injuryType"),
+      severity: parseInt(formData.get("severity")),
+      description: formData.get("description"),
+      status: formData.get("status"),
+      startDate: formData.get("startDate"),
+    };
+
+    const button = form.querySelector(".btn-submit-injury");
+    const originalText = button.textContent;
+
+    // Disable button and show loading
+    button.disabled = true;
+    button.innerHTML = '<i data-lucide="loader-2" class="icon-16 icon-inline"></i> Saving...';
+
+    try {
+      const user = authManager.getCurrentUser();
+      const isDevelopment =
+        window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1";
+
+      if (!user && !isDevelopment) {
+        throw new Error("User not authenticated");
+      }
+
+      const injuryRecord = {
+        userId: user ? user.id || user.email : "demo-user",
+        ...injuryData,
+        createdAt: new Date().toISOString(),
+      };
+
+      // Save to API
+      try {
+        await apiClient.post(API_ENDPOINTS.wellness.injuries, injuryRecord);
+        logger.success("Injury report saved successfully");
+      } catch (apiError) {
+        // Fallback to localStorage
+        logger.warn("API unavailable, saving to localStorage:", apiError);
+        const saved = JSON.parse(localStorage.getItem("injuries") || "[]");
+        injuryRecord.id = Date.now().toString();
+        saved.push(injuryRecord);
+        localStorage.setItem("injuries", JSON.stringify(saved));
+      }
+
+      // Show success message
+      this.showNotification("Injury report saved successfully! ✓", "success");
+
+      // Reset form and hide
+      form.reset();
+      form.style.display = "none";
+      document.getElementById("btn-add-injury").style.display = "flex";
+
+      // Reload injuries list
+      await this.loadInjuries();
+
+      // Reset button
+      button.disabled = false;
+      button.innerHTML = originalText;
+    } catch (error) {
+      logger.error("Failed to save injury report:", error);
+      this.showNotification("Failed to save injury report. Please try again.", "error");
+      button.disabled = false;
+      button.innerHTML = originalText;
+    }
+  }
+
+  async loadInjuries() {
+    try {
+      const user = authManager.getCurrentUser();
+      if (!user) return;
+
+      let injuries = [];
+
+      // Try API first
+      try {
+        const response = await apiClient.get(API_ENDPOINTS.wellness.injuries);
+        if (response && response.data && Array.isArray(response.data)) {
+          injuries = response.data.filter(i =>
+            i.status === "active" || i.status === "recovering" || i.status === "monitoring"
+          );
+        }
+      } catch (apiError) {
+        // Fallback to localStorage
+        logger.warn("API unavailable, loading from localStorage:", apiError);
+        const saved = JSON.parse(localStorage.getItem("injuries") || "[]");
+        injuries = saved.filter(i =>
+          i.userId === (user.id || user.email) &&
+          (i.status === "active" || i.status === "recovering" || i.status === "monitoring")
+        );
+      }
+
+      this.injuries = injuries;
+      this.renderInjuries();
+    } catch (error) {
+      logger.error("Failed to load injuries:", error);
+    }
+  }
+
+  renderInjuries() {
+    const container = document.getElementById("active-injuries-list");
+    if (!container) return;
+
+    if (this.injuries.length === 0) {
+      container.innerHTML = '<p class="injury-description" style="margin: 0; color: var(--color-text-tertiary);">No active injuries reported.</p>';
+      return;
+    }
+
+    container.innerHTML = this.injuries.map(injury => {
+      const statusClass = injury.status === "recovered" ? "recovered" :
+                         injury.status === "monitoring" ? "monitoring" : "active";
+      const statusLabel = injury.status === "recovered" ? "Recovered" :
+                         injury.status === "monitoring" ? "Monitoring" : "Active";
+
+      return `
+        <div class="injury-item ${statusClass}">
+          <div class="injury-item-info">
+            <div class="injury-item-title">
+              ${injury.type.charAt(0).toUpperCase() + injury.type.slice(1)} - Severity: ${injury.severity}/10
+            </div>
+            <div class="injury-item-details">
+              ${injury.description || "No description"} • Started: ${new Date(injury.startDate).toLocaleDateString()} • Status: ${statusLabel}
+            </div>
+          </div>
+          <div class="injury-item-actions">
+            ${injury.status !== "recovered" ? `
+              <button class="btn-mark-recovered" data-injury-id="${injury.id || injury.startDate}">
+                Mark Recovered
+              </button>
+            ` : ""}
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    // Add event listeners for mark recovered buttons
+    container.querySelectorAll(".btn-mark-recovered").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        const injuryId = e.target.dataset.injuryId;
+        this.markInjuryRecovered(injuryId);
+      });
+    });
+  }
+
+  async markInjuryRecovered(injuryId) {
+    try {
+      const user = authManager.getCurrentUser();
+      if (!user) return;
+
+      // Update injury status
+      try {
+        await apiClient.put(`${API_ENDPOINTS.wellness.injuries}/${injuryId}`, {
+          status: "recovered",
+          recoveryDate: new Date().toISOString().split("T")[0],
+        });
+        logger.success("Injury marked as recovered");
+      } catch (apiError) {
+        // Fallback to localStorage
+        logger.warn("API unavailable, updating localStorage:", apiError);
+        const saved = JSON.parse(localStorage.getItem("injuries") || "[]");
+        const injuryIndex = saved.findIndex(i =>
+          (i.id || i.startDate) === injuryId &&
+          i.userId === (user.id || user.email)
+        );
+        if (injuryIndex !== -1) {
+          saved[injuryIndex].status = "recovered";
+          saved[injuryIndex].recoveryDate = new Date().toISOString();
+          localStorage.setItem("injuries", JSON.stringify(saved));
+        }
+      }
+
+      this.showNotification("Injury marked as recovered! ✓", "success");
+      await this.loadInjuries();
+    } catch (error) {
+      logger.error("Failed to mark injury as recovered:", error);
+      this.showNotification("Failed to update injury status.", "error");
+    }
   }
 }
 

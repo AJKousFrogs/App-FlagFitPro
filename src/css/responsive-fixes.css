@@ -55,6 +55,15 @@ body {
   position: relative;
 }
 
+/* Ensure footer is always visible and properly positioned */
+.main-footer {
+  position: relative !important;
+  z-index: 1 !important;
+  overflow: visible !important;
+  clear: both !important;
+  display: block !important;
+}
+
 * {
   max-width: 100%;
 }
@@ -491,18 +500,38 @@ object {
     display: grid !important;
     grid-template-columns: 2fr 1fr 1fr !important;
     gap: var(--space-xl) !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   .footer-section {
     width: 100% !important;
     max-width: 100% !important;
   }
+
+  .main-footer {
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
 }
 
 /* Tablet fixes */
 @media (max-width: 1024px) {
+  .main-footer {
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
   .footer-content {
     gap: var(--space-lg) !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding-left: var(--space-md) !important;
+    padding-right: var(--space-md) !important;
+  }
+
+  .footer-section:first-child {
+    grid-column: 1 / -1 !important;
   }
 }
 
@@ -512,19 +541,41 @@ object {
   .landing-footer {
     padding-left: var(--space-md) !important;
     padding-right: var(--space-md) !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: visible !important;
+    clear: both !important;
+    display: block !important;
   }
 
   .footer-content {
     grid-template-columns: 1fr !important;
     gap: var(--space-lg) !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    padding-left: var(--space-md) !important;
+    padding-right: var(--space-md) !important;
+    overflow: visible !important;
   }
 
   .footer-section {
     width: 100% !important;
+    max-width: 100% !important;
     margin-bottom: var(--space-md) !important;
+    min-width: 0 !important;
+    overflow: visible !important;
   }
 
-  .footer-section:last-child {
+  .footer-section:first-child {
+    grid-column: 1 !important;
+    grid-column-start: 1 !important;
+    grid-column-end: -1 !important;
+  }
+
+  .footer-section:last-child,
+  .footer-section:last-of-type {
     margin-bottom: 0 !important;
   }
 
@@ -547,10 +598,18 @@ object {
     text-align: center !important;
     flex-direction: column !important;
     gap: var(--space-sm) !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    padding-left: var(--space-md) !important;
+    padding-right: var(--space-md) !important;
+    overflow: visible !important;
+    clear: both !important;
   }
 
   .footer-bottom p {
     text-align: center !important;
+    word-wrap: break-word !important;
   }
 }
 
@@ -560,14 +619,37 @@ object {
   .landing-footer {
     padding-left: var(--space-sm) !important;
     padding-right: var(--space-sm) !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: visible !important;
+    clear: both !important;
   }
 
   .footer-content {
     gap: var(--space-md) !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    padding-left: var(--space-sm) !important;
+    padding-right: var(--space-sm) !important;
+    overflow: visible !important;
   }
 
   .footer-section {
     margin-bottom: var(--space-lg) !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+  }
+
+  .footer-bottom {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+    clear: both !important;
+    padding-left: var(--space-sm) !important;
+    padding-right: var(--space-sm) !important;
   }
 
   .footer-links {
@@ -576,6 +658,42 @@ object {
 
   .footer-link-group {
     margin-bottom: var(--space-lg) !important;
+  }
+}
+
+/* Extra small mobile */
+@media (max-width: 360px) {
+  .main-footer {
+    padding-left: var(--space-xs) !important;
+    padding-right: var(--space-xs) !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+    clear: both !important;
+  }
+
+  .footer-content {
+    padding-left: var(--space-xs) !important;
+    padding-right: var(--space-xs) !important;
+    gap: var(--space-sm) !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+  }
+
+  .footer-section {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+  }
+
+  .footer-bottom {
+    padding-left: var(--space-xs) !important;
+    padding-right: var(--space-xs) !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+    clear: both !important;
   }
 }
 

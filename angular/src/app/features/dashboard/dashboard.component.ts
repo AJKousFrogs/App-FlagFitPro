@@ -14,9 +14,11 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
+import { PerformanceDashboardComponent } from "../../shared/components/performance-dashboard/performance-dashboard.component";
 import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
+import { HeaderService } from "../../core/services/header.service";
 
 @Component({
   selector: "app-dashboard",
@@ -31,6 +33,7 @@ import { AuthService } from "../../core/services/auth.service";
     MainLayoutComponent,
     PageHeaderComponent,
     StatsGridComponent,
+    PerformanceDashboardComponent,
   ],
   template: `
     <app-main-layout>
@@ -41,6 +44,12 @@ import { AuthService } from "../../core/services/auth.service";
         ></app-page-header>
 
         <app-stats-grid [stats]="stats()"></app-stats-grid>
+
+        <!-- Real-Time Performance Dashboard -->
+        <app-performance-dashboard
+          [athleteId]="athleteId()"
+          [realTimeEnabled]="true">
+        </app-performance-dashboard>
 
         <div class="dashboard-grid">
           <p-card class="dashboard-card">
@@ -232,21 +241,29 @@ import { AuthService } from "../../core/services/auth.service";
 export class DashboardComponent implements OnInit {
   private apiService = inject(ApiService);
   private authService = inject(AuthService);
+  private headerService = inject(HeaderService);
 
   stats = signal<any[]>([]);
   performanceChartData = signal<any>(null);
   trainingChartData = signal<any>(null);
   activities = signal<any[]>([]);
   upcomingSessions = signal<any[]>([]);
+  athleteId = signal<string | undefined>(undefined);
 
   chartOptions = DEFAULT_CHART_OPTIONS;
 
   ngOnInit(): void {
+    // Configure header for dashboard
+    this.headerService.setDashboardHeader();
     this.loadDashboardData();
   }
 
   loadDashboardData(): void {
-    const userId = this.authService.getUser()?.id;
+    const user = this.authService.getUser();
+    const userId = user?.id;
+    
+    // Set athlete ID for performance dashboard
+    this.athleteId.set(userId);
 
     // Load dashboard overview
     this.apiService

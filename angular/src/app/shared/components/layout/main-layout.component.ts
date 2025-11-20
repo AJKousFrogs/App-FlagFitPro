@@ -3,21 +3,32 @@ import { CommonModule } from "@angular/common";
 import { RouterOutlet } from "@angular/router";
 import { SidebarComponent } from "../sidebar/sidebar.component";
 import { HeaderComponent } from "../header/header.component";
+import { QuickActionsFABComponent } from "../quick-actions-fab/quick-actions-fab.component";
+import { SmartBreadcrumbsComponent } from "../smart-breadcrumbs/smart-breadcrumbs.component";
 
 @Component({
   selector: "app-main-layout",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterOutlet, SidebarComponent, HeaderComponent],
+  imports: [
+    CommonModule,
+    RouterOutlet,
+    SidebarComponent,
+    HeaderComponent,
+    QuickActionsFABComponent,
+    SmartBreadcrumbsComponent,
+  ],
   template: `
     <div class="dashboard-container">
       <app-sidebar #sidebar></app-sidebar>
       <main class="main-content">
         <app-header (toggleSidebar)="sidebar.toggleSidebar()"></app-header>
+        <app-smart-breadcrumbs></app-smart-breadcrumbs>
         <div class="content-wrapper">
           <router-outlet></router-outlet>
         </div>
       </main>
+      <app-quick-actions-fab></app-quick-actions-fab>
     </div>
   `,
   styles: [

@@ -132,7 +132,7 @@ button.primary {
 .btn.btn-secondary,
 button.secondary {
   background: var(--surface-primary, #ffffff);
-  color: var(--text-primary, #171717);
+  color: var(--color-text-primary);
   border-color: var(--border-strong, #d4d4d4);
 }
 
@@ -187,14 +187,14 @@ button.secondary {
 .btn-ghost,
 .btn-outline {
   background: transparent;
-  color: var(--text-secondary, #404040);
+  color: var(--color-text-secondary);
   border-color: transparent;
 }
 
 .btn-ghost:hover,
 .btn-outline:hover {
   background: var(--surface-secondary, #f8fafc);
-  color: var(--text-primary, #171717);
+  color: var(--color-text-primary);
 }
 
 /* ================================================================
@@ -305,12 +305,12 @@ button.secondary {
   border-radius: var(--radius-md, 8px);
   gap: var(--spacing-3, 12px);
   text-decoration: none;
-  color: var(--text-secondary, #404040);
+  color: var(--color-text-secondary);
 }
 
 .nav-item:hover {
   background: var(--surface-secondary, #f8fafc);
-  color: var(--text-primary, #171717);
+  color: var(--color-text-primary);
 }
 
 .nav-item.active {
@@ -407,7 +407,7 @@ tr.clickable td {
   align-items: center;
   gap: var(--spacing-3, 12px);
   text-decoration: none;
-  color: var(--text-primary, #171717);
+  color: var(--color-text-primary);
   cursor: pointer;
   border-radius: var(--radius-md, 8px);
 }
@@ -556,7 +556,7 @@ button:disabled,
   }
 
   .btn-secondary {
-    border: 2px solid var(--text-primary, #171717);
+    border: 2px solid var(--color-text-primary);
   }
 
   button:focus-visible,
@@ -610,7 +610,7 @@ button:disabled,
   }
 
   .nav-item {
-    color: var(--text-secondary-dark, #a3a3a3);
+    color: var(--color-text-secondary);
   }
 
   .nav-item:hover {

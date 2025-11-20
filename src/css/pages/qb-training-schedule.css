@@ -6,7 +6,7 @@
 .dashboard-container {
   display: flex;
   min-height: 100vh;
-  background: var(--dark-bg-primary);
+  background: var(--surface-primary);
 }
 
 .sidebar-nav {
@@ -25,14 +25,14 @@
   margin-top: 70px;
   flex: 1;
   padding: 32px;
-  background: var(--dark-bg-primary);
+  background: var(--surface-primary);
 }
 
 .qb-header {
   background: linear-gradient(
     135deg,
-    var(--primary-500) 0%,
-    var(--primary-600) 100%
+    var(--color-brand-primary) 0%,
+    var(--color-brand-primary-hover) 100%
   );
   color: var(--var(--dark-text-primary));
   padding: var(--space-8);
@@ -53,7 +53,7 @@
 
 .qb-title {
   font-size: var(--text-3xl);
-  font-weight: var(--font-bold);
+  font-weight: var(--font-weight-bold);
   margin-bottom: var(--space-2);
 }
 
@@ -72,7 +72,7 @@
 
 .challenge-title {
   font-size: var(--text-lg);
-  font-weight: var(--font-bold);
+  font-weight: var(--font-weight-bold);
   margin-bottom: var(--space-2);
 }
 
@@ -89,7 +89,7 @@
 
 .challenge-number {
   font-size: var(--text-2xl);
-  font-weight: var(--font-bold);
+  font-weight: var(--font-weight-bold);
   margin-bottom: var(--space-1);
 }
 
@@ -99,16 +99,16 @@
 }
 
 .dual-track-section {
-  background: var(--dark-card-bg);
+  background: var(--surface-elevated);
   padding: var(--space-6);
   border-radius: var(--radius-xl);
   margin-bottom: var(--space-6);
-  border: 1px solid var(--dark-border);
+  border: 1px solid var(--color-border-secondary);
 }
 
 .dual-track-title {
   font-size: var(--text-xl);
-  font-weight: var(--font-bold);
+  font-weight: var(--font-weight-bold);
   margin-bottom: var(--space-4);
   text-align: center;
 }
@@ -137,7 +137,7 @@
 
 .track-name {
   font-size: var(--text-lg);
-  font-weight: var(--font-bold);
+  font-weight: var(--font-weight-bold);
   margin-bottom: var(--space-3);
 }
 
@@ -160,16 +160,16 @@
 }
 
 .throwing-metrics {
-  background: var(--dark-card-bg);
+  background: var(--surface-elevated);
   padding: var(--space-6);
   border-radius: var(--radius-xl);
   margin-bottom: var(--space-6);
-  border: 1px solid var(--dark-border);
+  border: 1px solid var(--color-border-secondary);
 }
 
 .metrics-title {
   font-size: var(--text-xl);
-  font-weight: var(--font-bold);
+  font-weight: var(--font-weight-bold);
   margin-bottom: var(--space-4);
 }
 
@@ -180,7 +180,7 @@
 }
 
 .metric-card {
-  background: var(--dark-bg-primary);
+  background: var(--surface-primary);
   padding: var(--space-4);
   border-radius: var(--radius-lg);
   text-align: center;
@@ -188,7 +188,7 @@
 
 .metric-value {
   font-size: var(--text-2xl);
-  font-weight: var(--font-bold);
+  font-weight: var(--font-weight-bold);
   color: var(--primary);
   margin-bottom: var(--space-1);
 }
@@ -214,9 +214,9 @@
 }
 
 .weekly-breakdown {
-  background: var(--dark-card-bg);
+  background: var(--surface-elevated);
   border-radius: var(--radius-xl);
-  border: 1px solid var(--dark-border);
+  border: 1px solid var(--color-border-secondary);
   overflow: hidden;
   margin-bottom: var(--space-6);
 }
@@ -224,7 +224,7 @@
 .breakdown-header {
   background: var(--gray-50);
   padding: var(--space-4) var(--space-6);
-  border: 1px solid var(--dark-border);
+  border: 1px solid var(--color-border-secondary);
 }
 
 .week-selector {
@@ -241,8 +241,8 @@
 
 .week-nav-btn {
   padding: var(--space-2) var(--space-3);
-  border: 1px solid var(--dark-border);
-  background: var(--dark-card-bg);
+  border: 1px solid var(--color-border-secondary);
+  background: var(--surface-elevated);
   border-radius: var(--radius-md);
   cursor: pointer;
   transition: all var(--transition-fast);
@@ -259,7 +259,7 @@
 
 .current-week {
   font-size: var(--text-lg);
-  font-weight: var(--font-bold);
+  font-weight: var(--font-weight-bold);
   color: var(--dark-text-primary);
 }
 
@@ -274,7 +274,7 @@
 }
 
 .day-card {
-  border: 1px solid var(--dark-border);
+  border: 1px solid var(--color-border-secondary);
   border-radius: var(--radius-lg);
   overflow: hidden;
   transition: all var(--transition-fast);
@@ -309,7 +309,7 @@
 }
 
 .session-block.qb-specific {
-  background: var(--dark-card-bg);
+  background: var(--surface-elevated);
   border-left: 4px solid #ff9800;
 }
 
@@ -341,17 +341,17 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-weight: var(--font-bold);
+  font-weight: var(--font-weight-bold);
   color: #d32f2f;
   margin-bottom: var(--space-2);
 }
 
 .assessment-section {
-  background: var(--dark-card-bg);
+  background: var(--surface-elevated);
   padding: var(--space-6);
   border-radius: var(--radius-xl);
   margin-bottom: var(--space-6);
-  border: 1px solid var(--dark-border);
+  border: 1px solid var(--color-border-secondary);
 }
 
 .assessment-grid {
@@ -361,7 +361,7 @@
 }
 
 .assessment-card {
-  border: 1px solid var(--dark-border);
+  border: 1px solid var(--color-border-secondary);
   border-radius: var(--radius-lg);
   padding: var(--space-4);
   transition: all var(--transition-fast);
@@ -404,7 +404,7 @@
 
 .simulation-title {
   font-size: var(--text-2xl);
-  font-weight: var(--font-bold);
+  font-weight: var(--font-weight-bold);
   margin-bottom: var(--space-4);
   text-align: center;
 }
@@ -425,7 +425,7 @@
 
 .game-number {
   font-size: var(--text-lg);
-  font-weight: var(--font-bold);
+  font-weight: var(--font-weight-bold);
   margin-bottom: var(--space-2);
 }
 
@@ -444,7 +444,7 @@
   padding: var(--space-4) var(--space-8);
   border-radius: var(--radius-lg);
   font-size: var(--text-lg);
-  font-weight: var(--font-bold);
+  font-weight: var(--font-weight-bold);
   border: none;
   cursor: pointer;
   transition: all var(--transition-fast);
