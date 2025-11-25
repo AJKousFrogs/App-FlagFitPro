@@ -3,6 +3,8 @@
 
 const jwt = require("jsonwebtoken");
 const { db, checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
+const { validateQueryParams } = require("./validation.cjs");
+const { getOrFetch, CACHE_TTL, CACHE_PREFIX } = require("./cache.cjs");
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -604,23 +606,37 @@ exports.handler = async (event, context) => {
     // Parse path to determine endpoint
     const path = event.path.replace("/.netlify/functions/analytics", "");
     const queryParams = event.queryStringParameters || {};
+
+    // Validate query parameters
+    const validation = validateQueryParams(queryParams);
+    if (!validation.valid) {
+      return validation.response;
+    }
+
     const weeks = parseInt(queryParams.weeks) || 7;
     const period = queryParams.period || "30days";
 
     let data;
+    let cacheKey;
 
     if (path.includes("/performance-trends") || path.endsWith("/performance-trends")) {
-      data = await getPerformanceTrends(userId, weeks);
+      cacheKey = `${CACHE_PREFIX.ANALYTICS}:${userId}:performance-trends:${weeks}`;
+      data = await getOrFetch(cacheKey, async () => await getPerformanceTrends(userId, weeks), CACHE_TTL.ANALYTICS);
     } else if (path.includes("/team-chemistry") || path.endsWith("/team-chemistry")) {
-      data = await getTeamChemistry(userId);
+      cacheKey = `${CACHE_PREFIX.ANALYTICS}:${userId}:team-chemistry`;
+      data = await getOrFetch(cacheKey, async () => await getTeamChemistry(userId), CACHE_TTL.ANALYTICS);
     } else if (path.includes("/training-distribution") || path.endsWith("/training-distribution")) {
-      data = await getTrainingDistribution(userId, period);
+      cacheKey = `${CACHE_PREFIX.ANALYTICS}:${userId}:training-distribution:${period}`;
+      data = await getOrFetch(cacheKey, async () => await getTrainingDistribution(userId, period), CACHE_TTL.ANALYTICS);
     } else if (path.includes("/position-performance") || path.endsWith("/position-performance")) {
-      data = await getPositionPerformance(userId);
+      cacheKey = `${CACHE_PREFIX.ANALYTICS}:${userId}:position-performance`;
+      data = await getOrFetch(cacheKey, async () => await getPositionPerformance(userId), CACHE_TTL.ANALYTICS);
     } else if (path.includes("/speed-development") || path.endsWith("/speed-development")) {
-      data = await getSpeedDevelopment(userId, weeks);
+      cacheKey = `${CACHE_PREFIX.ANALYTICS}:${userId}:speed-development:${weeks}`;
+      data = await getOrFetch(cacheKey, async () => await getSpeedDevelopment(userId, weeks), CACHE_TTL.ANALYTICS);
     } else if (path.includes("/summary") || path.endsWith("/summary")) {
-      data = await getAnalyticsSummary(userId);
+      cacheKey = `${CACHE_PREFIX.ANALYTICS}:${userId}:summary`;
+      data = await getOrFetch(cacheKey, async () => await getAnalyticsSummary(userId), CACHE_TTL.ANALYTICS);
     } else {
       return {
         statusCode: 404,

@@ -398,16 +398,18 @@ async function handlePerformanceTests(method, userId, body, query) {
           throw error;
         }
 
+        const improvement = await calculateImprovement(
+          testData.testType,
+          testData.result,
+          userId,
+        );
+
         return {
           statusCode: 201,
           body: JSON.stringify({
             success: true,
             id: data.id,
-            improvement: calculateImprovement(
-              testData.testType,
-              testData.result,
-              userId,
-            ),
+            improvement,
           }),
         };
       } catch (error) {
@@ -431,36 +433,104 @@ async function handleWellness(method, userId, body, query) {
   switch (method) {
     case "GET":
       const timeframe = query?.timeframe || "30d";
-      const wellness = mockDB.wellness.filter(
-        (w) => w.userId === userId && isWithinTimeframe(w.date, timeframe),
-      );
+      const startDate = getStartDateForTimeframe(timeframe);
 
-      return {
-        statusCode: 200,
-        body: JSON.stringify({
-          data: wellness,
-          averages: calculateWellnessAverages(wellness),
-          patterns: detectWellnessPatterns(wellness),
-        }),
-      };
+      try {
+        const { data: wellness, error } = await supabaseAdmin
+          .from("wellness_data")
+          .select("*")
+          .eq("user_id", userId)
+          .gte("date", startDate.toISOString().split("T")[0])
+          .order("date", { ascending: false });
+
+        if (error && error.code !== "42P01") {
+          throw error;
+        }
+
+        const wellnessData = (wellness || []).map((w) => ({
+          id: w.id,
+          userId: w.user_id,
+          date: w.date,
+          sleep: w.sleep,
+          energy: w.energy,
+          stress: w.stress,
+          soreness: w.soreness,
+          motivation: w.motivation,
+          mood: w.mood,
+          hydration: w.hydration,
+          notes: w.notes,
+          timestamp: w.created_at,
+        }));
+
+        return {
+          statusCode: 200,
+          body: JSON.stringify({
+            data: wellnessData,
+            averages: calculateWellnessAverages(wellnessData),
+            patterns: detectWellnessPatterns(wellnessData),
+          }),
+        };
+      } catch (error) {
+        console.error("Error fetching wellness data:", error);
+        return {
+          statusCode: 200,
+          body: JSON.stringify({
+            data: [],
+            averages: null,
+            patterns: { patterns: [], insights: [] },
+          }),
+        };
+      }
 
     case "POST":
       const wellnessData = JSON.parse(body);
-      const newWellness = {
-        id: generateId(),
-        userId,
-        ...wellnessData,
-        timestamp: new Date().toISOString(),
-      };
 
-      mockDB.wellness.push(newWellness);
-      return {
-        statusCode: 201,
-        body: JSON.stringify({
-          success: true,
-          id: newWellness.id,
-        }),
-      };
+      try {
+        const { data, error } = await supabaseAdmin
+          .from("wellness_data")
+          .insert({
+            user_id: userId,
+            date: wellnessData.date || new Date().toISOString().split("T")[0],
+            sleep: wellnessData.sleep,
+            energy: wellnessData.energy,
+            stress: wellnessData.stress,
+            soreness: wellnessData.soreness,
+            motivation: wellnessData.motivation,
+            mood: wellnessData.mood,
+            hydration: wellnessData.hydration,
+            notes: wellnessData.notes,
+          })
+          .select()
+          .single();
+
+        if (error) {
+          if (error.code === "42P01") {
+            return {
+              statusCode: 201,
+              body: JSON.stringify({
+                success: true,
+                id: `temp_${Date.now()}`,
+                note: "Table needs to be created via migration",
+              }),
+            };
+          }
+          throw error;
+        }
+
+        return {
+          statusCode: 201,
+          body: JSON.stringify({
+            success: true,
+            id: data.id,
+          }),
+        };
+      } catch (error) {
+        console.error("Error saving wellness data:", error);
+        return {
+          statusCode: 500,
+          body: JSON.stringify({ error: "Failed to save wellness data" }),
+        };
+      }
 
     default:
       return {
@@ -475,35 +545,96 @@ async function handleSupplements(method, userId, body, query) {
   switch (method) {
     case "GET":
       const timeframe = query?.timeframe || "30d";
-      const supplements = mockDB.supplements.filter(
-        (s) => s.userId === userId && isWithinTimeframe(s.date, timeframe),
-      );
+      const startDate = getStartDateForTimeframe(timeframe);
 
-      return {
-        statusCode: 200,
-        body: JSON.stringify({
-          data: supplements,
-          compliance: calculateSupplementCompliance(supplements),
-        }),
-      };
+      try {
+        const { data: supplements, error } = await supabaseAdmin
+          .from("supplements_data")
+          .select("*")
+          .eq("user_id", userId)
+          .gte("date", startDate.toISOString().split("T")[0])
+          .order("date", { ascending: false });
+
+        if (error && error.code !== "42P01") {
+          throw error;
+        }
+
+        const supplementsData = (supplements || []).map((s) => ({
+          id: s.id,
+          userId: s.user_id,
+          name: s.name,
+          dosage: s.dosage,
+          taken: s.taken,
+          date: s.date,
+          timeOfDay: s.time_of_day,
+          notes: s.notes,
+          timestamp: s.created_at,
+        }));
+
+        return {
+          statusCode: 200,
+          body: JSON.stringify({
+            data: supplementsData,
+            compliance: calculateSupplementCompliance(supplementsData),
+          }),
+        };
+      } catch (error) {
+        console.error("Error fetching supplements data:", error);
+        return {
+          statusCode: 200,
+          body: JSON.stringify({
+            data: [],
+            compliance: { complianceRate: 0, totalDays: 0, missedDays: 0 },
+          }),
+        };
+      }
 
     case "POST":
       const supplementData = JSON.parse(body);
-      const newSupplement = {
-        id: generateId(),
-        userId,
-        ...supplementData,
-        timestamp: new Date().toISOString(),
-      };
 
-      mockDB.supplements.push(newSupplement);
-      return {
-        statusCode: 201,
-        body: JSON.stringify({
-          success: true,
-          id: newSupplement.id,
-        }),
-      };
+      try {
+        const { data, error } = await supabaseAdmin
+          .from("supplements_data")
+          .insert({
+            user_id: userId,
+            name: supplementData.name,
+            dosage: supplementData.dosage,
+            taken: supplementData.taken !== undefined ? supplementData.taken : true,
+            date: supplementData.date || new Date().toISOString().split("T")[0],
+            time_of_day: supplementData.timeOfDay,
+            notes: supplementData.notes,
+          })
+          .select()
+          .single();
+
+        if (error) {
+          if (error.code === "42P01") {
+            return {
+              statusCode: 201,
+              body: JSON.stringify({
+                success: true,
+                id: `temp_${Date.now()}`,
+                note: "Table needs to be created via migration",
+              }),
+            };
+          }
+          throw error;
+        }
+
+        return {
+          statusCode: 201,
+          body: JSON.stringify({
+            success: true,
+            id: data.id,
+          }),
+        };
+      } catch (error) {
+        console.error("Error saving supplement data:", error);
+        return {
+          statusCode: 500,
+          body: JSON.stringify({ error: "Failed to save supplement data" }),
+        };
+      }
 
     default:
       return {
@@ -513,7 +644,7 @@ async function handleSupplements(method, userId, body, query) {
   }
 }
 
-// Injuries Handler - Updated to use Supabase with mockDB fallback
+// Injuries Handler - Fully migrated to Supabase
 async function handleInjuries(method, userId, body, query) {
   switch (method) {
     case "GET":
@@ -535,49 +666,50 @@ async function handleInjuries(method, userId, body, query) {
 
         const { data: injuries, error: getError } = await queryBuilder;
 
-        if (!getError && injuries) {
-          const transformed = injuries.map(injury => ({
-            id: injury.id,
-            userId: injury.user_id,
-            type: injury.type,
-            severity: injury.severity,
-            description: injury.description,
-            status: injury.status,
-            startDate: injury.start_date,
-            recoveryDate: injury.recovery_date,
-            createdAt: injury.created_at,
-            updatedAt: injury.updated_at,
-          }));
-
-          return {
-            statusCode: 200,
-            headers: corsHeaders,
-            body: JSON.stringify({
-              success: true,
-              data: transformed,
-              statistics: calculateInjuryStatistics(transformed),
-            }),
-          };
+        if (getError && getError.code !== "42P01") {
+          throw getError;
         }
+
+        const transformed = (injuries || []).map(injury => ({
+          id: injury.id,
+          userId: injury.user_id,
+          type: injury.type,
+          severity: injury.severity,
+          description: injury.description,
+          status: injury.status,
+          startDate: injury.start_date,
+          recoveryDate: injury.recovery_date,
+          createdAt: injury.created_at,
+          updatedAt: injury.updated_at,
+        }));
+
+        return {
+          statusCode: 200,
+          headers: corsHeaders,
+          body: JSON.stringify({
+            success: true,
+            data: transformed,
+            statistics: calculateInjuryStatistics(transformed),
+          }),
+        };
       } catch (dbError) {
-        console.warn("Database query failed, using mockDB fallback:", dbError);
+        console.error("Error fetching injuries:", dbError);
+        return {
+          statusCode: 200,
+          headers: corsHeaders,
+          body: JSON.stringify({
+            success: true,
+            data: [],
+            statistics: {
+              total: 0,
+              active: 0,
+              recovered: 0,
+              byType: {},
+              avgRecoveryTime: null,
+            },
+          }),
+        };
       }
-
-      // Fallback to mockDB
-      let injuries = mockDB.injuries.filter((i) => i.userId === userId);
-      if (status && status !== "all") {
-        injuries = injuries.filter((i) => i.status === status);
-      }
-
-      return {
-        statusCode: 200,
-        headers: corsHeaders,
-        body: JSON.stringify({
-          success: true,
-          data: injuries,
-          statistics: calculateInjuryStatistics(injuries),
-        }),
-      };
 
     case "POST":
       const injuryData = JSON.parse(body);
@@ -611,51 +743,52 @@ async function handleInjuries(method, userId, body, query) {
           .select()
           .single();
 
-        if (!insertError && insertedInjury) {
-          const transformed = {
-            id: insertedInjury.id,
-            userId: insertedInjury.user_id,
-            type: insertedInjury.type,
-            severity: insertedInjury.severity,
-            description: insertedInjury.description,
-            status: insertedInjury.status,
-            startDate: insertedInjury.start_date,
-            recoveryDate: insertedInjury.recovery_date,
-            createdAt: insertedInjury.created_at,
-            updatedAt: insertedInjury.updated_at,
-          };
-
-          return {
-            statusCode: 201,
-            headers: corsHeaders,
-            body: JSON.stringify({
-              success: true,
-              data: transformed,
-            }),
-          };
+        if (insertError) {
+          if (insertError.code === "42P01") {
+            return {
+              statusCode: 201,
+              headers: corsHeaders,
+              body: JSON.stringify({
+                success: true,
+                id: `temp_${Date.now()}`,
+                note: "Injuries table needs to be created via migration",
+              }),
+            };
+          }
+          throw insertError;
         }
+
+        const transformed = {
+          id: insertedInjury.id,
+          userId: insertedInjury.user_id,
+          type: insertedInjury.type,
+          severity: insertedInjury.severity,
+          description: insertedInjury.description,
+          status: insertedInjury.status,
+          startDate: insertedInjury.start_date,
+          recoveryDate: insertedInjury.recovery_date,
+          createdAt: insertedInjury.created_at,
+          updatedAt: insertedInjury.updated_at,
+        };
+
+        return {
+          statusCode: 201,
+          headers: corsHeaders,
+          body: JSON.stringify({
+            success: true,
+            data: transformed,
+          }),
+        };
       } catch (dbError) {
-        console.warn("Database insert failed, using mockDB fallback:", dbError);
+        console.error("Error creating injury:", dbError);
+        return {
+          statusCode: 500,
+          headers: corsHeaders,
+          body: JSON.stringify({
+            error: "Failed to create injury record",
+          }),
+        };
       }
-
-      // Fallback to mockDB
-      const newInjury = {
-        id: generateId(),
-        userId,
-        status: "active",
-        ...injuryData,
-        reportedAt: new Date().toISOString(),
-      };
-
-      mockDB.injuries.push(newInjury);
-      return {
-        statusCode: 201,
-        headers: corsHeaders,
-        body: JSON.stringify({
-          success: true,
-          data: newInjury,
-        }),
-      };
 
     case "PATCH":
     case "PUT":
@@ -689,60 +822,49 @@ async function handleInjuries(method, userId, body, query) {
           .select()
           .single();
 
-        if (!updateError && updatedInjury) {
-          const transformed = {
-            id: updatedInjury.id,
-            userId: updatedInjury.user_id,
-            type: updatedInjury.type,
-            severity: updatedInjury.severity,
-            description: updatedInjury.description,
-            status: updatedInjury.status,
-            startDate: updatedInjury.start_date,
-            recoveryDate: updatedInjury.recovery_date,
-            createdAt: updatedInjury.created_at,
-            updatedAt: updatedInjury.updated_at,
-          };
-
-          return {
-            statusCode: 200,
-            headers: corsHeaders,
-            body: JSON.stringify({
-              success: true,
-              data: transformed,
-            }),
-          };
+        if (updateError) {
+          if (updateError.code === "PGRST116") {
+            // No rows updated - injury not found
+            return {
+              statusCode: 404,
+              headers: corsHeaders,
+              body: JSON.stringify({ error: "Injury not found" }),
+            };
+          }
+          throw updateError;
         }
-      } catch (dbError) {
-        console.warn("Database update failed, using mockDB fallback:", dbError);
-      }
 
-      // Fallback to mockDB
-      const injuryIndex = mockDB.injuries.findIndex(
-        (i) => i.id === injuryId && i.userId === userId,
-      );
+        const transformed = {
+          id: updatedInjury.id,
+          userId: updatedInjury.user_id,
+          type: updatedInjury.type,
+          severity: updatedInjury.severity,
+          description: updatedInjury.description,
+          status: updatedInjury.status,
+          startDate: updatedInjury.start_date,
+          recoveryDate: updatedInjury.recovery_date,
+          createdAt: updatedInjury.created_at,
+          updatedAt: updatedInjury.updated_at,
+        };
 
-      if (injuryIndex === -1) {
         return {
-          statusCode: 404,
+          statusCode: 200,
           headers: corsHeaders,
-          body: JSON.stringify({ error: "Injury not found" }),
+          body: JSON.stringify({
+            success: true,
+            data: transformed,
+          }),
+        };
+      } catch (dbError) {
+        console.error("Error updating injury:", dbError);
+        return {
+          statusCode: 500,
+          headers: corsHeaders,
+          body: JSON.stringify({
+            error: "Failed to update injury record",
+          }),
         };
       }
-
-      mockDB.injuries[injuryIndex] = {
-        ...mockDB.injuries[injuryIndex],
-        ...updateData,
-        updatedAt: new Date().toISOString(),
-      };
-
-      return {
-        statusCode: 200,
-        headers: corsHeaders,
-        body: JSON.stringify({
-          success: true,
-          data: mockDB.injuries[injuryIndex],
-        }),
-      };
 
     default:
       return {
@@ -762,79 +884,188 @@ async function handleTrends(method, userId, query) {
   }
 
   const timeframe = query?.timeframe || "12m";
+  const startDate = getStartDateForTimeframe(timeframe);
 
-  // Gather all data for trend analysis
-  const measurements = mockDB.measurements.filter(
-    (m) => m.userId === userId && isWithinTimeframe(m.timestamp, timeframe),
-  );
+  try {
+    // Fetch all data from Supabase for trend analysis
+    const [measurementsResult, performanceTestsResult, wellnessResult] = await Promise.all([
+      supabaseAdmin
+        .from("physical_measurements")
+        .select("*")
+        .eq("user_id", userId)
+        .gte("created_at", startDate.toISOString()),
+      supabaseAdmin
+        .from("athlete_performance_tests")
+        .select("*")
+        .eq("user_id", userId)
+        .gte("test_date", startDate.toISOString().split("T")[0]),
+      supabaseAdmin
+        .from("wellness_data")
+        .select("*")
+        .eq("user_id", userId)
+        .gte("date", startDate.toISOString().split("T")[0]),
+    ]);
 
-  const performanceTests = mockDB.performanceTests.filter(
-    (t) => t.userId === userId && isWithinTimeframe(t.timestamp, timeframe),
-  );
+    const measurements = (measurementsResult.data || []).map((m) => ({
+      userId: m.user_id,
+      weight: m.weight,
+      height: m.height,
+      bodyFat: m.body_fat,
+      muscleMass: m.muscle_mass,
+      timestamp: m.created_at,
+    }));
 
-  const wellness = mockDB.wellness.filter(
-    (w) => w.userId === userId && isWithinTimeframe(w.date, timeframe),
-  );
+    const performanceTests = (performanceTestsResult.data || []).map((t) => ({
+      userId: t.user_id,
+      testType: t.test_type || t.test_protocol_id?.toString(),
+      result: t.best_result || t.average_result,
+      timestamp: t.test_date || t.created_at,
+    }));
 
-  const trends = {
-    performance: calculatePerformanceTrends(performanceTests),
-    body_composition: calculateBodyCompositionTrends(measurements),
-    wellness: calculateWellnessTrends(wellness),
-    correlations: calculateCorrelations(performanceTests, wellness),
-    insights: generateInsights(performanceTests, wellness, measurements),
-    recommendations: generateRecommendations(
-      performanceTests,
-      wellness,
-      measurements,
-    ),
-  };
+    const wellness = (wellnessResult.data || []).map((w) => ({
+      userId: w.user_id,
+      sleep: w.sleep,
+      energy: w.energy,
+      stress: w.stress,
+      soreness: w.soreness,
+      motivation: w.motivation,
+      date: w.date,
+    }));
 
-  return {
-    statusCode: 200,
-    body: JSON.stringify(trends),
-  };
+    const trends = {
+      performance: calculatePerformanceTrends(performanceTests),
+      body_composition: calculateBodyCompositionTrends(measurements),
+      wellness: calculateWellnessTrends(wellness),
+      correlations: calculateCorrelations(performanceTests, wellness),
+      insights: generateInsights(performanceTests, wellness, measurements),
+      recommendations: generateRecommendations(
+        performanceTests,
+        wellness,
+        measurements,
+      ),
+    };
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify(trends),
+    };
+  } catch (error) {
+    console.error("Error fetching trends data:", error);
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        performance: {},
+        body_composition: { trend: "insufficient_data", changes: null },
+        wellness: { trend: "insufficient_data", averages: null },
+        correlations: {},
+        insights: [],
+        recommendations: [],
+      }),
+    };
+  }
 }
 
 // Data Export Handler
 async function handleExport(userId, query) {
   const format = query?.format || "json";
   const timeframe = query?.timeframe || "12m";
+  const startDate = getStartDateForTimeframe(timeframe);
 
-  // Gather all user data
-  const allData = {
-    measurements: mockDB.measurements.filter(
-      (m) => m.userId === userId && isWithinTimeframe(m.timestamp, timeframe),
-    ),
-    performanceTests: mockDB.performanceTests.filter(
-      (t) => t.userId === userId && isWithinTimeframe(t.timestamp, timeframe),
-    ),
-    wellness: mockDB.wellness.filter(
-      (w) => w.userId === userId && isWithinTimeframe(w.date, timeframe),
-    ),
-    supplements: mockDB.supplements.filter(
-      (s) => s.userId === userId && isWithinTimeframe(s.date, timeframe),
-    ),
-    injuries: mockDB.injuries.filter((i) => i.userId === userId),
-    exportedAt: new Date().toISOString(),
-  };
+  try {
+    // Gather all user data from Supabase
+    const [measurementsResult, performanceTestsResult, wellnessResult, supplementsResult, injuriesResult] = await Promise.all([
+      supabaseAdmin
+        .from("physical_measurements")
+        .select("*")
+        .eq("user_id", userId)
+        .gte("created_at", startDate.toISOString()),
+      supabaseAdmin
+        .from("athlete_performance_tests")
+        .select("*")
+        .eq("user_id", userId)
+        .gte("test_date", startDate.toISOString().split("T")[0]),
+      supabaseAdmin
+        .from("wellness_data")
+        .select("*")
+        .eq("user_id", userId)
+        .gte("date", startDate.toISOString().split("T")[0]),
+      supabaseAdmin
+        .from("supplements_data")
+        .select("*")
+        .eq("user_id", userId)
+        .gte("date", startDate.toISOString().split("T")[0]),
+      supabaseAdmin
+        .from("injuries")
+        .select("*")
+        .eq("user_id", userId),
+    ]);
 
-  if (format === "csv") {
-    const csv = convertToCSV(allData);
+    const allData = {
+      measurements: (measurementsResult.data || []).map((m) => ({
+        userId: m.user_id,
+        weight: m.weight,
+        height: m.height,
+        bodyFat: m.body_fat,
+        muscleMass: m.muscle_mass,
+        timestamp: m.created_at,
+      })),
+      performanceTests: (performanceTestsResult.data || []).map((t) => ({
+        userId: t.user_id,
+        testType: t.test_type || t.test_protocol_id?.toString(),
+        result: t.best_result || t.average_result,
+        timestamp: t.test_date || t.created_at,
+      })),
+      wellness: (wellnessResult.data || []).map((w) => ({
+        userId: w.user_id,
+        sleep: w.sleep,
+        energy: w.energy,
+        stress: w.stress,
+        soreness: w.soreness,
+        motivation: w.motivation,
+        date: w.date,
+      })),
+      supplements: (supplementsResult.data || []).map((s) => ({
+        userId: s.user_id,
+        name: s.name,
+        dosage: s.dosage,
+        taken: s.taken,
+        date: s.date,
+      })),
+      injuries: (injuriesResult.data || []).map((i) => ({
+        userId: i.user_id,
+        type: i.type,
+        severity: i.severity,
+        status: i.status,
+        startDate: i.start_date,
+        recoveryDate: i.recovery_date,
+      })),
+      exportedAt: new Date().toISOString(),
+    };
+
+    if (format === "csv") {
+      const csv = convertToCSV(allData);
+      return {
+        statusCode: 200,
+        headers: {
+          "Content-Type": "text/csv",
+          "Content-Disposition": 'attachment; filename="performance-data.csv"',
+        },
+        body: csv,
+      };
+    }
+
     return {
       statusCode: 200,
-      headers: {
-        "Content-Type": "text/csv",
-        "Content-Disposition": 'attachment; filename="performance-data.csv"',
-      },
-      body: csv,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(allData),
+    };
+  } catch (error) {
+    console.error("Error exporting data:", error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: "Failed to export data" }),
     };
   }
-
-  return {
-    statusCode: 200,
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(allData),
-  };
 }
 
 // Utility Functions
@@ -1069,33 +1300,42 @@ function calculateTestsSummary(tests) {
   return summary;
 }
 
-function calculateImprovement(testType, currentResult, userId) {
-  // Find previous test results for this user and test type
-  const previousTests = mockDB.performanceTests
-    .filter((t) => t.userId === userId && t.testType === testType)
-    .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-    .slice(1); // Skip the most recent (current) one
+async function calculateImprovement(testType, currentResult, userId) {
+  // Find previous test results for this user and test type from Supabase
+  try {
+    const { data: previousTests, error } = await supabaseAdmin
+      .from("athlete_performance_tests")
+      .select("best_result, average_result, test_date")
+      .eq("user_id", userId)
+      .eq("test_type", testType)
+      .order("test_date", { ascending: false })
+      .limit(2); // Get the 2 most recent
 
-  if (previousTests.length === 0) {
+    if (error || !previousTests || previousTests.length < 2) {
+      return { percent: 0, trend: "no_data" };
+    }
+
+    // Skip the most recent (current) one, use the second most recent
+    const previousResult = previousTests[1].best_result || previousTests[1].average_result;
+    const percentChange = (
+      ((currentResult - previousResult) / previousResult) *
+      100
+    ).toFixed(1);
+
+    return {
+      percent: parseFloat(percentChange),
+      trend:
+        percentChange > 0
+          ? "improving"
+          : percentChange < 0
+            ? "declining"
+            : "stable",
+      previous: previousResult,
+    };
+  } catch (error) {
+    console.error("Error calculating improvement:", error);
     return { percent: 0, trend: "no_data" };
   }
-
-  const previousResult = previousTests[0].result;
-  const percentChange = (
-    ((currentResult - previousResult) / previousResult) *
-    100
-  ).toFixed(1);
-
-  return {
-    percent: parseFloat(percentChange),
-    trend:
-      percentChange > 0
-        ? "improving"
-        : percentChange < 0
-          ? "declining"
-          : "stable",
-    previous: previousResult,
-  };
 }
 
 function detectWellnessPatterns(wellness) {

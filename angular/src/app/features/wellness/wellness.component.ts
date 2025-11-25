@@ -12,12 +12,11 @@ import { ButtonModule } from "primeng/button";
 import { ChartModule } from "primeng/chart";
 import { CalendarModule } from "primeng/calendar";
 import { InputNumberModule } from "primeng/inputnumber";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
 import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
-import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
+import { WellnessService } from "../../core/services/wellness.service";
 
 interface WellnessMetric {
   label: string;
@@ -208,7 +207,7 @@ interface WellnessMetric {
   ],
 })
 export class WellnessComponent implements OnInit {
-  private apiService = inject(ApiService);
+  private wellnessService = inject(WellnessService);
 
   metrics = signal<WellnessMetric[]>([]);
   wellnessStats = signal<any[]>([]);
@@ -227,65 +226,149 @@ export class WellnessComponent implements OnInit {
   }
 
   loadWellnessData(): void {
-    // Load stats for StatsGridComponent
+    // Fetch wellness data from service
+    this.wellnessService.getWellnessData('7d').subscribe({
+      next: (response) => {
+        if (response.success && response.data && response.data.length > 0) {
+          const latestData = response.data[0];
+          const overallScore = this.wellnessService.getWellnessScore(latestData);
+          const status = this.wellnessService.getWellnessStatus(overallScore);
+
+          // Update stats with real data
+          this.wellnessStats.set([
+            {
+              label: "Sleep Quality",
+              value: latestData.sleep ? `${latestData.sleep}h` : "N/A",
+              icon: "pi-moon",
+              color: "#3498db",
+              trend: this.calculateTrend(response.data, 'sleep'),
+              trendType: "positive",
+            },
+            {
+              label: "Recovery Score",
+              value: `${Math.round(overallScore * 10)}%`,
+              icon: "pi-heart",
+              color: status.color,
+              trend: status.label,
+              trendType: status.label.toLowerCase().includes('good') || status.label.toLowerCase().includes('excellent') ? "positive" : "neutral",
+            },
+            {
+              label: "Energy Level",
+              value: latestData.energy ? `${latestData.energy}/10` : "N/A",
+              icon: "pi-bolt",
+              color: "#f1c40f",
+              trend: this.calculateTrend(response.data, 'energy'),
+              trendType: "positive",
+            },
+            {
+              label: "Stress Level",
+              value: latestData.stress ? this.getStressLabel(latestData.stress) : "N/A",
+              icon: "pi-shield",
+              color: latestData.stress && latestData.stress <= 3 ? "#10c96b" : "#f1c40f",
+              trend: latestData.stress && latestData.stress <= 3 ? "Low" : "Moderate",
+              trendType: latestData.stress && latestData.stress <= 3 ? "positive" : "neutral",
+            },
+          ]);
+
+          // Build chart data from last 7 days
+          const sortedData = [...response.data].sort((a, b) =>
+            new Date(a.date).getTime() - new Date(b.date).getTime()
+          );
+
+          const labels = sortedData.map(d => {
+            const date = new Date(d.date);
+            return date.toLocaleDateString('en-US', { weekday: 'short' });
+          });
+
+          this.sleepChartData.set({
+            labels,
+            datasets: [
+              {
+                label: "Sleep Hours",
+                data: sortedData.map(d => d.sleep || 0),
+                borderColor: "#3498db",
+                backgroundColor: "rgba(52, 152, 219, 0.1)",
+              },
+            ],
+          });
+
+          this.recoveryChartData.set({
+            labels,
+            datasets: [
+              {
+                label: "Recovery Score",
+                data: sortedData.map(d => Math.round(this.wellnessService.getWellnessScore(d) * 10)),
+                backgroundColor: "#089949",
+              },
+            ],
+          });
+        } else {
+          // Fallback to default data if no data available
+          this.loadFallbackData();
+        }
+      },
+      error: (err) => {
+        console.error('Error loading wellness data:', err);
+        this.loadFallbackData();
+      },
+    });
+  }
+
+  private loadFallbackData(): void {
     this.wellnessStats.set([
       {
         label: "Sleep Quality",
-        value: "8.2h",
+        value: "No data",
         icon: "pi-moon",
         color: "#3498db",
-        trend: "+0.5h vs avg",
-        trendType: "positive",
+        trend: "Log check-in",
+        trendType: "neutral",
       },
       {
         label: "Recovery Score",
-        value: "85%",
+        value: "N/A",
         icon: "pi-heart",
         color: "#089949",
-        trend: "+5% today",
-        trendType: "positive",
+        trend: "Log check-in",
+        trendType: "neutral",
       },
       {
         label: "Energy Level",
-        value: "7.5",
+        value: "N/A",
         icon: "pi-bolt",
         color: "#f1c40f",
-        trend: "Good",
-        trendType: "positive",
+        trend: "Log check-in",
+        trendType: "neutral",
       },
       {
         label: "Stress Level",
-        value: "Low",
+        value: "N/A",
         icon: "pi-shield",
         color: "#10c96b",
-        trend: "Optimal",
-        trendType: "positive",
+        trend: "Log check-in",
+        trendType: "neutral",
       },
     ]);
 
-    // Load charts
-    this.sleepChartData.set({
-      labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-      datasets: [
-        {
-          label: "Sleep Hours",
-          data: [7.5, 8.0, 7.8, 8.2, 8.5, 9.0, 8.5],
-          borderColor: "#3498db",
-          backgroundColor: "rgba(52, 152, 219, 0.1)",
-        },
-      ],
-    });
+    this.sleepChartData.set(null);
+    this.recoveryChartData.set(null);
+  }
 
-    this.recoveryChartData.set({
-      labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-      datasets: [
-        {
-          label: "Recovery Score",
-          data: [80, 82, 85, 83, 87, 85, 88],
-          backgroundColor: "#089949",
-        },
-      ],
-    });
+  private calculateTrend(data: any[], metric: string): string {
+    if (data.length < 2) return 'N/A';
+    const current = data[0][metric];
+    const previous = data[1][metric];
+    if (!current || !previous) return 'N/A';
+    const diff = current - previous;
+    if (diff > 0) return `+${diff.toFixed(1)} vs yesterday`;
+    if (diff < 0) return `${diff.toFixed(1)} vs yesterday`;
+    return 'No change';
+  }
+
+  private getStressLabel(stress: number): string {
+    if (stress <= 3) return 'Low';
+    if (stress <= 6) return 'Moderate';
+    return 'High';
   }
 
   openCheckIn(): void {
@@ -295,18 +378,27 @@ export class WellnessComponent implements OnInit {
   }
 
   submitCheckIn(): void {
-    this.apiService
-      .post(API_ENDPOINTS.wellness.checkin, this.checkInData)
-      .pipe(takeUntilDestroyed())
-      .subscribe({
-        next: () => {
+    // Convert form data to wellness check-in format
+    const wellnessData = {
+      sleep: this.checkInData.sleepHours,
+      energy: this.checkInData.energyLevel,
+      mood: this.checkInData.mood,
+      date: new Date().toISOString().split('T')[0],
+    };
+
+    this.wellnessService.logWellness(wellnessData).subscribe({
+      next: (response) => {
+        if (response.success) {
           // Reset form
           this.checkInData = { sleepHours: 0, energyLevel: 5, mood: 5 };
-        },
-        error: () => {
-          // Error handled by error interceptor
-        },
-      });
+          // Reload wellness data to show updated stats
+          this.loadWellnessData();
+        }
+      },
+      error: (err) => {
+        console.error('Error submitting wellness check-in:', err);
+      },
+    });
   }
 
   trackByMetricLabel(index: number, metric: WellnessMetric): string {

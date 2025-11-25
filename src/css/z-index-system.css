@@ -1,0 +1,75 @@
+/* ================================================================
+   Z-INDEX SYSTEM - FlagFit Pro
+   Centralized z-index management to prevent conflicts
+   ================================================================ */
+
+:root {
+  /* ================================
+     Z-INDEX SCALE (10-point increments)
+     Lower values = background layers
+     Higher values = foreground/modal layers
+     ================================ */
+
+  /* Background layers (1-99) */
+  --z-background: 1;
+  --z-background-pattern: 2;
+  --z-background-gradient: 3;
+
+  /* Content layers (100-499) */
+  --z-content: 100;
+  --z-sidebar: 200;
+  --z-main-content: 300;
+
+  /* Navigation layers (500-799) */
+  --z-header: 500;
+  --z-top-bar: 500;
+  --z-sticky-nav: 600;
+  --z-mobile-menu: 700;
+
+  /* Interactive layers (800-999) */
+  --z-dropdown: 800;
+  --z-tooltip: 850;
+  --z-popover: 900;
+  --z-search-results: 950;
+
+  /* Overlay layers (1000-1999) */
+  --z-modal-backdrop: 1000;
+  --z-modal: 1100;
+  --z-toast: 1200;
+  --z-loading-overlay: 1300;
+
+  /* System layers (2000+) */
+  --z-emergency: 2000;
+  --z-debug: 9999;
+}
+
+/* ================================================================
+   COMPONENT Z-INDEX ASSIGNMENTS
+   Apply these classes or use CSS variables directly
+   ================================================================ */
+
+.z-background { z-index: var(--z-background); }
+.z-background-pattern { z-index: var(--z-background-pattern); }
+.z-background-gradient { z-index: var(--z-background-gradient); }
+
+.z-content { z-index: var(--z-content); }
+.z-sidebar { z-index: var(--z-sidebar); }
+.z-main-content { z-index: var(--z-main-content); }
+
+.z-header { z-index: var(--z-header); }
+.z-top-bar { z-index: var(--z-top-bar); }
+.z-sticky-nav { z-index: var(--z-sticky-nav); }
+.z-mobile-menu { z-index: var(--z-mobile-menu); }
+
+.z-dropdown { z-index: var(--z-dropdown); }
+.z-tooltip { z-index: var(--z-tooltip); }
+.z-popover { z-index: var(--z-popover); }
+.z-search-results { z-index: var(--z-search-results); }
+
+.z-modal-backdrop { z-index: var(--z-modal-backdrop); }
+.z-modal { z-index: var(--z-modal); }
+.z-toast { z-index: var(--z-toast); }
+.z-loading-overlay { z-index: var(--z-loading-overlay); }
+
+.z-emergency { z-index: var(--z-emergency); }
+.z-debug { z-index: var(--z-debug); }

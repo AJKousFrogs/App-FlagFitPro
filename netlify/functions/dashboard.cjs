@@ -3,6 +3,8 @@
 
 const jwt = require("jsonwebtoken");
 const { db, checkEnvVars } = require("./supabase-client.cjs");
+const { validateQueryParams } = require("./validation.cjs");
+const { getOrFetch, CACHE_TTL, CACHE_PREFIX } = require("./cache.cjs");
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -232,8 +234,20 @@ exports.handler = async (event, context) => {
     // Check environment variables
     checkEnvVars();
 
-    // Get dashboard data for user
-    const dashboardData = await getDashboardData(decoded.userId);
+    // Validate query parameters (for future use and robustness)
+    const queryParams = event.queryStringParameters || {};
+    const validation = validateQueryParams(queryParams);
+    if (!validation.valid) {
+      return validation.response;
+    }
+
+    // Get dashboard data for user (with caching)
+    const cacheKey = `${CACHE_PREFIX.DASHBOARD}:${decoded.userId}:overview`;
+    const dashboardData = await getOrFetch(
+      cacheKey,
+      async () => await getDashboardData(decoded.userId),
+      CACHE_TTL.DASHBOARD
+    );
 
     return {
       statusCode: 200,

@@ -3,6 +3,9 @@
 
 import { config, apiEndpoints } from "./config/environment.js";
 import { logger } from "./logger.js";
+import { csrfProtection } from "./js/security/csrf-protection.js";
+import { cacheService } from "./js/services/cache-service.js";
+import { NETWORK } from "./js/config/app-constants.js";
 
 const getApiBaseUrl = () => {
   // Use environment configuration for API base URL
@@ -282,6 +285,14 @@ export class ApiClient {
       config.headers["Authorization"] = `Bearer ${token}`;
     }
 
+    // Add CSRF token for state-changing requests (POST, PUT, DELETE, PATCH)
+    const method = (options.method || 'GET').toUpperCase();
+    if (csrfProtection.requiresProtection(method)) {
+      const csrfHeaders = csrfProtection.getHeaders();
+      Object.assign(config.headers, csrfHeaders);
+      logger.debug(`[CSRF] Token added to ${method} request:`, endpoint);
+    }
+
     try {
       const response = await fetch(url, config);
 
@@ -385,37 +396,89 @@ export class ApiClient {
     }
   }
 
-  // GET request
-  async get(endpoint, params = {}) {
+  // GET request with caching support
+  async get(endpoint, params = {}, options = {}) {
+    const {
+      useCache = true,
+      cacheTTL = NETWORK.CACHE_DURATION_MEDIUM,
+      forceRefresh = false
+    } = options;
+
     const queryString = new URLSearchParams(params).toString();
     const url = queryString ? `${endpoint}?${queryString}` : endpoint;
 
-    return this.request(url, {
+    // Generate cache key from URL
+    const cacheKey = `api:${url}`;
+
+    // Check cache first (unless force refresh)
+    if (useCache && !forceRefresh) {
+      const cached = cacheService.get(cacheKey);
+      if (cached !== null) {
+        logger.debug(`[API] Returning cached response for: ${url}`);
+        return cached;
+      }
+    }
+
+    // Make request if no cache or force refresh
+    const response = await this.request(url, {
       method: "GET",
     });
+
+    // Cache successful response
+    if (useCache && response && !response.error) {
+      cacheService.set(cacheKey, response, { ttl: cacheTTL });
+      logger.debug(`[API] Cached response for: ${url}`);
+    }
+
+    return response;
   }
 
-  // POST request
+  // POST request (invalidates related cache)
   async post(endpoint, data = {}) {
-    return this.request(endpoint, {
+    const response = await this.request(endpoint, {
       method: "POST",
       body: JSON.stringify(data),
     });
+
+    // Invalidate cache for this endpoint pattern
+    this.invalidateCache(endpoint);
+
+    return response;
   }
 
-  // PUT request
+  // PUT request (invalidates related cache)
   async put(endpoint, data = {}) {
-    return this.request(endpoint, {
+    const response = await this.request(endpoint, {
       method: "PUT",
       body: JSON.stringify(data),
     });
+
+    // Invalidate cache for this endpoint pattern
+    this.invalidateCache(endpoint);
+
+    return response;
   }
 
-  // DELETE request
+  // DELETE request (invalidates related cache)
   async delete(endpoint) {
-    return this.request(endpoint, {
+    const response = await this.request(endpoint, {
       method: "DELETE",
     });
+
+    // Invalidate cache for this endpoint pattern
+    this.invalidateCache(endpoint);
+
+    return response;
+  }
+
+  // Invalidate cache entries related to an endpoint
+  invalidateCache(endpoint) {
+    // Extract base endpoint (remove IDs and query params)
+    const baseEndpoint = endpoint.split('?')[0].replace(/\/\d+$/g, '');
+    const pattern = `api:${baseEndpoint}`;
+
+    cacheService.invalidatePattern(pattern);
+    logger.debug(`[API] Invalidated cache for pattern: ${pattern}`);
   }
 }
 

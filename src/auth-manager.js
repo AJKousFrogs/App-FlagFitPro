@@ -6,6 +6,9 @@ import { loadingManager } from "./loading-manager.js";
 import { logger } from "./logger.js";
 import { secureStorage } from "./secure-storage.js";
 import { config } from "./config/environment.js";
+import { csrfProtection } from "./js/security/csrf-protection.js";
+import { ErrorHandler } from "./error-handler.js";
+import { AUTH, ERROR_MESSAGES, SUCCESS_MESSAGES } from "./js/config/app-constants.js";
 
 // Import mock authentication for development/demo environments
 let mockAuth = null;
@@ -42,11 +45,27 @@ class AuthManager {
     this.loginCallbacks = [];
     this.logoutCallbacks = [];
     this.isRedirecting = false;
+    this.isInitializing = false;
+    this.isInitialized = false;
+    this.initPromise = null; // Store initialization promise for reuse
     this.init();
   }
 
   // Initialize auth manager
   async init() {
+    // Prevent multiple concurrent initializations
+    if (this.isInitializing || this.isInitialized) {
+      logger.debug("[Auth] Init already in progress or completed, returning existing promise");
+      return this.initPromise;
+    }
+
+    // Create and store initialization promise
+    this.initPromise = this._performInit();
+    return this.initPromise;
+  }
+
+  // Actual initialization logic (private)
+  async _performInit() {
     logger.debug("Initializing authentication manager...");
 
     this.isInitializing = true;
@@ -68,22 +87,30 @@ class AuthManager {
 
   // Wait for authentication to be fully initialized
   async waitForInit(maxWait = 5000) {
-    if (this.isInitialized) return;
+    // If already initialized, return immediately
+    if (this.isInitialized) {
+      return Promise.resolve();
+    }
 
-    return new Promise((resolve) => {
-      const startTime = Date.now();
-      const checkInit = () => {
-        if (this.isInitialized) {
-          resolve();
-        } else if (Date.now() - startTime > maxWait) {
-          logger.warn("Auth initialization timeout - proceeding anyway");
-          resolve(); // Don't block, just proceed
-        } else {
-          setTimeout(checkInit, 50);
-        }
-      };
-      checkInit();
-    });
+    // If initialization is in progress, wait for the promise
+    if (this.initPromise) {
+      try {
+        // Use Promise.race to add timeout
+        await Promise.race([
+          this.initPromise,
+          new Promise((resolve) => setTimeout(() => {
+            logger.warn("[Auth] Initialization timeout - proceeding anyway");
+            resolve();
+          }, maxWait))
+        ]);
+      } catch (error) {
+        logger.error("[Auth] Initialization error:", error);
+      }
+      return;
+    }
+
+    // If not initialized and no promise, initialization hasn't started
+    logger.warn("[Auth] waitForInit called but init hasn't started");
   }
 
   // Check authentication state on page load
@@ -346,60 +373,17 @@ class AuthManager {
         }
       }
 
-      // If no mock auth available, create temporary demo auth for any environment
+      // If no mock auth or backend auth available, reject login
       if (!mockAuth) {
-        logger.debug("🎭 Creating temporary demo authentication...");
-
-        // Simple demo authentication for any environment
-        if (email && password) {
-          const demoToken = "demo-token-" + Date.now();
-          const demoUser = {
-            id: "1",
-            email: email,
-            name: email.split("@")[0],
-            role: "player",
-          };
-
-          this.token = demoToken;
-          this.user = demoUser;
-
-          // Store authentication data securely
-          secureStorage.setAuthToken(this.token);
-          secureStorage.setUserData(this.user);
-          logger.debug("💾 Demo auth data stored securely");
-
-          this.saveUserData();
-
-          // Set token in API client
-          apiClient.setAuthToken(this.token);
-          logger.debug("🔗 Token set in API client");
-
-          // Notify callbacks
-          this.notifyLoginCallbacks();
-
-          this.hideLoading();
-          this.showSuccess("Welcome back!");
-
-          // Redirect to dashboard after successful login
-          setTimeout(() => {
-            logger.debug("🚀 Starting dashboard redirect...");
-            logger.debug("🔍 Final auth check before redirect:");
-            logger.debug("   - Token exists:", !!this.token);
-            logger.debug("   - User exists:", !!this.user);
-            logger.debug("   - Is authenticated:", this.isAuthenticated());
-
-            if (this.isAuthenticated()) {
-              this.redirectToDashboard();
-            } else {
-              logger.error("❌ Auth state invalid at redirect time");
-              this.showError(
-                "Authentication state lost. Please try logging in again.",
-              );
-            }
-          }, 1500);
-
-          return { success: true, user: this.user };
-        }
+        logger.error("❌ No authentication backend available");
+        this.hideLoading();
+        this.showError(
+          "Authentication service unavailable. Please check your backend configuration.",
+        );
+        return {
+          success: false,
+          error: "Authentication backend not configured",
+        };
       }
 
       // Try real API
@@ -421,7 +405,7 @@ class AuthManager {
         this.notifyLoginCallbacks();
 
         this.hideLoading();
-        this.showSuccess("Welcome back!");
+        this.showSuccess(SUCCESS_MESSAGES.LOGIN_SUCCESS);
 
         // Redirect to dashboard after successful login
         setTimeout(() => {
@@ -493,7 +477,7 @@ class AuthManager {
 
     this.clearAuth();
     this.notifyLogoutCallbacks();
-    this.showSuccess("You have been logged out");
+    this.showSuccess(SUCCESS_MESSAGES.LOGOUT_SUCCESS);
   }
 
   // Clear all authentication data
@@ -502,6 +486,10 @@ class AuthManager {
     this.token = null;
     secureStorage.clearAll();
     apiClient.setAuthToken(null);
+
+    // Clear CSRF token on logout for security
+    csrfProtection.clearToken();
+    logger.debug("[Auth] CSRF token cleared on logout");
   }
 
   // Save user data securely
@@ -532,24 +520,26 @@ class AuthManager {
     }
 
     if (this.token && this.user) {
-      // Check if it's a demo token (starts with "demo-token-") - only allow in development
+      // Check if it's a demo token (starts with "demo-token-")
       if (this.token.startsWith("demo-token-")) {
-        if (isDevelopment && shouldLog) {
-          // Only log in development and when throttling allows
-          logger.debug(
-            "🎭 Demo token detected in development, skipping JWT validation",
+        // Demo tokens ONLY allowed in development with mock auth enabled
+        if (isDevelopment && config.ENABLE_MOCK_AUTH) {
+          if (shouldLog) {
+            logger.debug(
+              "🎭 Demo token detected in development, skipping JWT validation",
+            );
+            logger.debug("✅ User is authenticated (demo mode)");
+          }
+          return true;
+        } else {
+          // Demo tokens strictly forbidden in non-development environments
+          logger.error(
+            "❌ SECURITY VIOLATION: Demo token detected in " + (isDevelopment ? "development with mock auth disabled" : "production environment"),
           );
-          logger.debug("✅ User is authenticated (demo mode)");
+          this.clearAuth();
+          this.showError("Security violation detected. Please contact support.");
+          return false;
         }
-        return true;
-      } else {
-        // Demo tokens strictly forbidden in production
-        logger.error(
-          "❌ SECURITY VIOLATION: Demo token detected in production environment",
-        );
-        this.clearAuth();
-        this.showError("Security violation detected. Please contact support.");
-        return false;
       }
 
       // For real JWT tokens, validate expiration
@@ -639,8 +629,9 @@ class AuthManager {
 
   // Setup session timeout management
   setupSessionTimeout() {
-    const SESSION_TIMEOUT = 2 * 60 * 60 * 1000; // 2 hours
-    const WARNING_TIME = 5 * 60 * 1000; // 5 minutes before timeout
+    // Use centralized constants instead of hardcoded values
+    const SESSION_TIMEOUT = AUTH.SESSION_TIMEOUT;
+    const WARNING_TIME = AUTH.SESSION_WARNING_TIME;
 
     let sessionTimer;
     let warningTimer;
@@ -657,7 +648,7 @@ class AuthManager {
       warningTimer = setTimeout(() => {
         if (this.isAuthenticated()) {
           this.showWarning(
-            "Your session will expire in 5 minutes due to inactivity.",
+            `Your session will expire in ${AUTH.SESSION_WARNING_TIME / 60000} minutes due to inactivity.`,
           );
         }
       }, SESSION_TIMEOUT - WARNING_TIME);
@@ -665,7 +656,7 @@ class AuthManager {
       // Set logout timer
       sessionTimer = setTimeout(() => {
         if (this.isAuthenticated()) {
-          this.showError("Session expired due to inactivity.");
+          this.showError(ERROR_MESSAGES.SESSION_EXPIRED);
           this.logout();
         }
       }, SESSION_TIMEOUT);
@@ -680,6 +671,14 @@ class AuthManager {
       "touchstart",
       "click",
     ];
+
+    // Clean up existing handlers first to prevent memory leaks
+    if (this.activityHandlers && this.activityHandlers.length > 0) {
+      this.activityHandlers.forEach(({ event, handler }) => {
+        document.removeEventListener(event, handler, true);
+      });
+      this.activityHandlers = [];
+    }
 
     // Create bound handler that can be removed
     const activityHandler = () => {
@@ -732,6 +731,10 @@ class AuthManager {
 
   // Notify login callbacks
   notifyLoginCallbacks() {
+    // Rotate CSRF token on login for enhanced security
+    csrfProtection.rotateToken();
+    logger.debug("[Auth] CSRF token rotated on login");
+
     this.loginCallbacks.forEach((callback) => {
       try {
         callback(this.user);
@@ -866,76 +869,29 @@ class AuthManager {
     loadingManager.hideLoading("auth-loading");
   }
 
-  // Show success message
+  // Show success message - use centralized ErrorHandler
   showSuccess(message) {
-    this.showNotification(message, "success");
+    ErrorHandler.showSuccess(message);
   }
 
-  // Show error message
+  // Show error message - use centralized ErrorHandler
   showError(message) {
-    this.showNotification(message, "error");
+    ErrorHandler.showError(message);
   }
 
-  // Show warning message
+  // Show warning message - use centralized ErrorHandler
   showWarning(message) {
-    this.showNotification(message, "warning");
+    ErrorHandler.showWarning(message);
   }
 
-  // Show info message
+  // Show info message - use centralized ErrorHandler
   showInfo(message) {
-    this.showNotification(message, "info");
+    ErrorHandler.showInfo(message);
   }
 
-  // Show notification
+  // Show notification - use centralized ErrorHandler
   showNotification(message, type = "info") {
-    const notification = document.createElement("div");
-    notification.style.cssText = `
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      padding: 15px 20px;
-      border-radius: 8px;
-      color: white;
-      font-family: 'Poppins', sans-serif;
-      font-weight: 500;
-      z-index: 10001;
-      max-width: 400px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-      animation: slideIn 0.3s ease;
-    `;
-
-    // Set background color based on type
-    const colors = {
-      success: "#10b981",
-      error: "#ef4444",
-      warning: "#f59e0b",
-      info: "#3b82f6",
-    };
-
-    notification.style.backgroundColor = colors[type] || colors.info;
-    notification.textContent = message;
-
-    // Add slide animation
-    const style = document.createElement("style");
-    style.textContent = `
-      @keyframes slideIn {
-        from { transform: translateX(100%); opacity: 0; }
-        to { transform: translateX(0); opacity: 1; }
-      }
-    `;
-    document.head.appendChild(style);
-
-    document.body.appendChild(notification);
-
-    // Auto remove after 4 seconds
-    setTimeout(() => {
-      notification.style.animation = "slideIn 0.3s ease reverse";
-      setTimeout(() => {
-        if (notification.parentNode) {
-          notification.parentNode.removeChild(notification);
-        }
-      }, 300);
-    }, 4000);
+    ErrorHandler.showNotification(message, type);
   }
 
   // Update user profile
@@ -991,10 +947,44 @@ class AuthManager {
       return { success: false, error: error.message };
     }
   }
+
+  /**
+   * Cleanup method to remove event listeners and prevent memory leaks
+   * Should be called on page unload or when destroying auth manager
+   */
+  cleanup() {
+    logger.debug("[AuthManager] Cleaning up event listeners...");
+
+    // Remove activity handlers
+    if (this.activityHandlers && this.activityHandlers.length > 0) {
+      this.activityHandlers.forEach(({ event, handler }) => {
+        document.removeEventListener(event, handler, true);
+      });
+      this.activityHandlers = [];
+      logger.debug("[AuthManager] Activity handlers cleaned up");
+    }
+
+    // Note: Timers are already cleaned up in the onLogout callback
+  }
 }
 
 // Create and export singleton instance
 export const authManager = new AuthManager();
+
+// Register cleanup on page unload to prevent memory leaks
+if (typeof window !== 'undefined') {
+  window.addEventListener('beforeunload', () => {
+    authManager.cleanup();
+  });
+
+  // Also cleanup on visibility change (e.g., switching tabs)
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') {
+      // Don't fully cleanup, just log for debugging
+      logger.debug("[AuthManager] Page hidden, event listeners remain active");
+    }
+  });
+}
 
 // Export class for potential additional instances
 export default AuthManager;

@@ -4,6 +4,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { db, checkEnvVars } = require("./supabase-client.cjs");
+const { validateRequestBody } = require("./validation.cjs");
 
 const JWT_SECRET =
   process.env.JWT_SECRET || "your-super-secret-jwt-key-change-in-production";
@@ -40,54 +41,14 @@ exports.handler = async (event, context) => {
     // Check environment variables
     checkEnvVars();
 
-    // Parse request body
-    const { name, email, password } = JSON.parse(event.body);
-
-    // Validate input
-    if (!name || !email || !password) {
-      return {
-        statusCode: 400,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          success: false,
-          error: "Name, email, and password are required",
-        }),
-      };
+    // Validate request body
+    const validation = validateRequestBody(event.body, 'register');
+    if (!validation.valid) {
+      return validation.response;
     }
 
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return {
-        statusCode: 400,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          success: false,
-          error: "Invalid email format",
-        }),
-      };
-    }
-
-    // Validate password strength
-    if (password.length < 6) {
-      return {
-        statusCode: 400,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          success: false,
-          error: "Password must be at least 6 characters long",
-        }),
-      };
-    }
+    // Use sanitized data
+    const { name, email, password, role } = validation.data;
 
     // Check if user already exists in database
     const normalizedEmail = email.toLowerCase();

@@ -1,0 +1,311 @@
+/**
+ * FlagFit Pro - Notification Manager
+ * Handles push notifications, reminders, and achievement alerts
+ * 100% FREE - Uses browser Notification API
+ */
+
+class NotificationManager {
+  constructor() {
+    this.permission = 'default';
+    this.isSupported = 'Notification' in window;
+    this.swRegistration = null;
+
+    // Load permission status
+    if (this.isSupported) {
+      this.permission = Notification.permission;
+    }
+  }
+
+  /**
+   * Initialize notification manager and register service worker
+   */
+  async init() {
+    if (!this.isSupported) {
+      console.warn('[Notifications] Not supported in this browser');
+      return false;
+    }
+
+    // Register service worker if not already registered
+    if ('serviceWorker' in navigator) {
+      try {
+        this.swRegistration = await navigator.serviceWorker.register('/sw.js', {
+          scope: '/'
+        });
+
+        console.log('[Notifications] Service Worker registered:', this.swRegistration);
+
+        // Check for updates
+        this.swRegistration.addEventListener('updatefound', () => {
+          const newWorker = this.swRegistration.installing;
+          console.log('[Notifications] Service Worker update found');
+
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              // New service worker available
+              this.showUpdateNotification();
+            }
+          });
+        });
+
+        return true;
+      } catch (error) {
+        console.error('[Notifications] Service Worker registration failed:', error);
+        return false;
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * Request notification permission from user
+   */
+  async requestPermission() {
+    if (!this.isSupported) {
+      return false;
+    }
+
+    if (this.permission === 'granted') {
+      return true;
+    }
+
+    try {
+      const permission = await Notification.requestPermission();
+      this.permission = permission;
+
+      if (permission === 'granted') {
+        console.log('[Notifications] Permission granted');
+        this.scheduleDefaultReminders();
+        return true;
+      } else {
+        console.log('[Notifications] Permission denied');
+        return false;
+      }
+    } catch (error) {
+      console.error('[Notifications] Permission request failed:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Show a notification
+   */
+  async show(title, options = {}) {
+    if (!this.isSupported || this.permission !== 'granted') {
+      console.warn('[Notifications] Cannot show notification - permission not granted');
+      return null;
+    }
+
+    const defaultOptions = {
+      icon: '/icons/icon-192.png',
+      badge: '/icons/badge-72.png',
+      vibrate: [200, 100, 200],
+      tag: 'flagfit-notification',
+      requireInteraction: false,
+      data: {}
+    };
+
+    const notificationOptions = { ...defaultOptions, ...options };
+
+    try {
+      // Use service worker notification if available
+      if (this.swRegistration && this.swRegistration.showNotification) {
+        return await this.swRegistration.showNotification(title, notificationOptions);
+      }
+
+      // Fallback to basic notification
+      return new Notification(title, notificationOptions);
+    } catch (error) {
+      console.error('[Notifications] Failed to show notification:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Schedule wellness reminder
+   */
+  scheduleWellnessReminder(time = '21:00') {
+    const [hours, minutes] = time.split(':').map(Number);
+    const now = new Date();
+    const scheduledTime = new Date();
+
+    scheduledTime.setHours(hours, minutes, 0, 0);
+
+    // If time has passed today, schedule for tomorrow
+    if (scheduledTime <= now) {
+      scheduledTime.setDate(scheduledTime.getDate() + 1);
+    }
+
+    const timeUntilReminder = scheduledTime - now;
+
+    console.log(`[Notifications] Wellness reminder scheduled for ${scheduledTime.toLocaleString()}`);
+
+    setTimeout(() => {
+      this.show('Time for your wellness check-in! 💪', {
+        body: 'Log your sleep, energy, and mood to track your recovery',
+        icon: '/icons/icon-192.png',
+        tag: 'wellness-reminder',
+        data: { url: '/wellness.html', type: 'wellness-reminder' },
+        actions: [
+          { action: 'log', title: 'Log Now' },
+          { action: 'skip', title: 'Skip' }
+        ]
+      });
+
+      // Schedule next reminder for tomorrow
+      this.scheduleWellnessReminder(time);
+    }, timeUntilReminder);
+
+    // Save scheduled time to localStorage
+    localStorage.setItem('wellnessReminderTime', time);
+  }
+
+  /**
+   * Notify achievement unlocked
+   */
+  notifyAchievement(achievement) {
+    this.show(`Achievement Unlocked! ${achievement.icon}`, {
+      body: achievement.name + '\n' + achievement.description,
+      icon: '/icons/icon-192.png',
+      tag: `achievement-${achievement.id}`,
+      requireInteraction: true,
+      data: { url: '/dashboard.html', type: 'achievement', achievementId: achievement.id },
+      vibrate: [100, 50, 100, 50, 100, 50, 200]
+    });
+  }
+
+  /**
+   * Notify training session reminder
+   */
+  notifyTrainingReminder(session) {
+    this.show('Training Session Reminder 🏈', {
+      body: `${session.title} starts in 30 minutes`,
+      icon: '/icons/icon-192.png',
+      tag: `training-${session.id}`,
+      data: { url: '/training.html', type: 'training-reminder', sessionId: session.id },
+      actions: [
+        { action: 'view', title: 'View Session' },
+        { action: 'dismiss', title: 'Dismiss' }
+      ]
+    });
+  }
+
+  /**
+   * Notify milestone reached
+   */
+  notifyMilestone(milestone) {
+    this.show(`Milestone Reached! 🎉`, {
+      body: milestone.message,
+      icon: '/icons/icon-192.png',
+      tag: `milestone-${milestone.type}`,
+      requireInteraction: true,
+      data: { url: '/dashboard.html', type: 'milestone' },
+      vibrate: [100, 50, 100, 50, 100, 50, 300]
+    });
+  }
+
+  /**
+   * Notify streak maintained
+   */
+  notifyStreak(days) {
+    const emoji = days >= 30 ? '🔥🔥🔥' : days >= 7 ? '🔥🔥' : '🔥';
+
+    this.show(`${days}-Day Streak! ${emoji}`, {
+      body: `You've logged wellness for ${days} days straight. Keep it up!`,
+      icon: '/icons/icon-192.png',
+      tag: `streak-${days}`,
+      data: { url: '/wellness.html', type: 'streak', days },
+      vibrate: [200, 100, 200]
+    });
+  }
+
+  /**
+   * Notify performance improvement
+   */
+  notifyImprovement(metric, improvement) {
+    this.show('Performance Improved! 📈', {
+      body: `Your ${metric} improved by ${improvement}. Great work!`,
+      icon: '/icons/icon-192.png',
+      tag: `improvement-${metric}`,
+      data: { url: '/analytics.html', type: 'improvement', metric }
+    });
+  }
+
+  /**
+   * Schedule default reminders
+   */
+  scheduleDefaultReminders() {
+    // Get saved reminder time or use default (9 PM)
+    const savedTime = localStorage.getItem('wellnessReminderTime') || '21:00';
+    this.scheduleWellnessReminder(savedTime);
+
+    console.log('[Notifications] Default reminders scheduled');
+  }
+
+  /**
+   * Cancel all scheduled reminders
+   */
+  cancelAllReminders() {
+    // Clear from localStorage
+    localStorage.removeItem('wellnessReminderTime');
+
+    console.log('[Notifications] All reminders cancelled');
+  }
+
+  /**
+   * Show update notification when new version available
+   */
+  showUpdateNotification() {
+    this.show('FlagFit Pro Update Available! 🎉', {
+      body: 'A new version is available. Refresh to update.',
+      icon: '/icons/icon-192.png',
+      tag: 'app-update',
+      requireInteraction: true,
+      data: { type: 'app-update' },
+      actions: [
+        { action: 'update', title: 'Update Now' },
+        { action: 'later', title: 'Later' }
+      ]
+    });
+  }
+
+  /**
+   * Check if notifications are enabled
+   */
+  isEnabled() {
+    return this.isSupported && this.permission === 'granted';
+  }
+
+  /**
+   * Get permission status
+   */
+  getPermissionStatus() {
+    return {
+      supported: this.isSupported,
+      permission: this.permission,
+      enabled: this.isEnabled()
+    };
+  }
+}
+
+// Create singleton instance
+const notificationManager = new NotificationManager();
+
+// Auto-initialize on page load
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    notificationManager.init();
+  });
+} else {
+  notificationManager.init();
+}
+
+// Export for use in other modules
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = notificationManager;
+}
+
+// Make available globally
+window.notificationManager = notificationManager;
+
+console.log('[Notifications] Notification Manager loaded');

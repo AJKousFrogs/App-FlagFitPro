@@ -4,6 +4,7 @@
 import { apiClient, API_ENDPOINTS } from "../../api-config.js";
 import { authManager } from "../../auth-manager.js";
 import { logger } from "../../logger.js";
+import { escapeHtml } from "../utils/sanitize.js";
 
 class DashboardPage {
   constructor() {
@@ -207,12 +208,12 @@ class DashboardPage {
     notificationList.innerHTML = notifications
       .map(
         (notif) => `
-      <div class="notification-item ${notif.read ? "read" : ""}" data-id="${notif.id}">
+      <div class="notification-item ${notif.read ? "read" : ""}" data-id="${escapeHtml(notif.id)}">
         <div class="notification-icon">${this.getNotificationIcon(notif.type)}</div>
         <div class="notification-content">
-          <div class="notification-title">${notif.title}</div>
-          <div class="notification-message">${notif.message}</div>
-          <div class="notification-time">${notif.time}</div>
+          <div class="notification-title">${escapeHtml(notif.title)}</div>
+          <div class="notification-message">${escapeHtml(notif.message)}</div>
+          <div class="notification-time">${escapeHtml(notif.time)}</div>
         </div>
         ${!notif.read ? '<button class="notification-mark-read" aria-label="Mark as read">×</button>' : ""}
       </div>

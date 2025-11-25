@@ -21,6 +21,8 @@
    Design tokens (CSS variables) - foundation for everything
    ================================================================ */
 @import url("./tokens.css") layer(tokens);
+@import url("./z-index-system.css") layer(tokens);
+@import url("./body-classes.css") layer(base);
 
 /* ================================================================
    LAYER 4: BREAKPOINTS

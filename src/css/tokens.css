@@ -13,6 +13,7 @@
   --color-primary: #089949; /* Design System Primary Brand Color */
   --color-primary-600: #0ab85a;
   --color-primary-dark: #036d35; /* Design System hover color */
+  --color-primary-rgb: 8, 153, 73; /* RGB values for alpha compositions */
   --color-success: #f1c40f; /* Design System: Yellow for success */
   --color-warning: #ef4444; /* Design System: Red for warning */
   --color-error: #ef4444;

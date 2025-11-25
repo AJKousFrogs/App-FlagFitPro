@@ -3,6 +3,7 @@
 
 import { loadingManager } from "./loading-manager.js";
 import { logger } from "./logger.js";
+import { escapeHtml } from "./js/utils/sanitize.js";
 
 export class ErrorHandler {
   static init() {
@@ -180,19 +181,19 @@ export class ErrorHandler {
       <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
         <span style="flex-shrink: 0; font-size: 1rem;">❌</span>
         <div style="flex: 1;">
-          <div style="margin-bottom: 0.5rem;">${message}</div>
-          <button onclick="this.closest('.error-notification').querySelector('.retry-btn').click()" 
+          <div style="margin-bottom: 0.5rem;">${escapeHtml(message)}</div>
+          <button onclick="this.closest('.error-notification').querySelector('.retry-btn').click()"
                   class="retry-btn"
-                  style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); 
-                         color: white; padding: 0.25rem 0.75rem; border-radius: 4px; cursor: pointer; 
+                  style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);
+                         color: white; padding: 0.25rem 0.75rem; border-radius: 4px; cursor: pointer;
                          font-size: 0.75rem; font-weight: 500; margin-top: 0.5rem;"
-                  onmouseover="this.style.background='rgba(255,255,255,0.3)'" 
+                  onmouseover="this.style.background='rgba(255,255,255,0.3)'"
                   onmouseout="this.style.background='rgba(255,255,255,0.2)'">Retry</button>
         </div>
-        <button onclick="this.closest('.error-notification').remove()" 
-                style="background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; 
+        <button onclick="this.closest('.error-notification').remove()"
+                style="background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer;
                        opacity: 0.8; padding: 0; margin: 0; line-height: 1; flex-shrink: 0;"
-                onmouseover="this.style.opacity='1'" 
+                onmouseover="this.style.opacity='1'"
                 onmouseout="this.style.opacity='0.8'">×</button>
       </div>
     `;
@@ -265,11 +266,11 @@ export class ErrorHandler {
     notification.innerHTML = `
       <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
         <span style="flex-shrink: 0; font-size: 1rem;">${icon[type]}</span>
-        <span style="flex: 1;">${message}</span>
-        <button onclick="this.closest('.error-notification').remove()" 
-                style="background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; 
+        <span style="flex: 1;">${escapeHtml(message)}</span>
+        <button onclick="this.closest('.error-notification').remove()"
+                style="background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer;
                        opacity: 0.8; padding: 0; margin: 0; line-height: 1; flex-shrink: 0;"
-                onmouseover="this.style.opacity='1'" 
+                onmouseover="this.style.opacity='1'"
                 onmouseout="this.style.opacity='0.8'">×</button>
       </div>
     `;

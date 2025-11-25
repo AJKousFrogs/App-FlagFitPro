@@ -3,6 +3,7 @@
 
 const jwt = require("jsonwebtoken");
 const { db, checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
+const { validateQueryParams, validateRequestBody } = require("./validation.cjs");
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -302,7 +303,33 @@ exports.handler = async (event, context) => {
 
     const userId = decoded.userId;
     const path = event.path.replace("/.netlify/functions/games", "");
-    const body = event.body ? JSON.parse(event.body) : {};
+
+    // Validate query parameters for GET requests
+    const queryParams = event.queryStringParameters || {};
+    const queryValidation = validateQueryParams(queryParams);
+    if (!queryValidation.valid) {
+      return queryValidation.response;
+    }
+
+    // Parse and validate request body for POST/PUT requests
+    let body = {};
+    if (event.body && (event.httpMethod === "POST" || event.httpMethod === "PUT")) {
+      try {
+        body = JSON.parse(event.body);
+      } catch (parseError) {
+        return {
+          statusCode: 400,
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            success: false,
+            error: "Invalid JSON in request body",
+          }),
+        };
+      }
+    }
 
     let result;
 
@@ -311,7 +338,6 @@ exports.handler = async (event, context) => {
       result = await createGame(userId, body);
     } else if (event.httpMethod === "GET" && path === "" || path === "/") {
       // Get games list
-      const queryParams = event.queryStringParameters || {};
       result = await getGames(userId, queryParams);
     } else if (event.httpMethod === "GET" && path.includes("/stats")) {
       // Get game statistics

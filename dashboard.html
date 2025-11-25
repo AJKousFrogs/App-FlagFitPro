@@ -8,6 +8,23 @@
       rel="icon"
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
     />
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#089949" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="FlagFit Pro" />
+
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>" />
+
+    <!-- Microsoft Tile -->
+    <meta name="msapplication-TileColor" content="#089949" />
+    <meta name="msapplication-TileImage" content="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -52,8 +69,15 @@
           console.warn("Chatbot preload failed:", error);
         });
     </script>
+
+    <!-- PWA Notification Manager -->
+    <script src="./src/js/notification-manager.js" defer></script>
+    <!-- Achievements System -->
+    <script src="./src/js/achievements-service.js" defer></script>
+    <script src="./src/js/achievements-widget.js" defer></script>
+    <script src="./src/js/achievements-integration.js" defer></script>
   </head>
-  <body>
+  <body class="page-dashboard">
     <!-- Skip link for accessibility -->
     <a href="#main-content" class="skip-link" aria-label="Skip to main content">Skip to main content</a>
     <div class="dashboard-container">
@@ -467,7 +491,7 @@
                   Add Injury / Pain Report
                 </button>
                 
-                <form id="injury-form" class="injury-form" style="display: none;">
+                <form id="injury-form" class="injury-form hidden">
                   <div class="form-group">
                     <label for="injury-type">Injury Type / Body Part:</label>
                     <select id="injury-type" name="injuryType" required>
@@ -589,6 +613,9 @@
                 <li class="upcoming-item">Sat 10:00 Conditioning</li>
               </ul>
             </div>
+
+            <!-- Achievements Widget -->
+            <div id="achievements-widget-container" style="margin-top: 30px;"></div>
           </div>
 
           <!-- Right: Quick Sidebar -->

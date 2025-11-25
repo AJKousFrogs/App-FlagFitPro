@@ -4,6 +4,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { db, checkEnvVars } = require("./supabase-client.cjs");
+const { validateRequestBody } = require("./validation.cjs");
 
 // Demo users to seed if database is empty
 const demoUsers = [
@@ -92,23 +93,14 @@ exports.handler = async (event, context) => {
     // Seed demo users on first run
     await seedDemoUsers();
 
-    // Parse request body
-    const { email, password } = JSON.parse(event.body);
-
-    // Validate input
-    if (!email || !password) {
-      return {
-        statusCode: 400,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          success: false,
-          error: "Email and password are required",
-        }),
-      };
+    // Validate request body
+    const validation = validateRequestBody(event.body, 'login');
+    if (!validation.valid) {
+      return validation.response;
     }
+
+    // Use sanitized data
+    const { email, password } = validation.data;
 
     // Find user in database
     const user = await db.users.findByEmail(email.toLowerCase());

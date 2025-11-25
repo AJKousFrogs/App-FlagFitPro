@@ -15,6 +15,7 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
 import { PerformanceDashboardComponent } from "../../shared/components/performance-dashboard/performance-dashboard.component";
+import { WellnessWidgetComponent } from "../../shared/components/wellness-widget/wellness-widget.component";
 import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
@@ -34,6 +35,7 @@ import { HeaderService } from "../../core/services/header.service";
     PageHeaderComponent,
     StatsGridComponent,
     PerformanceDashboardComponent,
+    WellnessWidgetComponent,
   ],
   template: `
     <app-main-layout>
@@ -52,6 +54,9 @@ import { HeaderService } from "../../core/services/header.service";
         </app-performance-dashboard>
 
         <div class="dashboard-grid">
+          <!-- Wellness Widget -->
+          <app-wellness-widget></app-wellness-widget>
+
           <p-card class="dashboard-card">
             <ng-template pTemplate="header">
               <h3>Performance Overview</h3>

@@ -8,6 +8,23 @@
       rel="icon"
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
     />
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#089949" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="FlagFit Pro" />
+
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>" />
+
+    <!-- Microsoft Tile -->
+    <meta name="msapplication-TileColor" content="#089949" />
+    <meta name="msapplication-TileImage" content="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -50,6 +67,17 @@
     <script type="module" src="./src/js/main.js"></script>
     <!-- Sidebar Utilities -->
     <script src="./src/js/utils/sidebar-utils.js"></script>
+
+    <!-- PWA Notification Manager -->
+    <script src="./src/js/notification-manager.js" defer></script>
+    <!-- Wellness Notifications Integration -->
+    <script src="./src/js/wellness-notifications.js" defer></script>
+    <!-- Achievements System -->
+    <script src="./src/js/achievements-service.js" defer></script>
+    <script src="./src/js/achievements-integration.js" defer></script>
+    <!-- Export Service -->
+    <script src="./src/js/export-service.js" defer></script>
+    <script src="./src/js/wellness-export-buttons.js" defer></script>
   </head>
   <body>
     <!-- Skip link for accessibility -->

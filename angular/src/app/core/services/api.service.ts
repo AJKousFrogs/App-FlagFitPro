@@ -205,9 +205,22 @@ export const API_ENDPOINTS = {
   },
   wellness: {
     checkin: "/api/wellness/checkin",
+    get: "/api/performance-data/wellness",
+    post: "/api/performance-data/wellness",
   },
   supplements: {
     log: "/api/supplements/log",
+    get: "/api/performance-data/supplements",
+    post: "/api/performance-data/supplements",
+  },
+  performanceData: {
+    measurements: "/api/performance-data/measurements",
+    performanceTests: "/api/performance-data/performance-tests",
+    wellness: "/api/performance-data/wellness",
+    supplements: "/api/performance-data/supplements",
+    injuries: "/api/performance-data/injuries",
+    trends: "/api/performance-data/trends",
+    export: "/api/performance-data/export",
   },
   nutrition: {
     searchFoods: "/api/nutrition/search-foods",
