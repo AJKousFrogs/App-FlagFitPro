@@ -1,73 +1,21 @@
 {
-  "name": "flag-football-app-mcp",
-  "version": "1.0.0",
-  "description": "MCP configuration for Flag Football Training App with Context7 and Sequential Thought integration",
-  "servers": {
+  "mcpServers": {
     "context7-sports": {
-      "type": "stdio",
       "command": "npx",
       "args": ["-y", "@context7/mcp-server"],
       "env": {
         "CONTEXT7_API_KEY": "${CONTEXT7_API_KEY}",
         "CONTEXT7_DOMAIN": "sports-science",
         "CONTEXT7_CATEGORIES": "nutrition,training,recovery,psychology,biomechanics"
-      },
-      "capabilities": {
-        "tools": true,
-        "resources": true
-      },
-      "tools": [
-        {
-          "name": "resolve-library-id",
-          "description": "Convert package names to Context7-compatible IDs for sports science libraries"
-        },
-        {
-          "name": "get-library-docs",
-          "description": "Retrieve documentation for sports science, nutrition, and training libraries"
-        }
-      ]
+      }
     },
     "sequential-thought": {
-      "type": "stdio",
       "command": "npx",
       "args": ["-y", "@sequential-thought/mcp-server"],
       "env": {
         "ST_REASONING_DEPTH": "3",
         "ST_DOMAIN": "sports-coaching"
-      },
-      "capabilities": {
-        "tools": true
-      },
-      "tools": [
-        {
-          "name": "sequentialthinking",
-          "description": "Chain-of-thought reasoning for complex training decisions and injury assessments"
-        }
-      ]
+      }
     }
-  },
-  "globalSettings": {
-    "timeout": 30000,
-    "retries": 3,
-    "logLevel": "info",
-    "enableCache": true,
-    "cacheTimeout": 3600000
-  },
-  "projectContext": {
-    "domain": "sports-training-app",
-    "framework": "react-vite",
-    "aiFeatures": [
-      "coaching-recommendations",
-      "nutrition-analysis",
-      "injury-risk-assessment",
-      "performance-prediction",
-      "recovery-optimization"
-    ],
-    "integrations": [
-      "neon-database",
-      "drizzle-orm",
-      "usda-food-api",
-      "sports-medicine-apis"
-    ]
   }
 }
