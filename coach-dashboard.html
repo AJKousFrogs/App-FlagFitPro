@@ -29,6 +29,8 @@
     <script type="module" src="./src/js/main.js"></script>
     <!-- Sidebar Utilities -->
     <script src="./src/js/utils/sidebar-utils.js"></script>
+    <!-- Footer Loader (Dynamic Component) -->
+    <script src="./src/js/components/footer-loader.js" defer></script>
   </head>
   <body>
     <div class="dashboard-container">
@@ -447,37 +449,7 @@
       </div>
     </div>
 
-    <!-- Footer -->
-    <footer role="contentinfo" class="main-footer">
-      <div class="footer-content">
-        <div class="footer-section">
-          <h3>FlagFit Pro</h3>
-          <p>Professional flag football training and analytics platform</p>
-        </div>
-        <div class="footer-section">
-          <h4>Quick Links</h4>
-          <nav aria-label="Footer navigation">
-            <ul>
-              <li><a href="/coach-dashboard.html">Coach Dashboard</a></li>
-              <li><a href="/training.html">Training</a></li>
-              <li><a href="/roster.html">Roster</a></li>
-              <li><a href="/analytics.html">Analytics</a></li>
-            </ul>
-          </nav>
-        </div>
-        <div class="footer-section">
-          <h4>Support</h4>
-          <nav aria-label="Support links">
-            <ul>
-              <li><a href="/settings.html">Settings</a></li>
-              <li><a href="/community.html">Community</a></li>
-            </ul>
-          </nav>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <p>&copy; 2025 FlagFit Pro. All rights reserved.</p>
-      </div>
-    </footer>
+        <!-- Footer (Loaded Dynamically) -->
+    <div data-footer-container></div>
   </body>
 </html>

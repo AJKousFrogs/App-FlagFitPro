@@ -29,6 +29,8 @@
     <script src="./src/theme-switcher.js" defer></script>
     <!-- Universal Components -->
     <script type="module" src="./src/js/main.js"></script>
+    <!-- Footer Loader (Dynamic Component) -->
+    <script src="./src/js/components/footer-loader.js" defer></script>
   </head>
   <body class="page-landing">
     <!-- Hero Section -->
@@ -232,78 +234,7 @@
       }, 15000);
     </script>
 
-    <!-- Footer -->
-    <footer role="contentinfo" class="landing-footer">
-      <div class="footer-content">
-        <div class="footer-brand">
-          <div class="footer-logo">
-            <i data-lucide="activity"></i>
-            <span>FlagFit Pro</span>
-          </div>
-          <p class="footer-tagline">
-            Professional flag football training and analytics platform. Elevate
-            your game with data-driven insights.
-          </p>
-          <div class="footer-social">
-            <a href="#" class="footer-social-link" aria-label="Twitter">
-              <i data-lucide="twitter"></i>
-            </a>
-            <a href="#" class="footer-social-link" aria-label="Instagram">
-              <i data-lucide="instagram"></i>
-            </a>
-            <a href="#" class="footer-social-link" aria-label="Facebook">
-              <i data-lucide="facebook"></i>
-            </a>
-          </div>
-        </div>
-
-        <div class="footer-links">
-          <div class="footer-link-group">
-            <h4 class="footer-link-title">Platform</h4>
-            <nav aria-label="Platform navigation">
-              <ul class="footer-link-list">
-                <li><a href="/dashboard.html">Dashboard</a></li>
-                <li><a href="/training.html">Training</a></li>
-                <li><a href="/roster.html">Roster</a></li>
-                <li><a href="/analytics.html">Analytics</a></li>
-              </ul>
-            </nav>
-          </div>
-
-          <div class="footer-link-group">
-            <h4 class="footer-link-title">Community</h4>
-            <nav aria-label="Community navigation">
-              <ul class="footer-link-list">
-                <li><a href="/community.html">Community Hub</a></li>
-                <li><a href="/tournaments.html">Tournaments</a></li>
-                <li><a href="/coach.html">Coaching</a></li>
-              </ul>
-            </nav>
-          </div>
-
-          <div class="footer-link-group">
-            <h4 class="footer-link-title">Support</h4>
-            <nav aria-label="Support navigation">
-              <ul class="footer-link-list">
-                <li><a href="/settings.html">Settings</a></li>
-                <li><a href="#">Help Center</a></li>
-                <li><a href="#">Contact Us</a></li>
-              </ul>
-            </nav>
-          </div>
-        </div>
-      </div>
-
-      <div class="footer-bottom">
-        <p class="footer-copyright">
-          &copy; 2025 FlagFit Pro. All rights reserved.
-        </p>
-        <div class="footer-legal">
-          <a href="#">Privacy Policy</a>
-          <span class="footer-separator">•</span>
-          <a href="#">Terms of Service</a>
-        </div>
-      </div>
-    </footer>
+        <!-- Footer (Loaded Dynamically) -->
+    <div data-footer-container></div>
   </body>
 </html>
