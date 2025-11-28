@@ -2,6 +2,7 @@
 // Handles profile completion flow after registration
 
 import { logger } from "./logger.js";
+import { storageService } from "./js/services/storage-service-unified.js";
 
 export class ProfileCompletionManager {
   constructor() {
@@ -19,7 +20,7 @@ export class ProfileCompletionManager {
   // Get stored profile data
   getStoredProfile() {
     try {
-      return JSON.parse(localStorage.getItem("user_profile") || "{}");
+      return storageService.get("user_profile", {}, { usePrefix: false });
     } catch {
       return {};
     }
@@ -38,7 +39,7 @@ export class ProfileCompletionManager {
     modal.setAttribute("aria-modal", "true");
 
     const storedProfile = this.getStoredProfile();
-    const user = JSON.parse(localStorage.getItem("userData") || "{}");
+    const user = storageService.get("userData", {}, { usePrefix: false });
 
     modal.innerHTML = `
       <div class="profile-completion-overlay"></div>
@@ -297,9 +298,9 @@ export class ProfileCompletionManager {
 
     // Update full name in userData
     const fullName = `${profileData.firstName} ${profileData.lastName}`.trim();
-    const userData = JSON.parse(localStorage.getItem("userData") || "{}");
+    const userData = storageService.get("userData", {}, { usePrefix: false });
     userData.name = fullName;
-    localStorage.setItem("userData", JSON.stringify(userData));
+    storageService.set("userData", userData, { usePrefix: false });
 
     // Save profile data
     const existingProfile = this.getStoredProfile();
@@ -309,7 +310,7 @@ export class ProfileCompletionManager {
       completedAt: new Date().toISOString(),
       profileCompleted: true,
     };
-    localStorage.setItem("user_profile", JSON.stringify(updatedProfile));
+    storageService.set("user_profile", updatedProfile, { usePrefix: false });
 
     // Try to save to API
     try {

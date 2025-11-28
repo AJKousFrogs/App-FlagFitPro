@@ -1,6 +1,8 @@
 // Onboarding Manager for FlagFit Pro
 // Handles new user onboarding flow and feature discovery
 
+import { storageService } from "./js/services/storage-service-unified.js";
+
 export class OnboardingManager {
   constructor() {
     this.currentStep = 0;
@@ -12,7 +14,7 @@ export class OnboardingManager {
 
   init() {
     // Check if user has completed onboarding
-    const onboardingCompleted = localStorage.getItem("onboardingCompleted");
+    const onboardingCompleted = storageService.get("onboardingCompleted", null, { usePrefix: false });
     const isNewUser = !onboardingCompleted && this.isFirstVisit();
 
     if (isNewUser) {
@@ -22,9 +24,9 @@ export class OnboardingManager {
 
   isFirstVisit() {
     // Check if this is the user's first visit to the dashboard
-    const firstVisit = !localStorage.getItem("hasVisitedDashboard");
+    const firstVisit = !storageService.get("hasVisitedDashboard", null, { usePrefix: false });
     if (firstVisit) {
-      localStorage.setItem("hasVisitedDashboard", "true");
+      storageService.set("hasVisitedDashboard", "true", { usePrefix: false });
     }
     return firstVisit;
   }
@@ -245,8 +247,8 @@ export class OnboardingManager {
   }
 
   completeOnboarding() {
-    localStorage.setItem("onboardingCompleted", "true");
-    localStorage.setItem("onboardingCompletedDate", new Date().toISOString());
+    storageService.set("onboardingCompleted", "true", { usePrefix: false });
+    storageService.set("onboardingCompletedDate", new Date().toISOString(), { usePrefix: false });
     this.isActive = false;
 
     const modal = document.getElementById("onboarding-modal");
@@ -283,7 +285,7 @@ export class OnboardingManager {
 
   // Method to restart onboarding (for help menu)
   restartOnboarding() {
-    localStorage.removeItem("onboardingCompleted");
+    storageService.remove("onboardingCompleted", { usePrefix: false });
     this.currentStep = 0;
     this.startOnboarding();
   }
