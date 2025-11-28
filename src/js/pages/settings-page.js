@@ -75,9 +75,7 @@ function loadUserSettings() {
     }
 
     // Load saved preferences
-    const savedSettings = JSON.parse(
-      localStorage.getItem("flagfit_settings") || "{}",
-    );
+    const savedSettings = storageService.get("flagfit_settings", {}, { usePrefix: false });
 
     // Apply saved theme
     if (savedSettings.theme) {
@@ -120,10 +118,8 @@ function loadUserSettings() {
 
   // Load profile data from user_profile (takes precedence)
   try {
-    const profileData = JSON.parse(
-      localStorage.getItem("user_profile") || "{}",
-    );
-    const userData = JSON.parse(localStorage.getItem("userData") || "{}");
+    const profileData = storageService.get("user_profile", {}, { usePrefix: false });
+    const userData = storageService.get("userData", {}, { usePrefix: false });
 
     // Load position (prefer profileData)
     if (profileData.position) {
@@ -342,7 +338,7 @@ window.saveSettings = async function (event) {
   };
 
   // Save to localStorage
-  localStorage.setItem("flagfit_settings", JSON.stringify(settings));
+  storageService.set("flagfit_settings", settings, { usePrefix: false });
 
   // Also save profile data to user_profile for profile page
   const profileData = {
@@ -354,17 +350,15 @@ window.saveSettings = async function (event) {
   };
 
   // Get existing profile data
-  const existingProfile = JSON.parse(
-    localStorage.getItem("user_profile") || "{}",
-  );
+  const existingProfile = storageService.get("user_profile", {}, { usePrefix: false });
   const updatedProfile = { ...existingProfile, ...profileData };
-  localStorage.setItem("user_profile", JSON.stringify(updatedProfile));
+  storageService.set("user_profile", updatedProfile, { usePrefix: false });
 
   // Update userData name if displayName changed
-  const userData = JSON.parse(localStorage.getItem("userData") || "{}");
+  const userData = storageService.get("userData", {}, { usePrefix: false });
   if (settings.displayName && settings.displayName !== userData.name) {
     userData.name = settings.displayName;
-    localStorage.setItem("userData", JSON.stringify(userData));
+    storageService.set("userData", userData, { usePrefix: false });
   }
 
   // Try to save to API
