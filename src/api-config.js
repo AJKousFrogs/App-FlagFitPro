@@ -6,6 +6,7 @@ import { logger } from "./logger.js";
 import { csrfProtection } from "./js/security/csrf-protection.js";
 import { cacheService } from "./js/services/cache-service.js";
 import { NETWORK } from "./js/config/app-constants.js";
+import { storageService } from "./js/services/storage-service-unified.js";
 
 const getApiBaseUrl = () => {
   // Use environment configuration for API base URL
@@ -255,7 +256,7 @@ export class ApiClient {
 
   // Get authentication token from localStorage
   getAuthToken() {
-    return localStorage.getItem("authToken");
+    return storageService.get("authToken", null, { usePrefix: false });
   }
 
   // Make HTTP request with cancellation support
