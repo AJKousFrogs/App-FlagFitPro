@@ -4,6 +4,8 @@
  * 100% FREE - Uses localStorage
  */
 
+import { storageService } from './services/storage-service-unified.js';
+
 class AchievementsService {
   constructor() {
     this.storageKey = 'flagfit_achievements';
@@ -234,15 +236,12 @@ class AchievementsService {
    */
   loadUnlockedAchievements() {
     try {
-      const saved = localStorage.getItem(this.storageKey);
-      if (saved) {
-        const unlockedIds = JSON.parse(saved);
-        unlockedIds.forEach(id => {
-          if (this.achievements[id]) {
-            this.achievements[id].unlocked = true;
-          }
-        });
-      }
+      const unlockedIds = storageService.get(this.storageKey, [], { usePrefix: false });
+      unlockedIds.forEach(id => {
+        if (this.achievements[id]) {
+          this.achievements[id].unlocked = true;
+        }
+      });
     } catch (error) {
       console.error('[Achievements] Error loading achievements:', error);
     }
@@ -256,7 +255,7 @@ class AchievementsService {
       const unlockedIds = Object.keys(this.achievements)
         .filter(id => this.achievements[id].unlocked);
 
-      localStorage.setItem(this.storageKey, JSON.stringify(unlockedIds));
+      storageService.set(this.storageKey, unlockedIds, { usePrefix: false });
     } catch (error) {
       console.error('[Achievements] Error saving achievements:', error);
     }
@@ -303,14 +302,14 @@ class AchievementsService {
    */
   addToHistory(achievement) {
     try {
-      const history = JSON.parse(localStorage.getItem(this.historyKey) || '[]');
+      const history = storageService.get(this.historyKey, [], { usePrefix: false });
       history.push({
         id: achievement.id,
         name: achievement.name,
         unlockedAt: achievement.unlockedAt,
         points: achievement.points
       });
-      localStorage.setItem(this.historyKey, JSON.stringify(history));
+      storageService.set(this.historyKey, history, { usePrefix: false });
     } catch (error) {
       console.error('[Achievements] Error adding to history:', error);
     }
@@ -366,7 +365,7 @@ class AchievementsService {
    */
   getHistory() {
     try {
-      return JSON.parse(localStorage.getItem(this.historyKey) || '[]');
+      return storageService.get(this.historyKey, [], { usePrefix: false });
     } catch (error) {
       console.error('[Achievements] Error getting history:', error);
       return [];
@@ -377,8 +376,8 @@ class AchievementsService {
    * Reset all achievements (for testing)
    */
   resetAll() {
-    localStorage.removeItem(this.storageKey);
-    localStorage.removeItem(this.historyKey);
+    storageService.remove(this.storageKey, { usePrefix: false });
+    storageService.remove(this.historyKey, { usePrefix: false });
     Object.values(this.achievements).forEach(a => {
       a.unlocked = false;
       delete a.unlockedAt;

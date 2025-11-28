@@ -2,12 +2,13 @@
 // Tracks and displays recently viewed pages/items with enhanced UX
 
 import { SecureDOMUtils } from "./secure-dom-utils.js";
+import { storageService } from "./js/services/storage-service-unified.js";
 
 export class RecentlyViewed {
   constructor() {
     this.storageKey = "recentlyViewed";
     this.maxItems = 10;
-    this.mode = localStorage.getItem("recentlyViewedMode") || "recent"; // 'recent' or 'quick-access'
+    this.mode = storageService.get("recentlyViewedMode", "recent", { usePrefix: false }); // 'recent' or 'quick-access'
     this.activeTab = "all"; // 'all', 'players', 'teams', 'stats', 'reports'
     this.init();
   }
@@ -41,7 +42,7 @@ export class RecentlyViewed {
     // Limit to max items
     recentItems = recentItems.slice(0, this.maxItems);
 
-    localStorage.setItem(this.storageKey, JSON.stringify(recentItems));
+    storageService.set(this.storageKey, recentItems, { usePrefix: false });
   }
 
   categorizePage(url) {
@@ -54,8 +55,7 @@ export class RecentlyViewed {
 
   getRecentItems() {
     try {
-      const stored = localStorage.getItem(this.storageKey);
-      return stored ? JSON.parse(stored) : [];
+      return storageService.get(this.storageKey, [], { usePrefix: false });
     } catch (e) {
       return [];
     }
@@ -158,7 +158,7 @@ export class RecentlyViewed {
     if (modeToggle) {
       modeToggle.addEventListener("click", () => {
         this.mode = this.mode === "recent" ? "quick-access" : "recent";
-        localStorage.setItem("recentlyViewedMode", this.mode);
+        storageService.set("recentlyViewedMode", this.mode, { usePrefix: false });
         this.addRecentlyViewedWidget();
       });
     }
@@ -239,7 +239,7 @@ export class RecentlyViewed {
   removeItem(url) {
     let items = this.getRecentItems();
     items = items.filter((item) => item.url !== url);
-    localStorage.setItem(this.storageKey, JSON.stringify(items));
+    storageService.set(this.storageKey, items, { usePrefix: false });
   }
 
   getPageIcon(url) {
@@ -276,7 +276,7 @@ export class RecentlyViewed {
   }
 
   clearHistory() {
-    localStorage.removeItem(this.storageKey);
+    storageService.remove(this.storageKey, { usePrefix: false });
   }
 
   createTabsSecurely(parent) {
