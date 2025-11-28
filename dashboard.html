@@ -76,136 +76,15 @@
     <script src="./src/js/achievements-service.js" defer></script>
     <script src="./src/js/achievements-widget.js" defer></script>
     <script src="./src/js/achievements-integration.js" defer></script>
+    <!-- Sidebar Loader (Dynamic Component) -->
+    <script src="./src/js/components/sidebar-loader.js" defer></script>
   </head>
   <body class="page-dashboard">
     <!-- Skip link for accessibility -->
     <a href="#main-content" class="skip-link" aria-label="Skip to main content">Skip to main content</a>
     <div class="dashboard-container">
-      <!-- Unified Sidebar Navigation -->
-      <div
-        class="sidebar"
-        id="sidebar"
-        role="navigation"
-        aria-label="Main navigation"
-      >
-        <div
-          class="sidebar-logo"
-          onclick="window.location.href='/dashboard.html'"
-          title="FlagFit Pro"
-          aria-label="Go to dashboard"
-        >
-          <i data-lucide="activity" class="icon-20 icon-inline"></i>
-        </div>
-
-        <nav class="nav-section" aria-label="Main navigation">
-          <a
-            href="/dashboard.html"
-            class="nav-item active"
-            aria-label="Overview"
-            id="nav-overview"
-          >
-            <span class="nav-item-icon">
-              <i data-lucide="layout-dashboard" class="icon-24"></i>
-            </span>
-            <span class="nav-item-label">Overview</span>
-          </a>
-          <a
-            href="/training.html"
-            class="nav-item"
-            aria-label="Training"
-            id="nav-training"
-          >
-            <span class="nav-item-icon">
-              <i data-lucide="zap" class="icon-24"></i>
-            </span>
-            <span class="nav-item-label">Training</span>
-          </a>
-          <a
-            href="/analytics.html"
-            class="nav-item"
-            aria-label="Analytics"
-            id="nav-analytics"
-          >
-            <span class="nav-item-icon">
-              <i data-lucide="bar-chart-3" class="icon-24"></i>
-            </span>
-            <span class="nav-item-label">Analytics</span>
-          </a>
-          <a
-            href="/performance-tracking.html"
-            class="nav-item"
-            aria-label="Performance Tracking"
-            id="nav-performance-tracking"
-          >
-            <span class="nav-item-icon">
-              <i data-lucide="target" class="icon-24"></i>
-            </span>
-            <span class="nav-item-label">Performance</span>
-          </a>
-          <a
-            href="/game-tracker.html"
-            class="nav-item"
-            aria-label="Game Tracker"
-            id="nav-game-tracker"
-          >
-            <span class="nav-item-icon">
-              <i data-lucide="clipboard-list" class="icon-24"></i>
-            </span>
-            <span class="nav-item-label">Game Tracker</span>
-          </a>
-          <a
-            href="/wellness.html"
-            class="nav-item"
-            aria-label="Wellness"
-            id="nav-wellness"
-          >
-            <span class="nav-item-icon">
-              <i data-lucide="heart-pulse" class="icon-24"></i>
-            </span>
-            <span class="nav-item-label">Wellness</span>
-          </a>
-          <a
-            href="/roster.html"
-            class="nav-item"
-            aria-label="Roster"
-            id="nav-roster"
-          >
-            <span class="nav-item-icon">
-              <i data-lucide="users" class="icon-24"></i>
-            </span>
-            <span class="nav-item-label">Roster</span>
-          </a>
-          <a
-            href="/tournaments.html"
-            class="nav-item"
-            aria-label="Tournaments"
-            id="nav-tournaments"
-          >
-            <span class="nav-item-icon">
-              <i data-lucide="trophy" class="icon-24"></i>
-            </span>
-            <span class="nav-item-label">Tournaments</span>
-          </a>
-          <a
-            href="/settings.html"
-            class="nav-item"
-            aria-label="Settings"
-            id="nav-settings"
-          >
-            <span class="nav-item-icon">
-              <i data-lucide="settings" class="icon-24"></i>
-            </span>
-            <span class="nav-item-label">Settings</span>
-          </a>
-        </nav>
-      </div>
-
-      <!-- Sidebar Overlay for Mobile -->
-      <div
-        class="sidebar-overlay"
-        id="sidebar-overlay"
-        aria-hidden="true"
-      ></div>
+      <!-- Unified Sidebar Navigation (Loaded Dynamically) -->
+      <div data-sidebar-container></div>
 
       <main
         id="main-content"
