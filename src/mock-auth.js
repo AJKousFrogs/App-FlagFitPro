@@ -3,6 +3,7 @@
 
 import { logger } from "./logger.js";
 import { config } from "./config/environment.js";
+import { storageService } from "./js/services/storage-service-unified.js";
 
 export class MockAuth {
   constructor() {
@@ -85,8 +86,8 @@ export class MockAuth {
       this.loginAttempts.delete(credentials.email);
 
       // Store in localStorage (securely in production this would be httpOnly cookies)
-      localStorage.setItem("authToken", token);
-      localStorage.setItem("userData", JSON.stringify(this.currentUser));
+      storageService.set("authToken", token, { usePrefix: false });
+      storageService.set("userData", this.currentUser, { usePrefix: false });
 
       logger.debug("Demo login successful for:", credentials.email);
 
@@ -150,8 +151,8 @@ export class MockAuth {
         role: "player",
       };
 
-      localStorage.setItem("authToken", "demo-token-" + Date.now());
-      localStorage.setItem("userData", JSON.stringify(this.currentUser));
+      storageService.set("authToken", "demo-token-" + Date.now(), { usePrefix: false });
+      storageService.set("userData", this.currentUser, { usePrefix: false });
 
       return {
         success: true,
@@ -169,18 +170,18 @@ export class MockAuth {
   async logout() {
     this.isLoggedIn = false;
     this.currentUser = null;
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("userData");
+    storageService.remove("authToken", { usePrefix: false });
+    storageService.remove("userData", { usePrefix: false });
 
     return { success: true };
   }
 
   async getCurrentUser() {
-    const token = localStorage.getItem("authToken");
-    const userData = localStorage.getItem("userData");
+    const token = storageService.get("authToken", null, { usePrefix: false });
+    const userData = storageService.get("userData", null, { usePrefix: false });
 
     if (token && userData) {
-      this.currentUser = JSON.parse(userData);
+      this.currentUser = userData;
       this.isLoggedIn = true;
 
       return {
@@ -196,7 +197,7 @@ export class MockAuth {
   }
 
   isAuthenticated() {
-    const token = localStorage.getItem("authToken");
+    const token = storageService.get("authToken", null, { usePrefix: false });
     return !!token;
   }
 }
