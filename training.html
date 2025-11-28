@@ -52,6 +52,8 @@
     </script>
     <!-- Sidebar Loader (Dynamic Component) -->
     <script src="./src/js/components/sidebar-loader.js" defer></script>
+    <!-- Top Bar Loader (Dynamic Component) -->
+    <script src="./src/js/components/top-bar-loader.js" defer></script>
   </head>
   <body>
     <div class="dashboard-container">
@@ -70,6 +72,9 @@
       <main
         class="main-content u-flex-1 u-min-width-0 u-overflow-x-hidden u-overflow-y-auto u-padding-24 u-bg-primary"
       >
+                <!-- Top Bar (Loaded Dynamically) -->
+        <div data-topbar-container></div>
+
         <!-- Top Bar -->
         <div class="top-bar" role="banner">
           <div class="header-left">

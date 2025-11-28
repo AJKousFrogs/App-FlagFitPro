@@ -45,6 +45,8 @@
     <script type="module" src="./src/js/main.js"></script>
     <!-- Sidebar Loader (Dynamic Component) -->
     <script src="./src/js/components/sidebar-loader.js" defer></script>
+    <!-- Top Bar Loader (Dynamic Component) -->
+    <script src="./src/js/components/top-bar-loader.js" defer></script>
   </head>
   <body>
     <div class="dashboard-container">
@@ -53,7 +55,10 @@
       <div data-sidebar-container></div>
 
 
-      <!-- Top Bar -->
+              <!-- Top Bar (Loaded Dynamically) -->
+        <div data-topbar-container></div>
+
+        <!-- Top Bar -->
       <div class="top-bar" role="banner">
         <div class="header-left">
           <!-- Global Search (combobox pattern) -->

@@ -78,6 +78,8 @@
     <script src="./src/js/achievements-integration.js" defer></script>
     <!-- Sidebar Loader (Dynamic Component) -->
     <script src="./src/js/components/sidebar-loader.js" defer></script>
+    <!-- Top Bar Loader (Dynamic Component) -->
+    <script src="./src/js/components/top-bar-loader.js" defer></script>
   </head>
   <body class="page-dashboard">
     <!-- Skip link for accessibility -->
@@ -90,6 +92,9 @@
         id="main-content"
         class="main-content flex-1 min-w-0 overflow-x-hidden overflow-y-auto bg-surface-primary min-h-screen transition-bg"
       >
+                <!-- Top Bar (Loaded Dynamically) -->
+        <div data-topbar-container></div>
+
         <!-- Top Bar -->
         <div class="top-bar" role="banner">
           <div class="header-left">
