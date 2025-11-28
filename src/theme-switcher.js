@@ -1,6 +1,9 @@
 // Theme Switcher - Toggle between light and dark mode
 // Handles theme switching and persistence
 
+// Access storageService from global window object
+const storageService = window.storageService;
+
 // Optional logger - use if available, otherwise fallback to console
 let logger;
 try {
@@ -42,7 +45,7 @@ try {
 
 class ThemeSwitcher {
   constructor() {
-    this.currentTheme = localStorage.getItem("theme") || "light";
+    this.currentTheme = storageService.get("theme", "light", { usePrefix: false });
     this.init();
   }
 
@@ -68,7 +71,7 @@ class ThemeSwitcher {
     if (window.matchMedia) {
       const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
       mediaQuery.addEventListener("change", (e) => {
-        if (!localStorage.getItem("theme")) {
+        if (!storageService.get("theme", null, { usePrefix: false })) {
           this.applyTheme(e.matches ? "dark" : "light");
         }
       });
@@ -143,7 +146,7 @@ class ThemeSwitcher {
 
   switchTheme(theme) {
     this.currentTheme = theme;
-    localStorage.setItem("theme", theme);
+    storageService.set("theme", theme, { usePrefix: false });
     this.applyTheme(theme);
     this.updateToggleText(theme);
   }
