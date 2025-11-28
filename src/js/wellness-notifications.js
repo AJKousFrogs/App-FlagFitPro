@@ -6,6 +6,9 @@
 (function() {
   'use strict';
 
+  // Get storageService from global window object
+  const storageService = window.storageService;
+
   // Wait for notification manager to be available
   function initWellnessNotifications() {
     if (!window.notificationManager) {
@@ -17,7 +20,7 @@
     console.log('[Wellness] Initializing wellness notifications');
 
     // Check if this is first visit
-    const hasSeenPrompt = localStorage.getItem('wellnessNotificationPromptSeen');
+    const hasSeenPrompt = storageService.get('wellnessNotificationPromptSeen', null, { usePrefix: false });
 
     if (!hasSeenPrompt) {
       // Show permission prompt after a short delay (better UX)
@@ -230,17 +233,17 @@
       }
 
       // Mark as seen
-      localStorage.setItem('wellnessNotificationPromptSeen', 'true');
+      storageService.set('wellnessNotificationPromptSeen', 'true', { usePrefix: false });
     });
 
     // Handle maybe later button
     document.getElementById('maybe-later').addEventListener('click', () => {
       modal.remove();
-      localStorage.setItem('wellnessNotificationPromptSeen', 'true');
+      storageService.set('wellnessNotificationPromptSeen', 'true', { usePrefix: false });
 
       // Ask again in 7 days
       const nextPrompt = Date.now() + (7 * 24 * 60 * 60 * 1000);
-      localStorage.setItem('wellnessNotificationNextPrompt', nextPrompt);
+      storageService.set('wellnessNotificationNextPrompt', nextPrompt, { usePrefix: false });
     });
   }
 
@@ -272,8 +275,8 @@
    * Check for wellness streaks
    */
   function checkWellnessStreak() {
-    // Get wellness history from localStorage
-    const wellnessHistory = JSON.parse(localStorage.getItem('wellnessHistory') || '[]');
+    // Get wellness history from storageService
+    const wellnessHistory = storageService.get('wellnessHistory', [], { usePrefix: false });
 
     if (wellnessHistory.length === 0) return;
 
