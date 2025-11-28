@@ -7,9 +7,9 @@ import {
   showFieldError,
   showFieldSuccess,
   clearFieldState,
-  getFromStorage,
   announceToScreenReader,
 } from "../utils/shared.js";
+import { storageService } from "../services/storage-service-unified.js";
 
 // Initialize settings page
 document.addEventListener("DOMContentLoaded", async function () {

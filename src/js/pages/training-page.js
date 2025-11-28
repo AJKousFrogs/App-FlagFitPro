@@ -9,12 +9,9 @@ import {
   initializeLucideIcons,
   announceToScreenReader,
   debounce,
-  saveToStorage,
-  getFromStorage,
 } from "../utils/shared.js";
 import TrainingVideoComponent from "../../training-video-component.js";
 // Services
-import { storageService } from "../services/storageService.js";
 import { workoutService } from "../services/workoutService.js";
 import { scheduleService } from "../services/scheduleService.js";
 import { statsService } from "../services/statsService.js";
@@ -35,6 +32,7 @@ import { delegateClick } from "../utils/event-delegation.js";
 import { qbTraining } from "../../training-modules/qb-training.js";
 import { dbTraining } from "../../training-modules/db-training.js";
 import { logger } from "../../logger.js";
+import { storageService } from "../services/storage-service-unified.js";
 
 // Initialize training page
 document.addEventListener("DOMContentLoaded", async function () {

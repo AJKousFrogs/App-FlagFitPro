@@ -5,8 +5,8 @@
  */
 
 import Modal from "./modal.js";
-import { storageService } from "../services/storageService.js";
 import { scheduleFileParser } from "../services/scheduleFileParser.js";
+import { storageService } from "../services/storage-service-unified.js";
 
 class ScheduleBuilderModal extends Modal {
   constructor(options = {}) {

@@ -12,10 +12,9 @@ import {
   initializeLucideIcons,
   getMessageStatusHtml,
   getMessageActionsHtml,
-  saveToStorage,
-  getFromStorage,
   announceToScreenReader,
 } from "../utils/shared.js";
+import { storageService } from "../services/storage-service-unified.js";
 
 let currentChannel = "team-general";
 let typingTimeout;
@@ -823,7 +822,7 @@ async function sendMessage() {
 
 function saveMessageToStorage(message) {
   const storageKey = `chat_messages_${currentChannel}`;
-  const existingMessages = getFromStorage(storageKey, []);
+  const existingMessages = storageService.get(storageKey, []);
   existingMessages.push(message);
 
   // Keep only last 50 messages per channel to prevent storage bloat
@@ -831,12 +830,12 @@ function saveMessageToStorage(message) {
     existingMessages.splice(0, existingMessages.length - 50);
   }
 
-  saveToStorage(storageKey, existingMessages);
+  storageService.set(storageKey, existingMessages);
 }
 
 function loadMessagesFromStorage() {
   const storageKey = `chat_messages_${currentChannel}`;
-  const storedMessages = getFromStorage(storageKey, []);
+  const storedMessages = storageService.get(storageKey, []);
 
   if (storedMessages.length > 0) {
     // Clear existing demo messages and load stored ones
