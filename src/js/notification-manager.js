@@ -4,6 +4,9 @@
  * 100% FREE - Uses browser Notification API
  */
 
+// Access storageService from global window object
+const storageService = window.storageService;
+
 class NotificationManager {
   constructor() {
     this.permission = 'default';
@@ -157,7 +160,7 @@ class NotificationManager {
     }, timeUntilReminder);
 
     // Save scheduled time to localStorage
-    localStorage.setItem('wellnessReminderTime', time);
+    storageService.set('wellnessReminderTime', time, { usePrefix: false });
   }
 
   /**
@@ -236,7 +239,7 @@ class NotificationManager {
    */
   scheduleDefaultReminders() {
     // Get saved reminder time or use default (9 PM)
-    const savedTime = localStorage.getItem('wellnessReminderTime') || '21:00';
+    const savedTime = storageService.get('wellnessReminderTime', '21:00', { usePrefix: false });
     this.scheduleWellnessReminder(savedTime);
 
     console.log('[Notifications] Default reminders scheduled');
@@ -247,7 +250,7 @@ class NotificationManager {
    */
   cancelAllReminders() {
     // Clear from localStorage
-    localStorage.removeItem('wellnessReminderTime');
+    storageService.remove('wellnessReminderTime', { usePrefix: false });
 
     console.log('[Notifications] All reminders cancelled');
   }
