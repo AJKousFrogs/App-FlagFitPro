@@ -6,6 +6,7 @@
 
 import { apiClient } from "../api-client.js";
 import { API_ENDPOINTS } from "../../api-config.js";
+import { storageService } from "./storage-service-unified.js";
 
 class GameStatsService {
   constructor() {
@@ -39,8 +40,8 @@ class GameStatsService {
         });
       }
 
-      localStorage.setItem(this.storageKey, JSON.stringify(games));
-      localStorage.setItem(this.currentGameKey, JSON.stringify(game));
+      storageService.set(this.storageKey, games, { usePrefix: false });
+      storageService.set(this.currentGameKey, game, { usePrefix: false });
     } catch (error) {
       console.error("Error saving to localStorage:", error);
     }
@@ -48,7 +49,7 @@ class GameStatsService {
     // Try to save to backend
     if (this.useBackend) {
       try {
-        const token = localStorage.getItem("authToken");
+        const token = storageService.get("authToken", null, { usePrefix: false });
         if (!token) {
           console.warn("No auth token, skipping backend save");
           return true; // Saved to localStorage
@@ -56,7 +57,7 @@ class GameStatsService {
 
         // Prepare game data for API
         const gameData = {
-          teamId: game.teamId || `TEAM_${localStorage.getItem("userId")}`,
+          teamId: game.teamId || `TEAM_${storageService.get("userId", "", { usePrefix: false })}`,
           opponentName: game.opponentName,
           gameDate: game.gameDate,
           gameTime: game.gameTime,
@@ -88,7 +89,7 @@ class GameStatsService {
           // Update local game with backend game_id
           if (response.data && response.data.game_id) {
             game.gameId = response.data.game_id;
-            localStorage.setItem(this.currentGameKey, JSON.stringify(game));
+            storageService.set(this.currentGameKey, game, { usePrefix: false });
           }
           return true;
         }
@@ -124,7 +125,7 @@ class GameStatsService {
     // Try backend first
     if (this.useBackend) {
       try {
-        const token = localStorage.getItem("authToken");
+        const token = storageService.get("authToken", null, { usePrefix: false });
         if (token) {
           const response = await apiClient.get(API_ENDPOINTS.games.list);
           if (response.success && response.data) {
@@ -147,7 +148,7 @@ class GameStatsService {
             }));
 
             // Sync to localStorage
-            localStorage.setItem(this.storageKey, JSON.stringify(games));
+            storageService.set(this.storageKey, games, { usePrefix: false });
             return games;
           }
         }
@@ -159,8 +160,7 @@ class GameStatsService {
 
     // Fallback to localStorage
     try {
-      const gamesJson = localStorage.getItem(this.storageKey);
-      return gamesJson ? JSON.parse(gamesJson) : [];
+      return storageService.get(this.storageKey, [], { usePrefix: false });
     } catch (error) {
       console.error("Error loading games from localStorage:", error);
       return [];
@@ -173,8 +173,7 @@ class GameStatsService {
    */
   getAllGamesSync() {
     try {
-      const gamesJson = localStorage.getItem(this.storageKey);
-      return gamesJson ? JSON.parse(gamesJson) : [];
+      return storageService.get(this.storageKey, [], { usePrefix: false });
     } catch (error) {
       console.error("Error loading games:", error);
       return [];
@@ -187,8 +186,7 @@ class GameStatsService {
    */
   getCurrentGame() {
     try {
-      const gameJson = localStorage.getItem(this.currentGameKey);
-      return gameJson ? JSON.parse(gameJson) : null;
+      return storageService.get(this.currentGameKey, null, { usePrefix: false });
     } catch (error) {
       console.error("Error loading current game:", error);
       return null;
@@ -204,7 +202,7 @@ class GameStatsService {
     try {
       const games = this.getAllGames();
       const filteredGames = games.filter((g) => g.gameId !== gameId);
-      localStorage.setItem(this.storageKey, JSON.stringify(filteredGames));
+      storageService.set(this.storageKey, filteredGames, { usePrefix: false });
       return true;
     } catch (error) {
       console.error("Error deleting game:", error);
@@ -624,7 +622,7 @@ class GameStatsService {
   importGamesFromJSON(jsonString) {
     try {
       const games = JSON.parse(jsonString);
-      localStorage.setItem(this.storageKey, JSON.stringify(games));
+      storageService.set(this.storageKey, games, { usePrefix: false });
       return true;
     } catch (error) {
       console.error("Error importing games:", error);
@@ -638,8 +636,8 @@ class GameStatsService {
    */
   clearAllGames() {
     try {
-      localStorage.removeItem(this.storageKey);
-      localStorage.removeItem(this.currentGameKey);
+      storageService.remove(this.storageKey, { usePrefix: false });
+      storageService.remove(this.currentGameKey, { usePrefix: false });
       return true;
     } catch (error) {
       console.error("Error clearing games:", error);

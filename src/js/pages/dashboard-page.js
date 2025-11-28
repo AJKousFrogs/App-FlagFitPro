@@ -5,6 +5,7 @@ import { apiClient, API_ENDPOINTS } from "../../api-config.js";
 import { authManager } from "../../auth-manager.js";
 import { logger } from "../../logger.js";
 import { escapeHtml } from "../utils/sanitize.js";
+import { storageService } from "../services/storage-service-unified.js";
 
 class DashboardPage {
   constructor() {
@@ -402,13 +403,11 @@ class DashboardPage {
       } catch (apiError) {
         // Fallback to localStorage for demo/testing
         logger.warn("API unavailable, saving to localStorage:", apiError);
-        const saved = JSON.parse(
-          localStorage.getItem("wellnessCheckIns") || "[]",
-        );
+        const saved = storageService.get("wellnessCheckIns", [], { usePrefix: false });
         // Remove existing entry for this date
         const filtered = saved.filter((w) => w.date !== dateStr);
         filtered.push(wellnessCheckIn);
-        localStorage.setItem("wellnessCheckIns", JSON.stringify(filtered));
+        storageService.set("wellnessCheckIns", filtered, { usePrefix: false });
       }
 
       // Show success message
@@ -491,22 +490,21 @@ class DashboardPage {
       } catch (apiError) {
         // Fallback to localStorage
         logger.warn("API unavailable, saving to localStorage:", apiError);
-        const saved = JSON.parse(
-          localStorage.getItem("trainingSessions") || "[]",
-        );
+        const saved = storageService.get("trainingSessions", [], { usePrefix: false });
         saved.push({ ...sessionData, status: "in_progress" });
-        localStorage.setItem("trainingSessions", JSON.stringify(saved));
+        storageService.set("trainingSessions", saved, { usePrefix: false });
       }
 
       // Store session data for training-schedule page
       const sessionDate = this.formatDateForInput(this.selectedDate);
-      localStorage.setItem(
+      storageService.set(
         "currentTrainingSession",
-        JSON.stringify({
+        {
           ...sessionData,
           date: sessionDate,
           status: "in_progress",
-        }),
+        },
+        { usePrefix: false }
       );
 
       // Show success and redirect to training schedule page
@@ -550,15 +548,10 @@ class DashboardPage {
       if (!toggleInput || !supplementKey) return;
 
       // Load saved state
-      const savedState = localStorage.getItem("supplements");
+      const savedState = storageService.get("supplements", null, { usePrefix: false });
       if (savedState) {
-        try {
-          const supplements = JSON.parse(savedState);
-          if (supplements[supplementKey]?.taken) {
-            toggleInput.checked = true;
-          }
-        } catch (e) {
-          logger.warn("Failed to load supplement state:", e);
+        if (savedState[supplementKey]?.taken) {
+          toggleInput.checked = true;
         }
       }
 
@@ -599,7 +592,7 @@ class DashboardPage {
       // Use user ID if available, otherwise use a fallback identifier
       const userId = user
         ? user.id || user.email
-        : localStorage.getItem("userId") || "anonymous";
+        : storageService.get("userId", "anonymous", { usePrefix: false });
 
       const supplementData = {
         userId: userId,
@@ -635,7 +628,7 @@ class DashboardPage {
       }
 
       // Fallback to localStorage (for unauthenticated users or API failures)
-      const saved = JSON.parse(localStorage.getItem("supplementLogs") || "[]");
+      const saved = storageService.get("supplementLogs", [], { usePrefix: false });
 
       // Remove existing entry for this supplement on selected date
       const filtered = saved.filter((log) => {
@@ -651,7 +644,7 @@ class DashboardPage {
         filtered.push(supplementData);
       }
 
-      localStorage.setItem("supplementLogs", JSON.stringify(filtered));
+      storageService.set("supplementLogs", filtered, { usePrefix: false });
 
       if (isChecked) {
         this.showNotification(`${supplementName} logged! ✓`, "success");
@@ -955,9 +948,7 @@ class DashboardPage {
       }
 
       // Load from localStorage
-      const saved = JSON.parse(
-        localStorage.getItem("wellnessCheckIns") || "[]",
-      );
+      const saved = storageService.get("wellnessCheckIns", [], { usePrefix: false });
       const wellnessForDate = saved.find((w) => w.date === dateStr);
 
       if (wellnessForDate) {
@@ -1055,7 +1046,7 @@ class DashboardPage {
       }
 
       // Load from localStorage
-      const saved = JSON.parse(localStorage.getItem("supplementLogs") || "[]");
+      const saved = storageService.get("supplementLogs", [], { usePrefix: false });
       const supplementsForDate = saved.filter((s) => {
         const logDate =
           s.date ||
@@ -1256,10 +1247,10 @@ class DashboardPage {
       } catch (apiError) {
         // Fallback to localStorage
         logger.warn("API unavailable, saving to localStorage:", apiError);
-        const saved = JSON.parse(localStorage.getItem("injuries") || "[]");
+        const saved = storageService.get("injuries", [], { usePrefix: false });
         injuryRecord.id = Date.now().toString();
         saved.push(injuryRecord);
-        localStorage.setItem("injuries", JSON.stringify(saved));
+        storageService.set("injuries", saved, { usePrefix: false });
       }
 
       // Show success message
@@ -1302,7 +1293,7 @@ class DashboardPage {
       } catch (apiError) {
         // Fallback to localStorage
         logger.warn("API unavailable, loading from localStorage:", apiError);
-        const saved = JSON.parse(localStorage.getItem("injuries") || "[]");
+        const saved = storageService.get("injuries", [], { usePrefix: false });
         injuries = saved.filter(i =>
           i.userId === (user.id || user.email) &&
           (i.status === "active" || i.status === "recovering" || i.status === "monitoring")
@@ -1376,7 +1367,7 @@ class DashboardPage {
       } catch (apiError) {
         // Fallback to localStorage
         logger.warn("API unavailable, updating localStorage:", apiError);
-        const saved = JSON.parse(localStorage.getItem("injuries") || "[]");
+        const saved = storageService.get("injuries", [], { usePrefix: false });
         const injuryIndex = saved.findIndex(i =>
           (i.id || i.startDate) === injuryId &&
           i.userId === (user.id || user.email)
@@ -1384,7 +1375,7 @@ class DashboardPage {
         if (injuryIndex !== -1) {
           saved[injuryIndex].status = "recovered";
           saved[injuryIndex].recoveryDate = new Date().toISOString();
-          localStorage.setItem("injuries", JSON.stringify(saved));
+          storageService.set("injuries", saved, { usePrefix: false });
         }
       }
 
