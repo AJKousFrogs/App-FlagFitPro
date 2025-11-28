@@ -3,7 +3,7 @@
  * Manages player schedules, league commitments, and preferences
  */
 
-// Player profiles are stored in localStorage directly
+import { storageService } from './storage-service-unified.js';
 
 class PlayerProfileService {
   /**
@@ -34,7 +34,7 @@ class PlayerProfileService {
       profiles.push(profileData);
     }
 
-    localStorage.setItem("playerProfiles", JSON.stringify(profiles));
+    storageService.set("playerProfiles", profiles, { usePrefix: false });
     return profileData;
   }
 
@@ -50,15 +50,14 @@ class PlayerProfileService {
    * Get all player profiles
    */
   getAllProfiles() {
-    const stored = localStorage.getItem("playerProfiles");
-    return stored ? JSON.parse(stored) : [];
+    return storageService.get("playerProfiles", [], { usePrefix: false });
   }
 
   /**
    * Get current active profile
    */
   getCurrentProfile() {
-    const currentId = localStorage.getItem("currentPlayerId");
+    const currentId = storageService.get("currentPlayerId", null, { usePrefix: false });
     if (currentId) {
       return this.getPlayerProfile(currentId);
     }
@@ -69,7 +68,7 @@ class PlayerProfileService {
    * Set current active profile
    */
   setCurrentProfile(playerId) {
-    localStorage.setItem("currentPlayerId", playerId);
+    storageService.set("currentPlayerId", playerId, { usePrefix: false });
   }
 
   /**
