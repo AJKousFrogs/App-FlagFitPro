@@ -8,7 +8,35 @@ export class UndoManager {
     this.actionHistory = [];
     this.maxHistorySize = 50;
     this.undoTimeout = 30000; // 30 seconds
+
+    // SECURITY: Safe callback registry to prevent code injection
+    // Instead of executing arbitrary code from data attributes,
+    // we register safe callbacks that can be referenced by name
+    this.callbackRegistry = new Map();
+
     this.init();
+  }
+
+  /**
+   * Register a safe callback function
+   * @param {string} name - Unique callback identifier
+   * @param {Function} callback - The function to execute
+   */
+  registerCallback(name, callback) {
+    if (typeof callback !== 'function') {
+      logger.error('[UndoManager] Callback must be a function');
+      return;
+    }
+    this.callbackRegistry.set(name, callback);
+    logger.debug(`[UndoManager] Registered callback: ${name}`);
+  }
+
+  /**
+   * Unregister a callback
+   * @param {string} name - Callback identifier to remove
+   */
+  unregisterCallback(name) {
+    this.callbackRegistry.delete(name);
   }
 
   init() {
@@ -48,12 +76,19 @@ export class UndoManager {
 
         this.addToHistory(action);
 
-        // Execute delete
+        // SECURITY FIX: Execute registered callback instead of arbitrary code
+        // Instead of using Function() constructor (which is like eval()),
+        // we now look up pre-registered safe callbacks by name
         if (onConfirm) {
           try {
-            const callback = new Function("return " + onConfirm)();
-            if (typeof callback === "function") {
-              callback();
+            const callback = this.callbackRegistry.get(onConfirm);
+            if (callback && typeof callback === "function") {
+              callback(itemId, itemType);
+            } else if (onConfirm) {
+              logger.warn(
+                `[UndoManager] Callback '${onConfirm}' not found in registry. ` +
+                `Register it using undoManager.registerCallback('${onConfirm}', yourFunction)`
+              );
             }
           } catch (e) {
             logger.error("Error executing delete callback:", e);

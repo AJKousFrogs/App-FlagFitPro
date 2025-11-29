@@ -1316,25 +1316,32 @@ class DashboardPage {
       return;
     }
 
+    // SECURITY: Sanitize all user-provided injury data before rendering
     container.innerHTML = this.injuries.map(injury => {
       const statusClass = injury.status === "recovered" ? "recovered" :
                          injury.status === "monitoring" ? "monitoring" : "active";
       const statusLabel = injury.status === "recovered" ? "Recovered" :
                          injury.status === "monitoring" ? "Monitoring" : "Active";
 
+      // Sanitize user-provided fields to prevent XSS
+      const safeType = escapeHtml(injury.type || '');
+      const safeDescription = escapeHtml(injury.description || "No description");
+      const safeSeverity = parseInt(injury.severity) || 0; // Ensure it's a number
+      const safeId = escapeHtml(String(injury.id || injury.startDate));
+
       return `
         <div class="injury-item ${statusClass}">
           <div class="injury-item-info">
             <div class="injury-item-title">
-              ${injury.type.charAt(0).toUpperCase() + injury.type.slice(1)} - Severity: ${injury.severity}/10
+              ${safeType.charAt(0).toUpperCase() + safeType.slice(1)} - Severity: ${safeSeverity}/10
             </div>
             <div class="injury-item-details">
-              ${injury.description || "No description"} • Started: ${new Date(injury.startDate).toLocaleDateString()} • Status: ${statusLabel}
+              ${safeDescription} • Started: ${new Date(injury.startDate).toLocaleDateString()} • Status: ${statusLabel}
             </div>
           </div>
           <div class="injury-item-actions">
             ${injury.status !== "recovered" ? `
-              <button class="btn-mark-recovered" data-injury-id="${injury.id || injury.startDate}">
+              <button class="btn-mark-recovered" data-injury-id="${safeId}">
                 Mark Recovered
               </button>
             ` : ""}

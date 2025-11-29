@@ -4,6 +4,54 @@
  */
 
 /**
+ * SECURITY: Validate password complexity
+ * @param {string} password - Password to validate
+ * @returns {object} { valid: boolean, errors: string[] }
+ */
+function validatePasswordComplexity(password) {
+  const errors = [];
+
+  if (!password || typeof password !== 'string') {
+    return { valid: false, errors: ['Password is required'] };
+  }
+
+  // Minimum length
+  if (password.length < 8) {
+    errors.push('Password must be at least 8 characters long');
+  }
+
+  // Maximum length (prevent DoS)
+  if (password.length > 128) {
+    errors.push('Password must be at most 128 characters long');
+  }
+
+  // Require lowercase letter
+  if (!/[a-z]/.test(password)) {
+    errors.push('Password must contain at least one lowercase letter');
+  }
+
+  // Require uppercase letter
+  if (!/[A-Z]/.test(password)) {
+    errors.push('Password must contain at least one uppercase letter');
+  }
+
+  // Require digit
+  if (!/\d/.test(password)) {
+    errors.push('Password must contain at least one number');
+  }
+
+  // Require special character
+  if (!/[@$!%*?&]/.test(password)) {
+    errors.push('Password must contain at least one special character (@$!%*?&)');
+  }
+
+  return {
+    valid: errors.length === 0,
+    errors,
+  };
+}
+
+/**
  * Validation schemas and rules
  */
 const VALIDATION_RULES = {
@@ -73,9 +121,17 @@ const VALIDATION_RULES = {
   // Authentication - Registration validation
   register: {
     email: { type: 'string', required: true, minLength: 3, maxLength: 255 },
-    password: { type: 'string', required: true, minLength: 8, maxLength: 255 },
+    password: { type: 'string', required: true, minLength: 8, maxLength: 128 },
     name: { type: 'string', required: true, minLength: 1, maxLength: 255 },
     role: { type: 'string', enum: ['player', 'coach', 'admin'], required: false },
+  },
+
+  // Authentication - Password Reset validation
+  resetPassword: {
+    email: { type: 'string', required: false, minLength: 3, maxLength: 255 },
+    token: { type: 'string', required: false, minLength: 10, maxLength: 500 },
+    newPassword: { type: 'string', required: false, minLength: 8, maxLength: 128 },
+    action: { type: 'string', enum: ['request', 'verify', 'reset'], required: false },
   },
 };
 
@@ -271,6 +327,30 @@ function validateRequestBody(body, schemaName) {
       };
     }
 
+    // SECURITY: Additional password complexity validation for auth schemas
+    if (schemaName === 'register' && sanitizedData.password) {
+      const passwordValidation = validatePasswordComplexity(sanitizedData.password);
+      if (!passwordValidation.valid) {
+        return {
+          valid: false,
+          data: null,
+          response: createValidationErrorResponse(passwordValidation.errors),
+        };
+      }
+    }
+
+    // SECURITY: Validate new password complexity for password reset
+    if (schemaName === 'resetPassword' && sanitizedData.newPassword) {
+      const passwordValidation = validatePasswordComplexity(sanitizedData.newPassword);
+      if (!passwordValidation.valid) {
+        return {
+          valid: false,
+          data: null,
+          response: createValidationErrorResponse(passwordValidation.errors),
+        };
+      }
+    }
+
     return {
       valid: true,
       data: sanitizedData,
@@ -312,5 +392,6 @@ module.exports = {
   validateQueryParams,
   sanitize,
   createValidationErrorResponse,
+  validatePasswordComplexity,
   VALIDATION_RULES,
 };

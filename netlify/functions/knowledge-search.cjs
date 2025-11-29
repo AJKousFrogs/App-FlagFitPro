@@ -3,6 +3,18 @@
 
 const { Pool } = require("pg");
 
+// SECURITY: Whitelist of allowed categories to prevent SQL injection
+const ALLOWED_CATEGORIES = [
+  'training',
+  'nutrition',
+  'recovery',
+  'technique',
+  'mental',
+  'injury',
+  'equipment',
+  'strategy'
+];
+
 exports.handler = async (event, context) => {
   // CORS headers
   const headers = {
@@ -25,6 +37,47 @@ exports.handler = async (event, context) => {
     if (event.httpMethod === "POST") {
       const { query, category, limit = 5 } = JSON.parse(event.body);
 
+      // SECURITY: Validate input parameters
+      if (!query || typeof query !== 'string') {
+        return {
+          statusCode: 400,
+          headers,
+          body: JSON.stringify({
+            success: false,
+            error: 'Query parameter is required and must be a string'
+          })
+        };
+      }
+
+      if (query.length > 500) {
+        return {
+          statusCode: 400,
+          headers,
+          body: JSON.stringify({
+            success: false,
+            error: 'Query too long (max 500 characters)'
+          })
+        };
+      }
+
+      // Validate category against whitelist
+      if (category) {
+        if (!ALLOWED_CATEGORIES.includes(category)) {
+          return {
+            statusCode: 400,
+            headers,
+            body: JSON.stringify({
+              success: false,
+              error: 'Invalid category',
+              allowedCategories: ALLOWED_CATEGORIES
+            })
+          };
+        }
+      }
+
+      // Validate limit
+      const sanitizedLimit = Math.min(Math.max(parseInt(limit) || 5, 1), 50);
+
       // Search knowledge base entries
       let searchQuery = `
         SELECT 
@@ -45,8 +98,8 @@ exports.handler = async (event, context) => {
       `;
 
       const params = category
-        ? [`%${query}%`, category, limit]
-        : [`%${query}%`, limit];
+        ? [`%${query}%`, category, sanitizedLimit]
+        : [`%${query}%`, sanitizedLimit];
 
       const result = await pool.query(searchQuery, params);
 

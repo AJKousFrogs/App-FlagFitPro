@@ -6,13 +6,7 @@ import { logger } from "../../logger.js";
 // ================================================================
 // DOM UTILITIES
 // ================================================================
-
-export function escapeHtml(text) {
-  if (!text) return "";
-  const div = document.createElement("div");
-  div.textContent = text;
-  return div.innerHTML;
-}
+// Note: For HTML escaping, use escapeHtml() from sanitize.js
 
 export function getInitials(name) {
   if (!name) return "??";

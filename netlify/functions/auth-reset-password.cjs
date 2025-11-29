@@ -1,4 +1,7 @@
 const { emailService } = require("../../src/email-service.js");
+const { applyRateLimit } = require("./utils/rate-limiter.cjs");
+const { applyCSRFProtection } = require("./utils/csrf-protection.cjs");
+const { validateRequestBody } = require("./validation.cjs");
 
 // Password reset endpoint
 exports.handler = async (event, context) => {
@@ -26,8 +29,28 @@ exports.handler = async (event, context) => {
     };
   }
 
+  // SECURITY: Apply rate limiting - 5 reset attempts per 15 minutes
+  const rateLimitError = applyRateLimit(event, 5, 900000);
+  if (rateLimitError) {
+    rateLimitError.headers = { ...rateLimitError.headers, ...headers };
+    return rateLimitError;
+  }
+
+  // SECURITY: Apply CSRF protection
+  const csrfError = applyCSRFProtection(event);
+  if (csrfError) {
+    csrfError.headers = { ...csrfError.headers, ...headers };
+    return csrfError;
+  }
+
   try {
-    const { email, action = "request" } = JSON.parse(event.body);
+    // SECURITY: Validate request body
+    const validation = validateRequestBody(event.body, 'resetPassword');
+    if (!validation.valid) {
+      return validation.response;
+    }
+
+    const { email, action = "request", token, newPassword } = validation.data;
 
     if (!email) {
       return {
@@ -85,9 +108,7 @@ exports.handler = async (event, context) => {
         };
       }
     } else if (action === "verify") {
-      // Verify reset token
-      const { token } = JSON.parse(event.body);
-
+      // Verify reset token (token already extracted from validation)
       if (!token) {
         return {
           statusCode: 400,
@@ -104,9 +125,7 @@ exports.handler = async (event, context) => {
         body: JSON.stringify(verification),
       };
     } else if (action === "reset") {
-      // Reset password with token
-      const { token, newPassword } = JSON.parse(event.body);
-
+      // Reset password with token (already extracted and validated)
       if (!token || !newPassword) {
         return {
           statusCode: 400,

@@ -545,6 +545,7 @@
       import { PerformanceUtils } from "./src/performance-utils.js";
       import { AccessibilityUtils } from "./src/accessibility-utils.js";
       import { escapeHtml, sanitizeUrl } from "./src/js/utils/sanitize.js";
+      import { getInitials, getTimeAgo } from "./src/js/utils/shared.js";
 
       let postCounter = 4;
 
@@ -698,7 +699,7 @@
                         <div class="post-avatar">${getInitials(post.author)}</div>
                         <div class="post-info">
                             <div class="post-author">${escapeHtml(post.authorName)}</div>
-                            <div class="post-meta">${formatTime(post.timestamp)} • ${escapeHtml(post.location) || '<i data-lucide="map-pin" class="icon-14"></i> Community'}</div>
+                            <div class="post-meta">${getTimeAgo(post.timestamp)} • ${escapeHtml(post.location) || '<i data-lucide="map-pin" class="icon-14"></i> Community'}</div>
                         </div>
                     </div>
                     <div class="post-content">
@@ -738,7 +739,7 @@
                     <div class="comment-content">
                         <div class="comment-author">${escapeHtml(comment.authorName)}</div>
                         <div class="comment-text">${escapeHtml(comment.text)}</div>
-                        <div class="comment-time">${formatTime(comment.timestamp)}</div>
+                        <div class="comment-time">${getTimeAgo(comment.timestamp)}</div>
                     </div>
                 </div>
             `;
@@ -862,38 +863,6 @@
           .scrollIntoView({ behavior: "smooth" });
         document.getElementById("postInput").focus();
       };
-
-      function getInitials(name) {
-        if (!name) return "??";
-        return name
-          .split(" ")
-          .map((n) => n[0])
-          .join("")
-          .toUpperCase()
-          .slice(0, 2);
-      }
-
-      function formatTime(timestamp) {
-        const date = new Date(timestamp);
-        const now = new Date();
-        const diff = now - date;
-
-        if (diff < 3600000) {
-          // Less than 1 hour
-          return `${Math.floor(diff / 60000)} minutes ago`;
-        } else if (diff < 86400000) {
-          // Less than 1 day
-          return `${Math.floor(diff / 3600000)} hours ago`;
-        } else {
-          return date.toLocaleDateString();
-        }
-      }
-
-      function escapeHtml(text) {
-        const div = document.createElement("div");
-        div.textContent = text;
-        return div.innerHTML;
-      }
 
       document.addEventListener("DOMContentLoaded", initCommunityPage);
     </script>

@@ -1,6 +1,7 @@
 // Exercise Library Page - Optimized with pagination, debouncing, and DocumentFragment
 import { debounce } from "../utils/shared.js";
 import { logger } from "../../logger.js";
+import { escapeHtml } from "../utils/sanitize.js";
 
 export class ExerciseLibraryPage {
   constructor() {
@@ -404,7 +405,9 @@ export class ExerciseLibraryPage {
     if (!modal || !modalTitle || !modalCategory || !modalBody) return;
 
     modalTitle.textContent = name;
-    modalCategory.innerHTML = `<span class="exercise-category">${exercise.category || ""}</span>`;
+    // SECURITY: Sanitize exercise category to prevent XSS
+    const safeCategory = escapeHtml(exercise.category || "");
+    modalCategory.innerHTML = `<span class="exercise-category">${safeCategory}</span>`;
 
     // Use DocumentFragment for modal content
     const fragment = document.createDocumentFragment();

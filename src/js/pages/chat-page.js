@@ -688,11 +688,14 @@ function updateMessagesContainer(messages) {
       `Message from ${isOwn ? "You" : msg.authorName} at ${formatTime(msg.timestamp)}`,
     );
 
+    // SECURITY: Sanitize author name to prevent XSS
+    const safeAuthorName = escapeHtml(msg.authorName || msg.author || 'Unknown');
+
     messageDiv.innerHTML = `
-      <div class="message-avatar">${getInitials(msg.authorName || msg.author)}</div>
+      <div class="message-avatar">${getInitials(safeAuthorName)}</div>
       <div class="message-content">
         <div class="message-header">
-          <span class="message-author">${isOwn ? "You" : msg.authorName}</span>
+          <span class="message-author">${isOwn ? "You" : safeAuthorName}</span>
           <span class="message-time" aria-label="${formatTime(msg.timestamp)}">${formatTime(msg.timestamp)}</span>
         </div>
         <div class="message-text">${escapeHtml(msg.text)}</div>

@@ -99,18 +99,36 @@
         };
       }
 
+      // SECURITY FIX: Replace document.write() with safe dynamic script loading
+      // document.write() is deprecated and dangerous - it can overwrite the entire page
+      // and creates XSS vulnerabilities. Use dynamic script insertion instead.
+
+      /**
+       * Safely load a polyfill script dynamically
+       * @param {string} src - Script URL to load
+       * @returns {Promise} Resolves when script is loaded
+       */
+      function loadPolyfill(src) {
+        return new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = src;
+          script.crossOrigin = 'anonymous';
+          script.onload = resolve;
+          script.onerror = reject;
+          document.head.appendChild(script);
+        });
+      }
+
       // Promise polyfill for older browsers
       if (!window.Promise) {
-        document.write(
-          '<script src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js" crossorigin="anonymous"><\/script>',
-        );
+        loadPolyfill('https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js')
+          .catch(err => console.error('Failed to load Promise polyfill:', err));
       }
 
       // Fetch polyfill for older browsers
       if (!window.fetch) {
-        document.write(
-          '<script src="https://cdn.jsdelivr.net/npm/whatwg-fetch@3.6.2/dist/fetch.umd.js" crossorigin="anonymous"><\/script>',
-        );
+        loadPolyfill('https://cdn.jsdelivr.net/npm/whatwg-fetch@3.6.2/dist/fetch.umd.js')
+          .catch(err => console.error('Failed to load Fetch polyfill:', err));
       }
     </script>
     <!-- Sidebar Loader (Dynamic Component) -->

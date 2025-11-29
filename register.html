@@ -224,6 +224,7 @@
     <script type="module">
       import { authManager } from "./src/auth-manager.js";
       import { profileCompletionManager } from "./src/profile-completion.js";
+      import { validateEmail } from "./src/js/utils/shared.js";
 
       document
         .getElementById("registerForm")
@@ -393,8 +394,7 @@
           return false;
         }
 
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (emailRegex.test(email)) {
+        if (validateEmail(email)) {
           showFieldSuccess("email");
           return true;
         } else {

@@ -4,6 +4,8 @@
  * Includes search, notifications, theme toggle, and user menu
  */
 
+import { getInitials } from '../utils/shared.js';
+
 class TopBarLoader {
   constructor() {
     this.topBarContainer = null;
@@ -101,7 +103,7 @@ class TopBarLoader {
       // Try to get user info from auth manager
       if (window.authManager && window.authManager.user) {
         const user = window.authManager.user;
-        const initials = this.getInitials(user.name || user.email || 'User');
+        const initials = getInitials(user.name || user.email || 'User');
         userAvatar.textContent = initials;
       } else {
         // Default initials
@@ -110,17 +112,6 @@ class TopBarLoader {
     }, 500);
   }
 
-  /**
-   * Get initials from name
-   */
-  getInitials(name) {
-    if (!name) return 'U';
-    const parts = name.trim().split(' ');
-    if (parts.length >= 2) {
-      return (parts[0][0] + parts[1][0]).toUpperCase();
-    }
-    return name.substring(0, 2).toUpperCase();
-  }
 }
 
 // Auto-initialize on DOM ready

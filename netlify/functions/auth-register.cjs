@@ -5,9 +5,15 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { db, checkEnvVars } = require("./supabase-client.cjs");
 const { validateRequestBody } = require("./validation.cjs");
+const { applyRateLimit } = require("./utils/rate-limiter.cjs");
+const { applyCSRFProtection } = require("./utils/csrf-protection.cjs");
 
-const JWT_SECRET =
-  process.env.JWT_SECRET || "your-super-secret-jwt-key-change-in-production";
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET) {
+  console.error("CRITICAL: JWT_SECRET environment variable is not set!");
+  throw new Error("JWT_SECRET environment variable is required for security");
+}
 
 exports.handler = async (event, context) => {
   // Handle CORS preflight
@@ -35,6 +41,20 @@ exports.handler = async (event, context) => {
         error: "Method not allowed",
       }),
     };
+  }
+
+  // SECURITY: Apply rate limiting - 5 registration attempts per 15 minutes
+  const rateLimitError = applyRateLimit(event, 5, 900000);
+  if (rateLimitError) {
+    rateLimitError.headers["Access-Control-Allow-Origin"] = "*";
+    return rateLimitError;
+  }
+
+  // SECURITY: Apply CSRF protection
+  const csrfError = applyCSRFProtection(event);
+  if (csrfError) {
+    csrfError.headers["Access-Control-Allow-Origin"] = "*";
+    return csrfError;
   }
 
   try {

@@ -1,17 +1,36 @@
 [build]
   publish = "."
 
-# Security headers
+# SECURITY: Enhanced security headers for production
 [[headers]]
   for = "/*"
   [headers.values]
+    # Prevent clickjacking attacks
     X-Frame-Options = "DENY"
+
+    # Enable XSS filtering (legacy browsers)
     X-XSS-Protection = "1; mode=block"
+
+    # Prevent MIME type sniffing
     X-Content-Type-Options = "nosniff"
+
+    # Control referrer information
     Referrer-Policy = "strict-origin-when-cross-origin"
-    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
-    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https: wss:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+
+    # Force HTTPS (HSTS)
+    Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
+
+    # Permissions policy - disable unnecessary features
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()"
+
+    # Cross-Origin policies for additional isolation
+    Cross-Origin-Embedder-Policy = "require-corp"
+    Cross-Origin-Opener-Policy = "same-origin"
+    Cross-Origin-Resource-Policy = "same-origin"
+
+    # Content Security Policy - defense in depth against XSS
+    # Note: 'unsafe-inline' is used for inline scripts/styles - consider moving to external files with nonces in production
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co https://*.netlify.app https://*.netlify.com wss://*.supabase.co; object-src 'none'; media-src 'self'; frame-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"
 
 # API Routes for Dashboard (must come before page redirects)
 [[redirects]]

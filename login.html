@@ -220,6 +220,8 @@
 
     <script type="module">
       import { authManager } from "./src/auth-manager.js";
+      import { validateEmail } from "./src/js/utils/shared.js";
+      import { escapeHtml } from "./src/js/utils/sanitize.js";
 
       document
         .getElementById("loginForm")
@@ -511,8 +513,7 @@
           return false;
         }
 
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (emailRegex.test(email)) {
+        if (validateEmail(email)) {
           showFieldSuccess("email");
           return true;
         } else {
@@ -727,10 +728,13 @@
 
         strengthDiv.style.display = "block";
 
+        // SECURITY: Sanitize feedback array before displaying
+        const safeFeedback = escapeHtml(feedback.join(", "));
+
         if (strength <= 2) {
-          strengthDiv.innerHTML = `<span style="color: var(--error);">Weak: Missing ${feedback.join(", ")}</span>`;
+          strengthDiv.innerHTML = `<span style="color: var(--error);">Weak: Missing ${safeFeedback}</span>`;
         } else if (strength <= 4) {
-          strengthDiv.innerHTML = `<span style="color: var(--warning);">Medium: Missing ${feedback.join(", ")}</span>`;
+          strengthDiv.innerHTML = `<span style="color: var(--warning);">Medium: Missing ${safeFeedback}</span>`;
         } else {
           strengthDiv.innerHTML = `<span style="color: var(--success);">Strong password!</span>`;
         }
