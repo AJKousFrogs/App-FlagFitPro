@@ -349,25 +349,27 @@ All user inputs are validated and sanitized before processing to prevent injecti
 
 ### Sanitization Functions
 
-#### 1. Generic Input Sanitization
+#### 1. Input Normalization (Format Cleanup)
+
+**Note:** For XSS prevention, use `escapeHtml()` from `sanitize.js`. The function below is for format normalization only.
 
 ```javascript
-import { sanitizeInput } from './utils/validation.js';
+import { normalizeInput } from './utils/validation.js';
 
 // Text input
-const cleanText = sanitizeInput(userInput, 'text');
+const cleanText = normalizeInput(userInput, 'text');
 
 // Email
-const cleanEmail = sanitizeInput(userEmail, 'email'); // Lowercase
+const cleanEmail = normalizeInput(userEmail, 'email'); // Lowercase
 
 // Number
-const cleanNumber = sanitizeInput(userNumber, 'number'); // Only digits and ./-
+const cleanNumber = normalizeInput(userNumber, 'number'); // Only digits and ./-
 
 // Phone
-const cleanPhone = sanitizeInput(userPhone, 'phone'); // Only digits and ()+-
+const cleanPhone = normalizeInput(userPhone, 'phone'); // Only digits and ()+-
 
 // Alphanumeric
-const cleanCode = sanitizeInput(userCode, 'alphanumeric'); // Only a-z, A-Z, 0-9
+const cleanCode = normalizeInput(userCode, 'alphanumeric'); // Only a-z, A-Z, 0-9
 ```
 
 #### 2. Validation with Sanitization
@@ -697,8 +699,8 @@ csrfProtection.rotateToken();
 1. **Check sanitization type:**
 ```javascript
 // Wrong type may strip valid characters
-const clean = sanitizeInput(input, 'alphanumeric'); // Strips spaces
-const clean = sanitizeInput(input, 'text'); // Preserves spaces
+const clean = normalizeInput(input, 'alphanumeric'); // Strips spaces
+const clean = normalizeInput(input, 'text'); // Preserves spaces
 ```
 
 2. **Use appropriate validator:**

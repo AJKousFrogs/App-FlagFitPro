@@ -1568,12 +1568,14 @@ const result = FormValidators.profileForm({
 
 ### Utility Functions
 
-#### `sanitizeInput(value, type)`
+#### `normalizeInput(value, type)`
 
-Sanitizes user input by type.
+Normalizes user input for consistent formatting.
+
+**Note:** This function is for format normalization (lowercase, strip characters), NOT XSS prevention. For XSS prevention, use `escapeHtml()` from `sanitize.js`.
 
 **Parameters:**
-- `value` (any): Value to sanitize
+- `value` (any): Value to normalize
 - `type` (string): Input type (optional, default: `'text'`)
 
 **Types:**
@@ -1584,16 +1586,16 @@ Sanitizes user input by type.
 - `'alphanumeric'`: Only letters, numbers, spaces
 
 **Returns:**
-- (string): Sanitized value
+- (string): Normalized value
 
 **Example:**
 ```javascript
-import { sanitizeInput } from './utils/validation.js';
+import { normalizeInput } from './utils/validation.js';
 
-const cleanEmail = sanitizeInput('  USER@EXAMPLE.COM  ', 'email');
+const cleanEmail = normalizeInput('  USER@EXAMPLE.COM  ', 'email');
 // Result: 'user@example.com'
 
-const cleanPhone = sanitizeInput('(555) 123-4567!', 'phone');
+const cleanPhone = normalizeInput('(555) 123-4567!', 'phone');
 // Result: '(555) 123-4567'
 ```
 

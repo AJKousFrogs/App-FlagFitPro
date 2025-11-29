@@ -4,6 +4,7 @@
  */
 
 import { logger } from "./logger.js";
+import { escapeHtml } from "./js/utils/sanitize.js";
 
 export class SecureDOMUtils {
   /**
@@ -117,7 +118,7 @@ export class SecureDOMUtils {
 
     // Replace data placeholders safely
     Object.entries(data).forEach(([key, value]) => {
-      const escapedValue = this.escapeHtml(String(value || ""));
+      const escapedValue = escapeHtml(String(value || ""));
       sanitized = sanitized.replace(
         new RegExp(`{{${key}}}`, "g"),
         escapedValue,
@@ -125,17 +126,6 @@ export class SecureDOMUtils {
     });
 
     return sanitized;
-  }
-
-  /**
-   * Escapes HTML special characters
-   * @param {string} text - Text to escape
-   * @returns {string} Escaped text
-   */
-  static escapeHtml(text) {
-    const div = document.createElement("div");
-    div.textContent = text;
-    return div.innerHTML;
   }
 
   /**
@@ -206,7 +196,7 @@ export class SecureDOMUtils {
       Object.entries(data).forEach(([key, value]) => {
         text = text.replace(
           new RegExp(`{{${key}}}`, "g"),
-          this.escapeHtml(String(value || "")),
+          escapeHtml(String(value || "")),
         );
       });
       node.textContent = text;

@@ -393,31 +393,33 @@ export const FormValidators = {
 };
 
 /**
- * Sanitize and validate user input
+ * Normalize user input for consistent formatting
+ * Note: This is for format normalization (lowercase, strip chars), NOT XSS prevention.
+ * For XSS prevention, use escapeHtml() from sanitize.js
  */
-export function sanitizeInput(value, type = 'text') {
+export function normalizeInput(value, type = 'text') {
   if (value === null || value === undefined) {
     return '';
   }
 
-  let sanitized = String(value).trim();
+  let normalized = String(value).trim();
 
   switch (type) {
     case 'email':
-      sanitized = sanitized.toLowerCase();
+      normalized = normalized.toLowerCase();
       break;
     case 'number':
-      sanitized = sanitized.replace(/[^\d.-]/g, '');
+      normalized = normalized.replace(/[^\d.-]/g, '');
       break;
     case 'phone':
-      sanitized = sanitized.replace(/[^\d\s\-\+\(\)]/g, '');
+      normalized = normalized.replace(/[^\d\s\-\+\(\)]/g, '');
       break;
     case 'alphanumeric':
-      sanitized = sanitized.replace(/[^a-zA-Z0-9\s]/g, '');
+      normalized = normalized.replace(/[^a-zA-Z0-9\s]/g, '');
       break;
   }
 
-  return sanitized;
+  return normalized;
 }
 
 /**
@@ -503,7 +505,7 @@ export default {
   DomainValidators,
   FormValidators,
   ValidationResult,
-  sanitizeInput,
+  normalizeInput,
   validateForm,
   displayValidationErrors
 };
