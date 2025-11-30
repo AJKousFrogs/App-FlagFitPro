@@ -11,6 +11,7 @@ import {
   debounce,
 } from "../utils/shared.js";
 import TrainingVideoComponent from "../../training-video-component.js";
+import { errorHandler } from "../utils/unified-error-handler.js";
 // Services
 import { workoutService } from "../services/workoutService.js";
 import { scheduleService } from "../services/scheduleService.js";

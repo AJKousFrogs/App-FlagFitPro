@@ -3,6 +3,13 @@
 
 const jwt = require("jsonwebtoken");
 const { db, checkEnvVars } = require("./supabase-client.cjs");
+const {
+  validateJWT,
+  createSuccessResponse,
+  handleServerError,
+  logFunctionCall,
+  CORS_HEADERS
+} = require("./utils/error-handler.cjs");
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -216,15 +223,13 @@ const getLeaderboard = async (tournamentId = null) => {
 };
 
 exports.handler = async (event, context) => {
+  logFunctionCall('Tournaments', event);
+
   // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization",
-        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-      },
+      headers: CORS_HEADERS,
     };
   }
 
@@ -232,10 +237,7 @@ exports.handler = async (event, context) => {
   if (event.httpMethod !== "GET") {
     return {
       statusCode: 405,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-      },
+      headers: CORS_HEADERS,
       body: JSON.stringify({
         success: false,
         error: "Method not allowed",
@@ -329,34 +331,12 @@ exports.handler = async (event, context) => {
     // Get leaderboard
     const leaderboard = await getLeaderboard();
 
-    return {
-      statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        success: true,
-        data: {
-          tournaments: tournaments || [],
-          leaderboard: leaderboard || [],
-        },
-      }),
-    };
+    return createSuccessResponse({
+      tournaments: tournaments || [],
+      leaderboard: leaderboard || [],
+    });
   } catch (error) {
-    console.error("Tournaments API error:", error);
-
-    return {
-      statusCode: 500,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        success: false,
-        error: "Internal server error",
-      }),
-    };
+    return handleServerError(error, 'Tournaments');
   }
 };
 

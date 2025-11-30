@@ -4,6 +4,14 @@
 
 const jwt = require("jsonwebtoken");
 const { db, checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
+const {
+  validateJWT,
+  createSuccessResponse,
+  createErrorResponse,
+  handleServerError,
+  logFunctionCall,
+  CORS_HEADERS
+} = require("./utils/error-handler.cjs");
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -11,13 +19,6 @@ if (!JWT_SECRET) {
   console.error("CRITICAL: JWT_SECRET environment variable is not set!");
   throw new Error("JWT_SECRET environment variable is required for security");
 }
-
-// CORS headers
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
-  "Access-Control-Allow-Methods": "GET, OPTIONS",
-};
 
 /**
  * Calculate intensity level from training session data
@@ -211,58 +212,28 @@ function generateMockHeatmapData(timeRange) {
 }
 
 exports.handler = async (event, context) => {
+  logFunctionCall('Performance-Heatmap', event);
+
   // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
-      headers: corsHeaders,
-      body: "",
+      headers: CORS_HEADERS,
     };
   }
 
   try {
     // Only allow GET requests
     if (event.httpMethod !== "GET") {
-      return {
-        statusCode: 405,
-        headers: corsHeaders,
-        body: JSON.stringify({
-          success: false,
-          error: "Method not allowed",
-        }),
-      };
+      return createErrorResponse("Method not allowed", 405, 'method_not_allowed');
     }
 
-    // Parse authorization header
-    const authHeader = event.headers.authorization || event.headers.Authorization;
-
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return {
-        statusCode: 401,
-        headers: corsHeaders,
-        body: JSON.stringify({
-          success: false,
-          error: "No token provided",
-        }),
-      };
+    // Validate JWT token
+    const jwtValidation = validateJWT(event, jwt, JWT_SECRET);
+    if (!jwtValidation.success) {
+      return jwtValidation.error;
     }
-
-    // Extract and verify token
-    const token = authHeader.substring(7);
-    let decoded;
-
-    try {
-      decoded = jwt.verify(token, JWT_SECRET);
-    } catch (jwtError) {
-      return {
-        statusCode: 401,
-        headers: corsHeaders,
-        body: JSON.stringify({
-          success: false,
-          error: "Invalid or expired token",
-        }),
-      };
-    }
+    const { decoded } = jwtValidation;
 
     const userId = decoded.userId || decoded.id;
     const timeRange = event.queryStringParameters?.timeRange || "6months";
@@ -278,27 +249,9 @@ exports.handler = async (event, context) => {
       cells = generateMockHeatmapData(timeRange);
     }
 
-    return {
-      statusCode: 200,
-      headers: corsHeaders,
-      body: JSON.stringify({
-        success: true,
-        data: {
-          cells,
-          timeRange,
-        },
-      }),
-    };
+    return createSuccessResponse({ cells, timeRange });
   } catch (error) {
-    console.error("Performance heatmap API error:", error);
-    return {
-      statusCode: 500,
-      headers: corsHeaders,
-      body: JSON.stringify({
-        success: false,
-        error: "Internal server error",
-      }),
-    };
+    return handleServerError(error, 'Performance-Heatmap');
   }
 };
 

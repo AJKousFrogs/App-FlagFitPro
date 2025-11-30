@@ -4,6 +4,15 @@
 const jwt = require("jsonwebtoken");
 const { db, checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
 const { validateQueryParams, validateRequestBody } = require("./validation.cjs");
+const {
+  validateJWT,
+  createSuccessResponse,
+  createErrorResponse,
+  handleServerError,
+  handleValidationError,
+  logFunctionCall,
+  CORS_HEADERS
+} = require("./utils/error-handler.cjs");
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -251,55 +260,24 @@ const getPlayerGameStats = async (playerId, gameId) => {
 
 // Main handler
 exports.handler = async (event, context) => {
+  // Log function call
+  logFunctionCall('Games', event);
+
   // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization",
-        "Access-Control-Allow-Methods": "GET, POST, PUT, OPTIONS",
-      },
+      headers: CORS_HEADERS,
     };
   }
 
   try {
-    // Get authorization header
-    const authHeader = event.headers.authorization || event.headers.Authorization;
-
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return {
-        statusCode: 401,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          success: false,
-          error: "No token provided",
-        }),
-      };
+    // Validate JWT token
+    const jwtValidation = validateJWT(event, jwt, JWT_SECRET);
+    if (!jwtValidation.success) {
+      return jwtValidation.error;
     }
-
-    // Extract and verify token
-    const token = authHeader.substring(7);
-    let decoded;
-
-    try {
-      decoded = jwt.verify(token, JWT_SECRET);
-    } catch (jwtError) {
-      return {
-        statusCode: 401,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          success: false,
-          error: "Invalid or expired token",
-        }),
-      };
-    }
+    const { decoded } = jwtValidation;
 
     const userId = decoded.userId;
     const path = event.path.replace("/.netlify/functions/games", "");
@@ -317,17 +295,7 @@ exports.handler = async (event, context) => {
       try {
         body = JSON.parse(event.body);
       } catch (parseError) {
-        return {
-          statusCode: 400,
-          headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            success: false,
-            error: "Invalid JSON in request body",
-          }),
-        };
+        return handleValidationError("Invalid JSON in request body");
       }
     }
 
@@ -362,45 +330,12 @@ exports.handler = async (event, context) => {
       const gameId = path.replace("/plays", "").replace("/", "");
       result = await savePlay(gameId, body);
     } else {
-      return {
-        statusCode: 404,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          success: false,
-          error: "Endpoint not found",
-        }),
-      };
+      return createErrorResponse("Endpoint not found", 404, 'not_found');
     }
 
-    return {
-      statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        success: true,
-        data: result,
-      }),
-    };
+    return createSuccessResponse(result);
   } catch (error) {
-    console.error("Games API error:", error);
-
-    return {
-      statusCode: 500,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        success: false,
-        error: "Internal server error",
-        message: error.message,
-      }),
-    };
+    return handleServerError(error, 'Games');
   }
 };
 

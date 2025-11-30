@@ -3,20 +3,31 @@
 
 const jwt = require("jsonwebtoken");
 const { db, checkEnvVars } = require("./supabase-client.cjs");
+const {
+  validateJWT,
+  createSuccessResponse,
+  handleNotFoundError,
+  handleServerError,
+  logFunctionCall,
+  CORS_HEADERS
+} = require("./utils/error-handler.cjs");
 
-const JWT_SECRET =
-  process.env.JWT_SECRET || "your-super-secret-jwt-key-change-in-production";
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET) {
+  console.error("CRITICAL: JWT_SECRET environment variable is not set!");
+  throw new Error("JWT_SECRET environment variable is required for security");
+}
 
 exports.handler = async (event, context) => {
+  // Log function call
+  logFunctionCall('Auth-Me', event);
+
   // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization",
-        "Access-Control-Allow-Methods": "GET, OPTIONS",
-      },
+      headers: CORS_HEADERS,
     };
   }
 
@@ -24,10 +35,7 @@ exports.handler = async (event, context) => {
   if (event.httpMethod !== "GET") {
     return {
       statusCode: 405,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-      },
+      headers: CORS_HEADERS,
       body: JSON.stringify({
         success: false,
         error: "Method not allowed",
@@ -39,88 +47,24 @@ exports.handler = async (event, context) => {
     // Check environment variables
     checkEnvVars();
 
-    // Get authorization header
-    const authHeader =
-      event.headers.authorization || event.headers.Authorization;
-
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return {
-        statusCode: 401,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          success: false,
-          error: "No token provided",
-        }),
-      };
+    // Validate JWT token using standardized error handling
+    const jwtValidation = validateJWT(event, jwt, JWT_SECRET);
+    if (!jwtValidation.success) {
+      return jwtValidation.error;
     }
-
-    // Extract token
-    const token = authHeader.substring(7); // Remove 'Bearer ' prefix
-
-    // Verify JWT token
-    let decoded;
-    try {
-      decoded = jwt.verify(token, JWT_SECRET);
-    } catch (jwtError) {
-      return {
-        statusCode: 401,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          success: false,
-          error: "Invalid or expired token",
-        }),
-      };
-    }
+    const { decoded } = jwtValidation;
 
     // Get user by ID from database
     const user = await db.users.findById(decoded.userId);
     if (!user) {
-      return {
-        statusCode: 404,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          success: false,
-          error: "User not found",
-        }),
-      };
+      return handleNotFoundError('User');
     }
 
     // Return user data (exclude password)
     const { password: _, ...safeUser } = user;
 
-    return {
-      statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        success: true,
-        user: safeUser,
-      }),
-    };
+    return createSuccessResponse({ user: safeUser });
   } catch (error) {
-    console.error("Get user error:", error);
-
-    return {
-      statusCode: 500,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        success: false,
-        error: "Internal server error",
-      }),
-    };
+    return handleServerError(error, 'Auth-Me');
   }
 };

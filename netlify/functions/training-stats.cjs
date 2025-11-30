@@ -3,6 +3,15 @@
 
 const jwt = require("jsonwebtoken");
 const { db, checkEnvVars } = require("./supabase-client.cjs");
+const {
+  validateJWT,
+  createSuccessResponse,
+  createErrorResponse,
+  handleServerError,
+  handleValidationError,
+  logFunctionCall,
+  CORS_HEADERS
+} = require("./utils/error-handler.cjs");
 
 const JWT_SECRET =
   process.env.JWT_SECRET || "your-super-secret-jwt-key-change-in-production";
@@ -200,56 +209,23 @@ const getTimeAgo = (date) => {
 };
 
 exports.handler = async (event, context) => {
+  logFunctionCall('Training-Stats', event);
+
   // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization",
-        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-      },
+      headers: CORS_HEADERS,
     };
   }
 
   try {
-    // Get authorization header
-    const authHeader =
-      event.headers.authorization || event.headers.Authorization;
-
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return {
-        statusCode: 401,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          success: false,
-          error: "No token provided",
-        }),
-      };
+    // Validate JWT token
+    const jwtValidation = validateJWT(event, jwt, JWT_SECRET);
+    if (!jwtValidation.success) {
+      return jwtValidation.error;
     }
-
-    // Extract and verify token
-    const token = authHeader.substring(7);
-    let decoded;
-
-    try {
-      decoded = jwt.verify(token, JWT_SECRET);
-    } catch (jwtError) {
-      return {
-        statusCode: 401,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          success: false,
-          error: "Invalid or expired token",
-        }),
-      };
-    }
+    const { decoded } = jwtValidation;
 
     // Check environment variables
     checkEnvVars();
@@ -257,18 +233,7 @@ exports.handler = async (event, context) => {
     // Handle GET request - return training stats
     if (event.httpMethod === "GET") {
       const trainingStats = await getTrainingStats(decoded.userId);
-
-      return {
-        statusCode: 200,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          success: true,
-          data: trainingStats,
-        }),
-      };
+      return createSuccessResponse(trainingStats);
     }
 
     // Handle POST request - complete training session
@@ -277,17 +242,7 @@ exports.handler = async (event, context) => {
 
       // Validate input
       if (!workoutType || !duration) {
-        return {
-          statusCode: 400,
-          headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            success: false,
-            error: "Workout type and duration are required",
-          }),
-        };
+        return handleValidationError("Workout type and duration are required");
       }
 
       // Save to Supabase database
@@ -298,45 +253,12 @@ exports.handler = async (event, context) => {
         score: score || Math.floor(Math.random() * 20) + 80,
       });
 
-      return {
-        statusCode: 201,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          success: true,
-          data: sessionData,
-          message: "Training session completed successfully",
-        }),
-      };
+      return createSuccessResponse(sessionData, 201, "Training session completed successfully");
     }
 
     // Method not allowed
-    return {
-      statusCode: 405,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        success: false,
-        error: "Method not allowed",
-      }),
-    };
+    return createErrorResponse("Method not allowed", 405, 'method_not_allowed');
   } catch (error) {
-    console.error("Training stats error:", error);
-
-    return {
-      statusCode: 500,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        success: false,
-        error: "Internal server error",
-      }),
-    };
+    return handleServerError(error, 'Training-Stats');
   }
 };

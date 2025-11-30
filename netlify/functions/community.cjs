@@ -3,6 +3,14 @@
 
 const jwt = require("jsonwebtoken");
 const { db, checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
+const {
+  createSuccessResponse,
+  createErrorResponse,
+  handleServerError,
+  handleAuthenticationError,
+  logFunctionCall,
+  CORS_HEADERS
+} = require("./utils/error-handler.cjs");
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -139,15 +147,13 @@ const createPost = async (userId, postData) => {
 };
 
 exports.handler = async (event, context) => {
+  logFunctionCall('Community', event);
+
   // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization",
-        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-      },
+      headers: CORS_HEADERS,
     };
   }
 
@@ -176,17 +182,7 @@ exports.handler = async (event, context) => {
       // Handle feed request
       if (feed === "true" || feed === true) {
         const feedData = await getCommunityFeed(userId, parseInt(limit) || 20);
-        return {
-          statusCode: 200,
-          headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            success: true,
-            data: { posts: feedData },
-          }),
-        };
+        return createSuccessResponse({ posts: feedData });
       }
 
       // Handle leaderboard request
@@ -195,122 +191,40 @@ exports.handler = async (event, context) => {
           category || "overall",
           parseInt(limit) || 10,
         );
-        return {
-          statusCode: 200,
-          headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            success: true,
-            data: leaderboardData,
-          }),
-        };
+        return createSuccessResponse(leaderboardData);
       }
 
       // Handle comments request
       if (postId) {
         // Return empty comments for now
-        return {
-          statusCode: 200,
-          headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            success: true,
-            data: { comments: [] },
-          }),
-        };
+        return createSuccessResponse({ comments: [] });
       }
 
       // Default: return feed
       const feedData = await getCommunityFeed(userId, parseInt(limit) || 20);
-      return {
-        statusCode: 200,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          success: true,
-          data: { posts: feedData },
-        }),
-      };
+      return createSuccessResponse({ posts: feedData });
     }
 
     if (event.httpMethod === "POST") {
       // Handle like request
       if (like) {
-        return {
-          statusCode: 200,
-          headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            success: true,
-            message: "Post liked",
-          }),
-        };
+        return createSuccessResponse(null, 200, "Post liked");
       }
 
-    if (event.httpMethod === "POST") {
+      // Require authentication for creating posts
       if (!userId) {
-        return {
-          statusCode: 401,
-          headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            success: false,
-            error: "Authentication required",
-          }),
-        };
+        return handleAuthenticationError("Authentication required to create posts");
       }
 
       const postData = JSON.parse(event.body || "{}");
       const newPost = await createPost(userId, postData);
 
-      return {
-        statusCode: 201,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          success: true,
-          data: newPost,
-        }),
-      };
+      return createSuccessResponse(newPost, 201, "Post created successfully");
     }
 
-    return {
-      statusCode: 405,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        success: false,
-        error: "Method not allowed",
-      }),
-    };
+    return createErrorResponse("Method not allowed", 405, 'method_not_allowed');
   } catch (error) {
-    console.error("Community API error:", error);
-
-    return {
-      statusCode: 500,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        success: false,
-        error: "Internal server error",
-      }),
-    };
+    return handleServerError(error, 'Community');
   }
 };
 

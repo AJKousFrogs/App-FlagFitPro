@@ -3,13 +3,14 @@
 // Based on 87 peer-reviewed studies with 12,453 athletes
 
 const { createClient } = require("@supabase/supabase-js");
-
-// CORS headers
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
-  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-};
+const {
+  createSuccessResponse,
+  createErrorResponse,
+  handleServerError,
+  handleAuthenticationError,
+  logFunctionCall,
+  CORS_HEADERS
+} = require("./utils/error-handler.cjs");
 
 // Initialize Supabase client
 let supabase;
@@ -322,7 +323,7 @@ async function handleACWR(method, userId, query) {
   if (method !== "GET") {
     return {
       statusCode: 405,
-      headers: corsHeaders,
+      headers: CORS_HEADERS,
       body: JSON.stringify({ error: "Method not allowed" }),
     };
   }
@@ -332,7 +333,7 @@ async function handleACWR(method, userId, query) {
 
   return {
     statusCode: 200,
-    headers: corsHeaders,
+    headers: CORS_HEADERS,
     body: JSON.stringify(result),
   };
 }
@@ -344,7 +345,7 @@ async function handleMonotony(method, userId, query) {
   if (method !== "GET") {
     return {
       statusCode: 405,
-      headers: corsHeaders,
+      headers: CORS_HEADERS,
       body: JSON.stringify({ error: "Method not allowed" }),
     };
   }
@@ -356,7 +357,7 @@ async function handleMonotony(method, userId, query) {
 
   return {
     statusCode: 200,
-    headers: corsHeaders,
+    headers: CORS_HEADERS,
     body: JSON.stringify(result),
   };
 }
@@ -368,7 +369,7 @@ async function handleTSB(method, userId, query) {
   if (method !== "GET") {
     return {
       statusCode: 405,
-      headers: corsHeaders,
+      headers: CORS_HEADERS,
       body: JSON.stringify({ error: "Method not allowed" }),
     };
   }
@@ -378,7 +379,7 @@ async function handleTSB(method, userId, query) {
 
   return {
     statusCode: 200,
-    headers: corsHeaders,
+    headers: CORS_HEADERS,
     body: JSON.stringify(result),
   };
 }
@@ -390,7 +391,7 @@ async function handleInjuryRisk(method, userId, query) {
   if (method !== "GET") {
     return {
       statusCode: 405,
-      headers: corsHeaders,
+      headers: CORS_HEADERS,
       body: JSON.stringify({ error: "Method not allowed" }),
     };
   }
@@ -429,7 +430,7 @@ async function handleInjuryRisk(method, userId, query) {
 
   return {
     statusCode: 200,
-    headers: corsHeaders,
+    headers: CORS_HEADERS,
     body: JSON.stringify({
       overallRisk: parseFloat(compositeRisk.toFixed(3)),
       riskLevel,
@@ -452,7 +453,7 @@ async function handleTrainingLoads(method, userId, query) {
   if (method !== "GET") {
     return {
       statusCode: 405,
-      headers: corsHeaders,
+      headers: CORS_HEADERS,
       body: JSON.stringify({ error: "Method not allowed" }),
     };
   }
@@ -466,7 +467,7 @@ async function handleTrainingLoads(method, userId, query) {
 
   return {
     statusCode: 200,
-    headers: corsHeaders,
+    headers: CORS_HEADERS,
     body: JSON.stringify({ loads }),
   };
 }
@@ -475,12 +476,13 @@ async function handleTrainingLoads(method, userId, query) {
  * Main handler
  */
 exports.handler = async (event, _context) => {
+  logFunctionCall('Load-Management', event);
+
   // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
-      headers: corsHeaders,
-      body: "",
+      headers: CORS_HEADERS,
     };
   }
 
@@ -494,11 +496,7 @@ exports.handler = async (event, _context) => {
     const userId = parseAuthToken(authHeader);
 
     if (!userId) {
-      return {
-        statusCode: 401,
-        headers: corsHeaders,
-        body: JSON.stringify({ error: "Unauthorized" }),
-      };
+      return handleAuthenticationError("Authorization required");
     }
 
     const query = queryStringParameters || {};
@@ -522,23 +520,17 @@ exports.handler = async (event, _context) => {
         response = await handleTrainingLoads(httpMethod, userId, query);
         break;
       default:
+        response = createErrorResponse("Endpoint not found", 404, 'not_found');
+        // Convert to old format for consistency
         response = {
-          statusCode: 404,
-          headers: corsHeaders,
-          body: JSON.stringify({ error: "Endpoint not found" }),
+          statusCode: response.statusCode,
+          headers: response.headers,
+          body: response.body
         };
     }
 
     return response;
   } catch (error) {
-    console.error("Error in load-management function:", error);
-    return {
-      statusCode: 500,
-      headers: corsHeaders,
-      body: JSON.stringify({
-        error: "Internal server error",
-        message: error.message,
-      }),
-    };
+    return handleServerError(error, 'Load-Management');
   }
 };

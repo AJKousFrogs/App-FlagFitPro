@@ -2,6 +2,14 @@
 // Searches the evidence-based knowledge database
 
 const { Pool } = require("pg");
+const {
+  createSuccessResponse,
+  createErrorResponse,
+  handleServerError,
+  handleValidationError,
+  logFunctionCall,
+  CORS_HEADERS
+} = require("./utils/error-handler.cjs");
 
 // SECURITY: Whitelist of allowed categories to prevent SQL injection
 const ALLOWED_CATEGORIES = [
@@ -16,16 +24,10 @@ const ALLOWED_CATEGORIES = [
 ];
 
 exports.handler = async (event, context) => {
-  // CORS headers
-  const headers = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-    "Content-Type": "application/json",
-  };
+  logFunctionCall('Knowledge-Search', event);
 
   if (event.httpMethod === "OPTIONS") {
-    return { statusCode: 200, headers, body: "" };
+    return { statusCode: 200, headers: CORS_HEADERS };
   }
 
   const pool = new Pool({
@@ -39,39 +41,17 @@ exports.handler = async (event, context) => {
 
       // SECURITY: Validate input parameters
       if (!query || typeof query !== 'string') {
-        return {
-          statusCode: 400,
-          headers,
-          body: JSON.stringify({
-            success: false,
-            error: 'Query parameter is required and must be a string'
-          })
-        };
+        return handleValidationError('Query parameter is required and must be a string');
       }
 
       if (query.length > 500) {
-        return {
-          statusCode: 400,
-          headers,
-          body: JSON.stringify({
-            success: false,
-            error: 'Query too long (max 500 characters)'
-          })
-        };
+        return handleValidationError('Query too long (max 500 characters)');
       }
 
       // Validate category against whitelist
       if (category) {
         if (!ALLOWED_CATEGORIES.includes(category)) {
-          return {
-            statusCode: 400,
-            headers,
-            body: JSON.stringify({
-              success: false,
-              error: 'Invalid category',
-              allowedCategories: ALLOWED_CATEGORIES
-            })
-          };
+          return handleValidationError('Invalid category. Allowed: ' + ALLOWED_CATEGORIES.join(', '));
         }
       }
 
@@ -102,15 +82,7 @@ exports.handler = async (event, context) => {
         : [`%${query}%`, sanitizedLimit];
 
       const result = await pool.query(searchQuery, params);
-
-      return {
-        statusCode: 200,
-        headers,
-        body: JSON.stringify({
-          success: true,
-          data: result.rows,
-        }),
-      };
+      return createSuccessResponse(result.rows);
     }
 
     if (event.httpMethod === "GET") {
@@ -118,7 +90,7 @@ exports.handler = async (event, context) => {
 
       const result = await pool.query(
         `
-        SELECT 
+        SELECT
           kbe.*,
           array_agg(DISTINCT ra.id) as supporting_articles
         FROM knowledge_base_entries kbe
@@ -130,31 +102,12 @@ exports.handler = async (event, context) => {
         [topic],
       );
 
-      return {
-        statusCode: 200,
-        headers,
-        body: JSON.stringify({
-          success: true,
-          data: result.rows[0] || null,
-        }),
-      };
+      return createSuccessResponse(result.rows[0] || null);
     }
 
-    return {
-      statusCode: 405,
-      headers,
-      body: JSON.stringify({ error: "Method not allowed" }),
-    };
+    return createErrorResponse("Method not allowed", 405, 'method_not_allowed');
   } catch (error) {
-    console.error("Knowledge search error:", error);
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({
-        success: false,
-        error: error.message,
-      }),
-    };
+    return handleServerError(error, 'Knowledge-Search');
   } finally {
     await pool.end();
   }

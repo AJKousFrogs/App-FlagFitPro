@@ -2,16 +2,20 @@ const { emailService } = require("../../src/email-service.js");
 const { applyRateLimit } = require("./utils/rate-limiter.cjs");
 const { applyCSRFProtection } = require("./utils/csrf-protection.cjs");
 const { validateRequestBody } = require("./validation.cjs");
+const {
+  createSuccessResponse,
+  handleServerError,
+  logFunctionCall,
+  CORS_HEADERS
+} = require("./utils/error-handler.cjs");
 
 // Password reset endpoint
 exports.handler = async (event, context) => {
+  // Log function call
+  logFunctionCall('Auth-Reset-Password', event);
+
   // Handle CORS
-  const headers = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "Content-Type",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Content-Type": "application/json",
-  };
+  const headers = CORS_HEADERS;
 
   if (event.httpMethod === "OPTIONS") {
     return {

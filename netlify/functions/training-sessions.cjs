@@ -4,6 +4,15 @@
 
 const jwt = require("jsonwebtoken");
 const { db, checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
+const {
+  validateJWT,
+  createSuccessResponse,
+  createErrorResponse,
+  handleServerError,
+  handleValidationError,
+  logFunctionCall,
+  CORS_HEADERS
+} = require("./utils/error-handler.cjs");
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -11,13 +20,6 @@ if (!JWT_SECRET) {
   console.error("CRITICAL: JWT_SECRET environment variable is not set!");
   throw new Error("JWT_SECRET environment variable is required for security");
 }
-
-// CORS headers
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
-  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-};
 
 /**
  * Create a training session from the Training Builder
@@ -145,46 +147,23 @@ async function getTrainingSessions(userId, queryParams) {
 }
 
 exports.handler = async (event, context) => {
+  logFunctionCall('Training-Sessions', event);
+
   // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
-      headers: corsHeaders,
-      body: "",
+      headers: CORS_HEADERS,
     };
   }
 
   try {
-    // Parse authorization header
-    const authHeader = event.headers.authorization || event.headers.Authorization;
-
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return {
-        statusCode: 401,
-        headers: corsHeaders,
-        body: JSON.stringify({
-          success: false,
-          error: "No token provided",
-        }),
-      };
+    // Validate JWT token
+    const jwtValidation = validateJWT(event, jwt, JWT_SECRET);
+    if (!jwtValidation.success) {
+      return jwtValidation.error;
     }
-
-    // Extract and verify token
-    const token = authHeader.substring(7);
-    let decoded;
-
-    try {
-      decoded = jwt.verify(token, JWT_SECRET);
-    } catch (jwtError) {
-      return {
-        statusCode: 401,
-        headers: corsHeaders,
-        body: JSON.stringify({
-          success: false,
-          error: "Invalid or expired token",
-        }),
-      };
-    }
+    const { decoded } = jwtValidation;
 
     const userId = decoded.userId || decoded.id;
 
@@ -194,15 +173,7 @@ exports.handler = async (event, context) => {
     // Handle GET request - retrieve sessions
     if (event.httpMethod === "GET") {
       const sessions = await getTrainingSessions(userId, event.queryStringParameters);
-
-      return {
-        statusCode: 200,
-        headers: corsHeaders,
-        body: JSON.stringify({
-          success: true,
-          data: sessions,
-        }),
-      };
+      return createSuccessResponse(sessions);
     }
 
     // Handle POST request - create new session
@@ -211,50 +182,22 @@ exports.handler = async (event, context) => {
 
       // Validate required fields
       if (!sessionData.exercises || !Array.isArray(sessionData.exercises) || sessionData.exercises.length === 0) {
-        return {
-          statusCode: 400,
-          headers: corsHeaders,
-          body: JSON.stringify({
-            success: false,
-            error: "Exercises array is required",
-          }),
-        };
+        return handleValidationError("Exercises array is required");
       }
 
       const result = await createTrainingSession(userId, sessionData);
 
-      return {
-        statusCode: 201,
-        headers: corsHeaders,
-        body: JSON.stringify({
-          success: result.success,
-          data: result.session,
-          id: result.id,
-          note: result.note,
-        }),
-      };
+      return createSuccessResponse(
+        { session: result.session, id: result.id, note: result.note },
+        201,
+        "Training session created successfully"
+      );
     }
 
     // Method not allowed
-    return {
-      statusCode: 405,
-      headers: corsHeaders,
-      body: JSON.stringify({
-        success: false,
-        error: "Method not allowed",
-      }),
-    };
+    return createErrorResponse("Method not allowed", 405, 'method_not_allowed');
   } catch (error) {
-    console.error("Training sessions API error:", error);
-    return {
-      statusCode: 500,
-      headers: corsHeaders,
-      body: JSON.stringify({
-        success: false,
-        error: "Internal server error",
-        message: error.message,
-      }),
-    };
+    return handleServerError(error, 'Training-Sessions');
   }
 };
 

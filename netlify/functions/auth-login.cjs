@@ -7,6 +7,12 @@ const { db, checkEnvVars } = require("./supabase-client.cjs");
 const { validateRequestBody } = require("./validation.cjs");
 const { applyRateLimit } = require("./utils/rate-limiter.cjs");
 const { applyCSRFProtection } = require("./utils/csrf-protection.cjs");
+const {
+  createSuccessResponse,
+  handleServerError,
+  logFunctionCall,
+  CORS_HEADERS
+} = require("./utils/error-handler.cjs");
 
 // Demo users to seed if database is empty
 const demoUsers = [
@@ -61,15 +67,14 @@ async function seedDemoUsers() {
 }
 
 exports.handler = async (event, context) => {
+  // Log function call
+  logFunctionCall('Auth-Login', event);
+
   // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization",
-        "Access-Control-Allow-Methods": "POST, OPTIONS",
-      },
+      headers: CORS_HEADERS,
     };
   }
 
@@ -164,34 +169,12 @@ exports.handler = async (event, context) => {
     // Return success response (exclude password)
     const { password: _, ...safeUser } = user;
 
-    return {
-      statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        success: true,
-        data: {
-          token,
-          user: safeUser,
-        },
-        message: "Login successful",
-      }),
-    };
+    return createSuccessResponse(
+      { token, user: safeUser },
+      200,
+      "Login successful"
+    );
   } catch (error) {
-    console.error("Login error:", error);
-
-    return {
-      statusCode: 500,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        success: false,
-        error: "Internal server error",
-      }),
-    };
+    return handleServerError(error, 'Auth-Login');
   }
 };

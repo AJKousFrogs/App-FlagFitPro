@@ -2,6 +2,7 @@
 import { debounce } from "../utils/shared.js";
 import { logger } from "../../logger.js";
 import { escapeHtml } from "../utils/sanitize.js";
+import { errorHandler } from "../utils/unified-error-handler.js";
 
 export class ExerciseLibraryPage {
   constructor() {

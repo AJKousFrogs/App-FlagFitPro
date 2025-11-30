@@ -3,6 +3,14 @@
 
 const jwt = require("jsonwebtoken");
 const { db, checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
+const {
+  validateJWT,
+  createSuccessResponse,
+  createErrorResponse,
+  handleServerError,
+  logFunctionCall,
+  CORS_HEADERS
+} = require("./utils/error-handler.cjs");
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -11,20 +19,14 @@ if (!JWT_SECRET) {
   throw new Error("JWT_SECRET environment variable is required for security");
 }
 
-// CORS headers
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
-  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-};
-
 exports.handler = async (event, _context) => {
+  logFunctionCall('Performance-Data', event);
+
   // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
-      headers: corsHeaders,
-      body: "",
+      headers: CORS_HEADERS,
     };
   }
 
@@ -33,30 +35,12 @@ exports.handler = async (event, _context) => {
     const pathSegments = path.split("/").filter(Boolean);
     const endpoint = pathSegments[pathSegments.length - 1];
 
-    // Parse authorization header
-    const authHeader = event.headers.authorization || event.headers.Authorization;
-
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return {
-        statusCode: 401,
-        headers: corsHeaders,
-        body: JSON.stringify({ error: "No token provided" }),
-      };
+    // Validate JWT token
+    const jwtValidation = validateJWT(event, jwt, JWT_SECRET);
+    if (!jwtValidation.success) {
+      return jwtValidation.error;
     }
-
-    // Extract and verify token
-    const token = authHeader.substring(7);
-    let decoded;
-
-    try {
-      decoded = jwt.verify(token, JWT_SECRET);
-    } catch (jwtError) {
-      return {
-        statusCode: 401,
-        headers: corsHeaders,
-        body: JSON.stringify({ error: "Invalid or expired token" }),
-      };
-    }
+    const { decoded } = jwtValidation;
 
     const userId = decoded.userId;
 
@@ -117,23 +101,21 @@ exports.handler = async (event, _context) => {
         response = await handleExport(userId, queryStringParameters);
         break;
       default:
+        response = createErrorResponse("Endpoint not found", 404, 'not_found');
+        // Convert to old format for consistency with other handlers
         response = {
-          statusCode: 404,
-          body: JSON.stringify({ error: "Endpoint not found" }),
+          statusCode: response.statusCode,
+          body: response.body,
+          headers: response.headers
         };
     }
 
     return {
       ...response,
-      headers: { ...corsHeaders, ...response.headers },
+      headers: { ...CORS_HEADERS, ...response.headers },
     };
   } catch (error) {
-    console.error("API Error:", error);
-    return {
-      statusCode: 500,
-      headers: corsHeaders,
-      body: JSON.stringify({ error: "Internal server error" }),
-    };
+    return handleServerError(error, 'Performance-Data');
   }
 };
 
@@ -685,7 +667,7 @@ async function handleInjuries(method, userId, body, query) {
 
         return {
           statusCode: 200,
-          headers: corsHeaders,
+          headers: CORS_HEADERS,
           body: JSON.stringify({
             success: true,
             data: transformed,
@@ -696,7 +678,7 @@ async function handleInjuries(method, userId, body, query) {
         console.error("Error fetching injuries:", dbError);
         return {
           statusCode: 200,
-          headers: corsHeaders,
+          headers: CORS_HEADERS,
           body: JSON.stringify({
             success: true,
             data: [],
@@ -718,7 +700,7 @@ async function handleInjuries(method, userId, body, query) {
       if (!injuryData.type || !injuryData.severity || !injuryData.startDate) {
         return {
           statusCode: 400,
-          headers: corsHeaders,
+          headers: CORS_HEADERS,
           body: JSON.stringify({
             error: "Missing required fields: type, severity, startDate",
           }),
@@ -747,7 +729,7 @@ async function handleInjuries(method, userId, body, query) {
           if (insertError.code === "42P01") {
             return {
               statusCode: 201,
-              headers: corsHeaders,
+              headers: CORS_HEADERS,
               body: JSON.stringify({
                 success: true,
                 id: `temp_${Date.now()}`,
@@ -773,7 +755,7 @@ async function handleInjuries(method, userId, body, query) {
 
         return {
           statusCode: 201,
-          headers: corsHeaders,
+          headers: CORS_HEADERS,
           body: JSON.stringify({
             success: true,
             data: transformed,
@@ -783,7 +765,7 @@ async function handleInjuries(method, userId, body, query) {
         console.error("Error creating injury:", dbError);
         return {
           statusCode: 500,
-          headers: corsHeaders,
+          headers: CORS_HEADERS,
           body: JSON.stringify({
             error: "Failed to create injury record",
           }),
@@ -799,7 +781,7 @@ async function handleInjuries(method, userId, body, query) {
       if (!injuryId) {
         return {
           statusCode: 400,
-          headers: corsHeaders,
+          headers: CORS_HEADERS,
           body: JSON.stringify({ error: "Injury ID required" }),
         };
       }
@@ -827,7 +809,7 @@ async function handleInjuries(method, userId, body, query) {
             // No rows updated - injury not found
             return {
               statusCode: 404,
-              headers: corsHeaders,
+              headers: CORS_HEADERS,
               body: JSON.stringify({ error: "Injury not found" }),
             };
           }
@@ -849,7 +831,7 @@ async function handleInjuries(method, userId, body, query) {
 
         return {
           statusCode: 200,
-          headers: corsHeaders,
+          headers: CORS_HEADERS,
           body: JSON.stringify({
             success: true,
             data: transformed,
@@ -859,7 +841,7 @@ async function handleInjuries(method, userId, body, query) {
         console.error("Error updating injury:", dbError);
         return {
           statusCode: 500,
-          headers: corsHeaders,
+          headers: CORS_HEADERS,
           body: JSON.stringify({
             error: "Failed to update injury record",
           }),

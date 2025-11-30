@@ -5,6 +5,14 @@ const jwt = require("jsonwebtoken");
 const { db, checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
 const { validateQueryParams } = require("./validation.cjs");
 const { getOrFetch, CACHE_TTL, CACHE_PREFIX } = require("./cache.cjs");
+const {
+  validateJWT,
+  createSuccessResponse,
+  createErrorResponse,
+  handleServerError,
+  logFunctionCall,
+  CORS_HEADERS
+} = require("./utils/error-handler.cjs");
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -533,70 +541,28 @@ function getFallbackAnalyticsSummary() {
 
 // Main handler
 exports.handler = async (event, context) => {
+  logFunctionCall('Analytics', event);
+
   // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization",
-        "Access-Control-Allow-Methods": "GET, OPTIONS",
-      },
+      headers: CORS_HEADERS,
     };
   }
 
   // Only allow GET requests
   if (event.httpMethod !== "GET") {
-    return {
-      statusCode: 405,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        success: false,
-        error: "Method not allowed",
-      }),
-    };
+    return createErrorResponse("Method not allowed", 405, 'method_not_allowed');
   }
 
   try {
-    // Get authorization header
-    const authHeader = event.headers.authorization || event.headers.Authorization;
-
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return {
-        statusCode: 401,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          success: false,
-          error: "No token provided",
-        }),
-      };
+    // Validate JWT token
+    const jwtValidation = validateJWT(event, jwt, JWT_SECRET);
+    if (!jwtValidation.success) {
+      return jwtValidation.error;
     }
-
-    // Extract and verify token
-    const token = authHeader.substring(7);
-    let decoded;
-
-    try {
-      decoded = jwt.verify(token, JWT_SECRET);
-    } catch (jwtError) {
-      return {
-        statusCode: 401,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          success: false,
-          error: "Invalid or expired token",
-        }),
-      };
-    }
+    const { decoded } = jwtValidation;
 
     const userId = decoded.userId;
 
@@ -638,45 +604,12 @@ exports.handler = async (event, context) => {
       cacheKey = `${CACHE_PREFIX.ANALYTICS}:${userId}:summary`;
       data = await getOrFetch(cacheKey, async () => await getAnalyticsSummary(userId), CACHE_TTL.ANALYTICS);
     } else {
-      return {
-        statusCode: 404,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          success: false,
-          error: "Endpoint not found",
-        }),
-      };
+      return createErrorResponse("Endpoint not found", 404, 'not_found');
     }
 
-    return {
-      statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        success: true,
-        data: data,
-      }),
-    };
+    return createSuccessResponse(data);
   } catch (error) {
-    console.error("Analytics error:", error);
-
-    return {
-      statusCode: 500,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        success: false,
-        error: "Internal server error",
-        message: error.message,
-      }),
-    };
+    return handleServerError(error, 'Analytics');
   }
 };
 

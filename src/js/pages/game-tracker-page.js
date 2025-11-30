@@ -3,6 +3,7 @@
 
 import { gameStatsService } from "../services/gameStatsService.js";
 import { logger } from "../../logger.js";
+import { errorHandler } from "../utils/unified-error-handler.js";
 
 class GameTrackerPage {
   constructor() {

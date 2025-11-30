@@ -2,6 +2,7 @@
 import { authManager } from "../../auth-manager.js";
 import { apiClient } from "../../api-config.js";
 import { ErrorHandler } from "../../error-handler.js";
+import { errorHandler } from "../utils/unified-error-handler.js";
 import { AccessibilityUtils } from "../../accessibility-utils.js";
 import { logger } from "../../logger.js";
 import {

@@ -3,6 +3,14 @@
 
 const jwt = require("jsonwebtoken");
 const { db, checkEnvVars } = require("./supabase-client.cjs");
+const {
+  createSuccessResponse,
+  createErrorResponse,
+  handleServerError,
+  handleValidationError,
+  logFunctionCall,
+  CORS_HEADERS
+} = require("./utils/error-handler.cjs");
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -12,15 +20,13 @@ if (!JWT_SECRET) {
 }
 
 exports.handler = async (event, context) => {
+  logFunctionCall('Notifications', event);
+
   // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization",
-        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-      },
+      headers: CORS_HEADERS,
     };
   }
 
@@ -51,17 +57,7 @@ exports.handler = async (event, context) => {
 
     // If no user ID, return fallback notifications
     if (!userId) {
-      return {
-        statusCode: 200,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          success: true,
-          data: getFallbackNotifications(),
-        }),
-      };
+      return createSuccessResponse(getFallbackNotifications());
     }
 
     if (event.httpMethod === "GET") {
@@ -75,32 +71,11 @@ exports.handler = async (event, context) => {
           userId,
           limit,
         );
-
-        return {
-          statusCode: 200,
-          headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            success: true,
-            data: notifications,
-          }),
-        };
+        return createSuccessResponse(notifications);
       } catch (dbError) {
         console.error("Database error:", dbError);
         // Return fallback notifications if database query fails
-        return {
-          statusCode: 200,
-          headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            success: true,
-            data: getFallbackNotifications(),
-          }),
-        };
+        return createSuccessResponse(getFallbackNotifications());
       }
     } else if (event.httpMethod === "POST") {
       // Mark notification as read
@@ -108,74 +83,21 @@ exports.handler = async (event, context) => {
       const notificationId = body.notificationId;
 
       if (!notificationId) {
-        return {
-          statusCode: 400,
-          headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            success: false,
-            error: "notificationId is required",
-          }),
-        };
+        return handleValidationError("notificationId is required");
       }
 
       try {
         await db.notifications.markAsRead(userId, notificationId);
-        return {
-          statusCode: 200,
-          headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            success: true,
-          }),
-        };
+        return createSuccessResponse(null, 200, "Notification marked as read");
       } catch (dbError) {
         console.error("Database error:", dbError);
-        return {
-          statusCode: 500,
-          headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            success: false,
-            error: "Failed to update notification",
-          }),
-        };
+        return createErrorResponse("Failed to update notification", 500, 'database_error');
       }
     } else {
-      return {
-        statusCode: 405,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          success: false,
-          error: "Method not allowed",
-        }),
-      };
+      return createErrorResponse("Method not allowed", 405, 'method_not_allowed');
     }
   } catch (error) {
-    console.error("Notifications error:", error);
-
-    return {
-      statusCode: 500,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        success: false,
-        error: "Internal server error",
-        // Return fallback notifications on error
-        data: getFallbackNotifications(),
-      }),
-    };
+    return handleServerError(error, 'Notifications');
   }
 };
 

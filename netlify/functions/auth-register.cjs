@@ -7,6 +7,13 @@ const { db, checkEnvVars } = require("./supabase-client.cjs");
 const { validateRequestBody } = require("./validation.cjs");
 const { applyRateLimit } = require("./utils/rate-limiter.cjs");
 const { applyCSRFProtection } = require("./utils/csrf-protection.cjs");
+const {
+  createSuccessResponse,
+  handleServerError,
+  handleConflictError,
+  logFunctionCall,
+  CORS_HEADERS
+} = require("./utils/error-handler.cjs");
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -16,15 +23,14 @@ if (!JWT_SECRET) {
 }
 
 exports.handler = async (event, context) => {
+  // Log function call
+  logFunctionCall('Auth-Register', event);
+
   // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization",
-        "Access-Control-Allow-Methods": "POST, OPTIONS",
-      },
+      headers: CORS_HEADERS,
     };
   }
 
@@ -75,17 +81,7 @@ exports.handler = async (event, context) => {
     const existingUser = await db.users.findByEmail(normalizedEmail);
 
     if (existingUser) {
-      return {
-        statusCode: 409,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          success: false,
-          error: "User with this email already exists",
-        }),
-      };
+      return handleConflictError("User with this email already exists");
     }
 
     // Hash password
@@ -114,32 +110,12 @@ exports.handler = async (event, context) => {
     // Return success response (exclude password)
     const { password: _, ...safeUser } = newUser;
 
-    return {
-      statusCode: 201,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        success: true,
-        token,
-        user: safeUser,
-        message: "Account created successfully",
-      }),
-    };
+    return createSuccessResponse(
+      { token, user: safeUser },
+      201,
+      "Account created successfully"
+    );
   } catch (error) {
-    console.error("Registration error:", error);
-
-    return {
-      statusCode: 500,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        success: false,
-        error: "Internal server error",
-      }),
-    };
+    return handleServerError(error, 'Auth-Register');
   }
 };

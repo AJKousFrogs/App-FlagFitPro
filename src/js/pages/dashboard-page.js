@@ -6,6 +6,7 @@ import { authManager } from "../../auth-manager.js";
 import { logger } from "../../logger.js";
 import { escapeHtml } from "../utils/sanitize.js";
 import { storageService } from "../services/storage-service-unified.js";
+import { errorHandler } from "../utils/unified-error-handler.js";
 
 class DashboardPage {
   constructor() {
@@ -1098,6 +1099,20 @@ class DashboardPage {
   }
 
   showNotification(message, type = "info") {
+    // Use unified error handler for consistent notifications
+    if (type === "success") {
+      errorHandler.showSuccess(message);
+    } else if (type === "error") {
+      errorHandler.showError(message);
+    } else if (type === "warning") {
+      errorHandler.showWarning(message);
+    } else {
+      errorHandler.showInfo(message);
+    }
+
+    // Legacy notification code kept as fallback
+    return;
+
     // Create notification element
     const notification = document.createElement("div");
     notification.className = `dashboard-notification dashboard-notification-${type}`;

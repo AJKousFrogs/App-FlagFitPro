@@ -5,6 +5,14 @@ const jwt = require("jsonwebtoken");
 const { db, checkEnvVars } = require("./supabase-client.cjs");
 const { validateQueryParams } = require("./validation.cjs");
 const { getOrFetch, CACHE_TTL, CACHE_PREFIX } = require("./cache.cjs");
+const {
+  validateJWT,
+  createSuccessResponse,
+  handleServerError,
+  handleDatabaseError,
+  logFunctionCall,
+  CORS_HEADERS
+} = require("./utils/error-handler.cjs");
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -105,7 +113,8 @@ const getDashboardData = async (userId) => {
       },
     };
   } catch (error) {
-    console.error("Database error in getDashboardData:", error);
+    console.error("[Dashboard] Database error in getDashboardData:", error);
+    // Return fallback data on database error
     return getFallbackDashboardData();
   }
 };
@@ -165,15 +174,14 @@ const getTimeAgo = (date) => {
 };
 
 exports.handler = async (event, context) => {
+  // Log function call for debugging
+  logFunctionCall('Dashboard', event);
+
   // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization",
-        "Access-Control-Allow-Methods": "GET, OPTIONS",
-      },
+      headers: CORS_HEADERS,
     };
   }
 
@@ -193,43 +201,12 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    // Get authorization header
-    const authHeader =
-      event.headers.authorization || event.headers.Authorization;
-
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return {
-        statusCode: 401,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          success: false,
-          error: "No token provided",
-        }),
-      };
+    // Validate JWT token using standardized error handling
+    const jwtValidation = validateJWT(event, jwt, JWT_SECRET);
+    if (!jwtValidation.success) {
+      return jwtValidation.error;
     }
-
-    // Extract and verify token
-    const token = authHeader.substring(7);
-    let decoded;
-
-    try {
-      decoded = jwt.verify(token, JWT_SECRET);
-    } catch (jwtError) {
-      return {
-        statusCode: 401,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          success: false,
-          error: "Invalid or expired token",
-        }),
-      };
-    }
+    const { decoded } = jwtValidation;
 
     // Check environment variables
     checkEnvVars();
@@ -249,30 +226,10 @@ exports.handler = async (event, context) => {
       CACHE_TTL.DASHBOARD
     );
 
-    return {
-      statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        success: true,
-        data: dashboardData,
-      }),
-    };
+    // Return standardized success response
+    return createSuccessResponse(dashboardData);
   } catch (error) {
-    console.error("Dashboard error:", error);
-
-    return {
-      statusCode: 500,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        success: false,
-        error: "Internal server error",
-      }),
-    };
+    // Handle server errors with standardized error handler
+    return handleServerError(error, 'Dashboard');
   }
 };
