@@ -1,0 +1,171 @@
+[
+  {
+    "id": 1,
+    "archetype_name": "Elite Speed Demon",
+    "description": "Pure speed-based player with exceptional acceleration and top-end speed. Ideal for deep routes and breakaway plays.",
+    "speed_rating_min": 9,
+    "speed_rating_max": 10,
+    "agility_rating_min": 7,
+    "agility_rating_max": 9,
+    "power_rating_min": 7,
+    "power_rating_max": 9,
+    "ideal_sports_backgrounds": [
+      "track_field",
+      "soccer",
+      "basketball"
+    ],
+    "secondary_sports_backgrounds": [
+      "rugby_sevens",
+      "tennis"
+    ],
+    "position_suitability": {
+      "blitz": 7,
+      "center": 7,
+      "receiver": 10,
+      "quarterback": 6,
+      "defensive_back": 8
+    },
+    "ten_yard_sprint_target": "1.58",
+    "forty_yard_sprint_target": "4.50",
+    "l_drill_target": "6.60",
+    "vertical_jump_target": 32,
+    "broad_jump_target": 118,
+    "created_at": "2025-08-17T17:09:22.775Z"
+  },
+  {
+    "id": 2,
+    "archetype_name": "Complete Athlete",
+    "description": "Well-rounded player with excellent balance of speed, agility, power, and technical skills. The ideal flag football player.",
+    "speed_rating_min": 8,
+    "speed_rating_max": 9,
+    "agility_rating_min": 8,
+    "agility_rating_max": 10,
+    "power_rating_min": 8,
+    "power_rating_max": 9,
+    "ideal_sports_backgrounds": [
+      "soccer",
+      "basketball",
+      "rugby_sevens"
+    ],
+    "secondary_sports_backgrounds": [
+      "track_field",
+      "martial_arts",
+      "tennis"
+    ],
+    "position_suitability": {
+      "blitz": 8,
+      "center": 8,
+      "receiver": 9,
+      "quarterback": 9,
+      "defensive_back": 9
+    },
+    "ten_yard_sprint_target": "1.62",
+    "forty_yard_sprint_target": "4.60",
+    "l_drill_target": "6.70",
+    "vertical_jump_target": 30,
+    "broad_jump_target": 115,
+    "created_at": "2025-08-17T17:09:22.775Z"
+  },
+  {
+    "id": 3,
+    "archetype_name": "Technical Specialist",
+    "description": "Player with exceptional route running, catching, and field awareness. May not have elite speed but compensates with skill.",
+    "speed_rating_min": 6,
+    "speed_rating_max": 8,
+    "agility_rating_min": 8,
+    "agility_rating_max": 10,
+    "power_rating_min": 6,
+    "power_rating_max": 8,
+    "ideal_sports_backgrounds": [
+      "soccer",
+      "basketball",
+      "tennis"
+    ],
+    "secondary_sports_backgrounds": [
+      "martial_arts",
+      "gymnastics",
+      "volleyball"
+    ],
+    "position_suitability": {
+      "blitz": 6,
+      "center": 9,
+      "receiver": 8,
+      "quarterback": 10,
+      "defensive_back": 8
+    },
+    "ten_yard_sprint_target": "1.72",
+    "forty_yard_sprint_target": "4.80",
+    "l_drill_target": "6.50",
+    "vertical_jump_target": 26,
+    "broad_jump_target": 110,
+    "created_at": "2025-08-17T17:09:22.775Z"
+  },
+  {
+    "id": 4,
+    "archetype_name": "Power Rusher",
+    "description": "Explosive, powerful athlete focused on quarterback pressure and flag pulling. Strong acceleration and pursuit skills.",
+    "speed_rating_min": 7,
+    "speed_rating_max": 9,
+    "agility_rating_min": 7,
+    "agility_rating_max": 8,
+    "power_rating_min": 9,
+    "power_rating_max": 10,
+    "ideal_sports_backgrounds": [
+      "track_field",
+      "rugby_sevens",
+      "american_football"
+    ],
+    "secondary_sports_backgrounds": [
+      "wrestling",
+      "martial_arts",
+      "basketball"
+    ],
+    "position_suitability": {
+      "blitz": 10,
+      "center": 6,
+      "receiver": 6,
+      "quarterback": 5,
+      "defensive_back": 7
+    },
+    "ten_yard_sprint_target": "1.68",
+    "forty_yard_sprint_target": "4.70",
+    "l_drill_target": "7.00",
+    "vertical_jump_target": 34,
+    "broad_jump_target": 120,
+    "created_at": "2025-08-17T17:09:22.775Z"
+  },
+  {
+    "id": 5,
+    "archetype_name": "Defensive Specialist",
+    "description": "Elite defensive player with exceptional reaction time, backpedaling ability, and flag pulling technique.",
+    "speed_rating_min": 8,
+    "speed_rating_max": 9,
+    "agility_rating_min": 9,
+    "agility_rating_max": 10,
+    "power_rating_min": 7,
+    "power_rating_max": 8,
+    "ideal_sports_backgrounds": [
+      "soccer",
+      "basketball",
+      "tennis"
+    ],
+    "secondary_sports_backgrounds": [
+      "martial_arts",
+      "volleyball",
+      "track_field"
+    ],
+    "position_suitability": {
+      "blitz": 8,
+      "center": 6,
+      "receiver": 7,
+      "quarterback": 6,
+      "defensive_back": 10
+    },
+    "ten_yard_sprint_target": "1.62",
+    "forty_yard_sprint_target": "4.60",
+    "l_drill_target": "6.60",
+    "vertical_jump_target": 28,
+    "broad_jump_target": 112,
+    "created_at": "2025-08-17T17:09:22.775Z"
+  }
+]

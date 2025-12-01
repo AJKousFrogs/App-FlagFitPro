@@ -1,0 +1,7 @@
+-- Data for table: sprint_recovery_protocols
+-- Generated: 2025-12-01T20:59:23.522Z
+
+INSERT INTO sprint_recovery_protocols (id, name, recovery_type, duration_minutes, temperature_fahrenheit, instructions, effectiveness_percentage, recommended_timing, created_at) VALUES (1, 'Elite Cold Water Immersion', 'cold_water', 10, 52, 'Immerse legs up to waist for 10 minutes, gentle movement allowed', 87, 'within_2_hours', '2025-08-17T16:49:01.290Z');
+INSERT INTO sprint_recovery_protocols (id, name, recovery_type, duration_minutes, temperature_fahrenheit, instructions, effectiveness_percentage, recommended_timing, created_at) VALUES (2, 'Sauna Recovery Session', 'sauna', 15, 185, 'Sit in sauna 15 minutes, hydrate before and after', 97, 'within_2_hours', '2025-08-17T16:49:01.290Z');
+INSERT INTO sprint_recovery_protocols (id, name, recovery_type, duration_minutes, temperature_fahrenheit, instructions, effectiveness_percentage, recommended_timing, created_at) VALUES (3, 'Active Recovery Walk', 'active', 20, NULL, 'Light walking with dynamic stretching on grass surface', 75, 'immediately_post', '2025-08-17T16:49:01.290Z');
+INSERT INTO sprint_recovery_protocols (id, name, recovery_type, duration_minutes, temperature_fahrenheit, instructions, effectiveness_percentage, recommended_timing, created_at) VALUES (4, 'Power Nap Recovery', 'passive', 25, NULL, 'Dark room, 20-30 minute nap 2-4 hours post-training', 81, 'within_4_hours', '2025-08-17T16:49:01.290Z');

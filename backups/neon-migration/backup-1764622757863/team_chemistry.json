@@ -1,0 +1,15 @@
+[
+  {
+    "id": 1,
+    "user_id": "1",
+    "overall_chemistry": "8.4",
+    "communication_score": "9.1",
+    "trust_score": "8.7",
+    "cohesion_score": "8.2",
+    "leadership_score": "8.2",
+    "last_intervention": "Trust building exercise",
+    "intervention_effectiveness": 87,
+    "created_at": "2025-08-31T08:29:00.008Z",
+    "updated_at": "2025-08-31T08:29:00.008Z"
+  }
+]

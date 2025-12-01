@@ -1,0 +1,65 @@
+[
+  {
+    "id": 1,
+    "championship_year": 2024,
+    "host_country": "Germany",
+    "climate_zone": "temperate",
+    "teams_participating": 16,
+    "games_per_team": 6,
+    "tournament_duration_days": 14,
+    "average_temperature_celsius": "22.50",
+    "average_humidity_percentage": "65.00",
+    "altitude_variations_meters": [
+      100,
+      300,
+      500
+    ],
+    "pre_tournament_hydration_protocol": "Begin hydration protocol 7 days before tournament with 20ml/kg/day baseline",
+    "daily_hydration_targets_ml_per_kg": "18.00",
+    "between_games_hydration_strategy": "150ml every 20 minutes between games, electrolyte replacement for games >2 hours apart",
+    "recovery_hydration_protocol": "Post-game rehydration: 150% of weight loss within 2 hours, continue for 24 hours",
+    "hydration_status_checks_per_day": 4,
+    "body_weight_monitoring_frequency": "pre_post_each_game",
+    "cognitive_testing_schedule": [
+      "reaction_time",
+      "decision_making",
+      "memory_recall"
+    ],
+    "hydration_related_injuries": 0,
+    "performance_consistency_score": "92.50",
+    "athlete_feedback_score": "94.00",
+    "created_at": "2025-08-17T19:48:26.922Z"
+  },
+  {
+    "id": 2,
+    "championship_year": 2025,
+    "host_country": "Netherlands",
+    "climate_zone": "temperate",
+    "teams_participating": 20,
+    "games_per_team": 7,
+    "tournament_duration_days": 16,
+    "average_temperature_celsius": "20.00",
+    "average_humidity_percentage": "70.00",
+    "altitude_variations_meters": [
+      0,
+      100,
+      200
+    ],
+    "pre_tournament_hydration_protocol": "Enhanced hydration protocol 10 days before with climate adaptation training",
+    "daily_hydration_targets_ml_per_kg": "20.00",
+    "between_games_hydration_strategy": "200ml every 15 minutes between games, increased sodium for high humidity conditions",
+    "recovery_hydration_protocol": "Advanced recovery: 160% of weight loss within 1.5 hours, protein-electrolyte mix",
+    "hydration_status_checks_per_day": 5,
+    "body_weight_monitoring_frequency": "continuous_monitoring",
+    "cognitive_testing_schedule": [
+      "reaction_time",
+      "decision_making",
+      "memory_recall",
+      "spatial_awareness"
+    ],
+    "hydration_related_injuries": 0,
+    "performance_consistency_score": "95.00",
+    "athlete_feedback_score": "96.50",
+    "created_at": "2025-08-17T19:48:27.022Z"
+  }
+]
