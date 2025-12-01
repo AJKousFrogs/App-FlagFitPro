@@ -20,7 +20,7 @@
  * const workouts = storageService.getRecentWorkouts();
  */
 
-import { logger } from "../logger.js";
+import { logger } from "../../logger.js";
 
 class UnifiedStorageService {
   constructor() {
