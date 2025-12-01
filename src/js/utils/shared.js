@@ -2,11 +2,11 @@
 // Common functions used across multiple page modules
 
 import { logger } from "../../logger.js";
+import { escapeHtml } from "./sanitize.js";
 
 // ================================================================
 // DOM UTILITIES
 // ================================================================
-// Note: For HTML escaping, use escapeHtml() from sanitize.js
 
 export function getInitials(name) {
   if (!name) return "??";

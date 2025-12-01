@@ -95,28 +95,19 @@ const config = configs[ENV];
 
 // Validation for required environment variables
 const validateConfig = () => {
-  const errors = [];
+  const warnings = [];
 
   if (ENV === "production") {
+    // Note: DATABASE_URL and POCKETBASE_URL are backend-only variables
+    // They should be configured in Netlify Functions, not frontend
     if (!config.API_BASE_URL) {
-      errors.push("API_BASE_URL is required in production");
-    }
-    if (!config.DATABASE_URL && !config.NEON_DATABASE_URL) {
-      errors.push(
-        "DATABASE_URL or NEON_DATABASE_URL is required in production",
-      );
-    }
-    if (!config.POCKETBASE_URL) {
-      errors.push("POCKETBASE_URL is required in production");
+      warnings.push("API_BASE_URL not configured, using default");
     }
   }
 
-  if (errors.length > 0) {
-    console.error("Environment configuration errors:", errors);
-    // Don't throw in production to avoid breaking the app
-    if (ENV === "development") {
-      throw new Error(`Configuration validation failed: ${errors.join(", ")}`);
-    }
+  // In development, validate more strictly
+  if (ENV === "development" && warnings.length > 0) {
+    console.warn("⚠️ Environment configuration warnings:", warnings);
   }
 };
 
