@@ -2,9 +2,9 @@
 
 ## 🚀 Your Latest Deployment
 
-**Live URL:** https://cosmic-unicorn-1babc9.netlify.app
-**Modern Dashboard:** https://cosmic-unicorn-1babc9.netlify.app/dashboard-modern.html
-**Modern Training:** https://cosmic-unicorn-1babc9.netlify.app/training-modern.html
+**Live URL:** https://webflagfootballfrogs.netlify.app
+**Modern Dashboard:** https://webflagfootballfrogs.netlify.app/dashboard.html
+**Modern Training:** https://webflagfootballfrogs.netlify.app/training.html
 
 ## 📋 Quick Setup Steps
 
@@ -50,12 +50,12 @@ Since you have Xcode license issues, use GitHub Desktop:
 7. Click "Deploy site"
 ```
 
-### 4. Update Your Domain (Optional)
+### 4. Site Information
 
 ```bash
-1. In Netlify dashboard → Site settings
-2. Change site name from "cosmic-unicorn-1babc9" to "flagfit-pro"
-3. Your new URL will be: https://flagfit-pro.netlify.app
+Current site name: webflagfootballfrogs
+Live URL: https://webflagfootballfrogs.netlify.app
+Admin Dashboard: https://app.netlify.com/projects/webflagfootballfrogs
 ```
 
 ## 🔧 Auto-Deploy Setup

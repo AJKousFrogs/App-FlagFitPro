@@ -11,7 +11,7 @@
 ### Option 1: Netlify Dashboard (Recommended)
 
 1. Go to https://app.netlify.com/
-2. Find your site: **cosmic-unicorn-1babc9**
+2. Find your site: **webflagfootballfrogs**
 3. Go to **Site Settings** → **Environment Variables**
 4. Click **Add Variable** and add these:
 
@@ -51,9 +51,9 @@ I can deploy the updated code now and the environment variables will be included
 
 ## 📊 Current Live URLs
 
-- **Frontend:** https://cosmic-unicorn-1babc9.netlify.app/
-- **Dashboard:** https://cosmic-unicorn-1babc9.netlify.app/dashboard.html
-- **Training:** https://cosmic-unicorn-1babc9.netlify.app/training.html
+- **Frontend:** https://webflagfootballfrogs.netlify.app/
+- **Dashboard:** https://webflagfootballfrogs.netlify.app/dashboard.html
+- **Training:** https://webflagfootballfrogs.netlify.app/training.html
 
 ## 🚀 After Environment Variables Are Set
 
