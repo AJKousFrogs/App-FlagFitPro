@@ -1,0 +1,102 @@
+/**
+ * Auth Pages Footer Styles
+ * Simplified footer for login, register, and reset password pages
+ */
+
+.landing-footer {
+  background: var(--surface-primary);
+  border-top: 1px solid var(--border-color);
+  padding: 2rem 1rem;
+  margin-top: auto;
+}
+
+.footer-content-simple {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.footer-brand-center {
+  margin-bottom: 1.5rem;
+}
+
+.footer-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 0.5rem;
+}
+
+.footer-logo i {
+  width: 24px;
+  height: 24px;
+}
+
+.footer-tagline {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.footer-bottom {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.footer-copyright {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.footer-legal {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.footer-legal a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.2s;
+  cursor: pointer;
+}
+
+.footer-legal a:hover {
+  color: var(--primary);
+}
+
+.footer-separator {
+  color: var(--text-tertiary);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .landing-footer {
+    padding: 1.5rem 1rem;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .landing-footer {
+    background: var(--surface-secondary);
+  }
+}

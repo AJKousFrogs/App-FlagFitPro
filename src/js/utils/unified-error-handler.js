@@ -1,10 +1,24 @@
 /**
  * Unified Error Handling for FlagFit Pro Frontend
- * Combines error handling, user notifications, and logging
+ * Combines error handling, user notifications, logging, and Sentry tracking
  */
 
 import { logger } from '../../logger.js';
 import { escapeHtml } from './sanitize.js';
+
+// Lazy-load Sentry service (only in production)
+let sentryService = null;
+const loadSentry = async () => {
+  if (!sentryService) {
+    try {
+      const module = await import('../services/sentry-service.js');
+      sentryService = module.sentryService;
+    } catch (error) {
+      logger.warn('[Error Handler] Sentry not available:', error);
+    }
+  }
+  return sentryService;
+};
 
 /**
  * Error types for categorization
@@ -84,6 +98,18 @@ export class UnifiedErrorHandler {
       error: event.error
     });
 
+    // Report to Sentry
+    loadSentry().then(sentry => {
+      if (sentry && event.error) {
+        sentry.captureException(event.error, {
+          component: 'global',
+          filename: event.filename,
+          lineno: event.lineno,
+          colno: event.colno
+        });
+      }
+    });
+
     // Prevent default only if we handle it
     if (event.error instanceof AppError) {
       event.preventDefault();
@@ -99,6 +125,17 @@ export class UnifiedErrorHandler {
     event.preventDefault();
 
     const error = event.reason instanceof Error ? event.reason : new Error(String(event.reason));
+
+    // Report to Sentry
+    loadSentry().then(sentry => {
+      if (sentry) {
+        sentry.captureException(error, {
+          component: 'promise',
+          action: 'unhandled_rejection'
+        });
+      }
+    });
+
     this.handleError(error, {
       context: 'Promise Rejection',
       showToUser: true
@@ -125,6 +162,20 @@ export class UnifiedErrorHandler {
 
     // Log error
     this.logError(logMessage, error, logLevel);
+
+    // Report to Sentry for critical and error severity
+    if (errorInfo.severity === ErrorSeverity.ERROR || errorInfo.severity === ErrorSeverity.CRITICAL) {
+      loadSentry().then(sentry => {
+        if (sentry) {
+          sentry.captureException(error, {
+            component: context,
+            errorType: errorInfo.type,
+            severity: errorInfo.severity,
+            userMessage: errorInfo.userMessage
+          });
+        }
+      });
+    }
 
     // Show to user if requested
     if (showToUser) {

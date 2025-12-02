@@ -63,10 +63,7 @@ const configs = {
   },
 
   staging: {
-    API_BASE_URL: getEnvVar(
-      "REACT_APP_API_URL",
-      "https://api-staging.flagfit-pro.com",
-    ),
+    API_BASE_URL: getEnvVar("REACT_APP_API_URL", ""), // Use Netlify Functions (relative URLs)
     DATABASE_URL: getEnvVar("DATABASE_URL", ""),
     ENABLE_MOCK_AUTH: false,
     ENABLE_DEBUG_LOGS: true,
@@ -78,7 +75,7 @@ const configs = {
   },
 
   production: {
-    API_BASE_URL: getEnvVar("REACT_APP_API_URL", "https://api.flagfit-pro.com"),
+    API_BASE_URL: getEnvVar("REACT_APP_API_URL", ""), // Use Netlify Functions (relative URLs)
     DATABASE_URL: getEnvVar("DATABASE_URL", ""),
     ENABLE_MOCK_AUTH: false,
     ENABLE_DEBUG_LOGS: false,

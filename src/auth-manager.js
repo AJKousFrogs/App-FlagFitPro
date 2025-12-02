@@ -191,8 +191,34 @@ class AuthManager {
       "/dashboard.html",
       "/profile.html",
       "/settings.html",
+      "/training.html",
+      "/roster.html",
+      "/analytics.html",
+      "/community.html",
+      "/tournaments.html",
+      "/coach.html",
+      "/games.html",
+      "/wellness.html",
+      "/workout.html",
+      "/performance-tracking.html",
+      "/qb-training-schedule.html",
+      "/chat.html",
     ];
     const currentPath = window.location.pathname;
+
+    // Public pages that don't require authentication
+    const publicPages = [
+      "/login.html",
+      "/register.html",
+      "/reset-password.html",
+      "/index.html",
+    ];
+
+    // If it's a public page, return false
+    if (publicPages.some((page) => currentPath.includes(page))) {
+      return false;
+    }
+
     return protectedPages.some((page) => currentPath.includes(page));
   }
 

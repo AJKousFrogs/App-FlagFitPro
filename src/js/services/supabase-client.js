@@ -30,12 +30,29 @@ const getSupabaseConfig = () => {
     };
   }
 
-  // Fallback to hardcoded values from .env (only for development)
-  // NOTE: In production, these should come from environment variables
-  return {
-    url: 'https://pvzicicwxgftcielnm.supabase.co',
-    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2emljaWN3eGdmdGNpZWxrbm0iLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc1OTUzNzA1OCwiZXhwIjoyMDc1MTEzMDU4fQ.1nfJrtWPl6DrAwvjGvM1-CZBeyYgCaV9oDdaadpqhLU'
-  };
+  // For local development, check localStorage for testing
+  const isDevelopment = window.location.hostname === 'localhost' ||
+                       window.location.hostname === '127.0.0.1';
+
+  if (isDevelopment) {
+    const localUrl = localStorage.getItem('SUPABASE_URL');
+    const localKey = localStorage.getItem('SUPABASE_ANON_KEY');
+
+    if (localUrl && localKey) {
+      logger.debug('[Supabase] Using credentials from localStorage (development only)');
+      return { url: localUrl, anonKey: localKey };
+    }
+
+    // In development, show helpful error message
+    logger.error('[Supabase] Missing configuration. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY');
+    logger.error('[Supabase] Or add them to localStorage for local testing');
+    return { url: null, anonKey: null };
+  }
+
+  // Production: Fail securely - no fallback to hardcoded values
+  logger.error('[Supabase] CRITICAL: Missing Supabase configuration in production');
+  logger.error('[Supabase] Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY environment variables');
+  return { url: null, anonKey: null };
 };
 
 // Initialize Supabase client
