@@ -1,0 +1,170 @@
+[
+  {
+    "id": 1,
+    "category_id": 1,
+    "phase_id": 2,
+    "name": "3-Point Start Power Development",
+    "distance_yards": 10,
+    "intensity_percentage": 95,
+    "rest_duration_seconds": 180,
+    "sets": 3,
+    "reps_per_set": 6,
+    "recovery_between_sets_seconds": 300,
+    "surface_type": "grass",
+    "gradient_percentage": null,
+    "coaching_cues": [
+      "Drive phase forward lean",
+      "High knee frequency",
+      "Pump arms aggressively"
+    ],
+    "elite_application_notes": "Target: Sub-1.60s 10-yard split for elite flag football acceleration",
+    "created_at": "2025-08-17T16:48:27.838Z"
+  },
+  {
+    "id": 2,
+    "category_id": 1,
+    "phase_id": 2,
+    "name": "Resisted Sprint Acceleration",
+    "distance_yards": 15,
+    "intensity_percentage": 90,
+    "rest_duration_seconds": 120,
+    "sets": 4,
+    "reps_per_set": 4,
+    "recovery_between_sets_seconds": 240,
+    "surface_type": "turf",
+    "gradient_percentage": null,
+    "coaching_cues": [
+      "Maintain forward lean",
+      "Short powerful steps",
+      "Drive through resistance"
+    ],
+    "elite_application_notes": "Sled training method used by Jamaican sprinters",
+    "created_at": "2025-08-17T16:48:27.893Z"
+  },
+  {
+    "id": 3,
+    "category_id": 2,
+    "phase_id": 1,
+    "name": "Power Hill Sprints",
+    "distance_yards": 15,
+    "intensity_percentage": 85,
+    "rest_duration_seconds": 120,
+    "sets": 2,
+    "reps_per_set": 8,
+    "recovery_between_sets_seconds": 480,
+    "surface_type": "hill",
+    "gradient_percentage": 10,
+    "coaching_cues": [
+      "High knee drive",
+      "Pump arms powerfully",
+      "Maintain speed rhythm"
+    ],
+    "elite_application_notes": "Builds power for 4.6s 40-yard dash capability",
+    "created_at": "2025-08-17T16:48:27.943Z"
+  },
+  {
+    "id": 4,
+    "category_id": 2,
+    "phase_id": 1,
+    "name": "Long Hill Base Building",
+    "distance_yards": 40,
+    "intensity_percentage": 75,
+    "rest_duration_seconds": 180,
+    "sets": 3,
+    "reps_per_set": 6,
+    "recovery_between_sets_seconds": 360,
+    "surface_type": "hill",
+    "gradient_percentage": 8,
+    "coaching_cues": [
+      "Steady rhythm",
+      "Relaxed shoulders",
+      "Controlled breathing"
+    ],
+    "elite_application_notes": "Early season conditioning used in Jamaica training camps",
+    "created_at": "2025-08-17T16:48:27.997Z"
+  },
+  {
+    "id": 5,
+    "category_id": 3,
+    "phase_id": 3,
+    "name": "Special Endurance I (Flag Football)",
+    "distance_yards": 25,
+    "intensity_percentage": 95,
+    "rest_duration_seconds": 45,
+    "sets": 4,
+    "reps_per_set": 4,
+    "recovery_between_sets_seconds": 180,
+    "surface_type": "grass",
+    "gradient_percentage": null,
+    "coaching_cues": [
+      "Maintain sprint form",
+      "Fight fatigue",
+      "Strong finish"
+    ],
+    "elite_application_notes": "Game-specific conditioning for maintaining 4.6-4.8s speed",
+    "created_at": "2025-08-17T16:48:28.047Z"
+  },
+  {
+    "id": 6,
+    "category_id": 3,
+    "phase_id": 3,
+    "name": "Game Simulation Repeats",
+    "distance_yards": 15,
+    "intensity_percentage": 98,
+    "rest_duration_seconds": 10,
+    "sets": 6,
+    "reps_per_set": 6,
+    "recovery_between_sets_seconds": 120,
+    "surface_type": "turf",
+    "gradient_percentage": null,
+    "coaching_cues": [
+      "Quick recovery",
+      "Explosive restart",
+      "Mental toughness"
+    ],
+    "elite_application_notes": "Mimics flag football play frequency and intensity",
+    "created_at": "2025-08-17T16:48:28.125Z"
+  },
+  {
+    "id": 7,
+    "category_id": 1,
+    "phase_id": 2,
+    "name": "3-Point Start Power Development",
+    "distance_yards": 10,
+    "intensity_percentage": 95,
+    "rest_duration_seconds": 180,
+    "sets": 3,
+    "reps_per_set": 6,
+    "recovery_between_sets_seconds": 300,
+    "surface_type": "grass",
+    "gradient_percentage": null,
+    "coaching_cues": [
+      "Drive phase forward lean",
+      "High knee frequency",
+      "Pump arms aggressively"
+    ],
+    "elite_application_notes": "Target: Sub-1.60s 10-yard split for elite flag football acceleration",
+    "created_at": "2025-08-17T16:49:01.421Z"
+  },
+  {
+    "id": 8,
+    "category_id": 2,
+    "phase_id": 1,
+    "name": "Power Hill Sprints",
+    "distance_yards": 15,
+    "intensity_percentage": 85,
+    "rest_duration_seconds": 120,
+    "sets": 2,
+    "reps_per_set": 8,
+    "recovery_between_sets_seconds": 480,
+    "surface_type": "hill",
+    "gradient_percentage": 10,
+    "coaching_cues": [
+      "High knee drive",
+      "Pump arms powerfully",
+      "Maintain speed rhythm"
+    ],
+    "elite_application_notes": "Builds power for 4.6s 40-yard dash capability",
+    "created_at": "2025-08-17T16:49:01.471Z"
+  }
+]

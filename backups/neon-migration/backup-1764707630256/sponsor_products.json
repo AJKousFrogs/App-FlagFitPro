@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "product_name": "Pro Grip Football Socks",
+    "points_cost": 350,
+    "relevance_score": 92,
+    "category": "Gear",
+    "is_featured": true,
+    "created_at": "2025-08-31T08:28:59.925Z"
+  },
+  {
+    "id": 2,
+    "product_name": "Recovery Massage Gun",
+    "points_cost": 1650,
+    "relevance_score": 78,
+    "category": "Recovery",
+    "is_featured": true,
+    "created_at": "2025-08-31T08:28:59.925Z"
+  },
+  {
+    "id": 3,
+    "product_name": "Elite Training Shorts",
+    "points_cost": 780,
+    "relevance_score": 89,
+    "category": "Gear",
+    "is_featured": true,
+    "created_at": "2025-08-31T08:28:59.925Z"
+  },
+  {
+    "id": 4,
+    "product_name": "Recovery Band Set",
+    "points_cost": 420,
+    "relevance_score": 94,
+    "category": "Recovery",
+    "is_featured": true,
+    "created_at": "2025-08-31T08:28:59.925Z"
+  }
+]

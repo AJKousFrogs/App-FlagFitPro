@@ -1,0 +1,95 @@
+[
+  {
+    "id": 1,
+    "protocol_name": "Acute Mental Fatigue Recovery",
+    "protocol_description": "Quick recovery protocol for immediate cognitive fatigue relief",
+    "recovery_type": "acute_fatigue",
+    "recovery_duration_minutes": 30,
+    "recovery_intensity": "passive",
+    "digital_restrictions": {
+      "screen_time_limit": 15,
+      "notification_silence": true
+    },
+    "cognitive_activities": [
+      "mindfulness_meditation",
+      "deep_breathing",
+      "mental_visualization"
+    ],
+    "physical_activities": [
+      "gentle_stretching",
+      "slow_walking",
+      "yoga_poses"
+    ],
+    "environmental_requirements": null,
+    "recovery_metrics": [
+      "mental_clarity_rating",
+      "fatigue_reduction",
+      "focus_improvement"
+    ],
+    "expected_outcomes": null,
+    "contraindications": null,
+    "created_at": "2025-08-17T20:30:51.271Z"
+  },
+  {
+    "id": 2,
+    "protocol_name": "Competition Day Cognitive Prep",
+    "protocol_description": "Pre-competition cognitive preparation and mental clarity optimization",
+    "recovery_type": "competition_recovery",
+    "recovery_duration_minutes": 45,
+    "recovery_intensity": "light",
+    "digital_restrictions": {
+      "screen_time_limit": 30,
+      "social_media_avoidance": true
+    },
+    "cognitive_activities": [
+      "mental_rehearsal",
+      "positive_visualization",
+      "concentration_exercises"
+    ],
+    "physical_activities": [
+      "dynamic_stretching",
+      "light_cardio",
+      "balance_exercises"
+    ],
+    "environmental_requirements": null,
+    "recovery_metrics": [
+      "mental_alertness",
+      "decision_making_speed",
+      "reaction_time"
+    ],
+    "expected_outcomes": null,
+    "contraindications": null,
+    "created_at": "2025-08-17T20:30:51.271Z"
+  },
+  {
+    "id": 3,
+    "protocol_name": "Training Adaptation Recovery",
+    "protocol_description": "Recovery protocol for cognitive adaptation to new training stimuli",
+    "recovery_type": "training_adaptation",
+    "recovery_duration_minutes": 60,
+    "recovery_intensity": "moderate",
+    "digital_restrictions": {
+      "screen_time_limit": 45,
+      "work_digital_restriction": true
+    },
+    "cognitive_activities": [
+      "cognitive_skill_practice",
+      "strategy_planning",
+      "performance_analysis"
+    ],
+    "physical_activities": [
+      "moderate_exercise",
+      "skill_drills",
+      "coordination_work"
+    ],
+    "environmental_requirements": null,
+    "recovery_metrics": [
+      "learning_retention",
+      "skill_improvement",
+      "cognitive_adaptation"
+    ],
+    "expected_outcomes": null,
+    "contraindications": null,
+    "created_at": "2025-08-17T20:30:51.271Z"
+  }
+]

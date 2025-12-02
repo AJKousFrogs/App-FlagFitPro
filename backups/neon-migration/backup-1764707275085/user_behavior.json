@@ -1,0 +1,56 @@
+[
+  {
+    "id": 1,
+    "user_id": "user_123",
+    "session_id": "session_456",
+    "page_sequence": [
+      "/dashboard",
+      "/training",
+      "/goals"
+    ],
+    "session_duration": 1800,
+    "total_page_views": 5,
+    "bounce_rate": null,
+    "features_used": [
+      "training_timer",
+      "goal_tracker"
+    ],
+    "training_sessions_completed": 0,
+    "goals_created": 0,
+    "conversion_events": null,
+    "funnel_stage": null,
+    "device_type": null,
+    "browser": null,
+    "entry_page": null,
+    "exit_page": null,
+    "created_at": "2025-07-31T20:09:56.112Z",
+    "updated_at": "2025-07-31T20:09:56.112Z"
+  },
+  {
+    "id": 2,
+    "user_id": "user_456",
+    "session_id": "session_789",
+    "page_sequence": [
+      "/landing",
+      "/dashboard",
+      "/training"
+    ],
+    "session_duration": 1200,
+    "total_page_views": 3,
+    "bounce_rate": null,
+    "features_used": [
+      "signup",
+      "training_timer"
+    ],
+    "training_sessions_completed": 0,
+    "goals_created": 0,
+    "conversion_events": null,
+    "funnel_stage": null,
+    "device_type": null,
+    "browser": null,
+    "entry_page": null,
+    "exit_page": null,
+    "created_at": "2025-07-31T20:09:56.112Z",
+    "updated_at": "2025-07-31T20:09:56.112Z"
+  }
+]

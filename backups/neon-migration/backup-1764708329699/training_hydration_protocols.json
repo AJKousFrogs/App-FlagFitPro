@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "training_type": "hiit",
+    "training_duration_minutes": 90,
+    "training_intensity": "high",
+    "pre_training_hydration_ml_per_kg": "10.00",
+    "pre_training_timing_hours": null,
+    "during_training_hydration_ml_per_15min": "150.00",
+    "post_training_hydration_ml_per_kg": null,
+    "sodium_replacement_mg_per_hour": null,
+    "potassium_replacement_mg_per_hour": null,
+    "temperature_adjustment_factor": null,
+    "humidity_adjustment_factor": null,
+    "altitude_adjustment_factor": null,
+    "maintain_performance_threshold": null,
+    "cognitive_function_maintenance": null,
+    "created_at": "2025-08-17T19:32:49.188Z"
+  },
+  {
+    "id": 2,
+    "training_type": "hiit",
+    "training_duration_minutes": 90,
+    "training_intensity": "high",
+    "pre_training_hydration_ml_per_kg": "10.00",
+    "pre_training_timing_hours": null,
+    "during_training_hydration_ml_per_15min": "150.00",
+    "post_training_hydration_ml_per_kg": null,
+    "sodium_replacement_mg_per_hour": null,
+    "potassium_replacement_mg_per_hour": null,
+    "temperature_adjustment_factor": null,
+    "humidity_adjustment_factor": null,
+    "altitude_adjustment_factor": null,
+    "maintain_performance_threshold": null,
+    "cognitive_function_maintenance": null,
+    "created_at": "2025-08-17T19:33:05.909Z"
+  }
+]

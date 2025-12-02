@@ -1,0 +1,338 @@
+[
+  {
+    "id": 1,
+    "event_name": "New Year Strength Challenge",
+    "event_description": "Annual strength challenge to kick off the off-season training",
+    "event_type": "challenge",
+    "event_category": "strength",
+    "start_date": "2024-12-31T23:00:00.000Z",
+    "end_date": "2025-01-30T23:00:00.000Z",
+    "target_participants": 1000,
+    "current_participants": 0,
+    "event_format": "individual",
+    "prizes_awards": [
+      "strength_champion_badge",
+      "performance_gear",
+      "coaching_session"
+    ],
+    "success_criteria": [
+      "participation_rate_80_percent",
+      "strength_improvements",
+      "community_engagement"
+    ],
+    "event_status": "planned",
+    "participation_rate_percentage": "0.00",
+    "event_impact_score": null,
+    "notes": null,
+    "created_at": "2025-08-18T20:01:12.695Z",
+    "updated_at": "2025-08-18T20:01:12.695Z"
+  },
+  {
+    "id": 2,
+    "event_name": "QB-WR Combine Day",
+    "event_description": "Specialized combine testing for quarterbacks and wide receivers",
+    "event_type": "competition",
+    "event_category": "skill",
+    "start_date": "2025-03-14T23:00:00.000Z",
+    "end_date": "2025-03-14T23:00:00.000Z",
+    "target_participants": 200,
+    "current_participants": 0,
+    "event_format": "individual",
+    "prizes_awards": [
+      "combine_champion_badge",
+      "skill_development_prize",
+      "recognition"
+    ],
+    "success_criteria": [
+      "skill_improvement",
+      "team_chemistry",
+      "performance_metrics"
+    ],
+    "event_status": "planned",
+    "participation_rate_percentage": "0.00",
+    "event_impact_score": null,
+    "notes": null,
+    "created_at": "2025-08-18T20:01:12.695Z",
+    "updated_at": "2025-08-18T20:01:12.695Z"
+  },
+  {
+    "id": 3,
+    "event_name": "Heat Adaptation Leaderboard",
+    "event_description": "Summer conditioning challenge with heat adaptation focus",
+    "event_type": "challenge",
+    "event_category": "conditioning",
+    "start_date": "2025-04-30T22:00:00.000Z",
+    "end_date": "2025-06-29T22:00:00.000Z",
+    "target_participants": 1000,
+    "current_participants": 0,
+    "event_format": "individual",
+    "prizes_awards": [
+      "heat_warrior_badge",
+      "recovery_gear",
+      "nutrition_consultation"
+    ],
+    "success_criteria": [
+      "hydration_compliance",
+      "performance_maintenance",
+      "safety_metrics"
+    ],
+    "event_status": "planned",
+    "participation_rate_percentage": "0.00",
+    "event_impact_score": null,
+    "notes": null,
+    "created_at": "2025-08-18T20:01:12.695Z",
+    "updated_at": "2025-08-18T20:01:12.695Z"
+  },
+  {
+    "id": 4,
+    "event_name": "Weekly Player of the Week",
+    "event_description": "Recognition program for outstanding weekly performance",
+    "event_type": "award",
+    "event_category": "performance",
+    "start_date": "2025-06-30T22:00:00.000Z",
+    "end_date": "2025-09-29T22:00:00.000Z",
+    "target_participants": 1000,
+    "current_participants": 0,
+    "event_format": "individual",
+    "prizes_awards": [
+      "player_of_week_badge",
+      "recognition",
+      "small_prize"
+    ],
+    "success_criteria": [
+      "performance_improvement",
+      "team_contribution",
+      "sportsmanship"
+    ],
+    "event_status": "planned",
+    "participation_rate_percentage": "0.00",
+    "event_impact_score": null,
+    "notes": null,
+    "created_at": "2025-08-18T20:01:12.695Z",
+    "updated_at": "2025-08-18T20:01:12.695Z"
+  },
+  {
+    "id": 5,
+    "event_name": "Sleep Streak Badge Contest",
+    "event_description": "Community challenge to improve sleep habits and recovery",
+    "event_type": "challenge",
+    "event_category": "recovery",
+    "start_date": "2025-08-31T22:00:00.000Z",
+    "end_date": "2025-10-30T23:00:00.000Z",
+    "target_participants": 1000,
+    "current_participants": 0,
+    "event_format": "individual",
+    "prizes_awards": [
+      "sleep_master_badge",
+      "recovery_gear",
+      "wellness_consultation"
+    ],
+    "success_criteria": [
+      "sleep_consistency",
+      "recovery_improvement",
+      "community_engagement"
+    ],
+    "event_status": "planned",
+    "participation_rate_percentage": "0.00",
+    "event_impact_score": null,
+    "notes": null,
+    "created_at": "2025-08-18T20:01:12.695Z",
+    "updated_at": "2025-08-18T20:01:12.695Z"
+  },
+  {
+    "id": 6,
+    "event_name": "Best Progress Awards",
+    "event_description": "Annual recognition for most improved athletes",
+    "event_type": "award",
+    "event_category": "performance",
+    "start_date": "2025-10-31T23:00:00.000Z",
+    "end_date": "2025-12-30T23:00:00.000Z",
+    "target_participants": 100,
+    "current_participants": 0,
+    "event_format": "individual",
+    "prizes_awards": [
+      "most_improved_badge",
+      "major_prize",
+      "recognition"
+    ],
+    "success_criteria": [
+      "performance_improvement",
+      "goal_achievement",
+      "community_contribution"
+    ],
+    "event_status": "planned",
+    "participation_rate_percentage": "0.00",
+    "event_impact_score": null,
+    "notes": null,
+    "created_at": "2025-08-18T20:01:12.695Z",
+    "updated_at": "2025-08-18T20:01:12.695Z"
+  },
+  {
+    "id": 7,
+    "event_name": "New Year Strength Challenge",
+    "event_description": "Annual strength challenge to kick off the off-season training",
+    "event_type": "challenge",
+    "event_category": "strength",
+    "start_date": "2024-12-31T23:00:00.000Z",
+    "end_date": "2025-01-30T23:00:00.000Z",
+    "target_participants": 1000,
+    "current_participants": 0,
+    "event_format": "individual",
+    "prizes_awards": [
+      "strength_champion_badge",
+      "performance_gear",
+      "coaching_session"
+    ],
+    "success_criteria": [
+      "participation_rate_80_percent",
+      "strength_improvements",
+      "community_engagement"
+    ],
+    "event_status": "planned",
+    "participation_rate_percentage": "0.00",
+    "event_impact_score": null,
+    "notes": null,
+    "created_at": "2025-08-18T20:01:54.128Z",
+    "updated_at": "2025-08-18T20:01:54.128Z"
+  },
+  {
+    "id": 8,
+    "event_name": "QB-WR Combine Day",
+    "event_description": "Specialized combine testing for quarterbacks and wide receivers",
+    "event_type": "competition",
+    "event_category": "skill",
+    "start_date": "2025-03-14T23:00:00.000Z",
+    "end_date": "2025-03-14T23:00:00.000Z",
+    "target_participants": 200,
+    "current_participants": 0,
+    "event_format": "individual",
+    "prizes_awards": [
+      "combine_champion_badge",
+      "skill_development_prize",
+      "recognition"
+    ],
+    "success_criteria": [
+      "skill_improvement",
+      "team_chemistry",
+      "performance_metrics"
+    ],
+    "event_status": "planned",
+    "participation_rate_percentage": "0.00",
+    "event_impact_score": null,
+    "notes": null,
+    "created_at": "2025-08-18T20:01:54.128Z",
+    "updated_at": "2025-08-18T20:01:54.128Z"
+  },
+  {
+    "id": 9,
+    "event_name": "Heat Adaptation Leaderboard",
+    "event_description": "Summer conditioning challenge with heat adaptation focus",
+    "event_type": "challenge",
+    "event_category": "conditioning",
+    "start_date": "2025-04-30T22:00:00.000Z",
+    "end_date": "2025-06-29T22:00:00.000Z",
+    "target_participants": 1000,
+    "current_participants": 0,
+    "event_format": "individual",
+    "prizes_awards": [
+      "heat_warrior_badge",
+      "recovery_gear",
+      "nutrition_consultation"
+    ],
+    "success_criteria": [
+      "hydration_compliance",
+      "performance_maintenance",
+      "safety_metrics"
+    ],
+    "event_status": "planned",
+    "participation_rate_percentage": "0.00",
+    "event_impact_score": null,
+    "notes": null,
+    "created_at": "2025-08-18T20:01:54.128Z",
+    "updated_at": "2025-08-18T20:01:54.128Z"
+  },
+  {
+    "id": 10,
+    "event_name": "Weekly Player of the Week",
+    "event_description": "Recognition program for outstanding weekly performance",
+    "event_type": "award",
+    "event_category": "performance",
+    "start_date": "2025-06-30T22:00:00.000Z",
+    "end_date": "2025-09-29T22:00:00.000Z",
+    "target_participants": 1000,
+    "current_participants": 0,
+    "event_format": "individual",
+    "prizes_awards": [
+      "player_of_week_badge",
+      "recognition",
+      "small_prize"
+    ],
+    "success_criteria": [
+      "performance_improvement",
+      "team_contribution",
+      "sportsmanship"
+    ],
+    "event_status": "planned",
+    "participation_rate_percentage": "0.00",
+    "event_impact_score": null,
+    "notes": null,
+    "created_at": "2025-08-18T20:01:54.128Z",
+    "updated_at": "2025-08-18T20:01:54.128Z"
+  },
+  {
+    "id": 11,
+    "event_name": "Sleep Streak Badge Contest",
+    "event_description": "Community challenge to improve sleep habits and recovery",
+    "event_type": "challenge",
+    "event_category": "recovery",
+    "start_date": "2025-08-31T22:00:00.000Z",
+    "end_date": "2025-10-30T23:00:00.000Z",
+    "target_participants": 1000,
+    "current_participants": 0,
+    "event_format": "individual",
+    "prizes_awards": [
+      "sleep_master_badge",
+      "recovery_gear",
+      "wellness_consultation"
+    ],
+    "success_criteria": [
+      "sleep_consistency",
+      "recovery_improvement",
+      "community_engagement"
+    ],
+    "event_status": "planned",
+    "participation_rate_percentage": "0.00",
+    "event_impact_score": null,
+    "notes": null,
+    "created_at": "2025-08-18T20:01:54.128Z",
+    "updated_at": "2025-08-18T20:01:54.128Z"
+  },
+  {
+    "id": 12,
+    "event_name": "Best Progress Awards",
+    "event_description": "Annual recognition for most improved athletes",
+    "event_type": "award",
+    "event_category": "performance",
+    "start_date": "2025-10-31T23:00:00.000Z",
+    "end_date": "2025-12-30T23:00:00.000Z",
+    "target_participants": 100,
+    "current_participants": 0,
+    "event_format": "individual",
+    "prizes_awards": [
+      "most_improved_badge",
+      "major_prize",
+      "recognition"
+    ],
+    "success_criteria": [
+      "performance_improvement",
+      "goal_achievement",
+      "community_contribution"
+    ],
+    "event_status": "planned",
+    "participation_rate_percentage": "0.00",
+    "event_impact_score": null,
+    "notes": null,
+    "created_at": "2025-08-18T20:01:54.128Z",
+    "updated_at": "2025-08-18T20:01:54.128Z"
+  }
+]

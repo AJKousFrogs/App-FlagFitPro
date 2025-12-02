@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "premium_solution": "Professional Cryotherapy Session",
+    "premium_cost_euros": "50.00",
+    "affordable_alternative": "Home Ice Bath Protocol",
+    "alternative_cost_euros": "5.00",
+    "cost_savings_euros": "45.00",
+    "effectiveness_comparison": "80% as effective for basic recovery needs",
+    "trade_offs": [
+      "Less precise temperature control",
+      "Shorter duration",
+      "Limited body coverage"
+    ],
+    "when_to_consider_premium": "When you need whole-body treatment or precise temperature control",
+    "created_at": "2025-08-18T20:14:28.865Z"
+  },
+  {
+    "id": 2,
+    "premium_solution": "Personal Training Session",
+    "premium_cost_euros": "80.00",
+    "affordable_alternative": "Online Coaching Program",
+    "alternative_cost_euros": "20.00",
+    "cost_savings_euros": "60.00",
+    "effectiveness_comparison": "70% as effective for technique improvement",
+    "trade_offs": [
+      "Less personalized feedback",
+      "No hands-on correction",
+      "Limited real-time interaction"
+    ],
+    "when_to_consider_premium": "When you need hands-on technique correction or have complex movement issues",
+    "created_at": "2025-08-18T20:14:28.865Z"
+  },
+  {
+    "id": 3,
+    "premium_solution": "Premium Protein Powder",
+    "premium_cost_euros": "80.00",
+    "affordable_alternative": "Basic Whey Protein",
+    "alternative_cost_euros": "30.00",
+    "cost_savings_euros": "50.00",
+    "effectiveness_comparison": "90% as effective for muscle recovery",
+    "trade_offs": [
+      "Less flavor variety",
+      "Basic processing",
+      "Fewer added nutrients"
+    ],
+    "when_to_consider_premium": "When you need specific protein types or have dietary restrictions",
+    "created_at": "2025-08-18T20:14:28.865Z"
+  },
+  {
+    "id": 4,
+    "premium_solution": "GPS Performance Tracker",
+    "premium_cost_euros": "300.00",
+    "affordable_alternative": "Heart Rate Monitor + App",
+    "alternative_cost_euros": "80.00",
+    "cost_savings_euros": "220.00",
+    "effectiveness_comparison": "75% as effective for training monitoring",
+    "trade_offs": [
+      "Less detailed movement data",
+      "Limited GPS tracking",
+      "Basic performance metrics"
+    ],
+    "when_to_consider_premium": "When you need detailed movement analysis or team performance tracking",
+    "created_at": "2025-08-18T20:14:28.865Z"
+  },
+  {
+    "id": 5,
+    "premium_solution": "Professional Massage",
+    "premium_cost_euros": "80.00",
+    "affordable_alternative": "Self-Massage with Tools",
+    "alternative_cost_euros": "30.00",
+    "cost_savings_euros": "50.00",
+    "effectiveness_comparison": "60% as effective for muscle recovery",
+    "trade_offs": [
+      "Less deep tissue work",
+      "Limited professional expertise",
+      "Self-treatment limitations"
+    ],
+    "when_to_consider_premium": "When you have specific injuries or need deep tissue work",
+    "created_at": "2025-08-18T20:14:28.865Z"
+  }
+]

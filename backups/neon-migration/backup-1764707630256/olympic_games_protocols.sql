@@ -1,0 +1,4 @@
+-- Data for table: olympic_games_protocols
+-- Generated: 2025-12-02T20:33:52.681Z
+
+INSERT INTO olympic_games_protocols (id, olympic_year, host_city, flag_football_status, anti_doping_compliance, international_standards_application, cultural_dietary_considerations, wearable_technology_integration, real_time_biometric_monitoring, ai_powered_hydration_optimization, research_collaborations, knowledge_transfer_programs, long_term_impact_studies, created_at) VALUES (1, 2028, 'Los Angeles, USA', 'demonstration_sport', '["wada_standards","real_time_monitoring","athlete_education"]', '["olympic_charter","ifaf_regulations","world_anti_doping_code"]', '["multicultural_nutrition","religious_dietary_laws","local_food_integration"]', TRUE, TRUE, TRUE, '["olympic_research_center","university_partnerships","international_studies"]', '["coach_education","athlete_mentorship","sports_science_exchange"]', TRUE, '2025-08-17T19:48:27.314Z');
