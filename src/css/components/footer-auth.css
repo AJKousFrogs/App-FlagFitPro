@@ -3,11 +3,20 @@
  * Simplified footer for login, register, and reset password pages
  */
 
+/* Hide footer on auth pages to prevent layout issues */
+.page-auth .landing-footer,
+.page-auth [data-footer-container] {
+  display: none !important;
+}
+
+/* If footer must be shown, position it correctly */
 .landing-footer {
   background: var(--surface-primary);
   border-top: 1px solid var(--border-color);
   padding: 2rem 1rem;
   margin-top: auto;
+  width: 100%;
+  position: relative;
 }
 
 .footer-content-simple {
