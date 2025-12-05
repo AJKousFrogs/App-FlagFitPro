@@ -334,7 +334,7 @@ button:disabled {
 /* Skip link for keyboard navigation */
 .skip-link {
   position: absolute;
-  top: -40px;
+  top: -100px;
   left: 0;
   background: var(--color-brand-primary);
   color: var(--color-text-on-primary);
@@ -342,10 +342,18 @@ button:disabled {
   text-decoration: none;
   z-index: var(--z-index-skiplink);
   border-radius: var(--radius-component-md);
+  /* Ensure skip link is completely hidden when not focused */
+  clip-path: inset(50%);
+  opacity: 0;
+  pointer-events: none;
+  transition: top var(--motion-duration-fast, 200ms) ease, opacity var(--motion-duration-fast, 200ms) ease;
 }
 
 .skip-link:focus {
-  top: 0;
+  top: 6px;
+  clip-path: none;
+  opacity: 1;
+  pointer-events: auto;
 }
 
 /* Hide skip link on mobile devices - not needed for touch navigation */

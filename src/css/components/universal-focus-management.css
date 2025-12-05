@@ -9,7 +9,7 @@
 
 .skip-link {
   position: absolute;
-  top: -40px;
+  top: -100px;
   left: 6px;
   background: var(--color-brand-primary);
   color: #ffffff;
@@ -21,12 +21,20 @@
   transition: top var(--motion-duration-fast, 200ms) ease;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   font-size: var(--font-size-sm, 14px);
+  /* Ensure skip link is completely hidden when not focused */
+  clip-path: inset(50%);
+  opacity: 0;
+  pointer-events: none;
 }
 
 .skip-link:focus {
   top: 6px;
   outline: 2px solid #ffffff;
   outline-offset: 2px;
+  /* Restore visibility when focused */
+  clip-path: none;
+  opacity: 1;
+  pointer-events: auto;
 }
 
 /* ================================================================

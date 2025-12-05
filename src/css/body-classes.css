@@ -17,6 +17,7 @@ body {
   background-color: var(--surface-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  position: relative; /* Ensure skip links are positioned relative to body */
 }
 
 /* ================================
