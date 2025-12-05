@@ -37,6 +37,10 @@ const db = {
   // User operations
   users: {
     async findByEmail(email) {
+      if (!supabaseAdmin) {
+        throw new Error("Supabase admin client is not initialized. Please check SUPABASE_URL and SUPABASE_SERVICE_KEY environment variables.");
+      }
+      
       const { data, error } = await supabaseAdmin
         .from("users")
         .select("*")
@@ -52,6 +56,10 @@ const db = {
     },
 
     async create(userData) {
+      if (!supabaseAdmin) {
+        throw new Error("Supabase admin client is not initialized. Please check SUPABASE_URL and SUPABASE_SERVICE_KEY environment variables.");
+      }
+      
       const { data, error } = await supabaseAdmin
         .from("users")
         .insert(userData)

@@ -460,8 +460,14 @@ class AuthManager {
       const response = await auth.register(userData);
 
       if (response.success) {
-        this.token = response.token;
-        this.user = response.user;
+        // Handle response structure: { success: true, data: { token, user } }
+        const data = response.data || response;
+        this.token = data.token || response.token;
+        this.user = data.user || response.user;
+
+        if (!this.token || !this.user) {
+          throw new Error("Invalid response format from registration endpoint");
+        }
 
         // Store authentication data securely
         secureStorage.setAuthToken(this.token);
@@ -484,9 +490,10 @@ class AuthManager {
       }
     } catch (error) {
       this.hideLoading();
-      this.showError("Network error. Please try again.");
+      const errorMessage = error.message || "Network error. Please try again.";
+      this.showError(errorMessage);
       logger.error("Registration error:", error);
-      return { success: false, error: error.message };
+      return { success: false, error: errorMessage };
     }
   }
 

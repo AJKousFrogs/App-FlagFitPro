@@ -139,6 +139,11 @@ export class ErrorHandler {
     this.showNotification(message, "error", 8000);
   }
 
+  // Alias for showUserError for consistency with other methods
+  static showError(message) {
+    this.showUserError(message);
+  }
+
   static showSuccess(message) {
     this.showNotification(message, "success", 5000);
   }
