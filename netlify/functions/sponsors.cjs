@@ -33,17 +33,25 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    // Check environment variables
-    checkEnvVars();
+    // Check environment variables - if missing, return empty array for fallback
+    let envVarsValid = true;
+    try {
+      checkEnvVars();
+    } catch (envError) {
+      console.error("Environment variables check failed:", envError.message);
+      envVarsValid = false;
+    }
 
     // Get active sponsors from database
-    let sponsors;
-    try {
-      sponsors = await db.sponsors.getActiveSponsors();
-    } catch (dbError) {
-      console.error("Database error in sponsors function:", dbError);
-      // Return empty array if database query fails (fallback to hardcoded logos)
-      sponsors = [];
+    let sponsors = [];
+    if (envVarsValid) {
+      try {
+        sponsors = await db.sponsors.getActiveSponsors();
+      } catch (dbError) {
+        console.error("Database error in sponsors function:", dbError);
+        // Return empty array if database query fails (fallback to hardcoded logos)
+        sponsors = [];
+      }
     }
 
     // Build proxy URL for logos to bypass COEP restrictions

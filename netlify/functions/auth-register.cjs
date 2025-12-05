@@ -3,6 +3,7 @@
 
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const { randomBytes } = require("crypto");
 const { db, checkEnvVars } = require("./supabase-client.cjs");
 const { validateRequestBody } = require("./validation.cjs");
 const { applyRateLimit } = require("./utils/rate-limiter.cjs");
@@ -107,7 +108,10 @@ exports.handler = async (event, context) => {
       return handleServerError(bcryptError, "Failed to process password");
     }
 
-    // Create new user in database
+    // Generate email verification token
+    const verificationToken = randomBytes(32).toString("hex");
+
+    // Create new user in database (email_verified defaults to false)
     let newUser;
     try {
       newUser = await db.users.create({
@@ -115,36 +119,65 @@ exports.handler = async (event, context) => {
         email: normalizedEmail,
         password: hashedPassword,
         role: "player",
+        email_verified: false,
+        verification_token: verificationToken,
+        verification_token_expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours
       });
     } catch (dbError) {
       console.error("Database error creating user:", dbError);
       return handleServerError(dbError, "Failed to create user account");
     }
 
-    // Generate JWT token
-    let token;
+    // Send verification email
     try {
-      token = jwt.sign(
-        {
-          userId: newUser.id,
-          email: newUser.email,
-          role: newUser.role,
+      const appUrl = process.env.APP_URL || process.env.URL || "https://webflagfootballfrogs.netlify.app";
+      const verificationUrl = `${appUrl}/verify-email.html?token=${verificationToken}`;
+
+      // Determine the base URL for the send-email function
+      // In Netlify Functions, we can use the event's request context
+      const baseUrl = event.headers['x-forwarded-proto'] 
+        ? `${event.headers['x-forwarded-proto']}://${event.headers.host}`
+        : appUrl;
+      
+      const sendEmailUrl = `${baseUrl}/.netlify/functions/send-email`;
+
+      // Call send-email function
+      const emailResponse = await fetch(sendEmailUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-        JWT_SECRET,
-        { expiresIn: "24h" },
-      );
-    } catch (jwtError) {
-      console.error("Error generating JWT token:", jwtError);
-      return handleServerError(jwtError, "Failed to generate authentication token");
+        body: JSON.stringify({
+          type: "verification",
+          to: normalizedEmail,
+          name: name.trim(),
+          verificationUrl,
+        }),
+      });
+
+      if (!emailResponse.ok) {
+        const errorText = await emailResponse.text();
+        console.warn("Failed to send verification email, but user was created:", errorText);
+        // Don't fail registration if email fails - user can request resend
+      } else {
+        console.log("✅ Verification email sent to:", normalizedEmail);
+      }
+    } catch (emailError) {
+      console.error("Error sending verification email:", emailError);
+      // Don't fail registration if email fails - user can request resend
     }
 
-    // Return success response (exclude password)
-    const { password: _, ...safeUser } = newUser;
+    // Return success response (exclude password and verification token)
+    const { password: _, verification_token: __, verification_token_expires_at: ___, ...safeUser } = newUser;
 
     return createSuccessResponse(
-      { token, user: safeUser },
+      { 
+        user: safeUser,
+        message: "Account created successfully. Please check your email to verify your account.",
+        requiresVerification: true
+      },
       201,
-      "Account created successfully"
+      "Account created successfully. Please verify your email."
     );
   } catch (error) {
     console.error("Error in auth-register function:", error);

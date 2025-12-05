@@ -176,7 +176,7 @@ class GameTrackerPage {
     });
   }
 
-  handleGameSetup(e) {
+  async handleGameSetup(e) {
     e.preventDefault();
 
     const formData = new FormData(e.target);

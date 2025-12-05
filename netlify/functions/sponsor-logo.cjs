@@ -20,7 +20,12 @@ async function fetchImageAsBase64(imageUrl) {
   return new Promise((resolve, reject) => {
     const protocol = imageUrl.startsWith("https") ? https : http;
     
-    protocol.get(imageUrl, (response) => {
+    const request = protocol.get(imageUrl, {
+      timeout: 10000, // 10 second timeout
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; Netlify Function)'
+      }
+    }, (response) => {
       // Check if response is successful
       if (response.statusCode !== 200) {
         reject(new Error(`Failed to fetch image: ${response.statusCode}`));
@@ -28,25 +33,48 @@ async function fetchImageAsBase64(imageUrl) {
       }
 
       // Check content type
-      const contentType = response.headers["content-type"] || "image/png";
+      const contentType = response.headers["content-type"] || response.headers["Content-Type"] || "image/png";
       if (!contentType.startsWith("image/")) {
         reject(new Error(`Invalid content type: ${contentType}`));
         return;
       }
 
-      // Collect image data
+      // Collect image data with size limit (5MB)
       const chunks = [];
-      response.on("data", (chunk) => chunks.push(chunk));
-      response.on("end", () => {
-        const buffer = Buffer.concat(chunks);
-        const base64 = buffer.toString("base64");
-        resolve({
-          data: base64,
-          contentType: contentType,
-        });
+      let totalSize = 0;
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      
+      response.on("data", (chunk) => {
+        totalSize += chunk.length;
+        if (totalSize > maxSize) {
+          request.destroy();
+          reject(new Error("Image too large"));
+          return;
+        }
+        chunks.push(chunk);
       });
-    }).on("error", (error) => {
+      
+      response.on("end", () => {
+        try {
+          const buffer = Buffer.concat(chunks);
+          const base64 = buffer.toString("base64");
+          resolve({
+            data: base64,
+            contentType: contentType,
+          });
+        } catch (error) {
+          reject(new Error(`Failed to process image: ${error.message}`));
+        }
+      });
+    });
+    
+    request.on("error", (error) => {
       reject(error);
+    });
+    
+    request.on("timeout", () => {
+      request.destroy();
+      reject(new Error("Request timeout"));
     });
   });
 }
@@ -95,7 +123,18 @@ exports.handler = async (event, context) => {
       "gearxpro-sports.com",
     ];
     
-    const urlObj = new URL(imageUrl);
+    let urlObj;
+    try {
+      urlObj = new URL(imageUrl);
+    } catch (urlError) {
+      console.error("Invalid URL:", imageUrl, urlError);
+      return {
+        statusCode: 400,
+        headers: CORS_HEADERS,
+        body: JSON.stringify({ error: "Invalid URL format" }),
+      };
+    }
+    
     const isAllowed = allowedDomains.some((domain) =>
       urlObj.hostname.includes(domain)
     );
@@ -155,7 +194,26 @@ exports.handler = async (event, context) => {
       name: error.name,
       code: error.code,
     });
-    return handleServerError(error, "Failed to proxy sponsor logo");
+    
+    // Return a proper error response instead of crashing
+    try {
+      return handleServerError(error, "Failed to proxy sponsor logo");
+    } catch (handlerError) {
+      // Fallback if error handler itself fails
+      console.error("Error handler failed:", handlerError);
+      return {
+        statusCode: 500,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          success: false,
+          error: "Failed to proxy sponsor logo",
+          errorType: "server_error"
+        })
+      };
+    }
   }
 };
 

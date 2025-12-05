@@ -85,6 +85,10 @@ const db = {
     },
 
     async update(id, updates) {
+      if (!supabaseAdmin) {
+        throw new Error("Supabase admin client is not initialized. Please check SUPABASE_URL and SUPABASE_SERVICE_KEY environment variables.");
+      }
+      
       const { data, error } = await supabaseAdmin
         .from("users")
         .update({ ...updates, updated_at: new Date() })
@@ -94,6 +98,73 @@ const db = {
 
       if (error) throw error;
       return data;
+    },
+
+    async setVerificationToken(userId, token) {
+      if (!supabaseAdmin) {
+        throw new Error("Supabase admin client is not initialized. Please check SUPABASE_URL and SUPABASE_SERVICE_KEY environment variables.");
+      }
+      
+      const expiry = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+      const { data, error } = await supabaseAdmin
+        .from("users")
+        .update({ 
+          verification_token: token,
+          verification_token_expires_at: expiry.toISOString(),
+          updated_at: new Date()
+        })
+        .eq("id", userId)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+
+    async verifyEmail(token) {
+      if (!supabaseAdmin) {
+        throw new Error("Supabase admin client is not initialized. Please check SUPABASE_URL and SUPABASE_SERVICE_KEY environment variables.");
+      }
+      
+      // Find user by verification token
+      const { data: user, error: findError } = await supabaseAdmin
+        .from("users")
+        .select("*")
+        .eq("verification_token", token)
+        .single();
+
+      if (findError || !user) {
+        throw new Error("Invalid or expired verification token");
+      }
+
+      // Check if token is expired
+      if (user.verification_token_expires_at) {
+        const expiryDate = new Date(user.verification_token_expires_at);
+        if (new Date() > expiryDate) {
+          throw new Error("Verification token has expired");
+        }
+      }
+
+      // Check if already verified
+      if (user.email_verified) {
+        return { alreadyVerified: true, user };
+      }
+
+      // Mark email as verified and clear token
+      const { data, error } = await supabaseAdmin
+        .from("users")
+        .update({ 
+          email_verified: true,
+          verification_token: null,
+          verification_token_expires_at: null,
+          updated_at: new Date()
+        })
+        .eq("id", user.id)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return { alreadyVerified: false, user: data };
     },
   },
 

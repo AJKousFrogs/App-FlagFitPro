@@ -183,6 +183,22 @@ exports.handler = async (event, context) => {
       };
     }
 
+    // Check if email is verified
+    if (!user.email_verified) {
+      return {
+        statusCode: 403,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          success: false,
+          error: "Please verify your email address before logging in. Check your inbox for the verification email.",
+          requiresVerification: true,
+        }),
+      };
+    }
+
     // Generate JWT token
     let token;
     try {
