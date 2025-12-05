@@ -134,9 +134,6 @@ exports.handler = async (event, context) => {
 
     // Use sanitized data
     const { email, password } = validation.data;
-    
-    // Get JWT_SECRET for token generation
-    const JWT_SECRET = getJWTSecret();
 
     // Find user in database
     let user;
