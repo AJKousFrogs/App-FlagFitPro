@@ -12,12 +12,16 @@ const {
   CORS_HEADERS
 } = require("./utils/error-handler.cjs");
 
-const JWT_SECRET = process.env.JWT_SECRET;
-
-if (!JWT_SECRET) {
-  console.error("CRITICAL: JWT_SECRET environment variable is not set!");
-  throw new Error("JWT_SECRET environment variable is required for security");
-}
+// JWT_SECRET will be checked at runtime, not module load time
+// This prevents the function from failing to load if env var is missing
+const getJWTSecret = () => {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    console.error("CRITICAL: JWT_SECRET environment variable is not set!");
+    throw new Error("JWT_SECRET environment variable is required for security");
+  }
+  return secret;
+};
 
 exports.handler = async (event, context) => {
   // Log function call
@@ -46,6 +50,9 @@ exports.handler = async (event, context) => {
   try {
     // Check environment variables
     checkEnvVars();
+    
+    // Get JWT_SECRET
+    const JWT_SECRET = getJWTSecret();
 
     // Validate JWT token using standardized error handling
     const jwtValidation = validateJWT(event, jwt, JWT_SECRET);
@@ -55,7 +62,14 @@ exports.handler = async (event, context) => {
     const { decoded } = jwtValidation;
 
     // Get user by ID from database
-    const user = await db.users.findById(decoded.userId);
+    let user;
+    try {
+      user = await db.users.findById(decoded.userId);
+    } catch (dbError) {
+      console.error("Database error finding user:", dbError);
+      return handleServerError(dbError, "Failed to retrieve user");
+    }
+    
     if (!user) {
       return handleNotFoundError('User');
     }
@@ -65,6 +79,13 @@ exports.handler = async (event, context) => {
 
     return createSuccessResponse({ user: safeUser });
   } catch (error) {
+    console.error("Error in auth-me function:", error);
+    console.error("Error stack:", error.stack);
+    console.error("Error details:", {
+      message: error.message,
+      name: error.name,
+      code: error.code,
+    });
     return handleServerError(error, 'Auth-Me');
   }
 };

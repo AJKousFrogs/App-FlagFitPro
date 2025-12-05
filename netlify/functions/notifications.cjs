@@ -12,12 +12,16 @@ const {
   CORS_HEADERS
 } = require("./utils/error-handler.cjs");
 
-const JWT_SECRET = process.env.JWT_SECRET;
-
-if (!JWT_SECRET) {
-  console.error("CRITICAL: JWT_SECRET environment variable is not set!");
-  throw new Error("JWT_SECRET environment variable is required for security");
-}
+// JWT_SECRET will be checked at runtime, not module load time
+// This prevents the function from failing to load if env var is missing
+const getJWTSecret = () => {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    console.error("CRITICAL: JWT_SECRET environment variable is not set!");
+    throw new Error("JWT_SECRET environment variable is required for security");
+  }
+  return secret;
+};
 
 exports.handler = async (event, context) => {
   logFunctionCall('Notifications', event);
@@ -37,6 +41,12 @@ exports.handler = async (event, context) => {
 
     let userId = null;
 
+    // Check environment variables first
+    checkEnvVars();
+    
+    // Get JWT_SECRET
+    const JWT_SECRET = getJWTSecret();
+
     // Handle authentication - allow unauthenticated requests for notifications
     if (authHeader && authHeader.startsWith("Bearer ")) {
       // Extract and verify token
@@ -51,9 +61,6 @@ exports.handler = async (event, context) => {
         console.warn("Invalid token provided, returning fallback notifications");
       }
     }
-
-    // Check environment variables
-    checkEnvVars();
 
     // If no user ID, return fallback notifications
     if (!userId) {
@@ -97,6 +104,13 @@ exports.handler = async (event, context) => {
       return createErrorResponse("Method not allowed", 405, 'method_not_allowed');
     }
   } catch (error) {
+    console.error("Error in notifications function:", error);
+    console.error("Error stack:", error.stack);
+    console.error("Error details:", {
+      message: error.message,
+      name: error.name,
+      code: error.code,
+    });
     return handleServerError(error, 'Notifications');
   }
 };

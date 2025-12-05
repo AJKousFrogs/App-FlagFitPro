@@ -18,7 +18,9 @@
   border-radius: var(--radius-md, 8px);
   background: var(--surface-primary, #ffffff);
   color: var(--color-text-primary);
-  transition: all var(--motion-duration-fast, 200ms) ease;
+  transition: border-color var(--motion-duration-fast, 200ms) ease,
+    box-shadow var(--motion-duration-fast, 200ms) ease,
+    background-color var(--motion-duration-fast, 200ms) ease;
   width: 100%;
   box-sizing: border-box;
 }

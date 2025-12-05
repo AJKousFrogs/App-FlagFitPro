@@ -15,12 +15,16 @@ const {
   CORS_HEADERS
 } = require("./utils/error-handler.cjs");
 
-const JWT_SECRET = process.env.JWT_SECRET;
-
-if (!JWT_SECRET) {
-  console.error("CRITICAL: JWT_SECRET environment variable is not set!");
-  throw new Error("JWT_SECRET environment variable is required for security");
-}
+// JWT_SECRET will be checked at runtime, not module load time
+// This prevents the function from failing to load if env var is missing
+const getJWTSecret = () => {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    console.error("CRITICAL: JWT_SECRET environment variable is not set!");
+    throw new Error("JWT_SECRET environment variable is required for security");
+  }
+  return secret;
+};
 
 exports.handler = async (event, context) => {
   // Log function call
@@ -66,6 +70,9 @@ exports.handler = async (event, context) => {
   try {
     // Check environment variables
     checkEnvVars();
+    
+    // Check JWT_SECRET
+    const JWT_SECRET = getJWTSecret();
 
     // Validate request body
     const validation = validateRequestBody(event.body, 'register');
@@ -78,34 +85,58 @@ exports.handler = async (event, context) => {
 
     // Check if user already exists in database
     const normalizedEmail = email.toLowerCase();
-    const existingUser = await db.users.findByEmail(normalizedEmail);
+    let existingUser;
+    try {
+      existingUser = await db.users.findByEmail(normalizedEmail);
+    } catch (dbError) {
+      console.error("Database error checking existing user:", dbError);
+      return handleServerError(dbError, "Failed to check user existence");
+    }
 
     if (existingUser) {
       return handleConflictError("User with this email already exists");
     }
 
     // Hash password
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    let hashedPassword;
+    try {
+      const saltRounds = 10;
+      hashedPassword = await bcrypt.hash(password, saltRounds);
+    } catch (bcryptError) {
+      console.error("Error hashing password:", bcryptError);
+      return handleServerError(bcryptError, "Failed to process password");
+    }
 
     // Create new user in database
-    const newUser = await db.users.create({
-      name: name.trim(),
-      email: normalizedEmail,
-      password: hashedPassword,
-      role: "player",
-    });
+    let newUser;
+    try {
+      newUser = await db.users.create({
+        name: name.trim(),
+        email: normalizedEmail,
+        password: hashedPassword,
+        role: "player",
+      });
+    } catch (dbError) {
+      console.error("Database error creating user:", dbError);
+      return handleServerError(dbError, "Failed to create user account");
+    }
 
     // Generate JWT token
-    const token = jwt.sign(
-      {
-        userId: newUser.id,
-        email: newUser.email,
-        role: newUser.role,
-      },
-      JWT_SECRET,
-      { expiresIn: "24h" },
-    );
+    let token;
+    try {
+      token = jwt.sign(
+        {
+          userId: newUser.id,
+          email: newUser.email,
+          role: newUser.role,
+        },
+        JWT_SECRET,
+        { expiresIn: "24h" },
+      );
+    } catch (jwtError) {
+      console.error("Error generating JWT token:", jwtError);
+      return handleServerError(jwtError, "Failed to generate authentication token");
+    }
 
     // Return success response (exclude password)
     const { password: _, ...safeUser } = newUser;
@@ -116,6 +147,13 @@ exports.handler = async (event, context) => {
       "Account created successfully"
     );
   } catch (error) {
+    console.error("Error in auth-register function:", error);
+    console.error("Error stack:", error.stack);
+    console.error("Error details:", {
+      message: error.message,
+      name: error.name,
+      code: error.code,
+    });
     return handleServerError(error, 'Auth-Register');
   }
 };

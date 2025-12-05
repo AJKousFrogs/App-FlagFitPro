@@ -12,12 +12,16 @@ const {
   CORS_HEADERS
 } = require("./utils/error-handler.cjs");
 
-const JWT_SECRET = process.env.JWT_SECRET;
-
-if (!JWT_SECRET) {
-  console.error("CRITICAL: JWT_SECRET environment variable is not set!");
-  throw new Error("JWT_SECRET environment variable is required for security");
-}
+// JWT_SECRET will be checked at runtime, not module load time
+// This prevents the function from failing to load if env var is missing
+const getJWTSecret = () => {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    console.error("CRITICAL: JWT_SECRET environment variable is not set!");
+    throw new Error("JWT_SECRET environment variable is required for security");
+  }
+  return secret;
+};
 
 exports.handler = async (event, _context) => {
   logFunctionCall('Performance-Data', event);
@@ -35,6 +39,12 @@ exports.handler = async (event, _context) => {
     const pathSegments = path.split("/").filter(Boolean);
     const endpoint = pathSegments[pathSegments.length - 1];
 
+    // Check environment variables
+    checkEnvVars();
+    
+    // Get JWT_SECRET
+    const JWT_SECRET = getJWTSecret();
+
     // Validate JWT token
     const jwtValidation = validateJWT(event, jwt, JWT_SECRET);
     if (!jwtValidation.success) {
@@ -43,9 +53,6 @@ exports.handler = async (event, _context) => {
     const { decoded } = jwtValidation;
 
     const userId = decoded.userId;
-
-    // Check environment variables
-    checkEnvVars();
 
     let response;
 
@@ -115,6 +122,13 @@ exports.handler = async (event, _context) => {
       headers: { ...CORS_HEADERS, ...response.headers },
     };
   } catch (error) {
+    console.error("Error in performance-data function:", error);
+    console.error("Error stack:", error.stack);
+    console.error("Error details:", {
+      message: error.message,
+      name: error.name,
+      code: error.code,
+    });
     return handleServerError(error, 'Performance-Data');
   }
 };

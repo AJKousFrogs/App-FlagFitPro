@@ -14,12 +14,16 @@ const {
   CORS_HEADERS
 } = require("./utils/error-handler.cjs");
 
-const JWT_SECRET = process.env.JWT_SECRET;
-
-if (!JWT_SECRET) {
-  console.error("CRITICAL: JWT_SECRET environment variable is not set!");
-  throw new Error("JWT_SECRET environment variable is required for security");
-}
+// JWT_SECRET will be checked at runtime, not module load time
+// This prevents the function from failing to load if env var is missing
+const getJWTSecret = () => {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    console.error("CRITICAL: JWT_SECRET environment variable is not set!");
+    throw new Error("JWT_SECRET environment variable is required for security");
+  }
+  return secret;
+};
 
 /**
  * Create a training session from the Training Builder
@@ -158,6 +162,12 @@ exports.handler = async (event, context) => {
   }
 
   try {
+    // Check environment variables
+    checkEnvVars();
+    
+    // Get JWT_SECRET
+    const JWT_SECRET = getJWTSecret();
+
     // Validate JWT token
     const jwtValidation = validateJWT(event, jwt, JWT_SECRET);
     if (!jwtValidation.success) {
@@ -166,9 +176,6 @@ exports.handler = async (event, context) => {
     const { decoded } = jwtValidation;
 
     const userId = decoded.userId || decoded.id;
-
-    // Check environment variables
-    checkEnvVars();
 
     // Handle GET request - retrieve sessions
     if (event.httpMethod === "GET") {
@@ -197,6 +204,13 @@ exports.handler = async (event, context) => {
     // Method not allowed
     return createErrorResponse("Method not allowed", 405, 'method_not_allowed');
   } catch (error) {
+    console.error("Error in training-sessions function:", error);
+    console.error("Error stack:", error.stack);
+    console.error("Error details:", {
+      message: error.message,
+      name: error.name,
+      code: error.code,
+    });
     return handleServerError(error, 'Training-Sessions');
   }
 };

@@ -12,7 +12,7 @@ const {
 
 exports.handler = async (event, context) => {
   // Log function call
-  logFunctionCall("sponsors", event.httpMethod, event.path);
+  logFunctionCall("sponsors", event);
 
   // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
@@ -37,7 +37,14 @@ exports.handler = async (event, context) => {
     checkEnvVars();
 
     // Get active sponsors from database
-    const sponsors = await db.sponsors.getActiveSponsors();
+    let sponsors;
+    try {
+      sponsors = await db.sponsors.getActiveSponsors();
+    } catch (dbError) {
+      console.error("Database error in sponsors function:", dbError);
+      // Return empty array if database query fails (fallback to hardcoded logos)
+      sponsors = [];
+    }
 
     // Build proxy URL for logos to bypass COEP restrictions
     const getProxyUrl = (originalUrl) => {
@@ -49,19 +56,26 @@ exports.handler = async (event, context) => {
     };
 
     // Return sponsors data with proxied logo URLs
+    // If no sponsors found, return empty array (frontend will use fallback)
     return createSuccessResponse({
-      sponsors: sponsors.map((sponsor) => ({
-        id: sponsor.id,
-        name: sponsor.name,
-        logoUrl: getProxyUrl(sponsor.logo_url),
-        originalLogoUrl: sponsor.logo_url, // Keep original for reference
-        websiteUrl: sponsor.website_url || null,
-        displayOrder: sponsor.display_order || 0,
-      })),
+      sponsors: sponsors.length > 0 
+        ? sponsors.map((sponsor) => ({
+            id: sponsor.id,
+            name: sponsor.name,
+            logoUrl: getProxyUrl(sponsor.logo_url),
+            originalLogoUrl: sponsor.logo_url, // Keep original for reference
+            websiteUrl: sponsor.website_url || null,
+            displayOrder: sponsor.display_order || 0,
+          }))
+        : [],
     });
   } catch (error) {
-    console.error("Error fetching sponsors:", error);
-    return handleDatabaseError(error, "Failed to fetch sponsors");
+    console.error("Error in sponsors function:", error);
+    console.error("Error stack:", error.stack);
+    // Return empty array instead of error to allow fallback logos to work
+    return createSuccessResponse({
+      sponsors: [],
+    });
   }
 };
 

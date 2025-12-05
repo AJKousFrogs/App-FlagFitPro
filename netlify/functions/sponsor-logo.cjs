@@ -53,7 +53,7 @@ async function fetchImageAsBase64(imageUrl) {
 
 exports.handler = async (event, context) => {
   // Log function call
-  logFunctionCall("sponsor-logo", event.httpMethod, event.path);
+  logFunctionCall("sponsor-logo", event);
 
   // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
@@ -149,6 +149,12 @@ exports.handler = async (event, context) => {
     };
   } catch (error) {
     console.error("Error proxying sponsor logo:", error);
+    console.error("Error stack:", error.stack);
+    console.error("Error details:", {
+      message: error.message,
+      name: error.name,
+      code: error.code,
+    });
     return handleServerError(error, "Failed to proxy sponsor logo");
   }
 };

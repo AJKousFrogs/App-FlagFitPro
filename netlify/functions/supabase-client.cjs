@@ -9,15 +9,28 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY; // Service key for 
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY; // Anon key for regular operations
 
 // Create Supabase client with service key for admin operations
-const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false,
-  },
-});
+// Only create if environment variables are available
+let supabaseAdmin;
+let supabase;
 
-// Create Supabase client with anon key for regular operations
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+try {
+  if (supabaseUrl && supabaseServiceKey) {
+    supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+    });
+  }
+  
+  if (supabaseUrl && supabaseAnonKey) {
+    // Create Supabase client with anon key for regular operations
+    supabase = createClient(supabaseUrl, supabaseAnonKey);
+  }
+} catch (error) {
+  console.error("Failed to initialize Supabase clients:", error);
+  // Clients will be undefined, checkEnvVars will catch this
+}
 
 // Database operations helper
 const db = {
@@ -398,8 +411,22 @@ function getTimeAgo(dateString) {
 // Helper function to check if environment variables are configured
 function checkEnvVars() {
   if (!supabaseUrl || !supabaseServiceKey || !supabaseAnonKey) {
+    const missing = [];
+    if (!supabaseUrl) missing.push("SUPABASE_URL");
+    if (!supabaseServiceKey) missing.push("SUPABASE_SERVICE_KEY");
+    if (!supabaseAnonKey) missing.push("SUPABASE_ANON_KEY");
+    
+    console.error("Missing environment variables:", missing.join(", "));
     throw new Error(
-      "Missing required Supabase environment variables. Please set SUPABASE_URL, SUPABASE_SERVICE_KEY, and SUPABASE_ANON_KEY in Netlify.",
+      `Missing required Supabase environment variables: ${missing.join(", ")}. Please set them in Netlify.`,
+    );
+  }
+  
+  // Also check if clients were initialized
+  if (!supabaseAdmin || !supabase) {
+    console.error("Supabase clients not initialized properly");
+    throw new Error(
+      "Supabase clients failed to initialize. Please check your environment variables.",
     );
   }
 }

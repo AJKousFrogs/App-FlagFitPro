@@ -36,12 +36,16 @@ const demoUsers = [
   },
 ];
 
-const JWT_SECRET = process.env.JWT_SECRET;
-
-if (!JWT_SECRET) {
-  console.error("CRITICAL: JWT_SECRET environment variable is not set!");
-  throw new Error("JWT_SECRET environment variable is required for security");
-}
+// JWT_SECRET will be checked at runtime, not module load time
+// This prevents the function from failing to load if env var is missing
+const getJWTSecret = () => {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    console.error("CRITICAL: JWT_SECRET environment variable is not set!");
+    throw new Error("JWT_SECRET environment variable is required for security");
+  }
+  return secret;
+};
 
 // Seed demo users if they don't exist
 async function seedDemoUsers() {
@@ -110,9 +114,17 @@ exports.handler = async (event, context) => {
   try {
     // Check environment variables
     checkEnvVars();
+    
+    // Check JWT_SECRET
+    const JWT_SECRET = getJWTSecret();
 
-    // Seed demo users on first run
-    await seedDemoUsers();
+    // Seed demo users on first run (don't fail if seeding fails)
+    try {
+      await seedDemoUsers();
+    } catch (seedError) {
+      console.warn("Failed to seed demo users (non-critical):", seedError);
+      // Continue execution - seeding is not critical for login
+    }
 
     // Validate request body
     const validation = validateRequestBody(event.body, 'login');
@@ -122,9 +134,18 @@ exports.handler = async (event, context) => {
 
     // Use sanitized data
     const { email, password } = validation.data;
+    
+    // Get JWT_SECRET for token generation
+    const JWT_SECRET = getJWTSecret();
 
     // Find user in database
-    const user = await db.users.findByEmail(email.toLowerCase());
+    let user;
+    try {
+      user = await db.users.findByEmail(email.toLowerCase());
+    } catch (dbError) {
+      console.error("Database error finding user:", dbError);
+      return handleServerError(dbError, "Failed to authenticate user");
+    }
     if (!user) {
       return {
         statusCode: 401,
@@ -140,7 +161,14 @@ exports.handler = async (event, context) => {
     }
 
     // Verify password
-    const isValidPassword = await bcrypt.compare(password, user.password);
+    let isValidPassword;
+    try {
+      isValidPassword = await bcrypt.compare(password, user.password);
+    } catch (bcryptError) {
+      console.error("Error comparing password:", bcryptError);
+      return handleServerError(bcryptError, "Failed to verify password");
+    }
+    
     if (!isValidPassword) {
       return {
         statusCode: 401,
@@ -156,15 +184,21 @@ exports.handler = async (event, context) => {
     }
 
     // Generate JWT token
-    const token = jwt.sign(
-      {
-        userId: user.id,
-        email: user.email,
-        role: user.role,
-      },
-      JWT_SECRET,
-      { expiresIn: "24h" },
-    );
+    let token;
+    try {
+      token = jwt.sign(
+        {
+          userId: user.id,
+          email: user.email,
+          role: user.role,
+        },
+        JWT_SECRET,
+        { expiresIn: "24h" },
+      );
+    } catch (jwtError) {
+      console.error("Error generating JWT token:", jwtError);
+      return handleServerError(jwtError, "Failed to generate authentication token");
+    }
 
     // Return success response (exclude password)
     const { password: _, ...safeUser } = user;
@@ -175,6 +209,13 @@ exports.handler = async (event, context) => {
       "Login successful"
     );
   } catch (error) {
+    console.error("Error in auth-login function:", error);
+    console.error("Error stack:", error.stack);
+    console.error("Error details:", {
+      message: error.message,
+      name: error.name,
+      code: error.code,
+    });
     return handleServerError(error, 'Auth-Login');
   }
 };

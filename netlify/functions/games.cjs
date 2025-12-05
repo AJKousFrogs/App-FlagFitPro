@@ -14,12 +14,16 @@ const {
   CORS_HEADERS
 } = require("./utils/error-handler.cjs");
 
-const JWT_SECRET = process.env.JWT_SECRET;
-
-if (!JWT_SECRET) {
-  console.error("CRITICAL: JWT_SECRET environment variable is not set!");
-  throw new Error("JWT_SECRET environment variable is required for security");
-}
+// JWT_SECRET will be checked at runtime, not module load time
+// This prevents the function from failing to load if env var is missing
+const getJWTSecret = () => {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    console.error("CRITICAL: JWT_SECRET environment variable is not set!");
+    throw new Error("JWT_SECRET environment variable is required for security");
+  }
+  return secret;
+};
 
 // Create a new game
 const createGame = async (userId, gameData) => {
@@ -273,6 +277,7 @@ exports.handler = async (event, context) => {
 
   try {
     // Validate JWT token
+    const JWT_SECRET = getJWTSecret();
     const jwtValidation = validateJWT(event, jwt, JWT_SECRET);
     if (!jwtValidation.success) {
       return jwtValidation.error;
@@ -335,6 +340,13 @@ exports.handler = async (event, context) => {
 
     return createSuccessResponse(result);
   } catch (error) {
+    console.error("Error in games function:", error);
+    console.error("Error stack:", error.stack);
+    console.error("Error details:", {
+      message: error.message,
+      name: error.name,
+      code: error.code,
+    });
     return handleServerError(error, 'Games');
   }
 };
