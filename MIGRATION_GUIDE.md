@@ -11,7 +11,7 @@ You have **29.43 MB of valuable data** in Neon. This guide ensures **zero data l
 Before starting, ensure you have:
 
 - [ ] ✅ Access to Netlify dashboard
-- [ ] ✅ Access to Supabase dashboard (https://supabase.com/dashboard/project/pvzicicwxgftcielnm)
+- [ ] ✅ Access to Supabase dashboard (https://supabase.com/dashboard/project/pvziciccwxgftcielknm)
 - [ ] ✅ Latest `.env` file with all credentials
 - [ ] ✅ 30-60 minutes of uninterrupted time
 - [ ] ✅ Good internet connection
@@ -93,7 +93,7 @@ backups/neon-migration/backup-1733097600000/
 **Ensure tables exist in Supabase:**
 
 1. Open Supabase Dashboard:
-   https://supabase.com/dashboard/project/pvzicicwxgftcielnm
+   https://supabase.com/dashboard/project/pvziciccwxgftcielknm
 
 2. Go to **SQL Editor**
 
@@ -228,7 +228,7 @@ node scripts/migrate-neon-to-supabase.js --verify
    # DATABASE_URL=postgresql://neondb_owner:npg_...
 
    # Keep Supabase
-   SUPABASE_URL=https://pvzicicwxgftcielnm.supabase.co
+   SUPABASE_URL=https://pvziciccwxgftcielknm.supabase.co
    SUPABASE_ANON_KEY=eyJhbGci...
    SUPABASE_SERVICE_KEY=eyJhbGci...
    ```
@@ -297,7 +297,7 @@ node scripts/migrate-neon-to-supabase.js --verify
 # VITE_NEON_DATABASE_URL=postgresql://neondb_owner:...
 
 # Keep these:
-SUPABASE_URL=https://pvzicicwxgftcielnm.supabase.co
+SUPABASE_URL=https://pvziciccwxgftcielknm.supabase.co
 SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 SUPABASE_SERVICE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 JWT_SECRET=your-jwt-secret

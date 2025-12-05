@@ -6,7 +6,7 @@ You currently have **TWO** database systems configured:
 
 ### 1. **Supabase** (Primary)
 ```
-URL: https://pvzicicwxgftcielnm.supabase.co
+URL: https://pvziciccwxgftcielknm.supabase.co
 Purpose: Authentication, Real-time, PostgreSQL Database, Storage
 ```
 
@@ -107,7 +107,7 @@ Check your Supabase dashboard to ensure these tables exist:
 # VITE_NEON_DATABASE_URL=postgresql://neondb_owner:npg_SGzisOP7xC5I@...
 
 # ✅ KEEP ONLY THESE:
-SUPABASE_URL=https://pvzicicwxgftcielnm.supabase.co
+SUPABASE_URL=https://pvziciccwxgftcielknm.supabase.co
 SUPABASE_ANON_KEY=eyJhbGci...
 SUPABASE_SERVICE_KEY=eyJhbGci...
 ```
@@ -339,7 +339,7 @@ After removing Neon DB references:
 ### Check Database Content
 
 1. **Supabase:**
-   - Visit: https://supabase.com/dashboard/project/pvzicicwxgftcielnm
+   - Visit: https://supabase.com/dashboard/project/pvziciccwxgftcielknm
    - Go to Table Editor
    - Check if tables have data
 

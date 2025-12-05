@@ -15,7 +15,7 @@ Your FlagFit Pro app is now connected to **real production databases** on Netlif
 ## 🔌 Connected Databases
 
 ### 1. Supabase (Primary)
-**URL:** https://pvzicicwxgftcielnm.supabase.co
+**URL:** https://pvziciccwxgftcielknm.supabase.co
 
 **Services:**
 - ✅ Authentication (User login/registration)
@@ -138,7 +138,7 @@ Visit: https://webflagfootballfrogs.netlify.app/training.html
 ### Test 1: Check Supabase Connection
 ```bash
 # Visit Supabase Dashboard
-https://supabase.com/dashboard/project/pvzicicwxgftcielnm
+https://supabase.com/dashboard/project/pvziciccwxgftcielknm
 
 # Check:
 - Table Editor (see your tables)

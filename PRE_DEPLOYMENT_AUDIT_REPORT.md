@@ -22,7 +22,7 @@ Comprehensive audit completed on all APIs, routes, and Supabase database connect
 **Issue:**
 ```javascript
 // BEFORE (WRONG)
-url: 'https://pvzicicwxgftcielnm.supabase.co'
+url: 'https://pvziciccwxgftcielknm.supabase.co'
 
 // AFTER (FIXED)
 url: 'https://pvziciccwxgftcielknm.supabase.co'

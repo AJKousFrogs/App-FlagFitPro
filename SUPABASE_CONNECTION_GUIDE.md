@@ -16,7 +16,7 @@
 4. Click **Add Variable** and add these:
 
 ```
-SUPABASE_URL = https://pvzicicwxgftcielnm.supabase.co
+SUPABASE_URL = https://pvziciccwxgftcielknm.supabase.co
 SUPABASE_ANON_KEY = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2emljaWN3eGdmdGNpZWxrbm0iLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc1OTUzNzA1OCwiZXhwIjoyMDc1MTEzMDU4fQ.1nfJrtWPl6DrAwvjGvM1-CZBeyYgCaV9oDdaadpqhLU
 SUPABASE_SERVICE_KEY = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2emljaWN3eGdmdGNpZWxrbm0iLCJyb2xlIjoic2VydmljZV9yb2xlIiwiaWF0IjoxNzU5NTM3MDU4LCJleHAiOjIwNzUxMTMwNTh9.UwVhLpQOpC50G8D8zL8MCbIe8mm_2EqubaC2s_-Z5mo
 JWT_SECRET = flagfit-pro-jwt-secret-2024

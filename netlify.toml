@@ -268,3 +268,19 @@
   to = "/.netlify/functions/performance-data"
   status = 200
   force = true
+
+# Environment variables for Netlify Functions
+# NOTE: Sensitive values (SUPABASE_URL, SUPABASE_SERVICE_KEY, SUPABASE_ANON_KEY, JWT_SECRET)
+# should be set in the Netlify UI, NOT in this file, to keep them out of source control.
+
+# Production context: all deploys from the Production branch
+[context.production.environment]
+  NODE_ENV = "production"
+
+# Deploy preview context: pull/merge request deploys
+[context.deploy-preview.environment]
+  NODE_ENV = "development"
+
+# Branch deploy context: all other branch deploys
+[context.branch-deploy.environment]
+  NODE_ENV = "development"

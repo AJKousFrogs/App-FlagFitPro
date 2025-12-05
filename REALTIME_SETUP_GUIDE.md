@@ -446,7 +446,7 @@ import('./src/js/services/supabase-client.js').then(({ supabaseHelpers }) => {
 
 ### Test from Supabase Dashboard
 
-1. Open Supabase Dashboard: https://supabase.com/dashboard/project/pvzicicwxgftcielnm
+1. Open Supabase Dashboard: https://supabase.com/dashboard/project/pvziciccwxgftcielknm
 2. Go to Table Editor
 3. Select a table (e.g., `posts`)
 4. Click "Insert row"

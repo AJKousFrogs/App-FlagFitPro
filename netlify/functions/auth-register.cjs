@@ -91,6 +91,21 @@ exports.handler = async (event, context) => {
       existingUser = await db.users.findByEmail(normalizedEmail);
     } catch (dbError) {
       console.error("Database error checking existing user:", dbError);
+      
+      // Provide specific error for connection issues
+      if (dbError.code === 'SUPABASE_CONNECTION_ERROR' || dbError.message?.includes('connect to Supabase')) {
+        return {
+          statusCode: 503,
+          headers: CORS_HEADERS,
+          body: JSON.stringify({
+            success: false,
+            error: "Database connection failed. Please check your Supabase configuration.",
+            errorType: "database_error",
+            details: dbError.message,
+          }),
+        };
+      }
+      
       return handleServerError(dbError, "Failed to check user existence");
     }
 
@@ -114,7 +129,8 @@ exports.handler = async (event, context) => {
     // Create new user in database (email_verified defaults to false)
     let newUser;
     try {
-      newUser = await db.users.create({
+      // Try to create user with verification fields first
+      const userData = {
         name: name.trim(),
         email: normalizedEmail,
         password: hashedPassword,
@@ -122,10 +138,54 @@ exports.handler = async (event, context) => {
         email_verified: false,
         verification_token: verificationToken,
         verification_token_expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours
-      });
+      };
+
+      newUser = await db.users.create(userData);
     } catch (dbError) {
       console.error("Database error creating user:", dbError);
-      return handleServerError(dbError, "Failed to create user account");
+      console.error("Database error details:", {
+        message: dbError.message,
+        code: dbError.code,
+        details: dbError.details,
+        hint: dbError.hint,
+      });
+      
+      // If verification columns don't exist, try without them
+      if (dbError.code === '42703' && (dbError.message?.includes('verification_token') || dbError.message?.includes('verification_token_expires_at'))) {
+        console.warn("Verification columns not found, creating user without verification fields");
+        try {
+          newUser = await db.users.create({
+            name: name.trim(),
+            email: normalizedEmail,
+            password: hashedPassword,
+            role: "player",
+            email_verified: false,
+          });
+          console.log("User created successfully without verification fields");
+        } catch (retryError) {
+          console.error("Failed to create user even without verification fields:", retryError);
+          // Fall through to error handling below
+          throw retryError;
+        }
+      } else if (dbError.code === '23505') {
+        // Unique constraint violation
+        return handleConflictError("User with this email already exists");
+      } else if (dbError.code === '23502') {
+        // Not null constraint violation
+        return {
+          statusCode: 400,
+          headers: CORS_HEADERS,
+          body: JSON.stringify({
+            success: false,
+            error: "Missing required fields. Please check your registration data.",
+            errorType: "validation_error",
+            details: dbError.message,
+          }),
+        };
+      } else {
+        // Re-throw to be handled by outer catch
+        throw dbError;
+      }
     }
 
     // Send verification email

@@ -50,7 +50,7 @@ This report provides a comprehensive analysis of all API connections and real-ti
 │                    Database Layer                        │
 ├─────────────────────────────────────────────────────────┤
 │  1. Supabase (Primary)                                  │
-│     URL: https://pvzicicwxgftcielnm.supabase.co         │
+│     URL: https://pvziciccwxgftcielknm.supabase.co         │
 │     • PostgreSQL Database                               │
 │     • Authentication                                     │
 │     • Real-time Subscriptions                           │
@@ -404,7 +404,7 @@ Required environment variables set in Netlify:
 
 ```bash
 # Supabase Configuration
-SUPABASE_URL=https://pvzicicwxgftcielnm.supabase.co
+SUPABASE_URL=https://pvziciccwxgftcielknm.supabase.co
 SUPABASE_ANON_KEY=eyJhbGci...
 SUPABASE_SERVICE_KEY=eyJhbGci...
 
