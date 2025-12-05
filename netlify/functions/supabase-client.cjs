@@ -354,6 +354,20 @@ const db = {
       return data;
     },
   },
+
+  // Sponsors operations
+  sponsors: {
+    async getActiveSponsors() {
+      const { data, error } = await supabaseAdmin
+        .from("sponsors")
+        .select("*")
+        .eq("is_active", true)
+        .order("display_order", { ascending: true });
+
+      if (error) throw error;
+      return data || [];
+    },
+  },
 };
 
 // Helper functions for notifications

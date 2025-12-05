@@ -202,28 +202,8 @@
         <div class="login-sponsors-title text-sm text-muted mb-4">
           Proudly sponsored by
         </div>
-        <div class="login-sponsor-logos flex justify-center gap-6 flex-wrap items-center">
-          <div class="login-sponsor-logo-img">
-            <img
-              src="https://www.laprimafit.com/image/cache/catalog/logo/La_primafit_logo_black_linear_white_600w-1062x185.png"
-              alt="LA PRIMAFIT"
-              style="height: 24px; width: auto; filter: brightness(0);"
-            />
-          </div>
-          <div class="login-sponsor-logo-img">
-            <img
-              src="https://www.chemius.net/wp-content/uploads/2021/09/logo-chemius-header.png"
-              alt="Chemius"
-              style="height: 24px; width: auto; filter: brightness(0);"
-            />
-          </div>
-          <div class="login-sponsor-logo-img">
-            <img
-              src="https://gearxpro-sports.com/cdn/shop/files/Secondary_logo_Positive.png?v=1737387514&width=290"
-              alt="GEAR XPRO"
-              style="height: 24px; width: auto; filter: brightness(0);"
-            />
-          </div>
+        <div id="sponsorLogos" class="login-sponsor-logos flex justify-center gap-6 flex-wrap items-center">
+          <!-- Sponsors will be loaded dynamically here -->
         </div>
       </div>
     </div>
@@ -453,7 +433,85 @@
           }
           authManager.redirectToDashboard();
         }
+
+        // Load sponsors from database
+        loadSponsors();
       });
+
+      // Load sponsors from API
+      async function loadSponsors() {
+        // Define API base URL
+        const apiBaseUrl = window.location.origin.includes("netlify")
+          ? `${window.location.origin}/.netlify/functions`
+          : window.location.hostname === "localhost"
+            ? `${window.location.origin}/.netlify/functions`
+            : `${window.location.origin}/.netlify/functions`;
+
+        // Fallback logos helper function
+        const renderFallbackLogos = () => {
+          const fallbackLogos = [
+            { name: "LA PRIMAFIT", url: "https://www.laprimafit.com/image/cache/catalog/logo/La_primafit_logo_black_linear_white_600w-1062x185.png" },
+            { name: "Chemius", url: "https://www.chemius.net/wp-content/uploads/2021/09/logo-chemius-header.png" },
+            { name: "GEAR XPRO", url: "https://gearxpro-sports.com/cdn/shop/files/Secondary_logo_Positive.png?v=1737387514&width=290" }
+          ];
+          
+          const sponsorLogosContainer = document.getElementById("sponsorLogos");
+          sponsorLogosContainer.innerHTML = fallbackLogos
+            .map(
+              (sponsor) => `
+              <div class="login-sponsor-logo-img">
+                <img
+                  src="${apiBaseUrl}/sponsor-logo?url=${encodeURIComponent(sponsor.url)}"
+                  alt="${sponsor.name}"
+                  style="height: 24px; width: auto; filter: brightness(0);"
+                  onerror="this.src='${sponsor.url}'"
+                />
+              </div>
+            `
+            )
+            .join("");
+        };
+
+        try {
+          const response = await fetch(`${apiBaseUrl}/sponsors`);
+          
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const data = await response.json();
+          const sponsors = data.sponsors || [];
+
+          const sponsorLogosContainer = document.getElementById("sponsorLogos");
+          
+          if (sponsors.length === 0) {
+            // Fallback to hardcoded logos using proxy if API fails or no sponsors found
+            renderFallbackLogos();
+            return;
+          }
+
+          // Render sponsors from database
+          sponsorLogosContainer.innerHTML = sponsors
+            .map(
+              (sponsor) => `
+              <div class="login-sponsor-logo-img">
+                <img
+                  src="${sponsor.logoUrl}"
+                  alt="${sponsor.name}"
+                  style="height: 24px; width: auto; filter: brightness(0);${sponsor.websiteUrl ? ' cursor: pointer;' : ''}"
+                  ${sponsor.websiteUrl ? `onclick="window.open('${sponsor.websiteUrl}', '_blank')"` : ''}
+                />
+              </div>
+            `,
+            )
+            .join("");
+        } catch (error) {
+          console.error("Failed to load sponsors:", error);
+          
+          // Fallback to hardcoded logos using proxy on error
+          renderFallbackLogos();
+        }
+      }
 
       // Helper functions for inline validation
       function showFieldError(fieldId, message) {

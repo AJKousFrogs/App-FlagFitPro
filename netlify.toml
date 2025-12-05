@@ -24,13 +24,32 @@
     Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()"
 
     # Cross-Origin policies for additional isolation
-    Cross-Origin-Embedder-Policy = "require-corp"
+    # Using credentialless instead of require-corp to allow external resources
+    # (fonts, CDN scripts) without CORP headers while maintaining security
+    Cross-Origin-Embedder-Policy = "credentialless"
     Cross-Origin-Opener-Policy = "same-origin"
-    Cross-Origin-Resource-Policy = "same-origin"
+    # CORP header for same-site resources
+    Cross-Origin-Resource-Policy = "same-site"
 
     # Content Security Policy - defense in depth against XSS
     # Note: 'unsafe-inline' is used for inline scripts/styles - consider moving to external files with nonces in production
     Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co https://*.netlify.app https://*.netlify.com https://cdn.jsdelivr.net wss://*.supabase.co; object-src 'none'; media-src 'self'; frame-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"
+
+# CORP headers for static resources (CSS, JS, images)
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cross-Origin-Resource-Policy = "same-site"
+
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cross-Origin-Resource-Policy = "same-site"
+
+[[headers]]
+  for = "/src/**/*"
+  [headers.values]
+    Cross-Origin-Resource-Policy = "same-site"
 
 # API Routes for Dashboard (must come before page redirects)
 [[redirects]]
