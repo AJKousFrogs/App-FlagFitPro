@@ -41,10 +41,209 @@ class DashboardPage {
       document.addEventListener("DOMContentLoaded", () => {
         this.setupEventListeners();
         this.setupGlobalFunctions();
+        this.checkProfileCompletion();
       });
     } else {
       this.setupEventListeners();
       this.setupGlobalFunctions();
+      this.checkProfileCompletion();
+    }
+  }
+
+  // Check if profile needs completion and show prompt (non-blocking)
+  async checkProfileCompletion() {
+    try {
+      // Wait for auth manager to initialize
+      await authManager.waitForInit();
+
+      // Only check if user is authenticated
+      if (!authManager.isAuthenticated()) {
+        return;
+      }
+
+      // Dynamically import profile completion manager
+      const { profileCompletionManager } = await import("../../profile-completion.js");
+
+      // Check if profile needs completion
+      if (profileCompletionManager.needsCompletion()) {
+        // Show a non-blocking notification/banner instead of modal
+        // This allows dashboard access while reminding to complete profile
+        this.showProfileCompletionBanner();
+      }
+    } catch (error) {
+      logger.warn("Could not check profile completion:", error);
+      // Don't block dashboard access if check fails
+    }
+  }
+
+  // Show a non-blocking banner for profile completion
+  showProfileCompletionBanner() {
+    // Check if banner already exists
+    if (document.getElementById("profile-completion-banner")) {
+      return;
+    }
+
+    const banner = document.createElement("div");
+    banner.id = "profile-completion-banner";
+    banner.className = "profile-completion-banner";
+    banner.innerHTML = `
+      <div class="profile-completion-banner-content">
+        <div class="profile-completion-banner-icon">
+          <i data-lucide="alert-circle" class="icon-20"></i>
+        </div>
+        <div class="profile-completion-banner-text">
+          <strong>Complete Your Profile</strong>
+          <span>Finish setting up your account to get the most out of FlagFit Pro.</span>
+        </div>
+        <div class="profile-completion-banner-actions">
+          <button class="btn btn-primary btn-sm" id="complete-profile-btn">
+            Complete Profile
+          </button>
+          <button class="btn btn-secondary btn-sm" id="dismiss-profile-banner" aria-label="Dismiss">
+            <i data-lucide="x" class="icon-16"></i>
+          </button>
+        </div>
+      </div>
+    `;
+
+    // Add styles if not already present
+    if (!document.getElementById("profile-completion-banner-styles")) {
+      const style = document.createElement("style");
+      style.id = "profile-completion-banner-styles";
+      style.textContent = `
+        .profile-completion-banner {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          background: linear-gradient(135deg, #089949 0%, #0d7a3d 100%);
+          color: white;
+          padding: 12px 20px;
+          z-index: 1000;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+          animation: slideDown 0.3s ease-out;
+        }
+        .profile-completion-banner-content {
+          max-width: 1200px;
+          margin: 0 auto;
+          display: flex;
+          align-items: center;
+          gap: 16px;
+        }
+        .profile-completion-banner-icon {
+          flex-shrink: 0;
+        }
+        .profile-completion-banner-text {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+        }
+        .profile-completion-banner-text strong {
+          font-weight: 600;
+          font-size: 14px;
+        }
+        .profile-completion-banner-text span {
+          font-size: 12px;
+          opacity: 0.9;
+        }
+        .profile-completion-banner-actions {
+          display: flex;
+          gap: 8px;
+          align-items: center;
+        }
+        .btn-sm {
+          padding: 6px 12px;
+          font-size: 13px;
+        }
+        @keyframes slideDown {
+          from {
+            transform: translateY(-100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
+        }
+        @media (max-width: 768px) {
+          .profile-completion-banner-content {
+            flex-wrap: wrap;
+          }
+          .profile-completion-banner-text {
+            flex-basis: 100%;
+          }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    // Insert banner at the top of the body
+    document.body.insertBefore(banner, document.body.firstChild);
+
+    // Initialize Lucide icons
+    if (typeof lucide !== "undefined") {
+      lucide.createIcons(banner);
+    }
+
+    // Add event listeners
+    const completeBtn = document.getElementById("complete-profile-btn");
+    const dismissBtn = document.getElementById("dismiss-profile-banner");
+
+    if (completeBtn) {
+      completeBtn.addEventListener("click", async () => {
+        const { profileCompletionManager } = await import("../../profile-completion.js");
+        profileCompletionManager.showProfileCompletionModal(false); // false = not required, can skip
+        this.hideProfileCompletionBanner();
+      });
+    }
+
+    if (dismissBtn) {
+      dismissBtn.addEventListener("click", () => {
+        this.hideProfileCompletionBanner();
+        // Store dismissal to not show again for this session
+        sessionStorage.setItem("profile-banner-dismissed", "true");
+      });
+    }
+
+    // Adjust main content padding to account for banner
+    const mainContent = document.querySelector(".main-content");
+    if (mainContent) {
+      mainContent.style.paddingTop = "60px";
+    }
+  }
+
+  hideProfileCompletionBanner() {
+    const banner = document.getElementById("profile-completion-banner");
+    if (banner) {
+      banner.style.animation = "slideUp 0.3s ease-out";
+      setTimeout(() => {
+        banner.remove();
+        // Remove padding adjustment
+        const mainContent = document.querySelector(".main-content");
+        if (mainContent) {
+          mainContent.style.paddingTop = "";
+        }
+      }, 300);
+    }
+
+    // Add slideUp animation if not present
+    if (!document.getElementById("profile-completion-banner-animations")) {
+      const style = document.createElement("style");
+      style.id = "profile-completion-banner-animations";
+      style.textContent = `
+        @keyframes slideUp {
+          from {
+            transform: translateY(0);
+            opacity: 1;
+          }
+          to {
+            transform: translateY(-100%);
+            opacity: 0;
+          }
+        }
+      `;
+      document.head.appendChild(style);
     }
   }
 

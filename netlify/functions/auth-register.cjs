@@ -126,15 +126,20 @@ exports.handler = async (event, context) => {
     // Generate email verification token
     const verificationToken = randomBytes(32).toString("hex");
 
+    // Parse name into first_name and last_name
+    const nameParts = name.trim().split(/\s+/);
+    const firstName = nameParts[0] || "";
+    const lastName = nameParts.slice(1).join(" ") || "";
+
     // Create new user in database (email_verified defaults to false)
     let newUser;
     try {
       // Try to create user with verification fields first
       const userData = {
-        name: name.trim(),
+        first_name: firstName,
+        last_name: lastName,
         email: normalizedEmail,
-        password: hashedPassword,
-        role: "player",
+        password_hash: hashedPassword,
         email_verified: false,
         verification_token: verificationToken,
         verification_token_expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours
@@ -155,10 +160,10 @@ exports.handler = async (event, context) => {
         console.warn("Verification columns not found, creating user without verification fields");
         try {
           newUser = await db.users.create({
-            name: name.trim(),
+            first_name: firstName,
+            last_name: lastName,
             email: normalizedEmail,
-            password: hashedPassword,
-            role: "player",
+            password_hash: hashedPassword,
             email_verified: false,
           });
           console.log("User created successfully without verification fields");
@@ -166,6 +171,28 @@ exports.handler = async (event, context) => {
           console.error("Failed to create user even without verification fields:", retryError);
           // Fall through to error handling below
           throw retryError;
+        }
+      } else if (dbError.code === '42703') {
+        // Column doesn't exist - try with alternative column names
+        console.warn("Column mismatch detected, trying alternative schema");
+        try {
+          // Try with 'password' instead of 'password_hash' and 'name' instead of 'first_name'/'last_name'
+          const altUserData = {
+            name: name.trim(),
+            email: normalizedEmail,
+            password: hashedPassword,
+            email_verified: false,
+          };
+          // Remove verification fields if they don't exist
+          if (!dbError.message?.includes('verification_token')) {
+            altUserData.verification_token = verificationToken;
+            altUserData.verification_token_expires_at = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+          }
+          newUser = await db.users.create(altUserData);
+          console.log("User created successfully with alternative schema");
+        } catch (altError) {
+          console.error("Failed with alternative schema:", altError);
+          throw altError;
         }
       } else if (dbError.code === '23505') {
         // Unique constraint violation
@@ -227,8 +254,8 @@ exports.handler = async (event, context) => {
       // Don't fail registration if email fails - user can request resend
     }
 
-    // Return success response (exclude password and verification token)
-    const { password: _, verification_token: __, verification_token_expires_at: ___, ...safeUser } = newUser;
+    // Return success response (exclude password/password_hash and verification token)
+    const { password, password_hash, verification_token, verification_token_expires_at, ...safeUser } = newUser;
 
     return createSuccessResponse(
       { 
@@ -246,7 +273,27 @@ exports.handler = async (event, context) => {
       message: error.message,
       name: error.name,
       code: error.code,
+      details: error.details,
+      hint: error.hint,
     });
+    
+    // Check for RLS policy errors
+    if (error.message?.includes('new row violates row-level security policy') || 
+        error.code === '42501' || 
+        error.message?.includes('permission denied')) {
+      console.error("RLS Policy Error detected - service role may not have INSERT permission");
+      return {
+        statusCode: 500,
+        headers: CORS_HEADERS,
+        body: JSON.stringify({
+          success: false,
+          error: "Registration failed due to database security policy. Please contact support.",
+          errorType: "database_error",
+          details: process.env.NETLIFY_DEV === 'true' ? error.message : undefined,
+        }),
+      };
+    }
+    
     return handleServerError(error, 'Auth-Register');
   }
 };
