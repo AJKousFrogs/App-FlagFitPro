@@ -295,8 +295,8 @@ exports.handler = async (event, context) => {
       // Don't fail registration if email fails - user can request resend
     }
 
-    // Return success response (exclude password/password_hash and verification token)
-    const { password, password_hash, verification_token, verification_token_expires_at, ...safeUser } = newUser;
+    // Return success response (exclude password_hash and verification token)
+    const { password_hash, verification_token, verification_token_expires_at, ...safeUser } = newUser;
 
     return createSuccessResponse(
       { 
