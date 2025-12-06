@@ -94,3 +94,4 @@ If the problem persists:
 3. Check if Supabase project has IP restrictions enabled
 4. Review Netlify function logs for more detailed error messages
 
+

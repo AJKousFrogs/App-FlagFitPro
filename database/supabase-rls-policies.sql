@@ -19,6 +19,7 @@
 -- User-related tables
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE implementation_steps ENABLE ROW LEVEL SECURITY;
 
 -- Team-related tables
 ALTER TABLE teams ENABLE ROW LEVEL SECURITY;
@@ -88,6 +89,41 @@ USING (id = auth.user_id());
 CREATE POLICY "Users can view public profiles"
 ON users FOR SELECT
 USING (true); -- Public read access for name, avatar, etc.
+
+-- Users can insert their own profile (during registration)
+CREATE POLICY "Users can insert own profile"
+ON users FOR INSERT
+WITH CHECK (id = auth.user_id());
+
+-- Users can delete their own profile
+CREATE POLICY "Users can delete own profile"
+ON users FOR DELETE
+USING (id = auth.user_id());
+
+-- ============================================================================
+-- IMPLEMENTATION STEPS POLICIES
+-- ============================================================================
+
+-- Users can view their own implementation steps
+CREATE POLICY "Users can view own implementation steps"
+ON implementation_steps FOR SELECT
+USING (user_id = auth.user_id());
+
+-- Users can create their own implementation steps
+CREATE POLICY "Users can create own implementation steps"
+ON implementation_steps FOR INSERT
+WITH CHECK (user_id = auth.user_id());
+
+-- Users can update their own implementation steps
+CREATE POLICY "Users can update own implementation steps"
+ON implementation_steps FOR UPDATE
+USING (user_id = auth.user_id())
+WITH CHECK (user_id = auth.user_id());
+
+-- Users can delete their own implementation steps
+CREATE POLICY "Users can delete own implementation steps"
+ON implementation_steps FOR DELETE
+USING (user_id = auth.user_id());
 
 -- ============================================================================
 -- TEAM POLICIES
