@@ -155,8 +155,50 @@ exports.handler = async (event, context) => {
         hint: dbError.hint,
       });
       
-      // If verification columns don't exist, try without them
-      if (dbError.code === '42703' && (dbError.message?.includes('verification_token') || dbError.message?.includes('verification_token_expires_at'))) {
+      // Check if error is about missing columns (PostgreSQL 42703 or PostgREST PGRST204)
+      const isColumnError = dbError.code === '42703' || dbError.code === 'PGRST204';
+      const isVerificationColumnError = isColumnError && (
+        dbError.message?.includes('verification_token') || 
+        dbError.message?.includes('verification_token_expires_at')
+      );
+      
+      // Handle PostgREST schema cache errors - these usually mean the schema cache is stale
+      // or there's a mismatch between expected and actual schema
+      if (dbError.code === 'PGRST204' && dbError.message?.includes("'name' column")) {
+        console.error("PostgREST schema cache error: 'name' column not found. This suggests a schema mismatch.");
+        console.error("The database schema uses 'first_name' and 'last_name', not 'name'.");
+        console.error("PostgREST schema cache may need to be refreshed. Trying with correct column names...");
+        // Try again with correct schema (first_name/last_name) without verification fields
+        try {
+          newUser = await db.users.create({
+            first_name: firstName,
+            last_name: lastName,
+            email: normalizedEmail,
+            password_hash: hashedPassword,
+            email_verified: false,
+          });
+          console.log("User created successfully after schema cache error");
+        } catch (retryError) {
+          console.error("Failed after schema cache error:", retryError);
+          // If password_hash doesn't work, try password
+          if (retryError.code === 'PGRST204' && retryError.message?.includes('password')) {
+            try {
+              newUser = await db.users.create({
+                first_name: firstName,
+                last_name: lastName,
+                email: normalizedEmail,
+                password: hashedPassword,
+                email_verified: false,
+              });
+              console.log("User created successfully with 'password' column");
+            } catch (passwordError) {
+              throw passwordError;
+            }
+          } else {
+            throw retryError;
+          }
+        }
+      } else if (isVerificationColumnError) {
         console.warn("Verification columns not found, creating user without verification fields");
         try {
           newUser = await db.users.create({
@@ -169,30 +211,29 @@ exports.handler = async (event, context) => {
           console.log("User created successfully without verification fields");
         } catch (retryError) {
           console.error("Failed to create user even without verification fields:", retryError);
-          // Fall through to error handling below
-          throw retryError;
-        }
-      } else if (dbError.code === '42703') {
-        // Column doesn't exist - try with alternative column names
-        console.warn("Column mismatch detected, trying alternative schema");
-        try {
-          // Try with 'password' instead of 'password_hash' and 'name' instead of 'first_name'/'last_name'
-          const altUserData = {
-            name: name.trim(),
-            email: normalizedEmail,
-            password: hashedPassword,
-            email_verified: false,
-          };
-          // Remove verification fields if they don't exist
-          if (!dbError.message?.includes('verification_token')) {
-            altUserData.verification_token = verificationToken;
-            altUserData.verification_token_expires_at = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+          // Check if it's a column error for password_hash vs password
+          if (retryError.code === '42703' || retryError.code === 'PGRST204') {
+            if (retryError.message?.includes('password_hash') || retryError.message?.includes('password')) {
+              console.warn("Trying with 'password' column instead of 'password_hash'");
+              try {
+                newUser = await db.users.create({
+                  first_name: firstName,
+                  last_name: lastName,
+                  email: normalizedEmail,
+                  password: hashedPassword,
+                  email_verified: false,
+                });
+                console.log("User created successfully with 'password' column");
+              } catch (passwordError) {
+                console.error("Failed with 'password' column:", passwordError);
+                throw passwordError;
+              }
+            } else {
+              throw retryError;
+            }
+          } else {
+            throw retryError;
           }
-          newUser = await db.users.create(altUserData);
-          console.log("User created successfully with alternative schema");
-        } catch (altError) {
-          console.error("Failed with alternative schema:", altError);
-          throw altError;
         }
       } else if (dbError.code === '23505') {
         // Unique constraint violation
