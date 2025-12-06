@@ -295,18 +295,36 @@ exports.handler = async (event, context) => {
       // Don't fail registration if email fails - user can request resend
     }
 
-    // Return success response (exclude password_hash and verification token)
-    const { password_hash, verification_token, verification_token_expires_at, ...safeUser } = newUser;
+    // Generate JWT token for the new user
+    const token = jwt.sign(
+      {
+        userId: newUser.id,
+        email: newUser.email,
+        role: newUser.role || 'player',
+      },
+      JWT_SECRET,
+      { expiresIn: "24h" }
+    );
 
-    return createSuccessResponse(
-      { 
-        user: safeUser,
+    // Return success response with token (exclude password_hash and verification token)
+    const { password_hash, verification_token, verification_token_expires_at, password, ...safeUser } = newUser;
+
+    return {
+      statusCode: 201,
+      headers: CORS_HEADERS,
+      body: JSON.stringify({
+        success: true,
+        data: {
+          token,
+          user: {
+            ...safeUser,
+            name: `${safeUser.first_name || ''} ${safeUser.last_name || ''}`.trim() || safeUser.email,
+          },
+        },
         message: "Account created successfully. Please check your email to verify your account.",
         requiresVerification: true
-      },
-      201,
-      "Account created successfully. Please verify your email."
-    );
+      }),
+    };
   } catch (error) {
     console.error("Error in auth-register function:", error);
     console.error("Error stack:", error.stack);

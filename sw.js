@@ -134,8 +134,8 @@ async function networkFirstStrategy(request) {
     // Try network first
     const networkResponse = await fetch(request);
 
-    // Cache successful API responses
-    if (networkResponse.ok) {
+    // Only cache GET requests (never cache POST, PUT, DELETE, PATCH)
+    if (networkResponse.ok && request.method === 'GET') {
       const cache = await caches.open(RUNTIME_CACHE);
       cache.put(request, networkResponse.clone());
     }
@@ -144,12 +144,14 @@ async function networkFirstStrategy(request) {
   } catch (error) {
     console.log('[Service Worker] Network failed, trying cache:', request.url);
 
-    // Fallback to cache
-    const cachedResponse = await caches.match(request);
+    // Only try cache for GET requests
+    if (request.method === 'GET') {
+      const cachedResponse = await caches.match(request);
 
-    if (cachedResponse) {
-      console.log('[Service Worker] Serving API response from cache');
-      return cachedResponse;
+      if (cachedResponse) {
+        console.log('[Service Worker] Serving API response from cache');
+        return cachedResponse;
+      }
     }
 
     // No cache available

@@ -262,10 +262,22 @@
           });
 
           if (result.success) {
-            // Show profile completion form instead of redirecting immediately
+            // Show success message with email verification instructions
+            showMessage("successMessage",
+              "Account created successfully! Please check your email to verify your account before signing in."
+            );
+
+            // Clear the form
+            document.getElementById("registerForm").reset();
+
+            // Reset button state
+            submitButton.innerHTML = originalText;
+            submitButton.disabled = false;
+
+            // Redirect to login after 5 seconds
             setTimeout(() => {
-              profileCompletionManager.showProfileCompletionModal(true); // true = required
-            }, 500);
+              window.location.href = "/login.html?registered=true";
+            }, 5000);
           } else {
             submitButton.innerHTML = originalText;
             submitButton.disabled = false;
@@ -559,10 +571,12 @@
         element.textContent = message;
         element.style.display = "block";
 
-        // Auto-hide after 5 seconds
-        setTimeout(() => {
-          element.style.display = "none";
-        }, 5000);
+        // Auto-hide error messages after 5 seconds, but keep success messages visible
+        if (elementId === "errorMessage") {
+          setTimeout(() => {
+            element.style.display = "none";
+          }, 5000);
+        }
       }
 
       function hideMessage(elementId) {
