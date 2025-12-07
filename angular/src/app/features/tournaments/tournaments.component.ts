@@ -10,7 +10,7 @@ import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { TagModule } from "primeng/tag";
 import { ProgressBarModule } from "primeng/progressbar";
-import { TabViewModule } from "primeng/tabview";
+import { Tabs } from "primeng/tabs";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
@@ -39,7 +39,7 @@ interface Tournament {
     ButtonModule,
     TagModule,
     ProgressBarModule,
-    TabViewModule,
+    Tabs,
     MainLayoutComponent,
     PageHeaderComponent
 ],
@@ -55,8 +55,8 @@ interface Tournament {
         </app-page-header>
     
         <!-- Tournament Tabs -->
-        <p-tabView>
-          <p-tabPanel header="2026 Season" leftIcon="pi pi-calendar">
+        <p-tabs>
+          <p-tabpanel header="2026 Season" leftIcon="pi pi-calendar">
             <div class="tournaments-grid">
               @for (
                 tournament of tournaments2026(); track trackByTournamentId($index,
@@ -137,8 +137,8 @@ interface Tournament {
                 </p-card>
               }
             </div>
-          </p-tabPanel>
-          <p-tabPanel header="2027 Season" leftIcon="pi pi-calendar">
+          </p-tabpanel>
+          <p-tabpanel header="2027 Season" leftIcon="pi pi-calendar">
             <div class="tournaments-grid">
               @for (
                 tournament of tournaments2027(); track trackByTournamentId($index,
@@ -205,8 +205,8 @@ interface Tournament {
                 </p-card>
               }
             </div>
-          </p-tabPanel>
-        </p-tabView>
+          </p-tabpanel>
+        </p-tabs>
       </div>
     </app-main-layout>
     `,

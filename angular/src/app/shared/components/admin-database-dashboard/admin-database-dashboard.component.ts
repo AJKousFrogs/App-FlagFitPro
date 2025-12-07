@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
-import { TabViewModule } from 'primeng/tabview';
+import { Tabs } from 'primeng/tabview';
 import { AdminService } from '../../../core/services/admin.service';
 import { MessageService } from 'primeng/api';
 import { firstValueFrom } from 'rxjs';
@@ -22,7 +22,7 @@ import { firstValueFrom } from 'rxjs';
     CardModule,
     ButtonModule,
     TagModule,
-    TabViewModule,
+    Tabs,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [MessageService],
@@ -44,35 +44,35 @@ import { firstValueFrom } from 'rxjs';
 
       <!-- Data Sources Management -->
       <p-card header="Data Sources" class="sources-card">
-        <p-tabView>
-          <p-tabPanel header="USDA Foods" leftIcon="pi pi-apple">
+        <p-tabs>
+          <p-tabpanel header="USDA Foods" leftIcon="pi pi-apple">
             <div class="data-manager">
               <p>USDA Food Data Manager - Coming Soon</p>
               <p>This component will allow you to manage and sync USDA food database entries.</p>
             </div>
-          </p-tabPanel>
+          </p-tabpanel>
 
-          <p-tabPanel header="Recovery Protocols" leftIcon="pi pi-refresh">
+          <p-tabpanel header="Recovery Protocols" leftIcon="pi pi-refresh">
             <div class="data-manager">
               <p>Recovery Protocols Data Manager - Coming Soon</p>
               <p>This component will allow you to manage recovery protocols and their evidence.</p>
             </div>
-          </p-tabPanel>
+          </p-tabpanel>
 
-          <p-tabPanel header="AI Coaches" leftIcon="pi pi-users">
+          <p-tabpanel header="AI Coaches" leftIcon="pi pi-users">
             <div class="data-manager">
               <p>AI Coaches Data Manager - Coming Soon</p>
               <p>This component will allow you to manage AI coach personalities and configurations.</p>
             </div>
-          </p-tabPanel>
+          </p-tabpanel>
 
-          <p-tabPanel header="Research Data" leftIcon="pi pi-book">
+          <p-tabpanel header="Research Data" leftIcon="pi pi-book">
             <div class="data-manager">
               <p>Research Data Manager - Coming Soon</p>
               <p>This component will allow you to manage research studies and citations.</p>
             </div>
-          </p-tabPanel>
-        </p-tabView>
+          </p-tabpanel>
+        </p-tabs>
       </p-card>
 
       <!-- Data Sync Controls -->

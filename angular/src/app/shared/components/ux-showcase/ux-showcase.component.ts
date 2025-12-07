@@ -5,7 +5,7 @@ import { TrainingBuilderComponent } from '../training-builder/training-builder.c
 import { SwipeTableComponent } from '../swipe-table/swipe-table.component';
 import { TrainingHeatmapComponent } from '../training-heatmap/training-heatmap.component';
 import { CardModule } from 'primeng/card';
-import { TabViewModule } from 'primeng/tabview';
+import { Tabs } from 'primeng/tabview';
 
 /**
  * Showcase component demonstrating all advanced UX/UI components
@@ -18,7 +18,7 @@ import { TabViewModule } from 'primeng/tabview';
   imports: [
     CommonModule,
     CardModule,
-    TabViewModule,
+    Tabs,
     PerformanceDashboardComponent,
     TrainingBuilderComponent,
     SwipeTableComponent,
@@ -27,22 +27,22 @@ import { TabViewModule } from 'primeng/tabview';
   template: `
     <div class="ux-showcase">
       <p-card header="Advanced UX/UI Components Showcase">
-        <p-tabView>
+        <p-tabs>
           <!-- Performance Dashboard Tab -->
-          <p-tabPanel header="Performance Dashboard">
+          <p-tabpanel header="Performance Dashboard">
             <app-performance-dashboard
               [athleteId]="'demo-athlete'"
               [realTimeEnabled]="true">
             </app-performance-dashboard>
-          </p-tabPanel>
+          </p-tabpanel>
 
           <!-- Training Builder Tab -->
-          <p-tabPanel header="Training Builder">
+          <p-tabpanel header="Training Builder">
             <app-training-builder></app-training-builder>
-          </p-tabPanel>
+          </p-tabpanel>
 
           <!-- Swipe Table Tab -->
-          <p-tabPanel header="Swipe Table">
+          <p-tabpanel header="Swipe Table">
             <h3>Mobile Swipe Gestures</h3>
             <p class="info-text">
               Swipe left on rows (mobile only) to reveal edit/delete actions
@@ -53,13 +53,13 @@ import { TabViewModule } from 'primeng/tabview';
               [onEdit]="handleEdit"
               [onDelete]="handleDelete">
             </app-swipe-table>
-          </p-tabPanel>
+          </p-tabpanel>
 
           <!-- Training Heatmap Tab -->
-          <p-tabPanel header="Training Heatmap">
+          <p-tabpanel header="Training Heatmap">
             <app-training-heatmap></app-training-heatmap>
-          </p-tabPanel>
-        </p-tabView>
+          </p-tabpanel>
+        </p-tabs>
       </p-card>
     </div>
   `,

@@ -6,6 +6,9 @@ import { MessageService } from "primeng/api";
 import { routes } from "./app.routes";
 import { authInterceptor } from "./core/interceptors/auth.interceptor";
 import { errorInterceptor } from "./core/interceptors/error.interceptor";
+import { AcwrService } from "./core/services/acwr.service";
+import { LoadMonitoringService } from "./core/services/load-monitoring.service";
+import { AcwrAlertsService } from "./core/services/acwr-alerts.service";
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -14,5 +17,8 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(),
     provideHttpClient(withInterceptors([authInterceptor, errorInterceptor])),
     MessageService,
+    AcwrService,
+    LoadMonitoringService,
+    AcwrAlertsService,
   ],
 };

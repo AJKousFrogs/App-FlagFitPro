@@ -11,7 +11,7 @@ import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { AvatarModule } from "primeng/avatar";
 import { TagModule } from "primeng/tag";
-import { TabViewModule } from "primeng/tabview";
+import { Tabs } from "primeng/tabs";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
 import { AuthService } from "../../core/services/auth.service";
@@ -27,7 +27,7 @@ import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
     ButtonModule,
     AvatarModule,
     TagModule,
-    TabViewModule,
+    Tabs,
     MainLayoutComponent,
     StatsGridComponent
 ],
@@ -75,8 +75,8 @@ import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
         <app-stats-grid [stats]="stats()"></app-stats-grid>
     
         <!-- Profile Tabs -->
-        <p-tabView>
-          <p-tabPanel header="Overview" leftIcon="pi pi-chart-line">
+        <p-tabs>
+          <p-tabpanel header="Overview" leftIcon="pi pi-chart-line">
             <div class="overview-content">
               <p-card>
                 <ng-template pTemplate="header">
@@ -99,8 +99,8 @@ import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
                 </div>
               </p-card>
             </div>
-          </p-tabPanel>
-          <p-tabPanel header="Achievements" leftIcon="pi pi-trophy">
+          </p-tabpanel>
+          <p-tabpanel header="Achievements" leftIcon="pi pi-trophy">
             <div class="achievements-grid">
               @for (
                 achievement of achievements(); track trackByAchievementTitle($index,
@@ -117,8 +117,8 @@ import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
                 </p-card>
               }
             </div>
-          </p-tabPanel>
-          <p-tabPanel header="Statistics" leftIcon="pi pi-bar-chart">
+          </p-tabpanel>
+          <p-tabpanel header="Statistics" leftIcon="pi pi-bar-chart">
             <p-card>
               <ng-template pTemplate="header">
                 <h3>Performance Statistics</h3>
@@ -140,8 +140,8 @@ import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
                 }
               </div>
             </p-card>
-          </p-tabPanel>
-        </p-tabView>
+          </p-tabpanel>
+        </p-tabs>
       </div>
     </app-main-layout>
     `,

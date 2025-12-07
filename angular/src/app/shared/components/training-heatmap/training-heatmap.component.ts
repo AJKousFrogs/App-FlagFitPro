@@ -8,7 +8,7 @@ import {
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CardModule } from 'primeng/card';
-import { DropdownModule } from 'primeng/dropdown';
+import { Select } from 'primeng/dropdown';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 import { TagModule } from 'primeng/tag';
 import { DialogModule } from 'primeng/dialog';
@@ -32,7 +32,7 @@ interface HeatmapCell {
     CommonModule,
     FormsModule,
     CardModule,
-    DropdownModule,
+    Select,
     ToggleButtonModule,
     TagModule,
     DialogModule,
@@ -42,7 +42,7 @@ interface HeatmapCell {
   template: `
     <p-card header="Training Load Heatmap" class="heatmap-card">
       <div class="heatmap-controls">
-        <p-dropdown
+        <p-select
           [options]="timeRangeOptions"
           [(ngModel)]="selectedTimeRange"
           (onChange)="updateHeatmap()"
@@ -50,7 +50,7 @@ interface HeatmapCell {
           optionLabel="label"
           optionValue="value"
         >
-        </p-dropdown>
+        </p-select>
 
         <p-toggleButton
           [(ngModel)]="showIntensity"

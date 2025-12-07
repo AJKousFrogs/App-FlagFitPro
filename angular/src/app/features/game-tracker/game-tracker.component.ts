@@ -16,10 +16,10 @@ import {
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
-import { InputTextareaModule } from "primeng/inputtextarea";
+import { Textarea } from "primeng/textarea";
 import { InputNumberModule } from "primeng/inputnumber";
-import { CalendarModule } from "primeng/calendar";
-import { DropdownModule } from "primeng/dropdown";
+import { DatePicker } from "primeng/datepicker";
+import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { RadioButtonModule } from "primeng/radiobutton";
@@ -98,10 +98,10 @@ interface Play {
     CardModule,
     ButtonModule,
     InputTextModule,
-    InputTextareaModule,
+    Textarea,
     InputNumberModule,
-    CalendarModule,
-    DropdownModule,
+    DatePicker,
+    Select,
     TableModule,
     TagModule,
     RadioButtonModule,

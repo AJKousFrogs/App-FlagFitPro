@@ -10,9 +10,9 @@ import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { ChartModule } from "primeng/chart";
-import { DropdownModule } from "primeng/dropdown";
+import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
-import { TabViewModule } from "primeng/tabview";
+import { Tabs } from "primeng/tabs";
 import { TagModule } from "primeng/tag";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -49,9 +49,9 @@ interface Metric {
     CardModule,
     ButtonModule,
     ChartModule,
-    DropdownModule,
+    Select,
     TableModule,
-    TabViewModule,
+    Tabs,
     TagModule,
     MainLayoutComponent,
     PageHeaderComponent,
@@ -244,18 +244,18 @@ interface Metric {
             <div class="chart-header">
               <h3 class="chart-title">Speed Development Progress</h3>
               <div class="chart-controls">
-                <p-dropdown
+                <p-select
                   [options]="timePeriods"
                   [(ngModel)]="selectedTimePeriod"
                   placeholder="Time Period"
                   styleClass="w-full md:w-14rem"
-                ></p-dropdown>
-                <p-dropdown
+                ></p-select>
+                <p-select
                   [options]="metricOptions"
                   [(ngModel)]="selectedMetric"
                   placeholder="Metrics"
                   styleClass="w-full md:w-14rem"
-                ></p-dropdown>
+                ></p-select>
               </div>
             </div>
           </ng-template>
@@ -291,8 +291,8 @@ interface Metric {
           <ng-template pTemplate="header">
             <h3 class="chart-title">Player Statistics & Attendance</h3>
           </ng-template>
-          <p-tabView>
-            <p-tabPanel header="Per Game Stats">
+          <p-tabs>
+            <p-tabpanel header="Per Game Stats">
               <div class="stats-summary">
                 <div class="stat-summary-item">
                   <div class="stat-label">Games Played</div>
@@ -348,9 +348,9 @@ interface Metric {
                   </tr>
                 </ng-template>
               </p-table>
-            </p-tabPanel>
+            </p-tabpanel>
     
-            <p-tabPanel header="Season Stats">
+            <p-tabpanel header="Season Stats">
               @if (playerSeasonStats()) {
                 <div class="season-stats">
                   <div class="stats-summary">
@@ -487,9 +487,9 @@ interface Metric {
                       </div>
                     </div>
                   }
-                </p-tabPanel>
+                </p-tabpanel>
     
-                <p-tabPanel header="Multi-Season Stats">
+                <p-tabpanel header="Multi-Season Stats">
                   @if (playerMultiSeasonStats()) {
                     <div class="multi-season-stats">
                       <div class="stats-summary">
@@ -625,8 +625,8 @@ interface Metric {
                       </p-table>
                     </div>
                   }
-                </p-tabPanel>
-              </p-tabView>
+                </p-tabpanel>
+              </p-tabs>
             </p-card>
           </div>
         </app-main-layout>

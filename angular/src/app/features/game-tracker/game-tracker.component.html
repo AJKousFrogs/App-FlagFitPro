@@ -30,12 +30,12 @@
           <div class="form-grid">
             <div class="form-field">
               <label for="gameDate">Game Date</label>
-              <p-calendar
+              <p-datepicker
                 id="gameDate"
                 formControlName="gameDate"
                 dateFormat="mm/dd/yy"
                 [showIcon]="true"
-              ></p-calendar>
+              ></p-datepicker>
             </div>
             <div class="form-field">
               <label for="gameTime">Game Time</label>
@@ -68,25 +68,25 @@
             </div>
             <div class="form-field">
               <label for="homeAway">Home/Away</label>
-              <p-dropdown
+              <p-select
                 id="homeAway"
                 formControlName="homeAway"
                 [options]="homeAwayOptions"
                 optionLabel="label"
                 optionValue="value"
                 >
-              </p-dropdown>
+              </p-select>
             </div>
             <div class="form-field">
               <label for="weather">Weather Conditions</label>
-              <p-dropdown
+              <p-select
                 id="weather"
                 formControlName="weather"
                 [options]="weatherOptions"
                 optionLabel="label"
                 optionValue="value"
                 >
-              </p-dropdown>
+              </p-select>
             </div>
             <div class="form-field">
               <label for="temperature">Temperature (°F)</label>
@@ -101,14 +101,14 @@
             </div>
             <div class="form-field">
               <label for="fieldConditions">Field Conditions</label>
-              <p-dropdown
+              <p-select
                 id="fieldConditions"
                 formControlName="fieldConditions"
                 [options]="fieldConditionOptions"
                 optionLabel="label"
                 optionValue="value"
                 >
-              </p-dropdown>
+              </p-select>
             </div>
           </div>
           <div class="form-actions">
@@ -187,14 +187,14 @@
           <div class="form-grid">
             <div class="form-field">
               <label for="half">Half</label>
-              <p-dropdown
+              <p-select
                 id="half"
                 formControlName="half"
                 [options]="halfOptions"
                 optionLabel="label"
                 optionValue="value"
                 >
-              </p-dropdown>
+              </p-select>
             </div>
             <div class="form-field">
               <label for="timeRemaining">Time Remaining (seconds)</label>
@@ -315,7 +315,7 @@
                         <div class="form-grid">
                           <div class="form-field">
                             <label for="quarterbackId">Quarterback</label>
-                            <p-dropdown
+                            <p-select
                               id="quarterbackId"
                               formControlName="quarterbackId"
                               [options]="players()"
@@ -324,11 +324,11 @@
                               placeholder="Select QB"
                               [filter]="true"
                               >
-                            </p-dropdown>
+                            </p-select>
                           </div>
                           <div class="form-field">
                             <label for="receiverId">Receiver</label>
-                            <p-dropdown
+                            <p-select
                               id="receiverId"
                               formControlName="receiverId"
                               [options]="players()"
@@ -337,11 +337,11 @@
                               placeholder="Select Receiver"
                               [filter]="true"
                               >
-                            </p-dropdown>
+                            </p-select>
                           </div>
                           <div class="form-field">
                             <label for="routeType">Route Type</label>
-                            <p-dropdown
+                            <p-select
                               id="routeType"
                               formControlName="routeType"
                               [options]="routeTypeOptions"
@@ -349,7 +349,7 @@
                               optionValue="value"
                               placeholder="Select route"
                               >
-                            </p-dropdown>
+                            </p-select>
                           </div>
                           <div class="form-field">
                             <label for="routeDepth">Route Depth (yards)</label>
@@ -363,7 +363,7 @@
                           </div>
                           <div class="form-field">
                             <label for="snapAccuracy">Snap Accuracy</label>
-                            <p-dropdown
+                            <p-select
                               id="snapAccuracy"
                               formControlName="snapAccuracy"
                               [options]="accuracyOptions"
@@ -371,11 +371,11 @@
                               optionValue="value"
                               placeholder="Select accuracy"
                               >
-                            </p-dropdown>
+                            </p-select>
                           </div>
                           <div class="form-field">
                             <label for="throwAccuracy">Throw Accuracy</label>
-                            <p-dropdown
+                            <p-select
                               id="throwAccuracy"
                               formControlName="throwAccuracy"
                               [options]="accuracyOptions"
@@ -383,7 +383,7 @@
                               optionValue="value"
                               placeholder="Select accuracy"
                               >
-                            </p-dropdown>
+                            </p-select>
                           </div>
                         </div>
                         <!-- Pass Outcome Selection -->
@@ -412,7 +412,7 @@
                             <div class="form-grid">
                               <div class="form-field">
                                 <label for="dropSeverity">Drop Severity</label>
-                                <p-dropdown
+                                <p-select
                                   id="dropSeverity"
                                   formControlName="dropSeverity"
                                   [options]="dropSeverityOptions"
@@ -420,11 +420,11 @@
                                   optionValue="value"
                                   placeholder="Select severity"
                                   >
-                                </p-dropdown>
+                                </p-select>
                               </div>
                               <div class="form-field">
                                 <label for="dropReason">Drop Reason</label>
-                                <p-dropdown
+                                <p-select
                                   id="dropReason"
                                   formControlName="dropReason"
                                   [options]="dropReasonOptions"
@@ -432,7 +432,7 @@
                                   optionValue="value"
                                   placeholder="Select reason"
                                   >
-                                </p-dropdown>
+                                </p-select>
                               </div>
                             </div>
                           </div>
@@ -448,7 +448,7 @@
                         <div class="form-grid">
                           <div class="form-field">
                             <label for="ballCarrierId">Ball Carrier</label>
-                            <p-dropdown
+                            <p-select
                               id="ballCarrierId"
                               formControlName="ballCarrierId"
                               [options]="players()"
@@ -457,7 +457,7 @@
                               placeholder="Select player"
                               [filter]="true"
                               >
-                            </p-dropdown>
+                            </p-select>
                           </div>
                           <div class="form-field">
                             <label for="yardsGained">Yards Gained</label>
@@ -481,7 +481,7 @@
                         <div class="form-grid">
                           <div class="form-field">
                             <label for="defenderId">Defender</label>
-                            <p-dropdown
+                            <p-select
                               id="defenderId"
                               formControlName="defenderId"
                               [options]="players()"
@@ -490,11 +490,11 @@
                               placeholder="Select defender"
                               [filter]="true"
                               >
-                            </p-dropdown>
+                            </p-select>
                           </div>
                           <div class="form-field">
                             <label for="ballCarrierIdFlag">Ball Carrier</label>
-                            <p-dropdown
+                            <p-select
                               id="ballCarrierIdFlag"
                               formControlName="ballCarrierIdFlag"
                               [options]="players()"
@@ -503,11 +503,11 @@
                               placeholder="Select carrier"
                               [filter]="true"
                               >
-                            </p-dropdown>
+                            </p-select>
                           </div>
                           <div class="form-field">
                             <label for="isSuccessful">Successful Pull</label>
-                            <p-dropdown
+                            <p-select
                               id="isSuccessful"
                               formControlName="isSuccessful"
                               [options]="successOptions"
@@ -515,7 +515,7 @@
                               optionValue="value"
                               placeholder="Select outcome"
                               >
-                            </p-dropdown>
+                            </p-select>
                           </div>
                         </div>
                         <!-- Miss Analysis (Conditional) -->
@@ -525,7 +525,7 @@
                             >
                             <div class="form-field">
                               <label for="missReason">Miss Reason</label>
-                              <p-dropdown
+                              <p-select
                                 id="missReason"
                                 formControlName="missReason"
                                 [options]="missReasonOptions"
@@ -533,7 +533,7 @@
                                 optionValue="value"
                                 placeholder="Select reason"
                                 >
-                              </p-dropdown>
+                              </p-select>
                             </div>
                           </div>
                         }
@@ -548,7 +548,7 @@
                         <div class="form-grid">
                           <div class="form-field">
                             <label for="interceptorId">Interceptor</label>
-                            <p-dropdown
+                            <p-select
                               id="interceptorId"
                               formControlName="interceptorId"
                               [options]="players()"
@@ -557,7 +557,7 @@
                               placeholder="Select interceptor"
                               [filter]="true"
                               >
-                            </p-dropdown>
+                            </p-select>
                           </div>
                         </div>
                       </div>
@@ -571,7 +571,7 @@
                         <div class="form-grid">
                           <div class="form-field">
                             <label for="deflectedBy">Deflected By</label>
-                            <p-dropdown
+                            <p-select
                               id="deflectedBy"
                               formControlName="deflectedBy"
                               [options]="players()"
@@ -580,7 +580,7 @@
                               placeholder="Select defender"
                               [filter]="true"
                               >
-                            </p-dropdown>
+                            </p-select>
                           </div>
                         </div>
                       </div>

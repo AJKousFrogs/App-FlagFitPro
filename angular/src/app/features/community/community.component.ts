@@ -9,7 +9,7 @@ import {
 import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
-import { InputTextarea } from "primeng/inputtextarea";
+import { Textarea } from "primeng/textarea";
 import { AvatarModule } from "primeng/avatar";
 import { BadgeModule } from "primeng/badge";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -47,7 +47,7 @@ interface Comment {
     FormsModule,
     CardModule,
     ButtonModule,
-    InputTextarea,
+    Textarea,
     AvatarModule,
     BadgeModule,
     MainLayoutComponent,

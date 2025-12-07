@@ -15,9 +15,9 @@ import {
 } from "@angular/forms";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
-import { DropdownModule } from "primeng/dropdown";
+import { Select } from "primeng/select";
 import { SliderModule } from "primeng/slider";
-import { InputSwitchModule } from "primeng/inputswitch";
+import { ToggleSwitch } from "primeng/toggleswitch";
 import { ChipModule } from "primeng/chip";
 import { TagModule } from "primeng/tag";
 import { SelectButtonModule } from "primeng/selectbutton";
@@ -52,9 +52,9 @@ interface EquipmentOption {
     ReactiveFormsModule,
     CardModule,
     ButtonModule,
-    DropdownModule,
+    Select,
     SliderModule,
-    InputSwitchModule,
+    ToggleSwitch,
     ChipModule,
     TagModule,
     SelectButtonModule,
@@ -87,7 +87,7 @@ interface EquipmentOption {
         <div class="form-grid">
           <div class="form-field">
             <label for="sessionType">Session Type</label>
-            <p-dropdown
+            <p-select
               id="sessionType"
               formControlName="sessionType"
               [options]="sessionTypes"
@@ -107,7 +107,7 @@ interface EquipmentOption {
                   </div>
                 </div>
               </ng-template>
-            </p-dropdown>
+            </p-select>
           </div>
 
           <!-- Context-aware duration field -->

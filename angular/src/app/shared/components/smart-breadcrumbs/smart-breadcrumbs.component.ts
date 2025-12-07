@@ -8,7 +8,7 @@ import {
 
 import { Router, RouterModule } from "@angular/router";
 import { BreadcrumbModule } from "primeng/breadcrumb";
-import { DropdownModule } from "primeng/dropdown";
+import { Select } from "primeng/select";
 import { TagModule } from "primeng/tag";
 import { MenuItem } from "primeng/api";
 import { ContextService, QuickAction } from "../../../core/services/context.service";
@@ -20,7 +20,7 @@ import { ContextService, QuickAction } from "../../../core/services/context.serv
   imports: [
     RouterModule,
     BreadcrumbModule,
-    DropdownModule,
+    Select,
     TagModule
 ],
   template: `
@@ -62,7 +62,7 @@ import { ContextService, QuickAction } from "../../../core/services/context.serv
         </p-breadcrumb>
     
         <!-- Quick Actions Dropdown -->
-        <p-dropdown
+        <p-select
           [options]="quickActionsDropdown()"
           optionLabel="label"
           placeholder="Quick Actions"
@@ -77,7 +77,7 @@ import { ContextService, QuickAction } from "../../../core/services/context.serv
               <span>{{ action.label }}</span>
             </div>
           </ng-template>
-        </p-dropdown>
+        </p-select>
       </div>
     </nav>
     `,

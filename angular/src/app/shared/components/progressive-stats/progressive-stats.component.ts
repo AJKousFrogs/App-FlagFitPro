@@ -9,7 +9,7 @@ import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
 import { ButtonModule } from "primeng/button";
 import { TagModule } from "primeng/tag";
-import { TabViewModule } from "primeng/tabview";
+import { Tabs } from "primeng/tabs";
 import {
   trigger,
   transition,
@@ -36,7 +36,7 @@ export interface ProgressiveStatItem extends StatItem {
     ChartModule,
     ButtonModule,
     TagModule,
-    TabViewModule,
+    Tabs,
   ],
   template: `
     <div class="progressive-stats">
@@ -89,7 +89,7 @@ export interface ProgressiveStatItem extends StatItem {
               *ngIf="showDeepDive() === stat.id && hasChartData(stat)"
               class="stat-tabs"
             >
-              <p-tabPanel header="Trends" leftIcon="pi pi-chart-line">
+              <p-tabpanel header="Trends" leftIcon="pi pi-chart-line">
                 <div class="chart-container" *ngIf="stat.trendData">
                   <p-chart
                     [type]="'line'"
@@ -100,9 +100,9 @@ export interface ProgressiveStatItem extends StatItem {
                 <div class="no-data" *ngIf="!stat.trendData">
                   No trend data available
                 </div>
-              </p-tabPanel>
+              </p-tabpanel>
 
-              <p-tabPanel header="Breakdown" leftIcon="pi pi-pie-chart">
+              <p-tabpanel header="Breakdown" leftIcon="pi pi-pie-chart">
                 <div class="chart-container" *ngIf="stat.breakdownData">
                   <p-chart
                     [type]="'doughnut'"
@@ -113,9 +113,9 @@ export interface ProgressiveStatItem extends StatItem {
                 <div class="no-data" *ngIf="!stat.breakdownData">
                   No breakdown data available
                 </div>
-              </p-tabPanel>
+              </p-tabpanel>
 
-              <p-tabPanel header="Benchmarks" leftIcon="pi pi-flag">
+              <p-tabpanel header="Benchmarks" leftIcon="pi pi-flag">
                 <div class="benchmark-container" *ngIf="stat.benchmarkData">
                   <div
                     class="benchmark-item"
@@ -136,8 +136,8 @@ export interface ProgressiveStatItem extends StatItem {
                 <div class="no-data" *ngIf="!stat.benchmarkData">
                   No benchmark data available
                 </div>
-              </p-tabPanel>
-            </p-tabView>
+              </p-tabpanel>
+            </p-tabs>
 
             <div class="action-buttons">
               <p-button

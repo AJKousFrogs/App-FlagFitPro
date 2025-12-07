@@ -124,6 +124,22 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: "acwr",
+    loadComponent: () =>
+      import("./features/acwr-dashboard/acwr-dashboard.component").then(
+        (m) => m.AcwrDashboardComponent,
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: "load-monitoring",
+    redirectTo: "acwr",
+  },
+  {
+    path: "injury-prevention",
+    redirectTo: "acwr",
+  },
+  {
     path: "game-tracker",
     loadComponent: () =>
       import("./features/game-tracker/game-tracker.component").then(
