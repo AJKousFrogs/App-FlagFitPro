@@ -5,7 +5,7 @@ import {
   signal,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
@@ -40,7 +40,6 @@ interface Workout {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     FormsModule,
     CardModule,
     ButtonModule,
@@ -48,8 +47,8 @@ interface Workout {
     CheckboxModule,
     TagModule,
     MainLayoutComponent,
-    PageHeaderComponent,
-  ],
+    PageHeaderComponent
+],
   template: `
     <app-main-layout>
       <div class="workout-page">
@@ -57,102 +56,106 @@ interface Workout {
           title="Workout Tracker"
           subtitle="Track your workouts and monitor your progress"
           icon="pi-bolt"
-        >
+          >
           <p-button
             label="New Workout"
             icon="pi pi-plus"
             (onClick)="createNewWorkout()"
           ></p-button>
         </app-page-header>
-
+    
         <!-- Active Workout -->
-        <p-card *ngIf="activeWorkout()" class="active-workout-card">
-          <ng-template pTemplate="header">
-            <div class="workout-header">
-              <h3>{{ activeWorkout()?.name }}</h3>
-              <p-tag
+        @if (activeWorkout()) {
+          <p-card class="active-workout-card">
+            <ng-template pTemplate="header">
+              <div class="workout-header">
+                <h3>{{ activeWorkout()?.name }}</h3>
+                <p-tag
                 [value]="
                   activeWorkout()?.completed ? 'Completed' : 'In Progress'
                 "
-                [severity]="activeWorkout()?.completed ? 'success' : 'info'"
-              >
-              </p-tag>
-            </div>
-          </ng-template>
-          <div class="exercises-list">
-            <div
-              *ngFor="
-                let exercise of activeWorkout()?.exercises;
-                trackBy: trackByExerciseId
-              "
-              class="exercise-item"
-            >
-              <div class="exercise-info">
-                <h4>{{ exercise.name }}</h4>
-                <div class="exercise-details">
-                  <span
-                    >{{ exercise.sets }} sets × {{ exercise.reps }} reps</span
+                  [severity]="activeWorkout()?.completed ? 'success' : 'info'"
                   >
-                  <span *ngIf="exercise.weight">{{ exercise.weight }} lbs</span>
-                </div>
-              </div>
-              <div class="exercise-actions">
-                <p-checkbox
-                  [(ngModel)]="exercise.completed"
-                  [binary]="true"
-                  inputId="exercise-{{ exercise.id }}"
-                >
-                </p-checkbox>
-                <label for="exercise-{{ exercise.id }}">Done</label>
-              </div>
-            </div>
-          </div>
-          <div class="workout-actions">
-            <p-button
-              label="Save Progress"
-              [outlined]="true"
-              (onClick)="saveWorkout()"
-            ></p-button>
-            <p-button
-              label="Complete Workout"
-              (onClick)="completeWorkout()"
-            ></p-button>
-          </div>
-        </p-card>
-
-        <!-- Workout History -->
-        <p-card class="workout-history-card">
-          <ng-template pTemplate="header">
-            <h3>Workout History</h3>
-          </ng-template>
-          <div class="workouts-list">
-            <div
-              *ngFor="
-                let workout of workoutHistory();
-                trackBy: trackByWorkoutId
-              "
-              class="workout-item"
-            >
-              <div class="workout-info">
-                <h4>{{ workout.name }}</h4>
-                <p class="workout-date">{{ workout.date }}</p>
-                <p class="workout-stats">
-                  {{ workout.exercises.length }} exercises
-                </p>
-              </div>
-              <div class="workout-status">
-                <p-tag
-                  [value]="workout.completed ? 'Completed' : 'Incomplete'"
-                  [severity]="workout.completed ? 'success' : 'warn'"
-                >
                 </p-tag>
               </div>
+            </ng-template>
+            <div class="exercises-list">
+              @for (
+                exercise of activeWorkout()?.exercises; track trackByExerciseId($index,
+                exercise)) {
+                <div
+                  class="exercise-item"
+                  >
+                  <div class="exercise-info">
+                    <h4>{{ exercise.name }}</h4>
+                    <div class="exercise-details">
+                      <span
+                        >{{ exercise.sets }} sets × {{ exercise.reps }} reps</span
+                        >
+                        @if (exercise.weight) {
+                          <span>{{ exercise.weight }} lbs</span>
+                        }
+                      </div>
+                    </div>
+                    <div class="exercise-actions">
+                      <p-checkbox
+                        [(ngModel)]="exercise.completed"
+                        [binary]="true"
+                        inputId="exercise-{{ exercise.id }}"
+                        >
+                      </p-checkbox>
+                      <label for="exercise-{{ exercise.id }}">Done</label>
+                    </div>
+                  </div>
+                }
+              </div>
+              <div class="workout-actions">
+                <p-button
+                  label="Save Progress"
+                  [outlined]="true"
+                  (onClick)="saveWorkout()"
+                ></p-button>
+                <p-button
+                  label="Complete Workout"
+                  (onClick)="completeWorkout()"
+                ></p-button>
+              </div>
+            </p-card>
+          }
+    
+          <!-- Workout History -->
+          <p-card class="workout-history-card">
+            <ng-template pTemplate="header">
+              <h3>Workout History</h3>
+            </ng-template>
+            <div class="workouts-list">
+              @for (
+                workout of workoutHistory(); track trackByWorkoutId($index,
+                workout)) {
+                <div
+                  class="workout-item"
+                  >
+                  <div class="workout-info">
+                    <h4>{{ workout.name }}</h4>
+                    <p class="workout-date">{{ workout.date }}</p>
+                    <p class="workout-stats">
+                      {{ workout.exercises.length }} exercises
+                    </p>
+                  </div>
+                  <div class="workout-status">
+                    <p-tag
+                      [value]="workout.completed ? 'Completed' : 'Incomplete'"
+                      [severity]="workout.completed ? 'success' : 'warn'"
+                      >
+                    </p-tag>
+                  </div>
+                </div>
+              }
             </div>
-          </div>
-        </p-card>
-      </div>
-    </app-main-layout>
-  `,
+          </p-card>
+        </div>
+      </app-main-layout>
+    `,
   styles: [
     `
       .workout-page {

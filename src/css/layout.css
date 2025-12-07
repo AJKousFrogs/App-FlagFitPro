@@ -270,6 +270,63 @@
   margin-left: 0 !important;
 }
 
+/* ================================================================
+   DASHBOARD LAYOUT PATTERNS
+   Consolidated from page-specific CSS files
+   ================================================================ */
+
+/* Dashboard Container - Common pattern across dashboard pages */
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+  background: var(--surface-primary);
+}
+
+/* Main Content Area - Standard layout for pages with sidebar */
+.main-content {
+  margin-left: 250px;
+  width: calc(100% - 250px);
+  padding: var(--space-xl) var(--space-xl);
+  box-sizing: border-box;
+}
+
+@media (max-width: 1024px) {
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+    padding: var(--space-md) var(--space-6);
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    padding: var(--space-md) var(--space-md);
+  }
+}
+
+/* Main content with top bar offset */
+.main-content.has-topbar {
+  padding-top: calc(64px + var(--space-xl));
+}
+
+@media (max-width: 1024px) {
+  .main-content.has-topbar {
+    padding-top: calc(64px + var(--space-5));
+  }
+}
+
+@media (max-width: 768px) {
+  .main-content.has-topbar {
+    padding-top: calc(56px + var(--space-4));
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content.has-topbar {
+    padding-top: calc(56px + var(--space-3));
+  }
+}
+
 .l-page-centered {
   display: flex;
   align-items: center;

@@ -1,14 +1,14 @@
-import { Injectable, inject } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
-import { ApiService, API_ENDPOINTS } from './api.service';
+import { Injectable, inject } from "@angular/core";
+import { Observable, of } from "rxjs";
+import { map, catchError } from "rxjs/operators";
+import { ApiService, API_ENDPOINTS } from "./api.service";
 
 export interface NutritionGoal {
   nutrient: string;
   current: number;
   target: number;
   unit: string;
-  priority: 'high' | 'medium' | 'low';
+  priority: "high" | "medium" | "low";
 }
 
 export interface USDAFood {
@@ -50,13 +50,13 @@ export interface MealFood {
 export interface AINutritionSuggestion {
   name: string;
   benefit: string;
-  priority: 'high' | 'medium' | 'low';
+  priority: "high" | "medium" | "low";
   food: USDAFood;
   reason: string;
 }
 
 export interface PerformanceInsight {
-  type: 'positive' | 'warning' | 'negative';
+  type: "positive" | "warning" | "negative";
   icon: string;
   title: string;
   description: string;
@@ -65,7 +65,7 @@ export interface PerformanceInsight {
 }
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class NutritionService {
   private apiService = inject(ApiService);

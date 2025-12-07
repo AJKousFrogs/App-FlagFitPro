@@ -5,7 +5,7 @@ import {
   signal,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { TagModule } from "primeng/tag";
@@ -47,7 +47,6 @@ interface Workout {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     CardModule,
     ButtonModule,
     TagModule,
@@ -56,8 +55,8 @@ interface Workout {
     MainLayoutComponent,
     StatsGridComponent,
     TrainingBuilderComponent,
-    SwipeGestureDirective,
-  ],
+    SwipeGestureDirective
+],
   template: `
     <p-toast></p-toast>
     <app-main-layout>
@@ -67,7 +66,7 @@ interface Workout {
         appSwipeGesture
         [enablePullToRefresh]="true"
         (pullToRefresh)="refreshTrainingData()"
-      >
+        >
         <!-- Hero Section -->
         <div class="hero-section">
           <p-card class="hero-card">
@@ -79,13 +78,13 @@ interface Workout {
             <div class="hero-note">Your Weekly Performance Snapshot</div>
           </p-card>
         </div>
-
+    
         <!-- Smart Training Session Builder -->
         <app-training-builder></app-training-builder>
-
+    
         <!-- Training Stats Grid -->
         <app-stats-grid [stats]="trainingStats()"></app-stats-grid>
-
+    
         <!-- Weekly Schedule -->
         <p-card class="schedule-card">
           <ng-template pTemplate="header">
@@ -103,27 +102,28 @@ interface Workout {
             </div>
           </ng-template>
           <div class="weekly-schedule-grid">
-            <div
-              *ngFor="let day of weeklySchedule(); trackBy: trackByDayName"
-              class="schedule-day"
-            >
-              <div class="day-name">{{ day.name }}</div>
-              <div class="day-sessions">
-                <div
-                  *ngFor="
-                    let session of day.sessions;
-                    trackBy: trackBySessionTime
-                  "
-                  class="session-item"
+            @for (day of weeklySchedule(); track trackByDayName($index, day)) {
+              <div
+                class="schedule-day"
                 >
-                  <div class="session-time">{{ session.time }}</div>
-                  <div class="session-title">{{ session.title }}</div>
+                <div class="day-name">{{ day.name }}</div>
+                <div class="day-sessions">
+                  @for (
+                    session of day.sessions; track trackBySessionTime($index,
+                    session)) {
+                    <div
+                      class="session-item"
+                      >
+                      <div class="session-time">{{ session.time }}</div>
+                      <div class="session-title">{{ session.title }}</div>
+                    </div>
+                  }
                 </div>
               </div>
-            </div>
+            }
           </div>
         </p-card>
-
+    
         <!-- Training Grid -->
         <div class="training-grid">
           <!-- Workouts Section -->
@@ -135,36 +135,37 @@ interface Workout {
               </h2>
             </ng-template>
             <div class="workouts-list">
-              <div
-                *ngFor="let workout of workouts(); trackBy: trackByWorkoutTitle"
-                class="workout-card"
-                [style.border-color]="workout.iconBg"
-                [class.swiping-right]="swipingWorkoutId() === workout.title && swipeDirection() === 'right'"
-                [class.swiping-left]="swipingWorkoutId() === workout.title && swipeDirection() === 'left'"
-                appSwipeGesture
-                (swipeRight)="onSwipeRight($event, workout)"
-                (swipeLeft)="onSwipeLeft($event, workout)"
-              >
-                <div class="workout-icon" [style.background]="workout.iconBg">
-                  <i [class]="workout.icon"></i>
-                </div>
-                <div class="workout-content">
-                  <h3 class="workout-title">{{ workout.title }}</h3>
-                  <p class="workout-description">{{ workout.description }}</p>
-                  <div class="workout-meta">
-                    <span>⏱️ {{ workout.duration }}</span>
-                    <span>🔥 {{ workout.intensity }}</span>
-                    <span>📍 {{ workout.location }}</span>
+              @for (workout of workouts(); track trackByWorkoutTitle($index, workout)) {
+                <div
+                  class="workout-card"
+                  [style.border-color]="workout.iconBg"
+                  [class.swiping-right]="swipingWorkoutId() === workout.title && swipeDirection() === 'right'"
+                  [class.swiping-left]="swipingWorkoutId() === workout.title && swipeDirection() === 'left'"
+                  appSwipeGesture
+                  (swipeRight)="onSwipeRight($event, workout)"
+                  (swipeLeft)="onSwipeLeft($event, workout)"
+                  >
+                  <div class="workout-icon" [style.background]="workout.iconBg">
+                    <i [class]="workout.icon"></i>
                   </div>
+                  <div class="workout-content">
+                    <h3 class="workout-title">{{ workout.title }}</h3>
+                    <p class="workout-description">{{ workout.description }}</p>
+                    <div class="workout-meta">
+                      <span>⏱️ {{ workout.duration }}</span>
+                      <span>🔥 {{ workout.intensity }}</span>
+                      <span>📍 {{ workout.location }}</span>
+                    </div>
+                  </div>
+                  <p-button
+                    label="Start"
+                    (onClick)="startWorkout(workout)"
+                  ></p-button>
                 </div>
-                <p-button
-                  label="Start"
-                  (onClick)="startWorkout(workout)"
-                ></p-button>
-              </div>
+              }
             </div>
           </p-card>
-
+    
           <!-- Progress & Achievements -->
           <p-card class="progress-section">
             <ng-template pTemplate="header">
@@ -174,25 +175,25 @@ interface Workout {
               </h2>
             </ng-template>
             <div class="achievements-list">
-              <div
-                *ngFor="
-                  let achievement of achievements();
-                  trackBy: trackByAchievementTitle
-                "
-                class="achievement-item"
-              >
-                <div class="achievement-icon">{{ achievement.icon }}</div>
-                <div class="achievement-content">
-                  <div class="achievement-title">{{ achievement.title }}</div>
-                  <div class="achievement-date">{{ achievement.date }}</div>
+              @for (
+                achievement of achievements(); track trackByAchievementTitle($index,
+                achievement)) {
+                <div
+                  class="achievement-item"
+                  >
+                  <div class="achievement-icon">{{ achievement.icon }}</div>
+                  <div class="achievement-content">
+                    <div class="achievement-title">{{ achievement.title }}</div>
+                    <div class="achievement-date">{{ achievement.date }}</div>
+                  </div>
                 </div>
-              </div>
+              }
             </div>
           </p-card>
         </div>
       </div>
     </app-main-layout>
-  `,
+    `,
   styles: [
     `
       .training-page {

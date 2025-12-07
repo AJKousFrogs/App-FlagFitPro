@@ -4,7 +4,7 @@ import {
   signal,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { Router, RouterModule } from "@angular/router";
 import {
   FormBuilder,
@@ -26,15 +26,14 @@ import { AuthService } from "../../../core/services/auth.service";
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     RouterModule,
     ReactiveFormsModule,
     CardModule,
     ButtonModule,
     InputTextModule,
     MessageModule,
-    ToastModule,
-  ],
+    ToastModule
+],
   providers: [MessageService],
   template: `
     <p-toast></p-toast>
@@ -46,7 +45,7 @@ import { AuthService } from "../../../core/services/auth.service";
           </div>
           <h1 class="register-title">Create Your Account</h1>
         </ng-template>
-
+    
         <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
           <div class="p-field mb-4">
             <label for="name" class="p-label">Full Name</label>
@@ -57,12 +56,14 @@ import { AuthService } from "../../../core/services/auth.service";
               formControlName="name"
               placeholder="Enter your full name"
               [class.ng-invalid]="isFieldInvalid('name')"
-            />
-            <small class="p-error" *ngIf="isFieldInvalid('name')">
-              {{ getFieldError("name") }}
-            </small>
+              />
+            @if (isFieldInvalid('name')) {
+              <small class="p-error">
+                {{ getFieldError("name") }}
+              </small>
+            }
           </div>
-
+    
           <div class="p-field mb-4">
             <label for="email" class="p-label required">Email</label>
             <input
@@ -73,12 +74,14 @@ import { AuthService } from "../../../core/services/auth.service";
               placeholder="Enter your email"
               [class.ng-invalid]="isFieldInvalid('email')"
               autocomplete="email"
-            />
-            <small class="p-error" *ngIf="isFieldInvalid('email')">
-              {{ getFieldError("email") }}
-            </small>
+              />
+            @if (isFieldInvalid('email')) {
+              <small class="p-error">
+                {{ getFieldError("email") }}
+              </small>
+            }
           </div>
-
+    
           <div class="p-field mb-4">
             <label for="password" class="p-label required">Password</label>
             <input
@@ -89,55 +92,59 @@ import { AuthService } from "../../../core/services/auth.service";
               placeholder="Create a password"
               [class.ng-invalid]="isFieldInvalid('password')"
               autocomplete="new-password"
-            />
-            <small class="p-error" *ngIf="isFieldInvalid('password')">
-              {{ getFieldError("password") }}
-            </small>
+              />
+            @if (isFieldInvalid('password')) {
+              <small class="p-error">
+                {{ getFieldError("password") }}
+              </small>
+            }
             <small class="p-text-secondary mt-2">
               Password must be at least 8 characters and include uppercase,
               lowercase, number, and special character.
             </small>
           </div>
-
+    
           <div class="p-field mb-4">
             <label for="confirmPassword" class="p-label required"
               >Confirm Password</label
-            >
-            <input
-              id="confirmPassword"
-              type="password"
-              pInputText
-              formControlName="confirmPassword"
-              placeholder="Confirm your password"
-              [class.ng-invalid]="isFieldInvalid('confirmPassword')"
-              autocomplete="new-password"
-            />
-            <small class="p-error" *ngIf="isFieldInvalid('confirmPassword')">
-              {{ getFieldError("confirmPassword") }}
-            </small>
+              >
+              <input
+                id="confirmPassword"
+                type="password"
+                pInputText
+                formControlName="confirmPassword"
+                placeholder="Confirm your password"
+                [class.ng-invalid]="isFieldInvalid('confirmPassword')"
+                autocomplete="new-password"
+                />
+              @if (isFieldInvalid('confirmPassword')) {
+                <small class="p-error">
+                  {{ getFieldError("confirmPassword") }}
+                </small>
+              }
+            </div>
+    
+            <p-button
+              type="submit"
+              label="Create Account"
+              icon="pi pi-user-plus"
+              [loading]="isLoading()"
+              [disabled]="registerForm.invalid"
+              styleClass="w-full mb-4"
+              >
+            </p-button>
+          </form>
+    
+          <div class="register-divider my-4">
+            <span>Or</span>
           </div>
-
-          <p-button
-            type="submit"
-            label="Create Account"
-            icon="pi pi-user-plus"
-            [loading]="isLoading()"
-            [disabled]="registerForm.invalid"
-            styleClass="w-full mb-4"
-          >
-          </p-button>
-        </form>
-
-        <div class="register-divider my-4">
-          <span>Or</span>
+    
+          <a [routerLink]="['/login']" class="register-login-link"
+            >Already have an account? Sign in</a
+            >
+          </p-card>
         </div>
-
-        <a [routerLink]="['/login']" class="register-login-link"
-          >Already have an account? Sign in</a
-        >
-      </p-card>
-    </div>
-  `,
+    `,
   styles: [
     `
       .register-page {

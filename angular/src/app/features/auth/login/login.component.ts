@@ -4,7 +4,7 @@ import {
   signal,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { Router, RouterModule } from "@angular/router";
 import {
   FormBuilder,
@@ -27,7 +27,6 @@ import { AuthService } from "../../../core/services/auth.service";
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     RouterModule,
     ReactiveFormsModule,
     CardModule,
@@ -35,8 +34,8 @@ import { AuthService } from "../../../core/services/auth.service";
     InputTextModule,
     CheckboxModule,
     MessageModule,
-    ToastModule,
-  ],
+    ToastModule
+],
   providers: [MessageService],
   template: `
     <p-toast></p-toast>
@@ -48,15 +47,17 @@ import { AuthService } from "../../../core/services/auth.service";
           </div>
           <h1 class="login-title">Sign in to FlagFit Pro</h1>
         </ng-template>
-
-        <div class="alert alert-info mb-4" *ngIf="isDemoMode">
-          <strong>Demo Mode:</strong> This login accepts any email and password
-          for testing purposes.
-        </div>
-
+    
+        @if (isDemoMode) {
+          <div class="alert alert-info mb-4">
+            <strong>Demo Mode:</strong> This login accepts any email and password
+            for testing purposes.
+          </div>
+        }
+    
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
           <input type="hidden" [value]="csrfToken()" />
-
+    
           <div class="p-field mb-4">
             <label for="email" class="p-label required">Email</label>
             <input
@@ -67,12 +68,14 @@ import { AuthService } from "../../../core/services/auth.service";
               placeholder="Enter your email"
               [class.ng-invalid]="isFieldInvalid('email')"
               autocomplete="email"
-            />
-            <small class="p-error" *ngIf="isFieldInvalid('email')">
-              {{ getFieldError("email") }}
-            </small>
+              />
+            @if (isFieldInvalid('email')) {
+              <small class="p-error">
+                {{ getFieldError("email") }}
+              </small>
+            }
           </div>
-
+    
           <div class="p-field mb-4">
             <label for="password" class="p-label required">Password</label>
             <input
@@ -83,12 +86,14 @@ import { AuthService } from "../../../core/services/auth.service";
               placeholder="Enter your password"
               [class.ng-invalid]="isFieldInvalid('password')"
               autocomplete="current-password"
-            />
-            <small class="p-error" *ngIf="isFieldInvalid('password')">
-              {{ getFieldError("password") }}
-            </small>
+              />
+            @if (isFieldInvalid('password')) {
+              <small class="p-error">
+                {{ getFieldError("password") }}
+              </small>
+            }
           </div>
-
+    
           <div class="login-form-options mb-4">
             <div class="flex align-items-center">
               <p-checkbox
@@ -99,30 +104,30 @@ import { AuthService } from "../../../core/services/auth.service";
             </div>
             <a [routerLink]="['/reset-password']" class="text-primary"
               >Forgot your password?</a
-            >
+              >
+            </div>
+    
+            <p-button
+              type="submit"
+              label="Sign in"
+              icon="pi pi-lock"
+              [loading]="isLoading()"
+              [disabled]="loginForm.invalid"
+              styleClass="w-full"
+              >
+            </p-button>
+          </form>
+    
+          <div class="login-divider my-4">
+            <span>Or</span>
           </div>
-
-          <p-button
-            type="submit"
-            label="Sign in"
-            icon="pi pi-lock"
-            [loading]="isLoading()"
-            [disabled]="loginForm.invalid"
-            styleClass="w-full"
-          >
-          </p-button>
-        </form>
-
-        <div class="login-divider my-4">
-          <span>Or</span>
+    
+          <a [routerLink]="['/register']" class="login-create-link"
+            >create a new account</a
+            >
+          </p-card>
         </div>
-
-        <a [routerLink]="['/register']" class="login-create-link"
-          >create a new account</a
-        >
-      </p-card>
-    </div>
-  `,
+    `,
   styles: [
     `
       .login-page {

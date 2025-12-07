@@ -5,7 +5,7 @@ import {
   signal,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { Router } from "@angular/router";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
@@ -23,7 +23,7 @@ interface WellnessMetric {
   selector: "app-wellness-widget",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, CardModule, ButtonModule, ProgressBarModule],
+  imports: [CardModule, ButtonModule, ProgressBarModule],
   template: `
     <p-card class="wellness-widget">
       <ng-template pTemplate="header">
@@ -42,7 +42,7 @@ interface WellnessMetric {
           ></p-button>
         </div>
       </ng-template>
-
+    
       <div class="wellness-content">
         <!-- Overall Score -->
         <div class="score-section">
@@ -51,7 +51,7 @@ interface WellnessMetric {
             <span class="score-label">{{ statusLabel() }}</span>
           </div>
         </div>
-
+    
         <!-- Progress Bar -->
         <div class="progress-section">
           <p-progressBar
@@ -61,35 +61,40 @@ interface WellnessMetric {
             [styleClass]="'wellness-progress'"
           ></p-progressBar>
         </div>
-
+    
         <!-- Key Metrics -->
-        <div class="metrics-grid" *ngIf="metrics().length > 0">
-          <div
-            class="metric-item"
-            *ngFor="let metric of metrics(); trackBy: trackByLabel"
-          >
-            <i [class]="'pi ' + metric.icon" [style.color]="metric.color"></i>
-            <div class="metric-info">
-              <span class="metric-label">{{ metric.label }}</span>
-              <span class="metric-value">{{ metric.value }}</span>
-            </div>
+        @if (metrics().length > 0) {
+          <div class="metrics-grid">
+            @for (metric of metrics(); track trackByLabel($index, metric)) {
+              <div
+                class="metric-item"
+                >
+                <i [class]="'pi ' + metric.icon" [style.color]="metric.color"></i>
+                <div class="metric-info">
+                  <span class="metric-label">{{ metric.label }}</span>
+                  <span class="metric-value">{{ metric.value }}</span>
+                </div>
+              </div>
+            }
           </div>
-        </div>
-
+        }
+    
         <!-- No Data Message -->
-        <div class="no-data" *ngIf="metrics().length === 0">
-          <i class="pi pi-info-circle"></i>
-          <p>No wellness data yet</p>
-          <p-button
-            label="Log Check-in"
-            icon="pi pi-plus"
-            size="small"
-            (onClick)="navigateToWellness()"
-          ></p-button>
-        </div>
+        @if (metrics().length === 0) {
+          <div class="no-data">
+            <i class="pi pi-info-circle"></i>
+            <p>No wellness data yet</p>
+            <p-button
+              label="Log Check-in"
+              icon="pi pi-plus"
+              size="small"
+              (onClick)="navigateToWellness()"
+            ></p-button>
+          </div>
+        }
       </div>
     </p-card>
-  `,
+    `,
   styles: [
     `
       .wellness-widget {
@@ -272,7 +277,7 @@ export class WellnessWidgetComponent implements OnInit {
 
           // Update overall score
           this.overallScore.set(Math.round(score * 10));
-          this.statusLabel.set(status.label);
+          this.statusLabel.set(status.status);
           this.statusColor.set(status.color);
 
           // Build metrics array

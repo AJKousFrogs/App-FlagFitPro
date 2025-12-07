@@ -27,10 +27,43 @@ export function scrollToBottom(containerId, delay = 100) {
   }
 }
 
-export function initializeLucideIcons(container = document) {
-  if (typeof lucide !== "undefined") {
-    lucide.createIcons(container);
+/**
+ * Initialize Lucide icons with polling fallback
+ * Waits for Lucide to load if not immediately available
+ * @param {HTMLElement|Document} container - Container to initialize icons in (default: document)
+ * @param {Object} options - Options
+ * @param {number} options.maxAttempts - Maximum polling attempts (default: 50)
+ * @param {number} options.pollInterval - Polling interval in ms (default: 100)
+ * @param {number} options.initialDelay - Initial delay before checking in ms (default: 100)
+ * @returns {void}
+ */
+export function initializeLucideIcons(container = document, options = {}) {
+  const {
+    maxAttempts = 50,
+    pollInterval = 100,
+    initialDelay = 100
+  } = options;
+
+  // Check if Lucide is already available
+  if (typeof lucide !== "undefined" && lucide.createIcons) {
+    setTimeout(() => {
+      lucide.createIcons(container);
+    }, initialDelay);
+    return;
   }
+
+  // Poll for Lucide to load
+  let attempts = 0;
+  const checkLucide = setInterval(() => {
+    attempts++;
+    if (typeof lucide !== "undefined" && lucide.createIcons) {
+      clearInterval(checkLucide);
+      lucide.createIcons(container);
+    } else if (attempts >= maxAttempts) {
+      clearInterval(checkLucide);
+      console.warn('[Lucide Icons] Lucide library not loaded after maximum attempts');
+    }
+  }, pollInterval);
 }
 
 export function createElementWithClass(tag, className, innerHTML = "") {
@@ -148,35 +181,31 @@ export function getFormData(formId) {
 // ================================================================
 // LOCAL STORAGE UTILITIES
 // ================================================================
+// NOTE: Storage functions have been moved to storage-service-unified.js
+// These are kept for backward compatibility but will be deprecated
+// Import from '../services/storage-service-unified.js' instead
 
+import { storageService } from '../services/storage-service-unified.js';
+
+/**
+ * @deprecated Use storageService.set() from storage-service-unified.js instead
+ */
 export function saveToStorage(key, data) {
-  try {
-    localStorage.setItem(key, JSON.stringify(data));
-    return true;
-  } catch (error) {
-    logger.warn("Failed to save to localStorage:", error);
-    return false;
-  }
+  return storageService.set(key, data, { usePrefix: false });
 }
 
+/**
+ * @deprecated Use storageService.get() from storage-service-unified.js instead
+ */
 export function getFromStorage(key, defaultValue = null) {
-  try {
-    const data = localStorage.getItem(key);
-    return data ? JSON.parse(data) : defaultValue;
-  } catch (error) {
-    logger.warn("Failed to get from localStorage:", error);
-    return defaultValue;
-  }
+  return storageService.get(key, defaultValue, { usePrefix: false });
 }
 
+/**
+ * @deprecated Use storageService.remove() from storage-service-unified.js instead
+ */
 export function removeFromStorage(key) {
-  try {
-    localStorage.removeItem(key);
-    return true;
-  } catch (error) {
-    logger.warn("Failed to remove from localStorage:", error);
-    return false;
-  }
+  return storageService.remove(key, { usePrefix: false });
 }
 
 // ================================================================

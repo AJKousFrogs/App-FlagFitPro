@@ -27,7 +27,19 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    const { email, provider = "smtp" } = JSON.parse(event.body);
+    // Parse and validate request body
+    let bodyData = {};
+    try {
+      bodyData = JSON.parse(event.body);
+    } catch (parseError) {
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ error: "Invalid JSON in request body" }),
+      };
+    }
+
+    const { email, provider = "smtp" } = bodyData;
 
     if (!email) {
       return {

@@ -5,7 +5,7 @@ import {
   signal,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { ChartModule } from "primeng/chart";
@@ -31,7 +31,6 @@ interface TeamMember {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     CardModule,
     ButtonModule,
     ChartModule,
@@ -39,8 +38,8 @@ interface TeamMember {
     TagModule,
     MainLayoutComponent,
     PageHeaderComponent,
-    StatsGridComponent,
-  ],
+    StatsGridComponent
+],
   template: `
     <app-main-layout>
       <div class="coach-page">
@@ -48,30 +47,31 @@ interface TeamMember {
           title="Coach Dashboard"
           subtitle="Manage your team, track performance, and create training sessions"
           icon="pi-users"
-        >
+          >
           <p-button
             label="Create Session"
             icon="pi pi-plus"
             (onClick)="openCreateSession()"
           ></p-button>
         </app-page-header>
-
+    
         <!-- Coach Stats -->
         <app-stats-grid [stats]="stats()"></app-stats-grid>
-
+    
         <!-- Team Performance Chart -->
         <p-card class="chart-card">
           <ng-template pTemplate="header">
             <h3>Team Performance Overview</h3>
           </ng-template>
-          <p-chart
-            *ngIf="teamChartData()"
-            type="line"
-            [data]="teamChartData()"
-            [options]="chartOptions"
-          ></p-chart>
+          @if (teamChartData()) {
+            <p-chart
+              type="line"
+              [data]="teamChartData()"
+              [options]="chartOptions"
+            ></p-chart>
+          }
         </p-card>
-
+    
         <!-- Team Members Table -->
         <p-card class="table-card">
           <ng-template pTemplate="header">
@@ -82,7 +82,7 @@ interface TeamMember {
             [paginator]="true"
             [rows]="10"
             [rowsPerPageOptions]="[10, 25, 50]"
-          >
+            >
             <ng-template pTemplate="header">
               <tr>
                 <th>Name</th>
@@ -101,7 +101,7 @@ interface TeamMember {
                   <p-tag
                     [value]="member.performance + '%'"
                     [severity]="getPerformanceSeverity(member.performance)"
-                  >
+                    >
                   </p-tag>
                 </td>
                 <td>{{ member.attendance }}%</td>
@@ -109,7 +109,7 @@ interface TeamMember {
                   <p-tag
                     [value]="member.status"
                     [severity]="getStatusSeverity(member.status)"
-                  >
+                    >
                   </p-tag>
                 </td>
                 <td>
@@ -132,7 +132,7 @@ interface TeamMember {
         </p-card>
       </div>
     </app-main-layout>
-  `,
+    `,
   styles: [
     `
       .coach-page {

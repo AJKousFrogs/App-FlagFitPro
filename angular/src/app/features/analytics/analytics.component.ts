@@ -64,24 +64,25 @@ interface Metric {
           subtitle="Advanced Performance Analytics & Team Insights"
           icon="pi-chart-bar"
         ></app-page-header>
-
+    
         <!-- Key Metrics Overview -->
         <div class="metrics-grid">
-          <p-card
-            *ngFor="let metric of metrics(); trackBy: trackByMetricLabel"
-            class="metric-card"
-          >
-            <div class="metric-icon">
-              <i [class]="'pi ' + metric.icon"></i>
-            </div>
-            <div class="metric-value">{{ metric.value }}</div>
-            <div class="metric-label">{{ metric.label }}</div>
-            <div class="metric-trend" [class]="'trend-' + metric.trendType">
-              {{ metric.trend }}
-            </div>
-          </p-card>
+          @for (metric of metrics(); track trackByMetricLabel($index, metric)) {
+            <p-card
+              class="metric-card"
+              >
+              <div class="metric-icon">
+                <i [class]="'pi ' + metric.icon"></i>
+              </div>
+              <div class="metric-value">{{ metric.value }}</div>
+              <div class="metric-label">{{ metric.label }}</div>
+              <div class="metric-trend" [class]="'trend-' + metric.trendType">
+                {{ metric.trend }}
+              </div>
+            </p-card>
+          }
         </div>
-
+    
         <!-- Charts Grid -->
         <div class="charts-grid">
           <!-- Performance Trends Chart -->
@@ -99,12 +100,13 @@ interface Metric {
                 </div>
               </div>
             </ng-template>
-            <p-chart
-              *ngIf="performanceChartData()"
-              type="line"
-              [data]="performanceChartData()"
-              [options]="lineChartOptions"
-            ></p-chart>
+            @if (performanceChartData()) {
+              <p-chart
+                type="line"
+                [data]="performanceChartData()"
+                [options]="lineChartOptions"
+              ></p-chart>
+            }
             <div class="chart-insights">
               <div class="insight-item">
                 <div class="insight-value">91</div>
@@ -120,7 +122,7 @@ interface Metric {
               </div>
             </div>
           </p-card>
-
+    
           <!-- Team Chemistry Chart -->
           <p-card class="chart-card">
             <ng-template pTemplate="header">
@@ -136,12 +138,13 @@ interface Metric {
                 </div>
               </div>
             </ng-template>
-            <p-chart
-              *ngIf="chemistryChartData()"
-              type="radar"
-              [data]="chemistryChartData()"
-              [options]="radarChartOptions"
-            ></p-chart>
+            @if (chemistryChartData()) {
+              <p-chart
+                type="radar"
+                [data]="chemistryChartData()"
+                [options]="radarChartOptions"
+              ></p-chart>
+            }
             <div class="chart-insights">
               <div class="insight-item">
                 <div class="insight-value">8.4</div>
@@ -157,7 +160,7 @@ interface Metric {
               </div>
             </div>
           </p-card>
-
+    
           <!-- Training Distribution Chart -->
           <p-card class="chart-card">
             <ng-template pTemplate="header">
@@ -173,12 +176,13 @@ interface Metric {
                 </div>
               </div>
             </ng-template>
-            <p-chart
-              *ngIf="distributionChartData()"
-              type="doughnut"
-              [data]="distributionChartData()"
-              [options]="DOUGHNUT_CHART_OPTIONS"
-            ></p-chart>
+            @if (distributionChartData()) {
+              <p-chart
+                type="doughnut"
+                [data]="distributionChartData()"
+                [options]="DOUGHNUT_CHART_OPTIONS"
+              ></p-chart>
+            }
             <div class="chart-insights">
               <div class="insight-item">
                 <div class="insight-value">30</div>
@@ -194,7 +198,7 @@ interface Metric {
               </div>
             </div>
           </p-card>
-
+    
           <!-- Position Performance Chart -->
           <p-card class="chart-card">
             <ng-template pTemplate="header">
@@ -210,12 +214,13 @@ interface Metric {
                 </div>
               </div>
             </ng-template>
-            <p-chart
-              *ngIf="positionChartData()"
-              type="bar"
-              [data]="positionChartData()"
-              [options]="BAR_CHART_OPTIONS"
-            ></p-chart>
+            @if (positionChartData()) {
+              <p-chart
+                type="bar"
+                [data]="positionChartData()"
+                [options]="BAR_CHART_OPTIONS"
+              ></p-chart>
+            }
             <div class="chart-insights">
               <div class="insight-item">
                 <div class="insight-value">94</div>
@@ -232,7 +237,7 @@ interface Metric {
             </div>
           </p-card>
         </div>
-
+    
         <!-- Full Width Charts -->
         <p-card class="chart-card full-width">
           <ng-template pTemplate="header">
@@ -254,12 +259,13 @@ interface Metric {
               </div>
             </div>
           </ng-template>
-          <p-chart
-            *ngIf="speedChartData()"
-            type="line"
-            [data]="speedChartData()"
-            [options]="lineChartOptions"
-          ></p-chart>
+          @if (speedChartData()) {
+            <p-chart
+              type="line"
+              [data]="speedChartData()"
+              [options]="lineChartOptions"
+            ></p-chart>
+          }
           <div class="chart-insights">
             <div class="insight-item">
               <div class="insight-value">4.46s</div>
@@ -279,7 +285,7 @@ interface Metric {
             </div>
           </div>
         </p-card>
-
+    
         <!-- Player Statistics Section -->
         <p-card class="player-stats-card full-width">
           <ng-template pTemplate="header">
@@ -306,7 +312,7 @@ interface Metric {
                 [paginator]="true"
                 [rows]="10"
                 styleClass="p-datatable-sm"
-              >
+                >
                 <ng-template pTemplate="header">
                   <tr>
                     <th>Date</th>
@@ -329,7 +335,7 @@ interface Metric {
                       <p-tag
                         [value]="game.present ? 'Present' : 'Missed'"
                         [severity]="game.present ? 'success' : 'danger'"
-                      >
+                        >
                       </p-tag>
                     </td>
                     <td>{{ game.passAttempts }}</td>
@@ -343,284 +349,288 @@ interface Metric {
                 </ng-template>
               </p-table>
             </p-tabPanel>
-
+    
             <p-tabPanel header="Season Stats">
-              <div *ngIf="playerSeasonStats()" class="season-stats">
-                <div class="stats-summary">
-                  <div class="stat-summary-item">
-                    <div class="stat-label">Season</div>
-                    <div class="stat-value">
-                      {{ playerSeasonStats()?.season }}
+              @if (playerSeasonStats()) {
+                <div class="season-stats">
+                  <div class="stats-summary">
+                    <div class="stat-summary-item">
+                      <div class="stat-label">Season</div>
+                      <div class="stat-value">
+                        {{ playerSeasonStats()?.season }}
+                      </div>
                     </div>
-                  </div>
-                  <div class="stat-summary-item">
-                    <div class="stat-label">Games Played</div>
-                    <div class="stat-value">
-                      {{ playerSeasonStats()?.gamesPlayed }}
+                    <div class="stat-summary-item">
+                      <div class="stat-label">Games Played</div>
+                      <div class="stat-value">
+                        {{ playerSeasonStats()?.gamesPlayed }}
+                      </div>
                     </div>
-                  </div>
-                  <div class="stat-summary-item">
-                    <div class="stat-label">Games Missed</div>
-                    <div class="stat-value error">
-                      {{ playerSeasonStats()?.gamesMissed }}
+                    <div class="stat-summary-item">
+                      <div class="stat-label">Games Missed</div>
+                      <div class="stat-value error">
+                        {{ playerSeasonStats()?.gamesMissed }}
+                      </div>
                     </div>
-                  </div>
-                  <div class="stat-summary-item">
-                    <div class="stat-label">Attendance Rate</div>
-                    <div class="stat-value">
-                      {{
-                        playerSeasonStats()?.attendanceRate | number: "1.1-1"
-                      }}%
-                    </div>
-                  </div>
-                </div>
-                <div class="stats-grid">
-                  <div class="stat-card">
-                    <h4>Passing</h4>
-                    <div class="stat-row">
-                      <span>Attempts:</span>
-                      <strong>{{
-                        playerSeasonStats()?.totalPassAttempts
-                      }}</strong>
-                    </div>
-                    <div class="stat-row">
-                      <span>Completions:</span>
-                      <strong>{{
-                        playerSeasonStats()?.totalCompletions
-                      }}</strong>
-                    </div>
-                    <div class="stat-row">
-                      <span>Yards:</span>
-                      <strong>{{
-                        playerSeasonStats()?.totalPassingYards
-                      }}</strong>
-                    </div>
-                    <div class="stat-row">
-                      <span>Completion %:</span>
-                      <strong
-                        >{{
-                          playerSeasonStats()?.completionPercentage
-                            | number: "1.1-1"
-                        }}%</strong
-                      >
-                    </div>
-                  </div>
-                  <div class="stat-card">
-                    <h4>Receiving</h4>
-                    <div class="stat-row">
-                      <span>Targets:</span>
-                      <strong>{{ playerSeasonStats()?.totalTargets }}</strong>
-                    </div>
-                    <div class="stat-row">
-                      <span>Receptions:</span>
-                      <strong>{{
-                        playerSeasonStats()?.totalReceptions
-                      }}</strong>
-                    </div>
-                    <div class="stat-row">
-                      <span>Yards:</span>
-                      <strong>{{
-                        playerSeasonStats()?.totalReceivingYards
-                      }}</strong>
-                    </div>
-                    <div class="stat-row">
-                      <span>Drops:</span>
-                      <strong>{{ playerSeasonStats()?.totalDrops }}</strong>
-                    </div>
-                  </div>
-                  <div class="stat-card">
-                    <h4>Rushing</h4>
-                    <div class="stat-row">
-                      <span>Attempts:</span>
-                      <strong>{{
-                        playerSeasonStats()?.totalRushingAttempts
-                      }}</strong>
-                    </div>
-                    <div class="stat-row">
-                      <span>Yards:</span>
-                      <strong>{{
-                        playerSeasonStats()?.totalRushingYards
-                      }}</strong>
-                    </div>
-                    <div class="stat-row">
-                      <span>Avg Yards:</span>
-                      <strong>{{
-                        playerSeasonStats()?.avgRushingYards | number: "1.1-1"
-                      }}</strong>
-                    </div>
-                  </div>
-                  <div class="stat-card">
-                    <h4>Defense</h4>
-                    <div class="stat-row">
-                      <span>Flag Pull Attempts:</span>
-                      <strong>{{
-                        playerSeasonStats()?.totalFlagPullAttempts
-                      }}</strong>
-                    </div>
-                    <div class="stat-row">
-                      <span>Flag Pulls:</span>
-                      <strong>{{ playerSeasonStats()?.totalFlagPulls }}</strong>
-                    </div>
-                    <div class="stat-row">
-                      <span>Success Rate:</span>
-                      <strong
-                        >{{
-                          playerSeasonStats()?.flagPullSuccessRate
-                            | number: "1.1-1"
-                        }}%</strong
-                      >
-                    </div>
-                    <div class="stat-row">
-                      <span>Interceptions:</span>
-                      <strong>{{
-                        playerSeasonStats()?.totalInterceptionsDef
-                      }}</strong>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </p-tabPanel>
-
-            <p-tabPanel header="Multi-Season Stats">
-              <div *ngIf="playerMultiSeasonStats()" class="multi-season-stats">
-                <div class="stats-summary">
-                  <div class="stat-summary-item">
-                    <div class="stat-label">Total Seasons</div>
-                    <div class="stat-value">
-                      {{ playerMultiSeasonStats()?.totalSeasons }}
-                    </div>
-                  </div>
-                  <div class="stat-summary-item">
-                    <div class="stat-label">Total Games Played</div>
-                    <div class="stat-value">
-                      {{ playerMultiSeasonStats()?.totalGamesPlayed }}
-                    </div>
-                  </div>
-                  <div class="stat-summary-item">
-                    <div class="stat-label">Total Games Missed</div>
-                    <div class="stat-value error">
-                      {{ playerMultiSeasonStats()?.totalGamesMissed }}
-                    </div>
-                  </div>
-                  <div class="stat-summary-item">
-                    <div class="stat-label">Overall Attendance</div>
-                    <div class="stat-value">
-                      {{
-                        playerMultiSeasonStats()?.overallAttendanceRate
-                          | number: "1.1-1"
-                      }}%
-                    </div>
-                  </div>
-                </div>
-                <h4>Career Totals</h4>
-                <div class="stats-grid">
-                  <div class="stat-card">
-                    <h5>Passing</h5>
-                    <div class="stat-row">
-                      <span>Career Attempts:</span>
-                      <strong>{{
-                        playerMultiSeasonStats()?.careerPassAttempts
-                      }}</strong>
-                    </div>
-                    <div class="stat-row">
-                      <span>Career Yards:</span>
-                      <strong>{{
-                        playerMultiSeasonStats()?.careerPassingYards
-                      }}</strong>
-                    </div>
-                    <div class="stat-row">
-                      <span>Career TDs:</span>
-                      <strong>{{
-                        playerMultiSeasonStats()?.careerTouchdowns
-                      }}</strong>
-                    </div>
-                  </div>
-                  <div class="stat-card">
-                    <h5>Receiving</h5>
-                    <div class="stat-row">
-                      <span>Career Receptions:</span>
-                      <strong>{{
-                        playerMultiSeasonStats()?.careerReceptions
-                      }}</strong>
-                    </div>
-                    <div class="stat-row">
-                      <span>Career Yards:</span>
-                      <strong>{{
-                        playerMultiSeasonStats()?.careerReceivingYards
-                      }}</strong>
-                    </div>
-                  </div>
-                  <div class="stat-card">
-                    <h5>Rushing</h5>
-                    <div class="stat-row">
-                      <span>Career Attempts:</span>
-                      <strong>{{
-                        playerMultiSeasonStats()?.careerRushingAttempts
-                      }}</strong>
-                    </div>
-                    <div class="stat-row">
-                      <span>Career Yards:</span>
-                      <strong>{{
-                        playerMultiSeasonStats()?.careerRushingYards
-                      }}</strong>
-                    </div>
-                  </div>
-                  <div class="stat-card">
-                    <h5>Defense</h5>
-                    <div class="stat-row">
-                      <span>Career Flag Pulls:</span>
-                      <strong>{{
-                        playerMultiSeasonStats()?.careerFlagPulls
-                      }}</strong>
-                    </div>
-                    <div class="stat-row">
-                      <span>Career Interceptions:</span>
-                      <strong>{{
-                        playerMultiSeasonStats()?.careerInterceptionsDef
-                      }}</strong>
-                    </div>
-                  </div>
-                </div>
-                <h4>Season Breakdown</h4>
-                <p-table
-                  [value]="playerMultiSeasonStats()?.seasons || []"
-                  [paginator]="true"
-                  [rows]="5"
-                >
-                  <ng-template pTemplate="header">
-                    <tr>
-                      <th>Season</th>
-                      <th>Games Played</th>
-                      <th>Games Missed</th>
-                      <th>Attendance Rate</th>
-                      <th>Total Yards</th>
-                      <th>Total TDs</th>
-                    </tr>
-                  </ng-template>
-                  <ng-template pTemplate="body" let-season>
-                    <tr>
-                      <td>{{ season.season }}</td>
-                      <td>{{ season.gamesPlayed }}</td>
-                      <td>{{ season.gamesMissed }}</td>
-                      <td>{{ season.attendanceRate | number: "1.1-1" }}%</td>
-                      <td>
+                    <div class="stat-summary-item">
+                      <div class="stat-label">Attendance Rate</div>
+                      <div class="stat-value">
                         {{
-                          season.totalPassingYards +
-                            season.totalReceivingYards +
-                            season.totalRushingYards
-                        }}
-                      </td>
-                      <td>{{ season.totalTouchdowns }}</td>
-                    </tr>
-                  </ng-template>
-                </p-table>
-              </div>
-            </p-tabPanel>
-          </p-tabView>
-        </p-card>
-      </div>
-    </app-main-layout>
-  `,
+                        playerSeasonStats()?.attendanceRate | number: "1.1-1"
+                        }}%
+                      </div>
+                    </div>
+                  </div>
+                  <div class="stats-grid">
+                    <div class="stat-card">
+                      <h4>Passing</h4>
+                      <div class="stat-row">
+                        <span>Attempts:</span>
+                        <strong>{{
+                          playerSeasonStats()?.totalPassAttempts
+                        }}</strong>
+                      </div>
+                      <div class="stat-row">
+                        <span>Completions:</span>
+                        <strong>{{
+                          playerSeasonStats()?.totalCompletions
+                        }}</strong>
+                      </div>
+                      <div class="stat-row">
+                        <span>Yards:</span>
+                        <strong>{{
+                          playerSeasonStats()?.totalPassingYards
+                        }}</strong>
+                      </div>
+                      <div class="stat-row">
+                        <span>Completion %:</span>
+                        <strong
+                          >{{
+                          playerSeasonStats()?.completionPercentage
+                          | number: "1.1-1"
+                          }}%</strong
+                          >
+                        </div>
+                      </div>
+                      <div class="stat-card">
+                        <h4>Receiving</h4>
+                        <div class="stat-row">
+                          <span>Targets:</span>
+                          <strong>{{ playerSeasonStats()?.totalTargets }}</strong>
+                        </div>
+                        <div class="stat-row">
+                          <span>Receptions:</span>
+                          <strong>{{
+                            playerSeasonStats()?.totalReceptions
+                          }}</strong>
+                        </div>
+                        <div class="stat-row">
+                          <span>Yards:</span>
+                          <strong>{{
+                            playerSeasonStats()?.totalReceivingYards
+                          }}</strong>
+                        </div>
+                        <div class="stat-row">
+                          <span>Drops:</span>
+                          <strong>{{ playerSeasonStats()?.totalDrops }}</strong>
+                        </div>
+                      </div>
+                      <div class="stat-card">
+                        <h4>Rushing</h4>
+                        <div class="stat-row">
+                          <span>Attempts:</span>
+                          <strong>{{
+                            playerSeasonStats()?.totalRushingAttempts
+                          }}</strong>
+                        </div>
+                        <div class="stat-row">
+                          <span>Yards:</span>
+                          <strong>{{
+                            playerSeasonStats()?.totalRushingYards
+                          }}</strong>
+                        </div>
+                        <div class="stat-row">
+                          <span>Avg Yards:</span>
+                          <strong>{{
+                            playerSeasonStats()?.avgRushingYards | number: "1.1-1"
+                          }}</strong>
+                        </div>
+                      </div>
+                      <div class="stat-card">
+                        <h4>Defense</h4>
+                        <div class="stat-row">
+                          <span>Flag Pull Attempts:</span>
+                          <strong>{{
+                            playerSeasonStats()?.totalFlagPullAttempts
+                          }}</strong>
+                        </div>
+                        <div class="stat-row">
+                          <span>Flag Pulls:</span>
+                          <strong>{{ playerSeasonStats()?.totalFlagPulls }}</strong>
+                        </div>
+                        <div class="stat-row">
+                          <span>Success Rate:</span>
+                          <strong
+                            >{{
+                            playerSeasonStats()?.flagPullSuccessRate
+                            | number: "1.1-1"
+                            }}%</strong
+                            >
+                          </div>
+                          <div class="stat-row">
+                            <span>Interceptions:</span>
+                            <strong>{{
+                              playerSeasonStats()?.totalInterceptionsDef
+                            }}</strong>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  }
+                </p-tabPanel>
+    
+                <p-tabPanel header="Multi-Season Stats">
+                  @if (playerMultiSeasonStats()) {
+                    <div class="multi-season-stats">
+                      <div class="stats-summary">
+                        <div class="stat-summary-item">
+                          <div class="stat-label">Total Seasons</div>
+                          <div class="stat-value">
+                            {{ playerMultiSeasonStats()?.totalSeasons }}
+                          </div>
+                        </div>
+                        <div class="stat-summary-item">
+                          <div class="stat-label">Total Games Played</div>
+                          <div class="stat-value">
+                            {{ playerMultiSeasonStats()?.totalGamesPlayed }}
+                          </div>
+                        </div>
+                        <div class="stat-summary-item">
+                          <div class="stat-label">Total Games Missed</div>
+                          <div class="stat-value error">
+                            {{ playerMultiSeasonStats()?.totalGamesMissed }}
+                          </div>
+                        </div>
+                        <div class="stat-summary-item">
+                          <div class="stat-label">Overall Attendance</div>
+                          <div class="stat-value">
+                            {{
+                            playerMultiSeasonStats()?.overallAttendanceRate
+                            | number: "1.1-1"
+                            }}%
+                          </div>
+                        </div>
+                      </div>
+                      <h4>Career Totals</h4>
+                      <div class="stats-grid">
+                        <div class="stat-card">
+                          <h5>Passing</h5>
+                          <div class="stat-row">
+                            <span>Career Attempts:</span>
+                            <strong>{{
+                              playerMultiSeasonStats()?.careerPassAttempts
+                            }}</strong>
+                          </div>
+                          <div class="stat-row">
+                            <span>Career Yards:</span>
+                            <strong>{{
+                              playerMultiSeasonStats()?.careerPassingYards
+                            }}</strong>
+                          </div>
+                          <div class="stat-row">
+                            <span>Career TDs:</span>
+                            <strong>{{
+                              playerMultiSeasonStats()?.careerTouchdowns
+                            }}</strong>
+                          </div>
+                        </div>
+                        <div class="stat-card">
+                          <h5>Receiving</h5>
+                          <div class="stat-row">
+                            <span>Career Receptions:</span>
+                            <strong>{{
+                              playerMultiSeasonStats()?.careerReceptions
+                            }}</strong>
+                          </div>
+                          <div class="stat-row">
+                            <span>Career Yards:</span>
+                            <strong>{{
+                              playerMultiSeasonStats()?.careerReceivingYards
+                            }}</strong>
+                          </div>
+                        </div>
+                        <div class="stat-card">
+                          <h5>Rushing</h5>
+                          <div class="stat-row">
+                            <span>Career Attempts:</span>
+                            <strong>{{
+                              playerMultiSeasonStats()?.careerRushingAttempts
+                            }}</strong>
+                          </div>
+                          <div class="stat-row">
+                            <span>Career Yards:</span>
+                            <strong>{{
+                              playerMultiSeasonStats()?.careerRushingYards
+                            }}</strong>
+                          </div>
+                        </div>
+                        <div class="stat-card">
+                          <h5>Defense</h5>
+                          <div class="stat-row">
+                            <span>Career Flag Pulls:</span>
+                            <strong>{{
+                              playerMultiSeasonStats()?.careerFlagPulls
+                            }}</strong>
+                          </div>
+                          <div class="stat-row">
+                            <span>Career Interceptions:</span>
+                            <strong>{{
+                              playerMultiSeasonStats()?.careerInterceptionsDef
+                            }}</strong>
+                          </div>
+                        </div>
+                      </div>
+                      <h4>Season Breakdown</h4>
+                      <p-table
+                        [value]="playerMultiSeasonStats()?.seasons || []"
+                        [paginator]="true"
+                        [rows]="5"
+                        >
+                        <ng-template pTemplate="header">
+                          <tr>
+                            <th>Season</th>
+                            <th>Games Played</th>
+                            <th>Games Missed</th>
+                            <th>Attendance Rate</th>
+                            <th>Total Yards</th>
+                            <th>Total TDs</th>
+                          </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-season>
+                          <tr>
+                            <td>{{ season.season }}</td>
+                            <td>{{ season.gamesPlayed }}</td>
+                            <td>{{ season.gamesMissed }}</td>
+                            <td>{{ season.attendanceRate | number: "1.1-1" }}%</td>
+                            <td>
+                              {{
+                              season.totalPassingYards +
+                              season.totalReceivingYards +
+                              season.totalRushingYards
+                              }}
+                            </td>
+                            <td>{{ season.totalTouchdowns }}</td>
+                          </tr>
+                        </ng-template>
+                      </p-table>
+                    </div>
+                  }
+                </p-tabPanel>
+              </p-tabView>
+            </p-card>
+          </div>
+        </app-main-layout>
+    `,
   styles: [
     `
       .analytics-page {

@@ -34,7 +34,7 @@
     var(--color-brand-primary) 0%,
     var(--color-brand-primary-hover) 100%
   );
-  color: var(--var(--dark-text-primary));
+  color: var(--color-text-on-primary);
   padding: var(--space-8);
   border-radius: var(--radius-xl);
   margin-bottom: var(--space-6);
@@ -195,7 +195,7 @@
 
 .metric-label {
   font-size: var(--text-sm);
-  color: var(--dark-text-secondary);
+  color: var(--color-text-secondary);
   margin-bottom: var(--space-2);
 }
 
@@ -260,7 +260,7 @@
 .current-week {
   font-size: var(--text-lg);
   font-weight: var(--font-weight-bold);
-  color: var(--dark-text-primary);
+  color: var(--color-text-primary);
 }
 
 .daily-breakdown {
@@ -326,7 +326,7 @@
 
 .session-duration {
   font-size: var(--text-xs);
-  color: var(--dark-text-secondary);
+  color: var(--color-text-secondary);
 }
 
 .arm-care-reminder {
@@ -378,14 +378,14 @@
 }
 
 .assessment-schedule {
-  color: var(--dark-text-secondary);
+  color: var(--color-text-secondary);
   font-size: var(--text-sm);
   margin-bottom: var(--space-3);
 }
 
 .next-assessment {
   background: var(--primary);
-  color: var(--var(--dark-text-primary));
+  color: var(--color-text-on-primary);
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-md);
   font-size: var(--text-sm);
@@ -396,7 +396,7 @@
 
 .simulation-section {
   background: linear-gradient(135deg, #1a237e, #283593);
-  color: var(--var(--dark-text-primary));
+  color: var(--color-text-on-primary);
   padding: var(--space-8);
   border-radius: var(--radius-xl);
   margin-bottom: var(--space-6);
@@ -440,7 +440,7 @@
 
 .start-simulation {
   background: var(--accent);
-  color: var(--var(--dark-text-primary));
+  color: var(--color-text-on-primary);
   padding: var(--space-4) var(--space-8);
   border-radius: var(--radius-lg);
   font-size: var(--text-lg);

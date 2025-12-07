@@ -4,55 +4,7 @@
    ================================================================ */
 
 /* Dashboard-specific minimal overrides - Kraken Style */
-body {
-  font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", sans-serif;
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
-}
-
-/* Dark Theme (default) - Higher specificity to override design system */
-html[data-theme="dark"] {
-  /* Override CSS variables for dark theme */
-  --surface-primary: #0f0f0f;
-  --surface-secondary: #1a1a1a;
-  --surface-tertiary: #2a2a2a;
-  --color-text-primary: #ffffff;
-  --color-text-secondary: rgba(255, 255, 255, 0.7);
-  --color-text-tertiary: rgba(255, 255, 255, 0.5);
-  --color-text-on-surface: #ffffff;
-  --color-border-primary: rgba(255, 255, 255, 0.1);
-  --color-border-secondary: rgba(255, 255, 255, 0.08);
-}
-
-body[data-theme="dark"],
-html[data-theme="dark"] body,
-html[data-theme="dark"] {
-  background: var(--surface-primary, #0f0f0f);
-  color: var(--color-text-primary, #ffffff);
-}
-
-/* Light Theme - Higher specificity to override design system */
-html[data-theme="light"] {
-  /* Override CSS variables for light theme */
-  --surface-primary: #ffffff;
-  --surface-secondary: #f5f5f5;
-  --surface-tertiary: #f0f0f0;
-  --color-text-primary: #1a1a1a;
-  --color-text-secondary: rgba(0, 0, 0, 0.7);
-  --color-text-tertiary: rgba(0, 0, 0, 0.5);
-  --color-text-on-surface: #1a1a1a;
-  --color-border-primary: rgba(0, 0, 0, 0.1);
-  --color-border-secondary: rgba(0, 0, 0, 0.08);
-}
-
-body[data-theme="light"],
-html[data-theme="light"] body,
-html[data-theme="light"] {
-  background: var(--surface-primary, #ffffff);
-  color: var(--color-text-primary, #1a1a1a);
-}
+/* Note: Theme overrides removed - use src/css/themes/dark.css and light.css instead */
 
 /* Navigation sidebar styles are now in src/css/components/sidebar.css */
 
@@ -274,7 +226,7 @@ html[data-theme="light"] .sidebar-icon:hover {
 }
 
 .day[data-status="today"] {
-  background: #fff;
+  background: var(--surface-primary);
   color: var(--color-brand-primary);
 }
 
@@ -2654,11 +2606,11 @@ html[data-theme="light"] .chart-header {
 
 .chart-title {
   font-family: var(--font-heading);
-  font-size: var(--font-size-lg, 18px);
+  font-size: var(--text-lg, 18px);
   font-weight: var(--font-weight-bold, 700);
-  color: var(--dark-text-primary);
+  color: var(--color-text-primary);
   letter-spacing: -0.02em;
-  line-height: var(--line-height-snug, 1.375);
+  line-height: var(--line-height-tight, 1.25);
   margin: 0;
   padding: 0;
   position: relative;
@@ -3411,8 +3363,8 @@ html[data-theme="light"] .card-footer-section {
   height: 100%;
   border-radius: 20px;
   padding: 32px;
-  background: var(--dark-card-bg);
-  border: 1px solid var(--dark-border);
+  background: var(--surface-primary);
+  border: 1px solid var(--color-border-secondary);
   box-shadow:
     0 8px 24px rgba(0, 0, 0, 0.15),
     0 4px 12px rgba(0, 0, 0, 0.1),
@@ -4103,7 +4055,7 @@ html[data-theme="light"] .skeleton {
   width: 100%;
   border-radius: 12px;
   overflow: hidden;
-  background: var(--dark-bg-secondary);
+  background: var(--surface-secondary);
 }
 
 .chart-skeleton::before {
@@ -4228,7 +4180,7 @@ html[data-theme="light"] .chart-skeleton::before {
   justify-content: center;
   height: 100%;
   gap: 16px;
-  color: var(--dark-text-secondary);
+  color: var(--color-text-secondary);
   font-family:
     "Inter",
     "Roboto",
@@ -4236,7 +4188,7 @@ html[data-theme="light"] .chart-skeleton::before {
     -apple-system,
     BlinkMacSystemFont,
     sans-serif;
-  font-size: var(--font-size-sm, 14px);
+  font-size: var(--text-sm, 14px);
   font-weight: var(--font-weight-medium, 500);
 }
 
@@ -4277,10 +4229,10 @@ html[data-theme="light"] .empty-state-icon {
 }
 
 .empty-state-title {
-  font-size: var(--font-size-lg, 18px);
+  font-size: var(--text-lg, 18px);
   font-weight: var(--font-weight-semibold, 600);
   margin-bottom: 8px;
-  color: var(--dark-text-primary);
+  color: var(--color-text-primary);
   font-family:
     "Inter",
     "Roboto",
@@ -4291,8 +4243,8 @@ html[data-theme="light"] .empty-state-icon {
 }
 
 .empty-state-description {
-  font-size: var(--font-size-sm, 14px);
-  color: var(--dark-text-secondary);
+  font-size: var(--text-sm, 14px);
+  color: var(--color-text-secondary);
   margin-bottom: 24px;
   max-width: 400px;
   line-height: var(--line-height-relaxed, 1.625);
@@ -4330,9 +4282,9 @@ html[data-theme="light"] .empty-state-icon {
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   text-align: left;
-  font-size: var(--font-size-sm, 14px);
+  font-size: var(--text-sm, 14px);
   font-weight: var(--font-weight-medium, 500);
-  color: var(--dark-text-primary);
+  color: var(--color-text-primary);
   font-family:
     "Inter",
     "Roboto",
@@ -5325,14 +5277,14 @@ html[data-theme="light"] .section-card-header {
 }
 
 .section-card-title {
-  font-size: var(--font-size-3xl, 1.875rem);
+  font-size: var(--text-2xl, 1.5rem);
   font-weight: var(--font-weight-bold, 700); /* Bold */
   margin: 0 0 12px 0; /* Increased margin */
   display: flex;
   align-items: center;
   gap: 12px;
-  color: var(--dark-text-primary);
-  line-height: var(--line-height-snug, 1.375);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-tight, 1.25);
   font-family:
     "Inter",
     "Roboto",
@@ -5350,8 +5302,8 @@ html[data-theme="light"] .section-card-header {
 }
 
 .section-card-description {
-  font-size: var(--font-size-base, 16px);
-  color: var(--dark-text-secondary);
+  font-size: var(--text-base, 16px);
+  color: var(--color-text-secondary);
   margin: 0;
   line-height: var(--line-height-relaxed, 1.625);
   font-weight: var(--font-weight-normal, 400);
@@ -5412,12 +5364,12 @@ html[data-theme="light"] .section-card-footer {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: var(--font-size-sm, 14px);
-  color: var(--dark-text-secondary);
+  font-size: var(--text-sm, 14px);
+  color: var(--color-text-secondary);
   padding: 12px 16px;
-  background: rgba(251, 191, 36, 0.1); /* Yellow for info */
+  background: var(--color-status-success-light);
   border-radius: 8px;
-  border-left: 3px solid #fbbf24; /* Bold yellow accent */
+  border-left: 3px solid var(--color-success);
 }
 
 .section-card-info i {
@@ -5514,9 +5466,9 @@ html[data-theme="light"] .section-card-footer {
   padding: 12px 16px;
   border: 1px solid;
   border-radius: 12px;
-  font-size: var(--font-size-sm, 14px);
-  background: var(--dark-bg-secondary);
-  color: var(--dark-text-primary);
+  font-size: var(--text-sm, 14px);
+  background: var(--surface-secondary);
+  color: var(--color-text-primary);
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -5534,9 +5486,9 @@ html[data-theme="light"] .section-card-footer .chat-input {
 
 .section-card-footer .chat-input:focus {
   outline: none;
-  border-color: var(--primary);
-  background: var(--dark-bg-primary);
-  box-shadow: 0 0 0 3px rgba(16, 201, 107, 0.1);
+  border-color: var(--color-primary);
+  background: var(--surface-primary);
+  box-shadow: 0 0 0 3px var(--color-brand-primary-light);
 }
 
 .section-card-footer .chat-send-btn {
@@ -6827,44 +6779,7 @@ html[data-theme="light"] .section-card-footer .chat-input {
   background-color: var(--color-brand-primary-hover);
 }
 
-/* AI Chat Bubble */
-.ai-chat-bubble {
-  position: fixed;
-  bottom: var(--space-6);
-  right: var(--space-6);
-  z-index: 1000;
-}
-
-.ai-chat-button {
-  padding: var(--space-4) var(--space-6);
-  background: var(--color-brand-primary);
-  color: white;
-  border: none;
-  border-radius: var(--radius-xl);
-  font-size: var(--typography-body-md-size);
-  font-weight: var(--font-weight-medium);
-  cursor: pointer;
-  box-shadow: var(--shadow-lg);
-  transition: all var(--transition);
-}
-
-.ai-chat-button:hover {
-  background: var(--color-brand-primary-hover);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-xl);
-}
-
-@media (max-width: 768px) {
-  .ai-chat-bubble {
-    bottom: var(--space-4);
-    right: var(--space-4);
-  }
-
-  .ai-chat-button {
-    padding: var(--space-3) var(--space-4);
-    font-size: var(--typography-body-sm-size);
-  }
-}
+/* AI Chat Bubble - Now in src/css/components/ai-chat-bubble.css */
 
 /* Dark Theme Adjustments */
 body[data-theme="dark"] .wellness-checkin-card,

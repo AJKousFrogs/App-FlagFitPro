@@ -5,7 +5,7 @@ import {
   signal,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { CardModule } from "primeng/card";
 import { TagModule } from "primeng/tag";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -39,7 +39,7 @@ interface Player {
   selector: "app-roster",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, CardModule, TagModule, MainLayoutComponent],
+  imports: [CardModule, TagModule, MainLayoutComponent],
   template: `
     <app-main-layout>
       <div class="roster-page">
@@ -56,7 +56,7 @@ interface Player {
             countries
           </p>
         </p-card>
-
+    
         <!-- Team Overview Stats -->
         <p-card class="overview-card">
           <ng-template pTemplate="header">
@@ -66,16 +66,17 @@ interface Player {
             </h2>
           </ng-template>
           <div class="team-overview-grid">
-            <div
-              *ngFor="let stat of teamStats(); trackBy: trackByStatLabel"
-              class="overview-stat"
-            >
-              <div class="overview-value">{{ stat.value }}</div>
-              <div class="overview-label">{{ stat.label }}</div>
-            </div>
+            @for (stat of teamStats(); track trackByStatLabel($index, stat)) {
+              <div
+                class="overview-stat"
+                >
+                <div class="overview-value">{{ stat.value }}</div>
+                <div class="overview-label">{{ stat.label }}</div>
+              </div>
+            }
           </div>
         </p-card>
-
+    
         <!-- Coaching Staff -->
         <div class="position-section">
           <h2 class="section-title">
@@ -83,117 +84,121 @@ interface Player {
             Coaching Staff & Support
           </h2>
           <div class="roster-grid">
-            <p-card
-              *ngFor="let member of coachingStaff(); trackBy: trackByMemberName"
-              class="staff-card"
-            >
-              <div class="player-header">
-                <div class="player-jersey">
-                  {{ getInitials(member.name) }}
-                </div>
-                <div class="player-info">
-                  <h3 class="player-name">{{ member.name }}</h3>
-                  <div class="player-position">{{ member.position }}</div>
-                  <div class="player-meta">
-                    {{ member.experience }} experience
-                  </div>
-                </div>
-              </div>
-              <div class="stats-grid">
-                <div class="stat-item">
-                  <div class="stat-value">
-                    {{ getYears(member.experience) }}
-                  </div>
-                  <div class="stat-label">Years</div>
-                </div>
-                <div class="stat-item">
-                  <div class="stat-value">{{ member.country }}</div>
-                  <div class="stat-label">Country</div>
-                </div>
-              </div>
-              <div
-                *ngIf="member.achievements && member.achievements.length > 0"
-                class="achievements"
-              >
-                <div class="achievements-title">Key Achievements:</div>
-                <div
-                  *ngFor="
-                    let achievement of member.achievements.slice(0, 2);
-                    trackBy: trackByAchievement
-                  "
-                  class="achievement-item"
+            @for (member of coachingStaff(); track trackByMemberName($index, member)) {
+              <p-card
+                class="staff-card"
                 >
-                  • {{ achievement }}
+                <div class="player-header">
+                  <div class="player-jersey">
+                    {{ getInitials(member.name) }}
+                  </div>
+                  <div class="player-info">
+                    <h3 class="player-name">{{ member.name }}</h3>
+                    <div class="player-position">{{ member.position }}</div>
+                    <div class="player-meta">
+                      {{ member.experience }} experience
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </p-card>
+                <div class="stats-grid">
+                  <div class="stat-item">
+                    <div class="stat-value">
+                      {{ getYears(member.experience) }}
+                    </div>
+                    <div class="stat-label">Years</div>
+                  </div>
+                  <div class="stat-item">
+                    <div class="stat-value">{{ member.country }}</div>
+                    <div class="stat-label">Country</div>
+                  </div>
+                </div>
+                @if (member.achievements && member.achievements.length > 0) {
+                  <div
+                    class="achievements"
+                    >
+                    <div class="achievements-title">Key Achievements:</div>
+                    @for (
+                      achievement of member.achievements.slice(0, 2); track trackByAchievement($index,
+                      achievement)) {
+                      <div
+                        class="achievement-item"
+                        >
+                        • {{ achievement }}
+                      </div>
+                    }
+                  </div>
+                }
+              </p-card>
+            }
           </div>
         </div>
-
+    
         <!-- Players by Position -->
-        <div
-          *ngFor="
-            let positionGroup of playersByPosition();
-            trackBy: trackByPosition
-          "
-          class="position-section"
-        >
-          <h2 class="section-title">
-            <i [class]="getPositionIcon(positionGroup.position)"></i>
-            {{ positionGroup.position }}
-          </h2>
-          <div class="roster-grid">
-            <p-card
-              *ngFor="
-                let player of positionGroup.players;
-                trackBy: trackByPlayerJersey
-              "
-              class="player-card"
+        @for (
+          positionGroup of playersByPosition(); track trackByPosition($index,
+          positionGroup)) {
+          <div
+            class="position-section"
             >
-              <div class="player-header">
-                <div
-                  class="player-jersey"
-                  [style.background]="getJerseyColor(player.position)"
-                >
-                  {{ player.jersey }}
-                </div>
-                <div class="player-info">
-                  <h3 class="player-name">{{ player.name }}</h3>
-                  <div class="player-position">{{ player.position }}</div>
-                  <div class="player-meta">
-                    <span>{{ player.country }}</span>
-                    <span class="separator">•</span>
-                    <span>Age {{ player.age }}</span>
+            <h2 class="section-title">
+              <i [class]="getPositionIcon(positionGroup.position)"></i>
+              {{ positionGroup.position }}
+            </h2>
+            <div class="roster-grid">
+              @for (
+                player of positionGroup.players; track trackByPlayerJersey($index,
+                player)) {
+                <p-card
+                  class="player-card"
+                  >
+                  <div class="player-header">
+                    <div
+                      class="player-jersey"
+                      [style.background]="getJerseyColor(player.position)"
+                      >
+                      {{ player.jersey }}
+                    </div>
+                    <div class="player-info">
+                      <h3 class="player-name">{{ player.name }}</h3>
+                      <div class="player-position">{{ player.position }}</div>
+                      <div class="player-meta">
+                        <span>{{ player.country }}</span>
+                        <span class="separator">•</span>
+                        <span>Age {{ player.age }}</span>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="player-details">
-                <div class="detail-item">
-                  <span class="detail-label">Height:</span>
-                  <span class="detail-value">{{ player.height }}</span>
-                </div>
-                <div class="detail-item">
-                  <span class="detail-label">Weight:</span>
-                  <span class="detail-value">{{ player.weight }}</span>
-                </div>
-              </div>
-              <div *ngIf="player.stats" class="player-stats">
-                <p-tag
-                  *ngFor="
-                    let stat of getPlayerStats(player);
-                    trackBy: trackByStatKey
-                  "
-                  [value]="stat.label + ': ' + stat.value"
-                  severity="info"
-                  styleClass="mr-2 mb-2"
-                ></p-tag>
-              </div>
-            </p-card>
+                  <div class="player-details">
+                    <div class="detail-item">
+                      <span class="detail-label">Height:</span>
+                      <span class="detail-value">{{ player.height }}</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Weight:</span>
+                      <span class="detail-value">{{ player.weight }}</span>
+                    </div>
+                  </div>
+                  @if (player.stats) {
+                    <div class="player-stats">
+                      @for (
+                        stat of getPlayerStats(player); track trackByStatKey($index,
+                        stat)) {
+                        <p-tag
+                          [value]="stat.label + ': ' + stat.value"
+                          severity="info"
+                          styleClass="mr-2 mb-2"
+                        ></p-tag>
+                      }
+                    </div>
+                  }
+                </p-card>
+              }
+            </div>
           </div>
-        </div>
+        }
       </div>
     </app-main-layout>
-  `,
+    `,
   styles: [
     `
       .roster-page {

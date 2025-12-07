@@ -56,6 +56,8 @@
     <script type="module" src="./src/js/components/top-bar-loader.js" defer></script>
     <!-- Footer Loader (Dynamic Component) -->
     <script type="module" src="./src/js/components/footer-loader.js" defer></script>
+    <!-- AI Chat Bubble Loader (Dynamic Component) -->
+    <script type="module" src="./src/js/components/ai-chat-bubble-loader.js" defer></script>
   </head>
   <body>
     <div class="dashboard-container">
@@ -380,10 +382,8 @@
           </div>
         </section>
 
-        <!-- AI Chat Floating Bubble -->
-        <div class="ai-chat-bubble">
-          <button class="ai-chat-button">💬 "Ask FlagFit Assistant"</button>
-        </div>
+        <!-- AI Chat Floating Bubble (Loaded Dynamically) -->
+        <div data-ai-chat-container></div>
       </main>
     </div>
 
@@ -923,57 +923,6 @@
 
       document.addEventListener("DOMContentLoaded", initTournamentsPage);
 
-      // Initialize AI Chat Button
-      function initializeAIChatButton() {
-        const aiChatBtn = document.querySelector(".ai-chat-button");
-        if (aiChatBtn) {
-          aiChatBtn.addEventListener("click", handleAIChat);
-        }
-      }
-
-      // Handle AI Chat Button Click
-      async function handleAIChat(e) {
-        e.preventDefault();
-
-        const chatButton = e.target.closest(".ai-chat-button") || e.target;
-
-        // Add visual feedback
-        chatButton.style.transform = "scale(0.95)";
-        setTimeout(() => {
-          chatButton.style.transform = "scale(1)";
-        }, 150);
-
-        // Open the chatbot modal
-        try {
-          // Import and open chatbot
-          const chatbotModule = await import("./src/js/components/chatbot.js");
-          const { flagFitChatbot } = chatbotModule;
-
-          if (flagFitChatbot && typeof flagFitChatbot.open === "function") {
-            flagFitChatbot.open();
-          } else {
-            throw new Error("Chatbot module not properly initialized");
-          }
-        } catch (error) {
-          console.error("Failed to load chatbot:", error);
-
-          // Try to use global chatbot if available
-          if (
-            window.flagFitChatbot &&
-            typeof window.flagFitChatbot.open === "function"
-          ) {
-            window.flagFitChatbot.open();
-          } else {
-            // Last resort: show alert
-            alert(
-              "AI Assistant Chat\n\nAsk me about:\n• Sports psychology & mental training\n• Nutrition & supplements\n• Speed & agility development\n• Injury prevention & treatment\n• Recovery strategies\n• Training programs",
-            );
-          }
-        }
-      }
-
-      // Initialize AI chat button after DOM is ready
-      document.addEventListener("DOMContentLoaded", initializeAIChatButton);
     </script>
 
         <!-- Footer (Loaded Dynamically) -->

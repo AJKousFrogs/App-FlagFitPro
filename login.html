@@ -214,6 +214,9 @@
       import { authManager } from "./src/auth-manager.js";
       import { validateEmail } from "./src/js/utils/shared.js";
       import { escapeHtml } from "./src/js/utils/sanitize.js";
+      import { showMessage, hideMessage, clearMessages } from "./src/js/utils/message-utils.js";
+      import { generateCSRFToken, validateCSRFToken, setCSRFTokenInForm } from "./src/js/utils/security-utils.js";
+      import { createLoginRateLimiter } from "./src/js/utils/security-utils.js";
 
       document
         .getElementById("loginForm")
@@ -226,8 +229,7 @@
           const password = document.getElementById("password").value;
 
           // Clear previous error messages
-          hideMessage("errorMessage");
-          hideMessage("successMessage");
+          clearMessages("errorMessage", "successMessage");
 
           // Validate form inputs
           if (!validateLoginForm(email, password)) {
@@ -247,10 +249,8 @@
           }
 
           // Validate CSRF token
-          const storedToken = sessionStorage.getItem("csrfToken");
           const formToken = document.getElementById("csrfToken").value;
-
-          if (!storedToken || storedToken !== formToken) {
+          if (!validateCSRFToken(formToken)) {
             showMessage(
               "errorMessage",
               "Security validation failed. Please refresh the page.",
@@ -261,10 +261,12 @@
           }
 
           // Check rate limiting
-          if (loginAttempts >= 3) {
+          const rateLimiter = createLoginRateLimiter();
+          if (rateLimiter.isRateLimited()) {
+            const timeRemaining = rateLimiter.getTimeRemaining();
             showMessage(
               "errorMessage",
-              "Too many failed attempts. Please wait before trying again.",
+              `Too many failed attempts. Please wait ${timeRemaining} minutes before trying again.`,
             );
             submitButton.innerHTML = originalText;
             submitButton.disabled = false;
@@ -283,8 +285,10 @@
               );
             }
 
+            const rateLimiter = createLoginRateLimiter();
+            
             if (result.success) {
-              recordLoginAttempt(true);
+              rateLimiter.recordAttempt(true);
 
               if (isDevelopment) {
                 console.log("✅ Login successful! Redirecting...");
@@ -296,13 +300,14 @@
                   "block";
               }, 3000);
             } else {
-              recordLoginAttempt(false);
+              rateLimiter.recordAttempt(false);
               showMessage("errorMessage", "Invalid email or password.");
               submitButton.innerHTML = originalText;
               submitButton.disabled = false;
             }
           } catch (error) {
-            recordLoginAttempt(false);
+            const rateLimiter = createLoginRateLimiter();
+            rateLimiter.recordAttempt(false);
             showMessage("errorMessage", "Login failed. Please try again.");
             submitButton.innerHTML = originalText;
             submitButton.disabled = false;
@@ -385,10 +390,23 @@
         }
 
         // Generate CSRF token
-        generateCSRFToken();
+        setCSRFTokenInForm("csrfToken");
 
         // Initialize rate limiting
-        initializeRateLimiting();
+        const rateLimiter = createLoginRateLimiter();
+        const rateLimitState = rateLimiter.getState();
+        
+        // Show rate limit warning if too many attempts
+        if (rateLimitState.isLimited) {
+          const timeRemaining = rateLimiter.getTimeRemaining();
+          if (timeRemaining > 0) {
+            showMessage(
+              "errorMessage",
+              `Too many login attempts. Please wait ${timeRemaining} minutes before trying again.`,
+            );
+            document.querySelector('button[type="submit"]').disabled = true;
+          }
+        }
 
         // Check if we're in demo mode (localhost or development)
         const isDemoMode =
@@ -510,86 +528,6 @@
           return false;
         }
         return true;
-      }
-
-      function showMessage(elementId, message) {
-        const element = document.getElementById(elementId);
-        element.textContent = message;
-        element.style.display = "block";
-
-        // Auto-hide after 5 seconds
-        setTimeout(() => {
-          element.style.display = "none";
-        }, 5000);
-      }
-
-      function hideMessage(elementId) {
-        const element = document.getElementById(elementId);
-        element.style.display = "none";
-      }
-
-      // CSRF Token Generation
-      function generateCSRFToken() {
-        const token = Array.from(crypto.getRandomValues(new Uint8Array(32)))
-          .map((b) => b.toString(16).padStart(2, "0"))
-          .join("");
-        document.getElementById("csrfToken").value = token;
-        sessionStorage.setItem("csrfToken", token);
-      }
-
-      // Rate Limiting Implementation
-      let loginAttempts = parseInt(
-        localStorage.getItem("loginAttempts") || "0",
-      );
-      let lastAttempt = parseInt(
-        localStorage.getItem("lastLoginAttempt") || "0",
-      );
-
-      function initializeRateLimiting() {
-        // Reset attempts after 15 minutes
-        const fifteenMinutes = 15 * 60 * 1000;
-        if (Date.now() - lastAttempt > fifteenMinutes) {
-          loginAttempts = 0;
-          localStorage.removeItem("loginAttempts");
-          localStorage.removeItem("lastLoginAttempt");
-        }
-
-        // Show rate limit warning if too many attempts
-        if (loginAttempts >= 3) {
-          const timeLeft = Math.ceil(
-            (fifteenMinutes - (Date.now() - lastAttempt)) / 1000 / 60,
-          );
-          if (timeLeft > 0) {
-            showMessage(
-              "errorMessage",
-              `Too many login attempts. Please wait ${timeLeft} minutes before trying again.`,
-            );
-            document.querySelector('button[type="submit"]').disabled = true;
-          }
-        }
-      }
-
-      function recordLoginAttempt(success = false) {
-        if (success) {
-          // Reset on successful login
-          loginAttempts = 0;
-          localStorage.removeItem("loginAttempts");
-          localStorage.removeItem("lastLoginAttempt");
-        } else {
-          // Increment failed attempts
-          loginAttempts++;
-          lastAttempt = Date.now();
-          localStorage.setItem("loginAttempts", loginAttempts.toString());
-          localStorage.setItem("lastLoginAttempt", lastAttempt.toString());
-
-          if (loginAttempts >= 3) {
-            showMessage(
-              "errorMessage",
-              "Too many failed attempts. Account temporarily locked for 15 minutes.",
-            );
-            document.querySelector('button[type="submit"]').disabled = true;
-          }
-        }
       }
 
       // Password strength is handled by UniversalFormValidator

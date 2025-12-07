@@ -1,7 +1,7 @@
-import { Injectable, inject } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
-import { ApiService, API_ENDPOINTS } from './api.service';
+import { Injectable, inject } from "@angular/core";
+import { Observable, of } from "rxjs";
+import { map, catchError } from "rxjs/operators";
+import { ApiService, API_ENDPOINTS } from "./api.service";
 
 export interface RecoveryMetric {
   name: string;
@@ -18,7 +18,7 @@ export interface RecoveryProtocol {
   description: string;
   category: string;
   duration: number; // in minutes
-  priority: 'high' | 'medium' | 'low';
+  priority: "high" | "medium" | "low";
   evidenceLevel: string;
   studyCount: number;
   benefits: string[];
@@ -61,7 +61,7 @@ export interface ResearchInsight {
 }
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class RecoveryService {
   private apiService = inject(ApiService);

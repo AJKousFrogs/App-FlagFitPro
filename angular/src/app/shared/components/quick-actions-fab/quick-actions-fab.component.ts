@@ -5,7 +5,7 @@ import {
   inject,
   computed,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { Router } from "@angular/router";
 import { SpeedDialModule } from "primeng/speeddial";
 import { MenuItem } from "primeng/api";
@@ -14,7 +14,7 @@ import { MenuItem } from "primeng/api";
   selector: "app-quick-actions-fab",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, SpeedDialModule],
+  imports: [SpeedDialModule],
   template: `
     <div class="quick-actions-container" [class.expanded]="isExpanded()">
       <p-speedDial

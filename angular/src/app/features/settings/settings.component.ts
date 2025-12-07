@@ -5,7 +5,7 @@ import {
   signal,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import {
   FormBuilder,
   FormGroup,
@@ -29,7 +29,6 @@ import { AuthService } from "../../core/services/auth.service";
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     CardModule,
     ButtonModule,
@@ -38,8 +37,8 @@ import { AuthService } from "../../core/services/auth.service";
     DropdownModule,
     ToastModule,
     MainLayoutComponent,
-    PageHeaderComponent,
-  ],
+    PageHeaderComponent
+],
   providers: [MessageService],
   template: `
     <p-toast></p-toast>

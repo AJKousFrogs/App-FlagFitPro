@@ -12,14 +12,14 @@ import {
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { CardModule } from 'primeng/card';
 import { StepsModule } from 'primeng/steps';
 import { ButtonModule } from 'primeng/button';
-import { DropdownModule } from 'primeng/dropdown';
+import { SelectModule } from 'primeng/select';
 import { SliderModule } from 'primeng/slider';
-import { ChipsModule } from 'primeng/chips';
+import { ChipModule } from 'primeng/chip';
 import { TagModule } from 'primeng/tag';
 import { TimelineModule } from 'primeng/timeline';
 import { DialogModule } from 'primeng/dialog';
@@ -55,253 +55,247 @@ interface Goal {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     FormsModule,
     CardModule,
     StepsModule,
     ButtonModule,
-    DropdownModule,
+    SelectModule,
     SliderModule,
-    ChipsModule,
+    ChipModule,
     TagModule,
     TimelineModule,
     DialogModule,
-    ToggleButtonModule,
-  ],
+    ToggleButtonModule
+],
   template: `
     <p-card header="Smart Training Session Builder" class="training-builder">
       <p-steps [(activeIndex)]="activeStep" [model]="steps" [readonly]="false">
       </p-steps>
-
+    
       <div class="step-content-wrapper">
         <!-- Step 1: Session Goals -->
-        <div *ngIf="activeStep === 0" class="step-content">
-          <h3>What are your training goals for today?</h3>
-
-          <div class="goals-grid">
-            <div
-              *ngFor="let goal of availableGoals; trackBy: trackByGoalId"
-              class="goal-card"
-              [class.selected]="isGoalSelected(goal.id)"
-              (click)="toggleGoal(goal.id)"
-            >
-              <i [class]="goal.icon" [style.color]="goal.color"></i>
-              <h4>{{ goal.name }}</h4>
-              <p>{{ goal.description }}</p>
-              <p-tag
-                *ngIf="goal.aiRecommended"
-                value="AI Recommended"
-                severity="success"
-                icon="pi pi-sparkles"
-              >
-              </p-tag>
-            </div>
-          </div>
-
-          <div class="step-actions">
-            <p-button
-              label="Next"
-              icon="pi pi-arrow-right"
-              [disabled]="selectedGoals().length === 0"
-              (onClick)="activeStep = 1"
-            >
-            </p-button>
-          </div>
-        </div>
-
-        <!-- Step 2: Session Parameters -->
-        <div *ngIf="activeStep === 1" class="step-content">
-          <form [formGroup]="sessionForm" class="parameters-form">
-            <div class="form-row">
-              <div class="form-field">
-                <label>Session Duration (minutes)</label>
-                <p-slider
-                  formControlName="duration"
-                  [min]="15"
-                  [max]="120"
-                  [step]="15"
-                >
-                </p-slider>
-                <span class="duration-display">{{
-                  sessionForm.get('duration')?.value
-                }}
-                  minutes</span>
-              </div>
-
-              <div class="form-field">
-                <label>Intensity Level</label>
-                <p-dropdown
-                  formControlName="intensity"
-                  [options]="intensityLevels"
-                  optionLabel="label"
-                  optionValue="value"
-                  placeholder="Select intensity"
-                >
-                  <ng-template let-option pTemplate="item">
-                    <div class="intensity-option">
-                      <span
-                        class="intensity-indicator"
-                        [class]="'intensity-' + option.value"
-                      ></span>
-                      <span>{{ option.label }}</span>
-                    </div>
-                  </ng-template>
-                </p-dropdown>
-              </div>
-            </div>
-
-            <div class="form-field">
-              <label>Available Equipment</label>
-              <p-chips
-                formControlName="equipment"
-                placeholder="Add equipment (optional)"
-                [allowDuplicate]="false"
-              >
-              </p-chips>
-            </div>
-
-            <!-- Weather-based recommendations -->
-            <div class="weather-notice" *ngIf="weatherData()">
-              <i class="pi pi-sun"></i>
-              <span
-                >{{ weatherData()?.condition }}, {{ weatherData()?.temperature }}°F</span
-              >
-              <p-tag
-                [value]="weatherData()?.recommendation"
-                [severity]="getWeatherSeverity()"
-              >
-              </p-tag>
-            </div>
-          </form>
-
-          <div class="step-actions">
-            <p-button
-              label="Previous"
-              icon="pi pi-arrow-left"
-              severity="secondary"
-              [outlined]="true"
-              (onClick)="activeStep = 0"
-            >
-            </p-button>
-
-            <p-button
-              label="Generate Session"
-              icon="pi pi-sparkles"
-              [disabled]="sessionForm.invalid"
-              (onClick)="generateSession(); activeStep = 2"
-            >
-            </p-button>
-          </div>
-        </div>
-
-        <!-- Step 3: Generated Session -->
-        <div *ngIf="activeStep === 2" class="step-content">
-          <div class="session-overview">
-            <h3>Generated Training Session</h3>
-            <div class="session-stats">
-              <div class="stat">
-                <span class="label">Duration</span>
-                <span class="value">{{ totalDuration() }} min</span>
-              </div>
-              <div class="stat">
-                <span class="label">Exercises</span>
-                <span class="value">{{ generatedExercises().length }}</span>
-              </div>
-              <div class="stat">
-                <span class="label">Intensity</span>
-                <p-tag
-                  [value]="sessionForm.get('intensity')?.value"
-                  [severity]="getIntensitySeverity()"
-                ></p-tag>
-              </div>
-            </div>
-          </div>
-
-          <!-- Exercise Timeline -->
-          <p-timeline
-            [value]="timelineEvents()"
-            layout="vertical"
-            class="session-timeline"
-          >
-            <ng-template pTemplate="marker" let-event>
-              <div class="timeline-marker" [class]="'marker-' + event.type">
-                <i [class]="event.icon"></i>
-              </div>
-            </ng-template>
-
-            <ng-template pTemplate="content" let-event>
-              <p-card class="timeline-card">
-                <div class="exercise-header">
-                  <h4>{{ event.title }}</h4>
-                  <div class="exercise-meta">
-                    <span class="duration">{{ event.duration }} min</span>
+        @if (activeStep === 0) {
+          <div class="step-content">
+            <h3>What are your training goals for today?</h3>
+            <div class="goals-grid">
+              @for (goal of availableGoals; track trackByGoalId($index, goal)) {
+                <div
+                  class="goal-card"
+                  [class.selected]="isGoalSelected(goal.id)"
+                  (click)="toggleGoal(goal.id)"
+                  >
+                  <i [class]="goal.icon" [style.color]="goal.color"></i>
+                  <h4>{{ goal.name }}</h4>
+                  <p>{{ goal.description }}</p>
+                  @if (goal.aiRecommended) {
                     <p-tag
-                      *ngIf="event.aiGenerated"
-                      value="AI Generated"
-                      severity="info"
-                      size="small"
+                      value="AI Recommended"
+                      severity="success"
+                      icon="pi pi-sparkles"
+                      >
+                    </p-tag>
+                  }
+                </div>
+              }
+            </div>
+            <div class="step-actions">
+              <p-button
+                label="Next"
+                icon="pi pi-arrow-right"
+                [disabled]="selectedGoals().length === 0"
+                (onClick)="activeStep = 1"
+                >
+              </p-button>
+            </div>
+          </div>
+        }
+    
+        <!-- Step 2: Session Parameters -->
+        @if (activeStep === 1) {
+          <div class="step-content">
+            <form [formGroup]="sessionForm" class="parameters-form">
+              <div class="form-row">
+                <div class="form-field">
+                  <label>Session Duration (minutes)</label>
+                  <p-slider
+                    formControlName="duration"
+                    [min]="15"
+                    [max]="120"
+                    [step]="15"
                     >
+                  </p-slider>
+                  <span class="duration-display">{{
+                    sessionForm.get('duration')?.value
+                    }}
+                  minutes</span>
+                </div>
+                <div class="form-field">
+                  <label>Intensity Level</label>
+                  <p-select
+                    formControlName="intensity"
+                    [options]="intensityLevels"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="Select intensity"
+                    >
+                    <ng-template let-option pTemplate="item">
+                      <div class="intensity-option">
+                        <span
+                          class="intensity-indicator"
+                          [class]="'intensity-' + option.value"
+                        ></span>
+                        <span>{{ option.label }}</span>
+                      </div>
+                    </ng-template>
+                  </p-select>
+                </div>
+              </div>
+              <div class="form-field">
+                <label>Available Equipment</label>
+                <p-chips
+                  formControlName="equipment"
+                  placeholder="Add equipment (optional)"
+                  >
+                </p-chips>
+              </div>
+              <!-- Weather-based recommendations -->
+              @if (weatherData()) {
+                <div class="weather-notice">
+                  <i class="pi pi-sun"></i>
+                  <span
+                    >{{ weatherData()?.condition }}, {{ weatherData()?.temperature }}°F</span
+                    >
+                    <p-tag
+                      [value]="weatherData()?.recommendation"
+                      [severity]="getWeatherSeverity()"
+                      >
                     </p-tag>
                   </div>
-                </div>
-
-                <p class="exercise-description">{{ event.description }}</p>
-
-                <div class="exercise-actions">
-                  <p-button
-                    icon="pi pi-play"
-                    label="Preview"
-                    size="small"
-                    [text]="true"
-                    (onClick)="previewExercise(event)"
+                }
+              </form>
+              <div class="step-actions">
+                <p-button
+                  label="Previous"
+                  icon="pi pi-arrow-left"
+                  severity="secondary"
+                  [outlined]="true"
+                  (onClick)="activeStep = 0"
                   >
-                  </p-button>
-
-                  <p-button
-                    icon="pi pi-pencil"
-                    label="Modify"
-                    size="small"
-                    [text]="true"
-                    (onClick)="modifyExercise(event)"
+                </p-button>
+                <p-button
+                  label="Generate Session"
+                  icon="pi pi-sparkles"
+                  [disabled]="sessionForm.invalid"
+                  (onClick)="generateSession(); activeStep = 2"
                   >
-                  </p-button>
+                </p-button>
+              </div>
+            </div>
+          }
+    
+          <!-- Step 3: Generated Session -->
+          @if (activeStep === 2) {
+            <div class="step-content">
+              <div class="session-overview">
+                <h3>Generated Training Session</h3>
+                <div class="session-stats">
+                  <div class="stat">
+                    <span class="label">Duration</span>
+                    <span class="value">{{ totalDuration() }} min</span>
+                  </div>
+                  <div class="stat">
+                    <span class="label">Exercises</span>
+                    <span class="value">{{ generatedExercises().length }}</span>
+                  </div>
+                  <div class="stat">
+                    <span class="label">Intensity</span>
+                    <p-tag
+                      [value]="sessionForm.get('intensity')?.value"
+                      [severity]="getIntensitySeverity()"
+                    ></p-tag>
+                  </div>
                 </div>
-              </p-card>
-            </ng-template>
-          </p-timeline>
-
-          <div class="step-actions">
-            <p-button
-              label="Previous"
-              icon="pi pi-arrow-left"
-              severity="secondary"
-              [outlined]="true"
-              (onClick)="activeStep = 1"
-            >
-            </p-button>
-
-            <p-button
-              label="Start Session"
-              icon="pi pi-play"
-              severity="success"
-              (onClick)="startSession()"
-            >
-            </p-button>
-
-            <p-button
-              label="Save for Later"
-              icon="pi pi-bookmark"
-              severity="secondary"
-              [outlined]="true"
-              (onClick)="saveSession()"
-            >
-            </p-button>
-          </div>
+              </div>
+              <!-- Exercise Timeline -->
+              <p-timeline
+                [value]="timelineEvents()"
+                layout="vertical"
+                class="session-timeline"
+                >
+                <ng-template pTemplate="marker" let-event>
+                  <div class="timeline-marker" [class]="'marker-' + event.type">
+                    <i [class]="event.icon"></i>
+                  </div>
+                </ng-template>
+                <ng-template pTemplate="content" let-event>
+                  <p-card class="timeline-card">
+                    <div class="exercise-header">
+                      <h4>{{ event.title }}</h4>
+                      <div class="exercise-meta">
+                        <span class="duration">{{ event.duration }} min</span>
+                        @if (event.aiGenerated) {
+                          <p-tag
+                            value="AI Generated"
+                            severity="info"
+                            size="small"
+                            >
+                          </p-tag>
+                        }
+                      </div>
+                    </div>
+                    <p class="exercise-description">{{ event.description }}</p>
+                    <div class="exercise-actions">
+                      <p-button
+                        icon="pi pi-play"
+                        label="Preview"
+                        size="small"
+                        [text]="true"
+                        (onClick)="previewExercise(event)"
+                        >
+                      </p-button>
+                      <p-button
+                        icon="pi pi-pencil"
+                        label="Modify"
+                        size="small"
+                        [text]="true"
+                        (onClick)="modifyExercise(event)"
+                        >
+                      </p-button>
+                    </div>
+                  </p-card>
+                </ng-template>
+              </p-timeline>
+              <div class="step-actions">
+                <p-button
+                  label="Previous"
+                  icon="pi pi-arrow-left"
+                  severity="secondary"
+                  [outlined]="true"
+                  (onClick)="activeStep = 1"
+                  >
+                </p-button>
+                <p-button
+                  label="Start Session"
+                  icon="pi pi-play"
+                  severity="success"
+                  (onClick)="startSession()"
+                  >
+                </p-button>
+                <p-button
+                  label="Save for Later"
+                  icon="pi pi-bookmark"
+                  severity="secondary"
+                  [outlined]="true"
+                  (onClick)="saveSession()"
+                  >
+                </p-button>
+              </div>
+            </div>
+          }
         </div>
-      </div>
-    </p-card>
-  `,
+      </p-card>
+    `,
   styles: [
     `
       .training-builder {
@@ -921,14 +915,14 @@ export class TrainingBuilderComponent implements OnInit {
     }
   }
 
-  getWeatherSeverity(): string {
+  getWeatherSeverity(): 'success' | 'secondary' | 'info' | 'warn' | 'danger' | 'contrast' {
     const temp = this.weatherData()?.temperature || 70;
     if (temp < 40 || temp > 90) return 'danger';
     if (temp < 50 || temp > 85) return 'warn';
     return 'success';
   }
 
-  getIntensitySeverity(): string {
+  getIntensitySeverity(): 'success' | 'secondary' | 'info' | 'warn' | 'danger' | 'contrast' {
     const intensity = this.sessionForm.get('intensity')?.value;
     switch (intensity) {
       case 'high':

@@ -1,23 +1,27 @@
 import { Component, Input } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { ButtonModule } from "primeng/button";
 
 @Component({
   selector: "app-page-header",
   standalone: true,
-  imports: [CommonModule, ButtonModule],
+  imports: [ButtonModule],
   template: `
     <div class="page-header">
       <div class="header-content">
         <h1 class="page-title">
-          <i *ngIf="icon" [class]="'pi ' + icon"></i>
+          @if (icon) {
+            <i [class]="'pi ' + icon"></i>
+          }
           {{ title }}
         </h1>
-        <p *ngIf="subtitle" class="page-subtitle">{{ subtitle }}</p>
+        @if (subtitle) {
+          <p class="page-subtitle">{{ subtitle }}</p>
+        }
       </div>
       <ng-content></ng-content>
     </div>
-  `,
+    `,
   styles: [
     `
       .page-header {

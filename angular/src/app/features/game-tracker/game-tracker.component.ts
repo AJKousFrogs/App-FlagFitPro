@@ -6,7 +6,7 @@ import {
   ChangeDetectionStrategy,
   DestroyRef,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import {
   FormBuilder,
   FormGroup,
@@ -93,7 +93,6 @@ interface Play {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     FormsModule,
     CardModule,
@@ -107,8 +106,8 @@ interface Play {
     TagModule,
     RadioButtonModule,
     MainLayoutComponent,
-    PageHeaderComponent,
-  ],
+    PageHeaderComponent
+],
   templateUrl: "./game-tracker.component.html",
   styleUrls: ["./game-tracker.component.css"],
 })

@@ -8,75 +8,83 @@ This document outlines the comprehensive technical architecture of the elite-lev
 
 ### **Architecture Pattern: Modern Full-Stack with AI Integration**
 
-- **Frontend**: React 18 + Vite + TypeScript (SPA with PWA capabilities)
+- **Frontend**: Angular 19 + PrimeNG + TypeScript (SPA with PWA capabilities)
 - **Backend**: Node.js + Express with RESTful API design
-- **Database**: PostgreSQL with Drizzle ORM for type-safe queries
+- **Database**: Neon PostgreSQL with optimized connection pooling
 - **AI/ML**: Evidence-based recommendation engines with 120+ study integration
-- **Real-time**: WebSocket connections for live updates
+- **Real-time**: Supabase Realtime subscriptions for live updates
 - **Caching**: Multi-layer caching strategy for performance optimization
 
 ## Frontend Architecture
 
-### **React 18 Implementation (Professional Grade)**
+### **Angular 19 + PrimeNG Implementation (Professional Grade)**
 
 ```typescript
 // Component Architecture Example
-interface DashboardProps {
-  userId: string;
-  olympicData: OlympicQualificationData;
-  performanceMetrics: PerformanceMetrics[];
-  teamChemistry: TeamChemistryAnalysis;
-}
+@Component({
+  selector: 'app-dashboard',
+  standalone: true,
+  imports: [CommonModule, PrimeNGModules],
+  templateUrl: './dashboard.component.html',
+  styleUrls: ['./dashboard.component.scss']
+})
+export class DashboardComponent {
+  userId = signal<string>('');
+  olympicData = signal<OlympicQualificationData | null>(null);
+  performanceMetrics = signal<PerformanceMetrics[]>([]);
+  teamChemistry = signal<TeamChemistryAnalysis | null>(null);
 
-const DashboardPage: React.FC<DashboardProps> = ({
-  userId,
-  olympicData,
-  performanceMetrics,
-  teamChemistry,
-}) => {
-  // 800+ lines of sophisticated implementation
-  // Real-time data integration
-  // Advanced state management
-  // Olympic qualification tracking
-  // AI coaching integration
-};
+  constructor(
+    private performanceService: PerformanceDataService,
+    private authService: AuthService
+  ) {
+    // 800+ lines of sophisticated implementation
+    // Real-time data integration
+    // Advanced state management with Signals
+    // Olympic qualification tracking
+    // AI coaching integration
+  }
+}
 ```
 
 ### **Technology Stack**
 
-- **Framework**: React 18 with Concurrent Features
-- **Build System**: Vite for fast development and optimized builds
+- **Framework**: Angular 19 (Standalone Components)
+- **UI Library**: PrimeNG 19+ with comprehensive component suite
+- **Build System**: Angular CLI with ESBuild for fast builds
 - **Type Safety**: TypeScript with strict type checking
-- **State Management**: Zustand for global state + React Query for server state
-- **UI Components**: Radix UI primitives + Custom design system
-- **Styling**: Tailwind CSS + CSS-in-JS for dynamic styles
-- **Testing**: Vitest + React Testing Library + Playwright E2E
+- **State Management**: Angular Signals + RxJS for reactive state
+- **UI Components**: PrimeNG components + Custom design system
+- **Styling**: SCSS with CSS Custom Properties (Design Tokens)
+- **Testing**: Angular Testing Utilities + Vitest + Playwright E2E
 
 ### **Component Architecture**
 
-#### **Atomic Design Structure**
+#### **Angular Feature-Based Structure**
 
 ```
-src/components/
-├── atoms/
-│   ├── Button.tsx           # Professional button components
-│   ├── Input.tsx            # Form input components
-│   ├── Badge.tsx            # Status and achievement badges
-│   └── ProgressBar.tsx      # Training progress indicators
-├── molecules/
-│   ├── MetricCard.tsx       # Performance metric displays
-│   ├── TrainingSession.tsx  # Individual training components
-│   ├── TeamMember.tsx       # Team roster components
-│   └── ChemistryIndicator.tsx # Team relationship displays
-├── organisms/
-│   ├── OlympicTracker.tsx   # LA28 qualification system
-│   ├── PerformanceDashboard.tsx # Analytics overview
-│   ├── SocialFeed.tsx       # Community interaction system
-│   └── TournamentBracket.tsx # Competition management
-└── templates/
-    ├── DashboardLayout.tsx  # Main app layout
-    ├── TrainingLayout.tsx   # Training-specific layout
-    └── CommunityLayout.tsx  # Social features layout
+angular/src/app/
+├── core/                    # Core services, guards, interceptors
+│   ├── services/
+│   ├── guards/
+│   └── interceptors/
+├── shared/                  # Shared components and utilities
+│   ├── components/
+│   │   ├── header/          # Header component
+│   │   ├── sidebar/         # Sidebar navigation
+│   │   ├── layout/          # Main layout components
+│   │   └── performance-dashboard/ # Performance widgets
+│   ├── directives/
+│   └── pipes/
+└── features/                # Feature modules
+    ├── auth/                # Authentication (Login, Register)
+    ├── dashboard/           # Main dashboard
+    ├── training/            # Training management
+    ├── analytics/           # Analytics and reporting
+    ├── roster/             # Team roster management
+    ├── tournaments/        # Tournament system
+    ├── community/          # Community features
+    └── wellness/           # Wellness tracking
 ```
 
 ### **Advanced Frontend Features**
@@ -84,19 +92,23 @@ src/components/
 #### **Real-Time Data Integration**
 
 ```typescript
-// WebSocket integration for live updates
-const useRealTimeUpdates = (userId: string) => {
-  const [socket, setSocket] = useState<WebSocket | null>(null);
-
-  useEffect(() => {
-    const ws = new WebSocket(`ws://localhost:3001/athletes/${userId}`);
-
-    ws.onmessage = (event) => {
-      const update = JSON.parse(event.data);
-      // Handle Olympic qualification updates
-      // Process team chemistry changes
-      // Update performance metrics
-    };
+// Supabase Realtime integration for live updates
+@Injectable({ providedIn: 'root' })
+export class RealtimeSyncService {
+  private supabase = inject(SupabaseClient);
+  
+  subscribeToUpdates(userId: string): Observable<any> {
+    return this.supabase
+      .channel(`athletes:${userId}`)
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'performance_metrics' },
+        (payload) => {
+          // Handle Olympic qualification updates
+          // Process team chemistry changes
+          // Update performance metrics
+        }
+      )
+      .subscribe();
 
     setSocket(ws);
     return () => ws.close();
@@ -473,11 +485,12 @@ testing:
 
 | Technology   | Rationale                                                        | Alternatives Considered    |
 | ------------ | ---------------------------------------------------------------- | -------------------------- |
-| React 18     | Mature ecosystem, concurrent features, Olympic-grade performance | Vue.js, Angular, Svelte    |
+| Angular 19    | Enterprise-grade framework, standalone components, signals       | React, Vue.js, Svelte      |
+| PrimeNG 19   | Production-ready UI components with comprehensive theming        | Material UI, Ant Design   |
 | TypeScript   | Type safety for complex sports data models                       | JavaScript, Flow           |
-| Vite         | Fast development and optimized builds                            | Create React App, Webpack  |
-| Tailwind CSS | Rapid UI development with consistent design                      | Styled Components, Emotion |
-| Zustand      | Lightweight state management for real-time updates               | Redux, Context API         |
+| Angular CLI  | Fast development and optimized builds with ESBuild                | Vite, Webpack              |
+| SCSS + Tokens| Design system with semantic tokens for consistent theming         | Tailwind CSS, Styled Components |
+| Angular Signals | Reactive state management with fine-grained reactivity          | RxJS, Redux, Zustand       |
 
 ### **Backend Technology Choices**
 

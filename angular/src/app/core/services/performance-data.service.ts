@@ -1,7 +1,7 @@
-import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { ApiService, API_ENDPOINTS } from './api.service';
+import { Injectable, inject } from "@angular/core";
+import { Observable } from "rxjs";
+import { map } from "rxjs/operators";
+import { ApiService, API_ENDPOINTS } from "./api.service";
 
 // Physical Measurements Interfaces
 export interface PhysicalMeasurement {
@@ -31,7 +31,7 @@ export interface Supplement {
   dosage?: string;
   taken: boolean;
   date: string;
-  timeOfDay?: 'morning' | 'afternoon' | 'evening' | 'pre-workout' | 'post-workout';
+  timeOfDay?: "morning" | "afternoon" | "evening" | "pre-workout" | "post-workout";
   notes?: string;
   timestamp?: string;
 }
@@ -74,7 +74,7 @@ export interface TrendsData {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class PerformanceDataService {
   private apiService = inject(ApiService);

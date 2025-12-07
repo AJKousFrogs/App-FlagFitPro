@@ -5,7 +5,7 @@ import {
   signal,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { ChartModule } from "primeng/chart";
@@ -30,7 +30,6 @@ interface PerformanceMetric {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     CardModule,
     ButtonModule,
     ChartModule,
@@ -39,8 +38,8 @@ interface PerformanceMetric {
     CalendarModule,
     MainLayoutComponent,
     PageHeaderComponent,
-    StatsGridComponent,
-  ],
+    StatsGridComponent
+],
   template: `
     <app-main-layout>
       <div class="performance-page">
@@ -48,44 +47,46 @@ interface PerformanceMetric {
           title="Performance Tracking"
           subtitle="Track and analyze your performance metrics over time"
           icon="pi-bullseye"
-        >
+          >
           <p-button
             label="Log Performance"
             icon="pi pi-plus"
             (onClick)="openLogDialog()"
           ></p-button>
         </app-page-header>
-
+    
         <!-- Performance Metrics -->
         <app-stats-grid [stats]="performanceStats()"></app-stats-grid>
-
+    
         <!-- Performance Charts -->
         <div class="charts-grid">
           <p-card class="chart-card">
             <ng-template pTemplate="header">
               <h3>Performance Over Time</h3>
             </ng-template>
-            <p-chart
-              *ngIf="performanceChartData()"
-              type="line"
-              [data]="performanceChartData()"
-              [options]="chartOptions"
-            ></p-chart>
+            @if (performanceChartData()) {
+              <p-chart
+                type="line"
+                [data]="performanceChartData()"
+                [options]="chartOptions"
+              ></p-chart>
+            }
           </p-card>
-
+    
           <p-card class="chart-card">
             <ng-template pTemplate="header">
               <h3>Speed Metrics</h3>
             </ng-template>
-            <p-chart
-              *ngIf="speedChartData()"
-              type="bar"
-              [data]="speedChartData()"
-              [options]="chartOptions"
-            ></p-chart>
+            @if (speedChartData()) {
+              <p-chart
+                type="bar"
+                [data]="speedChartData()"
+                [options]="chartOptions"
+              ></p-chart>
+            }
           </p-card>
         </div>
-
+    
         <!-- Performance History Table -->
         <p-card class="table-card">
           <ng-template pTemplate="header">
@@ -95,7 +96,7 @@ interface PerformanceMetric {
             [value]="performanceHistory()"
             [paginator]="true"
             [rows]="10"
-          >
+            >
             <ng-template pTemplate="header">
               <tr>
                 <th>Date</th>
@@ -117,7 +118,7 @@ interface PerformanceMetric {
                   <p-tag
                     [value]="record.score + '%'"
                     [severity]="getScoreSeverity(record.score)"
-                  >
+                    >
                   </p-tag>
                 </td>
               </tr>
@@ -126,7 +127,7 @@ interface PerformanceMetric {
         </p-card>
       </div>
     </app-main-layout>
-  `,
+    `,
   styles: [
     `
       .performance-page {

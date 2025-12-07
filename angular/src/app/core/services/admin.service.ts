@@ -1,13 +1,13 @@
-import { Injectable, inject } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
-import { ApiService, API_ENDPOINTS } from './api.service';
+import { Injectable, inject } from "@angular/core";
+import { Observable, of } from "rxjs";
+import { map, catchError } from "rxjs/operators";
+import { ApiService, API_ENDPOINTS } from "./api.service";
 
 export interface HealthMetric {
   name: string;
   value: string | number;
-  status: 'healthy' | 'warning' | 'error';
-  severity: 'success' | 'warn' | 'danger' | 'info';
+  status: "healthy" | "warning" | "error";
+  severity: "success" | "warn" | "danger" | "info";
   icon: string;
   color: string;
 }
@@ -15,8 +15,8 @@ export interface HealthMetric {
 export interface SyncStatus {
   source: string;
   timestamp: Date;
-  result: 'success' | 'failed' | 'partial';
-  severity: 'success' | 'warn' | 'danger';
+  result: "success" | "failed" | "partial";
+  severity: "success" | "warn" | "danger";
   recordsUpdated?: number;
   error?: string;
 }
@@ -25,11 +25,11 @@ export interface BackupInfo {
   filename: string;
   size: number;
   timestamp: Date;
-  status: 'completed' | 'failed' | 'in-progress';
+  status: "completed" | "failed" | "in-progress";
 }
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class AdminService {
   private apiService = inject(ApiService);

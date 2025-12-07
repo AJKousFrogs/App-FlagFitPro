@@ -1,4 +1,4 @@
-import { Injectable, signal, computed } from "@angular/core";
+import { Injectable, inject, signal, computed } from "@angular/core";
 import { MessageService } from "primeng/api";
 
 export interface PerformanceMetric {
@@ -16,7 +16,7 @@ export interface PerformanceMetric {
   providedIn: "root",
 })
 export class PerformanceMonitorService {
-  private messageService?: MessageService;
+  private messageService = inject(MessageService);
 
   metrics = signal<PerformanceMetric[]>([]);
   private performanceObserver?: PerformanceObserver;
@@ -288,19 +288,11 @@ export class PerformanceMonitorService {
   }
 
   private showToast(severity: string, message: string): void {
-    if (this.messageService) {
-      this.messageService.add({
-        severity,
-        summary: "Performance Monitor",
-        detail: message,
-      });
-    } else {
-      console.log(`[${severity.toUpperCase()}] ${message}`);
-    }
-  }
-
-  setMessageService(messageService: MessageService): void {
-    this.messageService = messageService;
+    this.messageService.add({
+      severity,
+      summary: "Performance Monitor",
+      detail: message,
+    });
   }
 
   reportIssue(): void {

@@ -487,7 +487,7 @@ html[data-theme="light"] .nav-item.active {
   align-items: center;
   justify-content: center;
   font-weight: var(--font-weight-bold, 700);
-  color: var(--dark-text-primary);
+  color: var(--color-text-primary);
 }
 
 .rank.first {

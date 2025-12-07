@@ -90,6 +90,10 @@ async function createTrainingSession(userId, sessionData) {
           note: "Table needs to be created via migration",
         };
       }
+      // Handle PGRST116 (not found) - shouldn't happen on insert, but handle gracefully
+      if (error.code === "PGRST116") {
+        throw new Error("Failed to create training session");
+      }
       throw error;
     }
 
@@ -185,7 +189,13 @@ exports.handler = async (event, context) => {
 
     // Handle POST request - create new session
     if (event.httpMethod === "POST") {
-      const sessionData = JSON.parse(event.body);
+      // Parse and validate request body
+      let sessionData = {};
+      try {
+        sessionData = JSON.parse(event.body);
+      } catch (parseError) {
+        return handleValidationError("Invalid JSON in request body");
+      }
 
       // Validate required fields
       if (!sessionData.exercises || !Array.isArray(sessionData.exercises) || sessionData.exercises.length === 0) {

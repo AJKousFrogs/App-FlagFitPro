@@ -4,91 +4,44 @@
  * Includes search, notifications, theme toggle, and user menu
  */
 
+import { BaseComponentLoader } from './base-component-loader.js';
+import { onDOMReady } from '../utils/dom-ready.js';
 import { getInitials } from '../utils/shared.js';
 
-class TopBarLoader {
+class TopBarLoader extends BaseComponentLoader {
   constructor() {
-    this.topBarContainer = null;
+    super({
+      containerSelector: '[data-topbar-container]',
+      componentPath: './src/components/organisms/top-bar-unified.html',
+      componentName: 'Top Bar',
+      createContainer: TopBarLoader.createTopBarContainer,
+      autoInit: false // We'll handle initialization manually
+    });
+
     this.init();
   }
 
   /**
-   * Initialize top bar loading
+   * Create top bar container if it doesn't exist
    */
-  async init() {
-    try {
-      await this.loadTopBar();
-      this.initializeLucideIcons();
-      this.initializeUserAvatar();
-    } catch (error) {
-      console.error('[Top Bar Loader] Failed to load top bar:', error);
+  static createContainer() {
+    const mainContent = document.querySelector('#main-content, .main-content, main');
+    if (!mainContent) {
+      throw new Error('Main content element not found');
     }
+
+    const container = document.createElement('div');
+    container.setAttribute('data-topbar-container', '');
+    mainContent.insertAdjacentElement('afterbegin', container);
+    return container;
   }
 
   /**
-   * Load top bar HTML from component file
+   * Override afterLoad to initialize user avatar
    */
-  async loadTopBar() {
-    try {
-      const response = await fetch('./src/components/organisms/top-bar-unified.html');
-
-      if (!response.ok) {
-        throw new Error(`Failed to load top bar: ${response.status}`);
-      }
-
-      const topBarHTML = await response.text();
-
-      // Find the top bar container or create one
-      this.topBarContainer = document.querySelector('[data-topbar-container]');
-
-      if (!this.topBarContainer) {
-        // Find main-content element to insert before
-        const mainContent = document.querySelector('#main-content, .main-content, main');
-
-        if (mainContent) {
-          // Create container and insert before main content
-          this.topBarContainer = document.createElement('div');
-          this.topBarContainer.setAttribute('data-topbar-container', '');
-          mainContent.insertAdjacentElement('afterbegin', this.topBarContainer);
-        } else {
-          throw new Error('Main content element not found');
-        }
-      }
-
-      // Inject top bar HTML
-      this.topBarContainer.innerHTML = topBarHTML;
-
-      console.log('[Top Bar Loader] Top bar loaded successfully');
-    } catch (error) {
-      console.error('[Top Bar Loader] Error loading top bar HTML:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Initialize Lucide icons in top bar
-   */
-  initializeLucideIcons() {
-    if (typeof lucide !== 'undefined' && lucide.createIcons) {
-      // Small delay to ensure DOM is ready
-      setTimeout(() => {
-        lucide.createIcons();
-      }, 100);
-    } else {
-      // Wait for Lucide to load
-      let attempts = 0;
-      const maxAttempts = 50;
-      const checkLucide = setInterval(() => {
-        attempts++;
-        if (typeof lucide !== 'undefined' && lucide.createIcons) {
-          clearInterval(checkLucide);
-          lucide.createIcons();
-        } else if (attempts >= maxAttempts) {
-          clearInterval(checkLucide);
-          console.warn('[Top Bar Loader] Lucide icons not loaded');
-        }
-      }, 100);
-    }
+  afterLoad() {
+    super.afterLoad();
+    this.initializeUserAvatar();
   }
 
   /**
@@ -111,17 +64,11 @@ class TopBarLoader {
       }
     }, 500);
   }
-
 }
 
 // Auto-initialize on DOM ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    window.topBarLoader = new TopBarLoader();
-  });
-} else {
-  // DOM already loaded
+onDOMReady(() => {
   window.topBarLoader = new TopBarLoader();
-}
+});
 
 export { TopBarLoader };

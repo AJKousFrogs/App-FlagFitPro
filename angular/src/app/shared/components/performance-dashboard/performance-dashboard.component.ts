@@ -47,84 +47,81 @@ interface PerformanceMetric {
   template: `
     <div class="performance-dashboard">
       <div class="metrics-grid">
-        <p-card
-          *ngFor="let metric of metrics(); trackBy: trackByMetricId"
-          class="metric-card"
-          [ngClass]="'metric-' + metric.id"
-        >
-          <div class="metric-header">
-            <div class="metric-info">
-              <i [class]="metric.icon" [style.color]="metric.color"></i>
-              <h4>{{ metric.label }}</h4>
-            </div>
-            <p-tag
-              [value]="formatTrend(metric.trend, metric.trendValue)"
-              [severity]="getTrendSeverity(metric.trend)"
-              [icon]="getTrendIcon(metric.trend)"
+        @for (metric of metrics(); track trackByMetricId($index, metric)) {
+          <p-card
+            class="metric-card"
+            [ngClass]="'metric-' + metric.id"
             >
-            </p-tag>
-          </div>
-
-          <div class="metric-visualization">
-            <div class="metric-value-container">
-              <p-knob
-                [(ngModel)]="metric.value"
-                [min]="0"
-                [max]="metric.target * 1.2"
-                [size]="120"
-                [strokeWidth]="8"
-                [valueColor]="metric.color"
-                [rangeColor]="'#e5e7eb'"
-                [readonly]="true"
-                [showValue]="false"
-              >
-              </p-knob>
-
-              <div class="metric-overlay">
-                <span class="metric-value">{{ metric.value }}</span>
-                <span class="metric-unit">{{ metric.unit }}</span>
+            <div class="metric-header">
+              <div class="metric-info">
+                <i [class]="metric.icon" [style.color]="metric.color"></i>
+                <h4>{{ metric.label }}</h4>
+              </div>
+              <p-tag
+                [value]="formatTrend(metric.trend, metric.trendValue)"
+                [severity]="getTrendSeverity(metric.trend)"
+                [icon]="getTrendIcon(metric.trend)"
+                >
+              </p-tag>
+            </div>
+            <div class="metric-visualization">
+              <div class="metric-value-container">
+                <p-knob
+                  [(ngModel)]="metric.value"
+                  [min]="0"
+                  [max]="metric.target * 1.2"
+                  [size]="120"
+                  [strokeWidth]="8"
+                  [valueColor]="metric.color"
+                  [rangeColor]="'#e5e7eb'"
+                  [readonly]="true"
+                  [showValue]="false"
+                  >
+                </p-knob>
+                <div class="metric-overlay">
+                  <span class="metric-value">{{ metric.value }}</span>
+                  <span class="metric-unit">{{ metric.unit }}</span>
+                </div>
+              </div>
+              <div class="metric-progress">
+                <label>Progress to Goal</label>
+                <p-progressBar
+                  [value]="(metric.value / metric.target) * 100"
+                  [showValue]="false"
+                  [style]="{'--p-progressbar-value-bg': metric.color}"
+                  >
+                </p-progressBar>
+                <span class="progress-text">
+                  {{ metric.value }} / {{ metric.target }} {{ metric.unit }}
+                </span>
               </div>
             </div>
-
-            <div class="metric-progress">
-              <label>Progress to Goal</label>
-              <p-progressBar
-                [value]="(metric.value / metric.target) * 100"
-                [showValue]="false"
-                [style]="{'--p-progressbar-value-bg': metric.color}"
-              >
-              </p-progressBar>
-              <span class="progress-text">
-                {{ metric.value }} / {{ metric.target }} {{ metric.unit }}
-              </span>
+            <!-- Real-time mini chart -->
+            <div class="metric-chart">
+              <p-chart
+                type="line"
+                [data]="getMetricChartData(metric.id)"
+                [options]="miniChartOptions"
+                [width]="'100%'"
+                [height]="'60px'"
+                >
+              </p-chart>
             </div>
-          </div>
-
-          <!-- Real-time mini chart -->
-          <div class="metric-chart">
-            <p-chart
-              type="line"
-              [data]="getMetricChartData(metric.id)"
-              [options]="miniChartOptions"
-              [width]="'100%'"
-              [height]="'60px'"
-            >
-            </p-chart>
-          </div>
-        </p-card>
+          </p-card>
+        }
       </div>
-
+    
       <!-- Performance Summary Chart -->
       <p-card header="Performance Overview" class="performance-summary">
         <p-chart
           type="radar"
           [data]="radarChartData()"
           [options]="radarChartOptions"
-        >
+          >
         </p-chart>
       </p-card>
     </div>
-  `,
+    `,
   styles: [
     `
       .performance-dashboard {

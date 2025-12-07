@@ -56,6 +56,8 @@
     <script type="module" src="./src/js/components/top-bar-loader.js" defer></script>
     <!-- Footer Loader (Dynamic Component) -->
     <script type="module" src="./src/js/components/footer-loader.js" defer></script>
+    <!-- AI Chat Bubble Loader (Dynamic Component) -->
+    <script type="module" src="./src/js/components/ai-chat-bubble-loader.js" defer></script>
   </head>
   <body>
     <div class="dashboard-container">
@@ -838,12 +840,8 @@
       </main>
     </div>
 
-    <!-- AI Chat Floating Bubble -->
-    <div class="ai-chat-bubble">
-      <button class="ai-chat-button" id="ai-chat-button-training">
-        <i data-lucide="message-circle" class="icon-16 icon-inline"></i> "Ask FlagFit Assistant"
-      </button>
-    </div>
+    <!-- AI Chat Floating Bubble (Loaded Dynamically) -->
+    <div data-ai-chat-container></div>
 
     <!-- Training Page JavaScript -->
     <script type="module" src="./src/js/pages/training-page.js"></script>

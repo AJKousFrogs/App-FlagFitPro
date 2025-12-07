@@ -1,5 +1,5 @@
 import { Component, Input } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { CardModule } from "primeng/card";
 import { TagModule } from "primeng/tag";
 
@@ -15,37 +15,41 @@ export interface StatItem {
 @Component({
   selector: "app-stats-grid",
   standalone: true,
-  imports: [CommonModule, CardModule, TagModule],
+  imports: [CardModule, TagModule],
   template: `
     <div class="stats-grid">
-      <p-card
-        *ngFor="let stat of stats; trackBy: trackByLabel"
-        class="stat-card"
-      >
-        <div class="stat-content">
-          <div
-            *ngIf="stat.icon"
-            class="stat-icon"
-            [style.background]="(stat.color || '#089949') + '20'"
-            [style.color]="stat.color || '#089949'"
+      @for (stat of stats; track trackByLabel($index, stat)) {
+        <p-card
+          class="stat-card"
           >
-            <i [class]="'pi ' + stat.icon"></i>
-          </div>
-          <div class="stat-info">
-            <div class="stat-value">{{ stat.value }}</div>
-            <div class="stat-label">{{ stat.label }}</div>
-            <div *ngIf="stat.trend" class="stat-trend">
-              <p-tag
-                [value]="stat.trend"
-                [severity]="getTrendSeverity(stat.trendType)"
-              >
-              </p-tag>
+          <div class="stat-content">
+            @if (stat.icon) {
+              <div
+                class="stat-icon"
+                [style.background]="(stat.color || '#089949') + '20'"
+                [style.color]="stat.color || '#089949'"
+                >
+                <i [class]="'pi ' + stat.icon"></i>
+              </div>
+            }
+            <div class="stat-info">
+              <div class="stat-value">{{ stat.value }}</div>
+              <div class="stat-label">{{ stat.label }}</div>
+              @if (stat.trend) {
+                <div class="stat-trend">
+                  <p-tag
+                    [value]="stat.trend"
+                    [severity]="getTrendSeverity(stat.trendType)"
+                    >
+                  </p-tag>
+                </div>
+              }
             </div>
           </div>
-        </div>
-      </p-card>
+        </p-card>
+      }
     </div>
-  `,
+    `,
   styles: [
     `
       .stats-grid {

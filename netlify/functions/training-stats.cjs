@@ -238,7 +238,15 @@ exports.handler = async (event, context) => {
 
     // Handle POST request - complete training session
     if (event.httpMethod === "POST") {
-      const { workoutType, duration, score } = JSON.parse(event.body);
+      // Parse and validate request body
+      let bodyData = {};
+      try {
+        bodyData = JSON.parse(event.body);
+      } catch (parseError) {
+        return handleValidationError("Invalid JSON in request body");
+      }
+
+      const { workoutType, duration, score } = bodyData;
 
       // Validate input
       if (!workoutType || !duration) {
