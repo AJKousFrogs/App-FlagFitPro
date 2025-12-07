@@ -307,7 +307,7 @@ exports.handler = async (event, context) => {
     );
 
     // Return success response with token (exclude password_hash and verification token)
-    const { password_hash, verification_token, verification_token_expires_at, password, ...safeUser } = newUser;
+    const { password_hash, verification_token, verification_token_expires_at, ...safeUser } = newUser;
 
     return {
       statusCode: 201,

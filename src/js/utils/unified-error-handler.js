@@ -72,7 +72,7 @@ export class UnifiedErrorHandler {
    * Initialize global error handlers
    */
   init() {
-    if (this.initialized) return;
+    if (this.initialized) {return;}
 
     // Global error listeners
     window.addEventListener('error', this.handleGlobalError.bind(this));
@@ -440,7 +440,7 @@ export class UnifiedErrorHandler {
     const retryBtn = notification.querySelector('.retry-btn');
     retryBtn.addEventListener('click', () => {
       notification.remove();
-      if (retryCallback) retryCallback();
+      if (retryCallback) {retryCallback();}
     });
 
     // Auto-remove after duration
@@ -521,12 +521,12 @@ export class UnifiedErrorHandler {
       } catch (error) {
         lastError = error;
 
-        if (attempt === maxAttempts) break;
+        if (attempt === maxAttempts) {break;}
 
         const errorInfo = this.categorizeError(error);
-        if (!shouldRetry(errorInfo)) break;
+        if (!shouldRetry(errorInfo)) {break;}
 
-        if (onRetry) onRetry(error, attempt);
+        if (onRetry) {onRetry(error, attempt);}
 
         logger.warn(`[Retry] Attempt ${attempt}/${maxAttempts} failed, retrying in ${currentDelay}ms...`);
 

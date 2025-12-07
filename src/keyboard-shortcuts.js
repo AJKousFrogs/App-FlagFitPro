@@ -131,7 +131,7 @@ export class KeyboardShortcuts {
   }
 
   showCommandPalette() {
-    if (this.commandPaletteActive) return;
+    if (this.commandPaletteActive) {return;}
 
     this.commandPaletteActive = true;
     const palette = document.createElement("div");

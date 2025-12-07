@@ -82,7 +82,7 @@ function toggleSidebar() {
   const overlay = document.getElementById("sidebar-overlay");
   const toggleBtn = document.getElementById("mobile-menu-toggle");
 
-  if (!sidebar) return;
+  if (!sidebar) {return;}
 
   const isOpen =
     sidebar.classList.contains("open") ||
@@ -90,23 +90,23 @@ function toggleSidebar() {
 
   if (isOpen) {
     sidebar.classList.remove("open", "mobile-open");
-    if (overlay) overlay.classList.remove("active");
+    if (overlay) {overlay.classList.remove("active");}
     document.body.classList.remove("sidebar-open", "menu-open");
     if (toggleBtn) {
       toggleBtn.setAttribute("aria-expanded", "false");
     }
     // Return focus to toggle button
-    if (toggleBtn) toggleBtn.focus();
+    if (toggleBtn) {toggleBtn.focus();}
   } else {
     sidebar.classList.add("open", "mobile-open");
-    if (overlay) overlay.classList.add("active");
+    if (overlay) {overlay.classList.add("active");}
     document.body.classList.add("sidebar-open", "menu-open");
     if (toggleBtn) {
       toggleBtn.setAttribute("aria-expanded", "true");
     }
     // Focus first nav item for accessibility
     const firstNavItem = sidebar.querySelector(".nav-item");
-    if (firstNavItem) firstNavItem.focus();
+    if (firstNavItem) {firstNavItem.focus();}
   }
 }
 
@@ -197,8 +197,8 @@ async function initializePageState() {
   // Load program states
   const currentProgram = storageService.getOffseasonProgram();
   const qbProgram = storageService.getQBProgram();
-  if (currentProgram) trainingPageState.setCurrentProgram(currentProgram);
-  if (qbProgram) trainingPageState.setQBProgram(qbProgram);
+  if (currentProgram) {trainingPageState.setCurrentProgram(currentProgram);}
+  if (qbProgram) {trainingPageState.setQBProgram(qbProgram);}
 
   // Set up global function for workout exercises (needed by workout.html)
   window.getWorkoutExercises = (type) =>
@@ -699,7 +699,7 @@ function createTrainingPlanModal(title, plan) {
 
   // Close on overlay click
   modal.onclick = (e) => {
-    if (e.target === modal) modal.remove();
+    if (e.target === modal) {modal.remove();}
   };
 
   return modal;

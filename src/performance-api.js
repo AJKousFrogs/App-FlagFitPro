@@ -46,7 +46,7 @@ export class PerformanceAPI {
         },
       );
 
-      if (!response.ok) throw new Error("Failed to save measurements");
+      if (!response.ok) {throw new Error("Failed to save measurements");}
       return await response.json();
     } catch (error) {
       logger.error("Error saving measurements:", error);
@@ -64,7 +64,7 @@ export class PerformanceAPI {
         },
       );
 
-      if (!response.ok) throw new Error("Failed to fetch measurements");
+      if (!response.ok) {throw new Error("Failed to fetch measurements");}
       return await response.json();
     } catch (error) {
       logger.error("Error fetching measurements:", error);
@@ -90,7 +90,7 @@ export class PerformanceAPI {
         },
       );
 
-      if (!response.ok) throw new Error("Failed to save performance test");
+      if (!response.ok) {throw new Error("Failed to save performance test");}
       return await response.json();
     } catch (error) {
       logger.error("Error saving performance test:", error);
@@ -107,7 +107,7 @@ export class PerformanceAPI {
         },
       );
 
-      if (!response.ok) throw new Error("Failed to fetch performance history");
+      if (!response.ok) {throw new Error("Failed to fetch performance history");}
       return await response.json();
     } catch (error) {
       logger.error("Error fetching performance history:", error);
@@ -136,7 +136,7 @@ export class PerformanceAPI {
         },
       );
 
-      if (!response.ok) throw new Error("Failed to save wellness data");
+      if (!response.ok) {throw new Error("Failed to save wellness data");}
       return await response.json();
     } catch (error) {
       logger.error("Error saving wellness data:", error);
@@ -153,7 +153,7 @@ export class PerformanceAPI {
         },
       );
 
-      if (!response.ok) throw new Error("Failed to fetch wellness history");
+      if (!response.ok) {throw new Error("Failed to fetch wellness history");}
       return await response.json();
     } catch (error) {
       logger.error("Error fetching wellness history:", error);
@@ -178,7 +178,7 @@ export class PerformanceAPI {
         },
       );
 
-      if (!response.ok) throw new Error("Failed to log supplement");
+      if (!response.ok) {throw new Error("Failed to log supplement");}
       return await response.json();
     } catch (error) {
       logger.error("Error logging supplement:", error);
@@ -199,7 +199,7 @@ export class PerformanceAPI {
         },
       );
 
-      if (!response.ok) throw new Error("Failed to fetch supplement history");
+      if (!response.ok) {throw new Error("Failed to fetch supplement history");}
       return await response.json();
     } catch (error) {
       logger.error("Error fetching supplement history:", error);
@@ -227,7 +227,7 @@ export class PerformanceAPI {
         },
       );
 
-      if (!response.ok) throw new Error("Failed to report injury");
+      if (!response.ok) {throw new Error("Failed to report injury");}
       return await response.json();
     } catch (error) {
       logger.error("Error reporting injury:", error);
@@ -250,7 +250,7 @@ export class PerformanceAPI {
         },
       );
 
-      if (!response.ok) throw new Error("Failed to update injury status");
+      if (!response.ok) {throw new Error("Failed to update injury status");}
       return await response.json();
     } catch (error) {
       logger.error("Error updating injury:", error);
@@ -268,7 +268,7 @@ export class PerformanceAPI {
         },
       );
 
-      if (!response.ok) throw new Error("Failed to fetch trends");
+      if (!response.ok) {throw new Error("Failed to fetch trends");}
       return await response.json();
     } catch (error) {
       logger.error("Error fetching trends:", error);
@@ -290,7 +290,7 @@ export class PerformanceAPI {
         },
       );
 
-      if (!response.ok) throw new Error("Failed to fetch comparative analysis");
+      if (!response.ok) {throw new Error("Failed to fetch comparative analysis");}
       return await response.json();
     } catch (error) {
       logger.error("Error fetching comparative analysis:", error);
@@ -308,7 +308,7 @@ export class PerformanceAPI {
         },
       );
 
-      if (!response.ok) throw new Error("Failed to export data");
+      if (!response.ok) {throw new Error("Failed to export data");}
 
       if (format === "csv") {
         return await response.text();
@@ -442,7 +442,7 @@ export const performanceAPI = new PerformanceAPI();
 // Utility functions for trend analysis
 export const TrendAnalyzer = {
   calculateTrend(data, field) {
-    if (data.length < 2) return { trend: "insufficient_data", change: 0 };
+    if (data.length < 2) {return { trend: "insufficient_data", change: 0 };}
 
     const sorted = data.sort((a, b) => new Date(a.date) - new Date(b.date));
     const latest = sorted[sorted.length - 1][field];
@@ -459,7 +459,7 @@ export const TrendAnalyzer = {
   },
 
   detectPatterns(data) {
-    if (data.length < 4) return [];
+    if (data.length < 4) {return [];}
 
     const patterns = [];
 

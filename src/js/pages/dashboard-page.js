@@ -259,7 +259,7 @@ class DashboardPage {
     const overlay = document.getElementById("sidebar-overlay");
     const toggleBtn = document.getElementById("mobile-menu-toggle");
 
-    if (!sidebar) return;
+    if (!sidebar) {return;}
 
     const isOpen =
       sidebar.classList.contains("open") ||
@@ -267,14 +267,14 @@ class DashboardPage {
 
     if (isOpen) {
       sidebar.classList.remove("open", "mobile-open");
-      if (overlay) overlay.classList.remove("active");
+      if (overlay) {overlay.classList.remove("active");}
       document.body.classList.remove("sidebar-open", "menu-open");
       if (toggleBtn) {
         toggleBtn.setAttribute("aria-expanded", "false");
       }
     } else {
       sidebar.classList.add("open", "mobile-open");
-      if (overlay) overlay.classList.add("active");
+      if (overlay) {overlay.classList.add("active");}
       document.body.classList.add("sidebar-open", "menu-open");
       if (toggleBtn) {
         toggleBtn.setAttribute("aria-expanded", "true");
@@ -286,7 +286,7 @@ class DashboardPage {
     const panel = document.getElementById("notification-panel");
     const bell = document.getElementById("notification-bell");
 
-    if (!panel || !bell) return;
+    if (!panel || !bell) {return;}
 
     const isHidden = panel.hidden;
     panel.hidden = !isHidden;
@@ -300,7 +300,7 @@ class DashboardPage {
 
   async loadNotifications() {
     const notificationList = document.getElementById("notification-list");
-    if (!notificationList) return;
+    if (!notificationList) {return;}
 
     try {
       // Try to get notifications from API
@@ -389,7 +389,7 @@ class DashboardPage {
 
   renderNotifications(notifications) {
     const notificationList = document.getElementById("notification-list");
-    if (!notificationList) return;
+    if (!notificationList) {return;}
 
     // Ensure notifications is an array
     if (!Array.isArray(notifications)) {
@@ -451,7 +451,7 @@ class DashboardPage {
     if (item) {
       item.classList.add("read");
       const markBtn = item.querySelector(".notification-mark-read");
-      if (markBtn) markBtn.remove();
+      if (markBtn) {markBtn.remove();}
     }
   }
 
@@ -460,12 +460,12 @@ class DashboardPage {
     items.forEach((item) => {
       item.classList.add("read");
       const markBtn = item.querySelector(".notification-mark-read");
-      if (markBtn) markBtn.remove();
+      if (markBtn) {markBtn.remove();}
     });
 
     // Update badge
     const badge = document.getElementById("notification-badge");
-    if (badge) badge.hidden = true;
+    if (badge) {badge.hidden = true;}
   }
 
   setupEventListeners() {
@@ -745,7 +745,7 @@ class DashboardPage {
       const supplementKey = item.getAttribute("data-supplement");
       const toggleInput = item.querySelector(".supplement-toggle-input");
 
-      if (!toggleInput || !supplementKey) return;
+      if (!toggleInput || !supplementKey) {return;}
 
       // Load saved state
       const savedState = storageService.get("supplements", null, { usePrefix: false });
@@ -910,7 +910,7 @@ class DashboardPage {
     const nextBtn = document.getElementById("next-day-btn");
     const todayBtn = document.getElementById("today-btn");
 
-    if (!datePicker) return;
+    if (!datePicker) {return;}
 
     // Initialize date picker with today's date
     const today = new Date();
@@ -998,7 +998,7 @@ class DashboardPage {
     const indicator = document.getElementById("date-indicator");
     const info = document.getElementById("date-info");
 
-    if (!indicator || !info) return;
+    if (!indicator || !info) {return;}
 
     const isToday = this.isToday(this.selectedDate);
     const isFuture = this.isFuture(this.selectedDate);
@@ -1085,7 +1085,7 @@ class DashboardPage {
 
   updateDateDataStatus(wellnessLoaded, supplementsLoaded) {
     const info = document.getElementById("date-info");
-    if (!info) return;
+    if (!info) {return;}
 
     const hasWellness =
       wellnessLoaded &&
@@ -1124,7 +1124,7 @@ class DashboardPage {
   async loadWellnessForDate(dateStr) {
     try {
       const user = authManager.getCurrentUser();
-      if (!user) return false;
+      if (!user) {return false;}
 
       // Try API first
       try {
@@ -1213,7 +1213,7 @@ class DashboardPage {
   async loadSupplementsForDate(dateStr) {
     try {
       const user = authManager.getCurrentUser();
-      if (!user) return false;
+      if (!user) {return false;}
 
       // Reset all supplements to false
       Object.keys(this.supplements).forEach((key) => {
@@ -1234,7 +1234,7 @@ class DashboardPage {
                 taken: log.taken || false,
                 time: log.timestamp || null,
               };
-              if (log.taken) hasData = true;
+              if (log.taken) {hasData = true;}
             }
           });
           this.updateSupplementsUI();
@@ -1492,7 +1492,7 @@ class DashboardPage {
   async loadInjuries() {
     try {
       const user = authManager.getCurrentUser();
-      if (!user) return;
+      if (!user) {return;}
 
       let injuries = [];
 
@@ -1523,7 +1523,7 @@ class DashboardPage {
 
   renderInjuries() {
     const container = document.getElementById("active-injuries-list");
-    if (!container) return;
+    if (!container) {return;}
 
     if (this.injuries.length === 0) {
       container.innerHTML = '<p class="injury-description" style="margin: 0; color: var(--color-text-tertiary);">No active injuries reported.</p>';
@@ -1576,7 +1576,7 @@ class DashboardPage {
   async markInjuryRecovered(injuryId) {
     try {
       const user = authManager.getCurrentUser();
-      if (!user) return;
+      if (!user) {return;}
 
       // Update injury status
       try {

@@ -98,7 +98,7 @@ class TopBarLoader {
     // Wait for auth manager to be available
     setTimeout(() => {
       const userAvatar = document.getElementById('user-avatar');
-      if (!userAvatar) return;
+      if (!userAvatar) {return;}
 
       // Try to get user info from auth manager
       if (window.authManager && window.authManager.user) {

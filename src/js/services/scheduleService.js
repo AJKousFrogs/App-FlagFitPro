@@ -83,7 +83,7 @@ class ScheduleService {
    * @returns {boolean} True if game day
    */
   isGameDay(dayOfWeek, date, scheduleSettings) {
-    if (!scheduleSettings) return false;
+    if (!scheduleSettings) {return false;}
 
     // Check for specific dates (from calendar or uploaded schedule)
     if (scheduleSettings.gameDays && Array.isArray(scheduleSettings.gameDays)) {
@@ -93,13 +93,13 @@ class ScheduleService {
       const isSpecificDate = scheduleSettings.gameDays.some(
         (gd) => gd.date === dateStr
       );
-      if (isSpecificDate) return true;
+      if (isSpecificDate) {return true;}
 
       // Check if this day of week matches recurring game days
       const isRecurringDay = scheduleSettings.gameDays.some(
         (gd) => gd.dayOfWeek === dayOfWeek && !gd.date
       );
-      if (isRecurringDay) return true;
+      if (isRecurringDay) {return true;}
     }
 
     // Legacy: single recurring day
@@ -121,7 +121,7 @@ class ScheduleService {
    * @returns {boolean} True if within daysBefore of a game
    */
   isDaysBeforeGame(date, daysBefore, scheduleSettings) {
-    if (!scheduleSettings?.gameDays) return false;
+    if (!scheduleSettings?.gameDays) {return false;}
 
     for (let i = 1; i <= daysBefore; i++) {
       const checkDate = new Date(date);

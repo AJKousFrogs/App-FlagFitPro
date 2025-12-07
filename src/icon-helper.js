@@ -20,8 +20,8 @@
     // Check all arguments for the error message pattern
     const errorText = args
       .map((arg) => {
-        if (typeof arg === "string") return arg;
-        if (arg && arg.toString) return arg.toString();
+        if (typeof arg === "string") {return arg;}
+        if (arg && arg.toString) {return arg.toString();}
         return "";
       })
       .join(" ");
@@ -118,7 +118,7 @@
 
     const observer = new MutationObserver(function (mutations) {
       // Throttle reinitialization to prevent excessive calls
-      if (isReinitializing) return;
+      if (isReinitializing) {return;}
 
       let shouldReinit = false;
       mutations.forEach(function (mutation) {

@@ -674,7 +674,7 @@ export class DBTrainingModule extends ComponentWithCleanup {
    */
   selectDrillsByCategory(category, analysis) {
     const scenario = this.trainingScenarios.get(category);
-    if (!scenario) return [];
+    if (!scenario) {return [];}
 
     const drills = [];
     scenario.scenarios.forEach((scenarioItem) => {

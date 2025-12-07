@@ -354,21 +354,21 @@ export const MOCK_ATHLETE_DATA = {
 
 // Utility functions
 export const getPerformanceGrade = (current, targets) => {
-  if (current <= targets.elite) return "Elite";
-  if (current <= targets.good) return "Good";
-  if (current <= targets.average) return "Average";
+  if (current <= targets.elite) {return "Elite";}
+  if (current <= targets.good) {return "Good";}
+  if (current <= targets.average) {return "Average";}
   return "Needs Improvement";
 };
 
 export const calculatePerformanceImprovement = (current, previous) => {
-  if (!previous) return 0;
+  if (!previous) {return 0;}
   return (((previous - current) / previous) * 100).toFixed(1);
 };
 
 export const getWellnessColor = (score) => {
-  if (score >= 8) return "var(--success)";
-  if (score >= 6) return "var(--accent)";
-  if (score >= 4) return "var(--warning)";
+  if (score >= 8) {return "var(--success)";}
+  if (score >= 6) {return "var(--accent)";}
+  if (score >= 4) {return "var(--warning)";}
   return "var(--error)";
 };
 
@@ -389,8 +389,8 @@ export const calculateBMI = (weight, height) => {
 };
 
 export const getBMICategory = (bmi) => {
-  if (bmi < 18.5) return "Underweight";
-  if (bmi < 25) return "Normal";
-  if (bmi < 30) return "Overweight";
+  if (bmi < 18.5) {return "Underweight";}
+  if (bmi < 25) {return "Normal";}
+  if (bmi < 30) {return "Overweight";}
   return "Obese";
 };

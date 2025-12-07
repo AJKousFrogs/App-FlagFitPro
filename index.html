@@ -233,34 +233,6 @@
       document.addEventListener("DOMContentLoaded", function () {
         try {
           // Initialize Lucide icons with error handling and timeout
-          function initIcons() {
-            try {
-              if (typeof lucide !== "undefined") {
-                lucide.createIcons();
-              } else {
-                // Wait for Lucide with timeout
-                let attempts = 0;
-                const maxAttempts = 50; // 5 seconds max
-                const checkLucide = setInterval(function () {
-                  attempts++;
-                  if (typeof lucide !== "undefined") {
-                    clearInterval(checkLucide);
-                    lucide.createIcons();
-                  } else if (attempts >= maxAttempts) {
-                    clearInterval(checkLucide);
-                    console.warn(
-                      "Lucide icons failed to load - page will continue without icons",
-                    );
-                  }
-                }, 100);
-              }
-            } catch (error) {
-              console.error("Error initializing icons:", error);
-            }
-          }
-
-          // Initialize icons (non-blocking)
-          setTimeout(initIcons, 0);
 
           // Ensure action buttons are visible
           const actionButtons = document.getElementById("actionButtons");

@@ -292,7 +292,7 @@ async function handlePerformanceTests(method, userId, body, query) {
       const startDate = getStartDateForTimeframe(timeframe);
 
       try {
-        let queryBuilder = supabaseAdmin
+        const queryBuilder = supabaseAdmin
           .from("athlete_performance_tests")
           .select("*", { count: "exact" })
           .eq("user_id", userId)
@@ -803,11 +803,11 @@ async function handleInjuries(method, userId, body, query) {
       // Try Supabase first
       try {
         const updatePayload = {};
-        if (updateData.status) updatePayload.status = updateData.status;
-        if (updateData.severity) updatePayload.severity = parseInt(updateData.severity);
-        if (updateData.description !== undefined) updatePayload.description = updateData.description;
-        if (updateData.recoveryDate) updatePayload.recovery_date = updateData.recoveryDate;
-        if (updateData.type) updatePayload.type = updateData.type;
+        if (updateData.status) {updatePayload.status = updateData.status;}
+        if (updateData.severity) {updatePayload.severity = parseInt(updateData.severity);}
+        if (updateData.description !== undefined) {updatePayload.description = updateData.description;}
+        if (updateData.recoveryDate) {updatePayload.recovery_date = updateData.recoveryDate;}
+        if (updateData.type) {updatePayload.type = updateData.type;}
         updatePayload.updated_at = new Date().toISOString();
 
         const { data: updatedInjury, error: updateError } = await supabaseAdmin
@@ -1135,7 +1135,7 @@ function validateMeasurementData(data) {
 }
 
 function calculateMeasurementsSummary(measurements) {
-  if (measurements.length === 0) return null;
+  if (measurements.length === 0) {return null;}
 
   const latest = measurements[measurements.length - 1];
   const previous = measurements[measurements.length - 2];
@@ -1182,7 +1182,7 @@ function calculatePerformanceTrends(tests) {
 }
 
 function calculateWellnessAverages(wellness) {
-  if (wellness.length === 0) return null;
+  if (wellness.length === 0) {return null;}
 
   const metrics = ["sleep", "energy", "stress", "soreness", "motivation"];
   const averages = {};
@@ -1276,7 +1276,7 @@ function generateRecommendations(_performanceTests, _wellness, _measurements) {
 function calculateTestsSummary(tests) {
   const byType = {};
   tests.forEach((test) => {
-    if (!byType[test.testType]) byType[test.testType] = [];
+    if (!byType[test.testType]) {byType[test.testType] = [];}
     byType[test.testType].push(test.result);
   });
 

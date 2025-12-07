@@ -3,6 +3,8 @@
  * Generates and manages CSRF tokens for secure API requests
  */
 
+import { logger } from '../../../logger.js';
+
 class CSRFProtection {
   constructor() {
     this.token = null;
@@ -12,7 +14,7 @@ class CSRFProtection {
     // Generate token on initialization
     this.generateToken();
 
-    console.log('[CSRF] Protection initialized');
+    logger.debug('[CSRF] Protection initialized');
   }
 
   /**
@@ -33,10 +35,10 @@ class CSRFProtection {
     try {
       sessionStorage.setItem(this.tokenKey, this.token);
     } catch (error) {
-      console.warn('[CSRF] Could not store token in sessionStorage:', error);
+      logger.warn('[CSRF] Could not store token in sessionStorage:', error);
     }
 
-    console.log('[CSRF] Token generated');
+    logger.debug('[CSRF] Token generated');
     return this.token;
   }
 
@@ -54,7 +56,7 @@ class CSRFProtection {
     try {
       this.token = sessionStorage.getItem(this.tokenKey);
     } catch (error) {
-      console.warn('[CSRF] Could not retrieve token from sessionStorage:', error);
+      logger.warn('[CSRF] Could not retrieve token from sessionStorage:', error);
     }
 
     // Generate new token if none exists
@@ -70,7 +72,7 @@ class CSRFProtection {
    * Should be called periodically or after sensitive operations
    */
   rotateToken() {
-    console.log('[CSRF] Rotating token');
+    logger.debug('[CSRF] Rotating token');
     this.generateToken();
   }
 
@@ -78,12 +80,12 @@ class CSRFProtection {
    * Clear the CSRF token (on logout)
    */
   clearToken() {
-    console.log('[CSRF] Clearing token');
+    logger.debug('[CSRF] Clearing token');
     this.token = null;
     try {
       sessionStorage.removeItem(this.tokenKey);
     } catch (error) {
-      console.warn('[CSRF] Could not remove token from sessionStorage:', error);
+      logger.warn('[CSRF] Could not remove token from sessionStorage:', error);
     }
   }
 
@@ -94,7 +96,7 @@ class CSRFProtection {
   getHeaders() {
     const token = this.getToken();
     if (!token) {
-      console.warn('[CSRF] No token available for request');
+      logger.warn('[CSRF] No token available for request');
       return {};
     }
 
@@ -112,7 +114,7 @@ class CSRFProtection {
     const token = this.getToken();
 
     if (!token) {
-      console.warn('[CSRF] No token available for request');
+      logger.warn('[CSRF] No token available for request');
       return options;
     }
 
@@ -172,7 +174,7 @@ class CSRFProtection {
     const token = this.getToken();
 
     if (!token) {
-      console.warn('[CSRF] No token available for form data');
+      logger.warn('[CSRF] No token available for form data');
       return formData;
     }
 
@@ -204,4 +206,4 @@ if (typeof window !== 'undefined') {
 // Export default
 export default csrfProtection;
 
-console.log('[CSRF] Protection service loaded');
+logger.debug('[CSRF] Protection service loaded');

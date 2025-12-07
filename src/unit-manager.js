@@ -42,7 +42,7 @@ export class UnitManager {
 
   // Distance conversions (yards, feet, inches, meters, cm)
   convertDistance(value, fromUnit, toUnit) {
-    if (fromUnit === toUnit) return value;
+    if (fromUnit === toUnit) {return value;}
 
     // Convert to meters first
     let meters;
@@ -85,7 +85,7 @@ export class UnitManager {
 
   // Weight conversions
   convertWeight(value, fromUnit, toUnit) {
-    if (fromUnit === toUnit) return value;
+    if (fromUnit === toUnit) {return value;}
 
     if (fromUnit === "lbs" && toUnit === "kg") {
       return value * 0.453592;

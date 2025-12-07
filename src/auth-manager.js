@@ -74,7 +74,7 @@ class AuthManager {
     this.setupSessionTimeout();
 
     await initMockAuth();
-    this.loadStoredAuth();
+    await this.loadStoredAuth(); // Now async with AES-GCM encryption
     this.setupTokenRefresh();
     await this.validateStoredToken();
     this.checkAuthStateOnLoad();
@@ -118,22 +118,21 @@ class AuthManager {
     const isDevelopment =
       window.location.hostname === "localhost" ||
       window.location.hostname === "127.0.0.1";
-    if (isDevelopment)
-      logger.debug("Checking authentication state on page load...");
+    if (isDevelopment) {logger.debug("Checking authentication state on page load...");}
 
     // Prevent redirect loops by checking if we're already redirecting
     if (this.isRedirecting) {
-      if (isDevelopment)
-        logger.debug("Already redirecting, skipping auth check");
+      if (isDevelopment) {logger.debug("Already redirecting, skipping auth check");}
       return;
     }
 
     // Skip check if still initializing - let individual pages handle it
     if (this.isInitializing) {
-      if (isDevelopment)
-        logger.debug(
+      if (isDevelopment) {
+logger.debug(
           "⏳ Still initializing, deferring auth check to page logic",
         );
+}
       return;
     }
 
@@ -146,8 +145,7 @@ class AuthManager {
 
       // For demo tokens or local development, skip server validation to prevent loops
       if (this.token && this.token.startsWith("demo-token-")) {
-        if (isDevelopment)
-          logger.debug("Demo token detected, skipping server validation");
+        if (isDevelopment) {logger.debug("Demo token detected, skipping server validation");}
         this.notifyLoginCallbacks();
         return;
       }
@@ -159,8 +157,7 @@ class AuthManager {
             logger.debug("Token validation successful");
             this.notifyLoginCallbacks();
           } else {
-            if (isDevelopment)
-              logger.warn("Token validation failed, redirecting to login");
+            if (isDevelopment) {logger.warn("Token validation failed, redirecting to login");}
             this.redirectToLogin();
           }
         })
@@ -174,12 +171,10 @@ class AuthManager {
           this.notifyLoginCallbacks();
         });
     } else {
-      if (isDevelopment)
-        logger.debug("No valid authentication found on page load");
+      if (isDevelopment) {logger.debug("No valid authentication found on page load");}
       // Check if we're on a protected page
       if (this.isProtectedPage()) {
-        if (isDevelopment)
-          logger.debug("Protected page detected, redirecting to login");
+        if (isDevelopment) {logger.debug("Protected page detected, redirecting to login");}
         this.redirectToLogin();
       }
     }
@@ -223,7 +218,7 @@ class AuthManager {
   }
 
   // Load authentication data from secure storage
-  loadStoredAuth() {
+  async loadStoredAuth() {
     const isDevelopment =
       window.location.hostname === "localhost" ||
       window.location.hostname === "127.0.0.1";
@@ -231,11 +226,11 @@ class AuthManager {
 
     try {
       // Try to migrate from legacy storage first
-      secureStorage.migrateFromLegacyStorage();
+      await secureStorage.migrateFromLegacyStorage();
 
-      // Load from secure storage
-      this.token = secureStorage.getAuthToken();
-      this.user = secureStorage.getUserData();
+      // Load from secure storage (now async with AES-GCM)
+      this.token = await secureStorage.getAuthToken();
+      this.user = await secureStorage.getUserData();
 
       if (isDevelopment) {
         logger.debug("Stored token:", this.token ? "Present" : "Missing");
@@ -266,7 +261,7 @@ class AuthManager {
 
   // Validate stored token with backend
   async validateStoredToken() {
-    if (!this.token) return false;
+    if (!this.token) {return false;}
 
     // Skip validation for demo tokens to prevent loops
     if (this.token.startsWith("demo-token-")) {
@@ -278,7 +273,7 @@ class AuthManager {
       const response = await auth.getCurrentUser();
       if (response.success) {
         this.user = response.user;
-        this.saveUserData();
+        await this.saveUserData();
         this.notifyLoginCallbacks();
         return true;
       } else {
@@ -332,14 +327,14 @@ class AuthManager {
           this.token = response.data.token;
           this.user = response.data.user;
 
-          // Store authentication data securely
-          secureStorage.setAuthToken(this.token);
-          secureStorage.setUserData(this.user);
-          logger.debug("Auth data stored securely");
+          // Store authentication data securely with AES-GCM encryption
+          await secureStorage.setAuthToken(this.token);
+          await secureStorage.setUserData(this.user);
+          logger.debug("Auth data stored securely with AES-GCM encryption");
           logger.debug("Stored token: encrypted");
           logger.debug("Stored user data: encrypted");
 
-          this.saveUserData();
+          await this.saveUserData();
 
           // Set token in API client
           apiClient.setAuthToken(this.token);
@@ -420,9 +415,9 @@ class AuthManager {
         this.token = response.data.token;
         this.user = response.data.user;
 
-        // Store authentication data securely
-        secureStorage.setAuthToken(this.token);
-        this.saveUserData();
+        // Store authentication data securely with AES-GCM encryption
+        await secureStorage.setAuthToken(this.token);
+        await this.saveUserData();
 
         // Set token in API client
         apiClient.setAuthToken(this.token);
@@ -469,9 +464,9 @@ class AuthManager {
           throw new Error("Invalid response format from registration endpoint");
         }
 
-        // Store authentication data securely
-        secureStorage.setAuthToken(this.token);
-        this.saveUserData();
+        // Store authentication data securely with AES-GCM encryption
+        await secureStorage.setAuthToken(this.token);
+        await this.saveUserData();
 
         // Set token in API client
         apiClient.setAuthToken(this.token);
@@ -525,10 +520,10 @@ class AuthManager {
     logger.debug("[Auth] CSRF token cleared on logout");
   }
 
-  // Save user data securely
-  saveUserData() {
+  // Save user data securely (now async with AES-GCM)
+  async saveUserData() {
     if (this.user) {
-      secureStorage.setUserData(this.user);
+      await secureStorage.setUserData(this.user);
     }
   }
 
@@ -674,8 +669,8 @@ class AuthManager {
       lastActivity = Date.now();
 
       // Clear existing timers
-      if (sessionTimer) clearTimeout(sessionTimer);
-      if (warningTimer) clearTimeout(warningTimer);
+      if (sessionTimer) {clearTimeout(sessionTimer);}
+      if (warningTimer) {clearTimeout(warningTimer);}
 
       // Set warning timer
       warningTimer = setTimeout(() => {
@@ -740,8 +735,8 @@ class AuthManager {
 
     // Clear timers and remove event listeners on logout
     this.onLogout(() => {
-      if (sessionTimer) clearTimeout(sessionTimer);
-      if (warningTimer) clearTimeout(warningTimer);
+      if (sessionTimer) {clearTimeout(sessionTimer);}
+      if (warningTimer) {clearTimeout(warningTimer);}
       // Remove activity event listeners
       if (this.activityHandlers) {
         this.activityHandlers.forEach(({ event, handler }) => {
@@ -937,7 +932,7 @@ class AuthManager {
 
       if (response.success) {
         this.user = { ...this.user, ...response.user };
-        this.saveUserData();
+        await this.saveUserData();
         this.hideLoading();
         this.showSuccess("Profile updated successfully!");
         return { success: true, user: this.user };

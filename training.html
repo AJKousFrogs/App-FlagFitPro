@@ -77,145 +77,6 @@
                 <!-- Top Bar (Loaded Dynamically) -->
         <div data-topbar-container></div>
 
-        <!-- Top Bar -->
-        <div class="top-bar" role="banner">
-          <div class="header-left">
-            <!-- Mobile Hamburger Menu Button -->
-            <button
-              id="mobile-menu-toggle"
-              class="mobile-menu-toggle"
-              type="button"
-              aria-label="Toggle navigation menu"
-              aria-expanded="false"
-              aria-controls="sidebar"
-              onclick="toggleSidebar()"
-            >
-              <i data-lucide="menu" class="icon-20"></i>
-            </button>
-            <!-- Global Search (combobox pattern) -->
-            <div class="search-box">
-              <label for="global-search" class="sr-only"
-                >Search workouts, exercises, videos</label
-              >
-              <span class="search-icon" aria-hidden="true">
-                <i data-lucide="search" class="icon-16"></i>
-              </span>
-
-              <input
-                id="global-search"
-                name="search"
-                class="search-input"
-                type="text"
-                placeholder="Search workouts, exercises, videos..."
-                role="combobox"
-                aria-autocomplete="list"
-                aria-haspopup="listbox"
-                aria-expanded="false"
-                aria-owns="search-results"
-                aria-controls="search-results"
-                aria-activedescendant=""
-                autocomplete="off"
-                inputmode="search"
-              />
-
-              <div id="search-status" class="sr-only" aria-live="polite"></div>
-
-              <div
-                id="search-results"
-                class="search-results"
-                role="listbox"
-                hidden
-              ></div>
-            </div>
-          </div>
-
-          <div class="header-right">
-            <!-- Notifications -->
-            <div class="header-icon-wrap">
-              <button
-                id="notification-bell"
-                class="header-icon"
-                type="button"
-                aria-label="Notifications"
-                aria-controls="notification-panel"
-                aria-expanded="false"
-              >
-                <i data-lucide="bell" class="icon-18"></i>
-                <span id="notification-badge" class="badge" hidden>3</span>
-              </button>
-              <span
-                id="notification-live"
-                class="sr-only"
-                aria-live="polite"
-              ></span>
-            </div>
-
-            <!-- Settings -->
-            <button class="header-icon" type="button" aria-label="Settings">
-              <i data-lucide="settings" class="icon-18"></i>
-            </button>
-
-            <!-- Theme Toggle -->
-            <div class="theme-toggle-container" aria-label="Theme toggle">
-              <label class="theme-toggle-label" title="Toggle theme">
-                <input
-                  type="checkbox"
-                  id="header-theme-toggle"
-                  class="theme-toggle-input"
-                  aria-label="Toggle theme"
-                />
-                <span class="theme-toggle-slider">
-                  <span class="theme-toggle-dot" id="theme-toggle-dot"></span>
-                </span>
-                <span class="theme-toggle-text"><i data-lucide="moon" class="icon-14 icon-inline"></i> Dark</span>
-              </label>
-            </div>
-
-            <!-- User Menu -->
-            <div class="user-menu-wrapper">
-              <button
-                id="user-menu-button"
-                class="user-menu"
-                type="button"
-                aria-label="User menu"
-                aria-haspopup="menu"
-                aria-controls="user-menu"
-                aria-expanded="false"
-              >
-                <div class="user-avatar" id="user-avatar" aria-hidden="true">
-                  JD
-                </div>
-              </button>
-
-              <!-- User Menu Dropdown -->
-              <ul id="user-menu" class="user-menu-dropdown" role="menu" hidden>
-                <li role="menuitem">
-                  <a href="/profile" class="user-menu-item">
-                    <i data-lucide="user" class="icon-16"></i>
-                    <span>Profile</span>
-                  </a>
-                </li>
-                <li role="menuitem">
-                  <a href="/settings" class="user-menu-item">
-                    <i data-lucide="settings" class="icon-16"></i>
-                    <span>Settings</span>
-                  </a>
-                </li>
-                <li role="separator" class="user-menu-separator"></li>
-                <li role="menuitem">
-                  <a
-                    href="/logout"
-                    class="user-menu-item user-menu-item-danger"
-                  >
-                    <i data-lucide="log-out" class="icon-16"></i>
-                    <span>Logout</span>
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
         <!-- Welcome Section (Hero) -->
         <div class="hero-section u-margin-bottom-16">
           <div class="hero-card">
@@ -1031,12 +892,7 @@
             if (targetContent) {
               targetContent.classList.add('active');
             }
-            
-            // Reinitialize Lucide icons for new content
-            if (typeof lucide !== "undefined") {
-              setTimeout(() => lucide.createIcons(), 100);
-            }
-            
+
             // Initialize schedule if switching to schedule tab
             if (targetTab === 'schedule' && !window.scheduleInitialized) {
               initializeTrainingSchedule();
@@ -1262,16 +1118,8 @@
         if (prevBtn) prevBtn.disabled = weekNumber <= 1;
         if (nextBtn) nextBtn.disabled = weekNumber >= 14;
 
-        if (typeof lucide !== "undefined") {
-          requestAnimationFrame(() => {
-            lucide.createIcons();
-            dayGridEl.style.opacity = "1";
-            dayGridEl.style.pointerEvents = "auto";
-          });
-        } else {
-          dayGridEl.style.opacity = "1";
-          dayGridEl.style.pointerEvents = "auto";
-        }
+        dayGridEl.style.opacity = "1";
+        dayGridEl.style.pointerEvents = "auto";
 
         updateProgramProgress();
       }
@@ -1368,10 +1216,6 @@
         window.onclick = (event) => {
           if (event.target === modal) modal.style.display = "none";
         };
-
-        if (typeof lucide !== "undefined") {
-          setTimeout(() => lucide.createIcons(), 100);
-        }
       };
 
       // Initialize tabs on page load

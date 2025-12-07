@@ -411,7 +411,7 @@ class AISchedulerUI {
    */
   async handleFileUpload(event) {
     const file = event.target.files[0];
-    if (!file) return;
+    if (!file) {return;}
 
     if (!this.currentProfile) {
       alert("Please create a player profile first");

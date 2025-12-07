@@ -60,100 +60,6 @@
               <!-- Top Bar (Loaded Dynamically) -->
         <div data-topbar-container></div>
 
-        <!-- Top Bar -->
-      <div class="top-bar" role="banner">
-        <div class="header-left">
-          <!-- Global Search (combobox pattern) -->
-          <div class="search-box">
-            <label for="global-search" class="sr-only"
-              >Search for players, teams and more</label
-            >
-            <span class="search-icon" aria-hidden="true">
-              <i data-lucide="search" class="icon-16"></i>
-            </span>
-
-            <input
-              id="global-search"
-              name="search"
-              class="search-input"
-              type="text"
-              placeholder="Search for players, teams & more"
-              role="combobox"
-              aria-autocomplete="list"
-              aria-haspopup="listbox"
-              aria-expanded="false"
-              aria-owns="search-results"
-              aria-controls="search-results"
-              aria-activedescendant=""
-              autocomplete="off"
-              inputmode="search"
-            />
-
-            <div id="search-status" class="sr-only" aria-live="polite"></div>
-
-            <div
-              id="search-results"
-              class="search-results"
-              role="listbox"
-              hidden
-            ></div>
-          </div>
-        </div>
-
-        <div class="header-right">
-          <!-- Notifications -->
-          <div class="header-icon-wrap">
-            <button
-              id="notification-bell"
-              class="header-icon"
-              type="button"
-              aria-label="Notifications"
-              aria-controls="notification-panel"
-              aria-expanded="false"
-            >
-              <i data-lucide="bell" class="icon-18"></i>
-              <span id="notification-badge" class="badge" hidden>3</span>
-            </button>
-            <span
-              id="notification-live"
-              class="sr-only"
-              aria-live="polite"
-            ></span>
-          </div>
-
-          <!-- Settings -->
-          <button class="header-icon" type="button" aria-label="Settings">
-            <i data-lucide="settings" class="icon-18"></i>
-          </button>
-
-          <!-- Theme Toggle -->
-          <div class="theme-toggle-container" aria-label="Theme toggle">
-            <!-- JS inserts switch; fallback below -->
-            <button
-              class="theme-toggle-fallback"
-              type="button"
-              data-theme-toggle
-              hidden
-            >
-              Theme
-            </button>
-          </div>
-
-          <!-- User Menu -->
-          <button
-            id="user-menu-button"
-            class="user-menu"
-            type="button"
-            aria-label="User menu"
-            aria-haspopup="menu"
-            aria-controls="user-menu"
-            aria-expanded="false"
-          >
-            <div class="user-avatar" id="user-avatar" aria-hidden="true">U</div>
-          </button>
-        </div>
-      </div>
-
       <main class="main-content">
         <!-- Header -->
         <div class="header-section">
@@ -254,11 +160,6 @@
     <script type="module">
       // Show loading state immediately
       document.addEventListener("DOMContentLoaded", async function () {
-        // Initialize Lucide icons immediately (non-blocking)
-        if (typeof lucide !== "undefined") {
-          lucide.createIcons();
-        }
-
         // Show loading indicator
         const exerciseGrid = document.getElementById("exerciseGrid");
         if (exerciseGrid) {

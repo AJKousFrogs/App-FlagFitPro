@@ -372,7 +372,7 @@ window.saveSettings = async function (event) {
   // Show success message
   const button =
     event?.target || document.querySelector('button[onclick*="saveSettings"]');
-  if (!button) return;
+  if (!button) {return;}
   const originalText = button.innerHTML;
   button.innerHTML =
     '<span><i data-lucide="check-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span> Saved!';

@@ -122,12 +122,12 @@
    * Calculate wellness streak
    */
   function calculateWellnessStreak(history) {
-    if (history.length === 0) return 0;
+    if (history.length === 0) {return 0;}
 
     const sorted = history.sort((a, b) => new Date(b.date) - new Date(a.date));
     let streak = 0;
     const today = new Date().toISOString().split('T')[0];
-    let currentDate = new Date(today);
+    const currentDate = new Date(today);
 
     for (const entry of sorted) {
       const entryDate = new Date(entry.date).toISOString().split('T')[0];
@@ -148,7 +148,7 @@
    * Calculate consecutive days with good sleep (8+ hours)
    */
   function calculateConsecutiveDaysGoodSleep(history) {
-    if (history.length === 0) return 0;
+    if (history.length === 0) {return 0;}
 
     const sorted = history.sort((a, b) => new Date(b.date) - new Date(a.date));
     let consecutive = 0;
@@ -168,7 +168,7 @@
    * Calculate consecutive days with high recovery
    */
   function calculateConsecutiveDaysHighRecovery(history) {
-    if (history.length === 0) return 0;
+    if (history.length === 0) {return 0;}
 
     const sorted = history.sort((a, b) => new Date(b.date) - new Date(a.date));
     let consecutive = 0;
@@ -189,7 +189,7 @@
    * Check for perfect week (7 days with 8+ sleep)
    */
   function checkPerfectWeek(history) {
-    if (history.length < 7) return false;
+    if (history.length < 7) {return false;}
 
     const sorted = history.sort((a, b) => new Date(b.date) - new Date(a.date));
     const lastWeek = sorted.slice(0, 7);

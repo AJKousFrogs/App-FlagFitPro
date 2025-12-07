@@ -376,7 +376,7 @@ export class ApiClient {
 
   // Cancel all active requests for a specific endpoint pattern
   cancelRequestsByPattern(pattern) {
-    if (!this.activeRequests) return;
+    if (!this.activeRequests) {return;}
 
     const toCancel = [];
     this.activeRequests.forEach((controller, requestId) => {

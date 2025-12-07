@@ -137,7 +137,7 @@ function fixHeadingStructure() {
     document.querySelectorAll("h1, h2, h3, h4, h5, h6"),
   );
 
-  if (headings.length === 0) return;
+  if (headings.length === 0) {return;}
 
   let currentLevel = 0;
   headings.forEach((heading, index) => {

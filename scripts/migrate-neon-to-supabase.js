@@ -258,7 +258,7 @@ async function backupNeonDatabase(auditReport) {
 
 // Generate SQL INSERT statements from data
 function generateInsertStatements(tableName, rows) {
-  if (rows.length === 0) return '';
+  if (rows.length === 0) {return '';}
 
   const columns = Object.keys(rows[0]);
   let sql = `-- Data for table: ${tableName}\n`;
@@ -267,11 +267,11 @@ function generateInsertStatements(tableName, rows) {
   for (const row of rows) {
     const values = columns.map(col => {
       const val = row[col];
-      if (val === null) return 'NULL';
-      if (typeof val === 'string') return `'${val.replace(/'/g, "''")}'`;
-      if (typeof val === 'boolean') return val ? 'TRUE' : 'FALSE';
-      if (val instanceof Date) return `'${val.toISOString()}'`;
-      if (typeof val === 'object') return `'${JSON.stringify(val).replace(/'/g, "''")}'`;
+      if (val === null) {return 'NULL';}
+      if (typeof val === 'string') {return `'${val.replace(/'/g, "''")}'`;}
+      if (typeof val === 'boolean') {return val ? 'TRUE' : 'FALSE';}
+      if (val instanceof Date) {return `'${val.toISOString()}'`;}
+      if (typeof val === 'object') {return `'${JSON.stringify(val).replace(/'/g, "''")}'`;}
       return val;
     }).join(', ');
 
@@ -420,8 +420,8 @@ async function generateCreateTableSQL(tableName) {
   let sql = `CREATE TABLE IF NOT EXISTS ${tableName} (\n`;
   const columnDefs = columns.map(col => {
     let def = `  ${col.column_name} ${col.data_type}`;
-    if (col.is_nullable === 'NO') def += ' NOT NULL';
-    if (col.column_default) def += ` DEFAULT ${col.column_default}`;
+    if (col.is_nullable === 'NO') {def += ' NOT NULL';}
+    if (col.column_default) {def += ` DEFAULT ${col.column_default}`;}
     return def;
   });
 

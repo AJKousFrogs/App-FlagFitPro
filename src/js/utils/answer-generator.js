@@ -321,12 +321,10 @@ export class AnswerGenerator {
   formatProtocol(protocol) {
     let formatted = "";
 
-    if (protocol.temperature)
-      formatted += `**Temperature:** ${protocol.temperature}\n`;
-    if (protocol.duration) formatted += `**Duration:** ${protocol.duration}\n`;
-    if (protocol.frequency)
-      formatted += `**Frequency:** ${protocol.frequency}\n`;
-    if (protocol.method) formatted += `**Method:** ${protocol.method}\n`;
+    if (protocol.temperature) {formatted += `**Temperature:** ${protocol.temperature}\n`;}
+    if (protocol.duration) {formatted += `**Duration:** ${protocol.duration}\n`;}
+    if (protocol.frequency) {formatted += `**Frequency:** ${protocol.frequency}\n`;}
+    if (protocol.method) {formatted += `**Method:** ${protocol.method}\n`;}
     if (protocol.steps) {
       formatted += `\n**Steps:**\n`;
       formatted += protocol.steps

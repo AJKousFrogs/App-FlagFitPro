@@ -196,28 +196,27 @@ function extractTags(article, category) {
     `${article.title || ""} ${article.abstractText || ""}`.toLowerCase();
 
   // Common supplement tags
-  if (text.includes("iron")) tags.push("iron");
-  if (text.includes("creatine")) tags.push("creatine");
-  if (text.includes("protein")) tags.push("protein");
-  if (text.includes("magnesium")) tags.push("magnesium");
-  if (text.includes("vitamin d")) tags.push("vitamin_d");
+  if (text.includes("iron")) {tags.push("iron");}
+  if (text.includes("creatine")) {tags.push("creatine");}
+  if (text.includes("protein")) {tags.push("protein");}
+  if (text.includes("magnesium")) {tags.push("magnesium");}
+  if (text.includes("vitamin d")) {tags.push("vitamin_d");}
 
   // Recovery methods
-  if (text.includes("sauna")) tags.push("sauna");
+  if (text.includes("sauna")) {tags.push("sauna");}
   if (
     text.includes("cold") ||
     text.includes("cryotherapy") ||
     text.includes("ice")
-  )
-    tags.push("cold_therapy");
-  if (text.includes("massage")) tags.push("massage");
-  if (text.includes("compression")) tags.push("compression");
+  ) {tags.push("cold_therapy");}
+  if (text.includes("massage")) {tags.push("massage");}
+  if (text.includes("compression")) {tags.push("compression");}
 
   // Injury types
-  if (text.includes("ankle")) tags.push("ankle_sprain");
-  if (text.includes("hamstring")) tags.push("hamstring_strain");
-  if (text.includes("acl")) tags.push("acl_injury");
-  if (text.includes("shoulder")) tags.push("shoulder_injury");
+  if (text.includes("ankle")) {tags.push("ankle_sprain");}
+  if (text.includes("hamstring")) {tags.push("hamstring_strain");}
+  if (text.includes("acl")) {tags.push("acl_injury");}
+  if (text.includes("shoulder")) {tags.push("shoulder_injury");}
 
   return tags;
 }
@@ -228,31 +227,28 @@ function extractTagsFromAbstract(abstract, category) {
 
 // Determine study type from abstract
 function determineStudyType(abstract) {
-  if (!abstract) return null;
+  if (!abstract) {return null;}
   const lower = abstract.toLowerCase();
 
-  if (lower.includes("meta-analysis") || lower.includes("meta analysis"))
-    return "meta_analysis";
-  if (lower.includes("systematic review")) return "systematic_review";
-  if (lower.includes("randomized controlled trial") || lower.includes("rct"))
-    return "rct";
-  if (lower.includes("cohort study")) return "cohort";
-  if (lower.includes("case-control")) return "case_control";
-  if (lower.includes("case study")) return "case_study";
-  if (lower.includes("review")) return "review";
+  if (lower.includes("meta-analysis") || lower.includes("meta analysis")) {return "meta_analysis";}
+  if (lower.includes("systematic review")) {return "systematic_review";}
+  if (lower.includes("randomized controlled trial") || lower.includes("rct")) {return "rct";}
+  if (lower.includes("cohort study")) {return "cohort";}
+  if (lower.includes("case-control")) {return "case_control";}
+  if (lower.includes("case study")) {return "case_study";}
+  if (lower.includes("review")) {return "review";}
 
   return null;
 }
 
 // Determine evidence level
 function determineEvidenceLevel(studyType, _citationCount) {
-  if (studyType === "meta_analysis" || studyType === "systematic_review")
-    return "A";
-  if (studyType === "rct") return "A";
-  if (studyType === "cohort") return "B";
-  if (studyType === "case_control") return "B";
-  if (studyType === "case_study") return "C";
-  if (studyType === "review") return "C";
+  if (studyType === "meta_analysis" || studyType === "systematic_review") {return "A";}
+  if (studyType === "rct") {return "A";}
+  if (studyType === "cohort") {return "B";}
+  if (studyType === "case_control") {return "B";}
+  if (studyType === "case_study") {return "C";}
+  if (studyType === "review") {return "C";}
   return "C";
 }
 
@@ -333,7 +329,7 @@ async function fetchAllArticles() {
       for (const article of epmcArticles) {
         totalFetched++;
         const id = await insertArticle(article);
-        if (id) totalInserted++;
+        if (id) {totalInserted++;}
       }
 
       // Fetch from Semantic Scholar
@@ -343,7 +339,7 @@ async function fetchAllArticles() {
       for (const article of ssArticles) {
         totalFetched++;
         const id = await insertArticle(article);
-        if (id) totalInserted++;
+        if (id) {totalInserted++;}
       }
 
       // Rate limiting - be respectful

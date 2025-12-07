@@ -258,7 +258,7 @@ class GameStatsService {
     };
 
     games.forEach((game) => {
-      if (!game.plays) return;
+      if (!game.plays) {return;}
 
       let playerInGame = false;
 
@@ -276,8 +276,8 @@ class GameStatsService {
         // Passing stats
         if (isQB && play.playType === "pass") {
           stats.passAttempts++;
-          if (play.outcome === "completion") stats.completions++;
-          if (play.outcome === "interception") stats.interceptions++;
+          if (play.outcome === "completion") {stats.completions++;}
+          if (play.outcome === "interception") {stats.interceptions++;}
           if (
             play.throwAccuracy === "bad" ||
             play.throwAccuracy === "terrible"
@@ -290,8 +290,8 @@ class GameStatsService {
         // Receiving stats
         if (isReceiver && play.playType === "pass") {
           stats.targets++;
-          if (play.outcome === "completion") stats.receptions++;
-          if (play.isDrop) stats.drops++;
+          if (play.outcome === "completion") {stats.receptions++;}
+          if (play.isDrop) {stats.drops++;}
         }
 
         // Rushing stats
@@ -311,7 +311,7 @@ class GameStatsService {
         }
       });
 
-      if (playerInGame) stats.gamesPlayed++;
+      if (playerInGame) {stats.gamesPlayed++;}
     });
 
     // Calculate percentages
@@ -346,7 +346,7 @@ class GameStatsService {
     const drops = [];
 
     games.forEach((game) => {
-      if (!game.plays) return;
+      if (!game.plays) {return;}
 
       game.plays.forEach((play) => {
         if (play.receiverId === playerId && play.isDrop) {
@@ -403,7 +403,7 @@ class GameStatsService {
     const attempts = [];
 
     games.forEach((game) => {
-      if (!game.plays) return;
+      if (!game.plays) {return;}
 
       game.plays.forEach((play) => {
         if (play.defenderId === playerId && play.playType === "flag_pull") {
@@ -456,7 +456,7 @@ class GameStatsService {
     const throws = [];
 
     games.forEach((game) => {
-      if (!game.plays) return;
+      if (!game.plays) {return;}
 
       game.plays.forEach((play) => {
         if (play.quarterbackId === playerId && play.playType === "pass") {
@@ -489,9 +489,9 @@ class GameStatsService {
       }
 
       byRoute[t.routeType].attempts++;
-      if (t.outcome === "completion") byRoute[t.routeType].completions++;
-      if (t.outcome !== "completion") byRoute[t.routeType].incompletions++;
-      if (t.isDrop) byRoute[t.routeType].drops++;
+      if (t.outcome === "completion") {byRoute[t.routeType].completions++;}
+      if (t.outcome !== "completion") {byRoute[t.routeType].incompletions++;}
+      if (t.isDrop) {byRoute[t.routeType].drops++;}
       if (t.throwAccuracy === "bad" || t.throwAccuracy === "terrible") {
         byRoute[t.routeType].badThrows++;
       }
@@ -544,16 +544,15 @@ class GameStatsService {
     game.plays.forEach((play) => {
       if (play.playType === "pass") {
         stats.passAttempts++;
-        if (play.outcome === "completion") stats.completions++;
-        else stats.incompletions++;
-        if (play.isDrop) stats.drops++;
-        if (play.outcome === "interception") stats.interceptions++;
+        if (play.outcome === "completion") {stats.completions++;} else {stats.incompletions++;}
+        if (play.isDrop) {stats.drops++;}
+        if (play.outcome === "interception") {stats.interceptions++;}
       } else if (play.playType === "run") {
         stats.rushingAttempts++;
         stats.totalYards += play.yardsGained || 0;
       } else if (play.playType === "flag_pull") {
         stats.flagPullAttempts++;
-        if (play.isSuccessful) stats.flagPulls++;
+        if (play.isSuccessful) {stats.flagPulls++;}
       }
     });
 

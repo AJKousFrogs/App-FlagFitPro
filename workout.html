@@ -83,11 +83,6 @@
 
       // Initialize workout page
       document.addEventListener("DOMContentLoaded", async function () {
-        // Initialize Lucide icons
-        if (typeof lucide !== "undefined") {
-          lucide.createIcons();
-        }
-        
         // Check authentication (wait for auth manager to initialize)
         const isAuthenticated = await authManager.requireAuth();
         if (!isAuthenticated) {

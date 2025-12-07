@@ -76,7 +76,7 @@ class PlayerProfileService {
    */
   addPractice(playerId, practice) {
     const profile = this.getPlayerProfile(playerId);
-    if (!profile) return null;
+    if (!profile) {return null;}
 
     profile.practices.push({
       date: practice.date,
@@ -94,7 +94,7 @@ class PlayerProfileService {
    */
   addLeagueGame(playerId, leagueGame) {
     const profile = this.getPlayerProfile(playerId);
-    if (!profile) return null;
+    if (!profile) {return null;}
 
     profile.leagueGames.push({
       date: leagueGame.date,
@@ -118,7 +118,7 @@ class PlayerProfileService {
       const parsedSchedule = await scheduleFileParser.parseFile(file);
       const profile = this.getPlayerProfile(playerId);
       
-      if (!profile) return null;
+      if (!profile) {return null;}
 
       // Add game days
       if (parsedSchedule.gameDays) {

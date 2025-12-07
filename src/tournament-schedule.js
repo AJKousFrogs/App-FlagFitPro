@@ -197,9 +197,9 @@ export const getNextTournament = () => {
       return tournamentDate > now;
     })
     .sort((a, b) => {
-      if (a.startDate === "TBD" && b.startDate === "TBD") return 0;
-      if (a.startDate === "TBD") return 1;
-      if (b.startDate === "TBD") return -1;
+      if (a.startDate === "TBD" && b.startDate === "TBD") {return 0;}
+      if (a.startDate === "TBD") {return 1;}
+      if (b.startDate === "TBD") {return -1;}
       return new Date(a.startDate) - new Date(b.startDate);
     });
 
@@ -248,7 +248,7 @@ export const formatTournamentDate = (tournament) => {
 
     // Format with ordinal suffixes (11th, 12th, etc.)
     const getOrdinalSuffix = (day) => {
-      if (day > 3 && day < 21) return day + "th";
+      if (day > 3 && day < 21) {return day + "th";}
       switch (day % 10) {
         case 1: return day + "st";
         case 2: return day + "nd";
