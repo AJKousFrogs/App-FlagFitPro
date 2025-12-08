@@ -455,11 +455,26 @@ logger.debug(
       const response = await auth.register(userData);
 
       if (response.success) {
-        // Handle response structure: { success: true, data: { token, user } }
+        // Handle response structure: { success: true, data: { token?, user }, requiresVerification? }
         const data = response.data || response;
         this.token = data.token || response.token;
         this.user = data.user || response.user;
 
+        // SECURITY: If email verification is required, token may not be returned
+        // User must verify email before receiving a token (via login after verification)
+        if (response.requiresVerification && !this.token) {
+          // This is expected - user must verify email first
+          this.hideLoading();
+          this.showSuccess(response.message || "Account created successfully! Please check your email to verify your account.");
+          return { 
+            success: true, 
+            user: this.user,
+            requiresVerification: true,
+            message: response.message || "Please verify your email before signing in."
+          };
+        }
+
+        // If token is missing and verification is not required, that's an error
         if (!this.token || !this.user) {
           throw new Error("Invalid response format from registration endpoint");
         }

@@ -420,5 +420,139 @@ export class TrainingPlanService {
       return [];
     }
   }
+
+  /**
+   * Save training plan to backend (persistence layer)
+   * Stores plan for athlete so it persists across sessions
+   */
+  async savePlan(athleteId: string, plan: WeeklyTrainingPlan): Promise<boolean> {
+    this.loading.set(true);
+    try {
+      const response = await this.apiService.post<{ success: boolean }>(
+        '/api/training/plan',
+        {
+          athleteId,
+          plan: {
+            ...plan,
+            // Convert dates to ISO strings for serialization
+            sessions: plan.sessions.map(s => ({
+              ...s,
+              // Ensure all fields are serializable
+            }))
+          }
+        }
+      );
+
+      if (response.success !== false) {
+        this.currentPlan.set(plan);
+        this.loading.set(false);
+        return true;
+      }
+      
+      this.loading.set(false);
+      return false;
+    } catch (error) {
+      console.error('Error saving training plan:', error);
+      this.loading.set(false);
+      return false;
+    }
+  }
+
+  /**
+   * Load saved training plan from backend
+   * Retrieves the most recent plan for an athlete
+   */
+  async loadPlan(athleteId: string, weekNumber?: number): Promise<WeeklyTrainingPlan | null> {
+    this.loading.set(true);
+    try {
+      const params: any = { athleteId };
+      if (weekNumber) {
+        params.weekNumber = weekNumber;
+      }
+
+      const response = await this.apiService.get<WeeklyTrainingPlan>(
+        '/api/training/plan',
+        params
+      );
+
+      if (response && response.data) {
+        const plan = response.data;
+        this.currentPlan.set(plan);
+        this.loading.set(false);
+        return plan;
+      }
+
+      this.loading.set(false);
+      return null;
+    } catch (error) {
+      console.error('Error loading training plan:', error);
+      this.loading.set(false);
+      return null;
+    }
+  }
+
+  /**
+   * Get all saved plans for an athlete (history)
+   */
+  async getPlanHistory(athleteId: string, limit: number = 10): Promise<WeeklyTrainingPlan[]> {
+    try {
+      const response = await this.apiService.get<WeeklyTrainingPlan[]>(
+        '/api/training/plan/history',
+        { athleteId, limit }
+      );
+
+      return response.data || [];
+    } catch (error) {
+      console.error('Error fetching plan history:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Delete a saved training plan
+   */
+  async deletePlan(athleteId: string, planId: string): Promise<boolean> {
+    try {
+      const response = await this.apiService.delete<{ success: boolean }>(
+        `/api/training/plan/${planId}`,
+        { athleteId }
+      );
+
+      // If deleted plan was current, clear it
+      const current = this.currentPlan();
+      if (current && (current as any).id === planId) {
+        this.currentPlan.set(null);
+      }
+
+      return response.success !== false;
+    } catch (error) {
+      console.error('Error deleting training plan:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Generate and save plan in one operation
+   * Convenience method that generates a plan and immediately saves it
+   */
+  async generateAndSavePlan(athleteId: string, config: GoalBasedPlanConfig): Promise<WeeklyTrainingPlan | null> {
+    // Generate the plan
+    const plan = this.generateWeeklyPlan(config);
+    
+    // Set the goal from config
+    plan.goal = config.goal;
+
+    // Save to backend
+    const saved = await this.savePlan(athleteId, plan);
+    
+    if (saved) {
+      return plan;
+    }
+
+    // If save failed, still return the plan (it's in memory)
+    // but log the error
+    console.warn('Failed to save training plan, but plan generated successfully');
+    return plan;
+  }
 }
 

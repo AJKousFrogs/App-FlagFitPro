@@ -133,6 +133,11 @@ const VALIDATION_RULES = {
     newPassword: { type: 'string', required: false, minLength: 8, maxLength: 128 },
     action: { type: 'string', enum: ['request', 'verify', 'reset'], required: false },
   },
+
+  // Authentication - Resend Verification Email validation
+  resendVerification: {
+    email: { type: 'string', required: true, minLength: 3, maxLength: 255 },
+  },
 };
 
 /**

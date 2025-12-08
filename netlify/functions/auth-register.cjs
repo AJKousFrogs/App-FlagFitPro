@@ -131,6 +131,12 @@ exports.handler = async (event, context) => {
     const firstName = nameParts[0] || "";
     const lastName = nameParts.slice(1).join(" ") || "";
 
+    // Validate and set role (default to 'player' if not provided or invalid)
+    const validRoles = ['player', 'coach', 'admin'];
+    const userRole = role && validRoles.includes(role.toLowerCase()) 
+      ? role.toLowerCase() 
+      : 'player';
+
     // Create new user in database (email_verified defaults to false)
     let newUser;
     try {
@@ -140,6 +146,7 @@ exports.handler = async (event, context) => {
         last_name: lastName,
         email: normalizedEmail,
         password_hash: hashedPassword,
+        role: userRole,
         email_verified: false,
         verification_token: verificationToken,
         verification_token_expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours
@@ -169,28 +176,33 @@ exports.handler = async (event, context) => {
         console.error("The database schema uses 'first_name' and 'last_name', not 'name'.");
         console.error("PostgREST schema cache may need to be refreshed. Trying with correct column names...");
         // Try again with correct schema (first_name/last_name) without verification fields
+        // NOTE: Without verification_token, user cannot verify email - this is a fallback for legacy schemas
         try {
           newUser = await db.users.create({
             first_name: firstName,
             last_name: lastName,
             email: normalizedEmail,
             password_hash: hashedPassword,
+            role: userRole,
             email_verified: false,
           });
+          console.warn("User created without verification token - email verification may not work");
           console.log("User created successfully after schema cache error");
         } catch (retryError) {
           console.error("Failed after schema cache error:", retryError);
           // If password_hash doesn't work, try password
           if (retryError.code === 'PGRST204' && retryError.message?.includes('password')) {
             try {
-              newUser = await db.users.create({
-                first_name: firstName,
-                last_name: lastName,
-                email: normalizedEmail,
-                password: hashedPassword,
-                email_verified: false,
-              });
-              console.log("User created successfully with 'password' column");
+                newUser = await db.users.create({
+                  first_name: firstName,
+                  last_name: lastName,
+                  email: normalizedEmail,
+                  password: hashedPassword,
+                  role: userRole,
+                  email_verified: false,
+                });
+                console.warn("User created without verification token - email verification may not work");
+                console.log("User created successfully with 'password' column");
             } catch (passwordError) {
               throw passwordError;
             }
@@ -200,12 +212,14 @@ exports.handler = async (event, context) => {
         }
       } else if (isVerificationColumnError) {
         console.warn("Verification columns not found, creating user without verification fields");
+        console.warn("WARNING: User will not be able to verify email without verification_token column");
         try {
           newUser = await db.users.create({
             first_name: firstName,
             last_name: lastName,
             email: normalizedEmail,
             password_hash: hashedPassword,
+            role: userRole,
             email_verified: false,
           });
           console.log("User created successfully without verification fields");
@@ -221,8 +235,10 @@ exports.handler = async (event, context) => {
                   last_name: lastName,
                   email: normalizedEmail,
                   password: hashedPassword,
+                  role: userRole,
                   email_verified: false,
                 });
+                console.warn("User created without verification token - email verification may not work");
                 console.log("User created successfully with 'password' column");
               } catch (passwordError) {
                 console.error("Failed with 'password' column:", passwordError);
@@ -269,7 +285,7 @@ exports.handler = async (event, context) => {
       
       const sendEmailUrl = `${baseUrl}/.netlify/functions/send-email`;
 
-      // Call send-email function
+      // Call send-email function (include role for role-specific email)
       const emailResponse = await fetch(sendEmailUrl, {
         method: "POST",
         headers: {
@@ -280,6 +296,7 @@ exports.handler = async (event, context) => {
           to: normalizedEmail,
           name: name.trim(),
           verificationUrl,
+          role: userRole,
         }),
       });
 
@@ -295,19 +312,14 @@ exports.handler = async (event, context) => {
       // Don't fail registration if email fails - user can request resend
     }
 
-    // Generate JWT token for the new user
-    const token = jwt.sign(
-      {
-        userId: newUser.id,
-        email: newUser.email,
-        role: newUser.role || 'player',
-      },
-      JWT_SECRET,
-      { expiresIn: "24h" }
-    );
+    // SECURITY: Do NOT generate JWT token until email is verified
+    // The login endpoint checks email_verified before issuing tokens
+    // Returning a token here could allow unverified users to access the system
+    // Instead, return success without token - user must verify email first
 
-    // Return success response with token (exclude password_hash and verification token)
-    const { password_hash, verification_token, verification_token_expires_at, ...safeUser } = newUser;
+    // Return success response (exclude password fields and verification token)
+    // Handle both password_hash and password column names
+    const { password_hash, password, verification_token, verification_token_expires_at, ...safeUser } = newUser;
 
     return {
       statusCode: 201,
@@ -315,13 +327,13 @@ exports.handler = async (event, context) => {
       body: JSON.stringify({
         success: true,
         data: {
-          token,
+          // Do not return token - user must verify email first
           user: {
             ...safeUser,
             name: `${safeUser.first_name || ''} ${safeUser.last_name || ''}`.trim() || safeUser.email,
           },
         },
-        message: "Account created successfully. Please check your email to verify your account.",
+        message: "Account created successfully. Please check your email to verify your account before signing in.",
         requiresVerification: true
       }),
     };

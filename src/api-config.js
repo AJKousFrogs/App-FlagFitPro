@@ -613,8 +613,8 @@ export const coach = {
 };
 
 export const knowledge = {
-  search: (query, category = null, limit = 5) =>
-    apiClient.post(API_ENDPOINTS.knowledge.search, { query, category, limit }),
+  search: (query, category = null, limit = 5, options = {}) =>
+    apiClient.post(API_ENDPOINTS.knowledge.search, { query, category, limit, options }),
   getEntry: (topic) => apiClient.get(API_ENDPOINTS.knowledge.entry(topic)),
   searchArticles: (query, categories = [], limit = 10) =>
     apiClient.post(API_ENDPOINTS.knowledge.articles, {

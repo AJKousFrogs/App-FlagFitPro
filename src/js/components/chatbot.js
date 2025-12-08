@@ -22,6 +22,13 @@ class FlagFitChatbot {
       recovery: [],
     };
     this.questionPools = this.initializeQuestionPools();
+    this.storageKey = "chatbot_messages";
+    this.conversationContext = []; // Store conversation context for better responses
+    this.timeoutDuration = 30000; // 30 seconds timeout
+    this.storageService = null; // Will be loaded lazily
+    this.userContext = null; // User context for role-aware responses
+    this.roleAwareGenerator = null; // Role-aware response generator
+    this.personalizationService = null; // Personalization service for profile data
   }
 
   initializeKnowledgeBase() {
@@ -178,11 +185,17 @@ class FlagFitChatbot {
     };
   }
 
-  open() {
+  async open() {
+    // Load user context for role-aware responses
+    if (!this.userContext) {
+      await this.loadUserContext();
+    }
+
     if (this.modal) {
       this.modal.classList.add("open");
       this.modal.setAttribute("aria-hidden", "false");
       document.body.style.overflow = "hidden";
+      await this.loadConversationHistory();
       this.focusInput();
       return;
     }
@@ -191,10 +204,11 @@ class FlagFitChatbot {
     this.modal.classList.add("open");
     this.modal.setAttribute("aria-hidden", "false");
     document.body.style.overflow = "hidden";
+    await this.loadConversationHistory();
     this.focusInput();
   }
 
-  createModal() {
+  async createModal() {
     const modal = document.createElement("div");
     modal.className = "chatbot-modal-overlay";
     modal.setAttribute("role", "dialog");
@@ -212,9 +226,19 @@ class FlagFitChatbot {
               <p class="chatbot-subtitle">Ask me about training, nutrition, psychology, injuries & more</p>
             </div>
           </div>
-          <button class="chatbot-close" aria-label="Close chatbot" type="button">
-            <i data-lucide="x" class="icon-20"></i>
-          </button>
+          <div class="chatbot-header-actions">
+            <button 
+              class="chatbot-clear-history" 
+              aria-label="Clear conversation history" 
+              type="button"
+              title="Clear conversation history"
+            >
+              <i data-lucide="trash-2" class="icon-18"></i>
+            </button>
+            <button class="chatbot-close" aria-label="Close chatbot" type="button">
+              <i data-lucide="x" class="icon-20"></i>
+            </button>
+          </div>
         </div>
 
         <div class="chatbot-messages" id="chatbot-messages" role="log" aria-live="polite">
@@ -280,20 +304,347 @@ class FlagFitChatbot {
       }
     }, 100);
 
-    // Add welcome message
-    this.messages.push({
-      type: "bot",
-      text: "👋 Hello! I'm your FlagFit AI Assistant. I can help you with sports psychology, nutrition, speed training, injuries, recovery, and more. What would you like to know?",
-      timestamp: new Date(),
-    });
+    // Initialize storage service
+    await this.initStorageService();
+
+    // Add welcome message only if no messages exist
+    const hasHistory = await this.loadConversationHistory();
+    if (!hasHistory) {
+      this.messages.push({
+        type: "bot",
+        text: "👋 Hello! I'm your FlagFit AI Assistant. I can help you with sports psychology, nutrition, speed training, injuries, recovery, and more. What would you like to know?",
+        timestamp: new Date(),
+      });
+      this.saveMessages();
+    }
 
     this.setupEventListeners();
+  }
+
+  async initStorageService() {
+    try {
+      const { storageService } = await import("../services/storage-service-unified.js");
+      this.storageService = storageService;
+    } catch (error) {
+      logger.warn("Storage service unavailable, using localStorage directly:", error);
+      // Fallback to direct localStorage
+      this.storageService = {
+        get: (key, defaultValue) => {
+          try {
+            const data = localStorage.getItem(key);
+            return data ? JSON.parse(data) : defaultValue;
+          } catch {
+            return defaultValue;
+          }
+        },
+        set: (key, data) => {
+          try {
+            localStorage.setItem(key, JSON.stringify(data));
+            return true;
+          } catch {
+            return false;
+          }
+        },
+        remove: (key) => {
+          try {
+            localStorage.removeItem(key);
+            return true;
+          } catch {
+            return false;
+          }
+        },
+      };
+    }
+  }
+
+  /**
+   * Load user context for role-aware responses
+   */
+  async loadUserContext() {
+    try {
+      // Get auth token from storage or session
+      const authToken = this.getAuthToken();
+      
+      if (!authToken) {
+        // No auth token - use default context
+        this.userContext = {
+          role: 'player',
+          teamType: 'domestic',
+          position: null,
+          expertiseLevel: 'intermediate'
+        };
+        await this.initializeRoleAwareGenerator();
+        return this.userContext;
+      }
+
+      // Fetch user context from API
+      const response = await fetch('/.netlify/functions/user-context', {
+        headers: {
+          'Authorization': `Bearer ${authToken}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success && result.data) {
+          this.userContext = {
+            userId: result.data.userId, // Store userId for personalization service
+            role: result.data.role || 'player',
+            teamType: result.data.teamType || 'domestic',
+            position: result.data.position || null,
+            expertiseLevel: result.data.expertiseLevel || 'intermediate',
+            totalQueries: result.data.totalQueries || 0,
+            preferredTopics: result.data.preferredTopics || [],
+            heightCm: result.data.heightCm,
+            weightKg: result.data.weightKg,
+            experienceLevel: result.data.experienceLevel
+          };
+          await this.initializeRoleAwareGenerator();
+          await this.initializePersonalizationService();
+          return this.userContext;
+        }
+      }
+    } catch (error) {
+      logger.warn('Failed to load user context:', error);
+    }
+
+    // Fallback: use default context
+    this.userContext = {
+      role: 'player',
+      teamType: 'domestic',
+      position: null,
+      expertiseLevel: 'intermediate'
+    };
+    await this.initializeRoleAwareGenerator();
+    
+    // Initialize personalization service
+    await this.initializePersonalizationService();
+    
+    return this.userContext;
+  }
+
+  /**
+   * Initialize personalization service
+   */
+  async initializePersonalizationService() {
+    try {
+      // Get userId from userContext or auth
+      let userId = null;
+      
+      if (this.userContext && this.userContext.userId) {
+        userId = this.userContext.userId;
+      } else {
+        // Try to get from auth token
+        const authToken = this.getAuthToken();
+        if (authToken) {
+          // Extract userId from token or fetch from API
+          // For now, we'll get it from user-context API
+          try {
+            const response = await fetch('/.netlify/functions/user-context', {
+              headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+              }
+            });
+            if (response.ok) {
+              const result = await response.json();
+              if (result.success && result.data && result.data.userId) {
+                userId = result.data.userId;
+              }
+            }
+          } catch (error) {
+            logger.debug('Could not get userId for personalization:', error);
+          }
+        }
+      }
+
+      if (userId) {
+        const { PersonalizationService } = await import("../services/personalization-service.js");
+        this.personalizationService = new PersonalizationService(userId);
+      }
+    } catch (error) {
+      logger.warn("Failed to initialize personalization service:", error);
+      this.personalizationService = null;
+    }
+  }
+
+  /**
+   * Initialize role-aware response generator
+   */
+  async initializeRoleAwareGenerator() {
+    try {
+      // Dynamically import role-aware generator
+      const module = await import("../utils/role-aware-response-generator.js");
+      const { RoleAwareResponseGenerator } = module;
+      this.roleAwareGenerator = new RoleAwareResponseGenerator(this.userContext);
+    } catch (error) {
+      logger.warn("Role-aware generator unavailable:", error);
+      this.roleAwareGenerator = null;
+    }
+  }
+
+  /**
+   * Get auth token from storage
+   */
+  getAuthToken() {
+    try {
+      // Try to get from localStorage
+      const authData = localStorage.getItem('auth');
+      if (authData) {
+        const parsed = JSON.parse(authData);
+        return parsed.token || parsed.access_token || null;
+      }
+
+      // Try to get from sessionStorage
+      const sessionAuth = sessionStorage.getItem('auth');
+      if (sessionAuth) {
+        const parsed = JSON.parse(sessionAuth);
+        return parsed.token || parsed.access_token || null;
+      }
+
+      // Try to get from window if available
+      if (window.auth && window.auth.token) {
+        return window.auth.token;
+      }
+
+      return null;
+    } catch (error) {
+      logger.debug("Error getting auth token:", error);
+      return null;
+    }
+  }
+
+  /**
+   * Update chatbot query statistics
+   */
+  async updateQueryStats(topic) {
+    if (!this.userContext || !this.getAuthToken()) {
+      return; // Skip if no user context or auth
+    }
+
+    try {
+      const authToken = this.getAuthToken();
+      await fetch('/.netlify/functions/update-chatbot-stats', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${authToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ topic })
+      });
+    } catch (error) {
+      logger.debug("Failed to update query stats:", error);
+      // Non-critical, continue silently
+    }
+  }
+
+  async loadConversationHistory() {
+    if (!this.storageService) {
+      await this.initStorageService();
+    }
+
+    try {
+      const storedMessages = this.storageService.get(this.storageKey, []);
+      if (storedMessages && storedMessages.length > 0) {
+        // Filter out welcome message if it exists
+        const filteredMessages = storedMessages.filter(
+          (msg) => !msg.isWelcomeMessage
+        );
+        
+        if (filteredMessages.length > 0) {
+          this.messages = filteredMessages.map((msg) => ({
+            ...msg,
+            timestamp: new Date(msg.timestamp),
+          }));
+          
+          // Render messages to UI
+          const messagesContainer = document.getElementById("chatbot-messages");
+          if (messagesContainer) {
+            // Clear existing messages except welcome
+            const existingMessages = messagesContainer.querySelectorAll(".chatbot-message");
+            existingMessages.forEach((msg, index) => {
+              if (index > 0) msg.remove(); // Keep welcome message
+            });
+
+            // Render stored messages
+            this.messages.forEach((msg) => {
+              if (!msg.isWelcomeMessage) {
+                this.renderMessage(msg.type, msg.text, false);
+              }
+            });
+          }
+          
+          return true;
+        }
+      }
+    } catch (error) {
+      logger.error("Failed to load conversation history:", error);
+    }
+    
+    return false;
+  }
+
+  saveMessages() {
+    if (!this.storageService) {
+      return;
+    }
+
+    try {
+      // Keep only last 100 messages to prevent storage bloat
+      const messagesToSave = this.messages.slice(-100).map((msg) => ({
+        type: msg.type,
+        text: msg.text,
+        timestamp: msg.timestamp instanceof Date ? msg.timestamp.toISOString() : msg.timestamp,
+        isWelcomeMessage: msg.isWelcomeMessage || false,
+      }));
+      
+      this.storageService.set(this.storageKey, messagesToSave);
+    } catch (error) {
+      logger.error("Failed to save messages:", error);
+    }
+  }
+
+  clearConversationHistory() {
+    this.messages = [];
+    if (this.storageService) {
+      this.storageService.remove(this.storageKey);
+    }
+    
+    // Clear UI
+    const messagesContainer = document.getElementById("chatbot-messages");
+    if (messagesContainer) {
+      messagesContainer.innerHTML = `
+        <div class="chatbot-message bot-message">
+          <div class="message-avatar">🤖</div>
+          <div class="message-content">
+            <div class="message-text">
+              👋 Hello! I'm your FlagFit AI Assistant. I can help you with:
+              <ul style="margin: 8px 0 0 20px; padding-left: 0;">
+                <li>Sports psychology & mental training</li>
+                <li>Nutrition & supplements</li>
+                <li>Speed & agility development</li>
+                <li>Injury prevention & treatment</li>
+                <li>Recovery strategies</li>
+                <li>Training programs</li>
+              </ul>
+              <br>
+              What would you like to know?
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    
+    // Reset conversation context
+    this.conversationContext = [];
   }
 
   setupEventListeners() {
     const input = document.getElementById("chatbot-input");
     const sendBtn = document.getElementById("chatbot-send");
     const closeBtn = this.modal.querySelector(".chatbot-close");
+    const clearHistoryBtn = this.modal.querySelector(".chatbot-clear-history");
     const quickBtns = this.modal.querySelectorAll(".chatbot-quick-btn");
 
     // Input handling
@@ -319,6 +670,15 @@ class FlagFitChatbot {
 
     // Close button
     closeBtn.addEventListener("click", () => this.close());
+
+    // Clear history button
+    if (clearHistoryBtn) {
+      clearHistoryBtn.addEventListener("click", () => {
+        if (confirm("Are you sure you want to clear the conversation history? This cannot be undone.")) {
+          this.clearConversationHistory();
+        }
+      });
+    }
 
     // Overlay click to close
     this.modal.addEventListener("click", (e) => {
@@ -451,45 +811,151 @@ class FlagFitChatbot {
 
     // Add user message
     this.addMessage("user", message);
+    
+    // Add to conversation context
+    this.conversationContext.push({ role: "user", content: message });
+    
+    // Keep context to last 10 messages to prevent bloat
+    if (this.conversationContext.length > 20) {
+      this.conversationContext = this.conversationContext.slice(-20);
+    }
+    
     input.value = "";
     input.style.height = "auto";
     const sendBtn = document.getElementById("chatbot-send");
     if (sendBtn) {sendBtn.disabled = true;}
 
-    // Show typing indicator
+    // Show typing indicator with progress
     this.showTypingIndicator();
+    const progressInterval = this.showProgressIndicator();
 
     // Get response (now async) - ensure we always get a response
     try {
       const response = await Promise.race([
         this.getResponse(message),
         new Promise((_, reject) => 
-          setTimeout(() => reject(new Error("Timeout")), 10000)
+          setTimeout(() => reject(new Error("Timeout")), this.timeoutDuration)
         )
       ]);
+      
+      clearInterval(progressInterval);
       this.hideTypingIndicator();
+      
       if (response && typeof response === 'string' && response.trim()) {
         this.addMessage("bot", response);
+        this.conversationContext.push({ role: "assistant", content: response });
       } else {
         // Fallback if response is empty
-        this.addMessage("bot", await this.getLocalResponse(null, message, message.toLowerCase()));
-      }
-    } catch (error) {
-      logger.error("Error getting response:", error);
-      this.hideTypingIndicator();
-      // Always provide a helpful fallback response
-      try {
         const fallbackResponse = await this.getLocalResponse(null, message, message.toLowerCase());
         this.addMessage("bot", fallbackResponse);
-      } catch (fallbackError) {
-        logger.error("Fallback also failed:", fallbackError);
-        this.addMessage(
-          "bot",
-          "I apologize, but I'm having trouble processing your question right now. I can help with:\n• Sports psychology & mental training\n• Nutrition & supplements\n• Speed & agility development\n• Injury prevention & treatment\n• Recovery strategies\n• Training programs\n\nCould you try rephrasing your question?",
-        );
+        this.conversationContext.push({ role: "assistant", content: fallbackResponse });
+      }
+    } catch (error) {
+      clearInterval(progressInterval);
+      logger.error("Error getting response:", error);
+      this.hideTypingIndicator();
+      
+      // Show user-friendly error message
+      let errorMessage = "";
+      if (error.message === "Timeout") {
+        errorMessage = "⏱️ This question is taking longer than expected. Let me try a simpler approach...";
+        this.showErrorMessage(errorMessage);
+        
+        // Try fallback with shorter timeout
+        try {
+          const fallbackResponse = await Promise.race([
+            this.getLocalResponse(null, message, message.toLowerCase()),
+            new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 5000))
+          ]);
+          this.hideErrorMessage();
+          this.addMessage("bot", fallbackResponse);
+          this.conversationContext.push({ role: "assistant", content: fallbackResponse });
+        } catch (fallbackError) {
+          this.hideErrorMessage();
+          this.showErrorMessage("I'm having trouble processing your question. Please try rephrasing it or ask about a different topic.");
+        }
+      } else {
+        errorMessage = "⚠️ I encountered an issue processing your question. Let me try again...";
+        this.showErrorMessage(errorMessage);
+        
+        // Always provide a helpful fallback response
+        try {
+          const fallbackResponse = await this.getLocalResponse(null, message, message.toLowerCase());
+          this.hideErrorMessage();
+          this.addMessage("bot", fallbackResponse);
+          this.conversationContext.push({ role: "assistant", content: fallbackResponse });
+        } catch (fallbackError) {
+          logger.error("Fallback also failed:", fallbackError);
+          this.hideErrorMessage();
+          this.addMessage(
+            "bot",
+            "I apologize, but I'm having trouble processing your question right now. I can help with:\n• Sports psychology & mental training\n• Nutrition & supplements\n• Speed & agility development\n• Injury prevention & treatment\n• Recovery strategies\n• Training programs\n\nCould you try rephrasing your question?",
+          );
+        }
       }
     } finally {
       if (sendBtn) {sendBtn.disabled = false;}
+    }
+  }
+
+  showProgressIndicator() {
+    const messagesContainer = document.getElementById("chatbot-messages");
+    if (!messagesContainer) return null;
+
+    const progressBar = document.createElement("div");
+    progressBar.className = "chatbot-progress-bar";
+    progressBar.id = "chatbot-progress";
+    progressBar.innerHTML = '<div class="chatbot-progress-fill"></div>';
+    
+    const typingIndicator = document.getElementById("typing-indicator");
+    if (typingIndicator) {
+      typingIndicator.appendChild(progressBar);
+    }
+
+    // Animate progress bar
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += 2; // Increase by 2% every ~600ms (30s total)
+      if (progress > 95) progress = 95; // Cap at 95%
+      
+      const fill = progressBar.querySelector(".chatbot-progress-fill");
+      if (fill) {
+        fill.style.width = `${progress}%`;
+      }
+    }, 600);
+
+    return interval;
+  }
+
+  showErrorMessage(message) {
+    const messagesContainer = document.getElementById("chatbot-messages");
+    if (!messagesContainer) return;
+
+    // Remove existing error message if any
+    const existingError = document.getElementById("chatbot-error-message");
+    if (existingError) {
+      existingError.remove();
+    }
+
+    const errorDiv = document.createElement("div");
+    errorDiv.id = "chatbot-error-message";
+    errorDiv.className = "chatbot-error-message";
+    errorDiv.setAttribute("role", "alert");
+    errorDiv.innerHTML = `
+      <div class="error-content">
+        <span class="error-icon">⚠️</span>
+        <span class="error-text">${this.escapeHtml(message)}</span>
+      </div>
+    `;
+
+    messagesContainer.appendChild(errorDiv);
+    this.scrollToBottom();
+  }
+
+  hideErrorMessage() {
+    const errorMessage = document.getElementById("chatbot-error-message");
+    if (errorMessage) {
+      errorMessage.remove();
     }
   }
 
@@ -500,6 +966,9 @@ class FlagFitChatbot {
     let parsedQuestion = null;
     let knowledgeEntry = null;
     let articles = [];
+
+    // Include conversation context in parsing if available
+    const contextMessages = this.conversationContext.slice(-4); // Last 4 messages for context
 
     try {
       // Import question parser and answer generator
@@ -513,6 +982,11 @@ class FlagFitChatbot {
 
         // Parse the question
         parsedQuestion = questionParser.parse(userMessage);
+        
+        // Enrich question with user profile data (body metrics, injuries, training schedule)
+        if (this.personalizationService) {
+          parsedQuestion = await this.personalizationService.enrichQuestion(parsedQuestion);
+        }
       } catch (parseError) {
         logger.debug("Question parser unavailable, using simple parsing:", parseError);
         // Create simple parsed question
@@ -531,7 +1005,8 @@ class FlagFitChatbot {
           "../services/knowledge-base-service.js"
         );
 
-        // Search knowledge base
+        // Search knowledge base with governance filters
+        // By default, only show approved entries with quality scores
         knowledgeEntry = await knowledgeBaseService.searchKnowledgeBase(
           userMessage,
           parsedQuestion.entities?.supplements?.[0]
@@ -545,6 +1020,11 @@ class FlagFitChatbot {
                   : parsedQuestion.entities?.psychology?.[0]
                     ? "psychology"
                     : null,
+          {
+            requireApproval: true, // Only approved entries
+            includeExperimental: false, // Exclude experimental
+            minQualityScore: 0.3 // Minimum quality score (30%)
+          }
         );
 
         // If no knowledge entry, search articles
@@ -582,9 +1062,48 @@ class FlagFitChatbot {
               parsedQuestion.entities?.recovery?.[0] ||
               "";
             answer = responseEnhancer.addDisclaimers(answer, topic);
+
+            // Add evidence indicators if knowledge entry available
+            if (knowledgeEntry) {
+              answer = responseEnhancer.addEvidenceIndicators(answer, knowledgeEntry);
+            }
           } catch {
             // Continue without enhancement if unavailable
           }
+
+          // Apply role-aware adjustments
+          if (this.roleAwareGenerator) {
+            answer = this.roleAwareGenerator.adjustForRole(answer, parsedQuestion);
+            
+            // Add position-specific advice if available
+            if (this.userContext?.position) {
+              const positionAdvice = this.roleAwareGenerator.getPositionSpecificAdvice(
+                this.userContext.position,
+                parsedQuestion.intent,
+                parsedQuestion.entities
+              );
+              if (positionAdvice) {
+                answer += positionAdvice;
+              }
+            }
+          }
+
+          // Apply personalized recommendations (injury-aware, schedule-aware, body metrics)
+          if (this.personalizationService) {
+            answer = this.personalizationService.generatePersonalizedRecommendations(
+              parsedQuestion,
+              answer
+            );
+          }
+
+          // Update query statistics (async, non-blocking)
+          const detectedTopic = parsedQuestion.entities?.supplements?.[0] ||
+            parsedQuestion.entities?.injuries?.[0] ||
+            parsedQuestion.entities?.recovery?.[0] ||
+            parsedQuestion.entities?.training?.[0] ||
+            parsedQuestion.entities?.psychology?.[0] ||
+            'general';
+          this.updateQueryStats(detectedTopic).catch(() => {});
 
           return answer;
         }
@@ -596,11 +1115,47 @@ class FlagFitChatbot {
       }
 
       // Fallback to local knowledge with intelligent parsing
-      return await this.getLocalResponse(
+      let localResponse = await this.getLocalResponse(
         parsedQuestion,
         userMessage,
         lowerMessage,
       );
+
+      // Apply role-aware adjustments to local response
+      if (this.roleAwareGenerator && parsedQuestion) {
+        localResponse = this.roleAwareGenerator.adjustForRole(localResponse, parsedQuestion);
+        
+        // Add position-specific advice if available
+        if (this.userContext?.position) {
+          const positionAdvice = this.roleAwareGenerator.getPositionSpecificAdvice(
+            this.userContext.position,
+            parsedQuestion.intent,
+            parsedQuestion.entities
+          );
+          if (positionAdvice) {
+            localResponse += positionAdvice;
+          }
+        }
+      }
+
+      // Apply personalized recommendations to local response
+      if (this.personalizationService && parsedQuestion) {
+        localResponse = this.personalizationService.generatePersonalizedRecommendations(
+          parsedQuestion,
+          localResponse
+        );
+      }
+
+      // Update query statistics (async, non-blocking)
+      const detectedTopic = parsedQuestion?.entities?.supplements?.[0] ||
+        parsedQuestion?.entities?.injuries?.[0] ||
+        parsedQuestion?.entities?.recovery?.[0] ||
+        parsedQuestion?.entities?.training?.[0] ||
+        parsedQuestion?.entities?.psychology?.[0] ||
+        'general';
+      this.updateQueryStats(detectedTopic).catch(() => {});
+
+      return localResponse;
     } catch (error) {
       logger.error("Error in intelligent response:", error);
       // Ultimate fallback - always return a helpful response
@@ -617,12 +1172,17 @@ class FlagFitChatbot {
   async getLocalResponse(parsedQuestion, userMessage, lowerMessage) {
     // Use parsed question if available, otherwise parse inline
     if (!parsedQuestion) {
-      // Simple inline parsing for fallback
-      parsedQuestion = {
-        intent: this.detectSimpleIntent(lowerMessage),
-        entities: this.extractSimpleEntities(lowerMessage, userMessage),
-        original: userMessage,
-      };
+    // Simple inline parsing for fallback
+        parsedQuestion = {
+          intent: this.detectSimpleIntent(lowerMessage),
+          entities: this.extractSimpleEntities(lowerMessage, userMessage),
+          original: userMessage,
+        };
+        
+        // Enrich question with user profile data if available
+        if (this.personalizationService) {
+          parsedQuestion = await this.personalizationService.enrichQuestion(parsedQuestion);
+        }
     }
 
     // Parse specific questions with numbers/measurements
@@ -926,7 +1486,23 @@ class FlagFitChatbot {
     return null;
   }
 
-  addMessage(type, text) {
+  addMessage(type, text, skipSave = false) {
+    this.renderMessage(type, text, skipSave);
+    
+    // Store message
+    if (!skipSave) {
+      this.messages.push({
+        type,
+        text,
+        timestamp: new Date(),
+      });
+      
+      // Save to storage
+      this.saveMessages();
+    }
+  }
+
+  renderMessage(type, text, skipSave = false) {
     const messagesContainer = document.getElementById("chatbot-messages");
     if (!messagesContainer) {return;}
 
@@ -951,13 +1527,6 @@ class FlagFitChatbot {
 
     messagesContainer.appendChild(messageDiv);
     this.scrollToBottom();
-
-    // Store message
-    this.messages.push({
-      type,
-      text,
-      timestamp: new Date(),
-    });
   }
 
   formatBotMessage(text) {

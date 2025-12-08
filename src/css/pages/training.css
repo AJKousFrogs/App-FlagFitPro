@@ -690,6 +690,25 @@
   transform: translateY(-2px);
 }
 
+/* When card has gradient background, ensure all text and icons are white */
+.cta-card.u-bg-gradient-primary {
+  border: none;
+}
+
+.cta-card.u-bg-gradient-primary .cta-content h2,
+.cta-card.u-bg-gradient-primary .cta-content p,
+.cta-card.u-bg-gradient-primary .cta-content span {
+  color: white !important;
+}
+
+.cta-card.u-bg-gradient-primary .icon-inline,
+.cta-card.u-bg-gradient-primary .icon-inline svg,
+.cta-card.u-bg-gradient-primary .icon-inline [data-lucide],
+.cta-card.u-bg-gradient-primary i[data-lucide] {
+  color: white !important;
+  stroke: white !important;
+}
+
 .cta-content {
   position: relative;
   z-index: 1;

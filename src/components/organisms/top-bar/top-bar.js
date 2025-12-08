@@ -52,7 +52,14 @@
         }
 
         // Fallback: call API directly
-        const response = await fetch("/api/dashboard/notifications/count", {
+        // Try Netlify Functions endpoint first, then fallback to REST API
+        const baseUrl = window.location.origin;
+        const isNetlify = baseUrl.includes("netlify.app") || baseUrl.includes("netlify.com");
+        const endpoint = isNetlify 
+          ? `${baseUrl}/.netlify/functions/notifications-count`
+          : "/api/dashboard/notifications/count";
+        
+        const response = await fetch(endpoint, {
           method: "GET",
           headers: {
             "Authorization": `Bearer ${localStorage.getItem("authToken") || ""}`,
@@ -61,11 +68,20 @@
         });
 
         if (!response.ok) {
+          logger.warn("Failed to fetch notification count:", response.status);
           return 0;
         }
 
         const data = await response.json();
-        return data?.data?.unreadCount || 0;
+        // Handle different response formats
+        if (data?.success !== false && data?.data) {
+          return data.data.unreadCount || data.data.count || 0;
+        } else if (data?.unreadCount !== undefined) {
+          return data.unreadCount;
+        } else if (typeof data === 'number') {
+          return data;
+        }
+        return 0;
       } catch (error) {
         console.warn("Failed to get notification count:", error);
         return 0;

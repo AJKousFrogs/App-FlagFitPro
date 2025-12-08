@@ -143,12 +143,20 @@ class NotificationStore {
     this.notify();
 
     try {
-      await apiClient.post(
+      // Use the API helper function for consistency
+      const response = await apiClient.post(
         API_ENDPOINTS.dashboard.notifications,
         { notificationId: String(id) }
       );
 
+      // Verify API response indicates success
+      if (!response || (response.success === false)) {
+        throw new Error(response?.error || "Failed to mark notification as read");
+      }
+
       // Success - state already updated optimistically
+      // Refresh badge count to ensure consistency with server
+      logger.debug("Notification marked as read successfully:", id);
       this.notify();
       return true;
     } catch (error) {
@@ -158,9 +166,15 @@ class NotificationStore {
       this.setState({ error: "Couldn't mark as read, please retry." });
       this.notify();
 
-      // Show error toast
+      // Show error toast with more details
+      const errorMessage = error?.message || "Couldn't mark notification as read, please retry.";
+      logger.error("Failed to mark notification as read:", error);
+      
       if (window.ErrorHandler) {
-        window.ErrorHandler.showError("Couldn't mark notification as read, please retry.");
+        window.ErrorHandler.showError(errorMessage);
+      } else {
+        // Fallback: use console if ErrorHandler not available
+        console.error("Notification error:", errorMessage);
       }
 
       throw error;
@@ -173,6 +187,7 @@ class NotificationStore {
   async markAllRead() {
     const unreadNotifications = this.notifications.filter(n => !n.read);
     if (unreadNotifications.length === 0) {
+      logger.debug("No unread notifications to mark as read");
       return;
     }
 
@@ -184,12 +199,19 @@ class NotificationStore {
     this.notify();
 
     try {
-      await apiClient.post(
+      // Use the API helper function for consistency
+      const response = await apiClient.post(
         API_ENDPOINTS.dashboard.notifications,
         { notificationId: "all" }
       );
 
+      // Verify API response indicates success
+      if (!response || (response.success === false)) {
+        throw new Error(response?.error || "Failed to mark all notifications as read");
+      }
+
       // Success - state already updated optimistically
+      logger.debug(`Marked ${unreadNotifications.length} notifications as read successfully`);
       this.notify();
       return true;
     } catch (error) {
@@ -199,9 +221,15 @@ class NotificationStore {
       this.setState({ error: "Couldn't mark all as read, please retry." });
       this.notify();
 
-      // Show error toast
+      // Show error toast with more details
+      const errorMessage = error?.message || "Couldn't mark all notifications as read, please retry.";
+      logger.error("Failed to mark all notifications as read:", error);
+      
       if (window.ErrorHandler) {
-        window.ErrorHandler.showError("Couldn't mark all notifications as read, please retry.");
+        window.ErrorHandler.showError(errorMessage);
+      } else {
+        // Fallback: use console if ErrorHandler not available
+        console.error("Notification error:", errorMessage);
       }
 
       throw error;
@@ -214,19 +242,33 @@ class NotificationStore {
   async refreshBadge() {
     try {
       const response = await apiClient.get(API_ENDPOINTS.dashboard.notificationsCount);
-      if (response && response.success && response.data) {
-        const count = response.data.unreadCount || 0;
-        this.unreadCount = count;
-        this.notify();
-        return count;
+      
+      // Handle different response formats
+      let count = 0;
+      if (response) {
+        if (response.success !== false && response.data) {
+          count = response.data.unreadCount || response.data.count || 0;
+        } else if (typeof response === 'number') {
+          count = response;
+        } else if (response.unreadCount !== undefined) {
+          count = response.unreadCount;
+        }
       }
-    } catch (error) {
-      logger.warn("Failed to refresh badge count:", error);
-      // Fallback to calculating from current notifications
-      this.unreadCount = this.calculateUnreadCount();
+
+      // Update state
+      this.unreadCount = count;
+      logger.debug("Badge count refreshed from API:", count);
       this.notify();
+      return count;
+    } catch (error) {
+      logger.warn("Failed to refresh badge count from API:", error);
+      // Fallback to calculating from current notifications
+      const calculatedCount = this.calculateUnreadCount();
+      this.unreadCount = calculatedCount;
+      this.notify();
+      logger.debug("Using calculated badge count as fallback:", calculatedCount);
+      return calculatedCount;
     }
-    return this.unreadCount;
   }
 }
 
@@ -844,11 +886,15 @@ class DashboardPage {
     try {
       await this.notificationStore.markOneRead(id);
       // UI will update automatically via store subscription
-      // Also refresh badge to ensure consistency
+      // Also refresh badge to ensure consistency with server state
       await this.refreshBadge();
+      // Reload notifications to sync with server state
+      await this.loadNotifications();
     } catch (error) {
       // Error handling is done in the store (shows toast)
       logger.warn("Failed to mark notification as read:", error);
+      // Still refresh badge to sync with server state even on error
+      await this.refreshBadge();
     }
   }
 
@@ -859,10 +905,15 @@ class DashboardPage {
     try {
       await this.notificationStore.markAllRead();
       // UI will update automatically via store subscription
-      // Badge will be updated via store subscription
+      // Also refresh badge to ensure consistency with server state
+      await this.refreshBadge();
+      // Reload notifications to sync with server state
+      await this.loadNotifications();
     } catch (error) {
       // Error handling is done in the store (shows toast)
       logger.warn("Failed to mark all notifications as read:", error);
+      // Still refresh badge to sync with server state even on error
+      await this.refreshBadge();
     }
   }
 

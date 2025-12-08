@@ -65,7 +65,30 @@ function getAppUrl() {
 }
 
 // Email verification template
-function getVerificationEmailTemplate(name, verificationUrl) {
+function getVerificationEmailTemplate(name, verificationUrl, role = 'player') {
+  const isCoach = role === 'coach';
+  const roleSpecificContent = isCoach 
+    ? `
+            <p><strong>As a coach,</strong> you'll be able to:</p>
+            <ul>
+                <li>Create and manage teams</li>
+                <li>Track player performance and analytics</li>
+                <li>Create training sessions and programs</li>
+                <li>Communicate with your team</li>
+            </ul>
+            <p>After verification, visit your coach dashboard to create your first team!</p>
+    `
+    : `
+            <p><strong>As a player,</strong> you'll be able to:</p>
+            <ul>
+                <li>Track your performance and training progress</li>
+                <li>Join teams and participate in tournaments</li>
+                <li>Access training programs and drills</li>
+                <li>Connect with teammates and coaches</li>
+            </ul>
+            <p>After verification, you can browse teams or wait for an invitation from your coach!</p>
+    `;
+
   return `
 <!DOCTYPE html>
 <html lang="en">
@@ -81,6 +104,8 @@ function getVerificationEmailTemplate(name, verificationUrl) {
         .button { display: inline-block; background: linear-gradient(135deg, #10c96b 0%, #0ab85a 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 20px 0; }
         .footer { background: #f8f9fa; padding: 30px; text-align: center; color: #666; font-size: 14px; border-radius: 0 0 10px 10px; }
         .warning { background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 5px; margin: 20px 0; color: #856404; }
+        .role-content { background: #e8f5e9; border-left: 4px solid #10c96b; padding: 15px; margin: 20px 0; border-radius: 4px; }
+        ul { margin: 10px 0; padding-left: 20px; }
     </style>
 </head>
 <body>
@@ -96,6 +121,10 @@ function getVerificationEmailTemplate(name, verificationUrl) {
             <p style="text-align: center;">
                 <a href="${verificationUrl}" class="button">Verify Email Address</a>
             </p>
+            
+            <div class="role-content">
+            ${roleSpecificContent}
+            </div>
             
             <div class="warning">
                 <strong>⚠️ Important:</strong>
@@ -160,7 +189,7 @@ exports.handler = async (event, context) => {
       };
     }
 
-    const { type, to, name, verificationUrl, token } = JSON.parse(event.body || "{}");
+    const { type, to, name, verificationUrl, token, role } = JSON.parse(event.body || "{}");
 
     if (!type || !to) {
       return {
@@ -190,6 +219,7 @@ exports.handler = async (event, context) => {
         }
 
         const url = verificationUrl || `${getAppUrl()}/verify-email.html?token=${token}`;
+        const userRole = role || 'player'; // Default to player if not provided
         mailOptions = {
           from: {
             name: "FlagFit Pro",
@@ -197,7 +227,7 @@ exports.handler = async (event, context) => {
           },
           to,
           subject: "Verify Your FlagFit Pro Email Address",
-          html: getVerificationEmailTemplate(name || "User", url),
+          html: getVerificationEmailTemplate(name || "User", url, userRole),
           text: `Hi ${name || "User"},\n\nPlease verify your email address by clicking this link:\n${url}\n\nThis link expires in 24 hours.\n\nBest regards,\nThe FlagFit Pro Team`,
         };
         break;

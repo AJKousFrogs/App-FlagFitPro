@@ -143,6 +143,92 @@ export class ResponseEnhancer {
   }
 
   /**
+   * Add evidence indicators to response based on knowledge entry
+   * @param {string} response - The response text
+   * @param {Object} knowledgeEntry - Knowledge base entry with governance fields
+   * @returns {string} Response with evidence indicators
+   */
+  addEvidenceIndicators(response, knowledgeEntry) {
+    if (!knowledgeEntry) {
+      return response;
+    }
+
+    const {
+      approval_status,
+      approval_level,
+      evidence_strength,
+      source_quality_score,
+      consensus_level
+    } = knowledgeEntry;
+
+    let indicators = '\n\n---\n**📚 Evidence Information:**\n';
+
+    // Approval status
+    if (approval_status === 'approved') {
+      indicators += '✅ **League-Approved** - This information has been reviewed and approved.\n';
+    } else if (approval_status === 'experimental') {
+      indicators += '🔬 **Experimental** - This is emerging research, use with caution.\n';
+    } else if (approval_status === 'pending') {
+      indicators += '⏳ **Pending Review** - This information is awaiting approval.\n';
+    } else if (approval_status === 'rejected') {
+      // Don't show rejected entries, but if somehow shown, indicate it
+      indicators += '❌ **Not Approved** - This information has been rejected.\n';
+    }
+
+    // Evidence strength
+    if (evidence_strength) {
+      const strengthEmoji = {
+        'strong': '🟢',
+        'moderate': '🟡',
+        'limited': '🟠'
+      };
+      const strengthLabel = {
+        'strong': 'Strong Evidence',
+        'moderate': 'Moderate Evidence',
+        'limited': 'Limited Evidence'
+      };
+      indicators += `${strengthEmoji[evidence_strength] || '⚪'} **Evidence Level:** ${strengthLabel[evidence_strength] || evidence_strength}\n`;
+    }
+
+    // Consensus level
+    if (consensus_level) {
+      const consensusEmoji = {
+        'high': '🟢',
+        'moderate': '🟡',
+        'low': '🟠'
+      };
+      indicators += `${consensusEmoji[consensus_level] || '⚪'} **Consensus:** ${consensus_level.charAt(0).toUpperCase() + consensus_level.slice(1)}\n`;
+    }
+
+    // Source quality score
+    if (source_quality_score !== null && source_quality_score !== undefined) {
+      const qualityPercent = Math.round(source_quality_score * 100);
+      let qualityEmoji = '⚪';
+      if (qualityPercent >= 80) qualityEmoji = '🟢';
+      else if (qualityPercent >= 60) qualityEmoji = '🟡';
+      else if (qualityPercent >= 40) qualityEmoji = '🟠';
+      else qualityEmoji = '🔴';
+      
+      indicators += `${qualityEmoji} **Source Quality:** ${qualityPercent}%\n`;
+    }
+
+    // Approval level
+    if (approval_level) {
+      const levelLabels = {
+        'league': 'Official League Guidelines',
+        'coach': 'Coach-Reviewed Protocol',
+        'research': 'Research-Based',
+        'experimental': 'Experimental Protocol'
+      };
+      indicators += `📋 **Source:** ${levelLabels[approval_level] || approval_level}\n`;
+    }
+
+    indicators += '\n**⚠️ Disclaimer:** Always consult with healthcare professionals before making significant changes to your training or nutrition.';
+
+    return response + indicators;
+  }
+
+  /**
    * Personalize response based on user context
    */
   personalizeResponse(response, userContext) {

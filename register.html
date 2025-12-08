@@ -178,6 +178,40 @@
           >
         </div>
 
+        <div class="form-group u-margin-bottom-20 u-text-left">
+          <label class="form-label required">I am registering as</label>
+          <div class="role-selector" style="display: flex; gap: 16px; margin-top: 8px;">
+            <label class="role-option" style="flex: 1; padding: 16px; border: 2px solid var(--color-border-primary, #e0e0e0); border-radius: 8px; cursor: pointer; transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+              <input
+                type="radio"
+                name="role"
+                value="player"
+                id="rolePlayer"
+                checked
+                required
+                style="margin: 0;"
+                aria-describedby="role-help"
+              />
+              <span style="font-weight: 600; font-size: 1.1em;">🏈 Player</span>
+              <span style="font-size: 0.9em; color: var(--color-text-secondary, #666); text-align: center;">Track performance, join teams, train</span>
+            </label>
+            <label class="role-option" style="flex: 1; padding: 16px; border: 2px solid var(--color-border-primary, #e0e0e0); border-radius: 8px; cursor: pointer; transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+              <input
+                type="radio"
+                name="role"
+                value="coach"
+                id="roleCoach"
+                required
+                style="margin: 0;"
+                aria-describedby="role-help"
+              />
+              <span style="font-weight: 600; font-size: 1.1em;">👔 Coach</span>
+              <span style="font-size: 0.9em; color: var(--color-text-secondary, #666); text-align: center;">Manage teams, create training plans</span>
+            </label>
+          </div>
+          <small id="role-help" class="form-help" style="display: block; margin-top: 8px;">Select your role to customize your experience</small>
+        </div>
+
         <button
           type="submit"
           class="register-btn u-width-full u-padding-16 u-text-white u-border-none u-radius-md u-text-body-md u-font-weight-600 u-display-flex u-align-center u-justify-center u-gap-10 u-margin-bottom-20 u-cursor-pointer"
@@ -241,6 +275,7 @@
           const password = document.getElementById("password").value;
           const confirmPassword =
             document.getElementById("confirmPassword").value;
+          const role = document.querySelector('input[name="role"]:checked')?.value || 'player';
 
           // Hide any existing messages
           clearMessages("errorMessage", "successMessage");
@@ -261,6 +296,7 @@
             name: name,
             email: email,
             password: password,
+            role: role,
           });
 
           if (result.success) {
@@ -299,6 +335,52 @@
           document.getElementById("email").value = "demo@flagfitpro.com";
           document.getElementById("password").value = "demo123";
           document.getElementById("confirmPassword").value = "demo123";
+        }
+
+        // Add role selector styling and interaction
+        const roleOptions = document.querySelectorAll('.role-option');
+        roleOptions.forEach(option => {
+          const radio = option.querySelector('input[type="radio"]');
+          
+          // Update visual state when radio is checked
+          radio.addEventListener('change', () => {
+            roleOptions.forEach(opt => {
+              const optRadio = opt.querySelector('input[type="radio"]');
+              if (optRadio.checked) {
+                opt.style.borderColor = 'var(--color-brand-primary, #007bff)';
+                opt.style.backgroundColor = 'var(--color-brand-primary-light, rgba(0, 123, 255, 0.05))';
+              } else {
+                opt.style.borderColor = 'var(--color-border-primary, #e0e0e0)';
+                opt.style.backgroundColor = 'transparent';
+              }
+            });
+          });
+
+          // Hover effect
+          option.addEventListener('mouseenter', () => {
+            if (!radio.checked) {
+              option.style.borderColor = 'var(--color-border-hover, #ccc)';
+            }
+          });
+          option.addEventListener('mouseleave', () => {
+            if (!radio.checked) {
+              option.style.borderColor = 'var(--color-border-primary, #e0e0e0)';
+            }
+          });
+
+          // Click on label should check radio
+          option.addEventListener('click', (e) => {
+            if (e.target !== radio) {
+              radio.checked = true;
+              radio.dispatchEvent(new Event('change'));
+            }
+          });
+        });
+
+        // Set initial selected state
+        const checkedRadio = document.querySelector('input[name="role"]:checked');
+        if (checkedRadio) {
+          checkedRadio.dispatchEvent(new Event('change'));
         }
 
         // Form validation is handled by UniversalFormValidator (auto-initialized)

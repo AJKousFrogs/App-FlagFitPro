@@ -66,7 +66,37 @@ exports.handler = async (event, context) => {
       // Validate limit
       const sanitizedLimit = Math.min(Math.max(parseInt(limit) || 5, 1), 50);
 
-      // Search knowledge base entries
+      // Parse options for governance filters
+      let requireApproval = true; // Default: only show approved entries
+      let includeExperimental = false; // Default: exclude experimental
+      let minQualityScore = 0.0; // Default: no minimum quality score
+
+      try {
+        const options = bodyData.options || {};
+        requireApproval = options.requireApproval !== false; // Default true, but can be overridden
+        includeExperimental = options.includeExperimental === true; // Default false
+        minQualityScore = parseFloat(options.minQualityScore) || 0.0;
+      } catch (e) {
+        // Use defaults if options parsing fails
+      }
+
+      // Build approval filter
+      let approvalFilter = '';
+      if (requireApproval) {
+        if (includeExperimental) {
+          approvalFilter = `AND kbe.approval_status IN ('approved', 'experimental')`;
+        } else {
+          approvalFilter = `AND kbe.approval_status = 'approved'`;
+        }
+      }
+
+      // Build quality score filter
+      let qualityFilter = '';
+      if (minQualityScore > 0) {
+        qualityFilter = `AND (kbe.source_quality_score IS NULL OR kbe.source_quality_score >= ${minQualityScore})`;
+      }
+
+      // Search knowledge base entries with governance filters
       let searchQuery = `
         SELECT 
           kbe.*,
@@ -76,12 +106,18 @@ exports.handler = async (event, context) => {
         LEFT JOIN unnest(kbe.supporting_articles) as article_id ON true
         LEFT JOIN research_articles ra ON ra.id = article_id
         WHERE 
-          kbe.answer ILIKE $1
+          (kbe.answer ILIKE $1
           OR kbe.question ILIKE $1
-          OR kbe.topic ILIKE $1
+          OR kbe.topic ILIKE $1)
           ${category ? `AND kbe.entry_type = $2` : ""}
+          ${approvalFilter}
+          ${qualityFilter}
         GROUP BY kbe.id
-        ORDER BY kbe.evidence_strength DESC, kbe.query_count DESC
+        ORDER BY 
+          kbe.approval_status = 'approved' DESC,
+          kbe.source_quality_score DESC NULLS LAST,
+          kbe.evidence_strength DESC,
+          kbe.query_count DESC
         LIMIT $${category ? "3" : "2"}
       `;
 
