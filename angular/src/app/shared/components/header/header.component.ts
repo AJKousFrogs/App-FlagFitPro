@@ -186,7 +186,7 @@ import { MenuItem } from "primeng/api";
         <p-avatar
           [label]="userInitials()"
           shape="circle"
-          [style]="{ 'background-color': '#089949', color: '#ffffff' }"
+          [style]="{ 'background-color': 'var(--ds-primary-green)', color: 'var(--color-text-on-primary)' }"
           (click)="userMenu.toggle($event)"
           class="user-avatar"
         ></p-avatar>

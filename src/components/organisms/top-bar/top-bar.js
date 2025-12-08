@@ -40,11 +40,36 @@
       }
     };
 
+  // getNotificationCount will be set by dashboard-page.js if available
+  // Otherwise use a fallback that calls the API directly
   window.getNotificationCount =
     window.getNotificationCount ||
     async function () {
-      // Fallback stub - returns 0 if not implemented
-      return 0;
+      try {
+        // Try to use the notification store if available
+        if (window.notificationStore) {
+          return await window.notificationStore.refreshBadge();
+        }
+
+        // Fallback: call API directly
+        const response = await fetch("/api/dashboard/notifications/count", {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${localStorage.getItem("authToken") || ""}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          return 0;
+        }
+
+        const data = await response.json();
+        return data?.data?.unreadCount || 0;
+      } catch (error) {
+        console.warn("Failed to get notification count:", error);
+        return 0;
+      }
     };
 
   // Wait for DOM to be ready
@@ -276,16 +301,43 @@
     // Close on Escape
     bell.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
-        bell.setAttribute("aria-expanded", "false");
+        const panel = document.getElementById("notification-panel");
+        if (panel && panel.classList.contains("is-open")) {
+          // Use dashboardPage method if available
+          if (window.dashboardPage && window.dashboardPage.closeNotificationPanel) {
+            window.dashboardPage.closeNotificationPanel();
+          } else {
+            // Fallback
+            panel.classList.remove("is-open");
+            bell.setAttribute("aria-expanded", "false");
+          }
+        }
         bell.blur();
       }
     });
 
     // Initialize badge count
-    window
-      .getNotificationCount()
-      .then(setBadge)
-      .catch(() => setBadge(0));
+    const initBadge = async () => {
+      try {
+        const count = await window.getNotificationCount();
+        setBadge(count);
+      } catch (error) {
+        console.warn("Failed to initialize badge:", error);
+        setBadge(0);
+      }
+    };
+
+    initBadge();
+
+    // Refresh badge periodically (every 30 seconds)
+    const badgeInterval = setInterval(() => {
+      initBadge();
+    }, 30000);
+
+    // Clean up interval when page unloads
+    window.addEventListener("beforeunload", () => {
+      clearInterval(badgeInterval);
+    });
   }
 
   /**

@@ -103,6 +103,15 @@ export const API_ENDPOINTS = {
     notifications: API_BASE_URL.includes("netlify/functions")
       ? "/notifications"
       : normalizeEndpoint("/api/dashboard/notifications"),
+    notificationsCount: API_BASE_URL.includes("netlify/functions")
+      ? "/notifications-count"
+      : normalizeEndpoint("/api/dashboard/notifications/count"),
+    notificationsCreate: API_BASE_URL.includes("netlify/functions")
+      ? "/notifications-create"
+      : normalizeEndpoint("/api/dashboard/notifications/create"),
+    notificationsPreferences: API_BASE_URL.includes("netlify/functions")
+      ? "/notifications-preferences"
+      : normalizeEndpoint("/api/dashboard/notifications/preferences"),
     dailyQuote: normalizeEndpoint("/api/dashboard/daily-quote"),
     health: normalizeEndpoint("/api/dashboard/health"),
   },
@@ -460,6 +469,19 @@ export class ApiClient {
     return response;
   }
 
+  // PATCH request (invalidates related cache)
+  async patch(endpoint, data = {}) {
+    const response = await this.request(endpoint, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    });
+
+    // Invalidate cache for this endpoint pattern
+    this.invalidateCache(endpoint);
+
+    return response;
+  }
+
   // DELETE request (invalidates related cache)
   async delete(endpoint) {
     const response = await this.request(endpoint, {
@@ -508,8 +530,24 @@ export const dashboard = {
     apiClient.get(API_ENDPOINTS.dashboard.wearables, { userId }),
   getTeamChemistry: (userId) =>
     apiClient.get(API_ENDPOINTS.dashboard.teamChemistry, { userId }),
-  getNotifications: (userId) =>
-    apiClient.get(API_ENDPOINTS.dashboard.notifications, { userId }),
+  getNotifications: (userId, options = {}) =>
+    apiClient.get(API_ENDPOINTS.dashboard.notifications, { userId, ...options }),
+  getNotificationCount: () =>
+    apiClient.get(API_ENDPOINTS.dashboard.notificationsCount),
+  markNotificationAsRead: (notificationId) =>
+    apiClient.post(API_ENDPOINTS.dashboard.notifications, { notificationId }),
+  markNotificationsAsRead: (ids) =>
+    apiClient.post(API_ENDPOINTS.dashboard.notifications, { ids }),
+  markAllNotificationsAsRead: () =>
+    apiClient.post(API_ENDPOINTS.dashboard.notifications, { notificationId: "all" }),
+  createNotification: (notificationData) =>
+    apiClient.post(API_ENDPOINTS.dashboard.notificationsCreate, notificationData),
+  getNotificationPreferences: () =>
+    apiClient.get(API_ENDPOINTS.dashboard.notificationsPreferences),
+  updateNotificationPreferences: (preferences) =>
+    apiClient.post(API_ENDPOINTS.dashboard.notificationsPreferences, { preferences }),
+  updateLastOpenedAt: () =>
+    apiClient.patch(`${API_ENDPOINTS.dashboard.notifications}/last-opened`),
   getDailyQuote: () => apiClient.get(API_ENDPOINTS.dashboard.dailyQuote),
 };
 

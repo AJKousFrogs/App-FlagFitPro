@@ -238,7 +238,7 @@ export class CoachComponent implements OnInit {
         label: "Team Members",
         value: "20",
         icon: "pi-users",
-        color: "#089949",
+        color: "var(--ds-primary-green)",
       },
       {
         label: "Avg Performance",
@@ -267,8 +267,8 @@ export class CoachComponent implements OnInit {
         {
           label: "Team Average",
           data: [82, 84, 85, 87],
-          borderColor: "#089949",
-          backgroundColor: "rgba(8, 153, 73, 0.1)",
+          borderColor: "var(--ds-primary-green)",
+          backgroundColor: "var(--ds-primary-green-subtle)",
         },
       ],
     });

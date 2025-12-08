@@ -38,6 +38,9 @@ document.addEventListener("DOMContentLoaded", async function () {
   // Load user settings
   loadUserSettings();
 
+  // Load notification preferences
+  loadNotificationPreferences();
+
   // Initialize with real player data
   initializeWithRealPlayerData();
 
@@ -292,6 +295,91 @@ window.closeMenu = function () {
 
 window.toggleSetting = function (element) {
   element.classList.toggle("active");
+};
+
+// Notification preferences toggle
+// Load notification preferences from backend
+async function loadNotificationPreferences() {
+  try {
+    const { apiClient, API_ENDPOINTS } = await import("../../api-config.js");
+    const prefsResponse = await apiClient.get(
+      API_ENDPOINTS.dashboard.notificationsPreferences
+    );
+    
+    if (prefsResponse && prefsResponse.success && prefsResponse.data) {
+      const preferences = prefsResponse.data;
+      
+      // Update toggle switches based on preferences
+      Object.entries(preferences).forEach(([type, prefs]) => {
+        const toggle = document.querySelector(
+          `[data-preference-key="${type}"]`
+        );
+        if (toggle) {
+          // Active = not muted
+          if (prefs.muted) {
+            toggle.classList.remove("active");
+          } else {
+            toggle.classList.add("active");
+          }
+        }
+      });
+    }
+  } catch (error) {
+    logger.warn("Failed to load notification preferences:", error);
+    // Continue with defaults (all enabled)
+  }
+}
+
+window.toggleNotificationPreference = async function (element, type) {
+  const isActive = element.classList.contains("active");
+  element.classList.toggle("active");
+  const muted = !element.classList.contains("active");
+  
+  try {
+    // Import API client if not available
+    if (!window.apiClient || !window.API_ENDPOINTS) {
+      const { apiClient, API_ENDPOINTS } = await import("../../api-config.js");
+      window.apiClient = apiClient;
+      window.API_ENDPOINTS = API_ENDPOINTS;
+    }
+    
+    // Get current preferences
+    const prefsResponse = await window.apiClient.get(
+      window.API_ENDPOINTS.dashboard.notificationsPreferences
+    );
+    
+    const currentPrefs = prefsResponse?.success ? prefsResponse.data : {};
+    
+    // Update preference for this type
+    const updatedPrefs = {
+      ...currentPrefs,
+      [type]: {
+        muted,
+        pushEnabled: currentPrefs[type]?.pushEnabled !== false,
+        inAppEnabled: currentPrefs[type]?.inAppEnabled !== false
+      }
+    };
+    
+    // Save to backend
+    await window.apiClient.post(
+      window.API_ENDPOINTS.dashboard.notificationsPreferences,
+      { preferences: updatedPrefs }
+    );
+    
+    // Show success feedback
+    if (window.ErrorHandler) {
+      window.ErrorHandler.showSuccess(
+        `${type} notifications ${muted ? 'muted' : 'enabled'}`
+      );
+    }
+  } catch (error) {
+    // Revert toggle on error
+    element.classList.toggle("active");
+    logger.warn("Failed to update notification preference:", error);
+    if (window.ErrorHandler) {
+      window.ErrorHandler.showError("Failed to update preference. Please try again.");
+    }
+  }
 };
 
 window.saveSettings = async function (event) {

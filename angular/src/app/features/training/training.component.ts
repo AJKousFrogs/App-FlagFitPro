@@ -620,7 +620,7 @@ export class TrainingComponent implements OnInit {
         intensity: "Medium intensity",
         location: "Gym access",
         icon: "💪",
-        iconBg: "linear-gradient(135deg, #10c96b, #089949)",
+        iconBg: "linear-gradient(135deg, var(--color-brand-primary-light), var(--ds-primary-green))",
       },
       {
         type: "agility",

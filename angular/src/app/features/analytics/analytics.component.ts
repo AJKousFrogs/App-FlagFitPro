@@ -1005,8 +1005,8 @@ export class AnalyticsComponent implements OnInit {
                 {
                   label: "Performance Score",
                   data: response.data.values,
-                  borderColor: "#089949",
-                  backgroundColor: "rgba(8, 153, 73, 0.1)",
+                  borderColor: "var(--ds-primary-green)",
+                  backgroundColor: "var(--ds-primary-green-subtle)",
                   borderWidth: 3,
                   fill: true,
                   tension: 0.4,
@@ -1034,8 +1034,8 @@ export class AnalyticsComponent implements OnInit {
                 {
                   label: "Team Chemistry",
                   data: response.data.values,
-                  borderColor: "#089949",
-                  backgroundColor: "rgba(16, 201, 107, 0.2)",
+                  borderColor: "var(--ds-primary-green)",
+                  backgroundColor: "rgba(16, 201, 107, 0.2)", // Using rgba for specific opacity
                   borderWidth: 2,
                 },
               ],
@@ -1064,11 +1064,11 @@ export class AnalyticsComponent implements OnInit {
                 {
                   data: response.data.values,
                   backgroundColor: [
-                    "#089949",
-                    "#10c89b",
-                    "#f1c40f",
-                    "#e74c3c",
-                    "#3498db",
+                    "#089949", // var(--ds-primary-green)
+                    "#10c89b", // var(--color-brand-primary-light)
+                    "#f1c40f", // var(--color-status-success)
+                    "#e74c3c", // var(--color-status-error)
+                    "#3498db", // Blue
                   ],
                 },
               ],
@@ -1096,7 +1096,7 @@ export class AnalyticsComponent implements OnInit {
                 {
                   label: "Performance",
                   data: response.data.values,
-                  backgroundColor: "#089949",
+                  backgroundColor: "var(--ds-primary-green)",
                 },
               ],
             });
@@ -1122,9 +1122,9 @@ export class AnalyticsComponent implements OnInit {
               labels: response.data.labels,
               datasets: response.data.datasets.map((ds: any) => ({
                 ...ds,
-                borderColor: ds.label.includes("40") ? "#089949" : "#10c96b",
+                borderColor: ds.label.includes("40") ? "var(--ds-primary-green)" : "#10c96b",
                 backgroundColor: ds.label.includes("40")
-                  ? "rgba(8, 153, 73, 0.1)"
+                  ? "var(--ds-primary-green-subtle)"
                   : "rgba(16, 201, 107, 0.1)",
               })),
             });
@@ -1187,8 +1187,8 @@ export class AnalyticsComponent implements OnInit {
         {
           label: "Performance Score",
           data: [78, 82, 85, 79, 88, 91, 87],
-          borderColor: "#089949",
-          backgroundColor: "rgba(8, 153, 73, 0.1)",
+          borderColor: "var(--ds-primary-green)",
+          backgroundColor: "var(--ds-primary-green-subtle)",
           borderWidth: 3,
           fill: true,
           tension: 0.4,
@@ -1218,7 +1218,7 @@ export class AnalyticsComponent implements OnInit {
       datasets: [
         {
           data: [30, 25, 20, 15, 10],
-          backgroundColor: ["#089949", "#10c89b", "#f1c40f", "#e74c3c", "#3498db"],
+          backgroundColor: ["#089949", "#10c89b", "#f1c40f", "#e74c3c", "#3498db"], // Array - using actual values with design system equivalents in comments
         },
       ],
     });
@@ -1231,7 +1231,7 @@ export class AnalyticsComponent implements OnInit {
         {
           label: "Performance",
           data: [94, 91, 89, 87, 85],
-          backgroundColor: "#089949",
+          backgroundColor: "var(--ds-primary-green)",
         },
       ],
     });
@@ -1244,8 +1244,8 @@ export class AnalyticsComponent implements OnInit {
         {
           label: "40-Yard",
           data: [4.65, 4.58, 4.52, 4.49, 4.47, 4.46, 4.46],
-          borderColor: "#089949",
-          backgroundColor: "rgba(8, 153, 73, 0.1)",
+          borderColor: "var(--ds-primary-green)",
+          backgroundColor: "var(--ds-primary-green-subtle)",
         },
         {
           label: "10-Yard",

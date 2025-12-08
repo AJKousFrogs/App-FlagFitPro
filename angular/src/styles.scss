@@ -1,8 +1,17 @@
-/* Design System Variables - SCSS files, using @use (must come before @import) */
-@use "./assets/styles/variables";
-@use "./assets/styles/theme";
+/* ================================================================
+   FLAGFIT PRO - MAIN STYLES
+   Single source of truth design system
+   ================================================================ */
 
-/* PrimeNG Theme - PrimeNG v19 uses CSS-in-JS, styles are included via components */
+/* Design System Tokens - Single source of truth */
+@import "./assets/styles/design-system-tokens.scss";
+
+/* Standardized Components - All components use same variants */
+@import "./assets/styles/standardized-components.scss";
+
+/* Layout System - Reusable layout patterns */
+@import "./assets/styles/layout-system.scss";
+
 /* PrimeIcons - CSS file, must use @import */
 @import "primeicons/primeicons.css";
 
@@ -14,17 +23,10 @@
 }
 
 :root {
-  font-family:
-    "Poppins",
-    "Inter",
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    "Roboto",
-    sans-serif;
+  font-family: var(--font-family-sans);
   font-size: 16px;
-  line-height: 1.5;
-  color: var(--text-primary);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-primary);
   background-color: var(--surface-primary);
 }
 
@@ -32,16 +34,4 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
-}
-
-/* PrimeNG Theme Overrides */
-:root {
-  --p-primary-color: #089949;
-  --p-primary-color-text: #ffffff;
-  --p-surface-0: #ffffff;
-  --p-surface-50: #f8faf9;
-  --p-text-color: #1a1a1a;
-  --p-text-color-secondary: #4a4a4a;
-  --p-border-radius: 0.5rem;
-  --p-focus-ring: 0 0 0 0.2rem rgba(8, 153, 73, 0.2);
 }

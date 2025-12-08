@@ -19,9 +19,17 @@ export const DesignTokens = {
         400: '#40ccaf',
         500: '#10c96b',
         600: '#0ab85a',
-        700: '#089949', // Main brand color
+        700: '#089949', // Primary: Main brand color, used most frequently
         800: '#067a3c',
         900: '#036d35', // Hover/dark
+      },
+      secondary: {
+        500: '#10c96b', // Secondary/Accent: Provides accents for important elements, applied sparingly
+        600: '#0ab85a',
+        700: '#089949',
+      },
+      accent: {
+        500: '#10c96b', // Alias for secondary
       },
       white: {
         pure: '#ffffff',
@@ -30,25 +38,32 @@ export const DesignTokens = {
     },
     status: {
       success: {
-        50: '#fefce8',
-        100: '#fef3c7',
-        500: '#f1c40f', // Yellow - Success indicator
-        600: '#d4a617',
-        700: '#b7941f',
+        50: '#f0fdf4',
+        100: '#dcfce7',
+        500: '#63ad0e', // Green - Success: positive outcomes, confirmations
+        600: '#4d8a0b',
+        700: '#3d6e09',
       },
       warning: {
-        50: '#fef2f2',
-        100: '#fee2e2',
-        500: '#ef4444', // Red - Warning/Error
-        600: '#dc2626',
-        700: '#b91c1c',
+        50: '#fffbeb',
+        100: '#fef3c7',
+        500: '#ffc000', // Yellow/Orange - Warning: potential problems or non-critical alerts
+        600: '#cc9900',
+        700: '#997300',
+      },
+      error: {
+        50: '#fff1f2',
+        100: '#ffe4e6',
+        500: '#FF003C', // Red - Error: critical issues, deletions, or blocking actions
+        600: '#cc002f',
+        700: '#990023',
       },
       info: {
-        50: '#f0f9f7',
-        100: '#d0f0eb',
-        500: '#089949', // Green - Info
-        600: '#067a3c',
-        700: '#036d35',
+        50: '#f0f9ff',
+        100: '#e0f2fe',
+        500: '#0ea5e9', // Blue - Info: informational messages, tips, or default states
+        600: '#0284c7',
+        700: '#0369a1',
       },
     },
     text: {
@@ -69,6 +84,19 @@ export const DesignTokens = {
       secondary: '#f8f9fa',
       tertiary: '#e9ecef',
       dark: '#1a1a1a',
+    },
+    neutral: {
+      // Neutrals: Whites, blacks, and grays for backgrounds, text, and fine details
+      50: '#fafafa',
+      100: '#f5f5f5',
+      200: '#e5e5e5',
+      300: '#d4d4d4',
+      400: '#a3a3a3',
+      500: '#737373',
+      600: '#525252',
+      700: '#404040',
+      800: '#262626',
+      900: '#171717',
     },
   },
   spacing: {
@@ -230,6 +258,8 @@ export const ChartColors = {
   successLight: rgba(DesignTokens.colors.status.success[500], 0.5),
   warning: DesignTokens.colors.status.warning[500],
   warningLight: rgba(DesignTokens.colors.status.warning[500], 0.5),
+  error: DesignTokens.colors.status.error[500],
+  errorLight: rgba(DesignTokens.colors.status.error[500], 0.5),
   info: DesignTokens.colors.status.info[500],
   infoLight: rgba(DesignTokens.colors.status.info[500], 0.5),
 
@@ -251,8 +281,8 @@ export const ChartColors = {
 export const WellnessColors = {
   excellent: DesignTokens.colors.brand.primary[700],  // Green
   good: DesignTokens.colors.brand.primary[500],        // Light green
-  fair: DesignTokens.colors.status.success[500],       // Yellow
-  poor: DesignTokens.colors.status.warning[500],       // Red
+  fair: DesignTokens.colors.status.warning[500],       // Yellow/Orange
+  poor: DesignTokens.colors.status.error[500],         // Red
 };
 
 /**
@@ -260,6 +290,6 @@ export const WellnessColors = {
  */
 export const PerformanceColors = {
   improving: DesignTokens.colors.brand.primary[700],   // Green
-  stable: DesignTokens.colors.status.success[500],     // Yellow
-  declining: DesignTokens.colors.status.warning[500],  // Red
+  stable: DesignTokens.colors.status.warning[500],     // Yellow/Orange
+  declining: DesignTokens.colors.status.error[500],    // Red
 };

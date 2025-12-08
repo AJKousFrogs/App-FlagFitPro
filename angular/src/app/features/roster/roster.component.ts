@@ -578,14 +578,17 @@ export class RosterComponent implements OnInit {
   }
 
   getJerseyColor(position: string): string {
+    // Use design system colors - gradients use actual color values since CSS vars don't work in gradients
+    const primaryGreen = '#089949'; // var(--ds-primary-green) equivalent
+    const primaryLight = '#10c96b'; // var(--color-brand-primary-light) equivalent
     const colors: Record<string, string> = {
-      QB: "linear-gradient(135deg, #089949, #10c96b)",
+      QB: `linear-gradient(135deg, ${primaryGreen}, ${primaryLight})`,
       WR: "linear-gradient(135deg, #3498db, #2980b9)",
       RB: "linear-gradient(135deg, #e74c3c, #c0392b)",
       DB: "linear-gradient(135deg, #9b59b6, #8e44ad)",
       Rusher: "linear-gradient(135deg, #f39c12, #e67e22)",
     };
-    return colors[position] || "linear-gradient(135deg, #089949, #10c96b)";
+    return colors[position] || `linear-gradient(135deg, ${primaryGreen}, ${primaryLight})`;
   }
 
   getPlayerStats(player: Player): any[] {

@@ -207,6 +207,70 @@
   status = 200
   force = true
 
+# API Routes for Notifications
+[[redirects]]
+  from = "/notifications"
+  to = "/.netlify/functions/notifications"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/notifications/*"
+  to = "/.netlify/functions/notifications"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/dashboard/notifications"
+  to = "/.netlify/functions/notifications"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/dashboard/notifications/*"
+  to = "/.netlify/functions/notifications"
+  status = 200
+  force = true
+
+# API Routes for Notifications Count
+[[redirects]]
+  from = "/notifications-count"
+  to = "/.netlify/functions/notifications-count"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/dashboard/notifications/count"
+  to = "/.netlify/functions/notifications-count"
+  status = 200
+  force = true
+
+# API Routes for Notifications Create
+[[redirects]]
+  from = "/notifications-create"
+  to = "/.netlify/functions/notifications-create"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/dashboard/notifications/create"
+  to = "/.netlify/functions/notifications-create"
+  status = 200
+  force = true
+
+# API Routes for Notifications Preferences
+[[redirects]]
+  from = "/notifications-preferences"
+  to = "/.netlify/functions/notifications-preferences"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/dashboard/notifications/preferences"
+  to = "/.netlify/functions/notifications-preferences"
+  status = 200
+  force = true
+
 # API Routes for Knowledge Search
 [[redirects]]
   from = "/knowledge-search"
@@ -266,6 +330,67 @@
 [[redirects]]
   from = "/api/performance-data/export"
   to = "/.netlify/functions/performance-data"
+  status = 200
+  force = true
+
+# API Routes for Import Open Data
+[[redirects]]
+  from = "/api/import-open-data"
+  to = "/.netlify/functions/import-open-data"
+  status = 200
+  force = true
+
+# API Routes for Compute ACWR
+[[redirects]]
+  from = "/api/compute-acwr"
+  to = "/.netlify/functions/compute-acwr"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/.netlify/functions/compute-acwr"
+  to = "/.netlify/functions/compute-acwr"
+  status = 200
+  force = true
+
+# API Routes for Training Metrics
+[[redirects]]
+  from = "/api/training-metrics"
+  to = "/.netlify/functions/training-metrics"
+  status = 200
+  force = true
+
+# API Routes for Readiness Calculation
+[[redirects]]
+  from = "/api/calc-readiness"
+  to = "/.netlify/functions/calc-readiness"
+  status = 200
+  force = true
+
+# API Routes for Readiness History
+[[redirects]]
+  from = "/api/readiness-history"
+  to = "/.netlify/functions/readiness-history"
+  status = 200
+  force = true
+
+# API Routes for Fixtures
+[[redirects]]
+  from = "/api/fixtures"
+  to = "/.netlify/functions/fixtures"
+  status = 200
+  force = true
+
+# API Routes for Trends
+[[redirects]]
+  from = "/api/trends/*"
+  to = "/.netlify/functions/trends"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/trends"
+  to = "/.netlify/functions/trends"
   status = 200
   force = true
 

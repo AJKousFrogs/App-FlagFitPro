@@ -172,6 +172,11 @@ export const API_ENDPOINTS = {
     summary: "/api/analytics/summary",
     health: "/api/analytics/health",
   },
+  trends: {
+    changeOfDirection: "/api/trends/change-of-direction",
+    sprintVolume: "/api/trends/sprint-volume",
+    gamePerformance: "/api/trends/game-performance",
+  },
   coach: {
     dashboard: "/api/coach/dashboard",
     team: "/api/coach/team",

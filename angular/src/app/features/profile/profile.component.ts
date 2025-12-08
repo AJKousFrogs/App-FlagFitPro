@@ -42,8 +42,8 @@ import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
               size="xlarge"
               shape="circle"
               [style]="{
-                'background-color': '#089949',
-                color: '#fff',
+                'background-color': 'var(--ds-primary-green)',
+                color: 'var(--color-text-on-primary)',
                 'font-size': '3rem',
               }"
               >

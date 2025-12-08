@@ -455,13 +455,15 @@ export class ChatComponent implements OnInit, AfterViewInit {
   }
 
   getAvatarColor(initials: string): string {
+    // Use design system colors - CSS vars don't work in JS arrays, so using actual values
+    // These match: --ds-primary-green, --color-brand-primary-light, --color-status-success, etc.
     const colors = [
-      "#089949",
-      "#10c96b",
-      "#f1c40f",
-      "#e74c3c",
-      "#3498db",
-      "#9b59b6",
+      "#089949", // var(--ds-primary-green)
+      "#10c96b", // var(--color-brand-primary-light)
+      "#f1c40f", // var(--color-status-success)
+      "#e74c3c", // var(--color-status-error)
+      "#3498db", // Blue
+      "#9b59b6", // Purple
     ];
     const index = initials.charCodeAt(0) % colors.length;
     return colors[index];

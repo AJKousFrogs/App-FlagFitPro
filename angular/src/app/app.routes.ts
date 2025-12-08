@@ -1,6 +1,8 @@
 import { Routes } from "@angular/router";
 import { authGuard } from "./core/guards/auth.guard";
 import { headerConfigGuard } from "./core/guards/header-config.guard";
+import { analyticsPrefetchResolver } from "./core/resolvers/analytics-prefetch.resolver";
+import { gameTrackerPrefetchResolver } from "./core/resolvers/game-tracker-prefetch.resolver";
 
 export const routes: Routes = [
   {
@@ -54,6 +56,8 @@ export const routes: Routes = [
         (m) => m.AnalyticsComponent,
       ),
     canActivate: [authGuard, headerConfigGuard],
+    resolve: { prefetch: analyticsPrefetchResolver },
+    // Prefetch data when route is activated (before component loads)
   },
   {
     path: "roster",
@@ -146,6 +150,8 @@ export const routes: Routes = [
         (m) => m.GameTrackerComponent,
       ),
     canActivate: [authGuard],
+    resolve: { prefetch: gameTrackerPrefetchResolver },
+    // Prefetch game tracker data (film/analytics) before component loads
   },
   {
     path: "exercise-library",

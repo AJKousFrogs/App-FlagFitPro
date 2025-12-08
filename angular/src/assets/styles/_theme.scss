@@ -1,32 +1,14 @@
-/* PrimeNG Theme Customization */
-:root {
-  --p-primary-color: #089949;
-  --p-primary-color-text: #ffffff;
-  --p-primary-50: #f0f9f7;
-  --p-primary-100: #d0f0eb;
-  --p-primary-200: #a0e4d7;
-  --p-primary-300: #70d8c3;
-  --p-primary-400: #40ccaf;
-  --p-primary-500: #10c96b;
-  --p-primary-600: #0ab85a;
-  --p-primary-700: #089949;
-  --p-primary-800: #067a3c;
-  --p-primary-900: #036d35;
+/* ================================================================
+   ⚠️ DEPRECATED - DO NOT USE
+   ================================================================
+   
+   This file is deprecated and will be removed in a future version.
+   PrimeNG theme variables are now defined in:
+   
+   angular/src/assets/styles/design-system-tokens.scss
+   
+   Migration guide: DESIGN_SYSTEM_REVAMP_SUMMARY.md
+   ================================================================ */
 
-  --p-surface-0: #ffffff;
-  --p-surface-50: #f8faf9;
-  --p-surface-100: #f0f0f0;
-  --p-surface-200: #e5e5e5;
-  --p-surface-300: #d4d4d4;
-  --p-surface-400: #a3a3a3;
-  --p-surface-500: #737373;
-  --p-surface-600: #404040;
-  --p-surface-700: #262626;
-  --p-surface-800: #171717;
-  --p-surface-900: #0a0a0a;
-
-  --p-text-color: #1a1a1a;
-  --p-text-color-secondary: #4a4a4a;
-  --p-border-radius: 0.5rem;
-  --p-focus-ring: 0 0 0 0.2rem rgba(8, 153, 73, 0.2);
-}
+/* Legacy compatibility - redirects to new design system */
+@import './design-system-tokens.scss';

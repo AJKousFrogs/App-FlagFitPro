@@ -299,7 +299,7 @@ export class WellnessComponent implements OnInit {
               {
                 label: "Recovery Score",
                 data: sortedData.map(d => Math.round(this.wellnessService.getWellnessScore(d) * 10)),
-                backgroundColor: "#089949",
+                backgroundColor: "var(--ds-primary-green)",
               },
             ],
           });
@@ -329,7 +329,7 @@ export class WellnessComponent implements OnInit {
         label: "Recovery Score",
         value: "N/A",
         icon: "pi-heart",
-        color: "#089949",
+        color: "var(--ds-primary-green)",
         trend: "Log check-in",
         trendType: "neutral",
       },

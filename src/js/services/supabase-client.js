@@ -358,8 +358,15 @@ export const supabaseHelpers = {
   }
 };
 
-// Auto-initialize on import
-initializeSupabase();
+// Auto-initialize on import (safe - will return null if config missing)
+// This allows the module to load even if env vars aren't ready yet
+// Client will be initialized when getSupabase() is called
+try {
+  initializeSupabase();
+} catch (error) {
+  // Silently fail - initialization will happen when needed
+  logger.debug('[Supabase] Auto-initialization deferred:', error.message);
+}
 
 // Export everything
 export { supabaseClient };
