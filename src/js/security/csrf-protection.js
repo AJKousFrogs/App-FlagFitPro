@@ -3,7 +3,7 @@
  * Generates and manages CSRF tokens for secure API requests
  */
 
-import { logger } from '../../../logger.js';
+import { logger } from '../../logger.js';
 
 class CSRFProtection {
   constructor() {
