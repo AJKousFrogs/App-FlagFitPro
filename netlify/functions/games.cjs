@@ -10,6 +10,7 @@ const {
   createErrorResponse,
   handleServerError,
   handleValidationError,
+  handleNotFoundError,
   logFunctionCall,
   CORS_HEADERS
 } = require("./utils/error-handler.cjs");
@@ -115,7 +116,13 @@ const getGameDetails = async (gameId) => {
       .eq("game_id", gameId)
       .single();
 
-    if (error) throw error;
+    if (error) {
+      // Handle not found error
+      if (error.code === 'PGRST116') {
+        throw new Error(`Game with ID ${gameId} not found`);
+      }
+      throw error;
+    }
     return data;
   } catch (error) {
     console.error("Error getting game details:", error);
@@ -138,7 +145,13 @@ const updateGame = async (gameId, updates) => {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      // Handle not found error
+      if (error.code === 'PGRST116') {
+        throw new Error(`Game with ID ${gameId} not found`);
+      }
+      throw error;
+    }
     return data;
   } catch (error) {
     console.error("Error updating game:", error);
@@ -315,24 +328,39 @@ exports.handler = async (event, context) => {
     } else if (event.httpMethod === "GET" && path.includes("/stats")) {
       // Get game statistics
       const gameId = path.replace("/stats", "").replace("/", "");
+      if (!gameId) {
+        return handleValidationError("Game ID is required");
+      }
       result = await getGameStats(gameId);
     } else if (event.httpMethod === "GET" && path.includes("/player-stats")) {
       // Get player game statistics
       const parts = path.split("/");
       const gameId = parts[1];
       const playerId = body.playerId || queryParams.playerId;
+      if (!gameId || !playerId) {
+        return handleValidationError("Game ID and Player ID are required");
+      }
       result = await getPlayerGameStats(playerId, gameId);
     } else if (event.httpMethod === "GET") {
       // Get game details
       const gameId = path.replace("/", "");
+      if (!gameId) {
+        return handleValidationError("Game ID is required");
+      }
       result = await getGameDetails(gameId);
     } else if (event.httpMethod === "PUT") {
       // Update game
       const gameId = path.replace("/", "");
+      if (!gameId) {
+        return handleValidationError("Game ID is required");
+      }
       result = await updateGame(gameId, body);
     } else if (event.httpMethod === "POST" && path.includes("/plays")) {
       // Save a play
       const gameId = path.replace("/plays", "").replace("/", "");
+      if (!gameId) {
+        return handleValidationError("Game ID is required");
+      }
       result = await savePlay(gameId, body);
     } else {
       return createErrorResponse("Endpoint not found", 404, 'not_found');
@@ -347,6 +375,12 @@ exports.handler = async (event, context) => {
       name: error.name,
       code: error.code,
     });
+    
+    // Handle not found errors specifically
+    if (error.message && error.message.includes("not found")) {
+      return handleNotFoundError(error.message.replace("Game with ID ", "").replace(" not found", ""));
+    }
+    
     return handleServerError(error, 'Games');
   }
 };

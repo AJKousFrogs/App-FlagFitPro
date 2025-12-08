@@ -142,7 +142,7 @@ export class EnhancedChartConfig {
   // Create custom interactive legend
   createCustomLegend(chart, containerId) {
     const container = document.getElementById(containerId);
-    if (!container) return;
+    if (!container) {return;}
 
     container.innerHTML = "";
     const datasets = chart.data.datasets;
@@ -180,7 +180,7 @@ export class EnhancedChartConfig {
   // Update custom legend state
   updateCustomLegend(chart, containerId) {
     const container = document.getElementById(containerId);
-    if (!container) return;
+    if (!container) {return;}
 
     const items = container.querySelectorAll(".chart-legend-item");
     items.forEach((item, index) => {

@@ -142,27 +142,27 @@ export class UndoManager {
     const overlay = modal.querySelector(".confirmation-overlay");
 
     confirmBtn.addEventListener("click", () => {
-      if (onConfirm) onConfirm();
+      if (onConfirm) {onConfirm();}
       this.closeConfirmation(modal);
     });
 
     cancelBtn.addEventListener("click", () => {
-      if (onCancel) onCancel();
+      if (onCancel) {onCancel();}
       this.closeConfirmation(modal);
     });
 
     overlay.addEventListener("click", () => {
-      if (onCancel) onCancel();
+      if (onCancel) {onCancel();}
       this.closeConfirmation(modal);
     });
 
     // Keyboard navigation
     modal.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
-        if (onCancel) onCancel();
+        if (onCancel) {onCancel();}
         this.closeConfirmation(modal);
       } else if (e.key === "Enter" && e.target === modal) {
-        if (onConfirm) onConfirm();
+        if (onConfirm) {onConfirm();}
         this.closeConfirmation(modal);
       }
     });
@@ -187,7 +187,7 @@ export class UndoManager {
     }
 
     const handleKeyDown = (e) => {
-      if (e.key !== "Tab") return;
+      if (e.key !== "Tab") {return;}
 
       if (e.shiftKey) {
         if (document.activeElement === firstElement) {
@@ -270,7 +270,7 @@ export class UndoManager {
     const index = this.actionHistory.findIndex(
       (a) => a.timestamp === action.timestamp,
     );
-    if (index === -1) return;
+    if (index === -1) {return;}
 
     // Restore item
     this.restoreItem(action);

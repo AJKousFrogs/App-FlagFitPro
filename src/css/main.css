@@ -46,6 +46,12 @@
 @import url("./layout-modern.css") layer(layout);
 
 /* ================================================================
+   LAYER 6.2: PAGE-SPECIFIC STYLES
+   Shared page styles (auth pages, etc.)
+   ================================================================ */
+@import url("./pages/auth.css") layer(layout);
+
+/* ================================================================
    LAYER 6.5: GRADIENTS
    Gradient utilities
    ================================================================ */
@@ -73,6 +79,7 @@
 @import url("./components/community.css") layer(components);
 @import url("./components/post.css") layer(components);
 @import url("./components/sidebar-widgets.css") layer(components);
+@import url("./components/ai-chat-bubble.css") layer(components);
 
 /* ================================================================
    LAYER 7.5: COMPONENTS MODERN

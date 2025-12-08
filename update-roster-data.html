@@ -19,6 +19,8 @@
     <script src="./src/icon-helper.js" defer></script>
     <!-- Universal Components -->
     <script type="module" src="./src/js/main.js"></script>
+    <!-- Universal Form Validator -->
+    <script type="module" src="./src/js/components/universal-form-validator.js" defer></script>
     <!-- Footer Loader (Dynamic Component) -->
     <script type="module" src="./src/js/components/footer-loader.js" defer></script>
   </head>
@@ -316,123 +318,7 @@
         },
       ];
 
-      // Helper functions for inline validation
-      function showFieldError(fieldId, message) {
-        const field = document.getElementById(fieldId);
-        const errorDiv = document.getElementById(`${fieldId}-error`);
-        const successDiv = document.getElementById(`${fieldId}-success`);
-
-        if (field) {
-          field.classList.remove("success");
-          field.classList.add("error");
-          field.setAttribute("aria-invalid", "true");
-        }
-
-        if (errorDiv) {
-          errorDiv.textContent = message;
-          errorDiv.style.display = "flex";
-        }
-
-        if (successDiv) {
-          successDiv.style.display = "none";
-        }
-      }
-
-      function showFieldSuccess(fieldId) {
-        const field = document.getElementById(fieldId);
-        const errorDiv = document.getElementById(`${fieldId}-error`);
-        const successDiv = document.getElementById(`${fieldId}-success`);
-
-        if (field) {
-          field.classList.remove("error");
-          field.classList.add("success");
-          field.setAttribute("aria-invalid", "false");
-        }
-
-        if (errorDiv) {
-          errorDiv.style.display = "none";
-        }
-
-        if (successDiv) {
-          successDiv.style.display = "flex";
-        }
-      }
-
-      function clearFieldState(fieldId) {
-        const field = document.getElementById(fieldId);
-        const errorDiv = document.getElementById(`${fieldId}-error`);
-        const successDiv = document.getElementById(`${fieldId}-success`);
-
-        if (field) {
-          field.classList.remove("error", "success");
-          field.setAttribute("aria-invalid", "false");
-        }
-
-        if (errorDiv) {
-          errorDiv.style.display = "none";
-        }
-
-        if (successDiv) {
-          successDiv.style.display = "none";
-        }
-      }
-
-      // Real-time validation functions
-      function validatePlayerName(name) {
-        if (!name || name.trim() === "") {
-          clearFieldState("playerName");
-          return false;
-        }
-
-        if (name.trim().length < 2) {
-          showFieldError(
-            "playerName",
-            "Name must be at least 2 characters long.",
-          );
-          return false;
-        }
-
-        showFieldSuccess("playerName");
-        return true;
-      }
-
-      function validateJerseyNumber(number) {
-        if (!number || number === "") {
-          clearFieldState("jerseyNumber");
-          return false;
-        }
-
-        const num = parseInt(number);
-        if (isNaN(num) || num < 0 || num > 99) {
-          showFieldError(
-            "jerseyNumber",
-            "Jersey number must be between 0 and 99.",
-          );
-          return false;
-        }
-
-        // Check for duplicate jersey numbers
-        if (teamRoster.find((p) => p.number === num)) {
-          showFieldError(
-            "jerseyNumber",
-            "Jersey number already exists. Please choose a different number.",
-          );
-          return false;
-        }
-
-        showFieldSuccess("jerseyNumber");
-        return true;
-      }
-
-      function validatePosition(position) {
-        if (!position || position === "") {
-          clearFieldState("position");
-          return false;
-        }
-
-        showFieldSuccess("position");
-        return true;
-      }
+      // Form validation is handled by UniversalFormValidator
 
       // Form submission
       document
@@ -454,43 +340,24 @@
           document.getElementById("hometown").value || "City, State";
         const isStarter = document.getElementById("isStarter").checked;
 
-        let isValid = true;
-
-        // Validate required fields
+        // Basic validation - detailed validation handled by UniversalFormValidator
         if (!name || name.trim().length < 2) {
-          showFieldError(
-            "playerName",
-            "Please enter a valid player name (at least 2 characters).",
-          );
-          isValid = false;
-        } else {
-          showFieldSuccess("playerName");
+          alert("Please enter a valid player name (at least 2 characters).");
+          return;
         }
 
         if (!number || isNaN(number) || number < 0 || number > 99) {
-          showFieldError(
-            "jerseyNumber",
-            "Please enter a valid jersey number (0-99).",
-          );
-          isValid = false;
-        } else if (teamRoster.find((p) => p.number === number)) {
-          showFieldError(
-            "jerseyNumber",
-            "Jersey number already exists. Please choose a different number.",
-          );
-          isValid = false;
-        } else {
-          showFieldSuccess("jerseyNumber");
+          alert("Please enter a valid jersey number (0-99).");
+          return;
+        }
+
+        if (teamRoster.find((p) => p.number === number)) {
+          alert("Jersey number already exists. Please choose a different number.");
+          return;
         }
 
         if (!position || position === "") {
-          showFieldError("position", "Please select a position.");
-          isValid = false;
-        } else {
-          showFieldSuccess("position");
-        }
-
-        if (!isValid) {
+          alert("Please select a position.");
           return;
         }
 
@@ -581,24 +448,7 @@ const teamInfo = {
       // Initialize display
       updateRosterDisplay();
 
-      // Add real-time validation
-      document
-        .getElementById("playerName")
-        .addEventListener("input", function () {
-          validatePlayerName(this.value);
-        });
-
-      document
-        .getElementById("jerseyNumber")
-        .addEventListener("input", function () {
-          validateJerseyNumber(this.value);
-        });
-
-      document
-        .getElementById("position")
-        .addEventListener("change", function () {
-          validatePosition(this.value);
-        });
+      // Form validation is handled by UniversalFormValidator (auto-initialized)
     </script>
 
         <!-- Footer (Loaded Dynamically) -->

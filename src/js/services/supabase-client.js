@@ -148,10 +148,10 @@ class RealtimeManager {
 
     try {
       // Create a new channel
-      let channel = client.channel(channelName);
+      const channel = client.channel(channelName);
 
       // Build subscription query
-      let subscription = channel.on(
+      const subscription = channel.on(
         'postgres_changes',
         {
           event,

@@ -125,7 +125,7 @@ class ProgramModal extends Modal {
    * Set up program-specific event handlers
    */
   setupProgramEvents() {
-    if (!this.modalElement) return;
+    if (!this.modalElement) {return;}
 
     // Download button
     const downloadBtn = this.modalElement.querySelector(

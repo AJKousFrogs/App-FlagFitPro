@@ -50,7 +50,7 @@ export function handleError(error, options = {}) {
   // Determine error type and user message
   let errorType = ErrorType.UNKNOWN;
   let userMessage = fallbackMessage;
-  let logMessage = `[${context}] ${error.message || 'Unknown error'}`;
+  const logMessage = `[${context}] ${error.message || 'Unknown error'}`;
 
   // Categorize error
   if (error.name === 'AppError') {

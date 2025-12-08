@@ -103,7 +103,7 @@ class AnalyticsPage {
   }
 
   updateMetricsDisplay() {
-    if (!this.analyticsData || !this.analyticsData.metrics) return;
+    if (!this.analyticsData || !this.analyticsData.metrics) {return;}
 
     const metrics = this.analyticsData.metrics;
     const metricCards = document.querySelectorAll(".metric-card");
@@ -114,8 +114,8 @@ class AnalyticsPage {
         const labelEl = metricCards[index].querySelector(".metric-label");
         const trendEl = metricCards[index].querySelector(".metric-trend");
 
-        if (valueEl) valueEl.textContent = metric.value;
-        if (labelEl) labelEl.textContent = metric.label;
+        if (valueEl) {valueEl.textContent = metric.value;}
+        if (labelEl) {labelEl.textContent = metric.label;}
         if (trendEl) {
           trendEl.textContent = metric.trend;
           trendEl.className = `metric-trend trend-${metric.trendType}`;
@@ -126,7 +126,7 @@ class AnalyticsPage {
 
   initPerformanceTrendsChart() {
     const ctx = document.getElementById("performanceTrendsChart");
-    if (!ctx) return;
+    if (!ctx) {return;}
 
     const data = this.chartData?.performanceTrends || {
       labels: ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6", "Week 7"],
@@ -162,13 +162,13 @@ class AnalyticsPage {
     // Update insights
     if (data.currentScore !== undefined) {
       const insightValue = document.querySelector("#performanceTrendsChart").closest(".chart-card")?.querySelector(".insight-item .insight-value");
-      if (insightValue) insightValue.textContent = data.currentScore;
+      if (insightValue) {insightValue.textContent = data.currentScore;}
     }
   }
 
   initTeamChemistryChart() {
     const ctx = document.getElementById("teamChemistryChart");
-    if (!ctx) return;
+    if (!ctx) {return;}
 
     const data = this.chartData?.teamChemistry || {
       labels: ["Communication", "Coordination", "Trust", "Cohesion", "Leadership", "Adaptability"],
@@ -202,13 +202,13 @@ class AnalyticsPage {
     if (data.overall !== undefined) {
       const chartCard = document.querySelector("#teamChemistryChart").closest(".chart-card");
       const overallValue = chartCard?.querySelector(".insight-item .insight-value");
-      if (overallValue) overallValue.textContent = data.overall.toFixed(1);
+      if (overallValue) {overallValue.textContent = data.overall.toFixed(1);}
     }
   }
 
   initTrainingDistributionChart() {
     const ctx = document.getElementById("trainingDistributionChart");
-    if (!ctx) return;
+    if (!ctx) {return;}
 
     const data = this.chartData?.trainingDistribution || {
       labels: ["Speed Training", "Strength", "Agility", "Endurance", "Technique"],
@@ -245,15 +245,15 @@ class AnalyticsPage {
       const speedValue = chartCard?.querySelectorAll(".insight-item .insight-value")[1];
       const technicalValue = chartCard?.querySelectorAll(".insight-item .insight-value")[2];
       
-      if (agilityValue) agilityValue.textContent = data.agilitySessions;
-      if (speedValue) speedValue.textContent = data.speedSessions;
-      if (technicalValue) technicalValue.textContent = data.technicalSessions;
+      if (agilityValue) {agilityValue.textContent = data.agilitySessions;}
+      if (speedValue) {speedValue.textContent = data.speedSessions;}
+      if (technicalValue) {technicalValue.textContent = data.technicalSessions;}
     }
   }
 
   initPositionPerformanceChart() {
     const ctx = document.getElementById("positionPerformanceChart");
-    if (!ctx) return;
+    if (!ctx) {return;}
 
     const data = this.chartData?.positionPerformance || {
       labels: ["QB", "WR", "RB", "DB", "Rusher"],
@@ -294,15 +294,15 @@ class AnalyticsPage {
       const insightLabels = chartCard?.querySelectorAll(".insight-item .insight-label");
       
       data.topPerformers.slice(0, 3).forEach((performer, index) => {
-        if (insightValues[index]) insightValues[index].textContent = performer.score;
-        if (insightLabels[index]) insightLabels[index].textContent = performer.name;
+        if (insightValues[index]) {insightValues[index].textContent = performer.score;}
+        if (insightLabels[index]) {insightLabels[index].textContent = performer.name;}
       });
     }
   }
 
   initOlympicProgressChart() {
     const ctx = document.getElementById("olympicProgressChart");
-    if (!ctx) return;
+    if (!ctx) {return;}
 
     // This would come from analytics summary
     const progress = this.analyticsData?.metrics?.find(m => m.label === "Olympic Qualification")?.value || "73%";
@@ -333,7 +333,7 @@ class AnalyticsPage {
 
   initInjuryRiskChart() {
     const ctx = document.getElementById("injuryRiskChart");
-    if (!ctx) return;
+    if (!ctx) {return;}
 
     // Default values - would come from analytics endpoint
     this.charts.injuryRisk = new Chart(ctx, {
@@ -360,7 +360,7 @@ class AnalyticsPage {
 
   initSpeedDevelopmentChart() {
     const ctx = document.getElementById("speedDevelopmentChart");
-    if (!ctx) return;
+    if (!ctx) {return;}
 
     const data = this.chartData?.speedDevelopment || {
       labels: ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6"],
@@ -396,15 +396,15 @@ class AnalyticsPage {
       const best10Value = chartCard?.querySelectorAll(".insight-item .insight-value")[1];
       const improvementValue = chartCard?.querySelectorAll(".insight-item .insight-value")[2];
       
-      if (best40Value) best40Value.textContent = `${data.best40Yard}s`;
-      if (best10Value) best10Value.textContent = `${data.best10Yard}s`;
-      if (improvementValue) improvementValue.textContent = `-${data.improvement}s`;
+      if (best40Value) {best40Value.textContent = `${data.best40Yard}s`;}
+      if (best10Value) {best10Value.textContent = `${data.best10Yard}s`;}
+      if (improvementValue) {improvementValue.textContent = `-${data.improvement}s`;}
     }
   }
 
   initEngagementFunnelChart() {
     const ctx = document.getElementById("engagementFunnelChart");
-    if (!ctx) return;
+    if (!ctx) {return;}
 
     // Default values - would come from analytics endpoint
     this.charts.engagementFunnel = new Chart(ctx, {
@@ -477,23 +477,23 @@ window.toggleSidebar = function() {
   const overlay = document.getElementById("sidebar-overlay");
   const toggleBtn = document.getElementById("mobile-menu-toggle");
 
-  if (!sidebar) return;
+  if (!sidebar) {return;}
 
   const isOpen = sidebar.classList.contains("open") || sidebar.classList.contains("mobile-open");
 
   if (isOpen) {
     sidebar.classList.remove("open", "mobile-open");
-    if (overlay) overlay.classList.remove("active");
+    if (overlay) {overlay.classList.remove("active");}
     document.body.classList.remove("sidebar-open", "menu-open");
-    if (toggleBtn) toggleBtn.setAttribute("aria-expanded", "false");
-    if (toggleBtn) toggleBtn.focus();
+    if (toggleBtn) {toggleBtn.setAttribute("aria-expanded", "false");}
+    if (toggleBtn) {toggleBtn.focus();}
   } else {
     sidebar.classList.add("open", "mobile-open");
-    if (overlay) overlay.classList.add("active");
+    if (overlay) {overlay.classList.add("active");}
     document.body.classList.add("sidebar-open", "menu-open");
-    if (toggleBtn) toggleBtn.setAttribute("aria-expanded", "true");
+    if (toggleBtn) {toggleBtn.setAttribute("aria-expanded", "true");}
     const firstNavItem = sidebar.querySelector(".nav-item");
-    if (firstNavItem) firstNavItem.focus();
+    if (firstNavItem) {firstNavItem.focus();}
   }
 };
 

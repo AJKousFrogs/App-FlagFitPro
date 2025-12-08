@@ -14,7 +14,7 @@ import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import { KnobModule } from 'primeng/knob';
 import { ProgressBarModule } from 'primeng/progressbar';
-import { TabViewModule } from 'primeng/tabview';
+import { Tabs } from 'primeng/tabview';
 import { TimelineModule } from 'primeng/timeline';
 import { RecoveryService } from '../../../core/services/recovery.service';
 import { firstValueFrom } from 'rxjs';
@@ -33,7 +33,7 @@ import { takeUntil } from 'rxjs/operators';
     TagModule,
     KnobModule,
     ProgressBarModule,
-    TabViewModule,
+    Tabs,
     TimelineModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -217,21 +217,21 @@ import { takeUntil } from 'rxjs/operators';
 
       <!-- Recovery History & Analytics -->
       <p-card header="Recovery Analytics" class="analytics-card">
-        <p-tabView>
-          <p-tabPanel header="Weekly Trends" leftIcon="pi pi-chart-line">
+        <p-tabs>
+          <p-tabpanel header="Weekly Trends" leftIcon="pi pi-chart-line">
             <p-chart type="line" [data]="weeklyRecoveryData" [options]="chartOptions">
             </p-chart>
-          </p-tabPanel>
+          </p-tabpanel>
 
-          <p-tabPanel header="Protocol Effectiveness" leftIcon="pi pi-star">
+          <p-tabpanel header="Protocol Effectiveness" leftIcon="pi pi-star">
             <p-chart
               type="bar"
               [data]="protocolEffectivenessData"
               [options]="barChartOptions">
             </p-chart>
-          </p-tabPanel>
+          </p-tabpanel>
 
-          <p-tabPanel header="Research Insights" leftIcon="pi pi-book">
+          <p-tabpanel header="Research Insights" leftIcon="pi pi-book">
             <div class="research-insights">
               <div *ngFor="let insight of researchInsights()" class="research-item">
                 <div class="research-header">
@@ -251,8 +251,8 @@ import { takeUntil } from 'rxjs/operators';
                 </div>
               </div>
             </div>
-          </p-tabPanel>
-        </p-tabView>
+          </p-tabpanel>
+        </p-tabs>
       </p-card>
     </div>
   `,

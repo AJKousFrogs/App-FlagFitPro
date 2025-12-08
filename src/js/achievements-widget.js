@@ -78,8 +78,8 @@
   function renderAchievementsList(achievements) {
     // Sort: unlocked first, then by points
     const sorted = achievements.sort((a, b) => {
-      if (a.unlocked && !b.unlocked) return -1;
-      if (!a.unlocked && b.unlocked) return 1;
+      if (a.unlocked && !b.unlocked) {return -1;}
+      if (!a.unlocked && b.unlocked) {return 1;}
       return b.points - a.points;
     });
 
@@ -347,7 +347,7 @@
    * Show all achievements in a modal
    */
   window.showAllAchievements = function() {
-    if (!window.achievementsService) return;
+    if (!window.achievementsService) {return;}
 
     const service = window.achievementsService;
     const categories = ['wellness', 'training', 'performance', 'social', 'special'];
@@ -380,7 +380,7 @@
 
         ${categories.map(category => {
           const categoryAchievements = service.getAchievementsByCategory(category);
-          if (categoryAchievements.length === 0) return '';
+          if (categoryAchievements.length === 0) {return '';}
 
           return `
             <div class="category-section">

@@ -7,6 +7,7 @@
 import { apiClient } from "../api-client.js";
 import { API_ENDPOINTS } from "../../api-config.js";
 import { storageService } from "./storage-service-unified.js";
+import { statisticsCalculationService } from "./statisticsCalculationService.js";
 
 class GameStatsService {
   constructor() {
@@ -258,7 +259,7 @@ class GameStatsService {
     };
 
     games.forEach((game) => {
-      if (!game.plays) return;
+      if (!game.plays) {return;}
 
       let playerInGame = false;
 
@@ -276,8 +277,8 @@ class GameStatsService {
         // Passing stats
         if (isQB && play.playType === "pass") {
           stats.passAttempts++;
-          if (play.outcome === "completion") stats.completions++;
-          if (play.outcome === "interception") stats.interceptions++;
+          if (play.outcome === "completion") {stats.completions++;}
+          if (play.outcome === "interception") {stats.interceptions++;}
           if (
             play.throwAccuracy === "bad" ||
             play.throwAccuracy === "terrible"
@@ -290,8 +291,8 @@ class GameStatsService {
         // Receiving stats
         if (isReceiver && play.playType === "pass") {
           stats.targets++;
-          if (play.outcome === "completion") stats.receptions++;
-          if (play.isDrop) stats.drops++;
+          if (play.outcome === "completion") {stats.receptions++;}
+          if (play.isDrop) {stats.drops++;}
         }
 
         // Rushing stats
@@ -311,7 +312,7 @@ class GameStatsService {
         }
       });
 
-      if (playerInGame) stats.gamesPlayed++;
+      if (playerInGame) {stats.gamesPlayed++;}
     });
 
     // Calculate percentages
@@ -346,7 +347,7 @@ class GameStatsService {
     const drops = [];
 
     games.forEach((game) => {
-      if (!game.plays) return;
+      if (!game.plays) {return;}
 
       game.plays.forEach((play) => {
         if (play.receiverId === playerId && play.isDrop) {
@@ -403,7 +404,7 @@ class GameStatsService {
     const attempts = [];
 
     games.forEach((game) => {
-      if (!game.plays) return;
+      if (!game.plays) {return;}
 
       game.plays.forEach((play) => {
         if (play.defenderId === playerId && play.playType === "flag_pull") {
@@ -456,7 +457,7 @@ class GameStatsService {
     const throws = [];
 
     games.forEach((game) => {
-      if (!game.plays) return;
+      if (!game.plays) {return;}
 
       game.plays.forEach((play) => {
         if (play.quarterbackId === playerId && play.playType === "pass") {
@@ -489,9 +490,9 @@ class GameStatsService {
       }
 
       byRoute[t.routeType].attempts++;
-      if (t.outcome === "completion") byRoute[t.routeType].completions++;
-      if (t.outcome !== "completion") byRoute[t.routeType].incompletions++;
-      if (t.isDrop) byRoute[t.routeType].drops++;
+      if (t.outcome === "completion") {byRoute[t.routeType].completions++;}
+      if (t.outcome !== "completion") {byRoute[t.routeType].incompletions++;}
+      if (t.isDrop) {byRoute[t.routeType].drops++;}
       if (t.throwAccuracy === "bad" || t.throwAccuracy === "terrible") {
         byRoute[t.routeType].badThrows++;
       }
@@ -544,33 +545,59 @@ class GameStatsService {
     game.plays.forEach((play) => {
       if (play.playType === "pass") {
         stats.passAttempts++;
-        if (play.outcome === "completion") stats.completions++;
-        else stats.incompletions++;
-        if (play.isDrop) stats.drops++;
-        if (play.outcome === "interception") stats.interceptions++;
+        if (play.outcome === "completion") {stats.completions++;} else {stats.incompletions++;}
+        if (play.isDrop) {stats.drops++;}
+        if (play.outcome === "interception") {stats.interceptions++;}
       } else if (play.playType === "run") {
         stats.rushingAttempts++;
         stats.totalYards += play.yardsGained || 0;
       } else if (play.playType === "flag_pull") {
         stats.flagPullAttempts++;
-        if (play.isSuccessful) stats.flagPulls++;
+        if (play.isSuccessful) {stats.flagPulls++;}
       }
     });
 
-    // Calculate percentages
+    // Calculate percentages using validated calculation service
     if (stats.passAttempts > 0) {
-      stats.completionPercentage = (
-        (stats.completions / stats.passAttempts) *
-        100
-      ).toFixed(1);
-      stats.dropRate = ((stats.drops / stats.passAttempts) * 100).toFixed(1);
+      try {
+        const completionResult = statisticsCalculationService.calculateCompletionPercentage(
+          stats.completions,
+          stats.passAttempts
+        );
+        stats.completionPercentage = completionResult.percentage.toFixed(1);
+      } catch (error) {
+        console.warn('Error calculating completion percentage:', error);
+        stats.completionPercentage = '0.0';
+      }
+
+      try {
+        const dropRateResult = statisticsCalculationService.calculateDropRate(
+          stats.drops,
+          stats.passAttempts
+        );
+        stats.dropRate = dropRateResult.rate.toFixed(1);
+        stats.dropRateSeverity = dropRateResult.severity;
+        stats.dropRateRecommendation = dropRateResult.recommendation;
+      } catch (error) {
+        console.warn('Error calculating drop rate:', error);
+        stats.dropRate = '0.0';
+      }
     }
 
     if (stats.flagPullAttempts > 0) {
-      stats.flagPullSuccessRate = (
-        (stats.flagPulls / stats.flagPullAttempts) *
-        100
-      ).toFixed(1);
+      try {
+        const flagPullResult = statisticsCalculationService.calculateFlagPullSuccessRate(
+          stats.flagPulls,
+          stats.flagPullAttempts
+        );
+        stats.flagPullSuccessRate = flagPullResult.rate.toFixed(1);
+        stats.flagPullConfidence95 = flagPullResult.confidence95;
+        stats.flagPullSampleSizeAdequate = flagPullResult.sampleSizeAdequate;
+        stats.defensiveGrade = flagPullResult.defensiveGrade;
+      } catch (error) {
+        console.warn('Error calculating flag pull success rate:', error);
+        stats.flagPullSuccessRate = '0.0';
+      }
     }
 
     return stats;

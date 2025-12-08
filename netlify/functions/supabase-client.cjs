@@ -41,18 +41,31 @@ const db = {
         throw new Error("Supabase admin client is not initialized. Please check SUPABASE_URL and SUPABASE_SERVICE_KEY environment variables.");
       }
       
-      const { data, error } = await supabaseAdmin
-        .from("users")
-        .select("*")
-        .eq("email", email)
-        .single();
+      try {
+        const { data, error } = await supabaseAdmin
+          .from("users")
+          .select("*")
+          .eq("email", email)
+          .single();
 
-      if (error && error.code !== "PGRST116") {
-        // PGRST116 = no rows found
+        if (error && error.code !== "PGRST116") {
+          // PGRST116 = no rows found
+          throw error;
+        }
+
+        return data;
+      } catch (error) {
+        // Enhance fetch errors with more context
+        if (error.message?.includes('fetch failed') || error.name === 'TypeError') {
+          const enhancedError = new Error(
+            `Failed to connect to Supabase. Check SUPABASE_URL (${supabaseUrl ? 'set' : 'MISSING'}) and network connectivity.`
+          );
+          enhancedError.originalError = error;
+          enhancedError.code = 'SUPABASE_CONNECTION_ERROR';
+          throw enhancedError;
+        }
         throw error;
       }
-
-      return data;
     },
 
     async create(userData) {
@@ -60,14 +73,27 @@ const db = {
         throw new Error("Supabase admin client is not initialized. Please check SUPABASE_URL and SUPABASE_SERVICE_KEY environment variables.");
       }
       
-      const { data, error } = await supabaseAdmin
-        .from("users")
-        .insert(userData)
-        .select()
-        .single();
+      try {
+        const { data, error } = await supabaseAdmin
+          .from("users")
+          .insert(userData)
+          .select()
+          .single();
 
-      if (error) throw error;
-      return data;
+        if (error) throw error;
+        return data;
+      } catch (error) {
+        // Enhance fetch errors with more context
+        if (error.message?.includes('fetch failed') || error.name === 'TypeError') {
+          const enhancedError = new Error(
+            `Failed to connect to Supabase. Check SUPABASE_URL (${supabaseUrl ? 'set' : 'MISSING'}) and network connectivity.`
+          );
+          enhancedError.originalError = error;
+          enhancedError.code = 'SUPABASE_CONNECTION_ERROR';
+          throw enhancedError;
+        }
+        throw error;
+      }
     },
 
     async findById(id) {
@@ -496,14 +522,34 @@ function checkEnvVars() {
     if (!supabaseAnonKey) missing.push("SUPABASE_ANON_KEY");
     
     console.error("Missing environment variables:", missing.join(", "));
+    console.error("Current env vars:", {
+      SUPABASE_URL: supabaseUrl ? `${supabaseUrl.substring(0, 20)}...` : 'MISSING',
+      SUPABASE_SERVICE_KEY: supabaseServiceKey ? 'SET' : 'MISSING',
+      SUPABASE_ANON_KEY: supabaseAnonKey ? 'SET' : 'MISSING',
+    });
     throw new Error(
       `Missing required Supabase environment variables: ${missing.join(", ")}. Please set them in Netlify.`,
+    );
+  }
+  
+  // Validate URL format
+  try {
+    new URL(supabaseUrl);
+  } catch (urlError) {
+    console.error("Invalid SUPABASE_URL format:", supabaseUrl);
+    throw new Error(
+      `Invalid SUPABASE_URL format. Expected a valid URL, got: ${supabaseUrl?.substring(0, 50)}...`,
     );
   }
   
   // Also check if clients were initialized
   if (!supabaseAdmin || !supabase) {
     console.error("Supabase clients not initialized properly");
+    console.error("Client status:", {
+      supabaseAdmin: !!supabaseAdmin,
+      supabase: !!supabase,
+      supabaseUrl: supabaseUrl ? `${supabaseUrl.substring(0, 30)}...` : 'MISSING',
+    });
     throw new Error(
       "Supabase clients failed to initialize. Please check your environment variables.",
     );

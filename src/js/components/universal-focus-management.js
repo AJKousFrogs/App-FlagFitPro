@@ -34,7 +34,7 @@ class UniversalFocusManagement {
   }
 
   setupSkipLinks() {
-    if (!this.options.enableSkipLinks) return;
+    if (!this.options.enableSkipLinks) {return;}
 
     // Skip skip links on auth pages (login, register, reset-password)
     // These pages don't have navigation to skip, so skip links are unnecessary
@@ -99,7 +99,7 @@ class UniversalFocusManagement {
       skipToNav.textContent = "Skip to navigation";
       skipToNav.setAttribute("aria-label", "Skip to navigation");
 
-      if (!nav.id) nav.id = "navigation";
+      if (!nav.id) {nav.id = "navigation";}
       document.body.insertBefore(skipToNav, skipLink.nextSibling);
     }
 
@@ -129,7 +129,7 @@ class UniversalFocusManagement {
   }
 
   enhanceFocusIndicators() {
-    if (!this.options.enableFocusIndicators) return;
+    if (!this.options.enableFocusIndicators) {return;}
 
     // Track if user is navigating with keyboard
     let isKeyboardNavigation = false;
@@ -160,7 +160,7 @@ class UniversalFocusManagement {
   }
 
   setupKeyboardShortcuts() {
-    if (!this.options.enableKeyboardShortcuts) return;
+    if (!this.options.enableKeyboardShortcuts) {return;}
 
     document.addEventListener("keydown", (e) => {
       // Handle keyboard shortcuts
@@ -198,7 +198,7 @@ class UniversalFocusManagement {
   }
 
   setupAriaLiveRegions() {
-    if (!this.options.enableAriaLiveRegions) return;
+    if (!this.options.enableAriaLiveRegions) {return;}
 
     // Create polite live region if it doesn't exist
     if (!document.getElementById("aria-live-polite")) {
@@ -251,7 +251,7 @@ class UniversalFocusManagement {
   }
 
   setupModalFocusTrapping() {
-    if (!this.options.enableFocusTrapping) return;
+    if (!this.options.enableFocusTrapping) {return;}
 
     // Watch for modals being opened
     const observer = new MutationObserver((mutations) => {
@@ -385,10 +385,10 @@ class UniversalFocusManagement {
   }
 
   trapFocus(element) {
-    if (!element) return;
+    if (!element) {return;}
 
     const focusableElements = element.querySelectorAll(this.focusableElements);
-    if (focusableElements.length === 0) return;
+    if (focusableElements.length === 0) {return;}
 
     const firstFocusable = focusableElements[0];
     const lastFocusable = focusableElements[focusableElements.length - 1];
@@ -536,14 +536,14 @@ class UniversalFocusManagement {
     const currentElement = document.activeElement;
 
     // Check if we're in a specific navigable component
-    if (this.handleTableNavigation(e, currentElement)) return;
-    if (this.handleMenuNavigation(e, currentElement)) return;
-    if (this.handleTabNavigation(e, currentElement)) return;
+    if (this.handleTableNavigation(e, currentElement)) {return;}
+    if (this.handleMenuNavigation(e, currentElement)) {return;}
+    if (this.handleTabNavigation(e, currentElement)) {}
   }
 
   handleTableNavigation(e, currentElement) {
     const cell = currentElement.closest("td, th");
-    if (!cell) return false;
+    if (!cell) {return false;}
 
     const table = cell.closest("table");
     const row = cell.closest("tr");
@@ -584,7 +584,7 @@ class UniversalFocusManagement {
     const menuItem = currentElement.closest(
       ".menu-item, .dropdown-item, .nav-item",
     );
-    if (!menuItem) return false;
+    if (!menuItem) {return false;}
 
     const menu = menuItem.closest(".menu, .dropdown-menu, .nav");
     const items = Array.from(
@@ -621,7 +621,7 @@ class UniversalFocusManagement {
     const tabButton = currentElement.closest(
       '.tab-button, .tab-nav-item, [role="tab"]',
     );
-    if (!tabButton) return false;
+    if (!tabButton) {return false;}
 
     const tabList = tabButton.closest('.tab-list, .tab-nav, [role="tablist"]');
     const tabs = Array.from(
@@ -711,23 +711,23 @@ class UniversalFocusManagement {
     const labelId = element.getAttribute("aria-labelledby");
     if (labelId) {
       const labelElement = document.getElementById(labelId);
-      if (labelElement) return labelElement.textContent.trim();
+      if (labelElement) {return labelElement.textContent.trim();}
     }
 
     const ariaLabel = element.getAttribute("aria-label");
-    if (ariaLabel) return ariaLabel;
+    if (ariaLabel) {return ariaLabel;}
 
     const placeholder = element.getAttribute("placeholder");
-    if (placeholder) return placeholder;
+    if (placeholder) {return placeholder;}
 
     // Find associated label
     if (element.id) {
       const label = document.querySelector(`label[for="${element.id}"]`);
-      if (label) return label.textContent.trim();
+      if (label) {return label.textContent.trim();}
     }
 
     const parentLabel = element.closest("label");
-    if (parentLabel) return parentLabel.textContent.trim();
+    if (parentLabel) {return parentLabel.textContent.trim();}
 
     return element.name || "Unlabeled";
   }

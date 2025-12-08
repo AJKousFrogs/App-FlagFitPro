@@ -5,12 +5,12 @@ import {
   signal,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { ChartModule } from "primeng/chart";
-import { CalendarModule } from "primeng/calendar";
+import { DatePicker } from "primeng/datepicker";
 import { InputNumberModule } from "primeng/inputnumber";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -31,17 +31,16 @@ interface WellnessMetric {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     FormsModule,
     CardModule,
     ButtonModule,
     ChartModule,
-    CalendarModule,
+    DatePicker,
     InputNumberModule,
     MainLayoutComponent,
     PageHeaderComponent,
-    StatsGridComponent,
-  ],
+    StatsGridComponent
+],
   template: `
     <app-main-layout>
       <div class="wellness-page">
@@ -49,44 +48,46 @@ interface WellnessMetric {
           title="Wellness & Recovery"
           subtitle="Track your health, recovery, and wellness metrics"
           icon="pi-heart"
-        >
+          >
           <p-button
             label="Log Check-in"
             icon="pi pi-plus"
             (onClick)="openCheckIn()"
           ></p-button>
         </app-page-header>
-
+    
         <!-- Wellness Metrics -->
         <app-stats-grid [stats]="wellnessStats()"></app-stats-grid>
-
+    
         <!-- Wellness Charts -->
         <div class="charts-grid">
           <p-card class="chart-card">
             <ng-template pTemplate="header">
               <h3>Sleep Quality</h3>
             </ng-template>
-            <p-chart
-              *ngIf="sleepChartData()"
-              type="line"
-              [data]="sleepChartData()"
-              [options]="chartOptions"
-            ></p-chart>
+            @if (sleepChartData()) {
+              <p-chart
+                type="line"
+                [data]="sleepChartData()"
+                [options]="chartOptions"
+              ></p-chart>
+            }
           </p-card>
-
+    
           <p-card class="chart-card">
             <ng-template pTemplate="header">
               <h3>Recovery Score</h3>
             </ng-template>
-            <p-chart
-              *ngIf="recoveryChartData()"
-              type="bar"
-              [data]="recoveryChartData()"
-              [options]="chartOptions"
-            ></p-chart>
+            @if (recoveryChartData()) {
+              <p-chart
+                type="bar"
+                [data]="recoveryChartData()"
+                [options]="chartOptions"
+              ></p-chart>
+            }
           </p-card>
         </div>
-
+    
         <!-- Daily Check-in -->
         <p-card class="checkin-card">
           <ng-template pTemplate="header">
@@ -132,7 +133,7 @@ interface WellnessMetric {
         </p-card>
       </div>
     </app-main-layout>
-  `,
+    `,
   styles: [
     `
       .wellness-page {

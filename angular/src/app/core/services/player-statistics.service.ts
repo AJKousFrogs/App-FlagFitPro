@@ -1,6 +1,7 @@
 import { Injectable, inject } from "@angular/core";
 import { Observable, map } from "rxjs";
 import { ApiService } from "./api.service";
+import { StatisticsCalculationService } from "./statistics-calculation.service";
 
 export interface PlayerGameStats {
   gameId: string;
@@ -97,6 +98,7 @@ export interface PlayerMultiSeasonStats {
 })
 export class PlayerStatisticsService {
   private apiService = inject(ApiService);
+  private statsCalcService = inject(StatisticsCalculationService);
 
   /**
    * Get player statistics for a specific game
@@ -270,15 +272,15 @@ export class PlayerStatisticsService {
               gamesPlayed > 0 ? aggregated.rushingYards / gamesPlayed : 0,
             completionPercentage:
               aggregated.passAttempts > 0
-                ? (aggregated.completions / aggregated.passAttempts) * 100
+                ? this.calculateCompletionPercentage(aggregated.completions, aggregated.passAttempts)
                 : 0,
             dropRate:
               aggregated.targets > 0
-                ? (aggregated.drops / aggregated.targets) * 100
+                ? this.calculateDropRate(aggregated.drops, aggregated.targets)
                 : 0,
             flagPullSuccessRate:
               aggregated.flagPullAttempts > 0
-                ? (aggregated.flagPulls / aggregated.flagPullAttempts) * 100
+                ? this.calculateFlagPullSuccessRate(aggregated.flagPulls, aggregated.flagPullAttempts)
                 : 0,
           };
         }),
@@ -328,11 +330,11 @@ export class PlayerStatisticsService {
           }));
 
           const totalGamesPlayed = seasonStats.reduce(
-            (sum, s) => sum + s.gamesPlayed,
+            (sum: number, s: any) => sum + s.gamesPlayed,
             0,
           );
           const totalGamesMissed = seasonStats.reduce(
-            (sum, s) => sum + s.gamesMissed,
+            (sum: number, s: any) => sum + s.gamesMissed,
             0,
           );
           const totalGames = totalGamesPlayed + totalGamesMissed;
@@ -346,60 +348,60 @@ export class PlayerStatisticsService {
             overallAttendanceRate,
             seasons: seasonStats,
             careerPassAttempts: seasonStats.reduce(
-              (sum, s) => sum + s.totalPassAttempts,
+              (sum: number, s: any) => sum + s.totalPassAttempts,
               0,
             ),
             careerCompletions: seasonStats.reduce(
-              (sum, s) => sum + s.totalCompletions,
+              (sum: number, s: any) => sum + s.totalCompletions,
               0,
             ),
             careerPassingYards: seasonStats.reduce(
-              (sum, s) => sum + s.totalPassingYards,
+              (sum: number, s: any) => sum + s.totalPassingYards,
               0,
             ),
             careerTouchdowns: seasonStats.reduce(
-              (sum, s) => sum + s.totalTouchdowns,
+              (sum: number, s: any) => sum + s.totalTouchdowns,
               0,
             ),
             careerInterceptions: seasonStats.reduce(
-              (sum, s) => sum + s.totalInterceptions,
+              (sum: number, s: any) => sum + s.totalInterceptions,
               0,
             ),
             careerTargets: seasonStats.reduce(
-              (sum, s) => sum + s.totalTargets,
+              (sum: number, s: any) => sum + s.totalTargets,
               0,
             ),
             careerReceptions: seasonStats.reduce(
-              (sum, s) => sum + s.totalReceptions,
+              (sum: number, s: any) => sum + s.totalReceptions,
               0,
             ),
             careerReceivingYards: seasonStats.reduce(
-              (sum, s) => sum + s.totalReceivingYards,
+              (sum: number, s: any) => sum + s.totalReceivingYards,
               0,
             ),
-            careerDrops: seasonStats.reduce((sum, s) => sum + s.totalDrops, 0),
+            careerDrops: seasonStats.reduce((sum: number, s: any) => sum + s.totalDrops, 0),
             careerRushingAttempts: seasonStats.reduce(
-              (sum, s) => sum + s.totalRushingAttempts,
+              (sum: number, s: any) => sum + s.totalRushingAttempts,
               0,
             ),
             careerRushingYards: seasonStats.reduce(
-              (sum, s) => sum + s.totalRushingYards,
+              (sum: number, s: any) => sum + s.totalRushingYards,
               0,
             ),
             careerFlagPullAttempts: seasonStats.reduce(
-              (sum, s) => sum + s.totalFlagPullAttempts,
+              (sum: number, s: any) => sum + s.totalFlagPullAttempts,
               0,
             ),
             careerFlagPulls: seasonStats.reduce(
-              (sum, s) => sum + s.totalFlagPulls,
+              (sum: number, s: any) => sum + s.totalFlagPulls,
               0,
             ),
             careerInterceptionsDef: seasonStats.reduce(
-              (sum, s) => sum + s.totalInterceptionsDef,
+              (sum: number, s: any) => sum + s.totalInterceptionsDef,
               0,
             ),
             careerPassDeflections: seasonStats.reduce(
-              (sum, s) => sum + s.totalPassDeflections,
+              (sum: number, s: any) => sum + s.totalPassDeflections,
               0,
             ),
           };
@@ -448,6 +450,45 @@ export class PlayerStatisticsService {
         passDeflections: 0,
       },
     );
+  }
+
+  /**
+   * Calculate completion percentage using validated calculation service
+   */
+  private calculateCompletionPercentage(completions: number, attempts: number): number {
+    try {
+      const result = this.statsCalcService.calculateCompletionPercentage(completions, attempts);
+      return result.percentage;
+    } catch (error) {
+      console.warn('Error calculating completion percentage:', error);
+      return attempts > 0 ? (completions / attempts) * 100 : 0;
+    }
+  }
+
+  /**
+   * Calculate drop rate using validated calculation service
+   */
+  private calculateDropRate(drops: number, targets: number): number {
+    try {
+      const result = this.statsCalcService.calculateDropRate(drops, targets);
+      return result.rate;
+    } catch (error) {
+      console.warn('Error calculating drop rate:', error);
+      return targets > 0 ? (drops / targets) * 100 : 0;
+    }
+  }
+
+  /**
+   * Calculate flag pull success rate using validated calculation service
+   */
+  private calculateFlagPullSuccessRate(successes: number, attempts: number): number {
+    try {
+      const result = this.statsCalcService.calculateFlagPullSuccessRate(successes, attempts);
+      return result.rate;
+    } catch (error) {
+      console.warn('Error calculating flag pull success rate:', error);
+      return attempts > 0 ? (successes / attempts) * 100 : 0;
+    }
   }
 
   private calculateAverageAccuracy(accuracies: string[]): number {

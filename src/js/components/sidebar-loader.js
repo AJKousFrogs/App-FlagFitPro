@@ -4,71 +4,53 @@
  * Handles active state based on current page
  */
 
-class SidebarLoader {
+import { BaseComponentLoader } from './base-component-loader.js';
+import { onDOMReady } from '../utils/dom-ready.js';
+
+class SidebarLoader extends BaseComponentLoader {
   constructor() {
-    this.sidebarContainer = null;
-    this.currentPage = this.getCurrentPage();
+    super({
+      containerSelector: '[data-sidebar-container]',
+      componentPath: './src/components/organisms/sidebar-navigation.html',
+      componentName: 'Sidebar',
+      createContainer: SidebarLoader.createSidebarContainer,
+      autoInit: false // We'll handle initialization manually
+    });
+
+    this.currentPage = SidebarLoader.getCurrentPage();
     this.init();
   }
 
   /**
    * Get current page name from URL
    */
-  getCurrentPage() {
+  static getCurrentPage() {
     const path = window.location.pathname;
     const page = path.split('/').pop().replace('.html', '') || 'dashboard';
     return page;
   }
 
   /**
-   * Initialize sidebar loading
+   * Create sidebar container if it doesn't exist
    */
-  async init() {
-    try {
-      await this.loadSidebar();
-      this.setActivePage();
-      this.initializeLucideIcons();
-    } catch (error) {
-      console.error('[Sidebar Loader] Failed to load sidebar:', error);
+  static createContainer() {
+    const dashboardContainer = document.querySelector('.dashboard-container');
+    if (!dashboardContainer) {
+      throw new Error('Dashboard container not found');
     }
+
+    const container = document.createElement('div');
+    container.setAttribute('data-sidebar-container', '');
+    dashboardContainer.insertBefore(container, dashboardContainer.firstChild);
+    return container;
   }
 
   /**
-   * Load sidebar HTML from component file
+   * Override afterLoad to set active page
    */
-  async loadSidebar() {
-    try {
-      const response = await fetch('./src/components/organisms/sidebar-navigation.html');
-
-      if (!response.ok) {
-        throw new Error(`Failed to load sidebar: ${response.status}`);
-      }
-
-      const sidebarHTML = await response.text();
-
-      // Find the sidebar container or create one
-      this.sidebarContainer = document.querySelector('[data-sidebar-container]');
-
-      if (!this.sidebarContainer) {
-        // Create container if it doesn't exist
-        const dashboardContainer = document.querySelector('.dashboard-container');
-        if (dashboardContainer) {
-          this.sidebarContainer = document.createElement('div');
-          this.sidebarContainer.setAttribute('data-sidebar-container', '');
-          dashboardContainer.insertBefore(this.sidebarContainer, dashboardContainer.firstChild);
-        } else {
-          throw new Error('Dashboard container not found');
-        }
-      }
-
-      // Inject sidebar HTML
-      this.sidebarContainer.innerHTML = sidebarHTML;
-
-      console.log('[Sidebar Loader] Sidebar loaded successfully');
-    } catch (error) {
-      console.error('[Sidebar Loader] Error loading sidebar HTML:', error);
-      throw error;
-    }
+  afterLoad() {
+    super.afterLoad();
+    this.setActivePage();
   }
 
   /**
@@ -98,42 +80,11 @@ class SidebarLoader {
       }
     }
   }
-
-  /**
-   * Initialize Lucide icons in sidebar
-   */
-  initializeLucideIcons() {
-    if (typeof lucide !== 'undefined' && lucide.createIcons) {
-      // Small delay to ensure DOM is ready
-      setTimeout(() => {
-        lucide.createIcons();
-      }, 100);
-    } else {
-      // Wait for Lucide to load
-      let attempts = 0;
-      const maxAttempts = 50;
-      const checkLucide = setInterval(() => {
-        attempts++;
-        if (typeof lucide !== 'undefined' && lucide.createIcons) {
-          clearInterval(checkLucide);
-          lucide.createIcons();
-        } else if (attempts >= maxAttempts) {
-          clearInterval(checkLucide);
-          console.warn('[Sidebar Loader] Lucide icons not loaded');
-        }
-      }, 100);
-    }
-  }
 }
 
 // Auto-initialize on DOM ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    window.sidebarLoader = new SidebarLoader();
-  });
-} else {
-  // DOM already loaded
+onDOMReady(() => {
   window.sidebarLoader = new SidebarLoader();
-}
+});
 
 export { SidebarLoader };

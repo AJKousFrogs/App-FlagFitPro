@@ -43,7 +43,7 @@
    * Check if icon name is typically decorative
    */
   function isDecorativeIconName(iconName) {
-    if (!iconName) return false;
+    if (!iconName) {return false;}
 
     const decorativeIcons = [
       "chevron-right",
@@ -90,7 +90,7 @@
    * Get accessible label for icon name
    */
   function getIconLabel(iconName) {
-    if (!iconName) return null;
+    if (!iconName) {return null;}
 
     const iconLabels = {
       settings: "Settings",

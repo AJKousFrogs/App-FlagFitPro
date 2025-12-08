@@ -5,7 +5,7 @@ import {
   signal,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
@@ -31,7 +31,6 @@ interface Exercise {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     FormsModule,
     CardModule,
     ButtonModule,
@@ -39,8 +38,8 @@ interface Exercise {
     TagModule,
     PaginatorModule,
     MainLayoutComponent,
-    PageHeaderComponent,
-  ],
+    PageHeaderComponent
+],
   template: `
     <app-main-layout>
       <div class="exercise-library-page">
@@ -49,7 +48,7 @@ interface Exercise {
           subtitle="Browse and discover exercises for your training program"
           icon="pi-book"
         ></app-page-header>
-
+    
         <!-- Search and Filters -->
         <p-card class="filters-card">
           <div class="filters-content">
@@ -58,77 +57,78 @@ interface Exercise {
               [(ngModel)]="searchQuery"
               placeholder="Search exercises..."
               class="search-input"
-            />
+              />
             <div class="filter-tags">
-              <p-tag
-                *ngFor="let category of categories; trackBy: trackByCategory"
-                [value]="category"
-                [styleClass]="selectedCategory() === category ? 'selected' : ''"
-                (click)="filterByCategory(category)"
-                [style]="{ cursor: 'pointer' }"
-              >
-              </p-tag>
+              @for (category of categories; track trackByCategory($index, category)) {
+                <p-tag
+                  [value]="category"
+                  [styleClass]="selectedCategory() === category ? 'selected' : ''"
+                  (click)="filterByCategory(category)"
+                  [style]="{ cursor: 'pointer' }"
+                  >
+                </p-tag>
+              }
             </div>
           </div>
         </p-card>
-
+    
         <!-- Exercises Grid -->
         <div class="exercises-grid">
-          <p-card
-            *ngFor="
-              let exercise of filteredExercises();
-              trackBy: trackByExerciseId
-            "
-            class="exercise-card"
-          >
-            <div class="exercise-header">
-              <h3 class="exercise-name">{{ exercise.name }}</h3>
-              <p-tag
-                [value]="exercise.difficulty"
-                [severity]="getDifficultySeverity(exercise.difficulty)"
+          @for (
+            exercise of filteredExercises(); track trackByExerciseId($index,
+            exercise)) {
+            <p-card
+              class="exercise-card"
               >
-              </p-tag>
-            </div>
-            <p class="exercise-category">{{ exercise.category }}</p>
-            <p class="exercise-description">{{ exercise.description }}</p>
-            <div class="exercise-tags">
-              <p-tag
-                *ngFor="
-                  let group of exercise.muscleGroups;
-                  trackBy: trackByMuscleGroup
-                "
-                [value]="group"
-                severity="info"
-                styleClass="mr-2"
-              >
-              </p-tag>
-            </div>
-            <div class="exercise-actions">
-              <p-button
-                label="View Details"
-                [outlined]="true"
-                size="small"
-              ></p-button>
-              <p-button
-                label="Add to Workout"
-                icon="pi pi-plus"
-                size="small"
-              ></p-button>
-            </div>
-          </p-card>
+              <div class="exercise-header">
+                <h3 class="exercise-name">{{ exercise.name }}</h3>
+                <p-tag
+                  [value]="exercise.difficulty"
+                  [severity]="getDifficultySeverity(exercise.difficulty)"
+                  >
+                </p-tag>
+              </div>
+              <p class="exercise-category">{{ exercise.category }}</p>
+              <p class="exercise-description">{{ exercise.description }}</p>
+              <div class="exercise-tags">
+                @for (
+                  group of exercise.muscleGroups; track trackByMuscleGroup($index,
+                  group)) {
+                  <p-tag
+                    [value]="group"
+                    severity="info"
+                    styleClass="mr-2"
+                    >
+                  </p-tag>
+                }
+              </div>
+              <div class="exercise-actions">
+                <p-button
+                  label="View Details"
+                  [outlined]="true"
+                  size="small"
+                ></p-button>
+                <p-button
+                  label="Add to Workout"
+                  icon="pi pi-plus"
+                  size="small"
+                ></p-button>
+              </div>
+            </p-card>
+          }
         </div>
-
+    
         <!-- Pagination -->
         <p-paginator
           [rows]="itemsPerPage"
           [totalRecords]="totalExercises()"
           (onPageChange)="onPageChange($event)"
           [rowsPerPageOptions]="[12, 24, 48]"
-        >
+          >
         </p-paginator>
       </div>
     </app-main-layout>
-  `,
+    `,
   styles: [
     `
       .exercise-library-page {

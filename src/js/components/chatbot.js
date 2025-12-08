@@ -447,14 +447,14 @@ class FlagFitChatbot {
     const input = document.getElementById("chatbot-input");
     const message = input.value.trim();
 
-    if (!message) return;
+    if (!message) {return;}
 
     // Add user message
     this.addMessage("user", message);
     input.value = "";
     input.style.height = "auto";
     const sendBtn = document.getElementById("chatbot-send");
-    if (sendBtn) sendBtn.disabled = true;
+    if (sendBtn) {sendBtn.disabled = true;}
 
     // Show typing indicator
     this.showTypingIndicator();
@@ -489,7 +489,7 @@ class FlagFitChatbot {
         );
       }
     } finally {
-      if (sendBtn) sendBtn.disabled = false;
+      if (sendBtn) {sendBtn.disabled = false;}
     }
   }
 
@@ -753,7 +753,7 @@ class FlagFitChatbot {
     let bestMatchScore = 0;
 
     for (const [category, data] of Object.entries(this.knowledgeBase)) {
-      if (!data.keywords) continue;
+      if (!data.keywords) {continue;}
 
       const keywordMatches = data.keywords.filter((keyword) =>
         lowerMessage.includes(keyword),
@@ -779,15 +779,13 @@ class FlagFitChatbot {
   }
 
   detectSimpleIntent(lowerMessage) {
-    if (lowerMessage.match(/how much|how many|dose|dosage|take|consume/i))
-      return "dosage";
-    if (lowerMessage.match(/when|timing|best time/i)) return "timing";
-    if (lowerMessage.match(/safe|dangerous|risk|warning/i)) return "safety";
-    if (lowerMessage.match(/how do|how to|how can/i)) return "how_to";
-    if (lowerMessage.match(/what is|what are|explain|tell about/i))
-      return "what_is";
-    if (lowerMessage.match(/why|reason|benefit/i)) return "why";
-    if (lowerMessage.match(/protocol|routine|schedule/i)) return "protocol";
+    if (lowerMessage.match(/how much|how many|dose|dosage|take|consume/i)) {return "dosage";}
+    if (lowerMessage.match(/when|timing|best time/i)) {return "timing";}
+    if (lowerMessage.match(/safe|dangerous|risk|warning/i)) {return "safety";}
+    if (lowerMessage.match(/how do|how to|how can/i)) {return "how_to";}
+    if (lowerMessage.match(/what is|what are|explain|tell about/i)) {return "what_is";}
+    if (lowerMessage.match(/why|reason|benefit/i)) {return "why";}
+    if (lowerMessage.match(/protocol|routine|schedule/i)) {return "protocol";}
     return "general";
   }
 
@@ -930,7 +928,7 @@ class FlagFitChatbot {
 
   addMessage(type, text) {
     const messagesContainer = document.getElementById("chatbot-messages");
-    if (!messagesContainer) return;
+    if (!messagesContainer) {return;}
 
     const messageDiv = document.createElement("div");
     messageDiv.className = `chatbot-message ${type}-message`;
@@ -991,7 +989,7 @@ class FlagFitChatbot {
 
   showTypingIndicator() {
     const messagesContainer = document.getElementById("chatbot-messages");
-    if (!messagesContainer) return;
+    if (!messagesContainer) {return;}
 
     const typingDiv = document.createElement("div");
     typingDiv.className = "chatbot-message bot-message typing-indicator";

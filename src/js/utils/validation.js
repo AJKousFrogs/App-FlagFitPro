@@ -69,7 +69,7 @@ export const Validators = {
    * Validate email format
    */
   email(value) {
-    if (!value) return null; // Skip if empty (use required separately)
+    if (!value) {return null;} // Skip if empty (use required separately)
 
     if (!VALIDATION.EMAIL_REGEX.test(value)) {
       return 'Please enter a valid email address';
@@ -86,7 +86,7 @@ export const Validators = {
    * Validate password strength
    */
   password(value) {
-    if (!value) return null;
+    if (!value) {return null;}
 
     const errors = [];
 
@@ -117,7 +117,7 @@ export const Validators = {
    * Validate string length
    */
   length(value, min, max, fieldName = 'Value') {
-    if (!value) return null;
+    if (!value) {return null;}
 
     const len = value.length;
 
@@ -136,7 +136,7 @@ export const Validators = {
    * Validate number range
    */
   range(value, min, max, fieldName = 'Value') {
-    if (value === null || value === undefined) return null;
+    if (value === null || value === undefined) {return null;}
 
     const num = Number(value);
 
@@ -159,7 +159,7 @@ export const Validators = {
    * Validate URL format
    */
   url(value) {
-    if (!value) return null;
+    if (!value) {return null;}
 
     if (!VALIDATION.URL_REGEX.test(value)) {
       return 'Please enter a valid URL starting with http:// or https://';
@@ -172,7 +172,7 @@ export const Validators = {
    * Validate phone number
    */
   phone(value) {
-    if (!value) return null;
+    if (!value) {return null;}
 
     if (!VALIDATION.PHONE_REGEX.test(value)) {
       return 'Please enter a valid phone number';
@@ -185,7 +185,7 @@ export const Validators = {
    * Validate date format (YYYY-MM-DD)
    */
   date(value) {
-    if (!value) return null;
+    if (!value) {return null;}
 
     const date = new Date(value);
 
@@ -235,7 +235,7 @@ export const DomainValidators = {
       'Sleep hours'
     );
 
-    if (error) return error;
+    if (error) {return error;}
 
     // Add warning for low sleep
     const num = Number(value);
@@ -271,10 +271,10 @@ export const FormValidators = {
 
     const emailError = Validators.required(data.email, 'Email') ||
                       Validators.email(data.email);
-    if (emailError) result.addError('email', emailError);
+    if (emailError) {result.addError('email', emailError);}
 
     const passwordError = Validators.required(data.password, 'Password');
-    if (passwordError) result.addError('password', passwordError);
+    if (passwordError) {result.addError('password', passwordError);}
 
     return result;
   },
@@ -288,22 +288,22 @@ export const FormValidators = {
     // Name
     const nameError = Validators.required(data.name, 'Name') ||
                      Validators.length(data.name, 2, DATA_LIMITS.MAX_NAME_LENGTH, 'Name');
-    if (nameError) result.addError('name', nameError);
+    if (nameError) {result.addError('name', nameError);}
 
     // Email
     const emailError = Validators.required(data.email, 'Email') ||
                       Validators.email(data.email);
-    if (emailError) result.addError('email', emailError);
+    if (emailError) {result.addError('email', emailError);}
 
     // Password
     const passwordError = Validators.required(data.password, 'Password') ||
                          Validators.password(data.password);
-    if (passwordError) result.addError('password', passwordError);
+    if (passwordError) {result.addError('password', passwordError);}
 
     // Confirm password
     const confirmError = Validators.required(data.confirmPassword, 'Confirm password') ||
                         Validators.matches(data.password, data.confirmPassword, 'Passwords');
-    if (confirmError) result.addError('confirmPassword', confirmError);
+    if (confirmError) {result.addError('confirmPassword', confirmError);}
 
     return result;
   },
@@ -317,7 +317,7 @@ export const FormValidators = {
     // Sleep
     if (data.sleep !== undefined && data.sleep !== null) {
       const sleepError = DomainValidators.sleepHours(data.sleep);
-      if (sleepError) result.addError('sleep', sleepError);
+      if (sleepError) {result.addError('sleep', sleepError);}
 
       // Warning for low sleep
       if (Number(data.sleep) < WELLNESS.LOW_SLEEP_HOURS) {
@@ -328,7 +328,7 @@ export const FormValidators = {
     // Energy
     if (data.energy !== undefined && data.energy !== null) {
       const energyError = DomainValidators.wellnessRating(data.energy, 'Energy');
-      if (energyError) result.addError('energy', energyError);
+      if (energyError) {result.addError('energy', energyError);}
 
       // Warning for low energy
       if (Number(data.energy) <= WELLNESS.LOW_ENERGY_THRESHOLD) {
@@ -339,13 +339,13 @@ export const FormValidators = {
     // Mood
     if (data.mood !== undefined && data.mood !== null) {
       const moodError = DomainValidators.wellnessRating(data.mood, 'Mood');
-      if (moodError) result.addError('mood', moodError);
+      if (moodError) {result.addError('mood', moodError);}
     }
 
     // Stress
     if (data.stress !== undefined && data.stress !== null) {
       const stressError = DomainValidators.wellnessRating(data.stress, 'Stress');
-      if (stressError) result.addError('stress', stressError);
+      if (stressError) {result.addError('stress', stressError);}
 
       // Warning for high stress
       if (Number(data.stress) >= WELLNESS.HIGH_STRESS_THRESHOLD) {
@@ -356,7 +356,7 @@ export const FormValidators = {
     // Notes
     if (data.notes) {
       const notesError = Validators.length(data.notes, null, DATA_LIMITS.MAX_NOTES_LENGTH, 'Notes');
-      if (notesError) result.addError('notes', notesError);
+      if (notesError) {result.addError('notes', notesError);}
     }
 
     return result;
@@ -372,20 +372,20 @@ export const FormValidators = {
     if (data.name !== undefined) {
       const nameError = Validators.required(data.name, 'Name') ||
                        Validators.length(data.name, 2, DATA_LIMITS.MAX_NAME_LENGTH, 'Name');
-      if (nameError) result.addError('name', nameError);
+      if (nameError) {result.addError('name', nameError);}
     }
 
     // Email
     if (data.email !== undefined) {
       const emailError = Validators.required(data.email, 'Email') ||
                         Validators.email(data.email);
-      if (emailError) result.addError('email', emailError);
+      if (emailError) {result.addError('email', emailError);}
     }
 
     // Phone (optional)
     if (data.phone) {
       const phoneError = Validators.phone(data.phone);
-      if (phoneError) result.addError('phone', phoneError);
+      if (phoneError) {result.addError('phone', phoneError);}
     }
 
     return result;
@@ -510,4 +510,4 @@ export default {
   displayValidationErrors
 };
 
-console.log('[Validation] Validation utilities loaded');
+logger.debug('[Validation] Validation utilities loaded');

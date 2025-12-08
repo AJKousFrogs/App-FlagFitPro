@@ -200,7 +200,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
     console.log(`   Total rows to migrate: ${tablesToCreate.reduce((sum, t) => sum + t.rowCount, 0)}`);
     console.log(`\n🚀 Next steps:`);
     console.log(`   1. Open Supabase SQL Editor:`);
-    console.log(`      https://supabase.com/dashboard/project/pvzicicwxgftcielnm/sql`);
+    console.log(`      https://supabase.com/dashboard/project/pvziciccwxgftcielknm/sql`);
     console.log(`   2. Copy and paste the SQL from: ${filename}`);
     console.log(`   3. Run the SQL to create tables`);
     console.log(`   4. Then re-run: node scripts/migrate-neon-to-supabase.js --migrate\n`);

@@ -5,10 +5,10 @@ import {
   inject,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { Router, RouterModule } from "@angular/router";
 import { BreadcrumbModule } from "primeng/breadcrumb";
-import { DropdownModule } from "primeng/dropdown";
+import { Select } from "primeng/select";
 import { TagModule } from "primeng/tag";
 import { MenuItem } from "primeng/api";
 import { ContextService, QuickAction } from "../../../core/services/context.service";
@@ -18,46 +18,51 @@ import { ContextService, QuickAction } from "../../../core/services/context.serv
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     RouterModule,
     BreadcrumbModule,
-    DropdownModule,
-    TagModule,
-  ],
+    Select,
+    TagModule
+],
   template: `
     <nav class="smart-breadcrumbs" aria-label="Navigation path">
       <div class="breadcrumbs-container">
         <p-breadcrumb
           [model]="breadcrumbItems()"
           styleClass="custom-breadcrumb"
-        >
+          >
           <ng-template pTemplate="item" let-item>
             <div class="breadcrumb-item" [class.current]="item.data?.current">
-              <i [class]="item.icon" *ngIf="item.icon"></i>
-              <a
-                *ngIf="item.routerLink && !item.data?.current"
-                [routerLink]="item.routerLink"
-                class="breadcrumb-link"
-              >
-                {{ item.label }}
-              </a>
-              <span *ngIf="!item.routerLink || item.data?.current" class="breadcrumb-text">
-                {{ item.label }}
-              </span>
-              <p-tag
-                *ngIf="item.data?.badge"
-                [value]="item.data.badge.text"
-                [severity]="item.data.badge.severity"
-                size="small"
-                class="breadcrumb-badge"
-              >
-              </p-tag>
+              @if (item.icon) {
+                <i [class]="item.icon"></i>
+              }
+              @if (item.routerLink && !item.data?.current) {
+                <a
+                  [routerLink]="item.routerLink"
+                  class="breadcrumb-link"
+                  >
+                  {{ item.label }}
+                </a>
+              }
+              @if (!item.routerLink || item.data?.current) {
+                <span class="breadcrumb-text">
+                  {{ item.label }}
+                </span>
+              }
+              @if (item.data?.badge) {
+                <p-tag
+                  [value]="item.data.badge.text"
+                  [severity]="item.data.badge.severity"
+                  size="small"
+                  class="breadcrumb-badge"
+                  >
+                </p-tag>
+              }
             </div>
           </ng-template>
         </p-breadcrumb>
-
+    
         <!-- Quick Actions Dropdown -->
-        <p-dropdown
+        <p-select
           [options]="quickActionsDropdown()"
           optionLabel="label"
           placeholder="Quick Actions"
@@ -65,17 +70,17 @@ import { ContextService, QuickAction } from "../../../core/services/context.serv
           (onChange)="executeQuickAction($event.value)"
           [showClear]="true"
           class="quick-actions-dropdown"
-        >
+          >
           <ng-template let-action pTemplate="item">
             <div class="quick-action-item">
               <i [class]="action.icon"></i>
               <span>{{ action.label }}</span>
             </div>
           </ng-template>
-        </p-dropdown>
+        </p-select>
       </div>
     </nav>
-  `,
+    `,
   styles: [
     `
       .smart-breadcrumbs {

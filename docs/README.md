@@ -4,8 +4,8 @@
 
 _Professional-grade training platform with advanced analytics and AI-powered insights_
 
-[![React](https://img.shields.io/badge/React-18.0+-blue.svg)](https://reactjs.org/)
-[![Vite](https://img.shields.io/badge/Vite-5.0+-purple.svg)](https://vitejs.dev/)
+[![Angular](https://img.shields.io/badge/Angular-19.0+-red.svg)](https://angular.dev/)
+[![PrimeNG](https://img.shields.io/badge/PrimeNG-19.0+-blue.svg)](https://primeng.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE.md)
 
 </div>
@@ -16,15 +16,23 @@ The Flag Football Training App is a comprehensive training platform that combine
 
 ### 🛠 Technology Stack
 
-- **Frontend**: React 18 + Vite + Tailwind CSS + TypeScript
-- **Backend**: Neon PostgreSQL + Drizzle ORM + Express
-- **Authentication**: JWT with React Context + React Query
-- **State Management**: React Query + Context API + Zustand
+**PRIMARY STACK: Angular 19 + PrimeNG**
+
+- **Frontend Framework**: Angular 19 (Standalone Components)
+- **UI Component Library**: PrimeNG 19+
+- **Icons**: PrimeIcons + Lucide Angular
+- **Charts**: PrimeNG Charts (Chart.js wrapper)
+- **Forms**: Angular Reactive Forms
+- **State Management**: Angular Signals + RxJS
+- **Styling**: SCSS with CSS Custom Properties (Design Tokens)
+- **Build**: Angular CLI with ESBuild
+- **Backend**: Node.js + Express + Netlify Functions
 - **Database**: Neon PostgreSQL with optimized connection pooling
+- **Authentication**: JWT with Angular Guards & Interceptors
 - **AI/ML**: Transformer models, ensemble methods, LSTM networks
 - **Data Science**: Evidence-based research integration (156 studies)
-- **Real-Time**: Streaming analytics pipeline (GPS/wearable ready)
-- **Testing**: Vitest + React Testing Library (>95% coverage)
+- **Real-Time**: Supabase Realtime subscriptions (GPS/wearable ready)
+- **Testing**: Angular Testing Utilities + Vitest + Playwright E2E
 - **Performance**: Advanced monitoring + code splitting + health checks
 - **Security**: AES-256 encryption + CSRF protection + input validation
 
@@ -66,40 +74,44 @@ The Flag Football Training App is a comprehensive training platform that combine
 
 <div align="center">
 
-| Frontend     | Backend | Database        | Analytics             |
-| ------------ | ------- | --------------- | --------------------- |
-| React 18     | Node.js | Neon PostgreSQL | AI/ML Models          |
-| Vite         | Express | Drizzle ORM     | D3.js Visualizations  |
-| Tailwind CSS | GraphQL | Redis Cache     | Sports Analytics APIs |
+| Frontend        | Backend | Database        | Analytics             |
+| --------------- | ------- | --------------- | --------------------- |
+| Angular 19      | Node.js | Neon PostgreSQL | AI/ML Models          |
+| PrimeNG 19      | Express | Connection Pool | PrimeNG Charts        |
+| Angular Signals | Netlify | Supabase        | Sports Analytics APIs |
 
 </div>
 
 ## 📁 Project Structure
 
 ```
-src/
-├── components/
-│   ├── AdvancedAnalyticsDashboard.jsx   # Research-backed analytics dashboard
-│   ├── PerformancePredictionEngine.jsx  # AI performance predictions
-│   ├── InjuryRiskAssessment.jsx         # Injury prevention analytics
-│   └── HydrationDashboard.jsx           # Precision hydration monitoring
-├── services/
-│   ├── AdvancedPredictionEngine.js      # Transformer-based ML models
-│   ├── DataScienceModels.js             # Comprehensive analytics engine
-│   ├── RealTimeDataPipeline.js          # Streaming analytics (GPS ready)
-│   ├── ModelValidationFramework.js     # A/B testing and validation
-│   ├── DatabaseConnectionManager.js    # Optimized connection pooling
-│   └── EvidenceBasedRecommendationEngine.js # Research integration
-├── utils/
-│   └── CommonFunctions.js               # Consolidated utility functions
-├── database/
-│   ├── schema.sql                       # Database schema
-│   └── migrations/                      # Database migrations (48 files)
-├── scripts/
-│   ├── seedAdvancedResearchDatabase2025.js # Latest research integration
-│   ├── codebase-health-check.js        # Automated health monitoring
-│   └── comprehensive-health-check.js   # System diagnostics
-└── docs/                               # Comprehensive documentation (80+ files)
+flagfit-pro/
+├── angular/                    # PRIMARY: Angular 19 + PrimeNG application
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── core/          # Core services, guards, interceptors
+│   │   │   │   ├── services/  # Auth, API, Performance, etc.
+│   │   │   │   ├── guards/    # Route guards
+│   │   │   │   └── interceptors/ # HTTP interceptors
+│   │   │   ├── shared/        # Shared components
+│   │   │   │   └── components/ # Header, Sidebar, Layout, etc.
+│   │   │   └── features/      # Feature modules
+│   │   │       ├── auth/      # Authentication
+│   │   │       ├── dashboard/ # Dashboard
+│   │   │       ├── training/  # Training management
+│   │   │       └── ...        # Other features
+│   │   └── assets/
+│   │       └── styles/        # Design system styles
+│   ├── angular.json
+│   └── package.json
+├── src/                        # Legacy vanilla HTML/CSS/JS (reference only)
+│   ├── css/                    # Legacy CSS
+│   ├── js/                     # Legacy JavaScript
+│   └── components/             # Legacy components
+├── netlify/                    # Netlify Functions (backend API)
+│   └── functions/
+├── database/                    # Database migrations and schema
+└── docs/                       # Comprehensive documentation
 ```
 
 ## 🚀 Quick Start
@@ -145,12 +157,14 @@ src/
 5. **Start development server**
 
    ```bash
-   npm run dev
+   # Start Angular development server
+   cd angular
+   npm start
    ```
 
 6. **Access Application**
-   - React App: http://127.0.0.1:4000/
-   - Database: Access via Drizzle Studio (npm run db:studio)
+   - Angular App: http://localhost:4200/
+   - Backend API: http://localhost:3001/ (if running separately)
 
 ## 📊 Advanced Features
 
@@ -205,12 +219,12 @@ The application uses a comprehensive Neon PostgreSQL schema including:
 ### Available Scripts
 
 ```bash
-# Development Commands
-npm run dev              # Start React development server with port management
-npm run build            # Build React app for production
-npm run preview          # Preview production build
-npm run test             # Run React tests
-npm run lint             # Lint React code
+# Development Commands (in angular/ directory)
+cd angular
+npm start                # Start Angular development server
+npm run build            # Build Angular app for production
+npm test                 # Run Angular tests
+npm run lint             # Lint Angular code
 
 # Database Commands
 npm run db:setup         # Set up database with migrations and seed data
@@ -233,8 +247,8 @@ npm run db:seed:advanced # Seed advanced research database
 
 - **ESLint**: Consistent code formatting
 - **Prettier**: Automatic code formatting
-- **Testing**: Comprehensive test coverage with Vitest
-- **Type Safety**: PropTypes for component validation
+- **Testing**: Comprehensive test coverage with Angular Testing Utilities + Vitest
+- **Type Safety**: TypeScript with strict type checking
 
 ## 🔐 Authentication
 
@@ -353,11 +367,12 @@ Comprehensive documentation available in `/docs/`:
 
 We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
 
-1. Follow the architecture guidelines in `CLAUDE.md`
-2. Use React functional components with hooks
-3. Use Neon PostgreSQL with Drizzle ORM for all database operations
-4. Write tests for new features
-5. Follow the existing code style
+1. Follow the architecture guidelines in `DESIGN_SYSTEM_DOCUMENTATION.md`
+2. Use Angular standalone components with Signals
+3. Use PrimeNG components when possible
+4. Use Neon PostgreSQL for all database operations
+5. Write tests for new features
+6. Follow the existing code style and design tokens
 
 ## 📄 License
 

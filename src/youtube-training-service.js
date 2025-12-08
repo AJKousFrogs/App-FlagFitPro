@@ -281,7 +281,7 @@ class YouTubeTrainingService {
     ];
 
     qualityKeywords.forEach((keyword) => {
-      if (title.includes(keyword)) score += 2;
+      if (title.includes(keyword)) {score += 2;}
     });
 
     // Prefer more recent videos (within 2 years)
@@ -304,7 +304,7 @@ class YouTubeTrainingService {
     ];
 
     lowQualityIndicators.forEach((indicator) => {
-      if (title.includes(indicator)) score -= 3;
+      if (title.includes(indicator)) {score -= 3;}
     });
 
     return score;
@@ -467,7 +467,7 @@ class YouTubeTrainingService {
   // Parse YouTube duration format (PT4M13S) to readable format
   parseDuration(duration) {
     const match = duration.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
-    if (!match) return "Unknown";
+    if (!match) {return "Unknown";}
 
     const hours = match[1] ? parseInt(match[1]) : 0;
     const minutes = match[2] ? parseInt(match[2]) : 0;

@@ -5,12 +5,12 @@ import {
   signal,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { TagModule } from "primeng/tag";
 import { ProgressBarModule } from "primeng/progressbar";
-import { TabViewModule } from "primeng/tabview";
+import { Tabs } from "primeng/tabs";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
@@ -35,15 +35,14 @@ interface Tournament {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     CardModule,
     ButtonModule,
     TagModule,
     ProgressBarModule,
-    TabViewModule,
+    Tabs,
     MainLayoutComponent,
-    PageHeaderComponent,
-  ],
+    PageHeaderComponent
+],
   template: `
     <app-main-layout>
       <div class="tournaments-page">
@@ -51,165 +50,166 @@ interface Tournament {
           title="Official Tournament Schedule 2026-2027"
           subtitle="International Flag Football Season featuring 7 major tournaments across Europe"
           icon="pi-trophy"
-        >
+          >
           <p-button label="Next Tournament" icon="pi pi-calendar"></p-button>
         </app-page-header>
-
+    
         <!-- Tournament Tabs -->
-        <p-tabView>
-          <p-tabPanel header="2026 Season" leftIcon="pi pi-calendar">
+        <p-tabs>
+          <p-tabpanel header="2026 Season" leftIcon="pi pi-calendar">
             <div class="tournaments-grid">
-              <p-card
-                *ngFor="
-                  let tournament of tournaments2026();
-                  trackBy: trackByTournamentId
-                "
-                class="tournament-card"
-              >
-                <div class="tournament-header">
-                  <p-tag
-                    [value]="getStatusLabel(tournament.status)"
-                    [severity]="getStatusSeverity(tournament.status)"
-                  ></p-tag>
-                  <h3 class="tournament-title">{{ tournament.title }}</h3>
-                  <p class="tournament-subtitle">{{ tournament.subtitle }}</p>
-                </div>
-                <div class="tournament-body">
-                  <div class="tournament-info">
-                    <div class="info-item">
-                      <div class="info-icon">
-                        <i class="pi pi-calendar"></i>
-                      </div>
-                      <div>
-                        <div class="info-value">{{ tournament.date }}</div>
-                        <div class="info-label">{{ tournament.duration }}</div>
-                      </div>
-                    </div>
-                    <div class="info-item">
-                      <div class="info-icon">📍</div>
-                      <div>
-                        <div class="info-value">{{ tournament.location }}</div>
-                        <div class="info-label">Location</div>
-                      </div>
-                    </div>
-                    <div class="info-item">
-                      <div class="info-icon">💰</div>
-                      <div>
-                        <div class="info-value">{{ tournament.prizePool }}</div>
-                        <div class="info-label">Prize pool</div>
-                      </div>
-                    </div>
-                    <div class="info-item">
-                      <div class="info-icon">
-                        <i class="pi pi-users"></i>
-                      </div>
-                      <div>
-                        <div class="info-value">
-                          {{ tournament.teamsRegistered }}/{{
-                            tournament.teamsMax
-                          }}
-                        </div>
-                        <div class="info-label">Teams</div>
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    *ngIf="tournament.progress !== undefined"
-                    class="tournament-progress"
+              @for (
+                tournament of tournaments2026(); track trackByTournamentId($index,
+                tournament)) {
+                <p-card
+                  class="tournament-card"
                   >
-                    <div class="progress-label">
-                      <span>Opens in</span>
-                      <span>{{ tournament.daysUntil }} days</span>
-                    </div>
-                    <p-progressBar
-                      [value]="tournament.progress"
-                      [showValue]="false"
-                    ></p-progressBar>
+                  <div class="tournament-header">
+                    <p-tag
+                      [value]="getStatusLabel(tournament.status)"
+                      [severity]="getStatusSeverity(tournament.status)"
+                    ></p-tag>
+                    <h3 class="tournament-title">{{ tournament.title }}</h3>
+                    <p class="tournament-subtitle">{{ tournament.subtitle }}</p>
                   </div>
-                  <div class="tournament-actions">
-                    <p-button
-                      label="Set Reminder"
-                      [outlined]="true"
-                      size="small"
-                    ></p-button>
-                    <p-button label="View Details" size="small"></p-button>
-                  </div>
-                </div>
-              </p-card>
-            </div>
-          </p-tabPanel>
-          <p-tabPanel header="2027 Season" leftIcon="pi pi-calendar">
-            <div class="tournaments-grid">
-              <p-card
-                *ngFor="
-                  let tournament of tournaments2027();
-                  trackBy: trackByTournamentId
-                "
-                class="tournament-card"
-              >
-                <div class="tournament-header">
-                  <p-tag
-                    [value]="getStatusLabel(tournament.status)"
-                    [severity]="getStatusSeverity(tournament.status)"
-                  ></p-tag>
-                  <h3 class="tournament-title">{{ tournament.title }}</h3>
-                  <p class="tournament-subtitle">{{ tournament.subtitle }}</p>
-                </div>
-                <div class="tournament-body">
-                  <div class="tournament-info">
-                    <div class="info-item">
-                      <div class="info-icon">
-                        <i class="pi pi-calendar"></i>
-                      </div>
-                      <div>
-                        <div class="info-value">{{ tournament.date }}</div>
-                        <div class="info-label">{{ tournament.duration }}</div>
-                      </div>
-                    </div>
-                    <div class="info-item">
-                      <div class="info-icon">📍</div>
-                      <div>
-                        <div class="info-value">{{ tournament.location }}</div>
-                        <div class="info-label">Location</div>
-                      </div>
-                    </div>
-                    <div class="info-item">
-                      <div class="info-icon">💰</div>
-                      <div>
-                        <div class="info-value">{{ tournament.prizePool }}</div>
-                        <div class="info-label">Prize pool</div>
-                      </div>
-                    </div>
-                    <div class="info-item">
-                      <div class="info-icon">
-                        <i class="pi pi-users"></i>
-                      </div>
-                      <div>
-                        <div class="info-value">
-                          {{ tournament.teamsRegistered }}/{{
-                            tournament.teamsMax
-                          }}
+                  <div class="tournament-body">
+                    <div class="tournament-info">
+                      <div class="info-item">
+                        <div class="info-icon">
+                          <i class="pi pi-calendar"></i>
                         </div>
-                        <div class="info-label">Teams</div>
+                        <div>
+                          <div class="info-value">{{ tournament.date }}</div>
+                          <div class="info-label">{{ tournament.duration }}</div>
+                        </div>
+                      </div>
+                      <div class="info-item">
+                        <div class="info-icon">📍</div>
+                        <div>
+                          <div class="info-value">{{ tournament.location }}</div>
+                          <div class="info-label">Location</div>
+                        </div>
+                      </div>
+                      <div class="info-item">
+                        <div class="info-icon">💰</div>
+                        <div>
+                          <div class="info-value">{{ tournament.prizePool }}</div>
+                          <div class="info-label">Prize pool</div>
+                        </div>
+                      </div>
+                      <div class="info-item">
+                        <div class="info-icon">
+                          <i class="pi pi-users"></i>
+                        </div>
+                        <div>
+                          <div class="info-value">
+                            {{ tournament.teamsRegistered }}/{{
+                            tournament.teamsMax
+                            }}
+                          </div>
+                          <div class="info-label">Teams</div>
+                        </div>
                       </div>
                     </div>
+                    @if (tournament.progress !== undefined) {
+                      <div
+                        class="tournament-progress"
+                        >
+                        <div class="progress-label">
+                          <span>Opens in</span>
+                          <span>{{ tournament.daysUntil }} days</span>
+                        </div>
+                        <p-progressBar
+                          [value]="tournament.progress"
+                          [showValue]="false"
+                        ></p-progressBar>
+                      </div>
+                    }
+                    <div class="tournament-actions">
+                      <p-button
+                        label="Set Reminder"
+                        [outlined]="true"
+                        size="small"
+                      ></p-button>
+                      <p-button label="View Details" size="small"></p-button>
+                    </div>
                   </div>
-                  <div class="tournament-actions">
-                    <p-button
-                      label="Set Reminder"
-                      [outlined]="true"
-                      size="small"
-                    ></p-button>
-                    <p-button label="View Details" size="small"></p-button>
-                  </div>
-                </div>
-              </p-card>
+                </p-card>
+              }
             </div>
-          </p-tabPanel>
-        </p-tabView>
+          </p-tabpanel>
+          <p-tabpanel header="2027 Season" leftIcon="pi pi-calendar">
+            <div class="tournaments-grid">
+              @for (
+                tournament of tournaments2027(); track trackByTournamentId($index,
+                tournament)) {
+                <p-card
+                  class="tournament-card"
+                  >
+                  <div class="tournament-header">
+                    <p-tag
+                      [value]="getStatusLabel(tournament.status)"
+                      [severity]="getStatusSeverity(tournament.status)"
+                    ></p-tag>
+                    <h3 class="tournament-title">{{ tournament.title }}</h3>
+                    <p class="tournament-subtitle">{{ tournament.subtitle }}</p>
+                  </div>
+                  <div class="tournament-body">
+                    <div class="tournament-info">
+                      <div class="info-item">
+                        <div class="info-icon">
+                          <i class="pi pi-calendar"></i>
+                        </div>
+                        <div>
+                          <div class="info-value">{{ tournament.date }}</div>
+                          <div class="info-label">{{ tournament.duration }}</div>
+                        </div>
+                      </div>
+                      <div class="info-item">
+                        <div class="info-icon">📍</div>
+                        <div>
+                          <div class="info-value">{{ tournament.location }}</div>
+                          <div class="info-label">Location</div>
+                        </div>
+                      </div>
+                      <div class="info-item">
+                        <div class="info-icon">💰</div>
+                        <div>
+                          <div class="info-value">{{ tournament.prizePool }}</div>
+                          <div class="info-label">Prize pool</div>
+                        </div>
+                      </div>
+                      <div class="info-item">
+                        <div class="info-icon">
+                          <i class="pi pi-users"></i>
+                        </div>
+                        <div>
+                          <div class="info-value">
+                            {{ tournament.teamsRegistered }}/{{
+                            tournament.teamsMax
+                            }}
+                          </div>
+                          <div class="info-label">Teams</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="tournament-actions">
+                      <p-button
+                        label="Set Reminder"
+                        [outlined]="true"
+                        size="small"
+                      ></p-button>
+                      <p-button label="View Details" size="small"></p-button>
+                    </div>
+                  </div>
+                </p-card>
+              }
+            </div>
+          </p-tabpanel>
+        </p-tabs>
       </div>
     </app-main-layout>
-  `,
+    `,
   styles: [
     `
       .tournaments-page {

@@ -66,7 +66,7 @@ class UniversalChartAccessibility {
   }
 
   enhanceChart(chartCanvas) {
-    if (!chartCanvas || this.charts.has(chartCanvas)) return;
+    if (!chartCanvas || this.charts.has(chartCanvas)) {return;}
 
     const chartInfo = this.analyzeChart(chartCanvas);
     this.charts.set(chartCanvas, chartInfo);
@@ -116,7 +116,7 @@ class UniversalChartAccessibility {
   }
 
   addAriaLabels(chartCanvas, chartInfo) {
-    if (!this.options.enableAriaLabels) return;
+    if (!this.options.enableAriaLabels) {return;}
 
     // Set role and basic labels
     chartCanvas.setAttribute("role", "img");
@@ -205,13 +205,13 @@ class UniversalChartAccessibility {
   }
 
   createDataTable(chartCanvas, chartInfo) {
-    if (!this.options.enableDataTables || !chartInfo.data) return;
+    if (!this.options.enableDataTables || !chartInfo.data) {return;}
 
     const { id, data, container, title } = chartInfo;
     const tableId = `${id}-data-table`;
 
     // Check if table already exists
-    if (document.getElementById(tableId)) return;
+    if (document.getElementById(tableId)) {return;}
 
     const table = document.createElement("table");
     table.id = tableId;
@@ -315,11 +315,11 @@ class UniversalChartAccessibility {
   }
 
   addKeyboardNavigation(chartCanvas, chartInfo) {
-    if (!this.options.enableKeyboardNavigation) return;
+    if (!this.options.enableKeyboardNavigation) {return;}
 
     chartCanvas.addEventListener("keydown", (e) => {
       const { instance } = chartInfo;
-      if (!instance) return;
+      if (!instance) {return;}
 
       switch (e.key) {
         case "Enter":
@@ -356,14 +356,13 @@ class UniversalChartAccessibility {
 
   navigateChartData(chartInfo, direction) {
     const { instance, data } = chartInfo;
-    if (!instance || !data || !data.datasets || data.datasets.length === 0)
-      return;
+    if (!instance || !data || !data.datasets || data.datasets.length === 0) {return;}
 
     const dataset = data.datasets[0];
     const dataPoints = dataset.data || [];
     const labels = data.labels || [];
 
-    if (dataPoints.length === 0) return;
+    if (dataPoints.length === 0) {return;}
 
     let currentIndex = chartInfo.currentDataIndex || 0;
 
@@ -404,7 +403,7 @@ class UniversalChartAccessibility {
   }
 
   addScreenReaderSupport(chartCanvas, chartInfo) {
-    if (!this.options.enableScreenReaderAnnouncements) return;
+    if (!this.options.enableScreenReaderAnnouncements) {return;}
 
     // Add live region for announcements
     const liveRegion = document.createElement("div");
@@ -418,12 +417,12 @@ class UniversalChartAccessibility {
   }
 
   addSummaryDescription(chartCanvas, chartInfo) {
-    if (!this.options.enableSummaryDescriptions) return;
+    if (!this.options.enableSummaryDescriptions) {return;}
 
     const descriptionId = `${chartInfo.id}-description`;
 
     // Check if description already exists
-    if (document.getElementById(descriptionId)) return;
+    if (document.getElementById(descriptionId)) {return;}
 
     const description = document.createElement("div");
     description.id = descriptionId;
@@ -467,13 +466,13 @@ class UniversalChartAccessibility {
   }
 
   calculateTrend(dataPoints) {
-    if (dataPoints.length < 2) return "stable";
+    if (dataPoints.length < 2) {return "stable";}
 
     const first = dataPoints[0];
     const last = dataPoints[dataPoints.length - 1];
     const change = ((last - first) / first) * 100;
 
-    if (Math.abs(change) < 5) return "stable";
+    if (Math.abs(change) < 5) {return "stable";}
     return change > 0 ? "increasing" : "decreasing";
   }
 
@@ -489,7 +488,7 @@ class UniversalChartAccessibility {
 
   cycleToNextChart() {
     const chartCanvases = Array.from(this.charts.keys());
-    if (chartCanvases.length === 0) return;
+    if (chartCanvases.length === 0) {return;}
 
     const currentActive = document.activeElement;
     let currentIndex = chartCanvases.indexOf(currentActive);
@@ -513,7 +512,7 @@ class UniversalChartAccessibility {
   }
 
   announceToScreenReader(message) {
-    if (!this.options.enableScreenReaderAnnouncements) return;
+    if (!this.options.enableScreenReaderAnnouncements) {return;}
 
     // Try to use existing live region first
     let liveRegion = document.querySelector('[aria-live="polite"]');

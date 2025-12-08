@@ -67,11 +67,11 @@ export class HelpSystem {
 
   addHelpMenu() {
     // Check if help menu already exists
-    if (document.getElementById("help-menu-item")) return;
+    if (document.getElementById("help-menu-item")) {return;}
 
     // Find navigation sidebar
     const sidebar = document.querySelector(".sidebar");
-    if (!sidebar) return;
+    if (!sidebar) {return;}
 
     // Find settings section or create help section
     let helpSection = sidebar.querySelector(".nav-section:last-child");
@@ -106,7 +106,7 @@ export class HelpSystem {
   showHelpModal() {
     // Remove existing modal
     const existing = document.getElementById("help-modal");
-    if (existing) existing.remove();
+    if (existing) {existing.remove();}
 
     const modal = document.createElement("div");
     modal.id = "help-modal";
@@ -342,7 +342,7 @@ export class HelpSystem {
             "data-lucide",
             isExpanded ? "chevron-down" : "chevron-up",
           );
-          if (typeof lucide !== "undefined") lucide.createIcons();
+          if (typeof lucide !== "undefined") {lucide.createIcons();}
         }
       });
     });

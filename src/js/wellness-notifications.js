@@ -278,7 +278,7 @@
     // Get wellness history from storageService
     const wellnessHistory = storageService.get('wellnessHistory', [], { usePrefix: false });
 
-    if (wellnessHistory.length === 0) return;
+    if (wellnessHistory.length === 0) {return;}
 
     // Calculate streak
     const streak = calculateStreak(wellnessHistory);
@@ -295,14 +295,14 @@
    * Calculate wellness streak
    */
   function calculateStreak(history) {
-    if (history.length === 0) return 0;
+    if (history.length === 0) {return 0;}
 
     // Sort by date descending
     const sorted = history.sort((a, b) => new Date(b.date) - new Date(a.date));
 
     let streak = 0;
     const today = new Date().toISOString().split('T')[0];
-    let currentDate = new Date(today);
+    const currentDate = new Date(today);
 
     for (const entry of sorted) {
       const entryDate = new Date(entry.date).toISOString().split('T')[0];

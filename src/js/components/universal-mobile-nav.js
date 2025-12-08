@@ -113,7 +113,7 @@ class UniversalMobileNav {
   }
 
   setupSwipeGestures() {
-    if (!this.sidebar) return;
+    if (!this.sidebar) {return;}
 
     let startX = null;
     let startY = null;
@@ -130,7 +130,7 @@ class UniversalMobileNav {
     this.sidebar.addEventListener(
       "touchend",
       (e) => {
-        if (!startX || !startY) return;
+        if (!startX || !startY) {return;}
 
         const endX = e.changedTouches[0].clientX;
         const endY = e.changedTouches[0].clientY;
@@ -169,7 +169,7 @@ class UniversalMobileNav {
   }
 
   setupAccessibility() {
-    if (!this.sidebar) return;
+    if (!this.sidebar) {return;}
 
     // Ensure sidebar has proper ARIA attributes
     this.sidebar.setAttribute("role", "navigation");
@@ -180,19 +180,19 @@ class UniversalMobileNav {
   }
 
   setupFocusTrap() {
-    if (!this.sidebar) return;
+    if (!this.sidebar) {return;}
 
     const focusableElements = this.sidebar.querySelectorAll(
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
     );
 
-    if (focusableElements.length === 0) return;
+    if (focusableElements.length === 0) {return;}
 
     const firstFocusable = focusableElements[0];
     const lastFocusable = focusableElements[focusableElements.length - 1];
 
     this.sidebar.addEventListener("keydown", (e) => {
-      if (!this.isOpen) return;
+      if (!this.isOpen) {return;}
 
       if (e.key === "Tab") {
         if (e.shiftKey) {
@@ -221,7 +221,7 @@ class UniversalMobileNav {
   }
 
   openSidebar() {
-    if (!this.sidebar) return;
+    if (!this.sidebar) {return;}
 
     this.isOpen = true;
     this.sidebar.classList.add("is-open");
@@ -243,7 +243,7 @@ class UniversalMobileNav {
   }
 
   closeSidebar() {
-    if (!this.sidebar) return;
+    if (!this.sidebar) {return;}
 
     this.isOpen = false;
     this.sidebar.classList.remove("is-open");
@@ -277,7 +277,7 @@ class UniversalMobileNav {
 
   // Public method to update active navigation state
   updateActiveNavigation(currentPath) {
-    if (!this.sidebar) return;
+    if (!this.sidebar) {return;}
 
     const navItems = this.sidebar.querySelectorAll(".nav-item");
     navItems.forEach((item) => {

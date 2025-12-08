@@ -39,7 +39,7 @@ class FlagFitApplication {
   }
 
   init() {
-    if (this.initialized) return;
+    if (this.initialized) {return;}
 
     // Wait for DOM to be ready
     if (document.readyState === "loading") {

@@ -1,37 +1,12 @@
-import { Injectable, inject } from "@angular/core";
+import { inject } from "@angular/core";
 import { CanActivateFn, ActivatedRouteSnapshot } from "@angular/router";
 import { HeaderService } from "../services/header.service";
 
-@Injectable({
-  providedIn: "root",
-})
-export class HeaderConfigGuard {
-  constructor(private headerService: HeaderService) {}
-
-  canActivate(route: ActivatedRouteSnapshot): boolean {
-    const routePath = route.routeConfig?.path;
-
-    switch (routePath) {
-      case "dashboard":
-        this.headerService.setDashboardHeader();
-        break;
-      case "training":
-      case "training/overview":
-        this.headerService.setTrainingHeader();
-        break;
-      case "analytics":
-        this.headerService.setAnalyticsHeader();
-        break;
-      default:
-        // Default header config
-        this.headerService.resetToDefault();
-        break;
-    }
-
-    return true;
-  }
-}
-
+/**
+ * Header Configuration Guard
+ * Configures header settings based on the current route.
+ * Uses functional guard pattern (Angular 19 best practice).
+ */
 export const headerConfigGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
   const headerService = inject(HeaderService);
   const routePath = route.routeConfig?.path;

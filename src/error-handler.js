@@ -182,26 +182,80 @@ export class ErrorHandler {
       max-width: 400px;
     `;
 
-    notification.innerHTML = `
-      <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
-        <span style="flex-shrink: 0; font-size: 1rem;">❌</span>
-        <div style="flex: 1;">
-          <div style="margin-bottom: 0.5rem;">${escapeHtml(message)}</div>
-          <button onclick="this.closest('.error-notification').querySelector('.retry-btn').click()"
-                  class="retry-btn"
-                  style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);
-                         color: white; padding: 0.25rem 0.75rem; border-radius: 4px; cursor: pointer;
-                         font-size: 0.75rem; font-weight: 500; margin-top: 0.5rem;"
-                  onmouseover="this.style.background='rgba(255,255,255,0.3)'"
-                  onmouseout="this.style.background='rgba(255,255,255,0.2)'">Retry</button>
-        </div>
-        <button onclick="this.closest('.error-notification').remove()"
-                style="background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer;
-                       opacity: 0.8; padding: 0; margin: 0; line-height: 1; flex-shrink: 0;"
-                onmouseover="this.style.opacity='1'"
-                onmouseout="this.style.opacity='0.8'">×</button>
-      </div>
+    // Create elements using safe DOM methods (no innerHTML)
+    const container = document.createElement("div");
+    container.style.cssText = "display: flex; align-items: flex-start; gap: 0.75rem;";
+
+    // Icon
+    const icon = document.createElement("span");
+    icon.style.cssText = "flex-shrink: 0; font-size: 1rem;";
+    icon.textContent = "❌";
+
+    // Content container
+    const contentDiv = document.createElement("div");
+    contentDiv.style.cssText = "flex: 1;";
+
+    // Message text (safely escaped)
+    const messageDiv = document.createElement("div");
+    messageDiv.style.cssText = "margin-bottom: 0.5rem;";
+    messageDiv.textContent = message; // textContent auto-escapes
+
+    // Retry button
+    const retryBtn = document.createElement("button");
+    retryBtn.className = "retry-btn";
+    retryBtn.textContent = "Retry";
+    retryBtn.style.cssText = `
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.75rem;
+      font-weight: 500;
+      margin-top: 0.5rem;
     `;
+
+    // Retry button hover effects (using addEventListener)
+    retryBtn.addEventListener("mouseenter", () => {
+      retryBtn.style.background = "rgba(255,255,255,0.3)";
+    });
+    retryBtn.addEventListener("mouseleave", () => {
+      retryBtn.style.background = "rgba(255,255,255,0.2)";
+    });
+
+    // Close button
+    const closeBtn = document.createElement("button");
+    closeBtn.textContent = "×";
+    closeBtn.setAttribute("aria-label", "Close notification");
+    closeBtn.style.cssText = `
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.2rem;
+      cursor: pointer;
+      opacity: 0.8;
+      padding: 0;
+      margin: 0;
+      line-height: 1;
+      flex-shrink: 0;
+    `;
+
+    // Close button hover effects (using addEventListener)
+    closeBtn.addEventListener("mouseenter", () => {
+      closeBtn.style.opacity = "1";
+    });
+    closeBtn.addEventListener("mouseleave", () => {
+      closeBtn.style.opacity = "0.8";
+    });
+
+    // Assemble DOM structure
+    contentDiv.appendChild(messageDiv);
+    contentDiv.appendChild(retryBtn);
+    container.appendChild(icon);
+    container.appendChild(contentDiv);
+    container.appendChild(closeBtn);
+    notification.appendChild(container);
 
     document.body.appendChild(notification);
 
@@ -210,13 +264,17 @@ export class ErrorHandler {
       notification.style.transform = "translateX(0)";
     }, 100);
 
-    // Setup retry button
-    const retryBtn = notification.querySelector(".retry-btn");
+    // Setup retry button click handler (no inline onclick)
     retryBtn.addEventListener("click", () => {
       notification.remove();
       if (retryCallback) {
         retryCallback();
       }
+    });
+
+    // Setup close button click handler (no inline onclick)
+    closeBtn.addEventListener("click", () => {
+      notification.remove();
     });
 
     // Auto-remove after duration
@@ -235,7 +293,7 @@ export class ErrorHandler {
   static showNotification(message, type = "info", duration = 5000) {
     // Remove any existing notifications of the same type
     const existing = document.querySelector(`.error-notification.${type}`);
-    if (existing) existing.remove();
+    if (existing) {existing.remove();}
 
     const notification = document.createElement("div");
     notification.className = `error-notification ${type}`;
@@ -261,24 +319,62 @@ export class ErrorHandler {
       ${type === "info" ? "background: #fbbf24; border-left: 4px solid #f59e0b;" : ""}  /* Yellow for info */
     `;
 
-    const icon = {
+    const iconMap = {
       error: "❌",
       success: "✅",
       warning: "⚠️",
       info: "ℹ️",
     };
 
-    notification.innerHTML = `
-      <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
-        <span style="flex-shrink: 0; font-size: 1rem;">${icon[type]}</span>
-        <span style="flex: 1;">${escapeHtml(message)}</span>
-        <button onclick="this.closest('.error-notification').remove()"
-                style="background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer;
-                       opacity: 0.8; padding: 0; margin: 0; line-height: 1; flex-shrink: 0;"
-                onmouseover="this.style.opacity='1'"
-                onmouseout="this.style.opacity='0.8'">×</button>
-      </div>
+    // Create elements using safe DOM methods (no innerHTML)
+    const container = document.createElement("div");
+    container.style.cssText = "display: flex; align-items: flex-start; gap: 0.75rem;";
+
+    // Icon
+    const iconSpan = document.createElement("span");
+    iconSpan.style.cssText = "flex-shrink: 0; font-size: 1rem;";
+    iconSpan.textContent = iconMap[type];
+
+    // Message text (safely escaped)
+    const messageSpan = document.createElement("span");
+    messageSpan.style.cssText = "flex: 1;";
+    messageSpan.textContent = message; // textContent auto-escapes
+
+    // Close button
+    const closeBtn = document.createElement("button");
+    closeBtn.textContent = "×";
+    closeBtn.setAttribute("aria-label", "Close notification");
+    closeBtn.style.cssText = `
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.2rem;
+      cursor: pointer;
+      opacity: 0.8;
+      padding: 0;
+      margin: 0;
+      line-height: 1;
+      flex-shrink: 0;
     `;
+
+    // Close button hover effects (using addEventListener, not inline)
+    closeBtn.addEventListener("mouseenter", () => {
+      closeBtn.style.opacity = "1";
+    });
+    closeBtn.addEventListener("mouseleave", () => {
+      closeBtn.style.opacity = "0.8";
+    });
+
+    // Close button click handler (using addEventListener, not inline onclick)
+    closeBtn.addEventListener("click", () => {
+      notification.remove();
+    });
+
+    // Assemble DOM structure
+    container.appendChild(iconSpan);
+    container.appendChild(messageSpan);
+    container.appendChild(closeBtn);
+    notification.appendChild(container);
 
     document.body.appendChild(notification);
 

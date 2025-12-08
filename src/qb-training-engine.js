@@ -418,7 +418,7 @@ export class QBTrainingEngine extends TrainingProgramEngine {
 
   parseVolumeRange(rangeString) {
     const numbers = rangeString.match(/\d+/g);
-    if (numbers.length === 1) return parseInt(numbers[0]);
+    if (numbers.length === 1) {return parseInt(numbers[0]);}
     return Math.round((parseInt(numbers[0]) + parseInt(numbers[1])) / 2);
   }
 
@@ -534,10 +534,10 @@ export class QBTrainingEngine extends TrainingProgramEngine {
   }
 
   getReadinessLevel(score) {
-    if (score >= 90) return "Elite - Tournament Ready";
-    if (score >= 80) return "Advanced - Competition Ready";
-    if (score >= 70) return "Intermediate - Needs Preparation";
-    if (score >= 60) return "Developing - Extended Training Needed";
+    if (score >= 90) {return "Elite - Tournament Ready";}
+    if (score >= 80) {return "Advanced - Competition Ready";}
+    if (score >= 70) {return "Intermediate - Needs Preparation";}
+    if (score >= 60) {return "Developing - Extended Training Needed";}
     return "Beginner - Foundation Building Required";
   }
 

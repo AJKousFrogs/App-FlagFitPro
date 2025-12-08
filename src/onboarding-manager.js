@@ -40,7 +40,7 @@ export class OnboardingManager {
   showOnboardingModal() {
     // Remove existing modal if present
     const existing = document.getElementById("onboarding-modal");
-    if (existing) existing.remove();
+    if (existing) {existing.remove();}
 
     const modal = document.createElement("div");
     modal.id = "onboarding-modal";
@@ -182,7 +182,7 @@ export class OnboardingManager {
     }
 
     const handleKeyDown = (e) => {
-      if (e.key !== "Tab") return;
+      if (e.key !== "Tab") {return;}
 
       if (e.shiftKey) {
         if (document.activeElement === firstElement) {

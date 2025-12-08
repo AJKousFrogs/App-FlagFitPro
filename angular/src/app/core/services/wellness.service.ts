@@ -1,7 +1,7 @@
-import { Injectable, inject } from '@angular/core';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
-import { ApiService, API_ENDPOINTS } from './api.service';
+import { Injectable, inject } from "@angular/core";
+import { Observable, BehaviorSubject } from "rxjs";
+import { map, tap } from "rxjs/operators";
+import { ApiService, API_ENDPOINTS } from "./api.service";
 
 export interface WellnessData {
   id?: number;
@@ -42,7 +42,7 @@ export interface WellnessResponse {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class WellnessService {
   private apiService = inject(ApiService);

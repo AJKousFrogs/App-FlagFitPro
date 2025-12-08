@@ -351,7 +351,7 @@ class ScheduleBuilderModal extends Modal {
    * Set up form-specific event handlers
    */
   setupFormEvents() {
-    if (!this.modalElement) return;
+    if (!this.modalElement) {return;}
 
     // Tab switching
     const tabs = this.modalElement.querySelectorAll(".schedule-tab");
@@ -451,7 +451,7 @@ class ScheduleBuilderModal extends Modal {
    */
   setupCalendarEvents() {
     const calendar = this.modalElement.querySelector("#game-day-calendar");
-    if (!calendar) return;
+    if (!calendar) {return;}
 
     // Day click handlers
     const dayElements = calendar.querySelectorAll(".calendar-day:not(.empty)");
@@ -499,7 +499,7 @@ class ScheduleBuilderModal extends Modal {
    */
   updateCalendarDisplay() {
     const calendar = this.modalElement.querySelector("#game-day-calendar");
-    if (!calendar) return;
+    if (!calendar) {return;}
 
     const dayElements = calendar.querySelectorAll(".calendar-day:not(.empty)");
     dayElements.forEach((dayEl) => {
@@ -530,7 +530,7 @@ class ScheduleBuilderModal extends Modal {
     const browseBtn = this.modalElement.querySelector("#browse-files-btn");
     const removeBtn = this.modalElement.querySelector("#remove-file-btn");
 
-    if (!uploadArea || !fileInput || !browseBtn) return;
+    if (!uploadArea || !fileInput || !browseBtn) {return;}
 
     // Browse button
     browseBtn.addEventListener("click", () => {
@@ -587,7 +587,7 @@ class ScheduleBuilderModal extends Modal {
     const fileStats = this.modalElement.querySelector("#uploaded-file-stats");
     const uploadPreview = this.modalElement.querySelector("#upload-preview");
 
-    if (!fileInfo || !fileName || !fileStats) return;
+    if (!fileInfo || !fileName || !fileStats) {return;}
 
     // Show loading state
     fileName.textContent = `Processing ${file.name}...`;

@@ -214,7 +214,7 @@ export class AIService {
     switch (detectedIntent) {
       case "start":
         if (lowerCommand.includes("training") || lowerCommand.includes("workout")) {
-          return {
+          return of({
             message: "Starting your training session. Let's get moving!",
             actions: [
               {
@@ -225,12 +225,12 @@ export class AIService {
                 },
               },
             ],
-          };
+          });
         }
         break;
 
       case "log":
-        return {
+        return of({
           message: "I'll help you log your session. What would you like to record?",
           actions: [
             {
@@ -241,11 +241,11 @@ export class AIService {
               },
             },
           ],
-        };
+        });
 
       case "show":
         if (lowerCommand.includes("stats") || lowerCommand.includes("performance")) {
-          return {
+          return of({
             message: "Here are your performance stats. You're doing great!",
             actions: [
               {
@@ -256,33 +256,33 @@ export class AIService {
                 },
               },
             ],
-          };
+          });
         }
         break;
 
       case "break":
-        return {
+        return of({
           message: "Taking a break is important for recovery. Rest up!",
-        };
+        });
 
       case "intensity":
         const isIncrease = /increase|more|harder|up/i.test(lowerCommand);
-        return {
+        return of({
           message: isIncrease
             ? "Increasing intensity. Push yourself!"
             : "Reducing intensity. Listen to your body.",
-        };
+        });
 
       case "help":
-        return {
+        return of({
           message:
             "I can help you start training, log sessions, view stats, adjust intensity, and more. Just tell me what you need!",
-        };
+        });
 
       default:
         // Try API for advanced processing
         return this.apiService
-          .post<{ message: string; actions?: any[] }>(
+          .post<{ success: boolean; data?: { message: string; actions?: any[] } }>(
             "/api/ai/process-command",
             { command: lowerCommand },
           )

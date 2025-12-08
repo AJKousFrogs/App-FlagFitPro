@@ -71,7 +71,7 @@
     const listbox = document.getElementById("search-results");
     const status = document.getElementById("search-status");
 
-    if (!input || !listbox || !status) return;
+    if (!input || !listbox || !status) {return;}
 
     let idx = -1;
     let items = [];
@@ -243,7 +243,7 @@
     const badge = document.getElementById("notification-badge");
     const live = document.getElementById("notification-live");
 
-    if (!bell) return;
+    if (!bell) {return;}
 
     // Initialize aria attributes
     bell.setAttribute("aria-expanded", "false");
@@ -252,7 +252,7 @@
 
     // Set badge count
     function setBadge(count) {
-      if (!badge || !live) return;
+      if (!badge || !live) {return;}
 
       if (count > 0) {
         badge.textContent = String(count);
@@ -296,7 +296,7 @@
     const button = document.getElementById("user-menu-button");
     const menu = document.getElementById("user-menu");
 
-    if (!button || !menu) return;
+    if (!button || !menu) {return;}
 
     // Initialize aria attributes
     button.setAttribute("aria-expanded", "false");
@@ -375,7 +375,7 @@
    */
   function initScrollEffects() {
     const topBar = document.querySelector(".top-bar");
-    if (!topBar) return;
+    if (!topBar) {return;}
 
     let ticking = false;
 
@@ -414,7 +414,7 @@
    */
   function initScrollToTop() {
     const scrollButton = document.getElementById("scroll-to-top");
-    if (!scrollButton) return;
+    if (!scrollButton) {return;}
 
     let ticking = false;
 
@@ -475,7 +475,7 @@
    */
   function initThemeToggle() {
     const themeToggle = document.getElementById("header-theme-toggle");
-    if (!themeToggle) return;
+    if (!themeToggle) {return;}
 
     // Initialize toggle state based on current theme
     const currentTheme =

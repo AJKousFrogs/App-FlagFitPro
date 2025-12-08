@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { RouterOutlet } from "@angular/router";
 import { SidebarComponent } from "../sidebar/sidebar.component";
 import { HeaderComponent } from "../header/header.component";
@@ -11,13 +11,12 @@ import { SmartBreadcrumbsComponent } from "../smart-breadcrumbs/smart-breadcrumb
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     RouterOutlet,
     SidebarComponent,
     HeaderComponent,
     QuickActionsFABComponent,
-    SmartBreadcrumbsComponent,
-  ],
+    SmartBreadcrumbsComponent
+],
   template: `
     <div class="dashboard-container">
       <app-sidebar #sidebar></app-sidebar>

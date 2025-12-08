@@ -93,11 +93,12 @@ async function initCoachDashboard() {
     const coachName = document.getElementById("coachName");
     const userAvatar = document.getElementById("user-avatar");
 
-    if (coachAvatar) coachAvatar.textContent = initials;
-    if (coachName)
-      coachName.textContent =
+    if (coachAvatar) {coachAvatar.textContent = initials;}
+    if (coachName) {
+coachName.textContent =
         user.name || "Coach " + user.email?.split("@")[0] || "Coach Williams";
-    if (userAvatar) userAvatar.textContent = initials;
+}
+    if (userAvatar) {userAvatar.textContent = initials;}
   }
 
   loadPlayers();

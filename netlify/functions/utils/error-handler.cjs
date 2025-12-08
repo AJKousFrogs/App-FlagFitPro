@@ -150,10 +150,40 @@ function handleDatabaseError(error, context = 'Database operation') {
  */
 function handleServerError(error, context = 'Operation') {
   console.error(`[Server Error] ${context}:`, error);
+  console.error(`[Server Error] Stack:`, error.stack);
+  console.error(`[Server Error] Details:`, {
+    message: error.message,
+    name: error.name,
+    code: error.code,
+    details: error.details,
+    hint: error.hint,
+  });
+  
+  // Check if this is a development environment
+  const isDevelopment = process.env.NETLIFY_DEV === 'true' || process.env.NODE_ENV === 'development';
+  
+  // Provide more detailed error messages in development
+  let errorMessage = 'An internal server error occurred. Please try again later.';
+  if (isDevelopment) {
+    errorMessage = error.message || errorMessage;
+    if (error.details) {
+      errorMessage += ` Details: ${error.details}`;
+    }
+    if (error.hint) {
+      errorMessage += ` Hint: ${error.hint}`;
+    }
+  }
+  
   return createErrorResponse(
-    'An internal server error occurred. Please try again later.',
+    errorMessage,
     500,
-    ErrorType.SERVER
+    ErrorType.SERVER,
+    isDevelopment ? {
+      originalError: error.message,
+      code: error.code,
+      details: error.details,
+      hint: error.hint,
+    } : {}
   );
 }
 

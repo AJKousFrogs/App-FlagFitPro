@@ -5,7 +5,7 @@ import {
   signal,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
 import { ButtonModule } from "primeng/button";
@@ -26,7 +26,6 @@ import { HeaderService } from "../../core/services/header.service";
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     CardModule,
     ChartModule,
     ButtonModule,
@@ -35,8 +34,8 @@ import { HeaderService } from "../../core/services/header.service";
     PageHeaderComponent,
     StatsGridComponent,
     PerformanceDashboardComponent,
-    WellnessWidgetComponent,
-  ],
+    WellnessWidgetComponent
+],
   template: `
     <app-main-layout>
       <div class="dashboard-content">
@@ -44,97 +43,99 @@ import { HeaderService } from "../../core/services/header.service";
           title="Dashboard"
           subtitle="Welcome back! Here's your performance overview."
         ></app-page-header>
-
+    
         <app-stats-grid [stats]="stats()"></app-stats-grid>
-
+    
         <!-- Real-Time Performance Dashboard -->
         <app-performance-dashboard
           [athleteId]="athleteId()"
           [realTimeEnabled]="true">
         </app-performance-dashboard>
-
+    
         <div class="dashboard-grid">
           <!-- Wellness Widget -->
           <app-wellness-widget></app-wellness-widget>
-
+    
           <p-card class="dashboard-card">
             <ng-template pTemplate="header">
               <h3>Performance Overview</h3>
             </ng-template>
-            <p-chart
-              *ngIf="performanceChartData()"
-              type="line"
-              [data]="performanceChartData()"
-              [options]="chartOptions"
-            ></p-chart>
+            @if (performanceChartData()) {
+              <p-chart
+                type="line"
+                [data]="performanceChartData()"
+                [options]="chartOptions"
+              ></p-chart>
+            }
           </p-card>
-
+    
           <p-card class="dashboard-card">
             <ng-template pTemplate="header">
               <h3>Training Sessions</h3>
             </ng-template>
-            <p-chart
-              *ngIf="trainingChartData()"
-              type="bar"
-              [data]="trainingChartData()"
-              [options]="chartOptions"
-            ></p-chart>
+            @if (trainingChartData()) {
+              <p-chart
+                type="bar"
+                [data]="trainingChartData()"
+                [options]="chartOptions"
+              ></p-chart>
+            }
           </p-card>
-
+    
           <p-card class="dashboard-card">
             <ng-template pTemplate="header">
               <h3>Recent Activity</h3>
             </ng-template>
             <div class="activity-list">
-              <div
-                *ngFor="
-                  let activity of activities();
-                  trackBy: trackByActivityId
-                "
-                class="activity-item"
-              >
-                <div class="activity-icon">
-                  <i [class]="'pi ' + activity.icon"></i>
+              @for (
+                activity of activities(); track trackByActivityId($index,
+                activity)) {
+                <div
+                  class="activity-item"
+                  >
+                  <div class="activity-icon">
+                    <i [class]="'pi ' + activity.icon"></i>
+                  </div>
+                  <div class="activity-content">
+                    <div class="activity-title">{{ activity.title }}</div>
+                    <div class="activity-time">{{ activity.time }}</div>
+                  </div>
                 </div>
-                <div class="activity-content">
-                  <div class="activity-title">{{ activity.title }}</div>
-                  <div class="activity-time">{{ activity.time }}</div>
-                </div>
-              </div>
+              }
             </div>
           </p-card>
-
+    
           <p-card class="dashboard-card">
             <ng-template pTemplate="header">
               <h3>Upcoming Sessions</h3>
             </ng-template>
             <div class="sessions-list">
-              <div
-                *ngFor="
-                  let session of upcomingSessions();
-                  trackBy: trackBySessionId
-                "
-                class="session-item"
-              >
-                <div class="session-date">
-                  <div class="session-day">{{ session.day }}</div>
-                  <div class="session-month">{{ session.month }}</div>
+              @for (
+                session of upcomingSessions(); track trackBySessionId($index,
+                session)) {
+                <div
+                  class="session-item"
+                  >
+                  <div class="session-date">
+                    <div class="session-day">{{ session.day }}</div>
+                    <div class="session-month">{{ session.month }}</div>
+                  </div>
+                  <div class="session-info">
+                    <div class="session-title">{{ session.title }}</div>
+                    <div class="session-time">{{ session.time }}</div>
+                  </div>
+                  <p-tag
+                    [value]="session.status"
+                    [severity]="getStatusSeverity(session.status)"
+                  ></p-tag>
                 </div>
-                <div class="session-info">
-                  <div class="session-title">{{ session.title }}</div>
-                  <div class="session-time">{{ session.time }}</div>
-                </div>
-                <p-tag
-                  [value]="session.status"
-                  [severity]="getStatusSeverity(session.status)"
-                ></p-tag>
-              </div>
+              }
             </div>
           </p-card>
         </div>
       </div>
     </app-main-layout>
-  `,
+    `,
   styles: [
     `
       .dashboard-content {

@@ -32,9 +32,9 @@ export class TrainingProgramEngine {
 
   // Get phase for given week
   getPhaseForWeek(week) {
-    if (week <= 4) return "foundation";
-    if (week <= 8) return "strength";
-    if (week <= 12) return "power";
+    if (week <= 4) {return "foundation";}
+    if (week <= 8) {return "strength";}
+    if (week <= 12) {return "power";}
     return "competition";
   }
 
@@ -288,13 +288,12 @@ export class TrainingProgramEngine {
     conditions = {},
   ) {
     const variations = this.exerciseVariations[exerciseName];
-    if (!variations) return exerciseName;
+    if (!variations) {return exerciseName;}
 
     // Check for condition-specific variations first
-    if (conditions.indoor && variations.indoor) return variations.indoor;
-    if (conditions.limitedSpace && variations.limited)
-      return variations.limited;
-    if (conditions.badWeather && variations.weather) return variations.weather;
+    if (conditions.indoor && variations.indoor) {return variations.indoor;}
+    if (conditions.limitedSpace && variations.limited) {return variations.limited;}
+    if (conditions.badWeather && variations.weather) {return variations.weather;}
 
     // Return level-appropriate variation
     return variations[userLevel] || exerciseName;
@@ -358,7 +357,7 @@ export class TrainingProgramEngine {
   }
 
   getPerformanceTests(weekNumber) {
-    if (!this.schedulePerformanceTest(weekNumber)) return [];
+    if (!this.schedulePerformanceTest(weekNumber)) {return [];}
 
     const phase = this.getPhaseForWeek(weekNumber);
     const tests = {

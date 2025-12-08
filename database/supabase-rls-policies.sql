@@ -19,6 +19,7 @@
 -- User-related tables
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE implementation_steps ENABLE ROW LEVEL SECURITY;
 
 -- Team-related tables
 ALTER TABLE teams ENABLE ROW LEVEL SECURITY;
@@ -35,6 +36,10 @@ ALTER TABLE wellness_logs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE measurements ENABLE ROW LEVEL SECURITY;
 ALTER TABLE supplements ENABLE ROW LEVEL SECURITY;
 ALTER TABLE injuries ENABLE ROW LEVEL SECURITY;
+ALTER TABLE wearables_data ENABLE ROW LEVEL SECURITY;
+ALTER TABLE training_analytics ENABLE ROW LEVEL SECURITY;
+ALTER TABLE user_behavior ENABLE ROW LEVEL SECURITY;
+ALTER TABLE supplement_protocols ENABLE ROW LEVEL SECURITY;
 
 -- Game-related tables
 ALTER TABLE games ENABLE ROW LEVEL SECURITY;
@@ -84,6 +89,41 @@ USING (id = auth.user_id());
 CREATE POLICY "Users can view public profiles"
 ON users FOR SELECT
 USING (true); -- Public read access for name, avatar, etc.
+
+-- Users can insert their own profile (during registration)
+CREATE POLICY "Users can insert own profile"
+ON users FOR INSERT
+WITH CHECK (id = auth.user_id());
+
+-- Users can delete their own profile
+CREATE POLICY "Users can delete own profile"
+ON users FOR DELETE
+USING (id = auth.user_id());
+
+-- ============================================================================
+-- IMPLEMENTATION STEPS POLICIES
+-- ============================================================================
+
+-- Users can view their own implementation steps
+CREATE POLICY "Users can view own implementation steps"
+ON implementation_steps FOR SELECT
+USING (user_id = auth.user_id());
+
+-- Users can create their own implementation steps
+CREATE POLICY "Users can create own implementation steps"
+ON implementation_steps FOR INSERT
+WITH CHECK (user_id = auth.user_id());
+
+-- Users can update their own implementation steps
+CREATE POLICY "Users can update own implementation steps"
+ON implementation_steps FOR UPDATE
+USING (user_id = auth.user_id())
+WITH CHECK (user_id = auth.user_id());
+
+-- Users can delete their own implementation steps
+CREATE POLICY "Users can delete own implementation steps"
+ON implementation_steps FOR DELETE
+USING (user_id = auth.user_id());
 
 -- ============================================================================
 -- TEAM POLICIES
@@ -246,6 +286,102 @@ USING (user_id = auth.user_id());
 CREATE POLICY "Users can delete own wellness logs"
 ON wellness_logs FOR DELETE
 USING (user_id = auth.user_id());
+
+-- ============================================================================
+-- WEARABLES DATA POLICIES
+-- ============================================================================
+
+-- Users can view their own wearables data
+CREATE POLICY "Users can view own wearables data"
+ON wearables_data FOR SELECT
+USING (user_id = (SELECT auth.uid())::text);
+
+-- Users can create their own wearables data
+CREATE POLICY "Users can create own wearables data"
+ON wearables_data FOR INSERT
+WITH CHECK (user_id = (SELECT auth.uid())::text);
+
+-- Users can update their own wearables data
+CREATE POLICY "Users can update own wearables data"
+ON wearables_data FOR UPDATE
+USING (user_id = (SELECT auth.uid())::text);
+
+-- Users can delete their own wearables data
+CREATE POLICY "Users can delete own wearables data"
+ON wearables_data FOR DELETE
+USING (user_id = (SELECT auth.uid())::text);
+
+-- ============================================================================
+-- TRAINING ANALYTICS POLICIES
+-- ============================================================================
+
+-- Users can view their own training analytics
+CREATE POLICY "Users can view own training analytics"
+ON training_analytics FOR SELECT
+USING (user_id = (SELECT auth.uid())::text);
+
+-- Users can create their own training analytics
+CREATE POLICY "Users can create own training analytics"
+ON training_analytics FOR INSERT
+WITH CHECK (user_id = (SELECT auth.uid())::text);
+
+-- Users can update their own training analytics
+CREATE POLICY "Users can update own training analytics"
+ON training_analytics FOR UPDATE
+USING (user_id = (SELECT auth.uid())::text);
+
+-- Users can delete their own training analytics
+CREATE POLICY "Users can delete own training analytics"
+ON training_analytics FOR DELETE
+USING (user_id = (SELECT auth.uid())::text);
+
+-- ============================================================================
+-- USER BEHAVIOR POLICIES
+-- ============================================================================
+
+-- Users can view their own behavior data
+CREATE POLICY "Users can view own behavior data"
+ON user_behavior FOR SELECT
+USING (user_id = (SELECT auth.uid())::text);
+
+-- Users can create their own behavior data
+CREATE POLICY "Users can create own behavior data"
+ON user_behavior FOR INSERT
+WITH CHECK (user_id = (SELECT auth.uid())::text);
+
+-- Users can update their own behavior data
+CREATE POLICY "Users can update own behavior data"
+ON user_behavior FOR UPDATE
+USING (user_id = (SELECT auth.uid())::text);
+
+-- Users can delete their own behavior data
+CREATE POLICY "Users can delete own behavior data"
+ON user_behavior FOR DELETE
+USING (user_id = (SELECT auth.uid())::text);
+
+-- ============================================================================
+-- SUPPLEMENT PROTOCOLS POLICIES
+-- ============================================================================
+
+-- Users can view their own supplement protocols
+CREATE POLICY "Users can view own supplement protocols"
+ON supplement_protocols FOR SELECT
+USING (user_id = (SELECT auth.uid()));
+
+-- Users can create their own supplement protocols
+CREATE POLICY "Users can create own supplement protocols"
+ON supplement_protocols FOR INSERT
+WITH CHECK (user_id = (SELECT auth.uid()));
+
+-- Users can update their own supplement protocols
+CREATE POLICY "Users can update own supplement protocols"
+ON supplement_protocols FOR UPDATE
+USING (user_id = (SELECT auth.uid()));
+
+-- Users can delete their own supplement protocols
+CREATE POLICY "Users can delete own supplement protocols"
+ON supplement_protocols FOR DELETE
+USING (user_id = (SELECT auth.uid()));
 
 -- ============================================================================
 -- GAMES POLICIES

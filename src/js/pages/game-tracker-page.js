@@ -39,7 +39,7 @@ class GameTrackerPage {
     const sidebar = document.getElementById("sidebar");
     const overlay = document.getElementById("sidebar-overlay");
 
-    if (!sidebar) return;
+    if (!sidebar) {return;}
 
     const isOpen =
       sidebar.classList.contains("open") ||
@@ -47,11 +47,11 @@ class GameTrackerPage {
 
     if (isOpen) {
       sidebar.classList.remove("open", "mobile-open");
-      if (overlay) overlay.classList.remove("active");
+      if (overlay) {overlay.classList.remove("active");}
       document.body.classList.remove("sidebar-open", "menu-open");
     } else {
       sidebar.classList.add("open", "mobile-open");
-      if (overlay) overlay.classList.add("active");
+      if (overlay) {overlay.classList.add("active");}
       document.body.classList.add("sidebar-open", "menu-open");
     }
   }
@@ -232,9 +232,9 @@ class GameTrackerPage {
     const trackingSection = document.getElementById("live-tracking-section");
     const listSection = document.getElementById("game-list-section");
 
-    if (setupSection) setupSection.style.display = "none";
-    if (trackingSection) trackingSection.style.display = "block";
-    if (listSection) listSection.style.display = "none";
+    if (setupSection) {setupSection.style.display = "none";}
+    if (trackingSection) {trackingSection.style.display = "block";}
+    if (listSection) {listSection.style.display = "none";}
 
     this.resetPlayForm();
     this.updateQuickStats();
@@ -245,9 +245,9 @@ class GameTrackerPage {
     const trackingSection = document.getElementById("live-tracking-section");
     const listSection = document.getElementById("game-list-section");
 
-    if (setupSection) setupSection.style.display = "block";
-    if (trackingSection) trackingSection.style.display = "none";
-    if (listSection) listSection.style.display = "none";
+    if (setupSection) {setupSection.style.display = "block";}
+    if (trackingSection) {trackingSection.style.display = "none";}
+    if (listSection) {listSection.style.display = "none";}
   }
 
   showGamesList() {
@@ -255,9 +255,9 @@ class GameTrackerPage {
     const trackingSection = document.getElementById("live-tracking-section");
     const listSection = document.getElementById("game-list-section");
 
-    if (setupSection) setupSection.style.display = "none";
-    if (trackingSection) trackingSection.style.display = "none";
-    if (listSection) listSection.style.display = "block";
+    if (setupSection) {setupSection.style.display = "none";}
+    if (trackingSection) {trackingSection.style.display = "none";}
+    if (listSection) {listSection.style.display = "block";}
 
     this.loadGamesList();
   }
@@ -265,7 +265,7 @@ class GameTrackerPage {
   async loadGamesList() {
     const gamesList = document.getElementById("games-list");
 
-    if (!gamesList) return;
+    if (!gamesList) {return;}
 
     // Show loading state
     gamesList.innerHTML = `
@@ -366,8 +366,8 @@ class GameTrackerPage {
   }
 
   determineGameResult(game) {
-    if (game.teamScore > game.opponentScore) return "Win";
-    if (game.teamScore < game.opponentScore) return "Loss";
+    if (game.teamScore > game.opponentScore) {return "Win";}
+    if (game.teamScore < game.opponentScore) {return "Loss";}
     return "Tie";
   }
 
@@ -406,9 +406,9 @@ class GameTrackerPage {
     const runSection = document.getElementById("run-play-section");
     const flagPullSection = document.getElementById("flag-pull-section");
 
-    if (passSection) passSection.style.display = "none";
-    if (runSection) runSection.style.display = "none";
-    if (flagPullSection) flagPullSection.style.display = "none";
+    if (passSection) {passSection.style.display = "none";}
+    if (runSection) {runSection.style.display = "none";}
+    if (flagPullSection) {flagPullSection.style.display = "none";}
 
     if (playType === "pass" && passSection) {
       passSection.style.display = "block";
@@ -598,12 +598,10 @@ class GameTrackerPage {
     const totalDropsEl = document.getElementById("total-drops");
     const totalFlagPullsEl = document.getElementById("total-flag-pulls");
 
-    if (totalPlaysEl) totalPlaysEl.textContent = this.plays.length;
-    if (totalCompletionsEl)
-      totalCompletionsEl.textContent = this.countCompletions(this.plays);
-    if (totalDropsEl) totalDropsEl.textContent = this.countDrops(this.plays);
-    if (totalFlagPullsEl)
-      totalFlagPullsEl.textContent = this.countFlagPulls(this.plays);
+    if (totalPlaysEl) {totalPlaysEl.textContent = this.plays.length;}
+    if (totalCompletionsEl) {totalCompletionsEl.textContent = this.countCompletions(this.plays);}
+    if (totalDropsEl) {totalDropsEl.textContent = this.countDrops(this.plays);}
+    if (totalFlagPullsEl) {totalFlagPullsEl.textContent = this.countFlagPulls(this.plays);}
   }
 
   countCompletions(plays) {
@@ -628,7 +626,7 @@ class GameTrackerPage {
   renderRecentPlays() {
     const recentPlaysList = document.getElementById("recent-plays-list");
 
-    if (!recentPlaysList) return;
+    if (!recentPlaysList) {return;}
 
     if (this.plays.length === 0) {
       recentPlaysList.innerHTML = `
@@ -723,7 +721,7 @@ class GameTrackerPage {
 
   resetPlayForm() {
     const form = document.getElementById("play-entry-form");
-    if (form) form.reset();
+    if (form) {form.reset();}
 
     // Reset active states
     document
@@ -747,7 +745,7 @@ class GameTrackerPage {
   }
 
   updateScore() {
-    if (!this.currentGame) return;
+    if (!this.currentGame) {return;}
 
     const teamScore =
       parseInt(document.getElementById("team-score").value) || 0;
@@ -761,7 +759,7 @@ class GameTrackerPage {
   }
 
   async handleEndGame() {
-    if (!this.currentGame) return;
+    if (!this.currentGame) {return;}
 
     if (
       confirm("Are you sure you want to end this game? All data will be saved.")

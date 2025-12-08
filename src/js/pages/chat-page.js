@@ -28,7 +28,7 @@ let messageInterval;
 let typingInterval;
 
 async function initChatPage() {
-  if (!authManager.requireAuth()) return;
+  if (!authManager.requireAuth()) {return;}
 
   // Check for channel parameter in URL (e.g., ?channel=flagfit-assistant)
   const urlParams = new URLSearchParams(window.location.search);
@@ -58,7 +58,7 @@ async function initChatPage() {
 // Ensure a channel exists, create it if it doesn't
 async function ensureChannelExists(channelName) {
   const channelsList = document.getElementById("channelsList");
-  if (!channelsList) return;
+  if (!channelsList) {return;}
 
   // Check if channel already exists
   const existingChannel = channelsList.querySelector(
@@ -71,7 +71,7 @@ async function ensureChannelExists(channelName) {
   // Special handling for AI assistant channel
   if (channelName === "flagfit-assistant") {
     createAIAssistantChannel();
-    return;
+    
   }
 
   // For other channels, they would need to be created through the normal flow
@@ -81,7 +81,7 @@ async function ensureChannelExists(channelName) {
 // Create the AI Assistant channel
 function createAIAssistantChannel() {
   const channelsList = document.getElementById("channelsList");
-  if (!channelsList) return;
+  if (!channelsList) {return;}
 
   // Find where to insert (after Direct Messages category or at end)
   const dmCategory = Array.from(
@@ -253,7 +253,7 @@ function setupCallButtons() {
 
 function setupChannelSettings() {
   const settingsBtn = document.getElementById("channelSettingsBtn");
-  if (!settingsBtn) return;
+  if (!settingsBtn) {return;}
 
   const user = authManager.getCurrentUser();
   const userRole = authManager.getUserRole();
@@ -480,7 +480,7 @@ async function handleChannelCreation(e) {
 
 function addChannelToSidebar(channel) {
   const channelsList = document.getElementById("channelsList");
-  if (!channelsList) return;
+  if (!channelsList) {return;}
 
   // Find where to insert (after Team Channels category)
   const teamChannelsCategory = channelsList.querySelector(".channel-category");
@@ -651,7 +651,7 @@ async function loadMessages() {
 
 function updateMessagesContainer(messages) {
   const container = document.getElementById("messagesContainer");
-  if (!container) return;
+  if (!container) {return;}
 
   const currentUser = authManager.getCurrentUser();
 
@@ -723,7 +723,7 @@ async function sendMessage() {
   const sendBtn = document.getElementById("sendBtn");
   const message = input.value.trim();
 
-  if (!message) return;
+  if (!message) {return;}
 
   const user = authManager.getCurrentUser();
 

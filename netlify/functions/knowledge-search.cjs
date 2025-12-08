@@ -37,7 +37,15 @@ exports.handler = async (event, context) => {
 
   try {
     if (event.httpMethod === "POST") {
-      const { query, category, limit = 5 } = JSON.parse(event.body);
+      // Parse and validate request body
+      let bodyData = {};
+      try {
+        bodyData = JSON.parse(event.body);
+      } catch (parseError) {
+        return handleValidationError("Invalid JSON in request body");
+      }
+
+      const { query, category, limit = 5 } = bodyData;
 
       // SECURITY: Validate input parameters
       if (!query || typeof query !== 'string') {

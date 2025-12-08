@@ -6,12 +6,23 @@ const { db, checkEnvVars } = require("./supabase-client.cjs");
 const {
   validateJWT,
   createSuccessResponse,
+  createErrorResponse,
   handleServerError,
+  handleNotFoundError,
   logFunctionCall,
   CORS_HEADERS
 } = require("./utils/error-handler.cjs");
 
-const JWT_SECRET = process.env.JWT_SECRET;
+// JWT_SECRET will be checked at runtime, not module load time
+// This prevents the function from failing to load if env var is missing
+const getJWTSecret = () => {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    console.error("CRITICAL: JWT_SECRET environment variable is not set!");
+    throw new Error("JWT_SECRET environment variable is required for security");
+  }
+  return secret;
+};
 
 // Tournament schedule data (fallback if database is unavailable)
 const TOURNAMENT_SCHEDULE = {
@@ -235,14 +246,7 @@ exports.handler = async (event, context) => {
 
   // Only allow GET requests for now
   if (event.httpMethod !== "GET") {
-    return {
-      statusCode: 405,
-      headers: CORS_HEADERS,
-      body: JSON.stringify({
-        success: false,
-        error: "Method not allowed",
-      }),
-    };
+    return createErrorResponse("Method not allowed", 405, 'method_not_allowed');
   }
 
   try {
@@ -255,17 +259,9 @@ exports.handler = async (event, context) => {
       const allTournaments = getAllTournaments();
       const tournament = allTournaments.find(t => t.id === id);
       if (tournament) {
-        return {
-          statusCode: 200,
-          headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            success: true,
-            data: { tournament },
-          }),
-        };
+        return createSuccessResponse({ tournament });
+      } else {
+        return handleNotFoundError(`Tournament with ID ${id}`);
       }
     }
 

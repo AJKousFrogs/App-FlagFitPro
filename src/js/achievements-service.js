@@ -270,7 +270,7 @@ class AchievementsService {
 
     Object.values(this.achievements).forEach(achievement => {
       // Skip already unlocked
-      if (achievement.unlocked) return;
+      if (achievement.unlocked) {return;}
 
       // Check condition
       if (achievement.condition(userData)) {

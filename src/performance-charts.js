@@ -96,7 +96,7 @@ export class PerformanceCharts {
 
   // Load Chart.js library dynamically
   async loadChartJS() {
-    if (window.Chart) return; // Already loaded
+    if (window.Chart) {return;} // Already loaded
 
     return new Promise((resolve, reject) => {
       const script = document.createElement("script");
@@ -121,7 +121,7 @@ export class PerformanceCharts {
   // Performance Trends Chart (40-yard dash, broad jump, etc.)
   async createPerformanceTrendsChart(canvasId) {
     const canvas = document.getElementById(canvasId);
-    if (!canvas) return;
+    if (!canvas) {return;}
 
     // Destroy existing chart if present (prevent memory leaks)
     if (this.charts.has(canvasId)) {
@@ -174,7 +174,7 @@ export class PerformanceCharts {
   // Wellness Tracking Chart (sleep, energy, stress, etc.)
   async createWellnessChart(canvasId) {
     const canvas = document.getElementById(canvasId);
-    if (!canvas) return;
+    if (!canvas) {return;}
 
     // Destroy existing chart if present (prevent memory leaks)
     if (this.charts.has(canvasId)) {
@@ -226,7 +226,7 @@ export class PerformanceCharts {
   // Body Composition Chart (weight, body fat, muscle mass)
   async createBodyCompositionChart(canvasId) {
     const canvas = document.getElementById(canvasId);
-    if (!canvas) return;
+    if (!canvas) {return;}
 
     // Destroy existing chart if present (prevent memory leaks)
     if (this.charts.has(canvasId)) {
@@ -279,7 +279,7 @@ export class PerformanceCharts {
   // Combined Overview Chart
   async createOverviewChart(canvasId) {
     const canvas = document.getElementById(canvasId);
-    if (!canvas) return;
+    if (!canvas) {return;}
 
     // Destroy existing chart if present (prevent memory leaks)
     if (this.charts.has(canvasId)) {
@@ -343,7 +343,7 @@ export class PerformanceCharts {
     // Group by test type
     const grouped = {};
     performanceHistory.forEach((test) => {
-      if (!grouped[test.testType]) grouped[test.testType] = [];
+      if (!grouped[test.testType]) {grouped[test.testType] = [];}
       grouped[test.testType].push({
         x: test.timestamp,
         y: test.result,
@@ -551,24 +551,22 @@ export class PerformanceCharts {
 
   // Performance scoring methods
   calculatePerformanceScore(trend) {
-    if (!trend) return 50;
+    if (!trend) {return 50;}
 
-    if (trend.trend === "improving")
-      return Math.min(100, 70 + Math.abs(trend.changePercent));
-    if (trend.trend === "declining")
-      return Math.max(0, 70 - Math.abs(trend.changePercent));
+    if (trend.trend === "improving") {return Math.min(100, 70 + Math.abs(trend.changePercent));}
+    if (trend.trend === "declining") {return Math.max(0, 70 - Math.abs(trend.changePercent));}
     return 70; // stable
   }
 
   calculateWellnessScore(wellness) {
-    if (!wellness || !wellness.averageScore) return 50;
+    if (!wellness || !wellness.averageScore) {return 50;}
     return Math.min(100, wellness.averageScore * 10);
   }
 
   calculateConsistencyScore(trends) {
     // Calculate based on variance in performance
     const performanceData = Object.values(trends.performance || {});
-    if (performanceData.length === 0) return 50;
+    if (performanceData.length === 0) {return 50;}
 
     let totalVariance = 0;
     performanceData.forEach((perf) => {

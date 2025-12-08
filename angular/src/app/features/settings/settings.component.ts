@@ -5,7 +5,7 @@ import {
   signal,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import {
   FormBuilder,
   FormGroup,
@@ -15,8 +15,8 @@ import {
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
-import { InputSwitchModule } from "primeng/inputswitch";
-import { DropdownModule } from "primeng/dropdown";
+import { ToggleSwitch } from "primeng/toggleswitch";
+import { Select } from "primeng/select";
 import { MessageService } from "primeng/api";
 import { ToastModule } from "primeng/toast";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -29,17 +29,16 @@ import { AuthService } from "../../core/services/auth.service";
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     CardModule,
     ButtonModule,
     InputTextModule,
-    InputSwitchModule,
-    DropdownModule,
+    ToggleSwitch,
+    Select,
     ToastModule,
     MainLayoutComponent,
-    PageHeaderComponent,
-  ],
+    PageHeaderComponent
+],
   providers: [MessageService],
   template: `
     <p-toast></p-toast>
@@ -150,14 +149,14 @@ import { AuthService } from "../../core/services/auth.service";
                 <label for="profileVisibility" class="p-label"
                   >Profile Visibility</label
                 >
-                <p-dropdown
+                <p-select
                   id="profileVisibility"
                   formControlName="profileVisibility"
                   [options]="visibilityOptions"
                   optionLabel="label"
                   optionValue="value"
                   placeholder="Select visibility"
-                ></p-dropdown>
+                ></p-select>
               </div>
               <div class="p-field-checkbox mb-4">
                 <p-inputSwitch formControlName="showStats"></p-inputSwitch>
@@ -179,25 +178,25 @@ import { AuthService } from "../../core/services/auth.service";
             <form [formGroup]="preferencesForm">
               <div class="p-field mb-4">
                 <label for="theme" class="p-label">Theme</label>
-                <p-dropdown
+                <p-select
                   id="theme"
                   formControlName="theme"
                   [options]="themeOptions"
                   optionLabel="label"
                   optionValue="value"
                   placeholder="Select theme"
-                ></p-dropdown>
+                ></p-select>
               </div>
               <div class="p-field mb-4">
                 <label for="language" class="p-label">Language</label>
-                <p-dropdown
+                <p-select
                   id="language"
                   formControlName="language"
                   [options]="languageOptions"
                   optionLabel="label"
                   optionValue="value"
                   placeholder="Select language"
-                ></p-dropdown>
+                ></p-select>
               </div>
             </form>
           </p-card>

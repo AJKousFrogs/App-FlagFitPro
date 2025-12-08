@@ -558,7 +558,7 @@ class TrainingVideoComponent extends ComponentWithCleanup {
         let video = null;
         playlist.forEach((section) => {
           const found = section.videos.find((v) => v.id === videoId);
-          if (found) video = found;
+          if (found) {video = found;}
         });
         if (video) {
           this.selectVideo(video);

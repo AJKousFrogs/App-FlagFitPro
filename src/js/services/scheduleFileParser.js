@@ -36,9 +36,9 @@ class ScheduleFileParser {
    */
   getFileType(filename) {
     const ext = filename.split(".").pop().toLowerCase();
-    if (ext === "csv") return "csv";
-    if (["xlsx", "xls"].includes(ext)) return "excel";
-    if (["md", "markdown"].includes(ext)) return "markdown";
+    if (ext === "csv") {return "csv";}
+    if (["xlsx", "xls"].includes(ext)) {return "excel";}
+    if (["md", "markdown"].includes(ext)) {return "markdown";}
     return null;
   }
 
@@ -319,7 +319,7 @@ class ScheduleFileParser {
    * Parse date string in various formats
    */
   parseDate(dateString) {
-    if (!dateString) return null;
+    if (!dateString) {return null;}
     
     // Try ISO format (YYYY-MM-DD)
     let date = new Date(dateString);

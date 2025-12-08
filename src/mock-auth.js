@@ -66,6 +66,10 @@ export class MockAuth {
       };
     }
 
+    // Check if user is registered (for better demo experience)
+    const existingUsers = JSON.parse(localStorage.getItem('demo_registered_users') || '[]');
+    const isRegistered = existingUsers.includes(credentials.email.toLowerCase());
+
     // For demo purposes, accept any valid email/password combination
     // In production, this would validate against a real database
     try {
@@ -75,6 +79,7 @@ export class MockAuth {
         email: credentials.email,
         name: this.extractNameFromEmail(credentials.email),
         role: "player",
+        email_verified: isRegistered, // Verified if they registered through the app
         createdAt: new Date().toISOString(),
         lastLogin: new Date().toISOString(),
       };
@@ -142,29 +147,72 @@ export class MockAuth {
     // Simulate API delay
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    if (userData.email && userData.password) {
-      this.isLoggedIn = true;
-      this.currentUser = {
-        id: "1",
-        email: userData.email,
-        name: userData.name || userData.email.split("@")[0],
-        role: "player",
-      };
-
-      storageService.set("authToken", "demo-token-" + Date.now(), { usePrefix: false });
-      storageService.set("userData", this.currentUser, { usePrefix: false });
-
+    // Basic validation
+    if (!userData?.email || !userData?.password) {
       return {
-        success: true,
-        token: "demo-token-" + Date.now(),
-        user: this.currentUser,
+        success: false,
+        error: "Email and password are required",
       };
     }
 
-    return {
-      success: false,
-      error: "Registration failed",
-    };
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(userData.email)) {
+      return {
+        success: false,
+        error: "Invalid email format",
+      };
+    }
+
+    // Check if user already exists (simple localStorage check for demo)
+    const existingUsers = JSON.parse(localStorage.getItem('demo_registered_users') || '[]');
+    if (existingUsers.includes(userData.email.toLowerCase())) {
+      return {
+        success: false,
+        error: "User with this email already exists",
+      };
+    }
+
+    try {
+      this.isLoggedIn = true;
+      this.currentUser = {
+        id: `demo-${Date.now()}`,
+        email: userData.email,
+        name: userData.name || this.extractNameFromEmail(userData.email),
+        role: "player",
+        email_verified: false,
+        createdAt: new Date().toISOString(),
+      };
+
+      // Generate demo token
+      const token = this.generateDemoToken();
+
+      // Store token and user data
+      storageService.set("authToken", token, { usePrefix: false });
+      storageService.set("userData", this.currentUser, { usePrefix: false });
+
+      // Add to registered users list
+      existingUsers.push(userData.email.toLowerCase());
+      localStorage.setItem('demo_registered_users', JSON.stringify(existingUsers));
+
+      logger.debug("Demo registration successful for:", userData.email);
+
+      return {
+        success: true,
+        data: {
+          token: token,
+          user: this.currentUser,
+        },
+        message: "Account created successfully. Please check your email to verify your account.",
+        requiresVerification: true
+      };
+    } catch (error) {
+      logger.error("Mock registration error:", error);
+      return {
+        success: false,
+        error: "Registration failed. Please try again.",
+      };
+    }
   }
 
   async logout() {

@@ -30,6 +30,8 @@
     <script src="./src/icon-helper.js" defer></script>
     <!-- Universal Components -->
     <script type="module" src="./src/js/main.js"></script>
+    <!-- Universal Form Validator -->
+    <script type="module" src="./src/js/components/universal-form-validator.js" defer></script>
     <!-- Footer Loader (Dynamic Component) -->
     <script type="module" src="./src/js/components/footer-loader.js" defer></script>
   </head>
@@ -212,6 +214,9 @@
       import { authManager } from "./src/auth-manager.js";
       import { validateEmail } from "./src/js/utils/shared.js";
       import { escapeHtml } from "./src/js/utils/sanitize.js";
+      import { showMessage, hideMessage, clearMessages } from "./src/js/utils/message-utils.js";
+      import { generateCSRFToken, validateCSRFToken, setCSRFTokenInForm } from "./src/js/utils/security-utils.js";
+      import { createLoginRateLimiter } from "./src/js/utils/security-utils.js";
 
       document
         .getElementById("loginForm")
@@ -224,8 +229,7 @@
           const password = document.getElementById("password").value;
 
           // Clear previous error messages
-          hideMessage("errorMessage");
-          hideMessage("successMessage");
+          clearMessages("errorMessage", "successMessage");
 
           // Validate form inputs
           if (!validateLoginForm(email, password)) {
@@ -245,10 +249,8 @@
           }
 
           // Validate CSRF token
-          const storedToken = sessionStorage.getItem("csrfToken");
           const formToken = document.getElementById("csrfToken").value;
-
-          if (!storedToken || storedToken !== formToken) {
+          if (!validateCSRFToken(formToken)) {
             showMessage(
               "errorMessage",
               "Security validation failed. Please refresh the page.",
@@ -259,10 +261,12 @@
           }
 
           // Check rate limiting
-          if (loginAttempts >= 3) {
+          const rateLimiter = createLoginRateLimiter();
+          if (rateLimiter.isRateLimited()) {
+            const timeRemaining = rateLimiter.getTimeRemaining();
             showMessage(
               "errorMessage",
-              "Too many failed attempts. Please wait before trying again.",
+              `Too many failed attempts. Please wait ${timeRemaining} minutes before trying again.`,
             );
             submitButton.innerHTML = originalText;
             submitButton.disabled = false;
@@ -281,8 +285,10 @@
               );
             }
 
+            const rateLimiter = createLoginRateLimiter();
+            
             if (result.success) {
-              recordLoginAttempt(true);
+              rateLimiter.recordAttempt(true);
 
               if (isDevelopment) {
                 console.log("✅ Login successful! Redirecting...");
@@ -294,13 +300,14 @@
                   "block";
               }, 3000);
             } else {
-              recordLoginAttempt(false);
+              rateLimiter.recordAttempt(false);
               showMessage("errorMessage", "Invalid email or password.");
               submitButton.innerHTML = originalText;
               submitButton.disabled = false;
             }
           } catch (error) {
-            recordLoginAttempt(false);
+            const rateLimiter = createLoginRateLimiter();
+            rateLimiter.recordAttempt(false);
             showMessage("errorMessage", "Login failed. Please try again.");
             submitButton.innerHTML = originalText;
             submitButton.disabled = false;
@@ -380,20 +387,26 @@
             }
             originalError.apply(console, args);
           };
-
-          try {
-            lucide.createIcons();
-          } finally {
-            // Restore original console.error
-            console.error = originalError;
-          }
         }
 
         // Generate CSRF token
-        generateCSRFToken();
+        setCSRFTokenInForm("csrfToken");
 
         // Initialize rate limiting
-        initializeRateLimiting();
+        const rateLimiter = createLoginRateLimiter();
+        const rateLimitState = rateLimiter.getState();
+        
+        // Show rate limit warning if too many attempts
+        if (rateLimitState.isLimited) {
+          const timeRemaining = rateLimiter.getTimeRemaining();
+          if (timeRemaining > 0) {
+            showMessage(
+              "errorMessage",
+              `Too many login attempts. Please wait ${timeRemaining} minutes before trying again.`,
+            );
+            document.querySelector('button[type="submit"]').disabled = true;
+          }
+        }
 
         // Check if we're in demo mode (localhost or development)
         const isDemoMode =
@@ -408,17 +421,7 @@
           document.getElementById("password").value = "TestDemo123!";
         }
 
-        // Add real-time validation
-        document.getElementById("email").addEventListener("input", function () {
-          validateEmailField(this.value);
-        });
-
-        document
-          .getElementById("password")
-          .addEventListener("input", function () {
-            validatePasswordField(this.value);
-            checkPasswordStrength();
-          });
+        // Form validation is handled by UniversalFormValidator (auto-initialized)
 
         // Only log in development mode
         if (isDemoMode) {
@@ -513,300 +516,21 @@
         }
       }
 
-      // Helper functions for inline validation
-      function showFieldError(fieldId, message) {
-        const field = document.getElementById(fieldId);
-        const errorDiv = document.getElementById(`${fieldId}-error`);
-        const successDiv = document.getElementById(`${fieldId}-success`);
-
-        if (field) {
-          field.classList.remove("success");
-          field.classList.add("error");
-          field.setAttribute("aria-invalid", "true");
-        }
-
-        if (errorDiv) {
-          errorDiv.textContent = message;
-          errorDiv.style.display = "flex";
-        }
-
-        if (successDiv) {
-          successDiv.style.display = "none";
-        }
-      }
-
-      function showFieldSuccess(fieldId) {
-        const field = document.getElementById(fieldId);
-        const errorDiv = document.getElementById(`${fieldId}-error`);
-        const successDiv = document.getElementById(`${fieldId}-success`);
-
-        if (field) {
-          field.classList.remove("error");
-          field.classList.add("success");
-          field.setAttribute("aria-invalid", "false");
-        }
-
-        if (errorDiv) {
-          errorDiv.style.display = "none";
-        }
-
-        if (successDiv) {
-          successDiv.style.display = "flex";
-        }
-      }
-
-      function clearFieldState(fieldId) {
-        const field = document.getElementById(fieldId);
-        const errorDiv = document.getElementById(`${fieldId}-error`);
-        const successDiv = document.getElementById(`${fieldId}-success`);
-
-        if (field) {
-          field.classList.remove("error", "success");
-          field.setAttribute("aria-invalid", "false");
-        }
-
-        if (errorDiv) {
-          errorDiv.style.display = "none";
-        }
-
-        if (successDiv) {
-          successDiv.style.display = "none";
-        }
-      }
-
-      // Real-time email validation
-      function validateEmailField(email) {
-        if (!email || email.trim() === "") {
-          clearFieldState("email");
-          return false;
-        }
-
-        if (validateEmail(email)) {
-          showFieldSuccess("email");
-          return true;
-        } else {
-          showFieldError(
-            "email",
-            "Please enter a valid email address (e.g., user@example.com)",
-          );
-          return false;
-        }
-      }
-
-      // Real-time password validation
-      function validatePasswordField(password) {
-        if (!password || password.trim() === "") {
-          clearFieldState("password");
-          return false;
-        }
-
-        if (password.length < 8) {
-          showFieldError(
-            "password",
-            "Password must be at least 8 characters long.",
-          );
-          return false;
-        }
-
-        const passwordRegex =
-          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-        if (passwordRegex.test(password)) {
-          showFieldSuccess("password");
-          return true;
-        } else {
-          showFieldError(
-            "password",
-            "Password must contain uppercase, lowercase, number, and special character (@$!%*?&).",
-          );
-          return false;
-        }
-      }
-
-      // Form validation functions
+      // Form validation is handled by UniversalFormValidator
       function validateLoginForm(email, password) {
-        let isValid = true;
-
-        // Email validation
+        // Basic validation - detailed validation handled by UniversalFormValidator
         if (!email || email.trim() === "") {
-          showFieldError("email", "Please enter your email address.");
           showMessage("errorMessage", "Please enter your email address.");
-          isValid = false;
-        } else {
-          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-          if (!emailRegex.test(email)) {
-            showFieldError(
-              "email",
-              "Please enter a valid email address (e.g., user@example.com)",
-            );
-            showMessage("errorMessage", "Please enter a valid email address.");
-            isValid = false;
-          } else {
-            showFieldSuccess("email");
-          }
+          return false;
         }
-
-        // Password validation
         if (!password || password.trim() === "") {
-          showFieldError("password", "Please enter your password.");
           showMessage("errorMessage", "Please enter your password.");
-          isValid = false;
-        } else if (password.length < 8) {
-          showFieldError(
-            "password",
-            "Password must be at least 8 characters long.",
-          );
-          showMessage(
-            "errorMessage",
-            "Password must be at least 8 characters long.",
-          );
-          isValid = false;
-        } else {
-          const passwordRegex =
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-          if (!passwordRegex.test(password)) {
-            showFieldError(
-              "password",
-              "Password must contain uppercase, lowercase, number, and special character (@$!%*?&).",
-            );
-            showMessage(
-              "errorMessage",
-              "Password must contain uppercase, lowercase, number, and special character.",
-            );
-            isValid = false;
-          } else {
-            showFieldSuccess("password");
-          }
+          return false;
         }
-
-        return isValid;
+        return true;
       }
 
-      function showMessage(elementId, message) {
-        const element = document.getElementById(elementId);
-        element.textContent = message;
-        element.style.display = "block";
-
-        // Auto-hide after 5 seconds
-        setTimeout(() => {
-          element.style.display = "none";
-        }, 5000);
-      }
-
-      function hideMessage(elementId) {
-        const element = document.getElementById(elementId);
-        element.style.display = "none";
-      }
-
-      // CSRF Token Generation
-      function generateCSRFToken() {
-        const token = Array.from(crypto.getRandomValues(new Uint8Array(32)))
-          .map((b) => b.toString(16).padStart(2, "0"))
-          .join("");
-        document.getElementById("csrfToken").value = token;
-        sessionStorage.setItem("csrfToken", token);
-      }
-
-      // Rate Limiting Implementation
-      let loginAttempts = parseInt(
-        localStorage.getItem("loginAttempts") || "0",
-      );
-      let lastAttempt = parseInt(
-        localStorage.getItem("lastLoginAttempt") || "0",
-      );
-
-      function initializeRateLimiting() {
-        // Reset attempts after 15 minutes
-        const fifteenMinutes = 15 * 60 * 1000;
-        if (Date.now() - lastAttempt > fifteenMinutes) {
-          loginAttempts = 0;
-          localStorage.removeItem("loginAttempts");
-          localStorage.removeItem("lastLoginAttempt");
-        }
-
-        // Show rate limit warning if too many attempts
-        if (loginAttempts >= 3) {
-          const timeLeft = Math.ceil(
-            (fifteenMinutes - (Date.now() - lastAttempt)) / 1000 / 60,
-          );
-          if (timeLeft > 0) {
-            showMessage(
-              "errorMessage",
-              `Too many login attempts. Please wait ${timeLeft} minutes before trying again.`,
-            );
-            document.querySelector('button[type="submit"]').disabled = true;
-          }
-        }
-      }
-
-      function recordLoginAttempt(success = false) {
-        if (success) {
-          // Reset on successful login
-          loginAttempts = 0;
-          localStorage.removeItem("loginAttempts");
-          localStorage.removeItem("lastLoginAttempt");
-        } else {
-          // Increment failed attempts
-          loginAttempts++;
-          lastAttempt = Date.now();
-          localStorage.setItem("loginAttempts", loginAttempts.toString());
-          localStorage.setItem("lastLoginAttempt", lastAttempt.toString());
-
-          if (loginAttempts >= 3) {
-            showMessage(
-              "errorMessage",
-              "Too many failed attempts. Account temporarily locked for 15 minutes.",
-            );
-            document.querySelector('button[type="submit"]').disabled = true;
-          }
-        }
-      }
-
-      // Password Strength Indicator
-      function checkPasswordStrength() {
-        const password = document.getElementById("password").value;
-        const strengthDiv = document.getElementById("passwordStrength");
-
-        if (password.length === 0) {
-          strengthDiv.style.display = "none";
-          return;
-        }
-
-        let strength = 0;
-        let feedback = [];
-
-        // Length check
-        if (password.length >= 8) strength++;
-        else feedback.push("At least 8 characters");
-
-        // Uppercase check
-        if (/[A-Z]/.test(password)) strength++;
-        else feedback.push("Uppercase letter");
-
-        // Lowercase check
-        if (/[a-z]/.test(password)) strength++;
-        else feedback.push("Lowercase letter");
-
-        // Number check
-        if (/\d/.test(password)) strength++;
-        else feedback.push("Number");
-
-        // Special character check
-        if (/[@$!%*?&]/.test(password)) strength++;
-        else feedback.push("Special character (@$!%*?&)");
-
-        strengthDiv.style.display = "block";
-
-        // SECURITY: Sanitize feedback array before displaying
-        const safeFeedback = escapeHtml(feedback.join(", "));
-
-        if (strength <= 2) {
-          strengthDiv.innerHTML = `<span style="color: var(--error);">Weak: Missing ${safeFeedback}</span>`;
-        } else if (strength <= 4) {
-          strengthDiv.innerHTML = `<span style="color: var(--warning);">Medium: Missing ${safeFeedback}</span>`;
-        } else {
-          strengthDiv.innerHTML = `<span style="color: var(--success);">Strong password!</span>`;
-        }
-      }
+      // Password strength is handled by UniversalFormValidator
     </script>
   </body>
 </html>

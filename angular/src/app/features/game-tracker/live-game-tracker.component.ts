@@ -18,7 +18,7 @@ import {
 } from "@angular/forms";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
-import { DropdownModule } from "primeng/dropdown";
+import { Select } from "primeng/select";
 import { InputNumberModule } from "primeng/inputnumber";
 import { SelectButtonModule } from "primeng/selectbutton";
 import { SpeedDialModule } from "primeng/speeddial";
@@ -70,7 +70,7 @@ interface Play {
     ReactiveFormsModule,
     ButtonModule,
     DialogModule,
-    DropdownModule,
+    Select,
     InputNumberModule,
     SelectButtonModule,
     SpeedDialModule,
@@ -231,7 +231,7 @@ interface Play {
 
           <div class="form-row">
             <label>Player</label>
-            <p-dropdown
+            <p-select
               formControlName="playerId"
               [options]="activePlayers()"
               optionLabel="name"

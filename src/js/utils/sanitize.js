@@ -62,13 +62,18 @@ function sanitizeUrl(url) {
   const hasProtocol = /^[a-z][a-z0-9+.-]*:/i.test(str);
 
   if (hasProtocol && !safeProtocols.test(str)) {
-    console.warn('[Sanitize] Blocked unsafe URL protocol:', str);
+    // Don't log the actual URL content in production for security
+    if (typeof logger !== 'undefined') {
+      logger.warn('[Sanitize] Blocked unsafe URL protocol');
+    }
     return '';
   }
 
-  // Block javascript: and data: URLs
+  // Block javascript: and data: URLs (redundant check for safety)
   if (/^(javascript|data|vbscript):/i.test(str)) {
-    console.warn('[Sanitize] Blocked XSS URL:', str);
+    if (typeof logger !== 'undefined') {
+      logger.warn('[Sanitize] Blocked XSS URL attempt');
+    }
     return '';
   }
 
@@ -167,4 +172,7 @@ if (typeof window !== 'undefined') {
   };
 }
 
-console.log('[Sanitize] HTML sanitization utilities loaded');
+// Use logger if available (imported modules will have it)
+if (typeof logger !== 'undefined') {
+  logger.debug('[Sanitize] HTML sanitization utilities loaded');
+}

@@ -278,31 +278,31 @@ class AITrainingScheduler {
     const day = date.getDate();
 
     // December (12) - Foundation
-    if (month === 12) return "foundation";
+    if (month === 12) {return "foundation";}
     
     // January (1) - Power Development
-    if (month === 1) return "power_development";
+    if (month === 1) {return "power_development";}
     
     // February (2) - Competition Preparation
-    if (month === 2) return "competition_preparation";
+    if (month === 2) {return "competition_preparation";}
     
     // March (3) - Explosive Phase
-    if (month === 3) return "explosive_phase";
+    if (month === 3) {return "explosive_phase";}
     
     // April-June (4-6) - Tournament Maintenance
-    if (month >= 4 && month <= 6) return "tournament_maintenance";
+    if (month >= 4 && month <= 6) {return "tournament_maintenance";}
     
     // July (7) - Off-Season Conditioning
-    if (month === 7) return "off_season_conditioning";
+    if (month === 7) {return "off_season_conditioning";}
     
     // August (8) - World Championship Prep
-    if (month === 8) return "world_championship_prep";
+    if (month === 8) {return "world_championship_prep";}
     
     // September (9) - Peak for Elite 8
-    if (month === 9) return "peak_elite_8";
+    if (month === 9) {return "peak_elite_8";}
     
     // October (10) - Transition
-    if (month === 10) return "transition";
+    if (month === 10) {return "transition";}
     
     // November (11) - Rest
     return "rest";

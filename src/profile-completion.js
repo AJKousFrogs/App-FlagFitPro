@@ -28,7 +28,7 @@ export class ProfileCompletionManager {
 
   // Show profile completion modal
   showProfileCompletionModal(required = false) {
-    if (this.isActive) return;
+    if (this.isActive) {return;}
 
     this.isActive = true;
     const modal = document.createElement("div");
@@ -253,7 +253,7 @@ export class ProfileCompletionManager {
   }
 
   parseHeight(heightCm) {
-    if (!heightCm) return { feet: "", inches: "" };
+    if (!heightCm) {return { feet: "", inches: "" };}
     const totalInches = Math.round(heightCm / 2.54);
     const feet = Math.floor(totalInches / 12);
     const inches = totalInches % 12;

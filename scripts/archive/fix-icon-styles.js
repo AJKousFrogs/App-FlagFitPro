@@ -54,7 +54,7 @@ function fixIconStyles(htmlContent) {
       const seen = new Set();
       styles = styles.filter((style) => {
         const key = style.split(":")[0].trim();
-        if (seen.has(key)) return false;
+        if (seen.has(key)) {return false;}
         seen.add(key);
         return true;
       });
@@ -72,8 +72,7 @@ function fixIconStyles(htmlContent) {
         .replace(/color:\s*[^;]+/g, "")
         .replace(/stroke:\s*[^;]+/g, "");
       cleanStyles = cleanStyles.replace(/;;/g, ";").replace(/;\s*;/g, ";");
-      if (!cleanStyles.includes("width:"))
-        cleanStyles = "width: 20px; height: 20px; " + cleanStyles;
+      if (!cleanStyles.includes("width:")) {cleanStyles = "width: 20px; height: 20px; " + cleanStyles;}
       cleanStyles +=
         " color: var(--icon-color-muted); stroke: var(--icon-color-muted);";
       return match.replace(/style="[^"]*"/, `style="${cleanStyles.trim()}"`);
@@ -88,8 +87,7 @@ function fixIconStyles(htmlContent) {
         .replace(/color:\s*[^;]+/g, "")
         .replace(/stroke:\s*[^;]+/g, "");
       cleanStyles = cleanStyles.replace(/;;/g, ";").replace(/;\s*;/g, ";");
-      if (!cleanStyles.includes("width:"))
-        cleanStyles = "width: 16px; height: 16px; " + cleanStyles;
+      if (!cleanStyles.includes("width:")) {cleanStyles = "width: 16px; height: 16px; " + cleanStyles;}
       cleanStyles +=
         " color: var(--icon-color-muted); stroke: var(--icon-color-muted);";
       return match.replace(/style="[^"]*"/, `style="${cleanStyles.trim()}"`);
@@ -104,8 +102,7 @@ function fixIconStyles(htmlContent) {
         .replace(/color:\s*[^;]+/g, "")
         .replace(/stroke:\s*[^;]+/g, "");
       cleanStyles = cleanStyles.replace(/;;/g, ";").replace(/;\s*;/g, ";");
-      if (!cleanStyles.includes("width:"))
-        cleanStyles = "width: 18px; height: 18px; " + cleanStyles;
+      if (!cleanStyles.includes("width:")) {cleanStyles = "width: 18px; height: 18px; " + cleanStyles;}
       cleanStyles +=
         " color: var(--icon-color-secondary); stroke: var(--icon-color-secondary);";
       return match.replace(/style="[^"]*"/, `style="${cleanStyles.trim()}"`);

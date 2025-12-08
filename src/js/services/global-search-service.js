@@ -206,7 +206,7 @@ async function loadPlayers() {
  * @returns {string} Normalized text
  */
 function normalizeText(text) {
-  if (!text) return "";
+  if (!text) {return "";}
   return text
     .toLowerCase()
     .normalize("NFD")
@@ -221,7 +221,7 @@ function normalizeText(text) {
  * @returns {Array} Array of search results
  */
 function searchPlayers(query, players) {
-  if (!players || players.length === 0) return [];
+  if (!players || players.length === 0) {return [];}
 
   const normalizedQuery = normalizeText(query);
   const queryWords = normalizedQuery.split(/\s+/).filter(w => w.length > 0);

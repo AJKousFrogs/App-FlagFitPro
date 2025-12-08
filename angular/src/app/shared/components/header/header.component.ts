@@ -9,7 +9,7 @@ import {
   computed,
   OnDestroy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { Router, RouterModule, NavigationEnd } from "@angular/router";
 import { FormsModule } from "@angular/forms";
 import { filter } from "rxjs/operators";
@@ -28,15 +28,14 @@ import { MenuItem } from "primeng/api";
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     RouterModule,
     FormsModule,
     ButtonModule,
     InputTextModule,
     AvatarModule,
     MenuModule,
-    BadgeModule,
-  ],
+    BadgeModule
+],
   template: `
     <header class="app-header" [class]="headerClass()">
       <!-- Left Section -->
@@ -48,92 +47,103 @@ import { MenuItem } from "primeng/api";
           (click)="onToggleSidebar()"
           aria-label="Toggle navigation menu"
           aria-expanded="false"
-        >
+          >
           <i class="pi pi-bars"></i>
         </button>
-
+    
         <!-- Logo (conditional) -->
-        <div class="logo-container" *ngIf="config().showLogo">
-          <img
-            src="/assets/images/flagfit-logo.svg"
-            alt="FlagFit Pro"
-            class="logo"
-            (error)="onLogoError($event)"
-          />
-        </div>
-
+        @if (config().showLogo) {
+          <div class="logo-container">
+            <img
+              src="/assets/images/flagfit-logo.svg"
+              alt="FlagFit Pro"
+              class="logo"
+              (error)="onLogoError($event)"
+              />
+          </div>
+        }
+    
         <!-- Breadcrumbs (conditional) -->
-        <nav class="breadcrumbs" *ngIf="config().showBreadcrumbs">
-          <span class="breadcrumb-item">{{ currentSection() }}</span>
-          <i class="pi pi-chevron-right separator" *ngIf="currentPage()"></i>
-          <span class="breadcrumb-item current" *ngIf="currentPage()">{{
-            currentPage()
-          }}</span>
-        </nav>
-
+        @if (config().showBreadcrumbs) {
+          <nav class="breadcrumbs">
+            <span class="breadcrumb-item">{{ currentSection() }}</span>
+            @if (currentPage()) {
+              <i class="pi pi-chevron-right separator"></i>
+            }
+            @if (currentPage()) {
+              <span class="breadcrumb-item current">{{
+                currentPage()
+              }}</span>
+            }
+          </nav>
+        }
+    
         <!-- Search (left position) -->
-        <div
-          class="search-container"
-          *ngIf="config().searchPosition === 'left'"
-        >
-          <span class="p-input-icon-left search-wrapper">
-            <i class="pi pi-search"></i>
-            <input
-              type="text"
-              pInputText
-              [placeholder]="config().searchPlaceholder || 'Search...'"
-              [(ngModel)]="searchQuery"
-              (keyup.enter)="onSearch()"
-              class="search-input"
-              aria-label="Search"
-            />
-          </span>
-        </div>
+        @if (config().searchPosition === 'left') {
+          <div
+            class="search-container"
+            >
+            <span class="p-input-icon-left search-wrapper">
+              <i class="pi pi-search"></i>
+              <input
+                type="text"
+                pInputText
+                [placeholder]="config().searchPlaceholder || 'Search...'"
+                [(ngModel)]="searchQuery"
+                (keyup.enter)="onSearch()"
+                class="search-input"
+                aria-label="Search"
+                />
+            </span>
+          </div>
+        }
       </div>
-
+    
       <!-- Center Section -->
       <div class="header-center">
         <!-- Search (center position) -->
-        <div
-          class="search-container"
-          *ngIf="config().searchPosition === 'center'"
-        >
-          <span class="p-input-icon-left search-wrapper">
-            <i class="pi pi-search"></i>
-            <input
-              type="text"
-              pInputText
-              [placeholder]="config().searchPlaceholder || 'Search...'"
-              [(ngModel)]="searchQuery"
-              (keyup.enter)="onSearch()"
-              class="search-input"
-              aria-label="Search"
-            />
-          </span>
-        </div>
+        @if (config().searchPosition === 'center') {
+          <div
+            class="search-container"
+            >
+            <span class="p-input-icon-left search-wrapper">
+              <i class="pi pi-search"></i>
+              <input
+                type="text"
+                pInputText
+                [placeholder]="config().searchPlaceholder || 'Search...'"
+                [(ngModel)]="searchQuery"
+                (keyup.enter)="onSearch()"
+                class="search-input"
+                aria-label="Search"
+                />
+            </span>
+          </div>
+        }
       </div>
-
+    
       <!-- Right Section -->
       <div class="header-right">
         <!-- Search (right position) -->
-        <div
-          class="search-container"
-          *ngIf="config().searchPosition === 'right'"
-        >
-          <span class="p-input-icon-left search-wrapper">
-            <i class="pi pi-search"></i>
-            <input
-              type="text"
-              pInputText
-              [placeholder]="config().searchPlaceholder || 'Search...'"
-              [(ngModel)]="searchQuery"
-              (keyup.enter)="onSearch()"
-              class="search-input"
-              aria-label="Search"
-            />
-          </span>
-        </div>
-
+        @if (config().searchPosition === 'right') {
+          <div
+            class="search-container"
+            >
+            <span class="p-input-icon-left search-wrapper">
+              <i class="pi pi-search"></i>
+              <input
+                type="text"
+                pInputText
+                [placeholder]="config().searchPlaceholder || 'Search...'"
+                [(ngModel)]="searchQuery"
+                (keyup.enter)="onSearch()"
+                class="search-input"
+                aria-label="Search"
+                />
+            </span>
+          </div>
+        }
+    
         <!-- Notifications -->
         <p-button
           icon="pi pi-bell"
@@ -145,7 +155,7 @@ import { MenuItem } from "primeng/api";
           ariaLabel="Notifications"
           class="header-icon-btn"
         ></p-button>
-
+    
         <!-- Settings -->
         <p-button
           icon="pi pi-cog"
@@ -155,7 +165,7 @@ import { MenuItem } from "primeng/api";
           ariaLabel="Settings"
           class="header-icon-btn"
         ></p-button>
-
+    
         <!-- Theme Toggle -->
         <div class="theme-toggle">
           <p-button
@@ -170,7 +180,7 @@ import { MenuItem } from "primeng/api";
             isDarkTheme() ? "Dark" : "Light"
           }}</span>
         </div>
-
+    
         <!-- User Menu -->
         <p-menu #userMenu [model]="userMenuItems()" [popup]="true"></p-menu>
         <p-avatar
@@ -182,7 +192,7 @@ import { MenuItem } from "primeng/api";
         ></p-avatar>
       </div>
     </header>
-  `,
+    `,
   styles: [
     `
       .app-header {

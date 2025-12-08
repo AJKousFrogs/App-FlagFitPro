@@ -1,5 +1,5 @@
 import { Component, signal, ChangeDetectionStrategy } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { RouterModule } from "@angular/router";
 
 interface NavItem {
@@ -13,38 +13,39 @@ interface NavItem {
   selector: "app-sidebar",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule],
+  imports: [RouterModule],
   template: `
     <div
       class="sidebar"
       [class.sidebar-open]="isOpen()"
       role="navigation"
       aria-label="Main navigation"
-    >
+      >
       <div
         class="sidebar-logo"
         (click)="navigateToDashboard()"
         title="FlagFit Pro"
         aria-label="Go to dashboard"
-      >
+        >
         <i class="pi pi-activity icon-20"></i>
       </div>
-
+    
       <nav class="nav-section" aria-label="Main navigation">
-        <a
-          *ngFor="let item of navItems; trackBy: trackByRoute"
-          [routerLink]="item.route"
-          routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: false }"
-          class="nav-item"
-          [attr.aria-label]="item.ariaLabel"
-          [id]="'nav-' + item.route.replace('/', '')"
-        >
-          <span class="nav-item-icon">
-            <i [class]="'pi ' + item.icon + ' icon-24'"></i>
-          </span>
-          <span class="nav-item-label">{{ item.label }}</span>
-        </a>
+        @for (item of navItems; track trackByRoute($index, item)) {
+          <a
+            [routerLink]="item.route"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: false }"
+            class="nav-item"
+            [attr.aria-label]="item.ariaLabel"
+            [id]="'nav-' + item.route.replace('/', '')"
+            >
+            <span class="nav-item-icon">
+              <i [class]="'pi ' + item.icon + ' icon-24'"></i>
+            </span>
+            <span class="nav-item-label">{{ item.label }}</span>
+          </a>
+        }
       </nav>
     </div>
     <div
@@ -53,7 +54,7 @@ interface NavItem {
       (click)="closeSidebar()"
       aria-hidden="true"
     ></div>
-  `,
+    `,
   styles: [
     `
       .sidebar {

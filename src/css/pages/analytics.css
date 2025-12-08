@@ -3,128 +3,16 @@
    Page-specific styles for analytics.html
    ================================================================ */
 
-/* Dashboard-specific minimal overrides - Kraken Style */
-body {
-  font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", sans-serif;
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
-}
-
-/* Dark Theme (default) - Higher specificity to override design system */
-html[data-theme="dark"] {
-  /* Override CSS variables for dark theme */
-  --surface-primary: #0f0f0f;
-  --surface-secondary: #1a1a1a;
-  --surface-tertiary: #2a2a2a;
-  --color-text-primary: #ffffff;
-  --color-text-secondary: rgba(255, 255, 255, 0.7);
-  --color-text-tertiary: rgba(255, 255, 255, 0.5);
-  --color-text-on-surface: #ffffff;
-  --color-border-primary: rgba(255, 255, 255, 0.1);
-  --color-border-secondary: rgba(255, 255, 255, 0.08);
-}
-
-body[data-theme="dark"],
-html[data-theme="dark"] body,
-html[data-theme="dark"] {
-  background: var(--surface-primary, #0f0f0f);
-  color: var(--color-text-primary, #ffffff);
-}
-
-/* Light Theme - Higher specificity to override design system */
-html[data-theme="light"] {
-  /* Override CSS variables for light theme */
-  --surface-primary: #ffffff;
-  --surface-secondary: #f5f5f5;
-  --surface-tertiary: #f0f0f0;
-  --color-text-primary: #1a1a1a;
-  --color-text-secondary: rgba(0, 0, 0, 0.7);
-  --color-text-tertiary: rgba(0, 0, 0, 0.5);
-  --color-text-on-surface: #1a1a1a;
-  --color-border-primary: rgba(0, 0, 0, 0.1);
-  --color-border-secondary: rgba(0, 0, 0, 0.08);
-}
-
-body[data-theme="light"],
-html[data-theme="light"] body,
-html[data-theme="light"] {
-  background: var(--surface-primary, #ffffff);
-  color: var(--color-text-primary, #1a1a1a);
-}
+/* Analytics-specific minimal overrides - Kraken Style */
+/* Note: Theme overrides removed - use src/css/themes/dark.css and light.css instead */
 
 /* Navigation sidebar styles are now in src/css/components/sidebar.css */
 
-/* Dashboard-specific styles */
-.dashboard-container {
-  display: flex;
-  min-height: 100vh;
-  background: var(--surface-primary);
-}
-
+/* Dashboard Container - Now in src/css/layout.css */
+/* Main Content - Now in src/css/layout.css */
 /* Navigation sidebar styles are now in src/css/components/sidebar.css */
 
-/* Page-specific styles that can't be replaced with utilities */
-.main-content {
-  margin-left: 250px;
-  width: calc(100% - 250px); /* ✅ Use width instead of max-width */
-  padding: var(--space-xl) var(--space-xl);
-  box-sizing: border-box;
-}
-
-@media (max-width: 1024px) {
-  .main-content {
-    margin-left: 0;
-    width: 100%; /* ✅ Full width on mobile */
-    padding: var(--space-md) var(--space-6);
-  }
-}
-
-@media (max-width: 480px) {
-  .main-content {
-    padding: var(--space-md) var(--space-md);
-  }
-}
-
-/* AI Chat Floating Bubble */
-.ai-chat-bubble {
-  position: fixed;
-  bottom: var(--space-6, 24px);
-  right: var(--space-6, 24px);
-  z-index: 1000;
-}
-
-.ai-chat-button {
-  padding: var(--space-4, 16px) var(--space-6, 24px);
-  background: var(--color-brand-primary, #10c96b);
-  color: white;
-  border: none;
-  border-radius: var(--radius-xl, 12px);
-  font-size: var(--typography-body-md-size, 16px);
-  font-weight: var(--font-weight-medium, 500);
-  cursor: pointer;
-  box-shadow: var(--shadow-lg, 0 8px 24px rgba(0, 0, 0, 0.15));
-  transition: all var(--transition, 0.3s ease);
-}
-
-.ai-chat-button:hover {
-  background: var(--color-brand-primary-hover, #0ea55a);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-xl, 0 12px 32px rgba(0, 0, 0, 0.2));
-}
-
-@media (max-width: 768px) {
-  .ai-chat-bubble {
-    bottom: var(--space-4, 16px);
-    right: var(--space-4, 16px);
-  }
-
-  .ai-chat-button {
-    padding: var(--space-3, 12px) var(--space-4, 16px);
-    font-size: var(--typography-body-sm-size, 14px);
-  }
-}
+/* AI Chat Floating Bubble - Now in src/css/components/ai-chat-bubble.css */
 
 .analytics-container {
   max-width: 1400px;
@@ -152,7 +40,7 @@ html[data-theme="light"] {
 }
 
 .chart-card {
-  background: var(--dark-text-primary);
+  background: var(--surface-primary);
   border-radius: 20px;
   padding: 2rem;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
@@ -186,13 +74,13 @@ html[data-theme="light"] {
   align-items: center;
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;
-  border-bottom: 2px solid var(--dark-bg-secondary);
+  border-bottom: 2px solid var(--color-border-secondary);
 }
 
 .chart-title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--dark-text-primary);
+  color: var(--color-text-primary);
 }
 
 .chart-actions {
@@ -218,21 +106,21 @@ html[data-theme="light"] {
 }
 
 .btn-primary {
-  background: var(--primary-500);
-  color: var(--dark-text-primary);
+  background: var(--color-primary);
+  color: var(--color-text-on-primary);
 }
 
 .btn-primary:hover {
-  background: #2563eb;
+  background: var(--color-primary-600);
 }
 
 .btn-secondary {
-  background: var(--dark-bg-secondary);
-  color: var(--dark-text-secondary);
+  background: var(--surface-secondary);
+  color: var(--color-text-secondary);
 }
 
 .btn-secondary:hover {
-  background: #e5e7eb;
+  background: var(--surface-tertiary);
 }
 
 .chart-container {
@@ -251,7 +139,7 @@ html[data-theme="light"] {
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 1rem;
   padding: 1rem;
-  background: #f9fafb;
+  background: var(--surface-secondary);
   border-radius: 12px;
 }
 
@@ -262,13 +150,13 @@ html[data-theme="light"] {
 .insight-value {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--dark-text-primary);
+  color: var(--color-text-primary);
   margin-bottom: 0.25rem;
 }
 
 .insight-label {
   font-size: 0.75rem;
-  color: var(--dark-text-muted);
+  color: var(--color-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   font-weight: 500;
@@ -284,7 +172,7 @@ html[data-theme="light"] {
 }
 
 .metric-card {
-  background: var(--dark-text-primary);
+  background: var(--surface-primary);
   border-radius: 16px;
   padding: 1.5rem;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
@@ -305,15 +193,15 @@ html[data-theme="light"] {
 }
 
 .metric-value {
-  font-size: var(--font-size-2xl, 2rem);
-  font-weight: var(--font-weight-extrabold, 800);
-  color: var(--dark-text-primary);
+  font-size: var(--text-2xl, 2rem);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-text-primary);
   margin-bottom: 0.5rem;
 }
 
 .metric-label {
-  font-size: var(--font-size-base, 1rem);
-  color: var(--dark-text-muted);
+  font-size: var(--text-base, 1rem);
+  color: var(--color-text-muted);
   font-weight: var(--font-weight-medium, 500);
 }
 
@@ -324,11 +212,11 @@ html[data-theme="light"] {
 }
 
 .trend-positive {
-  color: var(--primary-500);
+  color: var(--color-primary);
 }
 
 .trend-negative {
-  color: var(--error-500);
+  color: var(--color-error);
 }
 
 .full-width-chart {
@@ -360,15 +248,15 @@ html[data-theme="light"] {
 .control-label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--dark-text-muted);
+  color: var(--color-text-muted);
 }
 
 .control-select {
   padding: 0.5rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--color-border);
   border-radius: 6px;
   font-size: 0.875rem;
-  background: var(--dark-text-primary);
+  background: var(--surface-primary);
   /* Ensure proper styling in all browsers */
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -501,7 +389,7 @@ html[data-theme="light"] {
 
   .chart-card {
     box-shadow: none;
-    border: 1px solid #ccc;
+    border: 1px solid var(--color-border);
   }
 }
 
@@ -544,7 +432,7 @@ html[data-theme="light"] {
   -ms-flex-pack: center;
   justify-content: center;
   height: 200px;
-  color: var(--dark-text-muted);
+  color: var(--color-text-muted);
   font-style: italic;
 }
 
@@ -559,7 +447,7 @@ html[data-theme="light"] {
   -ms-flex-pack: center;
   justify-content: center;
   height: 200px;
-  color: var(--error-500);
+  color: var(--color-error);
   font-weight: 500;
 }
 
@@ -600,7 +488,7 @@ html[data-theme="light"] {
 /* Focus styles for accessibility */
 .btn:focus,
 .control-select:focus {
-  outline: 2px solid var(--primary-500);
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
@@ -609,8 +497,8 @@ html[data-theme="light"] {
   position: absolute;
   top: -40px;
   left: 6px;
-  background: #000;
-  color: var(--dark-text-primary);
+  background: var(--color-text);
+  color: var(--color-text-on-primary);
   padding: 8px;
   text-decoration: none;
   z-index: var(--z-index-skiplink, 1600);

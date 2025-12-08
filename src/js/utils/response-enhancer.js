@@ -146,7 +146,7 @@ export class ResponseEnhancer {
    * Personalize response based on user context
    */
   personalizeResponse(response, userContext) {
-    if (!userContext) return response;
+    if (!userContext) {return response;}
 
     let personalized = response;
 

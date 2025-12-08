@@ -5,13 +5,13 @@ import {
   signal,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { AvatarModule } from "primeng/avatar";
 import { TagModule } from "primeng/tag";
-import { TabViewModule } from "primeng/tabview";
+import { Tabs } from "primeng/tabs";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
 import { AuthService } from "../../core/services/auth.service";
@@ -22,16 +22,15 @@ import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     RouterModule,
     CardModule,
     ButtonModule,
     AvatarModule,
     TagModule,
-    TabViewModule,
+    Tabs,
     MainLayoutComponent,
-    StatsGridComponent,
-  ],
+    StatsGridComponent
+],
   template: `
     <app-main-layout>
       <div class="profile-page">
@@ -47,7 +46,7 @@ import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
                 color: '#fff',
                 'font-size': '3rem',
               }"
-            >
+              >
             </p-avatar>
             <p-button
               icon="pi pi-camera"
@@ -71,81 +70,81 @@ import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
             ></p-button>
           </div>
         </div>
-
+    
         <!-- Profile Stats -->
         <app-stats-grid [stats]="stats()"></app-stats-grid>
-
+    
         <!-- Profile Tabs -->
-        <p-tabView>
-          <p-tabPanel header="Overview" leftIcon="pi pi-chart-line">
+        <p-tabs>
+          <p-tabpanel header="Overview" leftIcon="pi pi-chart-line">
             <div class="overview-content">
               <p-card>
                 <ng-template pTemplate="header">
                   <h3>Recent Activity</h3>
                 </ng-template>
                 <div class="activity-list">
-                  <div
-                    *ngFor="
-                      let activity of activities();
-                      trackBy: trackByActivityTitle
-                    "
-                    class="activity-item"
-                  >
-                    <div class="activity-icon">{{ activity.icon }}</div>
-                    <div class="activity-content">
-                      <div class="activity-title">{{ activity.title }}</div>
-                      <div class="activity-time">{{ activity.time }}</div>
+                  @for (
+                    activity of activities(); track trackByActivityTitle($index,
+                    activity)) {
+                    <div
+                      class="activity-item"
+                      >
+                      <div class="activity-icon">{{ activity.icon }}</div>
+                      <div class="activity-content">
+                        <div class="activity-title">{{ activity.title }}</div>
+                        <div class="activity-time">{{ activity.time }}</div>
+                      </div>
                     </div>
-                  </div>
+                  }
                 </div>
               </p-card>
             </div>
-          </p-tabPanel>
-          <p-tabPanel header="Achievements" leftIcon="pi pi-trophy">
+          </p-tabpanel>
+          <p-tabpanel header="Achievements" leftIcon="pi pi-trophy">
             <div class="achievements-grid">
-              <p-card
-                *ngFor="
-                  let achievement of achievements();
-                  trackBy: trackByAchievementTitle
-                "
-                class="achievement-card"
-              >
-                <div class="achievement-icon">{{ achievement.icon }}</div>
-                <h4 class="achievement-title">{{ achievement.title }}</h4>
-                <p class="achievement-description">
-                  {{ achievement.description }}
-                </p>
-                <div class="achievement-date">{{ achievement.date }}</div>
-              </p-card>
+              @for (
+                achievement of achievements(); track trackByAchievementTitle($index,
+                achievement)) {
+                <p-card
+                  class="achievement-card"
+                  >
+                  <div class="achievement-icon">{{ achievement.icon }}</div>
+                  <h4 class="achievement-title">{{ achievement.title }}</h4>
+                  <p class="achievement-description">
+                    {{ achievement.description }}
+                  </p>
+                  <div class="achievement-date">{{ achievement.date }}</div>
+                </p-card>
+              }
             </div>
-          </p-tabPanel>
-          <p-tabPanel header="Statistics" leftIcon="pi pi-bar-chart">
+          </p-tabpanel>
+          <p-tabpanel header="Statistics" leftIcon="pi pi-bar-chart">
             <p-card>
               <ng-template pTemplate="header">
                 <h3>Performance Statistics</h3>
               </ng-template>
               <div class="stats-grid">
-                <div
-                  *ngFor="
-                    let stat of performanceStats();
-                    trackBy: trackByPerformanceStatLabel
-                  "
-                  class="performance-stat"
-                >
-                  <div class="stat-label">{{ stat.label }}</div>
-                  <div class="stat-value">{{ stat.value }}</div>
-                  <p-tag
-                    [value]="stat.trend"
-                    [severity]="stat.trendType"
-                  ></p-tag>
-                </div>
+                @for (
+                  stat of performanceStats(); track trackByPerformanceStatLabel($index,
+                  stat)) {
+                  <div
+                    class="performance-stat"
+                    >
+                    <div class="stat-label">{{ stat.label }}</div>
+                    <div class="stat-value">{{ stat.value }}</div>
+                    <p-tag
+                      [value]="stat.trend"
+                      [severity]="stat.trendType"
+                    ></p-tag>
+                  </div>
+                }
               </div>
             </p-card>
-          </p-tabPanel>
-        </p-tabView>
+          </p-tabpanel>
+        </p-tabs>
       </div>
     </app-main-layout>
-  `,
+    `,
   styles: [
     `
       .profile-page {
