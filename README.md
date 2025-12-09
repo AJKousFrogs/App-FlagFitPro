@@ -2,8 +2,8 @@
 
 _Professional-grade training platform with advanced analytics and AI-powered insights_
 
-[![Angular](https://img.shields.io/badge/Angular-19.0+-red.svg)](https://angular.dev/)
-[![PrimeNG](https://img.shields.io/badge/PrimeNG-19.0+-blue.svg)](https://primeng.org/)
+[![Angular](https://img.shields.io/badge/Angular-21.0+-red.svg)](https://angular.dev/)
+[![PrimeNG](https://img.shields.io/badge/PrimeNG-21.0+-blue.svg)](https://primeng.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE.md)
 
 ## 🚀 Overview
@@ -12,10 +12,10 @@ FlagFit Pro is a comprehensive training platform that combines modern web techno
 
 ## 🛠 Technology Stack
 
-**PRIMARY STACK: Angular 19 + PrimeNG**
+**PRIMARY STACK: Angular 21 + PrimeNG 21**
 
-- **Frontend Framework**: Angular 19 (Standalone Components)
-- **UI Component Library**: PrimeNG 19+
+- **Frontend Framework**: Angular 21 (Standalone Components)
+- **UI Component Library**: PrimeNG 21
 - **Icons**: PrimeIcons + Lucide Angular
 - **Charts**: PrimeNG Charts (Chart.js wrapper)
 - **Forms**: Angular Reactive Forms
@@ -25,20 +25,20 @@ FlagFit Pro is a comprehensive training platform that combines modern web techno
 
 **Backend & Infrastructure**:
 - **Backend**: Node.js + Express
-- **Database**: Neon PostgreSQL
+- **Database**: Supabase PostgreSQL
 - **Authentication**: JWT with Angular Guards & Interceptors
 - **API**: RESTful API with Netlify Functions
 - **Real-Time**: Supabase Realtime subscriptions
 
 **Legacy Files**:
 - The root directory contains legacy vanilla HTML/CSS/JS files from the original implementation
-- These are maintained for reference but **Angular 19 + PrimeNG is the primary development stack**
+- These are maintained for reference but **Angular 21 + PrimeNG 21 is the primary development stack**
 
 ## 📁 Project Structure
 
 ```
 flagfit-pro/
-├── angular/                    # PRIMARY: Angular 19 + PrimeNG application
+├── angular/                    # PRIMARY: Angular 21 + PrimeNG 21 application
 │   ├── src/
 │   │   ├── app/
 │   │   │   ├── core/          # Core services, guards, interceptors
@@ -61,13 +61,13 @@ flagfit-pro/
 ### Prerequisites
 
 - Node.js 18+ and npm
-- Angular CLI 19
+- Angular CLI 21
 
 ### Installation
 
 ```bash
 # Install Angular CLI globally
-npm install -g @angular/cli@19
+npm install -g @angular/cli@21
 
 # Navigate to angular directory
 cd angular
@@ -181,10 +181,10 @@ The authentication system includes:
 
 ## 🎯 Migration Status
 
-The project is migrating from vanilla HTML/CSS/JS to Angular 19 + PrimeNG:
+The project is migrating from vanilla HTML/CSS/JS to Angular 21 + PrimeNG 21:
 
-- ✅ Angular 19 project setup
-- ✅ PrimeNG integration
+- ✅ Angular 21 project setup
+- ✅ PrimeNG 21 integration
 - ✅ Core services (Auth, API)
 - ✅ Shared components (Sidebar, Header, Layout)
 - ✅ Auth module (Login, Register, Reset Password)
