@@ -99,7 +99,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:${{ env.POSTGRES_VERSION }}
+        image: postgres:14
         env:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: flagfit_test
@@ -433,7 +433,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:${{ env.POSTGRES_VERSION }}
+        image: postgres:14
         env:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: flagfit_test
