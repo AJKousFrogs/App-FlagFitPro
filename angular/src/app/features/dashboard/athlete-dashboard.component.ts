@@ -16,12 +16,14 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
 import { TrafficLightIndicatorComponent, TrafficLightStatus } from "../../shared/components/traffic-light-indicator/traffic-light-indicator.component";
 import { TrendCardComponent, TrendData } from "../../shared/components/trend-card/trend-card.component";
 import { ReadinessWidgetComponent } from "../../shared/components/readiness-widget/readiness-widget.component";
+import { LiveIndicatorComponent } from "../../shared/components/live-indicator/live-indicator.component";
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
 import { AcwrService } from "../../core/services/acwr.service";
 import { ReadinessService } from "../../core/services/readiness.service";
 import { TrendsService } from "../../core/services/trends.service";
 import { HeaderService } from "../../core/services/header.service";
+import { RealtimeBaseComponent } from "../../shared/components/realtime-base.component";
 
 @Component({
   selector: "app-athlete-dashboard",
@@ -37,6 +39,7 @@ import { HeaderService } from "../../core/services/header.service";
     TrafficLightIndicatorComponent,
     TrendCardComponent,
     ReadinessWidgetComponent,
+    LiveIndicatorComponent,
   ],
   template: `
     <app-main-layout>
@@ -44,7 +47,11 @@ import { HeaderService } from "../../core/services/header.service";
         <app-page-header
           title="Athlete Dashboard"
           subtitle="Your performance overview for today"
-        ></app-page-header>
+        >
+          <div class="flex items-center gap-3">
+            <app-live-indicator [isLive]="realtimeService.isConnected()"></app-live-indicator>
+          </div>
+        </app-page-header>
 
         <!-- Key Metrics Row -->
         <div class="metrics-row">
@@ -214,7 +221,7 @@ import { HeaderService } from "../../core/services/header.service";
     `,
   ],
 })
-export class AthleteDashboardComponent implements OnInit {
+export class AthleteDashboardComponent extends RealtimeBaseComponent implements OnInit {
   private apiService = inject(ApiService);
   private authService = inject(AuthService);
   private acwrService = inject(AcwrService);
@@ -252,6 +259,44 @@ export class AthleteDashboardComponent implements OnInit {
   ngOnInit(): void {
     this.headerService.setDashboardHeader();
     this.loadDashboardData();
+    this.setupRealtimeSubscriptions();
+  }
+
+  /**
+   * Set up real-time subscriptions for live data updates
+   */
+  private setupRealtimeSubscriptions(): void {
+    const userId = this.authService.getUser()?.id;
+    if (!userId) return;
+
+    // Subscribe to training sessions updates
+    const trainingUnsub = this.realtimeService.subscribeToTrainingSessions((event) => {
+      console.log('🔴 LIVE: Training session updated', event);
+      // Reload today's workload when training data changes
+      this.loadTodayWorkload(userId);
+      this.loadNextSession(userId);
+    });
+    this.addSubscription(trainingUnsub);
+
+    // Subscribe to readiness updates
+    const readinessUnsub = this.realtimeService.subscribeToReadiness((event) => {
+      console.log('🔴 LIVE: Readiness updated', event);
+      // Reload readiness when it changes
+      this.readinessService.calculateToday(userId).pipe(
+        takeUntilDestroyed()
+      ).subscribe();
+    });
+    this.addSubscription(readinessUnsub);
+
+    // Subscribe to performance metrics updates
+    const performanceUnsub = this.realtimeService.subscribeToPerformance((event) => {
+      console.log('🔴 LIVE: Performance metrics updated', event);
+      // Reload trends when performance data changes
+      this.loadTrends(userId);
+    });
+    this.addSubscription(performanceUnsub);
+
+    console.log('✅ Real-time subscriptions active for athlete dashboard');
   }
 
   loadDashboardData(): void {
