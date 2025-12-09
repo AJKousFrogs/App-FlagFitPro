@@ -45,7 +45,7 @@ jobs:
         run: npm audit --audit-level high
 
       - name: Upload code quality results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: code-quality-results
@@ -85,7 +85,7 @@ jobs:
           name: unit-tests-node-${{ matrix.node-version }}
 
       - name: Upload test results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: unit-test-results-node-${{ matrix.node-version }}
@@ -150,7 +150,7 @@ jobs:
           NODE_ENV: test
 
       - name: Upload integration test results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: integration-test-results
@@ -196,7 +196,7 @@ jobs:
           PLAYWRIGHT_HTML_REPORT: playwright-report-${{ matrix.browser }}-${{ matrix.device }}
 
       - name: Upload E2E test results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: e2e-results-${{ matrix.browser }}-${{ matrix.device }}
@@ -246,7 +246,7 @@ jobs:
           npm run performance:compare # Compare with baseline
 
       - name: Upload performance results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: performance-test-results
@@ -292,7 +292,7 @@ jobs:
         run: npm run security:dast-scan || true
 
       - name: Upload security results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: security-test-results
@@ -331,7 +331,7 @@ jobs:
         run: npm run a11y:wcag-check
 
       - name: Upload accessibility results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: accessibility-test-results
@@ -381,7 +381,7 @@ jobs:
         run: npm run test:cross-browser -- --browser=${{ matrix.browser }}
 
       - name: Upload cross-browser results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: cross-browser-results-${{ matrix.os }}-${{ matrix.browser }}
@@ -419,7 +419,7 @@ jobs:
         run: npx playwright test --project=${{ matrix.device }}
 
       - name: Upload mobile test results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: mobile-test-results-${{ matrix.device }}
@@ -479,7 +479,7 @@ jobs:
         run: npm run test:api:contracts
 
       - name: Upload API test results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: api-test-results
@@ -503,7 +503,7 @@ jobs:
     if: always()
     steps:
       - name: Download all test artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
 
       - name: Generate test summary
         run: |
