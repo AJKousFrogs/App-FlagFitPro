@@ -1,8 +1,8 @@
 import { Injectable, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
-import { Observable, throwError } from "rxjs";
-import { tap, catchError } from "rxjs/operators";
-import { ApiService, API_ENDPOINTS } from "./api.service";
+import { Observable, throwError, from, of } from "rxjs";
+import { tap, catchError, map } from "rxjs/operators";
+import { SupabaseService } from "./supabase.service";
 
 export interface User {
   id: string;
@@ -29,7 +29,7 @@ export interface RegisterData {
   providedIn: "root",
 })
 export class AuthService {
-  private apiService = inject(ApiService);
+  private supabaseService = inject(SupabaseService);
   private router = inject(Router);
 
   private readonly TOKEN_KEY = "authToken";
@@ -43,87 +43,97 @@ export class AuthService {
 
   constructor() {
     this.loadStoredAuth();
+    // Subscribe to Supabase auth state changes
+    this.supabaseService.currentUser$.subscribe((user) => {
+      if (user) {
+        const appUser: User = {
+          id: user.id,
+          email: user.email ?? "",
+          name: user.user_metadata?.["name"] ?? user.email,
+          role: user.user_metadata?.["role"] ?? "user",
+        };
+        this.currentUser.set(appUser);
+        this.isAuthenticated.set(true);
+      } else {
+        this.currentUser.set(null);
+        this.isAuthenticated.set(false);
+      }
+    });
   }
 
   private loadStoredAuth(): void {
-    const token = localStorage.getItem(this.TOKEN_KEY);
-    const userStr = localStorage.getItem(this.USER_KEY);
-
-    if (token && userStr) {
-      try {
-        const user = JSON.parse(userStr);
-        this.currentUser.set(user);
-        this.isAuthenticated.set(true);
-      } catch (error) {
-        console.error("Error parsing stored user data:", error);
-        this.clearAuth();
-      }
+    // Supabase handles session persistence automatically
+    // Just check if we have a current session
+    const session = this.supabaseService.session;
+    if (session?.user) {
+      const user: User = {
+        id: session.user.id,
+        email: session.user.email ?? "",
+        name: session.user.user_metadata?.["name"] ?? session.user.email,
+        role: session.user.user_metadata?.["role"] ?? "user",
+      };
+      this.currentUser.set(user);
+      this.isAuthenticated.set(true);
     }
   }
 
   login(credentials: LoginCredentials): Observable<any> {
     this.isLoading.set(true);
 
-    return this.apiService.post(API_ENDPOINTS.auth.login, credentials).pipe(
-      tap((response) => {
-        if (response.success && response.data) {
-          const data = response.data as { token?: string; user?: User };
-          const { token, user } = data;
-
-          if (token) {
-            localStorage.setItem(this.TOKEN_KEY, token);
-            this.isAuthenticated.set(true);
-          }
-
-          if (user) {
-            localStorage.setItem(this.USER_KEY, JSON.stringify(user));
-            this.currentUser.set(user);
-          }
-
-          // Handle remember me
-          if (credentials.remember) {
-            // Store additional session data if needed
-          }
+    return from(
+      this.supabaseService.signIn(credentials.email, credentials.password)
+    ).pipe(
+      map((response) => {
+        if (response.error) {
+          throw new Error(response.error.message);
         }
+        return {
+          success: true,
+          data: {
+            user: response.data.user,
+            session: response.data.session,
+          },
+        };
       }),
       catchError((error) => {
         this.isLoading.set(false);
         return throwError(() => error);
       }),
-      tap(() => this.isLoading.set(false)),
+      tap(() => this.isLoading.set(false))
     );
   }
 
   register(data: RegisterData): Observable<any> {
     this.isLoading.set(true);
 
-    return this.apiService.post(API_ENDPOINTS.auth.register, data).pipe(
-      tap((response) => {
-        if (response.success && response.data) {
-          const data = response.data as { token?: string; user?: User };
-          const { token, user } = data;
+    const { email, password, ...metadata } = data;
 
-          if (token) {
-            localStorage.setItem(this.TOKEN_KEY, token);
-            this.isAuthenticated.set(true);
-          }
-
-          if (user) {
-            localStorage.setItem(this.USER_KEY, JSON.stringify(user));
-            this.currentUser.set(user);
-          }
+    return from(
+      this.supabaseService.signUp(data.email, data.password, metadata)
+    ).pipe(
+      map((response) => {
+        if (response.error) {
+          throw new Error(response.error.message);
         }
+        return {
+          success: true,
+          data: {
+            user: response.data.user,
+            session: response.data.session,
+          },
+          message: "Please check your email to verify your account.",
+        };
       }),
       catchError((error) => {
         this.isLoading.set(false);
         return throwError(() => error);
       }),
-      tap(() => this.isLoading.set(false)),
+      tap(() => this.isLoading.set(false))
     );
   }
 
   logout(): Observable<any> {
-    return this.apiService.post(API_ENDPOINTS.auth.logout).pipe(
+    return from(this.supabaseService.signOut()).pipe(
       tap(() => {
         this.clearAuth();
         this.router.navigate(["/login"]);
@@ -133,25 +143,28 @@ export class AuthService {
         this.clearAuth();
         this.router.navigate(["/login"]);
         return throwError(() => error);
-      }),
+      })
     );
   }
 
   getCurrentUser(): Observable<any> {
-    return this.apiService.get(API_ENDPOINTS.auth.me).pipe(
-      tap((response) => {
-        if (response.success && response.data) {
-          const user = response.data as User;
-          localStorage.setItem(this.USER_KEY, JSON.stringify(user));
-          this.currentUser.set(user);
-          this.isAuthenticated.set(true);
-        }
-      }),
-    );
+    const user = this.supabaseService.currentUser;
+    if (user) {
+      const appUser: User = {
+        id: user.id,
+        email: user.email ?? "",
+        name: user.user_metadata?.["name"] ?? user.email,
+        role: user.user_metadata?.["role"] ?? "user",
+      };
+      this.currentUser.set(appUser);
+      this.isAuthenticated.set(true);
+      return of({ success: true, data: appUser });
+    }
+    return of({ success: false, error: "No user found" });
   }
 
-  getToken(): string | null {
-    return localStorage.getItem(this.TOKEN_KEY);
+  async getToken(): Promise<string | null> {
+    return await this.supabaseService.getToken();
   }
 
   getUser(): User | null {
@@ -159,11 +172,12 @@ export class AuthService {
   }
 
   checkAuth(): boolean {
-    const token = this.getToken();
-    const isAuth = !!token && this.isAuthenticated();
+    // Check if we have an authenticated session
+    const session = this.supabaseService.session;
+    const isAuth = !!session && this.isAuthenticated();
 
-    if (!isAuth && token) {
-      // Token exists but state is not set, reload user
+    if (!isAuth && session) {
+      // Session exists but state is not set, reload user
       this.getCurrentUser().subscribe();
     }
 
@@ -179,11 +193,11 @@ export class AuthService {
   }
 
   private clearAuth(): void {
-    localStorage.removeItem(this.TOKEN_KEY);
-    localStorage.removeItem(this.USER_KEY);
-    sessionStorage.removeItem(this.CSRF_KEY);
+    // Supabase handles session cleanup
+    // Just clear our local state
     this.currentUser.set(null);
     this.isAuthenticated.set(false);
+    sessionStorage.removeItem(this.CSRF_KEY);
   }
 
   generateCsrfToken(): string {

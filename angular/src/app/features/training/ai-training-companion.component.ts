@@ -34,7 +34,7 @@ interface Insight {
 interface QuickAction {
   label: string;
   icon: string;
-  severity?: "success" | "info" | "warning" | "danger";
+  severity?: "success" | "info" | "warn" | "danger";
   action: () => void;
 }
 

@@ -12,7 +12,7 @@ import { ButtonModule } from "primeng/button";
 import { ChartModule } from "primeng/chart";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
-import { Tabs } from "primeng/tabs";
+import { Tabs, TabPanel } from "primeng/tabs";
 import { TagModule } from "primeng/tag";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -52,6 +52,7 @@ interface Metric {
     Select,
     TableModule,
     Tabs,
+    TabPanel,
     TagModule,
     MainLayoutComponent,
     PageHeaderComponent,
@@ -979,8 +980,8 @@ export class AnalyticsComponent implements OnInit {
       .get(API_ENDPOINTS.analytics.summary, { userId: currentUser.id })
       .subscribe({
         next: (response) => {
-          if (response.success && response.data?.metrics) {
-            this.metrics.set(response.data.metrics);
+          if (response.success && (response.data as any)?.metrics) {
+            this.metrics.set((response.data as any).metrics);
           } else {
             this.loadFallbackMetrics();
           }
@@ -1000,11 +1001,11 @@ export class AnalyticsComponent implements OnInit {
         next: (response) => {
           if (response.success && response.data) {
             this.performanceChartData.set({
-              labels: response.data.labels,
+              labels: (response.data as any).labels,
               datasets: [
                 {
                   label: "Performance Score",
-                  data: response.data.values,
+                  data: (response.data as any).values,
                   borderColor: "var(--ds-primary-green)",
                   backgroundColor: "var(--ds-primary-green-subtle)",
                   borderWidth: 3,
@@ -1029,11 +1030,11 @@ export class AnalyticsComponent implements OnInit {
         next: (response) => {
           if (response.success && response.data) {
             this.chemistryChartData.set({
-              labels: response.data.labels,
+              labels: (response.data as any).labels,
               datasets: [
                 {
                   label: "Team Chemistry",
-                  data: response.data.values,
+                  data: (response.data as any).values,
                   borderColor: "var(--ds-primary-green)",
                   backgroundColor: "rgba(16, 201, 107, 0.2)", // Using rgba for specific opacity
                   borderWidth: 2,
@@ -1059,10 +1060,10 @@ export class AnalyticsComponent implements OnInit {
         next: (response) => {
           if (response.success && response.data) {
             this.distributionChartData.set({
-              labels: response.data.labels,
+              labels: (response.data as any).labels,
               datasets: [
                 {
-                  data: response.data.values,
+                  data: (response.data as any).values,
                   backgroundColor: [
                     "#089949", // var(--ds-primary-green)
                     "#10c89b", // var(--color-brand-primary-light)
@@ -1091,11 +1092,11 @@ export class AnalyticsComponent implements OnInit {
         next: (response) => {
           if (response.success && response.data) {
             this.positionChartData.set({
-              labels: response.data.labels,
+              labels: (response.data as any).labels,
               datasets: [
                 {
                   label: "Performance",
-                  data: response.data.values,
+                  data: (response.data as any).values,
                   backgroundColor: "var(--ds-primary-green)",
                 },
               ],
@@ -1119,8 +1120,8 @@ export class AnalyticsComponent implements OnInit {
         next: (response) => {
           if (response.success && response.data) {
             this.speedChartData.set({
-              labels: response.data.labels,
-              datasets: response.data.datasets.map((ds: any) => ({
+              labels: (response.data as any).labels,
+              datasets: (response.data as any).datasets.map((ds: any) => ({
                 ...ds,
                 borderColor: ds.label.includes("40") ? "var(--ds-primary-green)" : "#10c96b",
                 backgroundColor: ds.label.includes("40")

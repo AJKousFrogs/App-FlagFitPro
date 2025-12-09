@@ -10,7 +10,7 @@ import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { TagModule } from "primeng/tag";
 import { ProgressBarModule } from "primeng/progressbar";
-import { Tabs } from "primeng/tabs";
+import { Tabs, TabPanel } from "primeng/tabs";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
@@ -40,6 +40,7 @@ interface Tournament {
     TagModule,
     ProgressBarModule,
     Tabs,
+    TabPanel,
     MainLayoutComponent,
     PageHeaderComponent
 ],
@@ -425,12 +426,12 @@ export class TournamentsComponent implements OnInit {
     return labels[status] || status;
   }
 
-  getStatusSeverity(status: string): string {
-    const severities: Record<string, string> = {
+  getStatusSeverity(status: string): "info" | "success" | "secondary" | "warn" {
+    const severities: Record<string, "info" | "success" | "secondary" | "warn"> = {
       upcoming: "info",
       ongoing: "success",
       completed: "secondary",
-      registration: "warning",
+      registration: "warn",
     };
     return severities[status] || "info";
   }

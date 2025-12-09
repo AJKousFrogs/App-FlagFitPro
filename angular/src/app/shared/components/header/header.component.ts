@@ -149,7 +149,7 @@ import { MenuItem } from "primeng/api";
           icon="pi pi-bell"
           [text]="true"
           [rounded]="true"
-          [badge]="notificationCount() > 0 ? notificationCount().toString() : null"
+          [badge]="notificationCount() > 0 ? notificationCount().toString() : undefined"
           badgeClass="p-badge-danger"
           (onClick)="toggleNotifications()"
           ariaLabel="Notifications"

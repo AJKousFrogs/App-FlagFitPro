@@ -28,7 +28,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { catchError, tap, map } from 'rxjs/operators';
 import { ApiService } from './api.service';
 import { EvidenceConfigService } from './evidence-config.service';
 
@@ -167,9 +167,10 @@ export class ReadinessService {
       '/api/calc-readiness',
       { athleteId }
     ).pipe(
+      map((res) => res.data || ({} as ReadinessResponse)),
       tap({
         next: (res) => {
-          this.current.set(res.data || res);
+          this.current.set(res);
           this.loading.set(false);
         },
         error: (err) => {
@@ -196,9 +197,10 @@ export class ReadinessService {
       '/api/calc-readiness',
       { athleteId, day }
     ).pipe(
+      map((res) => res.data || ({} as ReadinessResponse)),
       tap({
         next: (res) => {
-          this.current.set(res.data || res);
+          this.current.set(res);
           this.loading.set(false);
         },
         error: (err) => {
@@ -222,8 +224,9 @@ export class ReadinessService {
       '/api/readiness-history',
       { athleteId, days }
     ).pipe(
+      map((res) => res.data || []),
       tap(history => {
-        this.history.set(history.data || []);
+        this.history.set(history);
       }),
       catchError(error => {
         console.error('Error fetching readiness history:', error);
@@ -235,9 +238,9 @@ export class ReadinessService {
   /**
    * Get severity color for PrimeNG Tag
    */
-  getSeverity(level: ReadinessLevel): 'success' | 'warning' | 'danger' {
+  getSeverity(level: ReadinessLevel): 'success' | 'warn' | 'danger' {
     if (level === 'high') return 'success';
-    if (level === 'moderate') return 'warning';
+    if (level === 'moderate') return 'warn';
     return 'danger';
   }
 
@@ -332,7 +335,7 @@ export class ReadinessService {
     
     return {
       preset: `${preset.name} (${preset.version})`,
-      citations: readinessConfig.citations.map(c => ({
+      citations: readinessConfig.citations.map((c: any) => ({
         authors: c.authors,
         year: c.year,
         title: c.title,

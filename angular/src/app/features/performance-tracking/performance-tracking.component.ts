@@ -302,7 +302,7 @@ export class PerformanceTrackingComponent implements OnInit {
     return severities[trendType] || "info";
   }
 
-  getScoreSeverity(score: number): string {
+  getScoreSeverity(score: number): "success" | "info" | "warn" | "danger" {
     if (score >= 90) return "success";
     if (score >= 80) return "info";
     if (score >= 70) return "warn";

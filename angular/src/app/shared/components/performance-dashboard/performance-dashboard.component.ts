@@ -447,7 +447,7 @@ export class PerformanceDashboardComponent implements OnInit, OnDestroy {
     return `${sign}${value.toFixed(1)}%`;
   }
 
-  getTrendSeverity(trend: string): string {
+  getTrendSeverity(trend: string): "success" | "secondary" | "info" | "warn" | "danger" | "contrast" {
     switch (trend) {
       case 'up':
         return 'success';

@@ -696,7 +696,7 @@ export class AcwrService {
     
     return {
       preset: `${preset.name} (${preset.version})`,
-      citations: acwrConfig.citations.map(c => ({
+      citations: acwrConfig.citations.map((c: any) => ({
         authors: c.authors,
         year: c.year,
         title: c.title,

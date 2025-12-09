@@ -306,15 +306,15 @@ export class CoachComponent implements OnInit {
     // Open create session modal - implementation pending
   }
 
-  getPerformanceSeverity(performance: number): string {
+  getPerformanceSeverity(performance: number): "success" | "info" | "warn" | "danger" {
     if (performance >= 90) return "success";
     if (performance >= 80) return "info";
     if (performance >= 70) return "warn";
     return "danger";
   }
 
-  getStatusSeverity(status: string): string {
-    const severities: Record<string, string> = {
+  getStatusSeverity(status: string): "success" | "info" | "warn" | "danger" {
+    const severities: Record<string, "success" | "info" | "warn" | "danger"> = {
       Active: "success",
       Injured: "warn",
       Inactive: "danger",

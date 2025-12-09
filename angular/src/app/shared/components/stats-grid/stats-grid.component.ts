@@ -120,8 +120,8 @@ export class StatsGridComponent {
     return item.label;
   }
 
-  getTrendSeverity(trendType?: string): string {
-    const severities: Record<string, string> = {
+  getTrendSeverity(trendType?: string): "success" | "secondary" | "info" | "warn" | "danger" | "contrast" {
+    const severities: Record<string, "success" | "secondary" | "info" | "warn" | "danger" | "contrast"> = {
       positive: "success",
       negative: "danger",
       neutral: "info",

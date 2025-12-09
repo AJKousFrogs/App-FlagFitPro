@@ -57,11 +57,8 @@ export class TrendsService {
       { athleteId, weeks: 4 }
     ).pipe(
       map(res => {
-        // Handle both response formats
-        if (res && typeof res === 'object' && 'data' in res) {
-          return res.data as ChangeOfDirectionTrend;
-        }
-        return res as ChangeOfDirectionTrend;
+        // Handle ApiResponse format
+        return res.data || ({} as ChangeOfDirectionTrend);
       }),
       catchError(error => {
         console.error('Error fetching change of direction trend:', error);
@@ -79,10 +76,8 @@ export class TrendsService {
       { athleteId, weeks: 4 }
     ).pipe(
       map(res => {
-        if (res && typeof res === 'object' && 'data' in res) {
-          return res.data as SprintVolumeTrend;
-        }
-        return res as SprintVolumeTrend;
+        // Handle ApiResponse format
+        return res.data || ({} as SprintVolumeTrend);
       }),
       catchError(error => {
         console.error('Error fetching sprint volume trend:', error);
@@ -100,10 +95,8 @@ export class TrendsService {
       { athleteId, games }
     ).pipe(
       map(res => {
-        if (res && typeof res === 'object' && 'data' in res) {
-          return res.data as GamePerformanceTrend;
-        }
-        return res as GamePerformanceTrend;
+        // Handle ApiResponse format
+        return res.data || ({} as GamePerformanceTrend);
       }),
       catchError(error => {
         console.error('Error fetching game performance trend:', error);

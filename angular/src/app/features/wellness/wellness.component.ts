@@ -250,8 +250,8 @@ export class WellnessComponent implements OnInit {
               value: `${Math.round(overallScore * 10)}%`,
               icon: "pi-heart",
               color: status.color,
-              trend: status.label,
-              trendType: status.label.toLowerCase().includes('good') || status.label.toLowerCase().includes('excellent') ? "positive" : "neutral",
+              trend: status.status,
+              trendType: status.status === 'good' || status.status === 'excellent' ? "positive" : "neutral",
             },
             {
               label: "Energy Level",

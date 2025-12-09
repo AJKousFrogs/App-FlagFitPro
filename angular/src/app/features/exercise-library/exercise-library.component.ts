@@ -343,8 +343,8 @@ export class ExerciseLibraryComponent implements OnInit {
     this.itemsPerPage = event.rows;
   }
 
-  getDifficultySeverity(difficulty: string): string {
-    const severities: Record<string, string> = {
+  getDifficultySeverity(difficulty: string): "success" | "info" | "warn" {
+    const severities: Record<string, "success" | "info" | "warn"> = {
       beginner: "success",
       intermediate: "info",
       advanced: "warn",

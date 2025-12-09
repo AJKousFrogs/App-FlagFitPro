@@ -110,7 +110,9 @@ import { HeaderService } from "../../core/services/header.service";
 
         <!-- Readiness Widget -->
         <div class="readiness-section">
-          <app-readiness-widget [athleteId]="athleteId()"></app-readiness-widget>
+          @if (athleteId()) {
+            <app-readiness-widget [athleteId]="athleteId()!"></app-readiness-widget>
+          }
         </div>
 
         <!-- Trend Cards -->

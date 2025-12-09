@@ -6,8 +6,8 @@
  */
 
 import { Injectable, signal, computed } from '@angular/core';
+import { EvidencePreset } from '../config/evidence-config';
 import {
-  EvidencePreset,
   getPresetById,
   getDefaultPreset,
   getAllPresets,

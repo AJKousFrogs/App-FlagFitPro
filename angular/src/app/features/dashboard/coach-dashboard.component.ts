@@ -561,10 +561,10 @@ export class CoachDashboardComponent implements OnInit {
     return 'readiness-low';
   }
 
-  getRiskSeverity(risk: string): string {
-    const severities: Record<string, string> = {
+  getRiskSeverity(risk: string): "success" | "warn" | "danger" | "info" {
+    const severities: Record<string, "success" | "warn" | "danger" | "info"> = {
       low: 'success',
-      medium: 'warning',
+      medium: 'warn',
       high: 'danger',
     };
     return severities[risk] || 'info';
@@ -579,10 +579,10 @@ export class CoachDashboardComponent implements OnInit {
     return 'Upcoming';
   }
 
-  getFixtureSeverity(date: Date): string {
+  getFixtureSeverity(date: Date): "danger" | "warn" | "info" {
     const daysUntil = Math.ceil((date.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
     if (daysUntil <= 3) return 'danger';
-    if (daysUntil <= 7) return 'warning';
+    if (daysUntil <= 7) return 'warn';
     return 'info';
   }
 }
