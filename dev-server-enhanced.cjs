@@ -5,6 +5,7 @@ const http = require("http");
 const path = require("path");
 const fs = require("fs");
 const { spawn } = require("child_process");
+const url = require("url");
 
 const app = express();
 const server = http.createServer(app);
@@ -16,8 +17,162 @@ const API_PORT = process.env.PORT || 3001;
 console.log("🔥 Starting Enhanced Dev Server with Hot Reload & Bug Fixing...");
 console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
-// Serve static files
-app.use(express.static("."));
+// Body parsing for Netlify Functions
+app.use("/.netlify/functions/:functionName", express.raw({ type: "*/*", limit: "10mb" }));
+
+// Handle Netlify Functions
+app.all("/.netlify/functions/:functionName", async (req, res) => {
+  try {
+    // Extract function name from route parameter
+    const functionName = req.params.functionName;
+    
+    if (!functionName) {
+      console.error(`❌ No function name in request: ${req.path}`);
+      res.status(404).json({ error: "Function name not found" });
+      return;
+    }
+
+    console.log(`⚡ Executing Netlify function: ${functionName} (${req.method})`);
+
+    // Find function file (could be .cjs or .js)
+    const functionDir = path.join(__dirname, "netlify", "functions");
+    let functionPath = path.join(functionDir, `${functionName}.cjs`);
+    
+    if (!fs.existsSync(functionPath)) {
+      functionPath = path.join(functionDir, `${functionName}.js`);
+    }
+
+    if (!fs.existsSync(functionPath)) {
+      console.error(`❌ Netlify function not found: ${functionName}`);
+      console.error(`   Searched: ${functionPath}`);
+      res.status(404).json({ error: `Function '${functionName}' not found` });
+      return;
+    }
+
+    console.log(`   Found function at: ${functionPath}`);
+
+    // Clear require cache to allow hot reloading
+    try {
+      const resolvedPath = require.resolve(functionPath);
+      delete require.cache[resolvedPath];
+    } catch (e) {
+      // Path not in cache yet, that's fine
+    }
+
+    // Load the function
+    const functionModule = require(functionPath);
+    
+    if (!functionModule.handler) {
+      res.status(500).json({ error: `Function '${functionName}' does not export a handler` });
+      return;
+    }
+
+    // Convert Express request to Netlify event format
+    const parsedUrl = url.parse(req.url, true);
+    const event = {
+      httpMethod: req.method,
+      path: req.path,
+      pathParameters: null,
+      queryStringParameters: parsedUrl.query || {},
+      headers: req.headers,
+      body: null,
+      isBase64Encoded: false,
+      requestContext: {
+        requestId: `dev-${Date.now()}`,
+        identity: {
+          sourceIp: req.ip || req.connection.remoteAddress,
+        },
+        http: {
+          method: req.method,
+          path: req.path,
+          protocol: req.protocol,
+          userAgent: req.headers["user-agent"] || "",
+        },
+      },
+    };
+
+    // Read body if present
+    if (req.method !== "GET" && req.method !== "HEAD" && req.body) {
+      // Body is already parsed as raw buffer by Express middleware
+      if (Buffer.isBuffer(req.body)) {
+        event.body = req.body.toString("utf8");
+      } else if (typeof req.body === "string") {
+        event.body = req.body;
+      } else {
+        event.body = JSON.stringify(req.body);
+      }
+    }
+
+    // Create Netlify context
+    const context = {
+      callbackWaitsForEmptyEventLoop: false,
+      functionName: functionName,
+      functionVersion: "$LATEST",
+      invokedFunctionArn: `arn:aws:lambda:us-east-1:123456789012:function:${functionName}`,
+      memoryLimitInMB: "128",
+      awsRequestId: `dev-${Date.now()}`,
+      logGroupName: `/aws/lambda/${functionName}`,
+      logStreamName: `${new Date().toISOString().split("T")[0]}/[$LATEST]`,
+      getRemainingTimeInMillis: () => 30000,
+    };
+
+    // Execute the function
+    const result = await functionModule.handler(event, context);
+
+    if (!result) {
+      console.error(`❌ Function ${functionName} returned undefined`);
+      res.status(500).json({ error: "Function returned no response" });
+      return;
+    }
+
+    // Send response
+    if (result.statusCode) {
+      res.status(result.statusCode);
+    } else {
+      res.status(200);
+    }
+
+    // Set headers
+    if (result.headers) {
+      Object.keys(result.headers).forEach((key) => {
+        res.setHeader(key, result.headers[key]);
+      });
+    }
+
+    // Handle base64 encoded body (for images)
+    if (result.isBase64Encoded && result.body) {
+      const buffer = Buffer.from(result.body, "base64");
+      res.send(buffer);
+    } else {
+      res.send(result.body || "");
+    }
+    
+    console.log(`✅ Function ${functionName} completed with status ${result.statusCode || 200}`);
+  } catch (error) {
+    console.error(`❌ Error executing Netlify function:`, error);
+    res.status(500).json({
+      error: "Function execution failed",
+      message: error.message,
+      stack: process.env.NODE_ENV === "development" ? error.stack : undefined,
+    });
+  }
+});
+
+// Serve static files with proper MIME types
+app.use(express.static(".", {
+  setHeaders: (res, filePath) => {
+    // Set proper MIME types for module scripts
+    if (filePath.endsWith(".js")) {
+      res.setHeader("Content-Type", "application/javascript");
+    } else if (filePath.endsWith(".mjs")) {
+      res.setHeader("Content-Type", "application/javascript");
+    } else if (filePath.endsWith(".css")) {
+      res.setHeader("Content-Type", "text/css");
+    } else if (filePath.endsWith(".html")) {
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+    }
+  },
+}));
 
 // Serve HTML files
 app.get("/", (req, res) => {
@@ -269,14 +424,30 @@ watcher.on("unlink", (filePath) => {
   console.log(`🗑️  File removed: ${filePath}`);
 });
 
-// Hot reload client script
+// Get Supabase credentials from environment
+const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+
+// Hot reload client script + Supabase config injection
 const hotReloadScript = `
 <script>
+// Inject Supabase credentials for frontend
+window._env = window._env || {};
+window._env.SUPABASE_URL = '${supabaseUrl || ''}';
+window._env.SUPABASE_ANON_KEY = '${supabaseAnonKey || ''}';
+
+// Also set in localStorage for development
+if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+  if ('${supabaseUrl}') localStorage.setItem('SUPABASE_URL', '${supabaseUrl}');
+  if ('${supabaseAnonKey}') localStorage.setItem('SUPABASE_ANON_KEY', '${supabaseAnonKey}');
+}
+
 (function() {
   const ws = new WebSocket('ws://localhost:${PORT}');
   
   ws.onopen = function() {
     console.log('🔥 Hot reload connected');
+    ${supabaseUrl ? "console.log('✅ Supabase credentials loaded');" : "console.warn('⚠️ Supabase credentials not found');"}
   };
   
   ws.onmessage = function(event) {
@@ -338,6 +509,7 @@ app.get("/dev/health", (req, res) => {
 server.listen(PORT, () => {
   console.log(`\n🚀 Enhanced Dev Server running on http://localhost:${PORT}`);
   console.log(`🔗 Backend API proxied from http://localhost:${API_PORT}`);
+  console.log(`⚡ Netlify Functions available at http://localhost:${PORT}/.netlify/functions/*`);
   console.log(`🔥 Hot reload enabled for: HTML, CSS, JS files`);
   console.log(`🐛 Bug detection & auto-fixing enabled`);
   console.log(`📱 Access your app: http://localhost:${PORT}`);

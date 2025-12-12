@@ -205,7 +205,7 @@ export class PerformanceTrackingComponent implements OnInit {
         label: "40-Yard Dash",
         value: "4.45s",
         icon: "pi-bolt",
-        color: "#089949",
+        color: "var(--ds-primary-green)",
         trend: "+0.05s",
         trendType: "positive",
       },
@@ -242,8 +242,8 @@ export class PerformanceTrackingComponent implements OnInit {
         {
           label: "Overall Performance",
           data: [82, 84, 85, 87, 86, 88],
-          borderColor: "#089949",
-          backgroundColor: "rgba(8, 153, 73, 0.1)",
+          borderColor: "var(--ds-primary-green)",
+          backgroundColor: "var(--ds-primary-green-subtle)",
         },
       ],
     });
@@ -302,7 +302,7 @@ export class PerformanceTrackingComponent implements OnInit {
     return severities[trendType] || "info";
   }
 
-  getScoreSeverity(score: number): string {
+  getScoreSeverity(score: number): "success" | "info" | "warn" | "danger" {
     if (score >= 90) return "success";
     if (score >= 80) return "info";
     if (score >= 70) return "warn";

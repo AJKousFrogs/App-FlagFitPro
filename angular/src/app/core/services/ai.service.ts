@@ -282,14 +282,17 @@ export class AIService {
       default:
         // Try API for advanced processing
         return this.apiService
-          .post<{ success: boolean; data?: { message: string; actions?: any[] } }>(
+          .post<{ message: string; actions?: any[] }>(
             "/api/ai/process-command",
             { command: lowerCommand },
           )
           .pipe(
-            map((response) => {
+            map((response): { message: string; actions?: any[] } => {
               if (response.success && response.data) {
-                return response.data;
+                return {
+                  message: response.data.message,
+                  actions: response.data.actions
+                };
               }
               return {
                 message: "I'm not sure I understand. Can you rephrase that?",

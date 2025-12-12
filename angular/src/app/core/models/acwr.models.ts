@@ -118,7 +118,33 @@ export interface TrainingSession {
 }
 
 /**
- * Complete ACWR calculation data
+ * Data quality assessment for ACWR calculation
+ */
+export type DataQualityLevel = 'high' | 'medium' | 'low' | 'insufficient';
+
+export interface ACWRDataQuality {
+  level: DataQualityLevel;
+  confidence: number;              // 0-100, confidence in ACWR calculation
+  sessionsInChronicWindow: number; // Number of sessions in chronic window
+  daysWithData: number;            // Number of days with training data
+  issues: string[];                // Array of data quality issues
+  recommendations: string[];      // Recommendations to improve data quality
+}
+
+/**
+ * Tolerance detection results
+ */
+export interface ToleranceDetection {
+  detected: boolean;               // Whether high tolerance detected
+  daysAboveThreshold: number;      // Consecutive days above danger threshold
+  averageACWRAboveThreshold: number; // Average ACWR during high period
+  injuryOccurred: boolean;         // Whether injury occurred during period
+  recommendation: 'maintain' | 'adjust' | 'investigate';
+  message: string;
+}
+
+/**
+ * Complete ACWR calculation data with quality assessment
  */
 export interface ACWRData {
   acute: number;                   // 7-day EWMA load
@@ -131,7 +157,10 @@ export interface ACWRData {
     changePercent: number;
     isSafe: boolean;
     warning?: string;
+    cappedAtMax?: boolean;         // Whether weekly increase was capped
   };
+  dataQuality: ACWRDataQuality;   // Data quality assessment
+  toleranceDetection?: ToleranceDetection; // Tolerance detection results
   lastUpdated: Date;
 }
 
@@ -236,21 +265,63 @@ export interface LoadAlert {
 }
 
 /**
- * ACWR configuration
+ * ACWR configuration with evidence-based thresholds and safeguards
+ * 
+ * Thresholds based on:
+ * - Gabbett (2016): "The training—injury prevention paradox: should athletes be training smarter and harder?"
+ * - Multiple systematic reviews and practitioner guidelines
  */
 export interface ACWRConfig {
-  acuteDays: number;               // Default: 7
-  chronicDays: number;             // Default: 28
-  acuteLambda: number;             // Default: 0.2 (EWMA decay)
-  chronicLambda: number;           // Default: 0.05
+  // Window sizes for acute and chronic load calculation
+  acuteWindowDays: number;         // Default: 7 (Gabbett 2016)
+  chronicWindowDays: number;       // Default: 28 (Gabbett 2016)
+  
+  // EWMA decay factors
+  acuteLambda: number;             // Default: 0.2 (more weight to recent days)
+  chronicLambda: number;           // Default: 0.05 (smoother for chronic load)
+  
+  // Evidence-based thresholds (Gabbett 2016, later syntheses)
   thresholds: {
-    underTraining: number;         // Default: 0.80
-    sweetSpotMax: number;          // Default: 1.30
-    elevatedRisk: number;          // Default: 1.50
-    maxWeeklyIncrease: number;     // Default: 10%
+    sweetSpotLow: number;           // Default: 0.8 - Lower bound of optimal zone
+    sweetSpotHigh: number;          // Default: 1.3 - Upper bound of optimal zone (Gabbett 2016)
+    dangerHigh: number;             // Default: 1.5 - High-risk threshold (Gabbett 2016)
+    maxWeeklyIncreasePercent: number; // Default: 10% - Weekly load increase cap (Gabbett 2016)
+    maxWeeklyIncreasePercentConservative?: number; // Optional: More conservative cap (e.g., 5-7%)
   };
+  
+  // Data quality safeguards
+  minChronicLoad: number;          // Default: 50 AU - Minimum chronic load floor
+                                   // Prevents inflated ratios during returns from injury/time off
+  minDaysForChronic: number;       // Default: 21 days (3 weeks)
+                                   // Don't compute meaningful ACWR until stable data exists
+  minSessionsForChronic: number;   // Default: 12 sessions in chronic window
+                                   // Minimum sessions required for reliable ACWR
+  
+  // Data quality flags
+  dataQuality: {
+    lowConfidenceThreshold: number; // Default: 8 sessions in 4 weeks
+                                     // Tag ACWR as "low confidence" if sparse data
+    enableQualityFlags: boolean;     // Default: true - Enable data quality warnings
+  };
+  
+  // Tolerance detection (for athletes repeatedly training above 1.5 without issues)
+  toleranceDetection: {
+    enabled: boolean;              // Default: true
+    consecutiveHighDays: number;   // Default: 7 days - Days above 1.5 to trigger check
+    checkFrequency: 'daily' | 'weekly'; // Default: 'weekly'
+  };
+  
+  // Personalization options
+  personalization: {
+    enabled: boolean;              // Default: false - Use athlete-specific thresholds
+    adjustThresholdsBasedOnHistory: boolean; // Default: false
+    trackInjuryCorrelation: boolean; // Default: true
+  };
+  
+  // Feature flags
   autoAdjust: boolean;             // Enable auto-adjustments
-  alertsEnabled: boolean;
+  alertsEnabled: boolean;          // Enable alerts
+  enablePredictiveLoad: boolean;   // Default: true - Enable predictive load management
 }
 
 /**

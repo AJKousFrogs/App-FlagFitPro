@@ -26,8 +26,8 @@ export interface StatItem {
             @if (stat.icon) {
               <div
                 class="stat-icon"
-                [style.background]="(stat.color || '#089949') + '20'"
-                [style.color]="stat.color || '#089949'"
+                [style.background]="(stat.color || 'var(--ds-primary-green)') + '20'"
+                [style.color]="stat.color || 'var(--ds-primary-green)'"
                 >
                 <i [class]="'pi ' + stat.icon"></i>
               </div>
@@ -120,8 +120,8 @@ export class StatsGridComponent {
     return item.label;
   }
 
-  getTrendSeverity(trendType?: string): string {
-    const severities: Record<string, string> = {
+  getTrendSeverity(trendType?: string): "success" | "secondary" | "info" | "warn" | "danger" | "contrast" {
+    const severities: Record<string, "success" | "secondary" | "info" | "warn" | "danger" | "contrast"> = {
       positive: "success",
       negative: "danger",
       neutral: "info",

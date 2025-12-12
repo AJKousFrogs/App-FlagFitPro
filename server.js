@@ -263,6 +263,127 @@ app.put("/api/training/workouts/:id", (req, res) => {
   });
 });
 
+// Netlify Functions endpoints for local development
+// These simulate Netlify Functions behavior
+
+// Notifications endpoint
+app.get("/.netlify/functions/notifications", (req, res) => {
+  res.json({
+    success: true,
+    data: [
+      {
+        id: 1,
+        type: "training",
+        title: "Training Session Reminder",
+        message: "Speed & Agility training starts in 30 minutes",
+        time: "5 minutes ago",
+        read: false,
+        createdAt: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
+      },
+      {
+        id: 2,
+        type: "achievement",
+        title: "New Achievement Unlocked",
+        message: "You've completed 10 training sessions this month!",
+        time: "1 hour ago",
+        read: false,
+        createdAt: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
+      },
+      {
+        id: 3,
+        type: "team",
+        title: "Team Update",
+        message: "New team member joined: Alex Johnson",
+        time: "2 hours ago",
+        read: false,
+        createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+      },
+    ],
+  });
+});
+
+app.post("/.netlify/functions/notifications", (req, res) => {
+  const body = req.body || {};
+  const { notificationId, ids } = body;
+
+  if (notificationId === "all") {
+    res.json({
+      success: true,
+      data: null,
+      message: "All notifications marked as read",
+    });
+  } else if (Array.isArray(ids) && ids.length > 0) {
+    res.json({
+      success: true,
+      data: null,
+      message: `${ids.length} notifications marked as read`,
+    });
+  } else if (notificationId) {
+    res.json({
+      success: true,
+      data: null,
+      message: "Notification marked as read",
+    });
+  } else {
+    res.status(400).json({
+      success: false,
+      error: "notificationId or ids array is required",
+    });
+  }
+});
+
+// Handle PATCH /notifications/last-opened before the general PATCH route
+app.patch("/.netlify/functions/notifications/last-opened", (req, res) => {
+  res.json({
+    success: true,
+    data: null,
+    message: "Last opened timestamp updated",
+  });
+});
+
+// Notifications count endpoint
+app.get("/.netlify/functions/notifications-count", (req, res) => {
+  res.json({
+    success: true,
+    data: {
+      count: 3,
+      unread: 3,
+    },
+  });
+});
+
+// Notifications create endpoint
+app.post("/.netlify/functions/notifications-create", (req, res) => {
+  res.json({
+    success: true,
+    data: {
+      id: Date.now().toString(),
+      ...req.body,
+      createdAt: new Date().toISOString(),
+    },
+  });
+});
+
+// Notifications preferences endpoint
+app.get("/.netlify/functions/notifications-preferences", (req, res) => {
+  res.json({
+    success: true,
+    data: {
+      email: true,
+      push: true,
+      sms: false,
+    },
+  });
+});
+
+app.post("/.netlify/functions/notifications-preferences", (req, res) => {
+  res.json({
+    success: true,
+    data: req.body.preferences || {},
+    message: "Notification preferences updated",
+  });
+});
+
 // Catch-all route for SPA routing
 app.get("*", (req, res) => {
   // If requesting an HTML file, serve it directly

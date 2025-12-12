@@ -206,44 +206,75 @@
               <h2 class="section-title">Notifications</h2>
             </div>
 
-            <div class="setting-item">
+            <div class="setting-item" data-notification-type="training">
               <div class="setting-info">
                 <h3>Training Reminders</h3>
                 <p>Get notified about upcoming training sessions</p>
               </div>
               <div
                 class="toggle-switch active"
-                onclick="toggleSetting(this)"
+                data-preference-key="training"
+                onclick="toggleNotificationPreference(this, 'training')"
               ></div>
             </div>
 
-            <div class="setting-item">
+            <div class="setting-item" data-notification-type="tournament">
               <div class="setting-info">
                 <h3>Tournament Updates</h3>
                 <p>Receive updates about tournament schedules and results</p>
               </div>
               <div
                 class="toggle-switch active"
-                onclick="toggleSetting(this)"
+                data-preference-key="tournament"
+                onclick="toggleNotificationPreference(this, 'tournament')"
               ></div>
             </div>
 
-            <div class="setting-item">
+            <div class="setting-item" data-notification-type="team">
               <div class="setting-info">
                 <h3>Team Messages</h3>
                 <p>Get notified when teammates send messages</p>
               </div>
-              <div class="toggle-switch" onclick="toggleSetting(this)"></div>
+              <div 
+                class="toggle-switch" 
+                data-preference-key="team"
+                onclick="toggleNotificationPreference(this, 'team')"
+              ></div>
             </div>
 
-            <div class="setting-item">
+            <div class="setting-item" data-notification-type="achievement">
               <div class="setting-info">
-                <h3>Performance Insights</h3>
-                <p>Weekly reports on your training progress</p>
+                <h3>Achievement Notifications</h3>
+                <p>Get notified when you unlock achievements</p>
               </div>
               <div
                 class="toggle-switch active"
-                onclick="toggleSetting(this)"
+                data-preference-key="achievement"
+                onclick="toggleNotificationPreference(this, 'achievement')"
+              ></div>
+            </div>
+
+            <div class="setting-item" data-notification-type="wellness">
+              <div class="setting-info">
+                <h3>Wellness Reminders</h3>
+                <p>Daily reminders to log your wellness data</p>
+              </div>
+              <div
+                class="toggle-switch active"
+                data-preference-key="wellness"
+                onclick="toggleNotificationPreference(this, 'wellness')"
+              ></div>
+            </div>
+
+            <div class="setting-item" data-notification-type="game">
+              <div class="setting-info">
+                <h3>Game Updates</h3>
+                <p>Notifications about game schedules and results</p>
+              </div>
+              <div
+                class="toggle-switch active"
+                data-preference-key="game"
+                onclick="toggleNotificationPreference(this, 'game')"
               ></div>
             </div>
           </div>

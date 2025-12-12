@@ -209,7 +209,7 @@ interface HeatmapCell {
       }
 
       .heatmap-cell.intensity-7 {
-        background: #089949;
+        background: var(--ds-primary-green);
       }
 
       .cell-value {
@@ -268,7 +268,7 @@ interface HeatmapCell {
       }
 
       .gradient-step.intensity-7 {
-        background: #089949;
+        background: var(--ds-primary-green);
       }
 
       .legend-label {

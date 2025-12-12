@@ -67,7 +67,8 @@
     "build:css": "echo 'CSS build - configure PostCSS for minification'",
     "build:js": "echo 'JS build - configure esbuild for minification'",
     "clean": "rm -rf dist",
-    "deploy": "./deploy-to-netlify.sh"
+    "deploy": "./deploy-to-netlify.sh",
+    "postinstall": "node scripts/fix-jws-vulnerability.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.58.0",
@@ -106,7 +107,14 @@
     "prettier": "^3.6.2",
     "supertest": "^6.3.4",
     "tailwindcss": "^4.1.12",
-    "vitest": "^1.6.0",
+    "vitest": "^4.0.15",
     "ws": "^8.14.2"
+  },
+  "overrides": {
+    "jws": "^4.0.1",
+    "netlify-cli": {
+      "jsonwebtoken": "^9.0.3",
+      "jws": "^4.0.1"
+    }
   }
 }

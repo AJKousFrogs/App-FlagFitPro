@@ -426,12 +426,12 @@ export class TournamentsComponent implements OnInit {
     return labels[status] || status;
   }
 
-  getStatusSeverity(status: string): string {
-    const severities: Record<string, string> = {
+  getStatusSeverity(status: string): "info" | "success" | "secondary" | "warn" {
+    const severities: Record<string, "info" | "success" | "secondary" | "warn"> = {
       upcoming: "info",
       ongoing: "success",
       completed: "secondary",
-      registration: "warning",
+      registration: "warn",
     };
     return severities[status] || "info";
   }

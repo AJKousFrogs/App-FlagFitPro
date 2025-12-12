@@ -40,11 +40,52 @@
       }
     };
 
+  // getNotificationCount will be set by dashboard-page.js if available
+  // Otherwise use a fallback that calls the API directly
   window.getNotificationCount =
     window.getNotificationCount ||
     async function () {
-      // Fallback stub - returns 0 if not implemented
-      return 0;
+      try {
+        // Try to use the notification store if available
+        if (window.notificationStore) {
+          return await window.notificationStore.refreshBadge();
+        }
+
+        // Fallback: call API directly
+        // Try Netlify Functions endpoint first, then fallback to REST API
+        const baseUrl = window.location.origin;
+        const isNetlify = baseUrl.includes("netlify.app") || baseUrl.includes("netlify.com");
+        const endpoint = isNetlify 
+          ? `${baseUrl}/.netlify/functions/notifications-count`
+          : "/api/dashboard/notifications/count";
+        
+        const response = await fetch(endpoint, {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${localStorage.getItem("authToken") || ""}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          logger.warn("Failed to fetch notification count:", response.status);
+          return 0;
+        }
+
+        const data = await response.json();
+        // Handle different response formats
+        if (data?.success !== false && data?.data) {
+          return data.data.unreadCount || data.data.count || 0;
+        } else if (data?.unreadCount !== undefined) {
+          return data.unreadCount;
+        } else if (typeof data === 'number') {
+          return data;
+        }
+        return 0;
+      } catch (error) {
+        console.warn("Failed to get notification count:", error);
+        return 0;
+      }
     };
 
   // Wait for DOM to be ready
@@ -276,16 +317,43 @@
     // Close on Escape
     bell.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
-        bell.setAttribute("aria-expanded", "false");
+        const panel = document.getElementById("notification-panel");
+        if (panel && panel.classList.contains("is-open")) {
+          // Use dashboardPage method if available
+          if (window.dashboardPage && window.dashboardPage.closeNotificationPanel) {
+            window.dashboardPage.closeNotificationPanel();
+          } else {
+            // Fallback
+            panel.classList.remove("is-open");
+            bell.setAttribute("aria-expanded", "false");
+          }
+        }
         bell.blur();
       }
     });
 
     // Initialize badge count
-    window
-      .getNotificationCount()
-      .then(setBadge)
-      .catch(() => setBadge(0));
+    const initBadge = async () => {
+      try {
+        const count = await window.getNotificationCount();
+        setBadge(count);
+      } catch (error) {
+        console.warn("Failed to initialize badge:", error);
+        setBadge(0);
+      }
+    };
+
+    initBadge();
+
+    // Refresh badge periodically (every 30 seconds)
+    const badgeInterval = setInterval(() => {
+      initBadge();
+    }, 30000);
+
+    // Clean up interval when page unloads
+    window.addEventListener("beforeunload", () => {
+      clearInterval(badgeInterval);
+    });
   }
 
   /**

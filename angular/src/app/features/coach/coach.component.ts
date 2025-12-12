@@ -238,7 +238,7 @@ export class CoachComponent implements OnInit {
         label: "Team Members",
         value: "20",
         icon: "pi-users",
-        color: "#089949",
+        color: "var(--ds-primary-green)",
       },
       {
         label: "Avg Performance",
@@ -267,8 +267,8 @@ export class CoachComponent implements OnInit {
         {
           label: "Team Average",
           data: [82, 84, 85, 87],
-          borderColor: "#089949",
-          backgroundColor: "rgba(8, 153, 73, 0.1)",
+          borderColor: "var(--ds-primary-green)",
+          backgroundColor: "var(--ds-primary-green-subtle)",
         },
       ],
     });
@@ -306,15 +306,15 @@ export class CoachComponent implements OnInit {
     // Open create session modal - implementation pending
   }
 
-  getPerformanceSeverity(performance: number): string {
+  getPerformanceSeverity(performance: number): "success" | "info" | "warn" | "danger" {
     if (performance >= 90) return "success";
     if (performance >= 80) return "info";
     if (performance >= 70) return "warn";
     return "danger";
   }
 
-  getStatusSeverity(status: string): string {
-    const severities: Record<string, string> = {
+  getStatusSeverity(status: string): "success" | "info" | "warn" | "danger" {
+    const severities: Record<string, "success" | "info" | "warn" | "danger"> = {
       Active: "success",
       Injured: "warn",
       Inactive: "danger",

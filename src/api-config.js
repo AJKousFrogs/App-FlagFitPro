@@ -103,6 +103,15 @@ export const API_ENDPOINTS = {
     notifications: API_BASE_URL.includes("netlify/functions")
       ? "/notifications"
       : normalizeEndpoint("/api/dashboard/notifications"),
+    notificationsCount: API_BASE_URL.includes("netlify/functions")
+      ? "/notifications-count"
+      : normalizeEndpoint("/api/dashboard/notifications/count"),
+    notificationsCreate: API_BASE_URL.includes("netlify/functions")
+      ? "/notifications-create"
+      : normalizeEndpoint("/api/dashboard/notifications/create"),
+    notificationsPreferences: API_BASE_URL.includes("netlify/functions")
+      ? "/notifications-preferences"
+      : normalizeEndpoint("/api/dashboard/notifications/preferences"),
     dailyQuote: normalizeEndpoint("/api/dashboard/daily-quote"),
     health: normalizeEndpoint("/api/dashboard/health"),
   },
@@ -297,20 +306,66 @@ export class ApiClient {
     try {
       const response = await fetch(url, config);
 
+      // Check Content-Type before parsing
+      const contentType = response.headers.get("content-type") || "";
+      const isJSON = contentType.includes("application/json");
+      const isHTML = contentType.includes("text/html");
+
       // Handle non-200 responses
       if (!response.ok) {
         // For 401 errors, try to parse error message but don't fail completely
         if (response.status === 401) {
-          const errorData = await response.json().catch(() => ({}));
-          const error = new Error(errorData.error || `HTTP ${response.status}`);
-          error.status = 401;
+          if (isJSON) {
+            const errorData = await response.json().catch(() => ({}));
+            const error = new Error(errorData.error || `HTTP ${response.status}`);
+            error.status = 401;
+            throw error;
+          } else {
+            const error = new Error(`HTTP ${response.status}: Unauthorized`);
+            error.status = 401;
+            throw error;
+          }
+        }
+        
+        // If response is HTML (like a 404 page), don't try to parse as JSON
+        if (isHTML) {
+          const error = new Error(`HTTP ${response.status}: Server returned HTML instead of JSON. Endpoint may not exist.`);
+          error.status = response.status;
+          error.isHTMLResponse = true;
           throw error;
         }
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || `HTTP ${response.status}`);
+        
+        // Try to parse JSON error response
+        if (isJSON) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || `HTTP ${response.status}`);
+        } else {
+          // Non-JSON error response
+          const text = await response.text().catch(() => "");
+          throw new Error(`HTTP ${response.status}: ${text.substring(0, 100)}`);
+        }
       }
 
-      const result = await response.json();
+      // For successful responses, check content type before parsing
+      if (isHTML) {
+        // Server returned HTML instead of JSON - likely a routing issue
+        const error = new Error(`Server returned HTML instead of JSON. Endpoint may not exist: ${endpoint}`);
+        error.isHTMLResponse = true;
+        throw error;
+      }
+
+      // Parse JSON response
+      const result = isJSON 
+        ? await response.json()
+        : await response.text().then(text => {
+            // Try to parse as JSON anyway (some servers don't set content-type correctly)
+            try {
+              return JSON.parse(text);
+            } catch {
+              throw new Error(`Expected JSON but received: ${text.substring(0, 100)}`);
+            }
+          });
+      
       this.activeRequests.delete(requestId);
       return result;
     } catch (error) {
@@ -460,6 +515,19 @@ export class ApiClient {
     return response;
   }
 
+  // PATCH request (invalidates related cache)
+  async patch(endpoint, data = {}) {
+    const response = await this.request(endpoint, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    });
+
+    // Invalidate cache for this endpoint pattern
+    this.invalidateCache(endpoint);
+
+    return response;
+  }
+
   // DELETE request (invalidates related cache)
   async delete(endpoint) {
     const response = await this.request(endpoint, {
@@ -508,8 +576,24 @@ export const dashboard = {
     apiClient.get(API_ENDPOINTS.dashboard.wearables, { userId }),
   getTeamChemistry: (userId) =>
     apiClient.get(API_ENDPOINTS.dashboard.teamChemistry, { userId }),
-  getNotifications: (userId) =>
-    apiClient.get(API_ENDPOINTS.dashboard.notifications, { userId }),
+  getNotifications: (userId, options = {}) =>
+    apiClient.get(API_ENDPOINTS.dashboard.notifications, { userId, ...options }),
+  getNotificationCount: () =>
+    apiClient.get(API_ENDPOINTS.dashboard.notificationsCount),
+  markNotificationAsRead: (notificationId) =>
+    apiClient.post(API_ENDPOINTS.dashboard.notifications, { notificationId }),
+  markNotificationsAsRead: (ids) =>
+    apiClient.post(API_ENDPOINTS.dashboard.notifications, { ids }),
+  markAllNotificationsAsRead: () =>
+    apiClient.post(API_ENDPOINTS.dashboard.notifications, { notificationId: "all" }),
+  createNotification: (notificationData) =>
+    apiClient.post(API_ENDPOINTS.dashboard.notificationsCreate, notificationData),
+  getNotificationPreferences: () =>
+    apiClient.get(API_ENDPOINTS.dashboard.notificationsPreferences),
+  updateNotificationPreferences: (preferences) =>
+    apiClient.post(API_ENDPOINTS.dashboard.notificationsPreferences, { preferences }),
+  updateLastOpenedAt: () =>
+    apiClient.patch(`${API_ENDPOINTS.dashboard.notifications}/last-opened`),
   getDailyQuote: () => apiClient.get(API_ENDPOINTS.dashboard.dailyQuote),
 };
 
@@ -575,8 +659,8 @@ export const coach = {
 };
 
 export const knowledge = {
-  search: (query, category = null, limit = 5) =>
-    apiClient.post(API_ENDPOINTS.knowledge.search, { query, category, limit }),
+  search: (query, category = null, limit = 5, options = {}) =>
+    apiClient.post(API_ENDPOINTS.knowledge.search, { query, category, limit, options }),
   getEntry: (topic) => apiClient.get(API_ENDPOINTS.knowledge.entry(topic)),
   searchArticles: (query, categories = [], limit = 10) =>
     apiClient.post(API_ENDPOINTS.knowledge.articles, {

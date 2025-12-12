@@ -260,7 +260,7 @@ export class WellnessWidgetComponent implements OnInit {
 
   overallScore = signal<number>(0);
   statusLabel = signal<string>("N/A");
-  statusColor = signal<string>("#089949");
+  statusColor = signal<string>("var(--ds-primary-green)");
   metrics = signal<WellnessMetric[]>([]);
 
   ngOnInit(): void {

@@ -24,34 +24,39 @@ import { ButtonModule } from "primeng/button";
     `,
   styles: [
     `
+      /* Uses standardized layout-system.scss classes */
       .page-header {
         display: flex;
         justify-content: space-between;
-        align-items: center;
+        align-items: flex-start;
         margin-bottom: var(--space-6);
-        padding: var(--space-5);
-        background: var(--surface-primary);
-        border-radius: var(--p-border-radius);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        padding: var(--space-6);
+        background-color: var(--surface-primary);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
       }
 
       .header-content {
         flex: 1;
+        min-width: 0;
       }
 
       .page-title {
         display: flex;
         align-items: center;
         gap: var(--space-3);
-        font-size: 1.5rem;
-        font-weight: 600;
-        margin-bottom: var(--space-2);
-        color: var(--text-primary);
+        font-size: var(--font-heading-lg);
+        font-weight: var(--font-weight-semibold);
+        line-height: var(--line-height-tight);
+        margin: 0 0 var(--space-2) 0;
+        color: var(--color-text-primary);
       }
 
       .page-subtitle {
-        font-size: 0.875rem;
-        color: var(--text-secondary);
+        font-size: var(--text-base);
+        font-weight: var(--font-weight-normal);
+        line-height: var(--line-height-normal);
+        color: var(--color-text-secondary);
         margin: 0;
       }
 

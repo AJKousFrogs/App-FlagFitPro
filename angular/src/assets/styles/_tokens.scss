@@ -1,18 +1,14 @@
-/* Primitive Tokens - Global Values */
-:root {
-  /* Color Primitives - Green Theme */
-  --primitive-primary-500: #10c96b;
-  --primitive-primary-600: #0ab85a;
-  --primitive-primary-700: #089949;
-  --primitive-secondary-500: #89c300;
-  --primitive-tertiary-500: #cc9610;
-  --primitive-neutral-300: #d0d0d0;
+/* ================================================================
+   ⚠️ DEPRECATED - DO NOT USE
+   ================================================================
+   
+   This file is deprecated and will be removed in a future version.
+   Please use the new design system tokens instead:
+   
+   @import './assets/styles/design-system-tokens.scss';
+   
+   Migration guide: DESIGN_SYSTEM_REVAMP_SUMMARY.md
+   ================================================================ */
 
-  /* Typography Primitives */
-  --primitive-font-size-16: 1rem;
-  --primitive-font-weight-600: 600;
-
-  /* Spacing Primitives (8-point grid) */
-  --primitive-space-16: 1rem;
-  --primitive-space-24: 1.5rem;
-}
+/* Legacy compatibility - redirects to new design system */
+@import './design-system-tokens.scss';

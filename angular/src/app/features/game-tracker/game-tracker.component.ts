@@ -166,7 +166,7 @@ export class GameTrackerComponent implements OnInit {
   passOutcomeOptions = [
     { label: "Completion", value: "completion", severity: "success" },
     { label: "Drop", value: "drop", severity: "danger" },
-    { label: "Incompletion", value: "incompletion", severity: "warning" },
+    { label: "Incompletion", value: "incompletion", severity: "warn" },
     { label: "Interception", value: "interception", severity: "danger" },
     { label: "Defended", value: "defended", severity: "info" },
   ];
@@ -583,21 +583,19 @@ export class GameTrackerComponent implements OnInit {
     return types[playType] || playType;
   }
 
-  getPlayTypeSeverity(playType: string): string {
-    const severities: Record<string, string> = {
+  getPlayTypeSeverity(playType: string): "success" | "secondary" | "info" | "warn" | "danger" | "contrast" {
+    const severities: Record<string, "success" | "secondary" | "info" | "warn" | "danger" | "contrast"> = {
       pass_play: "info",
       run_play: "success",
-      flag_pull: "warning",
+      flag_pull: "warn",
       interception: "danger",
-      pass_deflection: "warning",
+      pass_deflection: "warn",
     };
     return severities[playType] || "info";
   }
 
   getPlayDetails(play: Play): string {
-    const playType = play.playType;
-
-    switch (playType) {
+    switch (play.playType) {
       case "pass_play":
         const qbName = this.getPlayerName(play.quarterbackId);
         const wrName = this.getPlayerName(play.receiverId);
@@ -666,8 +664,8 @@ export class GameTrackerComponent implements OnInit {
     element?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
-  getResultSeverity(result: string): string {
-    const severities: Record<string, string> = {
+  getResultSeverity(result: string): "success" | "secondary" | "info" | "warn" | "danger" | "contrast" {
+    const severities: Record<string, "success" | "secondary" | "info" | "warn" | "danger" | "contrast"> = {
       win: "success",
       loss: "danger",
       tie: "info",

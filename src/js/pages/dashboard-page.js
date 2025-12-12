@@ -8,11 +8,278 @@ import { escapeHtml } from "../utils/sanitize.js";
 import { storageService } from "../services/storage-service-unified.js";
 import { errorHandler } from "../utils/unified-error-handler.js";
 
+/**
+ * NotificationStore - Centralized notification state management
+ * Manages notifications, unread count, loading state, and API calls
+ */
+class NotificationStore {
+  constructor() {
+    this.notifications = [];
+    this.unreadCount = 0;
+    this.loading = false;
+    this.error = null;
+    this.listeners = new Set();
+    this.lastOpenedAt = null;
+  }
+
+  /**
+   * Subscribe to store changes
+   */
+  subscribe(callback) {
+    this.listeners.add(callback);
+    return () => this.listeners.delete(callback);
+  }
+
+  /**
+   * Notify all listeners of state changes
+   */
+  notify() {
+    this.listeners.forEach(callback => callback(this.getState()));
+  }
+
+  /**
+   * Get current state
+   */
+  getState() {
+    return {
+      notifications: this.notifications,
+      unreadCount: this.unreadCount,
+      loading: this.loading,
+      error: this.error
+    };
+  }
+
+  /**
+   * Update state and notify listeners
+   */
+  setState(updates) {
+    Object.assign(this, updates);
+    this.notify();
+  }
+
+  /**
+   * Calculate unread count from notifications
+   */
+  calculateUnreadCount() {
+    return this.notifications.filter(n => !n.read).length;
+  }
+
+  /**
+   * Load notifications from API
+   */
+  async loadNotifications(options = {}) {
+    this.setState({ loading: true, error: null });
+
+    try {
+      // Get last opened timestamp from store or API
+      const lastOpenedAt = this.lastOpenedAt || null;
+      
+      const response = await apiClient.get(
+        API_ENDPOINTS.dashboard.notifications,
+        { ...options, lastOpenedAt }
+      );
+
+      let notifications = [];
+      if (response && response.success && response.data) {
+        if (Array.isArray(response.data)) {
+          notifications = response.data;
+        } else if (response.data.notifications && Array.isArray(response.data.notifications)) {
+          notifications = response.data.notifications;
+        } else if (response.data.data && Array.isArray(response.data.data)) {
+          notifications = response.data.data;
+        }
+      }
+
+      const unreadCount = notifications.filter(n => !n.read).length;
+
+      this.setState({
+        notifications,
+        unreadCount,
+        loading: false,
+        error: null
+      });
+
+      return notifications;
+    } catch (error) {
+      logger.warn("Failed to load notifications:", error);
+      this.setState({
+        loading: false,
+        error: error.message || "Failed to load notifications"
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Update last opened timestamp
+   */
+  async updateLastOpenedAt() {
+    try {
+      // Use query parameter for more reliable routing
+      await apiClient.patch(
+        `${API_ENDPOINTS.dashboard.notifications}?action=last-opened`
+      );
+      this.lastOpenedAt = new Date().toISOString();
+      this.notify();
+    } catch (error) {
+      logger.warn("Failed to update last opened timestamp:", error);
+    }
+  }
+
+  /**
+   * Mark a single notification as read (optimistic update)
+   */
+  async markOneRead(id) {
+    const notification = this.notifications.find(n => String(n.id) === String(id));
+    if (!notification || notification.read) {
+      return;
+    }
+
+    // Optimistic update
+    const previousState = { ...notification };
+    notification.read = true;
+    const previousUnreadCount = this.unreadCount;
+    this.unreadCount = Math.max(0, this.unreadCount - 1);
+    this.notify();
+
+    try {
+      // Use the API helper function for consistency
+      const response = await apiClient.post(
+        API_ENDPOINTS.dashboard.notifications,
+        { notificationId: String(id) }
+      );
+
+      // Verify API response indicates success
+      if (!response || (response.success === false)) {
+        throw new Error(response?.error || "Failed to mark notification as read");
+      }
+
+      // Success - state already updated optimistically
+      // Refresh badge count to ensure consistency with server
+      logger.debug("Notification marked as read successfully:", id);
+      this.notify();
+      return true;
+    } catch (error) {
+      // Revert optimistic update
+      notification.read = previousState.read;
+      this.unreadCount = previousUnreadCount;
+      this.setState({ error: "Couldn't mark as read, please retry." });
+      this.notify();
+
+      // Show error toast with more details
+      const errorMessage = error?.message || "Couldn't mark notification as read, please retry.";
+      logger.error("Failed to mark notification as read:", error);
+      
+      if (window.ErrorHandler) {
+        window.ErrorHandler.showError(errorMessage);
+      } else {
+        // Fallback: use console if ErrorHandler not available
+        console.error("Notification error:", errorMessage);
+      }
+
+      throw error;
+    }
+  }
+
+  /**
+   * Mark all notifications as read
+   */
+  async markAllRead() {
+    const unreadNotifications = this.notifications.filter(n => !n.read);
+    if (unreadNotifications.length === 0) {
+      logger.debug("No unread notifications to mark as read");
+      return;
+    }
+
+    // Optimistic update
+    const previousState = this.notifications.map(n => ({ ...n }));
+    this.notifications.forEach(n => { n.read = true; });
+    const previousUnreadCount = this.unreadCount;
+    this.unreadCount = 0;
+    this.notify();
+
+    try {
+      // Use the API helper function for consistency
+      const response = await apiClient.post(
+        API_ENDPOINTS.dashboard.notifications,
+        { notificationId: "all" }
+      );
+
+      // Verify API response indicates success
+      if (!response || (response.success === false)) {
+        throw new Error(response?.error || "Failed to mark all notifications as read");
+      }
+
+      // Success - state already updated optimistically
+      logger.debug(`Marked ${unreadNotifications.length} notifications as read successfully`);
+      this.notify();
+      return true;
+    } catch (error) {
+      // Revert optimistic update
+      this.notifications = previousState;
+      this.unreadCount = previousUnreadCount;
+      this.setState({ error: "Couldn't mark all as read, please retry." });
+      this.notify();
+
+      // Show error toast with more details
+      const errorMessage = error?.message || "Couldn't mark all notifications as read, please retry.";
+      logger.error("Failed to mark all notifications as read:", error);
+      
+      if (window.ErrorHandler) {
+        window.ErrorHandler.showError(errorMessage);
+      } else {
+        // Fallback: use console if ErrorHandler not available
+        console.error("Notification error:", errorMessage);
+      }
+
+      throw error;
+    }
+  }
+
+  /**
+   * Refresh badge count from API
+   */
+  async refreshBadge() {
+    try {
+      const response = await apiClient.get(API_ENDPOINTS.dashboard.notificationsCount);
+      
+      // Handle different response formats
+      let count = 0;
+      if (response) {
+        if (response.success !== false && response.data) {
+          count = response.data.unreadCount || response.data.count || 0;
+        } else if (typeof response === 'number') {
+          count = response;
+        } else if (response.unreadCount !== undefined) {
+          count = response.unreadCount;
+        }
+      }
+
+      // Update state
+      this.unreadCount = count;
+      logger.debug("Badge count refreshed from API:", count);
+      this.notify();
+      return count;
+    } catch (error) {
+      logger.warn("Failed to refresh badge count from API:", error);
+      // Fallback to calculating from current notifications
+      const calculatedCount = this.calculateUnreadCount();
+      this.unreadCount = calculatedCount;
+      this.notify();
+      logger.debug("Using calculated badge count as fallback:", calculatedCount);
+      return calculatedCount;
+    }
+  }
+}
+
 class DashboardPage {
   constructor() {
     // Initialize with today's date
     this.selectedDate = new Date();
     this.selectedDate.setHours(0, 0, 0, 0);
+
+    // Initialize notification store
+    this.notificationStore = new NotificationStore();
 
     this.wellnessData = {
       energy: null,
@@ -41,12 +308,115 @@ class DashboardPage {
       document.addEventListener("DOMContentLoaded", () => {
         this.setupEventListeners();
         this.setupGlobalFunctions();
+        this.setupNotificationStore();
         this.checkProfileCompletion();
       });
     } else {
       this.setupEventListeners();
       this.setupGlobalFunctions();
+      this.setupNotificationStore();
       this.checkProfileCompletion();
+    }
+  }
+
+  /**
+   * Setup notification store subscription to update UI on state changes
+   */
+  setupNotificationStore() {
+    // Subscribe to store changes
+    this.notificationStore.subscribe((state) => {
+      this.updateNotificationUI(state);
+    });
+
+    // Initial badge refresh
+    this.refreshBadge();
+  }
+
+  /**
+   * Update UI based on notification store state
+   */
+  updateNotificationUI(state) {
+    const { notifications, unreadCount, loading, error } = state;
+
+    // Update badge
+    this.updateBadge(unreadCount);
+
+    // Update panel if it's visible
+    const panel = document.getElementById("notification-panel");
+    if (panel && panel.classList.contains("is-open")) {
+      if (loading) {
+        this.showNotificationLoading();
+      } else if (error) {
+        this.showNotificationError(error);
+      } else {
+        this.renderNotifications(notifications);
+      }
+    }
+  }
+
+  /**
+   * Show loading state in notification panel
+   */
+  showNotificationLoading() {
+    const notificationList = document.getElementById("notification-list");
+    if (!notificationList) return;
+
+    notificationList.innerHTML = `
+      <div class="notification-loading">
+        <div class="notification-loading-spinner"></div>
+        <div class="notification-loading-text">Loading notifications...</div>
+      </div>
+    `;
+  }
+
+  /**
+   * Show error state in notification panel
+   */
+  showNotificationError(error) {
+    const notificationList = document.getElementById("notification-list");
+    if (!notificationList) return;
+
+    notificationList.innerHTML = `
+      <div class="notification-error">
+        <div class="notification-error-icon">⚠️</div>
+        <div class="notification-error-text">${escapeHtml(error)}</div>
+        <button class="notification-retry-btn" onclick="window.dashboardPage?.loadNotifications()">
+          Retry
+        </button>
+      </div>
+    `;
+  }
+
+  /**
+   * Update notification badge
+   */
+  updateBadge(count) {
+    const badge = document.getElementById("notification-badge");
+    const live = document.getElementById("notification-live");
+
+    if (!badge || !live) return;
+
+    if (count > 0) {
+      badge.textContent = String(count);
+      badge.hidden = false;
+      live.textContent = `${count} new notification${count !== 1 ? "s" : ""}`;
+    } else {
+      badge.hidden = true;
+      live.textContent = "No new notifications";
+    }
+  }
+
+  /**
+   * Refresh badge count from API
+   */
+  async refreshBadge() {
+    try {
+      const count = await this.notificationStore.refreshBadge();
+      this.updateBadge(count);
+    } catch (error) {
+      logger.warn("Failed to refresh badge:", error);
+      // Use count from store as fallback
+      this.updateBadge(this.notificationStore.unreadCount);
     }
   }
 
@@ -252,6 +622,26 @@ class DashboardPage {
     window.toggleSidebar = () => this.toggleSidebar();
     window.toggleNotifications = () => this.toggleNotifications();
     window.markAllAsRead = () => this.markAllAsRead();
+    
+    // Make dashboardPage and notificationStore globally available
+    window.dashboardPage = this;
+    window.notificationStore = this.notificationStore;
+    
+    // Make getNotificationCount available globally
+    window.getNotificationCount = async () => {
+      try {
+        const count = await this.notificationStore.refreshBadge();
+        return count;
+      } catch (error) {
+        logger.warn("Failed to get notification count:", error);
+        return this.notificationStore.unreadCount || 0;
+      }
+    };
+
+    // Clean up click-outside handler on page unload
+    window.addEventListener("beforeunload", () => {
+      this.removeClickOutsideHandler();
+    });
   }
 
   toggleSidebar() {
@@ -288,73 +678,108 @@ class DashboardPage {
 
     if (!panel || !bell) {return;}
 
-    const isHidden = panel.hidden;
-    panel.hidden = !isHidden;
-    bell.setAttribute("aria-expanded", String(!isHidden));
-
-    // Load notifications if opening
-    if (!isHidden) {
-      this.loadNotifications();
+    const isOpen = panel.classList.contains("is-open");
+    
+    if (isOpen) {
+      this.closeNotificationPanel();
+    } else {
+      this.openNotificationPanel();
     }
   }
 
+  /**
+   * Open notification panel
+   */
+  async openNotificationPanel() {
+    const panel = document.getElementById("notification-panel");
+    const bell = document.getElementById("notification-bell");
+
+    if (!panel || !bell) return;
+
+    panel.classList.add("is-open");
+    bell.setAttribute("aria-expanded", "true");
+
+    // Update last opened timestamp
+    await this.notificationStore.updateLastOpenedAt();
+
+    // Load notifications
+    this.loadNotifications();
+
+    // Add click-outside handler
+    this.setupClickOutsideHandler();
+  }
+
+  /**
+   * Close notification panel
+   */
+  closeNotificationPanel() {
+    const panel = document.getElementById("notification-panel");
+    const bell = document.getElementById("notification-bell");
+
+    if (!panel || !bell) return;
+
+    panel.classList.remove("is-open");
+    bell.setAttribute("aria-expanded", "false");
+
+    // Remove click-outside handler
+    this.removeClickOutsideHandler();
+  }
+
+  /**
+   * Setup click-outside handler to close panel
+   */
+  setupClickOutsideHandler() {
+    // Remove existing handler if any
+    this.removeClickOutsideHandler();
+
+    // Create new handler
+    this.clickOutsideHandler = (e) => {
+      const panel = document.getElementById("notification-panel");
+      const bell = document.getElementById("notification-bell");
+
+      if (!panel || !bell) return;
+
+      // Check if click is outside panel and not on bell
+      const clickedPanel = panel.contains(e.target);
+      const clickedBell = bell.contains(e.target) || bell === e.target;
+
+      if (!clickedPanel && !clickedBell) {
+        this.closeNotificationPanel();
+      }
+    };
+
+    // Add handler with slight delay to avoid immediate closure
+    setTimeout(() => {
+      document.addEventListener("click", this.clickOutsideHandler);
+    }, 0);
+  }
+
+  /**
+   * Remove click-outside handler
+   */
+  removeClickOutsideHandler() {
+    if (this.clickOutsideHandler) {
+      document.removeEventListener("click", this.clickOutsideHandler);
+      this.clickOutsideHandler = null;
+    }
+  }
+
+  /**
+   * Load notifications using the store
+   */
   async loadNotifications() {
-    const notificationList = document.getElementById("notification-list");
-    if (!notificationList) {return;}
-
     try {
-      // Try to get notifications from API
-      const response = await apiClient.get(
-        API_ENDPOINTS.dashboard.notifications,
-      );
-
-      // Extract notifications array from response
-      let notifications = null;
-      if (response && response.success && response.data) {
-        // Handle different response formats
-        if (Array.isArray(response.data)) {
-          notifications = response.data;
-        } else if (
-          response.data.notifications &&
-          Array.isArray(response.data.notifications)
-        ) {
-          notifications = response.data.notifications;
-        } else if (response.data.data && Array.isArray(response.data.data)) {
-          notifications = response.data.data;
-        }
-      }
-
-      // Use extracted notifications or fallback to mock
-      if (notifications && Array.isArray(notifications)) {
-        this.renderNotifications(notifications);
-      } else {
-        logger.debug(
-          "No valid notifications array in response, using mock data",
-        );
-        this.renderNotifications(this.getMockNotifications());
-      }
+      await this.notificationStore.loadNotifications();
+      // UI will update automatically via store subscription
     } catch (error) {
-      // Handle specific error types gracefully
-      if (error.isConnectionRefused ||
+      // Error handling is done in the store
+      // For development, you might want to show mock data
+      if (error.isConnectionRefused || 
           (error.isNetworkError && error.message && error.message.includes("Failed to fetch"))) {
-        // Connection refused is expected when Netlify Functions aren't running
-        // Silently use mock data without logging
+        // Silently fall back to mock data in development
+        logger.debug("Using mock notifications in development");
         this.renderNotifications(this.getMockNotifications());
-        return;
       }
-
-      if (error.isNetworkError || (error.message && error.message.includes("Failed to fetch"))) {
-        logger.debug(
-          "Network error loading notifications, using mock data",
-        );
-      } else if (error.status === 401 || (error.message && error.message.includes("401"))) {
-        logger.debug(
-          "Unauthorized - using mock notifications",
-        );
-      } else {
-        logger.warn("Failed to load notifications, using mock data:", error);
-      }
-      this.renderNotifications(this.getMockNotifications());
     }
   }
 
@@ -401,18 +826,26 @@ class DashboardPage {
     }
 
     if (notifications.length === 0) {
-      notificationList.innerHTML =
-        '<div class="notification-empty">No notifications</div>';
+      notificationList.innerHTML = `
+        <div class="notification-empty">
+          <div class="notification-empty-icon">🔔</div>
+          <div class="notification-empty-title">No notifications yet</div>
+          <div class="notification-empty-text">You're all caught up! New notifications will appear here.</div>
+        </div>
+      `;
       return;
     }
 
     notificationList.innerHTML = notifications
       .map(
         (notif) => `
-      <div class="notification-item ${notif.read ? "read" : ""}" data-id="${escapeHtml(notif.id)}">
+      <div class="notification-item ${notif.read ? "read" : ""} ${notif.new ? "new" : ""}" data-id="${escapeHtml(notif.id)}">
         <div class="notification-icon">${this.getNotificationIcon(notif.type)}</div>
         <div class="notification-content">
-          <div class="notification-title">${escapeHtml(notif.title)}</div>
+          <div class="notification-title">
+            ${escapeHtml(notif.title)}
+            ${notif.new ? '<span class="notification-new-badge">New</span>' : ""}
+          </div>
           <div class="notification-message">${escapeHtml(notif.message)}</div>
           <div class="notification-time">${escapeHtml(notif.time)}</div>
         </div>
@@ -446,26 +879,42 @@ class DashboardPage {
     return icons[type] || icons.default;
   }
 
-  markNotificationAsRead(id) {
-    const item = document.querySelector(`[data-id="${id}"]`);
-    if (item) {
-      item.classList.add("read");
-      const markBtn = item.querySelector(".notification-mark-read");
-      if (markBtn) {markBtn.remove();}
+  /**
+   * Mark a notification as read (with optimistic update and API call)
+   */
+  async markNotificationAsRead(id) {
+    try {
+      await this.notificationStore.markOneRead(id);
+      // UI will update automatically via store subscription
+      // Also refresh badge to ensure consistency with server state
+      await this.refreshBadge();
+      // Reload notifications to sync with server state
+      await this.loadNotifications();
+    } catch (error) {
+      // Error handling is done in the store (shows toast)
+      logger.warn("Failed to mark notification as read:", error);
+      // Still refresh badge to sync with server state even on error
+      await this.refreshBadge();
     }
   }
 
-  markAllAsRead() {
-    const items = document.querySelectorAll(".notification-item");
-    items.forEach((item) => {
-      item.classList.add("read");
-      const markBtn = item.querySelector(".notification-mark-read");
-      if (markBtn) {markBtn.remove();}
-    });
-
-    // Update badge
-    const badge = document.getElementById("notification-badge");
-    if (badge) {badge.hidden = true;}
+  /**
+   * Mark all notifications as read (with optimistic update and API call)
+   */
+  async markAllAsRead() {
+    try {
+      await this.notificationStore.markAllRead();
+      // UI will update automatically via store subscription
+      // Also refresh badge to ensure consistency with server state
+      await this.refreshBadge();
+      // Reload notifications to sync with server state
+      await this.loadNotifications();
+    } catch (error) {
+      // Error handling is done in the store (shows toast)
+      logger.warn("Failed to mark all notifications as read:", error);
+      // Still refresh badge to sync with server state even on error
+      await this.refreshBadge();
+    }
   }
 
   setupEventListeners() {
@@ -1611,6 +2060,12 @@ class DashboardPage {
 
 // Initialize dashboard page when script loads
 const dashboardPage = new DashboardPage();
+
+// Make API client and endpoints available globally for notification-manager.js
+if (typeof window !== 'undefined') {
+  window.apiClient = window.apiClient || apiClient;
+  window.API_ENDPOINTS = window.API_ENDPOINTS || API_ENDPOINTS;
+}
 
 // Export for potential external use
 export default dashboardPage;

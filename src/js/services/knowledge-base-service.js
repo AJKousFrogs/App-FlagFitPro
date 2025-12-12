@@ -14,11 +14,21 @@ class KnowledgeBaseService {
    * Search knowledge base for relevant entries
    * @param {string} query - User's question
    * @param {string} category - Optional category filter
+   * @param {Object} options - Search options
+   * @param {boolean} options.requireApproval - Only return approved entries (default: true)
+   * @param {boolean} options.includeExperimental - Include experimental entries (default: false)
+   * @param {number} options.minQualityScore - Minimum source quality score (0.0-1.0, default: 0.0)
    * @returns {Promise<Object>} Knowledge base entry with answer
    */
-  async searchKnowledgeBase(query, category = null) {
-    // Check cache first
-    const cacheKey = `${query}_${category || "all"}`;
+  async searchKnowledgeBase(query, category = null, options = {}) {
+    const {
+      requireApproval = true,
+      includeExperimental = false,
+      minQualityScore = 0.0
+    } = options;
+
+    // Check cache first (include options in cache key)
+    const cacheKey = `${query}_${category || "all"}_${requireApproval}_${includeExperimental}_${minQualityScore}`;
     const cached = this.cache.get(cacheKey);
     if (cached && Date.now() - cached.timestamp < this.cacheTimeout) {
       return cached.data;
@@ -26,7 +36,12 @@ class KnowledgeBaseService {
 
     try {
       const { knowledge } = await import("../../api-config.js");
-      const response = await knowledge.search(query, category, 5);
+      // Pass options to search API
+      const response = await knowledge.search(query, category, 5, {
+        requireApproval,
+        includeExperimental,
+        minQualityScore
+      });
 
       if (response.success && response.data && response.data.length > 0) {
         // Cache the result

@@ -11,9 +11,21 @@ let sentryService = null;
 const loadSentry = async () => {
   if (!sentryService) {
     try {
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'unified-error-handler.js:11',message:'loadSentry called',data:{sentryServiceExists:!!sentryService},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+      // #endregion
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'unified-error-handler.js:14',message:'Before importing sentry-service',data:{importPath:'../services/sentry-service.js'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+      // #endregion
       const module = await import('../services/sentry-service.js');
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'unified-error-handler.js:15',message:'Import successful',data:{hasModule:!!module,hasSentryService:!!module.sentryService,moduleKeys:Object.keys(module||{})},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+      // #endregion
       sentryService = module.sentryService;
     } catch (error) {
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'unified-error-handler.js:17',message:'Import error in loadSentry',data:{errorName:error?.name,errorMessage:error?.message,errorStack:error?.stack?.substring(0,500),errorToString:String(error),errorColumn:error?.columnNumber,errorLine:error?.lineNumber},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+      // #endregion
       logger.warn('[Error Handler] Sentry not available:', error);
     }
   }

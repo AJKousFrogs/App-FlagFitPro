@@ -3,7 +3,8 @@
  * Handles real-time subscriptions and database operations from the browser
  */
 
-import { createClient } from '@supabase/supabase-js';
+// Import Supabase from CDN for browser compatibility
+const { createClient } = window.supabase || {};
 import { logger } from '../../logger.js';
 
 // Get Supabase configuration from environment or window globals
@@ -358,8 +359,15 @@ export const supabaseHelpers = {
   }
 };
 
-// Auto-initialize on import
-initializeSupabase();
+// Auto-initialize on import (safe - will return null if config missing)
+// This allows the module to load even if env vars aren't ready yet
+// Client will be initialized when getSupabase() is called
+try {
+  initializeSupabase();
+} catch (error) {
+  // Silently fail - initialization will happen when needed
+  logger.debug('[Supabase] Auto-initialization deferred:', error.message);
+}
 
 // Export everything
 export { supabaseClient };

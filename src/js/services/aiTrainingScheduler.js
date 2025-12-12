@@ -6,19 +6,80 @@
  * - Game schedules
  * - League commitments
  * - Recovery needs
+ * 
+ * Evidence-Based Tapering & Periodization:
+ * - 7-14 day taper with 40-60% volume reduction (consensus range)
+ * - Up to 60-90% volume reduction after heavy overload blocks
+ * - Minimum intensity floor: 80-90% of normal (maintain intensity during taper)
+ * - Major events: 10-14 day structured taper (after 2-4 weeks overload)
+ * - Minor events: 4-7 day taper
+ * - Back-to-back peak logic: post-event recovery → mini-overload → mini-taper
+ * 
+ * References:
+ * - Bosquet et al. (2007): Effects of tapering on performance
+ * - Mujika & Padilla (2003): Scientific bases for precompetition tapering strategies
+ * - Multiple reviews on team-sport tapering protocols
  */
 
 import { ANNUAL_TRAINING_PROGRAM } from "../../training-program-data.js";
 import { getAllTournaments, getDaysUntilTournament } from "../../tournament-schedule.js";
 
+/**
+ * Event importance levels for taper differentiation
+ */
+const EVENT_IMPORTANCE = {
+  MAJOR: "major",        // Elite 8, World Championship - 10-14 day taper, 50-70% volume cut
+  HIGH: "high",          // Major tournaments - 7-10 day taper, 40-60% volume cut
+  MEDIUM: "medium",      // Regular tournaments - 5-7 day taper, 30-50% volume cut
+  MINOR: "minor",        // League games, scrimmages - 3-5 day taper, 20-40% volume cut
+};
+
 class AITrainingScheduler {
   constructor() {
     this.tournamentDates = this.loadTournamentDates();
     this.periodizationRules = this.initializePeriodizationRules();
+    this.taperConfig = this.initializeTaperConfig();
   }
 
   /**
-   * Load official tournament dates
+   * Initialize evidence-based taper configuration
+   * Based on consensus ranges: 7-14 day taper, 40-60% volume reduction
+   */
+  initializeTaperConfig() {
+    return {
+      // Target total volume reduction across last 10-14 days (evidence-based)
+      targetVolumeReduction: {
+        major: { min: 0.50, max: 0.70 },      // 50-70% reduction for major events
+        high: { min: 0.40, max: 0.60 },       // 40-60% reduction (consensus range)
+        medium: { min: 0.30, max: 0.50 },     // 30-50% reduction
+        minor: { min: 0.20, max: 0.40 },      // 20-40% reduction
+      },
+      // Minimum intensity floor (80-90% of normal) - maintain intensity during taper
+      minIntensityFloor: 0.80,                // 80% minimum intensity
+      maxIntensityFloor: 0.90,                 // 90% maximum intensity (moderate-high)
+      // Taper duration ranges (days)
+      taperDuration: {
+        major: { min: 10, max: 14 },          // 10-14 days for major events
+        high: { min: 7, max: 10 },            // 7-10 days for high-priority events
+        medium: { min: 5, max: 7 },           // 5-7 days for medium-priority events
+        minor: { min: 3, max: 5 },           // 3-5 days for minor events (league games)
+      },
+      // Post-overload taper (after heavy overload blocks: 60-90% reduction)
+      postOverloadTaper: {
+        volumeReduction: { min: 0.60, max: 0.90 },
+        duration: { min: 10, max: 14 },
+      },
+      // Overload period before major events (2-4 weeks)
+      overloadPeriod: {
+        duration: { min: 14, max: 28 },       // 2-4 weeks
+        volumeMultiplier: 1.1,                // 10% volume increase
+        intensityMultiplier: 0.95,            // Slight intensity reduction during overload
+      },
+    };
+  }
+
+  /**
+   * Load official tournament dates with event importance
    */
   loadTournamentDates() {
     const tournaments = getAllTournaments();
@@ -31,12 +92,13 @@ class AITrainingScheduler {
         endDate: new Date(t.endDate),
         location: t.location,
         priority: this.getTournamentPriority(t),
+        eventImportance: this.getEventImportance(t), // NEW: Explicit importance field
       }))
       .sort((a, b) => a.startDate - b.startDate);
   }
 
   /**
-   * Get tournament priority for periodization
+   * Get tournament priority (legacy - kept for backward compatibility)
    */
   getTournamentPriority(tournament) {
     const priorityMap = {
@@ -50,18 +112,36 @@ class AITrainingScheduler {
   }
 
   /**
+   * Get event importance for taper differentiation
+   * Maps to evidence-based taper durations and volume reductions
+   */
+  getEventImportance(tournament) {
+    const importanceMap = {
+      "elite_8_2026": EVENT_IMPORTANCE.MAJOR,      // 10-14 days, 50-70% volume cut
+      "world_championship_2026": EVENT_IMPORTANCE.MAJOR,
+      "capital_bowl_2026": EVENT_IMPORTANCE.HIGH,   // 7-10 days, 40-60% volume cut
+      "big_bowl_2026": EVENT_IMPORTANCE.HIGH,
+      "copenhagen_bowl_2026": EVENT_IMPORTANCE.HIGH,
+      "adria_bowl_2026": EVENT_IMPORTANCE.MEDIUM,   // 5-7 days, 30-50% volume cut
+    };
+    return importanceMap[tournament.id] || EVENT_IMPORTANCE.MEDIUM;
+  }
+
+  /**
    * Initialize periodization rules based on annual program
+   * Evidence-based taper protocols with explicit parameters
    */
   initializePeriodizationRules() {
     return {
-      // Days before tournament - training adjustments
+      // Days before tournament - evidence-based taper adjustments
+      // Note: Actual taper duration and volume reduction determined by eventImportance
       taper: {
         "0-2": { volume: 0, intensity: 0, type: "rest" }, // Tournament days
-        "3-4": { volume: 0.2, intensity: 0.3, type: "light_activation" },
-        "5-7": { volume: 0.4, intensity: 0.5, type: "taper" },
-        "8-14": { volume: 0.6, intensity: 0.7, type: "pre_taper" },
+        "3-4": { volume: 0.2, intensity: 0.85, type: "light_activation" }, // Maintain intensity floor
+        "5-7": { volume: 0.4, intensity: 0.85, type: "taper" },
+        "8-14": { volume: 0.6, intensity: 0.80, type: "pre_taper" },
       },
-      // Days after tournament - recovery
+      // Days after tournament - recovery (back-to-back peak logic)
       recovery: {
         "0-1": { volume: 0, intensity: 0, type: "complete_rest" },
         "2-3": { volume: 0.1, intensity: 0.2, type: "mobility_only" },
@@ -76,13 +156,145 @@ class AITrainingScheduler {
         dayBeforeGame: { volume: 0.3, intensity: 0.4, type: "light" },
         dayAfterGame: { volume: 0.2, intensity: 0.3, type: "recovery" },
       },
-      // League game adjustments
+      // League game adjustments (minor events: 3-5 day taper, 20-40% cut)
       leagueGame: {
         dayBefore: { volume: 0.2, intensity: 0.3, type: "light" },
         gameDay: { volume: 0, intensity: 0, type: "rest" },
         dayAfter: { volume: 0.3, intensity: 0.4, type: "recovery" },
       },
     };
+  }
+
+  /**
+   * Calculate taper parameters based on event importance
+   * Returns taper duration and volume reduction targets
+   */
+  calculateTaperParameters(eventImportance, daysUntilEvent, hasOverloadPeriod = false) {
+    const config = this.taperConfig;
+    const importanceConfig = config.targetVolumeReduction[eventImportance] || config.targetVolumeReduction.medium;
+    const durationConfig = config.taperDuration[eventImportance] || config.taperDuration.medium;
+
+    // Determine if we're in taper window
+    const maxTaperDays = durationConfig.max;
+    const minTaperDays = durationConfig.min;
+    
+    if (daysUntilEvent > maxTaperDays) {
+      return null; // Not in taper window yet
+    }
+
+    // Calculate volume reduction based on days until event
+    let volumeReduction;
+    if (hasOverloadPeriod && eventImportance === EVENT_IMPORTANCE.MAJOR) {
+      // Post-overload taper: 60-90% reduction
+      const reductionRange = config.postOverloadTaper.volumeReduction;
+      const progress = 1 - (daysUntilEvent / maxTaperDays); // 0 to 1 as we approach event
+      volumeReduction = reductionRange.min + (reductionRange.max - reductionRange.min) * progress;
+    } else {
+      // Standard taper: use importance-based range
+      const progress = 1 - (daysUntilEvent / maxTaperDays);
+      volumeReduction = importanceConfig.min + (importanceConfig.max - importanceConfig.min) * progress;
+    }
+
+    // Calculate intensity (maintain floor: 80-90% of normal)
+    const intensityFloor = config.minIntensityFloor + 
+      ((config.maxIntensityFloor - config.minIntensityFloor) * (1 - daysUntilEvent / maxTaperDays));
+
+    return {
+      volumeMultiplier: 1 - volumeReduction, // Convert reduction to multiplier
+      intensityMultiplier: Math.max(intensityFloor, config.minIntensityFloor),
+      taperDuration: Math.min(daysUntilEvent, maxTaperDays),
+      eventImportance,
+      rationale: `Evidence-based taper: ${eventImportance} event, ${Math.round(volumeReduction * 100)}% volume reduction, ${Math.round(intensityFloor * 100)}% intensity floor`,
+    };
+  }
+
+  /**
+   * Post-event recovery phase (back-to-back peak logic)
+   * Initial short recovery: very low volume, moderate intensity
+   * Based on research: recovery phase before secondary peak
+   */
+  calculatePostEventRecovery(daysSinceEvent, nextEventImportance = null) {
+    const recoveryPhases = {
+      "0-1": { 
+        volume: 0, 
+        intensity: 0, 
+        type: "complete_rest",
+        rationale: "Immediate post-event recovery - complete rest"
+      },
+      "2-3": { 
+        volume: 0.1, 
+        intensity: 0.5, // Moderate intensity (research: maintain intensity during recovery)
+        type: "mobility_only",
+        rationale: "Post-event recovery: very low volume, moderate intensity"
+      },
+      "4-5": { 
+        volume: 0.2, 
+        intensity: 0.6, 
+        type: "light_activation",
+        rationale: "Post-event recovery: light activation phase"
+      },
+      "6-7": { 
+        volume: 0.3, 
+        intensity: 0.7, 
+        type: "return_to_training",
+        rationale: "Post-event recovery: returning to training"
+      },
+    };
+
+    // Determine phase
+    let phase;
+    if (daysSinceEvent <= 1) phase = recoveryPhases["0-1"];
+    else if (daysSinceEvent <= 3) phase = recoveryPhases["2-3"];
+    else if (daysSinceEvent <= 5) phase = recoveryPhases["4-5"];
+    else if (daysSinceEvent <= 7) phase = recoveryPhases["6-7"];
+    else phase = null; // Recovery phase complete
+
+    return phase;
+  }
+
+  /**
+   * Secondary-peak microcycle (back-to-back peak logic)
+   * Mini-overload and mini-taper into second event
+   * Used when two major events are close together (e.g., World Championship → Elite 8)
+   */
+  calculateSecondaryPeakMicrocycle(daysSinceFirstEvent, daysUntilSecondEvent, secondEventImportance) {
+    // Typical pattern: World Championship (end Aug) → Elite 8 (mid Sep)
+    // Recovery (days 0-7) → Mini-overload (days 8-14) → Mini-taper (days 15-21)
+    
+    if (daysSinceFirstEvent <= 7) {
+      // Still in recovery phase
+      return this.calculatePostEventRecovery(daysSinceFirstEvent);
+    }
+
+    if (daysSinceFirstEvent <= 14 && daysUntilSecondEvent > 7) {
+      // Mini-overload phase: slight volume increase, moderate intensity
+      return {
+        volume: 0.9, // 90% of normal (slight overload)
+        intensity: 0.85, // 85% intensity
+        type: "mini_overload",
+        rationale: "Secondary-peak microcycle: mini-overload phase (research: rebuild before second peak)"
+      };
+    }
+
+    if (daysUntilSecondEvent <= 7 && daysUntilSecondEvent > 0) {
+      // Mini-taper into second event
+      const taperParams = this.calculateTaperParameters(
+        secondEventImportance, 
+        daysUntilSecondEvent, 
+        false // Not post-overload taper
+      );
+      
+      if (taperParams) {
+        return {
+          volume: taperParams.volumeMultiplier,
+          intensity: taperParams.intensityMultiplier,
+          type: "mini_taper",
+          rationale: `Secondary-peak microcycle: mini-taper into ${secondEventImportance} event`
+        };
+      }
+    }
+
+    return null;
   }
 
   /**
@@ -310,6 +522,7 @@ class AITrainingScheduler {
 
   /**
    * Determine periodization adjustments for this week
+   * Enhanced with evidence-based taper parameters and back-to-back peak logic
    */
   determinePeriodization(week, allDates) {
     const adjustments = {
@@ -317,13 +530,15 @@ class AITrainingScheduler {
       intensity: 1.0,
       type: "normal",
       reasons: [],
+      rationale: null, // Evidence-based rationale
     };
 
-    // Check for upcoming tournaments
+    // Check for upcoming tournaments with event importance
     const upcomingTournaments = allDates.tournaments.filter(
       t => {
         const daysUntil = Math.floor((t.startDate - week.startDate) / (1000 * 60 * 60 * 24));
-        return daysUntil >= 0 && daysUntil <= 14;
+        const maxTaperDays = this.taperConfig.taperDuration[t.eventImportance || EVENT_IMPORTANCE.MEDIUM]?.max || 14;
+        return daysUntil >= 0 && daysUntil <= maxTaperDays;
       }
     );
 
@@ -332,54 +547,121 @@ class AITrainingScheduler {
       const daysUntil = Math.floor(
         (nearestTournament.startDate - week.startDate) / (1000 * 60 * 60 * 24)
       );
+      const eventImportance = nearestTournament.eventImportance || EVENT_IMPORTANCE.MEDIUM;
+
+      // Check if we had an overload period (2-4 weeks before major events)
+      const overloadStart = new Date(nearestTournament.startDate);
+      overloadStart.setDate(overloadStart.getDate() - this.taperConfig.overloadPeriod.duration.max);
+      const hasOverloadPeriod = eventImportance === EVENT_IMPORTANCE.MAJOR && 
+                                 week.startDate >= overloadStart;
+
+      // Calculate evidence-based taper parameters
+      const taperParams = this.calculateTaperParameters(
+        eventImportance,
+        daysUntil,
+        hasOverloadPeriod
+      );
 
       if (daysUntil <= 2) {
+        // Tournament days
         adjustments.volume = 0;
         adjustments.intensity = 0;
         adjustments.type = "rest";
         adjustments.reasons.push(`Tournament: ${nearestTournament.name} (${daysUntil} days)`);
-      } else if (daysUntil <= 7) {
-        adjustments.volume = 0.4;
-        adjustments.intensity = 0.5;
-        adjustments.type = "taper";
-        adjustments.reasons.push(`Tapering for ${nearestTournament.name}`);
-      } else if (daysUntil <= 14) {
-        adjustments.volume = 0.6;
-        adjustments.intensity = 0.7;
-        adjustments.type = "pre_taper";
-        adjustments.reasons.push(`Pre-taper for ${nearestTournament.name}`);
+        adjustments.rationale = "Tournament competition days - complete rest";
+      } else if (taperParams) {
+        // Apply evidence-based taper
+        adjustments.volume = taperParams.volumeMultiplier;
+        adjustments.intensity = taperParams.intensityMultiplier;
+        adjustments.type = taperParams.taperDuration <= 7 ? "taper" : "pre_taper";
+        adjustments.reasons.push(`Tapering for ${nearestTournament.name} (${eventImportance} event)`);
+        adjustments.rationale = taperParams.rationale;
       }
     }
 
-    // Check for recent tournaments (recovery)
+    // Check for recent tournaments (back-to-back peak logic)
     const recentTournaments = allDates.tournaments.filter(
       t => {
         const daysSince = Math.floor((week.startDate - t.endDate) / (1000 * 60 * 60 * 24));
-        return daysSince >= 0 && daysSince <= 7;
+        return daysSince >= 0 && daysSince <= 14; // Extended to 14 days for back-to-back logic
       }
     );
 
-    if (recentTournaments.length > 0) {
+    // Check for upcoming second event (back-to-back peak scenario)
+    const upcomingSecondEvent = allDates.tournaments.find(
+      t => {
+        const daysUntil = Math.floor((t.startDate - week.startDate) / (1000 * 60 * 60 * 24));
+        return daysUntil > 0 && daysUntil <= 21; // Within 3 weeks
+      }
+    );
+
+    if (recentTournaments.length > 0 && upcomingSecondEvent) {
+      // Back-to-back peak scenario: use secondary-peak microcycle logic
+      const recentTournament = recentTournaments[0];
+      const daysSince = Math.floor(
+        (week.startDate - recentTournament.endDate) / (1000 * 60 * 60 * 24)
+      );
+      const daysUntil = Math.floor(
+        (upcomingSecondEvent.startDate - week.startDate) / (1000 * 60 * 60 * 24)
+      );
+
+      const secondaryPeak = this.calculateSecondaryPeakMicrocycle(
+        daysSince,
+        daysUntil,
+        upcomingSecondEvent.eventImportance || EVENT_IMPORTANCE.MEDIUM
+      );
+
+      if (secondaryPeak) {
+        adjustments.volume = secondaryPeak.volume;
+        adjustments.intensity = secondaryPeak.intensity;
+        adjustments.type = secondaryPeak.type;
+        adjustments.reasons.push(`Back-to-back peak: ${recentTournament.name} → ${upcomingSecondEvent.name}`);
+        adjustments.rationale = secondaryPeak.rationale;
+      }
+    } else if (recentTournaments.length > 0) {
+      // Standard post-event recovery
       const recentTournament = recentTournaments[0];
       const daysSince = Math.floor(
         (week.startDate - recentTournament.endDate) / (1000 * 60 * 60 * 24)
       );
 
-      if (daysSince <= 1) {
-        adjustments.volume = 0;
-        adjustments.intensity = 0;
-        adjustments.type = "complete_rest";
+      const recovery = this.calculatePostEventRecovery(daysSince);
+      if (recovery) {
+        adjustments.volume = recovery.volume;
+        adjustments.intensity = recovery.intensity;
+        adjustments.type = recovery.type;
         adjustments.reasons.push(`Post-tournament recovery: ${recentTournament.name}`);
-      } else if (daysSince <= 3) {
-        adjustments.volume = 0.1;
-        adjustments.intensity = 0.2;
-        adjustments.type = "mobility_only";
-        adjustments.reasons.push(`Post-tournament recovery: ${recentTournament.name}`);
-      } else if (daysSince <= 7) {
-        adjustments.volume = 0.5;
-        adjustments.intensity = 0.6;
-        adjustments.type = "return_to_training";
-        adjustments.reasons.push(`Returning to training after ${recentTournament.name}`);
+        adjustments.rationale = recovery.rationale;
+      }
+    }
+
+    // Check for upcoming league games (minor events: 3-5 day taper)
+    const upcomingLeagueGames = allDates.leagueGames.filter(
+      lg => {
+        const daysUntil = Math.floor((lg.date - week.startDate) / (1000 * 60 * 60 * 24));
+        return daysUntil >= 0 && daysUntil <= 5; // Minor event taper window
+      }
+    );
+
+    if (upcomingLeagueGames.length > 0 && !upcomingTournaments.length) {
+      // Only apply league game taper if no tournament taper is active
+      const nearestGame = upcomingLeagueGames[0];
+      const daysUntil = Math.floor(
+        (nearestGame.date - week.startDate) / (1000 * 60 * 60 * 24)
+      );
+
+      const leagueTaperParams = this.calculateTaperParameters(
+        EVENT_IMPORTANCE.MINOR,
+        daysUntil,
+        false
+      );
+
+      if (leagueTaperParams) {
+        adjustments.volume = leagueTaperParams.volumeMultiplier;
+        adjustments.intensity = leagueTaperParams.intensityMultiplier;
+        adjustments.type = "league_taper";
+        adjustments.reasons.push(`League game taper: ${nearestGame.league} (${daysUntil} days)`);
+        adjustments.rationale = leagueTaperParams.rationale;
       }
     }
 
@@ -736,4 +1018,7 @@ class AITrainingScheduler {
 
 // Export singleton instance
 export const aiTrainingScheduler = new AITrainingScheduler();
+
+// Export EVENT_IMPORTANCE for use in other modules
+export { EVENT_IMPORTANCE };
 

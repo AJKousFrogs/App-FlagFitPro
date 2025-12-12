@@ -91,9 +91,54 @@ class NotificationManager {
   }
 
   /**
-   * Show a notification
+   * Show a notification (unified with backend)
    */
   async show(title, options = {}) {
+    const {
+      type = 'general',
+      message = title,
+      priority = 'medium',
+      createInBackend = true,
+      ...notificationOptions
+    } = options;
+
+    // Create notification in backend first (if enabled and API available)
+    if (createInBackend && window.apiClient && window.API_ENDPOINTS) {
+      try {
+        await window.apiClient.post(
+          window.API_ENDPOINTS.dashboard.notificationsCreate,
+          {
+            type,
+            message,
+            priority
+          }
+        );
+      } catch (error) {
+        console.warn('[Notifications] Failed to create notification in backend:', error);
+        // Continue to show push notification even if backend creation fails
+      }
+    }
+
+    // Check user preferences before showing push notification
+    if (window.apiClient && window.API_ENDPOINTS) {
+      try {
+        const prefsResponse = await window.apiClient.get(
+          window.API_ENDPOINTS.dashboard.notificationsPreferences
+        );
+        if (prefsResponse && prefsResponse.success && prefsResponse.data) {
+          const typePrefs = prefsResponse.data[type];
+          // Don't show push if muted or push disabled
+          if (typePrefs && (typePrefs.muted || !typePrefs.pushEnabled)) {
+            console.log(`[Notifications] Push notification for ${type} is muted or disabled`);
+            return null;
+          }
+        }
+      } catch (error) {
+        console.warn('[Notifications] Failed to check preferences:', error);
+        // Continue to show notification if preference check fails
+      }
+    }
+
     if (!this.isSupported || this.permission !== 'granted') {
       console.warn('[Notifications] Cannot show notification - permission not granted');
       return null;
@@ -103,21 +148,21 @@ class NotificationManager {
       icon: '/icons/icon-192.png',
       badge: '/icons/badge-72.png',
       vibrate: [200, 100, 200],
-      tag: 'flagfit-notification',
+      tag: `flagfit-${type}-${Date.now()}`,
       requireInteraction: false,
-      data: {}
+      data: { type, ...notificationOptions.data }
     };
 
-    const notificationOptions = { ...defaultOptions, ...options };
+    const finalOptions = { ...defaultOptions, ...notificationOptions };
 
     try {
       // Use service worker notification if available
       if (this.swRegistration && this.swRegistration.showNotification) {
-        return await this.swRegistration.showNotification(title, notificationOptions);
+        return await this.swRegistration.showNotification(title, finalOptions);
       }
 
       // Fallback to basic notification
-      return new Notification(title, notificationOptions);
+      return new Notification(title, finalOptions);
     } catch (error) {
       console.error('[Notifications] Failed to show notification:', error);
       return null;
@@ -145,14 +190,17 @@ class NotificationManager {
 
     setTimeout(() => {
       this.show('Time for your wellness check-in! 💪', {
+        type: 'wellness',
+        message: 'Log your sleep, energy, and mood to track your recovery',
         body: 'Log your sleep, energy, and mood to track your recovery',
         icon: '/icons/icon-192.png',
         tag: 'wellness-reminder',
-        data: { url: '/wellness.html', type: 'wellness-reminder' },
+        data: { url: '/wellness.html', type: 'wellness' },
         actions: [
           { action: 'log', title: 'Log Now' },
           { action: 'skip', title: 'Skip' }
-        ]
+        ],
+        priority: 'medium'
       });
 
       // Schedule next reminder for tomorrow
@@ -214,11 +262,14 @@ class NotificationManager {
     const emoji = days >= 30 ? '🔥🔥🔥' : days >= 7 ? '🔥🔥' : '🔥';
 
     this.show(`${days}-Day Streak! ${emoji}`, {
+      type: 'wellness',
+      message: `You've logged wellness for ${days} days straight. Keep it up!`,
       body: `You've logged wellness for ${days} days straight. Keep it up!`,
       icon: '/icons/icon-192.png',
       tag: `streak-${days}`,
-      data: { url: '/wellness.html', type: 'streak', days },
-      vibrate: [200, 100, 200]
+      data: { url: '/wellness.html', type: 'wellness', days },
+      vibrate: [200, 100, 200],
+      priority: 'medium'
     });
   }
 

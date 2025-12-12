@@ -53,8 +53,8 @@ export interface ProgressiveStatItem extends StatItem {
               <div
                 *ngIf="stat.icon"
                 class="stat-icon"
-                [style.background]="(stat.color || '#089949') + '20'"
-                [style.color]="stat.color || '#089949'"
+                [style.background]="(stat.color || 'var(--ds-primary-green)') + '20'"
+                [style.color]="stat.color || 'var(--ds-primary-green)'"
               >
                 <i [class]="'pi ' + stat.icon"></i>
               </div>

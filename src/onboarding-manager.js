@@ -6,10 +6,126 @@ import { storageService } from "./js/services/storage-service-unified.js";
 export class OnboardingManager {
   constructor() {
     this.currentStep = 0;
-    this.totalSteps = 5;
+    this.totalSteps = 5; // Will be updated based on role
     this.isActive = false;
     this.completedSteps = new Set();
     this.init();
+  }
+
+  // Get user role from stored user data
+  getUserRole() {
+    try {
+      const user = storageService.get("userData", {}, { usePrefix: false });
+      return user?.role || 'player';
+    } catch {
+      return 'player';
+    }
+  }
+
+  // Get role-specific onboarding steps
+  getOnboardingSteps(role) {
+    const isCoach = role === 'coach';
+    
+    if (isCoach) {
+      return [
+        {
+          title: "Welcome, Coach!",
+          content:
+            "Welcome to FlagFit Pro! Your coaching dashboard helps you manage teams, track player performance, and create training plans. Let's get started.",
+          icon: "👔",
+        },
+        {
+          title: "Coach Dashboard Overview",
+          content:
+            "Your dashboard shows team performance metrics, player stats, upcoming training sessions, and quick actions for team management.",
+          icon: "📊",
+        },
+        {
+          title: "Creating & Managing Teams",
+          content:
+            "Create teams, invite players, and manage rosters. Set up domestic or international teams and configure team settings.",
+          icon: "👥",
+        },
+        {
+          title: "Adding Players to Roster",
+          content:
+            "Invite athletes to join your team, manage player profiles, and track their progress. Build your roster from the team management page.",
+          icon: "➕",
+        },
+        {
+          title: "Training Sessions & Stats",
+          content:
+            "Create training sessions, log player performance data, and monitor team progress. Use the training hub to schedule and track workouts.",
+          icon: "📈",
+        },
+        {
+          title: "Community & Messaging",
+          content:
+            "Communicate with your team, share updates, and engage with the flag football coaching community.",
+          icon: "💬",
+        },
+        {
+          title: "Create Your First Team",
+          content:
+            "Ready to start coaching? Create a team, set it as domestic or international, and invite players. You can create teams from the roster page or coach dashboard.",
+          icon: "➕",
+          action: {
+            label: "Create Team",
+            url: "/roster.html",
+          },
+        },
+        {
+          title: "You're All Set!",
+          content:
+            "Start managing your teams! You can always access help from the menu or press ? for keyboard shortcuts.",
+          icon: "🎉",
+        },
+      ];
+    } else {
+      // Player/Athlete steps
+      return [
+        {
+          title: "Welcome to FlagFit Pro!",
+          content:
+            "Your ultimate flag football training and competition platform. Let's get you started with a quick tour.",
+          icon: "👋",
+        },
+        {
+          title: "Dashboard Overview",
+          content:
+            "Your dashboard shows your performance metrics, upcoming training sessions, and quick actions. Everything you need is right here.",
+          icon: "📊",
+        },
+        {
+          title: "Training Hub & Drills",
+          content:
+            "Access your training programs, track workouts, and monitor your progress. Build your skills with structured programs and drills.",
+          icon: "🏋️",
+        },
+        {
+          title: "Team & Community",
+          content:
+            "Find and join teams using team codes or browse public teams. Connect with teammates, join tournaments, and engage with the community.",
+          icon: "👥",
+        },
+        {
+          title: "Find or Join a Team",
+          content:
+            "Ready to join a team? Browse public teams, use a team code from your coach, or wait for an invitation. You can access teams from the navigation menu.",
+          icon: "🔍",
+          action: {
+            label: "Browse Teams",
+            url: "/roster.html",
+          },
+        },
+        {
+          title: "You're All Set!",
+          content:
+            "Start exploring! You can always access help from the menu or press ? for keyboard shortcuts.",
+          icon: "🎉",
+        },
+      ];
+    }
   }
 
   init() {
@@ -34,6 +150,9 @@ export class OnboardingManager {
   startOnboarding() {
     this.isActive = true;
     this.currentStep = 0;
+    const role = this.getUserRole();
+    const steps = this.getOnboardingSteps(role);
+    this.totalSteps = steps.length;
     this.showOnboardingModal();
   }
 
@@ -49,38 +168,10 @@ export class OnboardingManager {
     modal.setAttribute("aria-labelledby", "onboarding-title");
     modal.setAttribute("aria-modal", "true");
 
-    const steps = [
-      {
-        title: "Welcome to FlagFit Pro!",
-        content:
-          "Your ultimate flag football training and competition platform. Let's get you started with a quick tour.",
-        icon: "👋",
-      },
-      {
-        title: "Dashboard Overview",
-        content:
-          "Your dashboard shows your performance metrics, upcoming training sessions, and quick actions. Everything you need is right here.",
-        icon: "📊",
-      },
-      {
-        title: "Training Hub",
-        content:
-          "Access your training programs, track workouts, and monitor your progress. Build your skills with structured programs.",
-        icon: "🏋️",
-      },
-      {
-        title: "Team & Community",
-        content:
-          "Connect with your team, join tournaments, and engage with the flag football community.",
-        icon: "👥",
-      },
-      {
-        title: "You're All Set!",
-        content:
-          "Start exploring! You can always access help from the menu or press ? for keyboard shortcuts.",
-        icon: "🎉",
-      },
-    ];
+    // Get role-specific steps
+    const role = this.getUserRole();
+    const steps = this.getOnboardingSteps(role);
+    this.totalSteps = steps.length; // Update total steps based on role
 
     const currentStepData = steps[this.currentStep];
     const progress = ((this.currentStep + 1) / this.totalSteps) * 100;
@@ -98,6 +189,14 @@ export class OnboardingManager {
           <div class="onboarding-icon">${currentStepData.icon}</div>
           <h2 id="onboarding-title" class="onboarding-title">${currentStepData.title}</h2>
           <p class="onboarding-text">${currentStepData.content}</p>
+          ${currentStepData.action ? `
+            <div class="onboarding-action" style="margin-top: 20px;">
+              <a href="${currentStepData.action.url}" class="btn btn-primary" style="text-decoration: none; display: inline-block;">
+                ${currentStepData.action.label}
+                <i data-lucide="arrow-right" aria-hidden="true"></i>
+              </a>
+            </div>
+          ` : ''}
         </div>
         <div class="onboarding-footer">
           <button class="btn btn-secondary onboarding-back" ${this.currentStep === 0 ? "disabled" : ""}>

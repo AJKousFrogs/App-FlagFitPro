@@ -3,18 +3,20 @@ export default {
   content: [
     "./**/*.html",
     "./src/**/*.{html,js}",
+    "./angular/src/**/*.{html,ts}",
     "./netlify/functions/**/*.{js,cjs}",
   ],
   theme: {
     extend: {
       // Use your existing CSS variables as Tailwind values
       colors: {
-        // Brand colors
+        // Brand colors - Main Colors (Branding & UI)
         "brand-primary": "var(--color-brand-primary)",
         "brand-primary-hover": "var(--color-brand-primary-hover)",
         "brand-secondary": "var(--color-brand-secondary)",
+        "brand-accent": "var(--color-brand-accent)",
 
-        // Surface colors
+        // Surface colors - Neutrals
         "surface-primary": "var(--surface-primary)",
         "surface-secondary": "var(--surface-secondary)",
         "surface-tertiary": "var(--surface-tertiary)",
@@ -28,22 +30,26 @@ export default {
         "icon-primary": "var(--icon-color-primary)",
         "icon-secondary": "var(--icon-color-secondary)",
 
-        // Status colors
-        error: {
-          50: "var(--error-50)",
-          500: "var(--error-500)",
-          600: "var(--error-600)",
-          700: "var(--error-700)",
-        },
+        // Status colors - Feedback Colors (Status & Alerts)
         success: {
-          50: "var(--primitive-success-50)",
-          500: "var(--primitive-success-500)",
-          600: "var(--primitive-success-600)",
+          DEFAULT: "var(--color-status-success)",
+          light: "var(--color-status-success-light)",
+          subtle: "var(--color-status-success-subtle)",
+        },
+        error: {
+          DEFAULT: "var(--color-status-error)",
+          light: "var(--color-status-error-light)",
+          subtle: "var(--color-status-error-subtle)",
         },
         warning: {
-          50: "var(--warning-50)",
-          500: "var(--warning-500)",
-          600: "var(--warning-600)",
+          DEFAULT: "var(--color-status-warning)",
+          light: "var(--color-status-warning-light)",
+          subtle: "var(--color-status-warning-subtle)",
+        },
+        info: {
+          DEFAULT: "var(--color-status-info)",
+          light: "var(--color-status-info-light)",
+          subtle: "var(--color-status-info-subtle)",
         },
       },
       spacing: {
