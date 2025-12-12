@@ -158,8 +158,21 @@ app.all("/.netlify/functions/:functionName", async (req, res) => {
   }
 });
 
-// Serve static files
-app.use(express.static("."));
+// Serve static files with proper MIME types
+app.use(express.static(".", {
+  setHeaders: (res, filePath) => {
+    // Set proper MIME types for module scripts
+    if (filePath.endsWith(".js")) {
+      res.setHeader("Content-Type", "application/javascript");
+    } else if (filePath.endsWith(".mjs")) {
+      res.setHeader("Content-Type", "application/javascript");
+    } else if (filePath.endsWith(".css")) {
+      res.setHeader("Content-Type", "text/css");
+    } else if (filePath.endsWith(".html")) {
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+    }
+  },
+}));
 
 // Serve HTML files
 app.get("/", (req, res) => {

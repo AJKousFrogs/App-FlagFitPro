@@ -306,20 +306,66 @@ export class ApiClient {
     try {
       const response = await fetch(url, config);
 
+      // Check Content-Type before parsing
+      const contentType = response.headers.get("content-type") || "";
+      const isJSON = contentType.includes("application/json");
+      const isHTML = contentType.includes("text/html");
+
       // Handle non-200 responses
       if (!response.ok) {
         // For 401 errors, try to parse error message but don't fail completely
         if (response.status === 401) {
-          const errorData = await response.json().catch(() => ({}));
-          const error = new Error(errorData.error || `HTTP ${response.status}`);
-          error.status = 401;
+          if (isJSON) {
+            const errorData = await response.json().catch(() => ({}));
+            const error = new Error(errorData.error || `HTTP ${response.status}`);
+            error.status = 401;
+            throw error;
+          } else {
+            const error = new Error(`HTTP ${response.status}: Unauthorized`);
+            error.status = 401;
+            throw error;
+          }
+        }
+        
+        // If response is HTML (like a 404 page), don't try to parse as JSON
+        if (isHTML) {
+          const error = new Error(`HTTP ${response.status}: Server returned HTML instead of JSON. Endpoint may not exist.`);
+          error.status = response.status;
+          error.isHTMLResponse = true;
           throw error;
         }
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || `HTTP ${response.status}`);
+        
+        // Try to parse JSON error response
+        if (isJSON) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || `HTTP ${response.status}`);
+        } else {
+          // Non-JSON error response
+          const text = await response.text().catch(() => "");
+          throw new Error(`HTTP ${response.status}: ${text.substring(0, 100)}`);
+        }
       }
 
-      const result = await response.json();
+      // For successful responses, check content type before parsing
+      if (isHTML) {
+        // Server returned HTML instead of JSON - likely a routing issue
+        const error = new Error(`Server returned HTML instead of JSON. Endpoint may not exist: ${endpoint}`);
+        error.isHTMLResponse = true;
+        throw error;
+      }
+
+      // Parse JSON response
+      const result = isJSON 
+        ? await response.json()
+        : await response.text().then(text => {
+            // Try to parse as JSON anyway (some servers don't set content-type correctly)
+            try {
+              return JSON.parse(text);
+            } catch {
+              throw new Error(`Expected JSON but received: ${text.substring(0, 100)}`);
+            }
+          });
+      
       this.activeRequests.delete(requestId);
       return result;
     } catch (error) {

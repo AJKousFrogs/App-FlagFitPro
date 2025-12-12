@@ -14,8 +14,21 @@ const API_PORT = process.env.PORT || 3001;
 
 console.log("🔥 Starting Flag Football Training App Hot Reload Server...");
 
-// Serve static files
-app.use(express.static("."));
+// Serve static files with proper MIME types
+app.use(express.static(".", {
+  setHeaders: (res, filePath) => {
+    // Set proper MIME types for module scripts
+    if (filePath.endsWith(".js")) {
+      res.setHeader("Content-Type", "application/javascript");
+    } else if (filePath.endsWith(".mjs")) {
+      res.setHeader("Content-Type", "application/javascript");
+    } else if (filePath.endsWith(".css")) {
+      res.setHeader("Content-Type", "text/css");
+    } else if (filePath.endsWith(".html")) {
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+    }
+  },
+}));
 
 // Serve HTML files
 app.get("/", (req, res) => {
@@ -95,14 +108,30 @@ watcher.on("change", (filePath) => {
   });
 });
 
-// Hot reload client script
+// Get Supabase credentials from environment
+const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+
+// Hot reload client script + Supabase config injection
 const hotReloadScript = `
 <script>
+// Inject Supabase credentials for frontend
+window._env = window._env || {};
+window._env.SUPABASE_URL = '${supabaseUrl || ''}';
+window._env.SUPABASE_ANON_KEY = '${supabaseAnonKey || ''}';
+
+// Also set in localStorage for development
+if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+  if ('${supabaseUrl}') localStorage.setItem('SUPABASE_URL', '${supabaseUrl}');
+  if ('${supabaseAnonKey}') localStorage.setItem('SUPABASE_ANON_KEY', '${supabaseAnonKey}');
+}
+
 (function() {
   const ws = new WebSocket('ws://localhost:${PORT}');
   
   ws.onopen = function() {
     console.log('🔥 Hot reload connected');
+    ${supabaseUrl ? "console.log('✅ Supabase credentials loaded');" : "console.warn('⚠️ Supabase credentials not found - set SUPABASE_URL and SUPABASE_ANON_KEY');"}
   };
   
   ws.onmessage = function(event) {

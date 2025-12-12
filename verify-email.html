@@ -6,6 +6,15 @@
     <title>Verify Your Email - FlagFit Pro</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>" />
     <link rel="stylesheet" href="./src/css/main.css" />
+    <!-- Supabase JS SDK from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Supabase Configuration -->
+    <script>
+      window._env = {
+        SUPABASE_URL: 'https://pvziciccwxgftcielknm.supabase.co',
+        SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2emljaWNjd3hnZnRjaWVsa25tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MzcwNTgsImV4cCI6MjA3NTExMzA1OH0.1nfJrtWPl6DrAwvjGvM1-CZBeyYgCaV9oDdaadpqhLU'
+      };
+    </script>
     <style>
       body {
         display: flex;
@@ -106,12 +115,12 @@
     </div>
 
     <script type="module">
-      import { auth } from './src/api-config.js';
-      import { authManager } from './src/auth-manager.js';
+      import { getSupabase } from './src/js/services/supabase-client.js';
 
-      // Get token from URL
+      // Get verification parameters from URL
       const urlParams = new URLSearchParams(window.location.search);
-      const token = urlParams.get('token');
+      const tokenHash = urlParams.get('token_hash');
+      const type = urlParams.get('type');
 
       const successMessage = document.getElementById('successMessage');
       const errorMessage = document.getElementById('errorMessage');
@@ -119,41 +128,39 @@
       const content = document.getElementById('content');
 
       async function verifyEmail() {
-        if (!token) {
-          showError('No verification token provided. Please check your email and click the verification link.');
+        if (!tokenHash || !type) {
+          showError('Invalid verification link. Please check your email and click the verification link.');
           spinner.style.display = 'none';
           return;
         }
 
         try {
-          const response = await fetch('/.netlify/functions/auth-verify-email', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ token }),
-          });
+          const supabase = getSupabase();
 
-          const result = await response.json();
+          if (!supabase) {
+            throw new Error('Unable to connect to authentication service');
+          }
+
+          // Use Supabase Auth to verify the email
+          const { data, error } = await supabase.auth.verifyOtp({
+            token_hash: tokenHash,
+            type: type
+          });
 
           spinner.style.display = 'none';
 
-          if (result.success && result.data) {
-            const { token: authToken, user } = result.data;
-
-            // Store authentication data
-            if (authToken && user) {
-              authManager.token = authToken;
-              authManager.user = user;
-              localStorage.setItem('authToken', authToken);
-              localStorage.setItem('userData', JSON.stringify(user));
-            }
-
-            showSuccess(result.data.message || 'Email verified successfully! You can now log in.');
-            content.style.display = 'block';
-          } else {
-            showError(result.error || 'Failed to verify email. The link may have expired.');
+          if (error) {
+            showError(error.message || 'Verification failed. The link may have expired.');
+            return;
           }
+
+          showSuccess('Email verified successfully! Redirecting to login...');
+          content.style.display = 'block';
+
+          // Redirect to login page after 2 seconds
+          setTimeout(() => {
+            window.location.href = '/login.html?verified=true';
+          }, 2000);
         } catch (error) {
           spinner.style.display = 'none';
           showError('Network error. Please check your connection and try again.');

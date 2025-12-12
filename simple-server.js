@@ -13,6 +13,27 @@ const __dirname = path.dirname(__filename);
 
 const PORT = process.env.VITE_DEV_PORT || 4000;
 
+// Get Supabase credentials from environment
+const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+
+// Script to inject Supabase credentials
+const envScript = `
+<script>
+// Inject Supabase credentials for frontend
+window._env = window._env || {};
+window._env.SUPABASE_URL = '${supabaseUrl || ''}';
+window._env.SUPABASE_ANON_KEY = '${supabaseAnonKey || ''}';
+
+// Also set in localStorage for development
+if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+  if ('${supabaseUrl}') localStorage.setItem('SUPABASE_URL', '${supabaseUrl}');
+  if ('${supabaseAnonKey}') localStorage.setItem('SUPABASE_ANON_KEY', '${supabaseAnonKey}');
+  ${supabaseUrl ? "console.log('✅ Supabase credentials loaded');" : "console.warn('⚠️ Supabase credentials not found - set SUPABASE_URL and SUPABASE_ANON_KEY');"}
+}
+</script>
+`;
+
 // MIME type mapping
 const mimeTypes = {
   ".html": "text/html",
@@ -107,8 +128,15 @@ const server = http.createServer((req, res) => {
           res.writeHead(404, { "Content-Type": "text/plain" });
           res.end("404 - File not found");
         } else {
+          // Inject environment variables into HTML
+          let htmlContent = data.toString();
+          if (htmlContent.includes("</body>")) {
+            htmlContent = htmlContent.replace("</body>", envScript + "</body>");
+          } else if (htmlContent.includes("</head>")) {
+            htmlContent = htmlContent.replace("</head>", envScript + "</head>");
+          }
           res.writeHead(200, { "Content-Type": "text/html" });
-          res.end(data);
+          res.end(htmlContent);
         }
       });
     } else {
@@ -119,8 +147,21 @@ const server = http.createServer((req, res) => {
           res.end("500 - Internal Server Error");
         } else {
           const mimeType = mimeTypes[ext] || "application/octet-stream";
-          res.writeHead(200, { "Content-Type": mimeType });
-          res.end(data);
+          
+          // Inject environment variables into HTML files
+          if (ext === ".html") {
+            let htmlContent = data.toString();
+            if (htmlContent.includes("</body>")) {
+              htmlContent = htmlContent.replace("</body>", envScript + "</body>");
+            } else if (htmlContent.includes("</head>")) {
+              htmlContent = htmlContent.replace("</head>", envScript + "</head>");
+            }
+            res.writeHead(200, { "Content-Type": mimeType });
+            res.end(htmlContent);
+          } else {
+            res.writeHead(200, { "Content-Type": mimeType });
+            res.end(data);
+          }
         }
       });
     }
@@ -134,6 +175,11 @@ server.listen(PORT, "0.0.0.0", () => {
   console.log(`📁 Serving static files from: ${__dirname}`);
   console.log(`🎯 Open: http://localhost:${PORT}/index.html`);
   console.log(`🔗 Also accessible via: http://127.0.0.1:${PORT}/index.html`);
+  if (supabaseUrl && supabaseAnonKey) {
+    console.log(`✅ Supabase credentials loaded`);
+  } else {
+    console.log(`⚠️  Supabase credentials not found - set SUPABASE_URL and SUPABASE_ANON_KEY environment variables`);
+  }
 });
 
 // Enhanced error handling

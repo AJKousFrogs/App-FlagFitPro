@@ -3,6 +3,10 @@
  * Monitors and reports errors in production
  */
 
+// #region agent log
+fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'sentry-service.js:8',message:'Module loading started',data:{hasWindow:typeof window!=='undefined',hasDocument:typeof document!=='undefined',moduleType:typeof import.meta},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+// #endregion
+
 import { logger } from '../../logger.js';
 import { config } from '../config/environment.js';
 
@@ -31,27 +35,49 @@ class SentryService {
     }
 
     try {
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'sentry-service.js:33',message:'Before dynamic import',data:{importSupported:typeof import!=='undefined'},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'A'})}).catch(()=>{});
+      // #endregion
       // Dynamically import Sentry to avoid loading in development
-      const { default: * as Sentry } = await import('@sentry/browser');
-      const { BrowserTracing } = await import('@sentry/tracing');
+      // Use a more defensive import pattern that handles missing packages gracefully
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'sentry-service.js:35',message:'Attempting import @sentry/browser',data:{packageName:'@sentry/browser'},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'A'})}).catch(()=>{});
+      // #endregion
+      let SentryModule;
+      try {
+        SentryModule = await import('@sentry/browser');
+      } catch (importError) {
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'sentry-service.js:38',message:'Import failed, Sentry package not available',data:{errorName:importError?.name,errorMessage:importError?.message},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'A'})}).catch(()=>{});
+        // #endregion
+        logger.warn('[Sentry] Package @sentry/browser not available, error tracking disabled');
+        return;
+      }
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'sentry-service.js:42',message:'Import successful',data:{hasSentryModule:!!SentryModule,hasDefault:!!SentryModule.default},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'A'})}).catch(()=>{});
+      // #endregion
+      const Sentry = SentryModule.default || SentryModule;
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'sentry-service.js:45',message:'Attempting import @sentry/tracing',data:{packageName:'@sentry/tracing'},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'A'})}).catch(()=>{});
+      // #endregion
+      let BrowserTracing;
+      try {
+        const tracingModule = await import('@sentry/tracing');
+        BrowserTracing = tracingModule.BrowserTracing;
+      } catch (importError) {
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'sentry-service.js:50',message:'Tracing import failed, continuing without tracing',data:{errorName:importError?.name,errorMessage:importError?.message},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'A'})}).catch(()=>{});
+        // #endregion
+        logger.warn('[Sentry] Package @sentry/tracing not available, continuing without tracing');
+        BrowserTracing = null;
+      }
 
       this.Sentry = Sentry;
 
       // Initialize Sentry
-      Sentry.init({
+      const initConfig = {
         dsn: sentryDsn,
         environment: config.ENV,
-
-        // Performance Monitoring
-        integrations: [
-          new BrowserTracing({
-            tracingOrigins: [
-              'localhost',
-              window.location.hostname,
-              /^\//  // Same-origin requests
-            ],
-          }),
-        ],
 
         // Sample rate for performance monitoring
         tracesSampleRate: config.PERFORMANCE_SAMPLE_RATE || 0.1,
@@ -108,7 +134,22 @@ class SentryService {
           /^chrome-extension:\/\//i,
           /^moz-extension:\/\//i,
         ],
-      });
+      };
+
+      // Add BrowserTracing integration only if available
+      if (BrowserTracing) {
+        initConfig.integrations = [
+          new BrowserTracing({
+            tracingOrigins: [
+              'localhost',
+              window.location.hostname,
+              /^\//  // Same-origin requests
+            ],
+          }),
+        ];
+      }
+
+      Sentry.init(initConfig);
 
       this.initialized = true;
       logger.success('[Sentry] Error tracking initialized');
@@ -117,6 +158,9 @@ class SentryService {
       this.updateUserContext();
 
     } catch (error) {
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'sentry-service.js:120',message:'Import error caught',data:{errorName:error?.name,errorMessage:error?.message,errorStack:error?.stack,errorToString:String(error)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+      // #endregion
       logger.error('[Sentry] Failed to initialize:', error);
     }
   }

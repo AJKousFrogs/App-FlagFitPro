@@ -10,34 +10,6 @@ import { csrfProtection } from "./js/security/csrf-protection.js";
 import { ErrorHandler } from "./error-handler.js";
 import { AUTH, ERROR_MESSAGES, SUCCESS_MESSAGES } from "./js/config/app-constants.js";
 
-// Import mock authentication for development/demo environments
-let mockAuth = null;
-const initMockAuth = async () => {
-  // Only use mock auth when explicitly enabled in environment config
-  if (config.ENABLE_MOCK_AUTH) {
-    logger.debug("Mock authentication enabled in environment config");
-    try {
-      const { MockAuth } = await import("./mock-auth.js");
-      mockAuth = new MockAuth();
-      logger.success("Mock authentication initialized");
-    } catch (error) {
-      logger.error("Failed to initialize mock auth:", error);
-    }
-  } else {
-    logger.debug("Mock authentication disabled - using production auth");
-  }
-};
-
-// Reserved for future API availability check
-// const checkRealApiAvailable = async () => {
-//   try {
-//     await fetch("http://localhost:3001/api/health");
-//     return true;
-//   } catch {
-//     return false;
-//   }
-// };
-
 class AuthManager {
   constructor() {
     this.user = null;
@@ -70,19 +42,34 @@ class AuthManager {
 
     this.isInitializing = true;
 
-    // Add session timeout management
-    this.setupSessionTimeout();
+    try {
+      // Add session timeout management
+      this.setupSessionTimeout();
 
-    await initMockAuth();
-    await this.loadStoredAuth(); // Now async with AES-GCM encryption
-    this.setupTokenRefresh();
-    await this.validateStoredToken();
-    this.checkAuthStateOnLoad();
+      // Setup Supabase Auth listener (don't await - let it run in background)
+      this.setupSupabaseAuthListener().catch(err => {
+        logger.warn("[Auth] Supabase auth listener setup failed:", err);
+      });
 
-    this.isInitializing = false;
-    this.isInitialized = true;
-
-    logger.success("Authentication manager initialized");
+      // Load stored auth data
+      await this.loadStoredAuth(); // Now async with AES-GCM encryption
+      
+      // Setup token refresh
+      this.setupTokenRefresh();
+      
+      // Validate token with timeout (3 seconds max) - this ensures initialization completes quickly
+      await this.validateStoredToken(3000);
+      
+      // Check auth state on load
+      this.checkAuthStateOnLoad();
+    } catch (error) {
+      logger.error("[Auth] Error during initialization:", error);
+      // Continue initialization even if some steps fail
+    } finally {
+      this.isInitializing = false;
+      this.isInitialized = true;
+      logger.success("Authentication manager initialized");
+    }
   }
 
   // Wait for authentication to be fully initialized
@@ -143,13 +130,6 @@ logger.debug(
         logger.debug("Current token:", this.token ? "Present" : "Missing");
       }
 
-      // For demo tokens or local development, skip server validation to prevent loops
-      if (this.token && this.token.startsWith("demo-token-")) {
-        if (isDevelopment) {logger.debug("Demo token detected, skipping server validation");}
-        this.notifyLoginCallbacks();
-        return;
-      }
-
       // Verify token is still valid by making a test request
       this.validateStoredToken()
         .then((isValid) => {
@@ -164,9 +144,6 @@ logger.debug(
         .catch((error) => {
           if (isDevelopment) {
             logger.error("Token validation error:", error);
-            logger.debug(
-              "🎭 Falling back to demo mode to prevent redirect loop",
-            );
           }
           this.notifyLoginCallbacks();
         });
@@ -260,17 +237,18 @@ logger.debug(
   }
 
   // Validate stored token with backend
-  async validateStoredToken() {
+  async validateStoredToken(timeoutMs = 3000) {
     if (!this.token) {return false;}
 
-    // Skip validation for demo tokens to prevent loops
-    if (this.token.startsWith("demo-token-")) {
-      logger.debug("Demo token, skipping server validation");
-      return true;
-    }
-
     try {
-      const response = await auth.getCurrentUser();
+      // Add timeout to prevent hanging on slow/unresponsive API calls
+      const validationPromise = auth.getCurrentUser();
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error("Token validation timeout")), timeoutMs)
+      );
+
+      const response = await Promise.race([validationPromise, timeoutPromise]);
+      
       if (response.success) {
         this.user = response.user;
         await this.saveUserData();
@@ -282,8 +260,30 @@ logger.debug(
         return false;
       }
     } catch (error) {
+      // Handle timeout errors
+      if (error.message === "Token validation timeout") {
+        logger.warn("Token validation timed out - endpoint may be slow or unavailable");
+        // Assume token is valid to prevent redirect loops
+        logger.debug("Timeout during validation, assuming token valid");
+        return true;
+      }
+
+      // Check if this is an HTML response (endpoint doesn't exist)
+      if (error.isHTMLResponse) {
+        logger.warn("Token validation endpoint returned HTML - endpoint may not be configured:", error.message);
+        // Assume token is valid to prevent redirect loops, but log the issue
+        logger.debug("HTML response during validation, assuming token valid (endpoint may be misconfigured)");
+        return true;
+      }
+      
+      // Check if this is a 401 error (unauthorized)
+      if (error.status === 401) {
+        logger.warn("Token validation failed: Unauthorized");
+        return false;
+      }
+      
+      // For other errors (network errors, etc.), assume token is still valid to prevent redirect loops
       logger.error("Token validation network error:", error);
-      // On network error, assume token is still valid to prevent redirect loops
       logger.debug("Network error during validation, assuming token valid");
       return true;
     }
@@ -292,156 +292,74 @@ logger.debug(
   // Login with email and password
   async login(email, password) {
     try {
-      logger.debug("Starting authentication process...");
-      logger.debug("Email:", email);
-      logger.debug("Password length:", password ? password.length : 0);
-
       this.showLoading("Signing in...");
 
-      // For Netlify deployments, use real Supabase functions
-      const isUsingNetlifyFunctions =
-        window.location.hostname.includes("netlify.app") ||
-        window.location.hostname.includes("netlify.com") ||
-        (window.location.hostname === "localhost" &&
-          window.location.port === "8888");
+      // Import Supabase client
+      const { getSupabase } = await import('./js/services/supabase-client.js');
+      const supabase = getSupabase();
 
-      logger.debug("Using Netlify Functions:", isUsingNetlifyFunctions);
-      logger.debug(
-        "Mock auth status:",
-        mockAuth ? "Available" : "Not available",
-      );
-      logger.debug("Demo mode enabled for Netlify deployment");
+      if (!supabase) {
+        throw new Error("Unable to connect to authentication service");
+      }
 
-      // Fallback to mock auth if real auth failed or not using Netlify
-      if (mockAuth) {
-        logger.debug("Using mock authentication...");
-        const response = await mockAuth.login({ email, password });
+      // Use Supabase Auth sign in
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-        logger.debug("Authentication response:", response);
+      if (error) {
+        this.hideLoading();
 
-        if (response.success) {
-          logger.success("Authentication successful!");
-          logger.debug("Token received:", response.data.token ? "Yes" : "No");
-          logger.debug("User data:", response.data.user);
-
-          this.token = response.data.token;
-          this.user = response.data.user;
-
-          // Store authentication data securely with AES-GCM encryption
-          await secureStorage.setAuthToken(this.token);
-          await secureStorage.setUserData(this.user);
-          logger.debug("Auth data stored securely with AES-GCM encryption");
-          logger.debug("Stored token: encrypted");
-          logger.debug("Stored user data: encrypted");
-
-          await this.saveUserData();
-
-          // Set token in API client
-          apiClient.setAuthToken(this.token);
-          logger.debug("Token set in API client");
-
-          // Verify auth state
-          const isValid = this.isAuthenticated();
-          logger.debug("Auth state valid:", isValid);
-
-          // Notify callbacks
-          this.notifyLoginCallbacks();
-
-          this.hideLoading();
-          this.showSuccess("Welcome back!");
-
-          // Redirect to dashboard after successful login
-          setTimeout(() => {
-            logger.debug("Starting dashboard redirect...");
-            logger.debug("Final auth check before redirect:", {
-              tokenExists: !!this.token,
-              userExists: !!this.user,
-              isAuthenticated: this.isAuthenticated(),
-            });
-
-            // Double-check auth state with a brief delay
-            if (this.isAuthenticated()) {
-              logger.debug(
-                "Authentication confirmed, proceeding with redirect",
-              );
-              this.redirectToDashboard();
-            } else {
-              logger.warn("Auth state invalid at redirect time");
-              logger.debug("Attempting to restore auth from localStorage...");
-              this.loadStoredAuth();
-
-              // Try again after loading
-              if (this.isAuthenticated()) {
-                logger.success(
-                  "Auth restored from storage, proceeding with redirect",
-                );
-                this.redirectToDashboard();
-              } else {
-                logger.error("Unable to restore authentication");
-                this.showError(
-                  "Authentication state lost. Please try logging in again.",
-                );
-              }
-            }
-          }, 1500); // Increased delay to ensure everything is saved
-
-          return { success: true, user: this.user };
-        } else {
-          logger.error("Authentication failed:", response.error);
-          this.hideLoading();
-          this.showError(response.error || "Login failed");
-          return { success: false, error: response.error };
+        // Handle email not verified
+        if (error.message.includes('Email not confirmed') ||
+            error.message.includes('not verified')) {
+          this.showError(
+            "Please verify your email before logging in. Check your inbox for the verification link."
+          );
+          return {
+            success: false,
+            error: 'Email not verified',
+            requiresVerification: true
+          };
         }
+
+        this.showError(error.message || "Login failed");
+        return { success: false, error: error.message };
       }
 
-      // If no mock auth or backend auth available, reject login
-      if (!mockAuth) {
-        logger.error("❌ No authentication backend available");
-        this.hideLoading();
-        this.showError(
-          "Authentication service unavailable. Please check your backend configuration.",
-        );
-        return {
-          success: false,
-          error: "Authentication backend not configured",
-        };
-      }
+      // Successful login
+      this.token = data.session.access_token;
+      this.user = {
+        id: data.user.id,
+        email: data.user.email,
+        role: data.user.user_metadata?.role || 'player',
+        name: data.user.user_metadata?.name || data.user.email,
+        email_verified: data.user.email_confirmed_at !== null,
+      };
 
-      // Try real API
-      logger.debug("🌐 Trying real API authentication...");
-      const response = await auth.login({ email, password });
+      // Store session
+      await secureStorage.setAuthToken(this.token);
+      await secureStorage.setUserData(this.user);
 
-      if (response.success) {
-        this.token = response.data.token;
-        this.user = response.data.user;
+      // Set token in API client
+      apiClient.setAuthToken(this.token);
 
-        // Store authentication data securely with AES-GCM encryption
-        await secureStorage.setAuthToken(this.token);
-        await this.saveUserData();
+      // Notify callbacks
+      this.notifyLoginCallbacks();
 
-        // Set token in API client
-        apiClient.setAuthToken(this.token);
+      this.hideLoading();
+      this.showSuccess("Welcome back!");
 
-        // Notify callbacks
-        this.notifyLoginCallbacks();
+      // Redirect to dashboard
+      setTimeout(() => {
+        this.redirectToDashboard();
+      }, 1000);
 
-        this.hideLoading();
-        this.showSuccess(SUCCESS_MESSAGES.LOGIN_SUCCESS);
-
-        // Redirect to dashboard after successful login
-        setTimeout(() => {
-          this.redirectToDashboard();
-        }, 1000);
-
-        return { success: true, user: this.user };
-      } else {
-        this.hideLoading();
-        this.showError(response.error || "Login failed");
-        return { success: false, error: response.error };
-      }
+      return { success: true, user: this.user };
     } catch (error) {
       this.hideLoading();
-      this.showError("Network error. Please try again.");
+      this.showError("Login failed. Please try again.");
       logger.error("Login error:", error);
       return { success: false, error: error.message };
     }
@@ -452,75 +370,228 @@ logger.debug(
     try {
       this.showLoading("Creating your account...");
 
-      const response = await auth.register(userData);
+      const { name, email, password, role } = userData;
+      const [firstName, ...lastNameParts] = name.split(' ');
+      const lastName = lastNameParts.join(' ');
 
-      if (response.success) {
-        // Handle response structure: { success: true, data: { token?, user }, requiresVerification? }
-        const data = response.data || response;
-        this.token = data.token || response.token;
-        this.user = data.user || response.user;
+      // Import Supabase client
+      const { getSupabase } = await import('./js/services/supabase-client.js');
+      const supabase = getSupabase();
 
-        // SECURITY: If email verification is required, token may not be returned
-        // User must verify email before receiving a token (via login after verification)
-        if (response.requiresVerification && !this.token) {
-          // This is expected - user must verify email first
-          this.hideLoading();
-          this.showSuccess(response.message || "Account created successfully! Please check your email to verify your account.");
-          return { 
-            success: true, 
-            user: this.user,
-            requiresVerification: true,
-            message: response.message || "Please verify your email before signing in."
-          };
-        }
-
-        // If token is missing and verification is not required, that's an error
-        if (!this.token || !this.user) {
-          throw new Error("Invalid response format from registration endpoint");
-        }
-
-        // Store authentication data securely with AES-GCM encryption
-        await secureStorage.setAuthToken(this.token);
-        await this.saveUserData();
-
-        // Set token in API client
-        apiClient.setAuthToken(this.token);
-
-        // Notify callbacks
-        this.notifyLoginCallbacks();
-
-        this.hideLoading();
-        this.showSuccess("Account created successfully!");
-
-        return { success: true, user: this.user };
-      } else {
-        this.hideLoading();
-        this.showError(response.error || "Registration failed");
-        return { success: false, error: response.error };
+      if (!supabase) {
+        throw new Error("Unable to connect to authentication service");
       }
+
+      // Use Supabase Auth signup
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/verify-email.html`,
+          data: {
+            name,
+            role: role || 'player',
+            first_name: firstName,
+            last_name: lastName || '',
+          }
+        }
+      });
+
+      if (error) {
+        this.hideLoading();
+        this.showError(error.message || "Registration failed");
+        return { success: false, error: error.message };
+      }
+
+      this.hideLoading();
+      this.showSuccess(
+        "Account created! Please check your email to verify your account before signing in."
+      );
+
+      return {
+        success: true,
+        user: {
+          id: data.user.id,
+          email: data.user.email,
+          name,
+          role: role || 'player',
+        },
+        requiresVerification: true
+      };
     } catch (error) {
       this.hideLoading();
-      const errorMessage = error.message || "Network error. Please try again.";
-      this.showError(errorMessage);
+      this.showError(error.message || "Registration failed");
       logger.error("Registration error:", error);
-      return { success: false, error: errorMessage };
+      return { success: false, error: error.message };
     }
   }
 
   // Logout user
   async logout() {
     try {
-      // Call backend logout if possible
-      if (this.token) {
-        await auth.logout().catch(() => {}); // Don't fail if backend is offline
+      const { getSupabase } = await import('./js/services/supabase-client.js');
+      const supabase = getSupabase();
+
+      if (supabase) {
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+          logger.warn("Logout error:", error);
+        }
       }
     } catch (error) {
       logger.warn("Logout API call failed:", error);
     }
 
+    // Clear local state
     this.clearAuth();
     this.notifyLogoutCallbacks();
-    this.showSuccess(SUCCESS_MESSAGES.LOGOUT_SUCCESS);
+    this.showSuccess("You have been logged out successfully.");
+
+    // Redirect to login
+    setTimeout(() => {
+      this.redirectToLogin();
+    }, 1000);
+  }
+
+  // Sign in with OAuth provider (Google, Facebook, Apple)
+  async signInWithOAuth(provider, role) {
+    try {
+      this.showLoading(`Signing in with ${provider}...`);
+
+      const { getSupabase } = await import('./js/services/supabase-client.js');
+      const supabase = getSupabase();
+
+      if (!supabase) {
+        throw new Error("Unable to connect to authentication service");
+      }
+
+      // Store role in localStorage temporarily (will be added to user metadata on callback)
+      localStorage.setItem('pending_oauth_role', role);
+
+      // Redirect to OAuth provider
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: provider,
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+          scopes: provider === 'google' ? 'email profile' : undefined,
+        }
+      });
+
+      if (error) {
+        this.hideLoading();
+        this.showError(error.message || `${provider} sign-in failed`);
+        localStorage.removeItem('pending_oauth_role');
+        return { success: false, error: error.message };
+      }
+
+      // User will be redirected to OAuth provider
+      // Callback will be handled in /auth/callback page
+
+    } catch (error) {
+      this.hideLoading();
+      this.showError(`Failed to sign in with ${provider}`);
+      logger.error(`${provider} OAuth error:`, error);
+      localStorage.removeItem('pending_oauth_role');
+      return { success: false, error: error.message };
+    }
+  }
+
+  // Setup Supabase Auth state change listener
+  async setupSupabaseAuthListener() {
+    try {
+      const { getSupabase } = await import('./js/services/supabase-client.js');
+      const supabase = getSupabase();
+
+      if (!supabase) {
+        logger.warn('[Auth] Supabase client not available for auth listener');
+        return;
+      }
+
+      supabase.auth.onAuthStateChange(async (event, session) => {
+        logger.debug('[Auth] State changed:', event);
+
+        if (event === 'SIGNED_IN' && session) {
+          // Check if this is an OAuth sign-in
+          const pendingRole = localStorage.getItem('pending_oauth_role');
+
+          // Get provider from session
+          const provider = session.user.app_metadata?.provider;
+          const isOAuth = provider !== 'email';
+
+          this.token = session.access_token;
+          this.user = {
+            id: session.user.id,
+            email: session.user.email,
+            role: session.user.user_metadata?.role || pendingRole || 'player',
+            name: session.user.user_metadata?.name ||
+                  session.user.user_metadata?.full_name ||
+                  session.user.email,
+            email_verified: session.user.email_confirmed_at !== null || isOAuth, // OAuth users auto-verified
+            provider: provider,
+          };
+
+          // If OAuth and role was pending, update user metadata
+          if (isOAuth && pendingRole && !session.user.user_metadata?.role) {
+            await supabase.auth.updateUser({
+              data: {
+                role: pendingRole,
+                name: this.user.name,
+              }
+            });
+            localStorage.removeItem('pending_oauth_role');
+          }
+
+          secureStorage.setAuthToken(this.token);
+          secureStorage.setUserData(this.user);
+          this.notifyLoginCallbacks();
+        } else if (event === 'SIGNED_OUT') {
+          this.clearAuth();
+          this.notifyLogoutCallbacks();
+        } else if (event === 'TOKEN_REFRESHED' && session) {
+          this.token = session.access_token;
+          secureStorage.setAuthToken(this.token);
+        }
+      });
+
+      logger.debug('[Auth] Supabase auth listener set up successfully');
+    } catch (error) {
+      logger.error('[Auth] Failed to setup auth listener:', error);
+    }
+  }
+
+  // Resend verification email
+  async resendVerificationEmail(email) {
+    try {
+      this.showLoading("Sending verification email...");
+
+      const { getSupabase } = await import('./js/services/supabase-client.js');
+      const supabase = getSupabase();
+
+      if (!supabase) {
+        throw new Error("Unable to connect to authentication service");
+      }
+
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/verify-email.html`,
+        }
+      });
+
+      if (error) {
+        this.hideLoading();
+        this.showError(error.message || "Failed to resend verification email");
+        return;
+      }
+
+      this.hideLoading();
+      this.showSuccess("Verification email sent! Please check your inbox.");
+    } catch (error) {
+      this.hideLoading();
+      this.showError("Failed to resend verification email");
+      logger.error("Resend verification error:", error);
+    }
   }
 
   // Clear all authentication data
@@ -563,29 +634,7 @@ logger.debug(
     }
 
     if (this.token && this.user) {
-      // Check if it's a demo token (starts with "demo-token-")
-      if (this.token.startsWith("demo-token-")) {
-        // Demo tokens ONLY allowed in development with mock auth enabled
-        if (isDevelopment && config.ENABLE_MOCK_AUTH) {
-          if (shouldLog) {
-            logger.debug(
-              "🎭 Demo token detected in development, skipping JWT validation",
-            );
-            logger.debug("✅ User is authenticated (demo mode)");
-          }
-          return true;
-        } else {
-          // Demo tokens strictly forbidden in non-development environments
-          logger.error(
-            "❌ SECURITY VIOLATION: Demo token detected in " + (isDevelopment ? "development with mock auth disabled" : "production environment"),
-          );
-          this.clearAuth();
-          this.showError("Security violation detected. Please contact support.");
-          return false;
-        }
-      }
-
-      // For real JWT tokens, validate expiration
+      // For JWT tokens, validate expiration
       try {
         // Verify token is not expired
         const payload = JSON.parse(atob(this.token.split(".")[1]));
@@ -613,15 +662,6 @@ logger.debug(
       } catch (error) {
         if (isDevelopment) {
           logger.error("❌ JWT token validation failed:", error);
-          logger.debug("🔄 Treating as demo token fallback");
-        }
-
-        // If JWT parsing fails but we have token and user, only allow in development
-        if (this.token && this.user && isDevelopment) {
-          if (shouldLog) {
-            logger.debug("✅ User is authenticated (fallback mode)");
-          }
-          return true;
         }
 
         // In production, JWT parsing failure means invalid token

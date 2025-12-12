@@ -20,6 +20,20 @@
     <link rel="stylesheet" href="./src/css/pages/register.css" />
     <!-- Auth footer styles -->
     <link rel="stylesheet" href="./src/css/components/footer-auth.css" />
+    <!-- OAuth styles -->
+    <link rel="stylesheet" href="./src/css/oauth.css" />
+
+    <!-- Supabase JS SDK from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Supabase Configuration -->
+    <script>
+      // Set Supabase config in window for development
+      window._env = {
+        SUPABASE_URL: 'https://pvziciccwxgftcielknm.supabase.co',
+        SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2emljaWNjd3hnZnRjaWVsa25tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MzcwNTgsImV4cCI6MjA3NTExMzA1OH0.1nfJrtWPl6DrAwvjGvM1-CZBeyYgCaV9oDdaadpqhLU'
+      };
+    </script>
 
     <!-- Lucide Icons - Modern icon library similar to Radix UI -->
     <script
@@ -45,14 +59,6 @@
       <h1 class="register-title text-2xl font-bold text-primary mb-6">
         Create Your Account
       </h1>
-
-      <div
-        class="demo-note u-bg-success u-padding-16 u-margin-bottom-20 u-text-body-sm u-text-success"
-        style="border: 1px solid var(--color-brand-primary)"
-      >
-        <strong>Demo Mode:</strong> Enter any information to create a demo
-        account.
-      </div>
 
       <div
         class="error-message u-bg-error u-padding-16 u-margin-bottom-20 u-text-body-sm u-text-error u-radius-md"
@@ -245,6 +251,9 @@
         </button>
       </form>
 
+      <!-- OAuth Social Login Buttons -->
+      <div id="oauthContainer"></div>
+
       <div
         class="divider u-margin-y-20 u-display-flex u-align-center u-text-body-sm u-text-tertiary"
       >
@@ -264,6 +273,15 @@
       import { profileCompletionManager } from "./src/profile-completion.js";
       import { validateEmail } from "./src/js/utils/shared.js";
       import { showMessage, hideMessage, clearMessages, showSuccess, showError } from "./src/js/utils/message-utils.js";
+      import { OAuthButtons } from "./src/components/oauth-buttons.js";
+
+      // Initialize OAuth buttons
+      const oauthButtons = new OAuthButtons('#oauthContainer', {
+        onRoleSelect: async (provider, role) => {
+          console.log(`🔐 OAuth registration initiated: ${provider} as ${role}`);
+          await authManager.signInWithOAuth(provider, role);
+        }
+      });
 
       document
         .getElementById("registerForm")
@@ -323,20 +341,8 @@
           }
         });
 
-      // Pre-fill with demo data for easy testing (development only)
+      // Initialize page
       document.addEventListener("DOMContentLoaded", function () {
-        const isDemoMode =
-          window.location.hostname === "localhost" ||
-          window.location.hostname === "127.0.0.1" ||
-          window.location.search.includes("demo=true");
-
-        if (isDemoMode) {
-          document.getElementById("name").value = "Demo User";
-          document.getElementById("email").value = "demo@flagfitpro.com";
-          document.getElementById("password").value = "demo123";
-          document.getElementById("confirmPassword").value = "demo123";
-        }
-
         // Add role selector styling and interaction
         const roleOptions = document.querySelectorAll('.role-option');
         roleOptions.forEach(option => {

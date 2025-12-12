@@ -3,7 +3,8 @@
  * Handles real-time subscriptions and database operations from the browser
  */
 
-import { createClient } from '@supabase/supabase-js';
+// Import Supabase from CDN for browser compatibility
+const { createClient } = window.supabase || {};
 import { logger } from '../../logger.js';
 
 // Get Supabase configuration from environment or window globals
