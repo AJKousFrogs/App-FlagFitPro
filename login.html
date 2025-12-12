@@ -192,8 +192,8 @@
         </button>
       </form>
 
-      <!-- OAuth Social Login Buttons -->
-      <div id="oauthContainer"></div>
+      <!-- OAuth Social Login Buttons - Disabled (using email/password only) -->
+      <!-- <div id="oauthContainer"></div> -->
 
       <div
         class="login-divider my-6 flex items-center text-sm"
@@ -240,15 +240,16 @@
       import { showMessage, hideMessage, clearMessages } from "./src/js/utils/message-utils.js";
       import { generateCSRFToken, validateCSRFToken, setCSRFTokenInForm } from "./src/js/utils/security-utils.js";
       import { createLoginRateLimiter } from "./src/js/utils/security-utils.js";
-      import { OAuthButtons } from "./src/components/oauth-buttons.js";
+      // OAuth disabled - using email/password only
+      // import { OAuthButtons } from "./src/components/oauth-buttons.js";
 
-      // Initialize OAuth buttons
-      const oauthButtons = new OAuthButtons('#oauthContainer', {
-        onRoleSelect: async (provider, role) => {
-          console.log(`🔐 OAuth login initiated: ${provider} as ${role}`);
-          await authManager.signInWithOAuth(provider, role);
-        }
-      });
+      // OAuth buttons disabled - using email/password authentication only
+      // const oauthButtons = new OAuthButtons('#oauthContainer', {
+      //   onRoleSelect: async (provider, role) => {
+      //     console.log(`🔐 OAuth login initiated: ${provider} as ${role}`);
+      //     await authManager.signInWithOAuth(provider, role);
+      //   }
+      // });
 
       document
         .getElementById("loginForm")
