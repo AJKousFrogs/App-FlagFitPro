@@ -19,6 +19,16 @@ const distDir = join(rootDir, "dist");
 
 console.log("🏗️  Building FlagFit Pro for production...\n");
 
+// Generate env.js with Supabase credentials
+try {
+  console.log("📝 Generating env.js with Supabase credentials...");
+  execSync("node generate-env.js", { stdio: "inherit", cwd: rootDir });
+  console.log("✅ env.js generated");
+} catch (error) {
+  console.error("❌ Failed to generate env.js:", error.message);
+  process.exit(1);
+}
+
 // Create dist directory if it doesn't exist
 if (!existsSync(distDir)) {
   mkdirSync(distDir, { recursive: true });
