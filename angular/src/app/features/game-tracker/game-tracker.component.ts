@@ -12,6 +12,7 @@ import {
   FormGroup,
   Validators,
   ReactiveFormsModule,
+  FormsModule,
 } from "@angular/forms";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
@@ -594,12 +595,7 @@ export class GameTrackerComponent implements OnInit {
   }
 
   getPlayDetails(play: Play): string {
-    const playType =
-      play.playType === "pass"
-        ? "pass_play"
-        : play.playType === "run"
-          ? "run_play"
-          : play.playType;
+    const playType = play.playType;
 
     switch (playType) {
       case "pass_play":
@@ -637,13 +633,7 @@ export class GameTrackerComponent implements OnInit {
 
   getTotalCompletions(): number {
     return this.plays().filter((p) => {
-      const type =
-        p.playType === "pass"
-          ? "pass_play"
-          : p.playType === "run"
-            ? "run_play"
-            : p.playType;
-      return type === "pass_play" && p.outcome === "completion";
+      return p.playType === "pass_play" && p.outcome === "completion";
     }).length;
   }
 

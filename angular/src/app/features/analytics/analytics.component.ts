@@ -12,7 +12,7 @@ import { ButtonModule } from "primeng/button";
 import { ChartModule } from "primeng/chart";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
-import { Tabs } from "primeng/tabs";
+import { Tabs, TabPanel } from "primeng/tabs";
 import { TagModule } from "primeng/tag";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -52,6 +52,7 @@ interface Metric {
     Select,
     TableModule,
     Tabs,
+    TabPanel,
     TagModule,
     MainLayoutComponent,
     PageHeaderComponent,

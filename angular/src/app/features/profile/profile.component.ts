@@ -11,7 +11,7 @@ import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { AvatarModule } from "primeng/avatar";
 import { TagModule } from "primeng/tag";
-import { Tabs } from "primeng/tabs";
+import { Tabs, TabPanel } from "primeng/tabs";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
 import { AuthService } from "../../core/services/auth.service";
@@ -28,6 +28,7 @@ import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
     AvatarModule,
     TagModule,
     Tabs,
+    TabPanel,
     MainLayoutComponent,
     StatsGridComponent
 ],
