@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to FlagFit Pro!</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./src/css/main.css" />
+
+  <!-- Supabase JS SDK from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Supabase Configuration -->
+  <script>
+    window._env = {
+      SUPABASE_URL: 'https://pvziciccwxgftcielknm.supabase.co',
+      SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2emljaWNjd3hnZnRjaWVsa25tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MzcwNTgsImV4cCI6MjA3NTExMzA1OH0.1nfJrtWPl6DrAwvjGvM1-CZBeyYgCaV9oDdaadpqhLU'
+    };
+  </script>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .onboarding-container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      max-width: 600px;
+      width: 90%;
+      padding: 50px;
+      text-align: center;
+    }
+    .welcome-emoji {
+      font-size: 4rem;
+      margin-bottom: 20px;
+    }
+    h1 {
+      font-size: 2.5rem;
+      color: #1a1a1a;
+      margin-bottom: 10px;
+    }
+    .subtitle {
+      color: #666;
+      font-size: 1.1rem;
+      margin-bottom: 40px;
+    }
+    .btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 16px 40px;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+    }
+    .btn-secondary {
+      background: #f0f0f0;
+      color: #333;
+      margin-left: 10px;
+    }
+    .btn-secondary:hover {
+      background: #e0e0e0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .feature-list {
+      text-align: left;
+      margin: 30px 0;
+      padding: 0 20px;
+    }
+    .feature-item {
+      display: flex;
+      align-items: center;
+      margin: 15px 0;
+      font-size: 1rem;
+      color: #444;
+    }
+    .feature-icon {
+      font-size: 1.5rem;
+      margin-right: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="onboarding-container">
+    <div class="welcome-emoji">🏈</div>
+    <h1>Welcome to FlagFit Pro!</h1>
+    <p class="subtitle" id="userName">Hi there! Let's get you started.</p>
+
+    <div class="feature-list">
+      <div class="feature-item">
+        <span class="feature-icon">📊</span>
+        <span>Track your performance and progress</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-icon">🏃</span>
+        <span>Follow personalized training plans</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-icon">📈</span>
+        <span>View detailed analytics and insights</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-icon">🏆</span>
+        <span>Compete in tournaments</span>
+      </div>
+    </div>
+
+    <button class="btn" onclick="completedOnboarding()">Get Started!</button>
+    <button class="btn btn-secondary" onclick="skipOnboarding()">Skip for Now</button>
+  </div>
+
+  <script type="module">
+    import { authManager } from './src/auth-manager.js';
+
+    // Get user info and personalize welcome
+    async function init() {
+      await authManager.waitForInit();
+      const user = authManager.getCurrentUser();
+
+      if (user) {
+        const firstName = user.user_metadata?.first_name || user.user_metadata?.name?.split(' ')[0] || 'there';
+        document.getElementById('userName').textContent = `Hi ${firstName}! Let's get you started.`;
+      }
+    }
+
+    init();
+
+    // Mark onboarding as completed
+    window.completedOnboarding = async function() {
+      const user = authManager.getCurrentUser();
+      if (user) {
+        // Update user metadata to mark onboarding as complete
+        try {
+          const { getSupabase } = await import('./src/js/services/supabase-client.js');
+          const supabase = getSupabase();
+
+          if (supabase) {
+            await supabase.auth.updateUser({
+              data: { onboarding_completed: true }
+            });
+          }
+        } catch (error) {
+          console.error('Error updating onboarding status:', error);
+        }
+      }
+
+      // Redirect to dashboard
+      window.location.href = '/dashboard.html';
+    }
+
+    // Skip onboarding (still mark as completed)
+    window.skipOnboarding = function() {
+      window.location.href = '/dashboard.html';
+    }
+  </script>
+</body>
+</html>

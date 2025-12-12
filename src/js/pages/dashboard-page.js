@@ -309,13 +309,40 @@ class DashboardPage {
         this.setupEventListeners();
         this.setupGlobalFunctions();
         this.setupNotificationStore();
+        this.updateUserGreeting();
         this.checkProfileCompletion();
       });
     } else {
       this.setupEventListeners();
       this.setupGlobalFunctions();
       this.setupNotificationStore();
+      this.updateUserGreeting();
       this.checkProfileCompletion();
+    }
+  }
+
+  /**
+   * Update the dashboard greeting with user's name
+   */
+  async updateUserGreeting() {
+    try {
+      await authManager.waitForInit();
+      const user = authManager.getCurrentUser();
+
+      if (user) {
+        const greetingEl = document.getElementById('userGreeting');
+        if (greetingEl) {
+          // Get user's first name from metadata
+          const firstName = user.user_metadata?.first_name ||
+                           user.user_metadata?.name?.split(' ')[0] ||
+                           user.email?.split('@')[0] ||
+                           'there';
+
+          greetingEl.textContent = `👋 Hello, ${firstName}!`;
+        }
+      }
+    } catch (error) {
+      logger.error('[Dashboard] Error updating greeting:', error);
     }
   }
 

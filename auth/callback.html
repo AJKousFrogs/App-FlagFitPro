@@ -142,9 +142,13 @@
           const user = session.user;
           const hasCompletedOnboarding = user.user_metadata?.onboarding_completed;
 
-          // Always redirect to dashboard for now
-          // TODO: Create onboarding flow for new users
-          window.location.href = '/dashboard.html';
+          if (hasCompletedOnboarding) {
+            // Redirect to dashboard
+            window.location.href = '/dashboard.html';
+          } else {
+            // Redirect to onboarding for new users
+            window.location.href = '/onboarding.html';
+          }
         } else {
           throw new Error('No session found after OAuth callback');
         }
