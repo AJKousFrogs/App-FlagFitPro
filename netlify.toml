@@ -347,12 +347,6 @@
   status = 200
   force = true
 
-[[redirects]]
-  from = "/.netlify/functions/compute-acwr"
-  to = "/.netlify/functions/compute-acwr"
-  status = 200
-  force = true
-
 # API Routes for Training Metrics
 [[redirects]]
   from = "/api/training-metrics"

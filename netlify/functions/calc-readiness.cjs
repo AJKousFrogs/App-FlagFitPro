@@ -199,7 +199,7 @@ exports.handler = async (event, context) => {
 
     // Get sessions from training_sessions table
     // Include both rpe and intensity_level (fallback for RPE)
-    const { data: sessions, error: sessErr } = await supabaseAdmin
+    let { data: sessions, error: sessErr } = await supabaseAdmin
       .from("training_sessions")
       .select("session_date, date, duration_minutes, rpe, intensity_level")
       .or(`user_id.eq.${athleteId},athlete_id.eq.${athleteId}`)
@@ -215,7 +215,7 @@ exports.handler = async (event, context) => {
         .or(`user_id.eq.${athleteId},athlete_id.eq.${athleteId}`)
         .gte("date", startChronic.toISOString().slice(0, 10))
         .lte("date", dayStr);
-      
+
       if (altErr) {
         return createErrorResponse(500, `Failed to fetch sessions: ${sessErr.message}`);
       }

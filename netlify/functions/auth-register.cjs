@@ -319,7 +319,7 @@ exports.handler = async (event, context) => {
 
     // Return success response (exclude password fields and verification token)
     // Handle both password_hash and password column names
-    const { password_hash, password, verification_token, verification_token_expires_at, ...safeUser } = newUser;
+    const { password_hash, password: password_field, verification_token, verification_token_expires_at, ...safeUser } = newUser;
 
     return {
       statusCode: 201,
