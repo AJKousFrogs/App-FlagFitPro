@@ -1,7 +1,7 @@
 // Analytics Page JavaScript
 // Fetches real analytics data from backend and renders charts
 
-import { apiClient } from "../api-client.js";
+import { apiClient } from "../../api-client.js";
 import { API_ENDPOINTS } from "../../api-config.js";
 import { authManager } from "../../auth-manager.js";
 import { errorHandler } from "../utils/unified-error-handler.js";

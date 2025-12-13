@@ -557,7 +557,7 @@ class GameTrackerPage {
     }
 
     try {
-      const { apiClient } = await import("../api-client.js");
+      const { apiClient } = await import("../../api-client.js");
       const { API_ENDPOINTS } = await import("../../api-config.js");
 
       const playData = {
@@ -784,7 +784,7 @@ class GameTrackerPage {
         
         // Update game scores in backend
         if (this.currentGame.gameId && this.currentGame.gameId.startsWith("GAME_")) {
-          const { apiClient } = await import("../api-client.js");
+          const { apiClient } = await import("../../api-client.js");
           const { API_ENDPOINTS } = await import("../../api-config.js");
           
           await apiClient.put(

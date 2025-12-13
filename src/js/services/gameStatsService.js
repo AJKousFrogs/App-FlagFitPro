@@ -4,7 +4,7 @@
  * Now uses backend API with localStorage fallback
  */
 
-import { apiClient } from "../api-client.js";
+import { apiClient } from "../../api-client.js";
 import { API_ENDPOINTS } from "../../api-config.js";
 import { storageService } from "./storage-service-unified.js";
 import { statisticsCalculationService } from "./statisticsCalculationService.js";
