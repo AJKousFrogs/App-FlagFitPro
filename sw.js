@@ -1,9 +1,9 @@
 // FlagFit Pro - Service Worker
-// Version 1.0.1
+// Version 1.0.2
 // Handles caching, offline support, and push notifications
 
-const CACHE_NAME = 'flagfit-pro-v1.0.1';
-const RUNTIME_CACHE = 'flagfit-runtime-v1.0.1';
+const CACHE_NAME = 'flagfit-pro-v1.0.2';
+const RUNTIME_CACHE = 'flagfit-runtime-v1.0.2';
 
 // Assets to cache on install
 const STATIC_ASSETS = [
