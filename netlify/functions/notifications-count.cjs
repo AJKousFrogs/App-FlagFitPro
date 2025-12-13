@@ -1,7 +1,7 @@
 // Netlify Function: Notifications Count
-// Returns unread notification count for the current user
+// Returns unread notification count for the current user using Supabase authentication
 
-const jwt = require("jsonwebtoken");
+const { createClient } = require("@supabase/supabase-js");
 const { db, checkEnvVars } = require("./supabase-client.cjs");
 const {
   createSuccessResponse,
@@ -11,15 +11,17 @@ const {
   CORS_HEADERS
 } = require("./utils/error-handler.cjs");
 
-// JWT_SECRET will be checked at runtime, not module load time
-const getJWTSecret = () => {
-  const secret = process.env.JWT_SECRET;
-  if (!secret) {
-    console.error("CRITICAL: JWT_SECRET environment variable is not set!");
-    throw new Error("JWT_SECRET environment variable is required for security");
+// Initialize Supabase client
+function getSupabaseClient() {
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY;
+
+  if (!supabaseUrl || !supabaseServiceKey) {
+    throw new Error("Missing Supabase configuration");
   }
-  return secret;
-};
+
+  return createClient(supabaseUrl, supabaseServiceKey);
+}
 
 exports.handler = async (event, context) => {
   logFunctionCall('NotificationsCount', event);
@@ -35,45 +37,45 @@ exports.handler = async (event, context) => {
   try {
     // Check environment variables first
     checkEnvVars();
-    
-    // Get JWT_SECRET
-    const JWT_SECRET = getJWTSecret();
 
     // Get authorization header
-    const authHeader =
-      event.headers.authorization || event.headers.Authorization;
+    const authHeader = event.headers.authorization || event.headers.Authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return createErrorResponse("Authentication required", 401, 'unauthorized');
     }
 
-    // Extract and verify token
+    // Extract token
     const token = authHeader.substring(7);
-    let decoded;
-    let userId = null;
 
-    try {
-      decoded = jwt.verify(token, JWT_SECRET);
-      userId = decoded.userId;
-    } catch (jwtError) {
+    // Initialize Supabase client
+    const supabase = getSupabaseClient();
+
+    // Verify token with Supabase
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+
+    if (authError || !user) {
+      console.error("Supabase auth error:", authError);
       return createErrorResponse("Invalid or expired token", 401, 'unauthorized');
     }
 
+    const userId = user.id;
+
     if (!userId) {
-      return createErrorResponse("User ID not found in token", 401, 'unauthorized');
+      return createErrorResponse("User ID not found", 401, 'unauthorized');
     }
 
     if (event.httpMethod === "GET") {
       try {
         // Get unread count (already filters muted types)
         const unreadCount = await db.notifications.getUnreadCount(userId);
-        
+
         // Also get last opened timestamp
         const lastOpenedAt = await db.notifications.getLastOpenedAt(userId);
-        
-        return createSuccessResponse({ 
+
+        return createSuccessResponse({
           unreadCount,
-          lastOpenedAt 
+          lastOpenedAt
         });
       } catch (dbError) {
         console.error("Database error:", dbError);
@@ -93,4 +95,3 @@ exports.handler = async (event, context) => {
     return handleServerError(error, 'NotificationsCount');
   }
 };
-

@@ -1,27 +1,26 @@
 // Netlify Function: Get Current User
-// Returns current user information from JWT token using Supabase
+// Returns current user information from Supabase JWT token
 
-const jwt = require("jsonwebtoken");
-const { db, checkEnvVars } = require("./supabase-client.cjs");
+const { createClient } = require("@supabase/supabase-js");
 const {
-  validateJWT,
   createSuccessResponse,
-  handleNotFoundError,
+  createErrorResponse,
   handleServerError,
   logFunctionCall,
   CORS_HEADERS
 } = require("./utils/error-handler.cjs");
 
-// JWT_SECRET will be checked at runtime, not module load time
-// This prevents the function from failing to load if env var is missing
-const getJWTSecret = () => {
-  const secret = process.env.JWT_SECRET;
-  if (!secret) {
-    console.error("CRITICAL: JWT_SECRET environment variable is not set!");
-    throw new Error("JWT_SECRET environment variable is required for security");
+// Initialize Supabase client
+function getSupabaseClient() {
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY;
+
+  if (!supabaseUrl || !supabaseServiceKey) {
+    throw new Error("Missing Supabase configuration");
   }
-  return secret;
-};
+
+  return createClient(supabaseUrl, supabaseServiceKey);
+}
 
 exports.handler = async (event, context) => {
   // Log function call
@@ -48,34 +47,38 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    // Check environment variables
-    checkEnvVars();
-    
-    // Get JWT_SECRET
-    const JWT_SECRET = getJWTSecret();
+    // Get authorization header
+    const authHeader = event.headers.authorization || event.headers.Authorization;
 
-    // Validate JWT token using standardized error handling
-    const jwtValidation = validateJWT(event, jwt, JWT_SECRET);
-    if (!jwtValidation.success) {
-      return jwtValidation.error;
-    }
-    const { decoded } = jwtValidation;
-
-    // Get user by ID from database
-    let user;
-    try {
-      user = await db.users.findById(decoded.userId);
-    } catch (dbError) {
-      console.error("Database error finding user:", dbError);
-      return handleServerError(dbError, "Failed to retrieve user");
-    }
-    
-    if (!user) {
-      return handleNotFoundError('User');
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return createErrorResponse("Authentication required", 401, 'unauthorized');
     }
 
-    // Return user data (exclude password)
-    const { password: _, ...safeUser } = user;
+    // Extract token
+    const token = authHeader.substring(7);
+
+    // Initialize Supabase client
+    const supabase = getSupabaseClient();
+
+    // Verify token with Supabase
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+
+    if (authError || !user) {
+      console.error("Supabase auth error:", authError);
+      return createErrorResponse("Invalid or expired token", 401, 'unauthorized');
+    }
+
+    // Return user data from Supabase
+    const safeUser = {
+      id: user.id,
+      email: user.email,
+      role: user.user_metadata?.role || 'player',
+      name: user.user_metadata?.name || user.email,
+      email_verified: user.email_confirmed_at !== null,
+      created_at: user.created_at,
+      updated_at: user.updated_at,
+      user_metadata: user.user_metadata
+    };
 
     return createSuccessResponse({ user: safeUser });
   } catch (error) {
