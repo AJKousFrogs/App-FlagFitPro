@@ -41,19 +41,31 @@ class AnalyticsPage {
     try {
       // Load all analytics data
       await this.loadAnalyticsData();
-      
-      // Initialize all charts
-      setTimeout(() => {
-        this.initPerformanceTrendsChart();
-        this.initTeamChemistryChart();
-        this.initTrainingDistributionChart();
-        this.initPositionPerformanceChart();
-        this.initOlympicProgressChart();
-        this.initInjuryRiskChart();
-        this.initSpeedDevelopmentChart();
-        this.initEngagementFunnelChart();
-        console.log("✅ All charts initialized successfully!");
-      }, 100);
+
+      // Initialize charts progressively using requestAnimationFrame for better performance
+      const charts = [
+        'PerformanceTrends',
+        'TeamChemistry',
+        'TrainingDistribution',
+        'PositionPerformance',
+        'OlympicProgress',
+        'InjuryRisk',
+        'SpeedDevelopment',
+        'EngagementFunnel'
+      ];
+
+      // Initialize charts one by one in animation frames
+      charts.forEach((chart, index) => {
+        requestAnimationFrame(() => {
+          try {
+            this[`init${chart}Chart`]();
+          } catch (error) {
+            console.error(`Error initializing ${chart} chart:`, error);
+          }
+        });
+      });
+
+      console.log("✅ All charts initialized successfully!");
     } catch (error) {
       console.error("Error loading analytics data:", error);
       // Fallback to hardcoded data

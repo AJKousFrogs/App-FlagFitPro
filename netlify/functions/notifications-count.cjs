@@ -1,7 +1,7 @@
 // Netlify Function: Notifications Count
 // Returns unread notification count for the current user using Supabase authentication
 
-const { createClient } = require("@supabase/supabase-js");
+const { getSupabaseClient } = require("./utils/auth-helper.cjs");
 const { db, checkEnvVars } = require("./supabase-client.cjs");
 const {
   createSuccessResponse,
@@ -10,18 +10,6 @@ const {
   logFunctionCall,
   CORS_HEADERS
 } = require("./utils/error-handler.cjs");
-
-// Initialize Supabase client
-function getSupabaseClient() {
-  const supabaseUrl = process.env.SUPABASE_URL;
-  const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY;
-
-  if (!supabaseUrl || !supabaseServiceKey) {
-    throw new Error("Missing Supabase configuration");
-  }
-
-  return createClient(supabaseUrl, supabaseServiceKey);
-}
 
 exports.handler = async (event, context) => {
   logFunctionCall('NotificationsCount', event);

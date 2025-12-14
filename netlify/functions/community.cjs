@@ -1,38 +1,87 @@
 // Netlify Function: Community API
 // Returns community feed, posts, and leaderboard data
 
-const jwt = require("jsonwebtoken");
 const { db, checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
+const { validate, sanitize } = require("./validation.cjs");
 const {
   createSuccessResponse,
   createErrorResponse,
   handleServerError,
   handleAuthenticationError,
+  handleValidationError,
   logFunctionCall,
   CORS_HEADERS
 } = require("./utils/error-handler.cjs");
+const { authenticateRequest } = require("./utils/auth-helper.cjs");
+const { applyRateLimit } = require("./utils/rate-limiter.cjs");
 
-// JWT_SECRET will be checked at runtime, not module load time
-// This prevents the function from failing to load if env var is missing
-const getJWTSecret = () => {
-  const secret = process.env.JWT_SECRET;
-  if (!secret) {
-    console.error("CRITICAL: JWT_SECRET environment variable is not set!");
-    throw new Error("JWT_SECRET environment variable is required for security");
-  }
-  return secret;
-};
-
-// Get community feed from database
+// Get community feed from database with privacy filtering
 const getCommunityFeed = async (userId, limit = 20) => {
   try {
     checkEnvVars();
-    
-    // Get posts from database using supabase-client helper
-    const posts = await db.community.getFeedPosts(limit);
-    
+
+    // SECURITY: Build query with privacy filters
+    let query = supabaseAdmin
+      .from("posts")
+      .select(`
+        *,
+        users:user_id (
+          id,
+          email,
+          name,
+          avatar_url
+        )
+      `)
+      .eq("is_published", true)
+      .order("created_at", { ascending: false })
+      .limit(limit);
+
+    // SECURITY: If user is authenticated, apply privacy filters
+    if (userId) {
+      // Get user's team membership for team-only posts
+      const { data: teamMemberships } = await supabaseAdmin
+        .from("team_members")
+        .select("team_id")
+        .eq("user_id", userId);
+
+      const userTeamIds = teamMemberships?.map(m => m.team_id) || [];
+
+      // Get blocked users (both ways)
+      const { data: blockedUsers } = await supabaseAdmin
+        .from("blocked_users")
+        .select("blocked_user_id")
+        .eq("user_id", userId);
+
+      const { data: blockedBy } = await supabaseAdmin
+        .from("blocked_users")
+        .select("user_id")
+        .eq("blocked_user_id", userId);
+
+      const blockedUserIds = [
+        ...(blockedUsers?.map(b => b.blocked_user_id) || []),
+        ...(blockedBy?.map(b => b.user_id) || [])
+      ];
+
+      // SECURITY: Exclude posts from blocked users
+      if (blockedUserIds.length > 0) {
+        query = query.not("user_id", "in", `(${blockedUserIds.join(",")})`);
+      }
+
+      // For now, show all public posts
+      // In future: filter by privacy_setting column
+      // .or(`privacy_setting.eq.public,and(privacy_setting.eq.team,team_id.in.(${userTeamIds.join(",")}))`)
+    } else {
+      // SECURITY: Non-authenticated users only see public posts
+      // In future: add privacy_setting filter
+      // .eq("privacy_setting", "public")
+    }
+
+    const { data: posts, error } = await query;
+
+    if (error) throw error;
+
     // Transform database format to match frontend format
-    return posts.map(post => ({
+    return (posts || []).map(post => ({
       id: post.id,
       author: post.users?.email || post.user_id,
       authorName: post.users?.name || "Unknown User",
@@ -118,22 +167,52 @@ const getCommunityLeaderboard = async (category = "overall", limit = 10) => {
   }
 };
 
-// Create a new post
+// Create a new post with validation
 const createPost = async (userId, postData) => {
   try {
     checkEnvVars();
-    
+
+    // SECURITY: Sanitize input to prevent XSS
+    const sanitizedData = sanitize(postData);
+
+    // SECURITY: Validate required fields
+    if (!sanitizedData.content && !sanitizedData.text) {
+      throw new Error("Post content is required");
+    }
+
+    const content = sanitizedData.content || sanitizedData.text || "";
+
+    // SECURITY: Validate content length
+    if (content.length < 1) {
+      throw new Error("Post content cannot be empty");
+    }
+    if (content.length > 5000) {
+      throw new Error("Post content must be at most 5000 characters");
+    }
+
+    // SECURITY: Validate title length if provided
+    if (sanitizedData.title && sanitizedData.title.length > 200) {
+      throw new Error("Post title must be at most 200 characters");
+    }
+
+    // SECURITY: Validate post type
+    const validPostTypes = ["general", "achievement", "question", "announcement", "training", "game"];
+    const postType = sanitizedData.post_type || sanitizedData.type || "general";
+    if (!validPostTypes.includes(postType)) {
+      throw new Error(`Invalid post type. Must be one of: ${validPostTypes.join(", ")}`);
+    }
+
     // Insert post into database using supabase-client helper
     const postToCreate = {
       user_id: userId,
-      content: postData.content || postData.text || "",
-      title: postData.title || null,
-      post_type: postData.post_type || postData.type || "general",
-      is_published: postData.is_published !== false, // Default to published
+      content: content,
+      title: sanitizedData.title || null,
+      post_type: postType,
+      is_published: sanitizedData.is_published !== false, // Default to published
     };
-    
+
     const newPost = await db.community.createPost(postToCreate);
-    
+
     // Transform to match frontend format
     return {
       id: newPost.id,
@@ -167,20 +246,27 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    // Get authorization header (optional for some endpoints)
-    const authHeader =
-      event.headers.authorization || event.headers.Authorization;
+    // SECURITY: Apply rate limiting
+    const rateLimitType = event.httpMethod === "POST" ? "CREATE" : "READ";
+    const rateLimitResponse = applyRateLimit(event, rateLimitType);
+    if (rateLimitResponse) {
+      return rateLimitResponse;
+    }
+
+    // SECURITY: Authentication (optional for GET, required for POST)
     let userId = null;
+    const authHeader = event.headers.authorization || event.headers.Authorization;
 
     if (authHeader && authHeader.startsWith("Bearer ")) {
-      const token = authHeader.substring(7);
-      try {
-        const JWT_SECRET = getJWTSecret();
-        const decoded = jwt.verify(token, JWT_SECRET);
-        userId = decoded.userId;
-      } catch (jwtError) {
-        // Token verification failed, but continue for public endpoints
-        console.warn("Token verification failed:", jwtError.message);
+      const auth = await authenticateRequest(event);
+      if (auth.success) {
+        userId = auth.user.id;
+      } else {
+        // For GET requests, continue without auth (show public feed)
+        // For POST requests, return auth error
+        if (event.httpMethod === "POST") {
+          return auth.error;
+        }
       }
     }
 
@@ -216,14 +302,14 @@ exports.handler = async (event, context) => {
     }
 
     if (event.httpMethod === "POST") {
+      // SECURITY: Require authentication for all POST operations
+      if (!userId) {
+        return handleAuthenticationError("Authentication required to create posts");
+      }
+
       // Handle like request
       if (like) {
         return createSuccessResponse(null, 200, "Post liked");
-      }
-
-      // Require authentication for creating posts
-      if (!userId) {
-        return handleAuthenticationError("Authentication required to create posts");
       }
 
       // Parse and validate request body
@@ -231,7 +317,7 @@ exports.handler = async (event, context) => {
       try {
         postData = JSON.parse(event.body || "{}");
       } catch (parseError) {
-        return createErrorResponse("Invalid JSON in request body", 400, 'validation_error');
+        return handleValidationError("Invalid JSON in request body");
       }
 
       const newPost = await createPost(userId, postData);
@@ -241,6 +327,15 @@ exports.handler = async (event, context) => {
 
     return createErrorResponse("Method not allowed", 405, 'method_not_allowed');
   } catch (error) {
+    // Handle validation errors
+    if (error.message && (
+      error.message.includes("required") ||
+      error.message.includes("must be") ||
+      error.message.includes("Invalid")
+    )) {
+      return handleValidationError(error.message);
+    }
+
     return handleServerError(error, 'Community');
   }
 };

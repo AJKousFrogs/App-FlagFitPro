@@ -1,7 +1,7 @@
 // Netlify Function: Get Current User
 // Returns current user information from Supabase JWT token
 
-const { createClient } = require("@supabase/supabase-js");
+const { getSupabaseClient } = require("./utils/auth-helper.cjs");
 const {
   createSuccessResponse,
   createErrorResponse,
@@ -9,18 +9,6 @@ const {
   logFunctionCall,
   CORS_HEADERS
 } = require("./utils/error-handler.cjs");
-
-// Initialize Supabase client
-function getSupabaseClient() {
-  const supabaseUrl = process.env.SUPABASE_URL;
-  const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY;
-
-  if (!supabaseUrl || !supabaseServiceKey) {
-    throw new Error("Missing Supabase configuration");
-  }
-
-  return createClient(supabaseUrl, supabaseServiceKey);
-}
 
 exports.handler = async (event, context) => {
   // Log function call

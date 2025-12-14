@@ -4,7 +4,6 @@
 
 const { db, checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
 const {
-  validateJWT,
   createSuccessResponse,
   createErrorResponse,
   handleServerError,
@@ -12,6 +11,8 @@ const {
   logFunctionCall,
   CORS_HEADERS
 } = require("./utils/error-handler.cjs");
+const { authenticateRequest } = require("./utils/auth-helper.cjs");
+const { applyRateLimit } = require("./utils/rate-limiter.cjs");
 
 /**
  * Compute ACWR for an athlete
@@ -35,10 +36,25 @@ exports.handler = async (event, context) => {
     // Only allow POST
     if (event.httpMethod !== "POST") {
       return createErrorResponse(
+        "Method not allowed. Use POST to compute ACWR.",
         405,
-        "Method not allowed. Use POST to compute ACWR."
+        'method_not_allowed'
       );
     }
+
+    // SECURITY: Apply rate limiting
+    const rateLimitResponse = applyRateLimit(event, "CREATE");
+    if (rateLimitResponse) {
+      return rateLimitResponse;
+    }
+
+    // SECURITY: Authenticate request using Supabase
+    const auth = await authenticateRequest(event);
+    if (!auth.success) {
+      return auth.error;
+    }
+
+    const userId = auth.user.id;
 
     // Parse request body
     let body;
@@ -48,7 +64,8 @@ exports.handler = async (event, context) => {
       return handleValidationError("Invalid JSON in request body");
     }
 
-    const { athleteId } = body;
+    // If athleteId not provided, use authenticated user's ID
+    const { athleteId = userId } = body;
 
     // Validate required fields
     if (!athleteId) {

@@ -1,7 +1,6 @@
 // Netlify Function: Notifications
 // Returns user notifications using Supabase
 
-const jwt = require("jsonwebtoken");
 const { db, checkEnvVars } = require("./supabase-client.cjs");
 const {
   createSuccessResponse,
@@ -11,17 +10,8 @@ const {
   logFunctionCall,
   CORS_HEADERS
 } = require("./utils/error-handler.cjs");
-
-// JWT_SECRET will be checked at runtime, not module load time
-// This prevents the function from failing to load if env var is missing
-const getJWTSecret = () => {
-  const secret = process.env.JWT_SECRET;
-  if (!secret) {
-    console.error("CRITICAL: JWT_SECRET environment variable is not set!");
-    throw new Error("JWT_SECRET environment variable is required for security");
-  }
-  return secret;
-};
+const { authenticateRequest } = require("./utils/auth-helper.cjs");
+const { applyRateLimit } = require("./utils/rate-limiter.cjs");
 
 exports.handler = async (event, context) => {
   logFunctionCall('Notifications', event);
@@ -43,19 +33,20 @@ exports.handler = async (event, context) => {
 
     // Check environment variables first
     checkEnvVars();
-    
-    // Get JWT_SECRET
-    const JWT_SECRET = getJWTSecret();
 
-    // Handle authentication - allow unauthenticated requests for notifications
-    if (authHeader && authHeader.startsWith("Bearer ")) {
-      // Extract and verify token
-      const token = authHeader.substring(7);
-      let decoded;
+    // SECURITY: Apply rate limiting
+    const rateLimitResponse = applyRateLimit(event, "READ");
+    if (rateLimitResponse) {
+      return rateLimitResponse;
+    }
 
-      try {
-        decoded = jwt.verify(token, JWT_SECRET);
-        userId = decoded.userId;
+    // SECURITY: Authenticate request using Supabase
+    const auth = await authenticateRequest(event);
+    if (!auth.success) {
+      return auth.error;
+    }
+
+    const userId = auth.user.id;
       } catch (jwtError) {
         // Invalid token - continue without authentication
         console.warn("Invalid token provided, returning fallback notifications");

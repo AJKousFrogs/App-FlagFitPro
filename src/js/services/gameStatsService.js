@@ -13,7 +13,8 @@ class GameStatsService {
   constructor() {
     this.storageKey = "flagfit_games";
     this.currentGameKey = "flagfit_current_game";
-    this.useBackend = true; // Toggle to use backend or localStorage
+    // Use backend in production/staging, localStorage in development
+    this.useBackend = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
   }
 
   /**
@@ -120,9 +121,21 @@ class GameStatsService {
 
   /**
    * Get all games from backend (with localStorage fallback)
-   * @returns {Promise<Array>} Array of game objects
+   * @param {Object} options - Options for loading games
+   * @param {boolean} options.forceSync - Force synchronous localStorage-only read
+   * @returns {Promise<Array>|Array} Array of game objects
    */
-  async getAllGames() {
+  async getAllGames(options = { forceSync: false }) {
+    // Synchronous localStorage-only mode (for backward compatibility)
+    if (options.forceSync) {
+      try {
+        return storageService.get(this.storageKey, [], { usePrefix: false });
+      } catch (error) {
+        console.error("Error loading games from localStorage:", error);
+        return [];
+      }
+    }
+
     // Try backend first
     if (this.useBackend) {
       try {
@@ -164,19 +177,6 @@ class GameStatsService {
       return storageService.get(this.storageKey, [], { usePrefix: false });
     } catch (error) {
       console.error("Error loading games from localStorage:", error);
-      return [];
-    }
-  }
-
-  /**
-   * Get all games (synchronous version for backward compatibility)
-   * @returns {Array} Array of game objects
-   */
-  getAllGamesSync() {
-    try {
-      return storageService.get(this.storageKey, [], { usePrefix: false });
-    } catch (error) {
-      console.error("Error loading games:", error);
       return [];
     }
   }

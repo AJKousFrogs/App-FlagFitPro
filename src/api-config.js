@@ -384,34 +384,26 @@ export class ApiClient {
                                  endpoint.startsWith("/notifications") ||
                                  endpoint.startsWith("/dashboard") ||
                                  endpoint.startsWith("/community") ||
-                                 endpoint.startsWith("/tournaments") ||
-                                 endpoint.startsWith("/community");
+                                 endpoint.startsWith("/tournaments");
 
       // Handle network errors (Failed to fetch)
       if (error.message === "Failed to fetch" || error.name === "TypeError" || error.message?.includes("Failed to fetch")) {
-        // Check if it's a connection refused error (common when Netlify Functions aren't running)
-        const isConnectionRefused = true; // All "Failed to fetch" errors in this context are connection issues
-
-        // In dev mode with Netlify Functions, connection refused is expected
-        // Don't log errors, just silently handle it
-        if (isDev && isNetlifyFunction) {
-          // Silently handle - this is expected when Netlify Dev isn't running
-          // Don't log anything, just throw a quiet error
-        } else {
-          logger.debug(`Network error for ${endpoint} - endpoint may be unavailable`);
-        }
-
         const networkError = new Error(`Failed to fetch: ${endpoint}`);
         networkError.isNetworkError = true;
-        networkError.isConnectionRefused = isConnectionRefused;
+        networkError.isConnectionRefused = true;
+
+        // Always log network errors, but at appropriate level
+        if (isDev && isNetlifyFunction) {
+          logger.debug(`Network error for ${endpoint} - Netlify Functions may not be running`);
+        } else {
+          logger.error(`Network error for ${endpoint} - endpoint may be unavailable`);
+        }
+
         throw networkError;
       }
 
-      // Log other errors (but use debug for dev environment)
-      if (isDev && isNetlifyFunction) {
-        // Don't log errors for Netlify Functions in dev - they're expected to fail if Netlify Dev isn't running
-        logger.debug(`API request failed (expected in dev): ${endpoint}`);
-      } else if (isDev) {
+      // Always log errors at appropriate level
+      if (isDev) {
         logger.debug(`API request failed (dev mode): ${endpoint}`, error);
       } else {
         logger.error(`API request failed: ${endpoint}`, error);

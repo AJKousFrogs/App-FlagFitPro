@@ -64,8 +64,13 @@ export const AUTH = {
   SESSION_TIMEOUT: 2 * 60 * 60 * 1000, // 2 hours
   SESSION_WARNING_TIME: 5 * 60 * 1000, // 5 minutes before timeout
 
+  // Activity tracking
+  ACTIVITY_DEBOUNCE_TIME: 1000, // 1 second
+  ACTIVITY_RESET_THRESHOLD: 60000, // 1 minute
+
   // Token refresh
   TOKEN_REFRESH_THRESHOLD: 5 * 60 * 1000, // 5 minutes before expiry
+  TOKEN_VALIDATION_TIMEOUT: 3000, // 3 seconds
 
   // Login attempts
   MAX_LOGIN_ATTEMPTS: 5,
@@ -77,6 +82,33 @@ export const AUTH = {
   PASSWORD_REQUIRE_LOWERCASE: true,
   PASSWORD_REQUIRE_NUMBER: true,
   PASSWORD_REQUIRE_SPECIAL: false,
+
+  // Protected routes (require authentication)
+  PROTECTED_ROUTES: [
+    '/dashboard.html',
+    '/profile.html',
+    '/settings.html',
+    '/training.html',
+    '/roster.html',
+    '/analytics.html',
+    '/community.html',
+    '/tournaments.html',
+    '/coach.html',
+    '/games.html',
+    '/wellness.html',
+    '/workout.html',
+    '/performance-tracking.html',
+    '/qb-training-schedule.html',
+    '/chat.html',
+  ],
+
+  // Public routes (no authentication required)
+  PUBLIC_ROUTES: [
+    '/login.html',
+    '/register.html',
+    '/reset-password.html',
+    '/index.html',
+  ],
 };
 
 /**

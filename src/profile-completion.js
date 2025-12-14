@@ -23,15 +23,18 @@ export class ProfileCompletionManager {
   needsCompletion() {
     const profile = this.getStoredProfile();
     const role = this.getUserRole();
-    
+
     if (role === 'coach') {
       // Coaches need: coaching experience level
       const requiredFields = ["coachingExperienceLevel"];
       return requiredFields.some((field) => !profile[field]);
     } else {
-      // Players need: position, jerseyNumber, experienceLevel
-      const requiredFields = ["position", "jerseyNumber", "experienceLevel"];
-      return requiredFields.some((field) => !profile[field]);
+      // Players need: at least one position, jerseyNumber, experienceLevel
+      const hasPositions = (Array.isArray(profile.positions) && profile.positions.length > 0) || profile.position;
+      const hasJerseyNumber = profile.jerseyNumber || profile.jersey_number;
+      const hasExperienceLevel = profile.experienceLevel;
+
+      return !hasPositions || !hasJerseyNumber || !hasExperienceLevel;
     }
   }
 
@@ -155,6 +158,86 @@ export class ProfileCompletionManager {
       }
     }, 100);
 
+    // Handle unit toggle buttons
+    const unitToggles = modal.querySelectorAll(".unit-toggle");
+    unitToggles.forEach((toggle) => {
+      toggle.addEventListener("click", (e) => {
+        e.preventDefault();
+        const field = toggle.getAttribute("data-field");
+        const unit = toggle.getAttribute("data-unit");
+
+        // Update toggle button styles
+        const fieldToggles = modal.querySelectorAll(`.unit-toggle[data-field="${field}"]`);
+        fieldToggles.forEach((btn) => {
+          if (btn.getAttribute("data-unit") === unit) {
+            btn.style.background = "#667eea";
+            btn.style.color = "white";
+            btn.style.borderColor = "#667eea";
+          } else {
+            btn.style.background = "white";
+            btn.style.color = "#666";
+            btn.style.borderColor = "#ddd";
+          }
+        });
+
+        // Show/hide appropriate inputs
+        const imperialDiv = modal.querySelector(`#${field}-imperial`);
+        const metricDiv = modal.querySelector(`#${field}-metric`);
+
+        if (unit === "imperial") {
+          if (imperialDiv) imperialDiv.style.display = field === "height" ? "flex" : "block";
+          if (metricDiv) metricDiv.style.display = "none";
+
+          // Convert values if present
+          if (field === "height") {
+            const cmInput = modal.querySelector("#heightCm");
+            const feetInput = modal.querySelector("#heightFeet");
+            const inchesInput = modal.querySelector("#heightInches");
+            if (cmInput && cmInput.value && feetInput && inchesInput) {
+              const cm = parseInt(cmInput.value);
+              const totalInches = Math.round(cm / 2.54);
+              const feet = Math.floor(totalInches / 12);
+              const inches = totalInches % 12;
+              feetInput.value = feet;
+              inchesInput.value = inches;
+            }
+          } else if (field === "weight") {
+            const kgInput = modal.querySelector("#weightKg");
+            const lbsInput = modal.querySelector("#weightLbs");
+            if (kgInput && kgInput.value && lbsInput) {
+              const kg = parseFloat(kgInput.value);
+              lbsInput.value = Math.round(kg * 2.20462);
+            }
+          }
+        } else {
+          if (imperialDiv) imperialDiv.style.display = "none";
+          if (metricDiv) metricDiv.style.display = "block";
+
+          // Convert values if present
+          if (field === "height") {
+            const cmInput = modal.querySelector("#heightCm");
+            const feetInput = modal.querySelector("#heightFeet");
+            const inchesInput = modal.querySelector("#heightInches");
+            if (feetInput && inchesInput && cmInput) {
+              const feet = parseInt(feetInput.value || 0);
+              const inches = parseInt(inchesInput.value || 0);
+              if (feet > 0 || inches > 0) {
+                const totalInches = feet * 12 + inches;
+                cmInput.value = Math.round(totalInches * 2.54);
+              }
+            }
+          } else if (field === "weight") {
+            const kgInput = modal.querySelector("#weightKg");
+            const lbsInput = modal.querySelector("#weightLbs");
+            if (lbsInput && lbsInput.value && kgInput) {
+              const lbs = parseFloat(lbsInput.value);
+              kgInput.value = Math.round((lbs / 2.20462) * 100) / 100;
+            }
+          }
+        }
+      });
+    });
+
     // Handle form submission
     const form = document.getElementById("profileCompletionForm");
     form.addEventListener("submit", (e) => this.handleSubmit(e, required));
@@ -187,19 +270,89 @@ export class ProfileCompletionManager {
 
   // Generate player-specific fields
   getPlayerFields(storedProfile) {
+    // Handle positions as array (new) or single value (legacy)
+    const positions = Array.isArray(storedProfile.positions)
+      ? storedProfile.positions
+      : (storedProfile.position ? [storedProfile.position] : []);
+
     return `
       <div class="form-group">
-        <label for="position">Playing Position <span class="required">*</span></label>
-        <select id="position" name="position" required>
-          <option value="">Select position</option>
-          <option value="QB" ${storedProfile.position === "QB" ? "selected" : ""}>Quarterback (QB)</option>
-          <option value="WR" ${storedProfile.position === "WR" ? "selected" : ""}>Wide Receiver (WR)</option>
-          <option value="RB" ${storedProfile.position === "RB" ? "selected" : ""}>Running Back (RB)</option>
-          <option value="DB" ${storedProfile.position === "DB" ? "selected" : ""}>Defensive Back (DB)</option>
-          <option value="LB" ${storedProfile.position === "LB" ? "selected" : ""}>Linebacker (LB)</option>
-          <option value="K" ${storedProfile.position === "K" ? "selected" : ""}>Kicker (K)</option>
-          <option value="FLEX" ${storedProfile.position === "FLEX" ? "selected" : ""}>Flex</option>
-        </select>
+        <label>Playing Positions <span class="required">*</span></label>
+        <small class="form-help" style="display: block; margin-bottom: 8px;">Select all positions you play</small>
+        <div class="checkbox-group" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 8px;">
+          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+            <input
+              type="checkbox"
+              name="positions"
+              value="QB"
+              ${positions.includes("QB") ? "checked" : ""}
+            />
+            <span>Quarterback (QB)</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+            <input
+              type="checkbox"
+              name="positions"
+              value="WR"
+              ${positions.includes("WR") ? "checked" : ""}
+            />
+            <span>Wide Receiver (WR)</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+            <input
+              type="checkbox"
+              name="positions"
+              value="RB"
+              ${positions.includes("RB") ? "checked" : ""}
+            />
+            <span>Running Back (RB)</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+            <input
+              type="checkbox"
+              name="positions"
+              value="C"
+              ${positions.includes("C") ? "checked" : ""}
+            />
+            <span>Center (C)</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+            <input
+              type="checkbox"
+              name="positions"
+              value="DB"
+              ${positions.includes("DB") ? "checked" : ""}
+            />
+            <span>Defensive Back (DB)</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+            <input
+              type="checkbox"
+              name="positions"
+              value="LB"
+              ${positions.includes("LB") ? "checked" : ""}
+            />
+            <span>Linebacker (LB)</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+            <input
+              type="checkbox"
+              name="positions"
+              value="K"
+              ${positions.includes("K") ? "checked" : ""}
+            />
+            <span>Kicker (K)</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+            <input
+              type="checkbox"
+              name="positions"
+              value="FLEX"
+              ${positions.includes("FLEX") ? "checked" : ""}
+            />
+            <span>Flex</span>
+          </label>
+        </div>
       </div>
 
       <div class="form-group">
@@ -232,14 +385,27 @@ export class ProfileCompletionManager {
 
   // Generate player physical stats section (separate method for proper HTML structure)
   getPlayerPhysicalStats(storedProfile) {
+    const heightCm = storedProfile.height_cm || 0;
+    const weightKg = storedProfile.weight_kg || 0;
+    const heightParsed = this.parseHeight(heightCm);
+    const weightLbs = weightKg ? Math.round(weightKg * 2.20462) : 0;
+
     return `
       <div class="form-section">
         <h3 class="form-section-title">Physical Stats (Optional)</h3>
 
         <div class="form-row">
           <div class="form-group">
-            <label for="heightFeet">Height</label>
-            <div class="height-input-group">
+            <label>Height</label>
+            <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+              <button type="button" class="unit-toggle" data-unit="imperial" data-field="height" style="flex: 1; padding: 6px 12px; border: 2px solid #667eea; background: #667eea; color: white; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                Feet/Inches
+              </button>
+              <button type="button" class="unit-toggle" data-unit="metric" data-field="height" style="flex: 1; padding: 6px 12px; border: 2px solid #ddd; background: white; color: #666; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                Centimeters
+              </button>
+            </div>
+            <div id="height-imperial" class="height-input-group">
               <input
                 type="number"
                 id="heightFeet"
@@ -247,7 +413,7 @@ export class ProfileCompletionManager {
                 min="4"
                 max="7"
                 placeholder="5"
-                value="${this.parseHeight(storedProfile.height_cm).feet}"
+                value="${heightParsed.feet || ""}"
                 aria-label="Feet"
               />
               <span class="height-separator">'</span>
@@ -258,26 +424,65 @@ export class ProfileCompletionManager {
                 min="0"
                 max="11"
                 placeholder="10"
-                value="${this.parseHeight(storedProfile.height_cm).inches}"
+                value="${heightParsed.inches || ""}"
                 aria-label="Inches"
               />
               <span class="height-separator">"</span>
             </div>
+            <div id="height-metric" style="display: none;">
+              <input
+                type="number"
+                id="heightCm"
+                name="heightCm"
+                min="120"
+                max="230"
+                placeholder="178"
+                value="${heightCm || ""}"
+                aria-label="Height in centimeters"
+                style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px;"
+              />
+              <small class="form-help">Your height in centimeters</small>
+            </div>
           </div>
 
           <div class="form-group">
-            <label for="weight">Weight (lbs)</label>
-            <input
-              type="number"
-              id="weight"
-              name="weight"
-              min="80"
-              max="350"
-              value="${storedProfile.weight_kg ? Math.round(storedProfile.weight_kg * 2.20462) : ""}"
-              placeholder="180"
-              aria-describedby="weight-help"
-            />
-            <small id="weight-help" class="form-help">Your weight in pounds</small>
+            <label>Weight</label>
+            <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+              <button type="button" class="unit-toggle" data-unit="imperial" data-field="weight" style="flex: 1; padding: 6px 12px; border: 2px solid #667eea; background: #667eea; color: white; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                Pounds (lbs)
+              </button>
+              <button type="button" class="unit-toggle" data-unit="metric" data-field="weight" style="flex: 1; padding: 6px 12px; border: 2px solid #ddd; background: white; color: #666; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                Kilograms (kg)
+              </button>
+            </div>
+            <div id="weight-imperial">
+              <input
+                type="number"
+                id="weightLbs"
+                name="weightLbs"
+                min="80"
+                max="350"
+                value="${weightLbs || ""}"
+                placeholder="180"
+                aria-label="Weight in pounds"
+                style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px;"
+              />
+              <small class="form-help">Your weight in pounds</small>
+            </div>
+            <div id="weight-metric" style="display: none;">
+              <input
+                type="number"
+                id="weightKg"
+                name="weightKg"
+                min="35"
+                max="160"
+                value="${weightKg || ""}"
+                placeholder="82"
+                aria-label="Weight in kilograms"
+                style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px;"
+              />
+              <small class="form-help">Your weight in kilograms</small>
+            </div>
           </div>
         </div>
 
@@ -398,21 +603,40 @@ export class ProfileCompletionManager {
       }
     } else {
       // Player-specific fields
-      profileData.position = formData.get("position");
+      // Collect all selected positions (checkboxes)
+      const positions = formData.getAll("positions");
+      if (positions.length > 0) {
+        profileData.positions = positions;
+        // Also store first position for backward compatibility
+        profileData.position = positions[0];
+      }
+
       profileData.jerseyNumber = parseInt(formData.get("jerseyNumber"));
       profileData.experienceLevel = formData.get("experienceLevel");
 
-      // Calculate height in cm
+      // Calculate height in cm - check which unit system was used
+      const heightCm = parseInt(formData.get("heightCm") || 0);
       const heightFeet = parseInt(formData.get("heightFeet") || 0);
       const heightInches = parseInt(formData.get("heightInches") || 0);
-      if (heightFeet > 0 || heightInches > 0) {
+
+      if (heightCm > 0) {
+        // User entered metric
+        profileData.height_cm = heightCm;
+      } else if (heightFeet > 0 || heightInches > 0) {
+        // User entered imperial
         const totalInches = heightFeet * 12 + heightInches;
         profileData.height_cm = Math.round(totalInches * 2.54);
       }
 
-      // Convert weight to kg
-      const weightLbs = parseFloat(formData.get("weight"));
-      if (weightLbs) {
+      // Convert weight to kg - check which unit system was used
+      const weightKg = parseFloat(formData.get("weightKg"));
+      const weightLbs = parseFloat(formData.get("weightLbs"));
+
+      if (weightKg) {
+        // User entered metric
+        profileData.weight_kg = Math.round(weightKg * 100) / 100;
+      } else if (weightLbs) {
+        // User entered imperial
         profileData.weight_kg = Math.round((weightLbs / 2.20462) * 100) / 100;
       }
 

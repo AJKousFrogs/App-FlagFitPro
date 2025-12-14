@@ -2,27 +2,16 @@
 // Returns real-time performance metrics for the Performance Dashboard component
 // Endpoint: /api/performance/metrics
 
-const jwt = require("jsonwebtoken");
 const { db, checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
 const {
-  validateJWT,
   createSuccessResponse,
   createErrorResponse,
   handleServerError,
   logFunctionCall,
   CORS_HEADERS
 } = require("./utils/error-handler.cjs");
-
-// JWT_SECRET will be checked at runtime, not module load time
-// This prevents the function from failing to load if env var is missing
-const getJWTSecret = () => {
-  const secret = process.env.JWT_SECRET;
-  if (!secret) {
-    console.error("CRITICAL: JWT_SECRET environment variable is not set!");
-    throw new Error("JWT_SECRET environment variable is required for security");
-  }
-  return secret;
-};
+const { authenticateRequest } = require("./utils/auth-helper.cjs");
+const { applyRateLimit } = require("./utils/rate-limiter.cjs");
 
 /**
  * Calculate performance trends from historical data
@@ -253,18 +242,20 @@ exports.handler = async (event, context) => {
 
     // Check environment variables
     checkEnvVars();
-    
-    // Get JWT_SECRET
-    const JWT_SECRET = getJWTSecret();
 
-    // Validate JWT token
-    const jwtValidation = validateJWT(event, jwt, JWT_SECRET);
-    if (!jwtValidation.success) {
-      return jwtValidation.error;
+    // SECURITY: Apply rate limiting
+    const rateLimitResponse = applyRateLimit(event, "READ");
+    if (rateLimitResponse) {
+      return rateLimitResponse;
     }
-    const { decoded } = jwtValidation;
 
-    const userId = decoded.userId || decoded.id;
+    // SECURITY: Authenticate request using Supabase
+    const auth = await authenticateRequest(event);
+    if (!auth.success) {
+      return auth.error;
+    }
+
+    const userId = auth.user.id;
     const athleteId = event.queryStringParameters?.athleteId || userId;
 
     // Get performance metrics

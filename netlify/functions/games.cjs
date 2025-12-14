@@ -1,56 +1,66 @@
 // Netlify Function: Games API
 // Handles game creation, retrieval, and statistics
 
-const jwt = require("jsonwebtoken");
 const { db, checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
-const { validateQueryParams, validateRequestBody } = require("./validation.cjs");
+const { validate, sanitize } = require("./validation.cjs");
 const {
-  validateJWT,
   createSuccessResponse,
   createErrorResponse,
   handleServerError,
   handleValidationError,
   handleNotFoundError,
+  handleAuthorizationError,
   logFunctionCall,
   CORS_HEADERS
 } = require("./utils/error-handler.cjs");
+const { authenticateRequest, checkTeamMembership, getUserTeamId } = require("./utils/auth-helper.cjs");
+const { applyRateLimit, getRateLimitType } = require("./utils/rate-limiter.cjs");
+const crypto = require("crypto");
 
-// JWT_SECRET will be checked at runtime, not module load time
-// This prevents the function from failing to load if env var is missing
-const getJWTSecret = () => {
-  const secret = process.env.JWT_SECRET;
-  if (!secret) {
-    console.error("CRITICAL: JWT_SECRET environment variable is not set!");
-    throw new Error("JWT_SECRET environment variable is required for security");
-  }
-  return secret;
-};
+// Secure game ID generation
+function generateGameId() {
+  const id = crypto.randomBytes(12).toString('base64url');
+  return `GAME_${id}`;
+}
 
-// Create a new game
+// Create a new game with validation
 const createGame = async (userId, gameData) => {
   try {
     checkEnvVars();
 
-    const gameId = `GAME_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    // Validate input data
+    const validation = validate(gameData, 'createGame');
+    if (!validation.valid) {
+      throw new Error(validation.errors.join(', '));
+    }
+
+    // Sanitize input
+    const sanitizedData = sanitize(gameData);
+
+    // Generate secure game ID
+    const gameId = generateGameId();
+
+    // Get user's team ID
+    const teamId = await getUserTeamId(userId);
 
     const { data, error } = await supabaseAdmin
       .from("games")
       .insert({
         game_id: gameId,
-        team_id: gameData.teamId || `TEAM_${userId}`,
-        opponent_team_name: gameData.opponentName,
-        game_date: gameData.gameDate,
-        game_time: gameData.gameTime || null,
-        location: gameData.location || null,
-        is_home_game: gameData.isHomeGame !== false,
-        weather_conditions: gameData.weather || null,
-        temperature: gameData.temperature ? parseInt(gameData.temperature) : null,
-        field_conditions: gameData.fieldConditions || null,
-        season: gameData.season || new Date().getFullYear().toString(),
-        tournament_name: gameData.tournamentName || null,
-        game_type: gameData.gameType || "regular_season",
-        team_score: gameData.teamScore || 0,
-        opponent_score: gameData.opponentScore || 0,
+        team_id: teamId,
+        opponent_team_name: sanitizedData.opponentName,
+        game_date: sanitizedData.gameDate,
+        game_time: sanitizedData.gameTime || null,
+        location: sanitizedData.location || null,
+        is_home_game: sanitizedData.isHomeGame !== false,
+        weather_conditions: sanitizedData.weather || null,
+        temperature: sanitizedData.temperature ? parseInt(sanitizedData.temperature) : null,
+        field_conditions: sanitizedData.fieldConditions || null,
+        season: sanitizedData.season || new Date().getFullYear().toString(),
+        tournament_name: sanitizedData.tournamentName || null,
+        game_type: sanitizedData.gameType || "regular_season",
+        team_score: sanitizedData.teamScore || 0,
+        opponent_score: sanitizedData.opponentScore || 0,
       })
       .select()
       .single();
@@ -130,28 +140,51 @@ const getGameDetails = async (gameId) => {
   }
 };
 
-// Update game (scores, etc.)
-const updateGame = async (gameId, updates) => {
+// Update game with authorization check
+const updateGame = async (userId, gameId, updates) => {
   try {
     checkEnvVars();
+
+    // First, get the game to verify ownership
+    const { data: game, error: fetchError } = await supabaseAdmin
+      .from("games")
+      .select("team_id")
+      .eq("game_id", gameId)
+      .single();
+
+    if (fetchError || !game) {
+      throw new Error(`Game with ID ${gameId} not found`);
+    }
+
+    // Verify user is on this team
+    const { authorized, error: authError } = await checkTeamMembership(userId, game.team_id);
+    if (!authorized) {
+      throw new Error("You don't have permission to modify this game");
+    }
+
+    // Sanitize updates
+    const sanitizedUpdates = sanitize(updates);
+
+    // Only allow certain fields to be updated
+    const allowedFields = ['team_score', 'opponent_score', 'weather_conditions', 'temperature', 'field_conditions', 'game_time', 'location'];
+    const filteredUpdates = {};
+    for (const field of allowedFields) {
+      if (sanitizedUpdates[field] !== undefined) {
+        filteredUpdates[field] = sanitizedUpdates[field];
+      }
+    }
 
     const { data, error } = await supabaseAdmin
       .from("games")
       .update({
-        ...updates,
+        ...filteredUpdates,
         updated_at: new Date().toISOString(),
       })
       .eq("game_id", gameId)
       .select()
       .single();
 
-    if (error) {
-      // Handle not found error
-      if (error.code === 'PGRST116') {
-        throw new Error(`Game with ID ${gameId} not found`);
-      }
-      throw error;
-    }
+    if (error) throw error;
     return data;
   } catch (error) {
     console.error("Error updating game:", error);
@@ -244,30 +277,45 @@ const getGameStats = async (gameId) => {
   }
 };
 
-// Get player's game statistics
+// Get player's game statistics (FIXED SQL INJECTION)
 const getPlayerGameStats = async (playerId, gameId) => {
   try {
     checkEnvVars();
 
-    const { data: plays, error } = await supabaseAdmin
+    // SECURITY: Validate playerId format to prevent SQL injection
+    if (!playerId || typeof playerId !== 'string' || !/^[A-Z0-9_-]+$/i.test(playerId)) {
+      throw new Error("Invalid player ID format");
+    }
+
+    // SECURITY: Use separate queries instead of string interpolation
+    // Query 1: Get plays where player is primary
+    const { data: primaryPlays, error: error1 } = await supabaseAdmin
       .from("game_events")
       .select("*")
       .eq("game_id", gameId)
-      .or(`primary_player_id.eq.${playerId},secondary_player_ids.cs.{${playerId}}`);
+      .eq("primary_player_id", playerId);
 
-    if (error) throw error;
+    if (error1) throw error1;
 
-    // Calculate player stats
-    const playerPlays = plays.filter(
-      (p) => p.primary_player_id === playerId || (p.secondary_player_ids || []).includes(playerId)
-    );
+    // Query 2: Get plays where player is in secondary players array
+    const { data: secondaryPlays, error: error2 } = await supabaseAdmin
+      .from("game_events")
+      .select("*")
+      .eq("game_id", gameId)
+      .contains("secondary_player_ids", [playerId]);
+
+    if (error2) throw error2;
+
+    // Combine results and remove duplicates
+    const allPlays = [...(primaryPlays || []), ...(secondaryPlays || [])];
+    const uniquePlays = Array.from(new Map(allPlays.map(p => [p.id, p])).values());
 
     return {
-      plays: playerPlays.length,
-      completions: playerPlays.filter((p) => p.play_result === "completion").length,
-      yards: playerPlays.reduce((sum, p) => sum + (p.yards_gained || 0), 0),
-      touchdowns: playerPlays.filter((p) => p.play_result === "touchdown").length,
-      flagPulls: playerPlays.filter((p) => p.play_result === "flag_pull").length,
+      plays: uniquePlays.length,
+      completions: uniquePlays.filter((p) => p.play_result === "completion").length,
+      yards: uniquePlays.reduce((sum, p) => sum + (p.yards_gained || 0), 0),
+      touchdowns: uniquePlays.filter((p) => p.play_result === "touchdown").length,
+      flagPulls: uniquePlays.filter((p) => p.play_result === "flag_pull").length,
     };
   } catch (error) {
     console.error("Error getting player game stats:", error);
@@ -277,37 +325,34 @@ const getPlayerGameStats = async (playerId, gameId) => {
 
 // Main handler
 exports.handler = async (event, context) => {
-  // Log function call
   logFunctionCall('Games', event);
 
   // Handle CORS preflight
   if (event.httpMethod === "OPTIONS") {
-    return {
-      statusCode: 200,
-      headers: CORS_HEADERS,
-    };
+    return { statusCode: 200, headers: CORS_HEADERS };
   }
 
   try {
-    // Validate JWT token
-    const JWT_SECRET = getJWTSecret();
-    const jwtValidation = validateJWT(event, jwt, JWT_SECRET);
-    if (!jwtValidation.success) {
-      return jwtValidation.error;
-    }
-    const { decoded } = jwtValidation;
-
-    const userId = decoded.userId;
-    const path = event.path.replace("/.netlify/functions/games", "");
-
-    // Validate query parameters for GET requests
-    const queryParams = event.queryStringParameters || {};
-    const queryValidation = validateQueryParams(queryParams);
-    if (!queryValidation.valid) {
-      return queryValidation.response;
+    // SECURITY: Apply rate limiting
+    const rateLimitType = getRateLimitType(event.httpMethod, event.path);
+    const rateLimitResponse = applyRateLimit(event, rateLimitType);
+    if (rateLimitResponse) {
+      return rateLimitResponse;
     }
 
-    // Parse and validate request body for POST/PUT requests
+    // SECURITY: Authenticate request using Supabase
+    const auth = await authenticateRequest(event);
+    if (!auth.success) {
+      return auth.error;
+    }
+
+    const userId = auth.user.id;
+
+    // SECURITY: Safe path parsing with regex
+    const pathMatch = event.path.match(/^\/\.netlify\/functions\/games\/?(.*)$/);
+    const path = pathMatch ? pathMatch[1] : "";
+
+    // Parse request body for POST/PUT
     let body = {};
     if (event.body && (event.httpMethod === "POST" || event.httpMethod === "PUT")) {
       try {
@@ -317,50 +362,32 @@ exports.handler = async (event, context) => {
       }
     }
 
+    const queryParams = event.queryStringParameters || {};
     let result;
 
-    if (event.httpMethod === "POST" && path === "" || path === "/") {
-      // Create new game
+    // SECURITY: Use explicit route matching instead of path.includes()
+    if (event.httpMethod === "POST" && (path === "" || path === "/")) {
       result = await createGame(userId, body);
-    } else if (event.httpMethod === "GET" && path === "" || path === "/") {
-      // Get games list
+    } else if (event.httpMethod === "GET" && (path === "" || path === "/")) {
       result = await getGames(userId, queryParams);
-    } else if (event.httpMethod === "GET" && path.includes("/stats")) {
-      // Get game statistics
-      const gameId = path.replace("/stats", "").replace("/", "");
-      if (!gameId) {
-        return handleValidationError("Game ID is required");
-      }
+    } else if (event.httpMethod === "GET" && path.match(/^([A-Z0-9_-]+)\/stats$/i)) {
+      const gameId = path.match(/^([A-Z0-9_-]+)\/stats$/i)[1];
       result = await getGameStats(gameId);
-    } else if (event.httpMethod === "GET" && path.includes("/player-stats")) {
-      // Get player game statistics
-      const parts = path.split("/");
-      const gameId = parts[1];
-      const playerId = body.playerId || queryParams.playerId;
-      if (!gameId || !playerId) {
-        return handleValidationError("Game ID and Player ID are required");
+    } else if (event.httpMethod === "GET" && path.match(/^([A-Z0-9_-]+)\/player-stats$/i)) {
+      const gameId = path.match(/^([A-Z0-9_-]+)\/player-stats$/i)[1];
+      const playerId = queryParams.playerId;
+      if (!playerId) {
+        return handleValidationError("Player ID is required");
       }
       result = await getPlayerGameStats(playerId, gameId);
-    } else if (event.httpMethod === "GET") {
-      // Get game details
-      const gameId = path.replace("/", "");
-      if (!gameId) {
-        return handleValidationError("Game ID is required");
-      }
+    } else if (event.httpMethod === "GET" && path.match(/^([A-Z0-9_-]+)$/i)) {
+      const gameId = path.match(/^([A-Z0-9_-]+)$/i)[1];
       result = await getGameDetails(gameId);
-    } else if (event.httpMethod === "PUT") {
-      // Update game
-      const gameId = path.replace("/", "");
-      if (!gameId) {
-        return handleValidationError("Game ID is required");
-      }
-      result = await updateGame(gameId, body);
-    } else if (event.httpMethod === "POST" && path.includes("/plays")) {
-      // Save a play
-      const gameId = path.replace("/plays", "").replace("/", "");
-      if (!gameId) {
-        return handleValidationError("Game ID is required");
-      }
+    } else if (event.httpMethod === "PUT" && path.match(/^([A-Z0-9_-]+)$/i)) {
+      const gameId = path.match(/^([A-Z0-9_-]+)$/i)[1];
+      result = await updateGame(userId, gameId, body);
+    } else if (event.httpMethod === "POST" && path.match(/^([A-Z0-9_-]+)\/plays$/i)) {
+      const gameId = path.match(/^([A-Z0-9_-]+)\/plays$/i)[1];
       result = await savePlay(gameId, body);
     } else {
       return createErrorResponse("Endpoint not found", 404, 'not_found');
@@ -369,18 +396,15 @@ exports.handler = async (event, context) => {
     return createSuccessResponse(result);
   } catch (error) {
     console.error("Error in games function:", error);
-    console.error("Error stack:", error.stack);
-    console.error("Error details:", {
-      message: error.message,
-      name: error.name,
-      code: error.code,
-    });
-    
-    // Handle not found errors specifically
+
     if (error.message && error.message.includes("not found")) {
       return handleNotFoundError(error.message.replace("Game with ID ", "").replace(" not found", ""));
     }
-    
+
+    if (error.message && error.message.includes("permission")) {
+      return handleAuthorizationError(error.message);
+    }
+
     return handleServerError(error, 'Games');
   }
 };

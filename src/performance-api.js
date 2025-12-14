@@ -5,10 +5,10 @@ import { logger } from "./logger.js";
 
 export class PerformanceAPI {
   constructor() {
-    this.baseUrl =
-      window.location.hostname === "localhost"
-        ? "http://localhost:3001/api"
-        : "https://api.flagfitpro.com";
+    // API disabled - using localStorage only until Supabase integration
+    // External API calls were causing CSP violations
+    this.useLocalStorageOnly = true;
+    this.baseUrl = null;
     this.endpoints = {
       measurements: "/athlete/measurements",
       performanceTests: "/athlete/performance-tests",
@@ -30,6 +30,11 @@ export class PerformanceAPI {
 
   // Physical Measurements API
   async savePhysicalMeasurements(data) {
+    // Using localStorage only - API disabled
+    if (this.useLocalStorageOnly) {
+      return this.saveToLocalStorage("measurements", data);
+    }
+
     try {
       const response = await fetch(
         `${this.baseUrl}${this.endpoints.measurements}`,
@@ -56,6 +61,11 @@ export class PerformanceAPI {
   }
 
   async getPhysicalMeasurements(athleteId, timeframe = "6m") {
+    // Using localStorage only - API disabled
+    if (this.useLocalStorageOnly) {
+      return this.getFromLocalStorage("measurements");
+    }
+
     try {
       const response = await fetch(
         `${this.baseUrl}${this.endpoints.measurements}?athlete=${athleteId}&timeframe=${timeframe}`,
@@ -74,6 +84,11 @@ export class PerformanceAPI {
 
   // Performance Tests API
   async savePerformanceTest(testType, data) {
+    // Using localStorage only - API disabled
+    if (this.useLocalStorageOnly) {
+      return this.saveToLocalStorage(`performance_${testType}`, data);
+    }
+
     try {
       const response = await fetch(
         `${this.baseUrl}${this.endpoints.performanceTests}`,
@@ -99,6 +114,11 @@ export class PerformanceAPI {
   }
 
   async getPerformanceHistory(testType, timeframe = "12m") {
+    // Using localStorage only - API disabled
+    if (this.useLocalStorageOnly) {
+      return this.getFromLocalStorage(`performance_${testType}`);
+    }
+
     try {
       const response = await fetch(
         `${this.baseUrl}${this.endpoints.performanceTests}/${testType}?timeframe=${timeframe}`,
@@ -117,6 +137,11 @@ export class PerformanceAPI {
 
   // Wellness Tracking API
   async saveWellnessData(data) {
+    // Using localStorage only - API disabled
+    if (this.useLocalStorageOnly) {
+      return this.saveToLocalStorage("wellness", data);
+    }
+
     try {
       const response = await fetch(
         `${this.baseUrl}${this.endpoints.wellness}`,
@@ -145,6 +170,11 @@ export class PerformanceAPI {
   }
 
   async getWellnessHistory(timeframe = "30d") {
+    // Using localStorage only - API disabled
+    if (this.useLocalStorageOnly) {
+      return this.getFromLocalStorage("wellness");
+    }
+
     try {
       const response = await fetch(
         `${this.baseUrl}${this.endpoints.wellness}?timeframe=${timeframe}`,
@@ -163,6 +193,15 @@ export class PerformanceAPI {
 
   // Supplement Tracking API
   async logSupplementIntake(supplementName, time, notes = "") {
+    // Using localStorage only - API disabled
+    if (this.useLocalStorageOnly) {
+      return this.saveToLocalStorage("supplements", {
+        supplement: supplementName,
+        time,
+        notes,
+      });
+    }
+
     try {
       const response = await fetch(
         `${this.baseUrl}${this.endpoints.supplements}`,
@@ -191,6 +230,11 @@ export class PerformanceAPI {
   }
 
   async getSupplementHistory(timeframe = "30d") {
+    // Using localStorage only - API disabled
+    if (this.useLocalStorageOnly) {
+      return this.getFromLocalStorage("supplements");
+    }
+
     try {
       const response = await fetch(
         `${this.baseUrl}${this.endpoints.supplements}?timeframe=${timeframe}`,
@@ -209,6 +253,11 @@ export class PerformanceAPI {
 
   // Injury Tracking API
   async reportInjury(injuryData) {
+    // Using localStorage only - API disabled
+    if (this.useLocalStorageOnly) {
+      return this.saveToLocalStorage("injuries", injuryData);
+    }
+
     try {
       const response = await fetch(
         `${this.baseUrl}${this.endpoints.injuries}`,
@@ -236,6 +285,11 @@ export class PerformanceAPI {
   }
 
   async updateInjuryStatus(injuryId, status, notes = "") {
+    // Using localStorage only - API disabled
+    if (this.useLocalStorageOnly) {
+      return { success: false, error: "API not available" };
+    }
+
     try {
       const response = await fetch(
         `${this.baseUrl}${this.endpoints.injuries}/${injuryId}`,
@@ -260,6 +314,12 @@ export class PerformanceAPI {
 
   // Trend Analysis API
   async getPerformanceTrends(timeframe = "12m") {
+    // Using localStorage only - API disabled
+    // Return empty data instead of mock trends
+    if (this.useLocalStorageOnly) {
+      return { performanceMetrics: {}, wellness: {}, recommendations: [] };
+    }
+
     try {
       const response = await fetch(
         `${this.baseUrl}${this.endpoints.trends}?timeframe=${timeframe}`,
@@ -272,11 +332,16 @@ export class PerformanceAPI {
       return await response.json();
     } catch (error) {
       logger.error("Error fetching trends:", error);
-      return this.generateMockTrends();
+      return { performanceMetrics: {}, wellness: {}, recommendations: [] };
     }
   }
 
   async getComparativeAnalysis(athleteIds, metrics) {
+    // Using localStorage only - API disabled
+    if (this.useLocalStorageOnly) {
+      return { success: false, error: "API not available" };
+    }
+
     try {
       const response = await fetch(
         `${this.baseUrl}${this.endpoints.trends}/compare`,
@@ -300,6 +365,11 @@ export class PerformanceAPI {
 
   // Bulk Data Export
   async exportPerformanceData(format = "csv", timeframe = "12m") {
+    // Using localStorage only - API disabled
+    if (this.useLocalStorageOnly) {
+      return this.exportLocalStorageData(format);
+    }
+
     try {
       const response = await fetch(
         `${this.baseUrl}/athlete/export?format=${format}&timeframe=${timeframe}`,

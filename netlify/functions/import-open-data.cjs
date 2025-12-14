@@ -4,7 +4,6 @@
 
 const { db, checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
 const {
-  validateJWT,
   createSuccessResponse,
   createErrorResponse,
   handleServerError,
@@ -12,6 +11,8 @@ const {
   logFunctionCall,
   CORS_HEADERS
 } = require("./utils/error-handler.cjs");
+const { authenticateRequest } = require("./utils/auth-helper.cjs");
+const { applyRateLimit } = require("./utils/rate-limiter.cjs");
 
 // Flag-football specific thresholds
 const HIGH_SPEED_M_S = 5.5; // High-speed running threshold (m/s)
@@ -84,10 +85,25 @@ exports.handler = async (event, context) => {
     // Only allow POST
     if (event.httpMethod !== "POST") {
       return createErrorResponse(
+        "Method not allowed. Use POST to import data.",
         405,
-        "Method not allowed. Use POST to import data."
+        'method_not_allowed'
       );
     }
+
+    // SECURITY: Apply rate limiting
+    const rateLimitResponse = applyRateLimit(event, "CREATE");
+    if (rateLimitResponse) {
+      return rateLimitResponse;
+    }
+
+    // SECURITY: Authenticate request using Supabase
+    const auth = await authenticateRequest(event);
+    if (!auth.success) {
+      return auth.error;
+    }
+
+    const userId = auth.user.id;
 
     // Parse request body
     let body;
@@ -97,7 +113,8 @@ exports.handler = async (event, context) => {
       return handleValidationError("Invalid JSON in request body");
     }
 
-    const { athleteId, dataset } = body;
+    // If athleteId not provided, use authenticated user's ID
+    const { athleteId = userId, dataset } = body;
 
     // Validate required fields
     if (!athleteId) {

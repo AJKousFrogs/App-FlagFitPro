@@ -7,7 +7,6 @@
 
 const { db, checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
 const {
-  validateJWT,
   createSuccessResponse,
   createErrorResponse,
   handleServerError,
@@ -15,6 +14,9 @@ const {
   logFunctionCall,
   CORS_HEADERS
 } = require("./utils/error-handler.cjs");
+const { authenticateRequest } = require("./utils/auth-helper.cjs");
+const { applyRateLimit } = require("./utils/rate-limiter.cjs");
+const { getWeekNumber } = require("./utils/date-utils.cjs");
 
 /**
  * Get change of direction sessions trend
@@ -173,17 +175,6 @@ async function getGamePerformanceTrend(athleteId, games = 5) {
 }
 
 /**
- * Helper: Get ISO week number
- */
-function getWeekNumber(date) {
-  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-  const dayNum = d.getUTCDay() || 7;
-  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
-  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-  return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-}
-
-/**
  * Main handler
  */
 exports.handler = async (event, context) => {
@@ -203,17 +194,33 @@ exports.handler = async (event, context) => {
 
     if (event.httpMethod !== "GET") {
       return createErrorResponse(
+        "Method not allowed. Use GET to retrieve trends.",
         405,
-        "Method not allowed. Use GET to retrieve trends."
+        'method_not_allowed'
       );
     }
+
+    // SECURITY: Apply rate limiting
+    const rateLimitResponse = applyRateLimit(event, "READ");
+    if (rateLimitResponse) {
+      return rateLimitResponse;
+    }
+
+    // SECURITY: Authenticate request using Supabase
+    const auth = await authenticateRequest(event);
+    if (!auth.success) {
+      return auth.error;
+    }
+
+    const userId = auth.user.id;
 
     // Parse path parameters
     const pathParts = event.path.split('/').filter(p => p);
     const trendType = pathParts[pathParts.length - 1]; // e.g., 'change-of-direction', 'sprint-volume', 'game-performance'
 
     // Parse query parameters
-    const athleteId = event.queryStringParameters?.athleteId;
+    // If athleteId not provided, use authenticated user's ID
+    const athleteId = event.queryStringParameters?.athleteId || userId;
     const weeks = parseInt(event.queryStringParameters?.weeks || "4", 10);
     const games = parseInt(event.queryStringParameters?.games || "5", 10);
 

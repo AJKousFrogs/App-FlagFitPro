@@ -1,10 +1,9 @@
 // Netlify Function: Tournaments API
 // Returns tournament data from database or local schedule
+// NOTE: Public endpoint - no authentication required
 
-const jwt = require("jsonwebtoken");
 const { db, checkEnvVars } = require("./supabase-client.cjs");
 const {
-  validateJWT,
   createSuccessResponse,
   createErrorResponse,
   handleServerError,
@@ -12,17 +11,7 @@ const {
   logFunctionCall,
   CORS_HEADERS
 } = require("./utils/error-handler.cjs");
-
-// JWT_SECRET will be checked at runtime, not module load time
-// This prevents the function from failing to load if env var is missing
-const getJWTSecret = () => {
-  const secret = process.env.JWT_SECRET;
-  if (!secret) {
-    console.error("CRITICAL: JWT_SECRET environment variable is not set!");
-    throw new Error("JWT_SECRET environment variable is required for security");
-  }
-  return secret;
-};
+const { applyRateLimit } = require("./utils/rate-limiter.cjs");
 
 // Tournament schedule data (fallback if database is unavailable)
 const TOURNAMENT_SCHEDULE = {
@@ -250,6 +239,12 @@ exports.handler = async (event, context) => {
   }
 
   try {
+    // SECURITY: Apply rate limiting (public endpoint)
+    const rateLimitResponse = applyRateLimit(event, "READ");
+    if (rateLimitResponse) {
+      return rateLimitResponse;
+    }
+
     // Get query parameters
     const queryParams = event.queryStringParameters || {};
     const { type, id, register, bracket } = queryParams;

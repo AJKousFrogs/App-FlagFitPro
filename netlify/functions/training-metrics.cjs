@@ -4,7 +4,6 @@
 
 const { db, checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
 const {
-  validateJWT,
   createSuccessResponse,
   createErrorResponse,
   handleServerError,
@@ -12,6 +11,8 @@ const {
   logFunctionCall,
   CORS_HEADERS
 } = require("./utils/error-handler.cjs");
+const { authenticateRequest } = require("./utils/auth-helper.cjs");
+const { applyRateLimit } = require("./utils/rate-limiter.cjs");
 
 /**
  * Get training metrics for an athlete
@@ -35,13 +36,29 @@ exports.handler = async (event, context) => {
     // Only allow GET
     if (event.httpMethod !== "GET") {
       return createErrorResponse(
+        "Method not allowed. Use GET to retrieve metrics.",
         405,
-        "Method not allowed. Use GET to retrieve metrics."
+        'method_not_allowed'
       );
     }
 
+    // SECURITY: Apply rate limiting
+    const rateLimitResponse = applyRateLimit(event, "READ");
+    if (rateLimitResponse) {
+      return rateLimitResponse;
+    }
+
+    // SECURITY: Authenticate request using Supabase
+    const auth = await authenticateRequest(event);
+    if (!auth.success) {
+      return auth.error;
+    }
+
+    const userId = auth.user.id;
+
     // Parse query parameters
-    const athleteId = event.queryStringParameters?.athleteId;
+    // If athleteId not provided, use authenticated user's ID
+    const athleteId = event.queryStringParameters?.athleteId || userId;
     const startDate = event.queryStringParameters?.startDate;
 
     // Validate required fields

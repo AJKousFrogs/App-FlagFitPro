@@ -1,10 +1,8 @@
 // Netlify Function: Training Statistics
 // Returns user training data and progress using Supabase
 
-const jwt = require("jsonwebtoken");
 const { db, checkEnvVars } = require("./supabase-client.cjs");
 const {
-  validateJWT,
   createSuccessResponse,
   createErrorResponse,
   handleServerError,
@@ -12,9 +10,9 @@ const {
   logFunctionCall,
   CORS_HEADERS
 } = require("./utils/error-handler.cjs");
-
-const JWT_SECRET =
-  process.env.JWT_SECRET || "your-super-secret-jwt-key-change-in-production";
+const { authenticateRequest } = require("./utils/auth-helper.cjs");
+const { applyRateLimit } = require("./utils/rate-limiter.cjs");
+const { getTimeAgo } = require("./utils/date-utils.cjs");
 
 // Get real training data from Supabase database
 const getTrainingStats = async (userId) => {
@@ -195,21 +193,6 @@ const formatWorkoutName = (workoutType) => {
   );
 };
 
-const getTimeAgo = (date) => {
-  const now = new Date();
-  const diffMs = now - date;
-  const diffMinutes = Math.floor(diffMs / (1000 * 60));
-  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-  const diffDays = Math.floor(diffHours / 24);
-
-  if (diffMinutes < 1) return "Just now";
-  if (diffMinutes < 60) return `${diffMinutes} minute${diffMinutes !== 1 ? "s" : ""} ago`;
-  if (diffHours < 24) return `${diffHours} hour${diffHours !== 1 ? "s" : ""} ago`;
-  if (diffDays === 1) return "Yesterday";
-  if (diffDays < 7) return `${diffDays} day${diffDays !== 1 ? "s" : ""} ago`;
-  const weeks = Math.floor(diffDays / 7);
-  return `${weeks} week${weeks !== 1 ? "s" : ""} ago`;
-};
 
 exports.handler = async (event, context) => {
   logFunctionCall('Training-Stats', event);
@@ -223,19 +206,26 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    // Validate JWT token
-    const jwtValidation = validateJWT(event, jwt, JWT_SECRET);
-    if (!jwtValidation.success) {
-      return jwtValidation.error;
-    }
-    const { decoded } = jwtValidation;
-
     // Check environment variables
     checkEnvVars();
 
+    // SECURITY: Apply rate limiting
+    const rateLimitResponse = applyRateLimit(event, "READ");
+    if (rateLimitResponse) {
+      return rateLimitResponse;
+    }
+
+    // SECURITY: Authenticate request using Supabase
+    const auth = await authenticateRequest(event);
+    if (!auth.success) {
+      return auth.error;
+    }
+
+    const userId = auth.user.id;
+
     // Handle GET request - return training stats
     if (event.httpMethod === "GET") {
-      const trainingStats = await getTrainingStats(decoded.userId);
+      const trainingStats = await getTrainingStats(userId);
       return createSuccessResponse(trainingStats);
     }
 

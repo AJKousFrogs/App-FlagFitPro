@@ -2,12 +2,13 @@
 // Returns comprehensive user profile including body metrics, injuries, and training data
 
 const { Pool } = require('pg');
-const { createClient } = require('@supabase/supabase-js');
-
-// Initialize Supabase client for auth
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_ANON_KEY;
-const supabase = createClient(supabaseUrl, supabaseKey);
+const { authenticateRequest } = require('./utils/auth-helper.cjs');
+const {
+  createSuccessResponse,
+  createErrorResponse,
+  handleServerError,
+  CORS_HEADERS
+} = require('./utils/error-handler.cjs');
 
 // Database connection
 const pool = new Pool({
@@ -15,80 +16,26 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false },
 });
 
-// Helper function to get user from auth token
-async function getUserFromToken(authHeader) {
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return null;
-  }
-
-  const token = authHeader.replace('Bearer ', '');
-  
-  try {
-    const { data: { user }, error } = await supabase.auth.getUser(token);
-    if (error || !user) {
-      return null;
-    }
-    return user;
-  } catch (error) {
-    console.error('Error verifying token:', error);
-    return null;
-  }
-}
-
-// Helper function to create success response
-function createSuccessResponse(data) {
-  return {
-    statusCode: 200,
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    },
-    body: JSON.stringify({ success: true, data }),
-  };
-}
-
-// Helper function to create error response
-function createErrorResponse(message, statusCode = 400) {
-  return {
-    statusCode,
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    },
-    body: JSON.stringify({ success: false, error: message }),
-  };
-}
-
 exports.handler = async (event, context) => {
   // Handle CORS preflight
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 200,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-        'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      },
-      body: '',
+      headers: CORS_HEADERS,
     };
   }
 
   try {
-    // Get user from auth token
-    const authHeader = event.headers.authorization || event.headers.Authorization;
-    const user = await getUserFromToken(authHeader);
-
-    if (!user) {
-      return createErrorResponse('Unauthorized - Invalid or missing token', 401);
+    // SECURITY: Authenticate request using Supabase
+    const auth = await authenticateRequest(event);
+    if (!auth.success) {
+      return auth.error;
     }
 
-    const userId = user.id;
+    const userId = auth.user.id;
     const requestedUserId = event.queryStringParameters?.userId || userId;
 
-    // Only allow users to access their own profile (unless admin)
-    // For now, we'll allow the authenticated user to access their own profile
+    // SECURITY: Only allow users to access their own profile (unless admin)
     if (requestedUserId !== userId) {
       // Could add admin check here in the future
       return createErrorResponse('Forbidden - Can only access your own profile', 403);

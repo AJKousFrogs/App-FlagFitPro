@@ -1,29 +1,17 @@
 // Netlify Function: Dashboard Data
 // Returns user dashboard statistics and activity using Supabase
 
-const jwt = require("jsonwebtoken");
 const { db, checkEnvVars } = require("./supabase-client.cjs");
-const { validateQueryParams } = require("./validation.cjs");
 const { getOrFetch, CACHE_TTL, CACHE_PREFIX } = require("./cache.cjs");
 const {
-  validateJWT,
   createSuccessResponse,
   handleServerError,
-  handleDatabaseError,
   logFunctionCall,
   CORS_HEADERS
 } = require("./utils/error-handler.cjs");
-
-// JWT_SECRET will be checked at runtime, not module load time
-// This prevents the function from failing to load if env var is missing
-const getJWTSecret = () => {
-  const secret = process.env.JWT_SECRET;
-  if (!secret) {
-    console.error("CRITICAL: JWT_SECRET environment variable is not set!");
-    throw new Error("JWT_SECRET environment variable is required for security");
-  }
-  return secret;
-};
+const { authenticateRequest } = require("./utils/auth-helper.cjs");
+const { applyRateLimit } = require("./utils/rate-limiter.cjs");
+const { getTimeAgo } = require("./utils/date-utils.cjs");
 
 // Get real dashboard data from Supabase database
 const getDashboardData = async (userId) => {
@@ -164,21 +152,6 @@ const getFallbackActivity = () => [
   },
 ];
 
-// Helper function to calculate time ago
-const getTimeAgo = (date) => {
-  const now = new Date();
-  const diffMs = now - date;
-  const diffMinutes = Math.floor(diffMs / (1000 * 60));
-  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-  const diffDays = Math.floor(diffHours / 24);
-
-  if (diffMinutes < 1) return "Just now";
-  if (diffMinutes < 60) return `${diffMinutes} minute${diffMinutes !== 1 ? "s" : ""} ago`;
-  if (diffHours < 24) return `${diffHours} hour${diffHours !== 1 ? "s" : ""} ago`;
-  if (diffDays < 7) return `${diffDays} day${diffDays !== 1 ? "s" : ""} ago`;
-  const weeks = Math.floor(diffDays / 7);
-  return `${weeks} week${weeks !== 1 ? "s" : ""} ago`;
-};
 
 exports.handler = async (event, context) => {
   // Log function call for debugging
@@ -208,45 +181,33 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    // Check environment variables
     checkEnvVars();
-    
-    // Get JWT_SECRET
-    const JWT_SECRET = getJWTSecret();
 
-    // Validate JWT token using standardized error handling
-    const jwtValidation = validateJWT(event, jwt, JWT_SECRET);
-    if (!jwtValidation.success) {
-      return jwtValidation.error;
+    // SECURITY: Apply rate limiting
+    const rateLimitResponse = applyRateLimit(event, "READ");
+    if (rateLimitResponse) {
+      return rateLimitResponse;
     }
-    const { decoded } = jwtValidation;
 
-    // Validate query parameters (for future use and robustness)
-    const queryParams = event.queryStringParameters || {};
-    const validation = validateQueryParams(queryParams);
-    if (!validation.valid) {
-      return validation.response;
+    // SECURITY: Authenticate request using Supabase
+    const auth = await authenticateRequest(event);
+    if (!auth.success) {
+      return auth.error;
     }
+
+    const userId = auth.user.id;
 
     // Get dashboard data for user (with caching)
-    const cacheKey = `${CACHE_PREFIX.DASHBOARD}:${decoded.userId}:overview`;
+    const cacheKey = `${CACHE_PREFIX.DASHBOARD}:${userId}:overview`;
     const dashboardData = await getOrFetch(
       cacheKey,
-      async () => await getDashboardData(decoded.userId),
+      async () => await getDashboardData(userId),
       CACHE_TTL.DASHBOARD
     );
 
-    // Return standardized success response
     return createSuccessResponse(dashboardData);
   } catch (error) {
     console.error("Error in dashboard function:", error);
-    console.error("Error stack:", error.stack);
-    console.error("Error details:", {
-      message: error.message,
-      name: error.name,
-      code: error.code,
-    });
-    // Handle server errors with standardized error handler
     return handleServerError(error, 'Dashboard');
   }
 };

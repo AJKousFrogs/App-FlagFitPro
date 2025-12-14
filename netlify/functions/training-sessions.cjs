@@ -2,10 +2,8 @@
 // Handles creation and retrieval of training sessions for the Training Builder component
 // Endpoint: /api/training/sessions
 
-const jwt = require("jsonwebtoken");
 const { db, checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
 const {
-  validateJWT,
   createSuccessResponse,
   createErrorResponse,
   handleServerError,
@@ -13,17 +11,8 @@ const {
   logFunctionCall,
   CORS_HEADERS
 } = require("./utils/error-handler.cjs");
-
-// JWT_SECRET will be checked at runtime, not module load time
-// This prevents the function from failing to load if env var is missing
-const getJWTSecret = () => {
-  const secret = process.env.JWT_SECRET;
-  if (!secret) {
-    console.error("CRITICAL: JWT_SECRET environment variable is not set!");
-    throw new Error("JWT_SECRET environment variable is required for security");
-  }
-  return secret;
-};
+const { authenticateRequest } = require("./utils/auth-helper.cjs");
+const { applyRateLimit } = require("./utils/rate-limiter.cjs");
 
 /**
  * Create a training session from the Training Builder
@@ -168,18 +157,21 @@ exports.handler = async (event, context) => {
   try {
     // Check environment variables
     checkEnvVars();
-    
-    // Get JWT_SECRET
-    const JWT_SECRET = getJWTSecret();
 
-    // Validate JWT token
-    const jwtValidation = validateJWT(event, jwt, JWT_SECRET);
-    if (!jwtValidation.success) {
-      return jwtValidation.error;
+    // SECURITY: Apply rate limiting
+    const rateLimitType = event.httpMethod === "POST" ? "CREATE" : "READ";
+    const rateLimitResponse = applyRateLimit(event, rateLimitType);
+    if (rateLimitResponse) {
+      return rateLimitResponse;
     }
-    const { decoded } = jwtValidation;
 
-    const userId = decoded.userId || decoded.id;
+    // SECURITY: Authenticate request using Supabase
+    const auth = await authenticateRequest(event);
+    if (!auth.success) {
+      return auth.error;
+    }
+
+    const userId = auth.user.id;
 
     // Handle GET request - retrieve sessions
     if (event.httpMethod === "GET") {

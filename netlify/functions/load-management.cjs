@@ -2,39 +2,19 @@
 // Evidence-based training load monitoring, injury risk prediction, and fatigue management
 // Based on 87 peer-reviewed studies with 12,453 athletes
 
-const { createClient } = require("@supabase/supabase-js");
+const { db, checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
 const {
   createSuccessResponse,
   createErrorResponse,
   handleServerError,
-  handleAuthenticationError,
   logFunctionCall,
   CORS_HEADERS
 } = require("./utils/error-handler.cjs");
+const { authenticateRequest } = require("./utils/auth-helper.cjs");
+const { applyRateLimit } = require("./utils/rate-limiter.cjs");
+const { getWeekStart } = require("./utils/date-utils.cjs");
 
-// Initialize Supabase client
-let supabase;
-try {
-  const supabaseUrl = process.env.SUPABASE_URL;
-  const supabaseKey = process.env.SUPABASE_ANON_KEY;
-  if (supabaseUrl && supabaseKey) {
-    supabase = createClient(supabaseUrl, supabaseKey);
-  }
-} catch (error) {
-  console.error("Supabase initialization error:", error);
-}
-
-/**
- * Parse authorization token and extract user ID
- */
-function parseAuthToken(authHeader) {
-  if (!authHeader) return null;
-  // Simple token parsing - replace with actual JWT verification
-  const token = authHeader.replace("Bearer ", "");
-  // For demo purposes, return a mock user ID
-  // In production, verify JWT and extract user ID
-  return token || "demo-user-id";
-}
+const supabase = supabaseAdmin; // Alias for compatibility
 
 /**
  * Get training loads for a user within a date range
@@ -307,16 +287,6 @@ async function getTrainingHistory(userId, startDate, endDate) {
 }
 
 /**
- * Get week start date (Monday)
- */
-function getWeekStart(date) {
-  const d = new Date(date);
-  const day = d.getDay();
-  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-  return new Date(d.setDate(diff));
-}
-
-/**
  * Handle ACWR endpoint
  */
 async function handleACWR(method, userId, query) {
@@ -487,18 +457,25 @@ exports.handler = async (event, _context) => {
   }
 
   try {
+    checkEnvVars();
+
     const { httpMethod, path, queryStringParameters } = event;
     const pathSegments = path.split("/").filter(Boolean);
     const endpoint = pathSegments[pathSegments.length - 1];
 
-    // Parse authorization
-    const authHeader = event.headers.authorization;
-    const userId = parseAuthToken(authHeader);
-
-    if (!userId) {
-      return handleAuthenticationError("Authorization required");
+    // SECURITY: Apply rate limiting
+    const rateLimitResponse = applyRateLimit(event, "READ");
+    if (rateLimitResponse) {
+      return rateLimitResponse;
     }
 
+    // SECURITY: Authenticate request using Supabase
+    const auth = await authenticateRequest(event);
+    if (!auth.success) {
+      return auth.error;
+    }
+
+    const userId = auth.user.id;
     const query = queryStringParameters || {};
 
     let response;

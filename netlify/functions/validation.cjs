@@ -138,6 +138,24 @@ const VALIDATION_RULES = {
   resendVerification: {
     email: { type: 'string', required: true, minLength: 3, maxLength: 255 },
   },
+
+  // Games - Create Game validation
+  createGame: {
+    teamId: { type: 'string', maxLength: 100, required: false },
+    opponentName: { type: 'string', minLength: 1, maxLength: 100, required: true },
+    gameDate: { type: 'date', required: true },
+    gameTime: { type: 'string', maxLength: 10, required: false },
+    location: { type: 'string', maxLength: 200, required: false },
+    isHomeGame: { type: 'boolean', required: false },
+    weather: { type: 'string', maxLength: 100, required: false },
+    temperature: { type: 'integer', min: -50, max: 150, required: false },
+    fieldConditions: { type: 'string', maxLength: 100, required: false },
+    season: { type: 'string', maxLength: 10, required: false },
+    tournamentName: { type: 'string', maxLength: 200, required: false },
+    gameType: { type: 'string', enum: ['regular_season', 'playoff', 'tournament', 'scrimmage'], required: false },
+    teamScore: { type: 'integer', min: 0, max: 999, required: false },
+    opponentScore: { type: 'integer', min: 0, max: 999, required: false },
+  },
 };
 
 /**

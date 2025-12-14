@@ -4,6 +4,7 @@
 import { gameStatsService } from "../services/gameStatsService.js";
 import { logger } from "../../logger.js";
 import { errorHandler } from "../utils/unified-error-handler.js";
+import { escapeHtml } from "../utils/html-escape.js";
 
 class GameTrackerPage {
   constructor() {
@@ -282,25 +283,10 @@ class GameTrackerPage {
       this.renderGamesList(games, gamesList);
     } catch (error) {
       console.error("Error loading games:", error);
-      // Fallback to localStorage
-      const games = gameStatsService.getAllGamesSync();
+      // Fallback to localStorage (synchronous mode)
+      const games = await gameStatsService.getAllGames({ forceSync: true });
       this.renderGamesList(games, gamesList);
     }
-  }
-
-  renderGamesList(games, gamesList) {
-    if (games.length === 0) {
-      gamesList.innerHTML = `
-        <div class="empty-state">
-          <i data-lucide="calendar" class="icon-48"></i>
-          <p>No games tracked yet</p>
-        </div>
-      `;
-      lucide.createIcons();
-      return;
-    }
-
-    this.renderGamesList(games, gamesList);
   }
 
   renderGamesList(games, gamesList) {
@@ -318,8 +304,10 @@ class GameTrackerPage {
     gamesList.innerHTML = games
       .map((game) => {
         const result = this.determineGameResult(game);
+        const safeOpponentName = escapeHtml(game.opponentName);
+        const safeGameId = escapeHtml(game.gameId);
         return `
-        <div class="game-item" onclick="window.gameTrackerPage.loadGame('${game.gameId}')">
+        <div class="game-item" onclick="window.gameTrackerPage.loadGame('${safeGameId}')">
           <div class="game-item-header">
             <div class="game-date">
               ${new Date(game.gameDate).toLocaleDateString("en-US", {
@@ -334,7 +322,7 @@ class GameTrackerPage {
             </div>
           </div>
           <div class="game-matchup">
-            vs ${game.opponentName}
+            vs ${safeOpponentName}
           </div>
           <div class="game-score-display">
             ${game.teamScore} - ${game.opponentScore}
@@ -646,6 +634,7 @@ class GameTrackerPage {
       .map((play) => {
         const badge = this.getPlayBadge(play);
         const description = this.getPlayDescription(play);
+        const safeNotes = play.playNotes ? escapeHtml(play.playNotes) : "No notes";
 
         return `
         <div class="play-item">
@@ -656,7 +645,7 @@ class GameTrackerPage {
             </div>
             <div class="play-description">${description}</div>
             <div class="play-details">
-              ${play.playNotes ? play.playNotes : "No notes"}
+              ${safeNotes}
             </div>
           </div>
           <div class="play-item-actions">
@@ -694,13 +683,13 @@ class GameTrackerPage {
   getPlayDescription(play) {
     const getPlayerName = (id) => {
       const player = this.players.find((p) => p.id === id);
-      return player ? player.name : "Unknown";
+      return player ? escapeHtml(player.name) : "Unknown";
     };
 
     if (play.playType === "pass") {
       const qb = getPlayerName(play.quarterbackId);
       const receiver = getPlayerName(play.receiverId);
-      const route = play.routeType || "route";
+      const route = escapeHtml(play.routeType || "route");
       return `${qb} to ${receiver} on ${route}`;
     } else if (play.playType === "run") {
       const carrier = getPlayerName(play.ballCarrierId);
@@ -817,24 +806,13 @@ class GameTrackerPage {
   showSuccessMessage(message) {
     // Create a simple toast notification
     const toast = document.createElement("div");
-    toast.style.cssText = `
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: var(--success-color);
-      color: white;
-      padding: 1rem 1.5rem;
-      border-radius: var(--radius-lg);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      z-index: 10000;
-      animation: slideIn 0.3s ease;
-    `;
+    toast.className = "toast-notification toast-success";
     toast.textContent = message;
 
     document.body.appendChild(toast);
 
     setTimeout(() => {
-      toast.style.animation = "slideOut 0.3s ease";
+      toast.classList.add("toast-exit");
       setTimeout(() => toast.remove(), 300);
     }, 3000);
   }

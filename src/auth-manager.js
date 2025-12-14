@@ -9,6 +9,7 @@ import { config } from "./config/environment.js";
 import { csrfProtection } from "./js/security/csrf-protection.js";
 import { ErrorHandler } from "./error-handler.js";
 import { AUTH, ERROR_MESSAGES, SUCCESS_MESSAGES } from "./js/config/app-constants.js";
+import { debounce } from "./js/utils/html-escape.js";
 
 class AuthManager {
   constructor() {
@@ -159,39 +160,14 @@ logger.debug(
 
   // Check if current page requires authentication
   isProtectedPage() {
-    const protectedPages = [
-      "/dashboard.html",
-      "/profile.html",
-      "/settings.html",
-      "/training.html",
-      "/roster.html",
-      "/analytics.html",
-      "/community.html",
-      "/tournaments.html",
-      "/coach.html",
-      "/games.html",
-      "/wellness.html",
-      "/workout.html",
-      "/performance-tracking.html",
-      "/qb-training-schedule.html",
-      "/chat.html",
-    ];
     const currentPath = window.location.pathname;
 
-    // Public pages that don't require authentication
-    const publicPages = [
-      "/login.html",
-      "/register.html",
-      "/reset-password.html",
-      "/index.html",
-    ];
-
     // If it's a public page, return false
-    if (publicPages.some((page) => currentPath.includes(page))) {
+    if (AUTH.PUBLIC_ROUTES.some((page) => currentPath.includes(page))) {
       return false;
     }
 
-    return protectedPages.some((page) => currentPath.includes(page));
+    return AUTH.PROTECTED_ROUTES.some((page) => currentPath.includes(page));
   }
 
   // Load authentication data from secure storage
@@ -237,7 +213,7 @@ logger.debug(
   }
 
   // Validate stored token with backend
-  async validateStoredToken(timeoutMs = 3000) {
+  async validateStoredToken(timeoutMs = AUTH.TOKEN_VALIDATION_TIMEOUT) {
     if (!this.token) {return false;}
 
     try {
@@ -746,35 +722,29 @@ logger.debug(
     };
 
     // Track user activity - store handlers for cleanup
-    const activityEvents = [
-      "mousedown",
-      "mousemove",
-      "keypress",
-      "scroll",
-      "touchstart",
-      "click",
-    ];
+    // Reduced to 3 strategic events to minimize performance impact
+    const activityEvents = ["mousedown", "keypress", "touchstart"];
 
     // Clean up existing handlers first to prevent memory leaks
     if (this.activityHandlers && this.activityHandlers.length > 0) {
       this.activityHandlers.forEach(({ event, handler }) => {
-        document.removeEventListener(event, handler, true);
+        document.removeEventListener(event, handler);
       });
       this.activityHandlers = [];
     }
 
-    // Create bound handler that can be removed
-    const activityHandler = () => {
-      if (this.isAuthenticated() && Date.now() - lastActivity > 60000) {
-        // Reset every minute
+    // Create debounced handler to prevent excessive calls
+    const activityHandler = debounce(() => {
+      if (this.isAuthenticated() && Date.now() - lastActivity > AUTH.ACTIVITY_RESET_THRESHOLD) {
         resetSessionTimer();
       }
-    };
+    }, AUTH.ACTIVITY_DEBOUNCE_TIME);
 
     // Store handlers for cleanup
     this.activityHandlers = [];
     activityEvents.forEach((event) => {
-      document.addEventListener(event, activityHandler, true);
+      // Use passive: true for better performance, no capture phase needed
+      document.addEventListener(event, activityHandler, { passive: true });
       this.activityHandlers.push({ event, handler: activityHandler });
     });
 
@@ -795,7 +765,7 @@ logger.debug(
       // Remove activity event listeners
       if (this.activityHandlers) {
         this.activityHandlers.forEach(({ event, handler }) => {
-          document.removeEventListener(event, handler, true);
+          document.removeEventListener(event, handler);
         });
         this.activityHandlers = [];
       }
@@ -840,42 +810,26 @@ logger.debug(
 
   // Redirect to login if not authenticated
   async requireAuth() {
-    const isDevelopment =
-      window.location.hostname === "localhost" ||
-      window.location.hostname === "127.0.0.1";
-
     logger.debug("🔒 Checking authentication requirement...");
 
     // Wait for auth manager to finish initializing
     await this.waitForInit();
 
-    // Check if we have stored auth data first (might not be loaded yet)
-    const hasStoredAuth =
-      localStorage.getItem("authToken") ||
-      localStorage.getItem("__auth_token_enc") ||
-      sessionStorage.getItem("authToken");
-
     logger.debug("🔍 Auth check after initialization:");
     logger.debug("   - Is authenticated:", this.isAuthenticated());
     logger.debug("   - Token exists:", !!this.token);
     logger.debug("   - User exists:", !!this.user);
-    logger.debug("   - Has stored auth:", !!hasStoredAuth);
 
-    // In development mode, allow access even if auth check fails (for testing)
-    if (isDevelopment && hasStoredAuth && !this.isAuthenticated()) {
-      logger.debug(
-        "⚠️ Development mode: Stored auth found but not loaded, allowing access",
-      );
-      // Try to reload auth from storage
-      this.loadStoredAuth();
-      return true;
-    }
-
-    // In development mode, allow access without auth for testing
-    if (isDevelopment && !hasStoredAuth) {
-      logger.debug(
-        "⚠️ Development mode: No auth found, allowing access for testing",
-      );
+    // SECURITY: Explicit environment-based bypass for development ONLY
+    // This will ONLY work if:
+    // 1. Running in development environment (localhost)
+    // 2. ALLOW_UNAUTHENTICATED_DEV is explicitly set to "true"
+    if (config.ALLOW_UNAUTHENTICATED_DEV && !this.isAuthenticated()) {
+      logger.warn("⚠️ ==========================================");
+      logger.warn("⚠️ DEV MODE ONLY: Bypassing authentication");
+      logger.warn("⚠️ This is DISABLED in production");
+      logger.warn("⚠️ Set ALLOW_UNAUTHENTICATED_DEV=false to test auth flow");
+      logger.warn("⚠️ ==========================================");
       return true;
     }
 
@@ -1041,7 +995,7 @@ logger.debug(
     // Remove activity handlers
     if (this.activityHandlers && this.activityHandlers.length > 0) {
       this.activityHandlers.forEach(({ event, handler }) => {
-        document.removeEventListener(event, handler, true);
+        document.removeEventListener(event, handler);
       });
       this.activityHandlers = [];
       logger.debug("[AuthManager] Activity handlers cleaned up");

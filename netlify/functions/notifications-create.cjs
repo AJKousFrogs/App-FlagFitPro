@@ -1,7 +1,6 @@
 // Netlify Function: Create Notification
 // Creates a notification in the database (for push notifications to sync with in-app)
 
-const jwt = require("jsonwebtoken");
 const { db, checkEnvVars } = require("./supabase-client.cjs");
 const {
   createSuccessResponse,
@@ -11,15 +10,8 @@ const {
   logFunctionCall,
   CORS_HEADERS
 } = require("./utils/error-handler.cjs");
-
-const getJWTSecret = () => {
-  const secret = process.env.JWT_SECRET;
-  if (!secret) {
-    console.error("CRITICAL: JWT_SECRET environment variable is not set!");
-    throw new Error("JWT_SECRET environment variable is required for security");
-  }
-  return secret;
-};
+const { authenticateRequest } = require("./utils/auth-helper.cjs");
+const { applyRateLimit } = require("./utils/rate-limiter.cjs");
 
 exports.handler = async (event, context) => {
   logFunctionCall('NotificationsCreate', event);
@@ -34,31 +26,20 @@ exports.handler = async (event, context) => {
 
   try {
     checkEnvVars();
-    const JWT_SECRET = getJWTSecret();
 
-    // Get authorization header
-    const authHeader =
-      event.headers.authorization || event.headers.Authorization;
-
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return createErrorResponse("Authentication required", 401, 'unauthorized');
+    // SECURITY: Apply rate limiting
+    const rateLimitResponse = applyRateLimit(event, "CREATE");
+    if (rateLimitResponse) {
+      return rateLimitResponse;
     }
 
-    // Extract and verify token
-    const token = authHeader.substring(7);
-    let decoded;
-    let userId = null;
-
-    try {
-      decoded = jwt.verify(token, JWT_SECRET);
-      userId = decoded.userId;
-    } catch (jwtError) {
-      return createErrorResponse("Invalid or expired token", 401, 'unauthorized');
+    // SECURITY: Authenticate request using Supabase
+    const auth = await authenticateRequest(event);
+    if (!auth.success) {
+      return auth.error;
     }
 
-    if (!userId) {
-      return createErrorResponse("User ID not found in token", 401, 'unauthorized');
-    }
+    const userId = auth.user.id;
 
     if (event.httpMethod === "POST") {
       const body = JSON.parse(event.body || "{}");

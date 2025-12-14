@@ -457,3 +457,63 @@
     transition: none !important;
   }
 }
+
+/* ================================================================
+   TOAST NOTIFICATION ANIMATIONS & STYLES
+   ================================================================ */
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.toast-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 1rem 1.5rem;
+  border-radius: var(--radius-lg, 8px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 10000;
+  animation: slideIn 0.3s ease;
+  color: white;
+  font-weight: 500;
+  max-width: 400px;
+}
+
+.toast-success {
+  background: var(--success-500, #10b981);
+}
+
+.toast-error {
+  background: var(--error-500, #ef4444);
+}
+
+.toast-warning {
+  background: var(--warning-500, #f59e0b);
+}
+
+.toast-info {
+  background: var(--info-500, #3b82f6);
+}
+
+.toast-exit {
+  animation: slideOut 0.3s ease;
+}
