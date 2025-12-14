@@ -31,14 +31,16 @@ import { firstValueFrom } from 'rxjs';
       <!-- Database Health Monitor -->
       <p-card header="Database Health" class="health-card">
         <div class="health-metrics">
-          <div class="health-item" *ngFor="let metric of healthMetrics()">
-            <div class="metric-header">
-              <i [class]="metric.icon" [style.color]="metric.color"></i>
-              <span>{{ metric.name }}</span>
+          @for (metric of healthMetrics(); track metric.name) {
+            <div class="health-item">
+              <div class="metric-header">
+                <i [class]="metric.icon" [style.color]="metric.color"></i>
+                <span>{{ metric.name }}</span>
+              </div>
+              <div class="metric-value">{{ metric.value }}</div>
+              <p-tag [value]="metric.status" [severity]="metric.severity"></p-tag>
             </div>
-            <div class="metric-value">{{ metric.value }}</div>
-            <p-tag [value]="metric.status" [severity]="metric.severity"></p-tag>
-          </div>
+          }
         </div>
       </p-card>
 
@@ -101,16 +103,20 @@ import { firstValueFrom } from 'rxjs';
           </p-button>
         </div>
 
-        <div class="sync-status" *ngIf="lastSyncStatus().length > 0">
-          <h4>Last Sync Status</h4>
-          <div class="status-grid">
-            <div class="status-item" *ngFor="let status of lastSyncStatus()">
-              <span class="status-name">{{ status.source }}</span>
-              <span class="status-time">{{ status.timestamp | date: 'medium' }}</span>
-              <p-tag [value]="status.result" [severity]="status.severity"></p-tag>
+        @if (lastSyncStatus().length > 0) {
+          <div class="sync-status">
+            <h4>Last Sync Status</h4>
+            <div class="status-grid">
+              @for (status of lastSyncStatus(); track status.source) {
+                <div class="status-item">
+                  <span class="status-name">{{ status.source }}</span>
+                  <span class="status-time">{{ status.timestamp | date: 'medium' }}</span>
+                  <p-tag [value]="status.result" [severity]="status.severity"></p-tag>
+                </div>
+              }
             </div>
           </div>
-        </div>
+        }
       </p-card>
     </div>
   `,

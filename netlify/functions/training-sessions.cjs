@@ -106,10 +106,20 @@ async function createTrainingSession(userId, sessionData) {
 
 /**
  * Get training sessions for a user
+ * Always filters to sessions up to and including today by default
+ * This ensures training statistics only include completed/real data
+ * 
+ * Query params:
+ * - userId (required, from auth)
+ * - startDate (optional, defaults to beginning of time)
+ * - endDate (optional, defaults to TODAY)
+ * - includeUpcoming (optional, boolean, default: false)
+ * - status (optional, filter by status)
+ * - limit (optional, default: 50)
  */
 async function getTrainingSessions(userId, queryParams) {
   try {
-    const { status, startDate, endDate, limit = 50 } = queryParams || {};
+    const { status, startDate, endDate, limit = 50, includeUpcoming = false } = queryParams || {};
 
     let query = supabaseAdmin
       .from("training_sessions")
@@ -117,6 +127,15 @@ async function getTrainingSessions(userId, queryParams) {
       .eq("user_id", userId)
       .order("session_date", { ascending: false })
       .limit(parseInt(limit));
+
+    // By default, only show sessions up to and including today
+    // This ensures training statistics only reflect real, completed data
+    // Use CURRENT_DATE for database-level filtering (more reliable than client-side date)
+    if (!includeUpcoming) {
+      // Get today's date in YYYY-MM-DD format (UTC)
+      const today = new Date().toISOString().split("T")[0];
+      query = query.lte("session_date", today);
+    }
 
     if (status) {
       query = query.eq("status", status);
@@ -127,7 +146,10 @@ async function getTrainingSessions(userId, queryParams) {
     }
 
     if (endDate) {
-      query = query.lte("session_date", endDate);
+      // Ensure endDate includes the full day
+      const endDateInclusive = new Date(endDate);
+      endDateInclusive.setHours(23, 59, 59, 999);
+      query = query.lte("session_date", endDateInclusive.toISOString().split("T")[0]);
     }
 
     const { data: sessions, error } = await query;

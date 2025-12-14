@@ -46,29 +46,30 @@ export interface SkillData {
           </p-chart>
         </div>
 
-        <div class="skills-breakdown" *ngIf="selectedSkill()">
-          <h4>{{ selectedSkill()?.label }} Breakdown</h4>
-          <div class="sub-skills">
-            <div
-              *ngFor="let subSkill of selectedSkill()?.breakdown; trackBy: trackBySubSkillName"
-              class="sub-skill"
-            >
-              <span class="sub-skill-name">{{ subSkill.name }}</span>
-              <p-progressBar
-                [value]="subSkill.score"
-                [showValue]="true"
-              ></p-progressBar>
-              <p-button
-                icon="pi pi-play-circle"
-                [text]="true"
-                label="Practice"
+        @if (selectedSkill()) {
+          <div class="skills-breakdown">
+            <h4>{{ selectedSkill()?.label }} Breakdown</h4>
+            <div class="sub-skills">
+              @for (subSkill of selectedSkill()?.breakdown; track trackBySubSkillName($index, subSkill)) {
+                <div class="sub-skill">
+                  <span class="sub-skill-name">{{ subSkill.name }}</span>
+                  <p-progressBar
+                    [value]="subSkill.score"
+                    [showValue]="true"
+                  ></p-progressBar>
+                  <p-button
+                    icon="pi pi-play-circle"
+                    [text]="true"
+                    label="Practice"
                 size="small"
                 (onClick)="startSkillDrill(subSkill)"
               >
               </p-button>
+                </div>
+              }
             </div>
           </div>
-        </div>
+        }
       </div>
     </p-card>
   `,

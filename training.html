@@ -1069,10 +1069,20 @@
         dayGridEl.style.pointerEvents = "none";
 
         let phase;
-        if (weekNumber <= 4) phase = "foundation";
-        else if (weekNumber <= 8) phase = "strength";
-        else if (weekNumber <= 12) phase = "power";
-        else phase = "competition";
+        let weekInPhase;
+        if (weekNumber <= 4) {
+          phase = "foundation";
+          weekInPhase = weekNumber;
+        } else if (weekNumber <= 8) {
+          phase = "strength";
+          weekInPhase = weekNumber - 4;
+        } else if (weekNumber <= 12) {
+          phase = "power";
+          weekInPhase = weekNumber - 8;
+        } else {
+          phase = "competition";
+          weekInPhase = weekNumber - 12;
+        }
 
         const phaseTitle = TRAINING_PROGRAM.phases[phase].title;
         if (currentWeekEl) currentWeekEl.textContent = `Week ${weekNumber} - ${phaseTitle}`;
@@ -1086,12 +1096,15 @@
           weekDatesEl.textContent = `${startDate.toLocaleDateString("en-US", { month: "long", day: "numeric" })} - ${endDate.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}`;
         }
 
-        const weekData = WEEKLY_SCHEDULES.foundation.week1;
+        // Get the correct week data based on phase and week
+        const weekKey = `week${weekInPhase}`;
+        const weekData = WEEKLY_SCHEDULES[phase]?.[weekKey] || WEEKLY_SCHEDULES.foundation.week1;
+        
         const days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
         const dayNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
         dayGridEl.innerHTML = days.map((day, index) => {
-          const dayData = weekData.days[day];
+          const dayData = weekData.days?.[day];
           if (!dayData) {
             return `<div class="card day-card" data-day="${day}">
               <div class="day-header"><div class="day-name">${dayNames[index]}</div>
@@ -1100,15 +1113,59 @@
             </div>`;
           }
 
+          // Render Sunday recovery protocol with full details
           if (day === "sunday" || dayData.type === "recovery") {
+            let activitiesHtml = '';
+            if (dayData.activities && Array.isArray(dayData.activities)) {
+              activitiesHtml = `
+                <div style="margin-top: var(--space-4);">
+                  <h4 style="font-size: var(--text-sm); font-weight: 600; margin-bottom: var(--space-2); color: var(--text-primary);">Recovery Activities:</h4>
+                  <ul style="list-style: none; padding: 0; margin: 0;">
+                    ${dayData.activities.map(activity => `
+                      <li style="padding: var(--space-2) 0; border-bottom: 1px solid var(--color-border-primary);">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                          <span style="color: var(--text-primary);">${activity.name}</span>
+                          <span style="color: var(--text-secondary); font-size: var(--text-xs);">${activity.duration}</span>
+                        </div>
+                      </li>
+                    `).join('')}
+                  </ul>
+                </div>
+              `;
+            }
+            
             return `<div class="card day-card" data-day="${day}">
-              <div class="day-header"><div class="day-name">${dayNames[index]}</div>
-              <span class="workout-type recovery">Recovery</span></div>
+              <div class="day-header">
+                <div class="day-name">${dayNames[index]}</div>
+                <span class="workout-type recovery">Recovery</span>
+              </div>
               <div class="card-body rest-day">
                 <div class="rest-day-icon"><i data-lucide="heart-pulse"></i></div>
-                <h3>Recovery Day</h3><p>Complete recovery protocol</p>
+                <h3>${dayData.title || 'Recovery Day'}</h3>
+                ${dayData.protocol ? `<p style="margin-bottom: var(--space-2);"><strong>Protocol:</strong> ${dayData.protocol}</p>` : ''}
+                ${dayData.duration ? `<p style="margin-bottom: var(--space-2);"><span>⏱️</span> ${dayData.duration} minutes</p>` : ''}
+                ${activitiesHtml}
+                <button class="btn btn-primary btn-md" onclick="showProtocolModal('recovery')" style="margin-top: var(--space-3);">
+                  View Recovery Protocol
+                </button>
               </div>
             </div>`;
+          }
+
+          // Render regular training days
+          let blocksHtml = '';
+          if (dayData.blocks && Array.isArray(dayData.blocks)) {
+            blocksHtml = `
+              <div style="margin-top: var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--color-border-primary);">
+                <h4 style="font-size: var(--text-sm); font-weight: 600; margin-bottom: var(--space-2);">Training Blocks:</h4>
+                ${dayData.blocks.map(block => `
+                  <div style="margin-bottom: var(--space-3); padding: var(--space-2); background: var(--surface-secondary); border-radius: var(--radius-md);">
+                    <div style="font-weight: 600; margin-bottom: var(--space-1);">${block.title}</div>
+                    ${block.duration ? `<div style="font-size: var(--text-xs); color: var(--text-secondary);">Duration: ${block.duration} min</div>` : ''}
+                  </div>
+                `).join('')}
+              </div>
+            `;
           }
 
           return `<div class="card day-card" data-day="${day}">
@@ -1118,11 +1175,20 @@
               <span class="workout-type ${dayData.type}">${dayData.type}</span>
             </div>
             <div class="card-body day-content">
-              <div class="workout-duration"><span>⏱️</span><span>${dayData.duration} minutes</span></div>
-              <button class="btn btn-primary btn-md" onclick="startWorkout('${day}', ${weekNumber})">Start Workout</button>
+              ${dayData.duration ? `<div class="workout-duration"><span>⏱️</span><span>${dayData.duration} minutes</span></div>` : ''}
+              ${dayData.warmup ? `<div style="font-size: var(--text-xs); color: var(--text-secondary); margin-top: var(--space-2);">Warmup: ${dayData.warmup}</div>` : ''}
+              ${blocksHtml}
+              <button class="btn btn-primary btn-md" onclick="startWorkout('${day}', ${weekNumber})" style="margin-top: var(--space-3);">Start Workout</button>
             </div>
           </div>`;
         }).join("");
+
+        // Reinitialize icons after rendering
+        setTimeout(() => {
+          if (window.lucide) {
+            window.lucide.createIcons();
+          }
+        }, 100);
 
         const prevBtn = document.getElementById("prevWeek");
         const nextBtn = document.getElementById("nextWeek");

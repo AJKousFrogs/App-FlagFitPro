@@ -227,11 +227,60 @@ class GameStatsService {
 
   /**
    * Calculate player statistics across all games
+   * Uses centralized backend endpoint for consistent, date-filtered stats
+   * Falls back to local calculation if backend is unavailable
    * @param {string} playerId - Player ID
-   * @returns {Object} Player statistics
+   * @param {Object} options - Options for fetching stats
+   * @returns {Promise<Object>|Object} Player statistics
    */
-  getPlayerStats(playerId) {
-    const games = this.getAllGames();
+  async getPlayerStats(playerId, options = {}) {
+    // Try backend first for consistent, date-filtered stats
+    if (this.useBackend && !options.forceLocal) {
+      try {
+        const token = storageService.get("authToken", null, { usePrefix: false });
+        if (token) {
+          const params = new URLSearchParams();
+          if (options.season) params.append("season", options.season);
+          if (options.teamId) params.append("teamId", options.teamId);
+          
+          const url = `${API_ENDPOINTS.playerStats.aggregated}?playerId=${playerId}${params.toString() ? '&' + params.toString() : ''}`;
+          const response = await apiClient.get(url);
+          
+          if (response.success && response.data) {
+            // Transform backend format to frontend format
+            return {
+              gamesPlayed: response.data.gamesPlayed || 0,
+              passAttempts: response.data.passAttempts || 0,
+              completions: response.data.completions || 0,
+              passingYards: response.data.passingYards || 0,
+              touchdowns: response.data.touchdowns || 0,
+              interceptions: response.data.interceptions || 0,
+              completionPercentage: response.data.completionPercentage || 0,
+              avgYardsPerAttempt: response.data.avgYardsPerAttempt || 0,
+              targets: response.data.targets || 0,
+              receptions: response.data.receptions || 0,
+              receivingYards: response.data.receivingYards || 0,
+              drops: response.data.drops || 0,
+              dropRate: response.data.dropRate || 0,
+              rushingAttempts: response.data.rushingAttempts || 0,
+              rushingYards: response.data.rushingYards || 0,
+              flagPullAttempts: response.data.flagPullAttempts || 0,
+              flagPulls: response.data.flagPulls || 0,
+              flagPullSuccessRate: response.data.flagPullSuccessRate || 0,
+              missedFlagPulls: response.data.missedFlagPulls || 0,
+              totalPlays: response.data.totalPlays || 0,
+              totalYards: response.data.totalYards || 0,
+            };
+          }
+        }
+      } catch (error) {
+        console.warn("Error fetching stats from backend, falling back to local calculation:", error);
+        // Fall through to local calculation
+      }
+    }
+
+    // Fallback to local calculation (for backward compatibility)
+    const games = this.getAllGames({ forceSync: true });
     const stats = {
       gamesPlayed: 0,
       // Passing stats
@@ -332,6 +381,100 @@ class GameStatsService {
         (stats.flagPulls / stats.flagPullAttempts) *
         100
       ).toFixed(1);
+    }
+
+    return stats;
+  }
+
+  /**
+   * Get player stats for a specific date range
+   * Uses centralized backend endpoint
+   * @param {string} playerId - Player ID
+   * @param {Date} startDate - Start date
+   * @param {Date} endDate - End date
+   * @returns {Promise<Object>} Player statistics
+   */
+  async getPlayerStatsByDateRange(playerId, startDate, endDate) {
+    if (this.useBackend) {
+      try {
+        const token = storageService.get("authToken", null, { usePrefix: false });
+        if (token) {
+          const params = new URLSearchParams({
+            playerId,
+            startDate: startDate.toISOString().split('T')[0],
+            endDate: endDate.toISOString().split('T')[0],
+          });
+          
+          const response = await apiClient.get(`${API_ENDPOINTS.playerStats.dateRange}?${params.toString()}`);
+          
+          if (response.success && response.data) {
+            return response.data;
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching stats by date range:", error);
+        throw error;
+      }
+    }
+
+    // Fallback to local calculation
+    const games = this.getGamesByDateRange(startDate, endDate);
+    const stats = {
+      gamesPlayed: games.length,
+      passAttempts: 0,
+      completions: 0,
+      passingYards: 0,
+      touchdowns: 0,
+      interceptions: 0,
+      completionPercentage: 0,
+      targets: 0,
+      receptions: 0,
+      receivingYards: 0,
+      drops: 0,
+      dropRate: 0,
+      rushingAttempts: 0,
+      rushingYards: 0,
+      flagPullAttempts: 0,
+      flagPulls: 0,
+      flagPullSuccessRate: 0,
+      missedFlagPulls: 0,
+    };
+
+    games.forEach((game) => {
+      if (!game.plays) return;
+      game.plays.forEach((play) => {
+        // Aggregate stats (same logic as getPlayerStats)
+        if (play.quarterbackId === playerId && play.playType === "pass") {
+          stats.passAttempts++;
+          if (play.outcome === "completion") stats.completions++;
+          if (play.outcome === "interception") stats.interceptions++;
+        }
+        if (play.receiverId === playerId && play.playType === "pass") {
+          stats.targets++;
+          if (play.outcome === "completion") stats.receptions++;
+          if (play.isDrop) stats.drops++;
+        }
+        if (play.ballCarrierId === playerId && play.playType === "run") {
+          stats.rushingAttempts++;
+          stats.rushingYards += play.yardsGained || 0;
+        }
+        if (play.defenderId === playerId && play.playType === "flag_pull") {
+          stats.flagPullAttempts++;
+          if (play.isSuccessful) stats.flagPulls++;
+          else stats.missedFlagPulls++;
+        }
+      });
+    });
+
+    // Calculate percentages
+    if (stats.passAttempts > 0) {
+      stats.completionPercentage = Number(((stats.completions / stats.passAttempts) * 100).toFixed(1));
+    }
+    if (stats.targets > 0) {
+      stats.dropRate = Number(((stats.drops / stats.targets) * 100).toFixed(1));
+    }
+    if (stats.flagPullAttempts > 0) {
+      stats.flagPullSuccessRate = Number(((stats.flagPulls / stats.flagPullAttempts) * 100).toFixed(1));
     }
 
     return stats;

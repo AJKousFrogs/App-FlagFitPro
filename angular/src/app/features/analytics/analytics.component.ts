@@ -30,6 +30,8 @@ import {
   PlayerMultiSeasonStats,
 } from "../../core/services/player-statistics.service";
 import { AuthService } from "../../core/services/auth.service";
+import { TrainingStatsCalculationService } from "../../core/services/training-stats-calculation.service";
+import { TrainingDataService } from "../../core/services/training-data.service";
 
 interface Metric {
   icon: string;
@@ -87,27 +89,28 @@ interface Metric {
         <!-- Charts Grid -->
         <div class="charts-grid">
           <!-- Performance Trends Chart -->
-          <p-card class="chart-card">
-            <ng-template pTemplate="header">
-              <div class="chart-header">
-                <h3 class="chart-title">Performance Trends</h3>
-                <div class="chart-actions">
-                  <p-button
-                    label="Export"
-                    [outlined]="true"
-                    size="small"
-                  ></p-button>
-                  <p-button label="Customize" size="small"></p-button>
+          @defer (on viewport) {
+            <p-card class="chart-card">
+              <ng-template pTemplate="header">
+                <div class="chart-header">
+                  <h3 class="chart-title">Performance Trends</h3>
+                  <div class="chart-actions">
+                    <p-button
+                      label="Export"
+                      [outlined]="true"
+                      size="small"
+                    ></p-button>
+                    <p-button label="Customize" size="small"></p-button>
+                  </div>
                 </div>
-              </div>
-            </ng-template>
-            @if (performanceChartData()) {
-              <p-chart
-                type="line"
-                [data]="performanceChartData()"
-                [options]="lineChartOptions"
-              ></p-chart>
-            }
+              </ng-template>
+              @if (performanceChartData()) {
+                <p-chart
+                  type="line"
+                  [data]="performanceChartData()"
+                  [options]="lineChartOptions"
+                ></p-chart>
+              }
             <div class="chart-insights">
               <div class="insight-item">
                 <div class="insight-value">91</div>
@@ -122,10 +125,16 @@ interface Metric {
                 <div class="insight-label">Weekly Trend</div>
               </div>
             </div>
-          </p-card>
+            </p-card>
+          } @placeholder {
+            <p-card class="chart-card">
+              <div class="loading-placeholder">Loading performance trends...</div>
+            </p-card>
+          }
     
           <!-- Team Chemistry Chart -->
-          <p-card class="chart-card">
+          @defer (on viewport) {
+            <p-card class="chart-card">
             <ng-template pTemplate="header">
               <div class="chart-header">
                 <h3 class="chart-title">Team Chemistry Analysis</h3>
@@ -160,9 +169,16 @@ interface Metric {
                 <div class="insight-label">Leadership</div>
               </div>
             </div>
-          </p-card>
+            </p-card>
+          } @placeholder {
+            <p-card class="chart-card">
+              <div class="loading-placeholder">Loading team chemistry analysis...</div>
+            </p-card>
+          }
     
           <!-- Training Distribution Chart -->
+          @defer (on viewport) {
+            <p-card class="chart-card">
           <p-card class="chart-card">
             <ng-template pTemplate="header">
               <div class="chart-header">
@@ -198,45 +214,56 @@ interface Metric {
                 <div class="insight-label">Technical Sessions</div>
               </div>
             </div>
-          </p-card>
+            </p-card>
+          } @placeholder {
+            <p-card class="chart-card">
+              <div class="loading-placeholder">Loading training distribution...</div>
+            </p-card>
+          }
     
           <!-- Position Performance Chart -->
-          <p-card class="chart-card">
-            <ng-template pTemplate="header">
-              <div class="chart-header">
-                <h3 class="chart-title">Position Performance Comparison</h3>
-                <div class="chart-actions">
-                  <p-button
-                    label="Benchmarks"
-                    [outlined]="true"
-                    size="small"
-                  ></p-button>
-                  <p-button label="Optimize" size="small"></p-button>
+          @defer (on viewport) {
+            <p-card class="chart-card">
+              <ng-template pTemplate="header">
+                <div class="chart-header">
+                  <h3 class="chart-title">Position Performance Comparison</h3>
+                  <div class="chart-actions">
+                    <p-button
+                      label="Benchmarks"
+                      [outlined]="true"
+                      size="small"
+                    ></p-button>
+                    <p-button label="Optimize" size="small"></p-button>
+                  </div>
+                </div>
+              </ng-template>
+              @if (positionChartData()) {
+                <p-chart
+                  type="bar"
+                  [data]="positionChartData()"
+                  [options]="BAR_CHART_OPTIONS"
+                ></p-chart>
+              }
+              <div class="chart-insights">
+                <div class="insight-item">
+                  <div class="insight-value">94</div>
+                  <div class="insight-label">Lorenzo S. #21</div>
+                </div>
+                <div class="insight-item">
+                  <div class="insight-value">91</div>
+                  <div class="insight-label">Aljosa K. #55</div>
+                </div>
+                <div class="insight-item">
+                  <div class="insight-value">89</div>
+                  <div class="insight-label">Vince M. #10</div>
                 </div>
               </div>
-            </ng-template>
-            @if (positionChartData()) {
-              <p-chart
-                type="bar"
-                [data]="positionChartData()"
-                [options]="BAR_CHART_OPTIONS"
-              ></p-chart>
-            }
-            <div class="chart-insights">
-              <div class="insight-item">
-                <div class="insight-value">94</div>
-                <div class="insight-label">Lorenzo S. #21</div>
-              </div>
-              <div class="insight-item">
-                <div class="insight-value">91</div>
-                <div class="insight-label">Aljosa K. #55</div>
-              </div>
-              <div class="insight-item">
-                <div class="insight-value">89</div>
-                <div class="insight-label">Vince M. #10</div>
-              </div>
-            </div>
-          </p-card>
+            </p-card>
+          } @placeholder {
+            <p-card class="chart-card">
+              <div class="loading-placeholder">Loading position performance...</div>
+            </p-card>
+          }
         </div>
     
         <!-- Full Width Charts -->
@@ -634,6 +661,13 @@ interface Metric {
     `,
   styles: [
     `
+      .loading-placeholder {
+        padding: var(--space-8);
+        text-align: center;
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+      }
+
       .analytics-page {
         padding: var(--space-6);
       }
@@ -875,6 +909,8 @@ export class AnalyticsComponent implements OnInit {
   private apiService = inject(ApiService);
   private playerStatsService = inject(PlayerStatisticsService);
   private authService = inject(AuthService);
+  private trainingStatsService = inject(TrainingStatsCalculationService);
+  private trainingDataService = inject(TrainingDataService);
 
   metrics = signal<Metric[]>([]);
   performanceChartData = signal<any>(null);
@@ -887,6 +923,10 @@ export class AnalyticsComponent implements OnInit {
   playerGameStats = signal<PlayerGameStats[]>([]);
   playerSeasonStats = signal<PlayerSeasonStats | null>(null);
   playerMultiSeasonStats = signal<PlayerMultiSeasonStats | null>(null);
+
+  // Training statistics
+  trainingStats = signal<any>(null);
+  acwrData = signal<any>(null);
 
   selectedTimePeriod: string = "Last 7 Weeks";
   selectedMetric: string = "40-Yard & 10-Yard";
@@ -915,6 +955,65 @@ export class AnalyticsComponent implements OnInit {
   ngOnInit(): void {
     this.loadAnalyticsData();
     this.loadPlayerStatistics();
+    this.loadTrainingStatistics();
+  }
+
+  loadTrainingStatistics(): void {
+    const currentUser = this.authService.getUser();
+    if (!currentUser?.id) return;
+
+    // Load comprehensive training stats
+    this.trainingStatsService.getTrainingStats().subscribe({
+      next: (stats) => {
+        this.trainingStats.set(stats);
+        
+        // Update metrics with training data
+        const currentMetrics = this.metrics();
+        const updatedMetrics = currentMetrics.map(metric => {
+          if (metric.label === "Training Sessions") {
+            return {
+              ...metric,
+              value: stats.totalSessions.toString(),
+            };
+          }
+          return metric;
+        });
+        this.metrics.set(updatedMetrics);
+
+        // Update distribution chart with real data
+        if (stats.sessionsByType) {
+          const labels = Object.keys(stats.sessionsByType);
+          const values = labels.map(key => stats.sessionsByType[key].count);
+          this.distributionChartData.set({
+            labels,
+            datasets: [{
+              data: values,
+              backgroundColor: [
+                "#089949",
+                "#10c89b",
+                "#f1c40f",
+                "#e74c3c",
+                "#3498db",
+              ],
+            }],
+          });
+        }
+      },
+      error: (error) => {
+        console.error("Error loading training statistics:", error);
+      },
+    });
+
+    // Load training sessions for ACWR calculation
+    this.trainingDataService.getTrainingSessions({ limit: 100 }).subscribe({
+      next: (sessions) => {
+        const acwr = this.trainingStatsService.calculateACWR(sessions);
+        this.acwrData.set(acwr);
+      },
+      error: (error) => {
+        console.error("Error loading training sessions for ACWR:", error);
+      },
+    });
   }
 
   loadPlayerStatistics(): void {

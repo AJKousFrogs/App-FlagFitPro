@@ -63,35 +63,37 @@ interface HeatmapCell {
 
       <div class="heatmap-container">
         <div class="heatmap-grid">
-          <div
-            *ngFor="let cell of heatmapData(); trackBy: trackByCell"
-            class="heatmap-cell"
-            [class]="getIntensityClass(cell.value)"
-            [style.grid-column]="cell.col"
-            [style.grid-row]="cell.row"
-            [pTooltip]="getTooltipText(cell)"
-            tooltipPosition="top"
-            (click)="onCellClick(cell)"
-            [attr.aria-label]="getAriaLabel(cell)"
-            role="button"
-            tabindex="0"
-            (keydown.enter)="onCellClick(cell)"
-            (keydown.space)="onCellClick(cell)"
-          >
-            <span class="cell-value" *ngIf="cell.value > 0">{{
-              cell.value
-            }}</span>
-          </div>
+          @for (cell of heatmapData(); track trackByCell($index, cell)) {
+            <div
+              class="heatmap-cell"
+              [class]="getIntensityClass(cell.value)"
+              [style.grid-column]="cell.col"
+              [style.grid-row]="cell.row"
+              [pTooltip]="getTooltipText(cell)"
+              tooltipPosition="top"
+              (click)="onCellClick(cell)"
+              [attr.aria-label]="getAriaLabel(cell)"
+              role="button"
+              tabindex="0"
+              (keydown.enter)="onCellClick(cell)"
+              (keydown.space)="onCellClick(cell)"
+            >
+              @if (cell.value > 0) {
+                <span class="cell-value">{{ cell.value }}</span>
+              }
+            </div>
+          }
         </div>
 
         <div class="heatmap-legend">
           <span class="legend-label">Less</span>
           <div class="legend-gradient">
-            <div
-              *ngFor="let step of legendSteps; trackBy: trackByStep"
-              class="gradient-step"
-              [class]="step.class"
-            ></div>
+            @for (step of legendSteps; track trackByStep($index, step)) {
+              <div
+                class="gradient-step"
+                [class]="step.class"
+              ></div>
+            }
           </div>
           <span class="legend-label">More</span>
         </div>
@@ -105,23 +107,25 @@ interface HeatmapCell {
         [style]="{ width: '400px' }"
         (onHide)="selectedCell = null"
       >
-        <div class="detail-content" *ngIf="selectedCell">
-          <h4>{{ selectedCell.date | date : 'fullDate' }}</h4>
-          <div class="detail-metrics">
-            <div class="metric">
-              <span class="label">Training Load:</span>
-              <span class="value">{{ selectedCell.value }}</span>
-            </div>
-            <div class="metric">
-              <span class="label">Sessions:</span>
-              <span class="value">{{ selectedCell.sessions }}</span>
-            </div>
-            <div class="metric">
-              <span class="label">Duration:</span>
-              <span class="value">{{ selectedCell.duration }} min</span>
+        @if (selectedCell) {
+          <div class="detail-content">
+            <h4>{{ selectedCell.date | date : 'fullDate' }}</h4>
+            <div class="detail-metrics">
+              <div class="metric">
+                <span class="label">Training Load:</span>
+                <span class="value">{{ selectedCell.value }}</span>
+              </div>
+              <div class="metric">
+                <span class="label">Sessions:</span>
+                <span class="value">{{ selectedCell.sessions }}</span>
+              </div>
+              <div class="metric">
+                <span class="label">Duration:</span>
+                <span class="value">{{ selectedCell.duration }} min</span>
+              </div>
             </div>
           </div>
-        </div>
+        }
       </p-dialog>
     </p-card>
   `,

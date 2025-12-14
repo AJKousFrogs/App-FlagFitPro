@@ -121,6 +121,12 @@ export const API_ENDPOINTS = {
     stats: API_BASE_URL.includes("netlify/functions")
       ? "/training-stats"
       : normalizeEndpoint("/api/training/stats"),
+    statsEnhanced: API_BASE_URL.includes("netlify/functions")
+      ? "/training-stats-enhanced"
+      : normalizeEndpoint("/api/training/stats-enhanced"),
+    sessions: API_BASE_URL.includes("netlify/functions")
+      ? "/training-sessions"
+      : normalizeEndpoint("/api/training/sessions"),
     complete: API_BASE_URL.includes("netlify/functions")
       ? "/training-stats"
       : normalizeEndpoint("/api/training/complete"),
@@ -238,6 +244,27 @@ export const API_ENDPOINTS = {
     plays: (gameId) => normalizeEndpoint(`/games/${gameId}/plays`),
     playerStats: (gameId, playerId) =>
       normalizeEndpoint(`/games/${gameId}/player-stats`),
+  },
+
+  // Player Statistics (Centralized - always up to and including today)
+  playerStats: {
+    aggregated: API_BASE_URL.includes("netlify/functions")
+      ? "/player-stats/aggregated"
+      : normalizeEndpoint("/api/player-stats/aggregated"),
+    dateRange: API_BASE_URL.includes("netlify/functions")
+      ? "/player-stats/date-range"
+      : normalizeEndpoint("/api/player-stats/date-range"),
+  },
+
+  // Training Plan (Evidence-based, date-filtered)
+  trainingPlan: {
+    today: API_BASE_URL.includes("netlify/functions")
+      ? "/training-plan"
+      : normalizeEndpoint("/api/training-plan"),
+    date: (date) =>
+      API_BASE_URL.includes("netlify/functions")
+        ? `/training-plan?date=${date}`
+        : normalizeEndpoint(`/api/training-plan?date=${date}`),
   },
 
   // General

@@ -32,10 +32,8 @@ export interface LiveMetric {
   template: `
     <p-card header="Live Performance Tracking">
       <div class="performance-metrics-grid">
-        <div
-          *ngFor="let metric of liveMetrics(); trackBy: trackByMetricId"
-          class="metric-card"
-        >
+        @for (metric of liveMetrics(); track trackByMetricId($index, metric)) {
+          <div class="metric-card">
           <div class="metric-icon">
             <i [class]="'pi ' + metric.icon"></i>
           </div>
@@ -65,7 +63,8 @@ export interface LiveMetric {
             class="metric-progress"
           >
           </p-progressBar>
-        </div>
+          </div>
+        }
       </div>
     </p-card>
   `,

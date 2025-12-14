@@ -42,123 +42,137 @@ export interface ProgressiveStatItem extends StatItem {
     <div class="progressive-stats">
       <!-- Level 1: Overview Cards -->
       <div class="stats-overview">
-        <div
-          class="stat-card"
-          *ngFor="let stat of stats; trackBy: trackByStatId"
-          (click)="expandStat(stat.id)"
-          [class.expanded]="expandedStat() === stat.id"
-        >
-          <div class="stat-header">
-            <div class="stat-header-left">
-              <div
-                *ngIf="stat.icon"
-                class="stat-icon"
-                [style.background]="(stat.color || 'var(--ds-primary-green)') + '20'"
-                [style.color]="stat.color || 'var(--ds-primary-green)'"
-              >
-                <i [class]="'pi ' + stat.icon"></i>
-              </div>
-              <div class="stat-info">
-                <h4 class="stat-title">{{ stat.label }}</h4>
-                <div class="stat-value">{{ stat.value }}</div>
-                <div *ngIf="stat.trend" class="stat-trend">
-                  <p-tag
-                    [value]="stat.trend"
-                    [severity]="getTrendSeverity(stat.trendType)"
-                    size="small"
-                  >
-                  </p-tag>
-                </div>
-              </div>
-            </div>
-            <i
-              class="pi expand-icon"
-              [class.pi-chevron-down]="expandedStat() !== stat.id"
-              [class.pi-chevron-up]="expandedStat() === stat.id"
-            ></i>
-          </div>
-
-          <!-- Level 2: Expanded Details (Progressive Disclosure) -->
+        @for (stat of stats; track trackByStatId($index, stat)) {
           <div
-            class="stat-details"
-            *ngIf="expandedStat() === stat.id"
-            [@slideDown]
+            class="stat-card"
+            (click)="expandStat(stat.id)"
+            [class.expanded]="expandedStat() === stat.id"
           >
-            <!-- Level 3: Deep Dive Charts -->
-            <p-tabView
-              *ngIf="showDeepDive() === stat.id && hasChartData(stat)"
-              class="stat-tabs"
-            >
-              <p-tabpanel header="Trends" leftIcon="pi pi-chart-line">
-                <div class="chart-container" *ngIf="stat.trendData">
-                  <p-chart
-                    [type]="'line'"
-                    [data]="stat.trendData"
-                    [options]="chartOptions"
-                  ></p-chart>
-                </div>
-                <div class="no-data" *ngIf="!stat.trendData">
-                  No trend data available
-                </div>
-              </p-tabpanel>
-
-              <p-tabpanel header="Breakdown" leftIcon="pi pi-pie-chart">
-                <div class="chart-container" *ngIf="stat.breakdownData">
-                  <p-chart
-                    [type]="'doughnut'"
-                    [data]="stat.breakdownData"
-                    [options]="chartOptions"
-                  ></p-chart>
-                </div>
-                <div class="no-data" *ngIf="!stat.breakdownData">
-                  No breakdown data available
-                </div>
-              </p-tabpanel>
-
-              <p-tabpanel header="Benchmarks" leftIcon="pi pi-flag">
-                <div class="benchmark-container" *ngIf="stat.benchmarkData">
+            <div class="stat-header">
+              <div class="stat-header-left">
+                @if (stat.icon) {
                   <div
-                    class="benchmark-item"
-                    *ngFor="let benchmark of stat.benchmarkData"
+                    class="stat-icon"
+                    [style.background]="(stat.color || 'var(--ds-primary-green)') + '20'"
+                    [style.color]="stat.color || 'var(--ds-primary-green)'"
                   >
-                    <div class="benchmark-label">{{ benchmark.label }}</div>
-                    <div class="benchmark-value">{{ benchmark.value }}</div>
-                    <div class="benchmark-comparison">
+                    <i [class]="'pi ' + stat.icon"></i>
+                  </div>
+                }
+                <div class="stat-info">
+                  <h4 class="stat-title">{{ stat.label }}</h4>
+                  <div class="stat-value">{{ stat.value }}</div>
+                  @if (stat.trend) {
+                    <div class="stat-trend">
                       <p-tag
-                        [value]="benchmark.comparison"
-                        [severity]="getComparisonSeverity(benchmark.comparison)"
+                        [value]="stat.trend"
+                        [severity]="getTrendSeverity(stat.trendType)"
                         size="small"
                       >
                       </p-tag>
                     </div>
-                  </div>
+                  }
                 </div>
-                <div class="no-data" *ngIf="!stat.benchmarkData">
-                  No benchmark data available
-                </div>
-              </p-tabpanel>
-            </p-tabs>
-
-            <div class="action-buttons">
-              <p-button
-                label="Deep Dive"
-                icon="pi pi-search-plus"
-                [text]="true"
-                (onClick)="toggleDeepDive(stat.id)"
-                [disabled]="!hasChartData(stat)"
-              >
-              </p-button>
-
-              <p-button
-                label="Set Goal"
-                icon="pi pi-flag"
-                [outlined]="true"
-                (onClick)="setGoal(stat)"
-              >
-              </p-button>
+              </div>
+              <i
+                class="pi expand-icon"
+                [class.pi-chevron-down]="expandedStat() !== stat.id"
+                [class.pi-chevron-up]="expandedStat() === stat.id"
+              ></i>
             </div>
+
+            <!-- Level 2: Expanded Details (Progressive Disclosure) -->
+            @if (expandedStat() === stat.id) {
+              <div
+                class="stat-details"
+                [@slideDown]
+              >
+                <!-- Level 3: Deep Dive Charts -->
+                @if (showDeepDive() === stat.id && hasChartData(stat)) {
+                  <p-tabView
+                    class="stat-tabs"
+                  >
+                    <p-tabpanel header="Trends" leftIcon="pi pi-chart-line">
+                      @if (stat.trendData) {
+                        <div class="chart-container">
+                          <p-chart
+                            [type]="'line'"
+                            [data]="stat.trendData"
+                            [options]="chartOptions"
+                          ></p-chart>
+                        </div>
+                      } @else {
+                        <div class="no-data">
+                          No trend data available
+                        </div>
+                      }
+                    </p-tabpanel>
+
+                    <p-tabpanel header="Breakdown" leftIcon="pi pi-pie-chart">
+                      @if (stat.breakdownData) {
+                        <div class="chart-container">
+                          <p-chart
+                            [type]="'doughnut'"
+                            [data]="stat.breakdownData"
+                            [options]="chartOptions"
+                          ></p-chart>
+                        </div>
+                      } @else {
+                        <div class="no-data">
+                          No breakdown data available
+                        </div>
+                      }
+                    </p-tabpanel>
+
+                    <p-tabpanel header="Benchmarks" leftIcon="pi pi-flag">
+                      @if (stat.benchmarkData) {
+                        <div class="benchmark-container">
+                          @for (benchmark of stat.benchmarkData; track benchmark.label) {
+                            <div class="benchmark-item">
+                              <div class="benchmark-label">{{ benchmark.label }}</div>
+                              <div class="benchmark-value">{{ benchmark.value }}</div>
+                              <div class="benchmark-comparison">
+                                <p-tag
+                                  [value]="benchmark.comparison"
+                                  [severity]="getComparisonSeverity(benchmark.comparison)"
+                                  size="small"
+                                >
+                                </p-tag>
+                              </div>
+                            </div>
+                          }
+                        </div>
+                      } @else {
+                        <div class="no-data">
+                          No benchmark data available
+                        </div>
+                      }
+                    </p-tabpanel>
+                  </p-tabView>
+                }
+
+                <div class="action-buttons">
+                  <p-button
+                    label="Deep Dive"
+                    icon="pi pi-search-plus"
+                    [text]="true"
+                    (onClick)="toggleDeepDive(stat.id)"
+                    [disabled]="!hasChartData(stat)"
+                  >
+                  </p-button>
+
+                  <p-button
+                    label="Set Goal"
+                    icon="pi pi-flag"
+                    [outlined]="true"
+                    (onClick)="setGoal(stat)"
+                  >
+                  </p-button>
+                </div>
+              </div>
+            }
           </div>
-        </div>
+        }
       </div>
     </div>
   `,

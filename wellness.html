@@ -440,10 +440,15 @@
       import { authManager } from "./src/auth-manager.js";
       import { logger } from "./src/logger.js";
 
-      // Check authentication
-      if (!authManager.isAuthenticated()) {
+      // Check authentication - wait for initialization first
+      authManager.waitForInit().then(() => {
+        if (!authManager.isAuthenticated()) {
+          window.location.href = "/login.html";
+        }
+      }).catch((error) => {
+        logger.error("Auth check failed:", error);
         window.location.href = "/login.html";
-      }
+      });
 
       // Initialize page
       document.addEventListener("DOMContentLoaded", () => {

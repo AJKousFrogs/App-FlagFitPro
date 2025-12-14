@@ -15,17 +15,23 @@ const { authenticateRequest } = require("./utils/auth-helper.cjs");
 const { applyRateLimit } = require("./utils/rate-limiter.cjs");
 
 // Get performance trends over time
+// Always filters data up to and including today
 const getPerformanceTrends = async (userId, weeks = 7) => {
   try {
     // Get training sessions for the specified weeks
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - weeks * 7);
+    
+    // Ensure we only get data up to and including today
+    const todayEndOfDay = new Date();
+    todayEndOfDay.setHours(23, 59, 59, 999);
 
     const { data: sessions, error } = await supabaseAdmin
       .from("training_sessions")
       .select("completed_at, score, workout_type")
       .eq("user_id", userId)
       .gte("completed_at", startDate.toISOString())
+      .lte("completed_at", todayEndOfDay.toISOString())
       .order("completed_at", { ascending: true });
 
     if (error) throw error;
@@ -115,12 +121,18 @@ const getTeamChemistry = async (userId) => {
     if (membersError) throw membersError;
 
     // Calculate chemistry metrics based on training sessions together
+    // Always filters data up to and including today
     const memberIds = members.map((m) => m.user_id);
+    const todayEndOfDay = new Date();
+    todayEndOfDay.setHours(23, 59, 59, 999);
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+    
     const { data: teamSessions, error: sessionsError } = await supabaseAdmin
       .from("training_sessions")
       .select("user_id, completed_at, score")
       .in("user_id", memberIds)
-      .gte("completed_at", new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString());
+      .gte("completed_at", thirtyDaysAgo.toISOString())
+      .lte("completed_at", todayEndOfDay.toISOString());
 
     if (sessionsError) throw sessionsError;
 
@@ -161,17 +173,23 @@ const getTeamChemistry = async (userId) => {
 };
 
 // Get training distribution
+// Always filters data up to and including today
 const getTrainingDistribution = async (userId, period = "30days") => {
   try {
     const days = period === "30days" ? 30 : period === "90days" ? 90 : 7;
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
+    
+    // Ensure we only get data up to and including today
+    const todayEndOfDay = new Date();
+    todayEndOfDay.setHours(23, 59, 59, 999);
 
     const { data: sessions, error } = await supabaseAdmin
       .from("training_sessions")
       .select("workout_type")
       .eq("user_id", userId)
-      .gte("completed_at", startDate.toISOString());
+      .gte("completed_at", startDate.toISOString())
+      .lte("completed_at", todayEndOfDay.toISOString());
 
     if (error) throw error;
 
@@ -237,12 +255,18 @@ const getPositionPerformance = async (userId) => {
     if (membersError) throw membersError;
 
     // Get performance scores for each member
+    // Always filters data up to and including today
     const memberIds = members.map((m) => m.user_id);
+    const todayEndOfDay = new Date();
+    todayEndOfDay.setHours(23, 59, 59, 999);
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+    
     const { data: sessions, error: sessionsError } = await supabaseAdmin
       .from("training_sessions")
       .select("user_id, score")
       .in("user_id", memberIds)
-      .gte("completed_at", new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString());
+      .gte("completed_at", thirtyDaysAgo.toISOString())
+      .lte("completed_at", todayEndOfDay.toISOString());
 
     if (sessionsError) throw sessionsError;
 
@@ -303,11 +327,16 @@ const getPositionPerformance = async (userId) => {
 };
 
 // Get speed development progress
+// Always filters data up to and including today
 const getSpeedDevelopment = async (userId, weeks = 7) => {
   try {
     // Get performance tests for speed-related metrics
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - weeks * 7);
+    
+    // Ensure we only get data up to and including today
+    const todayEndOfDay = new Date();
+    todayEndOfDay.setHours(23, 59, 59, 999);
 
     const { data: tests, error } = await supabaseAdmin
       .from("performance_tests")
@@ -315,6 +344,7 @@ const getSpeedDevelopment = async (userId, weeks = 7) => {
       .eq("user_id", userId)
       .in("test_type", ["40YardDash", "10YardSplit"])
       .gte("completed_at", startDate.toISOString())
+      .lte("completed_at", todayEndOfDay.toISOString())
       .order("completed_at", { ascending: true });
 
     if (error) throw error;

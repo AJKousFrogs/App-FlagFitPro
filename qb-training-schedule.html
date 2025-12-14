@@ -440,12 +440,13 @@
       import { QB_TRAINING_PROGRAM } from "./src/qb-training-program-data.js";
 
       // Initialize page
-      document.addEventListener("DOMContentLoaded", function () {
+      document.addEventListener("DOMContentLoaded", async function () {
         console.log(
           '<i data-lucide="target" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> QB Training Schedule page loading...',
         );
 
-        // Check authentication
+        // Check authentication - wait for initialization first
+        await authManager.waitForInit();
         if (!authManager.isAuthenticated()) {
           console.log(
             '<i data-lucide="x-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> User not authenticated, redirecting to login',

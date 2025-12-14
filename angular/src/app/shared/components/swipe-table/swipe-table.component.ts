@@ -27,7 +27,9 @@ import { ButtonModule } from 'primeng/button';
       >
         <ng-template pTemplate="header">
           <tr>
-            <th *ngFor="let col of columns()">{{ col.header }}</th>
+            @for (col of columns(); track col.field) {
+              <th>{{ col.header }}</th>
+            }
             <th class="actions-header">Actions</th>
           </tr>
         </ng-template>
@@ -43,9 +45,11 @@ import { ButtonModule } from 'primeng/button';
               swipingIndex === rowIndex ? 'translateX(-' + swipeDistance + 'px)' : 'translateX(0)'
             "
           >
-            <td *ngFor="let col of columns()">
-              {{ getFieldValue(row, col.field) }}
-            </td>
+            @for (col of columns(); track col.field) {
+              <td>
+                {{ getFieldValue(row, col.field) }}
+              </td>
+            }
             <td class="actions-cell">
               <!-- Swipe actions overlay -->
               <div

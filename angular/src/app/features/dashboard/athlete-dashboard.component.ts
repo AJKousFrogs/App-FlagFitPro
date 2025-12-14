@@ -23,6 +23,7 @@ import { AcwrService } from "../../core/services/acwr.service";
 import { ReadinessService } from "../../core/services/readiness.service";
 import { TrendsService } from "../../core/services/trends.service";
 import { HeaderService } from "../../core/services/header.service";
+import { TrainingDataService } from "../../core/services/training-data.service";
 import { RealtimeBaseComponent } from "../../shared/components/realtime-base.component";
 
 @Component({
@@ -228,6 +229,7 @@ export class AthleteDashboardComponent extends RealtimeBaseComponent implements 
   private readinessService = inject(ReadinessService);
   private trendsService = inject(TrendsService);
   private headerService = inject(HeaderService);
+  private trainingDataService = inject(TrainingDataService);
 
   athleteId = signal<string | undefined>(undefined);
   todayWorkload = signal<number>(0);
@@ -325,21 +327,21 @@ export class AthleteDashboardComponent extends RealtimeBaseComponent implements 
   loadTodayWorkload(userId: string): void {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+    const todayStr = today.toISOString().split('T')[0];
     
-    this.apiService.get(API_ENDPOINTS.training.sessions, {
-      userId,
-      date: today.toISOString().split('T')[0]
+    // Use TrainingDataService for consistent data access
+    this.trainingDataService.getTrainingSessions({
+      startDate: todayStr,
+      endDate: todayStr,
+      limit: 50
     }).pipe(takeUntilDestroyed()).subscribe({
-      next: (response) => {
-        if (response.success && response.data) {
-          const sessions = Array.isArray(response.data) ? response.data : [];
-          const workload = sessions.reduce((sum: number, session: any) => {
-            const rpe = session.rpe || session.intensity_level || 0;
-            const duration = session.duration_minutes || 0;
-            return sum + (rpe * duration);
-          }, 0);
-          this.todayWorkload.set(workload);
-        }
+      next: (sessions) => {
+        const workload = sessions.reduce((sum: number, session: any) => {
+          const rpe = session.rpe || session.intensity_level || 0;
+          const duration = session.duration_minutes || session.duration || 0;
+          return sum + (rpe * duration);
+        }, 0);
+        this.todayWorkload.set(workload);
       },
       error: () => {
         this.todayWorkload.set(0);
@@ -348,18 +350,21 @@ export class AthleteDashboardComponent extends RealtimeBaseComponent implements 
   }
 
   loadNextSession(userId: string): void {
-    this.apiService.get(API_ENDPOINTS.training.sessions, {
-      userId,
-      upcoming: true,
+    // Use TrainingDataService with includeUpcoming flag
+    this.trainingDataService.getTrainingSessions({
+      includeUpcoming: true,
       limit: 1
     }).pipe(takeUntilDestroyed()).subscribe({
-      next: (response) => {
-        if (response.success && response.data && Array.isArray(response.data) && response.data.length > 0) {
-          const session = response.data[0];
-          this.nextSession.set({
-            title: session.session_type || 'Training Session',
-            date: new Date(session.session_date || session.date)
-          });
+      next: (sessions) => {
+        if (sessions && sessions.length > 0) {
+          const session = sessions[0];
+          const sessionDate = session.session_date || session.date;
+          if (sessionDate) {
+            this.nextSession.set({
+              title: session.session_type || session.type || 'Training Session',
+              date: new Date(sessionDate)
+            });
+          }
         }
       },
       error: () => {

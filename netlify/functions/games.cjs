@@ -74,6 +74,7 @@ const createGame = async (userId, gameData) => {
 };
 
 // Get games for a user/team
+// Always filters to show games up to and including today by default
 const getGames = async (userId, options = {}) => {
   try {
     checkEnvVars();
@@ -97,12 +98,31 @@ const getGames = async (userId, options = {}) => {
       .eq("team_id", teamId)
       .order("game_date", { ascending: false });
 
+    // By default, only show games up to and including today
+    // This ensures users always see accurate, up-to-date data
+    if (options.includeFuture !== true) {
+      const todayEndOfDay = new Date();
+      todayEndOfDay.setHours(23, 59, 59, 999);
+      query = query.lte("game_date", todayEndOfDay.toISOString());
+    }
+
     if (options.limit) {
       query = query.limit(options.limit);
     }
 
     if (options.season) {
       query = query.eq("season", options.season);
+    }
+
+    // Support date range filtering
+    if (options.startDate) {
+      query = query.gte("game_date", new Date(options.startDate).toISOString());
+    }
+
+    if (options.endDate) {
+      const endDate = new Date(options.endDate);
+      endDate.setHours(23, 59, 59, 999);
+      query = query.lte("game_date", endDate.toISOString());
     }
 
     const { data, error } = await query;
@@ -278,6 +298,7 @@ const getGameStats = async (gameId) => {
 };
 
 // Get player's game statistics (FIXED SQL INJECTION)
+// Only returns stats for games up to and including today
 const getPlayerGameStats = async (playerId, gameId) => {
   try {
     checkEnvVars();
@@ -285,6 +306,21 @@ const getPlayerGameStats = async (playerId, gameId) => {
     // SECURITY: Validate playerId format to prevent SQL injection
     if (!playerId || typeof playerId !== 'string' || !/^[A-Z0-9_-]+$/i.test(playerId)) {
       throw new Error("Invalid player ID format");
+    }
+
+    // First verify the game exists and is not in the future
+    const todayEndOfDay = new Date();
+    todayEndOfDay.setHours(23, 59, 59, 999);
+    
+    const { data: game, error: gameError } = await supabaseAdmin
+      .from("games")
+      .select("game_id, game_date")
+      .eq("game_id", gameId)
+      .lte("game_date", todayEndOfDay.toISOString())
+      .single();
+
+    if (gameError || !game) {
+      throw new Error(`Game not found or is in the future`);
     }
 
     // SECURITY: Use separate queries instead of string interpolation

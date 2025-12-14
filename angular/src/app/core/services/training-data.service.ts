@@ -1,16 +1,22 @@
 import { Injectable, inject } from "@angular/core";
 import { Observable, from } from "rxjs";
 import { map, catchError } from "rxjs/operators";
-import { SupabaseService } from "./supabase.service";
+import { ApiService, API_ENDPOINTS } from "./api.service";
 
 export interface TrainingSession {
   id?: string;
   user_id: string;
-  date: string;
-  type: string;
-  duration: number;
+  date?: string;
+  session_date?: string;
+  type?: string;
+  session_type?: string;
+  duration?: number;
+  duration_minutes?: number;
   intensity?: string;
+  intensity_level?: number;
+  rpe?: number;
   notes?: string;
+  status?: string;
   created_at?: string;
   updated_at?: string;
 }
@@ -21,142 +27,160 @@ export interface TrainingStats {
   avg_duration: number;
   sessions_this_week: number;
   sessions_this_month: number;
+  total_load?: number;
+  avg_load?: number;
+  current_streak?: number;
+  acwr?: number;
+  acute_load?: number;
+  chronic_load?: number;
+  acwr_risk_zone?: string;
+  weekly_volume?: number;
+  weekly_duration?: number;
+  weekly_sessions?: number;
+  weekly_avg_intensity?: number;
+}
+
+export interface TrainingSessionsOptions {
+  startDate?: string;
+  endDate?: string;
+  includeUpcoming?: boolean;
+  status?: string;
+  limit?: number;
 }
 
 @Injectable({
   providedIn: "root",
 })
 export class TrainingDataService {
-  private supabase = inject(SupabaseService);
+  private apiService = inject(ApiService);
 
   /**
    * Get all training sessions for the current user
+   * Always uses backend API - never direct Supabase queries
+   * By default, filters to sessions up to and including today
    */
-  getTrainingSessions(): Observable<TrainingSession[]> {
-    const userId = this.supabase.currentUser?.id;
-    if (!userId) {
-      return from(Promise.resolve([]));
+  getTrainingSessions(options?: TrainingSessionsOptions): Observable<TrainingSession[]> {
+    const params: Record<string, any> = {};
+    
+    if (options?.startDate) {
+      params.startDate = options.startDate;
+    }
+    
+    if (options?.endDate) {
+      params.endDate = options.endDate;
+    }
+    
+    if (options?.includeUpcoming) {
+      params.includeUpcoming = options.includeUpcoming.toString();
+    }
+    
+    if (options?.status) {
+      params.status = options.status;
+    }
+    
+    if (options?.limit) {
+      params.limit = options.limit.toString();
     }
 
-    return from(
-      this.supabase.client
-        .from("training_sessions")
-        .select("*")
-        .eq("user_id", userId)
-        .order("date", { ascending: false })
+    return this.apiService.get<TrainingSession[]>(
+      API_ENDPOINTS.training.sessions,
+      params
     ).pipe(
       map((response) => {
         if (response.error) {
           console.error("Error fetching training sessions:", response.error);
           return [];
         }
-        return response.data as TrainingSession[];
+        return response.data || [];
+      }),
+      catchError((error) => {
+        console.error("Error fetching training sessions:", error);
+        return from(Promise.resolve([]));
       })
     );
   }
 
   /**
    * Get training session by ID
+   * Note: This may need a separate endpoint or can be filtered from getTrainingSessions
    */
   getTrainingSession(id: string): Observable<TrainingSession | null> {
-    return from(
-      this.supabase.client
-        .from("training_sessions")
-        .select("*")
-        .eq("id", id)
-        .single()
-    ).pipe(
-      map((response) => {
-        if (response.error) {
-          console.error("Error fetching training session:", response.error);
-          return null;
-        }
-        return response.data as TrainingSession;
+    return this.getTrainingSessions({ limit: 1000 }).pipe(
+      map((sessions) => {
+        const session = sessions.find((s) => s.id === id);
+        return session || null;
       })
     );
   }
 
   /**
    * Create a new training session
+   * Uses backend API endpoint
    */
   createTrainingSession(
     session: Omit<TrainingSession, "id" | "created_at" | "updated_at">
   ): Observable<TrainingSession | null> {
-    return from(
-      this.supabase.client
-        .from("training_sessions")
-        .insert([session])
-        .select()
-        .single()
+    return this.apiService.post<TrainingSession>(
+      API_ENDPOINTS.training.createSession,
+      session
     ).pipe(
       map((response) => {
         if (response.error) {
           console.error("Error creating training session:", response.error);
-          throw response.error;
+          throw new Error(response.error);
         }
-        return response.data as TrainingSession;
+        return response.data || null;
+      }),
+      catchError((error) => {
+        console.error("Error creating training session:", error);
+        throw error;
       })
     );
   }
 
   /**
    * Update a training session
+   * Note: May need a PUT endpoint - for now returns error
    */
   updateTrainingSession(
     id: string,
     updates: Partial<TrainingSession>
   ): Observable<TrainingSession | null> {
-    return from(
-      this.supabase.client
-        .from("training_sessions")
-        .update(updates)
-        .eq("id", id)
-        .select()
-        .single()
-    ).pipe(
-      map((response) => {
-        if (response.error) {
-          console.error("Error updating training session:", response.error);
-          throw response.error;
-        }
-        return response.data as TrainingSession;
-      })
-    );
+    console.warn("Update training session not yet implemented via API");
+    return from(Promise.resolve(null));
   }
 
   /**
    * Delete a training session
+   * Note: May need a DELETE endpoint - for now returns false
    */
   deleteTrainingSession(id: string): Observable<boolean> {
-    return from(
-      this.supabase.client.from("training_sessions").delete().eq("id", id)
-    ).pipe(
-      map((response) => {
-        if (response.error) {
-          console.error("Error deleting training session:", response.error);
-          return false;
-        }
-        return true;
-      })
-    );
+    console.warn("Delete training session not yet implemented via API");
+    return from(Promise.resolve(false));
   }
 
   /**
    * Get training statistics for the current user
+   * Uses centralized backend endpoint for consistent calculations
    */
-  getTrainingStats(): Observable<TrainingStats | null> {
-    const userId = this.supabase.currentUser?.id;
-    if (!userId) {
-      return from(Promise.resolve(null));
+  getTrainingStats(options?: { startDate?: string; endDate?: string }): Observable<TrainingStats | null> {
+    const params: Record<string, any> = {};
+    
+    if (options?.startDate) {
+      params.startDate = options.startDate;
+    }
+    
+    if (options?.endDate) {
+      params.endDate = options.endDate;
     }
 
-    return from(
-      this.supabase.client.rpc("get_training_stats", { user_id: userId })
+    return this.apiService.get<TrainingStats>(
+      "/training-stats-enhanced",
+      params
     ).pipe(
       map((response) => {
         if (response.error) {
           console.error("Error fetching training stats:", response.error);
-          // Return default stats if RPC function doesn't exist
           return {
             total_sessions: 0,
             total_duration: 0,
@@ -165,39 +189,48 @@ export class TrainingDataService {
             sessions_this_month: 0,
           };
         }
-        return response.data as TrainingStats;
+        
+        const stats = response.data;
+        if (!stats) {
+          return {
+            total_sessions: 0,
+            total_duration: 0,
+            avg_duration: 0,
+            sessions_this_week: 0,
+            sessions_this_month: 0,
+          };
+        }
+
+        // Map backend response to TrainingStats interface
+        return {
+          total_sessions: stats.totalSessions || 0,
+          total_duration: stats.totalDuration || 0,
+          avg_duration: stats.avgDuration || 0,
+          sessions_this_week: stats.weeklySessions || 0,
+          sessions_this_month: 0, // Can be calculated if needed
+          total_load: stats.totalLoad,
+          avg_load: stats.avgLoad,
+          current_streak: stats.currentStreak,
+          acwr: stats.acwr,
+          acute_load: stats.acuteLoad,
+          chronic_load: stats.chronicLoad,
+          acwr_risk_zone: stats.acwrRiskZone,
+          weekly_volume: stats.weeklyVolume,
+          weekly_duration: stats.weeklyDuration,
+          weekly_sessions: stats.weeklySessions,
+          weekly_avg_intensity: stats.weeklyAvgIntensity,
+        };
+      }),
+      catchError((error) => {
+        console.error("Error fetching training stats:", error);
+        return from(Promise.resolve({
+          total_sessions: 0,
+          total_duration: 0,
+          avg_duration: 0,
+          sessions_this_week: 0,
+          sessions_this_month: 0,
+        }));
       })
     );
-  }
-
-  /**
-   * Subscribe to real-time updates for training sessions
-   */
-  subscribeToTrainingSessions(
-    callback: (payload: any) => void
-  ): () => void {
-    const userId = this.supabase.currentUser?.id;
-    if (!userId) {
-      return () => {};
-    }
-
-    const channel = this.supabase.client
-      .channel("training_sessions_changes")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "training_sessions",
-          filter: `user_id=eq.${userId}`,
-        },
-        callback
-      )
-      .subscribe();
-
-    // Return unsubscribe function
-    return () => {
-      this.supabase.client.removeChannel(channel);
-    };
   }
 }

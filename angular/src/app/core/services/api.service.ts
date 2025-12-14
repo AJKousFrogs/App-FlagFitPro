@@ -148,6 +148,7 @@ export const API_ENDPOINTS = {
   },
   training: {
     stats: "/training-stats",
+    statsEnhanced: "/training-stats-enhanced",
     complete: "/api/training/complete",
     suggestions: "/api/training/suggestions",
     sessions: "/api/training/sessions",

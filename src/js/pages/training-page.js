@@ -175,8 +175,25 @@ async function initializePageState() {
   const scheduleSettings = storageService.getScheduleSettings();
   trainingPageState.setScheduleSettings(scheduleSettings);
 
-  // Load recent workouts
-  const recentWorkouts = storageService.getRecentWorkouts();
+  // Load recent workouts from backend API (with localStorage fallback)
+  let recentWorkouts = [];
+  try {
+    const { trainingApiService } = await import("../services/training-api-service.js");
+    recentWorkouts = await trainingApiService.getTrainingSessions({ limit: 50 });
+    
+    // If API returns empty and we have localStorage data, use it as fallback
+    if (recentWorkouts.length === 0) {
+      const localWorkouts = storageService.getRecentWorkouts();
+      if (localWorkouts && localWorkouts.length > 0) {
+        logger.info("Using localStorage workouts as fallback");
+        recentWorkouts = localWorkouts;
+      }
+    }
+  } catch (error) {
+    logger.error("Error loading training sessions from API, using localStorage:", error);
+    recentWorkouts = storageService.getRecentWorkouts();
+  }
+  
   trainingPageState.setRecentWorkouts(recentWorkouts);
 
   // Calculate stats

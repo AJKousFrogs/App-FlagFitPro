@@ -12,6 +12,7 @@
   "private": true,
   "dependencies": {
     "@angular/animations": "^21.0.3",
+    "@angular/aria": "^21.0.3",
     "@angular/common": "^21.0.3",
     "@angular/compiler": "^21.0.3",
     "@angular/core": "^21.0.3",
@@ -25,14 +26,15 @@
     "primeicons": "^7.0.0",
     "primeng": "^21.0.1",
     "rxjs": "~7.8.2",
-    "tslib": "^2.8.1",
-    "zone.js": "^0.16.0"
+    "tslib": "^2.8.1"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^21.0.2",
     "@angular/cli": "^21.0.2",
     "@angular/compiler-cli": "^21.0.3",
     "@types/node": "^24.10.1",
-    "typescript": "~5.9.3"
+    "@vitest/ui": "^4.0.15",
+    "typescript": "~5.9.3",
+    "vitest": "^4.0.15"
   }
 }

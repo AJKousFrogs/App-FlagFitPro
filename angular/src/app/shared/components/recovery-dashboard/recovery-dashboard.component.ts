@@ -60,21 +60,23 @@ import { takeUntil } from 'rxjs/operators';
           </div>
 
           <div class="recovery-metrics">
-            <div class="metric" *ngFor="let metric of recoveryMetrics()">
-              <div class="metric-header">
-                <i [class]="metric.icon" [style.color]="metric.color"></i>
-                <span class="metric-name">{{ metric.name }}</span>
+            @for (metric of recoveryMetrics(); track metric.name) {
+              <div class="metric">
+                <div class="metric-header">
+                  <i [class]="metric.icon" [style.color]="metric.color"></i>
+                  <span class="metric-name">{{ metric.name }}</span>
+                </div>
+                <div class="metric-value">
+                  <span class="value">{{ metric.value }}</span>
+                  <span class="unit">{{ metric.unit }}</span>
+                </div>
+                <p-progressBar
+                  [value]="metric.percentage"
+                  [showValue]="false"
+                  [style]="{'--p-progressbar-value-bg': metric.color}">
+                </p-progressBar>
               </div>
-              <div class="metric-value">
-                <span class="value">{{ metric.value }}</span>
-                <span class="unit">{{ metric.unit }}</span>
-              </div>
-              <p-progressBar
-                [value]="metric.percentage"
-                [showValue]="false"
-                [style]="{'--p-progressbar-value-bg': metric.color}">
-              </p-progressBar>
-            </div>
+            }
           </div>
         </div>
       </p-card>
@@ -82,41 +84,45 @@ import { takeUntil } from 'rxjs/operators';
       <!-- Evidence-Based Recovery Protocols -->
       <p-card header="Recommended Recovery Protocols" class="protocols-card">
         <div class="protocols-grid">
-          <div
-            *ngFor="let protocol of recommendedProtocols()"
-            class="protocol-card"
-            [class.priority]="protocol.priority === 'high'"
-            (click)="selectProtocol(protocol)">
-            <div class="protocol-header">
-              <div class="protocol-info">
-                <h4>{{ protocol.name }}</h4>
-                <p-tag
-                  [value]="protocol.category"
-                  [severity]="getProtocolSeverity(protocol.category)">
-                </p-tag>
+          @for (protocol of recommendedProtocols(); track protocol.name) {
+            <div
+              class="protocol-card"
+              [class.priority]="protocol.priority === 'high'"
+              (click)="selectProtocol(protocol)">
+              <div class="protocol-header">
+                <div class="protocol-info">
+                  <h4>{{ protocol.name }}</h4>
+                  <p-tag
+                    [value]="protocol.category"
+                    [severity]="getProtocolSeverity(protocol.category)">
+                  </p-tag>
+                </div>
+                <div class="protocol-meta">
+                  <span class="duration">{{ protocol.duration }} min</span>
+                  <i class="pi pi-chevron-right"></i>
+                </div>
               </div>
-              <div class="protocol-meta">
-                <span class="duration">{{ protocol.duration }} min</span>
-                <i class="pi pi-chevron-right"></i>
+
+              <p class="protocol-description">{{ protocol.description }}</p>
+
+              <!-- Research Evidence Badge -->
+              @if (protocol.evidenceLevel) {
+                <div class="evidence-badge">
+                  <i class="pi pi-verified"></i>
+                  <span>{{ protocol.evidenceLevel }} Evidence</span>
+                  <small>({{ protocol.studyCount }} studies)</small>
+                </div>
+              }
+
+              <!-- Expected Benefits -->
+              <div class="benefits">
+                <h5>Expected Benefits:</h5>
+                <ul>
+                  @for (benefit of protocol.benefits; track benefit) {
+                    <li>{{ benefit }}</li>
+                  }
+                </ul>
               </div>
-            </div>
-
-            <p class="protocol-description">{{ protocol.description }}</p>
-
-            <!-- Research Evidence Badge -->
-            <div class="evidence-badge" *ngIf="protocol.evidenceLevel">
-              <i class="pi pi-verified"></i>
-              <span>{{ protocol.evidenceLevel }} Evidence</span>
-              <small>({{ protocol.studyCount }} studies)</small>
-            </div>
-
-            <!-- Expected Benefits -->
-            <div class="benefits">
-              <h5>Expected Benefits:</h5>
-              <ul>
-                <li *ngFor="let benefit of protocol.benefits">{{ benefit }}</li>
-              </ul>
-            </div>
 
             <div class="protocol-actions">
               <p-button
@@ -134,15 +140,15 @@ import { takeUntil } from 'rxjs/operators';
                 (onClick)="showProtocolDetails(protocol)">
               </p-button>
             </div>
-          </div>
+          }
         </div>
       </p-card>
 
       <!-- Active Recovery Sessions -->
-      <p-card
-        header="Active Recovery Session"
-        class="active-session-card"
-        *ngIf="activeSession()">
+      @if (activeSession()) {
+        <p-card
+          header="Active Recovery Session"
+          class="active-session-card">
         <div class="session-content">
           <div class="session-info">
             <h3>{{ activeSession()?.protocol.name }}</h3>
@@ -213,7 +219,8 @@ import { takeUntil } from 'rxjs/operators';
             </p-button>
           </div>
         </div>
-      </p-card>
+        </p-card>
+      }
 
       <!-- Recovery History & Analytics -->
       <p-card header="Recovery Analytics" class="analytics-card">
@@ -233,23 +240,25 @@ import { takeUntil } from 'rxjs/operators';
 
           <p-tabpanel header="Research Insights" leftIcon="pi pi-book">
             <div class="research-insights">
-              <div *ngFor="let insight of researchInsights()" class="research-item">
-                <div class="research-header">
-                  <h4>{{ insight.title }}</h4>
-                  <p-tag [value]="insight.journal" severity="info"></p-tag>
+              @for (insight of researchInsights(); track insight.title) {
+                <div class="research-item">
+                  <div class="research-header">
+                    <h4>{{ insight.title }}</h4>
+                    <p-tag [value]="insight.journal" severity="info"></p-tag>
+                  </div>
+                  <p>{{ insight.summary }}</p>
+                  <div class="research-meta">
+                    <span>{{ insight.authors }} ({{ insight.year }})</span>
+                    <p-button
+                      label="Read Study"
+                      icon="pi pi-external-link"
+                      [text]="true"
+                      size="small"
+                      (onClick)="openStudy(insight.doi)">
+                    </p-button>
+                  </div>
                 </div>
-                <p>{{ insight.summary }}</p>
-                <div class="research-meta">
-                  <span>{{ insight.authors }} ({{ insight.year }})</span>
-                  <p-button
-                    label="Read Study"
-                    icon="pi pi-external-link"
-                    [text]="true"
-                    size="small"
-                    (onClick)="openStudy(insight.doi)">
-                  </p-button>
-                </div>
-              </div>
+              }
             </div>
           </p-tabpanel>
         </p-tabs>

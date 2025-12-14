@@ -241,6 +241,22 @@ class NotificationStore {
    */
   async refreshBadge() {
     try {
+      // Ensure auth manager is initialized
+      await authManager.waitForInit();
+      
+      if (!authManager.isAuthenticated()) {
+        logger.debug("User not authenticated, skipping badge refresh");
+        this.unreadCount = 0;
+        this.notify();
+        return 0;
+      }
+
+      // Ensure token is set in API client
+      const token = authManager.getToken();
+      if (token) {
+        apiClient.setAuthToken(token);
+      }
+
       const response = await apiClient.get(API_ENDPOINTS.dashboard.notificationsCount);
       
       // Handle different response formats
@@ -261,6 +277,14 @@ class NotificationStore {
       this.notify();
       return count;
     } catch (error) {
+      // Handle authentication errors gracefully
+      if (error.status === 401 || error.message?.includes("Authentication required")) {
+        logger.debug("Authentication required for badge refresh, user may not be logged in");
+        this.unreadCount = 0;
+        this.notify();
+        return 0;
+      }
+      
       logger.warn("Failed to refresh badge count from API:", error);
       // Fallback to calculating from current notifications
       const calculatedCount = this.calculateUnreadCount();
@@ -332,13 +356,20 @@ class DashboardPage {
       if (user) {
         const greetingEl = document.getElementById('userGreeting');
         if (greetingEl) {
-          // Get user's first name from metadata
-          const firstName = user.user_metadata?.first_name ||
-                           user.user_metadata?.name?.split(' ')[0] ||
-                           user.email?.split('@')[0] ||
-                           'there';
+          // Get user's first name - check multiple possible locations
+          let firstName = 'there';
+          
+          if (user.user_metadata?.first_name) {
+            firstName = user.user_metadata.first_name;
+          } else if (user.user_metadata?.name) {
+            firstName = user.user_metadata.name.split(' ')[0];
+          } else if (user.name) {
+            firstName = user.name.split(' ')[0];
+          } else if (user.email) {
+            firstName = user.email.split('@')[0];
+          }
 
-          greetingEl.textContent = `👋 Hello, ${firstName}!`;
+          greetingEl.textContent = `👋 Welcome back, ${firstName}!`;
         }
       }
     } catch (error) {
@@ -349,14 +380,24 @@ class DashboardPage {
   /**
    * Setup notification store subscription to update UI on state changes
    */
-  setupNotificationStore() {
+  async setupNotificationStore() {
     // Subscribe to store changes
     this.notificationStore.subscribe((state) => {
       this.updateNotificationUI(state);
     });
 
-    // Initial badge refresh
-    this.refreshBadge();
+    // Wait for auth manager to initialize before refreshing badge
+    try {
+      await authManager.waitForInit();
+      // Only refresh badge if user is authenticated
+      if (authManager.isAuthenticated()) {
+        this.refreshBadge();
+      }
+    } catch (error) {
+      logger.warn("Failed to wait for auth initialization:", error);
+      // Try to refresh badge anyway (will fail gracefully if not authenticated)
+      this.refreshBadge();
+    }
   }
 
   /**
@@ -438,9 +479,31 @@ class DashboardPage {
    */
   async refreshBadge() {
     try {
+      // Ensure auth manager is initialized and user is authenticated
+      await authManager.waitForInit();
+      
+      if (!authManager.isAuthenticated()) {
+        logger.debug("User not authenticated, skipping badge refresh");
+        this.updateBadge(0);
+        return;
+      }
+
+      // Ensure token is set in API client
+      const token = authManager.getToken();
+      if (token) {
+        apiClient.setAuthToken(token);
+      }
+
       const count = await this.notificationStore.refreshBadge();
       this.updateBadge(count);
     } catch (error) {
+      // Handle authentication errors gracefully
+      if (error.status === 401 || error.message?.includes("Authentication required")) {
+        logger.debug("Authentication required for badge refresh, user may not be logged in");
+        this.updateBadge(0);
+        return;
+      }
+      
       logger.warn("Failed to refresh badge:", error);
       // Use count from store as fallback
       this.updateBadge(this.notificationStore.unreadCount);
@@ -657,9 +720,20 @@ class DashboardPage {
     // Make getNotificationCount available globally
     window.getNotificationCount = async () => {
       try {
+        // Ensure auth manager is initialized
+        await authManager.waitForInit();
+        
+        if (!authManager.isAuthenticated()) {
+          return 0;
+        }
+
         const count = await this.notificationStore.refreshBadge();
         return count;
       } catch (error) {
+        // Handle authentication errors gracefully
+        if (error.status === 401 || error.message?.includes("Authentication required")) {
+          return 0;
+        }
         logger.warn("Failed to get notification count:", error);
         return this.notificationStore.unreadCount || 0;
       }

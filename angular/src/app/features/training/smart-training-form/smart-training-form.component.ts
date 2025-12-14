@@ -65,23 +65,26 @@ interface EquipmentOption {
     <p-card header="Create Training Session">
       <form [formGroup]="trainingForm" class="smart-training-form">
         <!-- AI Suggestions Banner -->
-        <div class="ai-suggestions" *ngIf="aiSuggestions().length > 0">
-          <h5>
-            <i class="pi pi-sparkles"></i>
-            AI Recommendations
-          </h5>
-          <div class="suggestion-chips">
-            <p-chip
-              *ngFor="let suggestion of aiSuggestions()"
-              [label]="suggestion.title"
-              icon="pi pi-plus"
-              [removable]="false"
-              (click)="applySuggestion(suggestion)"
-              class="clickable-chip"
-            >
-            </p-chip>
+        @if (aiSuggestions().length > 0) {
+          <div class="ai-suggestions">
+            <h5>
+              <i class="pi pi-sparkles"></i>
+              AI Recommendations
+            </h5>
+            <div class="suggestion-chips">
+              @for (suggestion of aiSuggestions(); track suggestion.title) {
+                <p-chip
+                  [label]="suggestion.title"
+                  icon="pi pi-plus"
+                  [removable]="false"
+                  (click)="applySuggestion(suggestion)"
+                  class="clickable-chip"
+                >
+                </p-chip>
+              }
+            </div>
           </div>
-        </div>
+        }
 
         <!-- Dynamic Form Fields -->
         <div class="form-grid">
@@ -125,32 +128,32 @@ interface EquipmentOption {
           </div>
 
           <!-- Weather-aware outdoor toggle -->
-          <div class="form-field" *ngIf="weatherData()">
-            <div class="weather-indicator">
-              <i class="pi pi-sun"></i>
-              <span
-                >{{ weatherData()?.temp }}°F, {{ weatherData()?.condition }}</span
+          @if (weatherData()) {
+            <div class="form-field">
+              <div class="weather-indicator">
+                <i class="pi pi-sun"></i>
+                <span
+                  >{{ weatherData()?.temp }}°F, {{ weatherData()?.condition }}</span
+                >
+                <p-tag
+                  [value]="weatherData()?.suitability"
+                  [severity]="getWeatherSeverity(weatherData()?.suitability || 'good')"
+                >
+                </p-tag>
+              </div>
+              <p-inputSwitch
+                formControlName="outdoorSession"
+                [disabled]="!weatherData()?.suitable"
               >
-              <p-tag
-                [value]="weatherData()?.suitability"
-                [severity]="getWeatherSeverity(weatherData()?.suitability || 'good')"
-              >
-              </p-tag>
+              </p-inputSwitch>
+              <label class="switch-label">Outdoor Session</label>
             </div>
-            <p-inputSwitch
-              formControlName="outdoorSession"
-              [disabled]="!weatherData()?.suitable"
-            >
-            </p-inputSwitch>
-            <label class="switch-label">Outdoor Session</label>
-          </div>
+          }
         </div>
 
         <!-- Smart Equipment Suggestions -->
-        <div
-          class="equipment-section"
-          *ngIf="recommendedEquipment().length > 0"
-        >
+        @if (recommendedEquipment().length > 0) {
+          <div class="equipment-section">
           <h5>Recommended Equipment</h5>
           <div class="equipment-grid">
             <p-selectButton
@@ -160,7 +163,8 @@ interface EquipmentOption {
             >
             </p-selectButton>
           </div>
-        </div>
+          </div>
+        }
 
         <!-- Form Actions -->
         <div class="form-actions">

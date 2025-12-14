@@ -51,6 +51,42 @@
           return await window.notificationStore.refreshBadge();
         }
 
+        // Try to use authManager if available
+        let authToken = null;
+        if (window.authManager && typeof window.authManager.getToken === 'function') {
+          try {
+            await window.authManager.waitForInit();
+            if (window.authManager.isAuthenticated()) {
+              authToken = window.authManager.getToken();
+            }
+          } catch (e) {
+            logger.debug("AuthManager not ready, trying fallback token retrieval");
+          }
+        }
+
+        // Fallback: try to get token from localStorage or secure storage
+        if (!authToken) {
+          // Try secure storage if available
+          if (window.secureStorage && typeof window.secureStorage.getAuthToken === 'function') {
+            try {
+              authToken = await window.secureStorage.getAuthToken();
+            } catch (e) {
+              logger.debug("Secure storage not available");
+            }
+          }
+          
+          // Final fallback: localStorage
+          if (!authToken) {
+            authToken = localStorage.getItem("authToken");
+          }
+        }
+
+        // If no token, return 0 (user not authenticated)
+        if (!authToken) {
+          logger.debug("No auth token available, returning 0");
+          return 0;
+        }
+
         // Fallback: call API directly
         // Try Netlify Functions endpoint first, then fallback to REST API
         const baseUrl = window.location.origin;
@@ -62,12 +98,17 @@
         const response = await fetch(endpoint, {
           method: "GET",
           headers: {
-            "Authorization": `Bearer ${localStorage.getItem("authToken") || ""}`,
+            "Authorization": `Bearer ${authToken}`,
             "Content-Type": "application/json",
           },
         });
 
         if (!response.ok) {
+          // Handle 401 gracefully (user not authenticated)
+          if (response.status === 401) {
+            logger.debug("Authentication required for notification count");
+            return 0;
+          }
           logger.warn("Failed to fetch notification count:", response.status);
           return 0;
         }
@@ -83,7 +124,7 @@
         }
         return 0;
       } catch (error) {
-        console.warn("Failed to get notification count:", error);
+        logger.warn("Failed to get notification count:", error);
         return 0;
       }
     };

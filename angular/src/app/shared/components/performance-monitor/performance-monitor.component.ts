@@ -25,71 +25,76 @@ import { MessageService } from "primeng/api";
     MessageModule,
   ],
   template: `
-    <div class="performance-monitor" *ngIf="showMonitor()">
-      <div class="monitor-header">
-        <h4>Performance Monitor</h4>
-        <p-button
-          icon="pi pi-times"
-          [text]="true"
-          size="small"
-          (onClick)="hideMonitor()"
-          ariaLabel="Close performance monitor"
-        >
-        </p-button>
-      </div>
-
-      <div class="performance-metrics">
-        <div
-          class="metric"
-          *ngFor="let metric of performanceMetrics(); trackBy: trackByLabel"
-          [class.warning]="metric.status === 'warning'"
-          [class.critical]="metric.status === 'critical'"
-        >
-          <div class="metric-header">
-            <span class="metric-label">{{ metric.label }}</span>
-            <span class="metric-value">{{ metric.value }}</span>
-          </div>
-          <p-progressBar
-            [value]="metric.score"
-            [severity]="getProgressSeverity(metric.status)"
-            [showValue]="false"
-          >
-          </p-progressBar>
-          <div class="metric-status">
-            <span [class]="'status-' + metric.status">
-              {{ getStatusLabel(metric.status) }}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <div class="performance-actions" *ngIf="hasIssues()">
-        <p-message
-          severity="warn"
-          text="Performance issues detected"
-          [closable]="false"
-        >
-        </p-message>
-        <div class="action-buttons">
+    @if (showMonitor()) {
+      <div class="performance-monitor">
+        <div class="monitor-header">
+          <h4>Performance Monitor</h4>
           <p-button
-            label="Optimize Now"
-            icon="pi pi-cog"
+            icon="pi pi-times"
+            [text]="true"
             size="small"
-            (onClick)="optimizePerformance()"
-          >
-          </p-button>
-          <p-button
-            label="Report Issue"
-            icon="pi pi-flag"
-            severity="secondary"
-            [outlined]="true"
-            size="small"
-            (onClick)="reportIssue()"
+            (onClick)="hideMonitor()"
+            ariaLabel="Close performance monitor"
           >
           </p-button>
         </div>
+
+        <div class="performance-metrics">
+          @for (metric of performanceMetrics(); track trackByLabel($index, metric)) {
+            <div
+              class="metric"
+              [class.warning]="metric.status === 'warning'"
+              [class.critical]="metric.status === 'critical'"
+            >
+              <div class="metric-header">
+                <span class="metric-label">{{ metric.label }}</span>
+                <span class="metric-value">{{ metric.value }}</span>
+              </div>
+              <p-progressBar
+                [value]="metric.score"
+                [severity]="getProgressSeverity(metric.status)"
+                [showValue]="false"
+              >
+              </p-progressBar>
+              <div class="metric-status">
+                <span [class]="'status-' + metric.status">
+                  {{ getStatusLabel(metric.status) }}
+                </span>
+              </div>
+            </div>
+          }
+        </div>
+
+        @if (hasIssues()) {
+          <div class="performance-actions">
+            <p-message
+              severity="warn"
+              text="Performance issues detected"
+              [closable]="false"
+            >
+            </p-message>
+            <div class="action-buttons">
+              <p-button
+                label="Optimize Now"
+                icon="pi pi-cog"
+                size="small"
+                (onClick)="optimizePerformance()"
+              >
+              </p-button>
+              <p-button
+                label="Report Issue"
+                icon="pi pi-flag"
+                severity="secondary"
+                [outlined]="true"
+                size="small"
+                (onClick)="reportIssue()"
+              >
+              </p-button>
+            </div>
+          </div>
+        }
       </div>
-    </div>
+    }
   `,
   styles: [
     `

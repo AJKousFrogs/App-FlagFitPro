@@ -54,12 +54,14 @@ export interface AccessibleDataPoint {
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let dataPoint of accessibleData(); let i = index">
-            <th scope="row">{{ dataPoint.date | date : "short" }}</th>
-            <td>{{ dataPoint.speed }}</td>
-            <td>{{ dataPoint.accuracy }}</td>
-            <td>{{ dataPoint.trendDescription }}</td>
-          </tr>
+          @for (dataPoint of accessibleData(); track $index) {
+            <tr>
+              <th scope="row">{{ dataPoint.date | date : "short" }}</th>
+              <td>{{ dataPoint.speed }}</td>
+              <td>{{ dataPoint.accuracy }}</td>
+              <td>{{ dataPoint.trendDescription }}</td>
+            </tr>
+          }
         </tbody>
       </table>
 

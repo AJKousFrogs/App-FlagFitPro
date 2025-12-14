@@ -72,69 +72,76 @@ import { firstValueFrom } from 'rxjs';
         </div>
 
         <!-- Quick Add Suggestions (AI-powered) -->
-        <div class="quick-suggestions" *ngIf="aiSuggestions().length > 0">
-          <h5>
-            <i class="pi pi-sparkles"></i>
-            AI Recommendations for You
-          </h5>
-          <div class="suggestion-chips">
-            <p-tag
-              *ngFor="let suggestion of aiSuggestions()"
-              [value]="suggestion.name"
-              [severity]="suggestion.priority === 'high' ? 'success' : 'info'"
-              (click)="addSuggestedFood(suggestion)"
-              class="clickable-tag">
-              {{ suggestion.name }} ({{ suggestion.benefit }})
-            </p-tag>
+        @if (aiSuggestions().length > 0) {
+          <div class="quick-suggestions">
+            <h5>
+              <i class="pi pi-sparkles"></i>
+              AI Recommendations for You
+            </h5>
+            <div class="suggestion-chips">
+              @for (suggestion of aiSuggestions(); track suggestion.name) {
+                <p-tag
+                  [value]="suggestion.name"
+                  [severity]="suggestion.priority === 'high' ? 'success' : 'info'"
+                  (click)="addSuggestedFood(suggestion)"
+                  class="clickable-tag">
+                  {{ suggestion.name }} ({{ suggestion.benefit }})
+                </p-tag>
+              }
+            </div>
           </div>
-        </div>
+        }
       </p-card>
 
       <!-- Daily Nutrition Goals Progress -->
       <p-card header="Daily Nutrition Goals" class="nutrition-goals-card">
         <div class="goals-grid">
-          <div
-            *ngFor="let goal of nutritionGoals()"
-            class="goal-item"
-            [class.achieved]="goal.current >= goal.target"
-            [class.warning]="goal.current < goal.target * 0.7 && goal.priority === 'high'">
-            <div class="goal-header">
-              <span class="nutrient-name">{{ goal.nutrient }}</span>
-              <p-tag
-                [value]="goal.priority"
-                [severity]="getPrioritySeverity(goal.priority)"
-                size="small">
-              </p-tag>
-            </div>
-
-            <div class="goal-progress">
-              <p-progressBar
-                [value]="(goal.current / goal.target) * 100"
-                [showValue]="false"
-                [style]="getProgressStyle(goal)">
-              </p-progressBar>
-
-              <div class="progress-text">
-                <span class="current">{{ goal.current | number: '1.1-1' }}</span>
-                <span class="separator">/</span>
-                <span class="target">{{ goal.target | number: '1.1-1' }} {{ goal.unit }}</span>
-              </div>
-            </div>
-
-            <!-- Recommended foods for this nutrient -->
-            <div class="nutrient-sources" *ngIf="goal.current < goal.target">
-              <small>Good sources:</small>
-              <div class="source-tags">
+          @for (goal of nutritionGoals(); track goal.nutrient) {
+            <div
+              class="goal-item"
+              [class.achieved]="goal.current >= goal.target"
+              [class.warning]="goal.current < goal.target * 0.7 && goal.priority === 'high'">
+              <div class="goal-header">
+                <span class="nutrient-name">{{ goal.nutrient }}</span>
                 <p-tag
-                  *ngFor="let source of getNutrientSources(goal.nutrient)"
-                  [value]="source"
-                  severity="secondary"
-                  size="small"
-                  class="source-tag">
+                  [value]="goal.priority"
+                  [severity]="getPrioritySeverity(goal.priority)"
+                  size="small">
                 </p-tag>
               </div>
+
+              <div class="goal-progress">
+                <p-progressBar
+                  [value]="(goal.current / goal.target) * 100"
+                  [showValue]="false"
+                  [style]="getProgressStyle(goal)">
+                </p-progressBar>
+
+                <div class="progress-text">
+                  <span class="current">{{ goal.current | number: '1.1-1' }}</span>
+                  <span class="separator">/</span>
+                  <span class="target">{{ goal.target | number: '1.1-1' }} {{ goal.unit }}</span>
+                </div>
+              </div>
+
+              <!-- Recommended foods for this nutrient -->
+              @if (goal.current < goal.target) {
+                <div class="nutrient-sources">
+                  <small>Good sources:</small>
+                  <div class="source-tags">
+                    @for (source of getNutrientSources(goal.nutrient); track source) {
+                      <p-tag
+                        [value]="source"
+                        severity="secondary"
+                        size="small"
+                        class="source-tag">
+                      </p-tag>
+                    }
+                  </div>
+                </div>
+              }
             </div>
-          </div>
+          }
         </div>
       </p-card>
 
@@ -150,10 +157,12 @@ import { firstValueFrom } from 'rxjs';
               </div>
 
               <div class="meal-foods">
-                <div *ngFor="let food of meal.foods" class="food-item">
-                  <span class="food-name">{{ food.name }}</span>
-                  <span class="food-amount">{{ food.amount }} {{ food.unit }}</span>
-                </div>
+                @for (food of meal.foods; track food.name) {
+                  <div class="food-item">
+                    <span class="food-name">{{ food.name }}</span>
+                    <span class="food-amount">{{ food.amount }} {{ food.unit }}</span>
+                  </div>
+                }
               </div>
 
               <!-- Nutrition breakdown chart -->
@@ -172,32 +181,35 @@ import { firstValueFrom } from 'rxjs';
       </p-card>
 
       <!-- Performance Impact Insights -->
-      <p-card
-        header="Performance Impact"
-        class="performance-insights-card"
-        *ngIf="performanceInsights().length > 0">
-        <div class="insights-list">
-          <div
-            *ngFor="let insight of performanceInsights()"
-            class="insight-item"
-            [class]="insight.type">
-            <div class="insight-icon">
-              <i [class]="insight.icon"></i>
-            </div>
-            <div class="insight-content">
-              <h5>{{ insight.title }}</h5>
-              <p>{{ insight.description }}</p>
-              <p-button
-                *ngIf="insight.actionLabel"
-                [label]="insight.actionLabel"
-                size="small"
-                [text]="true"
-                (onClick)="executeInsightAction(insight)">
-              </p-button>
-            </div>
+      @if (performanceInsights().length > 0) {
+        <p-card
+          header="Performance Impact"
+          class="performance-insights-card">
+          <div class="insights-list">
+            @for (insight of performanceInsights(); track insight.title) {
+              <div
+                class="insight-item"
+                [class]="insight.type">
+                <div class="insight-icon">
+                  <i [class]="insight.icon"></i>
+                </div>
+                <div class="insight-content">
+                  <h5>{{ insight.title }}</h5>
+                  <p>{{ insight.description }}</p>
+                  @if (insight.actionLabel) {
+                    <p-button
+                      [label]="insight.actionLabel"
+                      size="small"
+                      [text]="true"
+                      (onClick)="executeInsightAction(insight)">
+                    </p-button>
+                  }
+                </div>
+              </div>
+            }
           </div>
-        </div>
-      </p-card>
+        </p-card>
+      }
     </div>
   `,
   styles: [
