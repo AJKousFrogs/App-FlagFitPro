@@ -46,12 +46,7 @@ exports.handler = async (event, context) => {
       return auth.error;
     }
 
-    const userId = auth.user.id;
-      } catch (jwtError) {
-        // Invalid token - continue without authentication
-        console.warn("Invalid token provided, returning fallback notifications");
-      }
-    }
+    userId = auth.user.id;
 
     // If no user ID, return fallback notifications
     if (!userId) {
