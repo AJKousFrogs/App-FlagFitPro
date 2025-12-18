@@ -1,8 +1,22 @@
 # FlagFit AI Chatbot - Advanced Logic & Answering System
 
+**Version**: 1.0  
+**Last Updated**: January 2025  
+**Status**: ✅ Production Ready
+
+---
+
 ## Overview
 
 The FlagFit AI Chatbot uses a sophisticated multi-layer intelligence system to understand questions and generate comprehensive, evidence-based answers.
+
+### Key Features
+
+- **Three-Layer Intelligence**: Question parser, answer generator, and response enhancer
+- **8 Intent Types**: Dosage, timing, safety, comparison, how-to, what-is, why, protocol
+- **Personalization**: Body stats-based personalized answers
+- **Multi-Source Synthesis**: Knowledge base and research article integration
+- **Caching**: 1-hour cache for frequent queries
 
 ## Architecture
 
@@ -232,6 +246,19 @@ Test the chatbot with various question types:
 - Protocols: "What's the best [recovery method] protocol?"
 - Comparisons: "Which is better: [option A] or [option B]?"
 - How-to: "How do I [action]?"
+
+## 🔗 **Related Documentation**
+
+- [Enhanced Sport Psychology Database](ENHANCED_SPORT_PSYCHOLOGY_DATABASE.md) - Sport psychology content
+- [Enhanced Sports Nutrition Database](ENHANCED_SPORTS_NUTRITION_DATABASE.md) - Nutrition content
+- [Architecture](ARCHITECTURE.md) - System architecture overview
+
+## 📝 **Changelog**
+
+- **v1.0 (2025-01)**: Initial chatbot logic documentation
+- Three-layer intelligence system documented
+- Intent detection and entity extraction explained
+- Personalization and caching features documented
 
 ## Summary
 

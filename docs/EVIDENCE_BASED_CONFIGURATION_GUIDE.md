@@ -1,5 +1,9 @@
 # Evidence-Based Configuration Guide
 
+**Version**: 1.0  
+**Last Updated**: January 2025  
+**Status**: ✅ Production Ready
+
 **FlagFit Pro - ACWR, Readiness Scoring, and Taper Logic Documentation**
 
 ---
@@ -7,6 +11,14 @@
 ## Overview
 
 FlagFit Pro uses evidence-based configurations for all training load monitoring, readiness assessment, and periodization decisions. This guide documents the scientific foundations, implementation details, and customization options.
+
+### Key Features
+
+- **Evidence-Based Parameters**: Research-backed thresholds and configurations
+- **ACWR Monitoring**: Acute:Chronic Workload Ratio with EWMA method
+- **Readiness Scoring**: Composite score combining workload, wellness, sleep, and game proximity
+- **Tapering Logic**: Evidence-based tapering protocols for competition preparation
+- **Calibration Support**: Team-specific calibration and customization options
 
 ---
 
@@ -401,6 +413,19 @@ For questions about evidence-based configurations:
 2. Check evidence preset citations
 3. Consult with sports science team
 4. Refer to original research papers
+
+## 🔗 **Related Documentation**
+
+- [Evidence Configuration System Guide](EVIDENCE_CONFIG_GUIDE.md) - Configuration system architecture
+- [AI Training Scheduler Guide](AI_TRAINING_SCHEDULER_GUIDE.md) - Training scheduler integration
+- [Comprehensive Offseason Periodization](COMPREHENSIVE_OFFSEASON_PERIODIZATION.md) - Periodization plans
+
+## 📝 **Changelog**
+
+- **v1.0 (2025-01)**: Initial evidence-based configuration guide
+- ACWR, readiness scoring, and tapering logic documented
+- Scientific foundations and citations added
+- Calibration process documented
 
 **Remember**: Evidence-based configurations are starting points. Teams should calibrate using their own data for optimal accuracy.
 
