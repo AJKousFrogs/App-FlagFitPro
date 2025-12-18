@@ -12,6 +12,8 @@ import { ButtonModule } from "primeng/button";
 import { ChartModule } from "primeng/chart";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
+import { Tabs, TabPanel } from "primeng/tabs";
+import { Select } from "primeng/select";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import {
@@ -51,6 +53,9 @@ interface Metric {
     ChartModule,
     TableModule,
     TagModule,
+    Tabs,
+    TabPanel,
+    Select,
     MainLayoutComponent,
     PageHeaderComponent,
   ],
@@ -174,7 +179,6 @@ interface Metric {
           <!-- Training Distribution Chart -->
           @defer (on viewport) {
             <p-card class="chart-card">
-          <p-card class="chart-card">
             <ng-template pTemplate="header">
               <div class="chart-header">
                 <h3 class="chart-title">Training Session Distribution</h3>

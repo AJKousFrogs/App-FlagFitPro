@@ -15,8 +15,9 @@
 /* PrimeIcons - CSS file, must use @import */
 @import "primeicons/primeicons.css";
 
-/* Angular Material Theme */
-@import "@angular/material/prebuilt-themes/indigo-pink.css";
+/* Note: Angular Material theme removed - only CDK drag-drop is used, not full Material library
+ * This saves ~50-80KB in bundle size
+ */
 
 /* Global Styles */
 * {

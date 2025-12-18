@@ -207,8 +207,13 @@ describe('StatisticsCalculationService', () => {
     });
 
     it('should detect outliers', () => {
-      const result = service.calculateBMI(50, 200);
-      expect(result.isOutlier).toBe(false); // Normal range
+      // Test normal BMI (not an outlier)
+      const normalResult = service.calculateBMI(75, 180); // BMI ~23.1
+      expect(normalResult.isOutlier).toBe(false);
+      
+      // Test outlier (BMI < 16)
+      const outlierResult = service.calculateBMI(50, 200); // BMI ~12.5
+      expect(outlierResult.isOutlier).toBe(true);
     });
 
     it('should throw on invalid weight', () => {
