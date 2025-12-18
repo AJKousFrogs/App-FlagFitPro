@@ -11,7 +11,16 @@ const storage = {
     // Fallback to direct localStorage access
     try {
       const storedValue = localStorage.getItem(key);
-      return storedValue ? JSON.parse(storedValue) : defaultValue;
+      if (!storedValue) return defaultValue;
+      
+      // Try to parse as JSON first, but handle plain strings
+      try {
+        const parsed = JSON.parse(storedValue);
+        return parsed;
+      } catch (e) {
+        // If parsing fails, it's likely a plain string - return as-is
+        return storedValue;
+      }
     } catch (e) {
       return defaultValue;
     }
@@ -23,7 +32,13 @@ const storage = {
     }
     // Fallback to direct localStorage access
     try {
-      localStorage.setItem(key, JSON.stringify(value));
+      // For theme, store as plain string for compatibility
+      // Other values can be stored as JSON
+      if (key === "theme" && typeof value === "string") {
+        localStorage.setItem(key, value);
+      } else {
+        localStorage.setItem(key, JSON.stringify(value));
+      }
       return true;
     } catch (e) {
       logger.error('Failed to save to localStorage:', e);

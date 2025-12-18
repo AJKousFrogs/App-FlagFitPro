@@ -127,33 +127,47 @@ logger.debug(
       return;
     }
 
-    if (this.isAuthenticated()) {
+    // Check if we have stored auth data (token or user)
+    const hasStoredAuth = this.token || this.user;
+    
+    if (this.isAuthenticated() || hasStoredAuth) {
       if (isDevelopment) {
-        logger.debug("User is already authenticated");
+        logger.debug("User appears to be authenticated");
         logger.debug("Current user:", this.user?.email || "Unknown");
         logger.debug("Current token:", this.token ? "Present" : "Missing");
       }
 
-      // Verify token is still valid by making a test request
+      // Verify token is still valid by making a test request (non-blocking)
+      // Don't redirect on validation failure - let the page handle it
+      // This prevents redirect loops when network is slow or validation endpoint is unavailable
       this.validateStoredToken()
         .then((isValid) => {
           if (isValid) {
             logger.debug("Token validation successful");
             this.notifyLoginCallbacks();
           } else {
-            if (isDevelopment) {logger.warn("Token validation failed, redirecting to login");}
-            this.redirectToLogin();
+            // Validation failed, but we have stored auth data
+            // Don't redirect immediately - the user might still be authenticated
+            // Individual pages can check auth and redirect if needed
+            if (isDevelopment) {
+              logger.warn("Token validation failed, but stored auth exists - allowing navigation");
+            }
+            // Still notify callbacks so pages can check auth state
+            this.notifyLoginCallbacks();
           }
         })
         .catch((error) => {
           if (isDevelopment) {
             logger.error("Token validation error:", error);
+            logger.debug("Allowing navigation despite validation error - stored auth exists");
           }
+          // Don't redirect on validation errors - assume user is still authenticated
+          // Individual pages will handle auth checks
           this.notifyLoginCallbacks();
         });
     } else {
-      if (isDevelopment) {logger.debug("No valid authentication found on page load");}
-      // Check if we're on a protected page
+      // No stored auth data at all - check if we're on a protected page
+      if (isDevelopment) {logger.debug("No stored authentication found on page load");}
       if (this.isProtectedPage()) {
         if (isDevelopment) {logger.debug("Protected page detected, redirecting to login");}
         this.redirectToLogin();

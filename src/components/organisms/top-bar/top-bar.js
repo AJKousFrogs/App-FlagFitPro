@@ -696,26 +696,41 @@
     const themeToggle = document.getElementById("header-theme-toggle");
     if (!themeToggle) {return;}
 
+    // theme-switcher.js handles the toggle logic and event listeners
+    // This function just syncs the visual state when theme changes
+    
     // Initialize toggle state based on current theme
-    const currentTheme =
-      document.documentElement.getAttribute("data-theme") || "dark";
+    const getCurrentTheme = () => {
+      return document.documentElement.getAttribute("data-theme") || 
+             localStorage.getItem("theme") ||
+             "light";
+    };
+    
+    const currentTheme = getCurrentTheme();
     themeToggle.checked = currentTheme === "dark";
-
-    // Update toggle visual state
     updateToggleVisualState(currentTheme);
 
-    // Handle toggle change
-    themeToggle.addEventListener("change", (e) => {
-      const newTheme = e.target.checked ? "dark" : "light";
+    // Listen for theme changes from theme-switcher.js or other sources
+    const observer = new MutationObserver(() => {
+      const newTheme = getCurrentTheme();
+      if (themeToggle.checked !== (newTheme === "dark")) {
+        themeToggle.checked = newTheme === "dark";
+        updateToggleVisualState(newTheme);
+      }
+    });
 
-      // Use global theme switcher if available, otherwise fallback
-      if (window.themeSwitcher) {
-        window.themeSwitcher.switchTheme(newTheme);
-      } else {
-        // Fallback implementation
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    });
+
+    // Also listen for storage changes (in case theme changes in another tab)
+    window.addEventListener("storage", (e) => {
+      if (e.key === "theme") {
+        const newTheme = e.newValue || "light";
         document.documentElement.setAttribute("data-theme", newTheme);
         document.body.setAttribute("data-theme", newTheme);
-        localStorage.setItem("theme", newTheme);
+        themeToggle.checked = newTheme === "dark";
         updateToggleVisualState(newTheme);
       }
     });

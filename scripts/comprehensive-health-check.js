@@ -712,7 +712,7 @@ class HealthChecker {
 
     try {
       const supabaseUrl = process.env.SUPABASE_URL;
-      const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+      const supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
 
       if (!supabaseUrl || !supabaseKey) {
         database.issues.push("Missing Supabase environment variables");
@@ -899,7 +899,7 @@ class HealthChecker {
 
       // Optional but recommended
       const recommendedVars = [
-        'SUPABASE_SERVICE_ROLE_KEY',
+        'SUPABASE_SERVICE_KEY',
         'JWT_SECRET',
         'NODE_ENV',
       ];

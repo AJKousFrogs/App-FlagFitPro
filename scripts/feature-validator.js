@@ -498,7 +498,7 @@ class FeatureValidator {
     try {
       // Check for connection pooling configuration
       const supabaseUrl = process.env.SUPABASE_URL;
-      const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+      const supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
       
       if (!supabaseUrl || !supabaseKey) {
         return {
@@ -538,7 +538,7 @@ class FeatureValidator {
   async testQueryPerformance() {
     try {
       const supabaseUrl = process.env.SUPABASE_URL;
-      const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+      const supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
       
       if (!supabaseUrl || !supabaseKey) {
         return {
@@ -595,7 +595,7 @@ class FeatureValidator {
   async testSchemaIntegrity() {
     try {
       const supabaseUrl = process.env.SUPABASE_URL;
-      const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+      const supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
       
       if (!supabaseUrl || !supabaseKey) {
         return false;
@@ -821,7 +821,7 @@ class FeatureValidator {
       // Also check database for research data
       try {
         const supabaseUrl = process.env.SUPABASE_URL;
-        const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+        const supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
         
         if (supabaseUrl && supabaseKey) {
           const supabase = createClient(supabaseUrl, supabaseKey);

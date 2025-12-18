@@ -15,7 +15,7 @@ const getSupabaseConfig = () => {
     return { url: null, anonKey: null };
   }
 
-  // Try to get from window._env (set by build process)
+  // Try to get from window._env (set by supabase-config.js or build process)
   if (window._env?.SUPABASE_URL && window._env?.SUPABASE_ANON_KEY) {
     return {
       url: window._env.SUPABASE_URL,
@@ -23,12 +23,16 @@ const getSupabaseConfig = () => {
     };
   }
 
-  // Try to get from import.meta.env (Vite)
-  if (import.meta.env?.VITE_SUPABASE_URL && import.meta.env?.VITE_SUPABASE_ANON_KEY) {
-    return {
-      url: import.meta.env.VITE_SUPABASE_URL,
-      anonKey: import.meta.env.VITE_SUPABASE_ANON_KEY
-    };
+  // Try to get from import.meta.env (Vite) - only if available
+  try {
+    if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_SUPABASE_URL && import.meta.env?.VITE_SUPABASE_ANON_KEY) {
+      return {
+        url: import.meta.env.VITE_SUPABASE_URL,
+        anonKey: import.meta.env.VITE_SUPABASE_ANON_KEY
+      };
+    }
+  } catch (e) {
+    // import.meta not available in this context, continue to next check
   }
 
   // For local development, check localStorage for testing

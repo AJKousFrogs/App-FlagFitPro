@@ -49,8 +49,14 @@ export class ApiService {
   }
 
   private normalizeEndpoint(endpoint: string): string {
-    if (endpoint.startsWith("/api/") && this.baseUrl.endsWith("/api")) {
-      return endpoint.replace(/^\/api/, "");
+    // If baseUrl is /.netlify/functions, keep /api/ prefix (redirects handle it)
+    // If baseUrl ends with /api, remove /api/ prefix
+    if (endpoint.startsWith("/api/")) {
+      if (this.baseUrl.endsWith("/api")) {
+        return endpoint.replace(/^\/api/, "");
+      }
+      // For Netlify functions, keep the /api/ prefix - redirects will handle routing
+      return endpoint;
     }
     return endpoint;
   }
@@ -126,14 +132,14 @@ export class ApiService {
 }
 
 // API Endpoints Configuration
+// Note: Auth login/register/logout use Supabase directly via SupabaseService
+// Only auth-me endpoint uses backend API for token verification
 export const API_ENDPOINTS = {
   auth: {
-    login: "/auth-login",
-    register: "/auth-register",
-    logout: "/api/auth/logout",
-    refresh: "/api/auth/refresh",
-    me: "/auth-me",
-    csrf: "/api/auth/csrf",
+    me: "/auth-me", // ✅ Exists - used for token verification
+    // login/register: Use SupabaseService.signIn()/signUp() directly
+    // logout: Use SupabaseService.signOut() directly
+    // refresh/csrf: Not implemented - using Supabase session management
   },
   dashboard: {
     overview: "/api/dashboard/overview",

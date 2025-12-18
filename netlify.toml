@@ -161,10 +161,76 @@
   status = 200
   force = true
 
+# API Routes for Training Suggestions
+[[redirects]]
+  from = "/api/training/suggestions"
+  to = "/.netlify/functions/training-suggestions"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/training/suggestions/*"
+  to = "/.netlify/functions/training-suggestions"
+  status = 200
+  force = true
+
 # API Routes for Training Stats
 [[redirects]]
   from = "/training-stats"
   to = "/.netlify/functions/training-stats"
+  status = 200
+  force = true
+
+# API Routes for Weather
+[[redirects]]
+  from = "/api/weather/current"
+  to = "/.netlify/functions/weather"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/weather/*"
+  to = "/.netlify/functions/weather"
+  status = 200
+  force = true
+
+# API Routes for Nutrition
+[[redirects]]
+  from = "/api/nutrition/*"
+  to = "/.netlify/functions/nutrition"
+  status = 200
+  force = true
+
+# API Routes for Recovery
+[[redirects]]
+  from = "/api/recovery/*"
+  to = "/.netlify/functions/recovery"
+  status = 200
+  force = true
+
+# API Routes for Admin
+[[redirects]]
+  from = "/api/admin/*"
+  to = "/.netlify/functions/admin"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/admin"
+  to = "/.netlify/functions/admin"
+  status = 200
+  force = true
+
+# API Routes for Coach
+[[redirects]]
+  from = "/api/coach/*"
+  to = "/.netlify/functions/coach"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/coach"
+  to = "/.netlify/functions/coach"
   status = 200
   force = true
 
@@ -189,18 +255,8 @@
   force = true
 
 # API Routes for Auth
-[[redirects]]
-  from = "/auth-login"
-  to = "/.netlify/functions/auth-login"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/auth-register"
-  to = "/.netlify/functions/auth-register"
-  status = 200
-  force = true
-
+# Note: Login and Register use Supabase directly (not backend functions)
+# Only auth-me endpoint uses backend function for token verification
 [[redirects]]
   from = "/auth-me"
   to = "/.netlify/functions/auth-me"
