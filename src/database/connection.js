@@ -176,11 +176,25 @@ class DatabaseConnection {
     }
 
     try {
+      // Get auth token from secure storage
+      let token = null;
+      if (window.secureStorage && typeof window.secureStorage.getAuthToken === 'function') {
+        try {
+          token = await window.secureStorage.getAuthToken();
+        } catch (error) {
+          // Fallback to legacy method if secureStorage fails
+          token = localStorage.getItem("authToken");
+        }
+      } else {
+        // Fallback: legacy localStorage method
+        token = localStorage.getItem("authToken");
+      }
+
       const response = await fetch("/api/database/query", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           query,

@@ -157,6 +157,7 @@
 
     let idx = -1;
     let items = [];
+    let showingHistory = false;
 
     // Debounce function
     const debounce = (fn, delay = 250) => {
@@ -167,15 +168,65 @@
       };
     };
 
-    // Render search results
-    const render = (results = []) => {
+    // Highlight matches in text
+    const highlightText = (text, query, matchedTexts = []) => {
+      if (!text || !query) return text;
+      
+      // Use matchedTexts if available, otherwise use query
+      const termsToHighlight = matchedTexts.length > 0 ? matchedTexts : [query];
+      let highlighted = text;
+      
+      for (const term of termsToHighlight) {
+        if (!term || !term.trim()) continue;
+        // Escape special regex characters
+        const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const regex = new RegExp(`(${escapedTerm})`, 'gi');
+        highlighted = highlighted.replace(regex, (match) => {
+          // Check if already inside a highlight tag
+          if (highlighted.indexOf(`<mark>${match}</mark>`) !== -1) {
+            return match;
+          }
+          return `<mark class="search-highlight">${match}</mark>`;
+        });
+      }
+      
+      return highlighted;
+    };
+
+    // Render search results or history
+    const render = (results = [], isHistory = false) => {
+      showingHistory = isHistory;
+      
+      if (isHistory && results.length === 0) {
+        listbox.innerHTML = "";
+        listbox.hidden = true;
+        input.setAttribute("aria-expanded", "false");
+        status.textContent = "";
+        return;
+      }
+
       listbox.innerHTML = results
         .map(
           (r, i) => {
-            const description = r.description ? `<div class="result-description">${r.description}</div>` : "";
+            if (isHistory) {
+              // Render history item
+              return `<div id="sr-${i}" role="option" class="result-item result-item-history" aria-selected="${i === idx}">
+                <div class="result-label">
+                  <span class="history-icon">🕒</span>
+                  ${r}
+                </div>
+              </div>`;
+            }
+            
+            // Render search result with highlighting
+            const matchedTexts = r.matchedTexts || [input.value.trim()];
+            const highlightedLabel = highlightText(r.label, input.value.trim(), matchedTexts);
+            const highlightedDescription = r.description ? highlightText(r.description, input.value.trim(), matchedTexts) : "";
+            const description = highlightedDescription ? `<div class="result-description">${highlightedDescription}</div>` : "";
             const category = r.category ? `<div class="result-category">${r.category}</div>` : "";
+            
             return `<div id="sr-${i}" role="option" class="result-item" aria-selected="${i === idx}">
-              <div class="result-label">${r.label}</div>
+              <div class="result-label">${highlightedLabel}</div>
               ${description}
               ${category}
             </div>`;
@@ -188,26 +239,47 @@
 
       // Announce results
       if (results.length > 0) {
-        status.textContent = `${results.length} result${results.length !== 1 ? "s" : ""} found`;
-      } else if (input.value.trim()) {
+        if (isHistory) {
+          status.textContent = `${results.length} recent search${results.length !== 1 ? "es" : ""}`;
+        } else {
+          status.textContent = `${results.length} result${results.length !== 1 ? "s" : ""} found`;
+        }
+      } else if (input.value.trim() && !isHistory) {
         status.textContent = "No matches found";
       } else {
         status.textContent = "";
       }
     };
 
+    // Show search history
+    const showHistory = () => {
+      try {
+        const history = window.getRecentSearches ? window.getRecentSearches() : [];
+        if (history.length > 0) {
+          items = history;
+          idx = -1;
+          input.setAttribute("aria-activedescendant", "");
+          render(history, true);
+        } else {
+          render([], true);
+        }
+      } catch (error) {
+        logger.debug("Failed to load search history:", error);
+        render([], true);
+      }
+    };
+
     // Search function
     const search = debounce(async (query) => {
       if (!query.trim()) {
-        render([]);
-        idx = -1;
-        input.setAttribute("aria-activedescendant", "");
+        // Show history when input is empty
+        showHistory();
         return;
       }
 
       try {
-        // Call global search function
-        const results = await window.performGlobalSearch(query);
+        // Call global search function (don't save to history yet - will save on selection)
+        const results = await window.performGlobalSearch(query, { saveToHistory: false });
 
         items = results;
         idx = results.length > 0 ? 0 : -1;
@@ -215,7 +287,7 @@
           "aria-activedescendant",
           idx >= 0 ? `sr-${idx}` : "",
         );
-        render(results);
+        render(results, false);
       } catch (error) {
         logger.error("Search error:", error);
         render([]);
@@ -228,6 +300,13 @@
       idx = -1;
       input.setAttribute("aria-activedescendant", "");
       search(e.target.value);
+    });
+
+    // Show history on focus if input is empty
+    input.addEventListener("focus", () => {
+      if (!input.value.trim()) {
+        showHistory();
+      }
     });
 
     // Keyboard navigation
@@ -263,17 +342,32 @@
 
         case "Enter":
           if (idx >= 0 && items[idx]) {
-            // Handle selection
             const selected = items[idx];
-            input.value = selected.label;
-            listbox.hidden = true;
-            input.setAttribute("aria-expanded", "false");
-            input.setAttribute("aria-activedescendant", "");
-            idx = -1;
+            
+            if (showingHistory) {
+              // History item selected - use it as search query
+              input.value = selected;
+              search(selected);
+            } else {
+              // Search result selected
+              // Save to history
+              if (window.saveToHistory) {
+                window.saveToHistory(input.value.trim());
+              } else if (window.performGlobalSearch) {
+                // Trigger search again with history saving enabled
+                window.performGlobalSearch(input.value.trim(), { saveToHistory: true }).catch(() => {});
+              }
+              
+              input.value = selected.label || selected.value || selected;
+              listbox.hidden = true;
+              input.setAttribute("aria-expanded", "false");
+              input.setAttribute("aria-activedescendant", "");
+              idx = -1;
 
-            // Navigate or perform action
-            if (selected.url) {
-              window.location.href = selected.url;
+              // Navigate or perform action
+              if (selected.url) {
+                window.location.href = selected.url;
+              }
             }
           }
           e.preventDefault();
@@ -304,13 +398,29 @@
         const itemIdx = parseInt(item.id.replace("sr-", ""), 10);
         if (items[itemIdx]) {
           const selected = items[itemIdx];
-          input.value = selected.label;
-          listbox.hidden = true;
-          input.setAttribute("aria-expanded", "false");
-          input.setAttribute("aria-activedescendant", "");
+          
+          if (showingHistory) {
+            // History item clicked - use it as search query
+            input.value = selected;
+            search(selected);
+          } else {
+            // Search result clicked
+            // Save to history
+            if (window.saveToHistory) {
+              window.saveToHistory(input.value.trim());
+            } else if (window.performGlobalSearch) {
+              // Trigger search again with history saving enabled
+              window.performGlobalSearch(input.value.trim(), { saveToHistory: true }).catch(() => {});
+            }
+            
+            input.value = selected.label || selected.value || selected;
+            listbox.hidden = true;
+            input.setAttribute("aria-expanded", "false");
+            input.setAttribute("aria-activedescendant", "");
 
-          if (selected.url) {
-            window.location.href = selected.url;
+            if (selected.url) {
+              window.location.href = selected.url;
+            }
           }
         }
       }

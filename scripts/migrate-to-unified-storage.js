@@ -2,8 +2,11 @@
  * Storage Migration Script
  * Migrates files from old storage patterns to unified storage service
  *
+ * NOTE: Deprecated storage functions have been removed from shared.js.
+ * This script helps migrate any remaining legacy code.
+ *
  * Handles:
- * 1. Imports from shared.js (saveToStorage, getFromStorage, removeFromStorage)
+ * 1. Imports from shared.js (saveToStorage, getFromStorage, removeFromStorage) - REMOVED
  * 2. Imports from old storageService.js
  * 3. Function call replacements
  */

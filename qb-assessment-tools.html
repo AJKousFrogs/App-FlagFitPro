@@ -17,561 +17,420 @@
     <!-- New Modular CSS Architecture -->
     <link rel="stylesheet" href="./src/css/main.css" />
     <!-- Page-specific styles -->
-    <script src="./src/theme-switcher.js" defer></script>
+    <link rel="stylesheet" href="./src/css/pages/qb-assessment-tools.css" />
+    
+    <!-- Lucide Icons - Modern icon library -->
     <script
       src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"
       crossorigin="anonymous"
       defer
-    >
-      <!-- Universal Components -->
-      <script type="module" src="./src/js/main.js">
-    </script>
-    <!-- Footer Loader (Dynamic Component) -->
-    <script type="module" src="./src/js/components/footer-loader.js" defer></script>
+    ></script>
+    <script src="./src/icon-helper.js" defer></script>
+    <script src="./src/theme-switcher.js" defer></script>
+    <script src="./src/nav-highlight.js" defer></script>
+    <script src="./src/components/organisms/top-bar/top-bar.js" defer></script>
+    <!-- Universal Components -->
+    <script type="module" src="./src/js/main.js"></script>
+    <!-- Common Component Loaders (Sidebar, Top Bar, Footer) -->
+    <script type="module" src="./src/js/components/common-loaders.js" defer></script>
+    <!-- AI Chat Bubble Loader (Dynamic Component) -->
+    <script type="module" src="./src/js/components/ai-chat-bubble-loader.js" defer></script>
   
+    <!-- Supabase Configuration (Centralized) -->
+    <script src="./src/js/config/supabase-config.js"></script>
+    
     <!-- Supabase JS SDK from CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <!-- Supabase Configuration -->
-    <script>
-      // Set Supabase config in window for production
-      window._env = {
-        SUPABASE_URL: 'https://pvziciccwxgftcielknm.supabase.co',
-        SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2emljaWNjd3hnZnRjaWVsa25tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MzcwNTgsImV4cCI6MjA3NTExMzA1OH0.1nfJrtWPl6DrAwvjGvM1-CZBeyYgCaV9oDdaadpqhLU'
-      };
-    </script>
-
   </head>
   <body>
-    <div class="container l-container u-margin-x-auto u-padding-20">
-      <div class="header u-text-center u-margin-bottom-30 u-text-primary">
-        <h1 class="u-text-heading-xl u-font-weight-700 u-margin-bottom-10">
-          <i
-            data-lucide="target"
-            style="
-              width: 16px;
-              height: 16px;
-              display: inline-block;
-              vertical-align: middle;
-              color: var(--icon-color-primary);
-              stroke: var(--icon-color-primary);
-            "
-          ></i>
-          QB Assessment & Testing
-        </h1>
-        <p class="u-text-body-lg u-margin-bottom-20" style="opacity: 0.9">
-          Comprehensive performance evaluation and tournament readiness
-          assessment
-        </p>
-      </div>
+    <div class="dashboard-container">
+      <!-- Unified Sidebar Navigation (Loaded Dynamically) -->
+      <div data-sidebar-container></div>
+      <!-- Top Bar (Loaded Dynamically) -->
+      <div data-topbar-container></div>
 
-      <div
-        class="readiness-banner u-padding-20 u-radius-lg u-margin-bottom-30 u-text-center u-text-primary"
-      >
-        <div
-          class="readiness-score u-text-display-xl u-font-weight-700 u-margin-bottom-10"
-          id="tournamentReadinessScore"
-        >
-          87%
+      <main class="main-content u-flex-1 u-min-width-0 u-bg-primary">
+        <!-- Page Header -->
+        <div class="card card-elevated">
+          <div class="card-body">
+            <div class="u-text-body-sm u-text-secondary u-margin-bottom-4" style="line-height: 1.4; font-weight: 500">
+              <span>QB Development</span>
+              <span style="margin: 0 var(--space-1, 4px); opacity: 0.5">•</span>
+              <span>Performance Assessment</span>
+            </div>
+            <h1 class="u-text-heading-xl u-font-weight-700 u-text-primary u-margin-bottom-8 u-display-flex u-align-center u-gap-8">
+              <i
+                data-lucide="target"
+                class="icon-24"
+                style="color: var(--color-brand-primary)"
+              ></i>
+              QB Assessment & Testing Tools
+            </h1>
+            <p class="text-body-md text-secondary leading-relaxed">
+              Comprehensive performance evaluation and tournament readiness assessment
+            </p>
+          </div>
         </div>
-        <h3 class="u-text-heading-md">Tournament Readiness</h3>
-        <p class="u-text-body-md">
-          Elite Level - Competition Ready for 320-throw challenge
-        </p>
-      </div>
 
-      <div
-        class="assessment-grid u-display-grid u-gap-20 u-margin-bottom-30"
-        style="grid-template-columns: repeat(auto-fit, minmax(350px, 1fr))"
-      >
+        <!-- Tournament Readiness Banner -->
+        <div class="card card-elevated" style="background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%); color: white; margin-top: 24px;">
+          <div class="card-body" style="text-align: center; padding: 40px 32px;">
+            <div
+              class="u-text-display-xl u-font-weight-700 u-margin-bottom-12"
+              id="tournamentReadinessScore"
+              style="font-size: 4rem; line-height: 1;"
+            >
+              87%
+            </div>
+            <h3 class="u-text-heading-lg u-margin-bottom-8" style="color: white;">Tournament Readiness</h3>
+            <p class="text-body-lg" style="color: rgba(255, 255, 255, 0.9); margin: 0;">
+              Elite Level - Competition Ready for 320-throw challenge
+            </p>
+          </div>
+        </div>
+
+        <!-- Assessment Cards Grid -->
+        <div
+          class="u-display-grid u-gap-24 u-margin-top-24"
+          style="grid-template-columns: repeat(auto-fit, minmax(350px, 1fr))"
+        >
         <!-- Throwing Velocity Assessment -->
-        <div class="assessment-card u-radius-lg u-padding-24">
-          <div
-            class="card-header u-display-flex u-align-center u-margin-bottom-20"
-          >
-            <div
-              class="card-icon velocity-icon u-display-flex u-align-center u-justify-center u-margin-right-16 u-radius-md"
-            >
-              🚀
-            </div>
-            <div>
+        <div class="card card-interactive">
+          <div class="card-header">
+            <h3 class="card-title u-display-flex u-align-center u-gap-12 u-margin-0">
               <div
-                class="card-title u-text-heading-md u-font-weight-600 u-text-primary"
+                class="u-display-flex u-align-center u-justify-center u-radius-md"
+                style="width: 48px; height: 48px; background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);"
               >
-                Throwing Velocity
+                <i data-lucide="zap" class="icon-24" style="color: white;"></i>
               </div>
-              <div class="card-subtitle u-text-body-sm u-text-secondary">
-                Peak velocity development tracking
+              <div>
+                <div class="u-text-heading-md u-font-weight-600 u-text-primary">Throwing Velocity</div>
+                <div class="u-text-body-sm u-text-secondary">Peak velocity development tracking</div>
+              </div>
+            </h3>
+          </div>
+          <div class="card-body">
+
+            <div class="u-display-flex u-justify-between u-align-center u-padding-12 u-margin-bottom-12 u-radius-md" style="background: var(--surface-secondary);">
+              <span class="u-font-weight-500 u-text-primary">Current Max Velocity</span>
+              <span class="u-font-weight-700 u-text-heading-md u-text-brand" id="currentVelocity">--</span>
+            </div>
+
+            <div class="u-display-flex u-justify-between u-align-center u-padding-12 u-margin-bottom-16 u-radius-md" style="background: var(--surface-secondary);">
+              <span class="u-font-weight-500 u-text-primary">Velocity Gain</span>
+              <span class="u-font-weight-700 u-text-heading-md u-text-brand" id="velocityGain">--</span>
+            </div>
+
+            <div class="u-margin-bottom-16">
+              <div class="u-display-flex u-justify-between u-margin-bottom-4">
+                <span class="u-text-body-sm u-text-secondary">Progress</span>
+                <span class="u-text-body-sm u-text-secondary" id="velocityProgressText">0%</span>
+              </div>
+              <div class="u-width-full u-radius-sm u-overflow-hidden" style="height: 8px; background: var(--color-border-secondary);">
+                <div
+                  class="u-height-full u-radius-sm"
+                  id="velocityProgress"
+                  style="width: 0%; transition: width 0.3s ease; background: linear-gradient(90deg, var(--color-brand-primary), var(--color-brand-secondary));"
+                ></div>
               </div>
             </div>
-          </div>
 
-          <div
-            class="metric-display u-display-flex u-justify-between u-align-center u-margin-y-16 u-padding-12 u-bg-secondary u-radius-md"
-          >
-            <span class="metric-label u-font-weight-500"
-              >Current Max Velocity</span
-            >
-            <span
-              class="metric-value u-font-weight-700 u-text-heading-sm"
-              id="currentVelocity"
-              >--</span
-            >
+            <div class="u-display-flex u-gap-8" style="flex-direction: column;">
+              <button
+                class="btn btn-primary"
+                onclick="openVelocityTest()"
+                style="width: 100%;"
+              >
+                <i data-lucide="target" class="icon-18" style="margin-right: 8px;"></i>
+                Conduct Velocity Test
+              </button>
+              <button
+                class="btn btn-secondary"
+                onclick="viewVelocityHistory()"
+                style="width: 100%;"
+              >
+                <i data-lucide="history" class="icon-18" style="margin-right: 8px;"></i>
+                View History
+              </button>
+            </div>
           </div>
-
-          <div
-            class="metric-display u-display-flex u-justify-between u-align-center u-margin-y-16 u-padding-12 u-bg-secondary u-radius-md"
-          >
-            <span class="metric-label u-font-weight-500">Velocity Gain</span>
-            <span
-              class="metric-value u-font-weight-700 u-text-heading-sm"
-              id="velocityGain"
-              >--</span
-            >
-          </div>
-
-          <div
-            class="progress-bar u-width-full u-margin-y-10 u-radius-sm u-overflow-hidden"
-            style="height: 8px"
-          >
-            <div
-              class="progress-fill u-height-full u-radius-sm"
-              id="velocityProgress"
-              style="width: 0%; transition: width 0.3s ease"
-            ></div>
-          </div>
-
-          <button
-            class="btn btn-primary btn-md"
-            onclick="openVelocityTest()"
-            style="width: 100%; margin-top: var(--space-4)"
-          >
-            Conduct Velocity Test
-          </button>
-          <button
-            class="btn btn-secondary btn-md"
-            onclick="viewVelocityHistory()"
-            style="width: 100%; margin-top: var(--space-4)"
-          >
-            View History
-          </button>
         </div>
 
         <!-- Shoulder Mobility Assessment -->
-        <div class="assessment-card u-radius-lg u-padding-24">
-          <div
-            class="card-header u-display-flex u-align-center u-margin-bottom-20"
-          >
-            <div
-              class="card-icon mobility-icon u-display-flex u-align-center u-justify-center u-margin-right-16 u-radius-md"
-            >
-              🏃‍♂️
-            </div>
-            <div>
+        <div class="card card-interactive">
+          <div class="card-header">
+            <h3 class="card-title u-display-flex u-align-center u-gap-12 u-margin-0">
               <div
-                class="card-title u-text-heading-md u-font-weight-600 u-text-primary"
+                class="u-display-flex u-align-center u-justify-center u-radius-md"
+                style="width: 48px; height: 48px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);"
               >
-                Shoulder Mobility
+                <i data-lucide="move" class="icon-24" style="color: white;"></i>
               </div>
-              <div class="card-subtitle u-text-body-sm u-text-secondary">
-                Critical range of motion assessment
+              <div>
+                <div class="u-text-heading-md u-font-weight-600 u-text-primary">Shoulder Mobility</div>
+                <div class="u-text-body-sm u-text-secondary">Critical range of motion assessment</div>
+              </div>
+            </h3>
+          </div>
+          <div class="card-body">
+
+            <div class="u-display-flex u-justify-between u-align-center u-padding-12 u-margin-bottom-12 u-radius-md" style="background: var(--surface-secondary);">
+              <span class="u-font-weight-500 u-text-primary">External Rotation</span>
+              <span class="u-font-weight-700 u-text-heading-md u-text-brand" id="externalRotation">--</span>
+            </div>
+
+            <div class="u-display-flex u-justify-between u-align-center u-padding-12 u-margin-bottom-16 u-radius-md" style="background: var(--surface-secondary);">
+              <span class="u-font-weight-500 u-text-primary">Internal Rotation</span>
+              <span class="u-font-weight-700 u-text-heading-md u-text-brand" id="internalRotation">--</span>
+            </div>
+
+            <div class="u-margin-bottom-16">
+              <div class="u-display-flex u-justify-between u-margin-bottom-4">
+                <span class="u-text-body-sm u-text-secondary">Mobility Score</span>
+                <span class="u-text-body-sm u-text-secondary" id="mobilityProgressText">0%</span>
+              </div>
+              <div class="u-width-full u-radius-sm u-overflow-hidden" style="height: 8px; background: var(--color-border-secondary);">
+                <div
+                  class="u-height-full u-radius-sm"
+                  id="mobilityProgress"
+                  style="width: 0%; transition: width 0.3s ease; background: linear-gradient(90deg, var(--color-brand-primary), var(--color-brand-secondary));"
+                ></div>
               </div>
             </div>
-          </div>
 
-          <div
-            class="metric-display u-display-flex u-justify-between u-align-center u-margin-y-16 u-padding-12 u-bg-secondary u-radius-md"
-          >
-            <span class="metric-label u-font-weight-500"
-              >External Rotation</span
-            >
-            <span
-              class="metric-value u-font-weight-700 u-text-heading-sm"
-              id="externalRotation"
-              >--</span
-            >
+            <div class="u-display-flex u-gap-8" style="flex-direction: column;">
+              <button
+                class="btn btn-primary"
+                onclick="openMobilityTest()"
+                style="width: 100%;"
+              >
+                <i data-lucide="activity" class="icon-18" style="margin-right: 8px;"></i>
+                Assess Mobility
+              </button>
+              <button
+                class="btn btn-secondary"
+                onclick="viewMobilityProtocols()"
+                style="width: 100%;"
+              >
+                <i data-lucide="book-open" class="icon-18" style="margin-right: 8px;"></i>
+                View Protocols
+              </button>
+            </div>
           </div>
-
-          <div
-            class="metric-display u-display-flex u-justify-between u-align-center u-margin-y-16 u-padding-12 u-bg-secondary u-radius-md"
-          >
-            <span class="metric-label u-font-weight-500"
-              >Internal Rotation</span
-            >
-            <span
-              class="metric-value u-font-weight-700 u-text-heading-sm"
-              id="internalRotation"
-              >--</span
-            >
-          </div>
-
-          <div
-            class="progress-bar u-width-full u-margin-y-10 u-radius-sm u-overflow-hidden"
-            style="height: 8px"
-          >
-            <div
-              class="progress-fill u-height-full u-radius-sm"
-              id="mobilityProgress"
-              style="width: 0%; transition: width 0.3s ease"
-            ></div>
-          </div>
-
-          <button
-            class="btn btn-primary btn-md"
-            onclick="openMobilityTest()"
-            style="width: 100%; margin-top: var(--space-4)"
-          >
-            Assess Mobility
-          </button>
-          <button
-            class="btn btn-secondary btn-md"
-            onclick="viewMobilityProtocols()"
-            style="width: 100%; margin-top: var(--space-4)"
-          >
-            View Protocols
-          </button>
         </div>
 
         <!-- Throwing Endurance -->
-        <div class="assessment-card u-radius-lg u-padding-24">
-          <div
-            class="card-header u-display-flex u-align-center u-margin-bottom-20"
-          >
-            <div
-              class="card-icon endurance-icon u-display-flex u-align-center u-justify-center u-margin-right-16 u-radius-md"
-            >
-              <i
-                data-lucide="dumbbell"
-                style="
-                  width: 16px;
-                  height: 16px;
-                  display: inline-block;
-                  vertical-align: middle;
-                  color: var(--icon-color-primary);
-                  stroke: var(--icon-color-primary);
-                "
-              ></i>
-            </div>
-            <div>
+        <div class="card card-interactive">
+          <div class="card-header">
+            <h3 class="card-title u-display-flex u-align-center u-gap-12 u-margin-0">
               <div
-                class="card-title u-text-heading-md u-font-weight-600 u-text-primary"
+                class="u-display-flex u-align-center u-justify-center u-radius-md"
+                style="width: 48px; height: 48px; background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);"
               >
-                Throwing Endurance
+                <i data-lucide="dumbbell" class="icon-24" style="color: white;"></i>
               </div>
-              <div class="card-subtitle u-text-body-sm u-text-secondary">
-                320-throw tournament preparation
+              <div>
+                <div class="u-text-heading-md u-font-weight-600 u-text-primary">Throwing Endurance</div>
+                <div class="u-text-body-sm u-text-secondary">320-throw tournament preparation</div>
+              </div>
+            </h3>
+          </div>
+          <div class="card-body">
+
+            <div class="u-display-flex u-justify-between u-align-center u-padding-12 u-margin-bottom-12 u-radius-md" style="background: var(--surface-secondary);">
+              <span class="u-font-weight-500 u-text-primary">Max Throwing Volume</span>
+              <span class="u-font-weight-700 u-text-heading-md u-text-brand" id="maxVolume">--</span>
+            </div>
+
+            <div class="u-display-flex u-justify-between u-align-center u-padding-12 u-margin-bottom-16 u-radius-md" style="background: var(--surface-secondary);">
+              <span class="u-font-weight-500 u-text-primary">Accuracy Maintenance</span>
+              <span class="u-font-weight-700 u-text-heading-md u-text-brand" id="accuracyMaintenance">--</span>
+            </div>
+
+            <div class="u-margin-bottom-16">
+              <div class="u-display-flex u-justify-between u-margin-bottom-4">
+                <span class="u-text-body-sm u-text-secondary">Readiness</span>
+                <span class="u-text-body-sm u-text-secondary" id="enduranceProgressText">0%</span>
+              </div>
+              <div class="u-width-full u-radius-sm u-overflow-hidden" style="height: 8px; background: var(--color-border-secondary);">
+                <div
+                  class="u-height-full u-radius-sm"
+                  id="enduranceProgress"
+                  style="width: 0%; transition: width 0.3s ease; background: linear-gradient(90deg, var(--color-brand-primary), var(--color-brand-secondary));"
+                ></div>
               </div>
             </div>
-          </div>
 
-          <div
-            class="metric-display u-display-flex u-justify-between u-align-center u-margin-y-16 u-padding-12 u-bg-secondary u-radius-md"
-          >
-            <span class="metric-label u-font-weight-500"
-              >Max Throwing Volume</span
-            >
-            <span
-              class="metric-value u-font-weight-700 u-text-heading-sm"
-              id="maxVolume"
-              >--</span
-            >
+            <div class="u-display-flex u-gap-8" style="flex-direction: column;">
+              <button
+                class="btn btn-primary"
+                onclick="openEnduranceTest()"
+                style="width: 100%;"
+              >
+                <i data-lucide="play" class="icon-18" style="margin-right: 8px;"></i>
+                Start Endurance Test
+              </button>
+              <button
+                class="btn btn-secondary"
+                onclick="viewEnduranceHistory()"
+                style="width: 100%;"
+              >
+                <i data-lucide="history" class="icon-18" style="margin-right: 8px;"></i>
+                View History
+              </button>
+            </div>
           </div>
-
-          <div
-            class="metric-display u-display-flex u-justify-between u-align-center u-margin-y-16 u-padding-12 u-bg-secondary u-radius-md"
-          >
-            <span class="metric-label u-font-weight-500"
-              >Accuracy Maintenance</span
-            >
-            <span
-              class="metric-value u-font-weight-700 u-text-heading-sm"
-              id="accuracyMaintenance"
-              >--</span
-            >
-          </div>
-
-          <div
-            class="progress-bar u-width-full u-margin-y-10 u-radius-sm u-overflow-hidden"
-            style="height: 8px"
-          >
-            <div
-              class="progress-fill u-height-full u-radius-sm"
-              id="enduranceProgress"
-              style="width: 0%; transition: width 0.3s ease"
-            ></div>
-          </div>
-
-          <button
-            class="btn btn-primary btn-md"
-            onclick="openEnduranceTest()"
-            style="width: 100%; margin-top: var(--space-4)"
-          >
-            Start Endurance Test
-          </button>
-          <button
-            class="btn btn-secondary btn-md"
-            onclick="viewEnduranceHistory()"
-            style="width: 100%; margin-top: var(--space-4)"
-          >
-            View History
-          </button>
         </div>
 
         <!-- Rotator Cuff Strength -->
-        <div class="assessment-card u-radius-lg u-padding-24">
-          <div
-            class="card-header u-display-flex u-align-center u-margin-bottom-20"
-          >
-            <div
-              class="card-icon strength-icon u-display-flex u-align-center u-justify-center u-margin-right-16 u-radius-md"
-            >
-              <i
-                data-lucide="dumbbell"
-                style="
-                  width: 16px;
-                  height: 16px;
-                  display: inline-block;
-                  vertical-align: middle;
-                  color: var(--icon-color-primary);
-                  stroke: var(--icon-color-primary);
-                "
-              ></i>
-            </div>
-            <div>
+        <div class="card card-interactive">
+          <div class="card-header">
+            <h3 class="card-title u-display-flex u-align-center u-gap-12 u-margin-0">
               <div
-                class="card-title u-text-heading-md u-font-weight-600 u-text-primary"
+                class="u-display-flex u-align-center u-justify-center u-radius-md"
+                style="width: 48px; height: 48px; background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);"
               >
-                Rotator Cuff Strength
+                <i data-lucide="shield" class="icon-24" style="color: white;"></i>
               </div>
-              <div class="card-subtitle u-text-body-sm u-text-secondary">
-                Injury prevention assessment
+              <div>
+                <div class="u-text-heading-md u-font-weight-600 u-text-primary">Rotator Cuff Strength</div>
+                <div class="u-text-body-sm u-text-secondary">Injury prevention assessment</div>
+              </div>
+            </h3>
+          </div>
+          <div class="card-body">
+
+            <div class="u-display-flex u-justify-between u-align-center u-padding-12 u-margin-bottom-12 u-radius-md" style="background: var(--surface-secondary);">
+              <span class="u-font-weight-500 u-text-primary">External Rotation Strength</span>
+              <span class="u-font-weight-700 u-text-heading-md u-text-brand" id="rotatorCuffStrength">--</span>
+            </div>
+
+            <div class="u-display-flex u-justify-between u-align-center u-padding-12 u-margin-bottom-16 u-radius-md" style="background: var(--surface-secondary);">
+              <span class="u-font-weight-500 u-text-primary">Bilateral Balance</span>
+              <span class="u-font-weight-700 u-text-heading-md u-text-brand" id="bilateralBalance">--</span>
+            </div>
+
+            <div class="u-margin-bottom-16">
+              <div class="u-display-flex u-justify-between u-margin-bottom-4">
+                <span class="u-text-body-sm u-text-secondary">Strength Score</span>
+                <span class="u-text-body-sm u-text-secondary" id="strengthProgressText">0%</span>
+              </div>
+              <div class="u-width-full u-radius-sm u-overflow-hidden" style="height: 8px; background: var(--color-border-secondary);">
+                <div
+                  class="u-height-full u-radius-sm"
+                  id="strengthProgress"
+                  style="width: 0%; transition: width 0.3s ease; background: linear-gradient(90deg, var(--color-brand-primary), var(--color-brand-secondary));"
+                ></div>
               </div>
             </div>
-          </div>
 
-          <div
-            class="metric-display u-display-flex u-justify-between u-align-center u-margin-y-16 u-padding-12 u-bg-secondary u-radius-md"
-          >
-            <span class="metric-label u-font-weight-500"
-              >External Rotation Strength</span
-            >
-            <span
-              class="metric-value u-font-weight-700 u-text-heading-sm"
-              id="rotatorCuffStrength"
-              >--</span
-            >
+            <div class="u-display-flex u-gap-8" style="flex-direction: column;">
+              <button
+                class="btn btn-primary"
+                onclick="openStrengthTest()"
+                style="width: 100%;"
+              >
+                <i data-lucide="activity" class="icon-18" style="margin-right: 8px;"></i>
+                Test Strength
+              </button>
+              <button
+                class="btn btn-secondary"
+                onclick="viewStrengthProtocols()"
+                style="width: 100%;"
+              >
+                <i data-lucide="book-open" class="icon-18" style="margin-right: 8px;"></i>
+                View Protocols
+              </button>
+            </div>
           </div>
+        </div>
+        </div>
 
-          <div
-            class="metric-display u-display-flex u-justify-between u-align-center u-margin-y-16 u-padding-12 u-bg-secondary u-radius-md"
-          >
-            <span class="metric-label u-font-weight-500"
-              >Bilateral Balance</span
-            >
-            <span
-              class="metric-value u-font-weight-700 u-text-heading-sm"
-              id="bilateralBalance"
-              >--</span
-            >
-          </div>
+        <!-- Tournament Simulation -->
+        <div class="card card-elevated u-margin-top-24" style="background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%); color: white;">
+          <div class="card-body" style="padding: 32px;">
+            <h3 class="u-text-heading-lg u-margin-bottom-12 u-display-flex u-align-center u-gap-8" style="color: white;">
+              <i data-lucide="trophy" class="icon-24" style="color: white;"></i>
+              Tournament Simulation (320 Throws)
+            </h3>
+            <p class="u-text-body-md u-margin-bottom-24" style="color: rgba(255, 255, 255, 0.9);">
+              8-game simulation to assess competition readiness
+            </p>
 
-          <div
-            class="progress-bar u-width-full u-margin-y-10 u-radius-sm u-overflow-hidden"
-            style="height: 8px"
-          >
             <div
-              class="progress-fill u-height-full u-radius-sm"
-              id="strengthProgress"
-              style="width: 0%; transition: width 0.3s ease"
-            ></div>
-          </div>
+              class="u-display-grid u-gap-16 u-margin-bottom-24"
+              style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr))"
+            >
+              <div class="u-text-center u-padding-16 u-radius-md" style="background: rgba(255, 255, 255, 0.1);">
+                <div class="u-text-heading-xl u-font-weight-700" id="simGames" style="color: white;">
+                  0
+                </div>
+                <div class="u-text-body-sm" style="color: rgba(255, 255, 255, 0.9);">Games Completed</div>
+              </div>
+              <div class="u-text-center u-padding-16 u-radius-md" style="background: rgba(255, 255, 255, 0.1);">
+                <div class="u-text-heading-xl u-font-weight-700" id="simThrows" style="color: white;">
+                  0
+                </div>
+                <div class="u-text-body-sm" style="color: rgba(255, 255, 255, 0.9);">Total Throws</div>
+              </div>
+              <div class="u-text-center u-padding-16 u-radius-md" style="background: rgba(255, 255, 255, 0.1);">
+                <div class="u-text-heading-xl u-font-weight-700" id="simAccuracy" style="color: white;">
+                  --%
+                </div>
+                <div class="u-text-body-sm" style="color: rgba(255, 255, 255, 0.9);">Overall Accuracy</div>
+              </div>
+              <div class="u-text-center u-padding-16 u-radius-md" style="background: rgba(255, 255, 255, 0.1);">
+                <div class="u-text-heading-xl u-font-weight-700" id="simVelocity" style="color: white;">
+                  --
+                </div>
+                <div class="u-text-body-sm" style="color: rgba(255, 255, 255, 0.9);">Avg Velocity</div>
+              </div>
+            </div>
 
-          <button
-            class="btn btn-primary btn-md"
-            onclick="openStrengthTest()"
-            style="width: 100%; margin-top: var(--space-4)"
-          >
-            Test Strength
-          </button>
-          <button
-            class="btn btn-secondary btn-md"
-            onclick="viewStrengthProtocols()"
-            style="width: 100%; margin-top: var(--space-4)"
-          >
-            View Protocols
-          </button>
-        </div>
-      </div>
-
-      <!-- Tournament Simulation -->
-      <div
-        class="tournament-simulation u-radius-lg u-padding-24 u-margin-top-20 u-text-primary"
-      >
-        <h3 class="u-text-heading-md u-margin-bottom-12">
-          <i
-            data-lucide="trophy"
-            style="
-              width: 16px;
-              height: 16px;
-              display: inline-block;
-              vertical-align: middle;
-              color: var(--icon-color-primary);
-              stroke: var(--icon-color-primary);
-            "
-          ></i>
-          Tournament Simulation (320 Throws)
-        </h3>
-        <p class="u-text-body-md u-margin-bottom-16">
-          8-game simulation to assess competition readiness
-        </p>
-
-        <div
-          class="simulation-stats u-display-grid u-gap-16 u-margin-top-16"
-          style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr))"
-        >
-          <div class="simulation-stat u-text-center u-padding-16 u-radius-md">
-            <div class="u-text-heading-xl u-font-weight-700" id="simGames">
-              0
-            </div>
-            <div class="u-text-body-sm">Games Completed</div>
-          </div>
-          <div class="simulation-stat u-text-center u-padding-16 u-radius-md">
-            <div class="u-text-heading-xl u-font-weight-700" id="simThrows">
-              0
-            </div>
-            <div class="u-text-body-sm">Total Throws</div>
-          </div>
-          <div class="simulation-stat u-text-center u-padding-16 u-radius-md">
-            <div class="u-text-heading-xl u-font-weight-700" id="simAccuracy">
-              --%
-            </div>
-            <div class="u-text-body-sm">Overall Accuracy</div>
-          </div>
-          <div class="simulation-stat u-text-center u-padding-16 u-radius-md">
-            <div class="u-text-heading-xl u-font-weight-700" id="simVelocity">
-              --
-            </div>
-            <div class="u-text-body-sm">Avg Velocity</div>
+            <button
+              class="btn"
+              style="width: 100%; background: white; color: var(--color-brand-primary); font-weight: 600;"
+              onclick="startTournamentSim()"
+            >
+              <i data-lucide="play" class="icon-18" style="margin-right: 8px;"></i>
+              Start Tournament Simulation
+            </button>
           </div>
         </div>
 
-        <button
-          class="btn btn-primary btn-md"
-          style="width: 100%; margin-top: var(--space-5)"
-          onclick="startTournamentSim()"
-        >
-          Start Tournament Simulation
-        </button>
-      </div>
+        <!-- Assessment History -->
+        <div class="card u-margin-top-24">
+          <div class="card-header">
+            <h3 class="card-title u-display-flex u-align-center u-gap-8 u-margin-0">
+              <i data-lucide="bar-chart-3" class="icon-20" style="color: var(--color-brand-primary);"></i>
+              Assessment History
+            </h3>
+          </div>
+          <div class="card-body">
+            <div class="table-wrapper" style="overflow-x: auto;">
+              <table class="roster-table" role="table" style="width: 100%; border-collapse: collapse;">
+                <thead>
+                  <tr style="border-bottom: 2px solid var(--color-border-secondary);">
+                    <th style="text-align: left; padding: 12px; font-weight: 600; color: var(--text-primary); font-size: 0.875rem;">Date</th>
+                    <th style="text-align: left; padding: 12px; font-weight: 600; color: var(--text-primary); font-size: 0.875rem;">Assessment Type</th>
+                    <th style="text-align: left; padding: 12px; font-weight: 600; color: var(--text-primary); font-size: 0.875rem;">Score</th>
+                    <th style="text-align: left; padding: 12px; font-weight: 600; color: var(--text-primary); font-size: 0.875rem;">Status</th>
+                    <th style="text-align: left; padding: 12px; font-weight: 600; color: var(--text-primary); font-size: 0.875rem;">Notes</th>
+                  </tr>
+                </thead>
+                <tbody id="assessmentHistoryBody">
+                  <!-- History rows will be populated by JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
 
-      <!-- Assessment History -->
-      <div
-        class="assessment-history u-bg-primary u-radius-lg u-padding-24 u-margin-top-20"
-      >
-        <h3 class="u-text-heading-md u-margin-bottom-16">
-          <i
-            data-lucide="bar-chart-3"
-            style="
-              width: 16px;
-              height: 16px;
-              display: inline-block;
-              vertical-align: middle;
-              color: var(--icon-color-primary);
-              stroke: var(--icon-color-primary);
-            "
-          ></i>
-          Assessment History
-        </h3>
-        <table class="history-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Assessment Type</th>
-              <th>Score</th>
-              <th>Status</th>
-              <th>Notes</th>
-            </tr>
-          </thead>
-          <tbody id="assessmentHistoryBody">
-            <tr>
-              <td>2025-11-01</td>
-              <td>Velocity Test</td>
-              <td>52 mph</td>
-              <td class="status-good">Good</td>
-              <td>+3 mph from baseline</td>
-            </tr>
-            <tr>
-              <td>2025-10-28</td>
-              <td>Mobility Assessment</td>
-              <td>115°</td>
-              <td class="status-excellent">Excellent</td>
-              <td>Optimal range achieved</td>
-            </tr>
-            <tr>
-              <td>2025-10-25</td>
-              <td>Endurance Test</td>
-              <td>180 throws</td>
-              <td class="status-needs-work">Needs Work</td>
-              <td>Accuracy dropped after 150 throws</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Navigation -->
-      <div class="nav-links u-text-center u-margin-top-30">
-        <a
-          href="qb-training-schedule.html"
-          class="u-text-primary u-margin-x-16 u-padding-y-10 u-padding-x-20 u-radius-md"
-          style="
-            text-decoration: none;
-            background: rgba(255, 255, 255, 0.1);
-            transition: background 0.3s ease;
-          "
-          ><i
-            data-lucide="chevron-left"
-            style="
-              width: 16px;
-              height: 16px;
-              display: inline-block;
-              vertical-align: middle;
-              color: var(--icon-color-primary);
-              stroke: var(--icon-color-primary);
-            "
-          ></i>
-          Back to Training</a
-        >
-        <a
-          href="training.html#schedule"
-          class="u-text-primary u-margin-x-16 u-padding-y-10 u-padding-x-20 u-radius-md"
-          style="
-            text-decoration: none;
-            background: rgba(255, 255, 255, 0.1);
-            transition: background 0.3s ease;
-          "
-          >WR/DB Training</a
-        >
-        <a
-          href="exercise-library.html"
-          class="u-text-primary u-margin-x-16 u-padding-y-10 u-padding-x-20 u-radius-md"
-          style="
-            text-decoration: none;
-            background: rgba(255, 255, 255, 0.1);
-            transition: background 0.3s ease;
-          "
-          >Exercise Library</a
-        >
-        <a
-          href="index.html"
-          class="u-text-primary u-margin-x-16 u-padding-y-10 u-padding-x-20 u-radius-md"
-          style="
-            text-decoration: none;
-            background: rgba(255, 255, 255, 0.1);
-            transition: background 0.3s ease;
-          "
-          >Dashboard</a
-        >
-      </div>
+        <!-- AI Chat Floating Bubble (Loaded Dynamically) -->
+        <div data-ai-chat-container></div>
+      </main>
     </div>
 
     <!-- Velocity Test Modal -->
@@ -886,8 +745,9 @@
             latestVelocity.bestVelocity + " mph";
           document.getElementById("velocityGain").textContent =
             "+" + latestVelocity.gain + " mph";
-          document.getElementById("velocityProgress").style.width =
-            (latestVelocity.percentile || 0) + "%";
+          const progress = latestVelocity.percentile || 0;
+          document.getElementById("velocityProgress").style.width = progress + "%";
+          document.getElementById("velocityProgressText").textContent = progress + "%";
         }
 
         // Update mobility display
@@ -896,8 +756,9 @@
             latestMobility.extRotation + "°";
           document.getElementById("internalRotation").textContent =
             latestMobility.intRotation + "°";
-          document.getElementById("mobilityProgress").style.width =
-            (latestMobility.score || 0) + "%";
+          const progress = latestMobility.score || 0;
+          document.getElementById("mobilityProgress").style.width = progress + "%";
+          document.getElementById("mobilityProgressText").textContent = progress + "%";
         }
 
         // Update endurance display
@@ -906,8 +767,9 @@
             latestEndurance.maxVolume + " throws";
           document.getElementById("accuracyMaintenance").textContent =
             latestEndurance.accuracyMaintenance + "%";
-          document.getElementById("enduranceProgress").style.width =
-            (latestEndurance.tournamentReadiness || 0) + "%";
+          const progress = latestEndurance.tournamentReadiness || 0;
+          document.getElementById("enduranceProgress").style.width = progress + "%";
+          document.getElementById("enduranceProgressText").textContent = progress + "%";
         }
       }
 
@@ -936,16 +798,39 @@
 
         allAssessments.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-        allAssessments.slice(0, 10).forEach((assessment) => {
-          const row = tbody.insertRow();
-          row.innerHTML = `
-                    <td>${new Date(assessment.date).toLocaleDateString()}</td>
-                    <td>${formatAssessmentType(assessment.type)}</td>
-                    <td>${formatAssessmentScore(assessment, assessment.type)}</td>
-                    <td class="status-${getScoreStatus(assessment, assessment.type)}">${getStatusText(assessment, assessment.type)}</td>
-                    <td>${assessment.notes || "-"}</td>
-                `;
-        });
+        if (allAssessments.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                <i data-lucide="clipboard-x" class="icon-48" style="opacity: 0.3; margin-bottom: 16px;"></i>
+                <p>No assessment history yet. Start by conducting your first assessment!</p>
+              </td>
+            </tr>
+          `;
+          if (typeof lucide !== 'undefined') lucide.createIcons();
+        } else {
+          allAssessments.slice(0, 10).forEach((assessment) => {
+            const row = tbody.insertRow();
+            const status = getScoreStatus(assessment, assessment.type);
+            const statusColors = {
+              excellent: 'var(--color-success)',
+              good: 'var(--color-info)',
+              'needs-work': 'var(--color-warning)',
+              poor: 'var(--color-error)'
+            };
+            row.innerHTML = `
+              <td style="padding: 12px;">${new Date(assessment.date).toLocaleDateString()}</td>
+              <td style="padding: 12px;">${formatAssessmentType(assessment.type)}</td>
+              <td style="padding: 12px; font-weight: 600;">${formatAssessmentScore(assessment, assessment.type)}</td>
+              <td style="padding: 12px;">
+                <span style="display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 500; background: ${statusColors[status] || statusColors.good}20; color: ${statusColors[status] || statusColors.good};">
+                  ${getStatusText(assessment, assessment.type)}
+                </span>
+              </td>
+              <td style="padding: 12px; color: var(--text-secondary);">${assessment.notes || "-"}</td>
+            `;
+          });
+        }
       }
 
       function formatAssessmentType(type) {
@@ -1135,7 +1020,7 @@
       };
     </script>
 
-        <!-- Footer (Loaded Dynamically) -->
+    <!-- Footer (Loaded Dynamically) -->
     <div data-footer-container></div>
   </body>
 </html>

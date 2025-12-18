@@ -30,7 +30,11 @@ export class BaseComponentLoader {
   async init() {
     try {
       await this.loadComponent();
-      this.afterLoad();
+      // Call afterLoad - can be async or sync
+      const result = this.afterLoad();
+      if (result instanceof Promise) {
+        await result;
+      }
     } catch (error) {
       console.error(`[${this.config.componentName} Loader] Failed to load:`, error);
     }

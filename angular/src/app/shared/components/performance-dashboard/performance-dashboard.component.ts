@@ -1,6 +1,6 @@
 import {
   Component,
-  Input,
+  input,
   OnInit,
   OnDestroy,
   signal,
@@ -9,7 +9,6 @@ import {
   inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { CardModule } from 'primeng/card';
 import { ChartModule } from 'primeng/chart';
 import { TagModule } from 'primeng/tag';
@@ -37,7 +36,6 @@ interface PerformanceMetric {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    FormsModule,
     CardModule,
     ChartModule,
     TagModule,
@@ -50,7 +48,7 @@ interface PerformanceMetric {
         @for (metric of metrics(); track trackByMetricId($index, metric)) {
           <p-card
             class="metric-card"
-            [ngClass]="'metric-' + metric.id"
+            [class]="'metric-' + metric.id"
             >
             <div class="metric-header">
               <div class="metric-info">
@@ -67,7 +65,7 @@ interface PerformanceMetric {
             <div class="metric-visualization">
               <div class="metric-value-container">
                 <p-knob
-                  [(ngModel)]="metric.value"
+                  [value]="metric.value"
                   [min]="0"
                   [max]="metric.target * 1.2"
                   [size]="120"
@@ -262,8 +260,9 @@ interface PerformanceMetric {
   ],
 })
 export class PerformanceDashboardComponent implements OnInit, OnDestroy {
-  @Input() athleteId?: string;
-  @Input() realTimeEnabled = true;
+  // Angular 21: Use input() signals instead of @Input()
+  athleteId = input<string>();
+  realTimeEnabled = input<boolean>(true);
 
   private apiService = inject(ApiService);
   private destroy$ = new Subject<void>();
@@ -365,19 +364,20 @@ export class PerformanceDashboardComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.loadPerformanceMetrics();
     
-    if (this.realTimeEnabled) {
+    if (this.realTimeEnabled()) {
       this.startRealTimeUpdates();
     }
   }
 
   private loadPerformanceMetrics() {
-    if (!this.athleteId) {
+    const athleteId = this.athleteId();
+    if (!athleteId) {
       return;
     }
 
     // Try to load from API
     this.apiService
-      .get('/api/performance/metrics', { athleteId: this.athleteId })
+      .get('/api/performance/metrics', { athleteId })
       .pipe(takeUntilDestroyed())
       .subscribe({
         next: (response) => {

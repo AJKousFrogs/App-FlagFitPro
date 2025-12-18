@@ -60,6 +60,12 @@ document.addEventListener("DOMContentLoaded", async function () {
   // Initialize AI Chat Assistant Button
   initializeAIChatButton();
 
+  // Initialize Enhanced Training Schedule if container exists
+  initializeEnhancedSchedule();
+
+  // Initialize Enhanced Training Assistant
+  initializeEnhancedTrainingAssistant();
+
   // Initialize workout card event delegation
   initializeWorkoutCards();
 
@@ -591,6 +597,47 @@ async function handleAIChat(e) {
         "AI Assistant Chat\n\nAsk me about:\n• Sports psychology & mental training\n• Nutrition & supplements\n• Speed & agility development\n• Injury prevention & treatment\n• Recovery strategies\n• Training programs",
       );
     }
+  }
+}
+
+// Initialize Enhanced Training Schedule
+async function initializeEnhancedSchedule() {
+  const scheduleContainer = document.getElementById('enhanced-schedule-container') || 
+                           document.querySelector('[data-enhanced-schedule]');
+  
+  if (scheduleContainer) {
+    try {
+      const { default: enhancedTrainingSchedule } = await import('../components/enhanced-training-schedule.js');
+      await enhancedTrainingSchedule.init(scheduleContainer.id || 'enhanced-schedule-container', {
+        enableRealtime: true,
+        enableAI: true,
+        enableDragDrop: true
+      });
+      logger.debug('[TrainingPage] Enhanced training schedule initialized');
+    } catch (error) {
+      logger.warn('[TrainingPage] Enhanced training schedule not available:', error);
+    }
+  }
+}
+
+// Initialize Enhanced Training Assistant
+async function initializeEnhancedTrainingAssistant() {
+  try {
+    const { default: enhancedTrainingAssistant } = await import('../components/enhanced-training-assistant.js');
+    await enhancedTrainingAssistant.init();
+    
+    // Override AI chat button to use enhanced assistant
+    const aiChatBtn = document.querySelector('.ai-chat-button');
+    if (aiChatBtn) {
+      aiChatBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        await enhancedTrainingAssistant.open();
+      });
+    }
+    
+    logger.debug('[TrainingPage] Enhanced training assistant initialized');
+  } catch (error) {
+    logger.warn('[TrainingPage] Enhanced training assistant not available:', error);
   }
 }
 

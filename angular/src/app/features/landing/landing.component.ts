@@ -90,7 +90,7 @@ import { ButtonModule } from "primeng/button";
                 <div class="feature-card-icon">
                   <div
                     class="feature-icon-wrapper"
-                    [ngClass]="'feature-icon-' + feature.id"
+                    [class]="'feature-icon-' + feature.id"
                     >
                     <i [class]="'pi ' + feature.icon"></i>
                   </div>

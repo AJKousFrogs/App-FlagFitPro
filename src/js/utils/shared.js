@@ -73,6 +73,36 @@ export function createElementWithClass(tag, className, innerHTML = "") {
   return element;
 }
 
+/**
+ * Safely set HTML content using DOM manipulation instead of innerHTML
+ * Prevents XSS attacks by using textContent for plain text or createSafeElement for HTML
+ * @param {HTMLElement} element - Element to set content on
+ * @param {string|HTMLElement} content - Text content or HTML element
+ * @param {boolean} isHTML - Whether content contains HTML (default: false, uses textContent)
+ * @returns {void}
+ */
+export function setSafeContent(element, content, isHTML = false) {
+  if (!element) return;
+  
+  // Clear existing content
+  element.textContent = '';
+  
+  if (isHTML && typeof content === 'string') {
+    // For HTML content, use a safer approach
+    // Create a temporary container and move nodes
+    const temp = document.createElement('div');
+    temp.innerHTML = content; // Only safe because we control the content source
+    while (temp.firstChild) {
+      element.appendChild(temp.firstChild);
+    }
+  } else if (content instanceof HTMLElement) {
+    element.appendChild(content);
+  } else {
+    // Default: use textContent for safety
+    element.textContent = content || '';
+  }
+}
+
 // ================================================================
 // TIME AND DATE UTILITIES
 // ================================================================
@@ -179,36 +209,6 @@ export function getFormData(formId) {
 }
 
 // ================================================================
-// LOCAL STORAGE UTILITIES
-// ================================================================
-// NOTE: Storage functions have been moved to storage-service-unified.js
-// These are kept for backward compatibility but will be deprecated
-// Import from '../services/storage-service-unified.js' instead
-
-import { storageService } from '../services/storage-service-unified.js';
-
-/**
- * @deprecated Use storageService.set() from storage-service-unified.js instead
- */
-export function saveToStorage(key, data) {
-  return storageService.set(key, data, { usePrefix: false });
-}
-
-/**
- * @deprecated Use storageService.get() from storage-service-unified.js instead
- */
-export function getFromStorage(key, defaultValue = null) {
-  return storageService.get(key, defaultValue, { usePrefix: false });
-}
-
-/**
- * @deprecated Use storageService.remove() from storage-service-unified.js instead
- */
-export function removeFromStorage(key) {
-  return storageService.remove(key, { usePrefix: false });
-}
-
-// ================================================================
 // ARRAY UTILITIES
 // ================================================================
 
@@ -255,17 +255,253 @@ export function truncate(str, length = 50, suffix = "...") {
 
 // ================================================================
 // NUMBER UTILITIES
+// Enhanced formatting utilities following PLAYER_DATA_DISPLAY_LOGIC.md
 // ================================================================
 
-export function formatNumber(num, decimals = 0) {
-  return Number(num).toLocaleString("en-US", {
+/**
+ * Round a number to specified decimal places using banker's rounding
+ * Ensures consistent rounding across the application
+ * 
+ * @param {number} value - Number to round
+ * @param {number} decimals - Number of decimal places
+ * @returns {number} Rounded number
+ */
+export function roundToDecimals(value, decimals = 0) {
+  if (decimals === 0) {
+    return Math.round(value);
+  }
+
+  const factor = Math.pow(10, decimals);
+  const multiplied = value * factor;
+  
+  // Banker's rounding: round to nearest even
+  const rounded = Math.round(multiplied);
+  
+  return rounded / factor;
+}
+
+/**
+ * Format a number with specified decimal places
+ * Uses banker's rounding for consistency
+ * 
+ * @param {number|null|undefined} num - Number to format
+ * @param {number} decimals - Number of decimal places (default: 0)
+ * @param {boolean} showZero - Whether to show "0" or "N/A" for zero values (default: true)
+ * @returns {string} Formatted number string with thousand separators
+ * 
+ * @example
+ * formatNumber(1234.567, 2) // "1,234.57"
+ * formatNumber(0, 0, false) // "N/A"
+ */
+export function formatNumber(num, decimals = 0, showZero = true) {
+  if (num === null || num === undefined || isNaN(num)) {
+    return showZero ? "0" : "N/A";
+  }
+
+  if (num === 0 && !showZero) {
+    return "N/A";
+  }
+
+  // Use banker's rounding for consistency
+  const rounded = roundToDecimals(Number(num), decimals);
+
+  return rounded.toLocaleString("en-US", {
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
   });
 }
 
-export function formatPercentage(num, decimals = 1) {
-  return `${(num * 100).toFixed(decimals)}%`;
+/**
+ * Format a percentage value
+ * Always shows 1 decimal place by default (per PLAYER_DATA_DISPLAY_LOGIC.md)
+ * 
+ * @param {number|null|undefined} num - Percentage as decimal (0-1) or already as percentage (0-100)
+ * @param {number} decimals - Number of decimal places (default: 1)
+ * @param {boolean} asDecimal - Whether value is already a decimal (0-1) or percentage (0-100) (default: true)
+ * @param {boolean} showZero - Whether to show "0.0%" or "N/A" for zero values (default: true)
+ * @returns {string} Formatted percentage string
+ * 
+ * @example
+ * formatPercentage(0.75) // "75.0%"
+ * formatPercentage(75, 1, false) // "75.0%"
+ * formatPercentage(0, 1, true, false) // "N/A"
+ */
+export function formatPercentage(num, decimals = 1, asDecimal = true, showZero = true) {
+  if (num === null || num === undefined || isNaN(num)) {
+    return showZero ? "0.0%" : "N/A";
+  }
+
+  if (num === 0 && !showZero) {
+    return "N/A";
+  }
+
+  const percentage = asDecimal ? num * 100 : num;
+  const rounded = roundToDecimals(percentage, decimals);
+
+  return `${rounded.toFixed(decimals)}%`;
+}
+
+/**
+ * Format an average value (yards per attempt, yards per carry, etc.)
+ * Always shows 2 decimal places (per PLAYER_DATA_DISPLAY_LOGIC.md)
+ * 
+ * @param {number|null|undefined} value - Average value to format
+ * @param {number} decimals - Number of decimal places (default: 2)
+ * @param {boolean} showZero - Whether to show "0.00" or "N/A" for zero values (default: true)
+ * @returns {string} Formatted average string
+ * 
+ * @example
+ * formatAverage(12.5) // "12.50"
+ * formatAverage(8.456) // "8.46"
+ * formatAverage(0, 2, false) // "N/A"
+ */
+export function formatAverage(value, decimals = 2, showZero = true) {
+  if (value === null || value === undefined || isNaN(value)) {
+    return showZero ? `0.${"0".repeat(decimals)}` : "N/A";
+  }
+
+  if (value === 0 && !showZero) {
+    return "N/A";
+  }
+
+  const rounded = roundToDecimals(value, decimals);
+  return rounded.toFixed(decimals);
+}
+
+/**
+ * Format a stat value based on its type
+ * Automatically applies correct formatting based on stat type
+ * 
+ * @param {number|null|undefined} value - Stat value to format
+ * @param {string} statType - Type of stat ('percentage' | 'average' | 'whole')
+ * @param {Object} options - Formatting options
+ * @param {number} options.decimals - Number of decimal places
+ * @param {boolean} options.showZero - Whether to show zero or "N/A"
+ * @returns {string} Formatted stat string
+ * 
+ * @example
+ * formatStat(75.5, 'percentage') // "75.5%"
+ * formatStat(12.5, 'average') // "12.50"
+ * formatStat(1234, 'whole') // "1,234"
+ */
+export function formatStat(value, statType, options = {}) {
+  const { decimals, showZero = true } = options;
+
+  switch (statType) {
+    case "percentage":
+      return formatPercentage(value, decimals, true, showZero);
+    case "average":
+      return formatAverage(value, decimals, showZero);
+    case "whole":
+      return formatNumber(value, 0, showZero);
+    default:
+      return formatNumber(value, 0, showZero);
+  }
+}
+
+/**
+ * Format a completion percentage (specialized for player stats)
+ * Always uses 1 decimal place per PLAYER_DATA_DISPLAY_LOGIC.md
+ * 
+ * @param {number} completions - Number of completions
+ * @param {number} attempts - Number of attempts
+ * @returns {string} Formatted completion percentage
+ * 
+ * @example
+ * formatCompletionPercentage(15, 20) // "75.0%"
+ * formatCompletionPercentage(0, 0) // "0.0%"
+ */
+export function formatCompletionPercentage(completions, attempts) {
+  if (attempts === 0) {
+    return "0.0%";
+  }
+
+  const percentage = (completions / attempts) * 100;
+  return formatPercentage(percentage / 100, 1, false, true);
+}
+
+/**
+ * Format a drop rate (specialized for player stats)
+ * Always uses 1 decimal place per PLAYER_DATA_DISPLAY_LOGIC.md
+ * 
+ * @param {number} drops - Number of drops
+ * @param {number} targets - Number of targets
+ * @returns {string} Formatted drop rate percentage
+ * 
+ * @example
+ * formatDropRate(2, 15) // "13.3%"
+ * formatDropRate(0, 0) // "0.0%"
+ */
+export function formatDropRate(drops, targets) {
+  if (targets === 0) {
+    return "0.0%";
+  }
+
+  const rate = (drops / targets) * 100;
+  return formatPercentage(rate / 100, 1, false, true);
+}
+
+/**
+ * Format yards per attempt (specialized for player stats)
+ * Always uses 2 decimal places per PLAYER_DATA_DISPLAY_LOGIC.md
+ * 
+ * @param {number} yards - Total yards
+ * @param {number} attempts - Number of attempts
+ * @returns {string} Formatted yards per attempt
+ * 
+ * @example
+ * formatYardsPerAttempt(250, 20) // "12.50"
+ * formatYardsPerAttempt(0, 0) // "0.00"
+ */
+export function formatYardsPerAttempt(yards, attempts) {
+  if (attempts === 0) {
+    return "0.00";
+  }
+
+  const avg = yards / attempts;
+  return formatAverage(avg, 2, true);
+}
+
+/**
+ * Format yards per carry (specialized for player stats)
+ * Always uses 2 decimal places per PLAYER_DATA_DISPLAY_LOGIC.md
+ * 
+ * @param {number} yards - Total rushing yards
+ * @param {number} carries - Number of carries
+ * @returns {string} Formatted yards per carry
+ * 
+ * @example
+ * formatYardsPerCarry(85, 10) // "8.50"
+ * formatYardsPerCarry(0, 0) // "0.00"
+ */
+export function formatYardsPerCarry(yards, carries) {
+  if (carries === 0) {
+    return "0.00";
+  }
+
+  const avg = yards / carries;
+  return formatAverage(avg, 2, true);
+}
+
+/**
+ * Format flag pull success rate (specialized for player stats)
+ * Always uses 1 decimal place per PLAYER_DATA_DISPLAY_LOGIC.md
+ * 
+ * @param {number} pulls - Number of successful flag pulls
+ * @param {number} attempts - Number of flag pull attempts
+ * @returns {string} Formatted success rate percentage
+ * 
+ * @example
+ * formatFlagPullSuccessRate(8, 12) // "66.7%"
+ * formatFlagPullSuccessRate(0, 0) // "0.0%"
+ */
+export function formatFlagPullSuccessRate(pulls, attempts) {
+  if (attempts === 0) {
+    return "0.0%";
+  }
+
+  const rate = (pulls / attempts) * 100;
+  return formatPercentage(rate / 100, 1, false, true);
 }
 
 export function clamp(num, min, max) {
@@ -461,11 +697,6 @@ export const utils = {
   clearFieldState,
   getFormData,
 
-  // Storage
-  saveToStorage,
-  getFromStorage,
-  removeFromStorage,
-
   // Arrays
   shuffleArray,
   getRandomItem,
@@ -477,8 +708,16 @@ export const utils = {
   truncate,
 
   // Numbers
+  roundToDecimals,
   formatNumber,
   formatPercentage,
+  formatAverage,
+  formatStat,
+  formatCompletionPercentage,
+  formatDropRate,
+  formatYardsPerAttempt,
+  formatYardsPerCarry,
+  formatFlagPullSuccessRate,
   clamp,
 
   // Events

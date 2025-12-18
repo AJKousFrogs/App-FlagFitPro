@@ -10,6 +10,7 @@ import { csrfProtection } from "./js/security/csrf-protection.js";
 import { ErrorHandler } from "./error-handler.js";
 import { AUTH, ERROR_MESSAGES, SUCCESS_MESSAGES } from "./js/config/app-constants.js";
 import { debounce } from "./js/utils/html-escape.js";
+import { storageService } from "./js/services/storage-service-unified.js";
 
 class AuthManager {
   constructor() {
@@ -866,6 +867,23 @@ logger.debug(
     logger.debug("🚀 Redirecting to dashboard...");
     logger.debug("📍 Current location:", window.location.href);
 
+    // Check if user has completed onboarding
+    const user = this.getCurrentUser();
+    const onboardingCompleted = user?.user_metadata?.onboarding_completed || 
+                                (typeof storageService !== 'undefined' && storageService.get("onboardingCompleted", null, { usePrefix: false }));
+
+    // If onboarding not completed, redirect to onboarding page
+    if (!onboardingCompleted) {
+      logger.debug("📋 Onboarding not completed, redirecting to onboarding page");
+      const onboardingUrl = this.getOnboardingUrl();
+      try {
+        window.location.href = onboardingUrl;
+        return;
+      } catch (error) {
+        logger.error("❌ Redirect to onboarding failed:", error);
+      }
+    }
+
     // Handle different environments
     const dashboardUrl = this.getDashboardUrl();
     logger.debug("🎯 Dashboard URL:", dashboardUrl);
@@ -877,6 +895,13 @@ logger.debug(
       // Fallback: try window.location.assign
       window.location.assign(dashboardUrl);
     }
+  }
+
+  // Get the onboarding URL for current environment
+  getOnboardingUrl() {
+    const currentUrl = window.location;
+    const baseUrl = `${currentUrl.protocol}//${currentUrl.host}`;
+    return `${baseUrl}/onboarding.html`;
   }
 
   // Get the correct dashboard URL for current environment

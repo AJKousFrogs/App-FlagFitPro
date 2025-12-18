@@ -2,22 +2,28 @@
   "mcpServers": {
     "context7": {
       "command": "npx",
-      "args": ["-y", "@context7/mcp-server"],
+      "args": ["-y", "@context7/mcp-server@latest"],
       "env": {
         "CONTEXT7_API_KEY": "${CONTEXT7_API_KEY}",
-        "CONTEXT7_PORT": "3000"
+        "CONTEXT7_PORT": "3000",
+        "CONTEXT7_DOMAIN": "sports-science",
+        "CONTEXT7_CATEGORIES": "nutrition,training,recovery,psychology,biomechanics"
       },
       "allowedTools": ["resolve-library-id", "get-library-docs"],
-      "description": "Context7 - Software documentation finder for sports science and development libraries"
+      "description": "Context7 - Software documentation finder for sports science and development libraries",
+      "alwaysAllow": []
     },
     "sequential-thought": {
       "command": "npx",
-      "args": ["-y", "@sequential-thought/mcp-server"],
+      "args": ["-y", "@sequential-thought/mcp-server@latest"],
       "env": {
-        "SEQUENTIAL_THOUGHT_PORT": "3001"
+        "SEQUENTIAL_THOUGHT_PORT": "3001",
+        "ST_REASONING_DEPTH": "3",
+        "ST_DOMAIN": "sports-coaching"
       },
       "allowedTools": ["sequentialthinking"],
-      "description": "Sequential Thought - Chain-of-thought reasoning framework for complex decision making"
+      "description": "Sequential Thought - Chain-of-thought reasoning framework for complex decision making",
+      "alwaysAllow": []
     }
   },
   "allowedTools": [

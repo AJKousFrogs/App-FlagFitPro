@@ -1,4 +1,4 @@
-import { Component, Input, computed, signal } from '@angular/core';
+import { Component, input, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RiskZone } from '../../../core/models/acwr.models';
 
@@ -262,13 +262,14 @@ import { RiskZone } from '../../../core/models/acwr.models';
   `]
 })
 export class TrafficLightRiskComponent {
-  @Input() riskZone!: RiskZone;
-  @Input() acwrValue!: number;
+  // Angular 21: Use input.required() for required inputs instead of @Input() with !
+  riskZone = input.required<RiskZone>();
+  acwrValue = input.required<number>();
 
-  currentRisk = computed(() => this.riskZone);
+  currentRisk = computed(() => this.riskZone());
 
   markerPosition = computed(() => {
-    const value = this.acwrValue;
+    const value = this.acwrValue();
     if (value < 0.8) {
       return (value / 0.8) * 20;
     } else if (value < 1.3) {

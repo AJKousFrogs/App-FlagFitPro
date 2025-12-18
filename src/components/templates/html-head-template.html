@@ -32,12 +32,22 @@
   <!-- Page-Specific Styles - Uncomment and customize as needed -->
   <!-- <link rel="stylesheet" href="./src/css/pages/[page-name].css" /> -->
 
-  <!-- Lucide Icons -->
+  <!-- Supabase Configuration (Centralized) -->
+  <script src="./src/js/config/supabase-config.js"></script>
+  
+  <!-- Supabase JS SDK from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Lucide Icons (CDN - must be loaded as script tag) -->
   <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js" crossorigin="anonymous" defer></script>
 
   <!-- Core Scripts -->
   <script src="./src/icon-helper.js" defer></script>
   <script src="./src/theme-switcher.js" defer></script>
+
+  <!-- Common Component Loaders (Optional - for dashboard pages) -->
+  <!-- Uncomment for pages that need sidebar, topbar, and footer: -->
+  <!-- <script type="module" src="./src/js/components/common-loaders.js" defer></script> -->
 
   <!-- Page-Specific Scripts - Add as needed -->
   <!-- <script type="module" src="./src/js/[page-script].js"></script> -->

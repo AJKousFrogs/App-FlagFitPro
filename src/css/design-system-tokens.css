@@ -168,15 +168,34 @@
   --text-3xl: var(--font-heading-xl);
   --text-4xl: var(--font-heading-2xl);
   
-  /* Line Heights */
-  --line-height-tight: 1.25;
+  /* Line Heights - Enhanced Visual Hierarchy */
+  --line-height-none: 1;
+  --line-height-tight: 1.2;
+  --line-height-snug: 1.375;
   --line-height-normal: 1.5;
   --line-height-relaxed: 1.625;
+  --line-height-loose: 2;
   
-  /* Letter Spacing */
+  /* Letter Spacing - Enhanced Visual Hierarchy */
+  --letter-spacing-tighter: -0.05em;
   --letter-spacing-tight: -0.02em;
   --letter-spacing-normal: 0;
-  --letter-spacing-wide: 0.05em;
+  --letter-spacing-wide: 0.025em;
+  --letter-spacing-wider: 0.05em;
+  --letter-spacing-widest: 0.1em;
+  
+  /* Visual Hierarchy - Text Color Contrast Levels */
+  --text-hierarchy-primary: var(--color-text-primary);      /* Highest contrast - main content */
+  --text-hierarchy-secondary: var(--color-text-secondary);  /* Medium contrast - supporting text */
+  --text-hierarchy-tertiary: var(--color-text-muted);       /* Lower contrast - metadata, hints */
+  --text-hierarchy-disabled: var(--color-text-disabled);    /* Lowest contrast - disabled states */
+  
+  /* Visual Hierarchy - Spacing Between Elements */
+  --hierarchy-spacing-tight: var(--space-2);    /* 8px - Tight relationship */
+  --hierarchy-spacing-normal: var(--space-4);   /* 16px - Normal relationship */
+  --hierarchy-spacing-relaxed: var(--space-6); /* 24px - Relaxed relationship */
+  --hierarchy-spacing-loose: var(--space-8);    /* 32px - Loose relationship */
+  --hierarchy-spacing-section: var(--space-12);  /* 48px - Section separation */
   
   /* ================================
      BORDER RADIUS

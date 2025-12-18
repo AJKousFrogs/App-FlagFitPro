@@ -20,8 +20,23 @@ export class PerformanceAPI {
   }
 
   // Authentication header
-  getAuthHeaders() {
-    const token = localStorage.getItem("authToken");
+  // Upgraded to use secureStorage API with AES-GCM encryption
+  async getAuthHeaders() {
+    let token = null;
+    
+    // First, try to use secureStorage API (preferred method)
+    if (window.secureStorage && typeof window.secureStorage.getAuthToken === 'function') {
+      try {
+        token = await window.secureStorage.getAuthToken();
+      } catch (error) {
+        // Fallback to legacy method if secureStorage fails
+        token = localStorage.getItem("authToken");
+      }
+    } else {
+      // Fallback: legacy localStorage method
+      token = localStorage.getItem("authToken");
+    }
+    
     return {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
@@ -40,7 +55,7 @@ export class PerformanceAPI {
         `${this.baseUrl}${this.endpoints.measurements}`,
         {
           method: "POST",
-          headers: this.getAuthHeaders(),
+          headers: await this.getAuthHeaders(),
           body: JSON.stringify({
             height: data.height,
             weight: data.weight,
@@ -70,7 +85,7 @@ export class PerformanceAPI {
       const response = await fetch(
         `${this.baseUrl}${this.endpoints.measurements}?athlete=${athleteId}&timeframe=${timeframe}`,
         {
-          headers: this.getAuthHeaders(),
+          headers: await this.getAuthHeaders(),
         },
       );
 
@@ -94,7 +109,7 @@ export class PerformanceAPI {
         `${this.baseUrl}${this.endpoints.performanceTests}`,
         {
           method: "POST",
-          headers: this.getAuthHeaders(),
+          headers: await this.getAuthHeaders(),
           body: JSON.stringify({
             testType: testType,
             result: data.result,
@@ -123,7 +138,7 @@ export class PerformanceAPI {
       const response = await fetch(
         `${this.baseUrl}${this.endpoints.performanceTests}/${testType}?timeframe=${timeframe}`,
         {
-          headers: this.getAuthHeaders(),
+          headers: await this.getAuthHeaders(),
         },
       );
 
@@ -147,7 +162,7 @@ export class PerformanceAPI {
         `${this.baseUrl}${this.endpoints.wellness}`,
         {
           method: "POST",
-          headers: this.getAuthHeaders(),
+          headers: await this.getAuthHeaders(),
           body: JSON.stringify({
             sleep: data.sleep,
             energy: data.energy,
@@ -179,7 +194,7 @@ export class PerformanceAPI {
       const response = await fetch(
         `${this.baseUrl}${this.endpoints.wellness}?timeframe=${timeframe}`,
         {
-          headers: this.getAuthHeaders(),
+          headers: await this.getAuthHeaders(),
         },
       );
 
@@ -207,7 +222,7 @@ export class PerformanceAPI {
         `${this.baseUrl}${this.endpoints.supplements}`,
         {
           method: "POST",
-          headers: this.getAuthHeaders(),
+          headers: await this.getAuthHeaders(),
           body: JSON.stringify({
             supplement: supplementName,
             takenAt: time,
@@ -239,7 +254,7 @@ export class PerformanceAPI {
       const response = await fetch(
         `${this.baseUrl}${this.endpoints.supplements}?timeframe=${timeframe}`,
         {
-          headers: this.getAuthHeaders(),
+          headers: await this.getAuthHeaders(),
         },
       );
 
@@ -263,7 +278,7 @@ export class PerformanceAPI {
         `${this.baseUrl}${this.endpoints.injuries}`,
         {
           method: "POST",
-          headers: this.getAuthHeaders(),
+          headers: await this.getAuthHeaders(),
           body: JSON.stringify({
             bodyPart: injuryData.bodyPart,
             category: injuryData.category,
@@ -295,7 +310,7 @@ export class PerformanceAPI {
         `${this.baseUrl}${this.endpoints.injuries}/${injuryId}`,
         {
           method: "PATCH",
-          headers: this.getAuthHeaders(),
+          headers: await this.getAuthHeaders(),
           body: JSON.stringify({
             status: status,
             notes: notes,
@@ -324,7 +339,7 @@ export class PerformanceAPI {
       const response = await fetch(
         `${this.baseUrl}${this.endpoints.trends}?timeframe=${timeframe}`,
         {
-          headers: this.getAuthHeaders(),
+          headers: await this.getAuthHeaders(),
         },
       );
 
@@ -347,7 +362,7 @@ export class PerformanceAPI {
         `${this.baseUrl}${this.endpoints.trends}/compare`,
         {
           method: "POST",
-          headers: this.getAuthHeaders(),
+          headers: await this.getAuthHeaders(),
           body: JSON.stringify({
             athletes: athleteIds,
             metrics: metrics,
@@ -374,7 +389,7 @@ export class PerformanceAPI {
       const response = await fetch(
         `${this.baseUrl}/athlete/export?format=${format}&timeframe=${timeframe}`,
         {
-          headers: this.getAuthHeaders(),
+          headers: await this.getAuthHeaders(),
         },
       );
 

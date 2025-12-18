@@ -9,7 +9,12 @@ import { UniversalMobileNav } from "./components/universal-mobile-nav.js";
 import { UniversalFormValidator } from "./components/universal-form-validator.js";
 import { UniversalChartAccessibility } from "./components/universal-chart-accessibility.js";
 import { UniversalFocusManagement } from "./components/universal-focus-management.js";
-import { performGlobalSearch } from "./services/global-search-service.js";
+import { 
+  performGlobalSearch, 
+  getRecentSearches, 
+  clearSearchHistory,
+  highlightMatches 
+} from "./services/global-search-service.js";
 
 // Global application state
 window.FlagFitApp = {
@@ -122,11 +127,21 @@ class FlagFitApplication {
     // Override the stub in top-bar.js with the actual implementation
     // Ensure it's always available globally
     window.performGlobalSearch = performGlobalSearch;
+    window.getRecentSearches = getRecentSearches;
+    window.clearSearchHistory = clearSearchHistory;
+    window.highlightMatches = highlightMatches;
     
     // Initialize mobile navigation
     if (document.querySelector(".sidebar, .mobile-menu-toggle, nav")) {
       this.components.set("mobileNav", new UniversalMobileNav());
       window.FlagFitApp.components.mobileNav = this.components.get("mobileNav");
+    }
+
+    // Initialize enhanced sidebar navigation if sidebar exists
+    // This will be auto-initialized by sidebar-loader, but we ensure it's available
+    if (document.getElementById('sidebar') && window.enhancedSidebarNav) {
+      this.components.set("enhancedSidebarNav", window.enhancedSidebarNav);
+      window.FlagFitApp.components.enhancedSidebarNav = window.enhancedSidebarNav;
     }
 
     // Initialize form validation for pages with forms

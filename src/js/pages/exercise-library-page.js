@@ -135,32 +135,56 @@ export class ExerciseLibraryPage {
     );
 
     if (totalPages <= 1) {
-      paginationContainer.innerHTML = "";
+      paginationContainer.textContent = "";
       return;
     }
 
-    const prevDisabled = this.currentPage === 0 ? "disabled" : "";
-    const nextDisabled = this.currentPage >= totalPages - 1 ? "disabled" : "";
+    const prevDisabled = this.currentPage === 0;
+    const nextDisabled = this.currentPage >= totalPages - 1;
 
-    paginationContainer.innerHTML = `
-      <div class="pagination-info">
-        Showing ${this.currentPage * this.itemsPerPage + 1}-${Math.min(
-          (this.currentPage + 1) * this.itemsPerPage,
-          this.filteredExercises.length,
-        )} of ${this.filteredExercises.length} exercises
-      </div>
-      <div class="pagination-controls">
-        <button class="pagination-btn" ${prevDisabled} data-action="prev" aria-label="Previous page">
-          <i data-lucide="chevron-left"></i>
-        </button>
-        <span class="pagination-page-info">
-          Page ${this.currentPage + 1} of ${totalPages}
-        </span>
-        <button class="pagination-btn" ${nextDisabled} data-action="next" aria-label="Next page">
-          <i data-lucide="chevron-right"></i>
-        </button>
-      </div>
-    `;
+    paginationContainer.textContent = "";
+    
+    const info = document.createElement("div");
+    info.className = "pagination-info";
+    const start = this.currentPage * this.itemsPerPage + 1;
+    const end = Math.min((this.currentPage + 1) * this.itemsPerPage, this.filteredExercises.length);
+    info.textContent = `Showing ${start}-${end} of ${this.filteredExercises.length} exercises`;
+    
+    const controls = document.createElement("div");
+    controls.className = "pagination-controls";
+    
+    const prevBtn = document.createElement("button");
+    prevBtn.className = "pagination-btn";
+    if (prevDisabled) prevBtn.disabled = true;
+    prevBtn.setAttribute("data-action", "prev");
+    prevBtn.setAttribute("aria-label", "Previous page");
+    const prevIcon = document.createElement("i");
+    prevIcon.setAttribute("data-lucide", "chevron-left");
+    prevBtn.appendChild(prevIcon);
+    
+    const pageInfo = document.createElement("span");
+    pageInfo.className = "pagination-page-info";
+    pageInfo.textContent = `Page ${this.currentPage + 1} of ${totalPages}`;
+    
+    const nextBtn = document.createElement("button");
+    nextBtn.className = "pagination-btn";
+    if (nextDisabled) nextBtn.disabled = true;
+    nextBtn.setAttribute("data-action", "next");
+    nextBtn.setAttribute("aria-label", "Next page");
+    const nextIcon = document.createElement("i");
+    nextIcon.setAttribute("data-lucide", "chevron-right");
+    nextBtn.appendChild(nextIcon);
+    
+    controls.appendChild(prevBtn);
+    controls.appendChild(pageInfo);
+    controls.appendChild(nextBtn);
+    
+    paginationContainer.appendChild(info);
+    paginationContainer.appendChild(controls);
+    
+    if (typeof lucide !== "undefined") {
+      lucide.createIcons(paginationContainer);
+    }
 
     // Add event listeners for pagination buttons
     const handlePaginationClick = (e) => {
@@ -247,7 +271,7 @@ export class ExerciseLibraryPage {
     });
 
     // Single DOM update - clear and append fragment
-    exerciseGrid.innerHTML = "";
+    exerciseGrid.textContent = "";
     exerciseGrid.appendChild(fragment);
 
     // Initialize Lucide icons for new cards
@@ -267,45 +291,70 @@ export class ExerciseLibraryPage {
     card.className = "exercise-card hover-lift";
     card.onclick = () => this.openExerciseModal(name);
 
-    const icon = this.getExerciseIcon(exercise.category);
-    const primaryMuscles = (exercise.primaryMuscles || [])
-      .map(
-        (muscle) =>
-          `<span class="muscle-tag primary">${this.escapeHtml(muscle)}</span>`,
-      )
-      .join("");
-    const secondaryMuscles = (exercise.secondaryMuscles || [])
-      .map(
-        (muscle) =>
-          `<span class="muscle-tag">${this.escapeHtml(muscle)}</span>`,
-      )
-      .join("");
+    // Create video div with icon
+    const videoDiv = document.createElement("div");
+    videoDiv.className = "exercise-video";
+    // getExerciseIcon returns HTML string, use temp container
+    const iconTemp = document.createElement("div");
+    iconTemp.innerHTML = this.getExerciseIcon(exercise.category);
+    while (iconTemp.firstChild) {
+      videoDiv.appendChild(iconTemp.firstChild);
+    }
+    
+    const content = document.createElement("div");
+    content.className = "exercise-content";
+    
+    const header = document.createElement("div");
+    header.className = "exercise-header";
+    const category = document.createElement("div");
+    category.className = "exercise-category";
+    category.textContent = exercise.category || "";
+    const title = document.createElement("h3");
+    title.className = "exercise-title";
+    title.textContent = name;
+    header.appendChild(category);
+    header.appendChild(title);
+    
+    const muscleTags = document.createElement("div");
+    muscleTags.className = "muscle-tags";
+    (exercise.primaryMuscles || []).forEach(muscle => {
+      const tag = document.createElement("span");
+      tag.className = "muscle-tag primary";
+      tag.textContent = muscle;
+      muscleTags.appendChild(tag);
+    });
+    (exercise.secondaryMuscles || []).forEach(muscle => {
+      const tag = document.createElement("span");
+      tag.className = "muscle-tag";
+      tag.textContent = muscle;
+      muscleTags.appendChild(tag);
+    });
+    
+    const description = document.createElement("p");
+    description.className = "exercise-description";
+    description.textContent = exercise.setup || "";
+    
+    const meta = document.createElement("div");
+    meta.className = "exercise-meta";
+    const difficulty = document.createElement("span");
+    const difficultyLevel = exercise.difficulty || "intermediate";
+    difficulty.className = `difficulty-badge difficulty-${difficultyLevel}`;
+    difficulty.textContent = difficultyLevel.charAt(0).toUpperCase() + difficultyLevel.slice(1);
+    const equipmentList = document.createElement("div");
+    equipmentList.className = "equipment-list";
     const equipment = (exercise.equipment || []).slice(0, 2).join(", ");
     const equipmentMore = (exercise.equipment || []).length > 2 ? "..." : "";
-
-    card.innerHTML = `
-      <div class="exercise-video">${icon}</div>
-      <div class="exercise-content">
-        <div class="exercise-header">
-          <div class="exercise-category">${exercise.category || ""}</div>
-          <h3 class="exercise-title">${this.escapeHtml(name)}</h3>
-        </div>
-        <div class="muscle-tags">
-          ${primaryMuscles}
-          ${secondaryMuscles}
-        </div>
-        <p class="exercise-description">${this.escapeHtml(exercise.setup || "")}</p>
-        <div class="exercise-meta">
-          <span class="difficulty-badge difficulty-${exercise.difficulty || "intermediate"}">
-            ${
-              (exercise.difficulty || "intermediate").charAt(0).toUpperCase() +
-              (exercise.difficulty || "intermediate").slice(1)
-            }
-          </span>
-          <div class="equipment-list">${equipment}${equipmentMore}</div>
-        </div>
-      </div>
-    `;
+    equipmentList.textContent = equipment + equipmentMore;
+    meta.appendChild(difficulty);
+    meta.appendChild(equipmentList);
+    
+    content.appendChild(header);
+    content.appendChild(muscleTags);
+    content.appendChild(description);
+    content.appendChild(meta);
+    
+    card.appendChild(videoDiv);
+    card.appendChild(content);
 
     return card;
   }
@@ -355,26 +404,39 @@ export class ExerciseLibraryPage {
   showLoading() {
     const exerciseGrid = document.getElementById("exerciseGrid");
     if (!exerciseGrid) {return;}
-    exerciseGrid.innerHTML = `
-      <div style="grid-column: 1 / -1; text-align: center; padding: var(--space-12);">
-        <div style="font-size: 2rem; margin-bottom: var(--space-4);">⏳</div>
-        <h3>Loading exercises...</h3>
-      </div>
-    `;
+    exerciseGrid.textContent = "";
+    const loadingDiv = document.createElement("div");
+    loadingDiv.style.cssText = "grid-column: 1 / -1; text-align: center; padding: var(--space-12);";
+    const icon = document.createElement("div");
+    icon.style.cssText = "font-size: 2rem; margin-bottom: var(--space-4);";
+    icon.textContent = "⏳";
+    const h3 = document.createElement("h3");
+    h3.textContent = "Loading exercises...";
+    loadingDiv.appendChild(icon);
+    loadingDiv.appendChild(h3);
+    exerciseGrid.appendChild(loadingDiv);
   }
 
   showNoResults() {
     const exerciseGrid = document.getElementById("exerciseGrid");
     if (!exerciseGrid) {return;}
-    exerciseGrid.innerHTML = `
-      <div style="grid-column: 1 / -1; text-align: center; padding: var(--space-12); color: var(--color-text-secondary);">
-        <div style="font-size: 3rem; margin-bottom: var(--space-4);">
-          <i data-lucide="search" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>
-        </div>
-        <h3>No exercises found</h3>
-        <p>Try adjusting your search terms or filters</p>
-      </div>
-    `;
+    exerciseGrid.textContent = "";
+    const noResultsDiv = document.createElement("div");
+    noResultsDiv.style.cssText = "grid-column: 1 / -1; text-align: center; padding: var(--space-12); color: var(--color-text-secondary);";
+    const iconDiv = document.createElement("div");
+    iconDiv.style.cssText = "font-size: 3rem; margin-bottom: var(--space-4);";
+    const icon = document.createElement("i");
+    icon.setAttribute("data-lucide", "search");
+    icon.style.cssText = "width: 16px; height: 16px; display: inline-block; vertical-align: middle; color: var(--icon-color-primary); stroke: var(--icon-color-primary);";
+    iconDiv.appendChild(icon);
+    const h3 = document.createElement("h3");
+    h3.textContent = "No exercises found";
+    const p = document.createElement("p");
+    p.textContent = "Try adjusting your search terms or filters";
+    noResultsDiv.appendChild(iconDiv);
+    noResultsDiv.appendChild(h3);
+    noResultsDiv.appendChild(p);
+    exerciseGrid.appendChild(noResultsDiv);
     if (typeof lucide !== "undefined") {
       lucide.createIcons(exerciseGrid);
     }
@@ -383,13 +445,20 @@ export class ExerciseLibraryPage {
   showError(message) {
     const exerciseGrid = document.getElementById("exerciseGrid");
     if (!exerciseGrid) {return;}
-    exerciseGrid.innerHTML = `
-      <div style="grid-column: 1 / -1; text-align: center; padding: var(--space-12); color: var(--color-error);">
-        <div style="font-size: 2rem; margin-bottom: var(--space-4);">❌</div>
-        <h3>${this.escapeHtml(message)}</h3>
-        <p>Please refresh the page or try again later</p>
-      </div>
-    `;
+    exerciseGrid.textContent = "";
+    const errorDiv = document.createElement("div");
+    errorDiv.style.cssText = "grid-column: 1 / -1; text-align: center; padding: var(--space-12); color: var(--color-error);";
+    const icon = document.createElement("div");
+    icon.style.cssText = "font-size: 2rem; margin-bottom: var(--space-4);";
+    icon.textContent = "❌";
+    const h3 = document.createElement("h3");
+    h3.textContent = message;
+    const p = document.createElement("p");
+    p.textContent = "Please refresh the page or try again later";
+    errorDiv.appendChild(icon);
+    errorDiv.appendChild(h3);
+    errorDiv.appendChild(p);
+    exerciseGrid.appendChild(errorDiv);
   }
 
   openExerciseModal(name) {
@@ -406,8 +475,11 @@ export class ExerciseLibraryPage {
 
     modalTitle.textContent = name;
     // SECURITY: Sanitize exercise category to prevent XSS
-    const safeCategory = escapeHtml(exercise.category || "");
-    modalCategory.innerHTML = `<span class="exercise-category">${safeCategory}</span>`;
+    modalCategory.textContent = "";
+    const categorySpan = document.createElement("span");
+    categorySpan.className = "exercise-category";
+    categorySpan.textContent = exercise.category || "";
+    modalCategory.appendChild(categorySpan);
 
     // Use DocumentFragment for modal content
     const fragment = document.createDocumentFragment();
@@ -488,7 +560,7 @@ export class ExerciseLibraryPage {
       fragment.appendChild(tempDiv.firstChild);
     }
 
-    modalBody.innerHTML = "";
+    modalBody.textContent = "";
     modalBody.appendChild(fragment);
 
     modal.style.display = "block";

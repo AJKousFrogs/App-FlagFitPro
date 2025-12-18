@@ -125,6 +125,15 @@ export default [
       "no-unsanitized/method": "off",              // Would need eslint-plugin-no-unsanitized
       "no-unsanitized/property": "off",            // Would need eslint-plugin-no-unsanitized
 
+      // Warn about innerHTML usage (XSS risk)
+      "no-restricted-syntax": [
+        "warn",
+        {
+          selector: "MemberExpression[property.name='innerHTML']",
+          message: "Avoid innerHTML - use textContent or DOMPurify.sanitize() to prevent XSS attacks"
+        }
+      ],
+
       // ============================================
       // BEST PRACTICES
       // ============================================

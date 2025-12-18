@@ -1,6 +1,7 @@
-import { Injectable, inject } from "@angular/core";
-import { Observable, BehaviorSubject } from "rxjs";
+import { Injectable, inject, signal, computed } from "@angular/core";
+import { Observable } from "rxjs";
 import { map, tap } from "rxjs/operators";
+import { toSignal } from "@angular/core/rxjs-interop";
 import { ApiService, API_ENDPOINTS } from "./api.service";
 
 export interface WellnessData {
@@ -47,16 +48,25 @@ export interface WellnessResponse {
 export class WellnessService {
   private apiService = inject(ApiService);
 
-  // State management
-  private wellnessDataSubject = new BehaviorSubject<WellnessData[]>([]);
-  public wellnessData$ = this.wellnessDataSubject.asObservable();
+  // UI State: Use signals instead of BehaviorSubject
+  private readonly _wellnessData = signal<WellnessData[]>([]);
+  private readonly _averages = signal<WellnessAverages | null>(null);
 
-  private averagesSubject = new BehaviorSubject<WellnessAverages | null>(null);
-  public averages$ = this.averagesSubject.asObservable();
+  // Public readonly signals for components
+  readonly wellnessData = this._wellnessData.asReadonly();
+  readonly averages = this._averages.asReadonly();
+
+  // Computed signals for derived state
+  readonly hasWellnessData = computed(() => this._wellnessData().length > 0);
+  readonly latestWellnessEntry = computed(() => {
+    const data = this._wellnessData();
+    return data.length > 0 ? data[0] : null;
+  });
 
   /**
    * Get wellness data for a specific timeframe
    * @param timeframe - Time range (e.g., '7d', '30d', '3m')
+   * Returns Observable for complex async work (API calls)
    */
   getWellnessData(timeframe: string = '30d'): Observable<WellnessResponse> {
     return this.apiService
@@ -65,9 +75,10 @@ export class WellnessService {
         map(response => response.data || { success: false, data: [] }),
         tap(wellnessResponse => {
           if (wellnessResponse.success && wellnessResponse.data) {
-            this.wellnessDataSubject.next(wellnessResponse.data);
+            // Update signals (UI state) from async operation
+            this._wellnessData.set(wellnessResponse.data);
             if (wellnessResponse.averages) {
-              this.averagesSubject.next(wellnessResponse.averages);
+              this._averages.set(wellnessResponse.averages);
             }
           }
         })
@@ -238,7 +249,7 @@ export class WellnessService {
    * Clear cached wellness data
    */
   clearCache(): void {
-    this.wellnessDataSubject.next([]);
-    this.averagesSubject.next(null);
+    this._wellnessData.set([]);
+    this._averages.set(null);
   }
 }

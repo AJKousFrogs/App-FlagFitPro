@@ -1,4 +1,4 @@
-import { Injectable, inject, signal, computed } from "@angular/core";
+import { Injectable, inject, signal, computed, effect } from "@angular/core";
 import { MessageService } from "primeng/api";
 
 export interface PerformanceMetric {
@@ -33,10 +33,13 @@ export class PerformanceMonitorService {
   };
 
   constructor() {
-    // Initialize if browser supports PerformanceObserver
-    if (typeof PerformanceObserver !== "undefined") {
-      this.startMonitoring();
-    }
+    // Use effect() for initialization (zoneless-compatible)
+    effect(() => {
+      // Initialize if browser supports PerformanceObserver
+      if (typeof PerformanceObserver !== "undefined" && !this.performanceObserver) {
+        this.startMonitoring();
+      }
+    });
   }
 
   startMonitoring(): void {

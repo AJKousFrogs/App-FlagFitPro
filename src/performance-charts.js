@@ -101,7 +101,7 @@ export class PerformanceCharts {
     return new Promise((resolve, reject) => {
       const script = document.createElement("script");
       script.src =
-        "https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js";
+        "https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.js";
       script.crossOrigin = "anonymous";
       script.onload = () => {
         // Load Chart.js date adapter

@@ -1,6 +1,5 @@
 import {
   Component,
-  OnInit,
   computed,
   inject,
   ChangeDetectionStrategy,
@@ -178,7 +177,7 @@ import { ContextService, QuickAction } from "../../../core/services/context.serv
     `,
   ],
 })
-export class SmartBreadcrumbsComponent implements OnInit {
+export class SmartBreadcrumbsComponent {
   private router = inject(Router);
   private contextService = inject(ContextService);
 
@@ -206,10 +205,6 @@ export class SmartBreadcrumbsComponent implements OnInit {
       badge: action.badge,
     }));
   });
-
-  ngOnInit(): void {
-    // Component initialization
-  }
 
   executeQuickAction(action: QuickAction | null): void {
     if (!action) return;

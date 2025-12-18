@@ -62,6 +62,54 @@
             }
           },
           "defaultConfiguration": "development"
+        },
+        "serve-ssr": {
+          "builder": "@angular-devkit/build-angular:ssr-dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "flagfit-pro:build:production",
+              "serverTarget": "flagfit-pro:server:production"
+            },
+            "development": {
+              "buildTarget": "flagfit-pro:build:development",
+              "serverTarget": "flagfit-pro:server:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "prerender": {
+          "builder": "@angular-devkit/build-angular:prerender",
+          "options": {
+            "routes": []
+          }
+        },
+        "server": {
+          "builder": "@angular-devkit/build-angular:application-server",
+          "options": {
+            "outputPath": "dist/flagfit-pro/server",
+            "main": "server.ts",
+            "tsConfig": "tsconfig.server.json",
+            "optimization": true,
+            "sourceMap": false
+          },
+          "configurations": {
+            "production": {
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
+              "sourceMap": false,
+              "optimization": true
+            },
+            "development": {
+              "optimization": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
         }
       }
     }

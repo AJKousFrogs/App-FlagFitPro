@@ -12,7 +12,8 @@ export interface HeaderConfig {
   providedIn: "root",
 })
 export class HeaderService {
-  private headerConfig = signal<HeaderConfig>({
+  // Private writable signal - use readonly keyword for Angular 21 best practices
+  private readonly headerConfig = signal<HeaderConfig>({
     showLogo: true,
     searchPosition: "center",
     searchPlaceholder: "Search...",
@@ -20,6 +21,10 @@ export class HeaderService {
     variant: "default",
   });
 
+  /**
+   * Get readonly signal for config - Angular 21 best practice
+   * Returns a readonly signal that cannot be mutated externally
+   */
   getConfig() {
     return this.headerConfig.asReadonly();
   }

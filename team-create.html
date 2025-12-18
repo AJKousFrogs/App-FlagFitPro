@@ -8,11 +8,17 @@
       rel="icon"
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
+    <!-- Design System CSS -->
     <link rel="stylesheet" href="./src/css/main.css" />
+    <!-- Page-specific styles -->
+    <link rel="stylesheet" href="./src/css/pages/auth.css" />
+    <link rel="stylesheet" href="./src/css/pages/team-create.css" />
 
     <!-- Lucide Icons -->
     <script
@@ -23,291 +29,204 @@
     <script src="./src/icon-helper.js" defer></script>
     <script src="./src/theme-switcher.js" defer></script>
 
+    <!-- Supabase Configuration (Centralized) -->
+    <script src="./src/js/config/supabase-config.js"></script>
+    
     <!-- Supabase JS SDK from CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <!-- Supabase Configuration -->
-    <script>
-      window._env = {
-        SUPABASE_URL: 'https://pvziciccwxgftcielknm.supabase.co',
-        SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2emljaWNjd3hnZnRjaWVsa25tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MzcwNTgsImV4cCI6MjA3NTExMzA1OH0.1nfJrtWPl6DrAwvjGvM1-CZBeyYgCaV9oDdaadpqhLU'
-      };
-    </script>
+    <!-- Universal Components -->
+    <script type="module" src="./src/js/main.js"></script>
+    <!-- Universal Form Validator -->
+    <script type="module" src="./src/js/components/universal-form-validator.js" defer></script>
+    <!-- Footer Loader (Dynamic Component) -->
+    <script type="module" src="./src/js/components/footer-loader.js" defer></script>
 
-    <style>
-      body {
-        margin: 0;
-        padding: 0;
-        font-family: 'Poppins', sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-      }
-      .create-team-container {
-        background: white;
-        border-radius: 20px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        max-width: 700px;
-        width: 100%;
-        padding: 40px;
-      }
-      .header {
-        text-align: center;
-        margin-bottom: 40px;
-      }
-      .header-icon {
-        font-size: 4rem;
-        margin-bottom: 16px;
-      }
-      h1 {
-        font-size: 2.5rem;
-        color: #1a1a1a;
-        margin: 0 0 12px 0;
-        font-weight: 700;
-      }
-      .subtitle {
-        color: #666;
-        font-size: 1.1rem;
-        margin: 0;
-      }
-      .form-group {
-        margin-bottom: 24px;
-      }
-      label {
-        display: block;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 8px;
-        font-size: 0.95rem;
-      }
-      .required {
-        color: #e53e3e;
-      }
-      input[type="text"],
-      input[type="number"],
-      textarea,
-      select {
-        width: 100%;
-        padding: 12px 16px;
-        border: 2px solid #e0e0e0;
-        border-radius: 8px;
-        font-size: 1rem;
-        font-family: 'Poppins', sans-serif;
-        transition: border-color 0.2s;
-        box-sizing: border-box;
-      }
-      input[type="text"]:focus,
-      input[type="number"]:focus,
-      textarea:focus,
-      select:focus {
-        outline: none;
-        border-color: #667eea;
-      }
-      textarea {
-        resize: vertical;
-        min-height: 100px;
-      }
-      .form-help {
-        font-size: 0.85rem;
-        color: #666;
-        margin-top: 6px;
-        display: block;
-      }
-      .form-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
-      }
-      .color-picker-group {
-        display: flex;
-        gap: 12px;
-        align-items: center;
-      }
-      input[type="color"] {
-        width: 60px;
-        height: 45px;
-        border: 2px solid #e0e0e0;
-        border-radius: 8px;
-        cursor: pointer;
-      }
-      .color-preview {
-        flex: 1;
-        padding: 12px;
-        border-radius: 8px;
-        text-align: center;
-        color: white;
-        font-weight: 600;
-        font-size: 0.9rem;
-      }
-      .btn {
-        padding: 14px 28px;
-        border: none;
-        border-radius: 10px;
-        font-size: 1.1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s;
-        font-family: 'Poppins', sans-serif;
-      }
-      .btn-primary {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        width: 100%;
-      }
-      .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-      }
-      .btn-primary:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-        transform: none;
-      }
-      .btn-secondary {
-        background: #f0f0f0;
-        color: #333;
-        margin-top: 12px;
-        width: 100%;
-      }
-      .btn-secondary:hover {
-        background: #e0e0e0;
-      }
-      .success-message,
-      .error-message {
-        padding: 16px;
-        border-radius: 8px;
-        margin-bottom: 20px;
-        display: none;
-      }
-      .success-message {
-        background: #d4edda;
-        color: #155724;
-        border: 1px solid #c3e6cb;
-      }
-      .error-message {
-        background: #f8d7da;
-        color: #721c24;
-        border: 1px solid #f5c6cb;
-      }
-      @media (max-width: 600px) {
-        .form-row {
-          grid-template-columns: 1fr;
-        }
-        .create-team-container {
-          padding: 30px 20px;
-        }
-        h1 {
-          font-size: 2rem;
-        }
-      }
-    </style>
   </head>
-  <body>
-    <div class="create-team-container">
+  <body class="page-auth">
+    <div class="create-team-container card card-elevated">
       <div class="header">
-        <div class="header-icon">🏈</div>
-        <h1>Create Your Team</h1>
-        <p class="subtitle">Set up your team and start inviting players</p>
+        <div class="header-icon" aria-hidden="true">🏈</div>
+        <h1 class="text-heading-2xl text-primary space-relaxed">Create Your Team</h1>
+        <p class="subtitle text-body-md text-secondary">Set up your team and start inviting players</p>
       </div>
 
-      <div class="success-message" id="successMessage"></div>
-      <div class="error-message" id="errorMessage"></div>
+      <div
+        class="error-message u-bg-error u-padding-16 u-margin-bottom-20 u-text-body-sm u-text-error u-radius-md"
+        id="errorMessage"
+        role="alert"
+        aria-live="assertive"
+        style="display: none; border: 1px solid var(--color-status-error)"
+      ></div>
+      <div
+        class="success-message u-bg-success u-padding-16 u-margin-bottom-20 u-text-body-sm u-text-success u-radius-md"
+        id="successMessage"
+        role="status"
+        aria-live="polite"
+        style="display: none; border: 1px solid var(--color-status-success)"
+      ></div>
 
-      <form id="createTeamForm">
-        <div class="form-group">
-          <label for="teamName">Team Name <span class="required">*</span></label>
+      <form id="createTeamForm" novalidate>
+        <div class="form-group u-margin-bottom-24 u-text-left">
+          <label for="teamName" class="form-label required">
+            Team Name
+            <span class="required-indicator" aria-label="required">*</span>
+          </label>
           <input
             type="text"
             id="teamName"
             name="teamName"
+            class="form-input"
             required
             placeholder="Enter your team name"
             maxlength="255"
+            autocomplete="organization"
+            aria-describedby="teamName-error teamName-help"
+            aria-invalid="false"
           />
-          <small class="form-help">This will be displayed to all team members</small>
+          <div
+            id="teamName-error"
+            class="form-error"
+            role="alert"
+            aria-live="polite"
+            style="display: none"
+          ></div>
+          <small id="teamName-help" class="form-hint">This will be displayed to all team members</small>
         </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label for="league">League/Competition</label>
+        <div class="form-row u-display-grid u-grid-cols-2 u-gap-20 u-margin-bottom-24">
+          <div class="form-group u-text-left">
+            <label for="league" class="form-label">League/Competition</label>
             <input
               type="text"
               id="league"
               name="league"
+              class="form-input"
               placeholder="e.g., City League"
               maxlength="255"
+              autocomplete="organization-title"
+              aria-describedby="league-error"
             />
+            <div
+              id="league-error"
+              class="form-error"
+              role="alert"
+              style="display: none"
+            ></div>
           </div>
 
-          <div class="form-group">
-            <label for="season">Season</label>
+          <div class="form-group u-text-left">
+            <label for="season" class="form-label">Season</label>
             <input
               type="text"
               id="season"
               name="season"
+              class="form-input"
               placeholder="e.g., 2025 Spring"
               maxlength="100"
+              autocomplete="off"
+              aria-describedby="season-error"
             />
+            <div
+              id="season-error"
+              class="form-error"
+              role="alert"
+              style="display: none"
+            ></div>
           </div>
         </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label for="homeCity">Home City</label>
+        <div class="form-row u-display-grid u-grid-cols-2 u-gap-20 u-margin-bottom-24">
+          <div class="form-group u-text-left">
+            <label for="homeCity" class="form-label">Home City</label>
             <input
               type="text"
               id="homeCity"
               name="homeCity"
+              class="form-input"
               placeholder="e.g., Ljubljana"
               maxlength="255"
+              autocomplete="address-level2"
+              aria-describedby="homeCity-error"
             />
+            <div
+              id="homeCity-error"
+              class="form-error"
+              role="alert"
+              style="display: none"
+            ></div>
           </div>
 
-          <div class="form-group">
-            <label for="foundedYear">Founded Year</label>
+          <div class="form-group u-text-left">
+            <label for="foundedYear" class="form-label">Founded Year</label>
             <input
               type="number"
               id="foundedYear"
               name="foundedYear"
+              class="form-input"
               placeholder="2025"
               min="1900"
               max="2100"
+              autocomplete="off"
+              aria-describedby="foundedYear-error"
             />
+            <div
+              id="foundedYear-error"
+              class="form-error"
+              role="alert"
+              style="display: none"
+            ></div>
           </div>
         </div>
 
-        <div class="form-group">
-          <label for="motto">Team Motto</label>
+        <div class="form-group u-margin-bottom-24 u-text-left">
+          <label for="motto" class="form-label">Team Motto</label>
           <input
             type="text"
             id="motto"
             name="motto"
+            class="form-input"
             placeholder="e.g., Unity Through Sport"
             maxlength="500"
+            autocomplete="off"
+            aria-describedby="motto-error"
           />
+          <div
+            id="motto-error"
+            class="form-error"
+            role="alert"
+            style="display: none"
+          ></div>
         </div>
 
-        <div class="form-group">
-          <label for="description">Team Description</label>
+        <div class="form-group u-margin-bottom-24 u-text-left">
+          <label for="description" class="form-label">Team Description</label>
           <textarea
             id="description"
             name="description"
+            class="form-input"
             placeholder="Tell us about your team, goals, and vision..."
+            rows="4"
+            aria-describedby="description-error"
           ></textarea>
+          <div
+            id="description-error"
+            class="form-error"
+            role="alert"
+            style="display: none"
+          ></div>
         </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label for="primaryColor">Primary Color</label>
+        <div class="form-row u-display-grid u-grid-cols-2 u-gap-20 u-margin-bottom-24">
+          <div class="form-group u-text-left">
+            <label for="primaryColor" class="form-label">Primary Color</label>
             <div class="color-picker-group">
               <input
                 type="color"
                 id="primaryColor"
                 name="primaryColor"
                 value="#667eea"
+                aria-label="Primary team color"
               />
               <div class="color-preview" id="primaryPreview" style="background: #667eea;">
                 Primary
@@ -315,14 +234,15 @@
             </div>
           </div>
 
-          <div class="form-group">
-            <label for="secondaryColor">Secondary Color</label>
+          <div class="form-group u-text-left">
+            <label for="secondaryColor" class="form-label">Secondary Color</label>
             <div class="color-picker-group">
               <input
                 type="color"
                 id="secondaryColor"
                 name="secondaryColor"
                 value="#764ba2"
+                aria-label="Secondary team color"
               />
               <div class="color-preview" id="secondaryPreview" style="background: #764ba2;">
                 Secondary
@@ -331,12 +251,22 @@
           </div>
         </div>
 
-        <button type="submit" class="btn btn-primary" id="submitBtn">
-          <i data-lucide="check" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>
-          Create Team
+        <button
+          type="submit"
+          class="btn btn-primary u-width-full u-padding-16 u-margin-bottom-12"
+          id="submitBtn"
+          aria-label="Create team"
+        >
+          <i data-lucide="check" aria-hidden="true" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i>
+          <span>Create Team</span>
         </button>
 
-        <button type="button" class="btn btn-secondary" onclick="window.location.href='/dashboard.html'">
+        <button
+          type="button"
+          class="btn btn-secondary u-width-full"
+          onclick="window.location.href='/dashboard.html'"
+          aria-label="Cancel and return to dashboard"
+        >
           Cancel
         </button>
       </form>
@@ -345,6 +275,7 @@
     <script type="module">
       import { authManager } from './src/auth-manager.js';
       import { getSupabase } from './src/js/services/supabase-client.js';
+      import { showMessage, hideMessage, clearMessages, showSuccess, showError } from './src/js/utils/message-utils.js';
 
       // Wait for DOM and auth
       document.addEventListener('DOMContentLoaded', async () => {
@@ -360,8 +291,10 @@
         const userRole = user?.user_metadata?.role || user?.role || 'player';
 
         if (userRole !== 'coach') {
-          alert('Only coaches can create teams');
-          window.location.href = '/dashboard.html';
+          showError('errorMessage', 'Only coaches can create teams');
+          setTimeout(() => {
+            window.location.href = '/dashboard.html';
+          }, 2000);
           return;
         }
 
@@ -370,17 +303,37 @@
           lucide.createIcons();
         }
 
-        // Color preview updates
-        document.getElementById('primaryColor').addEventListener('input', (e) => {
-          document.getElementById('primaryPreview').style.background = e.target.value;
-        });
+        // Initialize Universal Form Validator
+        const form = document.getElementById('createTeamForm');
+        if (form && typeof UniversalFormValidator !== 'undefined') {
+          new UniversalFormValidator(form, {
+            validateOnInput: true,
+            validateOnBlur: true,
+            showSuccessStates: true,
+            announceErrors: true
+          });
+        }
 
-        document.getElementById('secondaryColor').addEventListener('input', (e) => {
-          document.getElementById('secondaryPreview').style.background = e.target.value;
-        });
+        // Color preview updates
+        const primaryColorInput = document.getElementById('primaryColor');
+        const secondaryColorInput = document.getElementById('secondaryColor');
+        const primaryPreview = document.getElementById('primaryPreview');
+        const secondaryPreview = document.getElementById('secondaryPreview');
+
+        if (primaryColorInput && primaryPreview) {
+          primaryColorInput.addEventListener('input', (e) => {
+            primaryPreview.style.background = e.target.value;
+          });
+        }
+
+        if (secondaryColorInput && secondaryPreview) {
+          secondaryColorInput.addEventListener('input', (e) => {
+            secondaryPreview.style.background = e.target.value;
+          });
+        }
 
         // Form submission
-        document.getElementById('createTeamForm').addEventListener('submit', async (e) => {
+        form.addEventListener('submit', async (e) => {
           e.preventDefault();
 
           const submitBtn = document.getElementById('submitBtn');
@@ -388,15 +341,26 @@
           const successMessage = document.getElementById('successMessage');
 
           // Hide previous messages
-          errorMessage.style.display = 'none';
-          successMessage.style.display = 'none';
+          clearMessages('errorMessage', 'successMessage');
 
-          // Disable submit button
+          // Validate form
+          if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+          }
+
+          // Disable submit button and show loading state
+          const originalBtnContent = submitBtn.innerHTML;
           submitBtn.disabled = true;
           submitBtn.innerHTML = '<i data-lucide="loader" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px; animation: spin 1s linear infinite;"></i> Creating Team...';
+          
+          // Re-initialize icons for the loader
+          if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+          }
 
           try {
-            const formData = new FormData(e.target);
+            const formData = new FormData(form);
             const supabase = getSupabase();
 
             if (!supabase) {
@@ -404,25 +368,30 @@
             }
 
             // Get current user
-            const { data: { user } } = await supabase.auth.getUser();
+            const { data: { user }, error: authError } = await supabase.auth.getUser();
 
-            if (!user) {
+            if (authError || !user) {
               throw new Error('You must be logged in to create a team');
             }
 
             // Prepare team data
             const teamData = {
-              name: formData.get('teamName'),
-              league: formData.get('league') || null,
-              season: formData.get('season') || null,
-              home_city: formData.get('homeCity') || null,
+              name: formData.get('teamName')?.trim(),
+              league: formData.get('league')?.trim() || null,
+              season: formData.get('season')?.trim() || null,
+              home_city: formData.get('homeCity')?.trim() || null,
               founded_year: formData.get('foundedYear') ? parseInt(formData.get('foundedYear')) : null,
-              motto: formData.get('motto') || null,
-              description: formData.get('description') || null,
+              motto: formData.get('motto')?.trim() || null,
+              description: formData.get('description')?.trim() || null,
               primary_color: formData.get('primaryColor') || '#667eea',
               secondary_color: formData.get('secondaryColor') || '#764ba2',
               coach_id: user.id
             };
+
+            // Validate team name
+            if (!teamData.name || teamData.name.length === 0) {
+              throw new Error('Team name is required');
+            }
 
             // Insert team
             const { data: team, error } = await supabase
@@ -432,12 +401,18 @@
               .single();
 
             if (error) {
-              throw error;
+              // Handle specific error cases
+              if (error.code === '23505') {
+                throw new Error('A team with this name already exists');
+              } else if (error.code === '23503') {
+                throw new Error('Invalid coach ID. Please log out and log back in.');
+              } else {
+                throw new Error(error.message || 'Failed to create team. Please try again.');
+              }
             }
 
             // Show success message
-            successMessage.textContent = `🎉 Team "${team.name}" created successfully!`;
-            successMessage.style.display = 'block';
+            showSuccess('successMessage', `🎉 Team "${team.name}" created successfully! Redirecting to roster...`);
 
             // Redirect to roster page after 2 seconds
             setTimeout(() => {
@@ -446,12 +421,11 @@
 
           } catch (error) {
             console.error('Error creating team:', error);
-            errorMessage.textContent = error.message || 'Failed to create team. Please try again.';
-            errorMessage.style.display = 'block';
+            showError('errorMessage', error.message || 'Failed to create team. Please try again.');
 
             // Re-enable submit button
             submitBtn.disabled = false;
-            submitBtn.innerHTML = '<i data-lucide="check" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;"></i> Create Team';
+            submitBtn.innerHTML = originalBtnContent;
 
             if (typeof lucide !== 'undefined') {
               lucide.createIcons();
@@ -460,5 +434,8 @@
         });
       });
     </script>
+
+    <!-- Footer (Loaded Dynamically) -->
+    <div data-footer-container></div>
   </body>
 </html>

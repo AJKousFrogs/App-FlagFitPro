@@ -362,3 +362,212 @@
     padding: var(--space-2) var(--space-3);
   }
 }
+
+/* ================================================================
+   ENHANCED SETTINGS STYLES
+   ================================================================ */
+
+/* Form validation states */
+.form-input.valid {
+  border-color: var(--color-status-success);
+  box-shadow: 0 0 0 3px var(--color-status-success-light);
+}
+
+.form-input.invalid {
+  border-color: var(--color-status-error);
+  box-shadow: 0 0 0 3px var(--color-status-error-light);
+}
+
+.form-success {
+  display: none;
+  color: var(--color-status-success);
+  font-size: var(--text-xs);
+  margin-top: var(--space-1);
+}
+
+.form-input.valid ~ .form-success {
+  display: block;
+}
+
+/* Save button states */
+.btn.has-changes {
+  animation: pulse 2s infinite;
+  position: relative;
+}
+
+.btn.has-changes::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: inherit;
+  background: var(--color-interactive-primary);
+  opacity: 0.2;
+  animation: pulse-glow 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+/* Settings section animations */
+.settings-section {
+  animation: fadeInUp 0.4s ease-out;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.settings-section:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Toggle switch animations */
+.toggle-switch {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.toggle-switch:active {
+  transform: scale(0.95);
+}
+
+.toggle-switch.active::after {
+  animation: toggle-slide 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes toggle-slide {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(24px);
+  }
+}
+
+/* Setting item hover effects */
+.setting-item {
+  transition: background-color 0.2s ease, padding 0.2s ease;
+}
+
+.setting-item:hover {
+  background-color: var(--surface-secondary);
+  padding-left: var(--space-2);
+  padding-right: var(--space-2);
+  margin-left: calc(-1 * var(--space-2));
+  margin-right: calc(-1 * var(--space-2));
+  border-radius: var(--radius-md);
+}
+
+/* Auto-save indicator */
+.auto-save-indicator {
+  position: fixed;
+  bottom: var(--space-4);
+  right: var(--space-4);
+  background: var(--surface-elevated);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  box-shadow: var(--shadow-md);
+  z-index: var(--z-index-dropdown);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.auto-save-indicator.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.auto-save-indicator.saving {
+  color: var(--color-interactive-primary);
+}
+
+.auto-save-indicator.saved {
+  color: var(--color-status-success);
+}
+
+.auto-save-indicator.error {
+  color: var(--color-status-error);
+}
+
+/* Loading states */
+.settings-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--space-8);
+  color: var(--color-text-secondary);
+}
+
+.settings-loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--color-border-secondary);
+  border-top-color: var(--color-interactive-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Unsaved changes warning */
+.unsaved-changes-warning {
+  background: var(--color-status-warning-light);
+  border: 1px solid var(--color-status-warning);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  margin-bottom: var(--space-4);
+  color: var(--color-status-warning-dark);
+  font-size: var(--text-sm);
+  display: none;
+}
+
+.unsaved-changes-warning.show {
+  display: block;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

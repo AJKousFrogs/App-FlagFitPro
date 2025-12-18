@@ -2,6 +2,7 @@ import { Injectable, inject } from "@angular/core";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { Observable, throwError, of } from "rxjs";
 import { catchError, delay, retryWhen, take } from "rxjs/operators";
+import { SupabaseService } from "./supabase.service";
 
 /**
  * Game Stats Service
@@ -46,15 +47,13 @@ export interface PlayerStats {
 export class GameStatsService {
   private readonly MAX_RETRIES = 3;
   private readonly RETRY_DELAY_MS = 1000;
-  private supabase: SupabaseClient | null = null;
+  private supabaseService = inject(SupabaseService);
 
   /**
-   * Initialize with Supabase client
-   * Note: This service requires manual initialization as SupabaseClient
-   * is typically created at the application level and passed down.
+   * Get Supabase client instance
    */
-  initialize(supabaseClient: SupabaseClient): void {
-    this.supabase = supabaseClient;
+  private get supabase(): SupabaseClient {
+    return this.supabaseService.client;
   }
 
   /**
@@ -65,9 +64,6 @@ export class GameStatsService {
     gameId: string,
     maxRetries = this.MAX_RETRIES
   ): Promise<PlayerStats | null> {
-    if (!this.supabase) {
-      throw new Error("Supabase client not initialized. Call initialize() first.");
-    }
 
     for (let attempt = 0; attempt < maxRetries; attempt++) {
       try {
@@ -110,9 +106,6 @@ export class GameStatsService {
    * Get player stats as Observable (RxJS version)
    */
   getPlayerStatsObservable(playerId: string, gameId: string): Observable<PlayerStats | null> {
-    if (!this.supabase) {
-      return throwError(() => new Error("Supabase client not initialized"));
-    }
 
     // Convert promise to observable with retry logic
     return new Observable<PlayerStats | null>((subscriber) => {

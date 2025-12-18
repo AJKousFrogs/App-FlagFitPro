@@ -1,10 +1,9 @@
 import {
   Component,
-  OnInit,
   inject,
-  signal,
   computed,
   ChangeDetectionStrategy,
+  effect,
 } from "@angular/core";
 
 import { CommonModule } from "@angular/common";
@@ -12,7 +11,6 @@ import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
 import { ButtonModule } from "primeng/button";
 import { TagModule } from "primeng/tag";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
@@ -20,8 +18,6 @@ import { PerformanceDashboardComponent } from "../../shared/components/performan
 import { WellnessWidgetComponent } from "../../shared/components/wellness-widget/wellness-widget.component";
 import { AthleteDashboardComponent } from "./athlete-dashboard.component";
 import { CoachDashboardComponent } from "./coach-dashboard.component";
-import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
-import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
 import { HeaderService } from "../../core/services/header.service";
 
@@ -158,18 +154,21 @@ import { HeaderService } from "../../core/services/header.service";
     `,
   ],
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent {
   private authService = inject(AuthService);
   private headerService = inject(HeaderService);
 
+  // Signal-based user role computation
   userRole = computed(() => {
-    const user = this.authService.getUser();
+    const user = this.authService.currentUser();
     return user?.role || 'player';
   });
 
-  ngOnInit(): void {
-    // Configure header for dashboard
-    this.headerService.setDashboardHeader();
+  constructor() {
+    // Configure header for dashboard using effect (zoneless change detection compatible)
+    effect(() => {
+      // Effect runs when component initializes and when dependencies change
+      this.headerService.setDashboardHeader();
+    });
   }
-
 }

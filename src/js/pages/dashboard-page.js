@@ -7,6 +7,40 @@ import { logger } from "../../logger.js";
 import { escapeHtml } from "../utils/sanitize.js";
 import { storageService } from "../services/storage-service-unified.js";
 import { errorHandler } from "../utils/unified-error-handler.js";
+import { initializeLucideIcons } from "../utils/shared.js";
+
+/**
+ * Helper: Set button loading state safely
+ */
+function setButtonLoading(button, loadingText = "Loading...") {
+  const originalHTML = button.innerHTML;
+  button.dataset.originalHtml = originalHTML;
+  button.disabled = true;
+  
+  // Clear and create loading icon using DOM
+  button.textContent = '';
+  const icon = document.createElement("i");
+  icon.setAttribute("data-lucide", "loader-2");
+  icon.className = "icon-16 icon-inline";
+  const text = document.createTextNode(` ${loadingText}`);
+  button.appendChild(icon);
+  button.appendChild(text);
+  initializeLucideIcons(button);
+}
+
+/**
+ * Helper: Restore button original state
+ */
+function restoreButton(button) {
+  const originalHTML = button.dataset.originalHtml || button.textContent;
+  button.disabled = false;
+  // Always use textContent for safety - if original was HTML, it will be lost
+  // This encourages using textContent from the start
+  button.textContent = originalHTML;
+  delete button.dataset.originalHtml;
+  // Re-initialize Lucide icons if needed
+  initializeLucideIcons(button);
+}
 
 /**
  * NotificationStore - Centralized notification state management
@@ -330,6 +364,7 @@ class DashboardPage {
     // Wait for DOM to be ready
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", () => {
+        this.checkOnboardingCompletion();
         this.setupEventListeners();
         this.setupGlobalFunctions();
         this.setupNotificationStore();
@@ -337,11 +372,37 @@ class DashboardPage {
         this.checkProfileCompletion();
       });
     } else {
+      this.checkOnboardingCompletion();
       this.setupEventListeners();
       this.setupGlobalFunctions();
       this.setupNotificationStore();
       this.updateUserGreeting();
       this.checkProfileCompletion();
+    }
+  }
+
+  // Check if user has completed onboarding and redirect if needed
+  async checkOnboardingCompletion() {
+    try {
+      await authManager.waitForInit();
+
+      // Only check if user is authenticated
+      if (!authManager.isAuthenticated()) {
+        return;
+      }
+
+      const user = authManager.getCurrentUser();
+      const onboardingCompleted = user?.user_metadata?.onboarding_completed || 
+                                  storageService.get("onboardingCompleted", null, { usePrefix: false });
+
+      // If onboarding not completed and not already on onboarding page, redirect
+      if (!onboardingCompleted && !window.location.pathname.includes('onboarding.html')) {
+        logger.info("User has not completed onboarding, redirecting to onboarding page");
+        window.location.href = '/onboarding.html';
+      }
+    } catch (error) {
+      logger.warn("Could not check onboarding completion:", error);
+      // Don't block dashboard access if check fails
     }
   }
 
@@ -383,8 +444,16 @@ class DashboardPage {
   async setupNotificationStore() {
     // Subscribe to store changes
     this.notificationStore.subscribe((state) => {
+      // Use enhanced notification center if available, otherwise fallback to basic rendering
+      if (window.enhancedNotificationCenter && window.enhancedNotificationCenter.panel) {
+        // Enhanced center will handle rendering
+        return;
+      }
       this.updateNotificationUI(state);
     });
+
+    // Make notification store available globally for enhanced center
+    window.notificationStore = this.notificationStore;
 
     // Wait for auth manager to initialize before refreshing badge
     try {
@@ -397,6 +466,15 @@ class DashboardPage {
       logger.warn("Failed to wait for auth initialization:", error);
       // Try to refresh badge anyway (will fail gracefully if not authenticated)
       this.refreshBadge();
+    }
+
+    // Initialize enhanced notification center if available
+    try {
+      const { default: enhancedNotificationCenter } = await import('../components/enhanced-notification-center.js');
+      await enhancedNotificationCenter.init(this.notificationStore);
+      logger.debug('[Dashboard] Enhanced notification center initialized');
+    } catch (error) {
+      logger.debug('[Dashboard] Enhanced notification center not available, using basic rendering:', error);
     }
   }
 
@@ -429,12 +507,21 @@ class DashboardPage {
     const notificationList = document.getElementById("notification-list");
     if (!notificationList) return;
 
-    notificationList.innerHTML = `
-      <div class="notification-loading">
-        <div class="notification-loading-spinner"></div>
-        <div class="notification-loading-text">Loading notifications...</div>
-      </div>
-    `;
+    // Clear and create loading state using DOM manipulation
+    notificationList.textContent = '';
+    const loadingDiv = document.createElement("div");
+    loadingDiv.className = "notification-loading";
+    
+    const spinner = document.createElement("div");
+    spinner.className = "notification-loading-spinner";
+    
+    const text = document.createElement("div");
+    text.className = "notification-loading-text";
+    text.textContent = "Loading notifications...";
+    
+    loadingDiv.appendChild(spinner);
+    loadingDiv.appendChild(text);
+    notificationList.appendChild(loadingDiv);
   }
 
   /**
@@ -444,15 +531,32 @@ class DashboardPage {
     const notificationList = document.getElementById("notification-list");
     if (!notificationList) return;
 
-    notificationList.innerHTML = `
-      <div class="notification-error">
-        <div class="notification-error-icon">⚠️</div>
-        <div class="notification-error-text">${escapeHtml(error)}</div>
-        <button class="notification-retry-btn" onclick="window.dashboardPage?.loadNotifications()">
-          Retry
-        </button>
-      </div>
-    `;
+    // Clear and create error state using DOM manipulation
+    notificationList.textContent = '';
+    const errorDiv = document.createElement("div");
+    errorDiv.className = "notification-error";
+    
+    const icon = document.createElement("div");
+    icon.className = "notification-error-icon";
+    icon.textContent = "⚠️";
+    
+    const text = document.createElement("div");
+    text.className = "notification-error-text";
+    text.textContent = error;
+    
+    const retryBtn = document.createElement("button");
+    retryBtn.className = "notification-retry-btn";
+    retryBtn.textContent = "Retry";
+    retryBtn.addEventListener("click", () => {
+      if (window.dashboardPage) {
+        window.dashboardPage.loadNotifications();
+      }
+    });
+    
+    errorDiv.appendChild(icon);
+    errorDiv.appendChild(text);
+    errorDiv.appendChild(retryBtn);
+    notificationList.appendChild(errorDiv);
   }
 
   /**
@@ -546,25 +650,54 @@ class DashboardPage {
     const banner = document.createElement("div");
     banner.id = "profile-completion-banner";
     banner.className = "profile-completion-banner";
-    banner.innerHTML = `
-      <div class="profile-completion-banner-content">
-        <div class="profile-completion-banner-icon">
-          <i data-lucide="alert-circle" class="icon-20"></i>
-        </div>
-        <div class="profile-completion-banner-text">
-          <strong>Complete Your Profile</strong>
-          <span>Finish setting up your account to get the most out of FlagFit Pro.</span>
-        </div>
-        <div class="profile-completion-banner-actions">
-          <button class="btn btn-primary btn-sm" id="complete-profile-btn">
-            Complete Profile
-          </button>
-          <button class="btn btn-secondary btn-sm" id="dismiss-profile-banner" aria-label="Dismiss">
-            <i data-lucide="x" class="icon-16"></i>
-          </button>
-        </div>
-      </div>
-    `;
+    
+    // Create banner content using DOM manipulation
+    const content = document.createElement("div");
+    content.className = "profile-completion-banner-content";
+    
+    const iconDiv = document.createElement("div");
+    iconDiv.className = "profile-completion-banner-icon";
+    const icon = document.createElement("i");
+    icon.setAttribute("data-lucide", "alert-circle");
+    icon.className = "icon-20";
+    iconDiv.appendChild(icon);
+    
+    const textDiv = document.createElement("div");
+    textDiv.className = "profile-completion-banner-text";
+    const strong = document.createElement("strong");
+    strong.textContent = "Complete Your Profile";
+    const span = document.createElement("span");
+    span.textContent = "Finish setting up your account to get the most out of FlagFit Pro.";
+    textDiv.appendChild(strong);
+    textDiv.appendChild(span);
+    
+    const actionsDiv = document.createElement("div");
+    actionsDiv.className = "profile-completion-banner-actions";
+    
+    const completeBtn = document.createElement("button");
+    completeBtn.className = "btn btn-primary btn-sm";
+    completeBtn.id = "complete-profile-btn";
+    completeBtn.textContent = "Complete Profile";
+    
+    const dismissBtn = document.createElement("button");
+    dismissBtn.className = "btn btn-secondary btn-sm";
+    dismissBtn.id = "dismiss-profile-banner";
+    dismissBtn.setAttribute("aria-label", "Dismiss");
+    const dismissIcon = document.createElement("i");
+    dismissIcon.setAttribute("data-lucide", "x");
+    dismissIcon.className = "icon-16";
+    dismissBtn.appendChild(dismissIcon);
+    
+    actionsDiv.appendChild(completeBtn);
+    actionsDiv.appendChild(dismissBtn);
+    
+    content.appendChild(iconDiv);
+    content.appendChild(textDiv);
+    content.appendChild(actionsDiv);
+    banner.appendChild(content);
+    
+    // Initialize Lucide icons
+    initializeLucideIcons(banner);
 
     // Add styles if not already present
     if (!document.getElementById("profile-completion-banner-styles")) {
@@ -927,34 +1060,79 @@ class DashboardPage {
     }
 
     if (notifications.length === 0) {
-      notificationList.innerHTML = `
-        <div class="notification-empty">
-          <div class="notification-empty-icon">🔔</div>
-          <div class="notification-empty-title">No notifications yet</div>
-          <div class="notification-empty-text">You're all caught up! New notifications will appear here.</div>
-        </div>
-      `;
+      // Clear and create empty state using DOM manipulation
+      notificationList.textContent = '';
+      const emptyDiv = document.createElement("div");
+      emptyDiv.className = "notification-empty";
+      
+      const icon = document.createElement("div");
+      icon.className = "notification-empty-icon";
+      icon.textContent = "🔔";
+      
+      const title = document.createElement("div");
+      title.className = "notification-empty-title";
+      title.textContent = "No notifications yet";
+      
+      const text = document.createElement("div");
+      text.className = "notification-empty-text";
+      text.textContent = "You're all caught up! New notifications will appear here.";
+      
+      emptyDiv.appendChild(icon);
+      emptyDiv.appendChild(title);
+      emptyDiv.appendChild(text);
+      notificationList.appendChild(emptyDiv);
       return;
     }
 
-    notificationList.innerHTML = notifications
-      .map(
-        (notif) => `
-      <div class="notification-item ${notif.read ? "read" : ""} ${notif.new ? "new" : ""}" data-id="${escapeHtml(notif.id)}">
-        <div class="notification-icon">${this.getNotificationIcon(notif.type)}</div>
-        <div class="notification-content">
-          <div class="notification-title">
-            ${escapeHtml(notif.title)}
-            ${notif.new ? '<span class="notification-new-badge">New</span>' : ""}
-          </div>
-          <div class="notification-message">${escapeHtml(notif.message)}</div>
-          <div class="notification-time">${escapeHtml(notif.time)}</div>
-        </div>
-        ${!notif.read ? '<button class="notification-mark-read" aria-label="Mark as read">×</button>' : ""}
-      </div>
-    `,
-      )
-      .join("");
+    // Clear and render notifications using DOM manipulation
+    notificationList.textContent = '';
+    notifications.forEach(notif => {
+      const item = document.createElement("div");
+      item.className = `notification-item ${notif.read ? "read" : ""} ${notif.new ? "new" : ""}`;
+      item.setAttribute("data-id", String(notif.id));
+      
+      const icon = document.createElement("div");
+      icon.className = "notification-icon";
+      icon.textContent = this.getNotificationIcon(notif.type);
+      
+      const content = document.createElement("div");
+      content.className = "notification-content";
+      
+      const title = document.createElement("div");
+      title.className = "notification-title";
+      title.textContent = notif.title;
+      if (notif.new) {
+        const badge = document.createElement("span");
+        badge.className = "notification-new-badge";
+        badge.textContent = "New";
+        title.appendChild(badge);
+      }
+      
+      const message = document.createElement("div");
+      message.className = "notification-message";
+      message.textContent = notif.message;
+      
+      const time = document.createElement("div");
+      time.className = "notification-time";
+      time.textContent = notif.time;
+      
+      content.appendChild(title);
+      content.appendChild(message);
+      content.appendChild(time);
+      
+      item.appendChild(icon);
+      item.appendChild(content);
+      
+      if (!notif.read) {
+        const markReadBtn = document.createElement("button");
+        markReadBtn.className = "notification-mark-read";
+        markReadBtn.setAttribute("aria-label", "Mark as read");
+        markReadBtn.textContent = "×";
+        item.appendChild(markReadBtn);
+      }
+      
+      notificationList.appendChild(item);
+    });
 
     // Add click handlers for mark as read
     notificationList
@@ -1985,8 +2163,7 @@ class DashboardPage {
     const originalText = button.textContent;
 
     // Disable button and show loading
-    button.disabled = true;
-    button.innerHTML = '<i data-lucide="loader-2" class="icon-16 icon-inline"></i> Saving...';
+    setButtonLoading(button, "Saving...");
 
     try {
       const user = authManager.getCurrentUser();
@@ -2029,13 +2206,11 @@ class DashboardPage {
       await this.loadInjuries();
 
       // Reset button
-      button.disabled = false;
-      button.innerHTML = originalText;
+      restoreButton(button);
     } catch (error) {
       logger.error("Failed to save injury report:", error);
       this.showNotification("Failed to save injury report. Please try again.", "error");
-      button.disabled = false;
-      button.innerHTML = originalText;
+      restoreButton(button);
     }
   }
 
@@ -2076,43 +2251,63 @@ class DashboardPage {
     if (!container) {return;}
 
     if (this.injuries.length === 0) {
-      container.innerHTML = '<p class="injury-description" style="margin: 0; color: var(--color-text-tertiary);">No active injuries reported.</p>';
+      container.textContent = '';
+      const p = document.createElement("p");
+      p.className = "injury-description";
+      p.style.margin = "0";
+      p.style.color = "var(--color-text-tertiary)";
+      p.textContent = "No active injuries reported.";
+      container.appendChild(p);
       return;
     }
 
-    // SECURITY: Sanitize all user-provided injury data before rendering
-    container.innerHTML = this.injuries.map(injury => {
+    // SECURITY: Render injuries using DOM manipulation to prevent XSS
+    container.textContent = '';
+    this.injuries.forEach(injury => {
       const statusClass = injury.status === "recovered" ? "recovered" :
                          injury.status === "monitoring" ? "monitoring" : "active";
       const statusLabel = injury.status === "recovered" ? "Recovered" :
                          injury.status === "monitoring" ? "Monitoring" : "Active";
 
       // Sanitize user-provided fields to prevent XSS
-      const safeType = escapeHtml(injury.type || '');
-      const safeDescription = escapeHtml(injury.description || "No description");
-      const safeSeverity = parseInt(injury.severity) || 0; // Ensure it's a number
-      const safeId = escapeHtml(String(injury.id || injury.startDate));
+      const safeType = injury.type || '';
+      const safeDescription = injury.description || "No description";
+      const safeSeverity = parseInt(injury.severity) || 0;
+      const safeId = String(injury.id || injury.startDate);
 
-      return `
-        <div class="injury-item ${statusClass}">
-          <div class="injury-item-info">
-            <div class="injury-item-title">
-              ${safeType.charAt(0).toUpperCase() + safeType.slice(1)} - Severity: ${safeSeverity}/10
-            </div>
-            <div class="injury-item-details">
-              ${safeDescription} • Started: ${new Date(injury.startDate).toLocaleDateString()} • Status: ${statusLabel}
-            </div>
-          </div>
-          <div class="injury-item-actions">
-            ${injury.status !== "recovered" ? `
-              <button class="btn-mark-recovered" data-injury-id="${safeId}">
-                Mark Recovered
-              </button>
-            ` : ""}
-          </div>
-        </div>
-      `;
-    }).join("");
+      const item = document.createElement("div");
+      item.className = `injury-item ${statusClass}`;
+      
+      const info = document.createElement("div");
+      info.className = "injury-item-info";
+      
+      const title = document.createElement("div");
+      title.className = "injury-item-title";
+      title.textContent = `${safeType.charAt(0).toUpperCase() + safeType.slice(1)} - Severity: ${safeSeverity}/10`;
+      
+      const details = document.createElement("div");
+      details.className = "injury-item-details";
+      const startDate = injury.startDate ? new Date(injury.startDate).toLocaleDateString() : "Unknown";
+      details.textContent = `${safeDescription} • Started: ${startDate} • Status: ${statusLabel}`;
+      
+      info.appendChild(title);
+      info.appendChild(details);
+      
+      const actions = document.createElement("div");
+      actions.className = "injury-item-actions";
+      
+      if (injury.status !== "recovered") {
+        const markRecoveredBtn = document.createElement("button");
+        markRecoveredBtn.className = "btn-mark-recovered";
+        markRecoveredBtn.setAttribute("data-injury-id", safeId);
+        markRecoveredBtn.textContent = "Mark Recovered";
+        actions.appendChild(markRecoveredBtn);
+      }
+      
+      item.appendChild(info);
+      item.appendChild(actions);
+      container.appendChild(item);
+    });
 
     // Add event listeners for mark recovered buttons
     container.querySelectorAll(".btn-mark-recovered").forEach(btn => {

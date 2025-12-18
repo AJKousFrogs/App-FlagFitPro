@@ -5,7 +5,7 @@
  * Displays a pulsing red dot with "LIVE" text.
  */
 
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -14,7 +14,7 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="live-indicator" [class.live-active]="isLive">
+    <div class="live-indicator" [class.live-active]="isLive()">
       <span class="live-dot"></span>
       <span class="live-text">LIVE</span>
     </div>
@@ -100,5 +100,6 @@ import { CommonModule } from '@angular/common';
   `]
 })
 export class LiveIndicatorComponent {
-  @Input() isLive: boolean = false;
+  // Angular 21: Use input() signal instead of @Input()
+  isLive = input<boolean>(false);
 }

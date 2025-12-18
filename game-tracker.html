@@ -31,24 +31,14 @@
       src="./src/js/pages/game-tracker-page.js"
       defer
     ></script>
-    <!-- Sidebar Loader (Dynamic Component) -->
-    <script type="module" src="./src/js/components/sidebar-loader.js" defer></script>
-    <!-- Top Bar Loader (Dynamic Component) -->
-    <script type="module" src="./src/js/components/top-bar-loader.js" defer></script>
-    <!-- Footer Loader (Dynamic Component) -->
-    <script type="module" src="./src/js/components/footer-loader.js" defer></script>
+    <!-- Common Component Loaders (Sidebar, Top Bar, Footer) -->
+    <script type="module" src="./src/js/components/common-loaders.js" defer></script>
   
+    <!-- Supabase Configuration (Centralized) -->
+    <script src="./src/js/config/supabase-config.js"></script>
+    
     <!-- Supabase JS SDK from CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <!-- Supabase Configuration -->
-    <script>
-      // Set Supabase config in window for production
-      window._env = {
-        SUPABASE_URL: 'https://pvziciccwxgftcielknm.supabase.co',
-        SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2emljaWNjd3hnZnRjaWVsa25tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MzcwNTgsImV4cCI6MjA3NTExMzA1OH0.1nfJrtWPl6DrAwvjGvM1-CZBeyYgCaV9oDdaadpqhLU'
-      };
-    </script>
 
   </head>
   <body>

@@ -118,6 +118,173 @@ body {
   opacity: 1;
 }
 
+/* Password input wrapper with toggle button */
+.password-input-wrapper {
+  position: relative;
+}
+
+.password-input-wrapper .form-input {
+  padding-right: 48px; /* Space for toggle button */
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease, opacity 0.2s ease;
+  border-radius: var(--border-radius-sm);
+  min-width: 32px;
+  min-height: 32px;
+}
+
+.password-toggle-btn:hover {
+  color: var(--color-primary);
+  background: var(--surface-secondary);
+}
+
+.password-toggle-btn:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.password-toggle-btn:active {
+  opacity: 0.7;
+}
+
+.password-toggle-btn[aria-pressed="true"] {
+  color: var(--color-primary);
+}
+
+.password-eye-icon {
+  display: none;
+}
+
+.password-eye-off-icon {
+  display: block;
+}
+
+.password-toggle-btn[aria-pressed="true"] .password-eye-icon {
+  display: block;
+}
+
+.password-toggle-btn[aria-pressed="true"] .password-eye-off-icon {
+  display: none;
+}
+
+/* Enhanced button loading state */
+.btn-loading {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-loading .spinner-mini {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--color-primary);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.btn-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Improved form group spacing */
+.form-group {
+  margin-bottom: var(--space-5);
+}
+
+/* Enhanced focus states */
+.form-input:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-color: var(--color-primary);
+}
+
+/* Better error message styling */
+.form-error {
+  margin-top: var(--space-1);
+  font-size: var(--text-sm);
+  color: var(--color-error);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.form-error::before {
+  content: "⚠";
+  font-size: 16px;
+}
+
+/* Success message styling */
+.form-success {
+  margin-top: var(--space-1);
+  font-size: var(--text-sm);
+  color: var(--color-success);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.form-success::before {
+  content: "✓";
+  font-size: 16px;
+}
+
+/* Improved checkbox styling */
+.login-checkbox-group input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: var(--color-primary);
+  margin-right: 8px;
+}
+
+.login-checkbox-group input[type="checkbox"]:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Enhanced link styling */
+.login-forgot-link {
+  transition: color 0.2s ease, text-decoration 0.2s ease;
+}
+
+.login-forgot-link:hover {
+  text-decoration: underline;
+}
+
+.login-create-link {
+  transition: color 0.2s ease, text-decoration 0.2s ease;
+}
+
+.login-create-link:hover {
+  text-decoration: underline;
+}
+
+/* Improved mobile experience */
 @media (max-width: 480px) {
   .login-container {
     padding: var(--space-6) var(--space-4);
@@ -134,5 +301,42 @@ body {
 
   .login-title {
     margin-bottom: var(--space-4);
+  }
+
+  .password-toggle-btn {
+    min-width: 40px;
+    min-height: 40px;
+    padding: 10px;
+  }
+
+  .login-form-options {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .login-forgot-link {
+    width: 100%;
+    text-align: left;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .password-toggle-btn,
+  .login-forgot-link,
+  .login-create-link {
+    transition: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .password-toggle-btn {
+    border: 1px solid currentColor;
+  }
+
+  .form-input:focus {
+    outline-width: 3px;
   }
 }

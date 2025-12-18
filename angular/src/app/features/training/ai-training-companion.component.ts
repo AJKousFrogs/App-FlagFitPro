@@ -14,7 +14,7 @@ import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { CarouselModule } from "primeng/carousel";
 import { KnobModule } from "primeng/knob";
-import { trigger, transition, style, animate } from "@angular/animations";
+import { scaleInOut } from "../../shared/animations/app.animations";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { AIService } from "../../core/services/ai.service";
 import { ContextService } from "../../core/services/context.service";
@@ -74,17 +74,7 @@ declare global {
     CarouselModule,
     KnobModule,
   ],
-  animations: [
-    trigger("fadeInOut", [
-      transition(":enter", [
-        style({ opacity: 0, transform: "scale(0.8)" }),
-        animate("300ms ease-out", style({ opacity: 1, transform: "scale(1)" })),
-      ]),
-      transition(":leave", [
-        animate("200ms ease-in", style({ opacity: 0, transform: "scale(0.8)" })),
-      ]),
-    ]),
-  ],
+  animations: [scaleInOut],
   template: `
     <div
       class="training-companion"

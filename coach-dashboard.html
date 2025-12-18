@@ -27,26 +27,18 @@
     <script src="./src/components/organisms/top-bar/top-bar.js" defer></script>
     <!-- Universal Components -->
     <script type="module" src="./src/js/main.js"></script>
-    <!-- Sidebar Loader (Dynamic Component) -->
-    <script type="module" src="./src/js/components/sidebar-loader.js" defer></script>
+    <!-- Common Component Loaders (Sidebar, Top Bar, Footer) -->
+    <script type="module" src="./src/js/components/common-loaders.js" defer></script>
     <!-- Sidebar Utilities -->
     <script src="./src/js/utils/sidebar-utils.js"></script>
-    <!-- Footer Loader (Dynamic Component) -->
-    <script type="module" src="./src/js/components/footer-loader.js" defer></script>
     <!-- Notification Panel Loader (Dynamic Component) -->
     <script type="module" src="./src/js/components/notification-panel-loader.js" defer></script>
   
+    <!-- Supabase Configuration (Centralized) -->
+    <script src="./src/js/config/supabase-config.js"></script>
+    
     <!-- Supabase JS SDK from CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <!-- Supabase Configuration -->
-    <script>
-      // Set Supabase config in window for production
-      window._env = {
-        SUPABASE_URL: 'https://pvziciccwxgftcielknm.supabase.co',
-        SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2emljaWNjd3hnZnRjaWVsa25tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MzcwNTgsImV4cCI6MjA3NTExMzA1OH0.1nfJrtWPl6DrAwvjGvM1-CZBeyYgCaV9oDdaadpqhLU'
-      };
-    </script>
 
   </head>
   <body>
@@ -67,7 +59,7 @@
         <!-- Coach Dashboard Content -->
         <div class="coach-dashboard-layout">
           <div class="coach-dashboard-header">
-            <h1>COACH DASHBOARD</h1>
+            <h1 class="text-heading-2xl text-primary">COACH DASHBOARD</h1>
           </div>
 
           <!-- Top Row: 3 Main Stats -->
@@ -88,7 +80,7 @@
 
           <!-- Wellness Snapshot -->
           <div class="wellness-snapshot-card">
-            <h2>WELLNESS SNAPSHOT</h2>
+            <h2 class="section-title text-heading-xl text-primary">WELLNESS SNAPSHOT</h2>
             <div class="wellness-table-container">
               <table class="wellness-table">
                 <thead>
@@ -141,9 +133,9 @@
 
           <!-- Injury Reports -->
           <div class="injury-reports-card">
-            <h2>INJURY REPORTS</h2>
+            <h2 class="section-title text-heading-xl text-primary">INJURY REPORTS</h2>
             <div class="injury-reports-content">
-              <h3>Latest Issues</h3>
+              <h3 class="card-title text-heading-md text-primary">Latest Issues</h3>
               <ul class="injury-list">
                 <li class="injury-item">
                   <span class="injury-player">Player 2:</span>
@@ -166,9 +158,9 @@
 
           <!-- Training Management -->
           <div class="training-management-card">
-            <h2>TRAINING MANAGEMENT</h2>
+            <h2 class="section-title text-heading-xl text-primary">TRAINING MANAGEMENT</h2>
             <div class="training-management-content">
-              <h3>TODAY'S SESSION</h3>
+              <h3 class="card-title text-heading-md text-primary">TODAY'S SESSION</h3>
               <div class="session-info">
                 <div class="session-time">18:30 — Speed & Agility</div>
                 <div class="session-stats">
@@ -191,7 +183,7 @@
 
           <!-- AI Coaching Assistant -->
           <div class="ai-coaching-card">
-            <h2>AI COACHING ASSISTANT</h2>
+            <h2 class="section-title text-heading-xl text-primary">AI COACHING ASSISTANT</h2>
             <div class="ai-coaching-content">
               <div class="ai-suggestion">
                 "3 players show early fatigue patterns. Suggested:

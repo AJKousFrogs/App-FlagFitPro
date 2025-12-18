@@ -46,26 +46,16 @@
           console.warn("Chatbot preload failed:", error);
         });
     </script>
-    <!-- Sidebar Loader (Dynamic Component) -->
-    <script type="module" src="./src/js/components/sidebar-loader.js" defer></script>
-    <!-- Top Bar Loader (Dynamic Component) -->
-    <script type="module" src="./src/js/components/top-bar-loader.js" defer></script>
-    <!-- Footer Loader (Dynamic Component) -->
-    <script type="module" src="./src/js/components/footer-loader.js" defer></script>
+    <!-- Common Component Loaders (Sidebar, Top Bar, Footer) -->
+    <script type="module" src="./src/js/components/common-loaders.js" defer></script>
     <!-- AI Chat Bubble Loader (Dynamic Component) -->
     <script type="module" src="./src/js/components/ai-chat-bubble-loader.js" defer></script>
   
+    <!-- Supabase Configuration (Centralized) -->
+    <script src="./src/js/config/supabase-config.js"></script>
+    
     <!-- Supabase JS SDK from CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <!-- Supabase Configuration -->
-    <script>
-      // Set Supabase config in window for production
-      window._env = {
-        SUPABASE_URL: 'https://pvziciccwxgftcielknm.supabase.co',
-        SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2emljaWNjd3hnZnRjaWVsa25tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MzcwNTgsImV4cCI6MjA3NTExMzA1OH0.1nfJrtWPl6DrAwvjGvM1-CZBeyYgCaV9oDdaadpqhLU'
-      };
-    </script>
 
   </head>
   <body>
@@ -87,15 +77,10 @@
               <span style="margin: 0 var(--space-1, 4px); opacity: 0.5">•</span>
               <span>Flag Football</span>
             </div>
-            <h2
-              class="u-text-heading-lg u-font-weight-700 u-text-primary u-margin-bottom-8"
-            >
+            <h2 class="text-heading-xl text-primary space-normal">
               International Flag Football Team
             </h2>
-            <p
-              class="u-text-body-md u-text-secondary u-margin-0"
-              style="line-height: 1.6"
-            >
+            <p class="text-body-md text-secondary leading-relaxed">
               Meet our world-class athletes and coaching staff representing 12
               countries
             </p>
@@ -105,9 +90,7 @@
         <!-- Team Overview Stats -->
         <div class="card">
           <div class="card-header">
-            <h2
-              class="card-title u-display-flex u-align-center u-gap-8 u-margin-0"
-            >
+            <h2 class="card-title text-heading-lg text-primary u-display-flex u-align-center u-gap-8 u-margin-0">
               <i
                 data-lucide="trophy"
                 class="icon-20"
@@ -129,8 +112,63 @@
           </div>
         </div>
 
+        <!-- Roster Controls -->
+        <div class="card" id="roster-controls" style="display: none;">
+          <div class="card-body">
+            <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: center;">
+              <!-- Search -->
+              <div style="flex: 1; min-width: 200px;">
+                <div style="position: relative;">
+                  <i
+                    data-lucide="search"
+                    class="icon-18"
+                    style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); pointer-events: none;"
+                  ></i>
+                  <input
+                    type="text"
+                    id="roster-search"
+                    placeholder="Search players..."
+                    style="width: 100%; padding: 10px 12px 10px 40px; border: 2px solid var(--color-border-secondary); border-radius: 8px; font-size: 0.95rem; background: var(--surface-primary); color: var(--text-primary);"
+                  />
+                </div>
+              </div>
+
+              <!-- Position Filter -->
+              <div>
+                <select
+                  id="position-filter"
+                  style="padding: 10px 32px 10px 12px; border: 2px solid var(--color-border-secondary); border-radius: 8px; font-size: 0.95rem; background: var(--surface-primary); color: var(--text-primary); cursor: pointer;"
+                >
+                  <option value="all">All Positions</option>
+                  <!-- Options will be populated dynamically -->
+                </select>
+              </div>
+
+              <!-- View Toggle -->
+              <div style="display: flex; gap: 4px; background: var(--surface-secondary); padding: 4px; border-radius: 8px;">
+                <button
+                  id="view-grid"
+                  class="view-toggle-btn active"
+                  aria-label="Grid view"
+                  style="padding: 8px 12px; border: none; background: transparent; border-radius: 6px; cursor: pointer; color: var(--text-secondary); transition: all 0.2s;"
+                >
+                  <i data-lucide="grid" class="icon-18"></i>
+                </button>
+                <button
+                  id="view-table"
+                  class="view-toggle-btn"
+                  aria-label="Table view"
+                  style="padding: 8px 12px; border: none; background: transparent; border-radius: 6px; cursor: pointer; color: var(--text-secondary); transition: all 0.2s;"
+                >
+                  <i data-lucide="list" class="icon-18"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Coaching Staff -->
-        <div class="position-section">
+        <div class="position-section" id="coaching-section" style="display: none;">
           <h2
             class="u-text-heading-xl u-font-weight-700 u-text-primary u-display-flex u-align-center u-gap-8"
           >
@@ -155,6 +193,38 @@
           <!-- Position sections will be populated by JavaScript -->
         </div>
 
+        <!-- Table View -->
+        <div class="card" id="roster-table-view" style="display: none;">
+          <div class="card-body">
+            <div class="table-wrapper" style="overflow-x: auto;">
+              <table class="roster-table" role="table" style="width: 100%; border-collapse: collapse;">
+                <thead>
+                  <tr style="border-bottom: 2px solid var(--color-border-secondary);">
+                    <th style="text-align: left; padding: 12px; font-weight: 600; color: var(--text-primary); font-size: 0.875rem;">
+                      Player
+                    </th>
+                    <th style="text-align: left; padding: 12px; font-weight: 600; color: var(--text-primary); font-size: 0.875rem;">
+                      Position
+                    </th>
+                    <th style="text-align: center; padding: 12px; font-weight: 600; color: var(--text-primary); font-size: 0.875rem;">
+                      Number
+                    </th>
+                    <th style="text-align: left; padding: 12px; font-weight: 600; color: var(--text-primary); font-size: 0.875rem;">
+                      Role
+                    </th>
+                    <th style="text-align: center; padding: 12px; font-weight: 600; color: var(--text-primary); font-size: 0.875rem;">
+                      Status
+                    </th>
+                  </tr>
+                </thead>
+                <tbody id="roster-table-body">
+                  <!-- Table rows will be populated by JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
         <!-- AI Chat Floating Bubble (Loaded Dynamically) -->
         <div data-ai-chat-container></div>
       </main>
@@ -164,11 +234,66 @@
       import { authManager } from "./src/auth-manager.js";
       import { storageService } from "./src/js/services/storage-service-unified.js";
       import { getSupabase } from "./src/js/services/supabase-client.js";
+      import { getInitials, groupBy, debounce, initializeLucideIcons } from "./src/js/utils/shared.js";
 
-      // Mock data disabled - will be replaced with real team data from Supabase
-      // import { REAL_TEAM_DATA } from "./src/real-team-data.js";
+      /**
+       * Helper: Safely clear and set text content
+       */
+      function setTextContent(element, text) {
+        if (!element) return;
+        element.textContent = text || '';
+      }
+
+      /**
+       * Helper: Create element with classes and text
+       */
+      function createElement(tag, className, textContent) {
+        const el = document.createElement(tag);
+        if (className) el.className = className;
+        if (textContent) el.textContent = textContent;
+        return el;
+      }
+
+      /**
+       * Helper: Set button loading state safely
+       */
+      function setButtonLoading(button, loadingText) {
+        if (!button) return;
+        button.disabled = true;
+        button.textContent = '';
+        const spinner = document.createElement('span');
+        spinner.style.cssText = 'display: inline-block; width: 16px; height: 16px; border: 2px solid white; border-top-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite; margin-right: 8px;';
+        const text = document.createTextNode(loadingText || 'Loading...');
+        button.appendChild(spinner);
+        button.appendChild(text);
+      }
+
+      /**
+       * Helper: Restore button state
+       */
+      function restoreButton(button, originalHTML) {
+        if (!button) return;
+        button.disabled = false;
+        if (originalHTML && originalHTML.includes('<i')) {
+          // For buttons with icons, use a temporary container
+          const temp = document.createElement('div');
+          temp.innerHTML = originalHTML;
+          button.textContent = '';
+          while (temp.firstChild) {
+            button.appendChild(temp.firstChild);
+          }
+          if (typeof lucide !== 'undefined') lucide.createIcons(button);
+        } else {
+          button.textContent = originalHTML || '';
+        }
+      }
 
       let currentTeam = null;
+      let allMembers = [];
+      let filteredMembers = [];
+      let viewMode = 'grid'; // 'grid' or 'table'
+      let searchQuery = '';
+      window.positionFilter = 'all';
 
       // Initialize roster page
       document.addEventListener("DOMContentLoaded", async function () {
@@ -257,22 +382,22 @@
                     <div style="display: flex; gap: 16px;">
                       <div style="flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; background: var(--gradient-primary); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">1</div>
                       <div>
-                        <h4 style="margin: 0 0 8px 0; font-weight: 600;">Create Your Team</h4>
-                        <p style="margin: 0; color: var(--text-secondary); font-size: 0.95rem;">Set up your team name, league, and basic information</p>
+                        <h4 class="text-heading-sm text-primary font-semibold space-tight">Create Your Team</h4>
+                        <p class="text-body-sm text-secondary">Set up your team name, league, and basic information</p>
                       </div>
                     </div>
                     <div style="display: flex; gap: 16px;">
                       <div style="flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; background: var(--gradient-primary); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">2</div>
                       <div>
-                        <h4 style="margin: 0 0 8px 0; font-weight: 600;">Invite Players</h4>
-                        <p style="margin: 0; color: var(--text-secondary); font-size: 0.95rem;">Send email invitations to your players to join</p>
+                        <h4 class="text-heading-sm text-primary font-semibold space-tight">Invite Players</h4>
+                        <p class="text-body-sm text-secondary">Send email invitations to your players to join</p>
                       </div>
                     </div>
                     <div style="display: flex; gap: 16px;">
                       <div style="flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; background: var(--gradient-primary); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">3</div>
                       <div>
-                        <h4 style="margin: 0 0 8px 0; font-weight: 600;">Start Training</h4>
-                        <p style="margin: 0; color: var(--text-secondary); font-size: 0.95rem;">Assign training programs and track progress</p>
+                        <h4 class="text-heading-sm text-primary font-semibold space-tight">Start Training</h4>
+                        <p class="text-body-sm text-secondary">Assign training programs and track progress</p>
                       </div>
                     </div>
                   </div>
@@ -393,41 +518,56 @@
         const mainContent = document.querySelector('.main-content');
         if (!mainContent || !currentTeam) return;
 
-        mainContent.innerHTML = `
-          <div class="card card-elevated">
-            <div class="card-body">
-              <div class="u-text-body-sm u-text-secondary u-margin-bottom-4" style="line-height: 1.4; font-weight: 500">
-                <span>${currentTeam.league || 'Flag Football'}</span>
-                <span style="margin: 0 var(--space-1, 4px); opacity: 0.5">•</span>
-                <span>${currentTeam.season || 'Season'}</span>
-              </div>
-              <h2 class="u-text-heading-lg u-font-weight-700 u-text-primary u-margin-bottom-8">
-                ${currentTeam.name}
-              </h2>
-              <p class="u-text-body-md u-text-secondary u-margin-0" style="line-height: 1.6">
-                ${currentTeam.description || 'Team roster and member information'}
-              </p>
-            </div>
-          </div>
+        // Update team header
+        const teamHeader = document.querySelector('.card.card-elevated .card-body');
+        if (teamHeader) {
+          teamHeader.textContent = '';
+          
+          const metaDiv = createElement('div', 'u-text-body-sm u-text-secondary u-margin-bottom-4', '');
+          metaDiv.style.cssText = 'line-height: 1.4; font-weight: 500';
+          
+          const leagueSpan = createElement('span', '', currentTeam.league || 'Flag Football');
+          const dotSpan = createElement('span', '', '•');
+          dotSpan.style.cssText = 'margin: 0 var(--space-1, 4px); opacity: 0.5';
+          const seasonSpan = createElement('span', '', currentTeam.season || 'Season');
+          
+          metaDiv.appendChild(leagueSpan);
+          metaDiv.appendChild(dotSpan);
+          metaDiv.appendChild(seasonSpan);
+          
+          const h2 = createElement('h2', 'u-text-heading-lg u-font-weight-700 u-text-primary u-margin-bottom-8', currentTeam.name);
+          
+          const p = createElement('p', 'text-body-md text-secondary leading-relaxed', currentTeam.description || 'Team roster and member information');
+          
+          teamHeader.appendChild(metaDiv);
+          teamHeader.appendChild(h2);
+          teamHeader.appendChild(p);
+        }
 
-          <div class="card" style="margin-top: 24px;">
-            <div class="card-header">
-              <h3 class="card-title u-margin-0">
-                <i data-lucide="users" class="icon-20" style="margin-right: 8px;"></i>
-                Team Members
-              </h3>
-            </div>
-            <div class="card-body" id="teamMembersContainer">
-              <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
-                <i data-lucide="loader" class="icon-24" style="animation: spin 1s linear infinite;"></i>
-                <p style="margin-top: 16px;">Loading team members...</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- AI Chat Floating Bubble (Loaded Dynamically) -->
-          <div data-ai-chat-container></div>
-        `;
+        // Show loading state
+        const controlsCard = document.getElementById('roster-controls');
+        const playersContainer = document.getElementById('players-by-position');
+        const coachingSection = document.getElementById('coaching-section');
+        const tableView = document.getElementById('roster-table-view');
+        
+        if (playersContainer) {
+          playersContainer.textContent = '';
+          const loadingDiv = createElement('div', '', '');
+          loadingDiv.style.cssText = 'text-align: center; padding: 60px 40px; color: var(--text-secondary);';
+          
+          const icon = createElement('i', 'icon-32', '');
+          icon.setAttribute('data-lucide', 'loader');
+          icon.style.cssText = 'animation: spin 1s linear infinite; opacity: 0.5;';
+          
+          const p = createElement('p', '', 'Loading team roster...');
+          p.style.cssText = 'margin-top: 16px; font-size: 1rem;';
+          
+          loadingDiv.appendChild(icon);
+          loadingDiv.appendChild(p);
+          playersContainer.appendChild(loadingDiv);
+          
+          if (typeof lucide !== 'undefined') lucide.createIcons(loadingDiv);
+        }
 
         if (typeof lucide !== 'undefined') {
           lucide.createIcons();
@@ -452,42 +592,521 @@
           .eq('team_id', currentTeam.id)
           .eq('status', 'active');
 
-        const container = document.getElementById('teamMembersContainer');
-        if (!container) return;
-
-        if (error || !members || members.length === 0) {
-          container.innerHTML = `
-            <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
-              <i data-lucide="users" class="icon-48" style="opacity: 0.3;"></i>
-              <p style="margin-top: 16px;">No team members yet</p>
-            </div>
-          `;
-          if (typeof lucide !== 'undefined') lucide.createIcons();
+        if (error) {
+          console.error('Error loading team members:', error);
+          if (playersContainer) {
+            playersContainer.textContent = '';
+            const errorDiv = createElement('div', '', '');
+            errorDiv.style.cssText = 'text-align: center; padding: 40px; color: var(--text-error);';
+            
+            const icon = createElement('i', 'icon-48', '');
+            icon.setAttribute('data-lucide', 'alert-circle');
+            
+            const p = createElement('p', '', 'Error loading roster. Please try again.');
+            p.style.cssText = 'margin-top: 16px;';
+            
+            errorDiv.appendChild(icon);
+            errorDiv.appendChild(p);
+            playersContainer.appendChild(errorDiv);
+            
+            if (typeof lucide !== 'undefined') lucide.createIcons(errorDiv);
+          }
           return;
         }
 
-        container.innerHTML = `
-          <div style="display: grid; gap: 16px;">
-            ${members.map(member => `
-              <div style="display: flex; align-items: center; padding: 16px; background: var(--surface-secondary); border-radius: 8px;">
-                <div style="flex-shrink: 0; width: 48px; height: 48px; border-radius: 50%; background: var(--gradient-primary); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1.2rem;">
-                  ${member.jersey_number || '?'}
-                </div>
-                <div style="flex: 1; margin-left: 16px;">
-                  <div style="font-weight: 600; color: var(--text-primary);">${member.users?.raw_user_meta_data?.name || member.users?.email || 'Unknown'}</div>
-                  <div style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 4px;">
-                    ${member.position || member.role === 'assistant_coach' ? 'Assistant Coach' : 'Player'}
-                    ${member.position ? ` • ${member.position}` : ''}
-                  </div>
-                </div>
-              </div>
-            `).join('')}
-          </div>
-        `;
+        if (!members || members.length === 0) {
+          if (playersContainer) {
+            playersContainer.textContent = '';
+            const emptyDiv = createElement('div', '', '');
+            emptyDiv.style.cssText = 'text-align: center; padding: 60px 40px; color: var(--text-secondary);';
+            
+            const icon = createElement('i', 'icon-64', '');
+            icon.setAttribute('data-lucide', 'users');
+            icon.style.opacity = '0.3';
+            
+            const h3 = createElement('h3', '', 'No team members yet');
+            h3.style.cssText = 'margin-top: 24px; color: var(--text-primary); font-size: 1.25rem;';
+            
+            const p = createElement('p', '', 'Start building your roster by inviting players.');
+            p.style.cssText = 'margin-top: 8px;';
+            
+            emptyDiv.appendChild(icon);
+            emptyDiv.appendChild(h3);
+            emptyDiv.appendChild(p);
+            playersContainer.appendChild(emptyDiv);
+            
+            if (typeof lucide !== 'undefined') lucide.createIcons(emptyDiv);
+          }
+          return;
+        }
+
+        // Store all members
+        allMembers = members.map(member => ({
+          ...member,
+          name: member.users?.raw_user_meta_data?.name || member.users?.email?.split('@')[0] || 'Unknown',
+          email: member.users?.email || '',
+          displayName: member.users?.raw_user_meta_data?.name || member.users?.email || 'Unknown'
+        }));
+
+        // Initialize filters
+        filteredMembers = [...allMembers];
+        
+        // Show controls
+        if (controlsCard) controlsCard.style.display = 'block';
+        
+        // Populate position filter
+        populatePositionFilter();
+        
+        // Render roster
+        renderRoster();
+        setupRosterControls();
+        
+        // Calculate and display team stats
+        displayTeamStats();
+      }
+
+      function displayTeamStats() {
+        const statsContainer = document.getElementById('team-overview');
+        if (!statsContainer) return;
+
+        const players = allMembers.filter(m => m.role === 'player');
+        const coaches = allMembers.filter(m => m.role === 'coach' || m.role === 'assistant_coach');
+        
+        const positions = [...new Set(players.map(p => p.position).filter(Boolean))];
+        
+        const stats = [
+          { label: 'Total Players', value: players.length, icon: 'users' },
+          { label: 'Coaching Staff', value: coaches.length, icon: 'user-check' },
+          { label: 'Positions', value: positions.length, icon: 'layout-grid' },
+          { label: 'Team Size', value: allMembers.length, icon: 'users-round' }
+        ];
+
+        statsContainer.textContent = '';
+        stats.forEach(stat => {
+          const card = createElement('div', 'card', '');
+          card.style.cssText = 'transition: all 0.2s ease; border: 1px solid var(--color-border-secondary);';
+          
+          const cardBody = createElement('div', 'card-body', '');
+          cardBody.style.cssText = 'padding: var(--space-6, 24px); text-align: center;';
+          
+          const icon = createElement('i', 'icon-24', '');
+          icon.setAttribute('data-lucide', stat.icon);
+          icon.style.cssText = 'color: var(--color-brand-primary); margin-bottom: 12px;';
+          
+          const valueDiv = createElement('div', 'overview-value', String(stat.value));
+          valueDiv.style.cssText = 'font-size: var(--text-3xl, 30px); font-weight: var(--font-weight-bold); color: var(--color-brand-primary); margin-bottom: var(--space-2, 8px); line-height: 1.2;';
+          
+          const labelDiv = createElement('div', 'overview-label', stat.label);
+          labelDiv.style.cssText = 'font-size: var(--text-sm, 14px); color: var(--color-text-secondary); font-weight: var(--font-weight-medium);';
+          
+          cardBody.appendChild(icon);
+          cardBody.appendChild(valueDiv);
+          cardBody.appendChild(labelDiv);
+          card.appendChild(cardBody);
+          statsContainer.appendChild(card);
+        });
 
         if (typeof lucide !== 'undefined') {
           lucide.createIcons();
         }
+      }
+
+      function renderRoster() {
+        // Separate coaches and players
+        const coaches = filteredMembers.filter(m => m.role === 'coach' || m.role === 'assistant_coach');
+        const players = filteredMembers.filter(m => m.role === 'player');
+
+        // Render coaching staff
+        renderCoachingStaff(coaches);
+
+        // Render players by position
+        renderPlayersByPosition(players);
+
+        // Render table view if active
+        if (viewMode === 'table') {
+          renderTableView();
+        }
+      }
+
+      function renderCoachingStaff(coaches) {
+        const coachingSection = document.getElementById('coaching-section');
+        const coachingContainer = document.getElementById('coaching-staff');
+        
+        if (!coachingSection || !coachingContainer) return;
+
+        if (coaches.length === 0) {
+          coachingSection.style.display = 'none';
+          return;
+        }
+
+        coachingSection.style.display = 'block';
+        coachingContainer.textContent = '';
+        
+        coaches.forEach(coach => {
+          const card = createStaffCard(coach);
+          coachingContainer.appendChild(card);
+        });
+
+        if (typeof lucide !== 'undefined') {
+          lucide.createIcons(coachingContainer);
+        }
+      }
+
+      function createStaffCard(member) {
+        const initials = getInitials(member.displayName);
+        
+        const card = createElement('div', 'card card-interactive', '');
+        const cardBody = createElement('div', 'card-body', '');
+        const header = createElement('div', 'player-header u-display-flex u-align-center u-gap-16 u-margin-bottom-16', '');
+        
+        const jersey = createElement('div', 'player-jersey u-radius-full u-display-flex u-align-center u-justify-center u-font-weight-700 u-text-body-lg', initials);
+        jersey.style.cssText = 'width: 56px; height: 56px; background: var(--gradient-primary); color: white; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);';
+        
+        const info = createElement('div', 'player-info u-flex-1', '');
+        const name = createElement('h3', 'u-text-heading-md u-font-weight-600 u-text-primary u-margin-0', member.displayName);
+        const role = createElement('div', 'player-position u-text-body-sm u-text-secondary u-margin-top-4', member.role === 'coach' ? 'Head Coach' : 'Assistant Coach');
+        
+        info.appendChild(name);
+        info.appendChild(role);
+        
+        if (member.position) {
+          const position = createElement('div', 'u-text-body-sm u-text-secondary u-margin-top-2', member.position);
+          info.appendChild(position);
+        }
+        
+        header.appendChild(jersey);
+        header.appendChild(info);
+        cardBody.appendChild(header);
+        card.appendChild(cardBody);
+        
+        return card;
+      }
+
+      function renderPlayersByPosition(players) {
+        const container = document.getElementById('players-by-position');
+        if (!container) return;
+
+        if (players.length === 0) {
+          container.textContent = '';
+          const card = createElement('div', 'card', '');
+          const cardBody = createElement('div', 'card-body', '');
+          cardBody.style.cssText = 'text-align: center; padding: 60px 40px;';
+          
+          const icon = createElement('i', 'icon-64', '');
+          icon.setAttribute('data-lucide', 'search-x');
+          icon.style.cssText = 'opacity: 0.3; color: var(--text-secondary);';
+          
+          const h3 = createElement('h3', '', 'No players found');
+          h3.style.cssText = 'margin-top: 24px; color: var(--text-primary); font-size: 1.25rem;';
+          
+          const p = createElement('p', '', 'Try adjusting your search or filters.');
+          p.style.cssText = 'margin-top: 8px; color: var(--text-secondary);';
+          
+          cardBody.appendChild(icon);
+          cardBody.appendChild(h3);
+          cardBody.appendChild(p);
+          card.appendChild(cardBody);
+          container.appendChild(card);
+          
+          if (typeof lucide !== 'undefined') lucide.createIcons(container);
+          return;
+        }
+
+        // Group by position
+        const grouped = groupBy(players, 'position');
+        const positionOrder = ['QB', 'WR', 'RB', 'C', 'DB', 'LB'];
+        const sortedPositions = positionOrder.filter(pos => grouped[pos]) 
+          .concat(Object.keys(grouped).filter(pos => !positionOrder.includes(pos)));
+
+        container.textContent = '';
+        sortedPositions.forEach(position => {
+          const positionPlayers = grouped[position];
+          const positionName = getPositionDisplayName(position);
+          const positionIcon = getPositionIcon(position);
+
+          const section = createElement('div', 'position-section', '');
+          
+          const h2 = createElement('h2', 'u-text-heading-xl u-font-weight-700 u-text-primary u-display-flex u-align-center u-gap-8', '');
+          const icon = createElement('i', 'icon-24', '');
+          icon.setAttribute('data-lucide', positionIcon);
+          icon.style.color = 'var(--color-brand-primary)';
+          const text = document.createTextNode(` ${positionName} (${positionPlayers.length})`);
+          h2.appendChild(icon);
+          h2.appendChild(text);
+          
+          const grid = createElement('div', 'roster-grid u-display-grid', '');
+          grid.style.cssText = 'grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));';
+          
+          positionPlayers.forEach(player => {
+            const card = createPlayerCard(player);
+            grid.appendChild(card);
+          });
+          
+          section.appendChild(h2);
+          section.appendChild(grid);
+          container.appendChild(section);
+        });
+
+        if (typeof lucide !== 'undefined') {
+          lucide.createIcons();
+        }
+      }
+
+      function createPlayerCard(player) {
+        const initials = getInitials(player.displayName);
+        const jerseyNumber = player.jersey_number || '?';
+        
+        const card = createElement('div', 'card card-interactive', '');
+        const cardBody = createElement('div', 'card-body', '');
+        const header = createElement('div', 'player-header u-display-flex u-align-center u-gap-16 u-margin-bottom-16', '');
+        
+        const jersey = createElement('div', 'player-jersey u-radius-full u-display-flex u-align-center u-justify-center u-font-weight-700 u-text-body-lg', jerseyNumber);
+        jersey.style.cssText = 'width: 56px; height: 56px; background: var(--gradient-primary); color: white; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);';
+        
+        const info = createElement('div', 'player-info u-flex-1', '');
+        const name = createElement('h3', 'u-text-heading-md u-font-weight-600 u-text-primary u-margin-0', player.displayName);
+        const position = createElement('div', 'player-position u-text-body-sm u-text-secondary u-margin-top-4', player.position || 'Player');
+        
+        info.appendChild(name);
+        info.appendChild(position);
+        
+        if (player.email) {
+          const email = createElement('div', 'u-text-body-sm u-text-secondary u-margin-top-2', player.email);
+          info.appendChild(email);
+        }
+        
+        header.appendChild(jersey);
+        header.appendChild(info);
+        cardBody.appendChild(header);
+        card.appendChild(cardBody);
+        
+        return card;
+      }
+
+      function renderTableView() {
+        const tableBody = document.getElementById('roster-table-body');
+        const tableView = document.getElementById('roster-table-view');
+        const playersContainer = document.getElementById('players-by-position');
+        const coachingSection = document.getElementById('coaching-section');
+
+        if (!tableBody || !tableView) return;
+
+        if (filteredMembers.length === 0) {
+          tableView.style.display = 'none';
+          if (playersContainer) playersContainer.style.display = 'block';
+          return;
+        }
+
+        // Hide grid view
+        if (playersContainer) playersContainer.style.display = 'none';
+        if (coachingSection) coachingSection.style.display = 'none';
+        
+        // Show table view
+        tableView.style.display = 'block';
+
+        tableBody.textContent = '';
+        filteredMembers.forEach(member => {
+          const initials = getInitials(member.displayName);
+          const roleDisplay = member.role === 'coach' ? 'Head Coach' : 
+                             member.role === 'assistant_coach' ? 'Assistant Coach' : 'Player';
+          
+          const tr = createElement('tr', '', '');
+          tr.style.cssText = 'border-bottom: 1px solid var(--color-border-secondary); transition: background-color 0.2s;';
+          
+          // Player name cell
+          const nameTd = createElement('td', '', '');
+          nameTd.style.cssText = 'padding: 16px 12px;';
+          const nameDiv = createElement('div', '', '');
+          nameDiv.style.cssText = 'display: flex; align-items: center; gap: 12px;';
+          
+          const avatar = createElement('div', '', initials);
+          avatar.style.cssText = 'width: 40px; height: 40px; border-radius: 50%; background: var(--gradient-primary); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 0.9rem; flex-shrink: 0;';
+          
+          const nameInfo = createElement('div', '', '');
+          const nameText = createElement('div', '', member.displayName);
+          nameText.style.cssText = 'font-weight: 600; color: var(--text-primary);';
+          nameInfo.appendChild(nameText);
+          
+          if (member.email) {
+            const email = createElement('div', '', member.email);
+            email.style.cssText = 'font-size: 0.85rem; color: var(--text-secondary); margin-top: 2px;';
+            nameInfo.appendChild(email);
+          }
+          
+          nameDiv.appendChild(avatar);
+          nameDiv.appendChild(nameInfo);
+          nameTd.appendChild(nameDiv);
+          
+          // Position cell
+          const positionTd = createElement('td', '', member.position || '—');
+          positionTd.style.cssText = 'padding: 16px 12px; color: var(--text-primary);';
+          
+          // Jersey number cell
+          const jerseyTd = createElement('td', '', member.jersey_number || '—');
+          jerseyTd.style.cssText = 'padding: 16px 12px; text-align: center; color: var(--text-primary); font-weight: 600;';
+          
+          // Role cell
+          const roleTd = createElement('td', '', roleDisplay);
+          roleTd.style.cssText = 'padding: 16px 12px; color: var(--text-secondary);';
+          
+          // Status cell
+          const statusTd = createElement('td', '', '');
+          statusTd.style.cssText = 'padding: 16px 12px; text-align: center;';
+          const statusSpan = createElement('span', '', 'Active');
+          statusSpan.style.cssText = 'display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 500; background: var(--color-success-alpha-20, rgba(16, 201, 107, 0.1)); color: var(--color-success, #10c96b);';
+          statusTd.appendChild(statusSpan);
+          
+          tr.appendChild(nameTd);
+          tr.appendChild(positionTd);
+          tr.appendChild(jerseyTd);
+          tr.appendChild(roleTd);
+          tr.appendChild(statusTd);
+          tableBody.appendChild(tr);
+        });
+
+        if (typeof lucide !== 'undefined') {
+          lucide.createIcons();
+        }
+      }
+
+      function getPositionDisplayName(position) {
+        const positionMap = {
+          'QB': 'Quarterbacks',
+          'WR': 'Wide Receivers',
+          'RB': 'Running Backs',
+          'C': 'Centers',
+          'DB': 'Defensive Backs',
+          'LB': 'Linebackers'
+        };
+        return positionMap[position] || position || 'Players';
+      }
+
+      function getPositionIcon(position) {
+        const iconMap = {
+          'QB': 'target',
+          'WR': 'zap',
+          'RB': 'trophy',
+          'C': 'shield',
+          'DB': 'shield-check',
+          'LB': 'shield-alert'
+        };
+        return iconMap[position] || 'user';
+      }
+
+      function populatePositionFilter() {
+        const positionFilter = document.getElementById('position-filter');
+        if (!positionFilter) return;
+
+        // Get unique positions from players
+        const players = allMembers.filter(m => m.role === 'player');
+        const positions = [...new Set(players.map(p => p.position).filter(Boolean))].sort();
+        
+        const positionMap = {
+          'QB': 'Quarterback',
+          'WR': 'Wide Receiver',
+          'RB': 'Running Back',
+          'C': 'Center',
+          'DB': 'Defensive Back',
+          'LB': 'Linebacker'
+        };
+
+        // Keep "All Positions" option, then add available positions
+        positionFilter.textContent = '';
+        const allOption = createElement('option', '', 'All Positions');
+        allOption.value = 'all';
+        positionFilter.appendChild(allOption);
+        
+        positions.forEach(pos => {
+          const option = document.createElement('option');
+          option.value = pos;
+          option.textContent = positionMap[pos] || pos;
+          positionFilter.appendChild(option);
+        });
+      }
+
+      function setupRosterControls() {
+        const searchInput = document.getElementById('roster-search');
+        const positionFilterEl = document.getElementById('position-filter');
+        const viewGridBtn = document.getElementById('view-grid');
+        const viewTableBtn = document.getElementById('view-table');
+        const playersContainer = document.getElementById('players-by-position');
+        const tableView = document.getElementById('roster-table-view');
+
+        // Search functionality
+        if (searchInput) {
+          const debouncedSearch = debounce(() => {
+            searchQuery = searchInput.value.toLowerCase().trim();
+            applyFilters();
+          }, 300);
+          
+          searchInput.addEventListener('input', debouncedSearch);
+        }
+
+        // Position filter
+        if (positionFilterEl) {
+          positionFilterEl.addEventListener('change', (e) => {
+            window.positionFilter = e.target.value;
+            applyFilters();
+          });
+        }
+
+        // View toggle
+        if (viewGridBtn && viewTableBtn) {
+          viewGridBtn.addEventListener('click', () => {
+            viewMode = 'grid';
+            viewGridBtn.classList.add('active');
+            viewTableBtn.classList.remove('active');
+            viewGridBtn.style.background = 'var(--color-brand-primary)';
+            viewGridBtn.style.color = 'white';
+            viewTableBtn.style.background = 'transparent';
+            viewTableBtn.style.color = 'var(--text-secondary)';
+            
+            if (tableView) tableView.style.display = 'none';
+            if (playersContainer) playersContainer.style.display = 'block';
+            const coachingSection = document.getElementById('coaching-section');
+            if (coachingSection) coachingSection.style.display = 'block';
+          });
+
+          viewTableBtn.addEventListener('click', () => {
+            viewMode = 'table';
+            viewTableBtn.classList.add('active');
+            viewGridBtn.classList.remove('active');
+            viewTableBtn.style.background = 'var(--color-brand-primary)';
+            viewTableBtn.style.color = 'white';
+            viewGridBtn.style.background = 'transparent';
+            viewGridBtn.style.color = 'var(--text-secondary)';
+            
+            renderTableView();
+          });
+
+          // Set initial active state
+          viewGridBtn.style.background = 'var(--color-brand-primary)';
+          viewGridBtn.style.color = 'white';
+        }
+      }
+
+      function applyFilters() {
+        filteredMembers = allMembers.filter(member => {
+          // Search filter
+          if (searchQuery) {
+            const searchLower = searchQuery.toLowerCase();
+            const matchesSearch = 
+              member.displayName.toLowerCase().includes(searchLower) ||
+              member.email.toLowerCase().includes(searchLower) ||
+              (member.position && member.position.toLowerCase().includes(searchLower));
+            
+            if (!matchesSearch) return false;
+          }
+
+          // Position filter
+          if (window.positionFilter && window.positionFilter !== 'all') {
+            if (member.position !== window.positionFilter) return false;
+          }
+
+          return true;
+        });
+
+        renderRoster();
       }
 
       function setupInvitationForm() {
@@ -533,7 +1152,7 @@
         try {
           // Disable button and show loading
           sendBtn.disabled = true;
-          sendBtn.innerHTML = '<span style="display: inline-block; width: 16px; height: 16px; border: 2px solid white; border-top-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite; margin-right: 8px;"></span> Sending...';
+          setButtonLoading(sendBtn, 'Sending...');
 
           const supabase = getSupabase();
           const { data: { session } } = await supabase.auth.getSession();
@@ -577,9 +1196,7 @@
           showMessage(error.message || 'Failed to send invitation. Please try again.', 'error');
         } finally {
           // Re-enable button
-          sendBtn.disabled = false;
-          sendBtn.innerHTML = '<i data-lucide="send" class="icon-18" style="margin-right: 8px;"></i> Send Invitation';
-          if (typeof lucide !== 'undefined') lucide.createIcons();
+          restoreButton(sendBtn, '<i data-lucide="send" class="icon-18" style="margin-right: 8px;"></i> Send Invitation');
         }
       }
 
@@ -609,34 +1226,55 @@
           }
 
           container.style.display = 'block';
-          container.innerHTML = `
-            <div style="border-top: 1px solid var(--color-border-secondary); padding-top: 24px;">
-              <h4 style="margin: 0 0 16px 0; font-weight: 600; color: var(--text-primary);">
-                <i data-lucide="clock" class="icon-18" style="margin-right: 8px; vertical-align: middle;"></i>
-                Pending Invitations (${invitations.length})
-              </h4>
-              <div style="display: grid; gap: 12px;">
-                ${invitations.map(inv => {
-                  const expiresAt = new Date(inv.expires_at);
-                  const daysLeft = Math.ceil((expiresAt - new Date()) / (1000 * 60 * 60 * 24));
-                  return `
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--surface-secondary); border-radius: 6px;">
-                      <div>
-                        <div style="font-weight: 500; color: var(--text-primary);">${inv.email}</div>
-                        <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">
-                          ${inv.role === 'assistant_coach' ? 'Assistant Coach' : 'Player'}
-                          ${inv.position ? ` • ${inv.position}` : ''}
-                        </div>
-                      </div>
-                      <div style="text-align: right; font-size: 0.85rem; color: var(--text-secondary);">
-                        ${daysLeft > 0 ? `${daysLeft} day${daysLeft !== 1 ? 's' : ''} left` : 'Expired'}
-                      </div>
-                    </div>
-                  `;
-                }).join('')}
-              </div>
-            </div>
-          `;
+          container.textContent = '';
+          
+          const wrapper = createElement('div', '', '');
+          wrapper.style.cssText = 'border-top: 1px solid var(--color-border-secondary); padding-top: 24px;';
+          
+          const h4 = createElement('h4', '', '');
+          h4.style.cssText = 'margin: 0 0 16px 0; font-weight: 600; color: var(--text-primary);';
+          const icon = createElement('i', 'icon-18', '');
+          icon.setAttribute('data-lucide', 'clock');
+          icon.style.cssText = 'margin-right: 8px; vertical-align: middle;';
+          const text = document.createTextNode(` Pending Invitations (${invitations.length})`);
+          h4.appendChild(icon);
+          h4.appendChild(text);
+          
+          const grid = createElement('div', '', '');
+          grid.style.cssText = 'display: grid; gap: 12px;';
+          
+          invitations.forEach(inv => {
+            const expiresAt = new Date(inv.expires_at);
+            const daysLeft = Math.ceil((expiresAt - new Date()) / (1000 * 60 * 60 * 24));
+            
+            const item = createElement('div', '', '');
+            item.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--surface-secondary); border-radius: 6px;';
+            
+            const left = createElement('div', '', '');
+            const email = createElement('div', '', inv.email);
+            email.style.cssText = 'font-weight: 500; color: var(--text-primary);';
+            const role = createElement('div', '', '');
+            role.style.cssText = 'font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;';
+            const roleText = inv.role === 'assistant_coach' ? 'Assistant Coach' : 'Player';
+            role.textContent = inv.position ? `${roleText} • ${inv.position}` : roleText;
+            
+            left.appendChild(email);
+            left.appendChild(role);
+            
+            const right = createElement('div', '', '');
+            right.style.cssText = 'text-align: right; font-size: 0.85rem; color: var(--text-secondary);';
+            right.textContent = daysLeft > 0 ? `${daysLeft} day${daysLeft !== 1 ? 's' : ''} left` : 'Expired';
+            
+            item.appendChild(left);
+            item.appendChild(right);
+            grid.appendChild(item);
+          });
+          
+          wrapper.appendChild(h4);
+          wrapper.appendChild(grid);
+          container.appendChild(wrapper);
+          
+          if (typeof lucide !== 'undefined') lucide.createIcons(container);
 
           if (typeof lucide !== 'undefined') {
             lucide.createIcons();

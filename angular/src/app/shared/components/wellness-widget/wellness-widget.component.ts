@@ -1,6 +1,5 @@
 import {
   Component,
-  OnInit,
   inject,
   signal,
   ChangeDetectionStrategy,
@@ -254,7 +253,7 @@ interface WellnessMetric {
     `,
   ],
 })
-export class WellnessWidgetComponent implements OnInit {
+export class WellnessWidgetComponent {
   private wellnessService = inject(WellnessService);
   private router = inject(Router);
 
@@ -262,10 +261,12 @@ export class WellnessWidgetComponent implements OnInit {
   statusLabel = signal<string>("N/A");
   statusColor = signal<string>("var(--ds-primary-green)");
   metrics = signal<WellnessMetric[]>([]);
-
-  ngOnInit(): void {
+  
+  constructor() {
+    // Angular 21: Initialize in constructor instead of OnInit
     this.loadWellnessData();
   }
+
 
   loadWellnessData(): void {
     this.wellnessService.getWellnessData("7d").subscribe({

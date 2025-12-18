@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, input } from "@angular/core";
 
 import { ButtonModule } from "primeng/button";
 
@@ -10,13 +10,13 @@ import { ButtonModule } from "primeng/button";
     <div class="page-header">
       <div class="header-content">
         <h1 class="page-title">
-          @if (icon) {
-            <i [class]="'pi ' + icon"></i>
+          @if (icon()) {
+            <i [class]="'pi ' + icon()"></i>
           }
-          {{ title }}
+          {{ title() }}
         </h1>
-        @if (subtitle) {
-          <p class="page-subtitle">{{ subtitle }}</p>
+        @if (subtitle()) {
+          <p class="page-subtitle">{{ subtitle() }}</p>
         }
       </div>
       <ng-content></ng-content>
@@ -71,7 +71,8 @@ import { ButtonModule } from "primeng/button";
   ],
 })
 export class PageHeaderComponent {
-  @Input() title: string = "";
-  @Input() subtitle?: string;
-  @Input() icon?: string;
+  // Angular 21: Use input() signal instead of @Input()
+  title = input<string>("");
+  subtitle = input<string | undefined>(undefined);
+  icon = input<string | undefined>(undefined);
 }

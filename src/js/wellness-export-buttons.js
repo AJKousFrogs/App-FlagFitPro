@@ -163,10 +163,14 @@
 
     document.head.appendChild(style);
 
-    // Insert export buttons (try to find a good spot)
-    const insertBefore = wellnessPage.querySelector('form, .wellness-form, .checkin-form');
-    if (insertBefore) {
-      insertBefore.parentNode.insertBefore(exportContainer, insertBefore);
+    // Insert export buttons after the wellness form section
+    const formSection = document.querySelector('.wellness-form-section');
+    const chartsSection = document.querySelector('.wellness-charts-section');
+    
+    if (formSection && formSection.nextSibling) {
+      formSection.parentNode.insertBefore(exportContainer, formSection.nextSibling);
+    } else if (chartsSection) {
+      chartsSection.parentNode.insertBefore(exportContainer, chartsSection);
     } else {
       wellnessPage.appendChild(exportContainer);
     }
@@ -177,9 +181,28 @@
   /**
    * Handle PDF export
    */
-  window.handleWellnessExportPDF = function() {
-    // Get wellness history from localStorage
-    const wellnessHistory = JSON.parse(localStorage.getItem('wellnessHistory') || '[]');
+  window.handleWellnessExportPDF = async function() {
+    // Try to get wellness data from service first, fallback to localStorage
+    let wellnessHistory = [];
+    
+    try {
+      // Check if wellness service is available
+      if (window.wellnessService || (await import('./services/wellness-service.js').catch(() => null))) {
+        const { wellnessService } = await import('./services/wellness-service.js');
+        const endDate = new Date().toISOString().split('T')[0];
+        const startDate = new Date();
+        startDate.setDate(startDate.getDate() - 90);
+        const startDateStr = startDate.toISOString().split('T')[0];
+        wellnessHistory = await wellnessService.getWellnessHistory(startDateStr, endDate);
+      }
+    } catch (error) {
+      console.warn('[Wellness Export] Could not load from service, trying localStorage:', error);
+    }
+
+    // Fallback to localStorage if service unavailable or empty
+    if (wellnessHistory.length === 0) {
+      wellnessHistory = JSON.parse(localStorage.getItem('wellnessHistory') || '[]');
+    }
 
     if (wellnessHistory.length === 0) {
       alert('No wellness data to export. Log some wellness check-ins first!');
@@ -215,9 +238,28 @@
   /**
    * Handle CSV export
    */
-  window.handleWellnessExportCSV = function() {
-    // Get wellness history from localStorage
-    const wellnessHistory = JSON.parse(localStorage.getItem('wellnessHistory') || '[]');
+  window.handleWellnessExportCSV = async function() {
+    // Try to get wellness data from service first, fallback to localStorage
+    let wellnessHistory = [];
+    
+    try {
+      // Check if wellness service is available
+      if (window.wellnessService || (await import('./services/wellness-service.js').catch(() => null))) {
+        const { wellnessService } = await import('./services/wellness-service.js');
+        const endDate = new Date().toISOString().split('T')[0];
+        const startDate = new Date();
+        startDate.setDate(startDate.getDate() - 90);
+        const startDateStr = startDate.toISOString().split('T')[0];
+        wellnessHistory = await wellnessService.getWellnessHistory(startDateStr, endDate);
+      }
+    } catch (error) {
+      console.warn('[Wellness Export] Could not load from service, trying localStorage:', error);
+    }
+
+    // Fallback to localStorage if service unavailable or empty
+    if (wellnessHistory.length === 0) {
+      wellnessHistory = JSON.parse(localStorage.getItem('wellnessHistory') || '[]');
+    }
 
     if (wellnessHistory.length === 0) {
       alert('No wellness data to export. Log some wellness check-ins first!');
@@ -233,7 +275,7 @@
     // Format data for CSV
     const csvData = wellnessHistory.map(entry => ({
       Date: new Date(entry.date).toLocaleDateString(),
-      'Sleep (hours)': entry.sleep || 'N/A',
+      'Sleep (1-10)': entry.sleep || 'N/A',
       'Energy (1-10)': entry.energy || 'N/A',
       'Mood (1-10)': entry.mood || 'N/A',
       'Stress (1-10)': entry.stress || 'N/A',

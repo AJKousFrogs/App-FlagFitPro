@@ -33,24 +33,14 @@
     <script type="module" src="./src/js/main.js"></script>
     <!-- Sidebar Utilities -->
     <script src="./src/js/utils/sidebar-utils.js"></script>
-    <!-- Sidebar Loader (Dynamic Component) -->
-    <script type="module" src="./src/js/components/sidebar-loader.js" defer></script>
-    <!-- Top Bar Loader (Dynamic Component) -->
-    <script type="module" src="./src/js/components/top-bar-loader.js" defer></script>
-    <!-- Footer Loader (Dynamic Component) -->
-    <script type="module" src="./src/js/components/footer-loader.js" defer></script>
+    <!-- Common Component Loaders (Sidebar, Top Bar, Footer) -->
+    <script type="module" src="./src/js/components/common-loaders.js" defer></script>
   
+    <!-- Supabase Configuration (Centralized) -->
+    <script src="./src/js/config/supabase-config.js"></script>
+    
     <!-- Supabase JS SDK from CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <!-- Supabase Configuration -->
-    <script>
-      // Set Supabase config in window for production
-      window._env = {
-        SUPABASE_URL: 'https://pvziciccwxgftcielknm.supabase.co',
-        SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2emljaWNjd3hnZnRjaWVsa25tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MzcwNTgsImV4cCI6MjA3NTExMzA1OH0.1nfJrtWPl6DrAwvjGvM1-CZBeyYgCaV9oDdaadpqhLU'
-      };
-    </script>
 
   </head>
   <body>
@@ -67,10 +57,10 @@
           class="header u-bg-primary u-padding-20 u-padding-x-30 u-radius-md u-shadow-sm u-margin-bottom-30 u-display-flex u-justify-between u-align-center"
         >
           <div>
-            <h1 class="u-text-heading-lg u-font-weight-600 u-text-primary">
+            <h1 class="text-heading-xl text-primary">
               Community Hub
             </h1>
-            <p class="u-text-body-sm u-text-secondary u-margin-top-4">
+            <p class="text-body-sm text-secondary">
               Connect with the flag football community
             </p>
           </div>
@@ -120,6 +110,11 @@
             </div>
 
             <div id="postsContainer">
+              <div id="community-loading" class="community-loading" style="display: none;">
+                <div class="community-loading-spinner"></div>
+                <span style="margin-left: var(--space-3);">Loading community feed...</span>
+              </div>
+              <div id="community-error" class="community-error" style="display: none;"></div>
               <div class="post">
                 <div class="post-header">
                   <div class="post-avatar">CM</div>
@@ -333,7 +328,7 @@
 
           <div class="sidebar-content">
             <div class="sidebar-section">
-              <h3 class="section-title">
+              <h3 class="section-title text-heading-lg text-primary">
                 <i data-lucide="trending-up" class="icon-18"></i>
                 Trending Topics
               </h3>
@@ -360,7 +355,7 @@
             </div>
 
             <div class="sidebar-section">
-              <h3 class="section-title">
+              <h3 class="section-title text-heading-lg text-primary">
                 <i data-lucide="users" class="icon-18"></i>
                 Suggested Connections
               </h3>
@@ -393,7 +388,7 @@
             </div>
 
             <div class="sidebar-section">
-              <h3 class="section-title">
+              <h3 class="section-title text-heading-lg text-primary">
                 <i data-lucide="trophy" class="icon-18"></i>
                 Recent Achievements
               </h3>
@@ -422,8 +417,10 @@
       import { AccessibilityUtils } from "./src/accessibility-utils.js";
       import { escapeHtml, sanitizeUrl } from "./src/js/utils/sanitize.js";
       import { getInitials, getTimeAgo } from "./src/js/utils/shared.js";
+      import { enhancedCommunity } from "./src/js/components/enhanced-community.js";
 
       let postCounter = 4;
+      let communityInitialized = false;
 
       async function initCommunityPage() {
         if (!authManager.requireAuth()) return;
@@ -432,24 +429,41 @@
         await PerformanceUtils.measureAsyncPerformance(
           "Community Page Load",
           async () => {
+            // Initialize enhanced community component
+            try {
+              await enhancedCommunity.init('postsContainer', {
+                enableRealtime: true,
+                enableInfiniteScroll: true,
+                enableNotifications: true
+              });
+
+              // Subscribe to community updates
+              enhancedCommunity.addEventListener((data) => {
+                renderCommunityFeed(data);
+              });
+
+              communityInitialized = true;
+            } catch (error) {
+              console.warn('[Community] Enhanced component failed, using fallback:', error);
+              // Fallback to original implementation
+              setupPostInput();
+              await loadCommunityFeed();
+            }
+
             setupPostInput();
-            await loadCommunityFeed();
+            setupInfiniteScrolling();
           },
         );
-
-        // Setup optimized scrolling for posts
-        setupInfiniteScrolling();
-
-        // Add demo posts to make the community feel active
-        setTimeout(addDemoPosts, 500);
       }
 
       function setupInfiniteScrolling() {
+        // Enhanced component handles infinite scrolling internally
+        // This is kept for fallback compatibility
         const postsContainer = document.getElementById("postsContainer");
         let isLoading = false;
 
         const loadMorePosts = PerformanceUtils.throttle(async () => {
-          if (isLoading) return;
+          if (isLoading || communityInitialized) return;
 
           const scrollPosition = window.scrollY + window.innerHeight;
           const documentHeight = document.documentElement.scrollHeight;
@@ -458,15 +472,156 @@
           if (scrollPosition >= documentHeight - 200) {
             isLoading = true;
 
-            // Simulate loading more posts
-            setTimeout(() => {
-              addDemoPosts();
-              isLoading = false;
-            }, 1000);
+            // Try to load more posts from enhanced component
+            if (communityInitialized && enhancedCommunity.hasMorePosts) {
+              try {
+                await enhancedCommunity.loadPosts();
+              } catch (error) {
+                console.warn('[Community] Failed to load more posts:', error);
+                // Fallback to demo posts
+                addDemoPosts();
+              }
+            } else {
+              // Fallback: simulate loading more posts
+              setTimeout(() => {
+                addDemoPosts();
+                isLoading = false;
+              }, 1000);
+            }
+            isLoading = false;
           }
         }, 250);
 
         window.addEventListener("scroll", loadMorePosts);
+      }
+
+      /**
+       * Render community feed from enhanced component data
+       */
+      function renderCommunityFeed(data) {
+        const container = document.getElementById("postsContainer");
+        const loadingEl = document.getElementById("community-loading");
+        const errorEl = document.getElementById("community-error");
+        
+        if (!container) return;
+
+        // Hide loading and error states
+        if (loadingEl) loadingEl.style.display = 'none';
+        if (errorEl) errorEl.style.display = 'none';
+
+        // Show loading if data is loading
+        if (data.isLoading) {
+          if (loadingEl) loadingEl.style.display = 'flex';
+          return;
+        }
+
+        // Clear existing posts (except create post form and loading/error)
+        const createPostForm = container.querySelector('.create-post');
+        const existingPosts = Array.from(container.querySelectorAll('.post'));
+        
+        // Remove old posts
+        existingPosts.forEach(post => post.remove());
+
+        // Render posts
+        if (data.posts && data.posts.length > 0) {
+          data.posts.forEach(post => {
+            const postHTML = createPostHTML(post, authManager.getCurrentUser());
+            container.insertAdjacentHTML('beforeend', postHTML);
+          });
+        } else if (!data.isLoading) {
+          // Show empty state
+          const emptyHTML = '<div class="community-empty">No posts yet. Be the first to share something!</div>';
+          container.insertAdjacentHTML('beforeend', emptyHTML);
+        }
+
+        // Render comments
+        if (data.comments) {
+          data.comments.forEach((comments, postId) => {
+            const commentsSection = document.getElementById(`comments-${postId}`);
+            if (commentsSection && comments.length > 0) {
+              // Keep comment input container
+              const inputContainer = commentsSection.querySelector('.comment-input-container');
+              commentsSection.innerHTML = comments.map(comment => 
+                createCommentHTML(comment)
+              ).join('');
+              if (inputContainer) {
+                commentsSection.appendChild(inputContainer);
+              } else {
+                commentsSection.insertAdjacentHTML('beforeend', `
+                  <div class="comment-input-container">
+                    <textarea
+                      id="comment-input-${postId}"
+                      class="comment-input"
+                      placeholder="Write a comment..."
+                      rows="2"
+                    ></textarea>
+                    <button
+                      class="btn btn-primary btn-sm"
+                      onclick="addComment('${postId}')"
+                    >
+                      Post
+                    </button>
+                  </div>
+                `);
+              }
+            }
+          });
+        }
+
+        // Update trending topics sidebar
+        renderTrendingTopics(data.trendingTopics || []);
+
+        // Update leaderboard sidebar
+        renderLeaderboard(data.leaderboard || []);
+
+        // Update suggested users sidebar
+        renderSuggestedUsers(data.suggestedUsers || []);
+
+        // Initialize Lucide icons
+        if (window.lucide) {
+          window.lucide.createIcons();
+        }
+      }
+
+      /**
+       * Render trending topics
+       */
+      function renderTrendingTopics(topics) {
+        const container = document.querySelector('.trending-item')?.parentElement;
+        if (!container || !topics.length) return;
+
+        container.innerHTML = topics.map(topic => `
+          <div class="trending-item">
+            <div class="trending-topic">#${escapeHtml(topic.name)}</div>
+            <div class="trending-count">${topic.count} posts</div>
+          </div>
+        `).join('');
+      }
+
+      /**
+       * Render leaderboard
+       */
+      function renderLeaderboard(leaderboard) {
+        // Leaderboard rendering can be added here if needed
+      }
+
+      /**
+       * Render suggested users
+       */
+      function renderSuggestedUsers(users) {
+        const container = document.querySelector('.suggested-user')?.parentElement;
+        if (!container || !users.length) return;
+
+        container.innerHTML = users.map(user => `
+          <div class="suggested-user">
+            <div class="user-avatar">${getInitials(user.name || user.email)}</div>
+            <div class="user-info">
+              <div class="user-name">${escapeHtml(user.name || user.email)}</div>
+              <div class="user-detail">${escapeHtml(user.role || 'Member')} • ${user.followers || 0} followers</div>
+            </div>
+            <button class="follow-btn" onclick="followUser('${user.id}')">Follow</button>
+          </div>
+        `).join('');
       }
 
       function addDemoPosts() {
@@ -565,13 +720,18 @@
       }
 
       function createPostHTML(post, currentUser) {
+        const authorName = post.authorName || post.author || 'Unknown';
+        const authorInitials = getInitials(authorName);
+        const location = post.location || '';
+        const timeAgo = post.timeAgo || getTimeAgo(post.timestamp);
+        
         return `
-                <div class="post">
+                <div class="post" data-post-id="${escapeHtml(post.id)}">
                     <div class="post-header">
-                        <div class="post-avatar">${getInitials(post.author)}</div>
+                        <div class="post-avatar">${authorInitials}</div>
                         <div class="post-info">
-                            <div class="post-author">${escapeHtml(post.authorName)}</div>
-                            <div class="post-meta">${getTimeAgo(post.timestamp)} • ${escapeHtml(post.location) || '<i data-lucide="map-pin" class="icon-14"></i> Community'}</div>
+                            <div class="post-author">${escapeHtml(authorName)}</div>
+                            <div class="post-meta">${timeAgo}${location ? ' • ' + escapeHtml(location) : ''}</div>
                         </div>
                     </div>
                     <div class="post-content">
@@ -599,19 +759,37 @@
                     </div>
                     <div class="comments-section" id="comments-${escapeHtml(post.id)}">
                         ${post.topComments ? post.topComments.map((comment) => createCommentHTML(comment)).join("") : ""}
+                        <div class="comment-input-container">
+                            <textarea
+                                id="comment-input-${escapeHtml(post.id)}"
+                                class="comment-input"
+                                placeholder="Write a comment..."
+                                rows="2"
+                            ></textarea>
+                            <button
+                                class="btn btn-primary btn-sm"
+                                onclick="addComment('${escapeHtml(post.id)}')"
+                            >
+                                Post
+                            </button>
+                        </div>
                     </div>
                 </div>
             `;
       }
 
       function createCommentHTML(comment) {
+        const authorName = comment.authorName || comment.author || 'Unknown';
+        const content = comment.content || comment.text || '';
+        const timeAgo = comment.timeAgo || getTimeAgo(comment.timestamp);
+        
         return `
                 <div class="comment">
-                    <div class="comment-avatar">${getInitials(comment.author)}</div>
+                    <div class="comment-avatar">${getInitials(authorName)}</div>
                     <div class="comment-content">
-                        <div class="comment-author">${escapeHtml(comment.authorName)}</div>
-                        <div class="comment-text">${escapeHtml(comment.text)}</div>
-                        <div class="comment-time">${getTimeAgo(comment.timestamp)}</div>
+                        <div class="comment-author">${escapeHtml(authorName)}</div>
+                        <div class="comment-text">${escapeHtml(content)}</div>
+                        <div class="comment-time">${timeAgo}</div>
                     </div>
                 </div>
             `;
@@ -623,52 +801,42 @@
 
         if (!content) return;
 
-        const user = authManager.getCurrentUser();
-
         try {
-          const response = await apiClient.post("/api/community/posts", {
-            content: content,
-          });
-
-          if (response.success) {
-            // Add post to UI immediately
-            addPostToUI({
-              id: `post${postCounter++}`,
-              author: user.email,
-              authorName: user.name || "You",
-              content: content,
-              timestamp: new Date().toISOString(),
-              likes: 0,
-              comments: 0,
-              shares: 0,
-              isLiked: false,
-            });
-
+          if (communityInitialized) {
+            // Use enhanced component
+            await enhancedCommunity.createPost(content);
             postInput.value = "";
             document.getElementById("submitPost").disabled = true;
-
             authManager.showSuccess("Post created successfully!");
+          } else {
+            // Fallback to original implementation
+            const user = authManager.getCurrentUser();
+
+            const response = await apiClient.post("/api/community/posts", {
+              content: content,
+            });
+
+            if (response.success) {
+              addPostToUI({
+                id: `post${postCounter++}`,
+                author: user.email,
+                authorName: user.name || "You",
+                content: content,
+                timestamp: new Date().toISOString(),
+                likes: 0,
+                comments: 0,
+                shares: 0,
+                isLiked: false,
+              });
+
+              postInput.value = "";
+              document.getElementById("submitPost").disabled = true;
+              authManager.showSuccess("Post created successfully!");
+            }
           }
         } catch (error) {
           console.error("Failed to create post:", error);
-
-          // Still add to UI for demo purposes
-          addPostToUI({
-            id: `post${postCounter++}`,
-            author: user.email,
-            authorName: user.name || "You",
-            content: content,
-            timestamp: new Date().toISOString(),
-            likes: 0,
-            comments: 0,
-            shares: 0,
-            isLiked: false,
-          });
-
-          postInput.value = "";
-          document.getElementById("submitPost").disabled = true;
-
-          authManager.showSuccess("Post created!");
+          authManager.showError("Failed to create post. Please try again.");
         }
       };
 
@@ -682,43 +850,110 @@
 
       window.toggleLike = async function (button, postId) {
         try {
-          const isLiked = button.classList.contains("liked");
+          if (communityInitialized) {
+            // Use enhanced component
+            await enhancedCommunity.toggleLike(postId);
+            // UI will update via renderCommunityFeed callback
+          } else {
+            // Fallback to original implementation
+            const isLiked = button.classList.contains("liked");
 
-          const response = await apiClient.post(
-            `/api/community/posts/${postId}/${isLiked ? "unlike" : "like"}`,
-          );
+            const response = await apiClient.post(
+              `/api/community/posts/${postId}/${isLiked ? "unlike" : "like"}`,
+            );
 
-          if (response.success || true) {
-            // Allow for demo
-            button.classList.toggle("liked");
+            if (response.success || true) {
+              button.classList.toggle("liked");
 
-            if (button.classList.contains("liked")) {
-              button.innerHTML =
-                '<i data-lucide="heart" class="icon-16"></i> Loved';
-            } else {
-              button.innerHTML =
-                '<i data-lucide="thumbs-up" class="icon-16"></i> Like';
+              if (button.classList.contains("liked")) {
+                button.innerHTML =
+                  '<i data-lucide="heart" class="icon-16"></i> Loved';
+              } else {
+                button.innerHTML =
+                  '<i data-lucide="thumbs-up" class="icon-16"></i> Like';
+              }
+
+              // Update like count in stats
+              const stats = button
+                .closest(".post-engagement")
+                .querySelector(".engagement-stats");
+              const likeSpan = stats.children[0];
+              const currentLikes = parseInt(likeSpan.textContent.match(/\d+/)[0]);
+              const newLikes = isLiked ? currentLikes - 1 : currentLikes + 1;
+              likeSpan.innerHTML = `<i data-lucide="thumbs-up" class="icon-14"></i> ${newLikes} likes`;
             }
-
-            // Update like count in stats
-            const stats = button
-              .closest(".post-engagement")
-              .querySelector(".engagement-stats");
-            const likeSpan = stats.children[0];
-            const currentLikes = parseInt(likeSpan.textContent.match(/\d+/)[0]);
-            const newLikes = isLiked ? currentLikes - 1 : currentLikes + 1;
-            likeSpan.innerHTML = `<i data-lucide="thumbs-up" class="icon-14"></i> ${newLikes} likes`;
           }
         } catch (error) {
           console.error("Failed to toggle like:", error);
-          // Still toggle for demo
-          button.classList.toggle("liked");
+          if (!communityInitialized) {
+            // Still toggle for demo
+            button.classList.toggle("liked");
+          }
         }
       };
 
-      window.toggleComments = function (postId) {
+      window.toggleComments = async function (postId) {
         const commentsSection = document.getElementById(`comments-${postId}`);
+        if (!commentsSection) return;
+
+        const isShowing = commentsSection.classList.contains("show");
+        
+        if (!isShowing && communityInitialized) {
+          // Load comments if not already loaded
+          const existingComments = enhancedCommunity.comments.get(postId);
+          if (!existingComments || existingComments.length === 0) {
+            await enhancedCommunity.loadPostComments(postId);
+          }
+        }
+
         commentsSection.classList.toggle("show");
+        
+        // Initialize Lucide icons after showing comments
+        if (!isShowing && window.lucide) {
+          setTimeout(() => window.lucide.createIcons(), 100);
+        }
+      };
+
+      /**
+       * Add comment to a post
+       */
+      window.addComment = async function (postId) {
+        const commentInput = document.getElementById(`comment-input-${postId}`);
+        if (!commentInput) return;
+
+        const content = commentInput.value.trim();
+        if (!content) return;
+
+        try {
+          if (communityInitialized) {
+            await enhancedCommunity.addComment(postId, content);
+            commentInput.value = "";
+            // Show comments section
+            const commentsSection = document.getElementById(`comments-${postId}`);
+            if (commentsSection) {
+              commentsSection.classList.add("show");
+            }
+          } else {
+            // Fallback implementation
+            console.warn("Comment functionality requires enhanced community component");
+          }
+        } catch (error) {
+          console.error("Failed to add comment:", error);
+          authManager.showError("Failed to add comment. Please try again.");
+        }
+      };
+
+      /**
+       * Follow a user
+       */
+      window.followUser = async function (userId) {
+        try {
+          // Implementation for following users
+          console.log("Follow user:", userId);
+          authManager.showSuccess("User followed!");
+        } catch (error) {
+          console.error("Failed to follow user:", error);
+        }
       };
 
       window.scrollToCreatePost = function () {

@@ -73,28 +73,42 @@ function renderDayCard(day, scheduleSettings) {
 
   const dayCard = document.createElement("div");
   dayCard.className = `day-card ${isToday ? "today" : ""} ${isCompleted ? "completed" : ""} ${isGameDay ? "game-day" : ""}`;
+  dayCard.setAttribute("role", "listitem");
+  dayCard.setAttribute("aria-label", `${dayName}, ${date.toLocaleDateString("en-US", { month: "long", day: "numeric" })}`);
+  
+  if (isToday) {
+    dayCard.setAttribute("aria-current", "date");
+  }
+
+  const dateFormatted = date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  const statusLabel = isCompleted ? "Completed" : workoutType ? "Scheduled" : "No workout scheduled";
+  
   dayCard.innerHTML = `
         <div class="day-header">
             <div>
-                <div class="day-name">${dayName}</div>
-                <div class="day-date">${date.toLocaleDateString("en-US", { month: "short", day: "numeric" })}</div>
+                <div class="day-name u-font-weight-600 u-text-primary">${dayName}</div>
+                <div class="day-date u-text-body-sm u-text-secondary">${dateFormatted}</div>
             </div>
-            <span class="day-status ${isCompleted ? "completed" : workoutType ? "scheduled" : ""}"></span>
+            <span 
+              class="day-status ${isCompleted ? "completed" : workoutType ? "scheduled" : ""}" 
+              aria-label="${statusLabel}"
+              role="status"
+            ></span>
         </div>
 
         ${
           scheduleSettings?.preferences?.includeMobility
             ? `
-        <div class="morning-routine">
-            <div class="morning-routine-label">
-                <i data-lucide="sunrise" style="width: 14px; height: 14px;"></i>
+        <div class="morning-routine" role="region" aria-label="Morning routine">
+            <div class="morning-routine-label u-text-body-sm u-font-weight-600 u-text-primary">
+                <i data-lucide="sunrise" class="icon-14 icon-inline" aria-hidden="true"></i>
                 Morning Routine
             </div>
-            <div class="morning-routine-content">
+            <div class="morning-routine-content u-display-flex u-align-center u-gap-8">
                 <div class="morning-routine-icon">
-                    <i data-lucide="activity" style="width: 12px; height: 12px;"></i>
+                    <i data-lucide="activity" class="icon-12 icon-inline" aria-hidden="true"></i>
                 </div>
-                <span>15 min Mobility + Foam Rolling</span>
+                <span class="u-text-body-sm u-text-secondary">15 min Mobility + Foam Rolling</span>
             </div>
         </div>
         `
@@ -104,9 +118,9 @@ function renderDayCard(day, scheduleSettings) {
         ${
           workoutTitle
             ? `
-        <div class="day-workout ${workoutClass} ${isSkipped ? "skipped" : ""}">
-            <div class="day-workout-title">${workoutTitle}</div>
-            ${workoutMeta ? `<div class="day-workout-meta">${workoutMeta}</div>` : ""}
+        <div class="day-workout ${workoutClass} ${isSkipped ? "skipped" : ""}" role="region" aria-label="Workout">
+            <div class="day-workout-title u-font-weight-600 u-text-primary">${workoutTitle}</div>
+            ${workoutMeta ? `<div class="day-workout-meta u-text-body-sm u-text-secondary">${workoutMeta}</div>` : ""}
         </div>
         `
             : ""
@@ -115,9 +129,14 @@ function renderDayCard(day, scheduleSettings) {
         ${
           !isSkipped && workoutType
             ? `
-        <div class="day-actions">
-            <button class="day-action-btn ${isCompleted ? "" : "primary"}" onclick="startDayWorkout('${workoutType}', '${date.toISOString()}')">
-                ${isCompleted ? "✓ Completed" : "Start"}
+        <div class="day-actions u-margin-top-12">
+            <button 
+              class="day-action-btn btn ${isCompleted ? "btn-secondary" : "btn-primary"} btn-sm" 
+              onclick="startDayWorkout('${workoutType}', '${date.toISOString()}')"
+              aria-label="${isCompleted ? "Workout completed" : `Start ${workoutTitle || workoutType} workout`}"
+              ${isCompleted ? 'aria-pressed="true"' : ''}
+            >
+                ${isCompleted ? '<i data-lucide="check" class="icon-16 icon-inline" aria-hidden="true"></i> Completed' : '<i data-lucide="play" class="icon-16 icon-inline" aria-hidden="true"></i> Start'}
             </button>
         </div>
         `

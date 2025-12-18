@@ -17,7 +17,7 @@
  */
 
 import pg from "pg";
-import fetch from "node-fetch";
+// Using native fetch (available in Node.js 18+)
 import { config } from "dotenv";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";

@@ -4,12 +4,15 @@
  * Extends BaseViewModel with reactive data streams
  * Perfect for real-time analytics and live data
  * 
+ * ⚠️ IMPORTANT: Use RxJS ONLY for complex async work (API calls, intervals, etc.)
+ * Use Signals for UI state management instead of BehaviorSubject
+ * 
  * Usage:
  * ```typescript
  * export class AnalyticsViewModel extends ReactiveViewModel {
  *   private analyticsService = inject(AnalyticsDataService);
  *   
- *   // Reactive data stream
+ *   // Complex async work: Use RxJS Observable
  *   performanceData$ = this.createStream(
  *     interval(5000).pipe(
  *       switchMap(() => this.analyticsService.getPerformanceData()),
@@ -17,29 +20,35 @@
  *     )
  *   );
  *   
- *   // Signal-based state derived from stream
+ *   // UI State: Convert Observable to Signal using toSignal()
  *   performanceMetrics = toSignal(
  *     this.performanceData$.pipe(
  *       map(data => data.metrics)
  *     ),
  *     { initialValue: [] }
  *   );
+ *   
+ *   // Or use signals directly for simple state
+ *   selectedMetric = signal<string>('speed');
+ *   filteredData = computed(() => {
+ *     return this.performanceMetrics().filter(m => m.type === this.selectedMetric());
+ *   });
  * }
  * ```
- */
 
 import { Injectable, signal, computed } from '@angular/core';
-import { Observable, Subject, BehaviorSubject, shareReplay } from 'rxjs';
+import { Observable, Subject, shareReplay } from 'rxjs';
 import { BaseViewModel } from './base.view-model';
 
 @Injectable()
 export abstract class ReactiveViewModel extends BaseViewModel {
-  // Stream management
+  // Stream management for complex async work (API calls, intervals, etc.)
   private streams = new Map<string, Observable<any>>();
-  private subjects = new Map<string, Subject<any>>();
 
   /**
    * Create a reactive data stream with automatic sharing
+   * Use this for complex async work (API calls, intervals, websockets, etc.)
+   * For UI state, prefer signals instead
    */
   protected createStream<T>(
     source$: Observable<T>,
@@ -55,15 +64,6 @@ export abstract class ReactiveViewModel extends BaseViewModel {
   }
 
   /**
-   * Create a BehaviorSubject for state management
-   */
-  protected createSubject<T>(initialValue: T, key: string): BehaviorSubject<T> {
-    const subject = new BehaviorSubject<T>(initialValue);
-    this.subjects.set(key, subject);
-    return subject;
-  }
-
-  /**
    * Get a stream by key
    */
   protected getStream<T>(key: string): Observable<T> | undefined {
@@ -76,8 +76,6 @@ export abstract class ReactiveViewModel extends BaseViewModel {
   override reset(): void {
     super.reset();
     this.streams.clear();
-    this.subjects.forEach(subject => subject.complete());
-    this.subjects.clear();
   }
 }
 

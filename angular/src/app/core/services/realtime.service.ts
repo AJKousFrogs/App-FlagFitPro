@@ -5,7 +5,7 @@
  * Provides a centralized way to subscribe to database changes.
  */
 
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, inject, signal, effect } from '@angular/core';
 import { SupabaseService } from './supabase.service';
 import { RealtimeChannel } from '@supabase/supabase-js';
 
@@ -36,11 +36,13 @@ export class RealtimeService {
   }
 
   /**
-   * Monitor connection status
+   * Monitor connection status using signals + effect()
+   * More efficient than subscriptions and zoneless-compatible
    */
   private initializeConnectionStatus() {
-    // Supabase realtime connection monitoring
-    this.supabase.session$.subscribe(session => {
+    // Use effect() to reactively watch session signal changes
+    effect(() => {
+      const session = this.supabase.session();
       if (session) {
         this.connectionStatus.set('connected');
         this.isConnected.set(true);
@@ -55,7 +57,8 @@ export class RealtimeService {
    * Subscribe to training sessions changes
    */
   subscribeToTrainingSessions(callback: RealtimeCallback): () => void {
-    const userId = this.supabase.currentUser?.id;
+    // Use signal instead of property access
+    const userId = this.supabase.currentUser()?.id;
     if (!userId) {
       console.warn('Cannot subscribe: No user logged in');
       return () => {};
@@ -73,7 +76,7 @@ export class RealtimeService {
    * Subscribe to games/matches changes
    */
   subscribeToGames(callback: RealtimeCallback): () => void {
-    const userId = this.supabase.currentUser?.id;
+    const userId = this.supabase.currentUser()?.id;
     if (!userId) {
       console.warn('Cannot subscribe: No user logged in');
       return () => {};
@@ -91,7 +94,7 @@ export class RealtimeService {
    * Subscribe to wellness data changes
    */
   subscribeToWellness(callback: RealtimeCallback): () => void {
-    const userId = this.supabase.currentUser?.id;
+    const userId = this.supabase.currentUser()?.id;
     if (!userId) {
       console.warn('Cannot subscribe: No user logged in');
       return () => {};
@@ -109,7 +112,7 @@ export class RealtimeService {
    * Subscribe to performance metrics changes
    */
   subscribeToPerformance(callback: RealtimeCallback): () => void {
-    const userId = this.supabase.currentUser?.id;
+    const userId = this.supabase.currentUser()?.id;
     if (!userId) {
       console.warn('Cannot subscribe: No user logged in');
       return () => {};
@@ -144,7 +147,7 @@ export class RealtimeService {
    * Subscribe to ACWR/readiness updates
    */
   subscribeToReadiness(callback: RealtimeCallback): () => void {
-    const userId = this.supabase.currentUser?.id;
+    const userId = this.supabase.currentUser()?.id;
     if (!userId) {
       console.warn('Cannot subscribe: No user logged in');
       return () => {};

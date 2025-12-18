@@ -14,7 +14,7 @@
  * @version 1.0.0
  */
 
-import { Injectable, signal, computed, effect } from '@angular/core';
+import { Injectable, signal, computed, effect, inject } from '@angular/core';
 import {
   LoadAlert,
   ACWRData,
@@ -29,17 +29,20 @@ import { AcwrService } from './acwr.service';
   providedIn: 'root'
 })
 export class AcwrAlertsService {
+  // Inject dependencies using inject() for Angular 21 best practices
+  private readonly acwrService = inject(AcwrService);
+
   // Active alerts
-  private alerts = signal<LoadAlert[]>([]);
+  private readonly alerts = signal<LoadAlert[]>([]);
 
   // Alert history (last 30 days)
-  private alertHistory = signal<LoadAlert[]>([]);
+  private readonly alertHistory = signal<LoadAlert[]>([]);
 
   // Notification preferences
-  private notificationEnabled = signal<boolean>(true);
-  private coachNotificationEnabled = signal<boolean>(true);
+  private readonly notificationEnabled = signal<boolean>(true);
+  private readonly coachNotificationEnabled = signal<boolean>(true);
 
-  // Alert counters
+  // Alert counters - readonly computed signal
   public readonly alertStats = computed(() => {
     const active = this.alerts();
     return {
@@ -51,8 +54,9 @@ export class AcwrAlertsService {
     };
   });
 
-  constructor(private acwrService: AcwrService) {
+  constructor() {
     // Monitor ACWR changes and generate alerts
+    // Effect automatically cleans up when service is destroyed in Angular 21
     effect(() => {
       const acwrData = this.acwrService.acwrData();
       this.checkForAlerts(acwrData);

@@ -10,6 +10,7 @@ const {
   logFunctionCall,
   CORS_HEADERS
 } = require("./utils/error-handler.cjs");
+const { buildNumericCondition } = require("./utils/sql-formatter.cjs");
 
 // SECURITY: Whitelist of allowed categories to prevent SQL injection
 const ALLOWED_CATEGORIES = [
@@ -90,10 +91,11 @@ exports.handler = async (event, context) => {
         }
       }
 
-      // Build quality score filter
+      // Build quality score filter (SECURITY: Use safe formatting to prevent SQL injection)
       let qualityFilter = '';
       if (minQualityScore > 0) {
-        qualityFilter = `AND (kbe.source_quality_score IS NULL OR kbe.source_quality_score >= ${minQualityScore})`;
+        const scoreCondition = buildNumericCondition('kbe.source_quality_score', '>=', minQualityScore);
+        qualityFilter = `AND (kbe.source_quality_score IS NULL OR ${scoreCondition})`;
       }
 
       // Search knowledge base entries with governance filters

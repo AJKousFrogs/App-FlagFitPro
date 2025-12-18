@@ -2,12 +2,11 @@ import {
   Directive,
   ElementRef,
   HostListener,
-  Input,
-  Output,
-  EventEmitter,
   OnInit,
   OnDestroy,
   inject,
+  input,
+  output,
 } from "@angular/core";
 
 export interface SwipeEvent {
@@ -20,14 +19,17 @@ export interface SwipeEvent {
   standalone: true,
 })
 export class SwipeGestureDirective implements OnInit, OnDestroy {
-  @Input() swipeThreshold = 50; // Minimum distance in pixels to trigger swipe
-  @Input() swipeVelocity = 0.3; // Minimum velocity for quick swipe
-  @Input() enablePullToRefresh = false; // Enable pull-to-refresh on container
-  @Output() swipeRight = new EventEmitter<SwipeEvent>();
-  @Output() swipeLeft = new EventEmitter<SwipeEvent>();
-  @Output() swipeUp = new EventEmitter<SwipeEvent>();
-  @Output() swipeDown = new EventEmitter<SwipeEvent>();
-  @Output() pullToRefresh = new EventEmitter<void>();
+  // Angular 21: Using signal inputs for better performance
+  swipeThreshold = input<number>(50); // Minimum distance in pixels to trigger swipe
+  swipeVelocity = input<number>(0.3); // Minimum velocity for quick swipe
+  enablePullToRefresh = input<boolean>(false); // Enable pull-to-refresh on container
+  
+  // Angular 21: Using output() for better type safety
+  swipeRight = output<SwipeEvent>();
+  swipeLeft = output<SwipeEvent>();
+  swipeUp = output<SwipeEvent>();
+  swipeDown = output<SwipeEvent>();
+  pullToRefresh = output<void>();
 
   private elementRef = inject(ElementRef);
   private touchStartX = 0;
@@ -60,7 +62,7 @@ export class SwipeGestureDirective implements OnInit, OnDestroy {
     this.isDragging = true;
 
     // For pull-to-refresh on containers
-    if (this.enablePullToRefresh) {
+    if (this.enablePullToRefresh()) {
       const element = this.elementRef.nativeElement;
       this.initialScrollTop = element.scrollTop || window.scrollY;
     }
@@ -76,7 +78,7 @@ export class SwipeGestureDirective implements OnInit, OnDestroy {
     const deltaY = currentY - this.touchStartY;
 
     // Handle pull-to-refresh
-    if (this.enablePullToRefresh) {
+    if (this.enablePullToRefresh()) {
       const element = this.elementRef.nativeElement;
       const scrollTop = element.scrollTop || window.scrollY;
 
@@ -109,14 +111,14 @@ export class SwipeGestureDirective implements OnInit, OnDestroy {
     const velocity = distance / duration;
 
     // Handle pull-to-refresh
-    if (this.enablePullToRefresh && this.pullDistance > this.swipeThreshold) {
+    if (this.enablePullToRefresh() && this.pullDistance > this.swipeThreshold()) {
       this.pullToRefresh.emit();
       this.resetPullIndicator();
       return;
     }
 
     // Determine swipe direction
-    if (distance < this.swipeThreshold && velocity < this.swipeVelocity) {
+    if (distance < this.swipeThreshold() && velocity < this.swipeVelocity()) {
       return; // Not a valid swipe
     }
 

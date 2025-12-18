@@ -274,20 +274,29 @@
   /**
    * Check for wellness streaks
    */
-  function checkWellnessStreak() {
-    // Get wellness history from storageService
-    const wellnessHistory = storageService.get('wellnessHistory', [], { usePrefix: false });
-
-    if (wellnessHistory.length === 0) {return;}
-
-    // Calculate streak
-    const streak = calculateStreak(wellnessHistory);
-
-    // Notify on milestone streaks
-    if (streak === 7 || streak === 14 || streak === 30 || streak === 60 || streak === 100) {
-      if (window.notificationManager && window.notificationManager.isEnabled()) {
-        window.notificationManager.notifyStreak(streak);
+  async function checkWellnessStreak() {
+    try {
+      // Try to use wellness service if available
+      let streak = 0;
+      
+      if (window.wellnessService) {
+        streak = await window.wellnessService.getWellnessStreak();
+      } else {
+        // Fallback to localStorage
+        const wellnessHistory = storageService.get('wellnessHistory', [], { usePrefix: false });
+        if (wellnessHistory.length > 0) {
+          streak = calculateStreak(wellnessHistory);
+        }
       }
+
+      // Notify on milestone streaks
+      if (streak > 0 && (streak === 7 || streak === 14 || streak === 30 || streak === 60 || streak === 100)) {
+        if (window.notificationManager && window.notificationManager.isEnabled()) {
+          window.notificationManager.notifyStreak(streak);
+        }
+      }
+    } catch (error) {
+      console.warn('[Wellness Notifications] Error checking streak:', error);
     }
   }
 

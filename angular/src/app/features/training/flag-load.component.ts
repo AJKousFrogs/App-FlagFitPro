@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, inject, signal } from '@angular/core';
+import { Component, input, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ChartModule } from 'primeng/chart';
 import { TrainingMetricsService, ACWRData, FlagMetrics } from '../../core/services/training-metrics.service';
@@ -33,12 +33,10 @@ import { TrainingMetricsService, ACWRData, FlagMetrics } from '../../core/servic
                   <td class="px-4 py-3">
                     <span 
                       class="font-semibold"
-                      [ngClass]="{
-                        'text-red-600': row.acwr && row.acwr > 1.5,
-                        'text-yellow-500': row.acwr && row.acwr >= 1.2 && row.acwr <= 1.5,
-                        'text-green-500': row.acwr && row.acwr < 1.2 && row.acwr >= 0.8,
-                        'text-orange-500': row.acwr && row.acwr < 0.8
-                      }">
+                      [class.text-red-600]="row.acwr && row.acwr > 1.5"
+                      [class.text-yellow-500]="row.acwr && row.acwr >= 1.2 && row.acwr <= 1.5"
+                      [class.text-green-500]="row.acwr && row.acwr < 1.2 && row.acwr >= 0.8"
+                      [class.text-orange-500]="row.acwr && row.acwr < 0.8">
                       {{ row.acwr ? (row.acwr | number:'1.2-2') : 'N/A' }}
                     </span>
                   </td>
@@ -69,7 +67,8 @@ import { TrainingMetricsService, ACWRData, FlagMetrics } from '../../core/servic
   `]
 })
 export class FlagLoadComponent implements OnInit {
-  @Input() athleteId!: string;
+  // Angular 21: Use input() signal instead of @Input()
+  athleteId = input.required<string>();
 
   private metricsService = inject(TrainingMetricsService);
 
@@ -98,14 +97,15 @@ export class FlagLoadComponent implements OnInit {
   };
 
   async ngOnInit() {
-    if (!this.athleteId) {
+    const athleteId = this.athleteId();
+    if (!athleteId) {
       console.error('FlagLoadComponent: athleteId is required');
       return;
     }
 
     try {
-      const acwr = await this.metricsService.getACWR(this.athleteId);
-      const flag = await this.metricsService.get4WeekFlagMetrics(this.athleteId);
+      const acwr = await this.metricsService.getACWR(athleteId);
+      const flag = await this.metricsService.get4WeekFlagMetrics(athleteId);
 
       this.acwrData.set(acwr);
       this.flagMetrics.set(flag);

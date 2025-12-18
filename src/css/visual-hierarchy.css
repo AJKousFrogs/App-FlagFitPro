@@ -1,0 +1,377 @@
+/* ================================================================
+   VISUAL HIERARCHY SYSTEM - FlagFit Pro
+   Enhanced typography, spacing, and contrast for clear information hierarchy
+   ================================================================ */
+
+/* ================================================================
+   TEXT HIERARCHY UTILITIES
+   ================================================================ */
+
+/* Text Size Hierarchy */
+.text-display-2xl {
+  font-size: var(--font-display-2xl);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-tighter);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-hierarchy-primary);
+}
+
+.text-display-xl {
+  font-size: var(--font-display-xl);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-tight);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-hierarchy-primary);
+}
+
+.text-heading-2xl {
+  font-size: var(--font-heading-2xl);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-tight);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-hierarchy-primary);
+}
+
+.text-heading-xl {
+  font-size: var(--font-heading-xl);
+  line-height: var(--line-height-snug);
+  letter-spacing: var(--letter-spacing-tight);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-hierarchy-primary);
+}
+
+.text-heading-lg {
+  font-size: var(--font-heading-lg);
+  line-height: var(--line-height-snug);
+  letter-spacing: var(--letter-spacing-normal);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-hierarchy-primary);
+}
+
+.text-heading-md {
+  font-size: var(--font-heading-md);
+  line-height: var(--line-height-normal);
+  letter-spacing: var(--letter-spacing-normal);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-hierarchy-primary);
+}
+
+.text-heading-sm {
+  font-size: var(--font-heading-sm);
+  line-height: var(--line-height-normal);
+  letter-spacing: var(--letter-spacing-normal);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-hierarchy-primary);
+}
+
+.text-body-lg {
+  font-size: var(--font-body-lg);
+  line-height: var(--line-height-relaxed);
+  letter-spacing: var(--letter-spacing-normal);
+  font-weight: var(--font-weight-normal);
+  color: var(--text-hierarchy-primary);
+}
+
+.text-body-md {
+  font-size: var(--font-body-md);
+  line-height: var(--line-height-relaxed);
+  letter-spacing: var(--letter-spacing-normal);
+  font-weight: var(--font-weight-normal);
+  color: var(--text-hierarchy-primary);
+}
+
+.text-body-sm {
+  font-size: var(--font-body-sm);
+  line-height: var(--line-height-normal);
+  letter-spacing: var(--letter-spacing-normal);
+  font-weight: var(--font-weight-normal);
+  color: var(--text-hierarchy-secondary);
+}
+
+.text-body-xs {
+  font-size: var(--font-body-xs);
+  line-height: var(--line-height-normal);
+  letter-spacing: var(--letter-spacing-normal);
+  font-weight: var(--font-weight-normal);
+  color: var(--text-hierarchy-tertiary);
+}
+
+/* ================================================================
+   TEXT COLOR HIERARCHY
+   ================================================================ */
+
+.text-primary {
+  color: var(--text-hierarchy-primary);
+}
+
+.text-secondary {
+  color: var(--text-hierarchy-secondary);
+}
+
+.text-tertiary {
+  color: var(--text-hierarchy-tertiary);
+}
+
+.text-muted {
+  color: var(--text-hierarchy-tertiary);
+}
+
+.text-disabled {
+  color: var(--text-hierarchy-disabled);
+}
+
+/* ================================================================
+   FONT WEIGHT HIERARCHY
+   ================================================================ */
+
+.font-light {
+  font-weight: 300;
+}
+
+.font-normal {
+  font-weight: var(--font-weight-normal);
+}
+
+.font-medium {
+  font-weight: var(--font-weight-medium);
+}
+
+.font-semibold {
+  font-weight: var(--font-weight-semibold);
+}
+
+.font-bold {
+  font-weight: var(--font-weight-bold);
+}
+
+/* ================================================================
+   LINE HEIGHT HIERARCHY
+   ================================================================ */
+
+.leading-none {
+  line-height: var(--line-height-none);
+}
+
+.leading-tight {
+  line-height: var(--line-height-tight);
+}
+
+.leading-snug {
+  line-height: var(--line-height-snug);
+}
+
+.leading-normal {
+  line-height: var(--line-height-normal);
+}
+
+.leading-relaxed {
+  line-height: var(--line-height-relaxed);
+}
+
+.leading-loose {
+  line-height: var(--line-height-loose);
+}
+
+/* ================================================================
+   LETTER SPACING HIERARCHY
+   ================================================================ */
+
+.tracking-tighter {
+  letter-spacing: var(--letter-spacing-tighter);
+}
+
+.tracking-tight {
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+.tracking-normal {
+  letter-spacing: var(--letter-spacing-normal);
+}
+
+.tracking-wide {
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.tracking-wider {
+  letter-spacing: var(--letter-spacing-wider);
+}
+
+.tracking-widest {
+  letter-spacing: var(--letter-spacing-widest);
+}
+
+/* ================================================================
+   SPACING HIERARCHY UTILITIES
+   ================================================================ */
+
+/* Vertical spacing between elements */
+.space-tight {
+  margin-bottom: var(--hierarchy-spacing-tight);
+}
+
+.space-normal {
+  margin-bottom: var(--hierarchy-spacing-normal);
+}
+
+.space-relaxed {
+  margin-bottom: var(--hierarchy-spacing-relaxed);
+}
+
+.space-loose {
+  margin-bottom: var(--hierarchy-spacing-loose);
+}
+
+.space-section {
+  margin-bottom: var(--hierarchy-spacing-section);
+}
+
+/* Remove bottom margin */
+.space-none {
+  margin-bottom: 0;
+}
+
+/* ================================================================
+   VISUAL EMPHASIS UTILITIES
+   ================================================================ */
+
+/* Highlight important text */
+.text-emphasis {
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-hierarchy-primary);
+}
+
+.text-emphasis-strong {
+  font-weight: var(--font-weight-bold);
+  color: var(--text-hierarchy-primary);
+}
+
+/* De-emphasize less important text */
+.text-deemphasize {
+  color: var(--text-hierarchy-secondary);
+  font-weight: var(--font-weight-normal);
+}
+
+.text-deemphasize-strong {
+  color: var(--text-hierarchy-tertiary);
+  font-weight: var(--font-weight-normal);
+}
+
+/* ================================================================
+   SECTION HIERARCHY
+   ================================================================ */
+
+.section-title {
+  font-size: var(--font-heading-xl);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-snug);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--text-hierarchy-primary);
+  margin-bottom: var(--hierarchy-spacing-relaxed);
+}
+
+.section-subtitle {
+  font-size: var(--font-heading-md);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-normal);
+  color: var(--text-hierarchy-primary);
+  margin-bottom: var(--hierarchy-spacing-normal);
+}
+
+.section-description {
+  font-size: var(--font-body-md);
+  line-height: var(--line-height-relaxed);
+  color: var(--text-hierarchy-secondary);
+  margin-bottom: var(--hierarchy-spacing-relaxed);
+}
+
+/* ================================================================
+   CARD HIERARCHY
+   ================================================================ */
+
+.card-title {
+  font-size: var(--font-heading-md);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-normal);
+  color: var(--text-hierarchy-primary);
+  margin-bottom: var(--hierarchy-spacing-tight);
+}
+
+.card-subtitle {
+  font-size: var(--font-body-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-normal);
+  color: var(--text-hierarchy-secondary);
+  margin-bottom: var(--hierarchy-spacing-tight);
+}
+
+.card-text {
+  font-size: var(--font-body-md);
+  line-height: var(--line-height-relaxed);
+  color: var(--text-hierarchy-primary);
+  margin-bottom: var(--hierarchy-spacing-normal);
+}
+
+.card-text-muted {
+  font-size: var(--font-body-sm);
+  line-height: var(--line-height-normal);
+  color: var(--text-hierarchy-tertiary);
+}
+
+/* ================================================================
+   RESPONSIVE HIERARCHY ADJUSTMENTS
+   ================================================================ */
+
+@media (max-width: 768px) {
+  /* Reduce heading sizes on mobile for better hierarchy */
+  h1,
+  .h1 {
+    font-size: var(--font-heading-xl); /* 30px instead of 40px */
+    margin-bottom: var(--hierarchy-spacing-normal);
+  }
+
+  h2,
+  .h2 {
+    font-size: var(--font-heading-lg); /* 24px instead of 30px */
+    margin-bottom: var(--hierarchy-spacing-tight);
+  }
+
+  h3,
+  .h3 {
+    font-size: var(--font-heading-md); /* 20px instead of 24px */
+  }
+
+  .text-display-2xl {
+    font-size: var(--font-heading-2xl);
+  }
+
+  .text-display-xl {
+    font-size: var(--font-heading-xl);
+  }
+
+  .section-title {
+    font-size: var(--font-heading-lg);
+  }
+}
+
+/* ================================================================
+   PRINT HIERARCHY
+   ================================================================ */
+
+@media print {
+  /* Ensure proper hierarchy in print */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    page-break-after: avoid;
+    color: #000;
+  }
+
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+}
+

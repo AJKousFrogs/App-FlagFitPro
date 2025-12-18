@@ -2,7 +2,9 @@ import {
   Component,
   inject,
   signal,
+  computed,
   ChangeDetectionStrategy,
+  effect,
 } from "@angular/core";
 
 import { Router, RouterModule } from "@angular/router";
@@ -11,6 +13,7 @@ import {
   FormGroup,
   Validators,
   ReactiveFormsModule,
+  AbstractControl,
 } from "@angular/forms";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
@@ -21,6 +24,7 @@ import { MessageService } from "primeng/api";
 import { ToastModule } from "primeng/toast";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { AuthService } from "../../../core/services/auth.service";
+import { getFormControlError, isFormControlInvalid, markFormGroupTouched } from "../../../shared/utils/form.utils";
 
 @Component({
   selector: "app-login",
@@ -58,7 +62,7 @@ import { AuthService } from "../../../core/services/auth.service";
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
           <input type="hidden" [value]="csrfToken()" />
     
-          <div class="p-field mb-4">
+            <div class="p-field mb-4">
             <label for="email" class="p-label required">Email</label>
             <input
               id="email"
@@ -66,12 +70,12 @@ import { AuthService } from "../../../core/services/auth.service";
               pInputText
               formControlName="email"
               placeholder="Enter your email"
-              [class.ng-invalid]="isFieldInvalid('email')"
+              [class.ng-invalid]="emailError()"
               autocomplete="email"
               />
-            @if (isFieldInvalid('email')) {
+            @if (emailError()) {
               <small class="p-error">
-                {{ getFieldError("email") }}
+                {{ emailError() }}
               </small>
             }
           </div>
@@ -84,12 +88,12 @@ import { AuthService } from "../../../core/services/auth.service";
               pInputText
               formControlName="password"
               placeholder="Enter your password"
-              [class.ng-invalid]="isFieldInvalid('password')"
+              [class.ng-invalid]="passwordError()"
               autocomplete="current-password"
               />
-            @if (isFieldInvalid('password')) {
+            @if (passwordError()) {
               <small class="p-error">
-                {{ getFieldError("password") }}
+                {{ passwordError() }}
               </small>
             }
           </div>
@@ -112,7 +116,7 @@ import { AuthService } from "../../../core/services/auth.service";
               label="Sign in"
               icon="pi pi-lock"
               [loading]="isLoading()"
-              [disabled]="loginForm.invalid"
+              [disabled]="!isFormValid()"
               styleClass="w-full"
               >
             </p-button>
@@ -223,7 +227,19 @@ export class LoginComponent {
   loginForm: FormGroup;
   isLoading = signal(false);
   csrfToken = signal("");
-  isDemoMode = false;
+  isDemoMode = signal(false);
+  submitted = signal(false);
+
+  // Computed form state signals
+  isFormValid = computed(() => this.loginForm.valid);
+  emailError = computed(() => {
+    const control = this.loginForm.get('email');
+    return control && (submitted() || control.touched) ? getFormControlError(control) : null;
+  });
+  passwordError = computed(() => {
+    const control = this.loginForm.get('password');
+    return control && (submitted() || control.touched) ? getFormControlError(control) : null;
+  });
 
   constructor() {
     this.loginForm = this.fb.group({
@@ -234,11 +250,13 @@ export class LoginComponent {
 
     // Check if demo mode
     if (typeof window !== "undefined") {
-      this.isDemoMode =
+      const demoMode =
         window.location.hostname === "localhost" ||
         window.location.hostname === "127.0.0.1";
+      
+      this.isDemoMode.set(demoMode);
 
-      if (this.isDemoMode) {
+      if (demoMode) {
         this.loginForm.patchValue({
           email: "test@flagfitpro.com",
           password: "TestDemo123!",
@@ -248,6 +266,14 @@ export class LoginComponent {
 
     // Generate CSRF token
     this.csrfToken.set(this.authService.generateCsrfToken());
+
+    // Watch form validity changes
+    effect(() => {
+      if (this.loginForm.valid && this.submitted()) {
+        // Form became valid after submission
+        this.submitted.set(false);
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -258,27 +284,20 @@ export class LoginComponent {
   }
 
   isFieldInvalid(fieldName: string): boolean {
-    const field = this.loginForm.get(fieldName);
-    return !!(field && field.invalid && field.touched);
+    const control = this.loginForm.get(fieldName);
+    return isFormControlInvalid(control as AbstractControl);
   }
 
   getFieldError(fieldName: string): string {
-    const field = this.loginForm.get(fieldName);
-    if (field?.hasError("required")) {
-      return `${fieldName} is required`;
-    }
-    if (field?.hasError("email")) {
-      return "Please enter a valid email address";
-    }
-    if (field?.hasError("minlength")) {
-      return "Password must be at least 8 characters";
-    }
-    return "";
+    const control = this.loginForm.get(fieldName);
+    return getFormControlError(control as AbstractControl) || "";
   }
 
   onSubmit(): void {
+    this.submitted.set(true);
+    
     if (this.loginForm.invalid) {
-      this.loginForm.markAllAsTouched();
+      markFormGroupTouched(this.loginForm);
       return;
     }
 

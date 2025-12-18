@@ -1,6 +1,5 @@
 import {
   Component,
-  Input,
   HostListener,
   ViewChild,
   ElementRef,
@@ -187,12 +186,11 @@ import { ButtonModule } from 'primeng/button';
   ],
 })
 export class SwipeTableComponent {
-  @Input() data = signal<any[]>([]);
-  @Input() columns = signal<
-    Array<{ field: string; header: string }>
-  >([]);
-  @Input() onEdit?: (row: any) => void;
-  @Input() onDelete?: (row: any) => void;
+  // Angular 21: Use input() signal instead of @Input() with signal assignment
+  data = input<any[]>([]);
+  columns = input<Array<{ field: string; header: string }>>([]);
+  onEdit = input<(row: any) => void>();
+  onDelete = input<(row: any) => void>();
 
   @ViewChild('tableContainer') tableContainer!: ElementRef;
 
@@ -244,15 +242,17 @@ export class SwipeTableComponent {
   }
 
   editRow(row: any) {
-    if (this.onEdit) {
-      this.onEdit(row);
+    const editFn = this.onEdit();
+    if (editFn) {
+      editFn(row);
     }
     this.resetSwipe();
   }
 
   deleteRow(row: any) {
-    if (this.onDelete) {
-      this.onDelete(row);
+    const deleteFn = this.onDelete();
+    if (deleteFn) {
+      deleteFn(row);
     }
     this.resetSwipe();
   }

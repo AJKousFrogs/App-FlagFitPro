@@ -3,17 +3,15 @@ import {
   signal,
   inject,
   ChangeDetectionStrategy,
-  Output,
-  EventEmitter,
-  OnInit,
+  output,
   computed,
-  OnDestroy,
+  effect,
+  model,
 } from "@angular/core";
 
 import { Router, RouterModule, NavigationEnd } from "@angular/router";
-import { FormsModule } from "@angular/forms";
 import { filter } from "rxjs/operators";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { toSignal } from "@angular/core/rxjs-interop";
 import { ButtonModule } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
 import { AvatarModule } from "primeng/avatar";
@@ -29,7 +27,6 @@ import { MenuItem } from "primeng/api";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterModule,
-    FormsModule,
     ButtonModule,
     InputTextModule,
     AvatarModule,
@@ -89,7 +86,8 @@ import { MenuItem } from "primeng/api";
                 type="text"
                 pInputText
                 [placeholder]="config().searchPlaceholder || 'Search...'"
-                [(ngModel)]="searchQuery"
+                [value]="searchQuery()"
+                (input)="searchQuery.set($any($event.target).value)"
                 (keyup.enter)="onSearch()"
                 class="search-input"
                 aria-label="Search"
@@ -112,7 +110,8 @@ import { MenuItem } from "primeng/api";
                 type="text"
                 pInputText
                 [placeholder]="config().searchPlaceholder || 'Search...'"
-                [(ngModel)]="searchQuery"
+                [value]="searchQuery()"
+                (input)="searchQuery.set($any($event.target).value)"
                 (keyup.enter)="onSearch()"
                 class="search-input"
                 aria-label="Search"
@@ -135,7 +134,8 @@ import { MenuItem } from "primeng/api";
                 type="text"
                 pInputText
                 [placeholder]="config().searchPlaceholder || 'Search...'"
-                [(ngModel)]="searchQuery"
+                [value]="searchQuery()"
+                (input)="searchQuery.set($any($event.target).value)"
                 (keyup.enter)="onSearch()"
                 class="search-input"
                 aria-label="Search"
@@ -379,13 +379,17 @@ import { MenuItem } from "primeng/api";
     `,
   ],
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent {
   private authService = inject(AuthService);
   private headerService = inject(HeaderService);
   private router = inject(Router);
 
-  @Output() toggleSidebar = new EventEmitter<void>();
-  searchQuery = signal("");
+  // Angular 21: Use output() signal instead of @Output() EventEmitter
+  toggleSidebar = output<void>();
+  
+  // Angular 21: Use model() for two-way binding (replaces ngModel)
+  searchQuery = model("");
+  
   notificationCount = signal(0);
   isDarkTheme = signal(false);
   userInitials = signal("JD");
@@ -415,23 +419,36 @@ export class HeaderComponent implements OnInit {
     },
   ]);
 
-  constructor() {
-    // Update breadcrumbs when route changes
-    this.router.events
-      .pipe(
-        filter((event) => event instanceof NavigationEnd),
-        takeUntilDestroyed()
-      )
-      .subscribe(() => {
-        this.updateBreadcrumbs();
-      });
-  }
+  // Angular 21: Use toSignal() for router events instead of subscription
+  private navigationEnd$ = this.router.events.pipe(
+    filter((event) => event instanceof NavigationEnd)
+  );
+  
+  private navigationEnd = toSignal(this.navigationEnd$, { initialValue: null });
 
-  ngOnInit(): void {
+  constructor() {
+    // Angular 21: Initialize data in constructor
     this.updateBreadcrumbs();
     this.loadThemePreference();
     this.loadUserData();
     this.loadNotifications();
+
+    // Angular 21: Use effect() for reactive side effects
+    effect(() => {
+      // React to navigation changes
+      if (this.navigationEnd()) {
+        this.updateBreadcrumbs();
+      }
+    });
+
+    // Angular 21: Use effect() for theme changes
+    effect(() => {
+      const isDark = this.isDarkTheme();
+      document.body.classList.toggle("dark-theme", isDark);
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem("theme", isDark ? "dark" : "light");
+      }
+    });
   }
 
   onToggleSidebar(): void {
@@ -458,21 +475,19 @@ export class HeaderComponent implements OnInit {
 
   toggleTheme(): void {
     this.isDarkTheme.update((current) => !current);
-    // Apply theme changes
-    const isDark = this.isDarkTheme();
-    document.body.classList.toggle("dark-theme", isDark);
-    localStorage.setItem("theme", isDark ? "dark" : "light");
+    // Theme changes are handled by effect() in constructor
   }
 
   logout(): void {
-    this.authService
-      .logout()
-      .pipe(takeUntilDestroyed())
-      .subscribe({
-        error: () => {
-          // Error handled by error interceptor
-        },
-      });
+    // Angular 21: Use toSignal() for one-time operations or handle directly
+    this.authService.logout().subscribe({
+      next: () => {
+        // Logout successful, navigation handled by auth service
+      },
+      error: () => {
+        // Error handled by error interceptor
+      },
+    });
   }
 
   onLogoError(event: Event): void {
@@ -513,10 +528,12 @@ export class HeaderComponent implements OnInit {
   }
 
   private loadThemePreference(): void {
-    const savedTheme = localStorage.getItem("theme");
-    const isDark = savedTheme === "dark";
-    this.isDarkTheme.set(isDark);
-    document.body.classList.toggle("dark-theme", isDark);
+    if (typeof localStorage !== 'undefined') {
+      const savedTheme = localStorage.getItem("theme");
+      const isDark = savedTheme === "dark";
+      this.isDarkTheme.set(isDark);
+      // Theme application handled by effect()
+    }
   }
 
   private loadUserData(): void {

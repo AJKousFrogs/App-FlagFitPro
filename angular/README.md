@@ -1,19 +1,19 @@
-# FlagFit Pro - Angular 19 Migration
+# FlagFit Pro - Angular 21 Application
 
-This is the Angular 19 version of FlagFit Pro, migrated from vanilla HTML/JavaScript to a modern Angular application with PrimeNG components.
+This is the Angular 21 version of FlagFit Pro, migrated from vanilla HTML/JavaScript to a modern Angular application with PrimeNG components.
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
 - Node.js 18+ and npm
-- Angular CLI 19
+- Angular CLI 21
 
 ### Installation
 
 ```bash
 # Install Angular CLI globally (if not already installed)
-npm install -g @angular/cli@19
+npm install -g @angular/cli@21
 
 # Navigate to angular directory
 cd angular
@@ -26,6 +26,41 @@ npm start
 ```
 
 The application will be available at `http://localhost:4200`
+
+## 📚 Style Guide
+
+**Comprehensive coding standards and best practices for Angular 21**
+
+- **[STYLE_GUIDE.md](./STYLE_GUIDE.md)** - Complete style guide with examples
+- **[STYLE_GUIDE_QUICK_REFERENCE.md](./STYLE_GUIDE_QUICK_REFERENCE.md)** - Quick reference card
+
+Key topics covered:
+- Code formatting and TypeScript standards
+- Angular 21 patterns (signals, standalone components, inject())
+- Component and service guidelines
+- State management patterns
+- File organization and naming conventions
+- SCSS/CSS guidelines
+- Testing standards
+- Accessibility requirements
+- Performance best practices
+
+## 🔍 Angular DevTools
+
+Angular 21 includes enhanced debugging capabilities. See [ANGULAR_DEVTOOLS_SETUP.md](./ANGULAR_DEVTOOLS_SETUP.md) for complete setup instructions.
+
+**Quick Setup**:
+1. Install [Angular DevTools browser extension](https://chromewebstore.google.com/detail/angular-devtools/ienfalfjdbdpebioblfackkekamfmbnh)
+2. Open your app in development mode
+3. Open browser DevTools (F12) → Look for "Angular" tab
+
+**Features Available**:
+- 🔍 Visual Signal Graph Explorer
+- ⚡ Real-time Change Detection Tracing
+- 🧠 Hydration Troubleshooting
+- 🔄 Component-level Load-Time Analysis
+- 🧰 Router Event Inspector
+- 🎯 Better Profiling for Slow Components
 
 ## 📁 Project Structure
 
@@ -90,14 +125,16 @@ The API service auto-detects the environment:
 
 ### ✅ Completed
 
-- [x] Angular 19 project setup
-- [x] PrimeNG integration
+- [x] Angular 21 project setup
+- [x] PrimeNG 21 integration
 - [x] Core services (Auth, API)
 - [x] Shared components (Sidebar, Header, Layout)
 - [x] Auth module (Login, Register, Reset Password)
 - [x] Dashboard component
 - [x] Routing and guards
 - [x] Design system styles
+- [x] Angular DevTools configuration
+- [x] Zoneless change detection (experimental)
 
 ### 🚧 In Progress
 
@@ -182,10 +219,11 @@ The authentication system includes:
 
 ## 📚 Resources
 
-- [Angular 19 Documentation](https://angular.dev)
-- [PrimeNG Documentation](https://primeng.org)
+- [Angular 21 Documentation](https://angular.dev)
+- [PrimeNG 21 Documentation](https://primeng.org)
+- [Angular DevTools Setup Guide](./ANGULAR_DEVTOOLS_SETUP.md)
 - [Design System Documentation](../DESIGN_SYSTEM_DOCUMENTATION.md)
-- [Migration Plan](../ANGULAR_MIGRATION_PLAN.md)
+- [Angular 21 Migration Guide](./ANGULAR_21_MIGRATION.md)
 
 ## 🤝 Contributing
 

@@ -23,17 +23,11 @@
     <!-- OAuth styles -->
     <link rel="stylesheet" href="./src/css/oauth.css" />
 
+    <!-- Supabase Configuration (Centralized) -->
+    <script src="./src/js/config/supabase-config.js"></script>
+    
     <!-- Supabase JS SDK from CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <!-- Supabase Configuration -->
-    <script>
-      // Set Supabase config in window for development
-      window._env = {
-        SUPABASE_URL: 'https://pvziciccwxgftcielknm.supabase.co',
-        SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2emljaWNjd3hnZnRjaWVsa25tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MzcwNTgsImV4cCI6MjA3NTExMzA1OH0.1nfJrtWPl6DrAwvjGvM1-CZBeyYgCaV9oDdaadpqhLU'
-      };
-    </script>
 
     <!-- Lucide Icons - Modern icon library similar to Radix UI -->
     <script
@@ -61,7 +55,7 @@
           style="height: 60px; width: auto; margin: 0 auto; filter: brightness(0);"
         />
       </div>
-      <h1 class="login-title text-2xl font-bold text-primary mb-6">
+      <h1 class="login-title text-heading-2xl text-primary space-relaxed">
         Sign in to FlagFit Pro
       </h1>
 
@@ -82,7 +76,7 @@
         id="manualRedirect"
         style="display: none"
       >
-        <p class="mb-3">
+        <p class="text-body-md text-primary mb-3">
           <i data-lucide="check-circle" aria-hidden="true" class="icon-18"></i>
           Login successful!
         </p>
@@ -126,17 +120,30 @@
 
         <div class="form-group">
           <label for="password" class="form-label required">Password</label>
-          <input
-            type="password"
-            id="password"
-            class="form-input"
-            name="password"
-            placeholder="Enter your password"
-            required
-            autocomplete="current-password"
-            aria-describedby="password-error password-success password-requirements password-strength"
-            aria-invalid="false"
-          />
+          <div class="password-input-wrapper" style="position: relative;">
+            <input
+              type="password"
+              id="password"
+              class="form-input"
+              name="password"
+              placeholder="Enter your password"
+              required
+              autocomplete="current-password"
+              aria-describedby="password-error password-success password-requirements password-strength"
+              aria-invalid="false"
+            />
+            <button
+              type="button"
+              id="togglePassword"
+              class="password-toggle-btn"
+              aria-label="Show password"
+              aria-pressed="false"
+              tabindex="0"
+            >
+              <i data-lucide="eye" aria-hidden="true" class="icon-18 password-eye-icon"></i>
+              <i data-lucide="eye-off" aria-hidden="true" class="icon-18 password-eye-off-icon"></i>
+            </button>
+          </div>
           <div
             id="password-error"
             class="form-error"
@@ -153,6 +160,7 @@
             id="password-requirements"
             class="password-requirements form-hint mt-2"
             role="note"
+            style="display: none;"
           >
             Password must be at least 8 characters and include uppercase,
             lowercase, number, and special character (@$!%*?&).
@@ -170,25 +178,40 @@
           class="login-form-options flex justify-between items-center mb-6 text-sm"
         >
           <div class="login-checkbox-group flex items-center gap-2">
-            <input type="checkbox" id="remember" name="remember" />
+            <input 
+              type="checkbox" 
+              id="remember" 
+              name="remember" 
+              aria-describedby="remember-hint"
+            />
             <label for="remember" class="text-primary cursor-pointer"
               >Remember me</label
             >
+            <span id="remember-hint" class="sr-only">Keep me signed in on this device</span>
           </div>
           <a
             href="/reset-password.html"
             class="login-forgot-link text-primary font-medium"
             style="text-decoration: none"
+            aria-label="Reset your password"
             >Forgot your password?</a
           >
         </div>
 
         <button
           type="submit"
+          id="loginSubmitBtn"
           class="btn btn-primary btn-lg w-full flex items-center justify-center gap-2"
+          aria-label="Sign in to your account"
         >
-          <i data-lucide="lock" aria-hidden="true" class="icon-18"></i>
-          Sign in
+          <span class="btn-content">
+            <i data-lucide="lock" aria-hidden="true" class="icon-18"></i>
+            <span>Sign in</span>
+          </span>
+          <span class="btn-loading">
+            <span class="spinner-mini"></span>
+            <span>Signing in...</span>
+          </span>
         </button>
       </form>
 
@@ -270,11 +293,7 @@
           }
 
           // Show loading state
-          const submitButton = this.querySelector('button[type="submit"]');
-          const originalText = submitButton.innerHTML;
-          submitButton.innerHTML =
-            '<span class="spinner-mini" style="display: inline-block; margin-right: 8px;"></span> Signing in...';
-          submitButton.disabled = true;
+          updateSubmitButtonState(true);
 
           if (window.location.hostname === "localhost") {
             console.log("📧 Email entered:", email);
@@ -283,13 +302,12 @@
 
           // Validate CSRF token
           const formToken = document.getElementById("csrfToken").value;
-          if (!validateCSRFToken(formToken)) {
+            if (!validateCSRFToken(formToken)) {
             showMessage(
               "errorMessage",
               "Security validation failed. Please refresh the page.",
             );
-            submitButton.innerHTML = originalText;
-            submitButton.disabled = false;
+            updateSubmitButtonState(false);
             return;
           }
 
@@ -301,8 +319,7 @@
               "errorMessage",
               `Too many failed attempts. Please wait ${timeRemaining} minutes before trying again.`,
             );
-            submitButton.innerHTML = originalText;
-            submitButton.disabled = false;
+            updateSubmitButtonState(false);
             return;
           }
 
@@ -335,15 +352,26 @@
             } else {
               rateLimiter.recordAttempt(false);
               showMessage("errorMessage", "Invalid email or password.");
-              submitButton.innerHTML = originalText;
-              submitButton.disabled = false;
+              updateSubmitButtonState(false);
             }
           } catch (error) {
             const rateLimiter = createLoginRateLimiter();
             rateLimiter.recordAttempt(false);
-            showMessage("errorMessage", "Login failed. Please try again.");
-            submitButton.innerHTML = originalText;
-            submitButton.disabled = false;
+            
+            // Provide more specific error messages
+            let errorMessage = "Login failed. Please try again.";
+            if (error.message) {
+              if (error.message.includes("Invalid login credentials")) {
+                errorMessage = "Invalid email or password. Please check your credentials and try again.";
+              } else if (error.message.includes("Email not confirmed") || error.message.includes("not verified")) {
+                errorMessage = "Please verify your email before logging in. Check your inbox for the verification link.";
+              } else if (error.message.includes("network") || error.message.includes("fetch")) {
+                errorMessage = "Network error. Please check your connection and try again.";
+              }
+            }
+            
+            showMessage("errorMessage", errorMessage);
+            updateSubmitButtonState(false);
 
             // Only log detailed errors in development
             const isDevelopment = window.location.hostname === "localhost";
@@ -360,11 +388,28 @@
           console.log("🔘 Manual redirect button clicked");
 
           // Since this button only appears after successful login, try to redirect directly
-          // First check if we have auth data stored
-          const hasStoredAuth =
-            localStorage.getItem("authToken") ||
-            localStorage.getItem("__auth_token_enc") ||
-            sessionStorage.getItem("authToken");
+          // First check if we have auth data stored (upgraded to use secureStorage)
+          let hasStoredAuth = false;
+          
+          // Try secureStorage API first (preferred method)
+          if (window.secureStorage && typeof window.secureStorage.getAuthToken === 'function') {
+            try {
+              const token = await window.secureStorage.getAuthToken();
+              if (token) {
+                hasStoredAuth = true;
+              }
+            } catch (error) {
+              console.debug("Secure storage check failed, trying fallback:", error);
+            }
+          }
+          
+          // Fallback: check legacy storage locations
+          if (!hasStoredAuth) {
+            hasStoredAuth =
+              localStorage.getItem("authToken") ||
+              localStorage.getItem("__auth_token_enc") ||
+              sessionStorage.getItem("authToken");
+          }
 
           if (hasStoredAuth) {
             // We have auth data, redirect directly
@@ -413,8 +458,8 @@
         modal.innerHTML = `
           <div class="modal-content card" style="max-width: 400px; width: 90%; padding: 24px; position: relative;">
             <button onclick="closeResendVerificationModal()" style="position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 24px; cursor: pointer; color: var(--color-text-secondary);">&times;</button>
-            <h2 style="margin-top: 0; margin-bottom: 16px;">Resend Verification Email</h2>
-            <p style="margin-bottom: 20px; color: var(--color-text-secondary);">Enter your email address and we'll send you a new verification link.</p>
+            <h2 class="text-heading-xl text-primary space-normal">Resend Verification Email</h2>
+            <p class="text-body-md text-secondary space-normal">Enter your email address and we'll send you a new verification link.</p>
             <form id="resendVerificationForm">
               <div class="form-group">
                 <label for="resendEmail" class="form-label required">Email</label>
@@ -499,6 +544,111 @@
         }
       }
 
+      // Password visibility toggle
+      function initPasswordToggle() {
+        const passwordInput = document.getElementById("password");
+        const toggleButton = document.getElementById("togglePassword");
+
+        if (!passwordInput || !toggleButton) return;
+
+        toggleButton.addEventListener("click", function () {
+          const isPassword = passwordInput.type === "password";
+          passwordInput.type = isPassword ? "text" : "password";
+          toggleButton.setAttribute("aria-label", isPassword ? "Hide password" : "Show password");
+          toggleButton.setAttribute("aria-pressed", isPassword ? "true" : "false");
+          
+          // Icon visibility is handled by CSS based on aria-pressed
+          // Re-initialize Lucide icons after toggle
+          if (typeof lucide !== "undefined") {
+            lucide.createIcons();
+          }
+        });
+
+        // Keyboard support for password toggle
+        toggleButton.addEventListener("keydown", function (e) {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            toggleButton.click();
+          }
+        });
+      }
+
+      // Enhanced form submission with better loading states
+      function updateSubmitButtonState(isLoading) {
+        const submitButton = document.getElementById("loginSubmitBtn");
+        if (!submitButton) return;
+
+        const btnContent = submitButton.querySelector(".btn-content");
+        const btnLoading = submitButton.querySelector(".btn-loading");
+
+        if (isLoading) {
+          submitButton.disabled = true;
+          if (btnContent) btnContent.style.display = "none";
+          if (btnLoading) btnLoading.style.display = "flex";
+        } else {
+          submitButton.disabled = false;
+          if (btnContent) btnContent.style.display = "flex";
+          if (btnLoading) btnLoading.style.display = "none";
+        }
+      }
+
+      // Remember me functionality
+      function initRememberMe() {
+        const rememberCheckbox = document.getElementById("remember");
+        const emailInput = document.getElementById("email");
+
+        if (!rememberCheckbox || !emailInput) return;
+
+        // Load saved email if remember me was checked
+        const rememberedEmail = localStorage.getItem("rememberedEmail");
+        if (rememberedEmail) {
+          emailInput.value = rememberedEmail;
+          rememberCheckbox.checked = true;
+        }
+
+        // Save email when checkbox is checked
+        rememberCheckbox.addEventListener("change", function () {
+          if (this.checked && emailInput.value) {
+            localStorage.setItem("rememberedEmail", emailInput.value);
+          } else {
+            localStorage.removeItem("rememberedEmail");
+          }
+        });
+
+        // Update saved email when user types
+        emailInput.addEventListener("blur", function () {
+          if (rememberCheckbox.checked && this.value) {
+            localStorage.setItem("rememberedEmail", this.value);
+          }
+        });
+      }
+
+      // Keyboard shortcuts
+      function initKeyboardShortcuts() {
+        document.addEventListener("keydown", function (e) {
+          // Escape key clears form
+          if (e.key === "Escape" && document.activeElement.tagName === "INPUT") {
+            const activeInput = document.activeElement;
+            if (activeInput.value && !activeInput.hasAttribute("readonly")) {
+              activeInput.value = "";
+              activeInput.focus();
+            }
+          }
+
+          // Enter key submits form (if not in textarea)
+          if (e.key === "Enter" && e.target.tagName !== "TEXTAREA") {
+            const form = document.getElementById("loginForm");
+            if (form && form.checkValidity() && !e.target.closest("button")) {
+              // Let default behavior handle it, but ensure form is valid
+              if (form.querySelector(":invalid")) {
+                e.preventDefault();
+                form.reportValidity();
+              }
+            }
+          }
+        });
+      }
+
       // Initialize login page
       document.addEventListener("DOMContentLoaded", function () {
         // Initialize Lucide icons with error suppression
@@ -516,7 +666,19 @@
             }
             originalError.apply(console, args);
           };
+          
+          // Initialize icons
+          lucide.createIcons();
         }
+
+        // Initialize password toggle
+        initPasswordToggle();
+
+        // Initialize remember me
+        initRememberMe();
+
+        // Initialize keyboard shortcuts
+        initKeyboardShortcuts();
 
         // Generate CSRF token
         setCSRFTokenInForm("csrfToken");
@@ -533,7 +695,8 @@
               "errorMessage",
               `Too many login attempts. Please wait ${timeRemaining} minutes before trying again.`,
             );
-            document.querySelector('button[type="submit"]').disabled = true;
+            const submitButton = document.querySelector('button[type="submit"]');
+            if (submitButton) submitButton.disabled = true;
           }
         }
 

@@ -9,20 +9,20 @@
 <!-- Basic Card -->
 <div class="card">
   <div class="card-header">
-    <h3>Card Title</h3>
+    <h3 class="card-title">Card Title</h3>
   </div>
   <div class="card-body">
-    <p>Card content goes here. This is the main body of the card.</p>
+    <p class="card-text">Card content goes here. This is the main body of the card.</p>
   </div>
 </div>
 
 <!-- Card with Footer -->
 <div class="card">
   <div class="card-header">
-    <h3>Performance Summary</h3>
+    <h3 class="card-title">Performance Summary</h3>
   </div>
   <div class="card-body">
-    <p>Your training metrics for this week.</p>
+    <p class="card-text">Your training metrics for this week.</p>
   </div>
   <div class="card-footer">
     <button class="btn btn-primary btn-sm">View Details</button>
@@ -32,24 +32,24 @@
 <!-- Elevated Card -->
 <div class="card card-elevated">
   <div class="card-body">
-    <p>This card has elevated shadow for emphasis.</p>
+    <p class="card-text">This card has elevated shadow for emphasis.</p>
   </div>
 </div>
 
 <!-- Interactive Card -->
 <div class="card card-interactive">
   <div class="card-body">
-    <p>This card has hover effects and is clickable.</p>
+    <p class="card-text">This card has hover effects and is clickable.</p>
   </div>
 </div>
 
 <!-- High Contrast Card (replaces glassmorphism) -->
 <div class="card card-elevated">
   <div class="card-header">
-    <h3>Performance Card</h3>
+    <h3 class="card-title">Performance Card</h3>
   </div>
   <div class="card-body">
-    <p>High contrast card optimized for athletic data clarity.</p>
+    <p class="card-text">High contrast card optimized for athletic data clarity.</p>
   </div>
 </div>
 
@@ -79,22 +79,10 @@
       style="display: flex; justify-content: space-between; align-items: center"
     >
       <div>
-        <div
-          style="
-            font-size: 0.875rem;
-            color: var(--color-text-secondary);
-            margin-bottom: 0.25rem;
-          "
-        >
+        <div class="card-subtitle">
           Total Distance
         </div>
-        <div
-          style="
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--color-text-primary);
-          "
-        >
+        <div class="text-heading-lg text-primary font-semibold">
           12.5 km
         </div>
       </div>

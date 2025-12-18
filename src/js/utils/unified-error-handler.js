@@ -66,6 +66,15 @@ export class UnifiedErrorHandler {
     this.initialized = false;
     this.notificationQueue = [];
     this.maxNotifications = 3;
+    this.errorHistory = [];
+    this.maxHistorySize = 100;
+    this.diagnostics = {
+      errorCounts: {},
+      errorTypes: {},
+      performanceMetrics: [],
+      networkStatus: 'unknown',
+      lastError: null,
+    };
   }
 
   /**
@@ -79,8 +88,20 @@ export class UnifiedErrorHandler {
     window.addEventListener('unhandledrejection', this.handlePromiseRejection.bind(this));
 
     // Network status monitoring
-    window.addEventListener('online', () => this.showSuccess('Connection restored'));
-    window.addEventListener('offline', () => this.showWarning('You are offline. Some features may not work.'));
+    window.addEventListener('online', () => {
+      this.diagnostics.networkStatus = 'online';
+      this.showSuccess('Connection restored');
+    });
+    window.addEventListener('offline', () => {
+      this.diagnostics.networkStatus = 'offline';
+      this.showWarning('You are offline. Some features may not work.');
+    });
+
+    // Track network status
+    this.diagnostics.networkStatus = navigator.onLine ? 'online' : 'offline';
+
+    // Performance monitoring
+    this.startPerformanceMonitoring();
 
     this.initialized = true;
     logger.debug('[Error Handler] Initialized');
@@ -159,6 +180,9 @@ export class UnifiedErrorHandler {
     // Categorize error
     const errorInfo = this.categorizeError(error);
     const logMessage = `[${context}] ${errorInfo.message}`;
+
+    // Track error in diagnostics
+    this.trackError(errorInfo, context);
 
     // Log error
     this.logError(logMessage, error, logLevel);
@@ -595,6 +619,125 @@ export class UnifiedErrorHandler {
     };
 
     fieldElement.addEventListener('input', clearError, { once: true });
+  }
+
+  /**
+   * Track error for diagnostics
+   */
+  trackError(errorInfo, context) {
+    // Update error counts
+    const key = `${errorInfo.type}_${errorInfo.severity}`;
+    this.diagnostics.errorCounts[key] = (this.diagnostics.errorCounts[key] || 0) + 1;
+    this.diagnostics.errorTypes[errorInfo.type] = (this.diagnostics.errorTypes[errorInfo.type] || 0) + 1;
+    this.diagnostics.lastError = {
+      type: errorInfo.type,
+      severity: errorInfo.severity,
+      context,
+      timestamp: new Date().toISOString(),
+      message: errorInfo.message,
+    };
+
+    // Add to history
+    this.errorHistory.push({
+      ...this.diagnostics.lastError,
+      userMessage: errorInfo.userMessage,
+    });
+
+    // Limit history size
+    if (this.errorHistory.length > this.maxHistorySize) {
+      this.errorHistory.shift();
+    }
+  }
+
+  /**
+   * Start performance monitoring
+   */
+  startPerformanceMonitoring() {
+    // Monitor page load performance
+    if (window.performance && window.performance.timing) {
+      window.addEventListener('load', () => {
+        const timing = window.performance.timing;
+        const loadTime = timing.loadEventEnd - timing.navigationStart;
+        const domReady = timing.domContentLoadedEventEnd - timing.navigationStart;
+
+        this.diagnostics.performanceMetrics.push({
+          type: 'pageLoad',
+          loadTime,
+          domReady,
+          timestamp: new Date().toISOString(),
+        });
+      });
+    }
+
+    // Monitor long tasks (if supported)
+    if ('PerformanceObserver' in window) {
+      try {
+        const observer = new PerformanceObserver((list) => {
+          for (const entry of list.getEntries()) {
+            if (entry.duration > 50) { // Tasks longer than 50ms
+              this.diagnostics.performanceMetrics.push({
+                type: 'longTask',
+                duration: entry.duration,
+                timestamp: new Date().toISOString(),
+              });
+            }
+          }
+        });
+        observer.observe({ entryTypes: ['longtask', 'measure'] });
+      } catch {
+        // PerformanceObserver not fully supported
+      }
+    }
+  }
+
+  /**
+   * Get diagnostic report
+   */
+  getDiagnostics() {
+    const totalErrors = Object.values(this.diagnostics.errorCounts).reduce((a, b) => a + b, 0);
+    const errorRate = totalErrors > 0 ? (this.diagnostics.errorCounts[`${ErrorType.NETWORK}_${ErrorSeverity.ERROR}`] || 0) / totalErrors : 0;
+
+    return {
+      ...this.diagnostics,
+      summary: {
+        totalErrors,
+        errorRate: Math.round(errorRate * 100),
+        mostCommonError: Object.entries(this.diagnostics.errorTypes)
+          .sort(([, a], [, b]) => b - a)[0]?.[0] || 'none',
+        networkStatus: this.diagnostics.networkStatus,
+        performanceIssues: this.diagnostics.performanceMetrics.filter(m => m.type === 'longTask').length,
+      },
+      errorHistory: this.errorHistory.slice(-10), // Last 10 errors
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  /**
+   * Export diagnostics as JSON
+   */
+  exportDiagnostics() {
+    const diagnostics = this.getDiagnostics();
+    const blob = new Blob([JSON.stringify(diagnostics, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `diagnostics-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  /**
+   * Clear diagnostics history
+   */
+  clearDiagnostics() {
+    this.errorHistory = [];
+    this.diagnostics.errorCounts = {};
+    this.diagnostics.errorTypes = {};
+    this.diagnostics.performanceMetrics = [];
+    this.diagnostics.lastError = null;
+    logger.debug('[Error Handler] Diagnostics cleared');
   }
 }
 

@@ -506,14 +506,8 @@ export class LiveGameTrackerComponent implements OnInit, OnDestroy {
     },
   ]);
 
-  yardLines = signal<YardLine[]>([]);
-  activePlayers = signal<FieldPlayer[]>([]);
-
-  private gameTimer?: NodeJS.Timeout;
-  private orientationCheck?: NodeJS.Timeout;
-
-  constructor() {
-    // Initialize yard lines
+  // Initialize yard lines at field declaration
+  yardLines = signal<YardLine[]>(() => {
     const lines: YardLine[] = [];
     for (let i = 0; i <= 10; i++) {
       lines.push({
@@ -521,9 +515,15 @@ export class LiveGameTrackerComponent implements OnInit, OnDestroy {
         label: i === 0 || i === 10 ? "Goal" : `${i * 10}`,
       });
     }
-    this.yardLines.set(lines);
+    return lines;
+  });
+  activePlayers = signal<FieldPlayer[]>([]);
 
-    // Check orientation
+  private gameTimer?: NodeJS.Timeout;
+  private orientationCheck?: NodeJS.Timeout;
+
+  constructor() {
+    // Check orientation - effect automatically cleans up on component destroy in Angular 21
     effect(() => {
       this.checkOrientation();
     });

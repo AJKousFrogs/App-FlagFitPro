@@ -33,24 +33,14 @@
     <script type="module" src="./src/js/main.js"></script>
     <!-- Sidebar Utilities -->
     <script src="./src/js/utils/sidebar-utils.js"></script>
-    <!-- Sidebar Loader (Dynamic Component) -->
-    <script type="module" src="./src/js/components/sidebar-loader.js" defer></script>
-    <!-- Top Bar Loader (Dynamic Component) -->
-    <script type="module" src="./src/js/components/top-bar-loader.js" defer></script>
-    <!-- Footer Loader (Dynamic Component) -->
-    <script type="module" src="./src/js/components/footer-loader.js" defer></script>
+    <!-- Common Component Loaders (Sidebar, Top Bar, Footer) -->
+    <script type="module" src="./src/js/components/common-loaders.js" defer></script>
   
+    <!-- Supabase Configuration (Centralized) -->
+    <script src="./src/js/config/supabase-config.js"></script>
+    
     <!-- Supabase JS SDK from CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <!-- Supabase Configuration -->
-    <script>
-      // Set Supabase config in window for production
-      window._env = {
-        SUPABASE_URL: 'https://pvziciccwxgftcielknm.supabase.co',
-        SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2emljaWNjd3hnZnRjaWVsa25tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MzcwNTgsImV4cCI6MjA3NTExMzA1OH0.1nfJrtWPl6DrAwvjGvM1-CZBeyYgCaV9oDdaadpqhLU'
-      };
-    </script>
 
   </head>
   <body>
@@ -78,9 +68,9 @@
               </button>
             </div>
             <div class="profile-info">
-              <h1 class="profile-name" id="profileName">Loading...</h1>
-              <p class="profile-role" id="profileRole">Player</p>
-              <p class="profile-email" id="profileEmail">Loading...</p>
+              <h1 class="profile-name text-heading-2xl text-primary" id="profileName">Loading...</h1>
+              <p class="profile-role text-body-md text-secondary" id="profileRole">Player</p>
+              <p class="profile-email text-body-sm text-tertiary" id="profileEmail">Loading...</p>
             </div>
             <div class="profile-actions">
               <button
@@ -136,7 +126,7 @@
           <!-- Profile Details -->
           <div class="profile-details">
             <div class="detail-section">
-              <h2 class="section-title">Personal Information</h2>
+              <h2 class="section-title text-heading-xl text-primary">Personal Information</h2>
               <div class="detail-grid">
                 <div class="detail-item">
                   <label>Position</label>
@@ -158,7 +148,7 @@
             </div>
 
             <div class="detail-section">
-              <h2 class="section-title">Physical Stats</h2>
+              <h2 class="section-title text-heading-xl text-primary">Physical Stats</h2>
               <div class="detail-grid">
                 <div class="detail-item">
                   <label>Height</label>
@@ -176,8 +166,8 @@
             </div>
 
             <div class="detail-section">
-              <h2 class="section-title">Bio</h2>
-              <p class="profile-bio" id="profileBio">No bio available.</p>
+              <h2 class="section-title text-heading-xl text-primary">Bio</h2>
+              <p class="profile-bio text-body-md text-primary" id="profileBio">No bio available.</p>
             </div>
           </div>
         </div>
@@ -214,7 +204,7 @@
               <i data-lucide="alert-circle" class="icon-24"></i>
             </div>
             <div class="profile-prompt-text">
-              <h3>Complete Your Profile</h3>
+              <h3 class="card-title text-heading-lg text-primary">Complete Your Profile</h3>
               <p>Your profile is missing some information. Complete it to get the most out of FlagFit Pro.</p>
             </div>
             <button class="btn btn-primary" onclick="window.profileCompletionManager.showProfileCompletionModal(false)">

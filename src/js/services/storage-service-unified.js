@@ -356,8 +356,3 @@ export const storageService = new UnifiedStorageService();
 
 // Export class for testing
 export { UnifiedStorageService };
-
-// Backward compatibility exports (to be deprecated)
-export const saveToStorage = (key, data) => storageService.set(key, data);
-export const getFromStorage = (key, defaultValue) => storageService.get(key, defaultValue);
-export const removeFromStorage = (key) => storageService.remove(key);

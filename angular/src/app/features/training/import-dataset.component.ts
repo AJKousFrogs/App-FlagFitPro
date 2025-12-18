@@ -1,9 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
-import { InputTextareaModule } from 'primeng/inputtextarea';
+import { Textarea } from 'primeng/textarea';
 import { InputTextModule } from 'primeng/inputtext';
 import { MessageModule } from 'primeng/message';
 import { MessageService } from 'primeng/api';
@@ -18,10 +17,9 @@ import { ErrorHandlerUtil } from '../../core/utils/error-handler.util';
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
     CardModule,
     ButtonModule,
-    InputTextareaModule,
+    Textarea,
     InputTextModule,
     MessageModule,
     ToastModule
@@ -90,7 +88,7 @@ import { ErrorHandlerUtil } from '../../core/utils/error-handler.util';
                 <button 
                   class="px-4 py-2 bg-brand-primary text-white rounded hover:bg-brand-primary-hover transition-colors"
                   (click)="parseAndImport()"
-                  [disabled]="isLoading() || !athleteId">
+                  [disabled]="isLoading() || !athleteId()">
                   Parse & Import
                 </button>
               </div>
@@ -107,7 +105,8 @@ import { ErrorHandlerUtil } from '../../core/utils/error-handler.util';
             <input
               id="athleteId"
               type="text"
-              [(ngModel)]="athleteId"
+              [value]="athleteId()"
+              (input)="athleteId.set($any($event.target).value)"
               placeholder="Enter athlete UUID"
               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-primary"
             />
@@ -117,7 +116,8 @@ import { ErrorHandlerUtil } from '../../core/utils/error-handler.util';
             <label for="jsonText" class="block text-sm font-semibold text-text-primary mb-2">Dataset JSON</label>
             <textarea
               id="jsonText"
-              [(ngModel)]="jsonText"
+              [value]="jsonText()"
+              (input)="jsonText.set($any($event.target).value)"
               placeholder='Paste your dataset JSON here, e.g.:
 [
   { "speed_m_s": 6.1, "distance_m": 3.2 },
@@ -134,7 +134,7 @@ import { ErrorHandlerUtil } from '../../core/utils/error-handler.util';
           <div class="flex justify-end">
             <button
               class="px-6 py-2 bg-brand-primary text-white rounded-lg hover:bg-brand-primary-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              [disabled]="!athleteId || !jsonText.trim() || isLoading()"
+              [disabled]="!athleteId() || !jsonText().trim() || isLoading()"
               (click)="import()">
               {{ isLoading() ? 'Importing...' : 'Import Dataset' }}
             </button>
@@ -150,7 +150,8 @@ import { ErrorHandlerUtil } from '../../core/utils/error-handler.util';
             <input
               id="generateAthleteId"
               type="text"
-              [(ngModel)]="athleteId"
+              [value]="athleteId()"
+              (input)="athleteId.set($any($event.target).value)"
               placeholder="Enter athlete UUID"
               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-primary"
             />
@@ -161,7 +162,8 @@ import { ErrorHandlerUtil } from '../../core/utils/error-handler.util';
               <label class="block text-sm font-semibold text-text-primary mb-2">Duration (minutes)</label>
               <input
                 type="number"
-                [(ngModel)]="generateOptions.durationMinutes"
+                [value]="generateOptions.durationMinutes"
+                (input)="generateOptions.durationMinutes = +$any($event.target).value"
                 min="15"
                 max="180"
                 class="w-full px-4 py-2 border border-gray-300 rounded-lg"
@@ -169,7 +171,7 @@ import { ErrorHandlerUtil } from '../../core/utils/error-handler.util';
             </div>
             <div>
               <label class="block text-sm font-semibold text-text-primary mb-2">Intensity</label>
-              <select [(ngModel)]="generateOptions.intensity" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+              <select [value]="generateOptions.intensity" (change)="generateOptions.intensity = $any($event.target).value" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
                 <option value="high">High</option>
@@ -181,7 +183,7 @@ import { ErrorHandlerUtil } from '../../core/utils/error-handler.util';
           <button
             class="w-full px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
             (click)="generateAndImport()"
-            [disabled]="!athleteId || isLoading()">
+            [disabled]="!athleteId() || isLoading()">
             Generate & Import Test Dataset
           </button>
         </div>
@@ -189,7 +191,7 @@ import { ErrorHandlerUtil } from '../../core/utils/error-handler.util';
 
       <!-- Results -->
       @if (importResult()) {
-        <div class="import-result mt-6 p-4 rounded-lg" [ngClass]="importResult()?.success ? 'bg-green-50 border-2 border-green-500' : 'bg-red-50 border-2 border-red-500'">
+        <div class="import-result mt-6 p-4 rounded-lg" [class]="importResult()?.success ? 'bg-green-50 border-2 border-green-500' : 'bg-red-50 border-2 border-red-500'">
           @if (importResult()?.success) {
             <div class="text-green-800">
               <p class="font-bold mb-2">✓ Success! Dataset imported successfully.</p>
@@ -227,8 +229,9 @@ export class ImportDatasetComponent {
   private datasetGenerator = inject(DatasetGeneratorService);
   private messageService = inject(MessageService);
 
-  athleteId = '';
-  jsonText = '';
+  // Angular 21: Use model() signals for two-way binding instead of ngModel
+  athleteId = signal('');
+  jsonText = signal('');
   activeTab = signal<'upload' | 'paste' | 'generate'>('upload');
   selectedFile = signal<File | null>(null);
   isLoading = signal(false);
@@ -252,7 +255,7 @@ export class ImportDatasetComponent {
 
   async parseAndImport() {
     const file = this.selectedFile();
-    if (!file || !this.athleteId) {
+    if (!file || !this.athleteId()) {
       this.messageService.add(ErrorHandlerUtil.createValidationError('file and Athlete ID', 'Please select a file and enter Athlete ID'));
       return;
     }
@@ -262,7 +265,7 @@ export class ImportDatasetComponent {
 
     try {
       const parsed = await this.wearableParser.parseFile(file);
-      const result = await this.metricsService.importOpenDataset(this.athleteId, parsed.data);
+      const result = await this.metricsService.importOpenDataset(this.athleteId(), parsed.data);
 
       if (result.ok) {
         this.importResult.set({
@@ -287,7 +290,7 @@ export class ImportDatasetComponent {
   }
 
   async generateAndImport() {
-    if (!this.athleteId) {
+    if (!this.athleteId()) {
       this.messageService.add(ErrorHandlerUtil.createValidationError('Athlete ID'));
       return;
     }
@@ -301,7 +304,7 @@ export class ImportDatasetComponent {
         intensity: this.generateOptions.intensity
       });
 
-      const result = await this.metricsService.importOpenDataset(this.athleteId, dataset.data);
+      const result = await this.metricsService.importOpenDataset(this.athleteId(), dataset.data);
 
       if (result.ok) {
         this.importResult.set({
@@ -325,7 +328,9 @@ export class ImportDatasetComponent {
   }
 
   async import() {
-    if (!this.athleteId || !this.jsonText.trim()) {
+    const athleteId = this.athleteId();
+    const jsonText = this.jsonText();
+    if (!athleteId || !jsonText.trim()) {
       this.messageService.add(ErrorHandlerUtil.createValidationError('Athlete ID and Dataset JSON', 'Please fill in both Athlete ID and Dataset JSON'));
       return;
     }
@@ -335,14 +340,14 @@ export class ImportDatasetComponent {
 
     try {
       // Parse JSON
-      const dataset = JSON.parse(this.jsonText);
+      const dataset = JSON.parse(jsonText);
 
       if (!Array.isArray(dataset)) {
         throw new Error('Dataset must be an array of objects');
       }
 
       // Import dataset
-      const result = await this.metricsService.importOpenDataset(this.athleteId, dataset);
+      const result = await this.metricsService.importOpenDataset(athleteId, dataset);
 
       if (result.ok) {
         this.importResult.set({
@@ -351,7 +356,7 @@ export class ImportDatasetComponent {
         });
         this.messageService.add(ErrorHandlerUtil.createSuccessMessage('Dataset imported successfully!'));
         // Clear form
-        this.jsonText = '';
+        this.jsonText.set('');
       } else {
         throw new Error('Import failed');
       }

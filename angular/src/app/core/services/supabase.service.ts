@@ -1,18 +1,24 @@
-import { Injectable } from "@angular/core";
+import { Injectable, signal, computed } from "@angular/core";
 import { createClient, SupabaseClient, User, Session, AuthChangeEvent } from "@supabase/supabase-js";
 import { environment } from "../../../environments/environment";
-import { BehaviorSubject, Observable } from "rxjs";
 
 @Injectable({
   providedIn: "root",
 })
 export class SupabaseService {
   private supabase: SupabaseClient;
-  private _currentUser = new BehaviorSubject<User | null>(null);
-  private _session = new BehaviorSubject<Session | null>(null);
+  
+  // UI State: Use signals instead of BehaviorSubject
+  private readonly _currentUser = signal<User | null>(null);
+  private readonly _session = signal<Session | null>(null);
 
-  public currentUser$: Observable<User | null> = this._currentUser.asObservable();
-  public session$: Observable<Session | null> = this._session.asObservable();
+  // Public readonly signals for components
+  readonly currentUser = this._currentUser.asReadonly();
+  readonly session = this._session.asReadonly();
+
+  // Computed signals for derived state
+  readonly isAuthenticated = computed(() => this._currentUser() !== null);
+  readonly userId = computed(() => this._currentUser()?.id ?? null);
 
   constructor() {
     this.supabase = createClient(
@@ -27,14 +33,14 @@ export class SupabaseService {
   private async initializeAuth() {
     // Get initial session
     const { data } = await this.supabase.auth.getSession();
-    this._session.next(data.session);
-    this._currentUser.next(data.session?.user ?? null);
+    this._session.set(data.session);
+    this._currentUser.set(data.session?.user ?? null);
 
     // Listen for auth changes
     this.supabase.auth.onAuthStateChange((event: AuthChangeEvent, session: Session | null) => {
       console.log("Auth state changed:", event);
-      this._session.next(session);
-      this._currentUser.next(session?.user ?? null);
+      this._session.set(session);
+      this._currentUser.set(session?.user ?? null);
     });
   }
 
@@ -46,17 +52,17 @@ export class SupabaseService {
   }
 
   /**
-   * Get current user
+   * Get current user (synchronous access)
    */
-  get currentUser(): User | null {
-    return this._currentUser.value;
+  getCurrentUser(): User | null {
+    return this._currentUser();
   }
 
   /**
-   * Get current session
+   * Get current session (synchronous access)
    */
-  get session(): Session | null {
-    return this._session.value;
+  getSession(): Session | null {
+    return this._session();
   }
 
   /**

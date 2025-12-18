@@ -1,4 +1,4 @@
-import { Injectable, inject, signal } from "@angular/core";
+import { Injectable, inject, signal, effect } from "@angular/core";
 import { Router } from "@angular/router";
 import { Observable, throwError, from, of } from "rxjs";
 import { tap, catchError, map } from "rxjs/operators";
@@ -42,9 +42,13 @@ export class AuthService {
   isLoading = signal<boolean>(false);
 
   constructor() {
+    // Load stored auth state immediately
     this.loadStoredAuth();
-    // Subscribe to Supabase auth state changes
-    this.supabaseService.currentUser$.subscribe((user) => {
+    
+    // Use effect() to reactively watch Supabase auth state changes (signals)
+    // This is zoneless-compatible and more efficient than subscriptions
+    effect(() => {
+      const user = this.supabaseService.currentUser();
       if (user) {
         const appUser: User = {
           id: user.id,
@@ -63,8 +67,8 @@ export class AuthService {
 
   private loadStoredAuth(): void {
     // Supabase handles session persistence automatically
-    // Just check if we have a current session
-    const session = this.supabaseService.session;
+    // Just check if we have a current session (using signal)
+    const session = this.supabaseService.session();
     if (session?.user) {
       const user: User = {
         id: session.user.id,
@@ -148,7 +152,8 @@ export class AuthService {
   }
 
   getCurrentUser(): Observable<any> {
-    const user = this.supabaseService.currentUser;
+    // Use signal instead of property access
+    const user = this.supabaseService.currentUser();
     if (user) {
       const appUser: User = {
         id: user.id,
@@ -172,8 +177,8 @@ export class AuthService {
   }
 
   checkAuth(): boolean {
-    // Check if we have an authenticated session
-    const session = this.supabaseService.session;
+    // Check if we have an authenticated session (using signal)
+    const session = this.supabaseService.session();
     const isAuth = !!session && this.isAuthenticated();
 
     if (!isAuth && session) {

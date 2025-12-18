@@ -15,11 +15,13 @@
    Base element styles, resets, typography defaults
    ================================================================ */
 @import url("./base.css") layer(base);
+@import url("./visual-hierarchy.css") layer(base);
 
 /* ================================================================
    LAYER 3: TOKENS
    Design tokens (CSS variables) - foundation for everything
    ================================================================ */
+@import url("./design-system-tokens.css") layer(tokens);
 @import url("./tokens.css") layer(tokens);
 @import url("./z-index-system.css") layer(tokens);
 @import url("./body-classes.css") layer(base);

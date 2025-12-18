@@ -18,6 +18,8 @@
     <link rel="stylesheet" href="./src/css/main.css" />
     <!-- Page-specific styles -->
     <link rel="stylesheet" href="./src/css/pages/training.css" />
+    <!-- Enhanced Training Schedule Styles -->
+    <link rel="stylesheet" href="./src/css/components/enhanced-training-schedule.css" />
     <!-- Component Styles -->
     <link rel="stylesheet" href="./src/css/components/chatbot.css" />
     <link rel="stylesheet" href="./src/css/components/modal.css" />
@@ -50,26 +52,16 @@
           console.warn("Chatbot preload failed:", error);
         });
     </script>
-    <!-- Sidebar Loader (Dynamic Component) -->
-    <script type="module" src="./src/js/components/sidebar-loader.js" defer></script>
-    <!-- Top Bar Loader (Dynamic Component) -->
-    <script type="module" src="./src/js/components/top-bar-loader.js" defer></script>
-    <!-- Footer Loader (Dynamic Component) -->
-    <script type="module" src="./src/js/components/footer-loader.js" defer></script>
+    <!-- Common Component Loaders (Sidebar, Top Bar, Footer) -->
+    <script type="module" src="./src/js/components/common-loaders.js" defer></script>
     <!-- AI Chat Bubble Loader (Dynamic Component) -->
     <script type="module" src="./src/js/components/ai-chat-bubble-loader.js" defer></script>
   
+    <!-- Supabase Configuration (Centralized) -->
+    <script src="./src/js/config/supabase-config.js"></script>
+    
     <!-- Supabase JS SDK from CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <!-- Supabase Configuration -->
-    <script>
-      // Set Supabase config in window for production
-      window._env = {
-        SUPABASE_URL: 'https://pvziciccwxgftcielknm.supabase.co',
-        SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2emljaWNjd3hnZnRjaWVsa25tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MzcwNTgsImV4cCI6MjA3NTExMzA1OH0.1nfJrtWPl6DrAwvjGvM1-CZBeyYgCaV9oDdaadpqhLU'
-      };
-    </script>
 
   </head>
   <body>
@@ -98,10 +90,10 @@
             <div class="u-text-body-sm u-text-secondary u-font-weight-500 u-margin-bottom-8 u-text-uppercase">
               Training Hub
             </div>
-            <h1 class="hero-main-title u-margin-bottom-8">
+            <h1 class="hero-main-title text-heading-2xl text-primary space-relaxed">
               Welcome back, <span id="user-display-name-training">Alex</span>!
             </h1>
-            <p class="u-text-heading-md u-text-secondary u-m-0">
+            <p class="text-body-md text-secondary">
               Ready to dominate today?
             </p>
             <div class="u-text-body-sm u-text-secondary u-font-weight-500 u-margin-top-12 u-opacity-70">
@@ -496,6 +488,8 @@
 
         <!-- Schedule Tab -->
         <div id="tab-schedule" class="tab-content" role="tabpanel" aria-labelledby="tab-btn-schedule">
+          <!-- Enhanced Training Schedule Container -->
+          <div id="enhanced-schedule-container" data-enhanced-schedule></div>
           <!-- Program Overview -->
           <div class="hero-card program-overview u-margin-bottom-24">
             <div class="hero-title" id="programTitle">
@@ -663,46 +657,38 @@
           <!-- Weekly Schedule -->
           <div class="card card-elevated weekly-schedule">
             <div class="card-header schedule-header">
-              <div class="week-selector">
-                <div class="week-nav">
-                  <button class="btn btn-secondary btn-sm" id="prevWeek">
-                    <i
-                      data-lucide="chevron-left"
-                      style="
-                        width: 16px;
-                        height: 16px;
-                        display: inline-block;
-                        vertical-align: middle;
-                        color: var(--icon-color-primary);
-                        stroke: var(--icon-color-primary);
-                      "
-                    ></i>
-                    Previous
+              <div class="week-selector u-display-flex u-align-center u-justify-between u-flex-wrap u-gap-16">
+                <div class="week-nav u-display-flex u-gap-8">
+                  <button 
+                    class="btn btn-secondary btn-sm" 
+                    id="prevWeek"
+                    aria-label="Previous week"
+                    type="button"
+                  >
+                    <i data-lucide="chevron-left" class="icon-16 icon-inline" aria-hidden="true"></i>
+                    <span>Previous</span>
                   </button>
-                  <button class="btn btn-secondary btn-sm" id="nextWeek">
-                    Next
-                    <i
-                      data-lucide="chevron-right"
-                      style="
-                        width: 16px;
-                        height: 16px;
-                        display: inline-block;
-                        vertical-align: middle;
-                        color: var(--icon-color-primary);
-                        stroke: var(--icon-color-primary);
-                      "
-                    ></i>
+                  <button 
+                    class="btn btn-secondary btn-sm" 
+                    id="nextWeek"
+                    aria-label="Next week"
+                    type="button"
+                  >
+                    <span>Next</span>
+                    <i data-lucide="chevron-right" class="icon-16 icon-inline" aria-hidden="true"></i>
                   </button>
                 </div>
-                <div class="current-week" id="currentWeek">
+                <div class="current-week u-text-heading-md u-font-weight-600 u-text-primary" id="currentWeek" role="heading" aria-level="3">
                   Week 1 - Foundation Phase
                 </div>
               </div>
-              <div class="week-dates" id="weekDates">December 1-7, 2025</div>
+              <div class="week-dates u-text-body-md u-text-secondary u-margin-top-8" id="weekDates" aria-label="Week date range">
+                December 1-7, 2025
+              </div>
             </div>
 
             <div class="card-body daily-schedule">
-              <div class="day-grid" id="dayGrid">
+              <div class="day-grid" id="dayGrid" role="list" aria-label="Weekly training schedule">
                 <!-- Daily workouts will be populated by JavaScript -->
               </div>
             </div>

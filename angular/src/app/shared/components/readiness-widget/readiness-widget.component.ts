@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, input, inject, signal, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { TagModule } from 'primeng/tag';
@@ -227,8 +227,9 @@ import { ReadinessService, ReadinessResponse } from '../../../core/services/read
     }
   `]
 })
-export class ReadinessWidgetComponent implements OnInit {
-  @Input() athleteId!: string;
+export class ReadinessWidgetComponent {
+  // Angular 21: Use input.required() for required inputs instead of @Input() with !
+  athleteId = input.required<string>();
 
   private readinessService = inject(ReadinessService);
 
@@ -236,15 +237,20 @@ export class ReadinessWidgetComponent implements OnInit {
   readiness = this.readinessService.current;
   error = this.readinessService.error;
 
-  ngOnInit() {
-    if (this.athleteId) {
-      this.refresh();
-    }
+  constructor() {
+    // Angular 21: Use effect() to react to input changes
+    effect(() => {
+      const id = this.athleteId();
+      if (id) {
+        this.refresh();
+      }
+    });
   }
 
   refresh() {
-    if (this.athleteId) {
-      this.readinessService.calculateToday(this.athleteId).subscribe();
+    const id = this.athleteId();
+    if (id) {
+      this.readinessService.calculateToday(id).subscribe();
     }
   }
 

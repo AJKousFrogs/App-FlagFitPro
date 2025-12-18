@@ -37,11 +37,15 @@ class TopBarLoader extends BaseComponentLoader {
   }
 
   /**
-   * Override afterLoad to initialize user avatar
+   * Override afterLoad to initialize enhanced features
    */
   afterLoad() {
     super.afterLoad();
     this.initializeUserAvatar();
+    // Initialize enhanced features after a short delay
+    setTimeout(() => {
+      this.initializeEnhancedFeatures();
+    }, 100);
   }
 
   /**
@@ -57,12 +61,39 @@ class TopBarLoader extends BaseComponentLoader {
       if (window.authManager && window.authManager.user) {
         const user = window.authManager.user;
         const initials = getInitials(user.name || user.email || 'User');
-        userAvatar.textContent = initials;
+        // Check if there's an initials element inside
+        const initialsEl = userAvatar.querySelector('.user-avatar-initials');
+        if (initialsEl) {
+          initialsEl.textContent = initials;
+        } else {
+          userAvatar.textContent = initials;
+        }
       } else {
         // Default initials
-        userAvatar.textContent = 'JD';
+        const initialsEl = userAvatar.querySelector('.user-avatar-initials');
+        if (initialsEl) {
+          initialsEl.textContent = 'JD';
+        } else {
+          userAvatar.textContent = 'JD';
+        }
       }
     }, 500);
+  }
+
+  /**
+   * Initialize enhanced top bar features
+   */
+  async initializeEnhancedFeatures() {
+    // Load and initialize enhanced top bar
+    try {
+      const { EnhancedTopBar } = await import('./enhanced-top-bar.js');
+      // The EnhancedTopBar auto-initializes, but we ensure it's set up
+      if (!window.enhancedTopBar) {
+        window.enhancedTopBar = new EnhancedTopBar();
+      }
+    } catch (error) {
+      console.warn('[Top Bar Loader] Could not load enhanced top bar:', error);
+    }
   }
 }
 

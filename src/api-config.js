@@ -229,6 +229,16 @@ export const API_ENDPOINTS = {
       : normalizeEndpoint("/api/wellness/injuries"),
   },
 
+  // Readiness Score
+  readiness: {
+    calculate: API_BASE_URL.includes("netlify/functions")
+      ? "/calc-readiness"
+      : normalizeEndpoint("/api/calc-readiness"),
+    history: API_BASE_URL.includes("netlify/functions")
+      ? "/readiness-history"
+      : normalizeEndpoint("/api/readiness-history"),
+  },
+
   // Supplements
   supplements: {
     log: normalizeEndpoint("/api/supplements/log"),
@@ -290,8 +300,22 @@ export class ApiClient {
     }
   }
 
-  // Get authentication token from localStorage
-  getAuthToken() {
+  // Get authentication token from secure storage
+  // Upgraded to use secureStorage API with AES-GCM encryption
+  async getAuthToken() {
+    // First, try to use secureStorage API (preferred method)
+    if (window.secureStorage && typeof window.secureStorage.getAuthToken === 'function') {
+      try {
+        const token = await window.secureStorage.getAuthToken();
+        if (token) {
+          return token;
+        }
+      } catch (error) {
+        logger.debug("Secure storage getAuthToken failed, trying fallback:", error);
+      }
+    }
+
+    // Fallback: legacy localStorage method via storageService
     return storageService.get("authToken", null, { usePrefix: false });
   }
 
@@ -317,7 +341,7 @@ export class ApiClient {
     };
 
     // Add auth token if available
-    const token = this.getAuthToken();
+    const token = await this.getAuthToken();
     if (token) {
       config.headers["Authorization"] = `Bearer ${token}`;
     }

@@ -1,6 +1,5 @@
 import {
   Component,
-  OnInit,
   signal,
   computed,
   inject,
@@ -470,13 +469,21 @@ import { firstValueFrom } from 'rxjs';
     `,
   ],
 })
-export class NutritionDashboardComponent implements OnInit {
+export class NutritionDashboardComponent {
   private nutritionService = inject(NutritionService);
 
   selectedFood: any = null;
   foodSuggestions = signal<any[]>([]);
   nutritionGoals = signal<NutritionGoal[]>([]);
   todaysMeals = signal<any[]>([]);
+  
+  constructor() {
+    // Angular 21: Initialize in constructor instead of OnInit
+    this.loadNutritionGoals();
+    this.loadTodaysMeals();
+    this.loadAISuggestions();
+    this.loadPerformanceInsights();
+  }
   aiSuggestions = signal<any[]>([]);
   performanceInsights = signal<any[]>([]);
 
@@ -488,12 +495,6 @@ export class NutritionDashboardComponent implements OnInit {
     },
   };
 
-  ngOnInit() {
-    this.loadNutritionGoals();
-    this.loadTodaysMeals();
-    this.loadAISuggestions();
-    this.loadPerformanceInsights();
-  }
 
   async searchFoods(event: any) {
     // Search USDA FoodData Central database

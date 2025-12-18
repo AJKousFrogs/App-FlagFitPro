@@ -1,6 +1,5 @@
 import {
   Component,
-  OnInit,
   signal,
   computed,
   ChangeDetectionStrategy,
@@ -537,7 +536,7 @@ interface Goal {
     `,
   ],
 })
-export class TrainingBuilderComponent implements OnInit {
+export class TrainingBuilderComponent {
   private fb = inject(FormBuilder);
   private aiService = inject(AIService);
   private weatherService = inject(WeatherService);
@@ -664,7 +663,8 @@ export class TrainingBuilderComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
+  constructor() {
+    // Angular 21: Initialize in constructor instead of OnInit
     this.loadWeatherData();
     this.loadAISuggestions();
   }

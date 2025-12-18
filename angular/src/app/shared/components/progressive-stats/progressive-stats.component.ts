@@ -1,6 +1,6 @@
 import {
   Component,
-  Input,
+  input,
   signal,
   ChangeDetectionStrategy,
 } from "@angular/core";
@@ -10,12 +10,7 @@ import { ChartModule } from "primeng/chart";
 import { ButtonModule } from "primeng/button";
 import { TagModule } from "primeng/tag";
 import { Tabs } from "primeng/tabs";
-import {
-  trigger,
-  transition,
-  style,
-  animate,
-} from "@angular/animations";
+import { expandCollapse } from "../../animations/app.animations";
 import { StatItem } from "../stats-grid/stats-grid.component";
 import { DEFAULT_CHART_OPTIONS } from "../../config/chart.config";
 
@@ -42,7 +37,7 @@ export interface ProgressiveStatItem extends StatItem {
     <div class="progressive-stats">
       <!-- Level 1: Overview Cards -->
       <div class="stats-overview">
-        @for (stat of stats; track trackByStatId($index, stat)) {
+        @for (stat of stats(); track trackByStatId($index, stat)) {
           <div
             class="stat-card"
             (click)="expandStat(stat.id)"
@@ -85,7 +80,7 @@ export interface ProgressiveStatItem extends StatItem {
             @if (expandedStat() === stat.id) {
               <div
                 class="stat-details"
-                [@slideDown]
+                [@expandCollapse]
               >
                 <!-- Level 3: Deep Dive Charts -->
                 @if (showDeepDive() === stat.id && hasChartData(stat)) {
@@ -98,7 +93,7 @@ export interface ProgressiveStatItem extends StatItem {
                           <p-chart
                             [type]="'line'"
                             [data]="stat.trendData"
-                            [options]="chartOptions"
+                            [options]="chartOptions()"
                           ></p-chart>
                         </div>
                       } @else {
@@ -114,7 +109,7 @@ export interface ProgressiveStatItem extends StatItem {
                           <p-chart
                             [type]="'doughnut'"
                             [data]="stat.breakdownData"
-                            [options]="chartOptions"
+                            [options]="chartOptions()"
                           ></p-chart>
                         </div>
                       } @else {
@@ -343,27 +338,12 @@ export interface ProgressiveStatItem extends StatItem {
       }
     `,
   ],
-  animations: [
-    trigger("slideDown", [
-      transition(":enter", [
-        style({ height: 0, opacity: 0, overflow: "hidden" }),
-        animate(
-          "300ms ease-out",
-          style({ height: "*", opacity: 1 }),
-        ),
-      ]),
-      transition(":leave", [
-        animate(
-          "300ms ease-in",
-          style({ height: 0, opacity: 0, overflow: "hidden" }),
-        ),
-      ]),
-    ]),
-  ],
+  animations: [expandCollapse],
 })
 export class ProgressiveStatsComponent {
-  @Input() stats: ProgressiveStatItem[] = [];
-  @Input() chartOptions: any = DEFAULT_CHART_OPTIONS;
+  // Angular 21: Use input() signal instead of @Input()
+  stats = input<ProgressiveStatItem[]>([]);
+  chartOptions = input<any>(DEFAULT_CHART_OPTIONS);
 
   expandedStat = signal<string | null>(null);
   showDeepDive = signal<string | null>(null);

@@ -31,7 +31,7 @@ const NOTIFICATION_PANEL_HTML = `
  * Load notification panel into the page
  * Looks for data-notification-panel-container attribute
  */
-export function loadNotificationPanel() {
+export async function loadNotificationPanel() {
   const container = document.querySelector('[data-notification-panel-container]');
   if (!container) {
     return; // No container found, skip loading
@@ -48,6 +48,28 @@ export function loadNotificationPanel() {
   // Initialize Lucide icons
   if (typeof lucide !== 'undefined') {
     lucide.createIcons(container);
+  }
+
+  // Load enhanced notification center if available
+  try {
+    const { default: enhancedNotificationCenter } = await import('./enhanced-notification-center.js');
+    
+    // Wait for notification store to be available
+    const waitForStore = () => {
+      if (window.notificationStore || window.dashboardPage?.notificationStore) {
+        const store = window.notificationStore || window.dashboardPage.notificationStore;
+        enhancedNotificationCenter.init(store);
+        console.log('[NotificationPanel] Enhanced notification center loaded');
+      } else {
+        // Retry after a short delay
+        setTimeout(waitForStore, 100);
+      }
+    };
+    
+    waitForStore();
+  } catch (error) {
+    console.warn('[NotificationPanel] Enhanced notification center not available:', error);
+    // Continue with basic functionality
   }
 }
 

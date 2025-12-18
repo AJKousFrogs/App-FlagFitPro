@@ -1,0 +1,67 @@
+<!-- Pagination Component -->
+<nav class="pagination-container" aria-label="Pagination">
+  <!-- Page Info -->
+  <div class="pagination-info">
+    <span class="pagination-text">
+      Showing <span class="start-item">1</span> - <span class="end-item">10</span> of <span class="total-items">100</span>
+    </span>
+  </div>
+
+  <!-- Pagination Controls -->
+  <div class="pagination-controls">
+    <!-- First Page -->
+    <button
+      type="button"
+      class="pagination-btn pagination-first"
+      aria-label="Go to first page"
+      disabled>
+      <i data-lucide="chevrons-left" style="width: 16px; height: 16px;"></i>
+    </button>
+
+    <!-- Previous Page -->
+    <button
+      type="button"
+      class="pagination-btn pagination-prev"
+      aria-label="Go to previous page"
+      disabled>
+      <i data-lucide="chevron-left" style="width: 16px; height: 16px;"></i>
+    </button>
+
+    <!-- Page Numbers -->
+    <div class="pagination-pages">
+      <button type="button" class="pagination-page active" aria-current="page">1</button>
+      <button type="button" class="pagination-page">2</button>
+      <button type="button" class="pagination-page">3</button>
+      <span class="pagination-ellipsis">...</span>
+      <button type="button" class="pagination-page">10</button>
+    </div>
+
+    <!-- Next Page -->
+    <button
+      type="button"
+      class="pagination-btn pagination-next"
+      aria-label="Go to next page">
+      <i data-lucide="chevron-right" style="width: 16px; height: 16px;"></i>
+    </button>
+
+    <!-- Last Page -->
+    <button
+      type="button"
+      class="pagination-btn pagination-last"
+      aria-label="Go to last page">
+      <i data-lucide="chevrons-right" style="width: 16px; height: 16px;"></i>
+    </button>
+  </div>
+
+  <!-- Items Per Page Selector -->
+  <div class="pagination-items-per-page">
+    <label for="items-per-page-select">Items per page:</label>
+    <select id="items-per-page-select" class="items-per-page-select">
+      <option value="10">10</option>
+      <option value="25">25</option>
+      <option value="50">50</option>
+      <option value="100">100</option>
+    </select>
+  </div>
+</nav>
+

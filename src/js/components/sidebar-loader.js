@@ -46,11 +46,39 @@ class SidebarLoader extends BaseComponentLoader {
   }
 
   /**
-   * Override afterLoad to set active page
+   * Override afterLoad to set active page and initialize enhanced features
    */
   afterLoad() {
     super.afterLoad();
     this.setActivePage();
+    // Initialize enhanced features after a short delay to ensure DOM is ready
+    setTimeout(() => {
+      this.initializeEnhancedFeatures();
+    }, 100);
+  }
+
+  /**
+   * Initialize enhanced sidebar features
+   */
+  async initializeEnhancedFeatures() {
+    const sidebar = document.getElementById('sidebar');
+    if (!sidebar) return;
+
+    // Ensure Lucide icons are initialized (base loader handles this, but double-check)
+    if (typeof lucide !== 'undefined' && lucide.createIcons) {
+      lucide.createIcons(sidebar);
+    }
+
+    // Load and initialize enhanced sidebar navigation
+    try {
+      const { EnhancedSidebarNav } = await import('./enhanced-sidebar-nav.js');
+      // The EnhancedSidebarNav auto-initializes, but we ensure it's set up
+      if (!window.enhancedSidebarNav) {
+        window.enhancedSidebarNav = new EnhancedSidebarNav();
+      }
+    } catch (error) {
+      console.warn('[Sidebar Loader] Could not load enhanced sidebar navigation:', error);
+    }
   }
 
   /**

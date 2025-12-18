@@ -17,91 +17,99 @@
     <!-- New Modular CSS Architecture -->
     <link rel="stylesheet" href="./src/css/main.css" />
     <!-- Page-specific styles -->
-    <script src="./src/theme-switcher.js" defer></script>
+    <link rel="stylesheet" href="./src/css/pages/qb-throwing-tracker.css" />
+    
+    <!-- Lucide Icons - Modern icon library -->
     <script
       src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"
       crossorigin="anonymous"
       defer
-    >
-      <!-- Universal Components -->
-      <script type="module" src="./src/js/main.js">
-    </script>
-    <!-- Footer Loader (Dynamic Component) -->
-    <script type="module" src="./src/js/components/footer-loader.js" defer></script>
+    ></script>
+    <script src="./src/icon-helper.js" defer></script>
+    <script src="./src/theme-switcher.js" defer></script>
+    <script src="./src/nav-highlight.js" defer></script>
+    <script src="./src/components/organisms/top-bar/top-bar.js" defer></script>
+    <!-- Universal Components -->
+    <script type="module" src="./src/js/main.js"></script>
+    <!-- Common Component Loaders (Sidebar, Top Bar, Footer) -->
+    <script type="module" src="./src/js/components/common-loaders.js" defer></script>
+    <!-- AI Chat Bubble Loader (Dynamic Component) -->
+    <script type="module" src="./src/js/components/ai-chat-bubble-loader.js" defer></script>
   
+    <!-- Supabase Configuration (Centralized) -->
+    <script src="./src/js/config/supabase-config.js"></script>
+    
     <!-- Supabase JS SDK from CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <!-- Supabase Configuration -->
-    <script>
-      // Set Supabase config in window for production
-      window._env = {
-        SUPABASE_URL: 'https://pvziciccwxgftcielknm.supabase.co',
-        SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2emljaWNjd3hnZnRjaWVsa25tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MzcwNTgsImV4cCI6MjA3NTExMzA1OH0.1nfJrtWPl6DrAwvjGvM1-CZBeyYgCaV9oDdaadpqhLU'
-      };
-    </script>
-
   </head>
   <body>
-    <div class="container l-container u-margin-x-auto u-padding-20">
-      <div class="header u-text-center u-margin-bottom-30 u-text-primary">
-        <h1 class="u-text-heading-xl u-font-weight-700 u-margin-bottom-10">
-          <i
-            data-lucide="bar-chart-3"
-            style="
-              width: 16px;
-              height: 16px;
-              display: inline-block;
-              vertical-align: middle;
-              color: var(--icon-color-primary);
-              stroke: var(--icon-color-primary);
-            "
-          ></i>
-          Throwing Volume & Velocity Tracker
-        </h1>
-        <p class="u-text-body-lg" style="opacity: 0.9">
-          Track your progress toward the 320-throw tournament challenge
-        </p>
-      </div>
+    <div class="dashboard-container">
+      <!-- Unified Sidebar Navigation (Loaded Dynamically) -->
+      <div data-sidebar-container></div>
+      <!-- Top Bar (Loaded Dynamically) -->
+      <div data-topbar-container></div>
 
-      <div class="progress-banner">
-        <h3>
-          <i
-            data-lucide="trophy"
-            style="
-              width: 16px;
-              height: 16px;
-              display: inline-block;
-              vertical-align: middle;
-              color: var(--icon-color-primary);
-              stroke: var(--icon-color-primary);
-            "
-          ></i>
-          Tournament Preparation Progress
-        </h3>
-        <div class="banner-stats">
-          <div class="banner-stat">
-            <div class="stat-number" id="currentWeekVolume">0</div>
-            <div class="stat-label">This Week's Throws</div>
-          </div>
-          <div class="banner-stat">
-            <div class="stat-number" id="totalThrows">0</div>
-            <div class="stat-label">Total Program Throws</div>
-          </div>
-          <div class="banner-stat">
-            <div class="stat-number" id="peakVelocity">--</div>
-            <div class="stat-label">Peak Velocity (mph)</div>
-          </div>
-          <div class="banner-stat">
-            <div class="stat-number" id="tournamentReadiness">0%</div>
-            <div class="stat-label">Tournament Readiness</div>
+      <main class="main-content u-flex-1 u-min-width-0 u-bg-primary">
+        <!-- Page Header -->
+        <div class="card card-elevated">
+          <div class="card-body">
+            <div class="u-text-body-sm u-text-secondary u-margin-bottom-4" style="line-height: 1.4; font-weight: 500">
+              <span>QB Development</span>
+              <span style="margin: 0 var(--space-1, 4px); opacity: 0.5">•</span>
+              <span>Throwing Tracker</span>
+            </div>
+            <h1 class="u-text-heading-xl u-font-weight-700 u-text-primary u-margin-bottom-8 u-display-flex u-align-center u-gap-8">
+              <i
+                data-lucide="bar-chart-3"
+                class="icon-24"
+                style="color: var(--color-brand-primary)"
+              ></i>
+              Throwing Volume & Velocity Tracker
+            </h1>
+            <p class="text-body-md text-secondary leading-relaxed">
+              Track your progress toward the 320-throw tournament challenge
+            </p>
           </div>
         </div>
-      </div>
 
-      <!-- Quick Session Logging -->
-      <div class="quick-log">
-        <h3>📝 Log Throwing Session</h3>
+        <!-- Tournament Preparation Progress -->
+        <div class="card card-elevated u-margin-top-24" style="background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%); color: white;">
+          <div class="card-body" style="padding: 32px;">
+            <h3 class="u-text-heading-lg u-margin-bottom-24 u-display-flex u-align-center u-gap-8" style="color: white;">
+              <i data-lucide="trophy" class="icon-24" style="color: white;"></i>
+              Tournament Preparation Progress
+            </h3>
+            <div class="u-display-grid u-gap-16" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+              <div class="u-text-center u-padding-16 u-radius-md" style="background: rgba(255, 255, 255, 0.1);">
+                <div class="u-text-heading-2xl u-font-weight-700 u-margin-bottom-4" id="currentWeekVolume" style="color: white;">0</div>
+                <div class="u-text-body-sm" style="color: rgba(255, 255, 255, 0.9);">This Week's Throws</div>
+              </div>
+              <div class="u-text-center u-padding-16 u-radius-md" style="background: rgba(255, 255, 255, 0.1);">
+                <div class="u-text-heading-2xl u-font-weight-700 u-margin-bottom-4" id="totalThrows" style="color: white;">0</div>
+                <div class="u-text-body-sm" style="color: rgba(255, 255, 255, 0.9);">Total Program Throws</div>
+              </div>
+              <div class="u-text-center u-padding-16 u-radius-md" style="background: rgba(255, 255, 255, 0.1);">
+                <div class="u-text-heading-2xl u-font-weight-700 u-margin-bottom-4" id="peakVelocity" style="color: white;">--</div>
+                <div class="u-text-body-sm" style="color: rgba(255, 255, 255, 0.9);">Peak Velocity (mph)</div>
+              </div>
+              <div class="u-text-center u-padding-16 u-radius-md" style="background: rgba(255, 255, 255, 0.1);">
+                <div class="u-text-heading-2xl u-font-weight-700 u-margin-bottom-4" id="tournamentReadiness" style="color: white;">0%</div>
+                <div class="u-text-body-sm" style="color: rgba(255, 255, 255, 0.9);">Tournament Readiness</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Session Logging -->
+        <div class="card u-margin-top-24">
+          <div class="card-header">
+            <h3 class="card-title u-display-flex u-align-center u-gap-8 u-margin-0">
+              <i data-lucide="plus-circle" class="icon-20" style="color: var(--color-brand-primary);"></i>
+              Log Throwing Session
+            </h3>
+          </div>
+          <div class="card-body">
 
         <div class="form-row">
           <div class="form-group">
@@ -225,187 +233,165 @@
           ></textarea>
         </div>
 
-        <button class="btn btn-success" onclick="logSession()">
-          Log Session
-        </button>
-        <button class="btn" onclick="startQuickSession()">
-          Start Guided Session
-        </button>
-      </div>
-
-      <!-- Progress Tracking -->
-      <div class="progress-section">
-        <h3>
-          <i
-            data-lucide="bar-chart-3"
-            style="
-              width: 16px;
-              height: 16px;
-              display: inline-block;
-              vertical-align: middle;
-              color: var(--icon-color-primary);
-              stroke: var(--icon-color-primary);
-            "
-          ></i>
-          Weekly Progress
-        </h3>
-
-        <div class="progress-bar-container">
-          <div class="progress-bar-label">
-            <span>Weekly Volume Goal</span>
-            <span id="volumeProgressText">0 / 0 throws</span>
-          </div>
-          <div class="progress-bar">
-            <div
-              class="progress-fill volume-progress"
-              id="volumeProgressBar"
-              style="width: 0%"
-            ></div>
-          </div>
-        </div>
-
-        <div class="progress-bar-container">
-          <div class="progress-bar-label">
-            <span>Velocity Development</span>
-            <span id="velocityProgressText">0 mph gain</span>
-          </div>
-          <div class="progress-bar">
-            <div
-              class="progress-fill velocity-progress"
-              id="velocityProgressBar"
-              style="width: 0%"
-            ></div>
-          </div>
-        </div>
-
-        <div class="progress-bar-container">
-          <div class="progress-bar-label">
-            <span>Tournament Readiness (320 throws)</span>
-            <span id="tournamentProgressText">0%</span>
-          </div>
-          <div class="progress-bar">
-            <div
-              class="progress-fill tournament-progress"
-              id="tournamentProgressBar"
-              style="width: 0%"
-            ></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="dashboard-grid">
-        <!-- Volume Tracking -->
-        <div class="tracking-card u-radius-lg u-padding-24">
-          <div
-            class="card-title u-display-flex u-align-center u-text-heading-md u-font-weight-600 u-margin-bottom-20"
-          >
-            <div
-              class="card-icon volume-icon u-display-flex u-align-center u-justify-center u-margin-right-16 u-radius-md"
-              style="width: 40px; height: 40px; font-size: 1.2rem"
-            >
-              <i
-                data-lucide="bar-chart-3"
-                style="
-                  width: 16px;
-                  height: 16px;
-                  display: inline-block;
-                  vertical-align: middle;
-                  color: var(--icon-color-primary);
-                  stroke: var(--icon-color-primary);
-                "
-              ></i>
+            <div class="u-display-flex u-gap-12" style="margin-top: 24px;">
+              <button class="btn btn-primary" onclick="logSession()">
+                <i data-lucide="save" class="icon-18" style="margin-right: 8px;"></i>
+                Log Session
+              </button>
+              <button class="btn btn-secondary" onclick="startQuickSession()">
+                <i data-lucide="play-circle" class="icon-18" style="margin-right: 8px;"></i>
+                Start Guided Session
+              </button>
             </div>
-            Volume Tracking
-          </div>
-          <div class="chart-placeholder" id="volumeChart">
-            Volume progression chart will be displayed here
-          </div>
-          <div class="form-group" style="margin-top: 15px">
-            <label class="form-label">Week to Display</label>
-            <select
-              class="form-select"
-              id="weekSelector"
-              onchange="updateCharts()"
-            >
-              <option value="current">Current Week</option>
-              <option value="last4">Last 4 Weeks</option>
-              <option value="all">All Program</option>
-            </select>
           </div>
         </div>
 
-        <!-- Velocity Tracking -->
-        <div class="tracking-card u-radius-lg u-padding-24">
-          <div
-            class="card-title u-display-flex u-align-center u-text-heading-md u-font-weight-600 u-margin-bottom-20"
-          >
-            <div
-              class="card-icon velocity-icon u-display-flex u-align-center u-justify-center u-margin-right-16 u-radius-md"
-              style="width: 40px; height: 40px; font-size: 1.2rem"
-            >
-              🚀
+        <!-- Progress Tracking -->
+        <div class="card u-margin-top-24">
+          <div class="card-header">
+            <h3 class="card-title u-display-flex u-align-center u-gap-8 u-margin-0">
+              <i data-lucide="trending-up" class="icon-20" style="color: var(--color-brand-primary);"></i>
+              Weekly Progress
+            </h3>
+          </div>
+          <div class="card-body">
+
+            <div class="u-margin-bottom-20">
+              <div class="u-display-flex u-justify-between u-margin-bottom-8">
+                <span class="u-font-weight-600 u-text-primary">Weekly Volume Goal</span>
+                <span class="u-font-weight-600 u-text-primary" id="volumeProgressText">0 / 0 throws</span>
+              </div>
+              <div class="u-width-full u-radius-sm u-overflow-hidden" style="height: 12px; background: var(--color-border-secondary);">
+                <div
+                  class="u-height-full u-radius-sm"
+                  id="volumeProgressBar"
+                  style="width: 0%; transition: width 0.3s ease; background: linear-gradient(90deg, #43e97b, #38f9d7);"
+                ></div>
+              </div>
             </div>
-            Velocity Progression
-          </div>
-          <div class="chart-placeholder" id="velocityChart">
-            Velocity progression chart will be displayed here
-          </div>
-          <div style="margin-top: 15px">
-            <small><strong>Target:</strong> 8-15 mph gain over 14 weeks</small>
+
+            <div class="u-margin-bottom-20">
+              <div class="u-display-flex u-justify-between u-margin-bottom-8">
+                <span class="u-font-weight-600 u-text-primary">Velocity Development</span>
+                <span class="u-font-weight-600 u-text-primary" id="velocityProgressText">0 mph gain</span>
+              </div>
+              <div class="u-width-full u-radius-sm u-overflow-hidden" style="height: 12px; background: var(--color-border-secondary);">
+                <div
+                  class="u-height-full u-radius-sm"
+                  id="velocityProgressBar"
+                  style="width: 0%; transition: width 0.3s ease; background: linear-gradient(90deg, var(--color-brand-primary), var(--color-brand-secondary));"
+                ></div>
+              </div>
+            </div>
+
+            <div class="u-margin-bottom-0">
+              <div class="u-display-flex u-justify-between u-margin-bottom-8">
+                <span class="u-font-weight-600 u-text-primary">Tournament Readiness (320 throws)</span>
+                <span class="u-font-weight-600 u-text-primary" id="tournamentProgressText">0%</span>
+              </div>
+              <div class="u-width-full u-radius-sm u-overflow-hidden" style="height: 12px; background: var(--color-border-secondary);">
+                <div
+                  class="u-height-full u-radius-sm"
+                  id="tournamentProgressBar"
+                  style="width: 0%; transition: width 0.3s ease; background: linear-gradient(90deg, var(--color-brand-primary), var(--color-brand-secondary));"
+                ></div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Recent Sessions -->
-      <div class="session-log">
-        <h3>
-          <i
-            data-lucide="clipboard-list"
-            style="
-              width: 16px;
-              height: 16px;
-              display: inline-block;
-              vertical-align: middle;
-              color: var(--icon-color-primary);
-              stroke: var(--icon-color-primary);
-            "
-          ></i>
-          Recent Sessions
-        </h3>
+        <!-- Charts Grid -->
+        <div class="u-display-grid u-gap-24 u-margin-top-24" style="grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));">
+          <!-- Volume Tracking -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title u-display-flex u-align-center u-gap-12 u-margin-0">
+                <div
+                  class="u-display-flex u-align-center u-justify-center u-radius-md"
+                  style="width: 40px; height: 40px; background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);"
+                >
+                  <i data-lucide="bar-chart-3" class="icon-20" style="color: white;"></i>
+                </div>
+                Volume Tracking
+              </h3>
+            </div>
+            <div class="card-body">
+              <div class="u-padding-24 u-radius-md u-margin-bottom-16" id="volumeChart" style="background: var(--surface-secondary); min-height: 200px; display: flex; align-items: center; justify-content: center; color: var(--text-secondary);">
+                <div class="u-text-center">
+                  <i data-lucide="bar-chart-3" class="icon-48" style="opacity: 0.3; margin-bottom: 12px;"></i>
+                  <p>Volume progression chart will be displayed here</p>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label u-display-block u-margin-bottom-4 u-font-weight-600">Week to Display</label>
+                <select
+                  class="form-select"
+                  id="weekSelector"
+                  onchange="updateCharts()"
+                  style="width: 100%; padding: 10px; border: 2px solid var(--color-border-secondary); border-radius: 8px; font-size: 0.95rem; background: var(--surface-primary); color: var(--text-primary);"
+                >
+                  <option value="current">Current Week</option>
+                  <option value="last4">Last 4 Weeks</option>
+                  <option value="all">All Program</option>
+                </select>
+              </div>
+            </div>
+          </div>
 
-        <div id="sessionLogContainer">
-          <!-- Sessions will be dynamically loaded here -->
+          <!-- Velocity Tracking -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title u-display-flex u-align-center u-gap-12 u-margin-0">
+                <div
+                  class="u-display-flex u-align-center u-justify-center u-radius-md"
+                  style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%);"
+                >
+                  <i data-lucide="zap" class="icon-20" style="color: white;"></i>
+                </div>
+                Velocity Progression
+              </h3>
+            </div>
+            <div class="card-body">
+              <div class="u-padding-24 u-radius-md u-margin-bottom-16" id="velocityChart" style="background: var(--surface-secondary); min-height: 200px; display: flex; align-items: center; justify-content: center; color: var(--text-secondary);">
+                <div class="u-text-center">
+                  <i data-lucide="trending-up" class="icon-48" style="opacity: 0.3; margin-bottom: 12px;"></i>
+                  <p>Velocity progression chart will be displayed here</p>
+                </div>
+              </div>
+              <div class="u-text-body-sm u-text-secondary">
+                <strong>Target:</strong> 8-15 mph gain over 14 weeks
+              </div>
+            </div>
+          </div>
         </div>
 
-        <button
-          class="btn"
-          onclick="loadMoreSessions()"
-          style="width: 100%; margin-top: 15px"
-        >
-          Load More Sessions
-        </button>
-      </div>
+        <!-- Recent Sessions -->
+        <div class="card u-margin-top-24">
+          <div class="card-header">
+            <h3 class="card-title u-display-flex u-align-center u-gap-8 u-margin-0">
+              <i data-lucide="clipboard-list" class="icon-20" style="color: var(--color-brand-primary);"></i>
+              Recent Sessions
+            </h3>
+          </div>
+          <div class="card-body">
+            <div id="sessionLogContainer">
+              <!-- Sessions will be dynamically loaded here -->
+            </div>
 
-      <!-- Navigation -->
-      <div class="nav-links">
-        <a href="qb-training-schedule.html"
-          ><i
-            data-lucide="chevron-left"
-            style="
-              width: 16px;
-              height: 16px;
-              display: inline-block;
-              vertical-align: middle;
-              color: var(--icon-color-primary);
-              stroke: var(--icon-color-primary);
-            "
-          ></i>
-          QB Training</a
-        >
-        <a href="qb-assessment-tools.html">Assessment Tools</a>
-        <a href="training.html#schedule">WR/DB Training</a>
-        <a href="index.html">Dashboard</a>
-      </div>
+            <button
+              class="btn btn-secondary"
+              onclick="loadMoreSessions()"
+              style="width: 100%; margin-top: 24px;"
+            >
+              <i data-lucide="chevron-down" class="icon-18" style="margin-right: 8px;"></i>
+              Load More Sessions
+            </button>
+          </div>
+        </div>
+
+        <!-- AI Chat Floating Bubble (Loaded Dynamically) -->
+        <div data-ai-chat-container></div>
+      </main>
     </div>
 
     <script type="module">
@@ -576,46 +562,59 @@
         const container = document.getElementById("sessionLogContainer");
         const recentSessions = sessionData.slice(-10).reverse(); // Last 10 sessions, newest first
 
-        container.innerHTML = recentSessions
-          .map((session) => {
-            const sessionDate = new Date(session.date);
-            return `
-                    <div class="log-entry">
-                        <div class="log-header">
-                            <span class="log-date">${sessionDate.toLocaleDateString()} - Week ${session.week}</span>
-                            <span class="log-type">${formatSessionType(session.type)}</span>
-                        </div>
-                        <div class="log-stats">
-                            <div class="log-stat">
-                                <div class="log-stat-number">${session.totalThrows}</div>
-                                <div class="log-stat-label">Throws</div>
-                            </div>
-                            <div class="log-stat">
-                                <div class="log-stat-number">${session.peakVelocity || "--"}</div>
-                                <div class="log-stat-label">Peak MPH</div>
-                            </div>
-                            <div class="log-stat">
-                                <div class="log-stat-number">${session.accuracy || "--"}%</div>
-                                <div class="log-stat-label">Accuracy</div>
-                            </div>
-                            <div class="log-stat">
-                                <div class="log-stat-number">${session.duration}</div>
-                                <div class="log-stat-label">Minutes</div>
-                            </div>
-                            <div class="log-stat">
-                                <div class="log-stat-number">${session.fatigueLevel}/10</div>
-                                <div class="log-stat-label">Fatigue</div>
-                            </div>
-                        </div>
-                        ${session.notes ? `<div style="margin-top: 10px; font-style: italic; color: var(--dark-text-secondary);">"${session.notes}"</div>` : ""}
-                    </div>
-                `;
-          })
-          .join("");
-
         if (recentSessions.length === 0) {
-          container.innerHTML =
-            '<p style="text-align: center; color: var(--dark-text-secondary); padding: 20px;">No sessions logged yet. Start by logging your first throwing session!</p>';
+          container.innerHTML = `
+            <div style="text-align: center; padding: 60px 40px; color: var(--text-secondary);">
+              <i data-lucide="clipboard-x" class="icon-64" style="opacity: 0.3; margin-bottom: 16px;"></i>
+              <h3 style="margin-top: 24px; color: var(--text-primary); font-size: 1.25rem;">No sessions logged yet</h3>
+              <p style="margin-top: 8px;">Start by logging your first throwing session!</p>
+            </div>
+          `;
+          if (typeof lucide !== 'undefined') lucide.createIcons();
+        } else {
+          container.innerHTML = recentSessions
+            .map((session) => {
+              const sessionDate = new Date(session.date);
+              return `
+                <div class="card card-interactive" style="margin-bottom: 16px;">
+                  <div class="card-body">
+                    <div class="u-display-flex u-justify-between u-align-center u-margin-bottom-12">
+                      <div>
+                        <div class="u-font-weight-600 u-text-primary u-text-heading-md">${sessionDate.toLocaleDateString()}</div>
+                        <div class="u-text-body-sm u-text-secondary">Week ${session.week}</div>
+                      </div>
+                      <span class="badge badge-primary" style="padding: 6px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 500;">${formatSessionType(session.type)}</span>
+                    </div>
+                    <div class="u-display-grid u-gap-12" style="grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); margin-bottom: 12px;">
+                      <div class="u-text-center u-padding-8 u-radius-md" style="background: var(--surface-secondary);">
+                        <div class="u-font-weight-700 u-text-heading-md u-text-primary">${session.totalThrows}</div>
+                        <div class="u-text-body-xs u-text-secondary u-margin-top-2">Throws</div>
+                      </div>
+                      <div class="u-text-center u-padding-8 u-radius-md" style="background: var(--surface-secondary);">
+                        <div class="u-font-weight-700 u-text-heading-md u-text-primary">${session.peakVelocity || "--"}</div>
+                        <div class="u-text-body-xs u-text-secondary u-margin-top-2">Peak MPH</div>
+                      </div>
+                      <div class="u-text-center u-padding-8 u-radius-md" style="background: var(--surface-secondary);">
+                        <div class="u-font-weight-700 u-text-heading-md u-text-primary">${session.accuracy || "--"}%</div>
+                        <div class="u-text-body-xs u-text-secondary u-margin-top-2">Accuracy</div>
+                      </div>
+                      <div class="u-text-center u-padding-8 u-radius-md" style="background: var(--surface-secondary);">
+                        <div class="u-font-weight-700 u-text-heading-md u-text-primary">${session.duration}</div>
+                        <div class="u-text-body-xs u-text-secondary u-margin-top-2">Minutes</div>
+                      </div>
+                      <div class="u-text-center u-padding-8 u-radius-md" style="background: var(--surface-secondary);">
+                        <div class="u-font-weight-700 u-text-heading-md u-text-primary">${session.fatigueLevel}/10</div>
+                        <div class="u-text-body-xs u-text-secondary u-margin-top-2">Fatigue</div>
+                      </div>
+                    </div>
+                    ${session.notes ? `<div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--color-border-secondary); font-style: italic; color: var(--text-secondary);">"${session.notes}"</div>` : ""}
+                  </div>
+                </div>
+              `;
+            })
+            .join("");
+          
+          if (typeof lucide !== 'undefined') lucide.createIcons();
         }
       }
 
@@ -742,7 +741,7 @@
       document.addEventListener("DOMContentLoaded", initializeDashboard);
     </script>
 
-        <!-- Footer (Loaded Dynamically) -->
+    <!-- Footer (Loaded Dynamically) -->
     <div data-footer-container></div>
   </body>
 </html>

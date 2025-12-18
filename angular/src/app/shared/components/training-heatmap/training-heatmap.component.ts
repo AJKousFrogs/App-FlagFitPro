@@ -1,6 +1,5 @@
 import {
   Component,
-  OnInit,
   signal,
   computed,
   ChangeDetectionStrategy,
@@ -341,11 +340,16 @@ interface HeatmapCell {
     `,
   ],
 })
-export class TrainingHeatmapComponent implements OnInit {
+export class TrainingHeatmapComponent {
   selectedTimeRange = '6months';
   showIntensity = true;
   showDetailModal = false;
   selectedCell: HeatmapCell | null = null;
+  
+  constructor() {
+    // Angular 21: Initialize in constructor instead of OnInit
+    this.updateHeatmap();
+  }
 
   timeRangeOptions = [
     { label: 'Last 3 Months', value: '3months' },
@@ -366,9 +370,6 @@ export class TrainingHeatmapComponent implements OnInit {
 
   heatmapData = signal<HeatmapCell[]>([]);
 
-  ngOnInit() {
-    this.updateHeatmap();
-  }
 
   updateHeatmap() {
     // Generate heatmap data based on selected time range

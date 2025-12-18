@@ -7,8 +7,13 @@ import { exec } from "child_process";
 import { promisify } from "util";
 import fs from "fs/promises";
 import path from "path";
+import { createClient } from '@supabase/supabase-js';
+import dotenv from 'dotenv';
 
 const execAsync = promisify(exec);
+
+// Load environment variables
+dotenv.config();
 
 class HealthChecker {
   constructor() {
@@ -33,6 +38,9 @@ class HealthChecker {
       await this.checkConfiguration();
       await this.checkPerformance();
       await this.checkDocumentation();
+      await this.checkDatabase();
+      await this.checkAPIEndpoints();
+      await this.checkEnvironment();
 
       this.calculateOverallHealth();
       await this.generateReport();
@@ -691,11 +699,339 @@ class HealthChecker {
     }
   }
 
+  async checkDatabase() {
+    console.log("🗄️  Checking Database Connectivity...");
+
+    const database = {
+      score: 0,
+      issues: [],
+      status: "checking",
+      metrics: {},
+    };
+
+    try {
+      const supabaseUrl = process.env.SUPABASE_URL;
+      const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+
+      if (!supabaseUrl || !supabaseKey) {
+        database.issues.push("Missing Supabase environment variables");
+        database.status = "critical";
+        this.results.criticalIssues.push("Database: Missing SUPABASE_URL or SUPABASE_KEY");
+        this.results.categories.database = database;
+        console.log(`   Score: ${database.score}/100`);
+        return;
+      }
+
+      // Test database connection
+      try {
+        const supabase = createClient(supabaseUrl, supabaseKey);
+        const startTime = Date.now();
+
+        // Test query
+        const { data, error, count } = await supabase
+          .from('users')
+          .select('id', { count: 'exact', head: true })
+          .limit(1);
+
+        const queryTime = Date.now() - startTime;
+        database.metrics.queryTime = `${queryTime}ms`;
+
+        if (error) {
+          database.issues.push(`Database query failed: ${error.message}`);
+          database.status = "critical";
+          this.results.criticalIssues.push(`Database: ${error.message}`);
+        } else {
+          database.score += 50; // 50 points for successful connection
+          database.metrics.connected = true;
+          database.metrics.responseTime = queryTime;
+
+          if (queryTime > 1000) {
+            database.issues.push(`Slow database response: ${queryTime}ms`);
+            this.results.warnings.push("Database response time is slow");
+          }
+        }
+
+        // Check for critical tables
+        const criticalTables = ['users', 'teams', 'training_sessions'];
+        let tablesFound = 0;
+
+        for (const table of criticalTables) {
+          try {
+            const { error: tableError } = await supabase
+              .from(table)
+              .select('id')
+              .limit(1);
+
+            if (!tableError) {
+              tablesFound++;
+            }
+          } catch {
+            // Table doesn't exist or not accessible
+          }
+        }
+
+        database.score += (tablesFound / criticalTables.length) * 30; // 30 points for tables
+        database.metrics.tablesFound = tablesFound;
+        database.metrics.totalTables = criticalTables.length;
+
+        if (tablesFound < criticalTables.length) {
+          database.issues.push(`Missing critical tables: ${criticalTables.length - tablesFound}`);
+        }
+
+        // Check database migrations
+        try {
+          const migrationsDir = "./database/migrations";
+          const migrationFiles = await fs.readdir(migrationsDir);
+          database.metrics.migrations = migrationFiles.length;
+          database.score += Math.min(migrationFiles.length * 2, 20); // Up to 20 points for migrations
+        } catch {
+          database.issues.push("Cannot access migrations directory");
+        }
+
+      } catch (error) {
+        database.issues.push(`Database connection failed: ${error.message}`);
+        database.status = "critical";
+        this.results.criticalIssues.push(`Database: Connection failed - ${error.message}`);
+      }
+
+      database.status =
+        database.score > 70 ? "good" : database.score > 40 ? "warning" : "critical";
+    } catch (error) {
+      database.issues.push(`Database check failed: ${error.message}`);
+      database.score = 0;
+      database.status = "critical";
+    }
+
+    this.results.categories.database = database;
+    console.log(`   Score: ${database.score}/100`);
+  }
+
+  async checkAPIEndpoints() {
+    console.log("🌐 Checking API Endpoints...");
+
+    const api = {
+      score: 0,
+      issues: [],
+      status: "checking",
+      metrics: {},
+    };
+
+    try {
+      // Check Netlify functions exist
+      const functionsDir = "./netlify/functions";
+      let functionsFound = 0;
+      let totalFunctions = 0;
+
+      try {
+        const functionFiles = await fs.readdir(functionsDir);
+        totalFunctions = functionFiles.filter(f => f.endsWith('.cjs') || f.endsWith('.js')).length;
+        functionsFound = totalFunctions;
+
+        api.metrics.functionsFound = functionsFound;
+        api.score += Math.min(functionsFound * 2, 40); // Up to 40 points for functions
+
+        // Check for critical functions
+        const criticalFunctions = ['auth-me.cjs', 'dashboard.cjs', 'auth-login.cjs'];
+        let criticalFound = 0;
+
+        for (const func of criticalFunctions) {
+          try {
+            await fs.access(path.join(functionsDir, func));
+            criticalFound++;
+          } catch {
+            api.issues.push(`Missing critical function: ${func}`);
+          }
+        }
+
+        api.score += (criticalFound / criticalFunctions.length) * 30; // 30 points for critical functions
+        api.metrics.criticalFunctions = criticalFound;
+      } catch {
+        api.issues.push("Cannot access Netlify functions directory");
+      }
+
+      // Check error handler utility exists
+      try {
+        await fs.access("./netlify/functions/utils/error-handler.cjs");
+        api.score += 15; // 15 points for error handler
+      } catch {
+        api.issues.push("Missing error handler utility");
+      }
+
+      // Check for API documentation
+      try {
+        const apiDocs = await fs.readFile("./docs/API_DOCUMENTATION.md", "utf8");
+        if (apiDocs.length > 1000) {
+          api.score += 15; // 15 points for API docs
+        }
+      } catch {
+        api.issues.push("API documentation missing or incomplete");
+      }
+
+      api.status =
+        api.score > 70 ? "good" : api.score > 40 ? "warning" : "critical";
+    } catch (error) {
+      api.issues.push(`API check failed: ${error.message}`);
+      api.score = 0;
+      api.status = "critical";
+    }
+
+    this.results.categories.api = api;
+    console.log(`   Score: ${api.score}/100`);
+  }
+
+  async checkEnvironment() {
+    console.log("🔧 Checking Environment Configuration...");
+
+    const env = {
+      score: 0,
+      issues: [],
+      status: "checking",
+      metrics: {},
+    };
+
+    try {
+      // Required environment variables
+      const requiredVars = [
+        'SUPABASE_URL',
+        'SUPABASE_ANON_KEY',
+      ];
+
+      // Optional but recommended
+      const recommendedVars = [
+        'SUPABASE_SERVICE_ROLE_KEY',
+        'JWT_SECRET',
+        'NODE_ENV',
+      ];
+
+      let foundRequired = 0;
+      let foundRecommended = 0;
+
+      for (const varName of requiredVars) {
+        if (process.env[varName]) {
+          foundRequired++;
+        } else {
+          env.issues.push(`Missing required environment variable: ${varName}`);
+          this.results.criticalIssues.push(`Environment: Missing ${varName}`);
+        }
+      }
+
+      for (const varName of recommendedVars) {
+        if (process.env[varName]) {
+          foundRecommended++;
+        } else {
+          env.issues.push(`Missing recommended environment variable: ${varName}`);
+        }
+      }
+
+      env.score += (foundRequired / requiredVars.length) * 60; // 60 points for required vars
+      env.score += (foundRecommended / recommendedVars.length) * 30; // 30 points for recommended vars
+
+      // Check .env.example exists
+      try {
+        await fs.access("./.env.example");
+        env.score += 10; // 10 points for .env.example
+      } catch {
+        env.issues.push("Missing .env.example file");
+      }
+
+      env.metrics.requiredVars = foundRequired;
+      env.metrics.totalRequired = requiredVars.length;
+      env.metrics.recommendedVars = foundRecommended;
+      env.metrics.totalRecommended = recommendedVars.length;
+
+      env.status =
+        env.score > 70 ? "good" : env.score > 40 ? "warning" : "critical";
+    } catch (error) {
+      env.issues.push(`Environment check failed: ${error.message}`);
+      env.score = 0;
+      env.status = "critical";
+    }
+
+    this.results.categories.environment = env;
+    console.log(`   Score: ${env.score}/100`);
+  }
+
   async generateReport() {
     const reportPath = "./health-check-report.json";
     await fs.writeFile(reportPath, JSON.stringify(this.results, null, 2));
 
-    console.log(`\n📊 Health check report saved to: ${reportPath}`);
+    // Generate markdown report
+    const markdownReport = this.generateMarkdownReport();
+    await fs.writeFile("./HEALTH_CHECK_REPORT.md", markdownReport);
+
+    console.log(`\n📊 Health check reports saved:`);
+    console.log(`   - JSON: ${reportPath}`);
+    console.log(`   - Markdown: ./HEALTH_CHECK_REPORT.md`);
+  }
+
+  generateMarkdownReport() {
+    let report = `# Comprehensive Health Check Report\n\n`;
+    report += `**Generated:** ${this.results.timestamp}\n`;
+    report += `**Overall Health:** ${this.results.overallHealth}/100\n\n`;
+
+    // Health status badge
+    let statusBadge = "🔴 Critical";
+    if (this.results.overallHealth >= 85) {
+      statusBadge = "🟢 Excellent";
+    } else if (this.results.overallHealth >= 70) {
+      statusBadge = "🟡 Good";
+    } else if (this.results.overallHealth >= 50) {
+      statusBadge = "🟠 Warning";
+    }
+
+    report += `**Status:** ${statusBadge}\n\n`;
+
+    // Categories
+    report += `## Categories\n\n`;
+    Object.entries(this.results.categories).forEach(([category, data]) => {
+      const statusIcon = data.status === "good" ? "✅" : data.status === "warning" ? "⚠️" : "❌";
+      report += `### ${statusIcon} ${category.charAt(0).toUpperCase() + category.slice(1)}\n\n`;
+      report += `**Score:** ${data.score}/100\n\n`;
+
+      if (data.metrics && Object.keys(data.metrics).length > 0) {
+        report += `**Metrics:**\n`;
+        Object.entries(data.metrics).forEach(([key, value]) => {
+          report += `- ${key}: ${value}\n`;
+        });
+        report += `\n`;
+      }
+
+      if (data.issues && data.issues.length > 0) {
+        report += `**Issues:**\n`;
+        data.issues.forEach((issue) => {
+          report += `- ${issue}\n`;
+        });
+        report += `\n`;
+      }
+    });
+
+    // Critical Issues
+    if (this.results.criticalIssues.length > 0) {
+      report += `## 🚨 Critical Issues\n\n`;
+      this.results.criticalIssues.forEach((issue) => {
+        report += `- ❌ ${issue}\n`;
+      });
+      report += `\n`;
+    }
+
+    // Warnings
+    if (this.results.warnings.length > 0) {
+      report += `## ⚠️  Warnings\n\n`;
+      this.results.warnings.forEach((warning) => {
+        report += `- ⚠️  ${warning}\n`;
+      });
+      report += `\n`;
+    }
+
+    // Recommendations
+    if (this.results.recommendations.length > 0) {
+      report += `## 💡 Recommendations\n\n`;
+      this.results.recommendations.forEach((rec) => {
+        report += `- ${rec}\n`;
+      });
+    }
+
+    return report;
   }
 }
 

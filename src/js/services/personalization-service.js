@@ -25,7 +25,7 @@ class PersonalizationService {
     }
 
     try {
-      const authToken = this.getAuthToken();
+      const authToken = await this.getAuthToken();
       if (!authToken) {
         logger.debug('No auth token available for profile fetch');
         return null;
@@ -326,22 +326,38 @@ class PersonalizationService {
   }
 
   /**
-   * Get auth token from storage
+   * Get auth token from secure storage
+   * Upgraded to use secureStorage API with AES-GCM encryption
    */
-  getAuthToken() {
+  async getAuthToken() {
     try {
+      // First, try to use secureStorage API (preferred method)
+      if (window.secureStorage && typeof window.secureStorage.getAuthToken === 'function') {
+        try {
+          const token = await window.secureStorage.getAuthToken();
+          if (token) {
+            return token;
+          }
+        } catch (error) {
+          logger.debug("Secure storage getAuthToken failed, trying fallback:", error);
+        }
+      }
+
+      // Fallback: Try to get from localStorage (legacy support)
       const authData = localStorage.getItem('auth');
       if (authData) {
         const parsed = JSON.parse(authData);
         return parsed.token || parsed.access_token || null;
       }
 
+      // Fallback: Try to get from sessionStorage (legacy support)
       const sessionAuth = sessionStorage.getItem('auth');
       if (sessionAuth) {
         const parsed = JSON.parse(sessionAuth);
         return parsed.token || parsed.access_token || null;
       }
 
+      // Fallback: Try to get from window if available
       if (window.auth && window.auth.token) {
         return window.auth.token;
       }

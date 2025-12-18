@@ -96,13 +96,21 @@ function createAIAssistantChannel() {
   channelItem.setAttribute("tabindex", "0");
   channelItem.setAttribute("aria-label", "Channel: FlagFit AI Assistant");
 
-  channelItem.innerHTML = `
-    <span class="channel-icon">🤖</span>
-    <div class="channel-info">
-      <div class="channel-name">FlagFit AI Assistant</div>
-      <div class="channel-preview">Ask me about training, nutrition, and performance</div>
-    </div>
-  `;
+  const icon = document.createElement("span");
+  icon.className = "channel-icon";
+  icon.textContent = "🤖";
+  const info = document.createElement("div");
+  info.className = "channel-info";
+  const name = document.createElement("div");
+  name.className = "channel-name";
+  name.textContent = "FlagFit AI Assistant";
+  const preview = document.createElement("div");
+  preview.className = "channel-preview";
+  preview.textContent = "Ask me about training, nutrition, and performance";
+  info.appendChild(name);
+  info.appendChild(preview);
+  channelItem.appendChild(icon);
+  channelItem.appendChild(info);
 
   // Add click handler
   channelItem.addEventListener("click", function () {
@@ -507,13 +515,23 @@ function addChannelToSidebar(channel) {
   channelItem.setAttribute("tabindex", "0");
   channelItem.setAttribute("aria-label", `Channel: ${channel.name}`);
 
-  channelItem.innerHTML = `
-    <span class="channel-icon">#</span>
-    <div class="channel-info">
-      <div class="channel-name">${channel.name}</div>
-      ${channel.description ? `<div class="channel-preview">${escapeHtml(channel.description)}</div>` : ""}
-    </div>
-  `;
+  const icon = document.createElement("span");
+  icon.className = "channel-icon";
+  icon.textContent = "#";
+  const info = document.createElement("div");
+  info.className = "channel-info";
+  const name = document.createElement("div");
+  name.className = "channel-name";
+  name.textContent = channel.name;
+  info.appendChild(name);
+  if (channel.description) {
+    const preview = document.createElement("div");
+    preview.className = "channel-preview";
+    preview.textContent = channel.description;
+    info.appendChild(preview);
+  }
+  channelItem.appendChild(icon);
+  channelItem.appendChild(info);
 
   // Add click handler
   channelItem.addEventListener("click", function () {
@@ -692,24 +710,56 @@ function updateMessagesContainer(messages) {
     // SECURITY: Sanitize author name to prevent XSS
     const safeAuthorName = escapeHtml(msg.authorName || msg.author || 'Unknown');
 
-    messageDiv.innerHTML = `
-      <div class="message-avatar">${getInitials(safeAuthorName)}</div>
-      <div class="message-content">
-        <div class="message-header">
-          <span class="message-author">${isOwn ? "You" : safeAuthorName}</span>
-          <span class="message-time" aria-label="${formatTime(msg.timestamp)}">${formatTime(msg.timestamp)}</span>
-        </div>
-        <div class="message-text">${escapeHtml(msg.text)}</div>
-        ${statusHtml}
-        ${actionsHtml}
-      </div>
-    `;
+    const avatar = document.createElement("div");
+    avatar.className = "message-avatar";
+    avatar.textContent = getInitials(safeAuthorName);
+    
+    const content = document.createElement("div");
+    content.className = "message-content";
+    
+    const header = document.createElement("div");
+    header.className = "message-header";
+    const author = document.createElement("span");
+    author.className = "message-author";
+    author.textContent = isOwn ? "You" : safeAuthorName;
+    const time = document.createElement("span");
+    time.className = "message-time";
+    time.setAttribute("aria-label", formatTime(msg.timestamp));
+    time.textContent = formatTime(msg.timestamp);
+    header.appendChild(author);
+    header.appendChild(time);
+    
+    const text = document.createElement("div");
+    text.className = "message-text";
+    text.textContent = msg.text;
+    
+    content.appendChild(header);
+    content.appendChild(text);
+    
+    // Add status and actions HTML using temp containers
+    if (statusHtml) {
+      const tempStatus = document.createElement("div");
+      tempStatus.innerHTML = statusHtml;
+      while (tempStatus.firstChild) {
+        content.appendChild(tempStatus.firstChild);
+      }
+    }
+    if (actionsHtml) {
+      const tempActions = document.createElement("div");
+      tempActions.innerHTML = actionsHtml;
+      while (tempActions.firstChild) {
+        content.appendChild(tempActions.firstChild);
+      }
+    }
+    
+    messageDiv.appendChild(avatar);
+    messageDiv.appendChild(content);
 
     fragment.appendChild(messageDiv);
   });
 
   // Single DOM update - clear and append fragment
-  container.innerHTML = "";
+  container.textContent = "";
   container.appendChild(fragment);
 
   // Initialize Lucide icons for new messages
@@ -729,7 +779,11 @@ async function sendMessage() {
 
   // Show loading state with accessibility
   const originalBtnText = sendBtn.innerHTML;
-  sendBtn.innerHTML = '<span aria-hidden="true">⏳</span>';
+  sendBtn.textContent = "";
+  const loadingSpan = document.createElement("span");
+  loadingSpan.setAttribute("aria-hidden", "true");
+  loadingSpan.textContent = "⏳";
+  sendBtn.appendChild(loadingSpan);
   sendBtn.disabled = true;
   sendBtn.setAttribute("aria-label", "Sending message...");
 
@@ -806,7 +860,13 @@ async function sendMessage() {
   // Reset form state
   input.value = "";
   input.style.height = "auto";
-  sendBtn.innerHTML = originalBtnText;
+  // Restore original button content - use temp container to safely restore HTML
+  const temp = document.createElement("div");
+  temp.innerHTML = originalBtnText;
+  sendBtn.textContent = "";
+  while (temp.firstChild) {
+    sendBtn.appendChild(temp.firstChild);
+  }
   sendBtn.disabled = true;
   sendBtn.setAttribute("aria-label", "Send message");
 
@@ -844,7 +904,7 @@ function loadMessagesFromStorage() {
   if (storedMessages.length > 0) {
     // Clear existing demo messages and load stored ones
     const container = document.getElementById("messagesContainer");
-    container.innerHTML = "";
+    container.textContent = "";
 
     storedMessages.forEach((msg) => {
       addMessageToUI(msg, msg.author === authManager.getCurrentUser()?.email);
@@ -934,18 +994,50 @@ function addMessageToUI(message, isOwn = false) {
     : "";
   const actionsHtml = getMessageActionsHtml(isOwn);
 
-  messageDiv.innerHTML = `
-          <div class="message-avatar">${getInitials(message.authorName)}</div>
-          <div class="message-content">
-              <div class="message-header">
-                  <span class="message-author">${message.authorName}</span>
-                  <span class="message-time" aria-label="${formatTime(message.timestamp)}">${formatTime(message.timestamp)}</span>
-              </div>
-              <div class="message-text">${escapeHtml(message.text)}</div>
-              ${statusHtml}
-              ${actionsHtml}
-          </div>
-      `;
+  const avatar = document.createElement("div");
+  avatar.className = "message-avatar";
+  avatar.textContent = getInitials(message.authorName);
+  
+  const content = document.createElement("div");
+  content.className = "message-content";
+  
+  const header = document.createElement("div");
+  header.className = "message-header";
+  const author = document.createElement("span");
+  author.className = "message-author";
+  author.textContent = message.authorName;
+  const time = document.createElement("span");
+  time.className = "message-time";
+  time.setAttribute("aria-label", formatTime(message.timestamp));
+  time.textContent = formatTime(message.timestamp);
+  header.appendChild(author);
+  header.appendChild(time);
+  
+  const text = document.createElement("div");
+  text.className = "message-text";
+  text.textContent = message.text;
+  
+  content.appendChild(header);
+  content.appendChild(text);
+  
+  // Add status and actions HTML using temp containers
+  if (statusHtml) {
+    const tempStatus = document.createElement("div");
+    tempStatus.innerHTML = statusHtml;
+    while (tempStatus.firstChild) {
+      content.appendChild(tempStatus.firstChild);
+    }
+  }
+  if (actionsHtml) {
+    const tempActions = document.createElement("div");
+    tempActions.innerHTML = actionsHtml;
+    while (tempActions.firstChild) {
+      content.appendChild(tempActions.firstChild);
+    }
+  }
+  
+  messageDiv.appendChild(avatar);
+  messageDiv.appendChild(content);
 
   container.appendChild(messageDiv);
 
@@ -1020,7 +1112,11 @@ function updateMessageStatus(status) {
       const icon = statusIcons[status] || "check";
       const statusClass = statusClasses[status] || "status-sent";
 
-      statusDiv.innerHTML = `<i data-lucide="${icon}" class="${statusClass} icon-14"></i>`;
+      statusDiv.textContent = "";
+      const statusIcon = document.createElement("i");
+      statusIcon.setAttribute("data-lucide", icon);
+      statusIcon.className = `${statusClass} icon-14`;
+      statusDiv.appendChild(statusIcon);
 
       // Re-initialize Lucide icons
       if (typeof lucide !== "undefined") {

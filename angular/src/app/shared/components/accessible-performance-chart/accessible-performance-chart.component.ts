@@ -1,7 +1,6 @@
 import {
   Component,
-  Input,
-  OnInit,
+  input,
   computed,
   signal,
   HostListener,
@@ -35,15 +34,15 @@ export interface AccessibleDataPoint {
       <!-- Visual Chart -->
       <p-chart
         [type]="'line'"
-        [data]="chartData"
-        [options]="chartOptions"
+        [data]="chartData()"
+        [options]="chartOptions()"
         aria-hidden="true"
       ></p-chart>
 
       <!-- Screen Reader Data Table -->
       <table class="sr-only" aria-label="Performance data table">
         <caption>
-          {{ chartTitle }} - Detailed performance metrics over time
+          {{ chartTitle() }} - Detailed performance metrics over time
         </caption>
         <thead>
           <tr>
@@ -213,10 +212,11 @@ export interface AccessibleDataPoint {
     `,
   ],
 })
-export class AccessiblePerformanceChartComponent implements OnInit {
-  @Input() chartData: any;
-  @Input() chartTitle: string = "Performance Chart";
-  @Input() chartOptions: any = DEFAULT_CHART_OPTIONS;
+export class AccessiblePerformanceChartComponent {
+  // Angular 21: Use input() signal instead of @Input()
+  chartData = input<any>();
+  chartTitle = input<string>("Performance Chart");
+  chartOptions = input<any>(DEFAULT_CHART_OPTIONS);
 
   showKeyboardHelp = signal(false);
   currentDataPointIndex = signal<number | null>(null);
@@ -228,12 +228,13 @@ export class AccessiblePerformanceChartComponent implements OnInit {
   });
 
   accessibleData = computed(() => {
-    if (!this.chartData?.datasets?.[0]?.data) {
+    const data = this.chartData();
+    if (!data?.datasets?.[0]?.data) {
       return [];
     }
 
-    return this.chartData.datasets[0].data.map((value: any, index: number) => {
-      const date = this.chartData.labels?.[index] || new Date();
+    return data.datasets[0].data.map((value: any, index: number) => {
+      const date = data.labels?.[index] || new Date();
       const speed = typeof value === "object" ? value.speed || value : value;
       const accuracy =
         typeof value === "object" ? value.accuracy || 0 : 100;
@@ -255,15 +256,8 @@ export class AccessiblePerformanceChartComponent implements OnInit {
     return `Data point ${index + 1} of ${this.accessibleData().length}: Date ${point.date}, Speed ${point.speed} miles per hour, Accuracy ${point.accuracy} percent. ${point.trendDescription}`;
   });
 
-  private speechSynthesis: SpeechSynthesis;
-
-  constructor() {
-    this.speechSynthesis = window.speechSynthesis;
-  }
-
-  ngOnInit(): void {
-    // Initialize component
-  }
+  // Initialize speechSynthesis at field declaration
+  private speechSynthesis: SpeechSynthesis = typeof window !== "undefined" ? window.speechSynthesis : null as any;
 
   @HostListener("keydown", ["$event"])
   handleKeydown(event: KeyboardEvent): void {
@@ -363,11 +357,12 @@ export class AccessiblePerformanceChartComponent implements OnInit {
   }
 
   private getMainTrend(): string {
-    if (!this.chartData?.datasets?.[0]?.data?.length) {
+    const chartData = this.chartData();
+    if (!chartData?.datasets?.[0]?.data?.length) {
       return "remained stable";
     }
 
-    const data = this.chartData.datasets[0].data;
+    const data = chartData.datasets[0].data;
     const first = typeof data[0] === "object" ? data[0].speed || data[0] : data[0];
     const last =
       typeof data[data.length - 1] === "object"
@@ -385,11 +380,12 @@ export class AccessiblePerformanceChartComponent implements OnInit {
   }
 
   private getTimePeriod(): string {
-    if (!this.chartData?.labels?.length) {
+    const chartData = this.chartData();
+    if (!chartData?.labels?.length) {
       return "the selected period";
     }
 
-    const labels = this.chartData.labels;
+    const labels = chartData.labels;
     const count = labels.length;
 
     if (count <= 7) {
@@ -414,15 +410,16 @@ export class AccessiblePerformanceChartComponent implements OnInit {
   }
 
   private calculateTrend(value: any, index: number): string {
-    if (!this.chartData?.datasets?.[0]?.data || index === 0) {
+    const chartData = this.chartData();
+    if (!chartData?.datasets?.[0]?.data || index === 0) {
       return "Baseline measurement";
     }
 
     const previousValue =
-      typeof this.chartData.datasets[0].data[index - 1] === "object"
-        ? this.chartData.datasets[0].data[index - 1].speed ||
-          this.chartData.datasets[0].data[index - 1]
-        : this.chartData.datasets[0].data[index - 1];
+      typeof chartData.datasets[0].data[index - 1] === "object"
+        ? chartData.datasets[0].data[index - 1].speed ||
+          chartData.datasets[0].data[index - 1]
+        : chartData.datasets[0].data[index - 1];
 
     const currentValue =
       typeof value === "object" ? value.speed || value : value;

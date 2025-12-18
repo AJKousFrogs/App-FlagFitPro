@@ -29,6 +29,14 @@ class FlagFitChatbot {
     this.userContext = null; // User context for role-aware responses
     this.roleAwareGenerator = null; // Role-aware response generator
     this.personalizationService = null; // Personalization service for profile data
+    this.responseCache = new Map(); // Cache responses for better performance
+    this.cacheTimeout = 5 * 60 * 1000; // 5 minutes cache
+    this.maxContextMessages = 10; // Maximum context messages to keep
+    this.retryAttempts = 3; // Maximum retry attempts for failed requests
+    this.retryDelay = 1000; // Initial retry delay in ms
+    this.isStreaming = false; // Track if currently streaming a response
+    this.currentStreamingMessage = null; // Current message being streamed
+    this.debounceTimer = null; // Debounce timer for input
   }
 
   initializeKnowledgeBase() {
@@ -216,51 +224,90 @@ class FlagFitChatbot {
     modal.setAttribute("aria-labelledby", "chatbot-title");
     modal.setAttribute("aria-hidden", "true");
 
-    modal.innerHTML = `
-      <div class="chatbot-modal-content">
-        <div class="chatbot-header">
-          <div class="chatbot-header-info">
-            <div class="chatbot-avatar">🤖</div>
-            <div>
-              <h2 id="chatbot-title" class="chatbot-title">FlagFit AI Assistant</h2>
-              <p class="chatbot-subtitle">Ask me about training, nutrition, psychology, injuries & more</p>
-            </div>
-          </div>
-          <div class="chatbot-header-actions">
-            <button 
-              class="chatbot-clear-history" 
-              aria-label="Clear conversation history" 
-              type="button"
-              title="Clear conversation history"
-            >
-              <i data-lucide="trash-2" class="icon-18"></i>
-            </button>
-            <button class="chatbot-close" aria-label="Close chatbot" type="button">
-              <i data-lucide="x" class="icon-20"></i>
-            </button>
-          </div>
-        </div>
-
-        <div class="chatbot-messages" id="chatbot-messages" role="log" aria-live="polite">
-          <div class="chatbot-message bot-message">
-            <div class="message-avatar">🤖</div>
-            <div class="message-content">
-              <div class="message-text">
-                👋 Hello! I'm your FlagFit AI Assistant. I can help you with:
-                <ul style="margin: 8px 0 0 20px; padding-left: 0;">
-                  <li>Sports psychology & mental training</li>
-                  <li>Nutrition & supplements</li>
-                  <li>Speed & agility development</li>
-                  <li>Injury prevention & treatment</li>
-                  <li>Recovery strategies</li>
-                  <li>Training programs</li>
-                </ul>
-                <br>
-                What would you like to know?
-              </div>
-            </div>
-          </div>
-        </div>
+    // Create modal content using DOM manipulation
+    const modalContent = document.createElement("div");
+    modalContent.className = "chatbot-modal-content";
+    
+    const header = document.createElement("div");
+    header.className = "chatbot-header";
+    
+    const headerInfo = document.createElement("div");
+    headerInfo.className = "chatbot-header-info";
+    const avatar = document.createElement("div");
+    avatar.className = "chatbot-avatar";
+    avatar.textContent = "🤖";
+    const infoDiv = document.createElement("div");
+    const title = document.createElement("h2");
+    title.id = "chatbot-title";
+    title.className = "chatbot-title";
+    title.textContent = "FlagFit AI Assistant";
+    const subtitle = document.createElement("p");
+    subtitle.className = "chatbot-subtitle";
+    subtitle.textContent = "Ask me about training, nutrition, psychology, injuries & more";
+    infoDiv.appendChild(title);
+    infoDiv.appendChild(subtitle);
+    headerInfo.appendChild(avatar);
+    headerInfo.appendChild(infoDiv);
+    
+    const headerActions = document.createElement("div");
+    headerActions.className = "chatbot-header-actions";
+    const clearBtn = document.createElement("button");
+    clearBtn.className = "chatbot-clear-history";
+    clearBtn.setAttribute("aria-label", "Clear conversation history");
+    clearBtn.type = "button";
+    clearBtn.title = "Clear conversation history";
+    const clearIcon = document.createElement("i");
+    clearIcon.setAttribute("data-lucide", "trash-2");
+    clearIcon.className = "icon-18";
+    clearBtn.appendChild(clearIcon);
+    const closeBtn = document.createElement("button");
+    closeBtn.className = "chatbot-close";
+    closeBtn.setAttribute("aria-label", "Close chatbot");
+    closeBtn.type = "button";
+    const closeIcon = document.createElement("i");
+    closeIcon.setAttribute("data-lucide", "x");
+    closeIcon.className = "icon-20";
+    closeBtn.appendChild(closeIcon);
+    headerActions.appendChild(clearBtn);
+    headerActions.appendChild(closeBtn);
+    
+    header.appendChild(headerInfo);
+    header.appendChild(headerActions);
+    
+    const messagesContainer = document.createElement("div");
+    messagesContainer.className = "chatbot-messages";
+    messagesContainer.id = "chatbot-messages";
+    messagesContainer.setAttribute("role", "log");
+    messagesContainer.setAttribute("aria-live", "polite");
+    
+    const welcomeMessage = document.createElement("div");
+    welcomeMessage.className = "chatbot-message bot-message";
+    const welcomeAvatar = document.createElement("div");
+    welcomeAvatar.className = "message-avatar";
+    welcomeAvatar.textContent = "🤖";
+    const welcomeContent = document.createElement("div");
+    welcomeContent.className = "message-content";
+    const welcomeText = document.createElement("div");
+    welcomeText.className = "message-text";
+    welcomeText.innerHTML = `👋 Hello! I'm your FlagFit AI Assistant. I can help you with:
+<ul style="margin: 8px 0 0 20px; padding-left: 0;">
+  <li>Sports psychology & mental training</li>
+  <li>Nutrition & supplements</li>
+  <li>Speed & agility development</li>
+  <li>Injury prevention & treatment</li>
+  <li>Recovery strategies</li>
+  <li>Training programs</li>
+</ul>
+<br>
+What would you like to know?`;
+    welcomeContent.appendChild(welcomeText);
+    welcomeMessage.appendChild(welcomeAvatar);
+    welcomeMessage.appendChild(welcomeContent);
+    messagesContainer.appendChild(welcomeMessage);
+    
+    modalContent.appendChild(header);
+    modalContent.appendChild(messagesContainer);
+    modal.appendChild(modalContent);
 
         <div class="chatbot-input-container">
           <div class="chatbot-input-wrapper">
@@ -363,7 +410,7 @@ class FlagFitChatbot {
   async loadUserContext() {
     try {
       // Get auth token from storage or session
-      const authToken = this.getAuthToken();
+      const authToken = await this.getAuthToken();
       
       if (!authToken) {
         // No auth token - use default context
@@ -436,7 +483,7 @@ class FlagFitChatbot {
         userId = this.userContext.userId;
       } else {
         // Try to get from auth token
-        const authToken = this.getAuthToken();
+        const authToken = await this.getAuthToken();
         if (authToken) {
           // Extract userId from token or fetch from API
           // For now, we'll get it from user-context API
@@ -485,25 +532,38 @@ class FlagFitChatbot {
   }
 
   /**
-   * Get auth token from storage
+   * Get auth token from secure storage
+   * Upgraded to use secureStorage API with AES-GCM encryption
    */
-  getAuthToken() {
+  async getAuthToken() {
     try {
-      // Try to get from localStorage
+      // First, try to use secureStorage API (preferred method)
+      if (window.secureStorage && typeof window.secureStorage.getAuthToken === 'function') {
+        try {
+          const token = await window.secureStorage.getAuthToken();
+          if (token) {
+            return token;
+          }
+        } catch (error) {
+          logger.debug("Secure storage getAuthToken failed, trying fallback:", error);
+        }
+      }
+
+      // Fallback: Try to get from localStorage (legacy support)
       const authData = localStorage.getItem('auth');
       if (authData) {
         const parsed = JSON.parse(authData);
         return parsed.token || parsed.access_token || null;
       }
 
-      // Try to get from sessionStorage
+      // Fallback: Try to get from sessionStorage (legacy support)
       const sessionAuth = sessionStorage.getItem('auth');
       if (sessionAuth) {
         const parsed = JSON.parse(sessionAuth);
         return parsed.token || parsed.access_token || null;
       }
 
-      // Try to get from window if available
+      // Fallback: Try to get from window if available
       if (window.auth && window.auth.token) {
         return window.auth.token;
       }
@@ -519,12 +579,12 @@ class FlagFitChatbot {
    * Update chatbot query statistics
    */
   async updateQueryStats(topic) {
-    if (!this.userContext || !this.getAuthToken()) {
+    const authToken = await this.getAuthToken();
+    if (!this.userContext || !authToken) {
       return; // Skip if no user context or auth
     }
 
     try {
-      const authToken = this.getAuthToken();
       await fetch('/.netlify/functions/update-chatbot-stats', {
         method: 'POST',
         headers: {
@@ -611,29 +671,38 @@ class FlagFitChatbot {
       this.storageService.remove(this.storageKey);
     }
     
+    // Clear cache as well
+    this.clearCache();
+    
     // Clear UI
     const messagesContainer = document.getElementById("chatbot-messages");
     if (messagesContainer) {
-      messagesContainer.innerHTML = `
-        <div class="chatbot-message bot-message">
-          <div class="message-avatar">🤖</div>
-          <div class="message-content">
-            <div class="message-text">
-              👋 Hello! I'm your FlagFit AI Assistant. I can help you with:
-              <ul style="margin: 8px 0 0 20px; padding-left: 0;">
-                <li>Sports psychology & mental training</li>
-                <li>Nutrition & supplements</li>
-                <li>Speed & agility development</li>
-                <li>Injury prevention & treatment</li>
-                <li>Recovery strategies</li>
-                <li>Training programs</li>
-              </ul>
-              <br>
-              What would you like to know?
-            </div>
-          </div>
-        </div>
-      `;
+      messagesContainer.textContent = '';
+      
+      const welcomeMessage = document.createElement("div");
+      welcomeMessage.className = "chatbot-message bot-message";
+      const welcomeAvatar = document.createElement("div");
+      welcomeAvatar.className = "message-avatar";
+      welcomeAvatar.textContent = "🤖";
+      const welcomeContent = document.createElement("div");
+      welcomeContent.className = "message-content";
+      const welcomeText = document.createElement("div");
+      welcomeText.className = "message-text";
+      welcomeText.innerHTML = `👋 Hello! I'm your FlagFit AI Assistant. I can help you with:
+<ul style="margin: 8px 0 0 20px; padding-left: 0;">
+  <li>Sports psychology & mental training</li>
+  <li>Nutrition & supplements</li>
+  <li>Speed & agility development</li>
+  <li>Injury prevention & treatment</li>
+  <li>Recovery strategies</li>
+  <li>Training programs</li>
+</ul>
+<br>
+What would you like to know?`;
+      welcomeContent.appendChild(welcomeText);
+      welcomeMessage.appendChild(welcomeAvatar);
+      welcomeMessage.appendChild(welcomeContent);
+      messagesContainer.appendChild(welcomeMessage);
     }
     
     // Reset conversation context
@@ -647,13 +716,21 @@ class FlagFitChatbot {
     const clearHistoryBtn = this.modal.querySelector(".chatbot-clear-history");
     const quickBtns = this.modal.querySelectorAll(".chatbot-quick-btn");
 
-    // Input handling
+    // Input handling with debouncing
     input.addEventListener("input", (e) => {
       sendBtn.disabled = !e.target.value.trim();
 
       // Auto-resize textarea
       e.target.style.height = "auto";
       e.target.style.height = Math.min(e.target.scrollHeight, 120) + "px";
+      
+      // Debounce for potential future features (autocomplete, suggestions, etc.)
+      if (this.debounceTimer) {
+        clearTimeout(this.debounceTimer);
+      }
+      this.debounceTimer = setTimeout(() => {
+        // Future: Could add autocomplete or suggestions here
+      }, 300);
     });
 
     input.addEventListener("keydown", (e) => {
@@ -808,94 +885,211 @@ class FlagFitChatbot {
     const message = input.value.trim();
 
     if (!message) {return;}
+    
+    // Prevent multiple simultaneous requests
+    if (this.isStreaming) {
+      logger.warn("Already processing a message, please wait...");
+      return;
+    }
+
+    // Check cache first
+    const cacheKey = this.getCacheKey(message);
+    const cachedResponse = this.responseCache.get(cacheKey);
+    if (cachedResponse && Date.now() - cachedResponse.timestamp < this.cacheTimeout) {
+      this.addMessage("user", message);
+      this.addMessage("bot", cachedResponse.response);
+      this.conversationContext.push({ role: "user", content: message });
+      this.conversationContext.push({ role: "assistant", content: cachedResponse.response });
+      this.optimizeContext();
+      input.value = "";
+      input.style.height = "auto";
+      return;
+    }
 
     // Add user message
     this.addMessage("user", message);
     
     // Add to conversation context
     this.conversationContext.push({ role: "user", content: message });
-    
-    // Keep context to last 10 messages to prevent bloat
-    if (this.conversationContext.length > 20) {
-      this.conversationContext = this.conversationContext.slice(-20);
-    }
+    this.optimizeContext();
     
     input.value = "";
     input.style.height = "auto";
     const sendBtn = document.getElementById("chatbot-send");
     if (sendBtn) {sendBtn.disabled = true;}
+    
+    this.isStreaming = true;
 
     // Show typing indicator with progress
     this.showTypingIndicator();
     const progressInterval = this.showProgressIndicator();
 
-    // Get response (now async) - ensure we always get a response
-    try {
-      const response = await Promise.race([
-        this.getResponse(message),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error("Timeout")), this.timeoutDuration)
-        )
-      ]);
-      
-      clearInterval(progressInterval);
-      this.hideTypingIndicator();
-      
-      if (response && typeof response === 'string' && response.trim()) {
-        this.addMessage("bot", response);
-        this.conversationContext.push({ role: "assistant", content: response });
-      } else {
-        // Fallback if response is empty
-        const fallbackResponse = await this.getLocalResponse(null, message, message.toLowerCase());
-        this.addMessage("bot", fallbackResponse);
-        this.conversationContext.push({ role: "assistant", content: fallbackResponse });
-      }
-    } catch (error) {
-      clearInterval(progressInterval);
-      logger.error("Error getting response:", error);
-      this.hideTypingIndicator();
-      
-      // Show user-friendly error message
-      let errorMessage = "";
-      if (error.message === "Timeout") {
-        errorMessage = "⏱️ This question is taking longer than expected. Let me try a simpler approach...";
-        this.showErrorMessage(errorMessage);
+    // Get response with retry logic
+    let response = null;
+    let lastError = null;
+    
+    for (let attempt = 1; attempt <= this.retryAttempts; attempt++) {
+      try {
+        response = await Promise.race([
+          this.getResponse(message),
+          new Promise((_, reject) => 
+            setTimeout(() => reject(new Error("Timeout")), this.timeoutDuration)
+          )
+        ]);
         
-        // Try fallback with shorter timeout
-        try {
-          const fallbackResponse = await Promise.race([
-            this.getLocalResponse(null, message, message.toLowerCase()),
-            new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 5000))
-          ]);
-          this.hideErrorMessage();
-          this.addMessage("bot", fallbackResponse);
-          this.conversationContext.push({ role: "assistant", content: fallbackResponse });
-        } catch (fallbackError) {
-          this.hideErrorMessage();
-          this.showErrorMessage("I'm having trouble processing your question. Please try rephrasing it or ask about a different topic.");
-        }
-      } else {
-        errorMessage = "⚠️ I encountered an issue processing your question. Let me try again...";
-        this.showErrorMessage(errorMessage);
+        // Success - break retry loop
+        break;
+      } catch (error) {
+        lastError = error;
+        logger.warn(`Attempt ${attempt} failed:`, error);
         
-        // Always provide a helpful fallback response
-        try {
-          const fallbackResponse = await this.getLocalResponse(null, message, message.toLowerCase());
-          this.hideErrorMessage();
-          this.addMessage("bot", fallbackResponse);
-          this.conversationContext.push({ role: "assistant", content: fallbackResponse });
-        } catch (fallbackError) {
-          logger.error("Fallback also failed:", fallbackError);
-          this.hideErrorMessage();
-          this.addMessage(
-            "bot",
-            "I apologize, but I'm having trouble processing your question right now. I can help with:\n• Sports psychology & mental training\n• Nutrition & supplements\n• Speed & agility development\n• Injury prevention & treatment\n• Recovery strategies\n• Training programs\n\nCould you try rephrasing your question?",
-          );
+        // Don't retry on timeout if it's the last attempt
+        if (attempt < this.retryAttempts && error.message !== "Timeout") {
+          await new Promise(resolve => setTimeout(resolve, this.retryDelay * attempt));
+          continue;
         }
       }
-    } finally {
-      if (sendBtn) {sendBtn.disabled = false;}
     }
+    
+    clearInterval(progressInterval);
+    this.hideTypingIndicator();
+    this.isStreaming = false;
+    
+    if (response && typeof response === 'string' && response.trim()) {
+      // Cache the response
+      this.responseCache.set(cacheKey, {
+        response,
+        timestamp: Date.now()
+      });
+      
+      // Stream the response for better UX
+      await this.streamMessage("bot", response);
+      this.conversationContext.push({ role: "assistant", content: response });
+    } else {
+      // Fallback response
+      try {
+        const fallbackResponse = await this.getLocalResponse(null, message, message.toLowerCase());
+        await this.streamMessage("bot", fallbackResponse);
+        this.conversationContext.push({ role: "assistant", content: fallbackResponse });
+      } catch (fallbackError) {
+        logger.error("Fallback failed:", fallbackError);
+        this.showErrorMessage("I'm having trouble processing your question. Please try rephrasing it or ask about a different topic.");
+        this.addMessage(
+          "bot",
+          "I apologize, but I'm having trouble processing your question right now. I can help with:\n• Sports psychology & mental training\n• Nutrition & supplements\n• Speed & agility development\n• Injury prevention & treatment\n• Recovery strategies\n• Training programs\n\nCould you try rephrasing your question?",
+        );
+      }
+    }
+    
+    if (sendBtn) {sendBtn.disabled = false;}
+  }
+  
+  /**
+   * Optimize conversation context to prevent bloat
+   */
+  optimizeContext() {
+    if (this.conversationContext.length > this.maxContextMessages * 2) {
+      // Keep only the most recent messages
+      this.conversationContext = this.conversationContext.slice(-this.maxContextMessages);
+    }
+  }
+  
+  /**
+   * Get cache key for a message
+   */
+  getCacheKey(message) {
+    return message.toLowerCase().trim().replace(/\s+/g, ' ');
+  }
+  
+  /**
+   * Stream a message character by character for better UX
+   */
+  async streamMessage(type, text) {
+    // Create message element
+    const messagesContainer = document.getElementById("chatbot-messages");
+    if (!messagesContainer) {
+      // Fallback to regular rendering if container not found
+      this.addMessage(type, text);
+      return;
+    }
+    
+    // For user messages, render immediately without streaming
+    if (type === "user") {
+      this.addMessage(type, text);
+      return;
+    }
+    
+    // Bot message with streaming
+    const messageDiv = document.createElement("div");
+    messageDiv.className = `chatbot-message ${type}-message streaming`;
+    const avatar = document.createElement("div");
+    avatar.className = "message-avatar";
+    avatar.textContent = "🤖";
+    const content = document.createElement("div");
+    content.className = "message-content";
+    const textElement = document.createElement("div");
+    textElement.className = "message-text";
+    content.appendChild(textElement);
+    messageDiv.appendChild(avatar);
+    messageDiv.appendChild(content);
+    
+    messagesContainer.appendChild(messageDiv);
+    this.currentStreamingMessage = messageDiv;
+    
+    const textElement = messageDiv.querySelector(".message-text");
+    let currentText = "";
+    const words = text.split(/(\s+)/);
+    let wordIndex = 0;
+    
+    return new Promise((resolve) => {
+      const streamInterval = setInterval(() => {
+        if (wordIndex < words.length) {
+          // Add next word
+          currentText += words[wordIndex];
+          wordIndex++;
+          
+          // Format and update - formatBotMessage returns HTML for formatting
+          // Use a temporary container to safely insert formatted HTML
+          const temp = document.createElement('div');
+          temp.innerHTML = this.formatBotMessage(currentText);
+          textElement.textContent = '';
+          while (temp.firstChild) {
+            textElement.appendChild(temp.firstChild);
+          }
+          this.scrollToBottom();
+        } else {
+          clearInterval(streamInterval);
+          messageDiv.classList.remove("streaming");
+          this.currentStreamingMessage = null;
+          
+          // Save to messages array
+          this.messages.push({
+            type,
+            text,
+            timestamp: new Date(),
+          });
+          this.saveMessages();
+          resolve();
+        }
+      }, 30); // 30ms per word for smooth streaming
+    });
+  }
+  
+  /**
+   * Clear response cache
+   */
+  clearCache() {
+    this.responseCache.clear();
+  }
+  
+  /**
+   * Get cache statistics
+   */
+  getCacheStats() {
+    return {
+      size: this.responseCache.size,
+      maxAge: this.cacheTimeout,
+    };
   }
 
   showProgressIndicator() {
@@ -905,7 +1099,9 @@ class FlagFitChatbot {
     const progressBar = document.createElement("div");
     progressBar.className = "chatbot-progress-bar";
     progressBar.id = "chatbot-progress";
-    progressBar.innerHTML = '<div class="chatbot-progress-fill"></div>';
+    const fill = document.createElement("div");
+    fill.className = "chatbot-progress-fill";
+    progressBar.appendChild(fill);
     
     const typingIndicator = document.getElementById("typing-indicator");
     if (typingIndicator) {
@@ -941,12 +1137,17 @@ class FlagFitChatbot {
     errorDiv.id = "chatbot-error-message";
     errorDiv.className = "chatbot-error-message";
     errorDiv.setAttribute("role", "alert");
-    errorDiv.innerHTML = `
-      <div class="error-content">
-        <span class="error-icon">⚠️</span>
-        <span class="error-text">${this.escapeHtml(message)}</span>
-      </div>
-    `;
+    const errorContent = document.createElement("div");
+    errorContent.className = "error-content";
+    const errorIcon = document.createElement("span");
+    errorIcon.className = "error-icon";
+    errorIcon.textContent = "⚠️";
+    const errorText = document.createElement("span");
+    errorText.className = "error-text";
+    errorText.textContent = message;
+    errorContent.appendChild(errorIcon);
+    errorContent.appendChild(errorText);
+    errorDiv.appendChild(errorContent);
 
     messagesContainer.appendChild(errorDiv);
     this.scrollToBottom();
@@ -967,8 +1168,9 @@ class FlagFitChatbot {
     let knowledgeEntry = null;
     let articles = [];
 
-    // Include conversation context in parsing if available
-    const contextMessages = this.conversationContext.slice(-4); // Last 4 messages for context
+      // Include conversation context in parsing if available
+      // Use optimized context (last N messages)
+      const contextMessages = this.conversationContext.slice(-this.maxContextMessages);
 
     try {
       // Import question parser and answer generator
@@ -1487,6 +1689,11 @@ class FlagFitChatbot {
   }
 
   addMessage(type, text, skipSave = false) {
+    // If streaming, don't add duplicate
+    if (this.isStreaming && type === "bot") {
+      return;
+    }
+    
     this.renderMessage(type, text, skipSave);
     
     // Store message
@@ -1510,19 +1717,34 @@ class FlagFitChatbot {
     messageDiv.className = `chatbot-message ${type}-message`;
 
     if (type === "user") {
-      messageDiv.innerHTML = `
-        <div class="message-content">
-          <div class="message-text">${this.escapeHtml(text)}</div>
-        </div>
-        <div class="message-avatar">You</div>
-      `;
+      const content = document.createElement("div");
+      content.className = "message-content";
+      const textEl = document.createElement("div");
+      textEl.className = "message-text";
+      textEl.textContent = text;
+      content.appendChild(textEl);
+      const avatar = document.createElement("div");
+      avatar.className = "message-avatar";
+      avatar.textContent = "You";
+      messageDiv.appendChild(content);
+      messageDiv.appendChild(avatar);
     } else {
-      messageDiv.innerHTML = `
-        <div class="message-avatar">🤖</div>
-        <div class="message-content">
-          <div class="message-text">${this.formatBotMessage(text)}</div>
-        </div>
-      `;
+      const avatar = document.createElement("div");
+      avatar.className = "message-avatar";
+      avatar.textContent = "🤖";
+      const content = document.createElement("div");
+      content.className = "message-content";
+      const textEl = document.createElement("div");
+      textEl.className = "message-text";
+      // formatBotMessage returns HTML for formatting - use temporary container
+      const temp = document.createElement('div');
+      temp.innerHTML = this.formatBotMessage(text);
+      while (temp.firstChild) {
+        textEl.appendChild(temp.firstChild);
+      }
+      content.appendChild(textEl);
+      messageDiv.appendChild(avatar);
+      messageDiv.appendChild(content);
     }
 
     messagesContainer.appendChild(messageDiv);
@@ -1533,8 +1755,31 @@ class FlagFitChatbot {
     // First escape HTML to prevent XSS
     let formatted = this.escapeHtml(text);
 
+    // Convert code blocks (```code```)
+    formatted = formatted.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
+    
+    // Convert inline code (`code`)
+    formatted = formatted.replace(/`([^`]+)`/g, '<code>$1</code>');
+
     // Convert bold text (**text**)
     formatted = formatted.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+
+    // Convert italic text (*text*)
+    formatted = formatted.replace(/\*(.+?)\*/g, "<em>$1</em>");
+
+    // Convert headers (# Header)
+    formatted = formatted.replace(/^###\s+(.+)$/gm, "<h3>$1</h3>");
+    formatted = formatted.replace(/^##\s+(.+)$/gm, "<h2>$1</h2>");
+    formatted = formatted.replace(/^#\s+(.+)$/gm, "<h1>$1</h1>");
+
+    // Convert links [text](url)
+    formatted = formatted.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+
+    // Convert blockquotes (> text)
+    formatted = formatted.replace(/^>\s+(.+)$/gm, "<blockquote>$1</blockquote>");
+
+    // Convert horizontal rules (---)
+    formatted = formatted.replace(/^---$/gm, "<hr>");
 
     // Convert line breaks
     formatted = formatted.replace(/\n/g, "<br>");
@@ -1545,6 +1790,13 @@ class FlagFitChatbot {
     // Wrap consecutive list items in ul tags
     formatted = formatted.replace(/(<li>.*?<\/li>(?:<br>)?)+/g, (match) => {
       return `<ul style='margin: 8px 0; padding-left: 20px;'>${match.replace(/<br>/g, "")}</ul>`;
+    });
+
+    // Convert numbered lists
+    formatted = formatted.replace(/^\d+\.\s+(.+)$/gm, "<li>$1</li>");
+    formatted = formatted.replace(/(<li>.*?<\/li>(?:<br>)?)+/g, (match) => {
+      if (match.includes('<ul')) return match; // Already wrapped
+      return `<ol style='margin: 8px 0; padding-left: 20px;'>${match.replace(/<br>/g, "")}</ol>`;
     });
 
     return formatted;
@@ -1563,16 +1815,20 @@ class FlagFitChatbot {
     const typingDiv = document.createElement("div");
     typingDiv.className = "chatbot-message bot-message typing-indicator";
     typingDiv.id = "typing-indicator";
-    typingDiv.innerHTML = `
-      <div class="message-avatar">🤖</div>
-      <div class="message-content">
-        <div class="typing-dots">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-      </div>
-    `;
+    const avatar = document.createElement("div");
+    avatar.className = "message-avatar";
+    avatar.textContent = "🤖";
+    const content = document.createElement("div");
+    content.className = "message-content";
+    const dots = document.createElement("div");
+    dots.className = "typing-dots";
+    for (let i = 0; i < 3; i++) {
+      const span = document.createElement("span");
+      dots.appendChild(span);
+    }
+    content.appendChild(dots);
+    typingDiv.appendChild(avatar);
+    typingDiv.appendChild(content);
 
     messagesContainer.appendChild(typingDiv);
     this.scrollToBottom();

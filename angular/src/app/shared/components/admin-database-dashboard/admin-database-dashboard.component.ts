@@ -1,6 +1,5 @@
 import {
   Component,
-  OnInit,
   signal,
   inject,
   ChangeDetectionStrategy,
@@ -214,7 +213,7 @@ import { firstValueFrom } from 'rxjs';
     `,
   ],
 })
-export class AdminDatabaseDashboardComponent implements OnInit {
+export class AdminDatabaseDashboardComponent {
   private adminService = inject(AdminService);
   private messageService = inject(MessageService);
 
@@ -222,12 +221,14 @@ export class AdminDatabaseDashboardComponent implements OnInit {
   syncingUSDA = signal(false);
   syncingResearch = signal(false);
   creatingBackup = signal(false);
-  lastSyncStatus = signal<any[]>([]);
-
-  ngOnInit() {
+  
+  constructor() {
+    // Angular 21: Initialize in constructor instead of OnInit
     this.loadHealthMetrics();
     this.loadSyncStatus();
   }
+  lastSyncStatus = signal<any[]>([]);
+
 
   async syncUSDAData() {
     this.syncingUSDA.set(true);

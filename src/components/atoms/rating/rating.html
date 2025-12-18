@@ -1,0 +1,164 @@
+<!-- 
+    Rating Component - FlagFit Pro
+    
+    Usage: Copy this snippet for star ratings
+    Features: Half stars, read-only, interactive
+    Accessibility:
+    - Use aria-label for rating value
+    - Support keyboard navigation
+-->
+
+<!-- Basic Rating -->
+<div class="rating-container">
+  <label class="form-label">Rating</label>
+  <div class="rating" id="rating-1" role="group" aria-label="Rating">
+    <input type="radio" id="rating-1-5" name="rating-1" value="5" />
+    <label for="rating-1-5" class="rating-star" aria-label="5 stars">
+      <i data-lucide="star" style="width: 24px; height: 24px"></i>
+    </label>
+    <input type="radio" id="rating-1-4" name="rating-1" value="4" />
+    <label for="rating-1-4" class="rating-star" aria-label="4 stars">
+      <i data-lucide="star" style="width: 24px; height: 24px"></i>
+    </label>
+    <input type="radio" id="rating-1-3" name="rating-1" value="3" />
+    <label for="rating-1-3" class="rating-star" aria-label="3 stars">
+      <i data-lucide="star" style="width: 24px; height: 24px"></i>
+    </label>
+    <input type="radio" id="rating-1-2" name="rating-1" value="2" />
+    <label for="rating-1-2" class="rating-star" aria-label="2 stars">
+      <i data-lucide="star" style="width: 24px; height: 24px"></i>
+    </label>
+    <input type="radio" id="rating-1-1" name="rating-1" value="1" />
+    <label for="rating-1-1" class="rating-star" aria-label="1 star">
+      <i data-lucide="star" style="width: 24px; height: 24px"></i>
+    </label>
+  </div>
+  <div class="rating-value" id="rating-value-1">0 / 5</div>
+</div>
+
+<!-- Read-only Rating -->
+<div class="rating-container">
+  <label class="form-label">Read-only Rating</label>
+  <div class="rating rating-readonly" data-rating="4">
+    <span class="rating-star filled"><i data-lucide="star" style="width: 24px; height: 24px"></i></span>
+    <span class="rating-star filled"><i data-lucide="star" style="width: 24px; height: 24px"></i></span>
+    <span class="rating-star filled"><i data-lucide="star" style="width: 24px; height: 24px"></i></span>
+    <span class="rating-star filled"><i data-lucide="star" style="width: 24px; height: 24px"></i></span>
+    <span class="rating-star"><i data-lucide="star" style="width: 24px; height: 24px"></i></span>
+  </div>
+  <div class="rating-value">4 / 5</div>
+</div>
+
+<!-- Small Rating -->
+<div class="rating-container">
+  <label class="form-label">Small Rating</label>
+  <div class="rating rating-sm" id="rating-2" role="group" aria-label="Rating">
+    <input type="radio" id="rating-2-5" name="rating-2" value="5" />
+    <label for="rating-2-5" class="rating-star"><i data-lucide="star" style="width: 16px; height: 16px"></i></label>
+    <input type="radio" id="rating-2-4" name="rating-2" value="4" />
+    <label for="rating-2-4" class="rating-star"><i data-lucide="star" style="width: 16px; height: 16px"></i></label>
+    <input type="radio" id="rating-2-3" name="rating-2" value="3" />
+    <label for="rating-2-3" class="rating-star"><i data-lucide="star" style="width: 16px; height: 16px"></i></label>
+    <input type="radio" id="rating-2-2" name="rating-2" value="2" />
+    <label for="rating-2-2" class="rating-star"><i data-lucide="star" style="width: 16px; height: 16px"></i></label>
+    <input type="radio" id="rating-2-1" name="rating-2" value="1" />
+    <label for="rating-2-1" class="rating-star"><i data-lucide="star" style="width: 16px; height: 16px"></i></label>
+  </div>
+</div>
+
+<!-- Large Rating -->
+<div class="rating-container">
+  <label class="form-label">Large Rating</label>
+  <div class="rating rating-lg" id="rating-3" role="group" aria-label="Rating">
+    <input type="radio" id="rating-3-5" name="rating-3" value="5" />
+    <label for="rating-3-5" class="rating-star"><i data-lucide="star" style="width: 32px; height: 32px"></i></label>
+    <input type="radio" id="rating-3-4" name="rating-3" value="4" />
+    <label for="rating-3-4" class="rating-star"><i data-lucide="star" style="width: 32px; height: 32px"></i></label>
+    <input type="radio" id="rating-3-3" name="rating-3" value="3" />
+    <label for="rating-3-3" class="rating-star"><i data-lucide="star" style="width: 32px; height: 32px"></i></label>
+    <input type="radio" id="rating-3-2" name="rating-3" value="2" />
+    <label for="rating-3-2" class="rating-star"><i data-lucide="star" style="width: 32px; height: 32px"></i></label>
+    <input type="radio" id="rating-3-1" name="rating-3" value="1" />
+    <label for="rating-3-1" class="rating-star"><i data-lucide="star" style="width: 32px; height: 32px"></i></label>
+  </div>
+</div>
+
+<style>
+  .rating-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .rating {
+    display: inline-flex;
+    flex-direction: row-reverse;
+    gap: 0.25rem;
+  }
+
+  .rating input[type="radio"] {
+    display: none;
+  }
+
+  .rating-star {
+    cursor: pointer;
+    color: var(--p-surface-300, #dee2e6);
+    transition: color 0.2s;
+  }
+
+  .rating-star:hover,
+  .rating-star:hover ~ .rating-star {
+    color: var(--color-brand-primary, #089949);
+  }
+
+  .rating input[type="radio"]:checked ~ .rating-star,
+  .rating input[type="radio"]:checked ~ .rating-star ~ .rating-star {
+    color: var(--color-brand-primary, #089949);
+  }
+
+  .rating-readonly .rating-star {
+    cursor: default;
+  }
+
+  .rating-readonly .rating-star.filled {
+    color: var(--color-brand-primary, #089949);
+  }
+
+  .rating-value {
+    font-size: 0.875rem;
+    color: var(--text-secondary, #6b7280);
+  }
+
+  .rating-sm {
+    gap: 0.125rem;
+  }
+
+  .rating-lg {
+    gap: 0.5rem;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Update rating value display
+    const ratings = document.querySelectorAll('.rating:not(.rating-readonly)');
+    ratings.forEach(rating => {
+      const inputs = rating.querySelectorAll('input[type="radio"]');
+      const valueDisplay = rating.parentElement.querySelector('.rating-value');
+      
+      inputs.forEach(input => {
+        input.addEventListener('change', function() {
+          if (valueDisplay) {
+            valueDisplay.textContent = this.value + ' / 5';
+          }
+        });
+      });
+    });
+    
+    // Initialize lucide icons
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
+  });
+</script>
+
