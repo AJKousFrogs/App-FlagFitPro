@@ -161,6 +161,19 @@
   status = 200
   force = true
 
+# API Routes for Training Complete
+[[redirects]]
+  from = "/api/training/complete"
+  to = "/.netlify/functions/training-complete"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/training/complete/*"
+  to = "/.netlify/functions/training-complete"
+  status = 200
+  force = true
+
 # API Routes for Training Suggestions
 [[redirects]]
   from = "/api/training/suggestions"
