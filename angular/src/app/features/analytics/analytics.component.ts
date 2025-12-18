@@ -10,9 +10,7 @@ import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { ChartModule } from "primeng/chart";
-import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
-import { Tabs, TabPanel } from "primeng/tabs";
 import { TagModule } from "primeng/tag";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -51,10 +49,7 @@ interface Metric {
     CardModule,
     ButtonModule,
     ChartModule,
-    Select,
     TableModule,
-    Tabs,
-    TabPanel,
     TagModule,
     MainLayoutComponent,
     PageHeaderComponent,

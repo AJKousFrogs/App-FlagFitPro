@@ -11,7 +11,6 @@ import { ButtonModule } from "primeng/button";
 import { ChartModule } from "primeng/chart";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
-import { DatePicker } from "primeng/datepicker";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
@@ -35,7 +34,6 @@ interface PerformanceMetric {
     ChartModule,
     TableModule,
     TagModule,
-    DatePicker,
     MainLayoutComponent,
     PageHeaderComponent,
     StatsGridComponent

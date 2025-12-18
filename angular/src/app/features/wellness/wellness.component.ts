@@ -10,7 +10,6 @@ import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { ChartModule } from "primeng/chart";
-import { DatePicker } from "primeng/datepicker";
 import { InputNumberModule } from "primeng/inputnumber";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -35,7 +34,6 @@ interface WellnessMetric {
     CardModule,
     ButtonModule,
     ChartModule,
-    DatePicker,
     InputNumberModule,
     MainLayoutComponent,
     PageHeaderComponent,

@@ -10,7 +10,7 @@
    behave identically across Angular + PrimeNG.
    ================================================================ */
 
-@import './design-system-tokens.scss';
+@use './design-system-tokens.scss' as *;
 
 /* ================================================================
    BUTTONS

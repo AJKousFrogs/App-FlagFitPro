@@ -63,23 +63,23 @@ export class TrainingDataService {
     const params: Record<string, any> = {};
     
     if (options?.startDate) {
-      params.startDate = options.startDate;
+      params['startDate'] = options.startDate;
     }
     
     if (options?.endDate) {
-      params.endDate = options.endDate;
+      params['endDate'] = options.endDate;
     }
     
     if (options?.includeUpcoming) {
-      params.includeUpcoming = options.includeUpcoming.toString();
+      params['includeUpcoming'] = options.includeUpcoming.toString();
     }
     
     if (options?.status) {
-      params.status = options.status;
+      params['status'] = options.status;
     }
     
     if (options?.limit) {
-      params.limit = options.limit.toString();
+      params['limit'] = options.limit.toString();
     }
 
     return this.apiService.get<TrainingSession[]>(
@@ -167,11 +167,11 @@ export class TrainingDataService {
     const params: Record<string, any> = {};
     
     if (options?.startDate) {
-      params.startDate = options.startDate;
+      params['startDate'] = options.startDate;
     }
     
     if (options?.endDate) {
-      params.endDate = options.endDate;
+      params['endDate'] = options.endDate;
     }
 
     return this.apiService.get<TrainingStats>(
@@ -203,22 +203,22 @@ export class TrainingDataService {
 
         // Map backend response to TrainingStats interface
         return {
-          total_sessions: stats.totalSessions || 0,
-          total_duration: stats.totalDuration || 0,
-          avg_duration: stats.avgDuration || 0,
-          sessions_this_week: stats.weeklySessions || 0,
+          total_sessions: stats.total_sessions || 0,
+          total_duration: stats.total_duration || 0,
+          avg_duration: stats.avg_duration || 0,
+          sessions_this_week: stats.weekly_sessions || 0,
           sessions_this_month: 0, // Can be calculated if needed
-          total_load: stats.totalLoad,
-          avg_load: stats.avgLoad,
-          current_streak: stats.currentStreak,
+          total_load: stats.total_load,
+          avg_load: stats.avg_load,
+          current_streak: stats.current_streak,
           acwr: stats.acwr,
-          acute_load: stats.acuteLoad,
-          chronic_load: stats.chronicLoad,
-          acwr_risk_zone: stats.acwrRiskZone,
-          weekly_volume: stats.weeklyVolume,
-          weekly_duration: stats.weeklyDuration,
-          weekly_sessions: stats.weeklySessions,
-          weekly_avg_intensity: stats.weeklyAvgIntensity,
+          acute_load: stats.acute_load,
+          chronic_load: stats.chronic_load,
+          acwr_risk_zone: stats.acwr_risk_zone,
+          weekly_volume: stats.weekly_volume,
+          weekly_duration: stats.weekly_duration,
+          weekly_sessions: stats.weekly_sessions,
+          weekly_avg_intensity: stats.weekly_avg_intensity,
         };
       }),
       catchError((error) => {

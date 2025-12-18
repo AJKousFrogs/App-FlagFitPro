@@ -170,13 +170,14 @@ export function formatDate(
     return "Invalid Date";
   }
 
-  const options: Intl.DateTimeFormatOptions = {
+  const formatOptions: Record<string, Intl.DateTimeFormatOptions> = {
     short: { month: "numeric", day: "numeric", year: "2-digit" },
     medium: { month: "short", day: "numeric", year: "numeric" },
     long: { month: "long", day: "numeric", year: "numeric" },
     full: { weekday: "long", month: "long", day: "numeric", year: "numeric" },
     time: { hour: "numeric", minute: "2-digit", hour12: true },
-  }[format];
+  };
+  const options: Intl.DateTimeFormatOptions = formatOptions[format];
 
   return dateObj.toLocaleDateString("en-US", options);
 }

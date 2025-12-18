@@ -4,13 +4,13 @@
    ================================================================ */
 
 /* Design System Tokens - Single source of truth */
-@import "./assets/styles/design-system-tokens.scss";
+@use "./assets/styles/design-system-tokens.scss" as *;
 
 /* Standardized Components - All components use same variants */
-@import "./assets/styles/standardized-components.scss";
+@use "./assets/styles/standardized-components.scss" as *;
 
 /* Layout System - Reusable layout patterns */
-@import "./assets/styles/layout-system.scss";
+@use "./assets/styles/layout-system.scss" as *;
 
 /* PrimeIcons - CSS file, must use @import */
 @import "primeicons/primeicons.css";

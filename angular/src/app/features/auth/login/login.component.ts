@@ -52,7 +52,7 @@ import { getFormControlError, isFormControlInvalid, markFormGroupTouched } from 
           <h1 class="login-title">Sign in to FlagFit Pro</h1>
         </ng-template>
     
-        @if (isDemoMode) {
+        @if (isDemoMode()) {
           <div class="alert alert-info mb-4">
             <strong>Demo Mode:</strong> This login accepts any email and password
             for testing purposes.
@@ -234,11 +234,11 @@ export class LoginComponent {
   isFormValid = computed(() => this.loginForm.valid);
   emailError = computed(() => {
     const control = this.loginForm.get('email');
-    return control && (submitted() || control.touched) ? getFormControlError(control) : null;
+    return control && (this.submitted() || control.touched) ? getFormControlError(control) : null;
   });
   passwordError = computed(() => {
     const control = this.loginForm.get('password');
-    return control && (submitted() || control.touched) ? getFormControlError(control) : null;
+    return control && (this.submitted() || control.touched) ? getFormControlError(control) : null;
   });
 
   constructor() {

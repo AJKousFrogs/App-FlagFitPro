@@ -137,8 +137,8 @@
               <div class="score-group">
                 <label>Our Score:</label>
                 <p-inputNumber
-                  [value]="teamScore()"
-                  (onInput)="teamScore.set($event.value ?? 0); updateScore()"
+                  [ngModel]="teamScore()"
+                  (ngModelChange)="teamScore.set($event ?? 0); updateScore()"
                   [min]="0"
                   [showButtons]="true"
                   styleClass="score-input"
@@ -149,8 +149,8 @@
               <div class="score-group">
                 <label>Opponent:</label>
                 <p-inputNumber
-                  [value]="opponentScore()"
-                  (onInput)="opponentScore.set($event.value ?? 0); updateScore()"
+                  [ngModel]="opponentScore()"
+                  (ngModelChange)="opponentScore.set($event ?? 0); updateScore()"
                   [min]="0"
                   [showButtons]="true"
                   styleClass="score-input"

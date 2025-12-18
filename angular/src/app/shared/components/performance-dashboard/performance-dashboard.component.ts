@@ -9,6 +9,7 @@ import {
   inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { CardModule } from 'primeng/card';
 import { ChartModule } from 'primeng/chart';
 import { TagModule } from 'primeng/tag';
@@ -36,6 +37,7 @@ interface PerformanceMetric {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
+    FormsModule,
     CardModule,
     ChartModule,
     TagModule,
@@ -65,7 +67,7 @@ interface PerformanceMetric {
             <div class="metric-visualization">
               <div class="metric-value-container">
                 <p-knob
-                  [value]="metric.value"
+                  [ngModel]="metric.value"
                   [min]="0"
                   [max]="metric.target * 1.2"
                   [size]="120"

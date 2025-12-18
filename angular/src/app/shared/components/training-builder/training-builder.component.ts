@@ -656,14 +656,13 @@ export class TrainingBuilderComponent {
   });
 
   constructor() {
+    // Initialize form
     this.sessionForm = this.fb.group({
       duration: [60, [Validators.required, Validators.min(15), Validators.max(120)]],
       intensity: ['medium', Validators.required],
       equipment: [[]],
     });
-  }
-
-  constructor() {
+    
     // Angular 21: Initialize in constructor instead of OnInit
     this.loadWeatherData();
     this.loadAISuggestions();
