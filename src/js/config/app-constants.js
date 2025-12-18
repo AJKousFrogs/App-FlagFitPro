@@ -345,4 +345,5 @@ export default {
   isDesktop,
 };
 
+// eslint-disable-next-line no-console
 console.log('[App Constants] Application constants loaded');

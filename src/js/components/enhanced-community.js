@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Enhanced Community Component
  * 
@@ -465,7 +466,7 @@ class EnhancedCommunity {
     const postId = like.post_id;
     if (!postId) return;
 
-    let postLikes = this.likes.get(postId) || new Set();
+    const postLikes = this.likes.get(postId) || new Set();
     const post = this.posts.find(p => p.id === postId);
 
     switch (eventType) {

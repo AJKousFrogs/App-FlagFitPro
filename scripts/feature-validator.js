@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable no-console */
 
 // Feature Validation Framework
 // Validates all Olympic-level claims and performance metrics
@@ -483,15 +484,11 @@ class FeatureValidator {
   }
 
   async testSessionManagement() {
+    // Check for session management
+    const authManagerPath = "./src/auth-manager.js";
     try {
-      // Check for session management
-      const authManagerPath = "./src/auth-manager.js";
-      try {
-        const content = await fs.readFile(authManagerPath, "utf8");
-        return content.includes("session") || content.includes("token") || content.includes("localStorage");
-      } catch {
-        return false;
-      }
+      const content = await fs.readFile(authManagerPath, "utf8");
+      return content.includes("session") || content.includes("token") || content.includes("localStorage");
     } catch {
       return false;
     }

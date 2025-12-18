@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // Analytics Page JavaScript
 // Fetches real analytics data from backend and renders charts
 

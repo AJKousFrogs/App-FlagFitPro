@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // Centralized Logging Service for FlagFit Pro
 // Provides consistent logging with environment-aware levels
 

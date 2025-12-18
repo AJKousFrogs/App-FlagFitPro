@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable no-console */
 
 /**
  * Apply Database Migration Script
@@ -75,7 +76,7 @@ async function applyMigration() {
       console.log(`\n[${i + 1}/${statements.length}] Executing statement...`);
 
       try {
-        const { data, error } = await supabase.rpc('exec_sql', {
+        const { error } = await supabase.rpc('exec_sql', {
           sql: statement
         });
 

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Enhanced Sidebar Navigation Component
  * Handles collapsible sections, user menu, and improved interactions

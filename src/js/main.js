@@ -5,6 +5,7 @@
  */
 
 // Import all universal components
+import { logger } from "../logger.js";
 import { UniversalMobileNav } from "./components/universal-mobile-nav.js";
 import { UniversalFormValidator } from "./components/universal-form-validator.js";
 import { UniversalChartAccessibility } from "./components/universal-chart-accessibility.js";
@@ -83,7 +84,7 @@ class FlagFitApplication {
         }),
       );
     } catch (error) {
-      console.error("Failed to initialize FlagFit application:", error);
+      logger.error("Failed to initialize FlagFit application:", error);
     }
   }
 
@@ -492,7 +493,7 @@ class FlagFitApplication {
 
   handleError(type, error) {
     if (window.FlagFitApp.config.debug) {
-      console.error(`${type}:`, error);
+      logger.error(`${type}:`, error);
     }
 
     // Report error to analytics service if available
@@ -507,7 +508,7 @@ class FlagFitApplication {
 
   log(message, ...args) {
     if (window.FlagFitApp.config.debug) {
-      console.log(`[FlagFit] ${message}`, ...args);
+      logger.debug(`[FlagFit] ${message}`, ...args);
     }
   }
 

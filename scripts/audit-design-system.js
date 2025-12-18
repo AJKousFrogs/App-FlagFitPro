@@ -1,10 +1,11 @@
+/* eslint-disable no-console */
 // Comprehensive Design System Audit Script
 // Checks all HTML files for design system consistency
 
 import fs from "fs";
-import path from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
+import path from "path";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

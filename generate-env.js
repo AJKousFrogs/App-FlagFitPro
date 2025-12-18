@@ -32,6 +32,9 @@ console.log('✅ Environment variables loaded:', {
 const outputPath = path.join(__dirname, 'env.js');
 fs.writeFileSync(outputPath, envJsContent);
 
+// eslint-disable-next-line no-console
 console.log('✅ Generated env.js with Supabase credentials');
+// eslint-disable-next-line no-console
 console.log(`   URL: ${supabaseUrl ? '✓ Set' : '✗ Missing'}`);
+// eslint-disable-next-line no-console
 console.log(`   Key: ${supabaseAnonKey ? '✓ Set' : '✗ Missing'}`);

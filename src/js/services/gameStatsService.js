@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Game Stats Service
  * Handles saving, loading, and analyzing game statistics

@@ -107,6 +107,7 @@ const validateConfig = () => {
 
   // In development, validate more strictly
   if (ENV === "development" && warnings.length > 0) {
+    // eslint-disable-next-line no-console
     console.warn("⚠️ Environment configuration warnings:", warnings);
   }
 };
@@ -173,7 +174,9 @@ export default {
 
 // Log current environment (only in development)
 if (config.ENABLE_DEBUG_LOGS) {
+  // eslint-disable-next-line no-console
   console.log(`🌍 Environment: ${ENV}`);
+  // eslint-disable-next-line no-console
   console.log("📋 Configuration:", {
     API_BASE_URL: config.API_BASE_URL,
     ENABLE_MOCK_AUTH: config.ENABLE_MOCK_AUTH,

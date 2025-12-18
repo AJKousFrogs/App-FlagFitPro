@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // Notification Panel Loader - FlagFit Pro
 // Dynamically loads the notification panel component into pages that need it
 

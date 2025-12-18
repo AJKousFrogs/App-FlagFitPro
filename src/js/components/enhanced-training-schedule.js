@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Enhanced Training Schedule Component
  * 

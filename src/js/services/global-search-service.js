@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Global Search Service
  * Provides search functionality across the entire application
@@ -171,7 +172,7 @@ function fuzzyMatch(text, query, threshold = 0.7) {
   const textWords = normalizedText.split(/\s+/);
   const queryWords = normalizedQuery.split(/\s+/);
   let bestScore = 0;
-  let matchedWords = [];
+  const matchedWords = [];
   
   for (const queryWord of queryWords) {
     for (const textWord of textWords) {
@@ -225,7 +226,7 @@ function parseQuery(query) {
   }
   
   // Remove exact phrases from query for further processing
-  let processedQuery = trimmed.replace(exactPhraseRegex, "");
+  const processedQuery = trimmed.replace(exactPhraseRegex, "");
   
   // Extract excluded terms (prefixed with -)
   const words = processedQuery.split(/\s+/);

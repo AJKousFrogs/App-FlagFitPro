@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Generate Supabase Schema from Neon
  * Creates SQL script to set up tables in Supabase

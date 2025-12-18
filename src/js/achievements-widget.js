@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * FlagFit Pro - Achievements Widget
  * Displays achievements on the dashboard

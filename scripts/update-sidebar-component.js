@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Automated Script to Replace Sidebar with Dynamic Component
  * Replaces sidebar HTML markup with dynamic loader across multiple files

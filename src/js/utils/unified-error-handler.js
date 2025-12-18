@@ -554,7 +554,9 @@ export class UnifiedErrorHandler {
 
         logger.warn(`[Retry] Attempt ${attempt}/${maxAttempts} failed, retrying in ${currentDelay}ms...`);
 
-        await new Promise(resolve => setTimeout(resolve, currentDelay));
+        await new Promise(resolve => {
+          setTimeout(resolve, currentDelay);
+        });
         currentDelay *= backoff;
       }
     }
@@ -757,4 +759,5 @@ if (typeof window !== 'undefined') {
   }
 }
 
+// eslint-disable-next-line no-console
 console.log('[Unified Error Handler] Module loaded');

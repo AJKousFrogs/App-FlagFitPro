@@ -21,5 +21,6 @@ import '../../icon-helper.js';
 // Load theme switcher
 import '../../theme-switcher.js';
 
+// eslint-disable-next-line no-console
 console.log('[Common Head] Head scripts loaded');
 

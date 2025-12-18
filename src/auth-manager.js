@@ -87,10 +87,12 @@ class AuthManager {
         // Use Promise.race to add timeout
         await Promise.race([
           this.initPromise,
-          new Promise((resolve) => setTimeout(() => {
-            logger.warn("[Auth] Initialization timeout - proceeding anyway");
-            resolve();
-          }, maxWait))
+          new Promise((resolve) => {
+            setTimeout(() => {
+              logger.warn("[Auth] Initialization timeout - proceeding anyway");
+              resolve();
+            }, maxWait || 5000);
+          })
         ]);
       } catch (error) {
         logger.error("[Auth] Initialization error:", error);
@@ -220,9 +222,9 @@ logger.debug(
     try {
       // Add timeout to prevent hanging on slow/unresponsive API calls
       const validationPromise = auth.getCurrentUser();
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error("Token validation timeout")), timeoutMs)
-      );
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error("Token validation timeout")), timeoutMs);
+      });
 
       const response = await Promise.race([validationPromise, timeoutPromise]);
       

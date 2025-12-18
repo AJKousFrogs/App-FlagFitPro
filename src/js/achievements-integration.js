@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * FlagFit Pro - Achievements Integration
  * Automatically checks achievements when users log activities

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Safe Migration Script: Neon DB → Supabase
  * Migrates all data from Netlify Neon database to Supabase

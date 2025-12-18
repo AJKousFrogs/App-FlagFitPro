@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable no-console */
 /**
  * Navigation Audit Script
  * Checks all HTML files for sidebar navigation consistency

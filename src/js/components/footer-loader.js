@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Footer Loader
  * Dynamically loads and injects the unified footer component

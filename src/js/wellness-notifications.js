@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * FlagFit Pro - Wellness Notifications Integration
  * Integrates push notifications with wellness tracking

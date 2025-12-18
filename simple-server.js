@@ -1,10 +1,10 @@
 // Simple static file server for development
 // Lightweight alternative to full Express server
 
+/* eslint-disable no-console */
 import http from "http";
 import fs from "fs";
 import path from "path";
-import url from "url";
 import { fileURLToPath } from "url";
 
 // ES module equivalent of __dirname
@@ -51,7 +51,7 @@ const mimeTypes = {
 
 const server = http.createServer((req, res) => {
   // Parse URL
-  const parsedUrl = url.parse(req.url);
+  const parsedUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
   let pathname = parsedUrl.pathname;
 
   // Set CORS headers for all requests

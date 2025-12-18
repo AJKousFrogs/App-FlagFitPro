@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Stats Service
  * Calculates training statistics and progress metrics

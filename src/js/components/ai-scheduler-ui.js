@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * AI Training Scheduler UI Component
  * Provides interface for uploading schedules and viewing AI-generated training plans

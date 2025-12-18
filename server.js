@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // Simple development server for Flag Football Training App
 // Serves static files with proper MIME types
 

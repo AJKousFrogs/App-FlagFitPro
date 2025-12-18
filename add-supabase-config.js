@@ -55,6 +55,7 @@ pagesToUpdate.forEach(filename => {
   const filePath = path.join(__dirname, filename);
 
   if (!fs.existsSync(filePath)) {
+    // eslint-disable-next-line no-console
     console.log(`⚠️  Skipped: ${filename} (file not found)`);
     skipped++;
     return;
@@ -64,6 +65,7 @@ pagesToUpdate.forEach(filename => {
 
   // Check if already has Supabase config
   if (content.includes('window._env') && content.includes('SUPABASE_URL')) {
+    // eslint-disable-next-line no-console
     console.log(`✅ Skipped: ${filename} (already has config)`);
     skipped++;
     return;
@@ -77,6 +79,7 @@ pagesToUpdate.forEach(filename => {
     // Insert before first script tag
     content = content.replace(/<script/, supabaseConfig + '\n    <script');
   } else {
+    // eslint-disable-next-line no-console
     console.log(`⚠️  Skipped: ${filename} (no insertion point found)`);
     skipped++;
     return;
@@ -84,10 +87,14 @@ pagesToUpdate.forEach(filename => {
 
   // Write back to file
   fs.writeFileSync(filePath, content);
+  // eslint-disable-next-line no-console
   console.log(`✅ Updated: ${filename}`);
   updated++;
 });
 
+// eslint-disable-next-line no-console
 console.log(`\n📊 Summary:`);
+// eslint-disable-next-line no-console
 console.log(`   Updated: ${updated} files`);
+// eslint-disable-next-line no-console
 console.log(`   Skipped: ${skipped} files`);

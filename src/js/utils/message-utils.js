@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // Message Display Utilities - FlagFit Pro
 // Shared functions for showing/hiding alert messages across pages
 

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // FlagFit AI Chatbot Component
 // Provides intelligent responses about sports psychology, nutrition, speed training, injuries, recovery, etc.
 
@@ -307,37 +308,59 @@ What would you like to know?`;
     
     modalContent.appendChild(header);
     modalContent.appendChild(messagesContainer);
+    
+    // Create input container
+    const inputContainer = document.createElement("div");
+    inputContainer.className = "chatbot-input-container";
+    
+    const inputWrapper = document.createElement("div");
+    inputWrapper.className = "chatbot-input-wrapper";
+    
+    const textarea = document.createElement("textarea");
+    textarea.id = "chatbot-input";
+    textarea.className = "chatbot-input";
+    textarea.placeholder = "Ask me anything about training, nutrition, psychology...";
+    textarea.rows = 1;
+    textarea.setAttribute("aria-label", "Chatbot input");
+    
+    const sendBtn = document.createElement("button");
+    sendBtn.id = "chatbot-send";
+    sendBtn.className = "chatbot-send-btn";
+    sendBtn.type = "button";
+    sendBtn.setAttribute("aria-label", "Send message");
+    sendBtn.disabled = true;
+    
+    const sendIcon = document.createElement("i");
+    sendIcon.setAttribute("data-lucide", "send");
+    sendIcon.className = "icon-18";
+    sendBtn.appendChild(sendIcon);
+    
+    inputWrapper.appendChild(textarea);
+    inputWrapper.appendChild(sendBtn);
+    
+    const quickActions = document.createElement("div");
+    quickActions.className = "chatbot-quick-actions";
+    
+    const topics = [
+      { topic: "psychology", label: "🧠 Psychology" },
+      { topic: "nutrition", label: "🍎 Nutrition" },
+      { topic: "speed", label: "⚡ Speed" },
+      { topic: "injury", label: "🩹 Injuries" },
+      { topic: "recovery", label: "💤 Recovery" }
+    ];
+    
+    topics.forEach(({ topic, label }) => {
+      const quickBtn = document.createElement("button");
+      quickBtn.className = "chatbot-quick-btn";
+      quickBtn.setAttribute("data-topic", topic);
+      quickBtn.textContent = label;
+      quickActions.appendChild(quickBtn);
+    });
+    
+    inputContainer.appendChild(inputWrapper);
+    inputContainer.appendChild(quickActions);
+    modalContent.appendChild(inputContainer);
     modal.appendChild(modalContent);
-
-        <div class="chatbot-input-container">
-          <div class="chatbot-input-wrapper">
-            <textarea
-              id="chatbot-input"
-              class="chatbot-input"
-              placeholder="Ask me anything about training, nutrition, psychology..."
-              rows="1"
-              aria-label="Chatbot input"
-            ></textarea>
-            <button
-              id="chatbot-send"
-              class="chatbot-send-btn"
-              type="button"
-              aria-label="Send message"
-              disabled
-            >
-              <i data-lucide="send" class="icon-18"></i>
-            </button>
-          </div>
-          <div class="chatbot-quick-actions">
-            <button class="chatbot-quick-btn" data-topic="psychology">🧠 Psychology</button>
-            <button class="chatbot-quick-btn" data-topic="nutrition">🍎 Nutrition</button>
-            <button class="chatbot-quick-btn" data-topic="speed">⚡ Speed</button>
-            <button class="chatbot-quick-btn" data-topic="injury">🩹 Injuries</button>
-            <button class="chatbot-quick-btn" data-topic="recovery">💤 Recovery</button>
-          </div>
-        </div>
-      </div>
-    `;
 
     document.body.appendChild(modal);
     this.modal = modal;
@@ -932,9 +955,9 @@ What would you like to know?`;
       try {
         response = await Promise.race([
           this.getResponse(message),
-          new Promise((_, reject) => 
-            setTimeout(() => reject(new Error("Timeout")), this.timeoutDuration)
-          )
+          new Promise((_, reject) => {
+            setTimeout(() => reject(new Error("Timeout")), this.timeoutDuration);
+          })
         ]);
         
         // Success - break retry loop
@@ -945,7 +968,9 @@ What would you like to know?`;
         
         // Don't retry on timeout if it's the last attempt
         if (attempt < this.retryAttempts && error.message !== "Timeout") {
-          await new Promise(resolve => setTimeout(resolve, this.retryDelay * attempt));
+          await new Promise(resolve => {
+            setTimeout(resolve, this.retryDelay * attempt);
+          });
           continue;
         }
       }
@@ -1036,7 +1061,6 @@ What would you like to know?`;
     messagesContainer.appendChild(messageDiv);
     this.currentStreamingMessage = messageDiv;
     
-    const textElement = messageDiv.querySelector(".message-text");
     let currentText = "";
     const words = text.split(/(\s+)/);
     let wordIndex = 0;

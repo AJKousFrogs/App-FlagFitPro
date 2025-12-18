@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * FlagFit Pro - Export Service
  * Export data to PDF and CSV formats

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Generate Supabase Schema from Neon (FIXED VERSION)
  * Creates SQL script with proper sequences

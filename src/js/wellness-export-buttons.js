@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * FlagFit Pro - Wellness Export Buttons
  * Adds PDF/CSV export buttons to wellness page
@@ -39,7 +40,7 @@
         <div class="export-buttons-grid">
           <button
             class="export-btn export-btn-pdf"
-            onclick="handleWellnessExportPDF()"
+            onclick="handleWellnessExportPDF(event)"
             aria-label="Export wellness data to PDF">
             <span class="export-btn-icon">📄</span>
             <span class="export-btn-text">
@@ -49,7 +50,7 @@
           </button>
           <button
             class="export-btn export-btn-csv"
-            onclick="handleWellnessExportCSV()"
+            onclick="handleWellnessExportCSV(event)"
             aria-label="Export wellness data to CSV">
             <span class="export-btn-icon">📊</span>
             <span class="export-btn-text">
@@ -181,7 +182,7 @@
   /**
    * Handle PDF export
    */
-  window.handleWellnessExportPDF = async function() {
+  window.handleWellnessExportPDF = async function(event) {
     // Try to get wellness data from service first, fallback to localStorage
     let wellnessHistory = [];
     
@@ -238,7 +239,7 @@
   /**
    * Handle CSV export
    */
-  window.handleWellnessExportCSV = async function() {
+  window.handleWellnessExportCSV = async function(event) {
     // Try to get wellness data from service first, fallback to localStorage
     let wellnessHistory = [];
     

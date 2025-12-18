@@ -1,17 +1,18 @@
+/* eslint-disable no-console */
 // Script to update all HTML files with Lucide Icons
 // Run with: node scripts/update-icons.js
 
 import fs from "fs";
-import path from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
+import path from "path";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Emoji to Lucide icon mapping
 const iconMap = {
-  "📊": "layout-dashboard",
+  "📊": "bar-chart-3",
   "👥": "users",
   "⚡": "zap",
   "🏆": "trophy",
@@ -34,7 +35,6 @@ const iconMap = {
   "🔍": "search",
   "📅": "calendar",
   "💡": "lightbulb",
-  "📊": "bar-chart-3",
   "💚": "heart",
   "⚖️": "scale",
   "↗": "trending-up",

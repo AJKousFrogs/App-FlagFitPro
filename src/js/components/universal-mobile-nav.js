@@ -50,6 +50,7 @@ class UniversalMobileNav {
           window.location.hostname === "localhost" ||
           window.location.hostname === "127.0.0.1";
         if (!isDevelopment) {
+          // eslint-disable-next-line no-console
           console.warn("Mobile nav elements not found - creating fallback");
         }
       }

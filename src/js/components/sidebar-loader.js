@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Sidebar Navigation Loader
  * Dynamically loads and injects the unified sidebar component

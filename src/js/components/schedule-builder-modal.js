@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Schedule Builder Modal Component
  * Specialized modal for building custom training schedules
@@ -482,6 +483,7 @@ class ScheduleBuilderModal extends Modal {
     if (prevBtn) {
       prevBtn.addEventListener("click", () => {
         // TODO: Implement month navigation
+        // eslint-disable-next-line no-console
         console.log("Previous month");
       });
     }
@@ -489,6 +491,7 @@ class ScheduleBuilderModal extends Modal {
     if (nextBtn) {
       nextBtn.addEventListener("click", () => {
         // TODO: Implement month navigation
+        // eslint-disable-next-line no-console
         console.log("Next month");
       });
     }
@@ -640,6 +643,7 @@ class ScheduleBuilderModal extends Modal {
       }
 
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("Error parsing file:", error);
       fileName.textContent = `Error processing ${file.name}`;
       fileStats.textContent = error.message || "Invalid file format";

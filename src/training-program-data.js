@@ -6242,7 +6242,7 @@ export const ANNUAL_TRAINING_PROGRAM = {
   months: {
     december: {
       title: "DECEMBER: FOUNDATION BUILDING",
-      weeks: 4,
+      weekCount: 4,
       dateRange: "December 1-31, 2025",
       goals: [
         "Build structural strength foundation",
@@ -6775,7 +6775,7 @@ export const ANNUAL_TRAINING_PROGRAM = {
       week3: {
         weekNumber: 3,
         dateRange: "March 16-22, 2026",
-        notes: "Same structure, sprint capacity continues to build",
+        notes: "Same structure, sprint capacity continues to build. This is the PEAK capacity week",
         saturday: {
           sprintCapacity: {
             week3Target: "4 sets × 8×40m",
@@ -6789,7 +6789,6 @@ export const ANNUAL_TRAINING_PROGRAM = {
             simulation: "Simulates 4 games = half tournament day",
           },
         },
-        notes: "This is the PEAK capacity week",
       },
       week4: {
         weekNumber: 4,

@@ -1,3 +1,4 @@
+/* global XLSX */
 /**
  * Schedule File Parser Service
  * Parses CSV, Excel, and Markdown training schedule files

@@ -6,12 +6,12 @@
 (function () {
   "use strict";
 
-  // Logger fallback - use window.logger if available, otherwise console
+  // Logger fallback - use window.logger if available, otherwise silent logger
   const logger = window.logger || {
-    error: (...args) => console.error(...args),
-    warn: (...args) => console.warn(...args),
-    info: (...args) => console.info(...args),
-    debug: (...args) => console.debug(...args),
+    error: () => {},
+    warn: () => {},
+    info: () => {},
+    debug: () => {},
   };
 
   // Global function stubs (can be overridden by other scripts)
@@ -489,7 +489,7 @@
         const count = await window.getNotificationCount();
         setBadge(count);
       } catch (error) {
-        console.warn("Failed to initialize badge:", error);
+        logger.warn("Failed to initialize badge:", error);
         setBadge(0);
       }
     };

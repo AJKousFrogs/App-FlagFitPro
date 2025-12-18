@@ -61,6 +61,7 @@ export function initializeLucideIcons(container = document, options = {}) {
       lucide.createIcons(container);
     } else if (attempts >= maxAttempts) {
       clearInterval(checkLucide);
+      // eslint-disable-next-line no-console
       console.warn('[Lucide Icons] Lucide library not loaded after maximum attempts');
     }
   }, pollInterval);

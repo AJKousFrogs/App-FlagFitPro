@@ -207,8 +207,8 @@ class NotificationStore {
       if (window.ErrorHandler) {
         window.ErrorHandler.showError(errorMessage);
       } else {
-        // Fallback: use console if ErrorHandler not available
-        console.error("Notification error:", errorMessage);
+        // Fallback: use logger if ErrorHandler not available
+        logger.error("Notification error:", errorMessage);
       }
 
       throw error;
@@ -262,8 +262,8 @@ class NotificationStore {
       if (window.ErrorHandler) {
         window.ErrorHandler.showError(errorMessage);
       } else {
-        // Fallback: use console if ErrorHandler not available
-        console.error("Notification error:", errorMessage);
+        // Fallback: use logger if ErrorHandler not available
+        logger.error("Notification error:", errorMessage);
       }
 
       throw error;
@@ -779,20 +779,20 @@ class DashboardPage {
       lucide.createIcons(banner);
     }
 
-    // Add event listeners
-    const completeBtn = document.getElementById("complete-profile-btn");
-    const dismissBtn = document.getElementById("dismiss-profile-banner");
+    // Add event listeners (buttons already created above)
+    const completeBtnEl = document.getElementById("complete-profile-btn");
+    const dismissBtnEl = document.getElementById("dismiss-profile-banner");
 
-    if (completeBtn) {
-      completeBtn.addEventListener("click", async () => {
+    if (completeBtnEl) {
+      completeBtnEl.addEventListener("click", async () => {
         const { profileCompletionManager } = await import("../../profile-completion.js");
         profileCompletionManager.showProfileCompletionModal(false); // false = not required, can skip
         this.hideProfileCompletionBanner();
       });
     }
 
-    if (dismissBtn) {
-      dismissBtn.addEventListener("click", () => {
+    if (dismissBtnEl) {
+      dismissBtnEl.addEventListener("click", () => {
         this.hideProfileCompletionBanner();
         // Store dismissal to not show again for this session
         sessionStorage.setItem("profile-banner-dismissed", "true");
@@ -1450,7 +1450,6 @@ class DashboardPage {
       }, 1000);
     } catch (error) {
       logger.error("❌ Failed to start training session:", error);
-      console.error("Start session error:", error);
       this.showNotification(
         "Failed to start session. Please try again.",
         "error",
@@ -2037,67 +2036,8 @@ class DashboardPage {
       errorHandler.showInfo(message);
     }
 
-    // Legacy notification code kept as fallback
+    // Legacy notification code removed - using errorHandler instead
     return;
-
-    // Create notification element
-    const notification = document.createElement("div");
-    notification.className = `dashboard-notification dashboard-notification-${type}`;
-    notification.textContent = message;
-    notification.style.cssText = `
-      position: fixed;
-      top: 80px;
-      right: 20px;
-      padding: 12px 20px;
-      background: ${type === "success" ? "#10b981" : type === "error" ? "#ef4444" : "#3b82f6"};
-      color: white;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      z-index: 10000;
-      font-size: 14px;
-      font-weight: 500;
-      animation: slideIn 0.3s ease-out;
-      max-width: 300px;
-    `;
-
-    // Add animation
-    const style = document.createElement("style");
-    style.textContent = `
-      @keyframes slideIn {
-        from {
-          transform: translateX(100%);
-          opacity: 0;
-        }
-        to {
-          transform: translateX(0);
-          opacity: 1;
-        }
-      }
-      @keyframes slideOut {
-        from {
-          transform: translateX(0);
-          opacity: 1;
-        }
-        to {
-          transform: translateX(100%);
-          opacity: 0;
-        }
-      }
-    `;
-    if (!document.getElementById("dashboard-notification-styles")) {
-      style.id = "dashboard-notification-styles";
-      document.head.appendChild(style);
-    }
-
-    document.body.appendChild(notification);
-
-    // Remove after 3 seconds
-    setTimeout(() => {
-      notification.style.animation = "slideOut 0.3s ease-out";
-      setTimeout(() => {
-        notification.remove();
-      }, 300);
-    }, 3000);
   }
 
   setupInjuryTracking() {

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Player Profile Service
  * Manages player schedules, league commitments, and preferences

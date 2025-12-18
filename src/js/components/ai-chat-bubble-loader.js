@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // AI Chat Bubble Loader - FlagFit Pro
 // Dynamically loads the AI chat bubble component into pages that need it
 

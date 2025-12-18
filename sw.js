@@ -1,3 +1,5 @@
+/* global self, caches, clients, Response, Headers */
+/* eslint-disable no-console */
 // FlagFit Pro - Service Worker
 // Version 1.0.2
 // Handles caching, offline support, and push notifications

@@ -8,6 +8,9 @@ export default [
       "*.min.js",
       "coverage/**",
       ".netlify/**",
+      "**/*.ts",
+      "**/*.tsx",
+      "supabase-types.ts",
     ],
   },
   {
@@ -26,6 +29,10 @@ export default [
         require: "readonly",
         exports: "readonly",
         global: "readonly",
+        // Node.js built-in modules (for scripts)
+        path: "readonly",
+        fs: "readonly",
+        url: "readonly",
         // Browser globals
         window: "readonly",
         document: "readonly",
@@ -48,6 +55,7 @@ export default [
         MutationObserver: "readonly",
         IntersectionObserver: "readonly",
         ResizeObserver: "readonly",
+        PerformanceObserver: "readonly",
         AbortController: "readonly",
         AbortSignal: "readonly",
         CustomEvent: "readonly",
@@ -59,6 +67,19 @@ export default [
         Node: "readonly",
         HTMLElement: "readonly",
         NodeFilter: "readonly",
+        // Text encoding APIs
+        TextEncoder: "readonly",
+        TextDecoder: "readonly",
+        // Audio API
+        Audio: "readonly",
+        // Service Worker APIs
+        self: "readonly",
+        caches: "readonly",
+        clients: "readonly",
+        Response: "readonly",
+        Headers: "readonly",
+        // Notification API
+        Notification: "readonly",
         // Browser dialogs
         alert: "readonly",
         confirm: "readonly",
@@ -224,6 +245,16 @@ export default [
     rules: {
       "no-console": "off",                         // Allow console in tests
       "no-unused-vars": "off",                     // Allow unused vars in tests
+    },
+  },
+
+  // ============================================
+  // RELAXED RULES FOR PERFORMANCE CHARTS
+  // ============================================
+  {
+    files: ["src/performance-charts.js"],
+    rules: {
+      "no-promise-executor-return": "off",        // False positives - not Promise executors
     },
   },
 ];

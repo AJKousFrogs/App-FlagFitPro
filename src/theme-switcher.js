@@ -26,12 +26,13 @@ const storage = {
       localStorage.setItem(key, JSON.stringify(value));
       return true;
     } catch (e) {
-      console.error('Failed to save to localStorage:', e);
+      logger.error('Failed to save to localStorage:', e);
       return false;
     }
   }
 };
 
+/* eslint-disable no-console */
 // Optional logger - use if available, otherwise fallback to console
 let logger;
 try {

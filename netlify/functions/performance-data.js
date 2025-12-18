@@ -1,9 +1,9 @@
+/* eslint-disable no-console */
 // Netlify Functions - Performance Data API
 // Handles athlete performance data storage and retrieval using Supabase
 
-const { db, checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
+const { checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
 const {
-  createSuccessResponse,
   createErrorResponse,
   handleServerError,
   logFunctionCall,
@@ -1088,11 +1088,14 @@ function getStartDateForTimeframe(timeframe) {
   return startDate;
 }
 
-function generateId() {
+// Unused helper functions - kept for potential future use
+// eslint-disable-next-line no-unused-vars
+function _generateId() {
   return Date.now().toString() + Math.random().toString(36).substr(2, 9);
 }
 
-function isWithinTimeframe(date, timeframe) {
+// eslint-disable-next-line no-unused-vars
+function _isWithinTimeframe(date, timeframe) {
   const now = new Date();
   const targetDate = new Date(date);
 
@@ -1180,7 +1183,7 @@ function calculateWellnessAverages(wellness) {
   const averages = {};
 
   metrics.forEach((metric) => {
-    const values = wellness.map((w) => w[metric]).filter((v) => v != null);
+    const values = wellness.map((w) => w[metric]).filter((v) => v !== null);
     averages[metric] =
       values.length > 0
         ? (values.reduce((sum, v) => sum + v, 0) / values.length).toFixed(1)
@@ -1510,7 +1513,7 @@ function calculateWellnessTrends(wellness) {
   const earlier = sorted.slice(0, recentStart);
 
   const calculateAvg = (data, metric) => {
-    const values = data.map((w) => w[metric]).filter((v) => v != null);
+    const values = data.map((w) => w[metric]).filter((v) => v !== null);
     return values.length > 0
       ? values.reduce((sum, v) => sum + v, 0) / values.length
       : null;

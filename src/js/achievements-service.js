@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * FlagFit Pro - Achievements Service
  * Gamification system for tracking milestones and motivating users

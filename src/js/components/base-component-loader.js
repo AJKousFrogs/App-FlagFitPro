@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Base Component Loader Class - FlagFit Pro
  * Provides common functionality for component loaders (footer, sidebar, top-bar)
