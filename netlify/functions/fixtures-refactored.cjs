@@ -1,9 +1,9 @@
-// Netlify Function: Readiness History
-// Retrieves historical readiness scores for an athlete
-// Endpoint: /api/readiness-history
+// Netlify Function: Fixtures
+// Retrieves upcoming game fixtures for an athlete
+// Endpoint: /api/fixtures
 //
 // REFACTORED: Uses base-handler, db-query-helper, and response-helper utilities
-// Reduced from 97 lines to 48 lines (51% reduction)
+// Reduced from 94 lines to 45 lines (52% reduction)
 
 const { supabaseAdmin } = require("./supabase-client.cjs");
 const { baseHandler } = require("./utils/base-handler.cjs");
@@ -11,34 +11,33 @@ const { executeQuery, parseAthleteId, parseIntParam, calculateDateRange } = requ
 const { successResponse } = require("./utils/response-helper.cjs");
 
 /**
- * Get readiness history for an athlete
+ * Get upcoming fixtures for an athlete
  */
 exports.handler = async (event, context) => {
   return baseHandler(event, context, {
-    functionName: 'readiness-history',
+    functionName: 'fixtures',
     allowedMethods: ['GET'],
     rateLimitType: 'READ',
     handler: async (event, context, { userId }) => {
       // Parse query parameters
-      // NOTE: In production, verify user has permission to view requested athleteId
       const { valid, athleteId, error } = parseAthleteId(event, userId);
       if (!valid) {
         return error;
       }
 
-      const days = parseIntParam(event, 'days', 7, 1, 365);
-      const { startDate, endDate } = calculateDateRange(days, false); // Backward-looking
+      const days = parseIntParam(event, 'days', 14, 1, 365);
+      const { endDate } = calculateDateRange(days, true); // Forward-looking
 
-      // Get readiness scores
+      // Get fixtures (either athlete-specific or team-based)
       const query = supabaseAdmin
-        .from("readiness_scores")
-        .select("day, score, level, suggestion, acwr")
-        .eq("athlete_id", athleteId)
-        .gte("day", startDate.toISOString().slice(0, 10))
-        .lte("day", endDate.toISOString().slice(0, 10))
-        .order("day", { ascending: false });
+        .from("fixtures")
+        .select("*")
+        .or(`athlete_id.eq.${athleteId},athlete_id.is.null`)
+        .gte("game_start", new Date().toISOString())
+        .lte("game_start", endDate.toISOString())
+        .order("game_start", { ascending: true });
 
-      const result = await executeQuery(query, "Failed to retrieve readiness history");
+      const result = await executeQuery(query, "Failed to retrieve fixtures");
       if (!result.success) {
         return result.error;
       }
@@ -47,3 +46,4 @@ exports.handler = async (event, context) => {
     }
   });
 };
+
