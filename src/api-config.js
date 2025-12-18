@@ -242,6 +242,25 @@ export const API_ENDPOINTS = {
   // Supplements
   supplements: {
     log: normalizeEndpoint("/api/supplements/log"),
+    get: API_BASE_URL.includes("netlify/functions")
+      ? "/performance-data?type=supplements"
+      : normalizeEndpoint("/api/performance-data/supplements"),
+  },
+
+  // Performance Data
+  performanceData: {
+    wellness: API_BASE_URL.includes("netlify/functions")
+      ? "/performance-data?type=wellness"
+      : normalizeEndpoint("/api/performance-data/wellness"),
+    supplements: API_BASE_URL.includes("netlify/functions")
+      ? "/performance-data?type=supplements"
+      : normalizeEndpoint("/api/performance-data/supplements"),
+    measurements: API_BASE_URL.includes("netlify/functions")
+      ? "/performance-data?type=measurements"
+      : normalizeEndpoint("/api/performance-data/measurements"),
+    injuries: API_BASE_URL.includes("netlify/functions")
+      ? "/performance-data?type=injuries"
+      : normalizeEndpoint("/api/performance-data/injuries"),
   },
 
   // Games

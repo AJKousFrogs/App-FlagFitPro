@@ -64,12 +64,32 @@ VITE_DEV_PORT=4001 node simple-server.js
 
 ---
 
-## Set Environment Variables (Optional)
+## Set Environment Variables
 
-If you want Supabase credentials injected:
+### Option 1: Use .env.local File (Recommended)
+
+Create a `.env.local` file in the project root with your Supabase credentials:
+
+```bash
+# Supabase Configuration
+SUPABASE_URL=https://pvziciccwxgftcielknm.supabase.co
+SUPABASE_ANON_KEY=sb_publishable_4mRqHbz4cFVXzpDi8nJc3A_rknKjryk
+VITE_SUPABASE_URL=https://pvziciccwxgftcielknm.supabase.co
+VITE_SUPABASE_ANON_KEY=sb_publishable_4mRqHbz4cFVXzpDi8nJc3A_rknKjryk
+```
+
+The dev servers (`dev-server.cjs` and `dev-server-enhanced.cjs`) automatically load `.env.local` and inject these variables into `window._env` for the frontend.
+
+### Option 2: Manual Environment Variables
+
+If you prefer to set environment variables manually:
 ```bash
 export SUPABASE_URL="your-url"
 export SUPABASE_ANON_KEY="your-key"
+export VITE_SUPABASE_URL="your-url"
+export VITE_SUPABASE_ANON_KEY="your-key"
 node simple-server.js
 ```
+
+**Note:** Restart your dev server after creating or modifying `.env.local` for changes to take effect.
 

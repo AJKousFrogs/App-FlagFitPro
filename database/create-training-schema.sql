@@ -300,46 +300,52 @@ ALTER TABLE position_specific_metrics ENABLE ROW LEVEL SECURITY;
 ALTER TABLE player_programs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE training_videos ENABLE ROW LEVEL SECURITY;
 
+-- ============================================================================
+-- RLS POLICIES (Optimized for Performance)
+-- ============================================================================
+-- All auth function calls are wrapped in (SELECT ...) for better query performance
+-- This prevents PostgreSQL from calling auth functions multiple times per row
+
 -- Positions: Public read, coaches can create/update
 CREATE POLICY "Positions are viewable by everyone" ON positions FOR SELECT USING (true);
 CREATE POLICY "Coaches can manage positions" ON positions FOR ALL USING (
-  auth.jwt() ->> 'user_metadata' ->> 'role' = 'coach'
+  (SELECT auth.jwt()) ->> 'user_metadata' ->> 'role' = 'coach'
 );
 
 -- Training Programs: Coaches can manage, players can view assigned programs
 CREATE POLICY "Programs viewable by coaches and assigned players" ON training_programs FOR SELECT USING (
-  (auth.jwt() ->> 'user_metadata' ->> 'role' = 'coach') OR
-  (auth.uid() IN (SELECT player_id FROM player_programs WHERE program_id = training_programs.id AND is_active = true))
+  ((SELECT auth.jwt()) ->> 'user_metadata' ->> 'role' = 'coach') OR
+  ((SELECT auth.uid()) IN (SELECT player_id FROM player_programs WHERE program_id = training_programs.id AND is_active = true))
 );
 CREATE POLICY "Coaches can manage programs" ON training_programs FOR ALL USING (
-  auth.jwt() ->> 'user_metadata' ->> 'role' = 'coach'
+  (SELECT auth.jwt()) ->> 'user_metadata' ->> 'role' = 'coach'
 );
 
 -- Workout Logs: Players can manage their own, coaches can view all
 CREATE POLICY "Players can manage their own workout logs" ON workout_logs FOR ALL USING (
-  auth.uid() = player_id
+  (SELECT auth.uid()) = player_id
 );
 CREATE POLICY "Coaches can view and comment on workout logs" ON workout_logs FOR SELECT USING (
-  auth.jwt() ->> 'user_metadata' ->> 'role' = 'coach'
+  (SELECT auth.jwt()) ->> 'user_metadata' ->> 'role' = 'coach'
 );
 CREATE POLICY "Coaches can update feedback" ON workout_logs FOR UPDATE USING (
-  auth.jwt() ->> 'user_metadata' ->> 'role' = 'coach'
+  (SELECT auth.jwt()) ->> 'user_metadata' ->> 'role' = 'coach'
 ) WITH CHECK (
-  auth.jwt() ->> 'user_metadata' ->> 'role' = 'coach'
+  (SELECT auth.jwt()) ->> 'user_metadata' ->> 'role' = 'coach'
 );
 
 -- Load Monitoring: Players can view their own, coaches can view all
 CREATE POLICY "Players can view their own load data" ON load_monitoring FOR SELECT USING (
-  auth.uid() = player_id
+  (SELECT auth.uid()) = player_id
 );
 CREATE POLICY "Coaches can view all load data" ON load_monitoring FOR SELECT USING (
-  auth.jwt() ->> 'user_metadata' ->> 'role' = 'coach'
+  (SELECT auth.jwt()) ->> 'user_metadata' ->> 'role' = 'coach'
 );
 
 -- Training Videos: Public read, coaches can upload
 CREATE POLICY "Training videos viewable by everyone" ON training_videos FOR SELECT USING (true);
 CREATE POLICY "Coaches can manage training videos" ON training_videos FOR ALL USING (
-  auth.jwt() ->> 'user_metadata' ->> 'role' = 'coach'
+  (SELECT auth.jwt()) ->> 'user_metadata' ->> 'role' = 'coach'
 );
 
 -- =====================================================

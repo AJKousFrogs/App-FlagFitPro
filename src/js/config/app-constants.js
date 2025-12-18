@@ -61,7 +61,10 @@ export const DATA_LIMITS = {
  */
 export const AUTH = {
   // Session timeout (in milliseconds)
-  SESSION_TIMEOUT: 2 * 60 * 60 * 1000, // 2 hours
+  // Set ENABLE_SESSION_TIMEOUT to true to enable automatic logout after inactivity
+  // Default: false for persistent sessions (users stay logged in)
+  ENABLE_SESSION_TIMEOUT: false, // Disabled for persistent sessions
+  SESSION_TIMEOUT: 2 * 60 * 60 * 1000, // 2 hours (only used if ENABLE_SESSION_TIMEOUT is true)
   SESSION_WARNING_TIME: 5 * 60 * 1000, // 5 minutes before timeout
 
   // Activity tracking

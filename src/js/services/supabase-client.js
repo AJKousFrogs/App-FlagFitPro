@@ -16,6 +16,7 @@ const getSupabaseConfig = () => {
   }
 
   // Try to get from window._env (set by supabase-config.js or build process)
+  // This is the primary source - supabase-config.js loads before this module
   if (window._env?.SUPABASE_URL && window._env?.SUPABASE_ANON_KEY) {
     return {
       url: window._env.SUPABASE_URL,
@@ -23,17 +24,9 @@ const getSupabaseConfig = () => {
     };
   }
 
-  // Try to get from import.meta.env (Vite) - only if available
-  try {
-    if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_SUPABASE_URL && import.meta.env?.VITE_SUPABASE_ANON_KEY) {
-      return {
-        url: import.meta.env.VITE_SUPABASE_URL,
-        anonKey: import.meta.env.VITE_SUPABASE_ANON_KEY
-      };
-    }
-  } catch (e) {
-    // import.meta not available in this context, continue to next check
-  }
+  // Note: import.meta.env check removed to avoid syntax errors
+  // Configuration should come from window._env (set by supabase-config.js)
+  // or from localStorage (for development)
 
   // For local development, check localStorage for testing
   const isDevelopment = window.location.hostname === 'localhost' ||

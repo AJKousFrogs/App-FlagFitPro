@@ -18,13 +18,33 @@
   // In development, they should be set by dev servers (dev-server.cjs, etc.) via window._env
   // Note: This file is loaded as a regular script, not a module, so we can't use import.meta.env
   // SECURITY: Never hardcode credentials here - they should come from environment variables only
-  const SUPABASE_URL = 
-    (typeof window !== 'undefined' && window._env?.SUPABASE_URL) ||
-    null;
-
-  const SUPABASE_ANON_KEY = 
-    (typeof window !== 'undefined' && window._env?.SUPABASE_ANON_KEY) ||
-    null;
+  
+  // Check multiple sources in order of preference:
+  // 1. window._env (set by dev server or build process)
+  // 2. localStorage (for local development/testing)
+  const getConfigValue = (key) => {
+    if (typeof window === 'undefined') return null;
+    
+    // First check window._env
+    if (window._env && window._env[key]) {
+      return window._env[key];
+    }
+    
+    // Fallback to localStorage for development
+    const isDevelopment = window.location.hostname === 'localhost' || 
+                         window.location.hostname === '127.0.0.1';
+    if (isDevelopment) {
+      const stored = localStorage.getItem(key);
+      if (stored) {
+        return stored;
+      }
+    }
+    
+    return null;
+  };
+  
+  const SUPABASE_URL = getConfigValue('SUPABASE_URL');
+  const SUPABASE_ANON_KEY = getConfigValue('SUPABASE_ANON_KEY');
 
   // Set window._env for compatibility with existing code
   if (typeof window !== 'undefined') {

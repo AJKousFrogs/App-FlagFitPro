@@ -1,3 +1,6 @@
+// Load environment variables from .env.local
+require('dotenv').config({ path: '.env.local' });
+
 const express = require("express");
 const chokidar = require("chokidar");
 const WebSocket = require("ws");

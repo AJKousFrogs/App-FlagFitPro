@@ -1294,28 +1294,22 @@ class DashboardPage {
     button.style.opacity = "0.7";
 
     try {
-      // Get current user
+      // Wait for auth manager to initialize
+      await authManager.waitForInit();
+
+      // Get current user (may be null if not authenticated)
       const user = authManager.getCurrentUser();
-
-      // Check if we're in development mode
-      const isDevelopment =
-        window.location.hostname === "localhost" ||
-        window.location.hostname === "127.0.0.1";
-
-      if (!user && !isDevelopment) {
-        throw new Error("User not authenticated");
-      }
-
-      if (!user && isDevelopment) {
-        logger.debug(
-          "Development mode: Submitting wellness check-in without authentication",
-        );
-      }
 
       // Prepare wellness data for selected date
       const dateStr = this.formatDateForInput(this.selectedDate);
+      
+      // Use user ID if available, otherwise use a fallback identifier
+      const userId = user
+        ? user.id || user.email
+        : storageService.get("userId", "anonymous", { usePrefix: false });
+
       const wellnessCheckIn = {
-        userId: user ? user.id || user.email : "demo-user",
+        userId: userId,
         date: dateStr,
         energy: this.wellnessData.energy,
         sleep: this.wellnessData.sleep,
@@ -1324,25 +1318,53 @@ class DashboardPage {
         timestamp: new Date().toISOString(),
       };
 
-      // Save to API (or localStorage for demo)
-      try {
-        await apiClient.post(API_ENDPOINTS.wellness.checkin, wellnessCheckIn);
-        logger.success("Wellness check-in submitted successfully");
-      } catch (apiError) {
-        // Fallback to localStorage for demo/testing
-        logger.warn("API unavailable, saving to localStorage:", apiError);
-        const saved = storageService.get("wellnessCheckIns", [], { usePrefix: false });
-        // Remove existing entry for this date
-        const filtered = saved.filter((w) => w.date !== dateStr);
-        filtered.push(wellnessCheckIn);
-        storageService.set("wellnessCheckIns", filtered, { usePrefix: false });
+      // Try API only if user is authenticated
+      if (user) {
+        try {
+          // Use performance-data endpoint for wellness (POST)
+          const endpoint = API_ENDPOINTS.performanceData?.wellness || '/api/performance-data/wellness';
+          await apiClient.post(endpoint, wellnessCheckIn);
+          logger.success("Wellness check-in submitted successfully");
+          
+          // Show success message
+          this.showNotification(
+            "Wellness check-in submitted successfully! ✓",
+            "success",
+          );
+
+          // Reload data to show updated status
+          await this.loadDateData();
+
+          // Reset button after delay
+          setTimeout(() => {
+            button.disabled = false;
+            button.textContent = originalText;
+            button.style.opacity = "1";
+          }, 1500);
+          return; // Successfully saved to API, exit early
+        } catch (apiError) {
+          logger.warn("API unavailable, saving to localStorage:", apiError);
+          // Fall through to localStorage save
+        }
+      } else {
+        logger.debug("User not authenticated, saving to localStorage");
       }
+
+      // Fallback to localStorage (for unauthenticated users or API failures)
+      const saved = storageService.get("wellnessCheckIns", [], { usePrefix: false });
+      // Remove existing entry for this date
+      const filtered = saved.filter((w) => w.date !== dateStr);
+      filtered.push(wellnessCheckIn);
+      storageService.set("wellnessCheckIns", filtered, { usePrefix: false });
 
       // Show success message
       this.showNotification(
-        "Wellness check-in submitted successfully! ✓",
+        "Wellness check-in saved locally! ✓",
         "success",
       );
+
+      // Reload data to show updated status
+      await this.loadDateData();
 
       // Reset button after delay
       setTimeout(() => {
@@ -1646,14 +1668,33 @@ class DashboardPage {
     datePicker.value = this.formatDateForInput(today);
     this.updateDateStatus();
 
-    // Date picker change handler
+    // Date picker change handler - prevent future dates
     datePicker.addEventListener("change", (e) => {
       const selectedDate = new Date(e.target.value);
       selectedDate.setHours(0, 0, 0, 0);
+      
+      // Don't allow selecting future dates
+      if (this.isFuture(selectedDate)) {
+        this.showNotification("Cannot select future dates", "warning");
+        // Reset to today
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        this.selectedDate = today;
+        datePicker.value = this.formatDateForInput(today);
+        this.updateDateStatus();
+        this.loadDateData();
+        return;
+      }
+      
       this.selectedDate = selectedDate;
       this.updateDateStatus();
       this.loadDateData();
     });
+    
+    // Set max date to today to prevent selecting future dates in the date picker
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    datePicker.setAttribute("max", this.formatDateForInput(today));
 
     // Previous day button
     if (prevBtn) {
@@ -1667,11 +1708,18 @@ class DashboardPage {
       });
     }
 
-    // Next day button
+    // Next day button - prevent going to future dates
     if (nextBtn) {
       nextBtn.addEventListener("click", () => {
         const nextDate = new Date(this.selectedDate);
         nextDate.setDate(nextDate.getDate() + 1);
+        
+        // Don't allow selecting future dates
+        if (this.isFuture(nextDate)) {
+          this.showNotification("Cannot select future dates", "warning");
+          return;
+        }
+        
         this.selectedDate = nextDate;
         datePicker.value = this.formatDateForInput(nextDate);
         this.updateDateStatus();
@@ -1814,6 +1862,16 @@ class DashboardPage {
     const info = document.getElementById("date-info");
     if (!info) {return;}
 
+    const isFuture = this.isFuture(this.selectedDate);
+    
+    // For future dates, show appropriate message
+    if (isFuture) {
+      info.classList.remove("has-data", "no-data");
+      info.classList.add("no-data");
+      // Don't append status text for future dates - CSS will handle "(No entries)"
+      return;
+    }
+
     const hasWellness =
       wellnessLoaded &&
       Object.values(this.wellnessData).some((v) => v !== null);
@@ -1853,21 +1911,47 @@ class DashboardPage {
       const user = authManager.getCurrentUser();
       if (!user) {return false;}
 
-      // Try API first
+      // Skip API call for future dates
+      const isFuture = this.isFuture(this.selectedDate);
+      if (isFuture) {
+        this.wellnessData = {
+          energy: null,
+          sleep: null,
+          mood: null,
+          trainingLoad: null,
+        };
+        this.updateWellnessUI();
+        return false; // No data for future dates
+      }
+
+      // Try API first - use performance-data endpoint for wellness data
       try {
-        const response = await apiClient.get(API_ENDPOINTS.wellness.checkin, {
+        const endpoint = API_ENDPOINTS.performanceData?.wellness || API_ENDPOINTS.wellness?.get || '/api/performance-data/wellness';
+        const response = await apiClient.get(endpoint, {
           date: dateStr,
+          type: 'wellness',
         });
+        
+        // Handle array response (from performance-data endpoint)
         if (response && response.data) {
-          const wellness = response.data;
-          this.wellnessData = {
-            energy: wellness.energy || null,
-            sleep: wellness.sleep || null,
-            mood: wellness.mood || null,
-            trainingLoad: wellness.trainingLoad || null,
-          };
-          this.updateWellnessUI();
-          return true; // Data loaded
+          let wellness = null;
+          if (Array.isArray(response.data)) {
+            // Find wellness entry for the specific date
+            wellness = response.data.find(w => w.date === dateStr);
+          } else if (response.data.date === dateStr) {
+            wellness = response.data;
+          }
+          
+          if (wellness) {
+            this.wellnessData = {
+              energy: wellness.energy || null,
+              sleep: wellness.sleep || null,
+              mood: wellness.mood || null,
+              trainingLoad: wellness.trainingLoad || null,
+            };
+            this.updateWellnessUI();
+            return true; // Data loaded
+          }
         }
       } catch (apiError) {
         // Fallback to localStorage
@@ -1942,6 +2026,17 @@ class DashboardPage {
       const user = authManager.getCurrentUser();
       if (!user) {return false;}
 
+      // Skip API call for future dates
+      const isFuture = this.isFuture(this.selectedDate);
+      if (isFuture) {
+        // Reset all supplements to false for future dates
+        Object.keys(this.supplements).forEach((key) => {
+          this.supplements[key] = { taken: false, time: null };
+        });
+        this.updateSupplementsUI();
+        return false; // No data for future dates
+      }
+
       // Reset all supplements to false
       Object.keys(this.supplements).forEach((key) => {
         this.supplements[key] = { taken: false, time: null };
@@ -1949,13 +2044,27 @@ class DashboardPage {
 
       let hasData = false;
 
-      // Try API first
+      // Try API first - use performance-data endpoint for supplements
       try {
-        const response = await apiClient.get(API_ENDPOINTS.supplements.log, {
+        const endpoint = API_ENDPOINTS.performanceData?.supplements || API_ENDPOINTS.supplements?.get || '/api/performance-data/supplements';
+        const response = await apiClient.get(endpoint, {
           date: dateStr,
+          type: 'supplements',
         });
-        if (response && response.data && Array.isArray(response.data)) {
-          response.data.forEach((log) => {
+        
+        if (response && response.data) {
+          let supplements = [];
+          if (Array.isArray(response.data)) {
+            // Filter supplements for the specific date
+            supplements = response.data.filter(s => {
+              const logDate = s.date || (s.timestamp ? new Date(s.timestamp).toISOString().split('T')[0] : null);
+              return logDate === dateStr;
+            });
+          } else if (response.data.date === dateStr) {
+            supplements = [response.data];
+          }
+          
+          supplements.forEach((log) => {
             if (log.supplement && this.supplements[log.supplement]) {
               this.supplements[log.supplement] = {
                 taken: log.taken || false,
@@ -1964,8 +2073,11 @@ class DashboardPage {
               if (log.taken) {hasData = true;}
             }
           });
-          this.updateSupplementsUI();
-          return hasData;
+          
+          if (supplements.length > 0) {
+            this.updateSupplementsUI();
+            return hasData;
+          }
         }
       } catch (apiError) {
         // Fallback to localStorage

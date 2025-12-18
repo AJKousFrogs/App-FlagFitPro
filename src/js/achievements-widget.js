@@ -88,11 +88,12 @@
     const topAchievements = sorted.slice(0, 6);
 
     return topAchievements.map(achievement => `
-      <div class="achievement-badge ${achievement.unlocked ? 'unlocked' : 'locked'}"
+      <div class="achievement-badge ${achievement.unlocked ? 'unlocked' : 'locked'} rarity-${achievement.rarity || 'common'}"
            title="${achievement.description}">
         <div class="achievement-icon">${achievement.icon}</div>
         <div class="achievement-name">${achievement.name}</div>
         <div class="achievement-points">${achievement.points} pts</div>
+        ${achievement.rarity && achievement.rarity !== 'common' ? `<div class="achievement-rarity rarity-${achievement.rarity}">${achievement.rarity.toUpperCase()}</div>` : ''}
         ${achievement.unlocked ? '<div class="achievement-check">✓</div>' : ''}
         ${!achievement.unlocked ? '<div class="achievement-lock">🔒</div>' : ''}
       </div>
@@ -214,11 +215,71 @@
       }
 
       .achievement-badge.unlocked {
-        background: linear-gradient(135deg, var(--brand-primary-700, #089949) 0%, #10c96b 100%);
         color: white;
         border-color: var(--brand-primary-900, #036d35);
         transform: scale(1);
         animation: unlock-bounce 0.5s ease-out;
+      }
+
+      /* Rarity-based styling */
+      .achievement-badge.unlocked.rarity-common {
+        background: linear-gradient(135deg, #6b7280 0%, #9ca3af 100%);
+        border-color: #4b5563;
+      }
+
+      .achievement-badge.unlocked.rarity-rare {
+        background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+        border-color: #2563eb;
+      }
+
+      .achievement-badge.unlocked.rarity-epic {
+        background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
+        border-color: #7c3aed;
+      }
+
+      .achievement-badge.unlocked.rarity-legendary {
+        background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+        border-color: #d97706;
+        box-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
+        animation: legendary-glow 2s ease-in-out infinite;
+      }
+
+      @keyframes legendary-glow {
+        0%, 100% {
+          box-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
+        }
+        50% {
+          box-shadow: 0 0 30px rgba(245, 158, 11, 0.8);
+        }
+      }
+
+      .achievement-rarity {
+        position: absolute;
+        bottom: 4px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.6rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        opacity: 0.9;
+      }
+
+      .achievement-rarity.rarity-rare {
+        background: rgba(59, 130, 246, 0.3);
+        color: #dbeafe;
+      }
+
+      .achievement-rarity.rarity-epic {
+        background: rgba(139, 92, 246, 0.3);
+        color: #e9d5ff;
+      }
+
+      .achievement-rarity.rarity-legendary {
+        background: rgba(245, 158, 11, 0.3);
+        color: #fef3c7;
       }
 
       @keyframes unlock-bounce {
@@ -351,7 +412,7 @@
     if (!window.achievementsService) {return;}
 
     const service = window.achievementsService;
-    const categories = ['wellness', 'training', 'performance', 'social', 'special'];
+    const categories = ['wellness', 'training', 'performance', 'games', 'tournaments', 'qb', 'social', 'special'];
 
     // Create modal
     const modal = document.createElement('div');
@@ -379,6 +440,34 @@
           </div>
         </div>
 
+        <div class="rarity-stats">
+          ${(() => {
+            const rarityStats = service.getRarityStats();
+            return `
+              <div class="rarity-stat-item rarity-common">
+                <span class="rarity-icon">⚪</span>
+                <span class="rarity-count">${rarityStats.common}</span>
+                <span class="rarity-label">Common</span>
+              </div>
+              <div class="rarity-stat-item rarity-rare">
+                <span class="rarity-icon">🔵</span>
+                <span class="rarity-count">${rarityStats.rare}</span>
+                <span class="rarity-label">Rare</span>
+              </div>
+              <div class="rarity-stat-item rarity-epic">
+                <span class="rarity-icon">🟣</span>
+                <span class="rarity-count">${rarityStats.epic}</span>
+                <span class="rarity-label">Epic</span>
+              </div>
+              <div class="rarity-stat-item rarity-legendary">
+                <span class="rarity-icon">🟡</span>
+                <span class="rarity-count">${rarityStats.legendary}</span>
+                <span class="rarity-label">Legendary</span>
+              </div>
+            `;
+          })()}
+        </div>
+
         ${categories.map(category => {
           const categoryAchievements = service.getAchievementsByCategory(category);
           if (categoryAchievements.length === 0) {return '';}
@@ -388,11 +477,12 @@
               <h3 class="category-title">${category.charAt(0).toUpperCase() + category.slice(1)}</h3>
               <div class="achievements-grid">
                 ${categoryAchievements.map(a => `
-                  <div class="achievement-badge ${a.unlocked ? 'unlocked' : 'locked'}">
+                  <div class="achievement-badge ${a.unlocked ? 'unlocked' : 'locked'} rarity-${a.rarity || 'common'}">
                     <div class="achievement-icon">${a.icon}</div>
                     <div class="achievement-name">${a.name}</div>
                     <div class="achievement-description">${a.description}</div>
                     <div class="achievement-points">${a.points} pts</div>
+                    ${a.rarity && a.rarity !== 'common' ? `<div class="achievement-rarity rarity-${a.rarity}">${a.rarity.toUpperCase()}</div>` : ''}
                     ${a.unlocked ? '<div class="achievement-check">✓</div>' : ''}
                     ${!a.unlocked ? '<div class="achievement-lock">🔒</div>' : ''}
                   </div>
@@ -520,6 +610,56 @@
 
       .achievement-badge.unlocked .achievement-description {
         color: rgba(255, 255, 255, 0.85);
+      }
+
+      .rarity-stats {
+        display: flex;
+        gap: var(--space-3, 12px);
+        margin-bottom: var(--space-6, 32px);
+        padding: var(--space-4, 16px);
+        background: var(--surface-secondary, #f3f4f6);
+        border-radius: 12px;
+        justify-content: space-around;
+      }
+
+      .rarity-stat-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .rarity-icon {
+        font-size: 1.5rem;
+      }
+
+      .rarity-count {
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+
+      .rarity-stat-item.rarity-common .rarity-count {
+        color: #6b7280;
+      }
+
+      .rarity-stat-item.rarity-rare .rarity-count {
+        color: #3b82f6;
+      }
+
+      .rarity-stat-item.rarity-epic .rarity-count {
+        color: #8b5cf6;
+      }
+
+      .rarity-stat-item.rarity-legendary .rarity-count {
+        color: #f59e0b;
+      }
+
+      .rarity-label {
+        font-size: 0.75rem;
+        color: var(--text-secondary, #6b7280);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 600;
       }
     `;
 

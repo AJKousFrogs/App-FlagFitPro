@@ -62,6 +62,9 @@ class AuthManager {
       // Validate token with timeout (3 seconds max) - this ensures initialization completes quickly
       await this.validateStoredToken(3000);
       
+      // Check authentication and restore session if needed
+      await this.checkAuthentication();
+      
       // Check auth state on load
       this.checkAuthStateOnLoad();
     } catch (error) {
@@ -187,7 +190,7 @@ logger.debug(
     return AUTH.PROTECTED_ROUTES.some((page) => currentPath.includes(page));
   }
 
-  // Load authentication data from secure storage
+  // Load authentication data from secure storage and Supabase session
   async loadStoredAuth() {
     const isDevelopment =
       window.location.hostname === "localhost" ||
@@ -195,7 +198,55 @@ logger.debug(
     logger.debug("Loading stored authentication data...");
 
     try {
-      // Try to migrate from legacy storage first
+      // First, try to restore Supabase session (this handles persistent sessions)
+      const { getSupabase } = await import('./js/services/supabase-client.js');
+      const supabase = getSupabase();
+
+      if (supabase) {
+        // Get current session from Supabase (this restores persisted sessions)
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) {
+          logger.warn("[Auth] Error getting Supabase session:", sessionError);
+        }
+
+        if (session) {
+          logger.debug("[Auth] Found Supabase session, restoring...");
+          
+          // Restore session from Supabase
+          this.token = session.access_token;
+          this.user = {
+            id: session.user.id,
+            email: session.user.email,
+            role: session.user.user_metadata?.role || 'player',
+            name: session.user.user_metadata?.name ||
+                  session.user.user_metadata?.full_name ||
+                  session.user.email,
+            email_verified: session.user.email_confirmed_at !== null,
+            provider: session.user.app_metadata?.provider,
+          };
+
+          // Store in secure storage for consistency
+          await secureStorage.setAuthToken(this.token);
+          await secureStorage.setUserData(this.user);
+          
+          // Set token in API client
+          apiClient.setAuthToken(this.token);
+          
+          logger.success("[Auth] Supabase session restored successfully");
+          
+          if (isDevelopment) {
+            logger.debug("Restored user:", this.user.email);
+            logger.debug("Token expires at:", new Date(session.expires_at * 1000));
+          }
+          
+          return; // Successfully restored from Supabase, exit early
+        } else {
+          logger.debug("[Auth] No Supabase session found");
+        }
+      }
+
+      // Fallback: Try to migrate from legacy storage
       await secureStorage.migrateFromLegacyStorage();
 
       // Load from secure storage (now async with AES-GCM)
@@ -225,7 +276,8 @@ logger.debug(
       }
     } catch (error) {
       logger.error("Error loading stored auth:", error);
-      this.clearAuth();
+      // Don't clear auth on error - might be a temporary network issue
+      // Let Supabase handle session restoration
     }
   }
 
@@ -534,15 +586,43 @@ logger.debug(
             localStorage.removeItem('pending_oauth_role');
           }
 
-          secureStorage.setAuthToken(this.token);
-          secureStorage.setUserData(this.user);
+          // Store session persistently
+          await secureStorage.setAuthToken(this.token);
+          await secureStorage.setUserData(this.user);
+          
+          // Set token in API client
+          apiClient.setAuthToken(this.token);
+          
+          // Notify callbacks
           this.notifyLoginCallbacks();
+          
+          logger.debug('[Auth] Session restored/updated from Supabase');
         } else if (event === 'SIGNED_OUT') {
           this.clearAuth();
           this.notifyLogoutCallbacks();
         } else if (event === 'TOKEN_REFRESHED' && session) {
+          // Token was automatically refreshed by Supabase
           this.token = session.access_token;
-          secureStorage.setAuthToken(this.token);
+          await secureStorage.setAuthToken(this.token);
+          apiClient.setAuthToken(this.token);
+          logger.debug('[Auth] Token refreshed automatically');
+        } else if (event === 'USER_UPDATED' && session) {
+          // User metadata was updated
+          if (session.user) {
+            this.user = {
+              ...this.user,
+              id: session.user.id,
+              email: session.user.email,
+              role: session.user.user_metadata?.role || this.user?.role || 'player',
+              name: session.user.user_metadata?.name ||
+                    session.user.user_metadata?.full_name ||
+                    this.user?.name ||
+                    session.user.email,
+              email_verified: session.user.email_confirmed_at !== null,
+            };
+            await secureStorage.setUserData(this.user);
+            logger.debug('[Auth] User data updated');
+          }
         }
       });
 
@@ -606,8 +686,15 @@ logger.debug(
     }
   }
 
-  // Check if user is authenticated
+  // Check if user is authenticated (synchronous - for quick checks)
   isAuthenticated() {
+    // Quick synchronous check - returns true if we have token and user
+    // For full validation including session restoration, use checkAuthentication()
+    return !!(this.token && this.user);
+  }
+
+  // Check authentication with session restoration (async)
+  async checkAuthentication() {
     const isDevelopment =
       window.location.hostname === "localhost" ||
       window.location.hostname === "127.0.0.1";
@@ -626,40 +713,143 @@ logger.debug(
       this._lastAuthLogTime = now;
     }
 
+    // First check: If we have token and user, validate token
     if (this.token && this.user) {
       // For JWT tokens, validate expiration
       try {
         // Verify token is not expired
         const payload = JSON.parse(atob(this.token.split(".")[1]));
-        const now = Math.floor(Date.now() / 1000);
+        const tokenExpiry = payload.exp ? Math.floor(Date.now() / 1000) : null;
 
         // Only log token details in development
-        if (isDevelopment) {
-          logger.debug("⏰ Token expires at:", new Date(payload.exp * 1000));
-          logger.debug("⏰ Current time:", new Date(now * 1000));
-          logger.debug("⏰ Token valid:", payload.exp > now);
+        if (isDevelopment && shouldLog) {
+          logger.debug("⏰ Token expires at:", payload.exp ? new Date(payload.exp * 1000) : "No expiry");
+          logger.debug("⏰ Current time:", new Date());
         }
 
-        if (payload.exp && payload.exp > now) {
+        // If token has expiry and is expired, try to refresh via Supabase
+        if (payload.exp && payload.exp <= Math.floor(Date.now() / 1000)) {
+          if (isDevelopment) {
+            logger.debug("⏰ Token expired, attempting refresh via Supabase...");
+          }
+          
+          // Try to refresh session via Supabase
+          try {
+            const { getSupabase } = await import('./js/services/supabase-client.js');
+            const supabase = getSupabase();
+            
+            if (supabase) {
+              const { data: { session }, error: refreshError } = await supabase.auth.getSession();
+              
+              if (session && session.access_token) {
+                // Session refreshed successfully
+                this.token = session.access_token;
+                await secureStorage.setAuthToken(this.token);
+                apiClient.setAuthToken(this.token);
+                
+                if (isDevelopment) {
+                  logger.debug("✅ Token refreshed successfully");
+                }
+                return true;
+              } else if (refreshError) {
+                if (isDevelopment) {
+                  logger.debug("❌ Token refresh failed:", refreshError);
+                }
+                // Token refresh failed, clear auth
+                this.clearAuth();
+                return false;
+              }
+            }
+          } catch (refreshError) {
+            if (isDevelopment) {
+              logger.debug("❌ Token refresh error:", refreshError);
+            }
+          }
+          
+          // If refresh failed, clear auth
+          if (isDevelopment) {
+            logger.debug("❌ Token expired and refresh failed, clearing auth");
+          }
+          this.clearAuth();
+          return false;
+        } else {
+          // Token is valid
           if (isDevelopment && shouldLog) {
             logger.debug("✅ User is authenticated (JWT valid)");
           }
           return true;
-        } else {
-          if (isDevelopment) {
-            logger.debug("❌ Token expired, clearing auth");
-          }
-          this.clearAuth();
-          return false;
         }
       } catch (error) {
         if (isDevelopment) {
           logger.error("❌ JWT token validation failed:", error);
         }
 
-        // In production, JWT parsing failure means invalid token
+        // JWT parsing failure - might be a Supabase token (not JWT)
+        // Check if we have a valid Supabase session instead
+        try {
+          const { getSupabase } = await import('./js/services/supabase-client.js');
+          const supabase = getSupabase();
+          
+          if (supabase) {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session && session.access_token) {
+              // Valid Supabase session exists
+              this.token = session.access_token;
+              await secureStorage.setAuthToken(this.token);
+              apiClient.setAuthToken(this.token);
+              
+              if (isDevelopment && shouldLog) {
+                logger.debug("✅ Valid Supabase session found");
+              }
+              return true;
+            }
+          }
+        } catch (sessionError) {
+          // Ignore session check errors
+        }
+
+        // No valid session found, clear auth
         this.clearAuth();
         return false;
+      }
+    }
+
+    // Second check: Try to restore from Supabase session if we don't have local auth
+    if (!this.token || !this.user) {
+      try {
+        const { getSupabase } = await import('./js/services/supabase-client.js');
+        const supabase = getSupabase();
+        
+        if (supabase) {
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session && session.access_token) {
+            // Restore session from Supabase
+            this.token = session.access_token;
+            this.user = {
+              id: session.user.id,
+              email: session.user.email,
+              role: session.user.user_metadata?.role || 'player',
+              name: session.user.user_metadata?.name ||
+                    session.user.user_metadata?.full_name ||
+                    session.user.email,
+              email_verified: session.user.email_confirmed_at !== null,
+            };
+            
+            await secureStorage.setAuthToken(this.token);
+            await secureStorage.setUserData(this.user);
+            apiClient.setAuthToken(this.token);
+            
+            if (isDevelopment && shouldLog) {
+              logger.debug("✅ Session restored from Supabase");
+            }
+            return true;
+          }
+        }
+      } catch (error) {
+        // Ignore errors during session restoration check
+        if (isDevelopment) {
+          logger.debug("Session restoration check error:", error);
+        }
       }
     }
 
@@ -692,19 +882,53 @@ logger.debug(
 
   // Setup automatic token refresh
   setupTokenRefresh() {
-    // Refresh token every 23 hours (tokens expire in 24 hours)
-    setInterval(
-      () => {
-        if (this.isAuthenticated()) {
-          this.validateStoredToken();
+    // Supabase handles token refresh automatically via autoRefreshToken: true
+    // This is just a backup validation check
+      // Check token validity every hour (Supabase refreshes automatically before expiry)
+      setInterval(
+      async () => {
+        if (this.token && this.user) {
+          // Try to refresh Supabase session if needed
+          try {
+            const { getSupabase } = await import('./js/services/supabase-client.js');
+            const supabase = getSupabase();
+            
+            if (supabase) {
+              // Get current session (this will trigger refresh if needed)
+              const { data: { session } } = await supabase.auth.getSession();
+              
+              if (session && session.access_token !== this.token) {
+                // Token was refreshed
+                this.token = session.access_token;
+                await secureStorage.setAuthToken(this.token);
+                apiClient.setAuthToken(this.token);
+                logger.debug('[Auth] Token refreshed via periodic check');
+              }
+            }
+          } catch (error) {
+            logger.debug('[Auth] Token refresh check error:', error);
+            // Fallback to validation
+            this.validateStoredToken();
+          }
         }
       },
-      23 * 60 * 60 * 1000,
+      60 * 60 * 1000, // Check every hour
     );
   }
 
   // Setup session timeout management
+  // NOTE: Disabled by default for persistent sessions. Set AUTH.ENABLE_SESSION_TIMEOUT=true to enable
   setupSessionTimeout() {
+    // Check if session timeout is enabled (default: false for persistent sessions)
+    const ENABLE_TIMEOUT = AUTH.ENABLE_SESSION_TIMEOUT !== undefined 
+      ? AUTH.ENABLE_SESSION_TIMEOUT 
+      : false; // Default to false for persistent sessions
+
+    if (!ENABLE_TIMEOUT) {
+      logger.debug('[Auth] Session timeout disabled - using persistent sessions');
+      return; // Exit early if timeout is disabled
+    }
+
     // Use centralized constants instead of hardcoded values
     const SESSION_TIMEOUT = AUTH.SESSION_TIMEOUT;
     const WARNING_TIME = AUTH.SESSION_WARNING_TIME;
@@ -722,7 +946,7 @@ logger.debug(
 
       // Set warning timer
       warningTimer = setTimeout(() => {
-        if (this.isAuthenticated()) {
+        if (this.token && this.user) {
           this.showWarning(
             `Your session will expire in ${AUTH.SESSION_WARNING_TIME / 60000} minutes due to inactivity.`,
           );
@@ -731,7 +955,7 @@ logger.debug(
 
       // Set logout timer
       sessionTimer = setTimeout(() => {
-        if (this.isAuthenticated()) {
+        if (this.token && this.user) {
           this.showError(ERROR_MESSAGES.SESSION_EXPIRED);
           this.logout();
         }
@@ -752,7 +976,7 @@ logger.debug(
 
     // Create debounced handler to prevent excessive calls
     const activityHandler = debounce(() => {
-      if (this.isAuthenticated() && Date.now() - lastActivity > AUTH.ACTIVITY_RESET_THRESHOLD) {
+      if (this.token && this.user && Date.now() - lastActivity > AUTH.ACTIVITY_RESET_THRESHOLD) {
         resetSessionTimer();
       }
     }, AUTH.ACTIVITY_DEBOUNCE_TIME);
@@ -765,15 +989,15 @@ logger.debug(
       this.activityHandlers.push({ event, handler: activityHandler });
     });
 
-    // Initialize session timer
-    if (this.isAuthenticated()) {
-      resetSessionTimer();
-    }
+      // Initialize session timer
+      if (this.token && this.user) {
+        resetSessionTimer();
+      }
 
-    // Reset timer on login
-    this.onLogin(() => {
-      resetSessionTimer();
-    });
+      // Reset timer on login
+      this.onLogin(() => {
+        resetSessionTimer();
+      });
 
     // Clear timers and remove event listeners on logout
     this.onLogout(() => {
@@ -833,7 +1057,7 @@ logger.debug(
     await this.waitForInit();
 
     logger.debug("🔍 Auth check after initialization:");
-    logger.debug("   - Is authenticated:", this.isAuthenticated());
+    logger.debug("   - Is authenticated:", !!(this.token && this.user));
     logger.debug("   - Token exists:", !!this.token);
     logger.debug("   - User exists:", !!this.user);
 
@@ -841,7 +1065,7 @@ logger.debug(
     // This will ONLY work if:
     // 1. Running in development environment (localhost)
     // 2. ALLOW_UNAUTHENTICATED_DEV is explicitly set to "true"
-    if (config.ALLOW_UNAUTHENTICATED_DEV && !this.isAuthenticated()) {
+    if (config.ALLOW_UNAUTHENTICATED_DEV && !(this.token && this.user)) {
       logger.warn("⚠️ ==========================================");
       logger.warn("⚠️ DEV MODE ONLY: Bypassing authentication");
       logger.warn("⚠️ This is DISABLED in production");
@@ -850,7 +1074,7 @@ logger.debug(
       return true;
     }
 
-    if (!this.isAuthenticated()) {
+    if (!(this.token && this.user)) {
       logger.debug(
         "❌ Authentication required but user not authenticated, redirecting to login",
       );

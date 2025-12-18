@@ -36,25 +36,34 @@ $env:VITE_SUPABASE_ANON_KEY="your_anon_key_here"
 npm run dev
 ```
 
-### Option 2: Use .env.local File
+### Option 2: Use .env.local File (Recommended)
 
-1. Copy `.env.example` to `.env.local`:
+1. Create `.env.local` file in the project root:
    ```bash
-   cp .env.example .env.local
+   # The file should already exist, but if not:
+   touch .env.local
    ```
 
-2. Edit `.env.local` and add your Supabase credentials:
+2. Add your Supabase credentials to `.env.local`:
    ```env
+   # Supabase Configuration
+   SUPABASE_URL=https://pvziciccwxgftcielknm.supabase.co
+   SUPABASE_ANON_KEY=sb_publishable_4mRqHbz4cFVXzpDi8nJc3A_rknKjryk
+   SUPABASE_SERVICE_KEY=sb_secret_ZbZdfro3oCkX1wAiyYg__g_SUrhZI1R
+
+   # Vite environment variables (for frontend)
    VITE_SUPABASE_URL=https://pvziciccwxgftcielknm.supabase.co
-   VITE_SUPABASE_ANON_KEY=your_anon_key_here
+   VITE_SUPABASE_ANON_KEY=sb_publishable_4mRqHbz4cFVXzpDi8nJc3A_rknKjryk
    ```
 
 3. Start your dev server:
    ```bash
-   npm run dev
+   npm run dev:hot
+   # or
+   npm run dev:enhanced
    ```
 
-**Note:** The dev servers (`dev-server.cjs`, `simple-server.js`, `dev-server-enhanced.cjs`) will automatically inject these variables into the browser.
+**Note:** The dev servers (`dev-server.cjs` and `dev-server-enhanced.cjs`) automatically load `.env.local` using dotenv and inject these variables into `window._env` for the browser.
 
 ### Option 3: Use Pre-configured Scripts
 
@@ -86,9 +95,10 @@ For quick testing, you can set credentials directly in the browser console:
 
 The Supabase client checks for credentials in this order:
 
-1. **`window._env`** - Set by dev servers when environment variables are available
-2. **`import.meta.env`** - Vite environment variables (requires build process)
-3. **`localStorage`** - Fallback for local development only
+1. **`window._env`** - Set by dev servers when environment variables are loaded from `.env.local` or system environment
+2. **`localStorage`** - Fallback for local development only (localhost/127.0.0.1)
+
+**Note:** `import.meta.env` is no longer used to avoid syntax errors. Configuration comes from `window._env` (set by `supabase-config.js` and dev servers) or `localStorage` for development.
 
 ## Verification
 
@@ -123,10 +133,14 @@ These will be injected during the build process.
 
 ### Dev server not injecting variables?
 
-Make sure you're using one of these servers:
-- `dev-server.cjs` (updated)
-- `simple-server.js` (updated)
-- `dev-server-enhanced.cjs` (already had this feature)
+Make sure you're using one of these servers (both now load `.env.local` automatically):
+- `dev-server.cjs` - Loads `.env.local` using dotenv
+- `dev-server-enhanced.cjs` - Loads `.env.local` using dotenv
 
-If using a different server, you may need to manually inject the variables.
+Both servers will:
+1. Load environment variables from `.env.local` on startup
+2. Inject them into `window._env` for the frontend
+3. Set them in `localStorage` for development (localhost only)
+
+**Important:** Restart your dev server after creating or modifying `.env.local` for changes to take effect.
 

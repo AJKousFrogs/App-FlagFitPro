@@ -43,16 +43,29 @@ This script will:
 
 ## Environment Variables
 
-The startup script automatically sets these environment variables:
+### Using .env.local File (Recommended)
+
+Create a `.env.local` file in the project root with:
 
 ```bash
+# Supabase Configuration
 SUPABASE_URL=https://pvziciccwxgftcielknm.supabase.co
-SUPABASE_ANON_KEY=<your-anon-key>
-SUPABASE_SERVICE_KEY=<your-service-key>
+SUPABASE_ANON_KEY=sb_publishable_4mRqHbz4cFVXzpDi8nJc3A_rknKjryk
+SUPABASE_SERVICE_KEY=sb_secret_ZbZdfro3oCkX1wAiyYg__g_SUrhZI1R
+
+# Vite environment variables (for frontend)
+VITE_SUPABASE_URL=https://pvziciccwxgftcielknm.supabase.co
+VITE_SUPABASE_ANON_KEY=sb_publishable_4mRqHbz4cFVXzpDi8nJc3A_rknKjryk
+
+# JWT Secret (if needed)
 JWT_SECRET=flagfit-pro-jwt-secret-2024
-VITE_SUPABASE_URL=<same-as-above>
-VITE_SUPABASE_ANON_KEY=<same-as-above>
 ```
+
+The dev servers (`dev-server.cjs` and `dev-server-enhanced.cjs`) automatically load `.env.local` and inject these variables into `window._env` for the frontend.
+
+### Alternative: Manual Environment Variables
+
+You can also set environment variables manually before starting the server:
 
 ## Manual Setup (Alternative)
 
@@ -90,10 +103,16 @@ lsof -ti:4000 | xargs kill -9
 
 ### Supabase Connection Issues
 
-1. Check browser console for Supabase initialization messages
-2. Verify environment variables are set correctly
-3. Check that Supabase credentials are injected (look for `window._env` in browser console)
-4. Verify network connectivity to Supabase
+1. **Check `.env.local` exists** and contains Supabase credentials
+2. **Restart dev server** after creating/modifying `.env.local`
+3. Check browser console for Supabase initialization messages
+4. Verify `window._env` has credentials (open browser console and type `window._env`)
+5. Check `localStorage` for credentials (in development):
+   ```javascript
+   localStorage.getItem('SUPABASE_URL')
+   localStorage.getItem('SUPABASE_ANON_KEY')
+   ```
+6. Verify network connectivity to Supabase
 
 ### Frontend Not Loading Data
 

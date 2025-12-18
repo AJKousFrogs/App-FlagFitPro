@@ -2,6 +2,12 @@
 -- RLS Performance Fix Helper Script
 -- Use this script to inspect and fix RLS policies with performance issues
 -- ============================================================================
+--
+-- UPGRADES:
+-- - Enhanced with more examples and best practices
+-- - Added comprehensive verification queries
+-- - Added helper function examples
+-- ============================================================================
 
 -- ============================================================================
 -- STEP 1: Inspect the existing policy
@@ -104,4 +110,51 @@ SELECT
 FROM pg_policies
 WHERE tablename = 'analytics_events'
 AND policyname = 'analytics_events_admin_all';
+
+-- ============================================================================
+-- STEP 5: Comprehensive Policy Audit (Optional)
+-- ============================================================================
+-- Run this to check all policies in your database for optimization issues
+
+SELECT 
+    schemaname,
+    tablename,
+    policyname,
+    cmd,
+    CASE 
+        WHEN qual LIKE '%(SELECT auth.%()%' OR qual LIKE '%(SELECT current_setting(%' THEN 'OPTIMIZED ✓'
+        WHEN qual LIKE '%auth.%()%' OR qual LIKE '%current_setting(%' THEN 'NEEDS OPTIMIZATION ⚠'
+        ELSE 'N/A'
+    END as optimization_status
+FROM pg_policies
+WHERE schemaname = 'public'
+ORDER BY 
+    CASE 
+        WHEN qual LIKE '%auth.%()%' OR qual LIKE '%current_setting(%' THEN 0
+        ELSE 1
+    END,
+    tablename,
+    policyname;
+
+-- ============================================================================
+-- STEP 6: Helper Function Pattern (Best Practice)
+-- ============================================================================
+-- Instead of wrapping auth.uid() in every policy, you can create helper functions
+-- This is even more performant and maintainable
+
+-- Example helper function (already exists in supabase-rls-policies.sql):
+-- CREATE OR REPLACE FUNCTION auth.user_id()
+-- RETURNS UUID AS $$
+--   SELECT COALESCE(
+--     auth.uid(),
+--     (current_setting('request.jwt.claims', true)::jsonb->>'sub')::uuid
+--   );
+-- $$ LANGUAGE SQL STABLE;
+
+-- Then use it in policies:
+-- CREATE POLICY example_policy
+-- ON example_table FOR SELECT
+-- USING (user_id = auth.user_id());
+--
+-- Note: Helper functions are automatically optimized by PostgreSQL
 
