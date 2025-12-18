@@ -1,6 +1,12 @@
+<<<<<<< Updated upstream
 import { ApplicationConfig, provideExperimentalZonelessChangeDetection, isDevMode } from "@angular/core";
 import { provideRouter, withComponentInputBinding, withViewTransitions, withPreloading, withDebugTracing } from "@angular/router";
 import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
+=======
+import { ApplicationConfig } from "@angular/core";
+import { provideRouter } from "@angular/router";
+// Removed provideAnimations() - PrimeNG v21 uses CSS animations (80+ KB bundle savings)
+>>>>>>> Stashed changes
 import { provideHttpClient, withInterceptors } from "@angular/common/http";
 import { MessageService } from "primeng/api";
 import { routes } from "./app.routes";
@@ -13,6 +19,7 @@ import { AuthAwarePreloadStrategy } from "./core/strategies/auth-aware-preload.s
 
 export const appConfig: ApplicationConfig = {
   providers: [
+<<<<<<< Updated upstream
     // Angular 21: Zoneless change detection (stable in v21)
     // Benefits:
     // - No Zone.js overhead (smaller bundle, faster change detection)
@@ -34,6 +41,11 @@ export const appConfig: ApplicationConfig = {
     // Angular 21: Async animations provider for better performance
     // Loads animations asynchronously, reducing initial bundle size
     provideAnimationsAsync(),
+=======
+    provideRouter(routes),
+    // Note: No provideAnimations() - PrimeNG v21 migrated to native CSS animations
+    // Benefits: 80+ KB bundle savings, hardware acceleration, 60+ FPS
+>>>>>>> Stashed changes
     provideHttpClient(withInterceptors([authInterceptor, errorInterceptor])),
     MessageService,
     AcwrService,
