@@ -109,9 +109,14 @@ class EnhancedTrainingSchedule {
    */
   async setupRealtimeSubscription() {
     try {
+      // Wait for authManager to initialize if available
+      if (window.authManager && typeof window.authManager.waitForInit === 'function') {
+        await window.authManager.waitForInit();
+      }
+
       const userId = this.getCurrentUserId();
       if (!userId) {
-        console.warn('[TrainingSchedule] No user ID for real-time subscription');
+        console.debug('[TrainingSchedule] No user ID for real-time subscription - user may not be authenticated');
         return;
       }
 
@@ -347,12 +352,18 @@ class EnhancedTrainingSchedule {
    */
   getCurrentUserId() {
     try {
-      if (window.authManager && window.authManager.getUserId) {
-        return window.authManager.getUserId();
+      if (window.authManager) {
+        const user = window.authManager.getCurrentUser();
+        return user?.id || user?.user_id || null;
       }
-      const userData = window.storageService?.get('user', null, { usePrefix: false });
-      return userData?.id || null;
+      // Fallback: try to get from storage
+      if (window.storageService) {
+        const userData = window.storageService.get('user', null, { usePrefix: false });
+        return userData?.id || userData?.user_id || null;
+      }
+      return null;
     } catch (error) {
+      console.warn('[TrainingSchedule] Failed to get user ID:', error);
       return null;
     }
   }
@@ -487,7 +498,7 @@ class EnhancedTrainingSchedule {
         <div class="session-header">
           <div class="session-time">${time}</div>
           <div class="session-type" style="background: ${typeConfig.bgColor}; color: ${typeConfig.color};">
-            ${typeConfig.icon} ${typeConfig.label}
+            <i data-lucide="${typeConfig.icon}" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i> ${typeConfig.label}
           </div>
         </div>
         <div class="session-title">${session.title || session.name || 'Training Session'}</div>
@@ -572,11 +583,11 @@ class EnhancedTrainingSchedule {
    */
   getTypeConfig(type) {
     const configs = {
-      training: { icon: '🏃', label: 'Training', color: '#3b82f6', bgColor: 'rgba(59, 130, 246, 0.1)' },
-      game: { icon: '🏈', label: 'Game', color: '#ef4444', bgColor: 'rgba(239, 68, 68, 0.1)' },
-      recovery: { icon: '💚', label: 'Recovery', color: '#10b981', bgColor: 'rgba(16, 185, 129, 0.1)' },
-      practice: { icon: '⚽', label: 'Practice', color: '#f59e0b', bgColor: 'rgba(245, 158, 11, 0.1)' },
-      tournament: { icon: '🏆', label: 'Tournament', color: '#8b5cf6', bgColor: 'rgba(139, 92, 246, 0.1)' }
+      training: { icon: 'running', label: 'Training', color: '#3b82f6', bgColor: 'rgba(59, 130, 246, 0.1)' },
+      game: { icon: 'football', label: 'Game', color: '#ef4444', bgColor: 'rgba(239, 68, 68, 0.1)' },
+      recovery: { icon: 'heart', label: 'Recovery', color: '#10b981', bgColor: 'rgba(16, 185, 129, 0.1)' },
+      practice: { icon: 'target', label: 'Practice', color: '#f59e0b', bgColor: 'rgba(245, 158, 11, 0.1)' },
+      tournament: { icon: 'trophy', label: 'Tournament', color: '#8b5cf6', bgColor: 'rgba(139, 92, 246, 0.1)' }
     };
     return configs[type] || configs.training;
   }

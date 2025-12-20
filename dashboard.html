@@ -38,6 +38,8 @@
     <link rel="stylesheet" href="./src/css/components/header.css" />
     <!-- Page-specific styles -->
     <link rel="stylesheet" href="./src/css/pages/dashboard.css" />
+    <!-- Inline styles replacement utilities -->
+    <link rel="stylesheet" href="./src/css/utilities/inline-styles-replacement.css" />
     <!-- Chatbot Component Styles -->
     <link rel="stylesheet" href="./src/css/components/chatbot.css" />
 
@@ -45,7 +47,7 @@
     <script src="./src/js/config/supabase-config.js"></script>
     
     <!-- Supabase JS SDK from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0" defer></script>
 
     <!-- Lucide Icons -->
     <script
@@ -78,7 +80,7 @@
     </script>
 
     <!-- PWA Notification Manager -->
-    <script src="./src/js/notification-manager.js" defer></script>
+    <script type="module" src="./src/js/notification-manager.js" defer></script>
     <!-- Achievements System -->
     <script type="module" src="./src/js/achievements-service.js" defer></script>
     <script src="./src/js/achievements-widget.js" defer></script>
@@ -131,7 +133,9 @@
                     id="dashboard-date-picker"
                     class="date-picker-input"
                     aria-label="Select date"
+                    class="date-picker-input-overlay"
                   />
+                  <span id="date-picker-display" class="date-picker-display date-picker-display-overlay">dd.mm.yyyy</span>
                   <button
                     class="date-today-btn"
                     id="today-btn"
@@ -336,9 +340,9 @@
             <div class="todays-training-card">
               <h2 class="section-title">TODAY'S TRAINING</h2>
               <div class="training-details">
-                <div class="training-time">🕒 18:30 — Speed & Agility</div>
-                <div class="training-info">Coach: Ales Zaksek</div>
-                <div class="training-info">Duration: 70 min</div>
+                <div class="training-time">🕒 Loading...</div>
+                <div class="training-info">Coach: Loading...</div>
+                <div class="training-info">Duration: Loading...</div>
                 <button type="button" class="btn-start-session">
                   START SESSION
                 </button>
@@ -370,7 +374,7 @@
             </div>
 
             <!-- Achievements Widget -->
-            <div id="achievements-widget-container" style="margin-top: 30px;"></div>
+            <div id="achievements-widget-container" class="u-margin-top-30"></div>
           </div>
 
           <!-- Right: Quick Sidebar -->

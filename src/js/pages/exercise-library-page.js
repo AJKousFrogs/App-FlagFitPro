@@ -360,19 +360,17 @@ export class ExerciseLibraryPage {
   }
 
   getExerciseIcon(category) {
+    const iconStyle = 'width: 16px; height: 16px; display: inline-block; vertical-align: middle; color: var(--icon-color-primary); stroke: var(--icon-color-primary);';
     const icons = {
-      "Posterior Chain": "🦵",
-      Plyometric:
-        '<i data-lucide="zap" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>',
-      Sprint: "🏃‍♂️",
-      Strength:
-        '<i data-lucide="dumbbell" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>',
-      Core: '<i data-lucide="target" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>',
-      Recovery: "🧘",
-      Agility:
-        '<i data-lucide="activity" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>',
+      "Posterior Chain": '<i data-lucide="leg" style="' + iconStyle + '"></i>',
+      Plyometric: '<i data-lucide="zap" style="' + iconStyle + '"></i>',
+      Sprint: '<i data-lucide="running" style="' + iconStyle + '"></i>',
+      Strength: '<i data-lucide="dumbbell" style="' + iconStyle + '"></i>',
+      Core: '<i data-lucide="target" style="' + iconStyle + '"></i>',
+      Recovery: '<i data-lucide="heart" style="' + iconStyle + '"></i>',
+      Agility: '<i data-lucide="activity" style="' + iconStyle + '"></i>',
     };
-    return icons[category] || "🏋️‍♂️";
+    return icons[category] || '<i data-lucide="dumbbell" style="' + iconStyle + '"></i>';
   }
 
   updateStats() {
@@ -407,14 +405,18 @@ export class ExerciseLibraryPage {
     exerciseGrid.textContent = "";
     const loadingDiv = document.createElement("div");
     loadingDiv.style.cssText = "grid-column: 1 / -1; text-align: center; padding: var(--space-12);";
-    const icon = document.createElement("div");
-    icon.style.cssText = "font-size: 2rem; margin-bottom: var(--space-4);";
-    icon.textContent = "⏳";
+    const icon = document.createElement("i");
+    icon.setAttribute("data-lucide", "loader-2");
+    icon.style.cssText = "width: 48px; height: 48px; display: inline-block; margin-bottom: var(--space-4); color: var(--icon-color-primary);";
+    icon.classList.add("icon-spin");
     const h3 = document.createElement("h3");
     h3.textContent = "Loading exercises...";
     loadingDiv.appendChild(icon);
     loadingDiv.appendChild(h3);
     exerciseGrid.appendChild(loadingDiv);
+    if (typeof lucide !== "undefined") {
+      lucide.createIcons(exerciseGrid);
+    }
   }
 
   showNoResults() {
@@ -448,9 +450,9 @@ export class ExerciseLibraryPage {
     exerciseGrid.textContent = "";
     const errorDiv = document.createElement("div");
     errorDiv.style.cssText = "grid-column: 1 / -1; text-align: center; padding: var(--space-12); color: var(--color-error);";
-    const icon = document.createElement("div");
-    icon.style.cssText = "font-size: 2rem; margin-bottom: var(--space-4);";
-    icon.textContent = "❌";
+    const icon = document.createElement("i");
+    icon.setAttribute("data-lucide", "x-circle");
+    icon.style.cssText = "width: 48px; height: 48px; display: inline-block; margin-bottom: var(--space-4); color: var(--color-error);";
     const h3 = document.createElement("h3");
     h3.textContent = message;
     const p = document.createElement("p");
@@ -459,6 +461,9 @@ export class ExerciseLibraryPage {
     errorDiv.appendChild(h3);
     errorDiv.appendChild(p);
     exerciseGrid.appendChild(errorDiv);
+    if (typeof lucide !== "undefined") {
+      lucide.createIcons(exerciseGrid);
+    }
   }
 
   openExerciseModal(name) {
@@ -544,7 +549,7 @@ export class ExerciseLibraryPage {
           ? `
         <div class="safety-notes">
           <div class="safety-title">
-            <span>⚠️</span>
+            <i data-lucide="alert-triangle" style="width: 20px; height: 20px; display: inline-block; vertical-align: middle; margin-right: 8px; color: var(--color-warning);"></i>
             <span>Safety Notes</span>
           </div>
           <ul style="margin: 0; padding-left: var(--space-4);">

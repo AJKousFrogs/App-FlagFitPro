@@ -1413,22 +1413,27 @@ class DashboardPage {
         // Continue with demo mode instead of throwing error
       }
 
-      // Get training session details
-      const trainingTime =
-        document.querySelector(".training-time")?.textContent || "18:30";
-      const trainingType = trainingTime.includes("Speed & Agility")
-        ? "Speed & Agility"
-        : "Training";
-      const coach =
-        document.querySelector(".training-info")?.textContent ||
-        "Coach: Ales Zaksek";
+      // Get training session details from button dataset or card
+      const button = e.target.closest(".btn-start-session") || e.target;
+      const trainingType = button.dataset.sessionType || 
+        document.querySelector(".training-time")?.textContent?.split("—")[1]?.trim() || 
+        "Training";
+      const trainingTime = button.dataset.sessionTime || 
+        document.querySelector(".training-time")?.textContent?.match(/\d{2}:\d{2}/)?.[0] || 
+        "18:30";
+      const coach = button.dataset.coach || 
+        document.querySelector(".training-info")?.textContent?.replace("Coach: ", "") ||
+        "Ales Zaksek";
+      const duration = button.dataset.duration || 70;
 
       const sessionData = {
         userId: user ? user.id || user.email : "demo-user",
         sessionType: trainingType,
-        coach: coach.replace("Coach: ", ""),
+        coach: coach,
         startTime: new Date().toISOString(),
         scheduledTime: trainingTime,
+        duration_minutes: parseInt(duration) || 70,
+        session_date: button.dataset.date || this.formatDateForInput(this.selectedDate),
       };
 
       logger.debug("📝 Session data:", sessionData);
@@ -1666,6 +1671,10 @@ class DashboardPage {
     today.setHours(0, 0, 0, 0);
     this.selectedDate = today;
     datePicker.value = this.formatDateForInput(today);
+    
+    // Update date picker display to show dd.mm.yyyy format
+    this.updateDatePickerDisplay();
+    
     this.updateDateStatus();
 
     // Date picker change handler - prevent future dates
@@ -1687,14 +1696,28 @@ class DashboardPage {
       }
       
       this.selectedDate = selectedDate;
+      this.updateDatePickerDisplay();
       this.updateDateStatus();
       this.loadDateData();
     });
     
     // Set max date to today to prevent selecting future dates in the date picker
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
     datePicker.setAttribute("max", this.formatDateForInput(today));
+
+    // Make date display clickable to open calendar
+    const dateDisplay = document.getElementById("date-picker-display");
+    if (dateDisplay) {
+      dateDisplay.style.pointerEvents = "auto";
+      dateDisplay.style.cursor = "pointer";
+      dateDisplay.addEventListener("click", () => {
+        datePicker.showPicker?.() || datePicker.click();
+      });
+    }
+
+    // Update display when date picker value changes
+    datePicker.addEventListener("change", () => {
+      this.updateDatePickerDisplay();
+    });
 
     // Previous day button
     if (prevBtn) {
@@ -1702,7 +1725,7 @@ class DashboardPage {
         const prevDate = new Date(this.selectedDate);
         prevDate.setDate(prevDate.getDate() - 1);
         this.selectedDate = prevDate;
-        datePicker.value = this.formatDateForInput(prevDate);
+        this.updateDatePickerDisplay();
         this.updateDateStatus();
         this.loadDateData();
       });
@@ -1721,7 +1744,7 @@ class DashboardPage {
         }
         
         this.selectedDate = nextDate;
-        datePicker.value = this.formatDateForInput(nextDate);
+        this.updateDatePickerDisplay();
         this.updateDateStatus();
         this.loadDateData();
       });
@@ -1733,7 +1756,7 @@ class DashboardPage {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         this.selectedDate = today;
-        datePicker.value = this.formatDateForInput(today);
+        this.updateDatePickerDisplay();
         this.updateDateStatus();
         this.loadDateData();
       });
@@ -1745,6 +1768,13 @@ class DashboardPage {
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
+  }
+
+  formatDateForDisplayDDMMYYYY(date) {
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}.${month}.${year}`;
   }
 
   formatDateForDisplay(date) {
@@ -1767,6 +1797,21 @@ class DashboardPage {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     return date.getTime() > today.getTime();
+  }
+
+  updateDatePickerDisplay() {
+    const datePicker = document.getElementById("dashboard-date-picker");
+    const dateDisplay = document.getElementById("date-picker-display");
+    
+    if (!datePicker) return;
+
+    // Update the date picker value (for HTML5 date input)
+    datePicker.value = this.formatDateForInput(this.selectedDate);
+    
+    // Update custom display overlay to show dd.mm.yyyy format
+    if (dateDisplay) {
+      dateDisplay.textContent = this.formatDateForDisplayDDMMYYYY(this.selectedDate);
+    }
   }
 
   updateDateStatus() {
@@ -1830,6 +1875,9 @@ class DashboardPage {
 
       // Load supplements for selected date
       const supplementsLoaded = await this.loadSupplementsForDate(dateStr);
+
+      // Load training data for selected date
+      await this.loadTrainingForDate(dateStr);
 
       // Restore date status first (includes date text)
       this.updateDateStatus();
@@ -2128,6 +2176,156 @@ class DashboardPage {
         toggleInput.checked = this.supplements[supplementKey].taken || false;
       }
     });
+  }
+
+  /**
+   * Load training sessions for selected date
+   */
+  async loadTrainingForDate(dateStr) {
+    try {
+      const user = authManager.getCurrentUser();
+      const isToday = this.isToday(this.selectedDate);
+      
+      // Get day of week (0 = Sunday, 6 = Saturday)
+      const dayOfWeek = this.selectedDate.getDay();
+      const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      const dayName = dayNames[dayOfWeek];
+
+      let trainingSession = null;
+
+      // Try API first
+      try {
+        const response = await apiClient.get(API_ENDPOINTS.training.sessions, {
+          startDate: dateStr,
+          endDate: dateStr,
+          includeUpcoming: true, // Include today and future dates
+          limit: 10
+        });
+
+        if (response && response.success && response.data) {
+          const sessions = Array.isArray(response.data) ? response.data : (response.data.sessions || []);
+          // Find session for this specific date
+          trainingSession = sessions.find(s => {
+            const sessionDate = s.session_date || s.date || (s.created_at ? new Date(s.created_at).toISOString().split('T')[0] : null);
+            return sessionDate === dateStr;
+          });
+        }
+      } catch (apiError) {
+        logger.warn("API unavailable, checking localStorage:", apiError);
+      }
+
+      // Fallback: Check training plan or schedule for this day of week
+      if (!trainingSession) {
+        try {
+          // Try to get training plan for this week
+          const trainingPlanResponse = await apiClient.get(API_ENDPOINTS.training?.schedule || '/api/training/schedule', {
+            date: dateStr
+          });
+
+          if (trainingPlanResponse && trainingPlanResponse.success && trainingPlanResponse.data) {
+            const schedule = trainingPlanResponse.data.schedule || trainingPlanResponse.data;
+            // Find training for this day of week
+            const daySchedule = Array.isArray(schedule) 
+              ? schedule.find(s => {
+                  const sDate = s.date ? new Date(s.date) : null;
+                  return sDate && sDate.toISOString().split('T')[0] === dateStr;
+                })
+              : null;
+            
+            if (daySchedule) {
+              trainingSession = {
+                session_type: daySchedule.session_type || daySchedule.type || daySchedule.title,
+                session_time: daySchedule.time || daySchedule.session_time || '18:30',
+                duration_minutes: daySchedule.duration || daySchedule.duration_minutes || 70,
+                coach: daySchedule.coach || 'Ales Zaksek',
+                date: dateStr
+              };
+            }
+          }
+        } catch (planError) {
+          logger.debug("Could not load training plan:", planError);
+        }
+      }
+
+      // Update training card UI
+      this.updateTrainingCard(trainingSession, dayName, isToday);
+
+      return trainingSession;
+    } catch (error) {
+      logger.error("Failed to load training for date:", error);
+      this.updateTrainingCard(null, null, false);
+      return null;
+    }
+  }
+
+  /**
+   * Update the training card with real data
+   */
+  updateTrainingCard(trainingSession, dayName, isToday) {
+    const trainingCard = document.querySelector('.todays-training-card');
+    if (!trainingCard) return;
+
+    const trainingTimeEl = trainingCard.querySelector('.training-time');
+    const trainingInfoEls = trainingCard.querySelectorAll('.training-info');
+    const startSessionBtn = trainingCard.querySelector('.btn-start-session');
+    const sectionTitle = trainingCard.querySelector('.section-title');
+
+    // Update title based on whether it's today
+    if (sectionTitle) {
+      if (isToday) {
+        sectionTitle.textContent = "TODAY'S TRAINING";
+      } else if (dayName) {
+        sectionTitle.textContent = `${dayName.toUpperCase()}'S TRAINING`;
+      } else {
+        sectionTitle.textContent = "TRAINING";
+      }
+    }
+
+    if (trainingSession) {
+      // Format time (e.g., "18:30" or extract from session_time)
+      const sessionTime = trainingSession.session_time || trainingSession.time || '18:30';
+      const sessionType = trainingSession.session_type || trainingSession.type || 'Training';
+      const duration = trainingSession.duration_minutes || trainingSession.duration || 70;
+      const coach = trainingSession.coach || trainingSession.coach_name || 'Ales Zaksek';
+
+      // Update training time display
+      if (trainingTimeEl) {
+        trainingTimeEl.textContent = `🕒 ${sessionTime} — ${sessionType}`;
+      }
+
+      // Update training info (coach and duration)
+      if (trainingInfoEls.length >= 1) {
+        trainingInfoEls[0].textContent = `Coach: ${coach}`;
+      }
+      if (trainingInfoEls.length >= 2) {
+        trainingInfoEls[1].textContent = `Duration: ${duration} min`;
+      }
+
+      // Store session data for START SESSION button
+      if (startSessionBtn) {
+        startSessionBtn.dataset.sessionType = sessionType;
+        startSessionBtn.dataset.sessionTime = sessionTime;
+        startSessionBtn.dataset.duration = duration;
+        startSessionBtn.dataset.coach = coach;
+        startSessionBtn.dataset.date = this.formatDateForInput(this.selectedDate);
+      }
+    } else {
+      // No training scheduled
+      if (trainingTimeEl) {
+        trainingTimeEl.textContent = '🕒 No training scheduled';
+      }
+      if (trainingInfoEls.length >= 1) {
+        trainingInfoEls[0].textContent = '';
+      }
+      if (trainingInfoEls.length >= 2) {
+        trainingInfoEls[1].textContent = '';
+      }
+      if (startSessionBtn) {
+        startSessionBtn.disabled = true;
+        startSessionBtn.textContent = 'NO SESSION';
+        delete startSessionBtn.dataset.sessionType;
+      }
+    }
   }
 
   loadSavedData() {

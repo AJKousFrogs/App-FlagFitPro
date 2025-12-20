@@ -65,18 +65,20 @@ class EnhancedSettings {
       ...options
     };
 
-    // Get current user
-    this.currentUserId = this.getCurrentUserId();
+    // Try to get current user ID - wait for auth if needed
+    this.currentUserId = await this.getCurrentUserIdAsync();
+    
+    // Continue initialization even without user ID (for guest mode or when auth is loading)
+    // The component can still work with localStorage-only settings
     if (!this.currentUserId) {
-      console.warn('[Settings] No user ID found');
-      return;
+      console.warn('[Settings] No user ID found - continuing with local settings only');
     }
 
     // Load initial settings
     await this.loadSettings();
 
-    // Setup real-time subscription
-    if (this.options.enableRealtime) {
+    // Setup real-time subscription (only if we have a user ID)
+    if (this.options.enableRealtime && this.currentUserId) {
       await this.setupRealtimeSubscription();
     }
 
@@ -93,28 +95,131 @@ class EnhancedSettings {
     // Setup change tracking
     this.setupChangeTracking();
 
-    console.log('[Settings] Enhanced settings initialized');
+    console.log('[Settings] Enhanced settings initialized', this.currentUserId ? `(User: ${this.currentUserId})` : '(Local mode)');
   }
 
   /**
-   * Get current user ID
+   * Get current user ID synchronously
    */
   getCurrentUserId() {
     try {
+      // Try window.authManager first
       if (window.authManager) {
         const user = window.authManager.getCurrentUser();
-        return user?.id || user?.user_id;
+        if (user) {
+          return user?.id || user?.user_id;
+        }
       }
+
+      // Try Supabase client directly
+      if (window.supabase) {
+        try {
+          const { createClient } = window.supabase;
+          if (createClient && window._env?.SUPABASE_URL && window._env?.SUPABASE_ANON_KEY) {
+            const supabase = createClient(window._env.SUPABASE_URL, window._env.SUPABASE_ANON_KEY);
+            // Note: getSession() is async, but we can't await here
+            // This is handled in getCurrentUserIdAsync()
+          }
+        } catch (e) {
+          // Supabase not available
+        }
+      }
+
+      // Try localStorage
       const userData = localStorage.getItem('user');
       if (userData) {
-        const user = JSON.parse(userData);
-        return user?.id || user?.user_id;
+        try {
+          const user = JSON.parse(userData);
+          return user?.id || user?.user_id;
+        } catch (e) {
+          // Invalid JSON
+        }
       }
+
+      // Try flagfit_auth storage
+      const flagfitAuth = localStorage.getItem('flagfit_auth');
+      const flagfitUser = localStorage.getItem('flagfit_user');
+      if (flagfitAuth === 'true' && flagfitUser) {
+        try {
+          const user = JSON.parse(flagfitUser);
+          return user?.id || user?.user_id;
+        } catch (e) {
+          // Invalid JSON
+        }
+      }
+
       return null;
     } catch (error) {
       console.warn('[Settings] Failed to get user ID:', error);
       return null;
     }
+  }
+
+  /**
+   * Get current user ID asynchronously (waits for auth if needed)
+   */
+  async getCurrentUserIdAsync() {
+    // First try synchronous method
+    const syncUserId = this.getCurrentUserId();
+    if (syncUserId) {
+      return syncUserId;
+    }
+
+    // Wait for authManager to initialize (max 3 seconds)
+    if (!window.authManager) {
+      const maxWait = 3000;
+      const startTime = Date.now();
+      
+      while (!window.authManager && (Date.now() - startTime) < maxWait) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+      
+      if (window.authManager) {
+        // Wait for authManager to finish initializing
+        if (window.authManager.waitForInit && typeof window.authManager.waitForInit === 'function') {
+          await window.authManager.waitForInit(2000);
+        }
+        
+        const user = window.authManager.getCurrentUser();
+        if (user) {
+          return user?.id || user?.user_id;
+        }
+      }
+    }
+
+    // Try Supabase client directly
+    try {
+      if (window.supabase && window._env?.SUPABASE_URL && window._env?.SUPABASE_ANON_KEY) {
+        const { createClient } = window.supabase;
+        if (createClient) {
+          const supabase = createClient(window._env.SUPABASE_URL, window._env.SUPABASE_ANON_KEY);
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session?.user?.id) {
+            return session.user.id;
+          }
+        }
+      }
+    } catch (error) {
+      // Supabase not available or error
+      console.debug('[Settings] Supabase auth check failed:', error);
+    }
+
+    // Try importing supabase-client if available
+    try {
+      const { getSupabase } = await import('../services/supabase-client.js');
+      const supabase = getSupabase();
+      if (supabase) {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user?.id) {
+          return session.user.id;
+        }
+      }
+    } catch (error) {
+      // Module not available
+      console.debug('[Settings] Supabase client import failed:', error);
+    }
+
+    return null;
   }
 
   /**
@@ -140,7 +245,27 @@ class EnhancedSettings {
 
     // Fallback to localStorage
     const savedSettings = storageService.get('flagfit_settings', {}, { usePrefix: false });
-    const user = window.authManager?.getCurrentUser() || {};
+    
+    // Try to get user data from various sources
+    let user = {};
+    if (window.authManager?.getCurrentUser) {
+      user = window.authManager.getCurrentUser() || {};
+    } else {
+      // Try localStorage fallbacks
+      try {
+        const userData = localStorage.getItem('user');
+        if (userData) {
+          user = JSON.parse(userData);
+        } else {
+          const flagfitUser = localStorage.getItem('flagfit_user');
+          if (flagfitUser) {
+            user = JSON.parse(flagfitUser);
+          }
+        }
+      } catch (e) {
+        // Invalid JSON, use empty object
+      }
+    }
 
     // Merge saved settings with defaults
     this.settings = {
@@ -645,23 +770,70 @@ class EnhancedSettings {
     // Collect current settings
     const newSettings = this.collectSettings();
 
-    // Validate required fields
+    // Validate all required fields and collect errors
+    const validationErrors = [];
+    let firstInvalidField = null;
+
+    // Validate display name
     if (!this.validateField('displayName', newSettings.profile.displayName)) {
-      this.showError('Please fix validation errors before saving');
-      return false;
+      const displayNameField = document.getElementById('displayName');
+      if (displayNameField) {
+        validationErrors.push('Display Name');
+        if (!firstInvalidField) {
+          firstInvalidField = displayNameField;
+        }
+      }
     }
 
+    // Validate email
     if (!this.validateField('email', newSettings.profile.email)) {
-      this.showError('Please fix validation errors before saving');
-      return false;
+      const emailField = document.getElementById('email');
+      if (emailField) {
+        validationErrors.push('Email');
+        if (!firstInvalidField) {
+          firstInvalidField = emailField;
+        }
+      }
     }
 
     // Validate password if provided
     if (newSettings.security.newPassword) {
       if (!this.validateField('password', newSettings.security.newPassword, 'newPassword')) {
-        this.showError('Please fix password validation errors');
-        return false;
+        const passwordField = document.getElementById('newPassword');
+        if (passwordField) {
+          validationErrors.push('New Password');
+          if (!firstInvalidField) {
+            firstInvalidField = passwordField;
+          }
+        }
       }
+    }
+
+    // If there are validation errors, show them and focus the first invalid field
+    if (validationErrors.length > 0) {
+      const errorMessage = validationErrors.length === 1
+        ? `Please fix the ${validationErrors[0]} field before saving`
+        : `Please fix the following fields before saving: ${validationErrors.join(', ')}`;
+      
+      this.showError(errorMessage);
+      
+      // Scroll to and focus the first invalid field
+      if (firstInvalidField) {
+        firstInvalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        firstInvalidField.focus();
+        
+        // Highlight the field briefly
+        firstInvalidField.classList.add('invalid');
+        setTimeout(() => {
+          // Keep the invalid class but ensure error is visible
+          const errorElement = document.getElementById(`${firstInvalidField.id}-error`);
+          if (errorElement) {
+            errorElement.style.display = 'block';
+          }
+        }, 100);
+      }
+      
+      return false;
     }
 
     // Update settings
@@ -798,11 +970,111 @@ class EnhancedSettings {
    * Show error message
    */
   showError(message) {
-    if (window.authManager) {
+    if (window.authManager && typeof window.authManager.showError === 'function') {
       window.authManager.showError(message);
     } else {
       console.error('[Settings]', message);
+      
+      // Show a visible error notification if authManager is not available
+      this.showErrorNotification(message);
     }
+  }
+
+  /**
+   * Show error notification (fallback when authManager is not available)
+   */
+  showErrorNotification(message) {
+    // Remove any existing error notification
+    const existing = document.getElementById('settings-error-notification');
+    if (existing) {
+      existing.remove();
+    }
+
+    // Create error notification element
+    const notification = document.createElement('div');
+    notification.id = 'settings-error-notification';
+    notification.className = 'settings-error-notification';
+    notification.setAttribute('role', 'alert');
+    notification.innerHTML = `
+      <div class="settings-error-content">
+        <span class="settings-error-icon">⚠️</span>
+        <span class="settings-error-message">${message}</span>
+        <button class="settings-error-close" onclick="this.closest('.settings-error-notification').remove()" aria-label="Close">×</button>
+      </div>
+    `;
+
+    // Add styles if not already present
+    if (!document.getElementById('settings-error-notification-styles')) {
+      const style = document.createElement('style');
+      style.id = 'settings-error-notification-styles';
+      style.textContent = `
+        .settings-error-notification {
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          background: #ef4444;
+          color: white;
+          padding: 16px 20px;
+          border-radius: 8px;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+          z-index: 10000;
+          max-width: 400px;
+          animation: slideInRight 0.3s ease-out;
+        }
+        @keyframes slideInRight {
+          from {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+        .settings-error-content {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+        .settings-error-icon {
+          font-size: 1.2rem;
+          flex-shrink: 0;
+        }
+        .settings-error-message {
+          flex: 1;
+          line-height: 1.5;
+        }
+        .settings-error-close {
+          background: transparent;
+          border: none;
+          color: white;
+          font-size: 1.5rem;
+          cursor: pointer;
+          padding: 0;
+          width: 24px;
+          height: 24px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+          opacity: 0.8;
+        }
+        .settings-error-close:hover {
+          opacity: 1;
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    document.body.appendChild(notification);
+
+    // Auto-dismiss after 5 seconds
+    setTimeout(() => {
+      if (notification.parentNode) {
+        notification.style.animation = 'slideInRight 0.3s ease-out reverse';
+        setTimeout(() => notification.remove(), 300);
+      }
+    }, 5000);
   }
 
   /**

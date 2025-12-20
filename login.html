@@ -24,10 +24,10 @@
     <link rel="stylesheet" href="./src/css/oauth.css" />
 
     <!-- Supabase Configuration (Centralized) -->
-    <script src="./src/js/config/supabase-config.js"></script>
+    <script src="./src/js/config/supabase-config.js" defer></script>
     
     <!-- Supabase JS SDK from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0" defer></script>
 
     <!-- Lucide Icons - Modern icon library similar to Radix UI -->
     <script
@@ -51,8 +51,8 @@
         <img
           src="https://gearxpro-sports.com/cdn/shop/files/Secondary_logo_Positive.png?v=1737387514&width=290"
           alt="GEARXPRo Logo"
-          class="gearxpro-logo"
-          style="height: 60px; width: auto; margin: 0 auto; filter: brightness(0);"
+          class="logo-gearxpro"
+          loading="lazy"
         />
       </div>
       <h1 class="login-title text-heading-2xl text-primary space-relaxed">
@@ -62,19 +62,19 @@
       <div
         class="alert alert-error mb-4"
         id="errorMessage"
-        style="display: none"
+        class="u-display-none"
       ></div>
       <div
         class="alert alert-success mb-4"
         id="successMessage"
-        style="display: none"
+        class="u-display-none"
       ></div>
 
       <!-- Manual redirect button (backup) -->
       <div
         class="alert alert-success mb-4"
         id="manualRedirect"
-        style="display: none"
+        class="u-display-none"
       >
         <p class="text-body-md text-primary mb-3">
           <i data-lucide="check-circle" aria-hidden="true" class="icon-18"></i>
@@ -111,7 +111,7 @@
             id="email-error"
             class="form-error"
             role="alert"
-            style="display: none"
+            class="u-display-none"
           ></div>
           <small id="email-success" class="form-success" style="display: none"
             >Valid email</small
@@ -148,12 +148,12 @@
             id="password-error"
             class="form-error"
             role="alert"
-            style="display: none"
+            class="u-display-none"
           ></div>
           <small
             id="password-success"
             class="form-success"
-            style="display: none"
+            class="u-display-none"
             >Password is valid</small
           >
           <div
@@ -168,7 +168,7 @@
           <div
             id="passwordStrength"
             class="password-strength mt-2 text-sm"
-            style="display: none"
+            class="u-display-none"
             role="status"
             aria-live="polite"
           ></div>

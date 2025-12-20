@@ -35,14 +35,19 @@
     exportContainer.className = 'wellness-export-buttons';
     exportContainer.innerHTML = `
       <div class="export-buttons-wrapper">
-        <h3 class="export-title">📊 Export Your Data</h3>
+        <h3 class="export-title">
+          <i data-lucide="download" style="width: 24px; height: 24px; display: inline-block; vertical-align: middle; margin-right: 8px;"></i>
+          Export Your Data
+        </h3>
         <p class="export-description">Download your wellness data for your records or to share with your coach</p>
         <div class="export-buttons-grid">
           <button
             class="export-btn export-btn-pdf"
             onclick="handleWellnessExportPDF(event)"
             aria-label="Export wellness data to PDF">
-            <span class="export-btn-icon">📄</span>
+            <span class="export-btn-icon">
+              <i data-lucide="file-text" style="width: 32px; height: 32px;"></i>
+            </span>
             <span class="export-btn-text">
               <strong>Export PDF</strong>
               <small>Full wellness report</small>
@@ -52,7 +57,9 @@
             class="export-btn export-btn-csv"
             onclick="handleWellnessExportCSV(event)"
             aria-label="Export wellness data to CSV">
-            <span class="export-btn-icon">📊</span>
+            <span class="export-btn-icon">
+              <i data-lucide="file-spreadsheet" style="width: 32px; height: 32px;"></i>
+            </span>
             <span class="export-btn-text">
               <strong>Export CSV</strong>
               <small>Spreadsheet format</small>
@@ -124,8 +131,26 @@
       }
 
       .export-btn-icon {
-        font-size: 2rem;
         flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .export-btn-icon i {
+        color: var(--text-primary, #1a1a1a);
+      }
+      
+      .export-btn-pdf:hover .export-btn-icon i {
+        color: #ef4444;
+      }
+      
+      .export-btn-csv:hover .export-btn-icon i {
+        color: #10c96b;
+      }
+      
+      .export-title i {
+        color: var(--text-primary, #1a1a1a);
       }
 
       .export-btn-text {
@@ -176,6 +201,20 @@
       wellnessPage.appendChild(exportContainer);
     }
 
+    // Initialize Lucide icons for the new content
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons(exportContainer);
+    } else {
+      // Wait for Lucide to load
+      const checkLucide = setInterval(() => {
+        if (typeof lucide !== 'undefined') {
+          lucide.createIcons(exportContainer);
+          clearInterval(checkLucide);
+        }
+      }, 100);
+      setTimeout(() => clearInterval(checkLucide), 5000);
+    }
+
     console.log('[Wellness Export] Export buttons added');
   }
 
@@ -214,23 +253,28 @@
     const btn = event.target.closest('.export-btn');
     const originalHTML = btn.innerHTML;
     btn.disabled = true;
-    btn.innerHTML = '<span>⏳ Generating PDF...</span>';
+    btn.innerHTML = '<span><i data-lucide="loader-2" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 8px;" class="icon-spin"></i>Generating PDF...</span>';
+    if (typeof lucide !== 'undefined') lucide.createIcons(btn);
 
     // Export with slight delay for UI feedback
     setTimeout(async () => {
       const success = await window.exportService.exportWellnessToPDF(wellnessHistory);
 
       if (success) {
-        btn.innerHTML = '<span>✅ PDF Downloaded!</span>';
+        btn.innerHTML = '<span><i data-lucide="check-circle" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 8px; color: #10c96b;"></i>PDF Downloaded!</span>';
+        if (typeof lucide !== 'undefined') lucide.createIcons(btn);
         setTimeout(() => {
           btn.disabled = false;
           btn.innerHTML = originalHTML;
+          if (typeof lucide !== 'undefined') lucide.createIcons(btn);
         }, 2000);
       } else {
-        btn.innerHTML = '<span>❌ Export Failed</span>';
+        btn.innerHTML = '<span><i data-lucide="x-circle" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 8px; color: #ef4444;"></i>Export Failed</span>';
+        if (typeof lucide !== 'undefined') lucide.createIcons(btn);
         setTimeout(() => {
           btn.disabled = false;
           btn.innerHTML = originalHTML;
+          if (typeof lucide !== 'undefined') lucide.createIcons(btn);
         }, 2000);
       }
     }, 300);
@@ -271,7 +315,8 @@
     const btn = event.target.closest('.export-btn');
     const originalHTML = btn.innerHTML;
     btn.disabled = true;
-    btn.innerHTML = '<span>⏳ Generating CSV...</span>';
+    btn.innerHTML = '<span><i data-lucide="loader-2" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 8px;" class="icon-spin"></i>Generating CSV...</span>';
+    if (typeof lucide !== 'undefined') lucide.createIcons(btn);
 
     // Format data for CSV
     const csvData = wellnessHistory.map(entry => ({
@@ -291,16 +336,20 @@
       const success = window.exportService.exportToCSV(csvData, 'flagfit-wellness-data.csv');
 
       if (success) {
-        btn.innerHTML = '<span>✅ CSV Downloaded!</span>';
+        btn.innerHTML = '<span><i data-lucide="check-circle" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 8px; color: #10c96b;"></i>CSV Downloaded!</span>';
+        if (typeof lucide !== 'undefined') lucide.createIcons(btn);
         setTimeout(() => {
           btn.disabled = false;
           btn.innerHTML = originalHTML;
+          if (typeof lucide !== 'undefined') lucide.createIcons(btn);
         }, 2000);
       } else {
-        btn.innerHTML = '<span>❌ Export Failed</span>';
+        btn.innerHTML = '<span><i data-lucide="x-circle" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 8px; color: #ef4444;"></i>Export Failed</span>';
+        if (typeof lucide !== 'undefined') lucide.createIcons(btn);
         setTimeout(() => {
           btn.disabled = false;
           btn.innerHTML = originalHTML;
+          if (typeof lucide !== 'undefined') lucide.createIcons(btn);
         }, 2000);
       }
     }, 300);

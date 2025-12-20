@@ -101,10 +101,11 @@ class AISchedulerUI {
         <div class="form-group">
           <label>Position:</label>
           <select id="player-position">
-            <option value="WR/DB">WR/DB</option>
             <option value="QB">QB</option>
-            <option value="RB">RB</option>
-            <option value="OL/DL">OL/DL</option>
+            <option value="WR">WR</option>
+            <option value="Center">Center</option>
+            <option value="DB">DB</option>
+            <option value="Blitzer">Blitzer</option>
           </select>
         </div>
         <button id="create-profile-btn" class="btn btn-primary">Create Profile</button>
@@ -159,9 +160,12 @@ class AISchedulerUI {
    * Render generation section
    */
   renderGenerationSection() {
-    // Set default dates based on program if not already set
-    const defaultStart = '2025-12-01';
-    const defaultEnd = '2026-10-31';
+    // Set default dates - start from today, end 10 months later
+    const today = new Date();
+    const defaultStart = today.toISOString().split('T')[0];
+    const endDate = new Date(today);
+    endDate.setMonth(endDate.getMonth() + 10);
+    const defaultEnd = endDate.toISOString().split('T')[0];
     
     return `
       <div class="generation-controls">

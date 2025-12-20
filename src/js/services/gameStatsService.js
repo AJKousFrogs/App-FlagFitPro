@@ -26,7 +26,12 @@ class GameStatsService {
   async saveGame(game) {
     // Always save to localStorage as backup
     try {
-      const games = this.getAllGames();
+      let games = await this.getAllGames();
+      // Ensure games is an array
+      if (!Array.isArray(games)) {
+        console.warn("getAllGames() did not return an array, using empty array");
+        games = [];
+      }
       const existingIndex = games.findIndex((g) => g.gameId === game.gameId);
 
       if (existingIndex >= 0) {
@@ -112,7 +117,10 @@ class GameStatsService {
    */
   getGame(gameId) {
     try {
-      const games = this.getAllGames();
+      const games = this.getAllGames({ forceSync: true });
+      if (!Array.isArray(games)) {
+        return null;
+      }
       return games.find((g) => g.gameId === gameId) || null;
     } catch (error) {
       console.error("Error getting game:", error);
@@ -202,7 +210,11 @@ class GameStatsService {
    */
   deleteGame(gameId) {
     try {
-      const games = this.getAllGames();
+      const games = this.getAllGames({ forceSync: true });
+      if (!Array.isArray(games)) {
+        console.warn("getAllGames() did not return an array in deleteGame");
+        return false;
+      }
       const filteredGames = games.filter((g) => g.gameId !== gameId);
       storageService.set(this.storageKey, filteredGames, { usePrefix: false });
       return true;
@@ -219,7 +231,11 @@ class GameStatsService {
    * @returns {Array} Filtered games
    */
   getGamesByDateRange(startDate, endDate) {
-    const games = this.getAllGames();
+    const games = this.getAllGames({ forceSync: true });
+    if (!Array.isArray(games)) {
+      console.warn("getAllGames() did not return an array in getGamesByDateRange");
+      return [];
+    }
     return games.filter((game) => {
       const gameDate = new Date(game.gameDate);
       return gameDate >= startDate && gameDate <= endDate;
@@ -487,7 +503,11 @@ class GameStatsService {
    * @returns {Object} Drop analysis
    */
   getPlayerDropAnalysis(playerId) {
-    const games = this.getAllGames();
+    const games = this.getAllGames({ forceSync: true });
+    if (!Array.isArray(games)) {
+      console.warn("getAllGames() did not return an array in getPlayerDropAnalysis");
+      return { totalDrops: 0, dropRate: 0, drops: [] };
+    }
     const drops = [];
 
     games.forEach((game) => {
@@ -544,7 +564,11 @@ class GameStatsService {
    * @returns {Object} Flag pull analysis
    */
   getDefenderFlagPullAnalysis(playerId) {
-    const games = this.getAllGames();
+    const games = this.getAllGames({ forceSync: true });
+    if (!Array.isArray(games)) {
+      console.warn("getAllGames() did not return an array in getDefenderFlagPullAnalysis");
+      return { successRate: 0, attempts: [] };
+    }
     const attempts = [];
 
     games.forEach((game) => {
@@ -597,7 +621,11 @@ class GameStatsService {
    * @returns {Object} QB accuracy analysis
    */
   getQBAccuracyAnalysis(playerId) {
-    const games = this.getAllGames();
+    const games = this.getAllGames({ forceSync: true });
+    if (!Array.isArray(games)) {
+      console.warn("getAllGames() did not return an array in getPlayerThrowAnalysis");
+      return { totalThrows: 0, throws: [] };
+    }
     const throws = [];
 
     games.forEach((game) => {
@@ -781,7 +809,11 @@ class GameStatsService {
    * @returns {string} JSON string
    */
   exportAllGamesAsJSON() {
-    const games = this.getAllGames();
+    const games = this.getAllGames({ forceSync: true });
+    if (!Array.isArray(games)) {
+      console.warn("getAllGames() did not return an array in exportGames");
+      return JSON.stringify([], null, 2);
+    }
     return JSON.stringify(games, null, 2);
   }
 

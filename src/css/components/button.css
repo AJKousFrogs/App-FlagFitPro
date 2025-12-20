@@ -1,6 +1,9 @@
 /* ================================================================
    BUTTON COMPONENT - FlagFit Pro
-   Standardized Button System using Unified Design System
+   DEPRECATED: This file is kept for legacy HTML pages only.
+   For Angular components, use: angular/src/assets/styles/standardized-components.scss
+   
+   This file will be gradually migrated to use the Angular standardized components.
    ================================================================ */
 
 .btn {

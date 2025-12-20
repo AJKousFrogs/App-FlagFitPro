@@ -16,6 +16,9 @@ document.addEventListener("DOMContentLoaded", async function () {
   // Initialize Lucide icons
   initializeLucideIcons();
 
+  // Expose authManager globally for enhanced-settings.js
+  window.authManager = authManager;
+
   // Wait for auth manager to initialize
   await authManager.waitForInit();
 

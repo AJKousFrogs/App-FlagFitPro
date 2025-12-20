@@ -33,10 +33,14 @@
     <script src="./src/theme-switcher.js" defer></script>
     <script src="./src/nav-highlight.js" defer></script>
     <script src="./src/components/organisms/top-bar/top-bar.js" defer></script>
+    <!-- Chart.js with multiple CDN fallbacks - Load BEFORE analytics-page.js -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
     <!-- Universal Components -->
     <script type="module" src="./src/js/main.js"></script>
-    <!-- Analytics Page Script -->
-    <script type="module" src="./src/js/pages/analytics-page.js"></script>
     <!-- Preload Chatbot Component -->
     <script type="module">
       // Preload chatbot for faster access
@@ -52,12 +56,7 @@
           console.warn("Chatbot preload failed:", error);
         });
     </script>
-    <!-- Chart.js with multiple CDN fallbacks -->
-    <script
-      src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"
-      crossorigin="anonymous"
-      defer
-    ></script>
+    <!-- Chart.js already loaded above -->
     <script>
       // Improved fallback system
       window.addEventListener("load", function () {
@@ -137,10 +136,13 @@
     <script type="module" src="./src/js/components/ai-chat-bubble-loader.js" defer></script>
   
     <!-- Supabase Configuration (Centralized) -->
-    <script src="./src/js/config/supabase-config.js"></script>
+    <script src="./src/js/config/supabase-config.js" defer></script>
     
     <!-- Supabase JS SDK from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0" defer></script>
+    
+    <!-- Analytics Page Script - Load AFTER Chart.js -->
+    <script type="module" src="./src/js/pages/analytics-page.js" defer></script>
 
   </head>
   <body>
@@ -174,9 +176,9 @@
                   "
                 ></i>
               </div>
-              <div class="metric-value">87%</div>
+              <div class="metric-value">—</div>
               <div class="metric-label">Overall Performance</div>
-              <div class="metric-trend trend-positive">+5.2% this week</div>
+              <div class="metric-trend">No data entry yet</div>
             </div>
             <div class="metric-card">
               <div class="metric-icon" aria-hidden="true">
@@ -192,9 +194,9 @@
                   "
                 ></i>
               </div>
-              <div class="metric-value">8.4</div>
+              <div class="metric-value">—</div>
               <div class="metric-label">Team Chemistry</div>
-              <div class="metric-trend trend-positive">+0.6 improvement</div>
+              <div class="metric-trend">No data entry yet</div>
             </div>
             <div class="metric-card">
               <div class="metric-icon" aria-hidden="true">
@@ -210,9 +212,9 @@
                   "
                 ></i>
               </div>
-              <div class="metric-value">4.52s</div>
+              <div class="metric-value">—</div>
               <div class="metric-label">40-Yard Dash</div>
-              <div class="metric-trend trend-positive">-0.13s faster</div>
+              <div class="metric-trend">No data entry yet</div>
             </div>
             <div class="metric-card">
               <div class="metric-icon" aria-hidden="true">
@@ -228,9 +230,9 @@
                   "
                 ></i>
               </div>
-              <div class="metric-value">73%</div>
+              <div class="metric-value">—</div>
               <div class="metric-label">Olympic Qualification</div>
-              <div class="metric-trend trend-positive">+8% progress</div>
+              <div class="metric-trend">No data entry yet</div>
             </div>
           </div>
 

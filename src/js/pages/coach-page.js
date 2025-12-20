@@ -260,9 +260,9 @@ function showPlayerModal(mode, player = null) {
                                 <option value="">Select Position</option>
                                 <option value="QB">Quarterback</option>
                                 <option value="WR">Wide Receiver</option>
-                                <option value="RB">Running Back</option>
-                                <option value="C">Center</option>
-                                <option value="DE">Defensive End</option>
+                                <option value="Center">Center (Snapping Only)</option>
+                                <option value="DB">Defensive Back</option>
+                                <option value="Blitzer">Blitzer</option>
                             </select>
                         </div>
                         <div style="margin-bottom: 1rem;">
@@ -311,9 +311,9 @@ function showPlayerModal(mode, player = null) {
                             <select id="editPlayerPosition" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--dark-border); border-radius: 6px;">
                                 <option value="QB" ${player.position === "QB" ? "selected" : ""}>Quarterback</option>
                                 <option value="WR" ${player.position === "WR" ? "selected" : ""}>Wide Receiver</option>
-                                <option value="RB" ${player.position === "RB" ? "selected" : ""}>Running Back</option>
-                                <option value="C" ${player.position === "C" ? "selected" : ""}>Center</option>
-                                <option value="DE" ${player.position === "DE" ? "selected" : ""}>Defensive End</option>
+                                <option value="Center" ${player.position === "Center" || player.position === "C" ? "selected" : ""}>Center (Snapping Only)</option>
+                                <option value="DB" ${player.position === "DB" ? "selected" : ""}>Defensive Back</option>
+                                <option value="Blitzer" ${player.position === "Blitzer" ? "selected" : ""}>Blitzer</option>
                             </select>
                         </div>
                         <div style="margin-bottom: 1rem;">

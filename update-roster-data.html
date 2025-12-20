@@ -23,12 +23,14 @@
     <script type="module" src="./src/js/components/universal-form-validator.js" defer></script>
     <!-- Footer Loader (Dynamic Component) -->
     <script type="module" src="./src/js/components/footer-loader.js" defer></script>
+    <!-- Event Handlers (Phase 2 - Replaces inline onclick handlers) -->
+    <script type="module" src="./src/js/utils/event-handlers.js" defer></script>
   
     <!-- Supabase Configuration (Centralized) -->
-    <script src="./src/js/config/supabase-config.js"></script>
+    <script src="./src/js/config/supabase-config.js" defer></script>
     
     <!-- Supabase JS SDK from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0" defer></script>
 
   </head>
   <body>
@@ -198,9 +200,10 @@
               >
                 <option value="">Select Position</option>
                 <option value="QB">Quarterback (QB)</option>
-                <option value="RB">Running Back (RB)</option>
                 <option value="WR">Wide Receiver (WR)</option>
+                <option value="Center">Center (Snapping Only)</option>
                 <option value="DB">Defensive Back (DB)</option>
+                <option value="Blitzer">Blitzer</option>
               </select>
               <div
                 id="position-error"
@@ -293,18 +296,21 @@
           Copy this code and replace the demo data in your dashboard.html file:
         </p>
         <button
-          onclick="generateCode()"
+          data-action="generate-code"
           class="btn btn-primary btn-md"
+          aria-label="Generate updated roster code"
           style="margin-bottom: var(--space-4)"
         >
           Generate Updated Code
         </button>
-        <div id="generatedCode" class="generated-code">
+        <div id="generatedCode" class="generated-code" data-copy-target>
           // Click "Generate Updated Code" button to see the code
         </div>
         <button
-          onclick="copyToClipboard()"
+          data-action="copy-clipboard"
+          data-copy-target="#generatedCode"
           class="btn btn-secondary btn-md"
+          aria-label="Copy generated code to clipboard"
           style="margin-top: var(--space-4)"
         >
           Copy to Clipboard
@@ -401,7 +407,7 @@
                             <div style="font-weight: 600; color: var(--dark-text-primary);">${player.name}</div>
                             <div style="color: var(--dark-text-secondary); font-size: var(--text-sm);">${player.position} • ${player.class}</div>
                         </div>
-                        <button onclick="removePlayer(${player.number})" class="btn btn-secondary btn-xs" style="
+                        <button data-action="remove-player" data-player-id="${player.number}" class="btn btn-secondary btn-xs" aria-label="Remove player ${player.name}" style="
                             background: var(--color-status-error); color: var(--color-text-primary); border: none;
                             margin-left: auto;
                         ">Remove</button>

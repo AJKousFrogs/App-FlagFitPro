@@ -24,18 +24,39 @@
 .ai-scheduler-banner {
   border: 2px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  color: white; /* Ensure white text on green backgrounds */
+  transition: box-shadow 0.2s ease; /* Only transition shadow, not transform */
+}
+
+/* Text elements should be white on green background */
+.ai-scheduler-banner h1,
+.ai-scheduler-banner h2,
+.ai-scheduler-banner h3,
+.ai-scheduler-banner h4,
+.ai-scheduler-banner h5,
+.ai-scheduler-banner h6,
+.ai-scheduler-banner p,
+.ai-scheduler-banner span:not(.btn-white *) {
+  color: white; /* Explicitly set white for all text elements */
+}
+
+/* Buttons should NOT inherit white color */
+.ai-scheduler-banner .btn-white,
+.ai-scheduler-banner .btn-white * {
+  color: var(--color-primary, #089949) !important;
 }
 
 .ai-scheduler-banner .btn-white {
   background: white;
   color: var(--color-primary, #089949);
   border: none;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease; /* Smooth transition without transform */
 }
 
 .ai-scheduler-banner .btn-white:hover {
   background: #f8fafc;
-  transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  /* Removed transform to prevent flashing */
 }
 
 .scheduler-header {
@@ -444,30 +465,8 @@
   overflow-y: auto;
 }
 
-/* Banner Styles for Training Schedule Page */
-.ai-scheduler-banner {
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transition: transform 0.2s ease;
-}
-
-.ai-scheduler-banner:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-}
-
-.ai-scheduler-banner .btn-white {
-  background: white;
-  color: var(--color-primary, #089949);
-  border: none;
-  font-weight: 600;
-}
-
-.ai-scheduler-banner .btn-white:hover {
-  background: #f8fafc;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
+/* Banner Styles for Training Schedule Page - Consolidated with above */
+/* Removed duplicate rules - hover effect removed to prevent flashing */
 
 /* Gradient Background for CTA Card */
 .u-bg-gradient-primary {

@@ -36,7 +36,7 @@
     widget.innerHTML = `
       <div class="achievements-header">
         <div class="achievements-title">
-          <h3>🏆 Achievements</h3>
+          <h3><i data-lucide="trophy" style="width: 20px; height: 20px; display: inline-block; vertical-align: middle; margin-right: 8px;"></i>Achievements</h3>
           <span class="achievements-count">${unlockedCount}/${allAchievements.length}</span>
         </div>
         <div class="achievements-points">
@@ -69,6 +69,11 @@
     // Clear and append
     container.innerHTML = '';
     container.appendChild(widget);
+    
+    // Initialize Lucide icons
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons(widget);
+    }
 
     console.log('[Achievements Widget] Rendered successfully');
   }
@@ -90,12 +95,14 @@
     return topAchievements.map(achievement => `
       <div class="achievement-badge ${achievement.unlocked ? 'unlocked' : 'locked'} rarity-${achievement.rarity || 'common'}"
            title="${achievement.description}">
-        <div class="achievement-icon">${achievement.icon}</div>
+        <div class="achievement-icon">
+          <i data-lucide="${achievement.icon}" style="width: 32px; height: 32px;"></i>
+        </div>
         <div class="achievement-name">${achievement.name}</div>
         <div class="achievement-points">${achievement.points} pts</div>
         ${achievement.rarity && achievement.rarity !== 'common' ? `<div class="achievement-rarity rarity-${achievement.rarity}">${achievement.rarity.toUpperCase()}</div>` : ''}
-        ${achievement.unlocked ? '<div class="achievement-check">✓</div>' : ''}
-        ${!achievement.unlocked ? '<div class="achievement-lock">🔒</div>' : ''}
+        ${achievement.unlocked ? '<div class="achievement-check"><i data-lucide="check" style="width: 16px; height: 16px;"></i></div>' : ''}
+        ${!achievement.unlocked ? '<div class="achievement-lock"><i data-lucide="lock" style="width: 16px; height: 16px;"></i></div>' : ''}
       </div>
     `).join('');
   }
@@ -312,8 +319,43 @@
       }
 
       .achievement-icon {
-        font-size: 2.5rem;
         margin-bottom: var(--space-2, 8px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .achievement-icon i {
+        color: var(--text-primary, #1a1a1a);
+      }
+      
+      .achievement-badge.unlocked .achievement-icon i {
+        color: white;
+      }
+      
+      .achievement-badge.locked .achievement-icon i {
+        opacity: 0.5;
+        filter: grayscale(100%);
+      }
+      
+      .achievement-check {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .achievement-check i {
+        color: var(--brand-primary-700, #089949);
+      }
+      
+      .achievement-lock {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .achievement-lock i {
+        color: var(--text-secondary, #6b7280);
       }
 
       .achievement-name {
@@ -392,8 +434,9 @@
           grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
         }
 
-        .achievement-icon {
-          font-size: 2rem;
+        .achievement-icon i {
+          width: 24px;
+          height: 24px;
         }
 
         .achievement-name {
@@ -421,7 +464,7 @@
       <div class="achievements-modal-overlay" onclick="this.parentElement.remove()"></div>
       <div class="achievements-modal-content">
         <div class="modal-header">
-          <h2>🏆 All Achievements</h2>
+          <h2><i data-lucide="trophy" style="width: 24px; height: 24px; display: inline-block; vertical-align: middle; margin-right: 8px;"></i>All Achievements</h2>
           <button class="modal-close" onclick="this.closest('.achievements-modal').remove()">×</button>
         </div>
 
@@ -478,13 +521,15 @@
               <div class="achievements-grid">
                 ${categoryAchievements.map(a => `
                   <div class="achievement-badge ${a.unlocked ? 'unlocked' : 'locked'} rarity-${a.rarity || 'common'}">
-                    <div class="achievement-icon">${a.icon}</div>
+                    <div class="achievement-icon">
+                      <i data-lucide="${a.icon}" style="width: 32px; height: 32px;"></i>
+                    </div>
                     <div class="achievement-name">${a.name}</div>
                     <div class="achievement-description">${a.description}</div>
                     <div class="achievement-points">${a.points} pts</div>
                     ${a.rarity && a.rarity !== 'common' ? `<div class="achievement-rarity rarity-${a.rarity}">${a.rarity.toUpperCase()}</div>` : ''}
-                    ${a.unlocked ? '<div class="achievement-check">✓</div>' : ''}
-                    ${!a.unlocked ? '<div class="achievement-lock">🔒</div>' : ''}
+                    ${a.unlocked ? '<div class="achievement-check"><i data-lucide="check" style="width: 16px; height: 16px;"></i></div>' : ''}
+                    ${!a.unlocked ? '<div class="achievement-lock"><i data-lucide="lock" style="width: 16px; height: 16px;"></i></div>' : ''}
                   </div>
                 `).join('')}
               </div>
@@ -665,6 +710,11 @@
 
     document.head.appendChild(modalStyles);
     document.body.appendChild(modal);
+    
+    // Initialize Lucide icons in modal
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons(modal);
+    }
   };
 
   // Auto-render widget if container exists

@@ -302,19 +302,10 @@ export class ProfileCompletionManager {
             <input
               type="checkbox"
               name="positions"
-              value="RB"
-              ${positions.includes("RB") ? "checked" : ""}
+              value="Center"
+              ${positions.includes("Center") ? "checked" : ""}
             />
-            <span>Running Back (RB)</span>
-          </label>
-          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
-            <input
-              type="checkbox"
-              name="positions"
-              value="C"
-              ${positions.includes("C") ? "checked" : ""}
-            />
-            <span>Center (C)</span>
+            <span>Center (Snapping Only)</span>
           </label>
           <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
             <input
@@ -329,28 +320,10 @@ export class ProfileCompletionManager {
             <input
               type="checkbox"
               name="positions"
-              value="LB"
-              ${positions.includes("LB") ? "checked" : ""}
+              value="Blitzer"
+              ${positions.includes("Blitzer") ? "checked" : ""}
             />
-            <span>Linebacker (LB)</span>
-          </label>
-          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
-            <input
-              type="checkbox"
-              name="positions"
-              value="K"
-              ${positions.includes("K") ? "checked" : ""}
-            />
-            <span>Kicker (K)</span>
-          </label>
-          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
-            <input
-              type="checkbox"
-              name="positions"
-              value="FLEX"
-              ${positions.includes("FLEX") ? "checked" : ""}
-            />
-            <span>Flex</span>
+            <span>Blitzer</span>
           </label>
         </div>
       </div>

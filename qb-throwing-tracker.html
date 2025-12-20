@@ -33,14 +33,16 @@
     <script type="module" src="./src/js/main.js"></script>
     <!-- Common Component Loaders (Sidebar, Top Bar, Footer) -->
     <script type="module" src="./src/js/components/common-loaders.js" defer></script>
+    <!-- Event Handlers (Phase 2 - Replaces inline onclick handlers) -->
+    <script type="module" src="./src/js/utils/event-handlers.js" defer></script>
     <!-- AI Chat Bubble Loader (Dynamic Component) -->
     <script type="module" src="./src/js/components/ai-chat-bubble-loader.js" defer></script>
   
     <!-- Supabase Configuration (Centralized) -->
-    <script src="./src/js/config/supabase-config.js"></script>
+    <script src="./src/js/config/supabase-config.js" defer></script>
     
     <!-- Supabase JS SDK from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0" defer></script>
 
   </head>
   <body>
@@ -135,14 +137,39 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label">Session Duration (mins)</label>
-            <input
-              type="number"
-              class="form-input"
-              id="sessionDuration"
-              placeholder="Minutes"
-              min="0"
-            />
+            <label class="form-label">Session Duration</label>
+            <!-- Unit Toggle -->
+            <div class="unit-toggle-group" style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem;">
+              <button 
+                type="button" 
+                class="unit-toggle-btn unit-toggle-active" 
+                data-unit="minutes"
+                id="sessionDuration-unit-minutes"
+                style="flex: 1; padding: 0.5rem 1rem; border: 2px solid var(--color-brand-primary, #10c96b); background: var(--color-brand-primary, #10c96b); color: white; border-radius: 0.5rem; cursor: pointer; font-weight: 600; font-size: 0.875rem; transition: all 0.2s;">
+                Minutes
+              </button>
+              <button 
+                type="button" 
+                class="unit-toggle-btn" 
+                data-unit="seconds"
+                id="sessionDuration-unit-seconds"
+                style="flex: 1; padding: 0.5rem 1rem; border: 2px solid var(--color-border-secondary, #e5e7eb); background: white; color: var(--color-text-secondary, #6b7280); border-radius: 0.5rem; cursor: pointer; font-weight: 600; font-size: 0.875rem; transition: all 0.2s;">
+                Seconds
+              </button>
+            </div>
+            <div class="input-group">
+              <input
+                type="number"
+                class="form-input"
+                id="sessionDuration"
+                name="sessionDuration"
+                placeholder="Enter duration in minutes"
+                min="0"
+                step="1"
+              />
+              <span class="input-suffix" id="sessionDuration-unit-label">min</span>
+            </div>
+            <input type="hidden" id="sessionDuration-unit" name="durationUnit" value="minutes">
           </div>
         </div>
 
@@ -234,11 +261,11 @@
         </div>
 
             <div class="u-display-flex u-gap-12" style="margin-top: 24px;">
-              <button class="btn btn-primary" onclick="logSession()">
+              <button class="btn btn-primary" data-action="log-session" aria-label="Log throwing session">
                 <i data-lucide="save" class="icon-18" style="margin-right: 8px;"></i>
                 Log Session
               </button>
-              <button class="btn btn-secondary" onclick="startQuickSession()">
+              <button class="btn btn-secondary" data-action="start-quick-session" aria-label="Start guided throwing session">
                 <i data-lucide="play-circle" class="icon-18" style="margin-right: 8px;"></i>
                 Start Guided Session
               </button>
@@ -327,7 +354,8 @@
                 <select
                   class="form-select"
                   id="weekSelector"
-                  onchange="updateCharts()"
+                  data-action="update-charts"
+                  aria-label="Select date range to update charts"
                   style="width: 100%; padding: 10px; border: 2px solid var(--color-border-secondary); border-radius: 8px; font-size: 0.95rem; background: var(--surface-primary); color: var(--text-primary);"
                 >
                   <option value="current">Current Week</option>
@@ -380,7 +408,9 @@
 
             <button
               class="btn btn-secondary"
-              onclick="loadMoreSessions()"
+              data-action="load-more"
+              data-load-more-fn="loadMoreSessions"
+              aria-label="Load more throwing sessions"
               style="width: 100%; margin-top: 24px;"
             >
               <i data-lucide="chevron-down" class="icon-18" style="margin-right: 8px;"></i>
@@ -651,13 +681,25 @@
         }
       }
 
+      // Initialize unit toggles
+      document.addEventListener('DOMContentLoaded', async () => {
+        try {
+          const { setupUnitToggle } = await import('./src/js/utils/unit-toggle-helper.js');
+          setupUnitToggle('time', 'sessionDuration', 'sessionDuration-unit-label', 'sessionDuration-unit');
+        } catch (error) {
+          console.warn('Failed to load unit toggle helper:', error);
+        }
+      });
+
       // Session logging function
       window.logSession = function () {
         const sessionType = document.getElementById("sessionType").value;
         const totalThrows =
           parseInt(document.getElementById("totalThrowsInput").value) || 0;
-        const duration =
-          parseInt(document.getElementById("sessionDuration").value) || 0;
+        const durationUnit = document.getElementById("sessionDuration-unit")?.value || "minutes";
+        const durationValue = parseFloat(document.getElementById("sessionDuration").value) || 0;
+        // Convert to minutes for storage if needed
+        const duration = durationUnit === "seconds" ? durationValue / 60 : durationValue;
         const peakVelocity =
           parseFloat(document.getElementById("peakVelocityInput").value) ||
           null;

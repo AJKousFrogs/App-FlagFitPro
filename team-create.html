@@ -30,10 +30,10 @@
     <script src="./src/theme-switcher.js" defer></script>
 
     <!-- Supabase Configuration (Centralized) -->
-    <script src="./src/js/config/supabase-config.js"></script>
+    <script src="./src/js/config/supabase-config.js" defer></script>
     
     <!-- Supabase JS SDK from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0" defer></script>
 
     <!-- Universal Components -->
     <script type="module" src="./src/js/main.js"></script>
@@ -41,6 +41,8 @@
     <script type="module" src="./src/js/components/universal-form-validator.js" defer></script>
     <!-- Footer Loader (Dynamic Component) -->
     <script type="module" src="./src/js/components/footer-loader.js" defer></script>
+    <!-- Event Handlers (Phase 2 - Replaces inline onclick handlers) -->
+    <script type="module" src="./src/js/utils/event-handlers.js" defer></script>
 
   </head>
   <body class="page-auth">
@@ -264,7 +266,8 @@
         <button
           type="button"
           class="btn btn-secondary u-width-full"
-          onclick="window.location.href='/dashboard.html'"
+          data-action="decline"
+          data-target="/dashboard.html"
           aria-label="Cancel and return to dashboard"
         >
           Cancel

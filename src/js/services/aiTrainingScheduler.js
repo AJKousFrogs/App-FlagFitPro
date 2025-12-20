@@ -349,9 +349,12 @@ class AITrainingScheduler {
       leagueGames: [],
     };
 
-    // Tournament dates
+    // Tournament dates - include tournaments that overlap with the date range (2-day tournaments)
     dates.tournaments = this.tournamentDates.filter(
-      t => t.startDate >= startDate && t.startDate <= endDate
+      t => {
+        // Tournament overlaps if: tournament starts before endDate AND tournament ends after startDate
+        return t.startDate <= endDate && t.endDate >= startDate;
+      }
     );
 
     // Player practice schedule
@@ -421,7 +424,10 @@ class AITrainingScheduler {
         endDate: new Date(weekEnd),
         dates: {
           tournaments: allDates.tournaments.filter(
-            t => t.startDate >= weekStart && t.startDate <= weekEnd
+            t => {
+              // Tournament overlaps with week if: tournament starts before weekEnd AND tournament ends after weekStart
+              return t.startDate <= weekEnd && t.endDate >= weekStart;
+            }
           ),
           practices: allDates.practices.filter(
             p => p.date >= weekStart && p.date <= weekEnd
@@ -562,13 +568,21 @@ class AITrainingScheduler {
         hasOverloadPeriod
       );
 
-      if (daysUntil <= 2) {
-        // Tournament days
-        adjustments.volume = 0;
-        adjustments.intensity = 0;
-        adjustments.type = "rest";
-        adjustments.reasons.push(`Tournament: ${nearestTournament.name} (${daysUntil} days)`);
-        adjustments.rationale = "Tournament competition days - complete rest";
+      // Check if any day in this week falls within tournament dates (2-day tournaments)
+      const weekEndDate = new Date(week.startDate);
+      weekEndDate.setDate(weekEndDate.getDate() + 6);
+      const isTournamentWeek = nearestTournament.startDate <= weekEndDate && 
+                               nearestTournament.endDate >= week.startDate;
+      
+      if (isTournamentWeek) {
+        // Tournament days - check each day individually in generateDaySchedule
+        // For periodization, reduce volume significantly but don't set to 0 for entire week
+        // Individual days will be set to 0 in generateDaySchedule
+        adjustments.volume = 0.1; // Minimal volume for non-tournament days in tournament week
+        adjustments.intensity = 0.3;
+        adjustments.type = "tournament_week";
+        adjustments.reasons.push(`Tournament week: ${nearestTournament.name}`);
+        adjustments.rationale = "Tournament competition week - minimal training outside tournament days";
       } else if (taperParams) {
         // Apply evidence-based taper
         adjustments.volume = taperParams.volumeMultiplier;
@@ -691,9 +705,19 @@ class AITrainingScheduler {
       adjustments: [],
     };
 
-    // Check for tournament
+    // Check for tournament (2-day tournaments: startDate to endDate)
     const tournament = week.dates.tournaments.find(
-      t => dayDate >= t.startDate && dayDate <= t.endDate
+      t => {
+        const dayStart = new Date(dayDate);
+        dayStart.setHours(0, 0, 0, 0);
+        const dayEnd = new Date(dayDate);
+        dayEnd.setHours(23, 59, 59, 999);
+        const tourStart = new Date(t.startDate);
+        tourStart.setHours(0, 0, 0, 0);
+        const tourEnd = new Date(t.endDate);
+        tourEnd.setHours(23, 59, 59, 999);
+        return dayStart <= tourEnd && dayEnd >= tourStart;
+      }
     );
 
     if (tournament) {
@@ -717,7 +741,10 @@ class AITrainingScheduler {
     const leagueGame = week.dates.leagueGames.find(
       lg => {
         const gameDate = new Date(lg.date);
-        return gameDate.toDateString() === dayDate.toDateString();
+        gameDate.setHours(0, 0, 0, 0);
+        const dayStart = new Date(dayDate);
+        dayStart.setHours(0, 0, 0, 0);
+        return gameDate.getTime() === dayStart.getTime();
       }
     );
 
@@ -787,6 +814,28 @@ class AITrainingScheduler {
         reason: periodization.reasons.join(", "),
         adjustment: periodization,
       });
+    }
+
+    // Ensure minimum training volume (never completely empty week)
+    // Even in recovery/taper weeks, maintain at least 20% volume on non-rest days
+    // Tournament and game days are already handled above and returned early
+    if (daySchedule.training && daySchedule.training.volume === 0) {
+      // Only set to 0 if it's a tournament or game day (already returned above)
+      // Otherwise, ensure minimum training
+      daySchedule.training.volume = 0.2;
+      daySchedule.training.intensity = 0.4;
+      daySchedule.training.type = "light_activation";
+      daySchedule.training.title = "Light Activation";
+      daySchedule.adjustments.push({
+        reason: "Minimum training maintained",
+        adjustment: { volume: 0.2, intensity: 0.4 },
+      });
+    }
+
+    // Ensure training volume is never completely zero (minimum 10% for non-rest days)
+    if (daySchedule.training && daySchedule.training.volume < 0.1) {
+      daySchedule.training.volume = Math.max(daySchedule.training.volume, 0.1);
+      daySchedule.training.intensity = Math.max(daySchedule.training.intensity, 0.3);
     }
 
     return daySchedule;
@@ -1013,6 +1062,131 @@ class AITrainingScheduler {
 
     ical += "END:VCALENDAR\n";
     return ical;
+  }
+
+  /**
+   * Get AI recommendations for schedule optimization
+   * Analyzes current schedule and provides periodization recommendations
+   * 
+   * @param {Object} options - Options for recommendations
+   * @param {Array} options.currentSchedule - Current training schedule
+   * @param {Date} options.week - Week to analyze
+   * @returns {Array} Array of recommendation objects
+   */
+  getRecommendations(options = {}) {
+    const { currentSchedule = [], week = new Date() } = options;
+    const recommendations = [];
+
+    try {
+      // Check for upcoming tournaments
+      const upcomingTournaments = this.tournamentDates.filter(t => {
+        const daysUntil = Math.floor((t.startDate - week) / (1000 * 60 * 60 * 24));
+        return daysUntil >= 0 && daysUntil <= 14;
+      });
+
+      if (upcomingTournaments.length > 0) {
+        const nearestTournament = upcomingTournaments[0];
+        const daysUntil = Math.floor((nearestTournament.startDate - week) / (1000 * 60 * 60 * 24));
+        const eventImportance = nearestTournament.eventImportance || EVENT_IMPORTANCE.MEDIUM;
+
+        if (daysUntil <= 14 && daysUntil > 0) {
+          const taperParams = this.calculateTaperParameters(eventImportance, daysUntil, false);
+          
+          if (taperParams) {
+            recommendations.push({
+              type: 'taper',
+              title: `Taper for ${nearestTournament.name}`,
+              description: `Reduce training volume by ${Math.round((1 - taperParams.volumeMultiplier) * 100)}% while maintaining ${Math.round(taperParams.intensityMultiplier * 100)}% intensity over the next ${daysUntil} days.`,
+              priority: eventImportance === EVENT_IMPORTANCE.MAJOR ? 'high' : 'medium',
+              action: {
+                type: 'apply_taper',
+                parameters: taperParams,
+                tournament: nearestTournament.name
+              },
+              rationale: taperParams.rationale
+            });
+          }
+        }
+      }
+
+      // Check for schedule conflicts (multiple sessions on same day)
+      const scheduleByDate = {};
+      currentSchedule.forEach(session => {
+        const dateKey = new Date(session.date).toDateString();
+        if (!scheduleByDate[dateKey]) {
+          scheduleByDate[dateKey] = [];
+        }
+        scheduleByDate[dateKey].push(session);
+      });
+
+      Object.entries(scheduleByDate).forEach(([dateKey, sessions]) => {
+        if (sessions.length > 1) {
+          recommendations.push({
+            type: 'conflict',
+            title: `Schedule conflict on ${dateKey}`,
+            description: `You have ${sessions.length} sessions scheduled on the same day. Consider spacing them out or reducing intensity.`,
+            priority: 'high',
+            action: {
+              type: 'resolve_conflict',
+              date: dateKey,
+              sessions: sessions.map(s => s.title || s.name || 'Training session')
+            }
+          });
+        }
+      });
+
+      // Check for insufficient recovery (sessions too close together)
+      const sortedSessions = [...currentSchedule].sort((a, b) => 
+        new Date(a.date) - new Date(b.date)
+      );
+
+      for (let i = 0; i < sortedSessions.length - 1; i++) {
+        const current = sortedSessions[i];
+        const next = sortedSessions[i + 1];
+        const daysBetween = Math.floor(
+          (new Date(next.date) - new Date(current.date)) / (1000 * 60 * 60 * 24)
+        );
+
+        if (daysBetween < 1 && current.intensity > 0.7 && next.intensity > 0.7) {
+          recommendations.push({
+            type: 'recovery',
+            title: 'Insufficient recovery time',
+            description: `High-intensity sessions scheduled ${daysBetween === 0 ? 'on the same day' : 'less than 24 hours apart'}. Add a recovery day between sessions.`,
+            priority: 'medium',
+            action: {
+              type: 'add_recovery',
+              sessions: [current.title || 'Session 1', next.title || 'Session 2']
+            }
+          });
+        }
+      }
+
+      // Check for upcoming events that need preparation
+      const upcomingEvents = this.tournamentDates.filter(t => {
+        const daysUntil = Math.floor((t.startDate - week) / (1000 * 60 * 60 * 24));
+        return daysUntil > 14 && daysUntil <= 28; // 2-4 weeks out
+      });
+
+      if (upcomingEvents.length > 0) {
+        const event = upcomingEvents[0];
+        recommendations.push({
+          type: 'preparation',
+          title: `Prepare for ${event.name}`,
+          description: `${event.name} is ${Math.floor((event.startDate - week) / (1000 * 60 * 60 * 24))} days away. Consider starting an overload period 2-4 weeks before the event.`,
+          priority: 'low',
+          action: {
+            type: 'start_overload',
+            event: event.name,
+            startDate: new Date(event.startDate.getTime() - 21 * 24 * 60 * 60 * 1000) // 3 weeks before
+          }
+        });
+      }
+
+    } catch (error) {
+      console.warn('[AITrainingScheduler] Error generating recommendations:', error);
+    }
+
+    return recommendations;
   }
 }
 

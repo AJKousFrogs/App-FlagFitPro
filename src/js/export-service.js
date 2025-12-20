@@ -15,26 +15,68 @@ class ExportService {
    * Load jsPDF library from CDN
    */
   async loadJsPDF() {
-    if (window.jspdf) {
+    // Check if jsPDF is already loaded (multiple ways it might be exposed)
+    if (window.jspdf || window.jsPDF || (typeof jspdf !== 'undefined')) {
       this.jsPDFLoaded = true;
       return;
     }
 
     try {
       const script = document.createElement('script');
-      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+      // Try a more reliable CDN URL
+      script.src = 'https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js';
       script.async = true;
+      script.crossOrigin = 'anonymous';
 
       await new Promise((resolve, reject) => {
-        script.onload = resolve;
-        script.onerror = reject;
+        const timeout = setTimeout(() => {
+          reject(new Error('jsPDF loading timeout'));
+        }, 10000); // 10 second timeout
+
+        script.onload = () => {
+          clearTimeout(timeout);
+          // Wait a bit for the library to initialize
+          setTimeout(() => {
+            if (window.jspdf || window.jsPDF || (typeof jspdf !== 'undefined')) {
+              this.jsPDFLoaded = true;
+              console.log('[Export] jsPDF loaded successfully');
+              resolve();
+            } else {
+              reject(new Error('jsPDF not available after load'));
+            }
+          }, 100);
+        };
+        script.onerror = (error) => {
+          clearTimeout(timeout);
+          reject(error);
+        };
         document.head.appendChild(script);
       });
-
-      this.jsPDFLoaded = true;
-      console.log('[Export] jsPDF loaded successfully');
     } catch (error) {
       console.error('[Export] Failed to load jsPDF:', error);
+      // Try fallback CDN
+      try {
+        const fallbackScript = document.createElement('script');
+        fallbackScript.src = 'https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js';
+        fallbackScript.async = true;
+        await new Promise((resolve, reject) => {
+          fallbackScript.onload = () => {
+            setTimeout(() => {
+              if (window.jspdf || window.jsPDF || (typeof jspdf !== 'undefined')) {
+                this.jsPDFLoaded = true;
+                console.log('[Export] jsPDF loaded from fallback CDN');
+                resolve();
+              } else {
+                reject(new Error('jsPDF not available after fallback load'));
+              }
+            }, 100);
+          };
+          fallbackScript.onerror = reject;
+          document.head.appendChild(fallbackScript);
+        });
+      } catch (fallbackError) {
+        console.error('[Export] Failed to load jsPDF from fallback:', fallbackError);
+      }
     }
   }
 

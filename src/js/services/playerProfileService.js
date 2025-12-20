@@ -198,7 +198,7 @@ class PlayerProfileService {
       id: "aljosa_kous_55",
       name: "Aljoša Kous",
       jerseyNumber: 55,
-      position: "WR/DB",
+      position: "WR",
       practices: [],
       games: [],
       leagueGames: [

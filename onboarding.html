@@ -11,11 +11,13 @@
   <link rel="stylesheet" href="./src/css/main.css" />
   <link rel="stylesheet" href="./src/css/onboarding.css" />
 
-  <!-- Supabase JS SDK from CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0"></script>
+    <!-- Supabase JS SDK from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0" defer></script>
 
   <!-- Supabase Configuration (Centralized) -->
-  <script src="./src/js/config/supabase-config.js"></script>
+    <script src="./src/js/config/supabase-config.js" defer></script>
+    <!-- Event Handlers (Phase 2 - Replaces inline onclick handlers) -->
+    <script type="module" src="./src/js/utils/event-handlers.js" defer></script>
 
   <style>
     body {
@@ -384,7 +386,7 @@
       </div>
 
       <div class="btn-group">
-        <button class="btn" onclick="nextStep()">Let's Get Started!</button>
+        <button class="btn" data-action="onboarding-next" aria-label="Start onboarding">Let's Get Started!</button>
       </div>
     </div>
 
@@ -402,12 +404,12 @@
       <p class="subtitle text-body-md text-secondary">We see you're registered as a <strong class="text-emphasis" id="currentRole">player</strong>. Is this correct?</p>
 
       <div class="role-confirmation">
-        <div class="role-card" data-role="player" onclick="selectRole('player')">
+        <div class="role-card" data-role="player" data-action="select-role" data-role-value="player" role="button" tabindex="0" aria-label="Select player role">
           <div class="role-card-icon">🏈</div>
           <div class="role-card-title text-heading-md text-primary font-semibold">Player</div>
           <div class="role-card-desc">Track performance, join teams, and train to improve your skills</div>
         </div>
-        <div class="role-card" data-role="coach" onclick="selectRole('coach')">
+        <div class="role-card" data-role="coach" data-action="select-role" data-role-value="coach" role="button" tabindex="0" aria-label="Select coach role">
           <div class="role-card-icon">👔</div>
           <div class="role-card-title text-heading-md text-primary font-semibold">Coach</div>
           <div class="role-card-desc">Manage teams, create training plans, and track player progress</div>
@@ -415,8 +417,8 @@
       </div>
 
       <div class="btn-group">
-        <button class="btn btn-secondary" onclick="previousStep()">Back</button>
-        <button class="btn" onclick="nextStep()" id="continueRoleBtn">Continue</button>
+        <button class="btn btn-secondary" data-action="onboarding-previous" aria-label="Go to previous step">Back</button>
+        <button class="btn" data-action="onboarding-next" id="continueRoleBtn" aria-label="Continue to next step">Continue</button>
       </div>
     </div>
 
@@ -433,14 +435,14 @@
       <h1 class="text-heading-2xl text-primary">Complete Your Profile</h1>
       <p class="subtitle text-body-md text-secondary">Let's set up your profile to personalize your experience</p>
 
-      <div id="profileFormContainer" style="text-align: left; max-width: 500px; margin: 0 auto;">
-        <p style="text-align: center; color: #666; margin-bottom: 30px;">We'll complete your profile in the next step...</p>
+      <div id="profileFormContainer" class="profile-form-container">
+        <p class="profile-form-text">We'll complete your profile in the next step...</p>
       </div>
 
       <div class="btn-group">
-        <button class="btn btn-secondary" onclick="previousStep()">Back</button>
-        <button class="btn" onclick="showProfileCompletion()">Complete Profile</button>
-        <button class="btn btn-outline" onclick="skipProfile()">Skip for Now</button>
+        <button class="btn btn-secondary" data-action="onboarding-previous" aria-label="Go to previous step">Back</button>
+        <button class="btn" data-action="show-profile-completion" aria-label="Complete your profile">Complete Profile</button>
+        <button class="btn btn-outline" data-action="skip-profile" aria-label="Skip profile completion">Skip for Now</button>
       </div>
     </div>
 
@@ -462,8 +464,8 @@
       </div>
 
       <div class="btn-group">
-        <button class="btn btn-secondary" onclick="previousStep()">Back</button>
-        <button class="btn" onclick="nextStep()">Continue</button>
+        <button class="btn btn-secondary" data-action="onboarding-previous" aria-label="Go to previous step">Back</button>
+        <button class="btn" data-action="onboarding-next" aria-label="Continue to next step">Continue</button>
         <a href="/dashboard.html" class="skip-link">Skip for Now</a>
       </div>
     </div>
@@ -497,7 +499,7 @@
       </div>
 
       <div class="btn-group">
-        <button class="btn" onclick="completedOnboarding()">Go to Dashboard</button>
+        <button class="btn" data-action="complete-onboarding" aria-label="Complete onboarding and go to dashboard">Go to Dashboard</button>
       </div>
     </div>
   </div>
@@ -643,12 +645,12 @@
         teamStepTitle.textContent = 'Create Your First Team';
         teamStepDesc.textContent = 'Set up a team to start managing players and training sessions';
         teamOptions.innerHTML = `
-          <div class="team-option" onclick="window.location.href='/team-create.html'">
+          <div class="team-option" data-navigate-to="/team-create.html" role="button" tabindex="0" aria-label="Create new team">
             <div class="team-option-icon">➕</div>
             <div class="team-option-title text-heading-md text-primary font-semibold">Create New Team</div>
             <div class="team-option-desc">Set up a new team and start inviting players</div>
           </div>
-          <div class="team-option" onclick="nextStep()">
+          <div class="team-option" data-action="onboarding-next" role="button" tabindex="0" aria-label="Skip team creation for now">
             <div class="team-option-icon">⏭️</div>
             <div class="team-option-title text-heading-md text-primary font-semibold">Do This Later</div>
             <div class="team-option-desc">You can create a team anytime from your dashboard</div>
@@ -659,17 +661,17 @@
         teamStepTitle.textContent = 'Join a Team';
         teamStepDesc.textContent = 'Connect with teams to track group performance and participate in tournaments';
         teamOptions.innerHTML = `
-          <div class="team-option" onclick="window.location.href='/roster.html'">
+          <div class="team-option" data-navigate-to="/roster.html" role="button" tabindex="0" aria-label="Browse teams">
             <div class="team-option-icon">🔍</div>
             <div class="team-option-title text-heading-md text-primary font-semibold">Browse Teams</div>
             <div class="team-option-desc">Find and join public teams in your area</div>
           </div>
-          <div class="team-option" onclick="window.location.href='/roster.html'">
+          <div class="team-option" data-navigate-to="/roster.html" role="button" tabindex="0" aria-label="Join team with code">
             <div class="team-option-icon">🔑</div>
             <div class="team-option-title text-heading-md text-primary font-semibold">Join with Code</div>
             <div class="team-option-desc">Use a team code from your coach</div>
           </div>
-          <div class="team-option" onclick="nextStep()">
+          <div class="team-option" data-action="onboarding-next" role="button" tabindex="0" aria-label="Skip team joining for now">
             <div class="team-option-icon">⏭️</div>
             <div class="team-option-title text-heading-md text-primary font-semibold">Do This Later</div>
             <div class="team-option-desc">You can join teams anytime from your dashboard</div>

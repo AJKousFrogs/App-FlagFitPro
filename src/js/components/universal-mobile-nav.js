@@ -26,6 +26,25 @@ class UniversalMobileNav {
       return;
     }
 
+    // Try to find elements immediately, but also wait for dynamically loaded content
+    this.findElements();
+
+    // If elements not found, wait a bit for dynamically loaded content
+    if (!this.sidebar || !this.toggle) {
+      // Wait for elements to be loaded dynamically (e.g., via top-bar-loader.js)
+      this.waitForElements();
+    } else {
+      // Elements found, proceed with setup
+      this.setupEventListeners();
+      this.setupKeyboardNavigation();
+      this.setupAccessibility();
+      
+      // Update active navigation
+      this.updateActiveNavigation(currentPath);
+    }
+  }
+
+  findElements() {
     // Find elements (they might have different IDs across pages)
     this.sidebar =
       document.getElementById("sidebar") || document.querySelector(".sidebar");
@@ -35,31 +54,53 @@ class UniversalMobileNav {
     this.overlay =
       document.getElementById("sidebar-overlay") ||
       document.querySelector(".sidebar-overlay, .menu-scrim");
+  }
 
-    // Only warn and create fallback if we're on a page that should have navigation
-    // Pages without sidebars (like some standalone pages) shouldn't trigger warnings
-    const hasAnyNav = document.querySelector(
-      'nav, .sidebar, .navigation, [role="navigation"]',
-    );
+  waitForElements(maxAttempts = 10, delay = 100) {
+    let attempts = 0;
 
-    if (!this.sidebar || !this.toggle) {
-      // Only warn if there's some navigation element present (meaning we should have mobile nav)
-      if (hasAnyNav) {
-        // Suppress warning in development to reduce console noise
-        const isDevelopment =
-          window.location.hostname === "localhost" ||
-          window.location.hostname === "127.0.0.1";
-        if (!isDevelopment) {
-          // eslint-disable-next-line no-console
-          console.warn("Mobile nav elements not found - creating fallback");
-        }
+    const checkElements = () => {
+      attempts++;
+      this.findElements();
+
+      if (this.sidebar && this.toggle) {
+        // Elements found, proceed with setup
+        this.setupEventListeners();
+        this.setupKeyboardNavigation();
+        this.setupAccessibility();
+        
+        // Update active navigation once sidebar is ready
+        const currentPath = window.location.pathname.toLowerCase();
+        this.updateActiveNavigation(currentPath);
+        return;
       }
-      this.createFallbackElements();
-    }
 
-    this.setupEventListeners();
-    this.setupKeyboardNavigation();
-    this.setupAccessibility();
+      if (attempts < maxAttempts) {
+        // Try again after a short delay
+        setTimeout(checkElements, delay);
+      } else {
+        // Elements still not found after waiting, create fallback silently
+        // Only warn if there's navigation present (meaning elements should exist)
+        const hasAnyNav = document.querySelector(
+          'nav, .sidebar, .navigation, [role="navigation"]',
+        );
+
+        if (hasAnyNav) {
+          // Use debug logging instead of warning to reduce console noise
+          if (window.logger && typeof window.logger.debug === 'function') {
+            window.logger.debug("Mobile nav elements not found - creating fallback");
+          }
+        }
+
+        this.createFallbackElements();
+        this.setupEventListeners();
+        this.setupKeyboardNavigation();
+        this.setupAccessibility();
+      }
+    };
+
+    // Start checking after a short delay to allow dynamic content to load
+    setTimeout(checkElements, delay);
   }
 
   createFallbackElements() {
@@ -308,9 +349,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (!isAuthPage) {
     window.universalMobileNav = new UniversalMobileNav();
-
-    // Set active navigation based on current page
-    window.universalMobileNav.updateActiveNavigation(currentPath);
+    // updateActiveNavigation is called automatically once elements are found
   }
 });
 

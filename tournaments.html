@@ -52,14 +52,16 @@
     </script>
     <!-- Common Component Loaders (Sidebar, Top Bar, Footer) -->
     <script type="module" src="./src/js/components/common-loaders.js" defer></script>
+    <!-- Event Handlers (Phase 2 - Replaces inline onclick handlers) -->
+    <script type="module" src="./src/js/utils/event-handlers.js" defer></script>
     <!-- AI Chat Bubble Loader (Dynamic Component) -->
     <script type="module" src="./src/js/components/ai-chat-bubble-loader.js" defer></script>
   
     <!-- Supabase Configuration (Centralized) -->
-    <script src="./src/js/config/supabase-config.js"></script>
+    <script src="./src/js/config/supabase-config.js" defer></script>
     
     <!-- Supabase JS SDK from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0" defer></script>
 
   </head>
   <body>
@@ -73,13 +75,12 @@
         <div data-topbar-container></div>
 
         <header
-          class="card u-padding-24 u-margin-bottom-30"
-          style="background: var(--surface-primary); border: 1px solid var(--color-border-secondary);"
+          class="card u-padding-24 u-margin-bottom-30 header-card"
         >
-          <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-6); flex-wrap: wrap;">
-            <div style="flex: 1; min-width: 0;">
-              <h1 class="text-heading-xl text-primary space-tight" style="display: flex; align-items: center; gap: var(--space-3);">
-                <i data-lucide="trophy" style="width: 28px; height: 28px; color: var(--color-brand-primary);"></i>
+          <div class="u-flex-between-wrap">
+            <div class="u-flex-1-min-0">
+              <h1 class="text-heading-xl text-primary space-tight u-flex-center-gap-3">
+                <i data-lucide="trophy" class="icon-28 u-color-brand-primary" aria-hidden="true"></i>
                 Official Tournament Schedule 2026-2027
               </h1>
               <p class="text-body-sm text-secondary">
@@ -87,53 +88,58 @@
               </p>
             </div>
             <div>
-              <button class="btn btn-primary btn-md" id="nextTournamentBtn" style="white-space: nowrap;">
-                <i data-lucide="calendar"></i>
+              <button class="btn btn-primary btn-md u-white-space-nowrap" id="nextTournamentBtn" aria-label="View next tournament">
+                <i data-lucide="calendar" aria-hidden="true"></i>
                 <span>Next Tournament</span>
               </button>
             </div>
           </div>
         </header>
 
-        <div class="tournament-tabs" style="display: flex; gap: var(--space-2); margin-bottom: var(--space-8); flex-wrap: wrap; padding-bottom: var(--space-4); border-bottom: 1px solid var(--color-border-secondary);">
+        <div class="tournament-tabs tournament-tabs-container">
           <button
-            class="btn btn-tertiary btn-sm tab-button active"
-            onclick="switchTab('2026', event)"
+            class="btn btn-tertiary btn-sm tab-button active tab-button-relative"
+            data-tab-switch="2026"
             data-tab="2026"
-            style="position: relative;"
+            aria-selected="true"
+            aria-label="Switch to 2026 Season tournaments"
           >
             2026 Season
           </button>
           <button
-            class="btn btn-tertiary btn-sm tab-button"
-            onclick="switchTab('2027', event)"
+            class="btn btn-tertiary btn-sm tab-button tab-button-relative"
+            data-tab-switch="2027"
             data-tab="2027"
-            style="position: relative;"
+            aria-selected="false"
+            aria-label="Switch to 2027 Season tournaments"
           >
             2027 Season
           </button>
           <button
-            class="btn btn-tertiary btn-sm tab-button"
-            onclick="switchTab('all', event)"
+            class="btn btn-tertiary btn-sm tab-button tab-button-relative"
+            data-tab-switch="all"
             data-tab="all"
-            style="position: relative;"
+            aria-selected="false"
+            aria-label="Show all tournaments"
           >
             All Tournaments
           </button>
           <button
-            class="btn btn-tertiary btn-sm tab-button"
-            onclick="switchTab('preparation', event)"
+            class="btn btn-tertiary btn-sm tab-button tab-button-relative"
+            data-tab-switch="preparation"
             data-tab="preparation"
-            style="position: relative;"
+            aria-selected="false"
+            aria-label="Show preparation tournaments"
           >
             Preparation
           </button>
         </div>
 
         <section
-          class="tournaments-grid u-display-grid u-gap-25 u-margin-bottom-30"
+          class="tournaments-grid u-display-grid u-gap-25 u-margin-bottom-30 tournament-grid u-grid-auto-fill-360"
           id="tournamentsGrid"
-          style="grid-template-columns: repeat(auto-fill, minmax(360px, 1fr))"
+          aria-live="polite"
+          aria-atomic="false"
         >
           <!-- Tournament cards will be populated by JavaScript -->
         </section>
@@ -141,12 +147,11 @@
         <!-- Loading state -->
         <div
           id="tournamentsLoading"
-          class="card"
-          style="display: none; text-align: center; padding: var(--space-16);"
+          class="card loading-container"
         >
-          <div style="display: flex; flex-direction: column; align-items: center; gap: var(--space-4);">
-            <div style="width: 48px; height: 48px; border: 3px solid var(--color-border-secondary); border-top-color: var(--color-brand-primary); border-radius: var(--radius-full); animation: spin 1s linear infinite;"></div>
-            <div style="font-size: var(--text-lg); color: var(--color-text-secondary); font-weight: var(--font-weight-medium);">
+          <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">
               Loading tournaments...
             </div>
           </div>
@@ -155,22 +160,21 @@
         <!-- Empty state -->
         <div
           id="tournamentsEmpty"
-          class="card"
-          style="display: none; text-align: center; padding: var(--space-16);"
+          class="card empty-state-container"
         >
-          <div style="display: flex; flex-direction: column; align-items: center; gap: var(--space-4);">
-            <i data-lucide="calendar-x" style="width: 64px; height: 64px; color: var(--color-text-tertiary); opacity: 0.5;"></i>
-            <div style="font-size: var(--text-xl); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); margin-bottom: var(--space-2);">
+          <div class="empty-state-content">
+            <i data-lucide="calendar-x" class="empty-state-icon"></i>
+            <div class="empty-state-title">
               No tournaments found
             </div>
-            <div style="font-size: var(--text-base); color: var(--color-text-secondary);">
+            <div class="empty-state-text">
               Check back later for upcoming tournaments.
             </div>
           </div>
         </div>
 
         <!-- Legacy tournament cards (will be removed by JavaScript) -->
-        <div style="display: none">
+        <div class="u-display-none">
           <div class="tournament-card hover-lift glow-hover">
             <div class="tournament-header">
               <div class="tournament-status">Coming Soon</div>
@@ -283,9 +287,8 @@
         <!-- End legacy tournament cards -->
 
         <section
-          class="bracket-container u-bg-primary u-radius-md u-shadow-sm u-padding-30 u-margin-bottom-30"
+          class="bracket-container u-bg-primary u-radius-md u-shadow-sm u-padding-30 u-margin-bottom-30 u-display-none"
           id="bracketContainer"
-          style="display: none"
         >
           <h3 class="bracket-title">Summer Slam - Tournament Bracket</h3>
           <div class="bracket">
@@ -380,7 +383,7 @@
               Tournament Rankings
             </h3>
           </div>
-          <div class="card-body" id="leaderboardList" style="padding: var(--space-6);">
+          <div class="card-body u-padding-6" id="leaderboardList">
             <!-- Leaderboard items will be populated by JavaScript -->
           </div>
         </section>
@@ -627,56 +630,56 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card-body" style="padding: var(--space-6);">
-                        <div class="tournament-info-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-4); margin-bottom: var(--space-6);">
-                            <div class="info-item" style="display: flex; align-items: flex-start; gap: var(--space-3);">
-                                <div class="info-icon" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: var(--color-brand-primary-subtle); border-radius: var(--radius-md); flex-shrink: 0;">
-                                    <i data-lucide="calendar" style="width: 18px; height: 18px; color: var(--color-brand-primary);"></i>
+                    <div class="card-body u-padding-6">
+                        <div class="tournament-info-grid">
+                            <div class="tournament-info-item">
+                                <div class="tournament-info-icon">
+                                    <i data-lucide="calendar" class="icon-18" style="color: var(--color-brand-primary);"></i>
                                 </div>
-                                <div style="flex: 1; min-width: 0;">
-                                    <div style="font-size: var(--text-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); margin-bottom: var(--space-1);">
+                                <div class="tournament-info-content">
+                                    <div class="tournament-info-label">
                                         ${formatTournamentDate(tournament)}
                                     </div>
-                                    <div style="font-size: var(--text-xs); color: var(--color-text-secondary);">
+                                    <div class="tournament-info-value">
                                         ${daysUntil !== null ? `${daysUntil} ${daysUntil === 1 ? 'day' : 'days'} away` : tournament.month ? `${tournament.month} 2027` : "Date TBD"}
                                     </div>
                                 </div>
                             </div>
-                            <div class="info-item" style="display: flex; align-items: flex-start; gap: var(--space-3);">
-                                <div class="info-icon" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(139, 92, 246, 0.1); border-radius: var(--radius-md); flex-shrink: 0;">
-                                    <i data-lucide="map-pin" style="width: 18px; height: 18px; color: #8b5cf6;"></i>
+                            <div class="tournament-info-item">
+                                <div class="tournament-info-icon tournament-info-icon-purple">
+                                    <i data-lucide="map-pin" class="icon-18 icon-color-purple"></i>
                                 </div>
-                                <div style="flex: 1; min-width: 0;">
-                                    <div style="font-size: var(--text-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); margin-bottom: var(--space-1);">
+                                <div class="tournament-info-content">
+                                    <div class="tournament-info-label">
                                         ${escapeHtml(tournament.location || "TBD")}
                                     </div>
-                                    <div style="font-size: var(--text-xs); color: var(--color-text-secondary);">
+                                    <div class="tournament-info-value">
                                         ${escapeHtml(tournament.venue || tournament.country || "Venue TBD")}
                                     </div>
                                 </div>
                             </div>
-                            <div class="info-item" style="display: flex; align-items: flex-start; gap: var(--space-3);">
-                                <div class="info-icon" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(245, 158, 11, 0.1); border-radius: var(--radius-md); flex-shrink: 0;">
-                                    <i data-lucide="award" style="width: 18px; height: 18px; color: #f59e0b;"></i>
+                            <div class="tournament-info-item-alt">
+                                <div class="tournament-info-icon-alt tournament-info-icon-orange">
+                                    <i data-lucide="award" class="icon-18 icon-color-orange"></i>
                                 </div>
-                                <div style="flex: 1; min-width: 0;">
-                                    <div style="font-size: var(--text-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); margin-bottom: var(--space-1);">
+                                <div class="tournament-info-content-alt">
+                                    <div class="tournament-info-label-alt">
                                         ${tournament.prizePool === "TBD" ? "TBD" : escapeHtml(String(tournament.prizePool))}
                                     </div>
-                                    <div style="font-size: var(--text-xs); color: var(--color-text-secondary);">
+                                    <div class="tournament-info-value-alt">
                                         Prize pool
                                     </div>
                                 </div>
                             </div>
-                            <div class="info-item" style="display: flex; align-items: flex-start; gap: var(--space-3);">
-                                <div class="info-icon" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: var(--color-brand-primary-subtle); border-radius: var(--radius-md); flex-shrink: 0;">
-                                    <i data-lucide="users" style="width: 18px; height: 18px; color: var(--color-brand-primary);"></i>
+                            <div class="tournament-info-item-alt">
+                                <div class="tournament-info-icon-alt tournament-info-icon-primary">
+                                    <i data-lucide="users" class="icon-18 icon-color-primary"></i>
                                 </div>
-                                <div style="flex: 1; min-width: 0;">
-                                    <div style="font-size: var(--text-sm); font-weight: var(--font-weight-semibold); color: var(--color-text-primary); margin-bottom: var(--space-1);">
+                                <div class="tournament-info-content-alt">
+                                    <div class="tournament-info-label-alt">
                                         ${tournament.expectedTeams === "TBD" ? "TBD" : typeof tournament.expectedTeams === 'number' ? tournament.expectedTeams + " teams" : escapeHtml(String(tournament.expectedTeams))}
                                     </div>
-                                    <div style="font-size: var(--text-xs); color: var(--color-text-secondary);">
+                                    <div class="tournament-info-value-alt">
                                         ${tournament.isInvitationOnly ? "Invitation Only" : "Expected"}
                                     </div>
                                 </div>
@@ -707,10 +710,10 @@
                         <div class="tournament-actions" style="display: flex; gap: var(--space-3);">
                             ${
                               tournament.isInvitationOnly
-                                ? '<button class="btn btn-secondary btn-md" disabled style="flex: 1;"><i data-lucide="lock"></i> Invitation Only</button>'
-                                : `<button class="btn btn-primary btn-md" onclick="viewTournamentDetails('${tournament.id}')" style="flex: 1;"><i data-lucide="user-plus"></i> Register Interest</button>`
+                                ? '<button class="btn btn-secondary btn-md" disabled style="flex: 1;" aria-label="Tournament is invitation only"><i data-lucide="lock"></i> Invitation Only</button>'
+                                : `<button class="btn btn-primary btn-md" data-action="view-tournament" data-tournament-id="${tournament.id}" aria-label="Register interest in ${tournament.name}" style="flex: 1;"><i data-lucide="user-plus"></i> Register Interest</button>`
                             }
-                            <button class="btn btn-secondary btn-md" onclick="viewTournamentDetails('${tournament.id}')" style="flex: 1;"><i data-lucide="eye"></i> View Details</button>
+                            <button class="btn btn-secondary btn-md" data-action="view-tournament" data-tournament-id="${tournament.id}" aria-label="View details for ${tournament.name}" style="flex: 1;"><i data-lucide="eye"></i> View Details</button>
                         </div>
                     </div>
                 </div>

@@ -5,6 +5,7 @@ import { gameStatsService } from "../services/gameStatsService.js";
 import { logger } from "../../logger.js";
 import { errorHandler } from "../utils/unified-error-handler.js";
 import { escapeHtml } from "../utils/html-escape.js";
+import { unitManager } from "../../unit-manager.js";
 
 class GameTrackerPage {
   constructor() {
@@ -149,9 +150,9 @@ class GameTrackerPage {
         { id: "player_1", name: "Player 1", position: "QB" },
         { id: "player_2", name: "Player 2", position: "WR" },
         { id: "player_3", name: "Player 3", position: "WR" },
-        { id: "player_4", name: "Player 4", position: "RB" },
+        { id: "player_4", name: "Player 4", position: "Center" },
         { id: "player_5", name: "Player 5", position: "DB" },
-        { id: "player_6", name: "Player 6", position: "DB" },
+        { id: "player_6", name: "Player 6", position: "Blitzer" },
       ];
     }
 
@@ -187,8 +188,19 @@ class GameTrackerPage {
     const location = document.getElementById("location").value;
     const homeAway = document.getElementById("home-away").value;
     const weather = document.getElementById("weather").value;
-    const temperature = document.getElementById("temperature").value;
+    const temperatureValue = parseFloat(document.getElementById("temperature").value);
+    const temperatureUnit = document.getElementById("temperature-unit")?.value || "fahrenheit";
     const fieldConditions = document.getElementById("field-conditions").value;
+
+    // Convert temperature to Fahrenheit for storage (API expects Fahrenheit)
+    let temperatureFahrenheit = null;
+    if (!isNaN(temperatureValue)) {
+      if (temperatureUnit === "celsius") {
+        temperatureFahrenheit = (temperatureValue * 9 / 5) + 32;
+      } else {
+        temperatureFahrenheit = temperatureValue;
+      }
+    }
 
     // Create game object
     this.currentGame = {
@@ -200,7 +212,8 @@ class GameTrackerPage {
       location,
       isHomeGame: homeAway === "home",
       weather,
-      temperature: temperature ? parseInt(temperature) : null,
+      temperature: temperatureFahrenheit ? Math.round(temperatureFahrenheit) : null,
+      temperatureUnit: temperatureUnit, // Store unit for display
       fieldConditions,
       teamScore: 0,
       opponentScore: 0,
@@ -469,11 +482,27 @@ class GameTrackerPage {
 
     this.playCounter++;
 
+    // Get distance unit and convert if needed
+    const distanceUnit = document.getElementById("distance-unit")?.value || "imperial";
+    const distanceValue = parseFloat(document.getElementById("distance").value) || 0;
+    const distanceMeters = distanceUnit === "imperial" 
+      ? unitManager.convertDistance(distanceValue, "yards", "meters")
+      : distanceValue;
+
+    // Get route depth unit and convert if needed
+    const routeDepthUnit = document.getElementById("route-depth-unit")?.value || "imperial";
+    const routeDepthValue = parseFloat(document.getElementById("route-depth").value) || 0;
+    const routeDepthMeters = routeDepthUnit === "imperial"
+      ? unitManager.convertDistance(routeDepthValue, "yards", "meters")
+      : routeDepthValue;
+
     const basePlay = {
       playNumber: this.playCounter,
       quarter: parseInt(document.getElementById("quarter").value),
       down: parseInt(document.getElementById("down").value),
-      distance: parseInt(document.getElementById("distance").value),
+      distance: distanceMeters, // Store in meters for API
+      distanceDisplay: distanceValue, // Keep original for display
+      distanceUnit: distanceUnit, // Keep unit for display
       yardLine: parseInt(document.getElementById("yard-line").value),
       playType: playType,
       playNotes: document.getElementById("play-notes").value,
@@ -489,7 +518,9 @@ class GameTrackerPage {
         quarterbackId: document.getElementById("quarterback").value,
         receiverId: document.getElementById("receiver").value,
         routeType: document.getElementById("route-type").value,
-        routeDepth: parseInt(document.getElementById("route-depth").value) || 0,
+        routeDepth: routeDepthMeters, // Store in meters for API
+        routeDepthDisplay: routeDepthValue, // Keep original for display
+        routeDepthUnit: routeDepthUnit, // Keep unit for display
         outcome: document.getElementById("pass-outcome").value,
         throwAccuracy: document.getElementById("throw-accuracy").value,
         isDrop: document.getElementById("pass-outcome").value === "drop",
@@ -497,11 +528,18 @@ class GameTrackerPage {
         dropReason: document.getElementById("drop-reason").value,
       };
     } else if (playType === "run") {
+      const yardsGainedValue = parseFloat(document.getElementById("yards-gained").value) || 0;
+      const yardsGainedUnit = localStorage.getItem("flagfit_distance_unit") || "imperial";
+      const yardsGainedMeters = yardsGainedUnit === "imperial"
+        ? unitManager.convertDistance(yardsGainedValue, "yards", "meters")
+        : yardsGainedValue;
+      
       play = {
         ...play,
         ballCarrierId: document.getElementById("ball-carrier").value,
-        yardsGained:
-          parseInt(document.getElementById("yards-gained").value) || 0,
+        yardsGained: yardsGainedMeters, // Store in meters for API
+        yardsGainedDisplay: yardsGainedValue, // Keep original for display
+        yardsGainedUnit: yardsGainedUnit, // Keep unit for display
       };
     } else if (playType === "flag_pull") {
       play = {
@@ -553,14 +591,15 @@ class GameTrackerPage {
         teamId: this.currentGame.teamId,
         quarter: play.quarter,
         down: play.down,
-        distance: play.distance,
+        distance: play.distance || play.distanceDisplay, // Use meters if converted, otherwise display value
         yardLine: play.yardLine,
         playType: play.playType,
         playCategory: "offensive", // or "defensive" based on play type
         primaryPlayerId: play.quarterbackId || play.ballCarrierId || play.defenderId,
         secondaryPlayerIds: play.receiverId ? [play.receiverId] : [],
         playResult: play.outcome || (play.isSuccessful ? "flag_pull" : "missed"),
-        yardsGained: play.yardsGained || 0,
+        yardsGained: play.yardsGained || play.yardsGainedDisplay || 0, // Use meters if converted
+        routeDepth: play.routeDepth || play.routeDepthDisplay || null, // Use meters if converted
         yardsAfterCatch: 0, // Could be calculated
         isSuccessful: play.outcome === "completion" || play.isSuccessful || false,
         isTurnover: play.outcome === "interception" || false,
@@ -642,7 +681,7 @@ class GameTrackerPage {
           <div class="play-item-content">
             <div class="play-item-header">
               <span class="play-number">#${play.playNumber}</span>
-              <span class="play-context">Q${play.quarter} • ${play.down}${this.getOrdinal(play.down)} & ${play.distance}</span>
+              <span class="play-context">Q${play.quarter} • ${play.down}${this.getOrdinal(play.down)} & ${this.formatDistance(play)}</span>
             </div>
             <div class="play-description">${description}</div>
             <div class="play-details">
@@ -691,16 +730,62 @@ class GameTrackerPage {
       const qb = getPlayerName(play.quarterbackId);
       const receiver = getPlayerName(play.receiverId);
       const route = escapeHtml(play.routeType || "route");
-      return `${qb} to ${receiver} on ${route}`;
+      const routeDepth = this.formatRouteDepth(play);
+      return `${qb} to ${receiver} on ${route}${routeDepth ? ` (${routeDepth})` : ""}`;
     } else if (play.playType === "run") {
       const carrier = getPlayerName(play.ballCarrierId);
-      return `${carrier} runs for ${play.yardsGained} yards`;
+      const yardsGained = this.formatYardsGained(play);
+      return `${carrier} runs for ${yardsGained}`;
     } else if (play.playType === "flag_pull") {
       const defender = getPlayerName(play.defenderId);
       const carrier = getPlayerName(play.ballCarrierId);
       return `${defender} ${play.isSuccessful ? "pulls flag on" : "misses"} ${carrier}`;
     }
     return "Play";
+  }
+
+  formatDistance(play) {
+    const preferredUnit = localStorage.getItem("flagfit_distance_unit") || "imperial";
+    if (play.distanceDisplay && play.distanceUnit) {
+      // Use stored display value and unit
+      return `${play.distanceDisplay} ${play.distanceUnit === "imperial" ? "yds" : "m"}`;
+    } else if (play.distance) {
+      // Convert from meters to preferred unit
+      const distanceValue = preferredUnit === "imperial"
+        ? unitManager.convertDistance(play.distance, "meters", "yards")
+        : play.distance;
+      return `${Math.round(distanceValue)} ${preferredUnit === "imperial" ? "yds" : "m"}`;
+    }
+    return "0 yds";
+  }
+
+  formatYardsGained(play) {
+    const preferredUnit = localStorage.getItem("flagfit_distance_unit") || "imperial";
+    if (play.yardsGainedDisplay && play.yardsGainedUnit) {
+      // Use stored display value and unit
+      return `${play.yardsGainedDisplay} ${play.yardsGainedUnit === "imperial" ? "yds" : "m"}`;
+    } else if (play.yardsGained) {
+      // Convert from meters to preferred unit
+      const yardsValue = preferredUnit === "imperial"
+        ? unitManager.convertDistance(play.yardsGained, "meters", "yards")
+        : play.yardsGained;
+      return `${Math.round(yardsValue)} ${preferredUnit === "imperial" ? "yds" : "m"}`;
+    }
+    return "0 yds";
+  }
+
+  formatRouteDepth(play) {
+    if (!play.routeDepth && !play.routeDepthDisplay) return "";
+    const preferredUnit = localStorage.getItem("flagfit_distance_unit") || "imperial";
+    if (play.routeDepthDisplay && play.routeDepthUnit) {
+      return `${play.routeDepthDisplay} ${play.routeDepthUnit === "imperial" ? "yds" : "m"}`;
+    } else if (play.routeDepth) {
+      const depthValue = preferredUnit === "imperial"
+        ? unitManager.convertDistance(play.routeDepth, "meters", "yards")
+        : play.routeDepth;
+      return `${depthValue.toFixed(1)} ${preferredUnit === "imperial" ? "yds" : "m"}`;
+    }
+    return "";
   }
 
   getOrdinal(n) {

@@ -31,12 +31,14 @@
     <script type="module" src="./src/js/main.js"></script>
     <!-- Common Component Loaders (Sidebar, Top Bar, Footer) -->
     <script type="module" src="./src/js/components/common-loaders.js" defer></script>
+    <!-- Event Handlers (Phase 2 - Replaces inline onclick handlers) -->
+    <script type="module" src="./src/js/utils/event-handlers.js" defer></script>
   
     <!-- Supabase Configuration (Centralized) -->
-    <script src="./src/js/config/supabase-config.js"></script>
+    <script src="./src/js/config/supabase-config.js" defer></script>
     
     <!-- Supabase JS SDK from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0" defer></script>
 
   </head>
   <body>
@@ -380,7 +382,8 @@
             <div class="u-text-center">
               <button
                 class="btn"
-                onclick="startTournamentSimulation()"
+                data-action="start-tournament-simulation"
+                aria-label="Start tournament simulation"
                 style="background: white; color: var(--color-brand-primary); font-weight: 600; padding: 16px 32px; font-size: 1.1rem;"
               >
                 <i data-lucide="play" class="icon-20" style="margin-right: 8px;"></i>

@@ -31,7 +31,7 @@ function checkRateLimit(identifier, options = RATE_LIMITS.DEFAULT) {
   return { allowed: true, remaining: maxRequests - limitData.count };
 }
 function applyRateLimit(event, limitType = "DEFAULT") {
-  const ip = event.headers["x-forwarded-for"] || "unknown";
+  const ip = (event.headers && event.headers["x-forwarded-for"]) || (event.headers && event.headers["X-Forwarded-For"]) || "unknown";
   const limit = RATE_LIMITS[limitType] || RATE_LIMITS.DEFAULT;
   const result = checkRateLimit(ip, limit);
   if (!result.allowed) {

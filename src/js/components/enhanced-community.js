@@ -14,8 +14,8 @@
  */
 
 import { realtimeManager } from '../services/supabase-client.js';
-import { escapeHtml, sanitizeUrl } from '../js/utils/sanitize.js';
-import { getInitials, getTimeAgo } from '../js/utils/shared.js';
+import { escapeHtml, sanitizeUrl } from '../utils/sanitize.js';
+import { getInitials, getTimeAgo } from '../utils/shared.js';
 
 class EnhancedCommunity {
   constructor() {

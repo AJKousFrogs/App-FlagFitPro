@@ -1,30 +1,22 @@
 /* ================================================================
    FLAGFIT PRO - COMPONENT STYLES
-   Comprehensive Production-Ready Component Library
-   Angular 19 + PrimeNG Compatible
-   ================================================================
+   DEPRECATED: This file contains duplicate styles.
    
-   USAGE:
-   @import './assets/styles/component-styles.scss';
+   IMPORTANT: For buttons and cards, use standardized-components.scss instead.
+   This file is kept for additional components (forms, navigation, modals, etc.)
+   that are not yet in standardized-components.scss.
    
-   This file contains ALL component styles for FlagFit Pro:
-   - Buttons (6 variants)
-   - Cards (multiple variants)
-   - Forms (inputs, selects, checkboxes, etc.)
-   - Navigation (header, sidebar, footer)
-   - Modals & Dialogs
-   - Tables
-   - Badges & Tags
-   - Alerts & Notifications
-   - Loading States
-   - And more...
+   MIGRATION PLAN:
+   - Buttons: Use standardized-components.scss (already migrated)
+   - Cards: Use standardized-components.scss (already migrated)
+   - Forms, Navigation, Modals: Keep here until migrated
    ================================================================ */
 
 @import './design-tokens.scss';
 
 /* ================================================================
-   BUTTONS
-   6 Standard Variants: Primary, Secondary, Outlined, Text, Danger, Success
+   BUTTONS - DEPRECATED
+   Use standardized-components.scss instead for buttons
    ================================================================ */
 
 /* Base Button Styles */
@@ -261,8 +253,8 @@
 }
 
 /* ================================================================
-   CARDS
-   Multiple Variants: Default, Elevated, Outlined, Interactive
+   CARDS - DEPRECATED
+   Use standardized-components.scss instead for cards
    ================================================================ */
 
 .card {

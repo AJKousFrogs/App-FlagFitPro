@@ -1,5 +1,7 @@
 /* ================================================================
    FORM COMPONENT - FlagFit Pro
+   NOTE: This file contains enhanced form styles with gradients and shadows.
+   For basic form styles, see: angular/src/assets/styles/standardized-components.scss
    ================================================================ */
 
 .form-group {

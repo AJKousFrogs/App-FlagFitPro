@@ -13,16 +13,20 @@
 @use './design-system-tokens.scss' as *;
 
 /* ================================================================
-   BUTTONS
+   BUTTONS - Angular 21 Modern Best Practices
    Variants: primary, secondary, ghost, destructive
+   Features: Proper hover detection, smooth animations, accessibility
    ================================================================ */
 
 .btn {
+  /* Layout */
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
   padding: var(--space-3) var(--space-6);
+  
+  /* Typography */
   font-family: var(--font-family-sans);
   font-size: var(--text-base);
   font-weight: var(--font-weight-medium);
@@ -31,35 +35,59 @@
   text-decoration: none;
   white-space: nowrap;
   vertical-align: middle;
+  
+  /* Interaction */
   cursor: pointer;
   user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  
+  /* Visual */
   border: 1px solid transparent;
   border-radius: var(--radius-md);
-  transition: all var(--transition-base);
-  min-height: var(--button-height-md);
+  min-height: var(--touch-target-min, 44px);
   
-  &:focus {
+  /* Animation - Modern CSS with will-change for performance */
+  transition: all var(--transition-base);
+  will-change: transform, box-shadow, background-color;
+  transform-origin: center;
+  
+  /* Focus - Angular 21 accessibility best practice */
+  &:focus-visible {
     outline: var(--focus-outline-width, 2px) solid var(--color-border-focus);
     outline-offset: var(--focus-outline-offset, 2px);
+    box-shadow: var(--shadow-focus);
   }
   
+  /* Disabled State */
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
     pointer-events: none;
+    transform: none !important;
+    will-change: auto;
   }
   
   /* Button Sizes */
   &.btn-sm {
     padding: var(--space-2) var(--space-4);
     font-size: var(--text-sm);
-    min-height: var(--button-height-sm);
+    min-height: 36px;
+    
+    @media (max-width: 480px) {
+      min-height: var(--touch-target-min, 44px);
+    }
   }
   
   &.btn-lg {
     padding: var(--space-4) var(--space-8);
     font-size: var(--text-lg);
-    min-height: var(--button-height-lg);
+    min-height: 52px;
+  }
+  
+  &.btn-xl {
+    padding: var(--space-6) var(--space-10);
+    font-size: var(--text-xl);
+    min-height: 60px;
   }
   
   /* Full Width Button */
@@ -70,13 +98,18 @@
   /* Icon Buttons */
   &.btn-icon {
     padding: var(--space-2);
-    min-width: var(--touch-target-min);
-    min-height: var(--touch-target-min);
+    min-width: var(--touch-target-min, 44px);
+    min-height: var(--touch-target-min, 44px);
     
     &.btn-sm {
       padding: var(--space-1);
       min-width: 36px;
       min-height: 36px;
+      
+      @media (max-width: 480px) {
+        min-width: var(--touch-target-min, 44px);
+        min-height: var(--touch-target-min, 44px);
+      }
     }
     
     &.btn-lg {
@@ -85,88 +118,170 @@
       min-height: 52px;
     }
   }
+  
+  /* Icon sizing within buttons */
+  i, svg, [data-lucide] {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+  
+  &.btn-sm i,
+  &.btn-sm svg,
+  &.btn-sm [data-lucide] {
+    width: 16px;
+    height: 16px;
+  }
+  
+  &.btn-lg i,
+  &.btn-lg svg,
+  &.btn-lg [data-lucide] {
+    width: 20px;
+    height: 20px;
+  }
 }
 
 /* Primary Button - Green BG + White Text */
 .btn-primary {
-  background-color: var(--ds-primary-green);
+  background-color: var(--color-brand-primary);
   color: var(--color-text-on-primary);
-  border-color: var(--ds-primary-green);
+  border-color: var(--color-brand-primary);
+  box-shadow: var(--shadow-sm);
   
-  &:hover:not(:disabled) {
-    background-color: var(--ds-primary-green-hover);
-    border-color: var(--ds-primary-green-hover);
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-md);
+  /* Modern hover effect - only on devices that support hover */
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:disabled) {
+      background-color: var(--color-brand-primary-hover);
+      border-color: var(--color-brand-primary-hover);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
   }
   
   &:active:not(:disabled) {
-    background-color: var(--ds-primary-green-hover);
-    border-color: var(--ds-primary-green-hover);
+    background-color: var(--color-brand-primary-active);
+    border-color: var(--color-brand-primary-active);
     transform: translateY(0);
     box-shadow: var(--shadow-sm);
   }
   
-  &:focus {
+  &:focus-visible {
     box-shadow: var(--shadow-focus);
+  }
+  
+  /* Touch device feedback */
+  @media (hover: none) and (pointer: coarse) {
+    &:active:not(:disabled) {
+      transform: scale(0.98);
+      opacity: 0.9;
+    }
   }
 }
 
 /* Secondary Button - White BG + Green Text */
 .btn-secondary {
   background-color: var(--surface-primary);
-  color: var(--ds-primary-green);
+  color: var(--color-brand-primary);
   border-color: var(--color-border-primary);
   
-  &:hover:not(:disabled) {
-    background-color: var(--surface-secondary);
-    border-color: var(--ds-primary-green);
-    color: var(--ds-primary-green-hover);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:disabled) {
+      background-color: var(--surface-secondary);
+      border-color: var(--color-brand-primary);
+      color: var(--color-brand-primary-hover);
+    }
   }
   
   &:active:not(:disabled) {
     background-color: var(--surface-tertiary);
-    border-color: var(--ds-primary-green-hover);
-    color: var(--ds-primary-green-hover);
+    border-color: var(--color-brand-primary-hover);
+    color: var(--color-brand-primary-hover);
   }
   
-  &:focus {
+  &:focus-visible {
     box-shadow: var(--shadow-focus);
+  }
+  
+  @media (hover: none) and (pointer: coarse) {
+    &:active:not(:disabled) {
+      transform: scale(0.98);
+      opacity: 0.9;
+    }
   }
 }
 
 /* Ghost Button - Transparent BG + Green Text */
-.btn-ghost {
+.btn-ghost,
+.btn-tertiary {
   background-color: transparent;
-  color: var(--ds-primary-green);
+  color: var(--color-brand-primary);
   border-color: transparent;
+  position: relative;
   
-  &:hover:not(:disabled) {
-    background-color: var(--ds-primary-green-ultra-subtle);
-    color: var(--ds-primary-green-hover);
+  /* Underline animation on hover */
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      var(--color-brand-primary),
+      var(--color-brand-primary-hover)
+    );
+    transition: all var(--transition-base);
+    transform: translateX(-50%);
+  }
+  
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:disabled) {
+      background-color: var(--color-brand-primary-subtle);
+      color: var(--color-brand-primary-hover);
+      
+      &::after {
+        width: 80%;
+      }
+    }
   }
   
   &:active:not(:disabled) {
-    background-color: var(--ds-primary-green-subtle);
-    color: var(--ds-primary-green-hover);
+    background-color: var(--color-brand-primary-light);
+    
+    &::after {
+      width: 100%;
+    }
   }
   
-  &:focus {
+  &:focus-visible {
     box-shadow: var(--shadow-focus);
+  }
+  
+  @media (hover: none) and (pointer: coarse) {
+    &:active:not(:disabled) {
+      transform: scale(0.98);
+      opacity: 0.9;
+    }
   }
 }
 
 /* Destructive Button - Red BG + White Text */
-.btn-destructive {
+.btn-destructive,
+.btn-danger,
+.btn-error {
   background-color: var(--color-status-error);
   color: var(--color-text-on-primary);
   border-color: var(--color-status-error);
+  box-shadow: var(--shadow-sm);
   
-  &:hover:not(:disabled) {
-    background-color: #dc2626;
-    border-color: #dc2626;
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-md);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:disabled) {
+      background-color: #dc2626;
+      border-color: #dc2626;
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
   }
   
   &:active:not(:disabled) {
@@ -176,8 +291,85 @@
     box-shadow: var(--shadow-sm);
   }
   
-  &:focus {
+  &:focus-visible {
     box-shadow: 0 0 0 0.2rem rgba(239, 68, 68, 0.2);
+  }
+  
+  @media (hover: none) and (pointer: coarse) {
+    &:active:not(:disabled) {
+      transform: scale(0.98);
+      opacity: 0.9;
+    }
+  }
+}
+
+/* Success Button */
+.btn-success {
+  background-color: var(--color-status-success);
+  color: var(--color-text-primary);
+  border-color: var(--color-status-success);
+  box-shadow: var(--shadow-sm);
+  
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:disabled) {
+      background-color: #d4a617;
+      border-color: #d4a617;
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+  }
+  
+  &:active:not(:disabled) {
+    background-color: #b7941f;
+    border-color: #b7941f;
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
+  }
+  
+  &:focus-visible {
+    box-shadow: 0 0 0 0.2rem rgba(241, 196, 15, 0.2);
+  }
+  
+  @media (hover: none) and (pointer: coarse) {
+    &:active:not(:disabled) {
+      transform: scale(0.98);
+      opacity: 0.9;
+    }
+  }
+}
+
+/* Warning Button */
+.btn-warning {
+  background-color: var(--color-status-warning);
+  color: var(--color-text-on-primary);
+  border-color: var(--color-status-warning);
+  box-shadow: var(--shadow-sm);
+  
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:disabled) {
+      background-color: #d97706;
+      border-color: #d97706;
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+  }
+  
+  &:active:not(:disabled) {
+    background-color: #b91c1c;
+    border-color: #b91c1c;
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
+  }
+  
+  &:focus-visible {
+    box-shadow: 0 0 0 0.2rem rgba(239, 68, 68, 0.2);
+  }
+  
+  @media (hover: none) and (pointer: coarse) {
+    &:active:not(:disabled) {
+      transform: scale(0.98);
+      opacity: 0.9;
+    }
   }
 }
 
@@ -207,16 +399,26 @@
    ================================================================ */
 
 .card {
+  /* Layout */
+  display: flex;
+  flex-direction: column;
+  
+  /* Visual */
   background-color: var(--surface-primary);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border-subtle);
   overflow: hidden;
+  
+  /* Animation - Modern CSS with will-change for performance */
   transition: all var(--transition-base);
+  will-change: transform, box-shadow;
+  transform-origin: center;
   
   /* Card Header */
   .card-header {
     padding: var(--space-6);
-    border-bottom: 1px solid var(--color-border-primary);
+    border-bottom: 1px solid var(--color-border-secondary);
     background-color: var(--surface-secondary);
     
     .card-title {
@@ -224,55 +426,181 @@
       font-size: var(--font-heading-md);
       font-weight: var(--font-weight-semibold);
       color: var(--color-text-primary);
+      line-height: var(--line-height-tight);
     }
     
     .card-subtitle {
       margin: var(--space-1) 0 0 0;
       font-size: var(--text-sm);
       color: var(--color-text-secondary);
+      line-height: var(--line-height-normal);
     }
   }
   
   /* Card Body */
   .card-body {
     padding: var(--space-6);
+    flex: 1;
   }
   
   /* Card Footer */
   .card-footer {
     padding: var(--space-6);
-    border-top: 1px solid var(--color-border-primary);
+    border-top: 1px solid var(--color-border-secondary);
     background-color: var(--surface-secondary);
   }
 }
 
-/* Elevated Card */
+/* Elevated Card - More prominent shadow */
 .card-elevated {
   box-shadow: var(--shadow-md);
+  border-color: var(--color-border-primary);
   
-  &:hover {
-    box-shadow: var(--shadow-lg);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-2px);
+    }
+  }
+  
+  &:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-md);
+  }
+  
+  @media (hover: none) and (pointer: coarse) {
+    &:active {
+      transform: scale(0.99);
+    }
   }
 }
 
-/* Outlined Card */
+/* Outlined Card - Border only, no shadow */
 .card-outlined {
   box-shadow: none;
   border: 1px solid var(--color-border-primary);
+  
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      border-color: var(--color-brand-primary);
+      box-shadow: var(--shadow-sm);
+    }
+  }
 }
 
-/* Interactive Card */
-.card-interactive {
+/* Interactive Card - Clickable with hover effects */
+.card-interactive,
+.clickable-card {
   cursor: pointer;
   
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--color-brand-primary);
+    }
   }
   
   &:active {
     transform: translateY(0);
     box-shadow: var(--shadow-sm);
+  }
+  
+  &:focus-visible {
+    outline: 2px solid var(--color-border-focus);
+    outline-offset: 2px;
+  }
+  
+  @media (hover: none) and (pointer: coarse) {
+    &:active {
+      transform: scale(0.99);
+      box-shadow: var(--shadow-sm);
+    }
+  }
+}
+
+/* Session Card - Special variant with accent bar */
+.card-session {
+  position: relative;
+  background-color: var(--surface-primary);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  transition: all var(--transition-base);
+  will-change: transform, box-shadow;
+  
+  /* Accent bar - visual interest */
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(
+      90deg,
+      var(--color-brand-primary) 0%,
+      var(--color-brand-secondary) 100%
+    );
+    z-index: 1;
+  }
+  
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      border-color: var(--color-brand-primary);
+      box-shadow: 0 8px 24px rgba(var(--ds-primary-green-rgb), 0.15);
+      transform: translateY(-2px);
+    }
+  }
+  
+  &:focus-within {
+    outline: 2px solid var(--color-brand-primary);
+    outline-offset: 2px;
+  }
+  
+  @media (hover: none) and (pointer: coarse) {
+    &:active {
+      transform: scale(0.99);
+      box-shadow: var(--shadow-md);
+    }
+  }
+}
+
+/* Hero Card - Large featured card */
+.hero-card {
+  background: linear-gradient(
+    135deg,
+    rgba(var(--ds-primary-green-rgb), 0.05) 0%,
+    rgba(var(--ds-primary-green-rgb), 0.02) 100%
+  );
+  border: 2px solid rgba(var(--ds-primary-green-rgb), 0.2);
+  border-radius: var(--radius-xl);
+  padding: var(--space-8);
+  position: relative;
+  overflow: hidden;
+  
+  /* Gradient background accent */
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(
+      circle,
+      rgba(var(--ds-primary-green-rgb), 0.1) 0%,
+      transparent 70%
+    );
+    pointer-events: none;
+  }
+  
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      border-color: rgba(var(--ds-primary-green-rgb), 0.3);
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-2px);
+    }
   }
 }
 
@@ -632,6 +960,62 @@ select {
       border-color: var(--color-border-focus);
       box-shadow: var(--shadow-focus);
     }
+  }
+}
+
+/* ================================================================
+   ACCESSIBILITY & PERFORMANCE ENHANCEMENTS
+   ================================================================ */
+
+/* Reduced Motion Support - Angular 21 Best Practice */
+@media (prefers-reduced-motion: reduce) {
+  .btn,
+  .card,
+  .card-interactive,
+  .card-elevated,
+  .card-session,
+  .hero-card {
+    transition: none;
+    animation: none;
+    will-change: auto;
+  }
+  
+  .btn:active,
+  .card:active,
+  .card-interactive:active {
+    transform: none;
+  }
+  
+  .btn-primary:hover,
+  .btn-secondary:hover,
+  .btn-ghost:hover,
+  .card-interactive:hover,
+  .card-elevated:hover {
+    transform: none;
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .btn {
+    border-width: 2px;
+  }
+  
+  .btn-primary {
+    border: 2px solid var(--color-brand-primary);
+  }
+  
+  .btn-secondary {
+    border: 2px solid var(--color-text-primary);
+  }
+  
+  .card {
+    border-width: 2px;
+  }
+  
+  .btn:focus-visible,
+  .card:focus-visible {
+    outline-width: 3px;
   }
 }
 
