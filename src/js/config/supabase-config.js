@@ -20,12 +20,12 @@
   // SECURITY: Never hardcode credentials here - they should come from environment variables only
   
   // Check multiple sources in order of preference:
-  // 1. window._env (set by dev server or build process)
+  // 1. window._env (set by build process, dev server, or inline script)
   // 2. localStorage (for local development/testing)
   const getConfigValue = (key) => {
     if (typeof window === 'undefined') return null;
     
-    // First check window._env
+    // First check window._env (set by build process or inline script)
     if (window._env && window._env[key]) {
       return window._env[key];
     }
@@ -52,11 +52,21 @@
     window._env.SUPABASE_URL = SUPABASE_URL;
     window._env.SUPABASE_ANON_KEY = SUPABASE_ANON_KEY;
     
-    // Warn if credentials are missing (development only)
-    if ((!SUPABASE_URL || !SUPABASE_ANON_KEY) && 
-        (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
-      console.warn('[Supabase Config] Missing credentials. Set SUPABASE_URL and SUPABASE_ANON_KEY environment variables.');
-      console.warn('[Supabase Config] Or set them in localStorage for local development.');
+    // Warn if credentials are missing
+    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+      const isDevelopment = window.location.hostname === 'localhost' || 
+                           window.location.hostname === '127.0.0.1';
+      
+      if (isDevelopment) {
+        console.warn('[Supabase Config] Missing credentials. Set SUPABASE_URL and SUPABASE_ANON_KEY environment variables.');
+        console.warn('[Supabase Config] Or set them in localStorage for local development.');
+      } else {
+        // Production: More detailed error message
+        console.error('[Supabase Config] CRITICAL: Missing Supabase configuration in production');
+        console.error('[Supabase Config] Environment variables VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY must be set during build.');
+        console.error('[Supabase Config] Check Netlify build logs and ensure variables are set in Netlify UI.');
+        console.error('[Supabase Config] window._env:', window._env);
+      }
     }
   }
 

@@ -9,7 +9,7 @@
  */
 
 import { execSync } from "child_process";
-import { existsSync, mkdirSync, readdirSync, statSync, copyFileSync } from "fs";
+import { existsSync, mkdirSync, readdirSync, statSync, copyFileSync, readFileSync, writeFileSync } from "fs";
 import { join, dirname, extname } from "path";
 import { fileURLToPath } from "url";
 
@@ -33,6 +33,16 @@ try {
 } catch (error) {
   console.error("❌ Failed to generate env.js:", error.message);
   process.exit(1);
+}
+
+// Inject environment variables into HTML files
+try {
+  console.log("📝 Injecting environment variables into HTML files...");
+  execSync("node scripts/inject-env-into-html.js", { stdio: "inherit", cwd: rootDir });
+  console.log("✅ Environment variables injected into HTML files\n");
+} catch (error) {
+  console.error("❌ Failed to inject env into HTML:", error.message);
+  // Don't exit - this is not critical if env.js exists
 }
 
 // Create dist directory structure
@@ -122,6 +132,13 @@ function copyHTML() {
     htmlFiles.forEach((file) => {
       copyFileSync(join(rootDir, file), join(distDir, file));
     });
+    
+    // Also copy env.js to dist if it exists
+    const envJsPath = join(rootDir, "env.js");
+    if (existsSync(envJsPath)) {
+      copyFileSync(envJsPath, join(distDir, "env.js"));
+      console.log("✅ Copied env.js to dist\n");
+    }
     
     if (htmlFiles.length > 0) {
       console.log(`✅ Copied ${htmlFiles.length} HTML file(s)\n`);
