@@ -10,6 +10,8 @@
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
+    "chart.js": "^4.5.1",
+    "chartjs-adapter-date-fns": "^3.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.28.0"
@@ -27,10 +29,10 @@
     "vite": "^6.0.1"
   },
   "keywords": [
-    "flag-football", 
-    "training", 
-    "react", 
-    "vite", 
+    "flag-football",
+    "training",
+    "react",
+    "vite",
     "wireframes",
     "ai-coaching",
     "olympics"

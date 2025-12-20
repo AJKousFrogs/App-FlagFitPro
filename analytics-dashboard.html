@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Advanced analytics dashboard for flag football performance tracking and team insights">
     <title>FlagFit Pro - Advanced Analytics Dashboard</title>
     
     <!-- Chart.js with fallback for older browsers -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
     <script>
         // Fallback for older browsers that don't support ES modules
         if (typeof Chart === 'undefined') {
@@ -16,7 +17,7 @@
     </script>
     
     <!-- Date adapter with fallback -->
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
     
     <!-- Polyfills for older browsers -->
     <script>
@@ -53,11 +54,11 @@
         }
         
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            background: -webkit-linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            background: -moz-linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            background: -o-linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #089949 0%, #10c96b 100%);
+            background: -webkit-linear-gradient(135deg, #089949 0%, #10c96b 100%);
+            background: -moz-linear-gradient(135deg, #089949 0%, #10c96b 100%);
+            background: -o-linear-gradient(135deg, #089949 0%, #10c96b 100%);
             min-height: 100vh;
             color: #1F2937;
             -webkit-font-smoothing: antialiased;
@@ -167,12 +168,12 @@
         }
 
         .btn-primary {
-            background: #3B82F6;
+            background: #089949;
             color: white;
         }
 
         .btn-primary:hover {
-            background: #2563EB;
+            background: #067a3c;
         }
 
         .btn-secondary {
@@ -536,7 +537,7 @@
         /* Focus styles for accessibility */
         .btn:focus,
         .control-select:focus {
-            outline: 2px solid #3B82F6;
+            outline: 2px solid #089949;
             outline-offset: 2px;
         }
 
@@ -561,7 +562,7 @@
     <!-- Skip link for accessibility -->
     <a href="#main-content" class="skip-link">Skip to main content</a>
     
-    <div class="dashboard-container" id="main-content">
+    <main class="dashboard-container" id="main-content" role="main">
         <!-- Dashboard Header -->
         <div class="dashboard-header">
             <h1 class="dashboard-title">🏈 FlagFit Pro Analytics</h1>
@@ -859,7 +860,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 
     <script type="module">
         // Enhanced error handling and cross-browser compatibility

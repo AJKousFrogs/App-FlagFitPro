@@ -177,7 +177,7 @@ const NewNavigation = () => {
           {/* Left Section - Logo & Brand */}
           <div className="flex items-center">
             <Link to="/dashboard" className="flex items-center">
-              <span className="text-xl font-bold text-gray-900 dark:text-white">
+              <span className="text-xl font-semibold text-gray-900 dark:text-white">
                 Merlins Playbook
               </span>
             </Link>
