@@ -569,7 +569,7 @@ const monitoring = await validator.monitorModelPerformance(
   "continuous",
 );
 
-// React to performance alerts
+// Respond to performance alerts
 validator.on("performanceAlert", (alert) => {
   console.log("⚠️ Performance alert:", alert.message);
 

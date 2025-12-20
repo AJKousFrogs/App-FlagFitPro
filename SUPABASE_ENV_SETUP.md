@@ -115,7 +115,7 @@ If you still see errors, verify:
 
 ## Production Deployment
 
-For production (Netlify, Vercel, etc.), set environment variables in your hosting platform's dashboard:
+For production (Netlify, etc.), set environment variables in your hosting platform's dashboard:
 
 - `VITE_SUPABASE_URL`
 - `VITE_SUPABASE_ANON_KEY`

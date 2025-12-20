@@ -8,18 +8,18 @@
 
 ## Overview
 
-This guide will help you set up the Express.js backend API that connects to your Neon PostgreSQL database for authentication.
+This guide will help you set up the Express.js backend API that connects to your Supabase PostgreSQL database for authentication.
 
 ### Prerequisites Checklist
 
-- [ ] Neon PostgreSQL database connection string
+- [ ] Supabase PostgreSQL credentials
 - [ ] Node.js version 18 or higher installed
 - [ ] npm package manager installed
 - [ ] Environment variables configured
 
 ## Prerequisites
 
-1. **Neon PostgreSQL Database**: You need a Neon database connection string
+1. **Supabase PostgreSQL Database**: You need Supabase credentials
 2. **Node.js**: Version 18 or higher
 3. **npm**: For package management
 
@@ -39,7 +39,9 @@ Create or update your `.env` file:
 
 ```env
 # Database Configuration
-DATABASE_URL=postgresql://your-neon-connection-string-here
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_KEY=your-service-key
+SUPABASE_ANON_KEY=your-anon-key
 
 # JWT Configuration (change in production)
 JWT_SECRET=your-secret-key-change-in-production
@@ -48,13 +50,13 @@ JWT_SECRET=your-secret-key-change-in-production
 VITE_API_BASE_URL=http://localhost:3001
 ```
 
-### 3. Get Your Neon Database Connection String
+### 3. Get Your Supabase Credentials
 
-1. Go to [Neon Console](https://console.neon.tech)
+1. Go to [Supabase Dashboard](https://app.supabase.com)
 2. Select your project
 3. Go to "Connection Details"
 4. Copy the connection string
-5. Replace `your-neon-connection-string-here` in your `.env` file
+5. Replace the placeholder values in your `.env` file with your Supabase credentials
 
 ### 4. Start the Backend Server
 
@@ -135,7 +137,7 @@ This will start:
 1. **Register a new user**:
    - Go to `/register` in your app
    - Fill out the form
-   - Should create a user in your Neon database
+   - Should create a user in your Supabase database
 
 2. **Login with the user**:
    - Go to `/login` in your app
@@ -148,7 +150,7 @@ This will start:
 
 1. **Database Connection Error**:
    - Check your `DATABASE_URL` in `.env`
-   - Ensure your Neon database is active
+   - Ensure your Supabase project is active
    - Verify the connection string format
 
 2. **CORS Errors**:
@@ -174,7 +176,9 @@ For production deployment:
 
    ```env
    NODE_ENV=production
-   DATABASE_URL=your-production-neon-connection-string
+   SUPABASE_URL=https://your-project.supabase.co
+   SUPABASE_SERVICE_KEY=your-production-service-key
+   SUPABASE_ANON_KEY=your-production-anon-key
    JWT_SECRET=your-secure-production-secret
    PORT=3001
    ```
@@ -186,7 +190,7 @@ For production deployment:
    - Set up rate limiting
 
 3. **Database**:
-   - Use a production Neon database
+   - Use a production Supabase project
    - Enable SSL connections
    - Set up proper backups
 
@@ -202,7 +206,7 @@ For production deployment:
 
 - **v1.0 (2025-01)**: Initial backend setup guide
 - Express.js backend documented
-- Neon PostgreSQL integration guide added
+- Supabase PostgreSQL integration guide added
 - Security features documented
 
 ## Next Steps
@@ -213,4 +217,4 @@ For production deployment:
 4. **Set up monitoring and logging**
 5. **Deploy to production**
 
-Your authentication system is now ready to use with your Neon PostgreSQL database!
+Your authentication system is now ready to use with your Supabase PostgreSQL database!

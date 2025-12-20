@@ -55,7 +55,7 @@ The FlagFit Pro database consists of four main systems:
 
 ### Database Requirements
 
-- Neon PostgreSQL (recommended) or PostgreSQL 12+
+- Supabase PostgreSQL (recommended) or PostgreSQL 12+
 - Database user with CREATE, INSERT, UPDATE, DELETE permissions
 - Sufficient storage space (minimum 2GB recommended)
 
@@ -222,7 +222,7 @@ ORDER BY record_count DESC;
 ### Common Issues
 
 1. **Database Connection Failed**
-   - Verify Neon PostgreSQL connection
+   - Verify Supabase PostgreSQL connection
    - Check database credentials in `.env`
    - Ensure database exists and is accessible
 
@@ -247,7 +247,7 @@ To completely reset the database:
 
 ```bash
 # Drop and recreate database (for local PostgreSQL only)
-# For Neon PostgreSQL, use the Neon console to reset the database
+# For Supabase PostgreSQL, use the Supabase dashboard to reset the database
 dropdb flagfootball_dev
 createdb flagfootball_dev
 
@@ -267,7 +267,7 @@ node scripts/setupDatabase.js
 
 ```bash
 # Create database backup (for local PostgreSQL)
-# For Neon PostgreSQL, use the Neon console for backups
+# For Supabase PostgreSQL, use the Supabase dashboard for backups
 pg_dump flagfootball_dev > backup_$(date +%Y%m%d).sql
 
 # Restore from backup

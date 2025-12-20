@@ -247,7 +247,7 @@ Modern, intuitive navigation that prioritizes user experience, accessibility, an
 - **Lazy Loading**: Load navigation components on demand
 - **Caching**: Cache navigation state and user preferences
 - **Preloading**: Preload critical navigation paths
-- **Minimal Re-renders**: Optimize React component updates
+- **Minimal Re-renders**: Optimize Angular component change detection with OnPush strategy
 
 ### **Accessibility Features**
 
@@ -340,64 +340,95 @@ Modern, intuitive navigation that prioritizes user experience, accessibility, an
 
 ## 🚀 Implementation Guidelines
 
-### **React Component Structure**
+### **Angular Component Structure**
 
-```jsx
+```typescript
 // Main Navigation Component
-<Navigation>
-  <NavigationHeader>
-    <Logo />
-    <TeamContext />
-  </NavigationHeader>
+@Component({
+  selector: 'app-navigation',
+  standalone: true,
+  imports: [CommonModule, RouterModule, PrimeNGModules],
+  template: `
+    <nav class="navigation-container">
+      <div class="navigation-header">
+        <app-logo />
+        <app-team-context />
+      </div>
 
-  <NavigationMenu>
-    <NavigationItem route="/dashboard" icon={HomeIcon}>
-      Dashboard
-    </NavigationItem>
+      <ul class="navigation-menu">
+        <li>
+          <a routerLink="/dashboard" routerLinkActive="active">
+            <i class="pi pi-home"></i>
+            Dashboard
+          </a>
+        </li>
 
-    <NavigationDropdown route="/training" icon={AcademicCapIcon}>
-      Training
-      <DropdownItem route="/training/routes">Route Running</DropdownItem>
-      <DropdownItem route="/training/plyometrics">Plyometrics</DropdownItem>
-      {/* ... more items */}
-    </NavigationDropdown>
+        <li class="dropdown">
+          <a routerLink="/training" routerLinkActive="active">
+            <i class="pi pi-book"></i>
+            Training
+          </a>
+          <ul class="dropdown-menu">
+            <li><a routerLink="/training/routes">Route Running</a></li>
+            <li><a routerLink="/training/plyometrics">Plyometrics</a></li>
+            <!-- ... more items -->
+          </ul>
+        </li>
 
-    {/* ... more navigation items */}
-  </NavigationMenu>
+        <!-- ... more navigation items -->
+      </ul>
 
-  <NavigationActions>
-    <NotificationBell />
-    <UserMenu />
-    <QuickActions />
-  </NavigationActions>
-</Navigation>
+      <div class="navigation-actions">
+        <app-notification-bell />
+        <app-user-menu />
+        <app-quick-actions />
+      </div>
+    </nav>
+  `
+})
+export class NavigationComponent {
+  // Angular 21: Use signals for reactive state
+  notifications = signal(0);
+  user = signal<User | null>(null);
+  team = signal<Team | null>(null);
+}
 ```
 
 ### **State Management**
 
-```javascript
-// Navigation State
-const navigationState = {
-  currentRoute: '/dashboard',
-  isMenuOpen: false,
-  notifications: {
+```typescript
+// Angular 21: Signal-based Navigation State
+export class NavigationComponent {
+  // Signals for reactive state
+  currentRoute = signal('/dashboard');
+  isMenuOpen = signal(false);
+  
+  notifications = signal({
     unread: 3,
-    items: [...]
-  },
-  user: {
+    items: [] as Notification[]
+  });
+  
+  user = signal({
     name: 'Alex Rivera',
     avatar: '/avatar.jpg',
-    role: 'player'
-  },
-  team: {
+    role: 'player' as UserRole
+  });
+  
+  team = signal({
     name: 'Hawks',
     chemistry: 7.8,
     nextGame: 'vs Eagles Tomorrow'
-  },
-  sync: {
-    status: 'synced',
-    lastSync: '2024-12-19T10:30:00Z'
-  }
+  });
+  
+  sync = signal({
+    status: 'synced' as SyncStatus,
+    lastSync: new Date('2024-12-19T10:30:00Z')
+  });
+  
+  // Computed signal for derived state
+  hasUnreadNotifications = computed(() => 
+    this.notifications().unread > 0
+  );
 }
 ```
 
@@ -471,11 +502,11 @@ const navigationState = {
 
 ### **Technical Requirements**
 
-- ✅ React component architecture
-- ✅ TypeScript type safety
-- ✅ CSS-in-JS styling
-- ✅ Performance optimized
-- ✅ SEO friendly
+- ✅ Angular 21 standalone component architecture
+- ✅ TypeScript strict mode type safety
+- ✅ SCSS with CSS Custom Properties (Design Tokens)
+- ✅ Performance optimized (OnPush change detection, lazy loading)
+- ✅ SEO friendly (Angular SSR support)
 
 ---
 

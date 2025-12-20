@@ -291,45 +291,12 @@ VITE_ENABLE_DEBUG_LOGS=false
    - Monitor build logs for errors
    - Site goes live at: `https://your-site-name.netlify.app`
 
-### **Vercel Deployment (Alternative)**
+### **Alternative Deployment Options**
 
-**vercel.json**
-
-```json
-{
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "buildCommand": "npm run build",
-        "distDir": "dist"
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
-  ],
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "X-Frame-Options",
-          "value": "DENY"
-        },
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        }
-      ]
-    }
-  ]
-}
-```
+For other hosting platforms, configure build settings according to their documentation. Ensure:
+- Build command: `cd angular && npm run build`
+- Output directory: `angular/dist/flagfit-pro`
+- Environment variables are properly configured
 
 ---
 
@@ -586,7 +553,7 @@ npm run type-check       # TypeScript checking
 # Deployment
 git push origin main     # Trigger Netlify deploy
 netlify deploy --prod    # Manual Netlify deploy
-vercel --prod           # Vercel deployment
+# Deploy to your chosen hosting platform
 
 # Utilities
 npm run clean           # Clean build artifacts

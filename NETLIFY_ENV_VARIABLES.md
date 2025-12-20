@@ -47,8 +47,7 @@ Some older functions use direct PostgreSQL connections. If you're using Supabase
 
 | Variable Name | Description | When Needed |
 |--------------|-------------|-------------|
-| `DATABASE_URL` | PostgreSQL connection string | Only if using direct DB connection |
-| `NEON_DATABASE_URL` | Neon PostgreSQL connection string | Only if using Neon database |
+| `DATABASE_URL` | PostgreSQL connection string | Only if using direct DB connection (legacy, not recommended) |
 
 **Note:** Most functions now use Supabase, so these are typically **not required**.
 

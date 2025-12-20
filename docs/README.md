@@ -4,8 +4,8 @@
 
 _Professional-grade training platform with advanced analytics and AI-powered insights_
 
-[![Angular](https://img.shields.io/badge/Angular-19.0+-red.svg)](https://angular.dev/)
-[![PrimeNG](https://img.shields.io/badge/PrimeNG-19.0+-blue.svg)](https://primeng.org/)
+[![Angular](https://img.shields.io/badge/Angular-21.0+-red.svg)](https://angular.dev/)
+[![PrimeNG](https://img.shields.io/badge/PrimeNG-21.0+-blue.svg)](https://primeng.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE.md)
 
 </div>
@@ -16,19 +16,19 @@ The Flag Football Training App is a comprehensive training platform that combine
 
 ### 🛠 Technology Stack
 
-**PRIMARY STACK: Angular 19 + PrimeNG**
+**PRIMARY STACK: Angular 21 + PrimeNG 21**
 
-- **Frontend Framework**: Angular 19 (Standalone Components)
-- **UI Component Library**: PrimeNG 19+
-- **Icons**: PrimeIcons + Lucide Angular
-- **Charts**: PrimeNG Charts (Chart.js wrapper)
-- **Forms**: Angular Reactive Forms
-- **State Management**: Angular Signals + RxJS
+- **Frontend Framework**: Angular 21 (Standalone Components, Zoneless)
+- **UI Component Library**: PrimeNG 21
+- **Icons**: PrimeIcons 7.0
+- **Charts**: Chart.js 4.5.1 (via PrimeNG Charts)
+- **Forms**: Angular Reactive Forms + Signal Forms
+- **State Management**: Angular Signals + RxJS 7.8.2
 - **Styling**: SCSS with CSS Custom Properties (Design Tokens)
-- **Build**: Angular CLI with ESBuild
-- **Backend**: Node.js + Express + Netlify Functions
-- **Database**: Neon PostgreSQL with optimized connection pooling
-- **Authentication**: JWT with Angular Guards & Interceptors
+- **Build**: Angular CLI 21.0.4 with ESBuild
+- **Backend**: Node.js + Express 5.2.1 + Netlify Functions
+- **Database**: Supabase PostgreSQL (managed PostgreSQL with RLS)
+- **Authentication**: Supabase Auth + JWT with Angular Guards & Interceptors
 - **AI/ML**: Transformer models, ensemble methods, LSTM networks
 - **Data Science**: Evidence-based research integration (156 studies)
 - **Real-Time**: Supabase Realtime subscriptions (GPS/wearable ready)
@@ -76,9 +76,9 @@ The Flag Football Training App is a comprehensive training platform that combine
 
 | Frontend        | Backend | Database        | Analytics             |
 | --------------- | ------- | --------------- | --------------------- |
-| Angular 19      | Node.js | Neon PostgreSQL | AI/ML Models          |
-| PrimeNG 19      | Express | Connection Pool | PrimeNG Charts        |
-| Angular Signals | Netlify | Supabase        | Sports Analytics APIs |
+| Angular 21      | Node.js | Supabase PostgreSQL | AI/ML Models          |
+| PrimeNG 21      | Express | Supabase RLS    | Chart.js              |
+| Angular Signals | Netlify | Supabase Realtime | Sports Analytics APIs |
 
 </div>
 
@@ -86,7 +86,7 @@ The Flag Football Training App is a comprehensive training platform that combine
 
 ```
 flagfit-pro/
-├── angular/                    # PRIMARY: Angular 19 + PrimeNG application
+├── angular/                    # PRIMARY: Angular 21 + PrimeNG 21 application
 │   ├── src/
 │   │   ├── app/
 │   │   │   ├── core/          # Core services, guards, interceptors
@@ -119,7 +119,7 @@ flagfit-pro/
 ### Prerequisites
 
 - Node.js 18+
-- PostgreSQL 14+ or Neon PostgreSQL
+- Supabase account (for PostgreSQL database)
 - npm or yarn
 
 ### Installation
@@ -147,11 +147,13 @@ flagfit-pro/
 4. **Set Up Database**
 
    ```bash
-   # In .env file, add your Neon database connection string
-   DATABASE_URL="postgresql://username:password@hostname/database?sslmode=require"
+   # In .env file, add your Supabase credentials
+   SUPABASE_URL="https://your-project.supabase.co"
+   SUPABASE_ANON_KEY="your-anon-key"
+   SUPABASE_SERVICE_KEY="your-service-key"
 
-   # Run database setup
-   npm run db:setup
+   # Run database setup (if needed)
+   # See SUPABASE_SETUP_GUIDE.md for detailed instructions
    ```
 
 5. **Start development server**
@@ -195,7 +197,7 @@ flagfit-pro/
 
 ## 🏗️ Database Schema
 
-The application uses a comprehensive Neon PostgreSQL schema including:
+The application uses a comprehensive Supabase PostgreSQL schema including:
 
 - **Users & Authentication**: Secure user management with enhanced profiles
 - **Evidence-Based Research**: 156+ studies with meta-analysis (2024-2025)
@@ -231,7 +233,7 @@ npm run db:setup         # Set up database with migrations and seed data
 npm run db:migrate       # Run database migrations
 npm run db:seed          # Populate with sample data
 npm run db:seed:research # Seed evidence-based research database
-npm run db:studio        # Open Drizzle Studio for database management
+# Database management via Supabase Dashboard
 
 # Health Check Commands
 npm run health:check     # Check all service ports and system health
@@ -280,7 +282,7 @@ npm run db:seed:advanced # Seed advanced research database
 
 ## 🗄️ Database
 
-### Neon PostgreSQL Tables
+### Supabase PostgreSQL Tables
 
 - `users`: User authentication and profiles
 - `training_sessions`: Training session data
@@ -291,7 +293,7 @@ npm run db:seed:advanced # Seed advanced research database
 
 ### Migrations
 
-Database migrations are located in `/drizzle/` and managed via Drizzle ORM. Run `npm run db:migrate` to apply migrations.
+Database migrations are located in `/database/migrations/` and `/supabase/migrations/`. Supabase migrations are managed via Supabase CLI or the Supabase dashboard.
 
 ### Database Testing
 
@@ -310,15 +312,18 @@ The application is deployment-ready with:
 
 ### Database Configuration
 
-The app uses optimized connection pooling with the `DatabaseConnectionManager` singleton:
+The app uses Supabase's built-in connection pooling and Row-Level Security (RLS):
 
-```javascript
-// Automatic connection optimization
-const dbManager = new DatabaseConnectionManager();
-const pool = await dbManager.getPool(); // 93% memory reduction
+```typescript
+// Angular service using Supabase client
+import { SupabaseService } from './core/services/supabase.service';
+
+// Automatic connection management via Supabase client
+const supabase = inject(SupabaseService);
+const { data } = await supabase.from('users').select('*');
 ```
 
-Set up your Neon PostgreSQL connection string in environment variables for production deployment.
+Set up your Supabase credentials in environment variables for production deployment. See `SUPABASE_SETUP_GUIDE.md` for details.
 
 ## 🏥 System Health & Optimization
 
@@ -368,10 +373,10 @@ Comprehensive documentation available in `/docs/`:
 We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
 
 1. Follow the architecture guidelines in `DESIGN_SYSTEM_DOCUMENTATION.md`
-2. Use Angular standalone components with Signals
-3. Use PrimeNG components when possible
-4. Use Neon PostgreSQL for all database operations
-5. Write tests for new features
+2. Use Angular 21 standalone components with Signals
+3. Use PrimeNG 21 components when possible
+4. Use Supabase PostgreSQL for all database operations
+5. Write tests for new features (Vitest + Angular Testing Utilities)
 6. Follow the existing code style and design tokens
 
 ## 📄 License

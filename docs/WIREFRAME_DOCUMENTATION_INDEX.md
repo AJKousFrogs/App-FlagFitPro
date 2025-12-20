@@ -207,7 +207,7 @@ These are the **4 complete HTML wireframes** that serve as the definitive design
 
 - **File**: `docs/DATABASE_SETUP.md`
 - **Purpose**: Database configuration and schema
-- **Content**: NEON database setup, migrations, data models
+- **Content**: Supabase database setup, migrations, data models
 
 ### **Backend Integration**
 
@@ -317,7 +317,7 @@ These are the **4 complete HTML wireframes** that serve as the definitive design
 - [x] **Mobile Responsive**: Touch-friendly mobile design
 - [x] **Accessibility**: WCAG 2.1 AA compliance
 - [x] **Performance**: Core Web Vitals optimization
-- [x] **Database**: Neon PostgreSQL with Drizzle ORM integration
+- [x] **Database**: Supabase PostgreSQL integration
 - [x] **Security**: Authentication and data protection
 
 ### **🔄 IN PROGRESS**

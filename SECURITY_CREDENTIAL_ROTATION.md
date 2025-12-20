@@ -8,11 +8,11 @@
 The following credentials were found in `.env` and need immediate rotation:
 
 ### 1. Database Credentials
-- **Service**: Neon Database (PostgreSQL)
+- **Service**: Supabase Database (PostgreSQL)
 - **Location**: `.env` line 2
 - **Exposed**: Database URL with embedded password
 - **Action Required**:
-  1. Log into https://neon.tech
+  1. Log into https://app.supabase.com
   2. Reset database password
   3. Update DATABASE_URL in environment variables
   4. Never commit the new URL to git
@@ -51,7 +51,7 @@ Review `.env` for any other API keys and rotate them all as a precaution.
 ## 📋 ROTATION CHECKLIST
 
 ### Immediate Actions (Within 24 hours)
-- [ ] Rotate Neon database password
+- [ ] Rotate Supabase database password (if needed)
 - [ ] Generate new JWT secret
 - [ ] Rotate Supabase keys
 - [ ] Rotate SendGrid API key (if used)

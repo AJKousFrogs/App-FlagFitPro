@@ -461,7 +461,7 @@ if (acwrData.riskZone === "safe") {
 ### Running the Migration
 
 ```bash
-# Connect to your Neon PostgreSQL database
+# Connect to your Supabase PostgreSQL database
 psql $DATABASE_URL
 
 # Run the migration

@@ -8,13 +8,13 @@
 
 ## Overview
 
-All mock API code has been removed and replaced with real Netlify Functions that integrate with Supabase/Neon database.
+All mock API code has been removed and replaced with real Netlify Functions that integrate with Supabase database.
 
 ### Key Changes
 
 - **Mock API Removed**: All mock API code eliminated
 - **Real Netlify Functions**: Database-integrated backend functions
-- **Supabase/Neon Integration**: Direct database connectivity
+- **Supabase Integration**: Direct database connectivity
 - **Fallback Support**: Local data fallback for empty databases
 - **Error Handling**: Graceful error handling and data transformation
 
@@ -145,7 +145,7 @@ curl http://localhost:8888/.netlify/functions/community?feed=true
 
 - **v1.0 (2025-01)**: Initial database integration summary
 - Mock API removed and replaced with real functions
-- Supabase/Neon integration documented
+- Supabase integration documented
 - Fallback mechanisms implemented
 
 ## Notes

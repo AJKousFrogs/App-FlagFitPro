@@ -8,16 +8,16 @@ This document outlines the comprehensive technical architecture of the elite-lev
 
 ### **Architecture Pattern: Modern Full-Stack with AI Integration**
 
-- **Frontend**: Angular 19 + PrimeNG + TypeScript (SPA with PWA capabilities)
+- **Frontend**: Angular 21 + PrimeNG 21 + TypeScript (SPA with PWA capabilities)
 - **Backend**: Node.js + Express with RESTful API design
-- **Database**: Neon PostgreSQL with optimized connection pooling
+- **Database**: Supabase PostgreSQL with optimized connection pooling
 - **AI/ML**: Evidence-based recommendation engines with 120+ study integration
 - **Real-time**: Supabase Realtime subscriptions for live updates
 - **Caching**: Multi-layer caching strategy for performance optimization
 
 ## Frontend Architecture
 
-### **Angular 19 + PrimeNG Implementation (Professional Grade)**
+### **Angular 21 + PrimeNG 21 Implementation (Professional Grade)**
 
 ```typescript
 // Component Architecture Example
@@ -175,7 +175,7 @@ router.get("/api/athletes/:id/olympic-status", async (req, res) => {
 
 - **Caching Layer**: Redis for session management and frequently accessed data
 - **Connection Pooling**: PostgreSQL connection optimization
-- **Query Optimization**: Indexed queries with Drizzle ORM
+- **Query Optimization**: Indexed queries with Supabase PostgreSQL
 - **Compression**: Gzip/Brotli response compression
 - **CDN Integration**: Static asset delivery optimization
 
@@ -485,12 +485,12 @@ testing:
 
 | Technology   | Rationale                                                        | Alternatives Considered    |
 | ------------ | ---------------------------------------------------------------- | -------------------------- |
-| Angular 19    | Enterprise-grade framework, standalone components, signals       | React, Vue.js, Svelte      |
-| PrimeNG 19   | Production-ready UI components with comprehensive theming        | Material UI, Ant Design   |
+| Angular 21    | Enterprise-grade framework, standalone components, signals       | Vue.js, Svelte      |
+| PrimeNG 21   | Production-ready UI components with comprehensive theming        | Material UI, Ant Design   |
 | TypeScript   | Type safety for complex sports data models                       | JavaScript, Flow           |
 | Angular CLI  | Fast development and optimized builds with ESBuild                | Vite, Webpack              |
 | SCSS + Tokens| Design system with semantic tokens for consistent theming         | Tailwind CSS, Styled Components |
-| Angular Signals | Reactive state management with fine-grained reactivity          | RxJS, Redux, Zustand       |
+| Angular Signals | Reactive state management with fine-grained reactivity          | RxJS       |
 
 ### **Backend Technology Choices**
 
@@ -499,7 +499,7 @@ testing:
 | Node.js     | JavaScript ecosystem consistency, excellent performance | Python Django, Ruby Rails   |
 | Express     | Lightweight, flexible, extensive middleware ecosystem   | Fastify, Koa.js, NestJS     |
 | PostgreSQL  | ACID compliance, JSONB support, excellent performance   | MongoDB, MySQL, CockroachDB |
-| Drizzle ORM | Type-safe queries, excellent PostgreSQL integration     | Prisma, TypeORM, Sequelize  |
+| Supabase Client | Type-safe queries, excellent PostgreSQL integration     | Prisma, TypeORM, Sequelize  |
 | Redis       | High-performance caching and session management         | Memcached, DynamoDB         |
 
 ## Future Architecture Considerations
