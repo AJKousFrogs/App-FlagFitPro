@@ -128,7 +128,6 @@ npm run dev:full
 ```
 
 This will start:
-
 - Frontend: `http://localhost:3000` (or 5173)
 - Backend: `http://localhost:3001`
 
@@ -137,7 +136,7 @@ This will start:
 1. **Register a new user**:
    - Go to `/register` in your app
    - Fill out the form
-   - Should create a user in your Supabase database
+   - Should create a user in your Neon database
 
 2. **Login with the user**:
    - Go to `/login` in your app

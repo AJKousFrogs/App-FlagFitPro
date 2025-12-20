@@ -117,7 +117,6 @@ export class RealtimeSyncService {
 ```
 
 #### **Performance Optimization**
-
 - **Code Splitting**: Route-based and component-based lazy loading
 - **Bundle Optimization**: Tree-shaking and dead code elimination
 - **Image Optimization**: Progressive loading with WebP format support
@@ -129,19 +128,17 @@ export class RealtimeSyncService {
 
 ```typescript
 // API Route Example - Olympic Qualification
-router.get("/api/athletes/:id/olympic-status", async (req, res) => {
+router.get('/api/athletes/:id/olympic-status', async (req, res) => {
   try {
     const { id } = req.params;
-
+    
     // Multi-source data aggregation
-    const [performanceData, rankingData, qualificationData] = await Promise.all(
-      [
-        getPerformanceMetrics(id),
-        getWorldRankings(id),
-        getQualificationProgress(id),
-      ],
-    );
-
+    const [performanceData, rankingData, qualificationData] = await Promise.all([
+      getPerformanceMetrics(id),
+      getWorldRankings(id),
+      getQualificationProgress(id)
+    ]);
+    
     // AI-powered probability calculation
     const qualificationProbability = await calculateOlympicProbability({
       performance: performanceData,
@@ -164,7 +161,6 @@ router.get("/api/athletes/:id/olympic-status", async (req, res) => {
 ### **API Architecture Features**
 
 #### **Authentication & Security**
-
 - **JWT-based authentication** with refresh token rotation
 - **Rate limiting** (5-10 requests per 5 minutes for algorithm-intensive operations)
 - **Input validation** with Joi schema validation
@@ -172,10 +168,9 @@ router.get("/api/athletes/:id/olympic-status", async (req, res) => {
 - **CORS configuration** for cross-origin security
 
 #### **Performance Optimization**
-
 - **Caching Layer**: Redis for session management and frequently accessed data
 - **Connection Pooling**: PostgreSQL connection optimization
-- **Query Optimization**: Indexed queries with Supabase PostgreSQL
+- **Query Optimization**: Indexed queries with Drizzle ORM
 - **Compression**: Gzip/Brotli response compression
 - **CDN Integration**: Static asset delivery optimization
 
@@ -200,7 +195,6 @@ app.use("/api/wearables", wearablesRoutes); // Device integration
 ### **PostgreSQL Schema (26 Migrations)**
 
 #### **Core Tables Structure**
-
 ```sql
 -- Olympic qualification tracking
 CREATE TABLE olympic_qualification_progress (
@@ -251,7 +245,6 @@ CREATE TABLE performance_predictions (
 ```
 
 #### **Advanced Database Features**
-
 - **Performance Indexes**: Optimized queries for real-time features
 - **Triggers**: Automatic data validation and cleanup
 - **Stored Procedures**: Complex calculations for Olympic qualification
@@ -259,7 +252,6 @@ CREATE TABLE performance_predictions (
 - **Time-series Data**: Performance metrics with temporal analysis
 
 ### **Database Performance Optimization**
-
 - **Connection Pooling**: pgBouncer for connection management
 - **Query Optimization**: Explain plans and index strategies
 - **Partitioning**: Time-based partitioning for performance data
@@ -274,7 +266,7 @@ CREATE TABLE performance_predictions (
 interface RecommendationEngine {
   // 120+ peer-reviewed studies integration
   studyDatabase: StudyReference[];
-
+  
   // AI coaching algorithms
   generateTrainingRecommendation(
     athleteProfile: AthleteProfile,
@@ -299,16 +291,14 @@ interface RecommendationEngine {
 ### **Algorithm Services Implementation**
 
 #### **Evidence-Based Coaching**
-
 - **Research Integration**: 120+ peer-reviewed studies database
 - **Personalization**: Individual athlete profiling and adaptation
 - **Contextual Awareness**: Environmental and situational factors
 - **Continuous Learning**: Algorithm improvement based on outcomes
 
 #### **Performance Prediction Models**
-
 - **Statistical Models**: Regression analysis for performance trends
-- **Machine Learning**: Neural networks for complex pattern recognition
+- **Machine Learning**: Neural networks for complex pattern recognition  
 - **Ensemble Methods**: Multiple model combination for accuracy
 - **Confidence Intervals**: Uncertainty quantification for predictions
 
@@ -344,7 +334,6 @@ class PerformanceAnalytics {
 // Real-time event handling
 class RealTimeManager {
   private wss: WebSocket.Server;
-
   constructor() {
     this.wss = new WebSocket.Server({ port: 3001 });
     this.setupEventHandlers();
@@ -367,7 +356,6 @@ class RealTimeManager {
 ```
 
 ### **Event-Driven Architecture**
-
 - **Message Queues**: RabbitMQ for asynchronous processing
 - **Event Sourcing**: Complete audit trail for data changes
 - **CQRS Pattern**: Separate read/write models for performance
@@ -378,7 +366,6 @@ class RealTimeManager {
 ### **Third-Party Integrations**
 
 #### **Wearables Integration**
-
 ```typescript
 interface WearablesIntegration {
   // Multi-device support
@@ -395,14 +382,12 @@ interface WearablesIntegration {
 ```
 
 #### **Olympic Data Integration**
-
 - **IFAF API**: Official competition data and rankings
 - **Tournament Systems**: Live bracket and scoring updates
 - **Qualification Tracking**: Real-time Olympic pathway monitoring
 - **World Rankings**: International athlete ranking systems
 
 #### **Nutrition Database Integration**
-
 - **USDA FoodData Central**: Comprehensive nutritional information
 - **Sports Nutrition Research**: Evidence-based supplementation data
 - **Meal Planning**: AI-powered nutrition optimization
@@ -411,7 +396,6 @@ interface WearablesIntegration {
 ## Security Architecture
 
 ### **Security Implementation**
-
 - **Authentication**: JWT with refresh token rotation
 - **Authorization**: Role-based access control (RBAC)
 - **Data Encryption**: AES-256 for sensitive data at rest
@@ -421,7 +405,6 @@ interface WearablesIntegration {
 - **Audit Logging**: Complete security event tracking
 
 ### **Privacy & Compliance**
-
 - **GDPR Compliance**: EU privacy regulation adherence
 - **CCPA Compliance**: California privacy rights implementation
 - **HIPAA Considerations**: Health data protection measures
@@ -431,7 +414,6 @@ interface WearablesIntegration {
 ## Performance & Scalability
 
 ### **Performance Metrics**
-
 - **API Response Time**: < 100ms for 95th percentile
 - **Database Query Time**: < 50ms for complex joins
 - **Page Load Time**: < 2s for first contentful paint
@@ -439,7 +421,6 @@ interface WearablesIntegration {
 - **Throughput**: 1000+ concurrent users supported
 
 ### **Scalability Strategy**
-
 - **Horizontal Scaling**: Load balancer with multiple app instances
 - **Database Scaling**: Read replicas and connection pooling
 - **Caching Strategy**: Multi-layer caching (CDN, Redis, Application)
@@ -449,7 +430,6 @@ interface WearablesIntegration {
 ## Development & Operations
 
 ### **DevOps Pipeline**
-
 ```yaml
 # CI/CD Pipeline
 stages:
@@ -471,7 +451,6 @@ testing:
 ```
 
 ### **Monitoring & Observability**
-
 - **Application Monitoring**: New Relic / DataDog integration
 - **Error Tracking**: Sentry for error aggregation and alerting
 - **Performance Monitoring**: Real user monitoring (RUM)
@@ -505,7 +484,6 @@ testing:
 ## Future Architecture Considerations
 
 ### **Scalability Roadmap**
-
 1. **Microservices Migration**: Service decomposition for Olympic features
 2. **Event Sourcing Implementation**: Complete audit trail for competitions
 3. **GraphQL API**: More efficient data fetching for complex queries
@@ -513,7 +491,6 @@ testing:
 5. **Global CDN**: International athlete support optimization
 
 ### **Technology Evolution**
-
 - **Edge Computing**: Reduce latency for real-time features
 - **Serverless Functions**: Cost-effective scaling for sporadic workloads
 - **Blockchain Integration**: Verifiable achievement and ranking systems

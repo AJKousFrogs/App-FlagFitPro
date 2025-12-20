@@ -6,18 +6,6 @@
 
 ---
 
-## Overview
-
-The Algorithm API provides access to sophisticated, evidence-based training algorithms including personalized training recommendations, supplement protocols, recovery optimization, performance predictions, and LA28 Olympic qualification tracking.
-
-### Key Features
-
-- **Comprehensive Recommendations**: Multi-algorithm integration with synergy optimization
-- **Evidence-Based**: 120+ peer-reviewed studies integrated
-- **Real-time Analytics**: Performance predictions and injury risk assessment
-- **LA28 Olympics Ready**: Qualification tracking and roadmap generation
-- **Rate Limited**: Protected endpoints with caching for performance
-
 ## Base URL
 
 ```

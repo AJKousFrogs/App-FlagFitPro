@@ -328,7 +328,6 @@ Set up your Supabase credentials in environment variables for production deploym
 ## 🏥 System Health & Optimization
 
 ### Performance Metrics
-
 - **Health Score**: 99/100 ⭐
 - **Memory Optimization**: 93% reduction through connection pooling
 - **Database Performance**: Optimized with singleton connection manager
@@ -336,14 +335,12 @@ Set up your Supabase credentials in environment variables for production deploym
 - **Real-time Ready**: Streaming analytics pipeline for GPS/wearable integration
 
 ### Optimization Results
-
 - **Database Connections**: Reduced from 14 individual pools to 1 singleton manager
 - **Function Consolidation**: Created `CommonFunctions.js` utility class
 - **Automated Health Monitoring**: Comprehensive system diagnostics
 - **Research Integration**: 2024-2025 sports science studies (156 studies, 3,847 participants)
 
 ### 2025 Research Integration
-
 - **Evidence-Based Training**: Latest flag football research integration
 - **Predictive Analytics**: 87.4% accuracy in performance predictions
 - **Injury Prevention**: 78% prevention rate through AI modeling
@@ -372,12 +369,11 @@ Comprehensive documentation available in `/docs/`:
 
 We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
 
-1. Follow the architecture guidelines in `DESIGN_SYSTEM_DOCUMENTATION.md`
-2. Use Angular 21 standalone components with Signals
-3. Use PrimeNG 21 components when possible
-4. Use Supabase PostgreSQL for all database operations
-5. Write tests for new features (Vitest + Angular Testing Utilities)
-6. Follow the existing code style and design tokens
+1. Follow the architecture guidelines in `CLAUDE.md`
+2. Use React functional components with hooks
+3. Use Neon PostgreSQL with Drizzle ORM for all database operations
+4. Write tests for new features
+5. Follow the existing code style
 
 ## 📄 License
 
