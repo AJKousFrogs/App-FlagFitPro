@@ -3,42 +3,62 @@
 
 class DashboardAPI {
     constructor() {
-        this.baseURL = 'http://localhost:3001/api';
+        // Use environment variable or fallback to localhost
+        this.baseURL = window.FLAGFIT_API_URL ||
+                       (typeof process !== 'undefined' && process.env?.VITE_API_URL) ||
+                       'http://localhost:3001/api';
         this.userId = '1'; // Default user ID for demo
         this.cache = new Map();
         this.cacheTTL = 5 * 60 * 1000; // 5 minutes
+        this.requestTimeout = 10000; // 10 seconds
     }
 
-    // Generic API call method
+    // Generic API call method with timeout and response validation
     async apiCall(endpoint, options = {}) {
         try {
             const url = `${this.baseURL}${endpoint}`;
-            
+
+            // Create AbortController for timeout
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), this.requestTimeout);
+
             // Get authentication token if available
             const token = localStorage.getItem('flagfit_token');
             const headers = {
                 'Content-Type': 'application/json',
                 ...options.headers
             };
-            
+
             if (token) {
                 headers['Authorization'] = `Bearer ${token}`;
             }
-            
+
             const response = await fetch(url, {
                 method: options.method || 'GET',
                 headers: headers,
                 body: options.body ? JSON.stringify(options.body) : undefined,
+                signal: controller.signal,
                 ...options
             });
+
+            clearTimeout(timeoutId);
 
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
+            // Validate response is JSON before parsing
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                throw new Error('Response is not JSON format');
+            }
+
             const data = await response.json();
             return data;
         } catch (error) {
+            if (error.name === 'AbortError') {
+                throw new Error('Request timeout - server took too long to respond');
+            }
             console.error(`API call failed for ${endpoint}:`, error);
             throw error;
         }

@@ -30,9 +30,21 @@ const ChatWidget = () => {
     }
   }, [isOpen]);
 
+  // Ref to track timeout for cleanup
+  const responseTimeoutRef = useRef(null);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (responseTimeoutRef.current) {
+        clearTimeout(responseTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    
+
     if (!inputValue.trim()) return;
 
     const userMessage = {
@@ -46,8 +58,13 @@ const ChatWidget = () => {
     setInputValue('');
     setIsTyping(true);
 
-    // Simulate AI response
-    setTimeout(() => {
+    // Clear any existing timeout
+    if (responseTimeoutRef.current) {
+      clearTimeout(responseTimeoutRef.current);
+    }
+
+    // Simulate AI response with cleanup
+    responseTimeoutRef.current = setTimeout(() => {
       const responses = [
         "Great question! Let me help you with that training insight.",
         "Based on your performance data, I recommend focusing on these areas.",
@@ -65,6 +82,7 @@ const ChatWidget = () => {
 
       setMessages(prev => [...prev, assistantMessage]);
       setIsTyping(false);
+      responseTimeoutRef.current = null;
     }, 1000);
   };
 

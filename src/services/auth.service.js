@@ -212,14 +212,20 @@ class AuthService {
 
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 300));
-      
+
       // Create new mock token
       const newToken = 'mock_jwt_token_' + Date.now();
       this.token = newToken;
       localStorage.setItem('flagfit_token', newToken);
 
       console.log('AuthService: Token refreshed successfully');
-      return newToken;
+
+      // Return user and new token
+      return {
+        user: this.currentUser,
+        token: newToken,
+        isAuthenticated: true
+      };
     } catch (error) {
       console.error('AuthService: Token refresh failed:', error.message);
       throw error;
