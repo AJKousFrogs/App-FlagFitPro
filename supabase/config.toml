@@ -63,13 +63,13 @@ enabled = true
 sql_paths = ["./seed.sql"]
 
 # [db.network_restrictions]
-# Enable management of network restrictions.
+# # Enable management of network restrictions.
 # enabled = false
-# List of IPv4 CIDR blocks allowed to connect to the database.
-# Defaults to allow all IPv4 connections. Set empty array to block all IPs.
+# # List of IPv4 CIDR blocks allowed to connect to the database.
+# # Defaults to allow all IPv4 connections. Set empty array to block all IPs.
 # allowed_cidrs = ["0.0.0.0/0"]
-# List of IPv6 CIDR blocks allowed to connect to the database.
-# Defaults to allow all IPv6 connections. Set empty array to block all IPs.
+# # List of IPv6 CIDR blocks allowed to connect to the database.
+# # Defaults to allow all IPv6 connections. Set empty array to block all IPs.
 # allowed_cidrs_v6 = ["::/0"]
 
 [realtime]
@@ -341,11 +341,11 @@ enabled = false
 
 # OAuth server configuration
 # [auth.oauth_server]
-# Enable OAuth server functionality
+# # Enable OAuth server functionality
 # enabled = false
-# Path for OAuth consent flow UI
+# # Path for OAuth consent flow UI
 # authorization_url_path = "/oauth/consent"
-# Allow dynamic client registration
+# # Allow dynamic client registration
 # allow_dynamic_registration = false
 
 [edge_runtime]
