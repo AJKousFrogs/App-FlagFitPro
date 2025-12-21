@@ -3,13 +3,9 @@
   "mcpServers": {
     "context7-sports": {
       "command": "npx",
-      "args": ["-y", "@context7/mcp-server@latest"],
-      "env": {
-        "CONTEXT7_API_KEY": "${CONTEXT7_API_KEY}",
-        "CONTEXT7_DOMAIN": "sports-science",
-        "CONTEXT7_CATEGORIES": "nutrition,training,recovery,psychology,biomechanics"
-      },
-      "description": "Context7 MCP Server - Sports science documentation and knowledge base for nutrition, training, recovery, psychology, and biomechanics",
+      "args": ["-y", "@upstash/context7-mcp@latest"],
+      "env": {},
+      "description": "Context7 MCP Server - Sports science documentation and knowledge base for nutrition, training, recovery, psychology, and biomechanics (using free tier without API key)",
       "alwaysAllow": []
     },
     "sequential-thought": {

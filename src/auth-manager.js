@@ -339,6 +339,9 @@ logger.debug(
     try {
       this.showLoading("Signing in...");
 
+      // Normalize email: trim whitespace and convert to lowercase
+      const normalizedEmail = email.trim().toLowerCase();
+
       // Import Supabase client
       const { getSupabase } = await import('./js/services/supabase-client.js');
       const supabase = getSupabase();
@@ -347,9 +350,9 @@ logger.debug(
         throw new Error("Unable to connect to authentication service");
       }
 
-      // Use Supabase Auth sign in
+      // Use Supabase Auth sign in with normalized email
       const { data, error } = await supabase.auth.signInWithPassword({
-        email,
+        email: normalizedEmail,
         password,
       });
 
@@ -419,11 +422,14 @@ logger.debug(
       const [firstName, ...lastNameParts] = name.split(' ');
       const lastName = lastNameParts.join(' ');
 
+      // Normalize email: trim whitespace and convert to lowercase
+      const normalizedEmail = email.trim().toLowerCase();
+
       // Check password against leaked password database
       try {
         const { checkPasswordLeakedAuto } = await import('./js/utils/password-leak-check.js');
         const leakCheck = await checkPasswordLeakedAuto(password);
-        
+
         if (leakCheck.leaked) {
           this.hideLoading();
           this.showError(leakCheck.message || "This password has been found in data breaches. Please choose a different password.");
@@ -443,9 +449,9 @@ logger.debug(
         throw new Error("Unable to connect to authentication service");
       }
 
-      // Use Supabase Auth signup
+      // Use Supabase Auth signup with normalized email
       const { data, error } = await supabase.auth.signUp({
-        email,
+        email: normalizedEmail,
         password,
         options: {
           emailRedirectTo: `${window.location.origin}/verify-email.html`,
@@ -1124,9 +1130,16 @@ logger.debug(
     logger.debug("📍 Current location:", window.location.href);
 
     // Check if user has completed onboarding
+    // user_metadata is the single source of truth for onboarding status
     const user = this.getCurrentUser();
-    const onboardingCompleted = user?.user_metadata?.onboarding_completed || 
-                                (typeof storageService !== 'undefined' && storageService.get("onboardingCompleted", null, { usePrefix: false }));
+    const onboardingCompleted = user?.user_metadata?.onboarding_completed === true;
+
+    // Cache the status in localStorage for performance, but always trust user_metadata
+    if (onboardingCompleted && typeof storageService !== 'undefined') {
+      storageService.set("onboardingCompleted", "true", { usePrefix: false });
+    } else if (!onboardingCompleted && typeof storageService !== 'undefined') {
+      storageService.remove("onboardingCompleted", { usePrefix: false });
+    }
 
     // If onboarding not completed, redirect to onboarding page
     if (!onboardingCompleted) {
