@@ -19,7 +19,7 @@ class HealthChecker {
       'Database': { ports: [5432, 5433, 5434], type: 'tcp' },
       'MCP Context7': { ports: [3000, 3001, 3002], type: 'http' },
       'MCP Sequential': { ports: [3001, 3002, 3003], type: 'http' },
-      'Neon Database': { connectionString: process.env.DATABASE_URL, type: 'database' }
+      'Supabase Database': { connectionString: process.env.SUPABASE_URL, type: 'database' }
     };
   }
 

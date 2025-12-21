@@ -136,7 +136,7 @@ This will start:
 1. **Register a new user**:
    - Go to `/register` in your app
    - Fill out the form
-   - Should create a user in your Neon database
+   - Should create a user in your Supabase database
 
 2. **Login with the user**:
    - Go to `/login` in your app

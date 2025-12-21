@@ -32,7 +32,7 @@ exports.handler = async (event, context) => {
   }
 
   const pool = new Pool({
-    connectionString: process.env.DATABASE_URL || process.env.NEON_DATABASE_URL,
+    connectionString: process.env.DATABASE_URL || process.env.SUPABASE_DB_URL,
     ssl: { rejectUnauthorized: false },
   });
 

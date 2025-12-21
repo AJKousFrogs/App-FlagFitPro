@@ -371,7 +371,7 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 
 1. Follow the architecture guidelines in `CLAUDE.md`
 2. Use React functional components with hooks
-3. Use Neon PostgreSQL with Drizzle ORM for all database operations
+3. Use Supabase for all database operations (authentication, database, storage)
 4. Write tests for new features
 5. Follow the existing code style
 

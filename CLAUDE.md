@@ -35,7 +35,7 @@ src/
 │   ├── FilterManager.js  # Interactive filtering system
 │   └── cn.js            # Styling utilities
 ├── contexts/             # React Context providers
-│   └── NeonDatabaseContext.jsx # Database state management
+│   └── (Supabase context managed via @supabase/supabase-js)
 ├── hooks/                # Custom React hooks
 │   └── useReducer.js     # Enhanced state management
 └── App.jsx              # Main application with routing
@@ -198,23 +198,17 @@ const DashboardPage = () => (
 
 ### React Context Pattern
 ```jsx
-// Database context provider
-export const NeonDatabaseContext = createContext();
+// Supabase client setup
+import { createClient } from '@supabase/supabase-js';
 
-export const NeonDatabaseProvider = ({ children }) => {
-  const [isConnected, setIsConnected] = useState(false);
-  const [error, setError] = useState(null);
-  
-  return (
-    <NeonDatabaseContext.Provider value={{
-      isConnected,
-      error,
-      connect,
-      disconnect
-    }}>
-      {children}
-    </NeonDatabaseContext.Provider>
-  );
+const supabase = createClient(
+  process.env.VITE_SUPABASE_URL,
+  process.env.VITE_SUPABASE_ANON_KEY
+);
+
+// Use Supabase directly in components or create a custom hook
+export const useSupabase = () => {
+  return supabase;
 };
 ```
 

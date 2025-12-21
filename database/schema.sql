@@ -274,7 +274,8 @@ CREATE TABLE IF NOT EXISTS load_monitoring (
   acute_load DECIMAL(10,2), -- 7-day rolling average
   chronic_load DECIMAL(10,2), -- 28-day rolling average
   acwr DECIMAL(5,2), -- Acute:Chronic Workload Ratio (acute_load / chronic_load)
-  injury_risk_level VARCHAR(20), -- 'Low', 'Moderate', 'High' (based on ACWR thresholds)
+  injury_risk_level VARCHAR(20), -- 'baseline_building', 'baseline_low', 'low', 'optimal', 'moderate', 'high'
+  baseline_days INTEGER CHECK (baseline_days >= 0 AND baseline_days <= 28), -- Days of data available (0-28)
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),
   UNIQUE(player_id, date)
@@ -470,6 +471,8 @@ $$ LANGUAGE plpgsql;
 -- =============================================================================
 
 -- Trigger function to update load monitoring when workout is logged
+-- NOTE: This function now uses calculate_acwr_safe() which includes baseline checks
+-- See migration 046_fix_acwr_baseline_checks.sql for the safe implementation
 CREATE OR REPLACE FUNCTION update_load_monitoring()
 RETURNS TRIGGER AS $$
 DECLARE
@@ -479,6 +482,7 @@ DECLARE
   chronic_load_value DECIMAL(10,2);
   acwr_value DECIMAL(5,2);
   risk_level VARCHAR(20);
+  baseline_days_val INTEGER;
 BEGIN
   log_date := DATE(NEW.completed_at);
 
@@ -489,19 +493,25 @@ BEGIN
   acute_load_value := calculate_acute_load(NEW.player_id, log_date);
   chronic_load_value := calculate_chronic_load(NEW.player_id, log_date);
 
-  -- Calculate ACWR
-  IF chronic_load_value > 0 THEN
-    acwr_value := acute_load_value / chronic_load_value;
-  ELSE
-    acwr_value := NULL;
-  END IF;
-
-  -- Determine injury risk level
-  risk_level := get_injury_risk_level(acwr_value);
+  -- Calculate ACWR with baseline checks
+  -- Use safe calculation if available, otherwise fallback to basic calculation
+  BEGIN
+    SELECT acwr, risk_level, baseline_days INTO acwr_value, risk_level, baseline_days_val
+    FROM calculate_acwr_safe(NEW.player_id, log_date);
+  EXCEPTION WHEN OTHERS THEN
+    -- Fallback to basic calculation if safe function doesn't exist yet
+    IF chronic_load_value > 0 THEN
+      acwr_value := acute_load_value / chronic_load_value;
+    ELSE
+      acwr_value := NULL;
+    END IF;
+    risk_level := get_injury_risk_level(acwr_value);
+    baseline_days_val := NULL;
+  END;
 
   -- Insert or update load monitoring record
-  INSERT INTO load_monitoring (player_id, date, daily_load, acute_load, chronic_load, acwr, injury_risk_level)
-  VALUES (NEW.player_id, log_date, daily_load_value, acute_load_value, chronic_load_value, acwr_value, risk_level)
+  INSERT INTO load_monitoring (player_id, date, daily_load, acute_load, chronic_load, acwr, injury_risk_level, baseline_days)
+  VALUES (NEW.player_id, log_date, daily_load_value, acute_load_value, chronic_load_value, acwr_value, risk_level, baseline_days_val)
   ON CONFLICT (player_id, date)
   DO UPDATE SET
     daily_load = EXCLUDED.daily_load,
@@ -509,6 +519,7 @@ BEGIN
     chronic_load = EXCLUDED.chronic_load,
     acwr = EXCLUDED.acwr,
     injury_risk_level = EXCLUDED.injury_risk_level,
+    baseline_days = COALESCE(EXCLUDED.baseline_days, load_monitoring.baseline_days),
     updated_at = NOW();
 
   RETURN NEW;

@@ -71,11 +71,17 @@ npm run dev
 
 ### **For Full Database Features:**
 
-#### **1. Set Up Neon Database (Optional)**
+#### **1. Set Up Supabase Database (Required for Full Features)**
 ```bash
-# Get your Neon database URL from neon.tech
-# Add to .env file:
-VITE_NEON_DATABASE_URL=postgresql://username:password@host/database
+# Get your Supabase credentials from supabase.com dashboard
+# Add to .env.local file:
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=your_anon_key_here
+SUPABASE_SERVICE_KEY=your_service_key_here
+
+# For frontend (Vite):
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your_anon_key_here
 ```
 
 #### **2. Run Database Migrations (Optional)**

@@ -33,7 +33,9 @@ if [ ! -f .env ]; then
     cp env.example .env
     echo "📝 Please update .env file with your database credentials"
     echo "🔑 Key variables to update:"
-    echo "   - DATABASE_URL (your Neon PostgreSQL connection string)"
+    echo "   - SUPABASE_URL (your Supabase project URL)"
+    echo "   - SUPABASE_ANON_KEY (your Supabase anonymous key)"
+    echo "   - SUPABASE_SERVICE_KEY (your Supabase service role key)"
     echo "   - JWT_SECRET (for authentication)"
     echo "   - Other API keys as needed"
     echo ""
@@ -41,9 +43,14 @@ if [ ! -f .env ]; then
     read
 fi
 
-# Check if database URL is set
-if ! grep -q "DATABASE_URL" .env || grep -q "your_neon_connection_string" .env; then
-    echo "❌ Please update DATABASE_URL in .env file with your Neon database connection string"
+# Check if Supabase configuration is set
+if ! grep -q "SUPABASE_URL" .env || grep -q "your_supabase_url" .env; then
+    echo "❌ Please update SUPABASE_URL in .env file with your Supabase project URL"
+    exit 1
+fi
+
+if ! grep -q "SUPABASE_ANON_KEY" .env || grep -q "your_supabase_anon_key" .env; then
+    echo "❌ Please update SUPABASE_ANON_KEY in .env file with your Supabase anonymous key"
     exit 1
 fi
 

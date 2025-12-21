@@ -58,8 +58,6 @@ const configs = {
     ENABLE_DEBUG_LOGS: true,
     ENABLE_ANALYTICS: false,
     YOUTUBE_API_KEY: getEnvVar("YOUTUBE_API_KEY", ""),
-    POCKETBASE_URL: getEnvVar("POCKETBASE_URL", "http://localhost:8090"),
-    NEON_DATABASE_URL: getEnvVar("NEON_DATABASE_URL", ""),
     ENABLE_SECURE_STORAGE: false, // Disable for local dev
   },
 
@@ -71,8 +69,6 @@ const configs = {
     ENABLE_DEBUG_LOGS: true,
     ENABLE_ANALYTICS: true,
     YOUTUBE_API_KEY: getEnvVar("YOUTUBE_API_KEY", ""),
-    POCKETBASE_URL: getEnvVar("POCKETBASE_URL", ""),
-    NEON_DATABASE_URL: getEnvVar("NEON_DATABASE_URL", ""),
     ENABLE_SECURE_STORAGE: true,
   },
 
@@ -84,8 +80,6 @@ const configs = {
     ENABLE_DEBUG_LOGS: false,
     ENABLE_ANALYTICS: true,
     YOUTUBE_API_KEY: getEnvVar("YOUTUBE_API_KEY", ""),
-    POCKETBASE_URL: getEnvVar("POCKETBASE_URL", ""),
-    NEON_DATABASE_URL: getEnvVar("NEON_DATABASE_URL", ""),
     ENABLE_SECURE_STORAGE: true,
   },
 };
@@ -98,8 +92,8 @@ const validateConfig = () => {
   const warnings = [];
 
   if (ENV === "production") {
-    // Note: DATABASE_URL and POCKETBASE_URL are backend-only variables
-    // They should be configured in Netlify Functions, not frontend
+    // Note: DATABASE_URL is a backend-only variable
+    // It should be configured in Netlify Functions, not frontend
     if (!config.API_BASE_URL) {
       warnings.push("API_BASE_URL not configured, using default");
     }

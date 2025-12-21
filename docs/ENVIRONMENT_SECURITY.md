@@ -188,10 +188,14 @@ git push --force-with-lease origin main  # CAREFUL!
 ### **For Each Environment Variable**
 Document in `.env.example`:
 ```bash
-# Database Connection (REQUIRED)
-# Get from: https://neon.tech dashboard → connection string
-# Format: postgresql://username:password@host:port/database
-DATABASE_URL=your_neon_database_url_here
+# Supabase Configuration (REQUIRED)
+# Get from: https://supabase.com dashboard → Settings → API
+# Project URL
+SUPABASE_URL=https://your-project.supabase.co
+# Anonymous/public key (safe for frontend)
+SUPABASE_ANON_KEY=your_supabase_anon_key_here
+# Service role key (backend only, never expose to frontend)
+SUPABASE_SERVICE_KEY=your_supabase_service_key_here
 
 # Context7 API Key (REQUIRED for AI features)  
 # Get from: https://context7.ai dashboard → API keys
