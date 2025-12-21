@@ -18,6 +18,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { interval, takeUntil, Subject } from 'rxjs';
 import { ApiService, API_ENDPOINTS } from '../../../core/services/api.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { LoggerService } from '../../../core/services/logger.service';
 
 interface PerformanceMetric {
   id: string;
@@ -268,6 +269,7 @@ export class PerformanceDashboardComponent implements OnInit, OnDestroy {
 
   private apiService = inject(ApiService);
   private destroy$ = new Subject<void>();
+  private logger = inject(LoggerService);
 
   metrics = signal<PerformanceMetric[]>([
     {
@@ -389,7 +391,7 @@ export class PerformanceDashboardComponent implements OnInit, OnDestroy {
         },
         error: () => {
           // Use default mock metrics if API fails
-          console.debug('Performance API not available, using default metrics');
+          this.logger.debug('Performance API not available, using default metrics');
         },
       });
   }

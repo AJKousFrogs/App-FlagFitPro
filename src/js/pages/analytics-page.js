@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 // Analytics Page JavaScript
 // Fetches real analytics data from backend and renders charts
 
@@ -6,6 +5,7 @@ import { apiClient } from "../../api-client.js";
 import { API_ENDPOINTS } from "../../api-config.js";
 import { authManager } from "../../auth-manager.js";
 import { errorHandler } from "../utils/unified-error-handler.js";
+import { logger } from "../../logger.js";
 
 class AnalyticsPage {
   constructor() {
@@ -40,7 +40,7 @@ class AnalyticsPage {
     
     // If Chart.js still not loaded, log error and return false
     if (typeof Chart === "undefined") {
-      console.error("Chart.js not loaded after waiting. Please ensure Chart.js is loaded before analytics-page.js");
+      logger.error("Chart.js not loaded after waiting. Please ensure Chart.js is loaded before analytics-page.js");
       return false;
     }
     return true;
@@ -49,15 +49,15 @@ class AnalyticsPage {
   async initializeCharts() {
     // Check if Chart.js is loaded
     if (typeof Chart === "undefined") {
-      console.error("Chart.js not loaded");
+      logger.error("Chart.js not loaded");
       return;
     }
 
-    console.log("🚀 Initializing FlagFit Pro Analytics Dashboard...");
+    logger.info("🚀 Initializing FlagFit Pro Analytics Dashboard...");
 
     // Check authentication
     if (!authManager.requireAuth()) {
-      console.error("User not authenticated");
+      logger.error("User not authenticated");
       return;
     }
 
@@ -83,14 +83,14 @@ class AnalyticsPage {
           try {
             this[`init${chart}Chart`]();
           } catch (error) {
-            console.error(`Error initializing ${chart} chart:`, error);
+            logger.error(`Error initializing ${chart} chart:`, error);
           }
         });
       });
 
-      console.log("✅ All charts initialized successfully!");
+      logger.info("✅ All charts initialized successfully!");
     } catch (error) {
-      console.error("Error loading analytics data:", error);
+      logger.error("Error loading analytics data:", error);
       // Don't load fallback data for authenticated users - show empty state instead
       this.showEmptyState();
     }
@@ -132,7 +132,7 @@ class AnalyticsPage {
         speedDevelopment: speedDevelopment.success ? speedDevelopment.data : null,
       };
     } catch (error) {
-      console.error("Error fetching analytics data:", error);
+      logger.error("Error fetching analytics data:", error);
       throw error;
     }
   }
@@ -554,11 +554,22 @@ class AnalyticsPage {
         color: var(--color-text-tertiary);
         min-height: 300px;
       `;
-      noDataMsg.innerHTML = `
-        <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;">📊</div>
-        <div style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--color-text-secondary);">No Data Available</div>
-        <div style="font-size: 0.875rem;">No ${chartName} data has been entered yet.</div>
-      `;
+      // Create no data message using DOM methods instead of innerHTML
+      const iconDiv = document.createElement("div");
+      iconDiv.style.cssText = "font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;";
+      iconDiv.textContent = "📊";
+      
+      const titleDiv = document.createElement("div");
+      titleDiv.style.cssText = "font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--color-text-secondary);";
+      titleDiv.textContent = "No Data Available";
+      
+      const messageDiv = document.createElement("div");
+      messageDiv.style.cssText = "font-size: 0.875rem;";
+      messageDiv.textContent = `No ${chartName} data has been entered yet.`;
+      
+      noDataMsg.appendChild(iconDiv);
+      noDataMsg.appendChild(titleDiv);
+      noDataMsg.appendChild(messageDiv);
       chartCard.appendChild(noDataMsg);
     }
   }

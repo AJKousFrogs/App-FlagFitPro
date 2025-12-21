@@ -2,6 +2,7 @@ import { Component, input, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ChartModule } from 'primeng/chart';
 import { TrainingMetricsService, ACWRData, FlagMetrics } from '../../core/services/training-metrics.service';
+import { LoggerService } from '../../core/services/logger.service';
 
 @Component({
   selector: 'app-flag-load',
@@ -71,6 +72,7 @@ export class FlagLoadComponent implements OnInit {
   athleteId = input.required<string>();
 
   private metricsService = inject(TrainingMetricsService);
+  private logger = inject(LoggerService);
 
   acwrData = signal<ACWRData[]>([]);
   flagMetrics = signal<FlagMetrics[]>([]);
@@ -99,7 +101,7 @@ export class FlagLoadComponent implements OnInit {
   async ngOnInit() {
     const athleteId = this.athleteId();
     if (!athleteId) {
-      console.error('FlagLoadComponent: athleteId is required');
+      this.logger.error('FlagLoadComponent: athleteId is required');
       return;
     }
 
@@ -113,7 +115,7 @@ export class FlagLoadComponent implements OnInit {
       // Update chart data
       this.updateChartData(flag);
     } catch (error) {
-      console.error('Error loading metrics:', error);
+      this.logger.error('Error loading metrics:', error);
     }
   }
 

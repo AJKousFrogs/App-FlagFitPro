@@ -6,6 +6,8 @@
  * CSP compliance, and testability.
  */
 
+import { logger } from '../../logger.js';
+
 // ================================================================
 // SIDEBAR TOGGLE
 // ================================================================
@@ -392,7 +394,7 @@ window.copyToClipboard = function(text, button) {
         }, 2000);
       }
     }).catch(err => {
-      console.error('Failed to copy:', err);
+      logger.error('Failed to copy:', err);
     });
   } else {
     // Fallback for older browsers
@@ -412,7 +414,7 @@ window.copyToClipboard = function(text, button) {
         }, 2000);
       }
     } catch (err) {
-      console.error('Fallback copy failed:', err);
+      logger.error('Fallback copy failed:', err);
     }
     document.body.removeChild(textArea);
   }

@@ -16,6 +16,7 @@ import { CommonModule } from '@angular/common';
 import { AcwrService } from '../../core/services/acwr.service';
 import { LoadMonitoringService } from '../../core/services/load-monitoring.service';
 import { AcwrAlertsService } from '../../core/services/acwr-alerts.service';
+import { LoggerService } from '../../core/services/logger.service';
 import { ACWRData, RiskZone, TrainingSession } from '../../core/models/acwr.models';
 
 @Component({
@@ -495,6 +496,7 @@ export class AcwrDashboardComponent implements OnInit {
   private readonly acwrService = inject(AcwrService);
   private readonly loadService = inject(LoadMonitoringService);
   private readonly alertsService = inject(AcwrAlertsService);
+  private logger = inject(LoggerService);
 
   // Reactive signals from services
   public readonly acwrRatio = this.acwrService.acwrRatio;
@@ -561,16 +563,16 @@ export class AcwrDashboardComponent implements OnInit {
 
   public logSession(): void {
     // TODO: Open session logging modal
-    console.log('Open session logging form');
+    this.logger.debug('Open session logging form');
   }
 
   public viewHistory(): void {
     // TODO: Navigate to history page
-    console.log('Navigate to load history');
+    this.logger.debug('Navigate to load history');
   }
 
   public downloadReport(): void {
     // TODO: Generate PDF report
-    console.log('Generate ACWR report');
+    this.logger.debug('Generate ACWR report');
   }
 }

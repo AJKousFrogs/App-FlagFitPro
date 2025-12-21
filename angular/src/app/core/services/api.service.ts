@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from "@angular/common/http";
 import { Observable, throwError } from "rxjs";
 import { catchError, map } from "rxjs/operators";
 import { environment } from "../../../environments/environment";
+import { LoggerService } from "./logger.service";
 
 export interface ApiResponse<T = any> {
   success: boolean;
@@ -124,7 +125,7 @@ export class ApiService {
 
     // Fallback to mock API in development
     if (this.baseUrl.includes("localhost") || this.baseUrl === "mock://api") {
-      console.debug("API server not available, using mock data");
+      this.logger.debug("API server not available, using mock data");
     }
 
     return throwError(() => new Error(errorMessage));

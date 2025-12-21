@@ -8,6 +8,7 @@
 import { Injectable, inject, signal, effect } from '@angular/core';
 import { SupabaseService } from './supabase.service';
 import { RealtimeChannel } from '@supabase/supabase-js';
+import { LoggerService } from './logger.service';
 
 export interface RealtimeEvent<T = any> {
   eventType: 'INSERT' | 'UPDATE' | 'DELETE';
@@ -25,6 +26,7 @@ export type RealtimeCallback<T = any> = (event: RealtimeEvent<T>) => void;
 })
 export class RealtimeService {
   private supabase = inject(SupabaseService);
+  private logger = inject(LoggerService);
   private channels = new Map<string, RealtimeChannel>();
 
   // Connection status
@@ -60,7 +62,7 @@ export class RealtimeService {
     // Use signal instead of property access
     const userId = this.supabase.currentUser()?.id;
     if (!userId) {
-      console.warn('Cannot subscribe: No user logged in');
+      this.logger.warn('Cannot subscribe: No user logged in');
       return () => {};
     }
 
@@ -78,7 +80,7 @@ export class RealtimeService {
   subscribeToGames(callback: RealtimeCallback): () => void {
     const userId = this.supabase.currentUser()?.id;
     if (!userId) {
-      console.warn('Cannot subscribe: No user logged in');
+      this.logger.warn('Cannot subscribe: No user logged in');
       return () => {};
     }
 
@@ -96,7 +98,7 @@ export class RealtimeService {
   subscribeToWellness(callback: RealtimeCallback): () => void {
     const userId = this.supabase.currentUser()?.id;
     if (!userId) {
-      console.warn('Cannot subscribe: No user logged in');
+      this.logger.warn('Cannot subscribe: No user logged in');
       return () => {};
     }
 
@@ -114,7 +116,7 @@ export class RealtimeService {
   subscribeToPerformance(callback: RealtimeCallback): () => void {
     const userId = this.supabase.currentUser()?.id;
     if (!userId) {
-      console.warn('Cannot subscribe: No user logged in');
+      this.logger.warn('Cannot subscribe: No user logged in');
       return () => {};
     }
 
@@ -131,7 +133,7 @@ export class RealtimeService {
    */
   subscribeToTeamUpdates(teamId: string, callback: RealtimeCallback): () => void {
     if (!teamId) {
-      console.warn('Cannot subscribe: No team ID provided');
+      this.logger.warn('Cannot subscribe: No team ID provided');
       return () => {};
     }
 
@@ -149,7 +151,7 @@ export class RealtimeService {
   subscribeToReadiness(callback: RealtimeCallback): () => void {
     const userId = this.supabase.currentUser()?.id;
     if (!userId) {
-      console.warn('Cannot subscribe: No user logged in');
+      this.logger.warn('Cannot subscribe: No user logged in');
       return () => {};
     }
 
@@ -166,7 +168,7 @@ export class RealtimeService {
    */
   subscribeToMessages(conversationId: string, callback: RealtimeCallback): () => void {
     if (!conversationId) {
-      console.warn('Cannot subscribe: No conversation ID provided');
+      this.logger.warn('Cannot subscribe: No conversation ID provided');
       return () => {};
     }
 
@@ -189,7 +191,7 @@ export class RealtimeService {
   ): () => void {
     // Check if channel already exists
     if (this.channels.has(channelName)) {
-      console.warn(`Channel ${channelName} already exists`);
+      this.logger.warn(`Channel ${channelName} already exists`);
       return () => {};
     }
 
@@ -218,9 +220,9 @@ export class RealtimeService {
       )
       .subscribe((status) => {
         if (status === 'SUBSCRIBED') {
-          console.log(`✅ Subscribed to ${channelName}`);
+          this.logger.success(`Subscribed to ${channelName}`);
         } else if (status === 'CHANNEL_ERROR') {
-          console.error(`❌ Error subscribing to ${channelName}`);
+          this.logger.error(`Error subscribing to ${channelName}`);
         }
       });
 
@@ -233,7 +235,7 @@ export class RealtimeService {
       if (ch) {
         this.supabase.client.removeChannel(ch);
         this.channels.delete(channelName);
-        console.log(`🔌 Unsubscribed from ${channelName}`);
+        this.logger.debug(`Unsubscribed from ${channelName}`);
       }
     };
   }
@@ -244,7 +246,7 @@ export class RealtimeService {
   unsubscribeAll(): void {
     this.channels.forEach((channel, name) => {
       this.supabase.client.removeChannel(channel);
-      console.log(`🔌 Unsubscribed from ${name}`);
+      this.logger.debug(`Unsubscribed from ${name}`);
     });
     this.channels.clear();
   }

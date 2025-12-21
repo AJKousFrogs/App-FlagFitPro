@@ -1,12 +1,8 @@
-/* eslint-disable no-console */
 // AI Chat Bubble Loader - FlagFit Pro
 // Dynamically loads the AI chat bubble component into pages that need it
 
-const AI_CHAT_BUBBLE_HTML = `
-<div class="ai-chat-bubble">
-  <button class="ai-chat-button">💬 "Ask FlagFit Assistant"</button>
-</div>
-`;
+import { setSafeContent } from '../utils/shared.js';
+import { logger } from '../../logger.js';
 
 /**
  * Initialize AI Chat Button functionality
@@ -46,7 +42,7 @@ async function handleAIChat(e) {
       throw new Error("Chatbot module not properly initialized");
     }
   } catch (error) {
-    console.error("Failed to load chatbot:", error);
+    logger.error("Failed to load chatbot:", error);
 
     // Try to use global chatbot if available
     if (
@@ -78,8 +74,16 @@ export function loadAIChatBubble() {
     return; // Already loaded
   }
 
-  // Insert AI chat bubble HTML
-  container.innerHTML = AI_CHAT_BUBBLE_HTML;
+  // Create AI chat bubble using DOM methods instead of innerHTML
+  const chatBubble = document.createElement("div");
+  chatBubble.className = "ai-chat-bubble";
+  
+  const chatButton = document.createElement("button");
+  chatButton.className = "ai-chat-button";
+  chatButton.textContent = '💬 "Ask FlagFit Assistant"';
+  
+  chatBubble.appendChild(chatButton);
+  container.appendChild(chatBubble);
 
   // Initialize chat button functionality
   initializeAIChatButton();

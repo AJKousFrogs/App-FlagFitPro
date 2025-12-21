@@ -1,7 +1,19 @@
-// Complete Quarterback Flag Football Training Program Data
-// 14-Week Elite QB Development - Dual Track Approach
-// November 17, 2025 - February 28, 2026
+// ⚠️ DEPRECATED: This file has been split into separate modules
+// Use: import { QB_TRAINING_PROGRAM, QB_WEEKLY_SCHEDULES, etc. } from './data/qb-training/index.js'
+// This file is kept for backward compatibility only
 
+// Re-export from split modules
+export {
+  QB_TRAINING_PROGRAM,
+  QB_EXERCISE_LIBRARY,
+  QB_ASSESSMENTS,
+  // TOURNAMENT_SIMULATION removed - unused export
+  // QB_WEEKLY_SCHEDULES removed - unused export
+  default
+} from './data/qb-training/index.js';
+
+// Original code below (kept for reference, will be removed in future version)
+/*
 export const QB_TRAINING_PROGRAM = {
   programInfo: {
     title: "COMPLETE QUARTERBACK FLAG FOOTBALL TRAINING PROGRAM",
@@ -7508,3 +7520,4 @@ export const QB_WEEKLY_SCHEDULES = {
 };
 
 export default QB_TRAINING_PROGRAM;
+*/

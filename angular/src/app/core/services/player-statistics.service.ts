@@ -2,6 +2,7 @@ import { Injectable, inject } from "@angular/core";
 import { Observable, map } from "rxjs";
 import { ApiService } from "./api.service";
 import { StatisticsCalculationService } from "./statistics-calculation.service";
+import { LoggerService } from "./logger.service";
 
 export interface PlayerGameStats {
   gameId: string;
@@ -99,6 +100,7 @@ export interface PlayerMultiSeasonStats {
 export class PlayerStatisticsService {
   private apiService = inject(ApiService);
   private statsCalcService = inject(StatisticsCalculationService);
+  private logger = inject(LoggerService);
 
   /**
    * Get player statistics for a specific game
@@ -460,7 +462,7 @@ export class PlayerStatisticsService {
       const result = this.statsCalcService.calculateCompletionPercentage(completions, attempts);
       return result.percentage;
     } catch (error) {
-      console.warn('Error calculating completion percentage:', error);
+      this.logger.warn('Error calculating completion percentage:', error);
       return attempts > 0 ? (completions / attempts) * 100 : 0;
     }
   }
@@ -473,7 +475,7 @@ export class PlayerStatisticsService {
       const result = this.statsCalcService.calculateDropRate(drops, targets);
       return result.rate;
     } catch (error) {
-      console.warn('Error calculating drop rate:', error);
+      this.logger.warn('Error calculating drop rate:', error);
       return targets > 0 ? (drops / targets) * 100 : 0;
     }
   }
@@ -486,7 +488,7 @@ export class PlayerStatisticsService {
       const result = this.statsCalcService.calculateFlagPullSuccessRate(successes, attempts);
       return result.rate;
     } catch (error) {
-      console.warn('Error calculating flag pull success rate:', error);
+      this.logger.warn('Error calculating flag pull success rate:', error);
       return attempts > 0 ? (successes / attempts) * 100 : 0;
     }
   }

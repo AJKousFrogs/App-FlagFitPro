@@ -1,32 +1,7 @@
-/* eslint-disable no-console */
 // Notification Panel Loader - FlagFit Pro
 // Dynamically loads the notification panel component into pages that need it
 
-const NOTIFICATION_PANEL_HTML = `
-<div id="notification-panel" class="notification-panel">
-  <div class="notification-header">
-    <h3>
-      <i data-lucide="bell"></i>
-      Notifications
-    </h3>
-    <button
-      onclick="toggleNotifications()"
-      aria-label="Close notifications"
-    >
-      <i data-lucide="x"></i>
-    </button>
-  </div>
-  <div id="notification-list" class="notification-list">
-    <!-- Notifications will be populated by JavaScript -->
-  </div>
-  <div class="notification-actions">
-    <button class="notification-action-btn" onclick="markAllAsRead()">
-      <i data-lucide="check-circle"></i>
-      Mark all as read
-    </button>
-  </div>
-</div>
-`;
+import { logger } from '../../logger.js';
 
 /**
  * Load notification panel into the page
@@ -43,8 +18,60 @@ export async function loadNotificationPanel() {
     return; // Already loaded
   }
 
-  // Insert notification panel HTML
-  container.innerHTML = NOTIFICATION_PANEL_HTML;
+  // Create notification panel using DOM methods instead of innerHTML
+  const panel = document.createElement("div");
+  panel.id = "notification-panel";
+  panel.className = "notification-panel";
+  
+  const header = document.createElement("div");
+  header.className = "notification-header";
+  
+  const heading = document.createElement("h3");
+  const bellIcon = document.createElement("i");
+  bellIcon.setAttribute("data-lucide", "bell");
+  heading.appendChild(bellIcon);
+  heading.appendChild(document.createTextNode(" Notifications"));
+  
+  const closeBtn = document.createElement("button");
+  closeBtn.setAttribute("aria-label", "Close notifications");
+  closeBtn.addEventListener("click", () => {
+    if (typeof toggleNotifications === "function") {
+      toggleNotifications();
+    }
+  });
+  const closeIcon = document.createElement("i");
+  closeIcon.setAttribute("data-lucide", "x");
+  closeBtn.appendChild(closeIcon);
+  
+  header.appendChild(heading);
+  header.appendChild(closeBtn);
+  
+  const notificationList = document.createElement("div");
+  notificationList.id = "notification-list";
+  notificationList.className = "notification-list";
+  
+  const actions = document.createElement("div");
+  actions.className = "notification-actions";
+  
+  const markAllBtn = document.createElement("button");
+  markAllBtn.className = "notification-action-btn";
+  markAllBtn.addEventListener("click", () => {
+    if (typeof markAllAsRead === "function") {
+      markAllAsRead();
+    }
+  });
+  const checkIcon = document.createElement("i");
+  checkIcon.setAttribute("data-lucide", "check-circle");
+  markAllBtn.appendChild(checkIcon);
+  markAllBtn.appendChild(document.createTextNode(" Mark all as read"));
+  
+  actions.appendChild(markAllBtn);
+  
+  panel.appendChild(header);
+  panel.appendChild(notificationList);
+  panel.appendChild(actions);
+  
+  container.appendChild(panel);
 
   // Initialize Lucide icons
   if (typeof lucide !== 'undefined') {
@@ -60,7 +87,7 @@ export async function loadNotificationPanel() {
       if (window.notificationStore || window.dashboardPage?.notificationStore) {
         const store = window.notificationStore || window.dashboardPage.notificationStore;
         enhancedNotificationCenter.init(store);
-        console.log('[NotificationPanel] Enhanced notification center loaded');
+        logger.info('[NotificationPanel] Enhanced notification center loaded');
       } else {
         // Retry after a short delay
         setTimeout(waitForStore, 100);
@@ -69,7 +96,7 @@ export async function loadNotificationPanel() {
     
     waitForStore();
   } catch (error) {
-    console.warn('[NotificationPanel] Enhanced notification center not available:', error);
+    logger.warn('[NotificationPanel] Enhanced notification center not available:', error);
     // Continue with basic functionality
   }
 }

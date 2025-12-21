@@ -28,6 +28,7 @@ import {
   WeatherService,
   WeatherData,
 } from "../../../core/services/weather.service";
+import { LoggerService } from "../../../core/services/logger.service";
 import { AuthService } from "../../../core/services/auth.service";
 
 interface SessionTypeOption {
@@ -348,6 +349,7 @@ export class SmartTrainingFormComponent implements OnInit {
   private weatherService = inject(WeatherService);
   private authService = inject(AuthService);
   private messageService = inject(MessageService);
+  private logger = inject(LoggerService);
 
   aiSuggestions = signal<TrainingSuggestion[]>([]);
   weatherData = signal<WeatherData | null>(null);
@@ -442,7 +444,7 @@ export class SmartTrainingFormComponent implements OnInit {
           this.aiSuggestions.set(suggestions);
         },
         error: (error) => {
-          console.error("Error loading AI suggestions:", error);
+          this.logger.error("Error loading AI suggestions:", error);
         },
       });
   }
@@ -453,7 +455,7 @@ export class SmartTrainingFormComponent implements OnInit {
         this.weatherData.set(weather);
       },
       error: (error) => {
-        console.error("Error loading weather data:", error);
+        this.logger.error("Error loading weather data:", error);
       },
     });
   }
@@ -514,7 +516,7 @@ export class SmartTrainingFormComponent implements OnInit {
   onSessionTypeChange(event: any) {
     // Additional logic when session type changes
     const selectedType = event.value;
-    console.log("Session type changed to:", selectedType);
+    this.logger.debug("Session type changed to:", selectedType);
   }
 
   applySuggestion(suggestion: TrainingSuggestion) {
@@ -535,7 +537,7 @@ export class SmartTrainingFormComponent implements OnInit {
   onSubmit() {
     if (this.trainingForm.valid) {
       const formValue = this.trainingForm.value;
-      console.log("Creating training session:", formValue);
+      this.logger.debug("Creating training session:", formValue);
       // TODO: Submit to API
       this.messageService.add({
         severity: "success",

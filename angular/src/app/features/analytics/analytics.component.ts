@@ -32,6 +32,7 @@ import {
 import { AuthService } from "../../core/services/auth.service";
 import { TrainingStatsCalculationService } from "../../core/services/training-stats-calculation.service";
 import { TrainingDataService } from "../../core/services/training-data.service";
+import { LoggerService } from "../../core/services/logger.service";
 
 interface Metric {
   icon: string;
@@ -910,6 +911,7 @@ export class AnalyticsComponent implements OnInit {
   private authService = inject(AuthService);
   private trainingStatsService = inject(TrainingStatsCalculationService);
   private trainingDataService = inject(TrainingDataService);
+  private logger = inject(LoggerService);
 
   metrics = signal<Metric[]>([]);
   performanceChartData = signal<any>(null);
@@ -999,7 +1001,7 @@ export class AnalyticsComponent implements OnInit {
         }
       },
       error: (error) => {
-        console.error("Error loading training statistics:", error);
+        this.logger.error("Error loading training statistics:", error);
       },
     });
 
@@ -1010,7 +1012,7 @@ export class AnalyticsComponent implements OnInit {
         this.acwrData.set(acwr);
       },
       error: (error) => {
-        console.error("Error loading training sessions for ACWR:", error);
+        this.logger.error("Error loading training sessions for ACWR:", error);
       },
     });
   }
@@ -1025,7 +1027,7 @@ export class AnalyticsComponent implements OnInit {
         this.playerGameStats.set(games);
       },
       error: (error) => {
-        console.error("Error loading player game stats:", error);
+        this.logger.error("Error loading player game stats:", error);
       },
     });
 
@@ -1038,7 +1040,7 @@ export class AnalyticsComponent implements OnInit {
           this.playerSeasonStats.set(stats);
         },
         error: (error) => {
-          console.error("Error loading season stats:", error);
+          this.logger.error("Error loading season stats:", error);
         },
       });
 
@@ -1050,7 +1052,7 @@ export class AnalyticsComponent implements OnInit {
           this.playerMultiSeasonStats.set(stats);
         },
         error: (error) => {
-          console.error("Error loading multi-season stats:", error);
+          this.logger.error("Error loading multi-season stats:", error);
         },
       });
   }

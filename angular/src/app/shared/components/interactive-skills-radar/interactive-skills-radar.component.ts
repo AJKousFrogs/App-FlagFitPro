@@ -11,6 +11,7 @@ import { ProgressBarModule } from "primeng/progressbar";
 import { ButtonModule } from "primeng/button";
 import { DEFAULT_CHART_OPTIONS } from "../../config/chart.config";
 import { ApiService } from "../../../core/services/api.service";
+import { LoggerService } from '../../../core/services/logger.service';
 
 export interface SubSkill {
   name: string;
@@ -147,6 +148,7 @@ export interface SkillData {
 })
 export class InteractiveSkillsRadarComponent {
   private apiService = inject(ApiService);
+  private logger = inject(LoggerService);
 
   selectedSkill = signal<SkillData | null>(null);
 
@@ -279,7 +281,7 @@ export class InteractiveSkillsRadarComponent {
 
   startSkillDrill(subSkill: SubSkill): void {
     // TODO: Implement skill drill functionality
-    console.log(`Starting drill for: ${subSkill.name}`);
+    this.logger.debug(`Starting drill for: ${subSkill.name}`);
     // This could navigate to a training page or open a modal
   }
 

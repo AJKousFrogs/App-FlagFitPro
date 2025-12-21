@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /**
  * Schedule Builder Modal Component
  * Specialized modal for building custom training schedules
@@ -8,6 +7,8 @@
 import Modal from "./modal.js";
 import { scheduleFileParser } from "../services/scheduleFileParser.js";
 import { storageService } from "../services/storage-service-unified.js";
+import { setSafeContent } from "../utils/shared.js";
+import { logger } from "../../logger.js";
 
 class ScheduleBuilderModal extends Modal {
   constructor(options = {}) {
@@ -483,16 +484,14 @@ class ScheduleBuilderModal extends Modal {
     if (prevBtn) {
       prevBtn.addEventListener("click", () => {
         // TODO: Implement month navigation
-        // eslint-disable-next-line no-console
-        console.log("Previous month");
+        logger.debug("Previous month");
       });
     }
     
     if (nextBtn) {
       nextBtn.addEventListener("click", () => {
         // TODO: Implement month navigation
-        // eslint-disable-next-line no-console
-        console.log("Next month");
+        logger.debug("Next month");
       });
     }
   }
@@ -511,14 +510,22 @@ class ScheduleBuilderModal extends Modal {
         if (this.selectedGameDays.has(date)) {
           dayEl.classList.add("selected");
           if (!dayEl.querySelector("i[data-lucide='check']")) {
-            dayEl.innerHTML = `${dayEl.getAttribute("data-day")} <i data-lucide="check" style="width: 14px; height: 14px;"></i>`;
+            // Use DOM methods instead of innerHTML
+            const dayText = dayEl.getAttribute("data-day");
+            dayEl.textContent = "";
+            dayEl.appendChild(document.createTextNode(dayText + " "));
+            const checkIcon = document.createElement("i");
+            checkIcon.setAttribute("data-lucide", "check");
+            checkIcon.style.cssText = "width: 14px; height: 14px;";
+            dayEl.appendChild(checkIcon);
             if (typeof lucide !== "undefined") {
               lucide.createIcons();
             }
           }
         } else {
           dayEl.classList.remove("selected");
-          dayEl.innerHTML = dayEl.getAttribute("data-day");
+          // Use textContent instead of innerHTML for plain text
+          dayEl.textContent = dayEl.getAttribute("data-day");
         }
       }
     });
@@ -629,7 +636,8 @@ class ScheduleBuilderModal extends Modal {
         }
 
         previewHTML += "</ul></div>";
-        uploadPreview.innerHTML = previewHTML;
+        // Use setSafeContent to sanitize HTML before insertion
+        setSafeContent(uploadPreview, previewHTML, true, true);
       }
 
       // Update selected game days from uploaded schedule
@@ -643,14 +651,15 @@ class ScheduleBuilderModal extends Modal {
       }
 
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error("Error parsing file:", error);
+      logger.error("Error parsing file:", error);
       fileName.textContent = `Error processing ${file.name}`;
       fileStats.textContent = error.message || "Invalid file format";
       fileStats.style.color = "var(--color-error, #ef4444)";
       
       if (uploadPreview) {
-        uploadPreview.innerHTML = `<div style='color: var(--color-error, #ef4444); margin-top: var(--space-2);'>${error.message}</div>`;
+        // Use setSafeContent to sanitize error message before insertion
+        const errorHtml = `<div style='color: var(--color-error, #ef4444); margin-top: var(--space-2);'>${error.message}</div>`;
+        setSafeContent(uploadPreview, errorHtml, true, true);
       }
     }
   }
@@ -724,8 +733,18 @@ class ScheduleBuilderModal extends Modal {
     const successMsg = document.createElement("div");
     successMsg.style.cssText =
       "position: fixed; top: 20px; right: 20px; background: var(--color-success); color: white; padding: 1rem 1.5rem; border-radius: 8px; box-shadow: var(--shadow-lg); z-index: 9999;";
-    successMsg.innerHTML =
-      '<i data-lucide="check-circle" style="width: 20px; height: 20px; display: inline-block; vertical-align: middle; margin-right: 8px;"></i> Schedule saved successfully!';
+    // Use DOM methods instead of innerHTML
+    const checkIcon = document.createElement("i");
+    checkIcon.setAttribute("data-lucide", "check-circle");
+    checkIcon.style.cssText = "width: 20px; height: 20px; display: inline-block; vertical-align: middle; margin-right: 8px;";
+    const successText = document.createTextNode(" Schedule saved successfully!");
+    successMsg.appendChild(checkIcon);
+    successMsg.appendChild(successText);
+    
+    // Initialize Lucide icons
+    if (typeof lucide !== "undefined") {
+      lucide.createIcons(successMsg);
+    }
     document.body.appendChild(successMsg);
 
     if (typeof lucide !== "undefined") {

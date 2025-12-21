@@ -403,5 +403,4 @@ if (typeof window !== 'undefined') {
 
 export default cacheService;
 
-// eslint-disable-next-line no-console
-console.log('[Cache] Cache service loaded');
+logger.info('[Cache] Cache service loaded');

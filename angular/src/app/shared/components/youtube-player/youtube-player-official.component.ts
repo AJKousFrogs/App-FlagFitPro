@@ -10,6 +10,7 @@ import { CommonModule } from '@angular/common';
 import { YouTubePlayerModule } from '@angular/youtube-player';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
+import { LoggerService } from '../../../core/services/logger.service';
 
 /**
  * Angular 21 Official YouTube Player Component
@@ -111,6 +112,7 @@ export class YoutubePlayerOfficialComponent implements OnInit, OnDestroy {
   videoId = input.required<string>();
   width = input<number>(640);
   height = input<number>(360);
+  private logger = inject(LoggerService);
   startSeconds = input<number>(0);
   endSeconds = input<number>(0);
   showControls = input<boolean>(true);
@@ -152,7 +154,7 @@ export class YoutubePlayerOfficialComponent implements OnInit, OnDestroy {
   }
 
   onError(event: YT.OnErrorEvent): void {
-    console.error('YouTube Player Error:', event);
+    this.logger.error('YouTube Player Error:', event);
     this.playerState.set('ERROR');
   }
 

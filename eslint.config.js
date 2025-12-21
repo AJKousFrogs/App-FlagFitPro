@@ -146,12 +146,12 @@ export default [
       "no-unsanitized/method": "off",              // Would need eslint-plugin-no-unsanitized
       "no-unsanitized/property": "off",            // Would need eslint-plugin-no-unsanitized
 
-      // Warn about innerHTML usage (XSS risk)
+      // ERROR on innerHTML usage (XSS risk) - Use setSafeContent() or DOM methods instead
       "no-restricted-syntax": [
-        "warn",
+        "error",
         {
           selector: "MemberExpression[property.name='innerHTML']",
-          message: "Avoid innerHTML - use textContent or DOMPurify.sanitize() to prevent XSS attacks"
+          message: "innerHTML is forbidden - use setSafeContent(element, content, isHTML, allowRichText) from utils/shared.js or DOM methods (textContent, createElement, appendChild) to prevent XSS attacks. Only exception: safe helper functions using temp container pattern."
         }
       ],
 

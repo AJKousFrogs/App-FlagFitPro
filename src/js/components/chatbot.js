@@ -290,17 +290,38 @@ class FlagFitChatbot {
     welcomeContent.className = "message-content";
     const welcomeText = document.createElement("div");
     welcomeText.className = "message-text";
-    welcomeText.innerHTML = `👋 Hello! I'm your FlagFit AI Assistant. I can help you with:
-<ul style="margin: 8px 0 0 20px; padding-left: 0;">
-  <li>Sports psychology & mental training</li>
-  <li>Nutrition & supplements</li>
-  <li>Speed & agility development</li>
-  <li>Injury prevention & treatment</li>
-  <li>Recovery strategies</li>
-  <li>Training programs</li>
-</ul>
-<br>
-What would you like to know?`;
+    
+    // Create welcome message using DOM methods instead of innerHTML
+    const welcomeGreeting = document.createTextNode("👋 Hello! I'm your FlagFit AI Assistant. I can help you with:");
+    welcomeText.appendChild(welcomeGreeting);
+    
+    const welcomeList = document.createElement("ul");
+    welcomeList.style.margin = "8px 0 0 20px";
+    welcomeList.style.paddingLeft = "0";
+    
+    const topics = [
+      "Sports psychology & mental training",
+      "Nutrition & supplements",
+      "Speed & agility development",
+      "Injury prevention & treatment",
+      "Recovery strategies",
+      "Training programs"
+    ];
+    
+    topics.forEach(topic => {
+      const listItem = document.createElement("li");
+      listItem.textContent = topic;
+      welcomeList.appendChild(listItem);
+    });
+    
+    welcomeText.appendChild(welcomeList);
+    
+    const br = document.createElement("br");
+    welcomeText.appendChild(br);
+    
+    const questionText = document.createTextNode("What would you like to know?");
+    welcomeText.appendChild(questionText);
+    
     welcomeContent.appendChild(welcomeText);
     welcomeMessage.appendChild(welcomeAvatar);
     welcomeMessage.appendChild(welcomeContent);
@@ -711,17 +732,38 @@ What would you like to know?`;
       welcomeContent.className = "message-content";
       const welcomeText = document.createElement("div");
       welcomeText.className = "message-text";
-      welcomeText.innerHTML = `👋 Hello! I'm your FlagFit AI Assistant. I can help you with:
-<ul style="margin: 8px 0 0 20px; padding-left: 0;">
-  <li>Sports psychology & mental training</li>
-  <li>Nutrition & supplements</li>
-  <li>Speed & agility development</li>
-  <li>Injury prevention & treatment</li>
-  <li>Recovery strategies</li>
-  <li>Training programs</li>
-</ul>
-<br>
-What would you like to know?`;
+      
+      // Create welcome message using DOM methods instead of innerHTML
+      const welcomeGreeting = document.createTextNode("👋 Hello! I'm your FlagFit AI Assistant. I can help you with:");
+      welcomeText.appendChild(welcomeGreeting);
+      
+      const welcomeList = document.createElement("ul");
+      welcomeList.style.margin = "8px 0 0 20px";
+      welcomeList.style.paddingLeft = "0";
+      
+      const topics = [
+        "Sports psychology & mental training",
+        "Nutrition & supplements",
+        "Speed & agility development",
+        "Injury prevention & treatment",
+        "Recovery strategies",
+        "Training programs"
+      ];
+      
+      topics.forEach(topic => {
+        const listItem = document.createElement("li");
+        listItem.textContent = topic;
+        welcomeList.appendChild(listItem);
+      });
+      
+      welcomeText.appendChild(welcomeList);
+      
+      const br = document.createElement("br");
+      welcomeText.appendChild(br);
+      
+      const questionText = document.createTextNode("What would you like to know?");
+      welcomeText.appendChild(questionText);
+      
       welcomeContent.appendChild(welcomeText);
       welcomeMessage.appendChild(welcomeAvatar);
       welcomeMessage.appendChild(welcomeContent);
@@ -1073,9 +1115,12 @@ What would you like to know?`;
           wordIndex++;
           
           // Format and update - formatBotMessage returns HTML for formatting
+          // formatBotMessage already escapes HTML and sanitizes URLs, so content is safe
           // Use a temporary container to safely insert formatted HTML
           const temp = document.createElement('div');
-          temp.innerHTML = this.formatBotMessage(currentText);
+          const formattedHtml = this.formatBotMessage(currentText);
+          // Use setSafeContent for consistency - formatBotMessage already escaped HTML, but we sanitize for extra safety
+          setSafeContent(temp, formattedHtml, true, true);
           textElement.textContent = '';
           while (temp.firstChild) {
             textElement.appendChild(temp.firstChild);
@@ -1760,9 +1805,12 @@ What would you like to know?`;
       content.className = "message-content";
       const textEl = document.createElement("div");
       textEl.className = "message-text";
-      // formatBotMessage returns HTML for formatting - use temporary container
+      // formatBotMessage returns HTML for formatting - use setSafeContent for consistency
+      // formatBotMessage already escapes HTML and sanitizes URLs, but we sanitize for extra safety
       const temp = document.createElement('div');
-      temp.innerHTML = this.formatBotMessage(text);
+      const formattedHtml = this.formatBotMessage(text);
+      // Use setSafeContent for safe HTML insertion
+      setSafeContent(temp, formattedHtml, true, true);
       while (temp.firstChild) {
         textEl.appendChild(temp.firstChild);
       }
@@ -1796,8 +1844,12 @@ What would you like to know?`;
     formatted = formatted.replace(/^##\s+(.+)$/gm, "<h2>$1</h2>");
     formatted = formatted.replace(/^#\s+(.+)$/gm, "<h1>$1</h1>");
 
-    // Convert links [text](url)
-    formatted = formatted.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+    // Convert links [text](url) with URL sanitization
+    formatted = formatted.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, linkText, url) => {
+      // Sanitize URL to prevent javascript: and data: protocols
+      const sanitizedUrl = this.sanitizeUrl(url);
+      return `<a href="${sanitizedUrl}" target="_blank" rel="noopener noreferrer">${linkText}</a>`;
+    });
 
     // Convert blockquotes (> text)
     formatted = formatted.replace(/^>\s+(.+)$/gm, "<blockquote>$1</blockquote>");
@@ -1830,6 +1882,36 @@ What would you like to know?`;
     const div = document.createElement("div");
     div.textContent = text;
     return div.innerHTML;
+  }
+
+  /**
+   * Sanitize URL to prevent XSS via href attributes
+   * @param {string} url - URL to sanitize
+   * @returns {string} Sanitized URL or empty string if dangerous
+   */
+  sanitizeUrl(url) {
+    if (!url) {
+      return '';
+    }
+
+    const str = String(url).trim();
+
+    // Allow only safe protocols
+    const safeProtocols = /^(https?|mailto|tel|sms):/i;
+    const hasProtocol = /^[a-z][a-z0-9+.-]*:/i.test(str);
+
+    if (hasProtocol && !safeProtocols.test(str)) {
+      logger.warn('[Chatbot] Blocked unsafe URL protocol:', str.substring(0, 50));
+      return '';
+    }
+
+    // Block javascript: and data: URLs
+    if (/^(javascript|data|vbscript):/i.test(str)) {
+      logger.warn('[Chatbot] Blocked XSS URL attempt');
+      return '';
+    }
+
+    return str;
   }
 
   showTypingIndicator() {

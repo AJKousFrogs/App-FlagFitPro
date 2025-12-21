@@ -9,10 +9,12 @@ import { inject } from '@angular/core';
 import { ResolveFn } from '@angular/router';
 import { AnalyticsDataService } from '../services/data/analytics-data.service';
 import { AnalyticsViewModel } from '../view-models/analytics.view-model';
+import { LoggerService } from '../services/logger.service';
 
 export const analyticsPrefetchResolver: ResolveFn<void> = (route, state) => {
   const analyticsDataService = inject(AnalyticsDataService);
   const analyticsViewModel = inject(AnalyticsViewModel);
+  const logger = inject(LoggerService);
 
   // Prefetch analytics data
   // This runs before the component loads, improving perceived performance
@@ -23,7 +25,7 @@ export const analyticsPrefetchResolver: ResolveFn<void> = (route, state) => {
     },
     error: (err) => {
       // Silently fail - component will handle error state
-      console.warn('Analytics prefetch failed:', err);
+      logger.warn('Analytics prefetch failed:', err);
     }
   });
 

@@ -833,12 +833,22 @@ class FlagFitApplication {
     notification.id = "offline-notification";
     notification.className = "offline-notification";
     notification.setAttribute("role", "alert");
-    notification.innerHTML = `
-      <div class="offline-notification-content">
-        <span class="offline-icon">📡</span>
-        <span class="offline-message">You're currently offline. Some features may be limited.</span>
-      </div>
-    `;
+    
+    // Create notification content using DOM methods instead of innerHTML
+    const content = document.createElement("div");
+    content.className = "offline-notification-content";
+    
+    const icon = document.createElement("span");
+    icon.className = "offline-icon";
+    icon.textContent = "📡";
+    
+    const message = document.createElement("span");
+    message.className = "offline-message";
+    message.textContent = "You're currently offline. Some features may be limited.";
+    
+    content.appendChild(icon);
+    content.appendChild(message);
+    notification.appendChild(content);
 
     // Add styles if not already present
     if (!document.getElementById("offline-notification-styles")) {
@@ -884,12 +894,22 @@ class FlagFitApplication {
     // Show service worker update notification
     const notification = document.createElement("div");
     notification.className = "update-notification";
-    notification.innerHTML = `
-      <div class="update-notification-content">
-        <span>New version available!</span>
-        <button onclick="window.location.reload()" class="update-button">Update Now</button>
-      </div>
-    `;
+    
+    // Create notification content using DOM methods instead of innerHTML
+    const content = document.createElement("div");
+    content.className = "update-notification-content";
+    
+    const message = document.createElement("span");
+    message.textContent = "New version available!";
+    
+    const updateButton = document.createElement("button");
+    updateButton.className = "update-button";
+    updateButton.textContent = "Update Now";
+    updateButton.addEventListener("click", () => window.location.reload());
+    
+    content.appendChild(message);
+    content.appendChild(updateButton);
+    notification.appendChild(content);
 
     // Add styles
     if (!document.getElementById("update-notification-styles")) {
@@ -1039,13 +1059,28 @@ class FlagFitApplication {
     const notification = document.createElement("div");
     notification.className = "error-notification";
     notification.setAttribute("role", "alert");
-    notification.innerHTML = `
-      <div class="error-notification-content">
-        <span class="error-icon">⚠️</span>
-        <span class="error-message">${message}</span>
-        <button class="error-close" onclick="this.parentElement.parentElement.remove()">×</button>
-      </div>
-    `;
+    
+    // Create notification content using DOM methods instead of innerHTML
+    const content = document.createElement("div");
+    content.className = "error-notification-content";
+    
+    const icon = document.createElement("span");
+    icon.className = "error-icon";
+    icon.textContent = "⚠️";
+    
+    const messageEl = document.createElement("span");
+    messageEl.className = "error-message";
+    messageEl.textContent = message; // Safe: message is already escaped by caller or should be
+    
+    const closeButton = document.createElement("button");
+    closeButton.className = "error-close";
+    closeButton.textContent = "×";
+    closeButton.addEventListener("click", () => notification.remove());
+    
+    content.appendChild(icon);
+    content.appendChild(messageEl);
+    content.appendChild(closeButton);
+    notification.appendChild(content);
 
     // Add styles if not already present
     if (!document.getElementById("error-notification-styles")) {

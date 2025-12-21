@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /**
  * Enhanced Training Schedule Component
  * 
@@ -14,6 +13,8 @@
 
 import { realtimeManager } from '../services/supabase-client.js';
 import { aiTrainingScheduler } from '../services/aiTrainingScheduler.js';
+import { setSafeContent } from '../utils/shared.js';
+import { logger } from '../../logger.js';
 
 class EnhancedTrainingSchedule {
   constructor() {
@@ -34,7 +35,7 @@ class EnhancedTrainingSchedule {
   async init(containerId, options = {}) {
     this.container = document.getElementById(containerId);
     if (!this.container) {
-      console.warn('[TrainingSchedule] Container not found:', containerId);
+      logger.warn('[TrainingSchedule] Container not found:', containerId);
       return;
     }
 
@@ -64,7 +65,7 @@ class EnhancedTrainingSchedule {
     // Setup event listeners
     this.setupEventListeners();
 
-    console.log('[TrainingSchedule] Enhanced training schedule initialized');
+    logger.info('[TrainingSchedule] Enhanced training schedule initialized');
   }
 
   /**
@@ -98,7 +99,7 @@ class EnhancedTrainingSchedule {
         this.notifyListeners();
       }
     } catch (error) {
-      console.warn('[TrainingSchedule] Failed to load schedule:', error);
+      logger.warn('[TrainingSchedule] Failed to load schedule:', error);
     } finally {
       this.isLoading = false;
     }
@@ -116,7 +117,7 @@ class EnhancedTrainingSchedule {
 
       const userId = this.getCurrentUserId();
       if (!userId) {
-        console.debug('[TrainingSchedule] No user ID for real-time subscription - user may not be authenticated');
+        logger.debug('[TrainingSchedule] No user ID for real-time subscription - user may not be authenticated');
         return;
       }
 
@@ -133,9 +134,9 @@ class EnhancedTrainingSchedule {
       );
 
       this.realtimeSubscription = subscription;
-      console.log('[TrainingSchedule] Real-time subscription active');
+      logger.info('[TrainingSchedule] Real-time subscription active');
     } catch (error) {
-      console.error('[TrainingSchedule] Failed to setup real-time subscription:', error);
+      logger.error('[TrainingSchedule] Failed to setup real-time subscription:', error);
     }
   }
 
@@ -148,7 +149,7 @@ class EnhancedTrainingSchedule {
 
     if (!session) return;
 
-    console.log('[TrainingSchedule] Real-time update:', eventType, session);
+    logger.debug('[TrainingSchedule] Real-time update:', eventType, session);
 
     switch (eventType) {
       case 'INSERT':
@@ -173,7 +174,7 @@ class EnhancedTrainingSchedule {
   async loadAIRecommendations() {
     try {
       if (!aiTrainingScheduler) {
-        console.warn('[TrainingSchedule] AI scheduler not available');
+        logger.warn('[TrainingSchedule] AI scheduler not available');
         return;
       }
 
@@ -185,7 +186,7 @@ class EnhancedTrainingSchedule {
       this.aiRecommendations = recommendations || [];
       this.notifyListeners();
     } catch (error) {
-      console.warn('[TrainingSchedule] Failed to load AI recommendations:', error);
+      logger.warn('[TrainingSchedule] Failed to load AI recommendations:', error);
     }
   }
 
@@ -333,7 +334,7 @@ class EnhancedTrainingSchedule {
         window.storageService.set('trainingSchedule', this.schedule, { usePrefix: false });
       }
     } catch (error) {
-      console.warn('[TrainingSchedule] Failed to save schedule:', error);
+      logger.warn('[TrainingSchedule] Failed to save schedule:', error);
     }
   }
 
@@ -363,7 +364,7 @@ class EnhancedTrainingSchedule {
       }
       return null;
     } catch (error) {
-      console.warn('[TrainingSchedule] Failed to get user ID:', error);
+      logger.warn('[TrainingSchedule] Failed to get user ID:', error);
       return null;
     }
   }
@@ -375,19 +376,27 @@ class EnhancedTrainingSchedule {
     if (!this.container) return;
 
     if (this.isLoading) {
-      this.container.innerHTML = this.renderLoading();
+      // Use setSafeContent to sanitize HTML before insertion
+      const loadingHtml = this.renderLoading();
+      setSafeContent(this.container, loadingHtml, true, true);
       return;
     }
 
     switch (this.viewMode) {
       case 'week':
-        this.container.innerHTML = this.renderWeekView();
+        // Use setSafeContent to sanitize HTML before insertion
+        const weekHtml = this.renderWeekView();
+        setSafeContent(this.container, weekHtml, true, true);
         break;
       case 'month':
-        this.container.innerHTML = this.renderMonthView();
+        // Use setSafeContent to sanitize HTML before insertion
+        const monthHtml = this.renderMonthView();
+        setSafeContent(this.container, monthHtml, true, true);
         break;
       case 'timeline':
-        this.container.innerHTML = this.renderTimelineView();
+        // Use setSafeContent to sanitize HTML before insertion
+        const timelineHtml = this.renderTimelineView();
+        setSafeContent(this.container, timelineHtml, true, true);
         break;
     }
 
@@ -620,7 +629,7 @@ class EnhancedTrainingSchedule {
    */
   setupDragAndDrop() {
     // TODO: Implement drag and drop
-    console.log('[TrainingSchedule] Drag and drop setup');
+    logger.debug('[TrainingSchedule] Drag and drop setup');
   }
 
   /**
@@ -665,7 +674,7 @@ class EnhancedTrainingSchedule {
           aiRecommendations: [...this.aiRecommendations]
         });
       } catch (error) {
-        console.error('[TrainingSchedule] Listener error:', error);
+        logger.error('[TrainingSchedule] Listener error:', error);
       }
     });
   }

@@ -1,18 +1,30 @@
 /* ================================================================
    FLAGFIT PRO - COMPONENT STYLES
-   DEPRECATED: This file contains duplicate styles.
+   ⚠️ FULLY DEPRECATED - DO NOT USE ⚠️
    
-   IMPORTANT: For buttons and cards, use standardized-components.scss instead.
-   This file is kept for additional components (forms, navigation, modals, etc.)
-   that are not yet in standardized-components.scss.
+   This file has been completely migrated to standardized-components.scss.
+   All styles (buttons, cards, forms, navigation, modals, tables, badges,
+   alerts, loading states, and utilities) are now in standardized-components.scss.
    
-   MIGRATION PLAN:
-   - Buttons: Use standardized-components.scss (already migrated)
-   - Cards: Use standardized-components.scss (already migrated)
-   - Forms, Navigation, Modals: Keep here until migrated
+   This file is kept temporarily for reference only and will be removed
+   in a future release. DO NOT import or use this file.
+   
+   MIGRATION STATUS: ✅ COMPLETE
+   - Buttons: ✅ Migrated
+   - Cards: ✅ Migrated
+   - Forms: ✅ Migrated
+   - Navigation: ✅ Migrated
+   - Modals: ✅ Migrated
+   - Tables: ✅ Migrated
+   - Badges/Tags: ✅ Migrated
+   - Alerts/Toasts: ✅ Migrated
+   - Loading States: ✅ Migrated
+   - Utilities: ✅ Migrated
+   
+   USE INSTEAD: standardized-components.scss
    ================================================================ */
 
-@import './design-tokens.scss';
+@import './design-system-tokens.scss';
 
 /* ================================================================
    BUTTONS - DEPRECATED

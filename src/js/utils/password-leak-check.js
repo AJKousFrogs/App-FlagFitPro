@@ -3,6 +3,8 @@
  * Checks passwords against Have I Been Pwned database via Supabase Edge Function
  */
 
+import { logger } from '../../logger.js';
+
 /**
  * Check if a password has been leaked using the Supabase Edge Function
  * @param {string} password - Password to check
@@ -19,7 +21,7 @@ export async function checkPasswordLeaked(password, supabaseUrl, supabaseToken =
   }
 
   if (!supabaseUrl) {
-    console.warn('[Password Leak Check] Supabase URL not provided, skipping check');
+    logger.warn('[Password Leak Check] Supabase URL not provided, skipping check');
     return {
       leaked: false,
       message: 'Password leak check unavailable',
@@ -49,7 +51,7 @@ export async function checkPasswordLeaked(password, supabaseUrl, supabaseToken =
 
     if (!response.ok) {
       // If function is unavailable or returns error, fail open (allow password)
-      console.warn('[Password Leak Check] Function unavailable:', response.status);
+      logger.warn('[Password Leak Check] Function unavailable:', response.status);
       return {
         leaked: false,
         message: 'Password leak check unavailable',
@@ -65,7 +67,7 @@ export async function checkPasswordLeaked(password, supabaseUrl, supabaseToken =
     };
   } catch (error) {
     // Fail open - if there's an error, allow password (but log it)
-    console.error('[Password Leak Check] Error:', error);
+    logger.error('[Password Leak Check] Error:', error);
     return {
       leaked: false,
       message: 'Password leak check unavailable',

@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /**
  * Enhanced Settings Component
  * 
@@ -14,6 +13,7 @@
 
 import { realtimeManager } from '../services/supabase-client.js';
 import { storageService } from '../services/storage-service-unified.js';
+import { logger } from '../../logger.js';
 
 class EnhancedSettings {
   constructor() {
@@ -71,7 +71,7 @@ class EnhancedSettings {
     // Continue initialization even without user ID (for guest mode or when auth is loading)
     // The component can still work with localStorage-only settings
     if (!this.currentUserId) {
-      console.warn('[Settings] No user ID found - continuing with local settings only');
+      logger.warn('[Settings] No user ID found - continuing with local settings only');
     }
 
     // Load initial settings
@@ -95,7 +95,7 @@ class EnhancedSettings {
     // Setup change tracking
     this.setupChangeTracking();
 
-    console.log('[Settings] Enhanced settings initialized', this.currentUserId ? `(User: ${this.currentUserId})` : '(Local mode)');
+    logger.info('[Settings] Enhanced settings initialized', this.currentUserId ? `(User: ${this.currentUserId})` : '(Local mode)');
   }
 
   /**
@@ -150,7 +150,7 @@ class EnhancedSettings {
 
       return null;
     } catch (error) {
-      console.warn('[Settings] Failed to get user ID:', error);
+      logger.warn('[Settings] Failed to get user ID:', error);
       return null;
     }
   }
@@ -201,7 +201,7 @@ class EnhancedSettings {
       }
     } catch (error) {
       // Supabase not available or error
-      console.debug('[Settings] Supabase auth check failed:', error);
+      logger.debug('[Settings] Supabase auth check failed:', error);
     }
 
     // Try importing supabase-client if available
@@ -216,7 +216,7 @@ class EnhancedSettings {
       }
     } catch (error) {
       // Module not available
-      console.debug('[Settings] Supabase client import failed:', error);
+      logger.debug('[Settings] Supabase client import failed:', error);
     }
 
     return null;
@@ -240,7 +240,7 @@ class EnhancedSettings {
         return;
       }
     } catch (error) {
-      console.warn('[Settings] Failed to load from API, using localStorage:', error);
+      logger.warn('[Settings] Failed to load from API, using localStorage:', error);
     }
 
     // Fallback to localStorage
@@ -438,9 +438,9 @@ class EnhancedSettings {
         }
       );
 
-      console.log('[Settings] Real-time subscription active');
+      logger.info('[Settings] Real-time subscription active');
     } catch (error) {
-      console.warn('[Settings] Failed to setup real-time subscription:', error);
+      logger.warn('[Settings] Failed to setup real-time subscription:', error);
     }
   }
 
@@ -453,7 +453,7 @@ class EnhancedSettings {
 
     if (!settings || settings.user_id !== this.currentUserId) return;
 
-    console.log('[Settings] Real-time update:', eventType, settings);
+    logger.debug('[Settings] Real-time update:', eventType, settings);
 
     // Merge updated settings
     if (settings.settings) {
@@ -878,7 +878,7 @@ class EnhancedSettings {
         throw new Error('Failed to save settings');
       }
     } catch (error) {
-      console.error('[Settings] Failed to save settings:', error);
+      logger.error('[Settings] Failed to save settings:', error);
       
       // Save to localStorage as fallback
       storageService.set('flagfit_settings', {
@@ -950,7 +950,7 @@ class EnhancedSettings {
       
       return await response.json();
     } catch (error) {
-      console.error('[Settings] API call failed:', error);
+      logger.error('[Settings] API call failed:', error);
       throw error;
     }
   }
@@ -962,7 +962,7 @@ class EnhancedSettings {
     if (window.authManager) {
       window.authManager.showSuccess(message);
     } else {
-      console.log('[Settings]', message);
+      logger.info('[Settings]', message);
     }
   }
 
@@ -973,7 +973,7 @@ class EnhancedSettings {
     if (window.authManager && typeof window.authManager.showError === 'function') {
       window.authManager.showError(message);
     } else {
-      console.error('[Settings]', message);
+      logger.error('[Settings]', message);
       
       // Show a visible error notification if authManager is not available
       this.showErrorNotification(message);
@@ -990,18 +990,33 @@ class EnhancedSettings {
       existing.remove();
     }
 
-    // Create error notification element
+    // Create error notification element using DOM methods instead of innerHTML
     const notification = document.createElement('div');
     notification.id = 'settings-error-notification';
     notification.className = 'settings-error-notification';
     notification.setAttribute('role', 'alert');
-    notification.innerHTML = `
-      <div class="settings-error-content">
-        <span class="settings-error-icon">⚠️</span>
-        <span class="settings-error-message">${message}</span>
-        <button class="settings-error-close" onclick="this.closest('.settings-error-notification').remove()" aria-label="Close">×</button>
-      </div>
-    `;
+    
+    const content = document.createElement('div');
+    content.className = 'settings-error-content';
+    
+    const icon = document.createElement('span');
+    icon.className = 'settings-error-icon';
+    icon.textContent = '⚠️';
+    
+    const messageEl = document.createElement('span');
+    messageEl.className = 'settings-error-message';
+    messageEl.textContent = message; // Safe: message should be escaped by caller
+    
+    const closeButton = document.createElement('button');
+    closeButton.className = 'settings-error-close';
+    closeButton.setAttribute('aria-label', 'Close');
+    closeButton.textContent = '×';
+    closeButton.addEventListener('click', () => notification.remove());
+    
+    content.appendChild(icon);
+    content.appendChild(messageEl);
+    content.appendChild(closeButton);
+    notification.appendChild(content);
 
     // Add styles if not already present
     if (!document.getElementById('settings-error-notification-styles')) {
@@ -1102,7 +1117,7 @@ class EnhancedSettings {
           hasUnsavedChanges: this.hasUnsavedChanges
         });
       } catch (error) {
-        console.error('[Settings] Listener error:', error);
+        logger.error('[Settings] Listener error:', error);
       }
     });
   }
@@ -1122,7 +1137,7 @@ class EnhancedSettings {
     }
 
     this.listeners.clear();
-    console.log('[Settings] Enhanced settings destroyed');
+    logger.info('[Settings] Enhanced settings destroyed');
   }
 }
 

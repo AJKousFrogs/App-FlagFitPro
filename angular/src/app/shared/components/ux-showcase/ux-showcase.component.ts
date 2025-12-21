@@ -6,6 +6,7 @@ import { SwipeTableComponent } from '../swipe-table/swipe-table.component';
 import { TrainingHeatmapComponent } from '../training-heatmap/training-heatmap.component';
 import { CardModule } from 'primeng/card';
 import { Tabs } from 'primeng/tabview';
+import { LoggerService } from '../../../core/services/logger.service';
 
 /**
  * Showcase component demonstrating all advanced UX/UI components
@@ -78,6 +79,7 @@ import { Tabs } from 'primeng/tabview';
   ],
 })
 export class UxShowcaseComponent {
+  private logger = inject(LoggerService);
   // Example data for swipe table
   tableData = signal([
     {
@@ -107,12 +109,12 @@ export class UxShowcaseComponent {
   ]);
 
   handleEdit(row: any) {
-    console.log('Edit row:', row);
+    this.logger.debug('Edit row:', row);
     // Implement edit logic
   }
 
   handleDelete(row: any) {
-    console.log('Delete row:', row);
+    this.logger.debug('Delete row:', row);
     // Implement delete logic
   }
 }

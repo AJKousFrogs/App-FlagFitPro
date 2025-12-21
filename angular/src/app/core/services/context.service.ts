@@ -2,6 +2,7 @@ import { Injectable, computed, signal, inject } from "@angular/core";
 import { Router, NavigationEnd } from "@angular/router";
 import { filter, map } from "rxjs/operators";
 import { toSignal } from "@angular/core/rxjs-interop";
+import { LoggerService } from "./logger.service";
 
 export interface QuickAction {
   label: string;
@@ -30,6 +31,7 @@ export interface BreadcrumbItem {
 })
 export class ContextService {
   private router = inject(Router);
+  private logger = inject(LoggerService);
 
   // Track current route
   private currentRoute$ = this.router.events.pipe(
@@ -350,37 +352,37 @@ export class ContextService {
 
   // Action handlers
   private exportReport(): void {
-    console.log("Export report action");
+    this.logger.debug("Export report action");
     // Implement export logic
   }
 
   private comparePeriods(): void {
-    console.log("Compare periods action");
+    this.logger.debug("Compare periods action");
     // Implement comparison logic
   }
 
   private shareDashboard(): void {
-    console.log("Share dashboard action");
+    this.logger.debug("Share dashboard action");
     // Implement sharing logic
   }
 
   private importCSV(): void {
-    console.log("Import CSV action");
+    this.logger.debug("Import CSV action");
     // Implement import logic
   }
 
   private exportRoster(): void {
-    console.log("Export roster action");
+    this.logger.debug("Export roster action");
     // Implement export logic
   }
 
   private setBenchmark(): void {
-    console.log("Set benchmark action");
+    this.logger.debug("Set benchmark action");
     // Implement benchmark logic
   }
 
   private setReminder(): void {
-    console.log("Set reminder action");
+    this.logger.debug("Set reminder action");
     // Implement reminder logic
   }
 }

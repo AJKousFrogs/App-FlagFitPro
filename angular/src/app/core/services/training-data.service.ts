@@ -2,6 +2,7 @@ import { Injectable, inject } from "@angular/core";
 import { Observable, from } from "rxjs";
 import { map, catchError } from "rxjs/operators";
 import { ApiService, API_ENDPOINTS } from "./api.service";
+import { LoggerService } from "./logger.service";
 
 export interface TrainingSession {
   id?: string;
@@ -53,6 +54,7 @@ export interface TrainingSessionsOptions {
 })
 export class TrainingDataService {
   private apiService = inject(ApiService);
+  private logger = inject(LoggerService);
 
   /**
    * Get all training sessions for the current user
@@ -88,13 +90,13 @@ export class TrainingDataService {
     ).pipe(
       map((response) => {
         if (response.error) {
-          console.error("Error fetching training sessions:", response.error);
+          this.logger.error("Error fetching training sessions:", response.error);
           return [];
         }
         return response.data || [];
       }),
       catchError((error) => {
-        console.error("Error fetching training sessions:", error);
+        this.logger.error("Error fetching training sessions:", error);
         return from(Promise.resolve([]));
       })
     );
@@ -126,13 +128,13 @@ export class TrainingDataService {
     ).pipe(
       map((response) => {
         if (response.error) {
-          console.error("Error creating training session:", response.error);
+          this.logger.error("Error creating training session:", response.error);
           throw new Error(response.error);
         }
         return response.data || null;
       }),
       catchError((error) => {
-        console.error("Error creating training session:", error);
+        this.logger.error("Error creating training session:", error);
         throw error;
       })
     );
@@ -146,7 +148,7 @@ export class TrainingDataService {
     id: string,
     updates: Partial<TrainingSession>
   ): Observable<TrainingSession | null> {
-    console.warn("Update training session not yet implemented via API");
+    this.logger.warn("Update training session not yet implemented via API");
     return from(Promise.resolve(null));
   }
 
@@ -155,7 +157,7 @@ export class TrainingDataService {
    * Note: May need a DELETE endpoint - for now returns false
    */
   deleteTrainingSession(id: string): Observable<boolean> {
-    console.warn("Delete training session not yet implemented via API");
+    this.logger.warn("Delete training session not yet implemented via API");
     return from(Promise.resolve(false));
   }
 
@@ -180,7 +182,7 @@ export class TrainingDataService {
     ).pipe(
       map((response) => {
         if (response.error) {
-          console.error("Error fetching training stats:", response.error);
+          this.logger.error("Error fetching training stats:", response.error);
           return {
             total_sessions: 0,
             total_duration: 0,
@@ -222,7 +224,7 @@ export class TrainingDataService {
         };
       }),
       catchError((error) => {
-        console.error("Error fetching training stats:", error);
+        this.logger.error("Error fetching training stats:", error);
         return from(Promise.resolve({
           total_sessions: 0,
           total_duration: 0,

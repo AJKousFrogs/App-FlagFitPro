@@ -1,6 +1,7 @@
 // Coach Page JavaScript Module
 import { authManager } from "../../auth-manager.js";
 import { logger } from "../../logger.js";
+import { setSafeContent } from "../utils/shared.js";
 
 // Sample player data
 const playersData = [
@@ -108,9 +109,12 @@ coachName.textContent =
 function loadPlayers() {
   const playersGrid = document.getElementById("playersGrid");
   if (playersGrid) {
-    playersGrid.innerHTML = playersData
+    // Build players HTML (createPlayerCard returns HTML string)
+    const playersHtml = playersData
       .map((player) => createPlayerCard(player))
       .join("");
+    // Use setSafeContent to sanitize HTML before insertion
+    setSafeContent(playersGrid, playersHtml, true, true);
   }
 }
 
@@ -329,7 +333,26 @@ function showPlayerModal(mode, player = null) {
             `;
   }
 
-  modal.innerHTML = modalContent;
+  // Use setSafeContent to sanitize HTML before insertion
+  setSafeContent(modal, modalContent, true, true);
+  
+  // Replace onclick attributes with addEventListener
+  modal.querySelectorAll('[onclick]').forEach(element => {
+    const onclickAttr = element.getAttribute('onclick');
+    element.removeAttribute('onclick');
+    if (onclickAttr.includes('closest')) {
+      element.addEventListener('click', () => modal.remove());
+    } else if (onclickAttr.includes('submit')) {
+      element.addEventListener('click', (e) => {
+        e.preventDefault();
+        // Handle form submission
+        if (typeof handlePlayerFormSubmit === 'function') {
+          handlePlayerFormSubmit(e);
+        }
+      });
+    }
+  });
+  
   document.body.appendChild(modal);
 }
 
@@ -341,9 +364,11 @@ function showPlayerStatsModal(player) {
             justify-content: center; z-index: var(--z-index-modal, 1400);
         `;
 
-  modal.innerHTML = `
+  // Build modal HTML (player.name is from data, should be safe but we'll sanitize)
+  const playerNameSafe = player.name || "Player";
+  const statsHtml = `
             <div style="background: var(--dark-text-primary); padding: 2rem; border-radius: 12px; max-width: 600px; width: 90%;">
-                <h3 style="margin-bottom: 1rem; color: var(--dark-text-primary);">${player.name} - Performance Stats</h3>
+                <h3 style="margin-bottom: 1rem; color: var(--dark-text-primary);">${playerNameSafe} - Performance Stats</h3>
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 2rem;">
                     <div style="text-align: center; padding: 1rem; background: var(--dark-bg-secondary); border-radius: 8px;">
                         <div style="font-size: 1.5rem; font-weight: bold; color: var(--primary);">94%</div>
@@ -367,10 +392,19 @@ function showPlayerStatsModal(player) {
                     <p style="margin-top: 0.5rem; color: var(--dark-text-secondary);">Excellent progress in speed training. Shows leadership qualities. Recommend for advanced drills.</p>
                 </div>
                 <div style="text-align: right;">
-                    <button onclick="this.closest('div').remove()" style="padding: 0.75rem 1.5rem; background: var(--primary); color: var(--dark-text-primary); border: none; border-radius: 6px; cursor: pointer;">Close</button>
+                    <button class="close-stats-modal" style="padding: 0.75rem 1.5rem; background: var(--primary); color: var(--dark-text-primary); border: none; border-radius: 6px; cursor: pointer;">Close</button>
                 </div>
             </div>
         `;
+
+  // Use setSafeContent to sanitize HTML before insertion
+  setSafeContent(modal, statsHtml, true, true);
+  
+  // Replace onclick with addEventListener
+  const closeBtn = modal.querySelector('.close-stats-modal');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', () => modal.remove());
+  }
 
   document.body.appendChild(modal);
 }
@@ -383,7 +417,8 @@ function showAIAnalysisModal() {
             justify-content: center; z-index: var(--z-index-modal, 1400);
         `;
 
-  modal.innerHTML = `
+  // Build modal HTML (static content, safe)
+  const analysisHtml = `
             <div style="background: var(--dark-text-primary); padding: 2rem; border-radius: 12px; max-width: 700px; width: 90%;">
                 <h3 style="margin-bottom: 1rem; color: var(--dark-text-primary);"><i data-lucide="bot" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> AI Team Chemistry Analysis</h3>
                 <div style="margin-bottom: 1rem; padding: 1rem; background: var(--primary-50); border-radius: 8px; border-left: 4px solid var(--primary);">
@@ -408,10 +443,19 @@ function showAIAnalysisModal() {
                     </ul>
                 </div>
                 <div style="text-align: right;">
-                    <button onclick="this.closest('div').remove()" style="padding: 0.75rem 1.5rem; background: var(--primary); color: var(--dark-text-primary); border: none; border-radius: 6px; cursor: pointer;">Close Analysis</button>
+                    <button class="close-analysis-modal" style="padding: 0.75rem 1.5rem; background: var(--primary); color: var(--dark-text-primary); border: none; border-radius: 6px; cursor: pointer;">Close Analysis</button>
                 </div>
             </div>
         `;
+
+  // Use setSafeContent to sanitize HTML before insertion
+  setSafeContent(modal, analysisHtml, true, true);
+  
+  // Replace onclick with addEventListener
+  const closeBtn = modal.querySelector('.close-analysis-modal');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', () => modal.remove());
+  }
 
   document.body.appendChild(modal);
 }

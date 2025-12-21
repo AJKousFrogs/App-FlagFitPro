@@ -13,6 +13,7 @@ import { Tabs } from "primeng/tabs";
 import { expandCollapse } from "../../animations/app.animations";
 import { StatItem } from "../stats-grid/stats-grid.component";
 import { DEFAULT_CHART_OPTIONS } from "../../config/chart.config";
+import { LoggerService } from '../../../core/services/logger.service';
 
 export interface ProgressiveStatItem extends StatItem {
   id: string;
@@ -344,6 +345,7 @@ export class ProgressiveStatsComponent {
   // Angular 21: Use input() signal instead of @Input()
   stats = input<ProgressiveStatItem[]>([]);
   chartOptions = input<any>(DEFAULT_CHART_OPTIONS);
+  private logger = inject(LoggerService);
 
   expandedStat = signal<string | null>(null);
   showDeepDive = signal<string | null>(null);
@@ -370,7 +372,7 @@ export class ProgressiveStatsComponent {
   }
 
   setGoal(stat: ProgressiveStatItem): void {
-    console.log("Set goal for stat:", stat);
+    this.logger.debug("Set goal for stat:", stat);
     // Implement goal setting logic
     // This could open a modal or navigate to a goal setting page
   }

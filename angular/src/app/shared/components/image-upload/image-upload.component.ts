@@ -10,6 +10,7 @@ import { CommonModule } from "@angular/common";
 import { ButtonModule } from "primeng/button";
 import { ProgressBarModule } from "primeng/progressbar";
 import { MessageModule } from "primeng/message";
+import { LoggerService } from '../../../core/services/logger.service';
 
 export interface ImageUploadResult {
   file: File;
@@ -301,6 +302,7 @@ export interface ImageUploadResult {
 })
 export class ImageUploadComponent {
   fileInput = viewChild<HTMLInputElement>("fileInput");
+  private logger = inject(LoggerService);
 
   // Configuration
   label = input<string>("Drop image here or click to browse");
@@ -501,7 +503,7 @@ export class ImageUploadComponent {
   enableCrop(): void {
     // Crop functionality would be implemented here
     // Could integrate with a library like cropperjs
-    console.log("Crop functionality not yet implemented");
+    this.logger.debug("Crop functionality not yet implemented");
   }
 
   resizeImage(): void {
@@ -513,7 +515,7 @@ export class ImageUploadComponent {
 
     // Resize functionality would be implemented here
     // Could use canvas API to resize the image
-    console.log(`Resize to ${width}x${height} not yet implemented`);
+    this.logger.debug(`Resize to ${width}x${height} not yet implemented`);
   }
 
   formatFileSize(bytes: number): string {

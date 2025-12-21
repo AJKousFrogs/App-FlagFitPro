@@ -15,6 +15,7 @@ import { TagModule } from "primeng/tag";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { ApiService } from "../../../core/services/api.service";
+import { LoggerService } from "../../../core/services/logger.service";
 
 interface AISuggestion {
   id: string;
@@ -173,6 +174,7 @@ interface AISuggestion {
 })
 export class AiTrainingSchedulerComponent implements OnInit {
   private apiService = inject(ApiService);
+  private logger = inject(LoggerService);
 
   selectedDate = signal<Date>(new Date());
   suggestions = signal<AISuggestion[]>([]);
@@ -204,7 +206,7 @@ export class AiTrainingSchedulerComponent implements OnInit {
         },
       ]);
     } catch (error) {
-      console.error("Error loading suggestions:", error);
+      this.logger.error("Error loading suggestions:", error);
     }
   }
 

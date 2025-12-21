@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /**
  * AI Training Scheduler UI Component
  * Provides interface for uploading schedules and viewing AI-generated training plans
@@ -6,6 +5,8 @@
 
 import { aiTrainingScheduler } from "../services/aiTrainingScheduler.js";
 import { playerProfileService } from "../services/playerProfileService.js";
+import { setSafeContent } from "../utils/shared.js";
+import { logger } from "../../logger.js";
 
 class AISchedulerUI {
   constructor(containerId) {
@@ -20,7 +21,7 @@ class AISchedulerUI {
    */
   async init() {
     if (!this.container) {
-      console.error("Container not found:", this.containerId || "unknown");
+      logger.error("Container not found:", this.containerId || "unknown");
       return;
     }
 
@@ -34,7 +35,8 @@ class AISchedulerUI {
    * Render the main UI
    */
   render() {
-    this.container.innerHTML = `
+    // Build main UI HTML
+    const mainHtml = `
       <div class="ai-scheduler-container">
         <div class="scheduler-header">
           <h2>🤖 AI-Powered Training Scheduler</h2>
@@ -67,6 +69,9 @@ class AISchedulerUI {
         </div>
       </div>
     `;
+
+    // Use setSafeContent to sanitize HTML before insertion
+    setSafeContent(this.container, mainHtml, true, true);
 
     this.attachEventListeners();
   }
@@ -511,7 +516,9 @@ class AISchedulerUI {
       // Update the schedule display with the rendered HTML
       const scheduleDisplayEl = document.getElementById("schedule-display");
       if (scheduleDisplayEl) {
-        scheduleDisplayEl.innerHTML = this.renderScheduleDisplay();
+        // Use setSafeContent to sanitize HTML before insertion
+        const scheduleHtml = this.renderScheduleDisplay();
+        setSafeContent(scheduleDisplayEl, scheduleHtml, true, true);
         scheduleDisplayEl.style.display = "block";
       }
 
@@ -530,7 +537,7 @@ class AISchedulerUI {
         });
       }
     } catch (error) {
-      console.error("Error generating schedule:", error);
+      logger.error("Error generating schedule:", error);
       if (statusEl) {
         statusEl.textContent = "Error generating schedule: " + error.message;
         statusEl.className = "status-message error";
@@ -569,7 +576,7 @@ class AISchedulerUI {
    */
   syncWithTrainingSchedule() {
     if (!this.currentSchedule) {
-      console.warn('No schedule generated yet');
+      logger.warn('No schedule generated yet');
       return;
     }
 
@@ -581,7 +588,7 @@ class AISchedulerUI {
       detail: this.currentSchedule
     }));
 
-    console.log('Schedule synced with training schedule page');
+    logger.debug('Schedule synced with training schedule page');
   }
 }
 

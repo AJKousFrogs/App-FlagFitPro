@@ -2,7 +2,7 @@
 // Common functions used across multiple page modules
 
 import { logger } from "../../logger.js";
-import { escapeHtml } from "./sanitize.js";
+import { escapeHtml, sanitizeRichText } from "./sanitize.js";
 
 // ================================================================
 // DOM UTILITIES
@@ -61,8 +61,7 @@ export function initializeLucideIcons(container = document, options = {}) {
       lucide.createIcons(container);
     } else if (attempts >= maxAttempts) {
       clearInterval(checkLucide);
-      // eslint-disable-next-line no-console
-      console.warn('[Lucide Icons] Lucide library not loaded after maximum attempts');
+      logger.warn('[Lucide Icons] Lucide library not loaded after maximum attempts');
     }
   }, pollInterval);
 }
@@ -70,29 +69,41 @@ export function initializeLucideIcons(container = document, options = {}) {
 export function createElementWithClass(tag, className, innerHTML = "") {
   const element = document.createElement(tag);
   if (className) {element.className = className;}
-  if (innerHTML) {element.innerHTML = innerHTML;}
+  if (innerHTML) {
+    // Use setSafeContent for safety instead of direct innerHTML
+    setSafeContent(element, innerHTML, true, true);
+  }
   return element;
 }
 
 /**
  * Safely set HTML content using DOM manipulation instead of innerHTML
- * Prevents XSS attacks by using textContent for plain text or createSafeElement for HTML
+ * Prevents XSS attacks by using textContent for plain text or sanitized HTML
  * @param {HTMLElement} element - Element to set content on
  * @param {string|HTMLElement} content - Text content or HTML element
  * @param {boolean} isHTML - Whether content contains HTML (default: false, uses textContent)
+ * @param {boolean} sanitize - Whether to sanitize HTML content (default: true)
  * @returns {void}
  */
-export function setSafeContent(element, content, isHTML = false) {
+export function setSafeContent(element, content, isHTML = false, sanitize = true) {
   if (!element) return;
   
   // Clear existing content
   element.textContent = '';
   
   if (isHTML && typeof content === 'string') {
-    // For HTML content, use a safer approach
+    let safeContent = content;
+    
+    if (sanitize) {
+      // Sanitize HTML content - removes dangerous tags and attributes
+      // This uses sanitizeRichText which allows only safe tags: b, i, em, strong, br
+      safeContent = sanitizeRichText(content);
+    }
+    
     // Create a temporary container and move nodes
+    // This approach is safer than direct innerHTML assignment
     const temp = document.createElement('div');
-    temp.innerHTML = content; // Only safe because we control the content source
+    temp.innerHTML = safeContent;
     while (temp.firstChild) {
       element.appendChild(temp.firstChild);
     }
@@ -544,43 +555,74 @@ export function throttle(func, limit) {
 
 export function showLoading(element, text = "Loading...") {
   if (!element) {return;}
-  element.innerHTML = `<span aria-hidden="true">⏳</span> ${text}`;
+  // Use setSafeContent with sanitization for safety
+  const loadingHTML = `<span aria-hidden="true">⏳</span> ${escapeHtml(text)}`;
+  setSafeContent(element, loadingHTML, true, true);
   element.disabled = true;
 }
 
 export function hideLoading(element, originalText) {
   if (!element) {return;}
-  element.innerHTML = originalText;
+  // Use setSafeContent - originalText should be plain text or sanitized HTML
+  setSafeContent(element, originalText, true, true);
   element.disabled = false;
 }
 
 export function createModal(title, content, actions = []) {
   const modal = createElementWithClass("div", "modal");
-  modal.innerHTML = `
-    <div class="modal-overlay" onclick="closeModal()"></div>
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>${title}</h2>
-        <button class="modal-close" onclick="closeModal()" aria-label="Close">
-          <i data-lucide="x" class="icon-18"></i>
-        </button>
-      </div>
-      <div class="modal-body">
-        ${content}
-      </div>
-      <div class="modal-actions">
-        ${actions
-          .map(
-            (action) => `
-          <button class="${action.class}" onclick="${action.onclick}">
-            ${action.text}
-          </button>
-        `,
-          )
-          .join("")}
-      </div>
-    </div>
-  `;
+  
+  // Create modal structure using DOM methods instead of innerHTML
+  const overlay = document.createElement("div");
+  overlay.className = "modal-overlay";
+  overlay.addEventListener("click", () => closeModal());
+  
+  const modalContent = document.createElement("div");
+  modalContent.className = "modal-content";
+  
+  const modalHeader = document.createElement("div");
+  modalHeader.className = "modal-header";
+  
+  const titleEl = document.createElement("h2");
+  titleEl.textContent = title;
+  
+  const closeBtn = document.createElement("button");
+  closeBtn.className = "modal-close";
+  closeBtn.setAttribute("aria-label", "Close");
+  closeBtn.addEventListener("click", () => closeModal());
+  
+  const closeIcon = document.createElement("i");
+  closeIcon.setAttribute("data-lucide", "x");
+  closeIcon.className = "icon-18";
+  closeBtn.appendChild(closeIcon);
+  
+  modalHeader.appendChild(titleEl);
+  modalHeader.appendChild(closeBtn);
+  
+  const modalBody = document.createElement("div");
+  modalBody.className = "modal-body";
+  // Use setSafeContent for content to prevent XSS
+  setSafeContent(modalBody, content, true, true);
+  
+  const modalActions = document.createElement("div");
+  modalActions.className = "modal-actions";
+  
+  // Create action buttons safely using DOM methods
+  actions.forEach((action) => {
+    const actionBtn = document.createElement("button");
+    actionBtn.className = action.class || "";
+    actionBtn.textContent = action.text || "";
+    if (action.onclick && typeof action.onclick === "function") {
+      actionBtn.addEventListener("click", action.onclick);
+    }
+    modalActions.appendChild(actionBtn);
+  });
+  
+  modalContent.appendChild(modalHeader);
+  modalContent.appendChild(modalBody);
+  modalContent.appendChild(modalActions);
+  
+  overlay.appendChild(modalContent);
+  modal.appendChild(overlay);
 
   document.body.appendChild(modal);
   initializeLucideIcons(modal);

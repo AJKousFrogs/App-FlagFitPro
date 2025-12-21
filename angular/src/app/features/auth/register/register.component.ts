@@ -21,6 +21,7 @@ import { ToastModule } from "primeng/toast";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { AuthService } from "../../../core/services/auth.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
+import { LoggerService } from "../../../core/services/logger.service";
 
 @Component({
   selector: "app-register",
@@ -222,6 +223,7 @@ export class RegisterComponent {
   private supabaseService = inject(SupabaseService);
   private router = inject(Router);
   private messageService = inject(MessageService);
+  private logger = inject(LoggerService);
 
   registerForm: FormGroup;
   isLoading = signal(false);
@@ -340,7 +342,7 @@ export class RegisterComponent {
       }
     } catch (leakCheckError) {
       // Fail open - if leak check fails, continue with registration
-      console.warn("Password leak check failed, continuing with registration:", leakCheckError);
+      this.logger.warn("Password leak check failed, continuing with registration:", leakCheckError);
     }
 
     this.isLoading.set(true);

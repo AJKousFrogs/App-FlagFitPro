@@ -5,18 +5,21 @@
  * Tracks preset usage and allows for preset switching.
  */
 
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, inject, signal, computed } from '@angular/core';
 import { EvidencePreset } from '../config/evidence-config';
 import {
   getPresetById,
   getDefaultPreset,
   getAllPresets,
 } from '../config/evidence-presets';
+import { LoggerService } from './logger.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EvidenceConfigService {
+  private logger = inject(LoggerService);
+  
   // Active preset ID
   private readonly activePresetId = signal<string>('adult_flag_competitive_v1');
   
@@ -76,7 +79,7 @@ export class EvidenceConfigService {
    */
   private logPresetChange(presetId: string): void {
     // TODO: Implement logging to backend
-    console.log(`[EvidenceConfig] Preset changed to: ${presetId}`);
+    this.logger.info(`[EvidenceConfig] Preset changed to: ${presetId}`);
   }
 }
 

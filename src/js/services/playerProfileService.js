@@ -1,10 +1,10 @@
-/* eslint-disable no-console */
 /**
  * Player Profile Service
  * Manages player schedules, league commitments, and preferences
  */
 
 import { storageService } from './storage-service-unified.js';
+import { logger } from '../../logger.js';
 
 class PlayerProfileService {
   /**
@@ -150,7 +150,7 @@ class PlayerProfileService {
 
       return this.savePlayerProfile(profile);
     } catch (error) {
-      console.error("Error parsing schedule file:", error);
+      logger.error("Error parsing schedule file:", error);
       throw error;
     }
   }

@@ -11,6 +11,7 @@ import { Observable, from } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { TrainingDataService, TrainingSession } from './training-data.service';
 import { ApiService, API_ENDPOINTS } from './api.service';
+import { LoggerService } from './logger.service';
 
 export interface ACWRData {
   acwr: number | null;
@@ -74,6 +75,7 @@ export interface TrainingStatsData {
 export class TrainingStatsCalculationService {
   private apiService = inject(ApiService);
   private trainingDataService = inject(TrainingDataService);
+  private logger = inject(LoggerService);
 
   /**
    * Get comprehensive training statistics
@@ -96,7 +98,7 @@ export class TrainingStatsCalculationService {
     ).pipe(
       map((response) => {
         if (response.error || !response.data) {
-          console.error('Error fetching training stats:', response.error);
+          this.logger.error('Error fetching training stats:', response.error);
           return this.getEmptyStats();
         }
         return response.data;

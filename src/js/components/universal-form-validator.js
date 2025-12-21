@@ -4,6 +4,8 @@
  * Pages: login.html, register.html, settings.html, profile.html, update-roster-data.html, reset-password.html
  */
 
+import { setSafeContent } from '../utils/shared.js';
+
 class UniversalFormValidator {
   constructor(formElement, options = {}) {
     this.form = formElement;
@@ -280,7 +282,9 @@ class UniversalFormValidator {
       }
 
       strengthContainer.style.display = "block";
-      strengthContainer.innerHTML = this.getPasswordStrengthHTML(strength);
+      // Use setSafeContent to sanitize HTML before insertion
+      const strengthHtml = this.getPasswordStrengthHTML(strength);
+      setSafeContent(strengthContainer, strengthHtml, true, true);
     });
   }
 

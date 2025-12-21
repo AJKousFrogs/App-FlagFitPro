@@ -3,6 +3,7 @@ import { SupabaseClient } from "@supabase/supabase-js";
 import { Observable, throwError, of } from "rxjs";
 import { catchError, delay, retryWhen, take } from "rxjs/operators";
 import { SupabaseService } from "./supabase.service";
+import { LoggerService } from "./logger.service";
 
 /**
  * Game Stats Service
@@ -48,6 +49,7 @@ export class GameStatsService {
   private readonly MAX_RETRIES = 3;
   private readonly RETRY_DELAY_MS = 1000;
   private supabaseService = inject(SupabaseService);
+  private logger = inject(LoggerService);
 
   /**
    * Get Supabase client instance
@@ -94,7 +96,7 @@ export class GameStatsService {
           continue;
         }
 
-        console.error(`Failed to fetch player stats after ${maxRetries} attempts:`, error);
+        this.logger.error(`Failed to fetch player stats after ${maxRetries} attempts:`, error);
         throw new Error(`Unable to fetch player statistics: ${this.getErrorMessage(error)}`);
       }
     }
@@ -125,7 +127,7 @@ export class GameStatsService {
         )
       ),
       catchError((error) => {
-        console.error("Error fetching player stats:", error);
+        this.logger.error("Error fetching player stats:", error);
         return of(null);
       })
     );
@@ -152,7 +154,7 @@ export class GameStatsService {
     plays.forEach((play) => {
       // Data integrity checks
       if (!play.playType || typeof play.playType !== "string") {
-        console.warn("Invalid play type in data:", play);
+        this.logger.warn("Invalid play type in data:", play);
         return;
       }
 

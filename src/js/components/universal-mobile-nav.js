@@ -115,7 +115,11 @@ class UniversalMobileNav {
         this.toggle.setAttribute("aria-label", "Toggle navigation menu");
         this.toggle.setAttribute("aria-expanded", "false");
         this.toggle.setAttribute("aria-controls", "sidebar");
-        this.toggle.innerHTML = '<i data-lucide="menu" class="icon-20"></i>';
+        // Create icon using DOM methods instead of innerHTML
+        const icon = document.createElement("i");
+        icon.setAttribute("data-lucide", "menu");
+        icon.className = "icon-20";
+        this.toggle.appendChild(icon);
         header.insertBefore(this.toggle, header.firstChild);
       }
     }

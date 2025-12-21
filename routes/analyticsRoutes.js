@@ -9,6 +9,8 @@
 import express from 'express';
 import { Pool } from 'pg';
 import dotenv from 'dotenv';
+import { safeQuery, safeParseInt, safeFormatDate } from './utils/query-helper.js';
+import { serverLogger } from './utils/server-logger.js';
 
 dotenv.config();
 
@@ -21,7 +23,7 @@ try {
   const connectionString = process.env.DATABASE_URL || process.env.VITE_DATABASE_URL;
   
   if (!connectionString) {
-    console.warn(`⚠️  ${ROUTE_NAME.toUpperCase()}: DATABASE_URL not configured`);
+    serverLogger.warn(`${ROUTE_NAME.toUpperCase()}: DATABASE_URL not configured`);
   }
   
   pool = new Pool({
@@ -34,18 +36,18 @@ try {
   });
   
   pool.on('connect', () => {
-    console.log(`✅ ${ROUTE_NAME.toUpperCase()} database connected successfully`);
+    serverLogger.success(`${ROUTE_NAME.toUpperCase()} database connected successfully`);
   });
   
   pool.on('error', (err) => {
-    console.error(`❌ ${ROUTE_NAME.toUpperCase()} database connection error:`, err);
+    serverLogger.error(`❌ ${ROUTE_NAME.toUpperCase()} database connection error:`, err);
     if (err.code === 'ECONNREFUSED' || err.code === 'ETIMEDOUT') {
-      console.warn(`⚠️  ${ROUTE_NAME.toUpperCase()}: Attempting to reconnect...`);
+      serverLogger.warn(`${ROUTE_NAME.toUpperCase()}: Attempting to reconnect...`);
     }
   });
   
 } catch (error) {
-  console.error(`❌ Failed to create ${ROUTE_NAME} database pool:`, error);
+  serverLogger.error(`❌ Failed to create ${ROUTE_NAME} database pool:`, error);
   pool = null;
 }
 
@@ -54,72 +56,16 @@ try {
 // =============================================================================
 
 /**
- * Safely execute database queries with error handling
+ * Wrapper for safeQuery that uses this route's pool and name
  * @param {string} query - SQL query string
  * @param {Array} params - Query parameters for parameterized queries
  * @returns {Promise<object>} Query result object
- * @throws {Error} If database connection is unavailable or query fails
  */
-async function safeQuery(query, params = []) {
-  if (!pool) {
-    throw new Error('Database connection not available');
-  }
-  
-  if (!query || typeof query !== 'string' || query.trim().length === 0) {
-    throw new Error('Invalid query: Query string is required');
-  }
-  
-  if (!Array.isArray(params)) {
-    throw new Error('Invalid parameters: Parameters must be an array');
-  }
-  
-  try {
-    const result = await pool.query(query, params);
-    return result;
-  } catch (error) {
-    console.error(`${ROUTE_NAME.toUpperCase()} database query error:`, {
-      message: error.message,
-      code: error.code,
-      query: query.substring(0, 100) + '...'
-    });
-    throw new Error(`Database operation failed: ${error.message}`);
-  }
+async function executeQuery(query, params = []) {
+  return safeQuery(pool, query, params, ROUTE_NAME);
 }
 
-/**
- * Safely parse integers with validation
- * @param {any} value - Value to parse
- * @param {number} defaultValue - Default value if parsing fails
- * @returns {number} Parsed integer or default value
- */
-function safeParseInt(value, defaultValue = 0) {
-  try {
-    if (value === null || value === undefined) return defaultValue;
-    const parsed = parseInt(value, 10);
-    return isNaN(parsed) ? defaultValue : parsed;
-  } catch (error) {
-    return defaultValue;
-  }
-}
-
-/**
- * Safely format dates to ISO string
- * @param {Date|string|number} date - Date to format
- * @returns {string} ISO formatted date string
- */
-function safeFormatDate(date) {
-  try {
-    if (!date) return new Date().toISOString();
-    const dateObj = new Date(date);
-    if (isNaN(dateObj.getTime())) {
-      return new Date().toISOString();
-    }
-    return dateObj.toISOString();
-  } catch (error) {
-    console.warn('Date formatting error:', error);
-    return new Date().toISOString();
-  }
-}
+// parseIntSafe and formatDate removed - unused functions (use safeParseInt and safeFormatDate from query-helper instead)
 
 /**
  * Safely calculate averages from an array of values
@@ -248,7 +194,7 @@ router.get('/performance-trends', async (req, res) => {
       ORDER BY week_start ASC
     `;
     
-    const result = await safeQuery(query, [userId]);
+    const result = await executeQuery(query, [userId]);
     
     // Format data for Chart.js
     const weeksData = [];
@@ -272,7 +218,7 @@ router.get('/performance-trends', async (req, res) => {
         trainingScores.push(Math.round(sessionEffectiveness));
       });
     } catch (formatError) {
-      console.error('Error formatting performance trends data:', formatError);
+      serverLogger.error('Error formatting performance trends data:', formatError);
       // Continue with fallback data
     }
     
@@ -308,7 +254,7 @@ router.get('/performance-trends', async (req, res) => {
       }
     });
   } catch (error) {
-    console.error(`${ROUTE_NAME.toUpperCase()} performance trends error:`, error);
+    serverLogger.error(`${ROUTE_NAME.toUpperCase()} performance trends error:`, error);
     const { statusCode, response } = createErrorResponse(
       'Failed to fetch performance trends',
       'FETCH_ERROR',
@@ -339,7 +285,7 @@ router.get('/team-chemistry', async (req, res) => {
       AND metric_date >= CURRENT_DATE - INTERVAL '30 days'
     `;
     
-    const result = await safeQuery(query, [userId]);
+    const result = await executeQuery(query, [userId]);
     const chemistryData = result.rows[0] || {};
     
     // Calculate leadership and adaptability scores with bounds checking
@@ -380,7 +326,7 @@ router.get('/team-chemistry', async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Team chemistry error:', error);
+    serverLogger.error('Team chemistry error:', error);
     res.status(500).json({ 
       success: false, 
       error: 'Failed to fetch team chemistry data',
@@ -417,7 +363,7 @@ router.get('/training-distribution', async (req, res) => {
       ORDER BY session_count DESC
     `;
     
-    const result = await safeQuery(query, [userId]);
+    const result = await executeQuery(query, [userId]);
     
     // Map training types to display names
     const trainingTypeMap = {
@@ -445,7 +391,7 @@ router.get('/training-distribution', async (req, res) => {
         avgPerformances.push(Math.round((parseFloat(row.avg_performance) || 8.5) * 10) / 10);
       });
     } catch (formatError) {
-      console.error('Error formatting training distribution data:', formatError);
+      serverLogger.error('Error formatting training distribution data:', formatError);
       // Continue with fallback data
     }
     
@@ -476,7 +422,7 @@ router.get('/training-distribution', async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Training distribution error:', error);
+    serverLogger.error('Training distribution error:', error);
     res.status(500).json({ 
       success: false, 
       error: 'Failed to fetch training distribution',
@@ -507,7 +453,7 @@ router.get('/position-performance', async (req, res) => {
       ORDER BY avg_performance DESC
     `;
     
-    const result = await safeQuery(query, [userId]);
+    const result = await executeQuery(query, [userId]);
     
     // Default positions if no data
     const defaultPositions = ['Quarterback', 'Wide Receiver', 'Running Back', 'Defensive Back', 'Rusher'];
@@ -527,7 +473,7 @@ router.get('/position-performance', async (req, res) => {
           targetScoresData.push(performance + 3);
         });
       } catch (formatError) {
-        console.error('Error formatting position performance data:', formatError);
+        serverLogger.error('Error formatting position performance data:', formatError);
         // Use default data
         positions.push(...defaultPositions);
         currentScores.push(...defaultScores);
@@ -551,7 +497,7 @@ router.get('/position-performance', async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Position performance error:', error);
+    serverLogger.error('Position performance error:', error);
     res.status(500).json({ 
       success: false, 
       error: 'Failed to fetch position performance data',
@@ -576,7 +522,7 @@ router.get('/injury-risk', async (req, res) => {
       AND game_date >= CURRENT_DATE - INTERVAL '7 days'
     `;
     
-    const result = await safeQuery(query, [userId]);
+    const result = await executeQuery(query, [userId]);
     const riskData = result.rows[0] || {};
     
     // Calculate risk levels based on fatigue and injury risk scores
@@ -623,7 +569,7 @@ router.get('/injury-risk', async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Injury risk error:', error);
+    serverLogger.error('Injury risk error:', error);
     res.status(500).json({ 
       success: false, 
       error: 'Failed to fetch injury risk data',
@@ -676,7 +622,7 @@ router.get('/speed-development', async (req, res) => {
       ORDER BY week_start ASC, metric_name
     `;
     
-    const result = await safeQuery(query, [userId]);
+    const result = await executeQuery(query, [userId]);
     
     // Format data for Chart.js
     const weeksData = [];
@@ -704,7 +650,7 @@ router.get('/speed-development', async (req, res) => {
         }
       });
     } catch (processError) {
-      console.error('Error processing speed development data:', processError);
+      serverLogger.error('Error processing speed development data:', processError);
       // Continue with fallback data
     }
     
@@ -741,7 +687,7 @@ router.get('/speed-development', async (req, res) => {
       }
     });
   } catch (error) {
-    console.error(`${ROUTE_NAME.toUpperCase()} speed development error:`, error);
+    serverLogger.error(`${ROUTE_NAME.toUpperCase()} speed development error:`, error);
     const { statusCode, response } = createErrorResponse(
       'Failed to fetch speed development data',
       'FETCH_ERROR',
@@ -778,7 +724,7 @@ router.get('/user-engagement', async (req, res) => {
       ORDER BY unique_users DESC
     `;
     
-    const result = await safeQuery(query);
+    const result = await executeQuery(query);
     
     // Map event types to funnel stages
     const eventTypeMap = {
@@ -805,7 +751,7 @@ router.get('/user-engagement', async (req, res) => {
         }
       });
     } catch (updateError) {
-      console.error('Error updating user engagement data:', updateError);
+      serverLogger.error('Error updating user engagement data:', updateError);
       // Continue with default data
     }
     
@@ -830,7 +776,7 @@ router.get('/user-engagement', async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('User engagement error:', error);
+    serverLogger.error('User engagement error:', error);
     res.status(500).json({ 
       success: false, 
       error: 'Failed to fetch user engagement data',
@@ -853,7 +799,7 @@ router.get('/summary', async (req, res) => {
         (SELECT AVG(load_time) FROM performance_metrics WHERE created_at >= CURRENT_DATE - INTERVAL '7 days') as avg_load_time
     `;
     
-    const summaryResult = await safeQuery(summaryQuery, [userId]);
+    const summaryResult = await executeQuery(summaryQuery, [userId]);
     const summary = summaryResult.rows[0] || {};
     
     res.json({
@@ -867,7 +813,7 @@ router.get('/summary', async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Analytics summary error:', error);
+    serverLogger.error('Analytics summary error:', error);
     res.status(500).json({ 
       success: false, 
       error: 'Failed to fetch analytics summary',
@@ -909,7 +855,7 @@ router.get('/health', async (req, res) => {
     
     res.json(healthStatus);
   } catch (error) {
-    console.error(`${ROUTE_NAME.toUpperCase()} health check error:`, error);
+    serverLogger.error(`${ROUTE_NAME.toUpperCase()} health check error:`, error);
     res.status(503).json({
       success: false,
       status: 'unhealthy',
@@ -929,7 +875,7 @@ router.get('/health', async (req, res) => {
  * Global error handler (catches unhandled errors)
  */
 router.use((err, req, res, next) => {
-  console.error(`${ROUTE_NAME.toUpperCase()} unhandled error:`, err);
+  serverLogger.error(`${ROUTE_NAME.toUpperCase()} unhandled error:`, err);
   
   const { statusCode, response } = createErrorResponse(
     'An unexpected error occurred',

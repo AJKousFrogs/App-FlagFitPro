@@ -28,6 +28,7 @@ import { SwipeGestureDirective, SwipeEvent } from "../../shared/directives/swipe
 import { GameTimePipe } from "../../shared/pipes/game-time.pipe";
 import { HapticFeedbackService } from "../../core/services/haptic-feedback.service";
 import { ApiService } from "../../core/services/api.service";
+import { LoggerService } from "../../core/services/logger.service";
 import { AuthService } from "../../core/services/auth.service";
 
 interface Game {
@@ -458,6 +459,7 @@ export class LiveGameTrackerComponent implements OnInit, OnDestroy {
   private apiService = inject(ApiService);
   private authService = inject(AuthService);
   private destroyRef = inject(DestroyRef);
+  private logger = inject(LoggerService);
 
   game = signal<Game | null>(null);
   ballPosition = signal({ x: 600, y: 266 }); // Center field
@@ -738,7 +740,7 @@ export class LiveGameTrackerComponent implements OnInit, OnDestroy {
   private animateTouchdown(): void {
     // Create confetti effect (simplified)
     // In a real implementation, you'd use a confetti library
-    console.log("Touchdown! 🎉");
+    this.logger.info("Touchdown! 🎉");
   }
 }
 

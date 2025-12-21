@@ -9,6 +9,7 @@ import {
   initializeLucideIcons,
   announceToScreenReader,
   debounce,
+  setSafeContent,
 } from "../utils/shared.js";
 import TrainingVideoComponent from "../../training-video-component.js";
 import { errorHandler } from "../utils/unified-error-handler.js";
@@ -131,15 +132,31 @@ function initializeTrainingVideos() {
     // Show fallback message
     const container = document.getElementById("training-videos-container");
     if (container) {
-      container.innerHTML = `
-                <div style="background: var(--surface-primary); border: 1px solid var(--color-border-primary); text-align: center; padding: 2rem; border-radius: 12px;">
-                    <h3 style="color: var(--text-primary); margin-bottom: 1rem;">📺 Training Videos</h3>
-                    <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Training videos are temporarily unavailable.</p>
-                    <a href="https://www.youtube.com/results?search_query=flag+football+training+drills" target="_blank" class="btn btn-primary">
-                        Search YouTube Manually
-                    </a>
-                </div>
-            `;
+      // Create fallback message using DOM methods instead of innerHTML
+      const fallbackDiv = document.createElement("div");
+      fallbackDiv.style.cssText = "background: var(--surface-primary); border: 1px solid var(--color-border-primary); text-align: center; padding: 2rem; border-radius: 12px;";
+      
+      const heading = document.createElement("h3");
+      heading.style.cssText = "color: var(--text-primary); margin-bottom: 1rem;";
+      heading.textContent = "📺 Training Videos";
+      
+      const message = document.createElement("p");
+      message.style.cssText = "color: var(--text-secondary); margin-bottom: 1.5rem;";
+      message.textContent = "Training videos are temporarily unavailable.";
+      
+      const link = document.createElement("a");
+      link.href = "https://www.youtube.com/results?search_query=flag+football+training+drills";
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.className = "btn btn-primary";
+      link.textContent = "Search YouTube Manually";
+      
+      fallbackDiv.appendChild(heading);
+      fallbackDiv.appendChild(message);
+      fallbackDiv.appendChild(link);
+      
+      container.textContent = "";
+      container.appendChild(fallbackDiv);
     }
   }
 }
@@ -263,12 +280,23 @@ async function loadDaySpecificVideos(selectedDate = null) {
 
   } catch (error) {
     logger.error("Error loading day-specific videos:", error);
-    container.innerHTML = `
-      <div style="background: var(--surface-primary); border: 1px solid var(--color-border-primary); text-align: center; padding: 2rem; border-radius: 12px;">
-        <h3 style="color: var(--text-primary); margin-bottom: 1rem;">📺 Training Videos</h3>
-        <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Unable to load videos. Please try again later.</p>
-      </div>
-    `;
+    // Create error message using DOM methods instead of innerHTML
+    const errorDiv = document.createElement("div");
+    errorDiv.style.cssText = "background: var(--surface-primary); border: 1px solid var(--color-border-primary); text-align: center; padding: 2rem; border-radius: 12px;";
+    
+    const heading = document.createElement("h3");
+    heading.style.cssText = "color: var(--text-primary); margin-bottom: 1rem;";
+    heading.textContent = "📺 Training Videos";
+    
+    const message = document.createElement("p");
+    message.style.cssText = "color: var(--text-secondary); margin-bottom: 1.5rem;";
+    message.textContent = "Unable to load videos. Please try again later.";
+    
+    errorDiv.appendChild(heading);
+    errorDiv.appendChild(message);
+    
+    container.textContent = "";
+    container.appendChild(errorDiv);
   }
 }
 
@@ -423,7 +451,10 @@ function renderDaySpecificVideos(container, data) {
     </div>
   `;
 
-  container.innerHTML = html;
+  // Use setSafeContent to sanitize HTML before insertion
+  // Note: HTML contains YouTube video data which is relatively trusted,
+  // but we sanitize to prevent any potential XSS from malformed data
+  setSafeContent(container, html, true, true);
 
   // Add date picker event listener
   const datePicker = document.getElementById('video-date-picker');
@@ -1082,7 +1113,9 @@ function createTrainingPlanModal(title, plan) {
   header.appendChild(closeBtn);
 
   const content = document.createElement("div");
-  content.innerHTML = formatTrainingPlan(plan);
+  // Use setSafeContent to sanitize HTML from formatTrainingPlan
+  const planHtml = formatTrainingPlan(plan);
+  setSafeContent(content, planHtml, true, true);
 
   modalContent.appendChild(header);
   modalContent.appendChild(content);

@@ -13,6 +13,7 @@ import { TabViewModule } from "primeng/tabview";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { ApiService } from "../../../core/services/api.service";
+import { LoggerService } from "../../../core/services/logger.service";
 
 @Component({
   selector: "app-enhanced-analytics",
@@ -127,6 +128,7 @@ import { ApiService } from "../../../core/services/api.service";
 })
 export class EnhancedAnalyticsComponent implements OnInit {
   private apiService = inject(ApiService);
+  private logger = inject(LoggerService);
 
   performanceChartData = signal<any>(null);
   injuryRisk = signal(15);
@@ -163,13 +165,13 @@ export class EnhancedAnalyticsComponent implements OnInit {
         ],
       });
     } catch (error) {
-      console.error("Error loading analytics:", error);
+      this.logger.error("Error loading analytics:", error);
     }
   }
 
   exportReport(): void {
     // TODO: Implement report export
-    console.log("Export report");
+    this.logger.debug("Export report");
   }
 }
 

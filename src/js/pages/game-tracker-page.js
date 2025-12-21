@@ -6,6 +6,7 @@ import { logger } from "../../logger.js";
 import { errorHandler } from "../utils/unified-error-handler.js";
 import { escapeHtml } from "../utils/html-escape.js";
 import { unitManager } from "../../unit-manager.js";
+import { setSafeContent } from "../utils/shared.js";
 
 class GameTrackerPage {
   constructor() {
@@ -225,8 +226,7 @@ class GameTrackerPage {
     try {
       await gameStatsService.saveGame(this.currentGame);
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error("Error saving game:", error);
+      logger.error("Error saving game:", error);
       // Game is still saved to localStorage as fallback
     }
 
@@ -282,14 +282,25 @@ class GameTrackerPage {
 
     if (!gamesList) {return;}
 
-    // Show loading state
-    gamesList.innerHTML = `
-      <div class="empty-state">
-        <i data-lucide="loader" class="icon-48 spinning"></i>
-        <p>Loading games...</p>
-      </div>
-    `;
-    lucide.createIcons();
+    // Show loading state using DOM methods
+    gamesList.textContent = "";
+    const emptyState = document.createElement("div");
+    emptyState.className = "empty-state";
+    
+    const loaderIcon = document.createElement("i");
+    loaderIcon.setAttribute("data-lucide", "loader");
+    loaderIcon.className = "icon-48 spinning";
+    
+    const loadingText = document.createElement("p");
+    loadingText.textContent = "Loading games...";
+    
+    emptyState.appendChild(loaderIcon);
+    emptyState.appendChild(loadingText);
+    gamesList.appendChild(emptyState);
+    
+    if (typeof lucide !== "undefined") {
+      lucide.createIcons();
+    }
 
     try {
       // Try to load from backend (async)
@@ -304,24 +315,38 @@ class GameTrackerPage {
   }
 
   renderGamesList(games, gamesList) {
+    gamesList.textContent = "";
+    
     if (games.length === 0) {
-      gamesList.innerHTML = `
-        <div class="empty-state">
-          <i data-lucide="calendar" class="icon-48"></i>
-          <p>No games tracked yet</p>
-        </div>
-      `;
-      lucide.createIcons();
+      // Create empty state using DOM methods
+      const emptyState = document.createElement("div");
+      emptyState.className = "empty-state";
+      
+      const calendarIcon = document.createElement("i");
+      calendarIcon.setAttribute("data-lucide", "calendar");
+      calendarIcon.className = "icon-48";
+      
+      const emptyText = document.createElement("p");
+      emptyText.textContent = "No games tracked yet";
+      
+      emptyState.appendChild(calendarIcon);
+      emptyState.appendChild(emptyText);
+      gamesList.appendChild(emptyState);
+      
+      if (typeof lucide !== "undefined") {
+        lucide.createIcons();
+      }
       return;
     }
 
-    gamesList.innerHTML = games
+    // Build games list HTML (data is escaped via escapeHtml)
+    const gamesHtml = games
       .map((game) => {
         const result = this.determineGameResult(game);
         const safeOpponentName = escapeHtml(game.opponentName);
         const safeGameId = escapeHtml(game.gameId);
         return `
-        <div class="game-item" onclick="window.gameTrackerPage.loadGame('${safeGameId}')">
+        <div class="game-item" data-game-id="${safeGameId}">
           <div class="game-item-header">
             <div class="game-date">
               ${new Date(game.gameDate).toLocaleDateString("en-US", {
@@ -364,7 +389,26 @@ class GameTrackerPage {
       })
       .join("");
 
-    lucide.createIcons();
+    // Use setSafeContent to sanitize HTML before insertion
+    // Data is already escaped via escapeHtml(), but we sanitize for extra safety
+    setSafeContent(gamesList, gamesHtml, true, true);
+    
+    // Add click event listeners to game items (replacing onclick attributes)
+    gamesList.querySelectorAll('.game-item').forEach(item => {
+      const gameId = item.getAttribute('data-game-id');
+      if (gameId) {
+        item.addEventListener('click', () => {
+          if (window.gameTrackerPage && typeof window.gameTrackerPage.loadGame === 'function') {
+            window.gameTrackerPage.loadGame(gameId);
+          }
+        });
+        item.style.cursor = 'pointer';
+      }
+    });
+
+    if (typeof lucide !== "undefined") {
+      lucide.createIcons();
+    }
   }
 
   determineGameResult(game) {
@@ -656,21 +700,35 @@ class GameTrackerPage {
 
     if (!recentPlaysList) {return;}
 
+    recentPlaysList.textContent = "";
+    
     if (this.plays.length === 0) {
-      recentPlaysList.innerHTML = `
-        <div class="empty-state">
-          <i data-lucide="clipboard" class="icon-48"></i>
-          <p>No plays tracked yet. Start tracking plays above!</p>
-        </div>
-      `;
-      lucide.createIcons();
+      // Create empty state using DOM methods
+      const emptyState = document.createElement("div");
+      emptyState.className = "empty-state";
+      
+      const clipboardIcon = document.createElement("i");
+      clipboardIcon.setAttribute("data-lucide", "clipboard");
+      clipboardIcon.className = "icon-48";
+      
+      const emptyText = document.createElement("p");
+      emptyText.textContent = "No plays tracked yet. Start tracking plays above!";
+      
+      emptyState.appendChild(clipboardIcon);
+      emptyState.appendChild(emptyText);
+      recentPlaysList.appendChild(emptyState);
+      
+      if (typeof lucide !== "undefined") {
+        lucide.createIcons();
+      }
       return;
     }
 
     // Show last 10 plays, most recent first
     const recentPlays = [...this.plays].reverse().slice(0, 10);
 
-    recentPlaysList.innerHTML = recentPlays
+    // Build plays HTML (data is escaped via escapeHtml)
+    const playsHtml = recentPlays
       .map((play) => {
         const badge = this.getPlayBadge(play);
         const description = this.getPlayDescription(play);

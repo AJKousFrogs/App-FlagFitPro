@@ -1,5 +1,5 @@
 // Exercise Library Page - Optimized with pagination, debouncing, and DocumentFragment
-import { debounce } from "../utils/shared.js";
+import { debounce, setSafeContent } from "../utils/shared.js";
 import { logger } from "../../logger.js";
 import { escapeHtml } from "../utils/sanitize.js";
 import { errorHandler } from "../utils/unified-error-handler.js";
@@ -294,12 +294,9 @@ export class ExerciseLibraryPage {
     // Create video div with icon
     const videoDiv = document.createElement("div");
     videoDiv.className = "exercise-video";
-    // getExerciseIcon returns HTML string, use temp container
-    const iconTemp = document.createElement("div");
-    iconTemp.innerHTML = this.getExerciseIcon(exercise.category);
-    while (iconTemp.firstChild) {
-      videoDiv.appendChild(iconTemp.firstChild);
-    }
+    // getExerciseIcon returns HTML string, use setSafeContent for safety
+    const iconHtml = this.getExerciseIcon(exercise.category);
+    setSafeContent(videoDiv, iconHtml, true, true);
     
     const content = document.createElement("div");
     content.className = "exercise-content";
@@ -486,11 +483,8 @@ export class ExerciseLibraryPage {
     categorySpan.textContent = exercise.category || "";
     modalCategory.appendChild(categorySpan);
 
-    // Use DocumentFragment for modal content
-    const fragment = document.createDocumentFragment();
-    const tempDiv = document.createElement("div");
-
-    tempDiv.innerHTML = `
+    // Build modal content HTML (data is already escaped via escapeHtml)
+    const modalHtml = `
       <div class="exercise-video" style="margin-bottom: var(--space-6);">
         ${this.getExerciseIcon(exercise.category)}
         <div style="position: absolute; bottom: var(--space-2); right: var(--space-2); background: rgba(0,0,0,0.7); color: var(--color-text-primary); padding: var(--space-1) var(--space-2); border-radius: var(--radius-sm); font-size: var(--text-xs);">

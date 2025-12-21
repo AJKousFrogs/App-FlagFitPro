@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /**
  * Base Component Loader Class - FlagFit Pro
  * Provides common functionality for component loaders (footer, sidebar, top-bar)
@@ -6,7 +5,8 @@
  */
 
 import { onDOMReady } from '../utils/dom-ready.js';
-import { initializeLucideIcons } from '../utils/shared.js';
+import { initializeLucideIcons, setSafeContent } from '../utils/shared.js';
+import { logger } from '../../logger.js';
 
 export class BaseComponentLoader {
   constructor(config) {
@@ -37,7 +37,7 @@ export class BaseComponentLoader {
         await result;
       }
     } catch (error) {
-      console.error(`[${this.config.componentName} Loader] Failed to load:`, error);
+      logger.error(`[${this.config.componentName} Loader] Failed to load:`, error);
     }
   }
 
@@ -64,10 +64,11 @@ export class BaseComponentLoader {
       throw new Error(`${this.config.componentName} container not found`);
     }
 
-    // Inject component HTML
-    this.container.innerHTML = componentHTML;
+    // Inject component HTML using setSafeContent
+    // HTML files from server are trusted, but we sanitize for safety
+    setSafeContent(this.container, componentHTML, true, true);
 
-    console.log(`[${this.config.componentName} Loader] Loaded successfully`);
+    logger.info(`[${this.config.componentName} Loader] Loaded successfully`);
   }
 
   /**

@@ -12,6 +12,7 @@ import { ButtonModule } from "primeng/button";
 import { InputNumberModule } from "primeng/inputnumber";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
+import { LoggerService } from "../../../core/services/logger.service";
 
 @Component({
   selector: "app-qb-throwing-tracker",
@@ -135,6 +136,8 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
   ],
 })
 export class QbThrowingTrackerComponent implements OnInit {
+  private logger = inject(LoggerService);
+  
   sessionData = {
     totalThrows: 0,
     completionRate: 0,
@@ -159,7 +162,7 @@ export class QbThrowingTrackerComponent implements OnInit {
 
   async saveSession(): Promise<void> {
     // TODO: Save throwing session
-    console.log("Save session:", this.sessionData);
+    this.logger.debug("Save session:", this.sessionData);
   }
 }
 

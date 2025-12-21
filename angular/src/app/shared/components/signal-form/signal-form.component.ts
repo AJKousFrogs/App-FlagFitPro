@@ -13,6 +13,7 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { MessageModule } from 'primeng/message';
 import { FormValidators, combineValidators, createSignalFormField } from '../../utils/form.utils';
+import { LoggerService } from '../../../core/services/logger.service';
 
 @Component({
   selector: 'app-signal-form',
@@ -203,6 +204,7 @@ export class SignalFormComponent {
   // Form fields using Angular 21 model() API for two-way binding
   name = model<string>('');
   email = model<string>('');
+  private logger = inject(LoggerService);
   password = model<string>('');
 
   // Form submission event
@@ -248,7 +250,7 @@ export class SignalFormComponent {
       };
       
       this.formSubmit.emit(formData);
-      console.log('Form submitted:', formData);
+      this.logger.debug('Form submitted:', formData);
     } else {
       // Focus first invalid field for accessibility
       this.focusFirstInvalidField();

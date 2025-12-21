@@ -4,6 +4,7 @@
  */
 
 import { unitManager } from '../../unit-manager.js';
+import { logger } from '../../logger.js';
 
 /**
  * Create unit toggle buttons HTML
@@ -35,7 +36,7 @@ export function createUnitToggleHTML(type, inputId, unitLabelId, hiddenInputId, 
 
   const config = configs[type];
   if (!config) {
-    console.warn(`Unknown unit type: ${type}`);
+    logger.warn(`Unknown unit type: ${type}`);
     return '';
   }
 
@@ -80,7 +81,7 @@ export function setupUnitToggle(type, inputId, unitLabelId, hiddenInputId) {
   const unitInput = document.getElementById(hiddenInputId);
   
   if (!input || !unitLabel) {
-    console.warn(`Unit toggle setup failed: missing elements for ${inputId}`);
+    logger.warn(`Unit toggle setup failed: missing elements for ${inputId}`);
     return;
   }
 
@@ -101,7 +102,7 @@ export function setupUnitToggle(type, inputId, unitLabelId, hiddenInputId) {
 
   const config = configs[type];
   if (!config) {
-    console.warn(`Unknown unit type: ${type}`);
+    logger.warn(`Unknown unit type: ${type}`);
     return;
   }
 
@@ -117,7 +118,7 @@ export function setupUnitToggle(type, inputId, unitLabelId, hiddenInputId) {
   const metricBtn = document.getElementById(`${inputId}-unit-${metricKey}`);
 
   if (!imperialBtn || !metricBtn) {
-    console.warn(`Unit toggle buttons not found for ${inputId}`);
+    logger.warn(`Unit toggle buttons not found for ${inputId}`);
     return;
   }
 

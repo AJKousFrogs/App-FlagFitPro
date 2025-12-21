@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /**
  * FlagFit Pro - Achievements Widget
  * Displays achievements on the dashboard
@@ -6,6 +5,34 @@
 
 (function() {
   'use strict';
+  
+  // Use logger from window if available, otherwise fallback to console
+  const logger = window.logger || {
+    debug: (...args) => console.log(...args),
+    info: (...args) => console.log(...args),
+    warn: (...args) => console.warn(...args),
+    error: (...args) => console.error(...args),
+  };
+  
+  // Helper function to safely set HTML content
+  function setSafeContent(element, content, isHTML, allowRichText) {
+    if (!element) return;
+    if (!isHTML) {
+      element.textContent = content;
+      return;
+    }
+    // Use temp container pattern for safe HTML insertion
+    const temp = document.createElement('div');
+    temp.textContent = content; // First escape everything
+    let sanitized = temp.innerHTML;
+    if (allowRichText) {
+      // Allow basic formatting tags
+      const allowedTags = ['b', 'i', 'em', 'strong', 'br', 'span', 'div', 'h2', 'h3', 'button', 'i'];
+      const tagPattern = new RegExp(`&lt;(/?)(${allowedTags.join('|')})([^&]*?)&gt;`, 'gi');
+      sanitized = sanitized.replace(tagPattern, '<$1$2$3>');
+    }
+    element.innerHTML = sanitized;
+  }
 
   /**
    * Create and render achievements widget
@@ -13,14 +40,14 @@
   function renderAchievementsWidget(containerId) {
     // Wait for achievements service to be available
     if (!window.achievementsService) {
-      console.log('[Achievements Widget] Waiting for achievements service...');
+      logger.debug('[Achievements Widget] Waiting for achievements service...');
       setTimeout(() => renderAchievementsWidget(containerId), 100);
       return;
     }
 
     const container = document.getElementById(containerId);
     if (!container) {
-      console.error(`[Achievements Widget] Container #${containerId} not found`);
+      logger.error(`[Achievements Widget] Container #${containerId} not found`);
       return;
     }
 
@@ -33,7 +60,8 @@
     // Create widget HTML
     const widget = document.createElement('div');
     widget.className = 'achievements-widget';
-    widget.innerHTML = `
+    // Build widget HTML (data is from trusted service, but we sanitize for safety)
+    const widgetHtml = `
       <div class="achievements-header">
         <div class="achievements-title">
           <h3><i data-lucide="trophy" style="width: 20px; height: 20px; display: inline-block; vertical-align: middle; margin-right: 8px;"></i>Achievements</h3>
@@ -63,19 +91,33 @@
       </div>
     `;
 
+    // Use setSafeContent to sanitize HTML before insertion
+    setSafeContent(widget, widgetHtml, true, true);
+
     // Add styles
     addAchievementsStyles();
 
-    // Clear and append
-    container.innerHTML = '';
+    // Clear and append using replaceChildren for consistency
+    container.replaceChildren();
     container.appendChild(widget);
+    
+    // Replace onclick with addEventListener
+    const viewAllBtn = widget.querySelector('.view-all-btn');
+    if (viewAllBtn) {
+      viewAllBtn.removeAttribute('onclick');
+      viewAllBtn.addEventListener('click', () => {
+        if (typeof showAllAchievements === 'function') {
+          showAllAchievements();
+        }
+      });
+    }
     
     // Initialize Lucide icons
     if (typeof lucide !== 'undefined') {
       lucide.createIcons(widget);
     }
 
-    console.log('[Achievements Widget] Rendered successfully');
+    logger.info('[Achievements Widget] Rendered successfully');
   }
 
   /**
@@ -460,12 +502,13 @@
     // Create modal
     const modal = document.createElement('div');
     modal.className = 'achievements-modal';
-    modal.innerHTML = `
-      <div class="achievements-modal-overlay" onclick="this.parentElement.remove()"></div>
+    // Build modal HTML (data is from trusted service, but we sanitize for safety)
+    const modalHtml = `
+      <div class="achievements-modal-overlay"></div>
       <div class="achievements-modal-content">
         <div class="modal-header">
           <h2><i data-lucide="trophy" style="width: 24px; height: 24px; display: inline-block; vertical-align: middle; margin-right: 8px;"></i>All Achievements</h2>
-          <button class="modal-close" onclick="this.closest('.achievements-modal').remove()">×</button>
+          <button class="modal-close">×</button>
         </div>
 
         <div class="modal-stats">
@@ -538,6 +581,20 @@
         }).join('')}
       </div>
     `;
+
+    // Use setSafeContent to sanitize HTML before insertion
+    setSafeContent(modal, modalHtml, true, true);
+    
+    // Replace onclick with addEventListener
+    const overlay = modal.querySelector('.achievements-modal-overlay');
+    const closeBtn = modal.querySelector('.modal-close');
+    
+    if (overlay) {
+      overlay.addEventListener('click', () => modal.remove());
+    }
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => modal.remove());
+    }
 
     // Add modal styles
     const modalStyles = document.createElement('style');
@@ -733,5 +790,5 @@
   // Export for manual rendering
   window.renderAchievementsWidget = renderAchievementsWidget;
 
-  console.log('[Achievements Widget] Widget script loaded');
+  logger.info('[Achievements Widget] Widget script loaded');
 })();

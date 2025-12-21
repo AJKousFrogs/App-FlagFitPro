@@ -1,10 +1,10 @@
-/* eslint-disable no-console */
 /**
  * Stats Service
  * Calculates training statistics and progress metrics
  */
 
 import { statisticsCalculationService } from "./statisticsCalculationService.js";
+import { logger } from "../../logger.js";
 
 class StatsService {
   /**
@@ -35,7 +35,7 @@ class StatsService {
         weeklyLoad: result.weeklyLoad
       };
     } catch (error) {
-      console.warn('Error calculating weekly stats, falling back to basic calculation:', error);
+      logger.warn('Error calculating weekly stats, falling back to basic calculation:', error);
       // Fallback to basic calculation
       const startOfWeek = new Date(today);
       startOfWeek.setDate(today.getDate() - today.getDay());
@@ -109,7 +109,7 @@ class StatsService {
         stretchDates: result.stretchDates
       };
     } catch (error) {
-      console.warn('Error calculating streak, falling back to basic calculation:', error);
+      logger.warn('Error calculating streak, falling back to basic calculation:', error);
       // Fallback to basic calculation
       if (recentWorkouts.length === 0) {
         return {

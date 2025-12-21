@@ -8,6 +8,7 @@ import { TagModule } from 'primeng/tag';
 import { TrainingPlanService, TrainingGoal, WeeklyTrainingPlan } from '../../core/services/training-plan.service';
 import { AcwrService } from '../../core/services/acwr.service';
 import { ReadinessService } from '../../core/services/readiness.service';
+import { LoggerService } from '../../core/services/logger.service';
 import { TrafficLightRiskComponent } from '../../shared/components/traffic-light-risk/traffic-light-risk.component';
 
 @Component({
@@ -227,6 +228,7 @@ export class GoalBasedPlannerComponent implements OnInit {
   private trainingPlanService = inject(TrainingPlanService);
   private acwrService = inject(AcwrService);
   private readinessService = inject(ReadinessService);
+  private logger = inject(LoggerService);
 
   selectedGoal = signal<TrainingGoal | null>(null);
   weeklyPlan = signal<WeeklyTrainingPlan | null>(null);
@@ -275,7 +277,7 @@ export class GoalBasedPlannerComponent implements OnInit {
 
       this.weeklyPlan.set(plan);
     } catch (error) {
-      console.error('Error generating plan:', error);
+      this.logger.error('Error generating plan:', error);
     } finally {
       this.loading.set(false);
     }

@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /**
  * Game Stats Service
  * Handles saving, loading, and analyzing game statistics
@@ -9,6 +8,7 @@ import { apiClient } from "../../api-client.js";
 import { API_ENDPOINTS } from "../../api-config.js";
 import { storageService } from "./storage-service-unified.js";
 import { statisticsCalculationService } from "./statisticsCalculationService.js";
+import { logger } from "../../logger.js";
 
 class GameStatsService {
   constructor() {
@@ -29,7 +29,7 @@ class GameStatsService {
       let games = await this.getAllGames();
       // Ensure games is an array
       if (!Array.isArray(games)) {
-        console.warn("getAllGames() did not return an array, using empty array");
+        logger.warn("getAllGames() did not return an array, using empty array");
         games = [];
       }
       const existingIndex = games.findIndex((g) => g.gameId === game.gameId);
@@ -51,7 +51,7 @@ class GameStatsService {
       storageService.set(this.storageKey, games, { usePrefix: false });
       storageService.set(this.currentGameKey, game, { usePrefix: false });
     } catch (error) {
-      console.error("Error saving to localStorage:", error);
+      logger.error("Error saving to localStorage:", error);
     }
 
     // Try to save to backend
@@ -59,7 +59,7 @@ class GameStatsService {
       try {
         const token = storageService.get("authToken", null, { usePrefix: false });
         if (!token) {
-          console.warn("No auth token, skipping backend save");
+          logger.warn("No auth token, skipping backend save");
           return true; // Saved to localStorage
         }
 
@@ -102,7 +102,7 @@ class GameStatsService {
           return true;
         }
       } catch (error) {
-        console.error("Error saving game to backend:", error);
+        logger.error("Error saving game to backend:", error);
         // Continue with localStorage version
       }
     }
@@ -123,7 +123,7 @@ class GameStatsService {
       }
       return games.find((g) => g.gameId === gameId) || null;
     } catch (error) {
-      console.error("Error getting game:", error);
+      logger.error("Error getting game:", error);
       return null;
     }
   }
@@ -140,7 +140,7 @@ class GameStatsService {
       try {
         return storageService.get(this.storageKey, [], { usePrefix: false });
       } catch (error) {
-        console.error("Error loading games from localStorage:", error);
+        logger.error("Error loading games from localStorage:", error);
         return [];
       }
     }

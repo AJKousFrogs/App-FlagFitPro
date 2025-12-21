@@ -294,5 +294,4 @@ export default {
   setupGlobalErrorHandlers
 };
 
-// eslint-disable-next-line no-console
-console.log('[Error Handling] Standardized error handling utilities loaded');
+logger.info('[Error Handling] Standardized error handling utilities loaded');

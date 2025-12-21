@@ -23,6 +23,7 @@
 
 import { ANNUAL_TRAINING_PROGRAM } from "../../training-program-data.js";
 import { getAllTournaments, getDaysUntilTournament } from "../../tournament-schedule.js";
+import { logger } from "../../logger.js";
 
 /**
  * Event importance levels for taper differentiation
@@ -1183,7 +1184,7 @@ class AITrainingScheduler {
       }
 
     } catch (error) {
-      console.warn('[AITrainingScheduler] Error generating recommendations:', error);
+      logger.warn('[AITrainingScheduler] Error generating recommendations:', error);
     }
 
     return recommendations;

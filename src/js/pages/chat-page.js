@@ -14,6 +14,7 @@ import {
   getMessageStatusHtml,
   getMessageActionsHtml,
   announceToScreenReader,
+  setSafeContent,
 } from "../utils/shared.js";
 import { storageService } from "../services/storage-service-unified.js";
 
@@ -313,12 +314,13 @@ function openChannelSettings() {
   modal.setAttribute("aria-labelledby", "channel-modal-title");
   modal.setAttribute("aria-modal", "true");
 
-  modal.innerHTML = `
-    <div class="channel-modal-overlay" onclick="closeChannelModal()"></div>
+  // Build modal HTML (static content, safe)
+  const modalHtml = `
+    <div class="channel-modal-overlay"></div>
     <div class="channel-modal-content">
       <div class="channel-modal-header">
         <h2 id="channel-modal-title">Create New Channel</h2>
-        <button class="channel-modal-close" onclick="closeChannelModal()" aria-label="Close dialog">
+        <button class="channel-modal-close" aria-label="Close dialog">
           <i data-lucide="x" class="icon-18"></i>
         </button>
       </div>
@@ -356,12 +358,30 @@ function openChannelSettings() {
           </select>
         </div>
         <div class="form-actions">
-          <button type="button" class="btn-secondary" onclick="closeChannelModal()">Cancel</button>
+          <button type="button" class="btn-secondary channel-modal-cancel">Cancel</button>
           <button type="submit" class="btn-primary">Create Channel</button>
         </div>
       </form>
     </div>
   `;
+
+  // Use setSafeContent to sanitize HTML before insertion
+  setSafeContent(modal, modalHtml, true, true);
+  
+  // Replace onclick with addEventListener
+  const overlay = modal.querySelector('.channel-modal-overlay');
+  const closeBtn = modal.querySelector('.channel-modal-close');
+  const cancelBtn = modal.querySelector('.channel-modal-cancel');
+  
+  if (overlay) {
+    overlay.addEventListener('click', () => closeChannelModal());
+  }
+  if (closeBtn) {
+    closeBtn.addEventListener('click', () => closeChannelModal());
+  }
+  if (cancelBtn) {
+    cancelBtn.addEventListener('click', () => closeChannelModal());
+  }
 
   document.body.appendChild(modal);
 
@@ -736,17 +756,17 @@ function updateMessagesContainer(messages) {
     content.appendChild(header);
     content.appendChild(text);
     
-    // Add status and actions HTML using temp containers
+    // Add status and actions HTML using setSafeContent
     if (statusHtml) {
       const tempStatus = document.createElement("div");
-      tempStatus.innerHTML = statusHtml;
+      setSafeContent(tempStatus, statusHtml, true, true);
       while (tempStatus.firstChild) {
         content.appendChild(tempStatus.firstChild);
       }
     }
     if (actionsHtml) {
       const tempActions = document.createElement("div");
-      tempActions.innerHTML = actionsHtml;
+      setSafeContent(tempActions, actionsHtml, true, true);
       while (tempActions.firstChild) {
         content.appendChild(tempActions.firstChild);
       }
@@ -862,7 +882,7 @@ async function sendMessage() {
   input.style.height = "auto";
   // Restore original button content - use temp container to safely restore HTML
   const temp = document.createElement("div");
-  temp.innerHTML = originalBtnText;
+  setSafeContent(temp, originalBtnText, true, true);
   sendBtn.textContent = "";
   while (temp.firstChild) {
     sendBtn.appendChild(temp.firstChild);
@@ -1023,14 +1043,14 @@ function addMessageToUI(message, isOwn = false) {
   // Add status and actions HTML using temp containers
   if (statusHtml) {
     const tempStatus = document.createElement("div");
-    tempStatus.innerHTML = statusHtml;
+    setSafeContent(tempStatus, statusHtml, true, true);
     while (tempStatus.firstChild) {
       content.appendChild(tempStatus.firstChild);
     }
   }
   if (actionsHtml) {
     const tempActions = document.createElement("div");
-    tempActions.innerHTML = actionsHtml;
+    setSafeContent(tempActions, actionsHtml, true, true);
     while (tempActions.firstChild) {
       content.appendChild(tempActions.firstChild);
     }

@@ -1,7 +1,20 @@
-// Complete Flag Football Offseason Training Program Data
-// 14-Week WR/DB Performance Optimization Program
-// November 17, 2025 - February 28, 2026
+// ⚠️ DEPRECATED: This file has been split into separate modules
+// Use: import { TRAINING_PROGRAM, WEEKLY_SCHEDULES, etc. } from './data/training/index.js'
+// This file is kept for backward compatibility only
 
+// Re-export from split modules
+export {
+  TRAINING_PROGRAM,
+  WEEKLY_SCHEDULES,
+  ANNUAL_TRAINING_PROGRAM,
+  EXERCISE_LIBRARY,
+  PERFORMANCE_TESTS,
+  // NUTRITION_GUIDELINES removed - unused export
+  default
+} from './data/training/index.js';
+
+// Original code below (kept for reference, will be removed in future version)
+/*
 export const TRAINING_PROGRAM = {
   programInfo: {
     title: "COMPLETE FLAG FOOTBALL OFFSEASON TRAINING PROGRAM",
@@ -10433,3 +10446,4 @@ export const NUTRITION_GUIDELINES = {
 };
 
 export default TRAINING_PROGRAM;
+*/

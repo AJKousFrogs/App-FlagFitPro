@@ -10,6 +10,7 @@ import { CommonModule, DatePipe } from "@angular/common";
 import { ChartModule } from "primeng/chart";
 import { ButtonModule } from "primeng/button";
 import { DEFAULT_CHART_OPTIONS } from "../../config/chart.config";
+import { LoggerService } from '../../../core/services/logger.service';
 
 export interface AccessibleDataPoint {
   date: Date | string;
@@ -216,6 +217,7 @@ export class AccessiblePerformanceChartComponent {
   // Angular 21: Use input() signal instead of @Input()
   chartData = input<any>();
   chartTitle = input<string>("Performance Chart");
+  private logger = inject(LoggerService);
   chartOptions = input<any>(DEFAULT_CHART_OPTIONS);
 
   showKeyboardHelp = signal(false);
@@ -332,7 +334,7 @@ export class AccessiblePerformanceChartComponent {
 
   private speak(text: string): void {
     if (!this.speechSynthesis) {
-      console.warn("Speech synthesis not available");
+      this.logger.warn("Speech synthesis not available");
       return;
     }
 

@@ -15,6 +15,7 @@ import { TagModule } from "primeng/tag";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { ApiService } from "../../../core/services/api.service";
+import { LoggerService } from "../../../core/services/logger.service";
 
 interface TrainingSession {
   id: string;
@@ -163,6 +164,7 @@ interface TrainingSession {
 })
 export class TrainingScheduleComponent implements OnInit {
   private apiService = inject(ApiService);
+  private logger = inject(LoggerService);
 
   selectedDate = signal<Date>(new Date());
   sessions = signal<TrainingSession[]>([]);
@@ -194,7 +196,7 @@ export class TrainingScheduleComponent implements OnInit {
         },
       ]);
     } catch (error) {
-      console.error("Error loading sessions:", error);
+      this.logger.error("Error loading sessions:", error);
     }
   }
 
@@ -205,7 +207,7 @@ export class TrainingScheduleComponent implements OnInit {
 
   createNewSession(): void {
     // TODO: Open modal or navigate to session creation
-    console.log("Create new session");
+    this.logger.debug("Create new session");
   }
 
   getStatusSeverity(status: string): string {

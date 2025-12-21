@@ -118,6 +118,7 @@ export class ReadinessService {
   private apiService = inject(ApiService);
   private http = inject(HttpClient);
   private evidenceConfigService = inject(EvidenceConfigService);
+  private logger = inject(LoggerService);
 
   /**
    * Get default configuration from active evidence preset
@@ -229,7 +230,7 @@ export class ReadinessService {
         this.history.set(history);
       }),
       catchError(error => {
-        console.error('Error fetching readiness history:', error);
+        this.logger.error('Error fetching readiness history:', error);
         return throwError(() => error);
       })
     );

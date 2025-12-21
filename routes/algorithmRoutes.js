@@ -10,6 +10,8 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import { Pool } from 'pg';
 import dotenv from 'dotenv';
+import { safeQuery, safeFormatDate } from './utils/query-helper.js';
+import { serverLogger } from './utils/server-logger.js';
 
 dotenv.config();
 
@@ -23,7 +25,7 @@ try {
   const connectionString = process.env.DATABASE_URL || process.env.VITE_DATABASE_URL;
   
   if (!connectionString) {
-    console.warn(`⚠️  ${ROUTE_NAME.toUpperCase()}: DATABASE_URL not configured`);
+    serverLogger.warn(`${ROUTE_NAME.toUpperCase()}: DATABASE_URL not configured`);
   }
   
   pool = new Pool({
@@ -36,79 +38,26 @@ try {
   });
   
   pool.on('connect', () => {
-    console.log(`✅ ${ROUTE_NAME.toUpperCase()} database connected successfully`);
+    serverLogger.success(`${ROUTE_NAME.toUpperCase()} database connected successfully`);
   });
   
   pool.on('error', (err) => {
-    console.error(`❌ ${ROUTE_NAME.toUpperCase()} database connection error:`, err);
+    serverLogger.error(`${ROUTE_NAME.toUpperCase()} database connection error:`, err);
     // Attempt to reconnect on error
     if (err.code === 'ECONNREFUSED' || err.code === 'ETIMEDOUT') {
-      console.warn(`⚠️  ${ROUTE_NAME.toUpperCase()}: Attempting to reconnect...`);
+      serverLogger.warn(`${ROUTE_NAME.toUpperCase()}: Attempting to reconnect...`);
     }
   });
   
 } catch (error) {
-  console.error(`❌ Failed to create ${ROUTE_NAME} database pool:`, error);
+  serverLogger.error(`Failed to create ${ROUTE_NAME} database pool:`, error);
   pool = null;
 }
 
 // =============================================================================
 // HELPER FUNCTIONS
 // =============================================================================
-
-/**
- * Safely execute database queries with error handling
- * @param {string} query - SQL query string
- * @param {Array} params - Query parameters for parameterized queries
- * @returns {Promise<object>} Query result object
- * @throws {Error} If database connection is unavailable or query fails
- */
-async function safeQuery(query, params = []) {
-  if (!pool) {
-    throw new Error('Database connection not available');
-  }
-  
-  // Validate query is not empty
-  if (!query || typeof query !== 'string' || query.trim().length === 0) {
-    throw new Error('Invalid query: Query string is required');
-  }
-  
-  // Validate params is an array
-  if (!Array.isArray(params)) {
-    throw new Error('Invalid parameters: Parameters must be an array');
-  }
-  
-  try {
-    const result = await pool.query(query, params);
-    return result;
-  } catch (error) {
-    console.error(`${ROUTE_NAME.toUpperCase()} database query error:`, {
-      message: error.message,
-      code: error.code,
-      query: query.substring(0, 100) + '...'
-    });
-    throw new Error(`Database operation failed: ${error.message}`);
-  }
-}
-
-/**
- * Safely format dates to ISO string
- * @param {Date|string|number} date - Date to format
- * @returns {string} ISO formatted date string
- */
-function safeFormatDate(date) {
-  try {
-    if (!date) return new Date().toISOString();
-    const dateObj = new Date(date);
-    if (isNaN(dateObj.getTime())) {
-      return new Date().toISOString();
-    }
-    return dateObj.toISOString();
-  } catch (error) {
-    console.warn('Date formatting error:', error);
-    return new Date().toISOString();
-  }
-}
+// Note: executeQuery and formatDate removed - unused functions
 
 /**
  * Safely validate JWT tokens
@@ -226,7 +175,7 @@ const authenticateToken = async (req, res, next) => {
       req.userId = user.id || user.userId || user.sub; // Support multiple JWT formats
       next();
     } catch (jwtError) {
-      console.error('JWT verification error:', {
+      serverLogger.error('JWT verification error:', {
         message: jwtError.message,
         name: jwtError.name
       });
@@ -247,7 +196,7 @@ const authenticateToken = async (req, res, next) => {
       return res.status(statusCode).json(response);
     }
   } catch (error) {
-    console.error('Authentication middleware error:', error);
+    serverLogger.error('Authentication middleware error:', error);
     const { statusCode, response } = createErrorResponse(
       'Authentication service error',
       'AUTH_ERROR',
@@ -307,7 +256,7 @@ router.get('/health', async (req, res) => {
     const statusCode = healthStatus.success ? 200 : 503;
     res.status(statusCode).json(healthStatus);
   } catch (error) {
-    console.error(`${ROUTE_NAME.toUpperCase()} health check error:`, error);
+    serverLogger.error(`${ROUTE_NAME.toUpperCase()} health check error:`, error);
     res.status(500).json({
       success: false,
       error: 'Health check failed',
@@ -362,7 +311,7 @@ router.get('/comprehensive/:userId', authenticateToken, async (req, res) => {
     });
     
   } catch (error) {
-    console.error(`❌ ${ROUTE_NAME.toUpperCase()} comprehensive recommendations error:`, error);
+    serverLogger.error(`${ROUTE_NAME.toUpperCase()} comprehensive recommendations error:`, error);
     const { statusCode, response } = createErrorResponse(
       'Service temporarily unavailable',
       'SERVICE_UNAVAILABLE',
@@ -407,7 +356,7 @@ router.get('/training/recommendations/:userId', authenticateToken, async (req, r
     });
     
   } catch (error) {
-    console.error(`❌ ${ROUTE_NAME.toUpperCase()} training recommendations error:`, error);
+    serverLogger.error(`${ROUTE_NAME.toUpperCase()} training recommendations error:`, error);
     const { statusCode, response } = createErrorResponse(
       'Service temporarily unavailable',
       'SERVICE_UNAVAILABLE',
@@ -442,7 +391,7 @@ router.get('/supplements/recommendations/:userId', authenticateToken, async (req
       timestamp: safeFormatDate(new Date())
     });
   } catch (error) {
-    console.error(`❌ ${ROUTE_NAME.toUpperCase()} supplement recommendations error:`, error);
+    serverLogger.error(`${ROUTE_NAME.toUpperCase()} supplement recommendations error:`, error);
     const { statusCode, response } = createErrorResponse('Service temporarily unavailable', 'SERVICE_UNAVAILABLE', 500, error.message);
     return res.status(statusCode).json(response);
   }
@@ -472,7 +421,7 @@ router.get('/recovery/optimization/:userId', authenticateToken, async (req, res)
       timestamp: safeFormatDate(new Date())
     });
   } catch (error) {
-    console.error(`❌ ${ROUTE_NAME.toUpperCase()} recovery optimization error:`, error);
+    serverLogger.error(`${ROUTE_NAME.toUpperCase()} recovery optimization error:`, error);
     const { statusCode, response } = createErrorResponse('Service temporarily unavailable', 'SERVICE_UNAVAILABLE', 500, error.message);
     return res.status(statusCode).json(response);
   }
@@ -502,7 +451,7 @@ router.get('/performance/predictions/:userId', authenticateToken, async (req, re
       timestamp: safeFormatDate(new Date())
     });
   } catch (error) {
-    console.error(`❌ ${ROUTE_NAME.toUpperCase()} performance predictions error:`, error);
+    serverLogger.error(`${ROUTE_NAME.toUpperCase()} performance predictions error:`, error);
     const { statusCode, response } = createErrorResponse('Service temporarily unavailable', 'SERVICE_UNAVAILABLE', 500, error.message);
     return res.status(statusCode).json(response);
   }
@@ -532,7 +481,7 @@ router.get('/la28/qualification/:userId', authenticateToken, async (req, res) =>
       timestamp: safeFormatDate(new Date())
     });
   } catch (error) {
-    console.error(`❌ ${ROUTE_NAME.toUpperCase()} LA28 qualification error:`, error);
+    serverLogger.error(`${ROUTE_NAME.toUpperCase()} LA28 qualification error:`, error);
     const { statusCode, response } = createErrorResponse('Service temporarily unavailable', 'SERVICE_UNAVAILABLE', 500, error.message);
     return res.status(statusCode).json(response);
   }
@@ -562,7 +511,7 @@ router.get('/dashboard/:userId', authenticateToken, async (req, res) => {
       timestamp: safeFormatDate(new Date())
     });
   } catch (error) {
-    console.error(`❌ ${ROUTE_NAME.toUpperCase()} dashboard data error:`, error);
+    serverLogger.error(`${ROUTE_NAME.toUpperCase()} dashboard data error:`, error);
     const { statusCode, response } = createErrorResponse('Service temporarily unavailable', 'SERVICE_UNAVAILABLE', 500, error.message);
     return res.status(statusCode).json(response);
   }
@@ -590,7 +539,7 @@ router.use('*', (req, res) => {
  * Global error handler (catches unhandled errors)
  */
 router.use((err, req, res, next) => {
-  console.error(`${ROUTE_NAME.toUpperCase()} unhandled error:`, err);
+  serverLogger.error(`${ROUTE_NAME.toUpperCase()} unhandled error:`, err);
   
   const { statusCode, response } = createErrorResponse(
     'An unexpected error occurred',

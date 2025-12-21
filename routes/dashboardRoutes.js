@@ -9,6 +9,7 @@
 import express from 'express';
 import { Pool } from 'pg';
 import dotenv from 'dotenv';
+import { safeQuery, safeParseInt, safeFormatDate } from './utils/query-helper.js';
 
 dotenv.config();
 
@@ -21,7 +22,7 @@ try {
   const connectionString = process.env.DATABASE_URL || process.env.VITE_DATABASE_URL;
   
   if (!connectionString) {
-    console.warn(`⚠️  ${ROUTE_NAME.toUpperCase()}: DATABASE_URL not configured`);
+    serverLogger.warn(`⚠️  ${ROUTE_NAME.toUpperCase()}: DATABASE_URL not configured`);
   }
   
   pool = new Pool({
@@ -34,18 +35,18 @@ try {
   });
   
   pool.on('connect', () => {
-    console.log(`✅ ${ROUTE_NAME.toUpperCase()} database connected successfully`);
+    serverLogger.success(`${ROUTE_NAME.toUpperCase()} database connected successfully`);
   });
   
   pool.on('error', (err) => {
-    console.error(`❌ ${ROUTE_NAME.toUpperCase()} database connection error:`, err);
+    serverLogger.error(`❌ ${ROUTE_NAME.toUpperCase()} database connection error:`, err);
     if (err.code === 'ECONNREFUSED' || err.code === 'ETIMEDOUT') {
-      console.warn(`⚠️  ${ROUTE_NAME.toUpperCase()}: Attempting to reconnect...`);
+      serverLogger.warn(`⚠️  ${ROUTE_NAME.toUpperCase()}: Attempting to reconnect...`);
     }
   });
   
 } catch (error) {
-  console.error(`❌ Failed to create ${ROUTE_NAME} database pool:`, error);
+  serverLogger.error(`❌ Failed to create ${ROUTE_NAME} database pool:`, error);
   pool = null;
 }
 
@@ -54,52 +55,13 @@ try {
 // =============================================================================
 
 /**
- * Safely execute database queries with error handling
+ * Wrapper for safeQuery that uses this route's pool and name
  * @param {string} query - SQL query string
  * @param {Array} params - Query parameters for parameterized queries
  * @returns {Promise<object>} Query result object
- * @throws {Error} If database connection is unavailable or query fails
  */
-async function safeQuery(query, params = []) {
-  if (!pool) {
-    throw new Error('Database connection not available');
-  }
-  
-  if (!query || typeof query !== 'string' || query.trim().length === 0) {
-    throw new Error('Invalid query: Query string is required');
-  }
-  
-  if (!Array.isArray(params)) {
-    throw new Error('Invalid parameters: Parameters must be an array');
-  }
-  
-  try {
-    const result = await pool.query(query, params);
-    return result;
-  } catch (error) {
-    console.error(`${ROUTE_NAME.toUpperCase()} database query error:`, {
-      message: error.message,
-      code: error.code,
-      query: query.substring(0, 100) + '...'
-    });
-    throw new Error(`Database operation failed: ${error.message}`);
-  }
-}
-
-/**
- * Safely parse integers with validation
- * @param {any} value - Value to parse
- * @param {number} defaultValue - Default value if parsing fails
- * @returns {number} Parsed integer or default value
- */
-function safeParseInt(value, defaultValue = 0) {
-  try {
-    if (value === null || value === undefined) return defaultValue;
-    const parsed = parseInt(value, 10);
-    return isNaN(parsed) ? defaultValue : parsed;
-  } catch (error) {
-    return defaultValue;
-  }
+async function executeQuery(query, params = []) {
+  return safeQuery(pool, query, params, ROUTE_NAME);
 }
 
 /**
@@ -118,24 +80,7 @@ function safeParseFloat(value, defaultValue = 0) {
   }
 }
 
-/**
- * Safely format dates to ISO string
- * @param {Date|string|number} date - Date to format
- * @returns {string} ISO formatted date string
- */
-function safeFormatDate(date) {
-  try {
-    if (!date) return new Date().toISOString();
-    const dateObj = new Date(date);
-    if (isNaN(dateObj.getTime())) {
-      return new Date().toISOString();
-    }
-    return dateObj.toISOString();
-  } catch (error) {
-    console.warn('Date formatting error:', error);
-    return new Date().toISOString();
-  }
-}
+// parseIntSafe and formatDate removed - unused functions (use safeParseInt and safeFormatDate from query-helper instead)
 
 /**
  * Safely calculate percentages
@@ -272,10 +217,10 @@ router.get('/overview', async (req, res) => {
     `;
     
     const [trainingResult, performanceResult, chemistryResult, upcomingResult] = await Promise.all([
-      safeQuery(trainingProgressQuery, [userId]),
-      safeQuery(performanceQuery, [userId]),
-      safeQuery(teamChemistryQuery, [userId]),
-      safeQuery(upcomingQuery, [userId])
+      executeQuery(trainingProgressQuery, [userId]),
+      executeQuery(performanceQuery, [userId]),
+      executeQuery(teamChemistryQuery, [userId]),
+      executeQuery(upcomingQuery, [userId])
     ]);
     
     const overview = {
@@ -308,7 +253,7 @@ router.get('/overview', async (req, res) => {
     
     res.json({ success: true, data: overview });
   } catch (error) {
-    console.error(`${ROUTE_NAME.toUpperCase()} overview error:`, error);
+    serverLogger.error(`${ROUTE_NAME.toUpperCase()} overview error:`, error);
     const { statusCode, response } = createErrorResponse(
       'Failed to fetch dashboard data',
       'FETCH_ERROR',
@@ -353,7 +298,7 @@ router.get('/training-calendar', async (req, res) => {
       ORDER BY session_date ASC
     `;
     
-    const result = await safeQuery(query, [userId]);
+    const result = await executeQuery(query, [userId]);
     
     // Generate calendar data for the week
     const calendar = [];
@@ -369,7 +314,7 @@ router.get('/training-calendar', async (req, res) => {
             const rowDate = new Date(row.session_date);
             return rowDate.toDateString() === date.toDateString();
           } catch (dateError) {
-            console.warn('Date parsing error:', dateError);
+            serverLogger.warn('Date parsing error:', dateError);
             return false;
           }
         });
@@ -387,7 +332,7 @@ router.get('/training-calendar', async (req, res) => {
         });
       }
     } catch (calendarError) {
-      console.error('Error generating calendar:', calendarError);
+      serverLogger.error('Error generating calendar:', calendarError);
       // Return fallback calendar data
       calendar.push({
         dayName: 'MON',
@@ -402,7 +347,7 @@ router.get('/training-calendar', async (req, res) => {
     
     res.json({ success: true, data: calendar });
   } catch (error) {
-    console.error(`${ROUTE_NAME.toUpperCase()} training calendar error:`, error);
+    serverLogger.error(`${ROUTE_NAME.toUpperCase()} training calendar error:`, error);
     const { statusCode, response } = createErrorResponse(
       'Failed to fetch training calendar',
       'FETCH_ERROR',
@@ -432,7 +377,7 @@ router.get('/olympic-qualification', async (req, res) => {
       LIMIT 1
     `;
     
-    const result = await safeQuery(query, [userId]);
+    const result = await executeQuery(query, [userId]);
     
     const olympicData = result.rows[0] || {
       qualification_probability: 73,
@@ -455,7 +400,7 @@ router.get('/olympic-qualification', async (req, res) => {
       ORDER BY metric_name
     `;
     
-    const benchmarksResult = await safeQuery(benchmarksQuery, [userId]);
+    const benchmarksResult = await executeQuery(benchmarksQuery, [userId]);
     
     const benchmarks = benchmarksResult.rows.length > 0 ? benchmarksResult.rows : [
       { metric_name: '40-Yard Dash', current_value: 4.52, target_value: 4.40, unit: 's' },
@@ -472,7 +417,7 @@ router.get('/olympic-qualification', async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Olympic qualification error:', error);
+    serverLogger.error('Olympic qualification error:', error);
     res.status(500).json({ 
       success: false, 
       error: 'Failed to fetch Olympic data',
@@ -498,7 +443,7 @@ router.get('/sponsor-rewards', async (req, res) => {
       LIMIT 1
     `;
     
-    const result = await safeQuery(query, [userId]);
+    const result = await executeQuery(query, [userId]);
     
     const sponsorData = result.rows[0] || {
       available_points: 2847,
@@ -520,7 +465,7 @@ router.get('/sponsor-rewards', async (req, res) => {
       LIMIT 4
     `;
     
-    const productsResult = await safeQuery(productsQuery);
+    const productsResult = await executeQuery(productsQuery);
     
     const products = productsResult.rows.length > 0 ? productsResult.rows : [
       { product_name: 'Pro Grip Football Socks', points_cost: 350, relevance_score: 92, category: 'Gear' },
@@ -537,7 +482,7 @@ router.get('/sponsor-rewards', async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Sponsor rewards error:', error);
+    serverLogger.error('Sponsor rewards error:', error);
     res.status(500).json({ 
       success: false, 
       error: 'Failed to fetch sponsor data',
@@ -565,7 +510,7 @@ router.get('/wearables', async (req, res) => {
       ORDER BY last_sync DESC
     `;
     
-    const result = await safeQuery(query, [userId]);
+    const result = await executeQuery(query, [userId]);
     
     const wearablesData = result.rows.length > 0 ? result.rows : [
       {
@@ -581,7 +526,7 @@ router.get('/wearables', async (req, res) => {
     
     res.json({ success: true, data: wearablesData });
   } catch (error) {
-    console.error('Wearables error:', error);
+    serverLogger.error('Wearables error:', error);
     res.status(500).json({ 
       success: false, 
       error: 'Failed to fetch wearables data',
@@ -609,7 +554,7 @@ router.get('/team-chemistry', async (req, res) => {
       LIMIT 1
     `;
     
-    const result = await safeQuery(query, [userId]);
+    const result = await executeQuery(query, [userId]);
     
     const chemistryData = result.rows[0] || {
       overall_chemistry: 8.4,
@@ -622,7 +567,7 @@ router.get('/team-chemistry', async (req, res) => {
     
     res.json({ success: true, data: chemistryData });
   } catch (error) {
-    console.error('Team chemistry error:', error);
+    serverLogger.error('Team chemistry error:', error);
     res.status(500).json({ 
       success: false, 
       error: 'Failed to fetch team chemistry data',
@@ -649,7 +594,7 @@ router.get('/notifications', async (req, res) => {
       LIMIT 10
     `;
     
-    const result = await safeQuery(query, [userId]);
+    const result = await executeQuery(query, [userId]);
     
     const notifications = result.rows.length > 0 ? result.rows : [
       {
@@ -677,7 +622,7 @@ router.get('/notifications', async (req, res) => {
     
     res.json({ success: true, data: notifications });
   } catch (error) {
-    console.error('Notifications error:', error);
+    serverLogger.error('Notifications error:', error);
     res.status(500).json({ 
       success: false, 
       error: 'Failed to fetch notifications',
@@ -710,7 +655,7 @@ router.get('/daily-quote', async (req, res) => {
     
     res.json({ success: true, data: quote });
   } catch (error) {
-    console.error('Daily quote error:', error);
+    serverLogger.error('Daily quote error:', error);
     res.status(500).json({ 
       success: false, 
       error: 'Failed to fetch daily quote',
@@ -752,7 +697,7 @@ router.get('/health', async (req, res) => {
     
     res.json(healthStatus);
   } catch (error) {
-    console.error(`${ROUTE_NAME.toUpperCase()} health check error:`, error);
+    serverLogger.error(`${ROUTE_NAME.toUpperCase()} health check error:`, error);
     res.status(503).json({
       success: false,
       status: 'unhealthy',
@@ -772,7 +717,7 @@ router.get('/health', async (req, res) => {
  * Global error handler (catches unhandled errors)
  */
 router.use((err, req, res, next) => {
-  console.error(`${ROUTE_NAME.toUpperCase()} unhandled error:`, err);
+  serverLogger.error(`${ROUTE_NAME.toUpperCase()} unhandled error:`, err);
   
   const { statusCode, response } = createErrorResponse(
     'An unexpected error occurred',

@@ -16,6 +16,7 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
 import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
 import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { WellnessService } from "../../core/services/wellness.service";
+import { LoggerService } from "../../core/services/logger.service";
 
 interface WellnessMetric {
   label: string;
@@ -207,6 +208,7 @@ interface WellnessMetric {
 })
 export class WellnessComponent implements OnInit {
   private wellnessService = inject(WellnessService);
+  private logger = inject(LoggerService);
 
   metrics = signal<WellnessMetric[]>([]);
   wellnessStats = signal<any[]>([]);
@@ -307,7 +309,7 @@ export class WellnessComponent implements OnInit {
         }
       },
       error: (err) => {
-        console.error('Error loading wellness data:', err);
+        this.logger.error('Error loading wellness data:', err);
         this.loadFallbackData();
       },
     });
@@ -395,7 +397,7 @@ export class WellnessComponent implements OnInit {
         }
       },
       error: (err) => {
-        console.error('Error submitting wellness check-in:', err);
+        this.logger.error('Error submitting wellness check-in:', err);
       },
     });
   }

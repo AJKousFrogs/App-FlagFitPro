@@ -20,6 +20,7 @@ import { RecoveryService } from '../../../core/services/recovery.service';
 import { firstValueFrom } from 'rxjs';
 import { interval, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { LoggerService } from '../../../core/services/logger.service';
 
 @Component({
   selector: 'app-recovery-dashboard',
@@ -590,6 +591,7 @@ export class RecoveryDashboardComponent implements OnInit, OnDestroy {
   private recoveryService = inject(RecoveryService);
   private destroy$ = new Subject<void>();
   private timerInterval?: any;
+  private logger = inject(LoggerService);
 
   recoveryScoreValue = 78;
   recoveryMetrics = signal<any[]>([]);
@@ -650,7 +652,7 @@ export class RecoveryDashboardComponent implements OnInit, OnDestroy {
   }
 
   selectProtocol(protocol: any) {
-    console.log('Selected protocol:', protocol);
+    this.logger.debug('Selected protocol:', protocol);
   }
 
   async startProtocol(protocol: any) {
@@ -663,7 +665,7 @@ export class RecoveryDashboardComponent implements OnInit, OnDestroy {
 
   showProtocolDetails(protocol: any) {
     // Open protocol details modal with research evidence
-    console.log('Show details for:', protocol);
+    this.logger.debug('Show details for:', protocol);
   }
 
   toggleSession() {
