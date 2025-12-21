@@ -1,14 +1,14 @@
-# 🏈 FlagFit Pro - Elite Flag Football Training Platform
+# 🏈 FlagFit Pro - Flag Football Training Platform
 
-*Professional wireframe-integrated training platform with AI coaching and LA28 Olympic preparation*
+_Professional-grade training platform with advanced analytics and AI-powered insights_
 
-[![React](https://img.shields.io/badge/React-18.0+-blue.svg)](https://reactjs.org/)
-[![Vite](https://img.shields.io/badge/Vite-7.0+-purple.svg)](https://vitejs.dev/)
+[![Angular](https://img.shields.io/badge/Angular-21.0+-red.svg)](https://angular.dev/)
+[![PrimeNG](https://img.shields.io/badge/PrimeNG-21.0+-blue.svg)](https://primeng.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE.md)
 
 ## 🚀 Overview
 
-FlagFit Pro is a comprehensive flag football training platform featuring complete wireframe-integrated design, AI coaching, interactive analytics, and preparation tools for LA28 Olympic qualification. Built with modern React architecture and professional design patterns.
+FlagFit Pro is a comprehensive training platform that combines modern web technologies with sports science to deliver personalized training experiences, advanced performance analytics, and team management tools.
 
 ## ✨ Latest Features (2024)
 
@@ -38,116 +38,143 @@ FlagFit Pro is a comprehensive flag football training platform featuring complet
 
 ## 🛠 Technology Stack
 
-| Frontend | Backend | Infrastructure | Design |
-|----------|---------|----------------|--------|
-| React 18 + Hooks | Node.js + Express | Vite Dev Server | Wireframe-Based UI |
-| React Router | JWT Authentication | Service Workers | Poppins Typography |
-| CSS3 + Flexbox/Grid | Mock Services | Performance API | Black & White Theme |
-| FilterManager | Local Storage | Error Boundaries | Responsive Design |
+**PRIMARY STACK: Angular 21 + PrimeNG 21**
+
+- **Frontend Framework**: Angular 21 (Standalone Components)
+- **UI Component Library**: PrimeNG 21
+- **Icons**: PrimeIcons + Lucide Angular
+- **Charts**: PrimeNG Charts (Chart.js wrapper)
+- **Forms**: Angular Reactive Forms
+- **State Management**: Angular Signals + RxJS
+- **Styling**: SCSS with CSS Custom Properties
+- **Build**: Angular CLI with ESBuild
+
+**Backend & Infrastructure**:
+- **Backend**: Node.js + Express
+- **Database**: Supabase PostgreSQL
+- **Authentication**: JWT with Angular Guards & Interceptors
+- **API**: RESTful API with Netlify Functions
+- **Real-Time**: Supabase Realtime subscriptions
+
+**Legacy Files**:
+- The root directory contains legacy vanilla HTML/CSS/JS files from the original implementation
+- These are maintained for reference but **Angular 21 + PrimeNG 21 is the primary development stack**
 
 ## 📁 Project Structure
 
 ```
-src/
-├── components/
-│   ├── ChatWidget.jsx              # AI coach chat interface
-│   ├── ChatWidget.css              # Complete chat styling
-│   ├── BackupManager.jsx           # Data backup management
-│   ├── ThemeToggle.jsx             # Theme switching
-│   └── NotificationCenter.jsx      # User notifications
-├── services/
-│   ├── auth.service.js             # Authentication with localStorage
-│   └── BackupService.js            # Data backup service
-├── utils/
-│   ├── FilterManager.js            # Interactive filtering system
-│   └── cn.js                       # Utility functions
-├── contexts/
-│   └── NeonDatabaseContext.jsx     # Database context provider
-├── hooks/
-│   └── useReducer.js               # Enhanced reducer hook
-└── App.jsx                         # Main wireframe-integrated app
+flagfit-pro/
+├── angular/                    # PRIMARY: Angular 21 + PrimeNG 21 application
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── core/          # Core services, guards, interceptors
+│   │   │   ├── shared/        # Shared components
+│   │   │   └── features/      # Feature modules
+│   │   └── assets/
+│   ├── angular.json
+│   └── package.json
+├── src/                        # Legacy vanilla HTML/CSS/JS (reference only)
+│   ├── css/
+│   ├── js/
+│   └── components/
+├── netlify/                    # Netlify Functions (backend API)
+│   └── functions/
+└── docs/                       # Documentation
 ```
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 18+
-- Modern web browser with ES6 support
+
+- Node.js 18+ and npm
+- Angular CLI 21
 
 ### Installation
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/AJKous31/app-new-flag.git
-   cd app-new-flag
-   ```
+```bash
+# Install Angular CLI globally
+npm install -g @angular/cli@21
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
+# Navigate to angular directory
+cd angular
 
-3. **Start development server**
-   ```bash
-   npm run dev
-   ```
+# Install dependencies
+npm install
 
-4. **Access the application**
-   - Local: http://localhost:3000/
-   - Network: Available on your local network
+# Start development server
+npm start
+```
 
-## 🎯 Core Functionality
+The Angular application will be available at `http://localhost:4200`
 
-### 🏈 Dashboard
+## ✨ Key Features
+
+### 🏆 Performance Analytics
+- AI-Powered Predictions with advanced ML models
+- Evidence-Based Research integration
+- Flag Football Specific metrics and analytics
+- Real-Time Processing ready for GPS/wearable integration
+- Interactive Visualizations with PrimeNG Charts
+
+### 🥗 Nutrition Intelligence
+- USDA Database Integration
+- Precision Hydration tracking
+- Evidence-Based Supplements recommendations
+- Personalized Strategies with biomarker integration
+
+### 🤝 Team Chemistry
+- Relationship Analytics
+- Communication Metrics
+- Network Visualization
+- Performance Impact correlation
+
+### 📊 Advanced Analytics Dashboard
+- Real-Time Streaming data
+- Predictive Insights with confidence intervals
+- Flag Football Optimization
+- Research Integration
+- Mobile Responsive design
+
+### 🎯 Core Functionality
+
+#### 🏈 Dashboard
 - **Performance Overview**: Training metrics and progress charts
 - **Today's Training**: Recommended exercises and schedules
 - **Team Updates**: Ljubljana Frogs team communications
 - **Interactive Cards**: Hover effects and responsive layout
 
-### 🏃‍♂️ Training
+#### 🏃‍♂️ Training
 - **Personalized Workouts**: AI-recommended training sessions
 - **Skill Categories**: Speed & Agility, Route Running, Defensive Drills
 - **Progress Tracking**: Duration and difficulty monitoring
 - **Customization**: Personalized training adjustments
 
-### 🤝 Community
+#### 🤝 Community
 - **Discussion Forums**: Player interaction and knowledge sharing
 - **Team Leaderboard**: Performance rankings and achievements
 - **Social Features**: Player connections and team chemistry
 - **Real-time Updates**: Live discussions and notifications
 
-### 🏆 Tournaments
+#### 🏆 Tournaments
 - **LA28 Olympic Path**: Qualification tracking and requirements
 - **Upcoming Events**: Tournament schedules and registration
 - **Results History**: Competition performance tracking
 - **Achievement System**: Awards and milestone recognition
 
-### 💬 AI Coach Chat
+#### 💬 AI Coach Chat
 - **Contextual Responses**: Intelligent coaching suggestions
 - **Quick Actions**: Training tips, nutrition, recovery advice
 - **Interactive Interface**: Typing indicators and smooth animations
 - **Persistent Sessions**: Chat history and context retention
 
-## 🔧 Development
-
-### Available Scripts
-
-```bash
-npm run dev          # Start development server
-npm run build        # Build for production
-npm run preview      # Preview production build
-npm run lint         # Code quality checks
-```
-
-### Code Quality Features
-
-- **FilterManager**: Advanced interactive filtering with accessibility
-- **Error Boundaries**: Comprehensive error handling
-- **Performance Optimization**: Loading states and smooth transitions
-- **Accessibility**: ARIA compliance and keyboard navigation
-- **Security**: CSP headers and XSS protection
-
 ## 🎨 Design System
+
+The application uses a comprehensive design system built on:
+
+- **PrimeNG**: Production-ready UI components
+- **SCSS**: Styling with CSS custom properties
+- **Design Tokens**: Semantic token system for theming
+- **Accessibility**: WCAG 2.1 AA compliant
 
 ### Typography
 - **Primary Font**: Poppins (300, 400, 500, 600, 700, 800)
@@ -164,6 +191,59 @@ npm run lint         # Code quality checks
 - **Desktop**: Full wireframe layout with grid systems
 - **Tablet**: Adapted layouts with touch optimization
 - **Mobile**: Stacked layouts with mobile-first approach
+
+See [DESIGN_SYSTEM_DOCUMENTATION.md](./DESIGN_SYSTEM_DOCUMENTATION.md) for complete details.
+
+## 🔌 API Integration
+
+All API connections are integrated through Angular services:
+
+- **Auth Service**: Login, Register, Logout, Token Management
+- **API Service**: Centralized HTTP client with interceptors
+- **Feature Services**: Training, Analytics, Community, Tournaments, etc.
+
+### API Configuration
+
+The API service auto-detects the environment:
+- **Development**: Uses mock API or localhost:3001
+- **Netlify**: Uses Netlify Functions
+- **Production**: Auto-detects based on hostname
+
+## 📦 Development
+
+### Build
+
+```bash
+cd angular
+npm run build
+```
+
+### Test
+
+```bash
+cd angular
+npm test
+```
+
+### Code Generation
+
+```bash
+cd angular
+
+# Generate a new component
+ng generate component features/my-feature
+
+# Generate a new service
+ng generate service core/services/my-service
+```
+
+### Code Quality Features
+
+- **FilterManager**: Advanced interactive filtering with accessibility
+- **Error Boundaries**: Comprehensive error handling
+- **Performance Optimization**: Loading states and smooth transitions
+- **Accessibility**: ARIA compliance and keyboard navigation
+- **Security**: CSP headers and XSS protection
 
 ## 🚀 Deployment
 
@@ -184,9 +264,11 @@ cp .env.example .env
 
 ### Security Features
 - **Content Security Policy**: XSS and injection protection
-- **Authentication**: JWT-style token management
+- **Authentication**: JWT token management with Angular Guards
 - **Data Protection**: Secure local storage handling
 - **Error Handling**: Graceful error boundaries
+- **CSRF Protection**: Built-in CSRF protection
+- **Session Management**: Secure session handling
 
 ### Privacy Compliance
 - **Data Minimization**: Only necessary data collection
@@ -208,6 +290,34 @@ cp .env.example .env
 - **Button States**: Clear active and disabled states
 - **Form Validation**: Accessible error messages
 
+## 🔐 Authentication
+
+The authentication system includes:
+- JWT token management
+- CSRF protection
+- Session management
+- Auto-redirect on auth state change
+- Route guards
+
+## 🎯 Migration Status
+
+The project is migrating from vanilla HTML/CSS/JS to Angular 21 + PrimeNG 21:
+
+- ✅ Angular 21 project setup
+- ✅ PrimeNG 21 integration
+- ✅ Core services (Auth, API)
+- ✅ Shared components (Sidebar, Header, Layout)
+- ✅ Auth module (Login, Register, Reset Password)
+- ✅ Dashboard component
+- 🚧 Remaining feature modules in progress
+
+## 📚 Documentation
+
+- [Angular README](./angular/README.md) - Angular-specific documentation
+- [Design System](./DESIGN_SYSTEM_DOCUMENTATION.md) - Complete design system guide
+- [Migration Plan](./ANGULAR_MIGRATION_PLAN.md) - Migration from vanilla HTML/JS
+- [Technical Architecture](./docs/TECHNICAL_ARCHITECTURE.md) - System architecture
+
 ## 🤝 Contributing
 
 We welcome contributions! Please:
@@ -220,12 +330,12 @@ We welcome contributions! Please:
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+MIT License - See LICENSE file for details
 
 ## 🙏 Acknowledgments
 
 - HTML wireframe designs for comprehensive UI structure
-- React community for excellent development tools
+- Angular and PrimeNG communities for excellent development tools
 - Accessibility guidelines from W3C and WCAG
 - Olympic flag football community for inspiration
 
@@ -234,10 +344,6 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 <div align="center">
 
 **Built with ❤️ for Olympic flag football excellence**
-
-🤖 **Generated with [Claude Code](https://claude.ai/code)**
-
-**Co-Authored-By: Claude <noreply@anthropic.com>**
 
 [Live Demo](https://app-new-flag.netlify.app/) • [Documentation](docs/) • [Contributing](CONTRIBUTING.md) • [License](LICENSE.md)
 

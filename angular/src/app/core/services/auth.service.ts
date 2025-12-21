@@ -1,0 +1,219 @@
+import { Injectable, inject, signal, effect } from "@angular/core";
+import { Router } from "@angular/router";
+import { Observable, throwError, from, of } from "rxjs";
+import { tap, catchError, map } from "rxjs/operators";
+import { SupabaseService } from "./supabase.service";
+
+export interface User {
+  id: string;
+  email: string;
+  name?: string;
+  role?: string;
+  [key: string]: any;
+}
+
+export interface LoginCredentials {
+  email: string;
+  password: string;
+  remember?: boolean;
+}
+
+export interface RegisterData {
+  email: string;
+  password: string;
+  name?: string;
+  [key: string]: any;
+}
+
+@Injectable({
+  providedIn: "root",
+})
+export class AuthService {
+  private supabaseService = inject(SupabaseService);
+  private router = inject(Router);
+
+  private readonly TOKEN_KEY = "authToken";
+  private readonly USER_KEY = "user";
+  private readonly CSRF_KEY = "csrfToken";
+
+  // Signals for reactive state
+  currentUser = signal<User | null>(null);
+  isAuthenticated = signal<boolean>(false);
+  isLoading = signal<boolean>(false);
+
+  constructor() {
+    // Load stored auth state immediately
+    this.loadStoredAuth();
+    
+    // Use effect() to reactively watch Supabase auth state changes (signals)
+    // This is zoneless-compatible and more efficient than subscriptions
+    effect(() => {
+      const user = this.supabaseService.currentUser();
+      if (user) {
+        const appUser: User = {
+          id: user.id,
+          email: user.email ?? "",
+          name: user.user_metadata?.["name"] ?? user.email,
+          role: user.user_metadata?.["role"] ?? "user",
+        };
+        this.currentUser.set(appUser);
+        this.isAuthenticated.set(true);
+      } else {
+        this.currentUser.set(null);
+        this.isAuthenticated.set(false);
+      }
+    });
+  }
+
+  private loadStoredAuth(): void {
+    // Supabase handles session persistence automatically
+    // Just check if we have a current session (using signal)
+    const session = this.supabaseService.session();
+    if (session?.user) {
+      const user: User = {
+        id: session.user.id,
+        email: session.user.email ?? "",
+        name: session.user.user_metadata?.["name"] ?? session.user.email,
+        role: session.user.user_metadata?.["role"] ?? "user",
+      };
+      this.currentUser.set(user);
+      this.isAuthenticated.set(true);
+    }
+  }
+
+  login(credentials: LoginCredentials): Observable<any> {
+    this.isLoading.set(true);
+
+    return from(
+      this.supabaseService.signIn(credentials.email, credentials.password)
+    ).pipe(
+      map((response) => {
+        if (response.error) {
+          throw new Error(response.error.message);
+        }
+        return {
+          success: true,
+          data: {
+            user: response.data.user,
+            session: response.data.session,
+          },
+        };
+      }),
+      catchError((error) => {
+        this.isLoading.set(false);
+        return throwError(() => error);
+      }),
+      tap(() => this.isLoading.set(false))
+    );
+  }
+
+  register(data: RegisterData): Observable<any> {
+    this.isLoading.set(true);
+
+    const { email, password, ...metadata } = data;
+
+    return from(
+      this.supabaseService.signUp(data.email, data.password, metadata)
+    ).pipe(
+      map((response) => {
+        if (response.error) {
+          throw new Error(response.error.message);
+        }
+        return {
+          success: true,
+          data: {
+            user: response.data.user,
+            session: response.data.session,
+          },
+          message: "Please check your email to verify your account.",
+        };
+      }),
+      catchError((error) => {
+        this.isLoading.set(false);
+        return throwError(() => error);
+      }),
+      tap(() => this.isLoading.set(false))
+    );
+  }
+
+  logout(): Observable<any> {
+    return from(this.supabaseService.signOut()).pipe(
+      tap(() => {
+        this.clearAuth();
+        this.router.navigate(["/login"]);
+      }),
+      catchError((error) => {
+        // Even if logout fails on server, clear local auth
+        this.clearAuth();
+        this.router.navigate(["/login"]);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  getCurrentUser(): Observable<any> {
+    // Use signal instead of property access
+    const user = this.supabaseService.currentUser();
+    if (user) {
+      const appUser: User = {
+        id: user.id,
+        email: user.email ?? "",
+        name: user.user_metadata?.["name"] ?? user.email,
+        role: user.user_metadata?.["role"] ?? "user",
+      };
+      this.currentUser.set(appUser);
+      this.isAuthenticated.set(true);
+      return of({ success: true, data: appUser });
+    }
+    return of({ success: false, error: "No user found" });
+  }
+
+  async getToken(): Promise<string | null> {
+    return await this.supabaseService.getToken();
+  }
+
+  getUser(): User | null {
+    return this.currentUser();
+  }
+
+  checkAuth(): boolean {
+    // Check if we have an authenticated session (using signal)
+    const session = this.supabaseService.session();
+    const isAuth = !!session && this.isAuthenticated();
+
+    if (!isAuth && session) {
+      // Session exists but state is not set, reload user
+      this.getCurrentUser().subscribe();
+    }
+
+    return isAuth;
+  }
+
+  redirectToDashboard(): void {
+    this.router.navigate(["/dashboard"]);
+  }
+
+  redirectToLogin(): void {
+    this.router.navigate(["/login"]);
+  }
+
+  private clearAuth(): void {
+    // Supabase handles session cleanup
+    // Just clear our local state
+    this.currentUser.set(null);
+    this.isAuthenticated.set(false);
+    sessionStorage.removeItem(this.CSRF_KEY);
+  }
+
+  generateCsrfToken(): string {
+    const token = Array.from(crypto.getRandomValues(new Uint8Array(32)))
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
+    sessionStorage.setItem(this.CSRF_KEY, token);
+    return token;
+  }
+
+  getCsrfToken(): string | null {
+    return sessionStorage.getItem(this.CSRF_KEY);
+  }
+}

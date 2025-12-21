@@ -1,0 +1,361 @@
+/* ================================================================
+   DESIGN TOKENS - FlagFit Pro
+   Simplified Production-Ready Token System (30 tokens)
+   Focus: Athletic data clarity, high performance, accessibility
+   ================================================================ */
+
+:root {
+  /* ================================
+     ESSENTIAL TOKENS ONLY (30 total)
+     ================================ */
+
+  /* Colors (8 tokens) - Aligned with Design System */
+  --color-primary: #089949; /* Design System Primary Brand Color */
+  --color-primary-600: #0ab85a;
+  --color-primary-dark: #036d35; /* Design System hover color */
+  --color-primary-rgb: 8, 153, 73; /* RGB values for alpha compositions */
+  --color-success: #f1c40f; /* Design System: Yellow for success */
+  --color-warning: #ef4444; /* Design System: Red for warning */
+  --color-error: #ef4444;
+  --color-text: #1a1a1a;
+  --color-text-muted: #6b7280;
+  --color-border: #e5e7eb;
+
+  /* Icon colors */
+  --icon-color-primary: #ffffff;
+
+  /* Spacing (6 tokens) */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+
+  /* Typography (6 tokens) */
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 18px;
+  --text-xl: 20px;
+  --text-2xl: 24px;
+
+  /* Component tokens (10 tokens) - Design System Compliant */
+  --radius-sm: 0.125rem; /* 2px - Design System */
+  --radius-md: 0.375rem; /* 6px - Design System */
+  --radius-lg: 0.5rem; /* 8px - Design System */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --transition: 0.2s ease;
+  --font-family: "Poppins", sans-serif;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+
+  /* ================================
+     LEGACY COMPATIBILITY ALIASES
+     (For existing code that uses old token names)
+     ================================ */
+
+  /* Spacing aliases */
+  --space-1: var(--space-xs);
+  --space-2: var(--space-sm);
+  --space-3: 12px;
+  --space-4: var(--space-md);
+  --space-5: 20px; /* 1.25rem - between space-4 (16px) and space-6 (24px) */
+  --space-6: var(--space-lg);
+  --space-8: var(--space-xl);
+  --space-12: var(--space-2xl);
+  --space-16: 64px;
+
+  /* Typography aliases */
+  --font-xs: var(--text-xs);
+  --font-sm: var(--text-sm);
+  --font-base: var(--text-base);
+  --font-lg: var(--text-lg);
+  --font-xl: var(--text-xl);
+  --font-2xl: var(--text-2xl);
+  --font-3xl: 30px;
+
+  /* Radius aliases - Design System Compliant */
+  --radius-none: 0;
+  --radius-xl: 0.75rem; /* 12px - Design System */
+  --radius-2xl: 1rem; /* 16px - Design System */
+  --radius-3xl: 1.5rem; /* 24px - Design System */
+  --radius-full: 9999px; /* Design System */
+
+  /* Shadow aliases */
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+  /* Color aliases for backward compatibility */
+  --color-brand-primary: var(--color-primary);
+  --color-brand-primary-hover: var(--color-primary-dark);
+  --color-brand-primary-active: var(--color-primary-dark);
+  --surface-primary: #ffffff;
+  --surface-secondary: #f8f9fa;
+  --surface-tertiary: #e9ecef;
+  --color-text-primary: var(--color-text);
+  --color-text-secondary: var(--color-text-muted);
+  --color-text-tertiary: var(--color-text-muted);
+  --color-border-primary: var(--color-border);
+  --color-border-secondary: var(--color-border);
+  --border-subtle: var(--color-border);
+
+  /* Primitive Neutral Palette (Design System Compliant) */
+  --primitive-neutral-50: #fafafa;
+  --primitive-neutral-100: #f5f5f5;
+  --primitive-neutral-200: #f0f0f0;
+  --primitive-neutral-300: #e5e5e5;
+  --primitive-neutral-400: #d4d4d4;
+  --primitive-neutral-500: #a3a3a3;
+  --primitive-neutral-600: #737373;
+  --primitive-neutral-700: #404040;
+  --primitive-neutral-800: #262626;
+  --primitive-neutral-900: #171717;
+  --primitive-neutral-950: #0a0a0a;
+
+  /* Primitive Primary/Brand Palette (Design System Compliant) */
+  --primitive-primary-50: #f0f9f7;
+  --primitive-primary-100: #d0f0eb;
+  --primitive-primary-200: #a0e4d7;
+  --primitive-primary-300: #70d8c3;
+  --primitive-primary-400: #40ccaf;
+  --primitive-primary-500: #10c96b;
+  --primitive-primary-600: #0ab85a;
+  --primitive-primary-700: #089949;
+  --primitive-primary-800: #067a3c;
+  --primitive-primary-900: #036d35;
+
+  /* Primitive Status Palettes (Design System Compliant) */
+  /* Warning - Amber scale */
+  --primitive-warning-400: #fbbf24; /* For dark mode */
+  --primitive-warning-500: #f59e0b; /* For light mode */
+  --primitive-warning-600: #d97706;
+
+  /* Error - Red scale */
+  --primitive-error-500: #ef4444; /* For dark mode */
+  --primitive-error-600: #dc2626; /* For light mode */
+  --primitive-error-700: #b91c1c;
+
+  /* Primitive aliases (most commonly used) */
+  --primitive-success-500: var(--color-success);
+
+  /* Brand color aliases */
+  --brand-green: var(--color-primary);
+  --brand-green-hover: var(--color-primary-dark);
+  --brand-green-dark: var(--color-primary-dark);
+
+  /* Component spacing aliases */
+  --spacing-component-xs: var(--space-sm);
+  --spacing-component-sm: 12px;
+  --spacing-component-md: var(--space-md);
+  --spacing-component-lg: var(--space-lg);
+  --spacing-component-xl: var(--space-xl);
+
+  /* Elevation aliases */
+  --elevation-low: var(--shadow-sm);
+  --elevation-medium: var(--shadow-md);
+  --elevation-high: var(--shadow-lg);
+
+  /* Motion aliases */
+  --motion-duration-normal: var(--transition);
+  --motion-easing-productive: ease;
+  --transition-base: var(--transition);
+  --transition-fast: 0.15s ease;
+  --transition-slow: 0.3s ease;
+
+  /* Font weight aliases */
+  --font-weight-semibold: 600;
+  --font-normal: var(--font-weight-normal);
+  --font-medium: var(--font-weight-medium);
+  --font-semibold: 600;
+  --font-bold: var(--font-weight-bold);
+
+  /* Text size aliases */
+  --text-3xl: 30px;
+  --text-4xl: 36px;
+  --text-5xl: 48px;
+
+  /* Line height aliases */
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
+
+  /* Letter spacing aliases */
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.05em;
+
+  /* RGB values for rgba() usage - Updated for new primary color */
+  --primitive-primary-rgb: 8, 153, 73; /* #089949 */
+  --primitive-primary-600-rgb: 10, 184, 90; /* #0ab85a */
+
+  /* ================================
+     TYPOGRAPHY SYSTEM VARIABLES
+     ================================ */
+
+  /* Typography - Display */
+  --typography-display-md-size: 48px;
+  --typography-display-md-weight: 700;
+  --typography-display-md-line-height: 1.2;
+  --typography-display-md-letter-spacing: -0.02em;
+
+  /* Typography - Headings */
+  --typography-heading-lg-size: 32px;
+  --typography-heading-lg-weight: 600;
+  --typography-heading-lg-line-height: 1.2;
+  --typography-heading-lg-letter-spacing: -0.01em;
+
+  --typography-heading-md-size: 24px;
+  --typography-heading-md-weight: 600;
+  --typography-heading-md-line-height: 1.3;
+  --typography-heading-md-letter-spacing: -0.01em;
+
+  --typography-heading-sm-size: 20px;
+  --typography-heading-sm-weight: 600;
+  --typography-heading-sm-line-height: 1.4;
+  --typography-heading-sm-letter-spacing: 0;
+
+  --typography-heading-xs-size: 18px;
+  --typography-heading-xs-weight: 600;
+  --typography-heading-xs-line-height: 1.4;
+  --typography-heading-xs-letter-spacing: 0;
+
+  /* Typography - Body */
+  --typography-body-md-size: 16px;
+  --typography-body-md-line-height: 1.5;
+  --typography-body-md-weight: 400;
+
+  --typography-body-sm-size: 14px;
+  --typography-body-sm-line-height: 1.5;
+  --typography-body-sm-weight: 400;
+
+  /* Typography - Labels */
+  --typography-label-sm-size: 12px;
+  --typography-label-sm-weight: 500;
+  --typography-label-sm-line-height: 1.4;
+
+  /* Typography - Caption */
+  --typography-caption-size: 12px;
+  --typography-caption-weight: 400;
+  --typography-caption-line-height: 1.4;
+
+  /* ================================
+     DESIGN SYSTEM TYPOGRAPHY TOKENS
+     (Matching DESIGN_SYSTEM_DOCUMENTATION.md)
+     ================================ */
+
+  /* Display Typography */
+  --font-display-2xl: 4.5rem; /* 72px */
+  --font-display-xl: 3.75rem; /* 60px */
+
+  /* Heading Typography */
+  --font-heading-2xl: 2.5rem; /* 40px */
+  --font-heading-xl: 1.875rem; /* 30px */
+  --font-heading-lg: 1.5rem; /* 24px */
+  --font-heading-md: 1.25rem; /* 20px */
+
+  /* Body Typography */
+  --font-body-lg: 1.125rem; /* 18px */
+  --font-body-md: 1rem; /* 16px */
+  --font-body-sm: 0.875rem; /* 14px */
+
+  /* Caption Typography */
+  --font-caption: 0.75rem; /* 12px */
+
+  /* Font Primitives - Design System Compliant */
+  --primitive-font-sans:
+    "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    sans-serif;
+  --primitive-font-display:
+    "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    sans-serif;
+  --primitive-font-weight-600: 600;
+
+  /* ================================
+     COLOR SYSTEM EXTENSIONS
+     ================================ */
+
+  /* Brand Color Variants - Updated for new primary color */
+  --color-brand-primary-light: rgba(8, 153, 73, 0.1);
+  --color-brand-primary-subtle: rgba(8, 153, 73, 0.05);
+  --color-brand-secondary: #10c96b; /* Design System secondary */
+
+  /* Interactive Colors */
+  --color-interactive-primary: var(--color-primary);
+  --color-interactive-primary-hover: var(--color-primary-600);
+
+  /* Status Colors - Design System Compliant */
+  --color-status-success: var(--color-success); /* #f1c40f - Yellow */
+  --color-status-success-light: rgba(241, 196, 15, 0.1);
+  --color-status-success-subtle: rgba(241, 196, 15, 0.05);
+
+  --color-status-warning: var(--color-warning); /* #ef4444 - Red */
+  --color-status-warning-light: rgba(239, 68, 68, 0.1);
+  --color-status-warning-subtle: rgba(239, 68, 68, 0.05);
+
+  --color-status-error: var(--color-error);
+  --color-status-error-light: rgba(239, 68, 68, 0.1);
+  --color-status-error-subtle: rgba(239, 68, 68, 0.05);
+
+  /* Text on Color Backgrounds */
+  --color-text-on-surface: var(--color-text);
+  --color-text-on-primary: #ffffff;
+
+  /* Dark Theme Colors */
+  --color-dark-surface: #1a1a1a;
+  --border-color-dark: rgba(255, 255, 255, 0.1);
+
+  /* ================================
+     GRADIENT SYSTEM
+     ================================ */
+
+  --gradient-primary: linear-gradient(
+    135deg,
+    var(--color-primary) 0%,
+    var(--color-primary-dark) 100%
+  );
+  --gradient-card: linear-gradient(
+    135deg,
+    rgba(8, 153, 73, 0.05) 0%,
+    rgba(3, 109, 53, 0.02) 100%
+  );
+  --gradient-dark-card: linear-gradient(
+    135deg,
+    rgba(8, 153, 73, 0.1) 0%,
+    rgba(3, 109, 53, 0.05) 100%
+  );
+
+  /* ================================
+     COMPONENT RADIUS SYSTEM
+     ================================ */
+
+  --radius-component-sm: var(--radius-sm);
+  --radius-component-md: var(--radius-md);
+  --radius-component-lg: var(--radius-lg);
+  --radius-component-xl: var(--radius-xl);
+
+  /* ================================
+     Z-INDEX SYSTEM
+     ================================ */
+
+  --z-index-base: 1;
+  --z-index-dropdown: 1000;
+  --z-index-sticky: 1020;
+  --z-index-fixed: 1030;
+  --z-index-modal-backdrop: 1040;
+  --z-index-modal: 1050;
+  --z-index-popover: 1060;
+  --z-index-tooltip: 1070;
+  --z-index-skiplink: 10000;
+  --z-index-loading: 10001;
+  --z-index-loading-overlay: 10002;
+
+  /* ================================
+     BORDER SYSTEM EXTENSIONS
+     ================================ */
+
+  --color-border-focus: var(--color-primary);
+  --color-border-subtle: rgba(0, 0, 0, 0.05);
+  --color-border-secondary: var(--color-border);
+}

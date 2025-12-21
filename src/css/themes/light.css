@@ -1,0 +1,504 @@
+/* ================================================================
+   LIGHT THEME - FlagFit Pro
+   Comprehensive light theme with proper contrast and accessibility
+   Design System Compliant - Uses primitive tokens for maintainability
+   UPGRADED: Enhanced shadows, improved component coverage, better visual hierarchy
+   ================================================================ */
+
+/* Manual theme switching via data-theme attribute */
+[data-theme="light"],
+html[data-theme="light"] {
+  /* Surface Colors - Light Mode (Design System Compliant) */
+  --surface-primary: #ffffff;
+  --surface-secondary: var(--primitive-neutral-50); /* #fafafa */
+  --surface-tertiary: var(--primitive-neutral-100); /* #f5f5f5 */
+  --surface-quaternary: var(
+    --primitive-neutral-200
+  ); /* #f0f0f0 - for layered UI */
+  --surface-elevated: #ffffff;
+  --surface-inverse: var(--primitive-neutral-900); /* #171717 */
+  --surface-overlay: rgba(0, 0, 0, 0.5); /* For modals and overlays */
+
+  /* Text Colors - Light Mode (Design System Compliant) */
+  --color-text-primary: var(--primitive-neutral-900); /* #171717 */
+  --color-text-secondary: var(--primitive-neutral-700); /* #404040 */
+  --color-text-tertiary: var(--primitive-neutral-600); /* #737373 */
+  --color-text-disabled: var(--primitive-neutral-400); /* #d4d4d4 */
+  --color-text-inverse: var(--primitive-neutral-50); /* #fafafa */
+  --color-text-on-surface: var(--primitive-neutral-900); /* #171717 */
+  --color-text-muted: var(--primitive-neutral-500); /* #a3a3a3 */
+
+  /* Icon Colors - Light Mode (WCAG AA Compliant) */
+  --icon-color-primary: var(--primitive-neutral-900); /* #171717 */
+  --icon-color-secondary: var(--primitive-neutral-700); /* #404040 */
+  --icon-color-tertiary: var(--primitive-neutral-600); /* #737373 */
+  --icon-color-disabled: var(--primitive-neutral-400); /* #d4d4d4 */
+  --icon-color-on-primary: #ffffff;
+  --icon-color-brand: var(--primitive-primary-700); /* #089949 */
+
+  /* Border Colors - Light Mode (Design System Compliant) */
+  --color-border-primary: var(--primitive-neutral-300); /* #e5e5e5 */
+  --color-border-secondary: var(--primitive-neutral-200); /* #f0f0f0 */
+  --color-border-subtle: var(--primitive-neutral-100); /* #f5f5f5 */
+  --color-border-strong: var(--primitive-neutral-400); /* #d4d4d4 */
+  --color-border-medium: var(--primitive-neutral-300); /* #e5e5e5 */
+  --color-border-focus: var(--primitive-primary-700); /* #089949 */
+
+  /* Brand Colors - Light Mode */
+  --color-brand-primary: var(--primitive-primary-700); /* #089949 */
+  --color-brand-primary-hover: var(--primitive-primary-800); /* #067a3c */
+  --color-brand-primary-active: var(--primitive-primary-900); /* #036d35 */
+  --color-brand-primary-alpha-10: rgba(8, 153, 73, 0.1);
+  --color-brand-primary-alpha-20: rgba(8, 153, 73, 0.2);
+  --color-brand-primary-alpha-5: rgba(8, 153, 73, 0.05);
+
+  /* Shadows & Elevation - Light Mode (Enhanced) */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --shadow-xl: 0 12px 48px rgba(0, 0, 0, 0.15);
+  --shadow-2xl: 0 20px 60px rgba(0, 0, 0, 0.2);
+  --shadow-focus: 0 0 0 3px var(--color-brand-primary-alpha-20);
+  --shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+
+  /* Elevation System - Light Mode */
+  --elevation-low: var(--shadow-sm);
+  --elevation-medium: var(--shadow-md);
+  --elevation-high: var(--shadow-lg);
+  --elevation-highest: var(--shadow-xl);
+
+  /* Chart Colors - Light Mode */
+  --chart-bar-fill: var(--color-brand-primary);
+  --chart-bar-bg: var(--primitive-neutral-100); /* #f5f5f5 */
+  --chart-line-color: var(--primitive-primary-600); /* #0ab85a */
+  --chart-grid-color: var(--primitive-neutral-200); /* #f0f0f0 */
+
+  /* Status Colors - Light Mode (Enhanced) */
+  --status-success-600: var(--primitive-primary-700); /* #089949 - dark green */
+  --status-success-50: rgba(8, 153, 73, 0.05);
+  --status-success-100: rgba(8, 153, 73, 0.1);
+  --status-success-200: rgba(8, 153, 73, 0.2);
+  --status-warning-500: var(--primitive-warning-500); /* #f59e0b - amber */
+  --status-warning-50: rgba(245, 158, 11, 0.05);
+  --status-warning-100: rgba(245, 158, 11, 0.1);
+  --status-error-500: var(--primitive-error-600); /* #dc2626 - red */
+  --status-error-50: rgba(220, 38, 38, 0.05);
+  --status-error-100: rgba(220, 38, 38, 0.1);
+  --status-info-500: var(--primitive-primary-400); /* #40ccaf - light green/teal */
+  --status-info-50: rgba(64, 204, 175, 0.05);
+  --status-info-100: rgba(64, 204, 175, 0.1);
+}
+
+/* Note: Class-based theme switching removed to eliminate duplication.
+   Use [data-theme="light"] for theme switching. */
+
+/* ================================================================
+   LIGHT THEME COMPONENT OVERRIDES
+   ================================================================ */
+
+/* Body and main layout */
+[data-theme="light"] body,
+html[data-theme="light"] body {
+  background-color: var(--surface-primary);
+  color: var(--color-text-primary);
+}
+
+/* Sidebar styling */
+[data-theme="light"] .sidebar {
+  background: var(--surface-secondary);
+  border-right: 1px solid var(--color-border-primary);
+}
+
+[data-theme="light"] .nav-item {
+  color: var(--color-text-secondary);
+  border-radius: 8px;
+  margin: 2px 8px;
+}
+
+[data-theme="light"] .nav-item:hover {
+  background: var(--color-brand-primary-alpha-10);
+  color: var(--color-text-primary);
+}
+
+[data-theme="light"] .nav-item.active {
+  background: var(--color-brand-primary);
+  color: var(--icon-color-on-primary);
+}
+
+[data-theme="light"] .nav-item.active .nav-item-icon {
+  color: var(--icon-color-on-primary);
+}
+
+/* Top bar and header */
+[data-theme="light"] .top-bar {
+  background: var(--surface-elevated);
+  border-bottom: 1px solid var(--color-border-primary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .header-icon {
+  color: var(--icon-color-primary);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+[data-theme="light"] .header-icon:hover {
+  background: var(--surface-secondary);
+  border-color: var(--color-border-primary);
+}
+
+/* Cards and containers */
+[data-theme="light"] .card,
+[data-theme="light"] .stat-card {
+  background: var(--surface-elevated);
+  border: 1px solid var(--color-border-primary);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+[data-theme="light"] .card:hover,
+[data-theme="light"] .stat-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+[data-theme="light"] .card-elevated {
+  box-shadow: var(--shadow-lg);
+}
+
+[data-theme="light"] .card-interactive {
+  cursor: pointer;
+}
+
+[data-theme="light"] .card-interactive:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-brand-primary);
+}
+
+/* Form elements */
+[data-theme="light"] input,
+[data-theme="light"] select,
+[data-theme="light"] textarea {
+  background: var(--surface-elevated);
+  border: 1px solid var(--color-border-primary);
+  color: var(--color-text-primary);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+[data-theme="light"] input:hover,
+[data-theme="light"] select:hover,
+[data-theme="light"] textarea:hover {
+  border-color: var(--color-border-strong);
+}
+
+[data-theme="light"] input:focus,
+[data-theme="light"] select:focus,
+[data-theme="light"] textarea:focus {
+  border-color: var(--color-brand-primary);
+  box-shadow: var(--shadow-focus);
+  outline: none;
+}
+
+[data-theme="light"] input:disabled,
+[data-theme="light"] select:disabled,
+[data-theme="light"] textarea:disabled {
+  background: var(--surface-tertiary);
+  color: var(--color-text-disabled);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+[data-theme="light"] input::placeholder,
+[data-theme="light"] textarea::placeholder {
+  color: var(--color-text-tertiary);
+  opacity: 0.7;
+}
+
+/* Buttons */
+[data-theme="light"] .btn-primary {
+  background: var(--color-brand-primary);
+  color: var(--icon-color-on-primary);
+  border: 1px solid var(--color-brand-primary);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+}
+
+[data-theme="light"] .btn-primary:hover {
+  background: var(--color-brand-primary-hover);
+  border-color: var(--color-brand-primary-hover);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+[data-theme="light"] .btn-primary:active {
+  background: var(--color-brand-primary-active);
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+[data-theme="light"] .btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+[data-theme="light"] .btn-secondary {
+  background: var(--surface-elevated);
+  border: 1px solid var(--color-border-strong);
+  color: var(--color-text-primary);
+  transition: all 0.2s ease;
+}
+
+[data-theme="light"] .btn-secondary:hover {
+  background: var(--surface-secondary);
+  border-color: var(--color-border-strong);
+  box-shadow: var(--shadow-sm);
+}
+
+[data-theme="light"] .btn-secondary:active {
+  background: var(--surface-tertiary);
+  box-shadow: var(--shadow-inner);
+}
+
+[data-theme="light"] .btn-ghost {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--color-text-primary);
+}
+
+[data-theme="light"] .btn-ghost:hover {
+  background: var(--color-brand-primary-alpha-10);
+  border-color: var(--color-border-primary);
+}
+
+/* Icons - Ensure proper contrast */
+[data-theme="light"] .icon,
+[data-theme="light"] [data-lucide],
+[data-theme="light"] svg {
+  color: var(--icon-color-primary);
+}
+
+[data-theme="light"] .nav-item-icon [data-lucide],
+[data-theme="light"] .nav-item-icon svg {
+  color: inherit;
+}
+
+/* Tables */
+[data-theme="light"] table {
+  background: var(--surface-elevated);
+  border: 1px solid var(--color-border-primary);
+}
+
+[data-theme="light"] th {
+  background: var(--surface-secondary);
+  border-bottom: 1px solid var(--color-border-primary);
+  color: var(--color-text-primary);
+}
+
+[data-theme="light"] td {
+  border-bottom: 1px solid var(--color-border-subtle);
+  color: var(--color-text-secondary);
+}
+
+/* Theme toggle button */
+[data-theme="light"] .theme-toggle-container {
+  background: var(--surface-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: 6px;
+  padding: 4px;
+}
+
+/* Notification panel */
+[data-theme="light"] .notification-panel {
+  background: var(--surface-elevated);
+  border: 1px solid var(--color-border-primary);
+  box-shadow: var(--shadow-xl);
+}
+
+[data-theme="light"] .notification-item {
+  background: var(--surface-elevated);
+  border-bottom: 1px solid var(--color-border-subtle);
+  transition: background-color 0.2s ease;
+}
+
+[data-theme="light"] .notification-item:hover {
+  background: var(--surface-secondary);
+}
+
+[data-theme="light"] .notification-item.unread {
+  background: var(--color-brand-primary-alpha-5);
+  border-left: 3px solid var(--color-brand-primary);
+}
+
+/* Charts and data visualization */
+[data-theme="light"] .chart-container {
+  background: var(--surface-elevated);
+  border: 1px solid var(--color-border-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+[data-theme="light"] .chart-legend {
+  color: var(--color-text-secondary);
+}
+
+[data-theme="light"] .chart-grid-line {
+  stroke: var(--chart-grid-color);
+  opacity: 0.5;
+}
+
+[data-theme="light"] .chart-axis {
+  color: var(--color-text-tertiary);
+}
+
+[data-theme="light"] .chart-tooltip {
+  background: var(--surface-elevated);
+  border: 1px solid var(--color-border-primary);
+  box-shadow: var(--shadow-lg);
+  color: var(--color-text-primary);
+}
+
+/* Modals and dialogs */
+[data-theme="light"] .modal-backdrop,
+[data-theme="light"] .modal-overlay {
+  background: var(--surface-overlay);
+  backdrop-filter: blur(4px);
+}
+
+[data-theme="light"] .modal,
+[data-theme="light"] .dialog {
+  background: var(--surface-elevated);
+  border: 1px solid var(--color-border-primary);
+  box-shadow: var(--shadow-2xl);
+}
+
+[data-theme="light"] .modal-header {
+  border-bottom: 1px solid var(--color-border-primary);
+  background: var(--surface-secondary);
+}
+
+[data-theme="light"] .modal-footer {
+  border-top: 1px solid var(--color-border-primary);
+  background: var(--surface-secondary);
+}
+
+/* Mobile menu overlay */
+[data-theme="light"] .mobile-menu-overlay {
+  background: var(--surface-overlay);
+  backdrop-filter: blur(4px);
+}
+
+[data-theme="light"] .mobile-menu {
+  background: var(--surface-elevated);
+  border-right: 1px solid var(--color-border-primary);
+  box-shadow: var(--shadow-xl);
+}
+
+/* Scrollbars for light theme */
+[data-theme="light"] ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+[data-theme="light"] ::-webkit-scrollbar-track {
+  background: var(--surface-secondary);
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: 4px;
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+  background: var(--primitive-neutral-500);
+}
+
+/* System preference (only if no manual theme is set) */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]):not(.dark) {
+    /* Surface Colors - Light Mode (Design System Compliant) */
+    --surface-primary: #ffffff;
+    --surface-secondary: var(--primitive-neutral-50);
+    --surface-tertiary: var(--primitive-neutral-100);
+    --surface-quaternary: var(--primitive-neutral-200);
+    --surface-elevated: #ffffff;
+    --surface-inverse: var(--primitive-neutral-900);
+    --surface-overlay: rgba(0, 0, 0, 0.5);
+
+    /* Text Colors - Light Mode (Design System Compliant) */
+    --color-text-primary: var(--primitive-neutral-900);
+    --color-text-secondary: var(--primitive-neutral-700);
+    --color-text-tertiary: var(--primitive-neutral-600);
+    --color-text-disabled: var(--primitive-neutral-400);
+    --color-text-inverse: var(--primitive-neutral-50);
+    --color-text-on-surface: var(--primitive-neutral-900);
+    --color-text-muted: var(--primitive-neutral-500);
+
+    /* Icon Colors - Light Mode (WCAG AA Compliant) */
+    --icon-color-primary: var(--primitive-neutral-900);
+    --icon-color-secondary: var(--primitive-neutral-700);
+    --icon-color-tertiary: var(--primitive-neutral-600);
+    --icon-color-disabled: var(--primitive-neutral-400);
+    --icon-color-on-primary: #ffffff;
+    --icon-color-brand: var(--primitive-primary-700);
+
+    /* Border Colors - Light Mode (Design System Compliant) */
+    --color-border-primary: var(--primitive-neutral-300);
+    --color-border-secondary: var(--primitive-neutral-200);
+    --color-border-subtle: var(--primitive-neutral-100);
+    --color-border-strong: var(--primitive-neutral-400);
+    --color-border-medium: var(--primitive-neutral-300);
+    --color-border-focus: var(--primitive-primary-700);
+
+    /* Brand Colors - Light Mode */
+    --color-brand-primary: var(--primitive-primary-700);
+    --color-brand-primary-hover: var(--primitive-primary-800);
+    --color-brand-primary-active: var(--primitive-primary-900);
+    --color-brand-primary-alpha-10: rgba(8, 153, 73, 0.1);
+    --color-brand-primary-alpha-20: rgba(8, 153, 73, 0.2);
+    --color-brand-primary-alpha-5: rgba(8, 153, 73, 0.05);
+
+    /* Shadows & Elevation - Light Mode (Enhanced) */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+    --shadow-xl: 0 12px 48px rgba(0, 0, 0, 0.15);
+    --shadow-2xl: 0 20px 60px rgba(0, 0, 0, 0.2);
+    --shadow-focus: 0 0 0 3px var(--color-brand-primary-alpha-20);
+    --shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+
+    /* Elevation System - Light Mode */
+    --elevation-low: var(--shadow-sm);
+    --elevation-medium: var(--shadow-md);
+    --elevation-high: var(--shadow-lg);
+    --elevation-highest: var(--shadow-xl);
+
+    /* Chart Colors - Light Mode */
+    --chart-bar-fill: var(--color-brand-primary);
+    --chart-bar-bg: var(--primitive-neutral-100);
+    --chart-line-color: var(--primitive-primary-600);
+    --chart-grid-color: var(--primitive-neutral-200);
+
+    /* Status Colors - Light Mode (Enhanced) */
+    --status-success-600: var(--primitive-primary-700);
+    --status-success-50: rgba(8, 153, 73, 0.05);
+    --status-success-100: rgba(8, 153, 73, 0.1);
+    --status-success-200: rgba(8, 153, 73, 0.2);
+    --status-warning-500: var(--primitive-warning-500);
+    --status-warning-50: rgba(245, 158, 11, 0.05);
+    --status-warning-100: rgba(245, 158, 11, 0.1);
+    --status-error-500: var(--primitive-error-600);
+    --status-error-50: rgba(220, 38, 38, 0.05);
+    --status-error-100: rgba(220, 38, 38, 0.1);
+    --status-info-500: var(--primitive-primary-400);
+    --status-info-50: rgba(64, 204, 175, 0.05);
+    --status-info-100: rgba(64, 204, 175, 0.1);
+
+    /* Surface overlay */
+    --surface-overlay: rgba(0, 0, 0, 0.5);
+
+    /* Text muted */
+    --color-text-muted: var(--primitive-neutral-500);
+  }
+}

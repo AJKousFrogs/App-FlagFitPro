@@ -1,0 +1,5 @@
+-- Data for table: user_behavior
+-- Generated: 2025-12-01T20:59:18.138Z
+
+INSERT INTO user_behavior (id, user_id, session_id, page_sequence, session_duration, total_page_views, bounce_rate, features_used, training_sessions_completed, goals_created, conversion_events, funnel_stage, device_type, browser, entry_page, exit_page, created_at, updated_at) VALUES (1, 'user_123', 'session_456', '["/dashboard","/training","/goals"]', 1800, 5, NULL, '["training_timer","goal_tracker"]', 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, '2025-07-31T20:09:56.112Z', '2025-07-31T20:09:56.112Z');
+INSERT INTO user_behavior (id, user_id, session_id, page_sequence, session_duration, total_page_views, bounce_rate, features_used, training_sessions_completed, goals_created, conversion_events, funnel_stage, device_type, browser, entry_page, exit_page, created_at, updated_at) VALUES (2, 'user_456', 'session_789', '["/landing","/dashboard","/training"]', 1200, 3, NULL, '["signup","training_timer"]', 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, '2025-07-31T20:09:56.112Z', '2025-07-31T20:09:56.112Z');

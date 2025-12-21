@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FlagFit Pro - Coach Dashboard</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
+    />
+    <!-- Design System CSS -->
+    <link rel="stylesheet" href="./src/css/main.css" />
+    <!-- Component CSS -->
+    <link rel="stylesheet" href="./src/css/components/sidebar.css" />
+    <link rel="stylesheet" href="./src/css/components/header.css" />
+    <!-- Page-specific styles -->
+    <link rel="stylesheet" href="./src/css/pages/coach-dashboard.css" />
+    <!-- Lucide Icons -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
+    <script src="./src/icon-helper.js" defer></script>
+    <script src="./src/theme-switcher.js" defer></script>
+    <script src="./src/nav-highlight.js" defer></script>
+    <script src="./src/components/organisms/top-bar/top-bar.js" defer></script>
+    <!-- Universal Components -->
+    <script type="module" src="./src/js/main.js"></script>
+    <!-- Common Component Loaders (Sidebar, Top Bar, Footer) -->
+    <script type="module" src="./src/js/components/common-loaders.js" defer></script>
+    <!-- Sidebar Utilities -->
+    <script src="./src/js/utils/sidebar-utils.js" defer></script>
+    <!-- Notification Panel Loader (Dynamic Component) -->
+    <script type="module" src="./src/js/components/notification-panel-loader.js" defer></script>
+  
+    <!-- Supabase Configuration (Centralized) -->
+    <script src="./src/js/config/supabase-config.js" defer></script>
+    
+    <!-- Supabase JS SDK from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0" defer></script>
+
+  </head>
+  <body>
+    <div class="dashboard-container">
+      <!-- Unified Sidebar Navigation (Loaded Dynamically) -->
+      <div data-sidebar-container></div>
+
+      <!-- Sidebar Overlay for Mobile -->
+      <div
+        class="sidebar-overlay"
+        id="sidebar-overlay"
+        aria-hidden="true"
+      ></div>
+
+      <main
+        class="main-content flex-1 min-w-0 overflow-x-hidden overflow-y-auto bg-surface-primary min-h-screen transition-bg"
+      >
+        <!-- Coach Dashboard Content -->
+        <div class="coach-dashboard-layout">
+          <div class="coach-dashboard-header">
+            <h1 class="text-heading-2xl text-primary">COACH DASHBOARD</h1>
+          </div>
+
+          <!-- Top Row: 3 Main Stats -->
+          <div class="stats-top-row">
+            <div class="stat-card">
+              <div class="stat-label">Team Readiness</div>
+              <div class="stat-value">82%</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Average Wellness Score Today</div>
+              <div class="stat-value">6.4/10</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Injury Alerts</div>
+              <div class="stat-value">3 players</div>
+            </div>
+          </div>
+
+          <!-- Wellness Snapshot -->
+          <div class="wellness-snapshot-card">
+            <h2 class="section-title text-heading-xl text-primary">WELLNESS SNAPSHOT</h2>
+            <div class="wellness-table-container">
+              <table class="wellness-table">
+                <thead>
+                  <tr>
+                    <th>Player</th>
+                    <th>Energy</th>
+                    <th>Sleep</th>
+                    <th>Mood</th>
+                    <th>Load</th>
+                    <th>Flags</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Player 1</td>
+                    <td>7/10</td>
+                    <td>8/10</td>
+                    <td>6/10</td>
+                    <td>5/10</td>
+                    <td>—</td>
+                  </tr>
+                  <tr class="warning-row">
+                    <td>Player 2</td>
+                    <td>4/10</td>
+                    <td>5/10</td>
+                    <td>3/10</td>
+                    <td>8/10</td>
+                    <td><span class="flag-warning">⚠ Overload</span></td>
+                  </tr>
+                  <tr>
+                    <td>Player 3</td>
+                    <td>6/10</td>
+                    <td>7/10</td>
+                    <td>5/10</td>
+                    <td>6/10</td>
+                    <td>—</td>
+                  </tr>
+                  <tr class="high-risk-row">
+                    <td>Player 4</td>
+                    <td>3/10</td>
+                    <td>4/10</td>
+                    <td>4/10</td>
+                    <td>8/10</td>
+                    <td><span class="flag-high-risk">⚠ High Risk</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Injury Reports -->
+          <div class="injury-reports-card">
+            <h2 class="section-title text-heading-xl text-primary">INJURY REPORTS</h2>
+            <div class="injury-reports-content">
+              <h3 class="card-title text-heading-md text-primary">Latest Issues</h3>
+              <ul class="injury-list">
+                <li class="injury-item">
+                  <span class="injury-player">Player 2:</span>
+                  <span class="injury-description"
+                    >Hamstring tightness (5/10)</span
+                  >
+                </li>
+                <li class="injury-item">
+                  <span class="injury-player">Player 4:</span>
+                  <span class="injury-description">Shoulder pain (6/10)</span>
+                </li>
+                <li class="injury-item">
+                  <span class="injury-player">Player 7:</span>
+                  <span class="injury-description">Wrist soreness (3/10)</span>
+                </li>
+              </ul>
+              <button class="btn-view-all">View All</button>
+            </div>
+          </div>
+
+          <!-- Training Management -->
+          <div class="training-management-card">
+            <h2 class="section-title text-heading-xl text-primary">TRAINING MANAGEMENT</h2>
+            <div class="training-management-content">
+              <h3 class="card-title text-heading-md text-primary">TODAY'S SESSION</h3>
+              <div class="session-info">
+                <div class="session-time">18:30 — Speed & Agility</div>
+                <div class="session-stats">
+                  <div class="session-stat">
+                    <span class="stat-label">Attendance expected:</span>
+                    <span class="stat-value">14/17</span>
+                  </div>
+                  <div class="session-stat">
+                    <span class="stat-label">Wellness risk:</span>
+                    <span class="stat-value warning">3 flagged</span>
+                  </div>
+                </div>
+                <div class="session-actions">
+                  <button class="btn-adjust-load">Adjust Training Load</button>
+                  <button class="btn-send-reminder">Send Reminder</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Coaching Assistant -->
+          <div class="ai-coaching-card">
+            <h2 class="section-title text-heading-xl text-primary">AI COACHING ASSISTANT</h2>
+            <div class="ai-coaching-content">
+              <div class="ai-suggestion">
+                "3 players show early fatigue patterns. Suggested:
+                <ul class="suggestion-list">
+                  <li>reduce sprint reps by 15%</li>
+                  <li>extend warm-up by 3 minutes</li>
+                  <li>recommend magnesium for Player 4</li>
+                </ul>
+              </div>
+              <div class="ai-actions">
+                <button class="btn-apply-suggestion">Apply Suggestion</button>
+                <button class="btn-ask-more">Ask for More</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Notification Panel (Loaded Dynamically) -->
+    <div data-notification-panel-container></div>
+
+        <!-- Footer (Loaded Dynamically) -->
+    <div data-footer-container></div>
+  </body>
+</html>

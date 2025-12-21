@@ -1,0 +1,245 @@
+import { Injectable, inject } from "@angular/core";
+import { SupabaseClient } from "@supabase/supabase-js";
+import { Observable, throwError, of } from "rxjs";
+import { catchError, delay, retryWhen, take } from "rxjs/operators";
+import { SupabaseService } from "./supabase.service";
+
+/**
+ * Game Stats Service
+ * Provides robust game statistics retrieval with retry logic,
+ * error recovery, and data integrity checks.
+ */
+
+export interface GamePlay {
+  id?: string;
+  playType: 'pass' | 'run' | 'flag_pull';
+  outcome?: 'completion' | 'incompletion' | 'interception' | 'drop';
+  quarterbackId?: string;
+  receiverId?: string;
+  ballCarrierId?: string;
+  defenderId?: string;
+  yardsGained?: number;
+  routeType?: string;
+  isDrop?: boolean;
+  isSuccessful?: boolean;
+  dropSeverity?: string;
+  dropReason?: string;
+  missReason?: string;
+}
+
+export interface PlayerStats {
+  passAttempts: number;
+  completions: number;
+  interceptions: number;
+  drops: number;
+  targets: number;
+  receptions: number;
+  rushingAttempts: number;
+  rushingYards: number;
+  flagPullAttempts: number;
+  flagPulls: number;
+  missedFlagPulls: number;
+}
+
+@Injectable({
+  providedIn: "root",
+})
+export class GameStatsService {
+  private readonly MAX_RETRIES = 3;
+  private readonly RETRY_DELAY_MS = 1000;
+  private supabaseService = inject(SupabaseService);
+
+  /**
+   * Get Supabase client instance
+   */
+  private get supabase(): SupabaseClient {
+    return this.supabaseService.client;
+  }
+
+  /**
+   * Get player stats with retry logic and error recovery
+   */
+  async getPlayerStats(
+    playerId: string,
+    gameId: string,
+    maxRetries = this.MAX_RETRIES
+  ): Promise<PlayerStats | null> {
+
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      try {
+        const { data, error } = await this.supabase
+          .from("game_plays")
+          .select("*")
+          .eq("player_id", playerId)
+          .eq("game_id", gameId);
+
+        if (error) {
+          // PGRST116 = not found - valid state, don't retry
+          if (error.code === "PGRST116" || error.code === "42P01") {
+            return null;
+          }
+          throw error;
+        }
+
+        if (!data || data.length === 0) {
+          return null;
+        }
+
+        // Aggregate stats
+        return this.aggregatePlayerStats(data as GamePlay[]);
+      } catch (error: any) {
+        if (attempt < maxRetries - 1) {
+          // Exponential backoff
+          await this.delay(this.RETRY_DELAY_MS * Math.pow(2, attempt));
+          continue;
+        }
+
+        console.error(`Failed to fetch player stats after ${maxRetries} attempts:`, error);
+        throw new Error(`Unable to fetch player statistics: ${this.getErrorMessage(error)}`);
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Get player stats as Observable (RxJS version)
+   */
+  getPlayerStatsObservable(playerId: string, gameId: string): Observable<PlayerStats | null> {
+
+    // Convert promise to observable with retry logic
+    return new Observable<PlayerStats | null>((subscriber) => {
+      this.getPlayerStats(playerId, gameId)
+        .then((stats) => {
+          subscriber.next(stats);
+          subscriber.complete();
+        })
+        .catch((error) => {
+          subscriber.error(error);
+        });
+    }).pipe(
+      retryWhen((errors) =>
+        errors.pipe(
+          delay(this.RETRY_DELAY_MS),
+          take(this.MAX_RETRIES)
+        )
+      ),
+      catchError((error) => {
+        console.error("Error fetching player stats:", error);
+        return of(null);
+      })
+    );
+  }
+
+  /**
+   * Aggregate plays into statistics with data integrity checks
+   */
+  private aggregatePlayerStats(plays: GamePlay[]): PlayerStats {
+    const stats: PlayerStats = {
+      passAttempts: 0,
+      completions: 0,
+      interceptions: 0,
+      drops: 0,
+      targets: 0,
+      receptions: 0,
+      rushingAttempts: 0,
+      rushingYards: 0,
+      flagPullAttempts: 0,
+      flagPulls: 0,
+      missedFlagPulls: 0
+    };
+
+    plays.forEach((play) => {
+      // Data integrity checks
+      if (!play.playType || typeof play.playType !== "string") {
+        console.warn("Invalid play type in data:", play);
+        return;
+      }
+
+      switch (play.playType) {
+        case "pass":
+          stats.passAttempts++;
+          if (play.outcome === "completion") {
+            stats.completions++;
+            stats.receptions++;
+            stats.targets++;
+          } else if (play.outcome === "interception") {
+            stats.interceptions++;
+            stats.targets++;
+          } else if (play.outcome === "incompletion") {
+            stats.targets++;
+          }
+          if (play.isDrop) {
+            stats.drops++;
+            stats.targets++;
+          }
+          break;
+
+        case "run":
+          stats.rushingAttempts++;
+          if (play.yardsGained !== undefined && typeof play.yardsGained === "number") {
+            stats.rushingYards += play.yardsGained;
+          }
+          break;
+
+        case "flag_pull":
+          stats.flagPullAttempts++;
+          if (play.isSuccessful) {
+            stats.flagPulls++;
+          } else {
+            stats.missedFlagPulls++;
+          }
+          break;
+      }
+    });
+
+    return stats;
+  }
+
+  /**
+   * Batch get stats for multiple players
+   */
+  async getMultiplePlayerStats(
+    playerIds: string[],
+    gameId: string
+  ): Promise<Map<string, PlayerStats | null>> {
+    const results = new Map<string, PlayerStats | null>();
+
+    // Process in parallel with concurrency limit
+    const batchSize = 10;
+    for (let i = 0; i < playerIds.length; i += batchSize) {
+      const batch = playerIds.slice(i, i + batchSize);
+      const batchPromises = batch.map((playerId) =>
+        this.getPlayerStats(playerId, gameId).then((stats) => ({
+          playerId,
+          stats,
+        }))
+      );
+
+      const batchResults = await Promise.all(batchPromises);
+      batchResults.forEach(({ playerId, stats }) => {
+        results.set(playerId, stats);
+      });
+    }
+
+    return results;
+  }
+
+  /**
+   * Delay helper for retry logic
+   */
+  private delay(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  /**
+   * Extract error message from various error types
+   */
+  private getErrorMessage(error: any): string {
+    if (error?.message) return error.message;
+    if (error?.status) return `HTTP ${error.status}`;
+    if (typeof error === "string") return error;
+    return "Unknown error";
+  }
+}
+

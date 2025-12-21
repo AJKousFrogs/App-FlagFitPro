@@ -1,0 +1,695 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FlagFit Pro - QB Training Schedule</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <!-- New Modular CSS Architecture -->
+    <link rel="stylesheet" href="./src/css/main.css" />
+    <!-- Page-specific styles -->
+    <link rel="stylesheet" href="./src/css/pages/qb-training-schedule.css" />
+
+    <!-- Lucide Icons - Modern icon library similar to Radix UI -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
+    <script src="./src/icon-helper.js" defer></script>
+    <script src="./src/theme-switcher.js" defer></script>
+    <script src="./src/nav-highlight.js" defer></script>
+    <script src="./src/components/organisms/top-bar/top-bar.js" defer></script>
+    <!-- Universal Components -->
+    <script type="module" src="./src/js/main.js"></script>
+    <!-- Common Component Loaders (Sidebar, Top Bar, Footer) -->
+    <script type="module" src="./src/js/components/common-loaders.js" defer></script>
+    <!-- Event Handlers (Phase 2 - Replaces inline onclick handlers) -->
+    <script type="module" src="./src/js/utils/event-handlers.js" defer></script>
+  
+    <!-- Supabase Configuration (Centralized) -->
+    <script src="./src/js/config/supabase-config.js" defer></script>
+    
+    <!-- Supabase JS SDK from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0" defer></script>
+
+  </head>
+  <body>
+    <div class="dashboard-container">
+      <!-- Unified Sidebar Navigation (Loaded Dynamically) -->
+      <div data-sidebar-container></div>
+
+      <main class="main-content">
+        <!-- QB Header -->
+        <div class="card card-elevated" style="background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%); color: white;">
+          <div class="card-body" style="padding: 40px 32px;">
+            <div class="u-text-body-sm u-margin-bottom-4" style="color: rgba(255, 255, 255, 0.8); font-weight: 500;">
+              <span>QB Development</span>
+              <span style="margin: 0 var(--space-1, 4px); opacity: 0.5">•</span>
+              <span>Training Program</span>
+            </div>
+            <h1 class="u-text-heading-2xl u-font-weight-700 u-margin-bottom-8" style="color: white;">QUARTERBACK ELITE DEVELOPMENT</h1>
+            <p class="u-text-body-lg u-margin-bottom-24" style="color: rgba(255, 255, 255, 0.9);">14-Week Flag Football Training Program</p>
+
+            <div class="card" style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);">
+              <div class="card-body" style="padding: 24px;">
+                <h3 class="u-text-heading-md u-margin-bottom-16 u-display-flex u-align-center u-gap-8" style="color: white;">
+                  <i data-lucide="target" class="icon-20" style="color: white;"></i>
+                  Tournament Challenge: 320 Throws in a Weekend
+                </h3>
+                <div class="u-display-grid u-gap-16" style="grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));">
+                  <div class="u-text-center">
+                    <div class="u-text-heading-2xl u-font-weight-700 u-margin-bottom-4" style="color: white;">8</div>
+                    <div class="u-text-body-sm" style="color: rgba(255, 255, 255, 0.9);">Games</div>
+                  </div>
+                  <div class="u-text-center">
+                    <div class="u-text-heading-2xl u-font-weight-700 u-margin-bottom-4" style="color: white;">40</div>
+                    <div class="u-text-body-sm" style="color: rgba(255, 255, 255, 0.9);">Throws/Game</div>
+                  </div>
+                  <div class="u-text-center">
+                    <div class="u-text-heading-2xl u-font-weight-700 u-margin-bottom-4" style="color: white;">320</div>
+                    <div class="u-text-body-sm" style="color: rgba(255, 255, 255, 0.9);">Total Throws</div>
+                  </div>
+                  <div class="u-text-center">
+                    <div class="u-text-heading-2xl u-font-weight-700 u-margin-bottom-4" style="color: white;">2</div>
+                    <div class="u-text-body-sm" style="color: rgba(255, 255, 255, 0.9);">Days</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Arm Care Reminder -->
+        <div class="card" style="background: #fff3cd; border: 2px solid #ffc107; margin-top: 24px;">
+          <div class="card-body" style="padding: 24px;">
+            <div class="u-display-flex u-align-center u-gap-8 u-margin-bottom-12">
+              <i data-lucide="alert-triangle" class="icon-24" style="color: #856404;"></i>
+              <h3 class="u-text-heading-md u-font-weight-700 u-margin-0" style="color: #856404;">Daily Arm Care - Non-Negotiable</h3>
+            </div>
+            <div class="u-display-flex u-flex-direction-column u-gap-8">
+              <p class="u-margin-0" style="color: #856404;">
+                <strong>Every training day:</strong> 20 min pre-training shoulder protocol + 15 min post-throwing recovery
+              </p>
+              <p class="u-margin-0" style="color: #856404;">
+                <strong>Every throwing day:</strong> Progressive warm-up (50+ throws) + proper cool-down
+              </p>
+              <p class="u-margin-0" style="color: #856404;">
+                <strong>Red flags:</strong> Sharp shoulder pain, velocity drop >15%, accuracy decline >20% - STOP immediately
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dual Track Approach -->
+        <div class="card u-margin-top-24">
+          <div class="card-header">
+            <h2 class="card-title u-display-flex u-align-center u-gap-8 u-margin-0">
+              <i data-lucide="dumbbell" class="icon-24" style="color: var(--color-brand-primary);"></i>
+              Dual-Track Training Approach
+            </h2>
+          </div>
+          <div class="card-body">
+            <div class="u-display-grid u-gap-24" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+              <div class="card card-interactive" style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border: 2px solid var(--color-brand-primary);">
+                <div class="card-body">
+                  <h3 class="u-text-heading-md u-font-weight-700 u-margin-bottom-8 u-text-primary">Track 1: Lower Body Foundation</h3>
+                  <p class="u-text-body-sm u-text-secondary u-margin-bottom-16">
+                    Same as WR/DB Program
+                  </p>
+                  <ul class="u-list-none u-padding-0 u-margin-0" style="list-style: none;">
+                    <li class="u-display-flex u-align-center u-gap-8 u-margin-bottom-8">
+                      <i data-lucide="check" class="icon-16" style="color: var(--color-brand-primary);"></i>
+                      <span class="u-text-body-sm u-text-primary">Sprint speed and acceleration</span>
+                    </li>
+                    <li class="u-display-flex u-align-center u-gap-8 u-margin-bottom-8">
+                      <i data-lucide="check" class="icon-16" style="color: var(--color-brand-primary);"></i>
+                      <span class="u-text-body-sm u-text-primary">Explosive power development</span>
+                    </li>
+                    <li class="u-display-flex u-align-center u-gap-8 u-margin-bottom-8">
+                      <i data-lucide="check" class="icon-16" style="color: var(--color-brand-primary);"></i>
+                      <span class="u-text-body-sm u-text-primary">Posterior chain strength</span>
+                    </li>
+                    <li class="u-display-flex u-align-center u-gap-8 u-margin-bottom-8">
+                      <i data-lucide="check" class="icon-16" style="color: var(--color-brand-primary);"></i>
+                      <span class="u-text-body-sm u-text-primary">Injury prevention</span>
+                    </li>
+                    <li class="u-display-flex u-align-center u-gap-8">
+                      <i data-lucide="check" class="icon-16" style="color: var(--color-brand-primary);"></i>
+                      <span class="u-text-body-sm u-text-primary">Game conditioning</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="card card-interactive" style="background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); border: 2px solid #ff9800;">
+                <div class="card-body">
+                  <h3 class="u-text-heading-md u-font-weight-700 u-margin-bottom-8 u-text-primary">Track 2: QB-Specific Upper Body</h3>
+                  <p class="u-text-body-sm u-text-secondary u-margin-bottom-16">
+                    Quarterback Specialization
+                  </p>
+                  <ul class="u-list-none u-padding-0 u-margin-0" style="list-style: none;">
+                    <li class="u-display-flex u-align-center u-gap-8 u-margin-bottom-8">
+                      <i data-lucide="check" class="icon-16" style="color: #ff9800;"></i>
+                      <span class="u-text-body-sm u-text-primary">Arm strength and velocity</span>
+                    </li>
+                    <li class="u-display-flex u-align-center u-gap-8 u-margin-bottom-8">
+                      <i data-lucide="check" class="icon-16" style="color: #ff9800;"></i>
+                      <span class="u-text-body-sm u-text-primary">Shoulder mobility and health</span>
+                    </li>
+                    <li class="u-display-flex u-align-center u-gap-8 u-margin-bottom-8">
+                      <i data-lucide="check" class="icon-16" style="color: #ff9800;"></i>
+                      <span class="u-text-body-sm u-text-primary">Throwing endurance</span>
+                    </li>
+                    <li class="u-display-flex u-align-center u-gap-8 u-margin-bottom-8">
+                      <i data-lucide="check" class="icon-16" style="color: #ff9800;"></i>
+                      <span class="u-text-body-sm u-text-primary">Hip flexor flexibility (critical)</span>
+                    </li>
+                    <li class="u-display-flex u-align-center u-gap-8">
+                      <i data-lucide="check" class="icon-16" style="color: #ff9800;"></i>
+                      <span class="u-text-body-sm u-text-primary">Back strength for power</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Throwing Metrics -->
+        <div class="card u-margin-top-24">
+          <div class="card-header">
+            <h2 class="card-title u-display-flex u-align-center u-gap-8 u-margin-0">
+              <i data-lucide="bar-chart-3" class="icon-20" style="color: var(--color-brand-primary);"></i>
+              Throwing Performance Metrics
+            </h2>
+          </div>
+          <div class="card-body">
+            <div class="u-display-grid u-gap-16" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+              <div class="card card-interactive">
+                <div class="card-body" style="text-align: center; padding: 24px;">
+                  <div class="u-text-heading-2xl u-font-weight-700 u-text-brand u-margin-bottom-4" id="currentVelocity">72 mph</div>
+                  <div class="u-text-body-sm u-text-secondary u-margin-bottom-12">Current Velocity</div>
+                  <div class="u-width-full u-radius-sm u-overflow-hidden" style="height: 8px; background: var(--color-border-secondary);">
+                    <div class="u-height-full u-radius-sm" style="width: 60%; background: linear-gradient(90deg, var(--color-brand-primary), var(--color-brand-secondary));"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="card card-interactive">
+                <div class="card-body" style="text-align: center; padding: 24px;">
+                  <div class="u-text-heading-2xl u-font-weight-700 u-text-brand u-margin-bottom-4" id="weeklyThrows">280</div>
+                  <div class="u-text-body-sm u-text-secondary u-margin-bottom-12">Weekly Throws</div>
+                  <div class="u-width-full u-radius-sm u-overflow-hidden" style="height: 8px; background: var(--color-border-secondary);">
+                    <div class="u-height-full u-radius-sm" style="width: 45%; background: linear-gradient(90deg, var(--color-brand-primary), var(--color-brand-secondary));"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="card card-interactive">
+                <div class="card-body" style="text-align: center; padding: 24px;">
+                  <div class="u-text-heading-2xl u-font-weight-700 u-text-brand u-margin-bottom-4" id="accuracyRate">78%</div>
+                  <div class="u-text-body-sm u-text-secondary u-margin-bottom-12">Accuracy Rate</div>
+                  <div class="u-width-full u-radius-sm u-overflow-hidden" style="height: 8px; background: var(--color-border-secondary);">
+                    <div class="u-height-full u-radius-sm" style="width: 78%; background: linear-gradient(90deg, var(--color-brand-primary), var(--color-brand-secondary));"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="card card-interactive">
+                <div class="card-body" style="text-align: center; padding: 24px;">
+                  <div class="u-text-heading-2xl u-font-weight-700 u-text-brand u-margin-bottom-4" id="enduranceThrows">150</div>
+                  <div class="u-text-body-sm u-text-secondary u-margin-bottom-12">Endurance Capacity</div>
+                  <div class="u-width-full u-radius-sm u-overflow-hidden" style="height: 8px; background: var(--color-border-secondary);">
+                    <div class="u-height-full u-radius-sm" style="width: 47%; background: linear-gradient(90deg, var(--color-brand-primary), var(--color-brand-secondary));"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="card card-interactive">
+                <div class="card-body" style="text-align: center; padding: 24px;">
+                  <div class="u-text-heading-2xl u-font-weight-700 u-text-brand u-margin-bottom-4" id="shoulderHealth">9/10</div>
+                  <div class="u-text-body-sm u-text-secondary u-margin-bottom-12">Shoulder Health</div>
+                  <div class="u-width-full u-radius-sm u-overflow-hidden" style="height: 8px; background: var(--color-border-secondary);">
+                    <div class="u-height-full u-radius-sm" style="width: 90%; background: linear-gradient(90deg, var(--color-brand-primary), var(--color-brand-secondary));"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="card card-interactive">
+                <div class="card-body" style="text-align: center; padding: 24px;">
+                  <div class="u-text-heading-2xl u-font-weight-700 u-text-brand u-margin-bottom-4" id="hipFlexibility">85%</div>
+                  <div class="u-text-body-sm u-text-secondary u-margin-bottom-12">Hip Flexibility</div>
+                  <div class="u-width-full u-radius-sm u-overflow-hidden" style="height: 8px; background: var(--color-border-secondary);">
+                    <div class="u-height-full u-radius-sm" style="width: 85%; background: linear-gradient(90deg, var(--color-brand-primary), var(--color-brand-secondary));"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Weekly Training Breakdown -->
+        <div class="card u-margin-top-24">
+          <div class="card-header" style="background: var(--surface-secondary);">
+            <div class="u-display-flex u-justify-between u-align-center u-flex-wrap u-gap-16">
+              <div>
+                <div class="u-text-heading-lg u-font-weight-700 u-text-primary u-margin-bottom-4" id="currentWeek">
+                  Week 1 - Foundation Phase
+                </div>
+                <div class="u-text-body-sm u-text-secondary" id="weekDates">
+                  December 1-7, 2025
+                </div>
+              </div>
+              <div class="u-display-flex u-gap-8">
+                <button class="btn btn-secondary btn-sm" id="prevWeek">
+                  <i data-lucide="chevron-left" class="icon-16"></i>
+                  Previous
+                </button>
+                <button class="btn btn-secondary btn-sm" id="nextWeek">
+                  Next
+                  <i data-lucide="chevron-right" class="icon-16"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="u-display-grid u-gap-16" style="grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));" id="daySchedule">
+              <!-- Days will be populated by JavaScript -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Assessment Schedule -->
+        <div class="card u-margin-top-24">
+          <div class="card-header">
+            <h2 class="card-title u-display-flex u-align-center u-gap-8 u-margin-0">
+              <i data-lucide="clipboard-list" class="icon-20" style="color: var(--color-brand-primary);"></i>
+              QB Assessment Schedule
+            </h2>
+          </div>
+          <div class="card-body">
+            <div class="u-display-grid u-gap-16" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+              <div class="card card-interactive">
+                <div class="card-body">
+                  <div class="u-display-flex u-align-center u-gap-8 u-margin-bottom-12">
+                    <i data-lucide="target" class="icon-20" style="color: var(--color-brand-primary);"></i>
+                    <h3 class="u-text-heading-md u-font-weight-600 u-text-primary u-margin-0">Throwing Velocity</h3>
+                  </div>
+                  <div class="u-text-body-sm u-text-secondary u-margin-bottom-12">Weeks 4, 8, 12, 14</div>
+                  <p class="u-text-body-sm u-text-secondary u-margin-bottom-16">
+                    10 max effort throws, radar gun measurement
+                  </p>
+                  <button class="btn btn-primary btn-sm" style="width: 100%;">Next: Week 4</button>
+                </div>
+              </div>
+              <div class="card card-interactive">
+                <div class="card-body">
+                  <div class="u-display-flex u-align-center u-gap-8 u-margin-bottom-12">
+                    <i data-lucide="activity" class="icon-20" style="color: var(--color-brand-primary);"></i>
+                    <h3 class="u-text-heading-md u-font-weight-600 u-text-primary u-margin-0">Throwing Endurance</h3>
+                  </div>
+                  <div class="u-text-body-sm u-text-secondary u-margin-bottom-12">
+                    Progressive: 100 → 150 → 200 → 320 throws
+                  </div>
+                  <p class="u-text-body-sm u-text-secondary u-margin-bottom-16">
+                    Track accuracy decline under fatigue
+                  </p>
+                  <button class="btn btn-primary btn-sm" style="width: 100%;">Next: Week 4 (100 throws)</button>
+                </div>
+              </div>
+              <div class="card card-interactive">
+                <div class="card-body">
+                  <div class="u-display-flex u-align-center u-gap-8 u-margin-bottom-12">
+                    <i data-lucide="move" class="icon-20" style="color: var(--color-brand-primary);"></i>
+                    <h3 class="u-text-heading-md u-font-weight-600 u-text-primary u-margin-0">Shoulder Mobility</h3>
+                  </div>
+                  <div class="u-text-body-sm u-text-secondary u-margin-bottom-12">Weeks 1, 4, 8, 12, 14</div>
+                  <p class="u-text-body-sm u-text-secondary u-margin-bottom-16">
+                    External rotation, horizontal abduction
+                  </p>
+                  <button class="btn btn-primary btn-sm" style="width: 100%;">Schedule Assessment</button>
+                </div>
+              </div>
+              <div class="card card-interactive">
+                <div class="card-body">
+                  <div class="u-display-flex u-align-center u-gap-8 u-margin-bottom-12">
+                    <i data-lucide="flex" class="icon-20" style="color: var(--color-brand-primary);"></i>
+                    <h3 class="u-text-heading-md u-font-weight-600 u-text-primary u-margin-0">Hip Flexor Flexibility</h3>
+                  </div>
+                  <div class="u-text-body-sm u-text-secondary u-margin-bottom-12">Monthly assessments</div>
+                  <p class="u-text-body-sm u-text-secondary u-margin-bottom-16">
+                    Couch stretch, Thomas test
+                  </p>
+                  <button class="btn btn-primary btn-sm" style="width: 100%;">Schedule Assessment</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tournament Simulation -->
+        <div class="card card-elevated u-margin-top-24" style="background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%); color: white;">
+          <div class="card-body" style="padding: 40px 32px;">
+            <h2 class="u-text-heading-xl u-font-weight-700 u-margin-bottom-24 u-display-flex u-align-center u-gap-8 u-justify-center" style="color: white;">
+              <i data-lucide="trophy" class="icon-24" style="color: white;"></i>
+              Tournament Simulation Training
+            </h2>
+            <div class="u-display-grid u-gap-16 u-margin-bottom-32" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+              <div class="u-text-center u-padding-16 u-radius-md" style="background: rgba(255, 255, 255, 0.1);">
+                <div class="u-text-heading-lg u-font-weight-700 u-margin-bottom-4" style="color: white;">Game 1-4</div>
+                <div class="u-text-body-sm u-margin-bottom-2" style="color: rgba(255, 255, 255, 0.9);">40 throws each</div>
+                <div class="u-text-body-sm" style="color: rgba(255, 255, 255, 0.9);">Day 1</div>
+              </div>
+              <div class="u-text-center u-padding-16 u-radius-md" style="background: rgba(255, 255, 255, 0.1);">
+                <div class="u-text-heading-lg u-font-weight-700 u-margin-bottom-4" style="color: white;">Game 5-8</div>
+                <div class="u-text-body-sm u-margin-bottom-2" style="color: rgba(255, 255, 255, 0.9);">40 throws each</div>
+                <div class="u-text-body-sm" style="color: rgba(255, 255, 255, 0.9);">Day 2</div>
+              </div>
+              <div class="u-text-center u-padding-16 u-radius-md" style="background: rgba(255, 255, 255, 0.1);">
+                <div class="u-text-heading-lg u-font-weight-700 u-margin-bottom-4" style="color: white;">Total</div>
+                <div class="u-text-body-sm u-margin-bottom-2" style="color: rgba(255, 255, 255, 0.9);">320 throws</div>
+                <div class="u-text-body-sm" style="color: rgba(255, 255, 255, 0.9);">Weekend</div>
+              </div>
+              <div class="u-text-center u-padding-16 u-radius-md" style="background: rgba(255, 255, 255, 0.1);">
+                <div class="u-text-heading-lg u-font-weight-700 u-margin-bottom-4" style="color: white;">Recovery</div>
+                <div class="u-text-body-sm u-margin-bottom-2" style="color: rgba(255, 255, 255, 0.9);">10 min between</div>
+                <div class="u-text-body-sm" style="color: rgba(255, 255, 255, 0.9);">Each game</div>
+              </div>
+            </div>
+            <div class="u-text-center">
+              <button
+                class="btn"
+                data-action="start-tournament-simulation"
+                aria-label="Start tournament simulation"
+                style="background: white; color: var(--color-brand-primary); font-weight: 600; padding: 16px 32px; font-size: 1.1rem;"
+              >
+                <i data-lucide="play" class="icon-20" style="margin-right: 8px;"></i>
+                Start Tournament Simulation
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Chat Floating Bubble (Loaded Dynamically) -->
+        <div data-ai-chat-container></div>
+      </main>
+    </div>
+
+    <script type="module">
+      import { authManager } from "./src/auth-manager.js";
+      import { QB_TRAINING_PROGRAM } from "./src/qb-training-program-data.js";
+
+      // Initialize page
+      document.addEventListener("DOMContentLoaded", async function () {
+        console.log(
+          '<i data-lucide="target" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> QB Training Schedule page loading...',
+        );
+
+        // Check authentication - wait for initialization first
+        await authManager.waitForInit();
+        if (!authManager.isAuthenticated()) {
+          console.log(
+            '<i data-lucide="x-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> User not authenticated, redirecting to login',
+          );
+          window.location.href = "/login.html";
+          return;
+        }
+
+        console.log(
+          '<i data-lucide="check-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> User authenticated, loading QB training schedule',
+        );
+
+        initializeQBSchedule();
+      });
+
+      let currentWeek = 1;
+      let currentPhase = "foundation";
+
+      function initializeQBSchedule() {
+        console.log(
+          '<i data-lucide="target" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Initializing QB training schedule...',
+        );
+
+        setupWeekNavigation();
+        loadWeekSchedule(currentWeek);
+        updateMetrics();
+      }
+
+      function setupWeekNavigation() {
+        const prevBtn = document.getElementById("prevWeek");
+        const nextBtn = document.getElementById("nextWeek");
+
+        prevBtn.addEventListener("click", function () {
+          if (currentWeek > 1) {
+            currentWeek--;
+            loadWeekSchedule(currentWeek);
+            updatePhaseForWeek(currentWeek);
+          }
+        });
+
+        nextBtn.addEventListener("click", function () {
+          if (currentWeek < 14) {
+            currentWeek++;
+            loadWeekSchedule(currentWeek);
+            updatePhaseForWeek(currentWeek);
+          }
+        });
+      }
+
+      function updatePhaseForWeek(week) {
+        let phase;
+        if (week <= 4) phase = "foundation";
+        else if (week <= 8) phase = "strength";
+        else if (week <= 12) phase = "power";
+        else phase = "competition";
+
+        currentPhase = phase;
+      }
+
+      function loadWeekSchedule(weekNumber) {
+        console.log(
+          `<i data-lucide="clipboard-list" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Loading QB week ${weekNumber} schedule...`,
+        );
+
+        // Update week display
+        const currentWeekEl = document.getElementById("currentWeek");
+        const weekDatesEl = document.getElementById("weekDates");
+        const dayScheduleEl = document.getElementById("daySchedule");
+
+        // Get phase for week
+        updatePhaseForWeek(weekNumber);
+        const phaseTitle = QB_TRAINING_PROGRAM.phases[currentPhase].title;
+
+        currentWeekEl.textContent = `Week ${weekNumber} - ${phaseTitle}`;
+
+        // Calculate dates (starting from Nov 17, 2025)
+        const startDate = new Date("2025-11-17");
+        startDate.setDate(startDate.getDate() + (weekNumber - 1) * 7);
+        const endDate = new Date(startDate);
+        endDate.setDate(endDate.getDate() + 6);
+
+        weekDatesEl.textContent = `${startDate.toLocaleDateString("en-US", { month: "long", day: "numeric" })} - ${endDate.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}`;
+
+        // Generate QB-specific weekly schedule
+        const weekSchedule = generateQBWeekSchedule(weekNumber, currentPhase);
+
+        dayScheduleEl.innerHTML = weekSchedule
+          .map((day, index) => {
+            const dayNames = [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday",
+              "Sunday",
+            ];
+
+            const typeColors = {
+              'lower-body': { bg: '#e3f2fd', border: 'var(--color-brand-primary)', icon: 'activity' },
+              'qb-specific': { bg: '#fff3e0', border: '#ff9800', icon: 'target' },
+              'recovery': { bg: '#e8f5e9', border: '#4caf50', icon: 'heart' }
+            };
+
+            return `
+              <div class="card card-interactive">
+                <div class="card-header" style="background: var(--surface-secondary); padding: 12px;">
+                  <h4 class="u-text-heading-sm u-font-weight-600 u-text-primary u-margin-0 u-text-center">${dayNames[index]}</h4>
+                </div>
+                <div class="card-body" style="padding: 16px;">
+                  ${day.sessions
+                    .map(
+                      (session) => {
+                        const colors = typeColors[session.type] || typeColors['lower-body'];
+                        return `
+                          <div class="u-margin-bottom-12 u-padding-12 u-radius-md" style="background: ${colors.bg}; border-left: 4px solid ${colors.border};">
+                            <div class="u-display-flex u-align-center u-gap-8 u-margin-bottom-4">
+                              <i data-lucide="${colors.icon}" class="icon-16" style="color: ${colors.border};"></i>
+                              <div class="u-text-body-sm u-font-weight-600 u-text-primary">${session.title}</div>
+                            </div>
+                            <div class="u-text-body-xs u-text-secondary">${session.duration} min</div>
+                          </div>
+                        `;
+                      }
+                    )
+                    .join("")}
+                  ${
+                    day.totalDuration
+                      ? `
+                      <div class="u-text-center u-margin-top-12 u-padding-top-12" style="border-top: 1px solid var(--color-border-secondary);">
+                        <div class="u-text-body-sm u-font-weight-600 u-text-primary">Total: ${day.totalDuration} min</div>
+                      </div>
+                    `
+                      : ""
+                  }
+                </div>
+              </div>
+            `;
+          })
+          .join("");
+        
+        if (typeof lucide !== 'undefined') {
+          lucide.createIcons();
+        }
+
+        // Update navigation buttons
+        document.getElementById("prevWeek").disabled = weekNumber <= 1;
+        document.getElementById("nextWeek").disabled = weekNumber >= 14;
+      }
+
+      function generateQBWeekSchedule(weekNumber, phase) {
+        const baseSchedule = [
+          // Monday
+          {
+            sessions: [
+              {
+                title: "Lower Body Strength",
+                type: "lower-body",
+                duration: 50,
+              },
+              { title: "QB Arm Strength", type: "qb-specific", duration: 35 },
+            ],
+            totalDuration: 115,
+          },
+          // Tuesday
+          {
+            sessions: [
+              { title: "Sprint/Bounds", type: "lower-body", duration: 50 },
+              {
+                title: "QB Shoulder Mobility",
+                type: "qb-specific",
+                duration: 40,
+              },
+            ],
+            totalDuration: 120,
+          },
+          // Wednesday
+          {
+            sessions: [
+              { title: "Active Recovery", type: "recovery", duration: 45 },
+              { title: "QB Hip/Back Work", type: "qb-specific", duration: 45 },
+            ],
+            totalDuration: 105,
+          },
+          // Thursday
+          {
+            sessions: [
+              { title: "Lower Body Power", type: "lower-body", duration: 55 },
+              {
+                title: "QB Throwing Integration",
+                type: "qb-specific",
+                duration: 45,
+              },
+            ],
+            totalDuration: 130,
+          },
+          // Friday
+          {
+            sessions: [
+              { title: "Speed/RSA", type: "lower-body", duration: 55 },
+              {
+                title: "QB Endurance Training",
+                type: "qb-specific",
+                duration: getThrowingDuration(weekNumber),
+              },
+            ],
+            totalDuration: 55 + getThrowingDuration(weekNumber),
+          },
+          // Saturday
+          {
+            sessions: [
+              { title: "Sprint Work", type: "lower-body", duration: 35 },
+              {
+                title: "QB Throwing Session",
+                type: "qb-specific",
+                duration: 50,
+              },
+            ],
+            totalDuration: 115,
+          },
+          // Sunday
+          {
+            sessions: [
+              { title: "Complete Recovery", type: "recovery", duration: 90 },
+            ],
+            totalDuration: 90,
+          },
+        ];
+
+        return baseSchedule;
+      }
+
+      function getThrowingDuration(weekNumber) {
+        // Progressive throwing duration based on week
+        if (weekNumber <= 4) return 45; // Foundation
+        if (weekNumber <= 8) return 60; // Strength
+        if (weekNumber <= 12) return 90; // Power (including 320 throw simulation)
+        return 30; // Competition (taper)
+      }
+
+      function updateMetrics() {
+        // Simulate progressive improvements
+        const weekProgress = (currentWeek / 14) * 100;
+
+        // Update velocity
+        const baseVelocity = 65;
+        const targetGain = 12;
+        const currentVel = baseVelocity + (targetGain * currentWeek) / 14;
+        document.getElementById("currentVelocity").textContent =
+          Math.round(currentVel) + " mph";
+
+        // Update weekly throws
+        const throwProgression = [
+          120, 150, 180, 200, 300, 350, 400, 450, 550, 600, 650, 600, 400, 300,
+        ];
+        document.getElementById("weeklyThrows").textContent =
+          throwProgression[currentWeek - 1] || 280;
+
+        // Update endurance capacity
+        const enduranceProgression = [
+          80, 100, 120, 150, 180, 200, 220, 250, 280, 300, 320, 320, 320, 320,
+        ];
+        document.getElementById("enduranceThrows").textContent =
+          enduranceProgression[currentWeek - 1] || 150;
+      }
+
+      // Global function for tournament simulation
+      window.startTournamentSimulation = function () {
+        console.log(
+          '<i data-lucide="trophy" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Starting tournament simulation...',
+        );
+
+        // This would open a detailed tournament simulation interface
+        alert(
+          `<i data-lucide="trophy" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i> Tournament Simulation\n\nPreparing for 8-game, 320-throw simulation...\n\nFeatures:\n• Game-by-game tracking\n• Velocity monitoring\n• Accuracy assessment\n• Between-game recovery\n• Mental preparation\n\n📱 Full simulation interface coming soon!`,
+        );
+      };
+    </script>
+
+        <!-- Footer (Loaded Dynamically) -->
+    <div data-footer-container></div>
+  </body>
+</html>

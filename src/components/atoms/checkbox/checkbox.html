@@ -1,0 +1,120 @@
+<!-- 
+    Checkbox Component - FlagFit Pro
+    
+    Usage: Copy this snippet for checkbox inputs
+    States: default, checked, disabled, indeterminate
+    Accessibility:
+    - Always include <label> with matching id
+    - Use fieldset/legend for groups
+-->
+
+<!-- Basic Checkbox -->
+<div class="form-group">
+  <label class="form-checkbox">
+    <input type="checkbox" id="checkbox-basic" name="checkbox-basic" />
+    <span>I agree to the terms and conditions</span>
+  </label>
+</div>
+
+<!-- Checked Checkbox -->
+<div class="form-group">
+  <label class="form-checkbox">
+    <input
+      type="checkbox"
+      id="checkbox-checked"
+      name="checkbox-checked"
+      checked
+    />
+    <span>Subscribe to newsletter</span>
+  </label>
+</div>
+
+<!-- Disabled Checkbox -->
+<div class="form-group">
+  <label class="form-checkbox">
+    <input
+      type="checkbox"
+      id="checkbox-disabled"
+      name="checkbox-disabled"
+      disabled
+    />
+    <span>Disabled option</span>
+  </label>
+</div>
+
+<!-- Checkbox with Error -->
+<div class="form-group">
+  <label class="form-checkbox error">
+    <input
+      type="checkbox"
+      id="checkbox-error"
+      name="checkbox-error"
+      aria-invalid="true"
+    />
+    <span>Required checkbox</span>
+  </label>
+  <div class="form-error" role="alert">This field is required</div>
+</div>
+
+<!-- Checkbox Group -->
+<fieldset class="form-group">
+  <legend class="form-label">Select your interests</legend>
+  <div class="checkbox-group">
+    <label class="form-checkbox">
+      <input
+        type="checkbox"
+        id="interest-training"
+        name="interests"
+        value="training"
+      />
+      <span>Training</span>
+    </label>
+    <label class="form-checkbox">
+      <input
+        type="checkbox"
+        id="interest-nutrition"
+        name="interests"
+        value="nutrition"
+      />
+      <span>Nutrition</span>
+    </label>
+    <label class="form-checkbox">
+      <input
+        type="checkbox"
+        id="interest-performance"
+        name="interests"
+        value="performance"
+      />
+      <span>Performance</span>
+    </label>
+  </div>
+</fieldset>
+
+<!-- Checkbox with Icon -->
+<div class="form-group">
+  <label class="form-checkbox">
+    <input type="checkbox" id="checkbox-icon" name="checkbox-icon" />
+    <span>
+      <i data-lucide="check" style="width: 16px; height: 16px"></i>
+      Option with icon
+    </span>
+  </label>
+</div>
+
+<!-- Indeterminate Checkbox (requires JavaScript) -->
+<div class="form-group">
+  <label class="form-checkbox">
+    <input
+      type="checkbox"
+      id="checkbox-indeterminate"
+      name="checkbox-indeterminate"
+      onclick="this.indeterminate = false;"
+    />
+    <span>Select all</span>
+  </label>
+</div>
+
+<script>
+  // Set indeterminate state (example)
+  document.getElementById("checkbox-indeterminate").indeterminate = true;
+</script>

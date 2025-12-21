@@ -1,0 +1,176 @@
+[
+  {
+    "id": 1,
+    "recovery_protocol_id": null,
+    "recommended_sleep_duration_hours": "8.00",
+    "sleep_efficiency_target_percentage": 85,
+    "deep_sleep_target_percentage": 20,
+    "rem_sleep_target_percentage": 25,
+    "pre_sleep_routine_duration_minutes": 90,
+    "bedroom_temperature_celsius": "18.50",
+    "light_exposure_guidelines": [
+      "dark_environment",
+      "no_blue_light"
+    ],
+    "electronic_device_cutoff_hours": "2.00",
+    "pre_sleep_nutrition_guidelines": [
+      "light_snack",
+      "avoid_large_meals"
+    ],
+    "sleep_promoting_supplements": [
+      "magnesium",
+      "melatonin"
+    ],
+    "supplements_to_avoid": [
+      "stimulants",
+      "alcohol"
+    ],
+    "caffeine_cutoff_hours": 6,
+    "alcohol_recommendations": null,
+    "room_darkness_requirements": "complete_darkness",
+    "noise_management": [
+      "white_noise",
+      "earplugs"
+    ],
+    "bedding_recommendations": [
+      "cooling_pillow",
+      "breathable_sheets"
+    ],
+    "air_quality_factors": null,
+    "performance_improvement_with_optimization": "15.50",
+    "injury_risk_reduction_percentage": "12.30",
+    "cognitive_performance_benefits": [
+      "improved_focus",
+      "better_reaction_time"
+    ],
+    "immune_function_benefits": [
+      "enhanced_immune_response"
+    ],
+    "recommended_tracking_metrics": [
+      "sleep_duration",
+      "sleep_efficiency",
+      "deep_sleep_percentage"
+    ],
+    "tracking_devices": null,
+    "travel_sleep_strategies": null,
+    "competition_sleep_preparation": null,
+    "training_camp_sleep_optimization": null,
+    "created_at": "2025-08-17T20:28:32.330Z"
+  },
+  {
+    "id": 2,
+    "recovery_protocol_id": null,
+    "recommended_sleep_duration_hours": "8.50",
+    "sleep_efficiency_target_percentage": 90,
+    "deep_sleep_target_percentage": 22,
+    "rem_sleep_target_percentage": 27,
+    "pre_sleep_routine_duration_minutes": 60,
+    "bedroom_temperature_celsius": "19.00",
+    "light_exposure_guidelines": [
+      "consistent_lighting",
+      "natural_light_exposure"
+    ],
+    "electronic_device_cutoff_hours": "3.00",
+    "pre_sleep_nutrition_guidelines": [
+      "regular_meal_times",
+      "protein_rich_dinner"
+    ],
+    "sleep_promoting_supplements": [
+      "valerian_root",
+      "chamomile"
+    ],
+    "supplements_to_avoid": [
+      "caffeine",
+      "nicotine"
+    ],
+    "caffeine_cutoff_hours": 8,
+    "alcohol_recommendations": null,
+    "room_darkness_requirements": "controlled_darkness",
+    "noise_management": [
+      "sound_machine",
+      "quiet_environment"
+    ],
+    "bedding_recommendations": [
+      "ergonomic_pillow",
+      "temperature_regulating"
+    ],
+    "air_quality_factors": null,
+    "performance_improvement_with_optimization": "18.20",
+    "injury_risk_reduction_percentage": "15.70",
+    "cognitive_performance_benefits": [
+      "enhanced_alertness",
+      "improved_memory"
+    ],
+    "immune_function_benefits": [
+      "better_stress_response"
+    ],
+    "recommended_tracking_metrics": [
+      "sleep_consistency",
+      "wake_time_regularity",
+      "sleep_quality_rating"
+    ],
+    "tracking_devices": null,
+    "travel_sleep_strategies": null,
+    "competition_sleep_preparation": null,
+    "training_camp_sleep_optimization": null,
+    "created_at": "2025-08-17T20:28:32.330Z"
+  },
+  {
+    "id": 3,
+    "recovery_protocol_id": null,
+    "recommended_sleep_duration_hours": "9.00",
+    "sleep_efficiency_target_percentage": 88,
+    "deep_sleep_target_percentage": 21,
+    "rem_sleep_target_percentage": 26,
+    "pre_sleep_routine_duration_minutes": 45,
+    "bedroom_temperature_celsius": "17.00",
+    "light_exposure_guidelines": [
+      "minimal_light",
+      "red_light_only"
+    ],
+    "electronic_device_cutoff_hours": "2.50",
+    "pre_sleep_nutrition_guidelines": [
+      "recovery_nutrition",
+      "electrolyte_balance"
+    ],
+    "sleep_promoting_supplements": [
+      "protein_powder",
+      "bcaa"
+    ],
+    "supplements_to_avoid": [
+      "heavy_meals",
+      "excessive_fluids"
+    ],
+    "caffeine_cutoff_hours": 7,
+    "alcohol_recommendations": null,
+    "room_darkness_requirements": "blackout_curtains",
+    "noise_management": [
+      "silence",
+      "minimal_disturbance"
+    ],
+    "bedding_recommendations": [
+      "compression_sheets",
+      "cooling_blanket"
+    ],
+    "air_quality_factors": null,
+    "performance_improvement_with_optimization": "20.10",
+    "injury_risk_reduction_percentage": "18.90",
+    "cognitive_performance_benefits": [
+      "faster_recovery",
+      "reduced_fatigue"
+    ],
+    "immune_function_benefits": [
+      "accelerated_healing"
+    ],
+    "recommended_tracking_metrics": [
+      "recovery_rate",
+      "muscle_soreness",
+      "energy_levels"
+    ],
+    "tracking_devices": null,
+    "travel_sleep_strategies": null,
+    "competition_sleep_preparation": null,
+    "training_camp_sleep_optimization": null,
+    "created_at": "2025-08-17T20:28:32.330Z"
+  }
+]

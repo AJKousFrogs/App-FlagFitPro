@@ -1,0 +1,756 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FlagFit Pro - Performance Tracking</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <!-- New Modular CSS Architecture -->
+    <link rel="stylesheet" href="./src/css/main.css" />
+    <!-- Page-specific styles -->
+    <link rel="stylesheet" href="./src/css/pages/performance-tracking.css" />
+
+    <!-- Lucide Icons -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
+    <script src="./src/icon-helper.js" defer></script>
+    <script src="./src/theme-switcher.js" defer></script>
+    <script src="./src/nav-highlight.js" defer></script>
+    <script src="./src/components/organisms/top-bar/top-bar.js" defer></script>
+    <!-- Universal Components -->
+    <script type="module" src="./src/js/main.js"></script>
+    <!-- Sidebar Utilities -->
+    <script src="./src/js/utils/sidebar-utils.js" defer></script>
+    <!-- Common Component Loaders (Sidebar, Top Bar, Footer) -->
+    <script type="module" src="./src/js/components/common-loaders.js" defer></script>
+  
+    <!-- Supabase Configuration (Centralized) -->
+    <script src="./src/js/config/supabase-config.js" defer></script>
+    
+    <!-- Supabase JS SDK from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0" defer></script>
+
+  </head>
+  <body>
+    <div class="dashboard-container">
+            <!-- Unified Sidebar Navigation (Loaded Dynamically) -->
+      <div data-sidebar-container></div>
+        <!-- Top Bar (Loaded Dynamically) -->
+        <div data-topbar-container></div>
+
+      <main class="main-content" id="main-content">
+        <div class="performance-tracking-container">
+          <!-- Page Header -->
+          <div class="page-header">
+            <div>
+              <h1 class="page-title">Performance Tracking</h1>
+              <p class="page-subtitle">
+                Track your daily weight and monthly performance tests
+              </p>
+            </div>
+          </div>
+
+          <!-- Quick Stats -->
+          <div class="quick-stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i data-lucide="scale" class="icon-24"></i>
+              </div>
+              <div class="stat-content">
+                <div class="stat-value" id="current-weight">--</div>
+                <div class="stat-label">Current Weight</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i data-lucide="gauge" class="icon-24"></i>
+              </div>
+              <div class="stat-content">
+                <div class="stat-value" id="last-40-yard">--</div>
+                <div class="stat-label">Last 40-Yard Dash</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i data-lucide="trending-up" class="icon-24"></i>
+              </div>
+              <div class="stat-content">
+                <div class="stat-value" id="last-vertical-jump">--</div>
+                <div class="stat-label">Last Vertical Jump</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i data-lucide="activity" class="icon-24"></i>
+              </div>
+              <div class="stat-content">
+                <div class="stat-value" id="last-3-cone">--</div>
+                <div class="stat-label">Last 3-Cone Drill</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main Content Grid -->
+          <div class="tracking-grid">
+            <!-- Daily Weight Entry -->
+            <div class="tracking-card">
+              <div class="card-header">
+                <h2 class="card-title">
+                  <i data-lucide="scale" class="icon-20"></i>
+                  Daily Weight
+                </h2>
+                <p class="card-subtitle">
+                  Track your weight daily to monitor body composition changes
+                </p>
+              </div>
+              <form id="weight-form" class="tracking-form">
+                <div class="form-group">
+                  <label for="weight-input" class="form-label">Weight</label>
+                  <!-- Unit Toggle -->
+                  <div class="unit-toggle-group" style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem;">
+                    <button 
+                      type="button" 
+                      class="unit-toggle-btn unit-toggle-active" 
+                      data-unit="imperial" 
+                      id="weight-unit-imperial"
+                      style="flex: 1; padding: 0.5rem 1rem; border: 2px solid var(--color-brand-primary, #10c96b); background: var(--color-brand-primary, #10c96b); color: white; border-radius: 0.5rem; cursor: pointer; font-weight: 600; font-size: 0.875rem; transition: all 0.2s;">
+                      Pounds (lbs)
+                    </button>
+                    <button 
+                      type="button" 
+                      class="unit-toggle-btn" 
+                      data-unit="metric" 
+                      id="weight-unit-metric"
+                      style="flex: 1; padding: 0.5rem 1rem; border: 2px solid var(--color-border-secondary, #e5e7eb); background: white; color: var(--color-text-secondary, #6b7280); border-radius: 0.5rem; cursor: pointer; font-weight: 600; font-size: 0.875rem; transition: all 0.2s;">
+                      Kilograms (kg)
+                    </button>
+                  </div>
+                  <div class="input-group">
+                    <input
+                      type="number"
+                      id="weight-input"
+                      name="weight"
+                      class="form-input"
+                      placeholder="Enter weight"
+                      step="0.1"
+                      min="0"
+                      required
+                      aria-describedby="weight-help"
+                    />
+                    <span class="input-suffix" id="weight-unit-label">lbs</span>
+                  </div>
+                  <small id="weight-help" class="form-help"
+                    >Enter your current weight</small
+                  >
+                  <input type="hidden" id="weight-unit" name="weightUnit" value="imperial">
+                </div>
+                <div class="form-group">
+                  <label for="weight-date" class="form-label">Date</label>
+                  <input
+                    type="date"
+                    id="weight-date"
+                    name="date"
+                    class="form-input"
+                    required
+                  />
+                </div>
+                <button type="submit" class="btn-primary btn-full">
+                  <i data-lucide="save" class="icon-16"></i>
+                  Save Weight
+                </button>
+              </form>
+              <div id="weight-success" class="success-message" hidden>
+                <i data-lucide="check-circle" class="icon-16"></i>
+                Weight saved successfully!
+              </div>
+            </div>
+
+            <!-- Performance Tests Entry -->
+            <div class="tracking-card">
+              <div class="card-header">
+                <h2 class="card-title">
+                  <i data-lucide="target" class="icon-20"></i>
+                  Performance Tests
+                </h2>
+                <p class="card-subtitle">
+                  Record your monthly performance test results
+                </p>
+              </div>
+              <form id="performance-form" class="tracking-form">
+                <div class="form-group">
+                  <label for="test-type" class="form-label">Test Type</label>
+                  <select
+                    id="test-type"
+                    name="testType"
+                    class="form-input"
+                    required
+                  >
+                    <option value="">Select a test...</option>
+                    <option value="40YardDash">40-Yard Dash</option>
+                    <option value="VerticalJump">Vertical Jump</option>
+                    <option value="3ConeDrill">3-Cone Drill</option>
+                    <option value="BroadJump">Broad Jump</option>
+                    <option value="ProAgility">Pro Agility (5-10-5)</option>
+                    <option value="300YardShuttle">300-Yard Shuttle</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="test-result" class="form-label" id="result-label"
+                    >Result</label
+                  >
+                  <div class="input-group">
+                    <input
+                      type="number"
+                      id="test-result"
+                      name="result"
+                      class="form-input"
+                      placeholder="Enter result"
+                      step="0.01"
+                      min="0"
+                      required
+                      aria-describedby="result-help"
+                    />
+                    <span class="input-suffix" id="result-unit">--</span>
+                  </div>
+                  <small id="result-help" class="form-help"
+                    >Enter your test result</small
+                  >
+                </div>
+                <div class="form-group">
+                  <label for="test-date" class="form-label">Date</label>
+                  <input
+                    type="date"
+                    id="test-date"
+                    name="date"
+                    class="form-input"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="test-notes" class="form-label"
+                    >Notes (Optional)</label
+                  >
+                  <textarea
+                    id="test-notes"
+                    name="notes"
+                    class="form-input"
+                    rows="3"
+                    placeholder="Add any notes about conditions, weather, etc."
+                  ></textarea>
+                </div>
+                <button type="submit" class="btn-primary btn-full">
+                  <i data-lucide="save" class="icon-16"></i>
+                  Save Test Result
+                </button>
+              </form>
+              <div id="performance-success" class="success-message" hidden>
+                <i data-lucide="check-circle" class="icon-16"></i>
+                Test result saved successfully!
+              </div>
+            </div>
+
+            <!-- Recent Entries -->
+            <div class="tracking-card tracking-card-full">
+              <div class="card-header">
+                <h2 class="card-title">
+                  <i data-lucide="history" class="icon-20"></i>
+                  Recent Entries
+                </h2>
+                <div class="card-actions">
+                  <button
+                    id="refresh-btn"
+                    class="btn-icon"
+                    aria-label="Refresh data"
+                  >
+                    <i data-lucide="refresh-cw" class="icon-16"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="entries-container">
+                <div id="entries-loading" class="loading-state">
+                  <i data-lucide="loader" class="icon-24 spinning"></i>
+                  <p>Loading entries...</p>
+                </div>
+                <div id="entries-list" class="entries-list"></div>
+                <div id="entries-empty" class="empty-state" hidden>
+                  <i data-lucide="inbox" class="icon-32"></i>
+                  <p>No entries yet. Start tracking your performance!</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script type="module">
+      import { authManager } from "./src/auth-manager.js";
+      import { performanceAPI } from "./src/performance-api.js";
+      import { PERFORMANCE_TESTS } from "./src/athlete-performance-data.js";
+      import { ErrorHandler } from "./src/error-handler.js";
+
+      // Test type configuration
+      const TEST_CONFIG = {
+        "40YardDash": {
+          unit: "seconds",
+          label: "40-Yard Dash",
+          lowerIsBetter: true,
+        },
+        VerticalJump: {
+          unit: "inches",
+          label: "Vertical Jump",
+          lowerIsBetter: false,
+        },
+        "3ConeDrill": {
+          unit: "seconds",
+          label: "3-Cone Drill",
+          lowerIsBetter: true,
+        },
+        BroadJump: { unit: "feet", label: "Broad Jump", lowerIsBetter: false },
+        ProAgility: {
+          unit: "seconds",
+          label: "Pro Agility (5-10-5)",
+          lowerIsBetter: true,
+        },
+        "300YardShuttle": {
+          unit: "seconds",
+          label: "300-Yard Shuttle",
+          lowerIsBetter: true,
+        },
+      };
+
+      // Initialize page
+      async function initPage() {
+        if (!authManager.requireAuth()) return;
+
+        setupEventListeners();
+        await loadQuickStats();
+        await loadRecentEntries();
+      }
+
+      // Setup event listeners
+      function setupEventListeners() {
+        // Weight form
+        document
+          .getElementById("weight-form")
+          .addEventListener("submit", handleWeightSubmit);
+
+        // Setup weight unit toggle
+        setupWeightUnitToggle();
+
+        // Performance test form
+        document
+          .getElementById("performance-form")
+          .addEventListener("submit", handlePerformanceSubmit);
+
+        // Test type change - update unit and label
+        document
+          .getElementById("test-type")
+          .addEventListener("change", updateTestType);
+
+        // Refresh button
+        document
+          .getElementById("refresh-btn")
+          .addEventListener("click", async () => {
+            await loadQuickStats();
+            await loadRecentEntries();
+          });
+
+        // Set default date to today
+        const today = new Date().toISOString().split("T")[0];
+        document.getElementById("weight-date").value = today;
+        document.getElementById("test-date").value = today;
+      }
+
+      // Update test type UI
+      function updateTestType() {
+        const testType = document.getElementById("test-type").value;
+        const config = TEST_CONFIG[testType];
+
+        if (config) {
+          document.getElementById("result-unit").textContent = config.unit;
+          document.getElementById("result-label").textContent =
+            `Result (${config.unit})`;
+        } else {
+          document.getElementById("result-unit").textContent = "--";
+          document.getElementById("result-label").textContent = "Result";
+        }
+      }
+
+      // Handle weight unit toggle
+      function setupWeightUnitToggle() {
+        const imperialBtn = document.getElementById("weight-unit-imperial");
+        const metricBtn = document.getElementById("weight-unit-metric");
+        const unitLabel = document.getElementById("weight-unit-label");
+        const unitInput = document.getElementById("weight-unit");
+        const weightInput = document.getElementById("weight-input");
+        
+        // Load saved preference or default to imperial
+        const savedUnit = localStorage.getItem("flagfit_weight_unit") || "imperial";
+        let currentUnit = savedUnit;
+        
+        function updateUnit(unit) {
+          currentUnit = unit;
+          localStorage.setItem("flagfit_weight_unit", unit);
+          
+          if (unit === "imperial") {
+            imperialBtn.classList.add("unit-toggle-active");
+            imperialBtn.style.borderColor = "var(--color-brand-primary, #10c96b)";
+            imperialBtn.style.background = "var(--color-brand-primary, #10c96b)";
+            imperialBtn.style.color = "white";
+            metricBtn.classList.remove("unit-toggle-active");
+            metricBtn.style.borderColor = "var(--color-border-secondary, #e5e7eb)";
+            metricBtn.style.background = "white";
+            metricBtn.style.color = "var(--color-text-secondary, #6b7280)";
+            unitLabel.textContent = "lbs";
+            unitInput.value = "imperial";
+            weightInput.placeholder = "Enter weight in pounds";
+          } else {
+            metricBtn.classList.add("unit-toggle-active");
+            metricBtn.style.borderColor = "var(--color-brand-primary, #10c96b)";
+            metricBtn.style.background = "var(--color-brand-primary, #10c96b)";
+            metricBtn.style.color = "white";
+            imperialBtn.classList.remove("unit-toggle-active");
+            imperialBtn.style.borderColor = "var(--color-border-secondary, #e5e7eb)";
+            imperialBtn.style.background = "white";
+            imperialBtn.style.color = "var(--color-text-secondary, #6b7280)";
+            unitLabel.textContent = "kg";
+            unitInput.value = "metric";
+            weightInput.placeholder = "Enter weight in kilograms";
+          }
+        }
+        
+        imperialBtn.addEventListener("click", () => {
+          // Convert value if switching from metric
+          if (currentUnit === "metric" && weightInput.value) {
+            const kgValue = parseFloat(weightInput.value);
+            if (!isNaN(kgValue)) {
+              weightInput.value = (kgValue * 2.20462).toFixed(1);
+            }
+          }
+          updateUnit("imperial");
+        });
+        
+        metricBtn.addEventListener("click", () => {
+          // Convert value if switching from imperial
+          if (currentUnit === "imperial" && weightInput.value) {
+            const lbsValue = parseFloat(weightInput.value);
+            if (!isNaN(lbsValue)) {
+              weightInput.value = (lbsValue / 2.20462).toFixed(1);
+            }
+          }
+          updateUnit("metric");
+        });
+        
+        // Initialize with saved preference
+        updateUnit(currentUnit);
+      }
+
+      // Handle weight submission
+      async function handleWeightSubmit(e) {
+        e.preventDefault();
+        const form = e.target;
+        const formData = new FormData(form);
+
+        const weight = parseFloat(formData.get("weight"));
+        const weightUnit = formData.get("weightUnit") || "imperial";
+        const date = formData.get("date");
+
+        if (!weight || weight <= 0) {
+          ErrorHandler.handleError(
+            new Error("Please enter a valid weight"),
+            "Invalid weight",
+          );
+          return;
+        }
+
+        try {
+          // Convert to kg for API (API expects kg)
+          const weightKg = weightUnit === "imperial" 
+            ? weight / 2.20462 
+            : weight;
+
+          await performanceAPI.savePhysicalMeasurements({
+            weight: weightKg,
+            date: date,
+          });
+
+          // Show success message
+          const successMsg = document.getElementById("weight-success");
+          successMsg.hidden = false;
+          setTimeout(() => {
+            successMsg.hidden = true;
+          }, 3000);
+
+          // Reset form
+          form.reset();
+          document.getElementById("weight-date").value = new Date()
+            .toISOString()
+            .split("T")[0];
+
+          // Reload stats and entries
+          await loadQuickStats();
+          await loadRecentEntries();
+        } catch (error) {
+          ErrorHandler.handleError(error, "Failed to save weight");
+        }
+      }
+
+      // Handle performance test submission
+      async function handlePerformanceSubmit(e) {
+        e.preventDefault();
+        const form = e.target;
+        const formData = new FormData(form);
+
+        const testType = formData.get("testType");
+        const result = parseFloat(formData.get("result"));
+        const date = formData.get("date");
+        const notes = formData.get("notes");
+
+        if (!testType) {
+          ErrorHandler.handleError(
+            new Error("Please select a test type"),
+            "Invalid test",
+          );
+          return;
+        }
+
+        if (!result || result <= 0) {
+          ErrorHandler.handleError(
+            new Error("Please enter a valid result"),
+            "Invalid result",
+          );
+          return;
+        }
+
+        try {
+          await performanceAPI.savePerformanceTest(testType, {
+            result: result,
+            date: date,
+            notes: notes || "",
+          });
+
+          // Show success message
+          const successMsg = document.getElementById("performance-success");
+          successMsg.hidden = false;
+          setTimeout(() => {
+            successMsg.hidden = true;
+          }, 3000);
+
+          // Reset form
+          form.reset();
+          document.getElementById("test-date").value = new Date()
+            .toISOString()
+            .split("T")[0];
+          updateTestType();
+
+          // Reload stats and entries
+          await loadQuickStats();
+          await loadRecentEntries();
+        } catch (error) {
+          ErrorHandler.handleError(error, "Failed to save test result");
+        }
+      }
+
+      // Load quick stats
+      async function loadQuickStats() {
+        try {
+          const user = authManager.getCurrentUser();
+          if (!user) return;
+
+          // Load weight data
+          const measurements = await performanceAPI.getPhysicalMeasurements(
+            user.id,
+            "30d",
+          );
+          if (
+            measurements &&
+            measurements.data &&
+            measurements.data.length > 0
+          ) {
+            const latestWeight =
+              measurements.data[measurements.data.length - 1];
+            const weightUnit = localStorage.getItem("flagfit_weight_unit") || "imperial";
+            const currentWeightEl = document.getElementById("current-weight");
+            
+            if (weightUnit === "imperial") {
+              const weightLbs = Math.round(latestWeight.weight * 2.20462);
+              currentWeightEl.textContent = `${weightLbs} lbs`;
+            } else {
+              const weightKg = latestWeight.weight.toFixed(1);
+              currentWeightEl.textContent = `${weightKg} kg`;
+            }
+          }
+
+          // Load performance test data
+          const testTypes = ["40YardDash", "VerticalJump", "3ConeDrill"];
+          for (const testType of testTypes) {
+            try {
+              const history = await performanceAPI.getPerformanceHistory(
+                testType,
+                "12m",
+              );
+              if (history && history.data && history.data.length > 0) {
+                const latest = history.data[history.data.length - 1];
+                const config = TEST_CONFIG[testType];
+                const displayValue =
+                  latest.result || latest.raw_score || latest.value;
+
+                if (testType === "40YardDash") {
+                  document.getElementById("last-40-yard").textContent =
+                    `${displayValue.toFixed(2)}s`;
+                } else if (testType === "VerticalJump") {
+                  document.getElementById("last-vertical-jump").textContent =
+                    `${displayValue.toFixed(1)}"`;
+                } else if (testType === "3ConeDrill") {
+                  document.getElementById("last-3-cone").textContent =
+                    `${displayValue.toFixed(2)}s`;
+                }
+              }
+            } catch (error) {
+              console.warn(`Failed to load ${testType}:`, error);
+            }
+          }
+        } catch (error) {
+          console.error("Failed to load quick stats:", error);
+        }
+      }
+
+      // Load recent entries
+      async function loadRecentEntries() {
+        const entriesList = document.getElementById("entries-list");
+        const loadingState = document.getElementById("entries-loading");
+        const emptyState = document.getElementById("entries-empty");
+
+        loadingState.hidden = false;
+        entriesList.innerHTML = "";
+        emptyState.hidden = true;
+
+        try {
+          const user = authManager.getCurrentUser();
+          if (!user) return;
+
+          const allEntries = [];
+
+          // Load weight entries
+          try {
+            const measurements = await performanceAPI.getPhysicalMeasurements(
+              user.id,
+              "30d",
+            );
+            if (measurements && measurements.data) {
+              measurements.data.forEach((entry) => {
+                allEntries.push({
+                  type: "weight",
+                  date: entry.date || entry.timestamp,
+                  value: entry.weight * 2.20462, // Convert to lbs
+                  unit: "lbs",
+                  label: "Weight",
+                });
+              });
+            }
+          } catch (error) {
+            console.warn("Failed to load weight entries:", error);
+          }
+
+          // Load performance test entries
+          for (const [testType, config] of Object.entries(TEST_CONFIG)) {
+            try {
+              const history = await performanceAPI.getPerformanceHistory(
+                testType,
+                "12m",
+              );
+              if (history && history.data) {
+                history.data.forEach((entry) => {
+                  allEntries.push({
+                    type: "test",
+                    date: entry.date || entry.timestamp,
+                    value: entry.result || entry.raw_score || entry.value,
+                    unit: config.unit,
+                    label: config.label,
+                    testType: testType,
+                  });
+                });
+              }
+            } catch (error) {
+              console.warn(`Failed to load ${testType} entries:`, error);
+            }
+          }
+
+          // Sort by date (newest first)
+          allEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+          // Display entries
+          if (allEntries.length === 0) {
+            emptyState.hidden = false;
+          } else {
+            allEntries.slice(0, 20).forEach((entry) => {
+              const entryEl = createEntryElement(entry);
+              entriesList.appendChild(entryEl);
+            });
+          }
+        } catch (error) {
+          console.error("Failed to load recent entries:", error);
+          ErrorHandler.handleError(error, "Failed to load entries");
+        } finally {
+          loadingState.hidden = true;
+        }
+      }
+
+      // Create entry element
+      function createEntryElement(entry) {
+        const div = document.createElement("div");
+        div.className = "entry-item";
+
+        const date = new Date(entry.date);
+        const dateStr = date.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        });
+
+        const icon = entry.type === "weight" ? "scale" : "target";
+        const displayValue =
+          entry.type === "weight"
+            ? `${Math.round(entry.value)} ${entry.unit}`
+            : `${entry.value.toFixed(entry.unit === "seconds" ? 2 : 1)} ${entry.unit}`;
+
+        div.innerHTML = `
+          <div class="entry-icon">
+            <i data-lucide="${icon}" class="icon-20"></i>
+          </div>
+          <div class="entry-content">
+            <div class="entry-label">${entry.label}</div>
+            <div class="entry-value">${displayValue}</div>
+          </div>
+          <div class="entry-date">${dateStr}</div>
+        `;
+
+        // Initialize icons
+        if (typeof lucide !== "undefined") {
+          lucide.createIcons(div);
+        }
+
+        return div;
+      }
+
+      // Initialize on page load
+      document.addEventListener("DOMContentLoaded", initPage);
+    </script>
+
+        <!-- Footer (Loaded Dynamically) -->
+    <div data-footer-container></div>
+  </body>
+</html>

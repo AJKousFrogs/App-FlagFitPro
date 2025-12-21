@@ -1,0 +1,111 @@
+[
+  {
+    "id": 2,
+    "protocol_name": "Bodyweight Strength Circuit",
+    "protocol_type": "training",
+    "target_outcome": "Build strength without expensive equipment",
+    "equipment_needed": [
+      "none"
+    ],
+    "time_required_minutes": 45,
+    "difficulty_level": "beginner",
+    "step_by_step_instructions": [
+      "Push-ups: 3 sets of 10-20",
+      "Squats: 3 sets of 15-25",
+      "Planks: 3 sets of 30-60 seconds",
+      "Lunges: 3 sets of 10 each leg"
+    ],
+    "video_tutorial_url": null,
+    "safety_considerations": [
+      "Maintain proper form",
+      "Progress gradually",
+      "Rest between sets"
+    ],
+    "effectiveness_rating": 8,
+    "cost_savings_euros": "200.00",
+    "created_at": "2025-08-18T20:14:28.769Z"
+  },
+  {
+    "id": 3,
+    "protocol_name": "Kitchen Nutrition Prep",
+    "protocol_type": "nutrition",
+    "target_outcome": "Affordable meal preparation for performance",
+    "equipment_needed": [
+      "basic_cookware",
+      "storage_containers"
+    ],
+    "time_required_minutes": 60,
+    "difficulty_level": "beginner",
+    "step_by_step_instructions": [
+      "Plan meals for the week",
+      "Buy ingredients in bulk",
+      "Cook large batches",
+      "Store in portioned containers"
+    ],
+    "video_tutorial_url": null,
+    "safety_considerations": [
+      "Follow food safety guidelines",
+      "Store properly",
+      "Use within safe timeframes"
+    ],
+    "effectiveness_rating": 9,
+    "cost_savings_euros": "300.00",
+    "created_at": "2025-08-18T20:14:28.769Z"
+  },
+  {
+    "id": 4,
+    "protocol_name": "Park Mobility Routine",
+    "protocol_type": "mobility",
+    "target_outcome": "Improve flexibility using public facilities",
+    "equipment_needed": [
+      "none"
+    ],
+    "time_required_minutes": 30,
+    "difficulty_level": "beginner",
+    "step_by_step_instructions": [
+      "Dynamic stretching",
+      "Hip mobility work",
+      "Shoulder mobility exercises",
+      "Ankle and wrist mobility"
+    ],
+    "video_tutorial_url": null,
+    "safety_considerations": [
+      "Warm up properly",
+      "Move within comfortable range",
+      "Avoid overstretching"
+    ],
+    "effectiveness_rating": 7,
+    "cost_savings_euros": "100.00",
+    "created_at": "2025-08-18T20:14:28.769Z"
+  },
+  {
+    "id": 1,
+    "protocol_name": "Home Ice Bath Protocol",
+    "protocol_type": "recovery",
+    "target_outcome": "Reduce muscle soreness and inflammation",
+    "equipment_needed": [
+      "portable_ice_bath_tub",
+      "ice_cubes",
+      "thermometer"
+    ],
+    "time_required_minutes": 20,
+    "difficulty_level": "beginner",
+    "step_by_step_instructions": [
+      "Set up portable ice bath tub in convenient location",
+      "Fill with cold water to desired level",
+      "Add ice to reach 10-15°C temperature",
+      "Immerse legs/body for 10-15 minutes",
+      "Gradually warm up after session",
+      "Drain and clean tub for next use"
+    ],
+    "video_tutorial_url": null,
+    "safety_considerations": [
+      "Start with shorter duration",
+      "Avoid if you have heart conditions",
+      "Listen to your body"
+    ],
+    "effectiveness_rating": 8,
+    "cost_savings_euros": "47.00",
+    "created_at": "2025-08-18T20:14:28.769Z"
+  }
+]

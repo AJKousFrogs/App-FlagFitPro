@@ -1,0 +1,292 @@
+<!-- 
+    Kanban Board Component - FlagFit Pro
+    
+    Usage: Copy this snippet for kanban board functionality
+    Features: Drag and drop, multiple columns, card management
+    Accessibility:
+    - Use aria-labels for columns and cards
+    - Support keyboard navigation
+-->
+
+<div class="kanban-board" id="kanban-board">
+  <!-- To Do Column -->
+  <div class="kanban-column" data-column="todo">
+    <div class="kanban-column-header">
+      <h3 class="kanban-column-title">To Do</h3>
+      <span class="kanban-column-count">2</span>
+    </div>
+    <div class="kanban-column-content" data-dropzone="todo">
+      <div class="kanban-card" draggable="true" data-card-id="1">
+        <div class="kanban-card-header">
+          <h4 class="kanban-card-title">Review Training Plan</h4>
+          <button type="button" class="kanban-card-menu" aria-label="Card options">
+            <i data-lucide="more-vertical" style="width: 16px; height: 16px"></i>
+          </button>
+        </div>
+        <p class="kanban-card-description">Review and update the training plan for next week.</p>
+        <div class="kanban-card-footer">
+          <span class="kanban-card-label" style="background: #089949;">Training</span>
+        </div>
+      </div>
+      
+      <div class="kanban-card" draggable="true" data-card-id="2">
+        <div class="kanban-card-header">
+          <h4 class="kanban-card-title">Schedule Team Meeting</h4>
+          <button type="button" class="kanban-card-menu" aria-label="Card options">
+            <i data-lucide="more-vertical" style="width: 16px; height: 16px"></i>
+          </button>
+        </div>
+        <p class="kanban-card-description">Schedule weekly team meeting.</p>
+        <div class="kanban-card-footer">
+          <span class="kanban-card-label" style="background: #667eea;">Meeting</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- In Progress Column -->
+  <div class="kanban-column" data-column="in-progress">
+    <div class="kanban-column-header">
+      <h3 class="kanban-column-title">In Progress</h3>
+      <span class="kanban-column-count">1</span>
+    </div>
+    <div class="kanban-column-content" data-dropzone="in-progress">
+      <div class="kanban-card" draggable="true" data-card-id="3">
+        <div class="kanban-card-header">
+          <h4 class="kanban-card-title">Update Player Stats</h4>
+          <button type="button" class="kanban-card-menu" aria-label="Card options">
+            <i data-lucide="more-vertical" style="width: 16px; height: 16px"></i>
+          </button>
+        </div>
+        <p class="kanban-card-description">Update player statistics from last game.</p>
+        <div class="kanban-card-footer">
+          <span class="kanban-card-label" style="background: #f59e0b;">Stats</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Done Column -->
+  <div class="kanban-column" data-column="done">
+    <div class="kanban-column-header">
+      <h3 class="kanban-column-title">Done</h3>
+      <span class="kanban-column-count">1</span>
+    </div>
+    <div class="kanban-column-content" data-dropzone="done">
+      <div class="kanban-card" draggable="true" data-card-id="4">
+        <div class="kanban-card-header">
+          <h4 class="kanban-card-title">Prepare Game Report</h4>
+          <button type="button" class="kanban-card-menu" aria-label="Card options">
+            <i data-lucide="more-vertical" style="width: 16px; height: 16px"></i>
+          </button>
+        </div>
+        <p class="kanban-card-description">Completed game report for last match.</p>
+        <div class="kanban-card-footer">
+          <span class="kanban-card-label" style="background: #10b981;">Report</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .kanban-board {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    overflow-x: auto;
+    min-height: 500px;
+  }
+
+  .kanban-column {
+    flex: 1;
+    min-width: 280px;
+    background: var(--p-surface-50, #f8faf9);
+    border-radius: var(--p-border-radius, 0.5rem);
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .kanban-column-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--p-surface-border, #dee2e6);
+  }
+
+  .kanban-column-title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary, #1a1a1a);
+  }
+
+  .kanban-column-count {
+    background: var(--p-surface-200, #e9ecef);
+    color: var(--text-secondary, #6b7280);
+    padding: 0.25rem 0.5rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .kanban-column-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-height: 100px;
+  }
+
+  .kanban-column-content.drag-over {
+    background: var(--p-surface-100, #f0f0f0);
+    border-radius: var(--p-border-radius, 0.5rem);
+  }
+
+  .kanban-card {
+    background: var(--p-surface-0, #ffffff);
+    border: 1px solid var(--p-surface-border, #dee2e6);
+    border-radius: var(--p-border-radius, 0.5rem);
+    padding: 1rem;
+    cursor: move;
+    transition: all 0.2s ease;
+  }
+
+  .kanban-card:hover {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+
+  .kanban-card.dragging {
+    opacity: 0.5;
+  }
+
+  .kanban-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+
+  .kanban-card-title {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary, #1a1a1a);
+    flex: 1;
+  }
+
+  .kanban-card-menu {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem;
+    color: var(--text-secondary, #6b7280);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .kanban-card:hover .kanban-card-menu {
+    opacity: 1;
+  }
+
+  .kanban-card-description {
+    margin: 0 0 0.75rem 0;
+    font-size: 0.75rem;
+    color: var(--text-secondary, #6b7280);
+    line-height: 1.4;
+  }
+
+  .kanban-card-footer {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .kanban-card-label {
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: white;
+  }
+</style>
+
+<script>
+  // Kanban drag and drop functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    const board = document.getElementById('kanban-board');
+    if (!board) return;
+    
+    let draggedCard = null;
+    
+    // Card drag start
+    board.addEventListener('dragstart', (e) => {
+      if (e.target.classList.contains('kanban-card')) {
+        draggedCard = e.target;
+        e.target.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+      }
+    });
+    
+    // Card drag end
+    board.addEventListener('dragend', (e) => {
+      if (e.target.classList.contains('kanban-card')) {
+        e.target.classList.remove('dragging');
+        document.querySelectorAll('.kanban-column-content').forEach(col => {
+          col.classList.remove('drag-over');
+        });
+      }
+    });
+    
+    // Column drag over
+    board.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      const dropzone = e.target.closest('.kanban-column-content');
+      if (dropzone) {
+        dropzone.classList.add('drag-over');
+      }
+    });
+    
+    // Column drag leave
+    board.addEventListener('dragleave', (e) => {
+      const dropzone = e.target.closest('.kanban-column-content');
+      if (dropzone) {
+        dropzone.classList.remove('drag-over');
+      }
+    });
+    
+    // Column drop
+    board.addEventListener('drop', (e) => {
+      e.preventDefault();
+      const dropzone = e.target.closest('.kanban-column-content');
+      if (dropzone && draggedCard) {
+        dropzone.appendChild(draggedCard);
+        updateColumnCounts();
+        draggedCard = null;
+      }
+      document.querySelectorAll('.kanban-column-content').forEach(col => {
+        col.classList.remove('drag-over');
+      });
+    });
+    
+    function updateColumnCounts() {
+      document.querySelectorAll('.kanban-column').forEach(column => {
+        const count = column.querySelectorAll('.kanban-card').length;
+        const countEl = column.querySelector('.kanban-column-count');
+        if (countEl) {
+          countEl.textContent = count;
+        }
+      });
+    }
+    
+    // Initialize lucide icons
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
+  });
+</script>
+

@@ -1,0 +1,184 @@
+[
+  {
+    "id": 1,
+    "equipment_name": "Foam Roller",
+    "equipment_category": "recovery",
+    "description": "Basic foam roller for muscle recovery and mobility",
+    "price_range_min": "15.00",
+    "price_range_max": "40.00",
+    "where_to_buy": [
+      "sports_stores",
+      "online_retailers",
+      "supermarkets"
+    ],
+    "diy_alternatives": [
+      "tennis_ball",
+      "water_bottle",
+      "rolled_towel"
+    ],
+    "expected_lifespan_months": 24,
+    "maintenance_requirements": [
+      "clean_regularly",
+      "replace_when_worn"
+    ],
+    "performance_benefit": "Improves muscle recovery and mobility",
+    "priority_for_amateur": "essential",
+    "created_at": "2025-08-18T20:14:28.722Z"
+  },
+  {
+    "id": 2,
+    "equipment_name": "Resistance Bands",
+    "equipment_category": "training",
+    "description": "Versatile resistance bands for strength training",
+    "price_range_min": "20.00",
+    "price_range_max": "60.00",
+    "where_to_buy": [
+      "sports_stores",
+      "online_retailers",
+      "fitness_stores"
+    ],
+    "diy_alternatives": [
+      "bodyweight_exercises",
+      "household_items",
+      "water_jugs"
+    ],
+    "expected_lifespan_months": 18,
+    "maintenance_requirements": [
+      "check_for_tears",
+      "store_properly"
+    ],
+    "performance_benefit": "Enables strength training at home",
+    "priority_for_amateur": "essential",
+    "created_at": "2025-08-18T20:14:28.722Z"
+  },
+  {
+    "id": 3,
+    "equipment_name": "Protein Powder",
+    "equipment_category": "nutrition",
+    "description": "Basic whey protein for muscle recovery",
+    "price_range_min": "25.00",
+    "price_range_max": "80.00",
+    "where_to_buy": [
+      "supermarkets",
+      "health_stores",
+      "online_retailers"
+    ],
+    "diy_alternatives": [
+      "eggs",
+      "greek_yogurt",
+      "lean_meat"
+    ],
+    "expected_lifespan_months": 12,
+    "maintenance_requirements": [
+      "store_cool_dry_place",
+      "use_by_date"
+    ],
+    "performance_benefit": "Supports muscle recovery and growth",
+    "priority_for_amateur": "essential",
+    "created_at": "2025-08-18T20:14:28.722Z"
+  },
+  {
+    "id": 4,
+    "equipment_name": "Heart Rate Monitor",
+    "equipment_category": "measurement",
+    "description": "Basic heart rate monitoring for training intensity",
+    "price_range_min": "30.00",
+    "price_range_max": "100.00",
+    "where_to_buy": [
+      "sports_stores",
+      "online_retailers",
+      "electronics_stores"
+    ],
+    "diy_alternatives": [
+      "perceived_exertion",
+      "talk_test",
+      "manual_pulse"
+    ],
+    "expected_lifespan_months": 36,
+    "maintenance_requirements": [
+      "clean_sensors",
+      "replace_battery"
+    ],
+    "performance_benefit": "Tracks training intensity and recovery",
+    "priority_for_amateur": "recommended",
+    "created_at": "2025-08-18T20:14:28.722Z"
+  },
+  {
+    "id": 5,
+    "equipment_name": "Creatine Monohydrate",
+    "equipment_category": "nutrition",
+    "description": "Evidence-based supplement for strength and power",
+    "price_range_min": "15.00",
+    "price_range_max": "40.00",
+    "where_to_buy": [
+      "health_stores",
+      "online_retailers",
+      "pharmacies"
+    ],
+    "diy_alternatives": [
+      "natural_foods",
+      "other_supplements"
+    ],
+    "expected_lifespan_months": 24,
+    "maintenance_requirements": [
+      "store_dry_place",
+      "use_consistently"
+    ],
+    "performance_benefit": "Improves strength and power output",
+    "priority_for_amateur": "recommended",
+    "created_at": "2025-08-18T20:14:28.722Z"
+  },
+  {
+    "id": 6,
+    "equipment_name": "Mobility Tools",
+    "equipment_category": "recovery",
+    "description": "Lacrosse ball, massage stick for mobility work",
+    "price_range_min": "10.00",
+    "price_range_max": "30.00",
+    "where_to_buy": [
+      "sports_stores",
+      "online_retailers"
+    ],
+    "diy_alternatives": [
+      "tennis_ball",
+      "water_bottle",
+      "rolling_pin"
+    ],
+    "expected_lifespan_months": 24,
+    "maintenance_requirements": [
+      "clean_regularly",
+      "replace_when_worn"
+    ],
+    "performance_benefit": "Improves joint mobility and flexibility",
+    "priority_for_amateur": "recommended",
+    "created_at": "2025-08-18T20:14:28.722Z"
+  },
+  {
+    "id": 7,
+    "equipment_name": "Portable Ice Bath Tub",
+    "equipment_category": "recovery",
+    "description": "XL portable foldable ice bath tub with cover for cold therapy recovery",
+    "price_range_min": "80.00",
+    "price_range_max": "150.00",
+    "where_to_buy": [
+      "online_retailers",
+      "temu",
+      "amazon",
+      "fitness_stores"
+    ],
+    "diy_alternatives": [
+      "bathtub",
+      "large_bucket",
+      "storage_bin"
+    ],
+    "expected_lifespan_months": 60,
+    "maintenance_requirements": [
+      "clean_after_each_use",
+      "store_dry_location",
+      "check_for_damage"
+    ],
+    "performance_benefit": "Professional-grade cold therapy recovery at home",
+    "priority_for_amateur": "recommended",
+    "created_at": "2025-08-18T20:19:58.336Z"
+  }
+]

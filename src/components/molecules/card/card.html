@@ -1,0 +1,95 @@
+<!-- 
+    Card Component - FlagFit Pro
+    
+    Usage: Copy this snippet for content containers
+    Variants: card, card-elevated, card-interactive
+    Structure: card-header, card-body, card-footer
+-->
+
+<!-- Basic Card -->
+<div class="card">
+  <div class="card-header">
+    <h3 class="card-title">Card Title</h3>
+  </div>
+  <div class="card-body">
+    <p class="card-text">Card content goes here. This is the main body of the card.</p>
+  </div>
+</div>
+
+<!-- Card with Footer -->
+<div class="card">
+  <div class="card-header">
+    <h3 class="card-title">Performance Summary</h3>
+  </div>
+  <div class="card-body">
+    <p class="card-text">Your training metrics for this week.</p>
+  </div>
+  <div class="card-footer">
+    <button class="btn btn-primary btn-sm">View Details</button>
+  </div>
+</div>
+
+<!-- Elevated Card -->
+<div class="card card-elevated">
+  <div class="card-body">
+    <p class="card-text">This card has elevated shadow for emphasis.</p>
+  </div>
+</div>
+
+<!-- Interactive Card -->
+<div class="card card-interactive">
+  <div class="card-body">
+    <p class="card-text">This card has hover effects and is clickable.</p>
+  </div>
+</div>
+
+<!-- High Contrast Card (replaces glassmorphism) -->
+<div class="card card-elevated">
+  <div class="card-header">
+    <h3 class="card-title">Performance Card</h3>
+  </div>
+  <div class="card-body">
+    <p class="card-text">High contrast card optimized for athletic data clarity.</p>
+  </div>
+</div>
+
+<!-- Stat Card Example -->
+<div class="card">
+  <div class="card-header">
+    <span class="stat-title">
+      <i data-lucide="activity" style="width: 16px; height: 16px"></i>
+      Training Sessions
+    </span>
+  </div>
+  <div class="card-body">
+    <div class="stat-value">24</div>
+    <div class="stat-change positive">
+      <span
+        ><i data-lucide="trending-up" style="width: 16px; height: 16px"></i
+      ></span>
+      <span>+12% from last week</span>
+    </div>
+  </div>
+</div>
+
+<!-- Metric Card Example -->
+<div class="card">
+  <div class="card-body">
+    <div
+      style="display: flex; justify-content: space-between; align-items: center"
+    >
+      <div>
+        <div class="card-subtitle">
+          Total Distance
+        </div>
+        <div class="text-heading-lg text-primary font-semibold">
+          12.5 km
+        </div>
+      </div>
+      <i
+        data-lucide="map"
+        style="width: 32px; height: 32px; color: var(--color-brand-primary)"
+      ></i>
+    </div>
+  </div>
+</div>

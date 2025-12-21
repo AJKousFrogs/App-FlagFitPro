@@ -1,0 +1,428 @@
+/**
+ * Universal Touch Targets & Button System
+ * Ensures all interactive elements meet 44px minimum touch target requirements
+ * Applies to all 26 pages with consistent button hierarchy and accessibility
+ */
+
+/* ================================================================
+   TOUCH TARGET FOUNDATION
+   ================================================================ */
+
+:root {
+  /* Touch target sizes - following iOS and Android guidelines */
+  --touch-target-min: 44px; /* iOS minimum */
+  --touch-target-comfortable: 48px; /* Android/comfortable size */
+  --touch-target-large: 56px; /* Primary actions */
+  --touch-spacing-min: 8px; /* Minimum spacing between targets */
+
+  /* Button hierarchy */
+  --button-height-sm: var(--touch-target-min);
+  --button-height-md: var(--touch-target-comfortable);
+  --button-height-lg: var(--touch-target-large);
+  --button-height-xl: 64px;
+
+  /* Interactive element padding */
+  --interactive-padding-sm: 8px 12px;
+  --interactive-padding-md: 12px 16px;
+  --interactive-padding-lg: 16px 24px;
+  --interactive-padding-xl: 20px 32px;
+}
+
+/* ================================================================
+   BASE INTERACTIVE ELEMENT RULES
+   ================================================================ */
+
+button,
+a,
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+.btn,
+.nav-item,
+.interactive {
+  /* Ensure minimum touch target size */
+  min-height: var(--touch-target-min);
+  min-width: var(--touch-target-min);
+
+  /* Add comfortable padding */
+  padding: var(--interactive-padding-md);
+
+  /* Ensure elements are touchable */
+  cursor: pointer;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+
+  /* Smooth interactions */
+  transition: all var(--motion-duration-fast, 200ms) ease;
+
+  /* Prevent text selection on buttons */
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+
+  /* Ensure proper display for inline elements */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2, 8px);
+
+  /* Prevent shrinking */
+  flex-shrink: 0;
+
+  /* Typography */
+  font-size: var(--font-size-base, 16px);
+  font-weight: var(--font-weight-medium, 500);
+  text-decoration: none;
+  text-align: center;
+
+  /* Border and background */
+  border-radius: var(--radius-md, 8px);
+  border: 1px solid transparent;
+  background: transparent;
+  color: inherit;
+
+  /* Box sizing */
+  box-sizing: border-box;
+}
+
+/* Remove default button styling */
+button,
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+  background: none;
+  border: 1px solid transparent;
+  font: inherit;
+  margin: 0;
+}
+
+/* ================================================================
+   BUTTON HIERARCHY SYSTEM
+   DEPRECATED: Button styles moved to standardized-components.scss
+   This section kept for legacy HTML pages only.
+   For Angular components, use: angular/src/assets/styles/standardized-components.scss
+   ================================================================ */
+
+/* NOTE: Button variant styles (.btn-primary, .btn-secondary, etc.) 
+   have been moved to standardized-components.scss to avoid duplication.
+   This file now only handles touch target sizing and base interactive element rules.
+*/
+
+/* ================================================================
+   NAVIGATION TOUCH TARGETS
+   ================================================================ */
+
+.nav-item,
+.navigation-link {
+  min-height: var(--touch-target-comfortable);
+  padding: var(--spacing-3, 12px) var(--spacing-4, 16px);
+  margin: 2px;
+  border-radius: var(--radius-md, 8px);
+  gap: var(--spacing-3, 12px);
+  text-decoration: none;
+  color: var(--color-text-secondary);
+}
+
+.nav-item:hover {
+  background: var(--surface-secondary, #f8fafc);
+  color: var(--color-text-primary);
+}
+
+.nav-item.active {
+  background: var(--color-brand-primary-alpha-10, rgba(16, 201, 107, 0.1));
+  color: var(--color-brand-primary);
+  font-weight: var(--font-weight-semibold, 600);
+}
+
+/* ================================================================
+   FORM ELEMENT TOUCH TARGETS
+   ================================================================ */
+
+input,
+select,
+textarea {
+  min-height: var(--touch-target-min);
+  padding: var(--spacing-3, 12px) var(--spacing-4, 16px);
+  font-size: 16px; /* Prevents iOS zoom */
+  border-radius: var(--radius-md, 8px);
+  border: 1px solid var(--border-default, #e5e5e5);
+}
+
+/* Checkbox and radio improvements */
+input[type="checkbox"],
+input[type="radio"] {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  accent-color: var(--color-brand-primary);
+  cursor: pointer;
+}
+
+/* Label improvements */
+label {
+  cursor: pointer;
+  min-height: var(--spacing-5, 20px);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2, 8px);
+}
+
+/* ================================================================
+   CARD AND INTERACTIVE AREA TOUCH TARGETS
+   DEPRECATED: Card styles moved to standardized-components.scss
+   This section kept for legacy HTML pages only.
+   For Angular components, use: angular/src/assets/styles/standardized-components.scss
+   ================================================================ */
+
+/* NOTE: Card styles (.card-interactive, etc.) have been moved to 
+   standardized-components.scss. This file now only ensures touch targets.
+*/
+
+/* ================================================================
+   TABLE INTERACTIVE ELEMENTS
+   ================================================================ */
+
+.table-row-interactive,
+tr.clickable {
+  cursor: pointer;
+  transition: background var(--motion-duration-fast, 200ms) ease;
+}
+
+.table-row-interactive:hover,
+tr.clickable:hover {
+  background: var(--surface-secondary, #f8fafc);
+}
+
+.table-row-interactive td,
+tr.clickable td {
+  padding: var(--spacing-3, 12px) var(--spacing-4, 16px);
+}
+
+/* ================================================================
+   DROPDOWN AND MENU TOUCH TARGETS
+   ================================================================ */
+
+.dropdown-item,
+.menu-item {
+  min-height: var(--touch-target-comfortable);
+  padding: var(--spacing-3, 12px) var(--spacing-4, 16px);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3, 12px);
+  text-decoration: none;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  border-radius: var(--radius-md, 8px);
+}
+
+.dropdown-item:hover,
+.menu-item:hover {
+  background: var(--surface-secondary, #f8fafc);
+}
+
+/* ================================================================
+   TAB NAVIGATION TOUCH TARGETS
+   ================================================================ */
+
+.tab-button,
+.tab-nav-item {
+  min-height: var(--touch-target-comfortable);
+  padding: var(--spacing-3, 12px) var(--spacing-4, 16px);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: var(--radius-md, 8px) var(--radius-md, 8px) 0 0;
+  border-bottom: 2px solid transparent;
+}
+
+.tab-button.active,
+.tab-nav-item.active {
+  background: var(--surface-primary, #ffffff);
+  border-bottom-color: var(--color-brand-primary);
+  color: var(--color-brand-primary);
+  font-weight: var(--font-weight-semibold, 600);
+}
+
+/* ================================================================
+   MOBILE-SPECIFIC TOUCH ENHANCEMENTS
+   ================================================================ */
+
+@media (hover: none) and (pointer: coarse) {
+  /* Larger touch targets for touch devices */
+  button,
+  a,
+  .btn,
+  .nav-item,
+  input,
+  select {
+    min-height: var(--touch-target-comfortable);
+  }
+
+  /* Increase spacing between touch targets */
+  .btn + .btn,
+  .nav-item + .nav-item {
+    margin-left: var(--touch-spacing-min);
+  }
+
+  /* Enhanced visual feedback for touch */
+  button:active,
+  .btn:active,
+  .nav-item:active {
+    transform: scale(0.98);
+    background-color: var(--surface-secondary, #f8fafc);
+  }
+
+  /* Remove hover states that don't work on touch */
+  .btn-primary:hover {
+    background: var(--color-brand-primary);
+    border-color: var(--color-brand-primary);
+  }
+}
+
+/* ================================================================
+   FOCUS MANAGEMENT
+   ================================================================ */
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+.btn:focus-visible,
+.nav-item:focus-visible {
+  outline: 2px solid var(--color-brand-primary);
+  outline-offset: 2px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Remove focus outline for mouse users */
+button:focus:not(:focus-visible),
+a:focus:not(:focus-visible),
+.btn:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ================================================================
+   DISABLED STATE TOUCH TARGETS
+   ================================================================ */
+
+button:disabled,
+.btn:disabled,
+.btn.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+  transform: none !important;
+}
+
+/* ================================================================
+   LOADING STATE TOUCH TARGETS
+   ================================================================ */
+
+.btn.loading,
+.btn-loading {
+  position: relative;
+  color: transparent;
+  pointer-events: none;
+}
+
+.btn.loading::after,
+.btn-loading::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 16px;
+  height: 16px;
+  border: 2px solid currentColor;
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* ================================================================
+   HIGH CONTRAST MODE SUPPORT
+   ================================================================ */
+
+@media (prefers-contrast: high) {
+  button,
+  .btn,
+  input,
+  select {
+    border-width: 2px;
+  }
+
+  .btn-primary {
+    border: 2px solid var(--color-brand-primary);
+  }
+
+  .btn-secondary {
+    border: 2px solid var(--color-text-primary);
+  }
+
+  button:focus-visible,
+  .btn:focus-visible {
+    outline-width: 3px;
+  }
+}
+
+/* ================================================================
+   REDUCED MOTION SUPPORT
+   ================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  button,
+  .btn,
+  .nav-item,
+  .card-interactive {
+    transition: none;
+  }
+
+  button:active,
+  .btn:active {
+    transform: none;
+  }
+
+  .btn.loading::after {
+    animation: none;
+  }
+
+  .btn.loading::after {
+    content: "⏳";
+    border: none;
+    background: none;
+    font-size: 16px;
+  }
+}
+
+/* ================================================================
+   DARK MODE SUPPORT
+   ================================================================ */
+
+@media (prefers-color-scheme: dark) {
+  .btn-secondary {
+    background: var(--surface-primary-dark, #1f1f1f);
+    color: var(--text-primary-dark, #ffffff);
+    border-color: var(--border-default-dark, #404040);
+  }
+
+  .btn-secondary:hover {
+    background: var(--surface-secondary-dark, #2a2a2a);
+  }
+
+  .nav-item {
+    color: var(--color-text-secondary);
+  }
+
+  .nav-item:hover {
+    background: var(--surface-secondary-dark, #2a2a2a);
+    color: var(--text-primary-dark, #ffffff);
+  }
+
+  .dropdown-item:hover,
+  .menu-item:hover {
+    background: var(--surface-secondary-dark, #2a2a2a);
+  }
+}

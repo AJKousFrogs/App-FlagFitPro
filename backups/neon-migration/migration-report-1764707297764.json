@@ -1,0 +1,295 @@
+{
+  "timestamp": "2025-12-02T20:28:06.458Z",
+  "tablesProcessed": 0,
+  "rowsMigrated": 0,
+  "errors": [
+    {
+      "table": "analytics_events",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "performance_metrics",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "affordable_brand_products",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "hydration_research_studies",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "user_behavior",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "ifaf_flag_rankings",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "implementation_steps",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "users",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "altitude_environmental_factors",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "wada_prohibited_substances",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "training_analytics",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "ifaf_elo_ratings",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "supplement_wada_compliance",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "premium_brand_analysis",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "supplement_evidence_grades",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "supplement_interactions",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "supplement_research",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "local_premium_alternatives",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "affordable_equipment",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "team_resources",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "environmental_adjustments",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "realistic_budget_categories",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "equipment_price_tracking",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "equipment_alternatives_comparison",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "premium_product_alternatives",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "budget_friendly_alternatives",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "supplement_protocols",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "amateur_training_programs",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "cost_effective_alternatives",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "budget_categories",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "realistic_performance_plans",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "diy_protocols",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "ifaf_hydration_protocols",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "budget_nutrition_plans",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "european_championship_protocols",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "world_championship_protocols",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "olympic_games_protocols",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "performance_plan_templates",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "creatine_research",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "flag_football_positions",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "national_team_profiles",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "success_indicators",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "community_activation_events",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "training_hydration_protocols",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "supplements",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "sleep_optimization_protocols",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "sprint_training_categories",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "sprint_workouts",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "sprint_training_phases",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "agility_patterns",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "sprint_recovery_protocols",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "player_archetypes",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "position_requirements",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "sports_crossover_analysis",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "defensive_schemes",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "nfl_combine_benchmarks",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "flag_football_performance_levels",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "nfl_combine_performances",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "game_day_workflows",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "sleep_guidelines",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "digital_wellness_protocols",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "cognitive_recovery_protocols",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "environmental_recovery_protocols",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "performance_competencies",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "team_chemistry",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "notifications",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "daily_quotes",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "olympic_qualification",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "performance_benchmarks",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "sponsor_rewards",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "sponsor_products",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "table": "wearables_data",
+      "error": "TypeError: fetch failed"
+    }
+  ]
+}

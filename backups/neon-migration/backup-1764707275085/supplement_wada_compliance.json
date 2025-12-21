@@ -1,0 +1,116 @@
+[
+  {
+    "id": 1,
+    "supplement_name": "Creatine Monohydrate",
+    "brand": "Generic",
+    "wada_status": "compliant",
+    "contamination_risk_percentage": "0.10",
+    "banned_substances_detected": null,
+    "testing_frequency": null,
+    "third_party_tested": true,
+    "testing_organization": null,
+    "last_test_date": null,
+    "test_result": null,
+    "flag_football_safe": true,
+    "recommended_for_position": [
+      "all_positions"
+    ],
+    "usage_guidelines": null,
+    "compliance_notes": null,
+    "risk_mitigation_strategies": null,
+    "created_at": "2025-08-17T19:32:54.422Z",
+    "updated_at": "2025-08-17T19:32:54.422Z"
+  },
+  {
+    "id": 2,
+    "supplement_name": "Whey Protein Isolate",
+    "brand": "Generic",
+    "wada_status": "compliant",
+    "contamination_risk_percentage": "0.05",
+    "banned_substances_detected": null,
+    "testing_frequency": null,
+    "third_party_tested": true,
+    "testing_organization": null,
+    "last_test_date": null,
+    "test_result": null,
+    "flag_football_safe": true,
+    "recommended_for_position": [
+      "all_positions"
+    ],
+    "usage_guidelines": null,
+    "compliance_notes": null,
+    "risk_mitigation_strategies": null,
+    "created_at": "2025-08-17T19:32:54.422Z",
+    "updated_at": "2025-08-17T19:32:54.422Z"
+  },
+  {
+    "id": 3,
+    "supplement_name": "Beta-Alanine",
+    "brand": "Generic",
+    "wada_status": "compliant",
+    "contamination_risk_percentage": "0.20",
+    "banned_substances_detected": null,
+    "testing_frequency": null,
+    "third_party_tested": true,
+    "testing_organization": null,
+    "last_test_date": null,
+    "test_result": null,
+    "flag_football_safe": true,
+    "recommended_for_position": [
+      "receiver",
+      "defensive_back",
+      "lineman"
+    ],
+    "usage_guidelines": null,
+    "compliance_notes": null,
+    "risk_mitigation_strategies": null,
+    "created_at": "2025-08-17T19:32:54.422Z",
+    "updated_at": "2025-08-17T19:32:54.422Z"
+  },
+  {
+    "id": 4,
+    "supplement_name": "Caffeine",
+    "brand": "Generic",
+    "wada_status": "compliant",
+    "contamination_risk_percentage": "0.10",
+    "banned_substances_detected": null,
+    "testing_frequency": null,
+    "third_party_tested": true,
+    "testing_organization": null,
+    "last_test_date": null,
+    "test_result": null,
+    "flag_football_safe": true,
+    "recommended_for_position": [
+      "quarterback",
+      "receiver",
+      "defensive_back"
+    ],
+    "usage_guidelines": null,
+    "compliance_notes": null,
+    "risk_mitigation_strategies": null,
+    "created_at": "2025-08-17T19:32:54.422Z",
+    "updated_at": "2025-08-17T19:32:54.422Z"
+  },
+  {
+    "id": 5,
+    "supplement_name": "Pre-Workout Blend",
+    "brand": "Generic",
+    "wada_status": "high_risk",
+    "contamination_risk_percentage": "15.00",
+    "banned_substances_detected": null,
+    "testing_frequency": null,
+    "third_party_tested": false,
+    "testing_organization": null,
+    "last_test_date": null,
+    "test_result": null,
+    "flag_football_safe": false,
+    "recommended_for_position": [
+      "none"
+    ],
+    "usage_guidelines": null,
+    "compliance_notes": null,
+    "risk_mitigation_strategies": null,
+    "created_at": "2025-08-17T19:32:54.422Z",
+    "updated_at": "2025-08-17T19:32:54.422Z"
+  }
+]

@@ -1,0 +1,111 @@
+/* ================================================================
+   BODY CLASS SYSTEM - FlagFit Pro
+   Standardized body classes for different page types
+   ================================================================ */
+
+/* ================================
+   BASE BODY STYLES
+   ================================ */
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-family);
+  font-size: var(--text-base);
+  line-height: 1.5;
+  color: var(--color-text);
+  background-color: var(--surface-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  position: relative; /* Ensure skip links are positioned relative to body */
+}
+
+/* ================================
+   PAGE TYPE CLASSES
+   ================================ */
+
+/* Landing/Marketing Pages */
+.page-landing {
+  background: var(--surface-primary);
+  overflow-x: hidden; /* Prevent horizontal scroll from hero animations */
+}
+
+/* Authentication Pages (Login, Register, Reset Password) */
+.page-auth {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-lg);
+  min-height: 100vh;
+  background: var(--surface-secondary);
+}
+
+/* Dashboard/Internal Pages */
+.page-dashboard {
+  background: var(--surface-secondary);
+  padding-left: 250px; /* Account for fixed sidebar */
+  padding-top: 64px; /* Account for fixed header */
+  min-height: 100vh;
+}
+
+/* Full-screen Application Pages (no sidebar) */
+.page-app {
+  background: var(--surface-primary);
+  padding-top: 64px; /* Account for fixed header only */
+  min-height: 100vh;
+}
+
+/* Error Pages */
+.page-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-lg);
+  min-height: 100vh;
+  background: var(--surface-primary);
+}
+
+/* ================================
+   RESPONSIVE ADJUSTMENTS
+   ================================ */
+
+@media (max-width: 1024px) {
+  .page-dashboard {
+    padding-left: 0; /* Remove sidebar padding on mobile */
+    padding-top: 64px; /* Keep header padding */
+  }
+}
+
+@media (max-width: 768px) {
+  .page-auth {
+    padding: var(--space-md);
+  }
+  
+  .page-dashboard,
+  .page-app {
+    padding-top: 56px; /* Smaller header on mobile */
+  }
+}
+
+/* ================================
+   UTILITY MODIFIERS
+   ================================ */
+
+/* Disable scrolling (for modals) */
+.scroll-disabled {
+  overflow: hidden;
+}
+
+/* High contrast mode */
+.high-contrast {
+  filter: contrast(1.2);
+}
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

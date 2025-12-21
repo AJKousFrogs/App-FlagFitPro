@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FlagFit Pro - Settings</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <!-- New Modular CSS Architecture -->
+    <link rel="stylesheet" href="./src/css/main.css" />
+    <!-- Page-specific styles -->
+    <link rel="stylesheet" href="./src/css/pages/settings.css" />
+
+    <!-- Lucide Icons - Modern icon library similar to Radix UI -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
+    <script src="./src/icon-helper.js" defer></script>
+    <script src="./src/theme-switcher.js" defer></script>
+    <script src="./src/nav-highlight.js" defer></script>
+    <script src="./src/components/organisms/top-bar/top-bar.js" defer></script>
+    <!-- Universal Components -->
+    <script type="module" src="./src/js/main.js"></script>
+    <!-- Common Component Loaders (Sidebar, Top Bar, Footer) -->
+    <script type="module" src="./src/js/components/common-loaders.js" defer></script>
+  
+    <!-- Supabase Configuration (Centralized) -->
+    <script src="./src/js/config/supabase-config.js" defer></script>
+    
+    <!-- Supabase JS SDK from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0" defer></script>
+
+  </head>
+  <body>
+    <div class="dashboard-container">
+            <!-- Unified Sidebar Navigation (Loaded Dynamically) -->
+      <div data-sidebar-container></div>
+        <!-- Top Bar (Loaded Dynamically) -->
+        <div data-topbar-container></div>
+
+      <main class="main-content">
+        <!-- Page Header -->
+        <div class="page-header">
+          <div class="page-title-section">
+            <h1 class="text-heading-2xl text-primary">Settings</h1>
+            <p class="text-body-md text-secondary">Manage your account and application preferences</p>
+          </div>
+
+          <button class="btn btn-primary" onclick="saveSettings()">
+            <span>💾</span>
+            Save Changes
+          </button>
+        </div>
+
+        <!-- Unsaved Changes Warning -->
+        <div id="unsavedChangesWarning" class="unsaved-changes-warning">
+          <strong>⚠️ You have unsaved changes</strong>
+          <p>Your changes will be saved automatically, or click "Save Changes" to save now.</p>
+        </div>
+
+        <!-- Settings Grid -->
+        <div class="settings-grid">
+          <!-- Profile Settings -->
+          <div class="settings-section">
+            <div class="section-header">
+              <span class="section-icon">👤</span>
+              <h2 class="section-title text-heading-xl text-primary">Profile Settings</h2>
+            </div>
+
+            <div class="form-group">
+              <label for="displayName">Display Name</label>
+              <input
+                type="text"
+                id="displayName"
+                class="form-input"
+                value=""
+                placeholder="Enter your display name"
+                autocomplete="name"
+                aria-describedby="displayName-error displayName-success"
+                aria-invalid="false"
+              />
+              <div
+                id="displayName-error"
+                class="form-error"
+                role="alert"
+                style="display: none"
+              ></div>
+              <small
+                id="displayName-success"
+                class="form-success"
+                style="display: none"
+                >Valid name</small
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input
+                type="email"
+                id="email"
+                class="form-input"
+                value="john.doe@example.com"
+                placeholder="Enter your email"
+                autocomplete="email"
+                aria-describedby="email-error email-success"
+                aria-invalid="false"
+              />
+              <div
+                id="email-error"
+                class="form-error"
+                role="alert"
+                style="display: none"
+              ></div>
+              <small
+                id="email-success"
+                class="form-success"
+                style="display: none"
+                >Valid email</small
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="position">Playing Position</label>
+              <select id="position" class="form-input form-select">
+                <option value="">Select position</option>
+                <option value="QB">Quarterback (QB)</option>
+                <option value="WR">Wide Receiver (WR)</option>
+                <option value="Center">Center (Snapping Only)</option>
+                <option value="DB">Defensive Back (DB)</option>
+                <option value="Blitzer">Blitzer</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="jerseyNumber">Jersey Number</label>
+              <input
+                type="number"
+                id="jerseyNumber"
+                class="form-input"
+                min="0"
+                max="99"
+                placeholder="Enter jersey number"
+                aria-describedby="jerseyNumber-help"
+              />
+              <small id="jerseyNumber-help" class="form-help"
+                >Your jersey number (0-99)</small
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="experienceLevel">Experience Level</label>
+              <select id="experienceLevel" class="form-input form-select">
+                <option value="">Select experience level</option>
+                <option value="beginner">Beginner</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="advanced">Advanced</option>
+                <option value="expert">Expert</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="team">Current Team</label>
+              <input
+                type="text"
+                id="team"
+                class="form-input"
+                value="Lightning Bolts"
+                placeholder="Enter your team name"
+                aria-describedby="team-error team-success"
+                aria-invalid="false"
+              />
+              <div
+                id="team-error"
+                class="form-error"
+                role="alert"
+                style="display: none"
+              ></div>
+              <small
+                id="team-success"
+                class="form-success"
+                style="display: none"
+                >Valid team name</small
+              >
+            </div>
+          </div>
+
+          <!-- Notification Settings -->
+          <div class="settings-section">
+            <div class="section-header">
+              <span class="section-icon"
+                ><i
+                  data-lucide="bell"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    color: var(--icon-color-primary);
+                    stroke: var(--icon-color-primary);
+                  "
+                ></i
+              ></span>
+              <h2 class="section-title text-heading-xl text-primary">Notifications</h2>
+            </div>
+
+            <div class="setting-item" data-notification-type="training">
+              <div class="setting-info">
+                <h3 class="text-heading-md text-primary font-semibold">Training Reminders</h3>
+                <p>Get notified about upcoming training sessions</p>
+              </div>
+              <div
+                class="toggle-switch active"
+                data-preference-key="training"
+                onclick="toggleNotificationPreference(this, 'training')"
+              ></div>
+            </div>
+
+            <div class="setting-item" data-notification-type="tournament">
+              <div class="setting-info">
+                <h3 class="text-heading-md text-primary font-semibold">Tournament Updates</h3>
+                <p>Receive updates about tournament schedules and results</p>
+              </div>
+              <div
+                class="toggle-switch active"
+                data-preference-key="tournament"
+                onclick="toggleNotificationPreference(this, 'tournament')"
+              ></div>
+            </div>
+
+            <div class="setting-item" data-notification-type="team">
+              <div class="setting-info">
+                <h3 class="text-heading-md text-primary font-semibold">Team Messages</h3>
+                <p>Get notified when teammates send messages</p>
+              </div>
+              <div 
+                class="toggle-switch" 
+                data-preference-key="team"
+                onclick="toggleNotificationPreference(this, 'team')"
+              ></div>
+            </div>
+
+            <div class="setting-item" data-notification-type="achievement">
+              <div class="setting-info">
+                <h3 class="text-heading-md text-primary font-semibold">Achievement Notifications</h3>
+                <p>Get notified when you unlock achievements</p>
+              </div>
+              <div
+                class="toggle-switch active"
+                data-preference-key="achievement"
+                onclick="toggleNotificationPreference(this, 'achievement')"
+              ></div>
+            </div>
+
+            <div class="setting-item" data-notification-type="wellness">
+              <div class="setting-info">
+                <h3 class="text-heading-md text-primary font-semibold">Wellness Reminders</h3>
+                <p>Daily reminders to log your wellness data</p>
+              </div>
+              <div
+                class="toggle-switch active"
+                data-preference-key="wellness"
+                onclick="toggleNotificationPreference(this, 'wellness')"
+              ></div>
+            </div>
+
+            <div class="setting-item" data-notification-type="game">
+              <div class="setting-info">
+                <h3 class="text-heading-md text-primary font-semibold">Game Updates</h3>
+                <p>Notifications about game schedules and results</p>
+              </div>
+              <div
+                class="toggle-switch active"
+                data-preference-key="game"
+                onclick="toggleNotificationPreference(this, 'game')"
+              ></div>
+            </div>
+          </div>
+
+          <!-- Privacy Settings -->
+          <div class="settings-section">
+            <div class="section-header">
+              <span class="section-icon">🔒</span>
+              <h2 class="section-title text-heading-xl text-primary">Privacy & Security</h2>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h3 class="text-heading-md text-primary font-semibold">Profile Visibility</h3>
+                <p>Allow other players to see your profile</p>
+              </div>
+              <div
+                class="toggle-switch active"
+                onclick="toggleSetting(this)"
+              ></div>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h3 class="text-heading-md text-primary font-semibold">Training Data Sharing</h3>
+                <p>Share training data with coaches and teammates</p>
+              </div>
+              <div
+                class="toggle-switch active"
+                onclick="toggleSetting(this)"
+              ></div>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h3 class="text-heading-md text-primary font-semibold">Analytics Tracking</h3>
+                <p>Allow collection of usage data to improve the app</p>
+              </div>
+              <div class="toggle-switch" onclick="toggleSetting(this)"></div>
+            </div>
+
+            <div class="form-group">
+              <label for="currentPassword">Current Password</label>
+              <input
+                type="password"
+                id="currentPassword"
+                class="form-input"
+                placeholder="Enter current password"
+                autocomplete="current-password"
+                aria-describedby="currentPassword-error currentPassword-success"
+                aria-invalid="false"
+              />
+              <div
+                id="currentPassword-error"
+                class="form-error"
+                role="alert"
+                style="display: none"
+              ></div>
+              <small
+                id="currentPassword-success"
+                class="form-success"
+                style="display: none"
+                >Password entered</small
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="newPassword">New Password</label>
+              <input
+                type="password"
+                id="newPassword"
+                class="form-input"
+                placeholder="Enter new password"
+                autocomplete="new-password"
+                aria-describedby="newPassword-error newPassword-success"
+                aria-invalid="false"
+              />
+              <div
+                id="newPassword-error"
+                class="form-error"
+                role="alert"
+                style="display: none"
+              ></div>
+              <small
+                id="newPassword-success"
+                class="form-success"
+                style="display: none"
+                >Password is valid</small
+              >
+              <small class="form-hint"
+                >Password must be at least 8 characters and include uppercase,
+                lowercase, number, and special character.</small
+              >
+            </div>
+          </div>
+
+          <!-- App Preferences -->
+          <div class="settings-section">
+            <div class="section-header">
+              <span class="section-icon">🎨</span>
+              <h2 class="section-title text-heading-xl text-primary">App Preferences</h2>
+            </div>
+
+            <div class="form-group">
+              <label for="theme">Theme</label>
+              <select id="theme" class="select-input">
+                <option>Light Mode</option>
+                <option>Dark Mode</option>
+                <option>Auto (System)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="language">Language</label>
+              <select id="language" class="select-input">
+                <option>English</option>
+                <option>Spanish</option>
+                <option>French</option>
+                <option>German</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="timezone">Timezone</label>
+              <select id="timezone" class="select-input">
+                <option>UTC-8 (Pacific)</option>
+                <option>UTC-7 (Mountain)</option>
+                <option>UTC-6 (Central)</option>
+                <option>UTC-5 (Eastern)</option>
+              </select>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h3 class="text-heading-md text-primary font-semibold">Auto-refresh Data</h3>
+                <p>Automatically refresh training and tournament data</p>
+              </div>
+              <div
+                class="toggle-switch active"
+                onclick="toggleSetting(this)"
+              ></div>
+            </div>
+          </div>
+
+          <!-- Danger Zone -->
+          <div class="settings-section danger-zone">
+            <div class="section-header">
+              <span class="section-icon">⚠️</span>
+              <h2 class="section-title text-heading-xl text-primary">Danger Zone</h2>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h3 class="text-heading-md text-primary font-semibold">Export Data</h3>
+                <p>Download all your training data and statistics</p>
+              </div>
+              <button class="btn btn-secondary" onclick="exportData()">
+                Export
+              </button>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h3 class="text-heading-md text-primary font-semibold">Delete Account</h3>
+                <p>Permanently delete your account and all associated data</p>
+              </div>
+              <button class="btn btn-error" onclick="deleteAccount()">
+                Delete Account
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script type="module">
+      import { enhancedSettings } from "./src/js/components/enhanced-settings.js";
+      import "./src/js/pages/settings-page.js";
+
+      // Initialize enhanced settings component
+      document.addEventListener("DOMContentLoaded", async () => {
+        try {
+          await enhancedSettings.init({
+            enableRealtime: true,
+            enableAutoSave: true,
+            enableValidation: true
+          });
+
+          // Subscribe to settings updates
+          enhancedSettings.addEventListener((data) => {
+            console.log('[Settings] Settings updated:', data);
+          });
+
+          // Override saveSettings to use enhanced component
+          window.saveSettings = async function(event) {
+            await enhancedSettings.saveSettings(false);
+          };
+
+          console.log('[Settings] Enhanced settings initialized');
+        } catch (error) {
+          console.warn('[Settings] Enhanced component failed, using fallback:', error);
+        }
+      });
+    </script>
+
+        <!-- Auto-save Indicator -->
+        <div id="autoSaveIndicator" class="auto-save-indicator">
+          <span id="autoSaveText">Saving...</span>
+        </div>
+
+        <!-- Footer (Loaded Dynamically) -->
+    <div data-footer-container></div>
+  </body>
+</html>

@@ -1,0 +1,117 @@
+<!-- 
+    Admin Layout Template - FlagFit Pro
+    
+    Usage: Copy this structure for admin pages
+    Similar to dashboard but with admin-specific navigation
+-->
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FlagFit Pro - Admin</title>
+
+    <!-- Design System CSS -->
+    <link rel="stylesheet" href="./src/css/main.css" />
+
+    <!-- Lucide Icons -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
+    <script src="./src/icon-helper.js" defer></script>
+    <script src="./src/theme-switcher.js" defer></script>
+  </head>
+  <body>
+    <div class="admin-container">
+      <!-- Navigation Sidebar -->
+      <!-- Include: src/components/organisms/navigation-sidebar/navigation-sidebar.html -->
+      <nav
+        class="sidebar admin-sidebar"
+        role="navigation"
+        aria-label="Admin navigation"
+      >
+        <div class="sidebar-header">
+          <a href="/admin" class="sidebar-logo" aria-label="FlagFit Pro Admin">
+            <i
+              data-lucide="activity"
+              style="width: 24px; height: 24px; color: white"
+            ></i>
+          </a>
+          <h2 class="sidebar-title">Admin Panel</h2>
+        </div>
+        <ul class="sidebar-nav" role="list">
+          <li role="listitem">
+            <a
+              href="/admin/dashboard"
+              class="sidebar-link active"
+              aria-current="page"
+            >
+              <i data-lucide="home" style="width: 20px; height: 20px"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li role="listitem">
+            <a href="/admin/users" class="sidebar-link">
+              <i data-lucide="users" style="width: 20px; height: 20px"></i>
+              <span>Users</span>
+            </a>
+          </li>
+          <li role="listitem">
+            <a href="/admin/teams" class="sidebar-link">
+              <i data-lucide="users-2" style="width: 20px; height: 20px"></i>
+              <span>Teams</span>
+            </a>
+          </li>
+          <li role="listitem">
+            <a href="/admin/settings" class="sidebar-link">
+              <i data-lucide="settings" style="width: 20px; height: 20px"></i>
+              <span>Settings</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Main Content Area -->
+      <main class="main-content">
+        <!-- Admin Header -->
+        <header class="dashboard-header">
+          <div class="header-left">
+            <h1 class="page-title">Admin Dashboard</h1>
+            <p class="page-subtitle">Manage your application</p>
+          </div>
+          <div class="header-right">
+            <!-- Search, notifications, user menu -->
+          </div>
+        </header>
+
+        <!-- Page Content -->
+        <div class="content-area">
+          <!-- Admin-specific content -->
+          <!-- Include: src/components/organisms/roster-table/roster-table.html -->
+          <div class="roster-table-card card">
+            <!-- Table content -->
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      // Initialize icons
+      if (typeof lucide !== "undefined") {
+        lucide.createIcons();
+      }
+    </script>
+  </body>
+</html>
+
+<!-- 
+    Layout Structure:
+    - .admin-container - Main wrapper
+    - .admin-sidebar - Admin navigation sidebar
+    - .main-content - Main content area
+    - .dashboard-header - Page header
+    - .content-area - Page content
+-->

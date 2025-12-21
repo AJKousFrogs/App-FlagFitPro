@@ -1,0 +1,573 @@
+/* ================================================================
+   SETTINGS PAGE STYLES - FlagFit Pro
+   Page-specific styles for settings.html
+   Design System Compliant - Uses semantic tokens
+   ================================================================ */
+
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+  background: var(--surface-primary);
+}
+
+.sidebar-nav {
+  padding: var(--space-6);
+}
+
+.nav-icon {
+  width: 20px;
+  height: 20px;
+  opacity: 0.8;
+}
+
+/* Top Bar styles are now in src/css/components/header.css */
+.main-content {
+  margin-left: 250px; /* Sidebar width */
+  margin-top: 0; /* Removed - padding-top handles spacing */
+  flex: 1;
+  padding: var(--space-8);
+  background: var(--surface-primary);
+  width: calc(100% - 250px); /* Prevent overflow */
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-8);
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.page-title-section h1 {
+  font-size: var(--text-3xl);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.page-title-section p {
+  font-size: var(--text-lg);
+  color: var(--color-text-secondary);
+}
+
+.settings-grid {
+  display: grid;
+  gap: var(--space-6);
+  max-width: 800px;
+  width: 100%;
+}
+
+.settings-section {
+  background: var(--surface-elevated);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  border: 1px solid var(--color-border-primary);
+  box-shadow: var(--shadow-sm);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border-primary);
+}
+
+.section-icon {
+  width: 24px;
+  height: 24px;
+  color: var(--color-brand-primary);
+}
+
+.section-title {
+  font-size: var(--text-lg);
+  font-weight: var(--font-semibold);
+  color: var(--color-text-primary);
+}
+
+.setting-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-4) 0;
+  border-bottom: 1px solid var(--color-border-primary);
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.setting-item:last-child {
+  border-bottom: none;
+}
+
+.setting-info h3 {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1);
+}
+
+.setting-info p {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}
+
+.toggle-switch {
+  position: relative;
+  width: 48px;
+  height: 24px;
+  background: var(--primitive-neutral-300);
+  border-radius: 24px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  flex-shrink: 0;
+  /* Ensure touch target is at least 44px */
+  min-width: 48px;
+  min-height: 24px;
+  /* Add padding for better touch target */
+  padding: 10px 0;
+  box-sizing: content-box;
+}
+
+.toggle-switch.active {
+  background: var(--color-brand-primary);
+}
+
+.toggle-switch::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background: var(--color-text-primary);
+  border-radius: 50%;
+  transition: transform 0.3s;
+}
+
+.toggle-switch.active::after {
+  transform: translateX(24px);
+}
+
+/* Form groups inherit from design system form.css */
+.form-group {
+  margin-bottom: var(--space-4);
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: var(--space-2);
+  font-weight: var(--font-medium);
+  color: var(--color-text-primary);
+  font-size: var(--text-sm);
+}
+
+/* Form inputs inherit from design system form.css but allow overrides */
+.form-input {
+  width: 100%;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
+  font-size: var(--text-base); /* 16px minimum for iOS zoom prevention */
+  min-height: 44px; /* Touch target compliance */
+  transition: all var(--transition-fast);
+  box-sizing: border-box;
+  background: var(--surface-primary);
+  color: var(--color-text-primary);
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--color-brand-primary);
+  box-shadow: 0 0 0 3px var(--color-brand-primary-alpha-20);
+}
+
+.select-input,
+.form-select {
+  width: 100%;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
+  font-size: var(--text-base); /* 16px minimum for iOS zoom prevention */
+  background: var(--surface-primary);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  min-height: 44px; /* Touch target compliance */
+  box-sizing: border-box;
+}
+
+.danger-zone {
+  border: 1px solid var(--status-error-500);
+  background: rgba(239, 68, 68, 0.1); /* error-50 equivalent */
+}
+
+.danger-zone .section-header {
+  color: var(--status-error-500);
+  border-bottom-color: var(--status-error-500);
+}
+
+/* Danger zone button uses design system .btn-error class */
+/* Custom styles removed - using design system button.css */
+
+/* ================================================================
+   RESPONSIVE BREAKPOINTS
+   ================================================================ */
+
+/* Tablet and below (1024px and below) */
+@media (max-width: 1024px) {
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform var(--transition-normal);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+    padding: var(--space-6);
+  }
+}
+
+/* Mobile (768px and below) */
+@media (max-width: 768px) {
+  .main-content {
+    padding: var(--space-4);
+    margin-top: 0;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
+  }
+
+  .page-header .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .page-title-section h1 {
+    font-size: var(--text-2xl);
+  }
+
+  .page-title-section p {
+    font-size: var(--text-base);
+  }
+
+  .settings-grid {
+    max-width: 100%;
+    gap: var(--space-4);
+  }
+
+  .settings-section {
+    padding: var(--space-4);
+  }
+
+  .section-header {
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .section-title {
+    font-size: var(--text-base);
+  }
+
+  .setting-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-3) 0;
+  }
+
+  .setting-info {
+    width: 100%;
+  }
+
+  .setting-info h3 {
+    font-size: var(--text-base);
+  }
+
+  .setting-info p {
+    font-size: var(--text-sm);
+  }
+
+  .toggle-switch {
+    align-self: flex-end;
+    margin-top: var(--space-2);
+  }
+
+  .form-group {
+    margin-bottom: var(--space-3);
+  }
+
+  .form-group label {
+    font-size: var(--text-base);
+  }
+
+    .form-input,
+  .form-select,
+  .select-input {
+    font-size: var(--text-base); /* Ensure 16px on mobile */
+    min-height: 44px;
+  }
+
+  .btn-error {
+    width: 100%;
+    min-height: 44px;
+  }
+}
+
+/* Small mobile (480px and below) */
+@media (max-width: 480px) {
+  .main-content {
+    padding: var(--space-3);
+  }
+
+  .page-header {
+    margin-bottom: var(--space-4);
+  }
+
+  .page-title-section h1 {
+    font-size: var(--text-xl);
+    line-height: 1.2;
+  }
+
+  .settings-grid {
+    gap: var(--space-3);
+  }
+
+  .settings-section {
+    padding: var(--space-3);
+    border-radius: var(--radius-lg);
+  }
+
+  .section-header {
+    padding-bottom: var(--space-2);
+    margin-bottom: var(--space-3);
+  }
+
+  .setting-item {
+    padding: var(--space-2) 0;
+  }
+
+  .form-input,
+  .form-select,
+  .select-input {
+    padding: var(--space-2) var(--space-3);
+  }
+}
+
+/* ================================================================
+   ENHANCED SETTINGS STYLES
+   ================================================================ */
+
+/* Form validation states */
+.form-input.valid {
+  border-color: var(--color-status-success);
+  box-shadow: 0 0 0 3px var(--color-status-success-light);
+}
+
+.form-input.invalid {
+  border-color: var(--color-status-error);
+  box-shadow: 0 0 0 3px var(--color-status-error-light);
+}
+
+.form-success {
+  display: none;
+  color: var(--color-status-success);
+  font-size: var(--text-xs);
+  margin-top: var(--space-1);
+}
+
+.form-input.valid ~ .form-success {
+  display: block;
+}
+
+/* Save button states */
+.btn.has-changes {
+  animation: pulse 2s infinite;
+  position: relative;
+}
+
+.btn.has-changes::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: inherit;
+  background: var(--color-interactive-primary);
+  opacity: 0.2;
+  animation: pulse-glow 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+/* Settings section animations */
+.settings-section {
+  animation: fadeInUp 0.4s ease-out;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.settings-section:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Toggle switch animations */
+.toggle-switch {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.toggle-switch:active {
+  transform: scale(0.95);
+}
+
+.toggle-switch.active::after {
+  animation: toggle-slide 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes toggle-slide {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(24px);
+  }
+}
+
+/* Setting item hover effects */
+.setting-item {
+  transition: background-color 0.2s ease, padding 0.2s ease;
+}
+
+.setting-item:hover {
+  background-color: var(--surface-secondary);
+  padding-left: var(--space-2);
+  padding-right: var(--space-2);
+  margin-left: calc(-1 * var(--space-2));
+  margin-right: calc(-1 * var(--space-2));
+  border-radius: var(--radius-md);
+}
+
+/* Auto-save indicator */
+.auto-save-indicator {
+  position: fixed;
+  bottom: var(--space-4);
+  right: var(--space-4);
+  background: var(--surface-elevated);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  box-shadow: var(--shadow-md);
+  z-index: var(--z-index-dropdown);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.auto-save-indicator.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.auto-save-indicator.saving {
+  color: var(--color-interactive-primary);
+}
+
+.auto-save-indicator.saved {
+  color: var(--color-status-success);
+}
+
+.auto-save-indicator.error {
+  color: var(--color-status-error);
+}
+
+/* Loading states */
+.settings-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--space-8);
+  color: var(--color-text-secondary);
+}
+
+.settings-loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--color-border-secondary);
+  border-top-color: var(--color-interactive-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Unsaved changes warning */
+.unsaved-changes-warning {
+  background: var(--color-status-warning-light);
+  border: 1px solid var(--color-status-warning);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  margin-bottom: var(--space-4);
+  color: var(--color-status-warning-dark);
+  font-size: var(--text-sm);
+  display: none;
+}
+
+.unsaved-changes-warning.show {
+  display: block;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

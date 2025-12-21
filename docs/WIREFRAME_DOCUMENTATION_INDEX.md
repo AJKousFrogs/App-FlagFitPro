@@ -180,11 +180,13 @@ These are the **4 complete HTML wireframes** that serve as the definitive design
 - **Content**: Component structure, data flow, integration patterns
 
 ### **Database Setup**
+
 - **File**: `docs/DATABASE_SETUP.md`
 - **Purpose**: Database configuration and schema
-- **Content**: NEON database setup, migrations, data models
+- **Content**: Supabase database setup, migrations, data models
 
 ### **Backend Integration**
+
 - **File**: `docs/BACKEND_INTEGRATION_SUMMARY.md`
 - **Purpose**: Backend services and API integration
 - **Content**: API specifications, authentication, data synchronization

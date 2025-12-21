@@ -103,7 +103,9 @@
 }
 
 /* ========================================
-   FORM COMPONENTS
+   FORM COMPONENTS - DEPRECATED
+   NOTE: Form styles have been moved to standardized-components.scss
+   For Angular components, use: angular/src/assets/styles/standardized-components.scss
    ======================================== */
 
 .form-group {
@@ -172,7 +174,9 @@
 }
 
 /* ========================================
-   CARD COMPONENTS
+   CARD COMPONENTS - DEPRECATED
+   NOTE: Card styles have been moved to standardized-components.scss
+   For Angular components, use: angular/src/assets/styles/standardized-components.scss
    ======================================== */
 
 .card {

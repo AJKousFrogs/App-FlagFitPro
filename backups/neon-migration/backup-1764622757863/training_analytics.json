@@ -1,0 +1,53 @@
+[
+  {
+    "id": 1,
+    "user_id": "user_123",
+    "session_id": null,
+    "training_type": "agility",
+    "duration_minutes": 30,
+    "exercises_completed": 8,
+    "difficulty_level": null,
+    "performance_score": "85.50",
+    "goals_achieved": 0,
+    "personal_best": false,
+    "improvement_percentage": null,
+    "weather_conditions": null,
+    "location_type": null,
+    "equipment_used": null,
+    "created_at": "2025-07-31T20:09:56.176Z"
+  },
+  {
+    "id": 2,
+    "user_id": "user_456",
+    "session_id": null,
+    "training_type": "passing",
+    "duration_minutes": 25,
+    "exercises_completed": 6,
+    "difficulty_level": null,
+    "performance_score": "92.30",
+    "goals_achieved": 0,
+    "personal_best": false,
+    "improvement_percentage": null,
+    "weather_conditions": null,
+    "location_type": null,
+    "equipment_used": null,
+    "created_at": "2025-07-31T20:09:56.176Z"
+  },
+  {
+    "id": 3,
+    "user_id": "user_789",
+    "session_id": null,
+    "training_type": "catching",
+    "duration_minutes": 20,
+    "exercises_completed": 5,
+    "difficulty_level": null,
+    "performance_score": "78.90",
+    "goals_achieved": 0,
+    "personal_best": false,
+    "improvement_percentage": null,
+    "weather_conditions": null,
+    "location_type": null,
+    "equipment_used": null,
+    "created_at": "2025-07-31T20:09:56.176Z"
+  }
+]

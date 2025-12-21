@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FlagFit Pro - Enhanced Analytics</title>
+    <meta http-equiv="refresh" content="0; url=/analytics.html" />
+    <link rel="canonical" href="/analytics.html" />
+    <script>
+      // Preserve URL parameters and hash when redirecting
+      const urlParams = new URLSearchParams(window.location.search);
+      const hash = window.location.hash;
+      const params = urlParams.toString();
+      const redirectUrl = '/analytics.html' + (params ? '?' + params : '') + (hash || '');
+      window.location.replace(redirectUrl);
+    </script>
+    <!-- Footer Loader (Dynamic Component) -->
+    <script type="module" src="./src/js/components/footer-loader.js" defer></script>
+  </head>
+  <body>
+    <p>Redirecting to <a href="/analytics.html">Analytics Dashboard</a>...</p>
+  </body>
+</html>

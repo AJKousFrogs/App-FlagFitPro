@@ -1,0 +1,213 @@
+<!-- 
+    Date Picker Component - FlagFit Pro
+    
+    Usage: Copy this snippet for date selection
+    States: default, focus, error, disabled
+    Accessibility:
+    - Always include <label> element
+    - Use aria-describedby for help text
+-->
+
+<!-- Basic Date Picker -->
+<div class="form-group">
+  <label for="date-basic" class="form-label">Date</label>
+  <div class="date-picker-wrapper">
+    <input
+      type="date"
+      id="date-basic"
+      name="date-basic"
+      class="form-input date-picker"
+      aria-describedby="date-basic-help"
+    />
+    <button type="button" class="date-picker-icon" aria-label="Open calendar">
+      <i data-lucide="calendar" style="width: 20px; height: 20px"></i>
+    </button>
+  </div>
+  <small id="date-basic-help" class="form-help">Select a date</small>
+</div>
+
+<!-- Date Picker with Default Value -->
+<div class="form-group">
+  <label for="date-default" class="form-label">Default Date</label>
+  <div class="date-picker-wrapper">
+    <input
+      type="date"
+      id="date-default"
+      name="date-default"
+      class="form-input date-picker"
+      value="2025-01-15"
+    />
+    <button type="button" class="date-picker-icon" aria-label="Open calendar">
+      <i data-lucide="calendar" style="width: 20px; height: 20px"></i>
+    </button>
+  </div>
+</div>
+
+<!-- Date Picker with Min/Max -->
+<div class="form-group">
+  <label for="date-constrained" class="form-label">Date Range (Today - Next Year)</label>
+  <div class="date-picker-wrapper">
+    <input
+      type="date"
+      id="date-constrained"
+      name="date-constrained"
+      class="form-input date-picker"
+      min="2025-01-01"
+      max="2026-12-31"
+      aria-describedby="date-constrained-help"
+    />
+    <button type="button" class="date-picker-icon" aria-label="Open calendar">
+      <i data-lucide="calendar" style="width: 20px; height: 20px"></i>
+    </button>
+  </div>
+  <small id="date-constrained-help" class="form-help">Select date between today and next year</small>
+</div>
+
+<!-- Date Picker with Error -->
+<div class="form-group">
+  <label for="date-error" class="form-label">Date with Error</label>
+  <div class="date-picker-wrapper">
+    <input
+      type="date"
+      id="date-error"
+      name="date-error"
+      class="form-input date-picker error"
+      aria-invalid="true"
+      aria-describedby="date-error-msg"
+    />
+    <button type="button" class="date-picker-icon" aria-label="Open calendar">
+      <i data-lucide="calendar" style="width: 20px; height: 20px"></i>
+    </button>
+  </div>
+  <div class="form-error" id="date-error-msg" role="alert">Please select a valid date</div>
+</div>
+
+<!-- Disabled Date Picker -->
+<div class="form-group">
+  <label for="date-disabled" class="form-label">Disabled Date Picker</label>
+  <div class="date-picker-wrapper">
+    <input
+      type="date"
+      id="date-disabled"
+      name="date-disabled"
+      class="form-input date-picker"
+      disabled
+    />
+    <button type="button" class="date-picker-icon" disabled aria-label="Open calendar">
+      <i data-lucide="calendar" style="width: 20px; height: 20px"></i>
+    </button>
+  </div>
+</div>
+
+<!-- Date Picker with Quick Actions -->
+<div class="form-group">
+  <label for="date-quick" class="form-label">Date with Quick Actions</label>
+  <div class="date-picker-wrapper">
+    <input
+      type="date"
+      id="date-quick"
+      name="date-quick"
+      class="form-input date-picker"
+    />
+    <button type="button" class="date-picker-icon" aria-label="Open calendar">
+      <i data-lucide="calendar" style="width: 20px; height: 20px"></i>
+    </button>
+  </div>
+  <div class="date-picker-quick-actions">
+    <button type="button" class="btn btn-tertiary btn-sm" onclick="setQuickDate('date-quick', 'today')">Today</button>
+    <button type="button" class="btn btn-tertiary btn-sm" onclick="setQuickDate('date-quick', 'tomorrow')">Tomorrow</button>
+    <button type="button" class="btn btn-tertiary btn-sm" onclick="setQuickDate('date-quick', 'nextWeek')">Next Week</button>
+  </div>
+</div>
+
+<style>
+  .date-picker-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .date-picker {
+    width: 100%;
+    padding-right: 3rem;
+  }
+
+  .date-picker-icon {
+    position: absolute;
+    right: 0.75rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    color: var(--text-secondary, #6b7280);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+  }
+
+  .date-picker-icon:hover:not(:disabled) {
+    color: var(--color-brand-primary, #089949);
+  }
+
+  .date-picker-icon:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .date-picker:focus {
+    outline: 2px solid var(--color-brand-primary, #089949);
+    outline-offset: 2px;
+  }
+
+  .date-picker.error {
+    border-color: var(--p-error-color, #ef4444);
+  }
+
+  .date-picker:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .date-picker-quick-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    flex-wrap: wrap;
+  }
+</style>
+
+<script>
+  function setQuickDate(inputId, type) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    
+    const today = new Date();
+    let date = new Date();
+    
+    switch(type) {
+      case 'today':
+        date = new Date(today);
+        break;
+      case 'tomorrow':
+        date = new Date(today);
+        date.setDate(date.getDate() + 1);
+        break;
+      case 'nextWeek':
+        date = new Date(today);
+        date.setDate(date.getDate() + 7);
+        break;
+    }
+    
+    input.value = date.toISOString().split('T')[0];
+    input.dispatchEvent(new Event('change'));
+  }
+  
+  // Initialize lucide icons
+  document.addEventListener('DOMContentLoaded', () => {
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
+  });
+</script>
+

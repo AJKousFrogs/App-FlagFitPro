@@ -1,0 +1,168 @@
+[
+  {
+    "id": 1,
+    "user_id": "f31b59e5-8a73-4afb-a444-f80b728a8a54",
+    "step_name": "Baseline Testing",
+    "step_description": "Complete comprehensive baseline testing for body composition, sprint time, HRV, and FMS screen",
+    "step_category": "baseline_testing",
+    "step_order": 1,
+    "estimated_duration_days": 3,
+    "dependencies": [],
+    "required_resources": [
+      "testing_equipment",
+      "qualified_tester"
+    ],
+    "success_criteria": [
+      "all_tests_completed",
+      "baseline_data_recorded",
+      "testing_report_generated"
+    ],
+    "step_status": "pending",
+    "start_date": null,
+    "completion_date": null,
+    "actual_duration_days": null,
+    "notes": null,
+    "created_at": "2025-08-18T20:02:58.773Z",
+    "updated_at": "2025-08-18T20:02:58.773Z"
+  },
+  {
+    "id": 2,
+    "user_id": "f31b59e5-8a73-4afb-a444-f80b728a8a54",
+    "step_name": "Budget Allocation",
+    "step_description": "Pre-pay core technology and secure shared resources",
+    "step_category": "budget_allocation",
+    "step_order": 2,
+    "estimated_duration_days": 2,
+    "dependencies": [
+      "Baseline Testing"
+    ],
+    "required_resources": [
+      "financial_resources",
+      "budget_plan"
+    ],
+    "success_criteria": [
+      "core_tech_purchased",
+      "shared_resources_secured",
+      "budget_tracking_setup"
+    ],
+    "step_status": "pending",
+    "start_date": null,
+    "completion_date": null,
+    "actual_duration_days": null,
+    "notes": null,
+    "created_at": "2025-08-18T20:02:58.773Z",
+    "updated_at": "2025-08-18T20:02:58.773Z"
+  },
+  {
+    "id": 3,
+    "user_id": "f31b59e5-8a73-4afb-a444-f80b728a8a54",
+    "step_name": "Personalized Plan Build",
+    "step_description": "Create vegan vs. omnivore nutrition templates and individual supplement checklists",
+    "step_category": "plan_building",
+    "step_order": 3,
+    "estimated_duration_days": 5,
+    "dependencies": [
+      "Baseline Testing"
+    ],
+    "required_resources": [
+      "nutrition_expertise",
+      "supplement_knowledge"
+    ],
+    "success_criteria": [
+      "nutrition_templates_created",
+      "supplement_checklists_completed",
+      "plan_personalized"
+    ],
+    "step_status": "pending",
+    "start_date": null,
+    "completion_date": null,
+    "actual_duration_days": null,
+    "notes": null,
+    "created_at": "2025-08-18T20:02:58.773Z",
+    "updated_at": "2025-08-18T20:02:58.773Z"
+  },
+  {
+    "id": 4,
+    "user_id": "f31b59e5-8a73-4afb-a444-f80b728a8a54",
+    "step_name": "Education Blitz",
+    "step_description": "Four 60-minute clinics on sleep, nutrition, training, and recovery",
+    "step_category": "education",
+    "step_order": 4,
+    "estimated_duration_days": 7,
+    "dependencies": [
+      "Personalized Plan Build"
+    ],
+    "required_resources": [
+      "expert_presenters",
+      "facility_equipment"
+    ],
+    "success_criteria": [
+      "clinics_delivered",
+      "recordings_created",
+      "materials_distributed"
+    ],
+    "step_status": "pending",
+    "start_date": null,
+    "completion_date": null,
+    "actual_duration_days": null,
+    "notes": null,
+    "created_at": "2025-08-18T20:02:58.773Z",
+    "updated_at": "2025-08-18T20:02:58.773Z"
+  },
+  {
+    "id": 5,
+    "user_id": "f31b59e5-8a73-4afb-a444-f80b728a8a54",
+    "step_name": "Accountability Groups",
+    "step_description": "Form 8-10 athlete mentor coach groups with weekly check-ins",
+    "step_category": "accountability",
+    "step_order": 5,
+    "estimated_duration_days": 3,
+    "dependencies": [
+      "Education Blitz"
+    ],
+    "required_resources": [
+      "mentor_coaches",
+      "group_platforms"
+    ],
+    "success_criteria": [
+      "groups_formed",
+      "check_in_schedule_set",
+      "mentorship_relationships_established"
+    ],
+    "step_status": "pending",
+    "start_date": null,
+    "completion_date": null,
+    "actual_duration_days": null,
+    "notes": null,
+    "created_at": "2025-08-18T20:02:58.773Z",
+    "updated_at": "2025-08-18T20:02:58.773Z"
+  },
+  {
+    "id": 6,
+    "user_id": "f31b59e5-8a73-4afb-a444-f80b728a8a54",
+    "step_name": "Data Dashboard Launch",
+    "step_description": "Launch simple tracking system for sleep, load, soreness, and hydration",
+    "step_category": "dashboard",
+    "step_order": 6,
+    "estimated_duration_days": 2,
+    "dependencies": [
+      "Accountability Groups"
+    ],
+    "required_resources": [
+      "dashboard_platform",
+      "data_tracking_tools"
+    ],
+    "success_criteria": [
+      "dashboard_launched",
+      "users_trained",
+      "data_collection_started"
+    ],
+    "step_status": "pending",
+    "start_date": null,
+    "completion_date": null,
+    "actual_duration_days": null,
+    "notes": null,
+    "created_at": "2025-08-18T20:02:58.773Z",
+    "updated_at": "2025-08-18T20:02:58.773Z"
+  }
+]

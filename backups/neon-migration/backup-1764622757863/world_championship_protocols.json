@@ -1,0 +1,77 @@
+[
+  {
+    "id": 1,
+    "championship_year": 2024,
+    "host_country": "USA",
+    "climate_zone": "mixed",
+    "teams_participating": 24,
+    "qualification_process": "Regional qualifiers + wildcard entries based on world rankings",
+    "tournament_format": "Group stage + knockout rounds",
+    "climate_variations_across_venues": [
+      "temperate",
+      "hot",
+      "humid",
+      "dry"
+    ],
+    "altitude_challenges": [
+      "sea_level",
+      "moderate_altitude",
+      "high_altitude"
+    ],
+    "travel_impact_on_hydration": [
+      "jet_lag_adaptation",
+      "climate_acclimatization",
+      "time_zone_adjustment"
+    ],
+    "personalized_hydration_plans": true,
+    "real_time_hydration_monitoring": true,
+    "emergency_hydration_protocols": [
+      "heat_stroke_prevention",
+      "dehydration_emergency",
+      "electrolyte_imbalance"
+    ],
+    "data_collection_protocols": [
+      "continuous_monitoring",
+      "biometric_tracking",
+      "performance_correlation"
+    ],
+    "performance_correlation_studies": true,
+    "long_term_follow_up_studies": true,
+    "created_at": "2025-08-17T19:48:27.118Z"
+  },
+  {
+    "id": 2,
+    "championship_year": 2026,
+    "host_country": "Canada",
+    "climate_zone": "temperate",
+    "teams_participating": 28,
+    "qualification_process": "Expanded regional qualifiers + performance-based wildcards",
+    "tournament_format": "Enhanced group stage + double elimination",
+    "climate_variations_across_venues": [
+      "temperate",
+      "cool",
+      "moderate_humidity"
+    ],
+    "altitude_challenges": [
+      "sea_level",
+      "low_altitude"
+    ],
+    "travel_impact_on_hydration": [
+      "climate_acclimatization",
+      "time_zone_adjustment"
+    ],
+    "personalized_hydration_plans": true,
+    "real_time_hydration_monitoring": true,
+    "emergency_hydration_protocols": [
+      "dehydration_emergency",
+      "electrolyte_imbalance"
+    ],
+    "data_collection_protocols": [
+      "continuous_monitoring",
+      "biometric_tracking"
+    ],
+    "performance_correlation_studies": true,
+    "long_term_follow_up_studies": true,
+    "created_at": "2025-08-17T19:48:27.218Z"
+  }
+]

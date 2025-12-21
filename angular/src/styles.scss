@@ -1,0 +1,41 @@
+/* ================================================================
+   FLAGFIT PRO - MAIN STYLES
+   Single source of truth design system
+   ================================================================ */
+
+/* Design System Tokens - Single source of truth */
+@use "./assets/styles/design-system-tokens.scss" as *;
+
+/* Standardized Components - All components use same variants */
+@use "./assets/styles/standardized-components.scss" as *;
+
+/* Layout System - Reusable layout patterns */
+@use "./assets/styles/layout-system.scss" as *;
+
+/* PrimeIcons - CSS file, must use @import */
+@import "primeicons/primeicons.css";
+
+/* Note: Angular Material theme removed - only CDK drag-drop is used, not full Material library
+ * This saves ~50-80KB in bundle size
+ */
+
+/* Global Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  font-family: var(--font-family-sans);
+  font-size: 16px;
+  line-height: var(--line-height-normal);
+  color: var(--color-text-primary);
+  background-color: var(--surface-primary);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}

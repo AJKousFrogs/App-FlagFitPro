@@ -1,0 +1,98 @@
+[
+  {
+    "id": 1,
+    "affordable_brand_product_id": 1,
+    "alternative_name": "Foam Roller + Tennis Ball",
+    "alternative_cost_euros": "30.00",
+    "cost_savings_euros": "50.00",
+    "effectiveness_comparison": "0.80",
+    "alternative_source": "DIY_Combination",
+    "best_for_budget_tier": "minimal_500",
+    "notes": "80% effectiveness for 38% of the cost - great for beginners",
+    "created_at": "2025-08-18T20:28:03.231Z"
+  },
+  {
+    "id": 2,
+    "affordable_brand_product_id": 1,
+    "alternative_name": "Basic Massage Gun",
+    "alternative_cost_euros": "40.00",
+    "cost_savings_euros": "40.00",
+    "effectiveness_comparison": "0.75",
+    "alternative_source": "Generic_Brand",
+    "best_for_budget_tier": "minimal_500",
+    "notes": "75% effectiveness for 50% of the cost - good budget option",
+    "created_at": "2025-08-18T20:28:03.231Z"
+  },
+  {
+    "id": 3,
+    "affordable_brand_product_id": 2,
+    "alternative_name": "Resistance Bands + Manual Techniques",
+    "alternative_cost_euros": "40.00",
+    "cost_savings_euros": "75.00",
+    "effectiveness_comparison": "0.70",
+    "alternative_source": "DIY_Combination",
+    "best_for_budget_tier": "minimal_500",
+    "notes": "70% effectiveness for 35% of the cost - manual work but effective",
+    "created_at": "2025-08-18T20:28:03.231Z"
+  },
+  {
+    "id": 4,
+    "affordable_brand_product_id": 2,
+    "alternative_name": "Mid-Range Massage Gun",
+    "alternative_cost_euros": "60.00",
+    "cost_savings_euros": "55.00",
+    "effectiveness_comparison": "0.80",
+    "alternative_source": "Generic_Brand",
+    "best_for_budget_tier": "moderate_1000",
+    "notes": "80% effectiveness for 52% of the cost - good compromise",
+    "created_at": "2025-08-18T20:28:03.231Z"
+  },
+  {
+    "id": 5,
+    "affordable_brand_product_id": 4,
+    "alternative_name": "DIY Agility Course + Stopwatch",
+    "alternative_cost_euros": "25.00",
+    "cost_savings_euros": "275.00",
+    "effectiveness_comparison": "0.75",
+    "alternative_source": "DIY_Alternative",
+    "best_for_budget_tier": "minimal_500",
+    "notes": "75% effectiveness for 8% of the cost - massive savings",
+    "created_at": "2025-08-18T20:28:03.231Z"
+  },
+  {
+    "id": 6,
+    "affordable_brand_product_id": 4,
+    "alternative_name": "Basic Agility Equipment",
+    "alternative_cost_euros": "80.00",
+    "cost_savings_euros": "220.00",
+    "effectiveness_comparison": "0.85",
+    "alternative_source": "Generic_Brand",
+    "best_for_budget_tier": "moderate_1000",
+    "notes": "85% effectiveness for 27% of the cost - good value",
+    "created_at": "2025-08-18T20:28:03.231Z"
+  },
+  {
+    "id": 7,
+    "affordable_brand_product_id": 6,
+    "alternative_name": "Resistance Training + Bodyweight",
+    "alternative_cost_euros": "0.00",
+    "cost_savings_euros": "200.00",
+    "effectiveness_comparison": "0.80",
+    "alternative_source": "DIY_Alternative",
+    "best_for_budget_tier": "minimal_500",
+    "notes": "80% effectiveness for 0% of the cost - completely free",
+    "created_at": "2025-08-18T20:28:03.231Z"
+  },
+  {
+    "id": 8,
+    "affordable_brand_product_id": 6,
+    "alternative_name": "Basic Recovery Tools",
+    "alternative_cost_euros": "100.00",
+    "cost_savings_euros": "100.00",
+    "effectiveness_comparison": "0.70",
+    "alternative_source": "DIY_Combination",
+    "best_for_budget_tier": "moderate_1000",
+    "notes": "70% effectiveness for 50% of the cost - good alternative",
+    "created_at": "2025-08-18T20:28:03.231Z"
+  }
+]

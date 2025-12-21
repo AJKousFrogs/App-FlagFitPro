@@ -1,0 +1,236 @@
+[
+  {
+    "id": 1,
+    "premium_brand_id": 1,
+    "premium_product_name": "Hypervolt 2.0 Pro",
+    "premium_product_price_euros": "350.00",
+    "premium_product_features": [
+      "percussion_therapy",
+      "quiet_operation",
+      "professional_grade"
+    ],
+    "affordable_alternative_name": "Pulsio AIR Massage Gun",
+    "affordable_alternative_price_euros": "80.00",
+    "cost_savings_euros": "270.00",
+    "effectiveness_comparison": "0.85",
+    "alternative_source": "Pulsio",
+    "alternative_notes": "Similar percussion therapy, 85% effectiveness, much more affordable",
+    "created_at": "2025-08-18T20:24:56.956Z"
+  },
+  {
+    "id": 2,
+    "premium_brand_id": 1,
+    "premium_product_name": "Normatec 3 Legs",
+    "premium_product_price_euros": "800.00",
+    "premium_product_features": [
+      "compression_therapy",
+      "sequential_compression",
+      "medical_grade"
+    ],
+    "affordable_alternative_name": "Portable Ice Bath + Compression Sleeves",
+    "affordable_alternative_price_euros": "120.00",
+    "cost_savings_euros": "680.00",
+    "effectiveness_comparison": "0.70",
+    "alternative_source": "DIY_Combination",
+    "alternative_notes": "Combined approach: cold therapy + compression, 70% effectiveness",
+    "created_at": "2025-08-18T20:24:56.956Z"
+  },
+  {
+    "id": 3,
+    "premium_brand_id": 1,
+    "premium_product_name": "Venom 2 Back",
+    "premium_product_price_euros": "400.00",
+    "premium_product_features": [
+      "heat_therapy",
+      "targeted_relief",
+      "professional_quality"
+    ],
+    "affordable_alternative_name": "Heating Pad + Tennis Ball",
+    "affordable_alternative_price_euros": "25.00",
+    "cost_savings_euros": "375.00",
+    "effectiveness_comparison": "0.65",
+    "alternative_source": "DIY_Combination",
+    "alternative_notes": "Basic heat + targeted pressure, 65% effectiveness",
+    "created_at": "2025-08-18T20:24:56.956Z"
+  },
+  {
+    "id": 4,
+    "premium_brand_id": 2,
+    "premium_product_name": "Pulsio Compression Boots",
+    "premium_product_price_euros": "370.00",
+    "premium_product_features": [
+      "compression_therapy",
+      "adjustable_pressure",
+      "professional_quality"
+    ],
+    "affordable_alternative_name": "Compression Sleeves + Manual Massage",
+    "affordable_alternative_price_euros": "50.00",
+    "cost_savings_euros": "320.00",
+    "effectiveness_comparison": "0.75",
+    "alternative_source": "DIY_Combination",
+    "alternative_notes": "Compression + manual techniques, 75% effectiveness",
+    "created_at": "2025-08-18T20:24:56.956Z"
+  },
+  {
+    "id": 5,
+    "premium_brand_id": 2,
+    "premium_product_name": "Pulsio AIR Massage Gun",
+    "premium_product_price_euros": "80.00",
+    "premium_product_features": [
+      "percussion_therapy",
+      "portable",
+      "good_quality"
+    ],
+    "affordable_alternative_name": "Foam Roller + Tennis Ball",
+    "affordable_alternative_price_euros": "30.00",
+    "cost_savings_euros": "50.00",
+    "effectiveness_comparison": "0.80",
+    "alternative_source": "DIY_Combination",
+    "alternative_notes": "Manual techniques, 80% effectiveness, great value",
+    "created_at": "2025-08-18T20:24:56.956Z"
+  },
+  {
+    "id": 6,
+    "premium_brand_id": 2,
+    "premium_product_name": "Pulsio ELITE",
+    "premium_product_price_euros": "115.00",
+    "premium_product_features": [
+      "high_power",
+      "deep_tissue",
+      "professional_grade"
+    ],
+    "affordable_alternative_name": "Resistance Bands + Manual Techniques",
+    "affordable_alternative_price_euros": "40.00",
+    "cost_savings_euros": "75.00",
+    "effectiveness_comparison": "0.70",
+    "alternative_source": "DIY_Combination",
+    "alternative_notes": "Resistance training + manual work, 70% effectiveness",
+    "created_at": "2025-08-18T20:24:56.956Z"
+  },
+  {
+    "id": 7,
+    "premium_brand_id": 3,
+    "premium_product_name": "Tecar Therapy Device",
+    "premium_product_price_euros": "3000.00",
+    "premium_product_features": [
+      "radio_frequency",
+      "deep_heating",
+      "clinical_grade"
+    ],
+    "affordable_alternative_name": "Hot Water Bottle + Manual Techniques",
+    "affordable_alternative_price_euros": "15.00",
+    "cost_savings_euros": "2985.00",
+    "effectiveness_comparison": "0.50",
+    "alternative_source": "DIY_Combination",
+    "alternative_notes": "Basic heat + manual work, 50% effectiveness but massive savings",
+    "created_at": "2025-08-18T20:24:56.956Z"
+  },
+  {
+    "id": 8,
+    "premium_brand_id": 3,
+    "premium_product_name": "EMS Device",
+    "premium_product_price_euros": "800.00",
+    "premium_product_features": [
+      "electrical_stimulation",
+      "muscle_activation",
+      "professional_grade"
+    ],
+    "affordable_alternative_name": "Resistance Training + Bodyweight",
+    "affordable_alternative_price_euros": "0.00",
+    "cost_savings_euros": "800.00",
+    "effectiveness_comparison": "0.80",
+    "alternative_source": "DIY_Alternative",
+    "alternative_notes": "Active training alternatives, 80% effectiveness, completely free",
+    "created_at": "2025-08-18T20:24:56.956Z"
+  },
+  {
+    "id": 9,
+    "premium_brand_id": 3,
+    "premium_product_name": "Shockwave Device",
+    "premium_product_price_euros": "5000.00",
+    "premium_product_features": [
+      "acoustic_waves",
+      "tissue_regeneration",
+      "clinical_grade"
+    ],
+    "affordable_alternative_name": "Foam Rolling + Stretching",
+    "affordable_alternative_price_euros": "30.00",
+    "cost_savings_euros": "4970.00",
+    "effectiveness_comparison": "0.60",
+    "alternative_source": "DIY_Alternative",
+    "alternative_notes": "Manual tissue work, 60% effectiveness, massive cost savings",
+    "created_at": "2025-08-18T20:24:56.956Z"
+  },
+  {
+    "id": 10,
+    "premium_brand_id": 4,
+    "premium_product_name": "Blazepod Training Set",
+    "premium_product_price_euros": "300.00",
+    "premium_product_features": [
+      "smart_training",
+      "reaction_time",
+      "performance_tracking"
+    ],
+    "affordable_alternative_name": "DIY Agility Course + Stopwatch",
+    "affordable_alternative_price_euros": "25.00",
+    "cost_savings_euros": "275.00",
+    "effectiveness_comparison": "0.75",
+    "alternative_source": "DIY_Alternative",
+    "alternative_notes": "Homemade agility course, 75% effectiveness, great for skill development",
+    "created_at": "2025-08-18T20:24:56.956Z"
+  },
+  {
+    "id": 11,
+    "premium_brand_id": 4,
+    "premium_product_name": "Blazepod Reaction Trainer",
+    "premium_product_price_euros": "150.00",
+    "premium_product_features": [
+      "reaction_training",
+      "cognitive_development",
+      "portable"
+    ],
+    "affordable_alternative_name": "Tennis Ball + Partner",
+    "affordable_alternative_price_euros": "5.00",
+    "cost_savings_euros": "145.00",
+    "effectiveness_comparison": "0.80",
+    "alternative_source": "DIY_Alternative",
+    "alternative_notes": "Partner-based reaction training, 80% effectiveness",
+    "created_at": "2025-08-18T20:24:56.956Z"
+  },
+  {
+    "id": 12,
+    "premium_brand_id": 5,
+    "premium_product_name": "Professional Treadmill",
+    "premium_product_price_euros": "8000.00",
+    "premium_product_features": [
+      "cardio_training",
+      "performance_tracking",
+      "medical_grade"
+    ],
+    "affordable_alternative_name": "Local Park + Heart Rate Monitor",
+    "affordable_alternative_price_euros": "80.00",
+    "cost_savings_euros": "7920.00",
+    "effectiveness_comparison": "0.85",
+    "alternative_source": "Local_Resources",
+    "alternative_notes": "Outdoor training + basic monitoring, 85% effectiveness",
+    "created_at": "2025-08-18T20:24:56.956Z"
+  },
+  {
+    "id": 13,
+    "premium_brand_id": 5,
+    "premium_product_name": "Rehabilitation Equipment",
+    "premium_product_price_euros": "15000.00",
+    "premium_product_features": [
+      "clinical_rehabilitation",
+      "professional_grade",
+      "comprehensive"
+    ],
+    "affordable_alternative_name": "Local Physio + Home Exercises",
+    "affordable_alternative_price_euros": "500.00",
+    "cost_savings_euros": "14500.00",
+    "effectiveness_comparison": "0.90",
+    "alternative_source": "Local_Resources",
+    "alternative_notes": "Professional guidance + home work, 90% effectiveness",
+    "created_at": "2025-08-18T20:24:56.956Z"
+  }
+]

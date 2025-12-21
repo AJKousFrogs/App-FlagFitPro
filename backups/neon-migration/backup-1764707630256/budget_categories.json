@@ -1,0 +1,79 @@
+[
+  {
+    "id": 1,
+    "category_name": "Sleep & Recovery Tech",
+    "category_description": "Technology and equipment for optimizing sleep quality and recovery",
+    "why_it_matters": "Accelerates muscle repair, boosts cognition, improves performance consistency",
+    "recommended_min_spend": "1300.00",
+    "recommended_max_spend": "2000.00",
+    "priority_level": "critical",
+    "expected_roi_percentage": "85.00",
+    "created_at": "2025-08-18T20:00:38.371Z"
+  },
+  {
+    "id": 2,
+    "category_name": "Nutrition & Meal Prep",
+    "category_description": "Food services, supplements, and meal preparation tools",
+    "why_it_matters": "Fuels training, supports immunity, provides consistent energy levels",
+    "recommended_min_spend": "1200.00",
+    "recommended_max_spend": "1800.00",
+    "priority_level": "critical",
+    "expected_roi_percentage": "90.00",
+    "created_at": "2025-08-18T20:00:38.371Z"
+  },
+  {
+    "id": 3,
+    "category_name": "Training & Coaching",
+    "category_description": "Flag-specific coaching, strength programs, and skill development",
+    "why_it_matters": "Reduces injury risk, optimizes progress, improves technique",
+    "recommended_min_spend": "1000.00",
+    "recommended_max_spend": "2000.00",
+    "priority_level": "high",
+    "expected_roi_percentage": "75.00",
+    "created_at": "2025-08-18T20:00:38.371Z"
+  },
+  {
+    "id": 4,
+    "category_name": "Preventive Medical & Bodywork",
+    "category_description": "Physio check-ups, massage, mobility classes, and health screenings",
+    "why_it_matters": "Keeps athletes on the field, prevents injuries, maintains health",
+    "recommended_min_spend": "700.00",
+    "recommended_max_spend": "1500.00",
+    "priority_level": "high",
+    "expected_roi_percentage": "80.00",
+    "created_at": "2025-08-18T20:00:38.371Z"
+  },
+  {
+    "id": 5,
+    "category_name": "Sport-Science Tooling",
+    "category_description": "GPS trackers, heart rate monitors, and analytics platforms",
+    "why_it_matters": "Provides objective data for smarter training decisions",
+    "recommended_min_spend": "500.00",
+    "recommended_max_spend": "900.00",
+    "priority_level": "medium",
+    "expected_roi_percentage": "70.00",
+    "created_at": "2025-08-18T20:00:38.371Z"
+  },
+  {
+    "id": 6,
+    "category_name": "Evidence-Based Supplements",
+    "category_description": "Creatine, caffeine, beta-alanine, and other proven supplements",
+    "why_it_matters": "Small but meaningful performance edge with scientific backing",
+    "recommended_min_spend": "300.00",
+    "recommended_max_spend": "600.00",
+    "priority_level": "medium",
+    "expected_roi_percentage": "60.00",
+    "created_at": "2025-08-18T20:00:38.371Z"
+  },
+  {
+    "id": 7,
+    "category_name": "Competition & Travel Buffer",
+    "category_description": "Tournament costs, travel expenses, and contingency funds",
+    "why_it_matters": "Ensures participation in competitions and handles unexpected costs",
+    "recommended_min_spend": "0.00",
+    "recommended_max_spend": "1000.00",
+    "priority_level": "low",
+    "expected_roi_percentage": "50.00",
+    "created_at": "2025-08-18T20:00:38.371Z"
+  }
+]

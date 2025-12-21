@@ -1,0 +1,53 @@
+[
+  {
+    "id": 1,
+    "name": "3-Point Start Acceleration",
+    "category_type": "acceleration",
+    "description": "0-20 yard explosive starts from 3-point stance",
+    "elite_method_origin": "usa_power",
+    "equipment_needed": [
+      "cones",
+      "stopwatch"
+    ],
+    "difficulty_level": 2,
+    "created_at": "2025-08-17T16:48:21.551Z"
+  },
+  {
+    "id": 2,
+    "name": "Hill Sprint Power",
+    "category_type": "hill_training",
+    "description": "8-15 yard uphill sprints for power development",
+    "elite_method_origin": "jamaican_long_to_short",
+    "equipment_needed": [
+      "hill 8-12% grade"
+    ],
+    "difficulty_level": 3,
+    "created_at": "2025-08-17T16:48:21.551Z"
+  },
+  {
+    "id": 3,
+    "name": "Speed Endurance Repeats",
+    "category_type": "speed_endurance",
+    "description": "Multiple 25-yard sprints with short recovery",
+    "elite_method_origin": "uk_athletics",
+    "equipment_needed": [
+      "cones",
+      "stopwatch"
+    ],
+    "difficulty_level": 4,
+    "created_at": "2025-08-17T16:48:21.551Z"
+  },
+  {
+    "id": 4,
+    "name": "Direction Change Mastery",
+    "category_type": "agility",
+    "description": "L-drills and cone weaves for game situations",
+    "elite_method_origin": "flag_football_specific",
+    "equipment_needed": [
+      "cones",
+      "flags"
+    ],
+    "difficulty_level": 3,
+    "created_at": "2025-08-17T16:48:21.551Z"
+  }
+]

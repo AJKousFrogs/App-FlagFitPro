@@ -1,0 +1,214 @@
+/* ================================================================
+   AUTH PAGES SHARED STYLES - FlagFit Pro
+   Common styles for login, register, and reset-password pages
+   Consolidated from page-specific CSS files
+   ================================================================ */
+
+/* Auth Page Layout */
+.page-auth body {
+  background: var(--gradient-primary);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
+/* Auth Container */
+.auth-container,
+.login-container,
+.register-container {
+  max-width: 480px;
+  width: 100%;
+  padding: var(--space-8) var(--space-6);
+  background: var(--surface-primary);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+}
+
+.register-container {
+  border: 2px solid var(--color-brand-primary);
+}
+
+/* Auth Logo */
+.auth-logo,
+.login-logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: var(--space-4);
+}
+
+.auth-logo i[data-lucide],
+.login-logo i[data-lucide] {
+  color: var(--color-primary);
+}
+
+.gearxpro-logo {
+  max-width: 200px;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Auth Title */
+.auth-title,
+.login-title {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  color: var(--color-text-primary);
+  text-align: center;
+  margin-bottom: var(--space-6);
+}
+
+/* Auth Divider */
+.auth-divider,
+.login-divider,
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: var(--space-6) 0;
+}
+
+.auth-divider::before,
+.auth-divider::after,
+.login-divider::before,
+.login-divider::after,
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--color-border-secondary);
+}
+
+.auth-divider span,
+.login-divider span,
+.divider span {
+  background: var(--surface-primary);
+  padding: 0 var(--space-4);
+  position: relative;
+  z-index: 1;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+/* Auth Form Elements */
+.auth-checkbox-group,
+.login-checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.auth-checkbox-group input[type="checkbox"],
+.login-checkbox-group input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: var(--color-primary);
+}
+
+.auth-checkbox-group label,
+.login-checkbox-group label {
+  cursor: pointer;
+  user-select: none;
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+/* Auth Sponsor Logos */
+.auth-sponsor-logos,
+.login-sponsor-logos {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-top: var(--space-6);
+}
+
+.auth-sponsor-logo,
+.login-sponsor-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2) var(--space-4);
+  border-radius: 9999px;
+  background: var(--surface-secondary);
+  border: 1px solid var(--color-border-secondary);
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.auth-sponsor-logo-img,
+.login-sponsor-logo-img {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-sponsor-logo-img img,
+.login-sponsor-logo-img img {
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.auth-sponsor-logo-img img:hover,
+.login-sponsor-logo-img img:hover {
+  opacity: 1;
+}
+
+/* Auth Button */
+.auth-btn,
+.register-btn {
+  width: 100%;
+  min-height: 50px;
+}
+
+.register-btn {
+  background: linear-gradient(
+    135deg,
+    var(--color-brand-primary) 0%,
+    var(--color-brand-secondary) 100%
+  );
+}
+
+.register-btn:hover {
+  background: linear-gradient(
+    135deg,
+    var(--color-brand-secondary) 0%,
+    var(--color-brand-tertiary) 100%
+  );
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .auth-container,
+  .login-container,
+  .register-container {
+    padding: var(--space-6) var(--space-4);
+    margin: var(--space-4);
+  }
+
+  .auth-title,
+  .login-title {
+    font-size: var(--text-xl);
+  }
+
+  .auth-logo,
+  .login-logo {
+    margin-bottom: var(--space-4);
+  }
+}
+
+
+
+
+
+
+
+

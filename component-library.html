@@ -1,0 +1,1102 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FlagFit Pro - Component Library</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Design System CSS -->
+    <link rel="stylesheet" href="./src/css/main.css" />
+    <!-- Page-specific styles -->
+    <link rel="stylesheet" href="./src/css/pages/component-library.css" />
+
+    <link rel="stylesheet" href="./src/css/component-library.css" />
+
+    <!-- Lucide Icons -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
+    <script src="./src/icon-helper.js" defer></script>
+    <script src="./src/theme-switcher.js" defer></script>
+    <!-- Universal Components -->
+    <script type="module" src="./src/js/main.js"></script>
+    <!-- Footer Loader (Dynamic Component) -->
+    <script type="module" src="./src/js/components/footer-loader.js" defer></script>
+  </head>
+  <body>
+    <div class="component-library">
+      <!-- Navigation Sidebar -->
+      <nav class="library-sidebar">
+        <h1>Component Library</h1>
+
+        <h2>Atoms</h2>
+        <ul>
+          <li><a href="#button">Button</a></li>
+          <li><a href="#input">Input</a></li>
+          <li><a href="#textarea">Textarea</a></li>
+          <li><a href="#select">Select</a></li>
+          <li><a href="#checkbox">Checkbox</a></li>
+          <li><a href="#radio">Radio</a></li>
+          <li><a href="#badge">Badge</a></li>
+          <li><a href="#icon">Icon</a></li>
+        </ul>
+
+        <h2>Molecules</h2>
+        <ul>
+          <li><a href="#form-input">Form Input</a></li>
+          <li><a href="#card">Card</a></li>
+          <li><a href="#alert">Alert</a></li>
+          <li><a href="#modal">Modal</a></li>
+          <li><a href="#tabs">Tabs</a></li>
+          <li><a href="#accordion">Accordion</a></li>
+          <li><a href="#search-bar">Search Bar</a></li>
+          <li><a href="#form-group">Form Group</a></li>
+        </ul>
+
+        <h2>Organisms</h2>
+        <ul>
+          <li><a href="#navigation-sidebar">Navigation Sidebar</a></li>
+          <li><a href="#dashboard-header">Dashboard Header</a></li>
+          <li><a href="#performance-chart">Performance Chart</a></li>
+          <li><a href="#roster-table">Roster Table</a></li>
+        </ul>
+
+        <h2>Templates</h2>
+        <ul>
+          <li><a href="#dashboard-layout">Dashboard Layout</a></li>
+          <li><a href="#auth-layout">Auth Layout</a></li>
+          <li><a href="#admin-layout">Admin Layout</a></li>
+        </ul>
+      </nav>
+
+      <!-- Main Content -->
+      <main class="library-main">
+        <!-- Introduction -->
+        <div class="library-section">
+          <h2>FlagFit Pro Component Library</h2>
+          <p>
+            This is the living documentation for all reusable components in
+            FlagFit Pro. Each component includes HTML markup, CSS classes, usage
+            examples, and accessibility guidelines.
+          </p>
+          <p>
+            <strong>Quick Start:</strong> Copy the HTML snippets from any
+            component below and paste them into your pages. All components use
+            the design system CSS classes from <code>src/css/main.css</code>.
+          </p>
+        </div>
+
+        <!-- ATOMS SECTION -->
+        <section id="atoms" class="library-section">
+          <h2>Atoms</h2>
+          <p>Basic building blocks that cannot be broken down further.</p>
+
+          <!-- Button Component -->
+          <div id="button" class="component-demo">
+            <h3>Button</h3>
+
+            <div class="demo-area">
+              <h4>Primary Button</h4>
+              <div class="demo-row">
+                <button class="btn btn-primary btn-md">Default</button>
+                <button class="btn btn-primary btn-md" disabled>
+                  Disabled
+                </button>
+              </div>
+
+              <h4>All Sizes</h4>
+              <div class="demo-row">
+                <button class="btn btn-primary btn-xs">Extra Small</button>
+                <button class="btn btn-primary btn-sm">Small</button>
+                <button class="btn btn-primary btn-md">Medium</button>
+                <button class="btn btn-primary btn-lg">Large</button>
+                <button class="btn btn-primary btn-xl">Extra Large</button>
+              </div>
+
+              <h4>All Variants</h4>
+              <div class="demo-row">
+                <button class="btn btn-primary btn-md">Primary</button>
+                <button class="btn btn-secondary btn-md">Secondary</button>
+                <button class="btn btn-tertiary btn-md">Tertiary</button>
+              </div>
+
+              <h4>With Icons</h4>
+              <div class="demo-row">
+                <button class="btn btn-primary btn-md">
+                  <i data-lucide="play" style="width: 18px; height: 18px"></i>
+                  Start Training
+                </button>
+                <button class="btn btn-secondary btn-md">
+                  <i
+                    data-lucide="settings"
+                    style="width: 18px; height: 18px"
+                  ></i>
+                  Settings
+                </button>
+              </div>
+            </div>
+
+            <details class="code-snippet">
+              <summary>Show HTML</summary>
+              <pre><code>&lt;button class="btn btn-primary btn-md"&gt;
+  Start Training
+&lt;/button&gt;
+
+&lt;!-- With Icon --&gt;
+&lt;button class="btn btn-primary btn-md"&gt;
+  &lt;i data-lucide="play" style="width: 18px; height: 18px;"&gt;&lt;/i&gt;
+  Start Training
+&lt;/button&gt;
+
+&lt;!-- Disabled State --&gt;
+&lt;button class="btn btn-primary btn-md" disabled&gt;
+  Disabled
+&lt;/button&gt;</code></pre>
+            </details>
+
+            <div class="component-docs">
+              <h4>Variants</h4>
+              <ul>
+                <li>
+                  <code>.btn-primary</code> - Main actions (green gradient)
+                </li>
+                <li>
+                  <code>.btn-secondary</code> - Supporting actions (outlined)
+                </li>
+                <li>
+                  <code>.btn-tertiary</code> - Low emphasis (text with
+                  underline)
+                </li>
+              </ul>
+              <h4>Sizes</h4>
+              <ul>
+                <li><code>.btn-xs</code> - Extra small (28px height)</li>
+                <li><code>.btn-sm</code> - Small (36px height)</li>
+                <li><code>.btn-md</code> - Medium (44px height, default)</li>
+                <li><code>.btn-lg</code> - Large (52px height)</li>
+                <li><code>.btn-xl</code> - Extra large (60px height)</li>
+              </ul>
+              <h4>Accessibility</h4>
+              <ul>
+                <li>
+                  Focus indicator included via <code>:focus-visible</code>
+                </li>
+                <li>Icon size must be explicitly set (16px, 18px, 20px)</li>
+                <li>Button text should be clear and action-oriented</li>
+                <li>Disabled state prevents interaction</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Input Component -->
+          <div id="input" class="component-demo">
+            <h3>Input</h3>
+
+            <div class="demo-area">
+              <h4>Basic Input</h4>
+              <div class="demo-row">
+                <input
+                  type="text"
+                  class="form-input"
+                  placeholder="Enter text..."
+                  style="width: 300px"
+                />
+              </div>
+
+              <h4>States</h4>
+              <div class="demo-row">
+                <input
+                  type="text"
+                  class="form-input"
+                  placeholder="Default"
+                  style="width: 200px"
+                />
+                <input
+                  type="text"
+                  class="form-input error"
+                  placeholder="Error"
+                  value="Invalid"
+                  style="width: 200px"
+                />
+                <input
+                  type="text"
+                  class="form-input success"
+                  placeholder="Success"
+                  value="Valid"
+                  style="width: 200px"
+                />
+                <input
+                  type="text"
+                  class="form-input"
+                  placeholder="Disabled"
+                  disabled
+                  style="width: 200px"
+                />
+              </div>
+            </div>
+
+            <details class="code-snippet">
+              <summary>Show HTML</summary>
+              <pre><code>&lt;input type="text" class="form-input" placeholder="Enter text..."&gt;
+
+&lt;!-- Error State --&gt;
+&lt;input type="text" class="form-input error" placeholder="Error" value="Invalid"&gt;
+
+&lt;!-- Success State --&gt;
+&lt;input type="text" class="form-input success" placeholder="Success" value="Valid"&gt;
+
+&lt;!-- Disabled State --&gt;
+&lt;input type="text" class="form-input" placeholder="Disabled" disabled&gt;</code></pre>
+            </details>
+
+            <div class="component-docs">
+              <h4>States</h4>
+              <ul>
+                <li><code>.error</code> - Validation error (red border)</li>
+                <li><code>.success</code> - Valid input (green border)</li>
+                <li><code>disabled</code> - Non-interactive state</li>
+              </ul>
+              <h4>Accessibility</h4>
+              <ul>
+                <li>Always pair with <code>&lt;label&gt;</code> element</li>
+                <li>Use 16px font size (prevents iOS zoom)</li>
+                <li>
+                  Include <code>aria-describedby</code> for error messages
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Badge Component -->
+          <div id="badge" class="component-demo">
+            <h3>Badge</h3>
+
+            <div class="demo-area">
+              <h4>Badge Variants</h4>
+              <div class="demo-row">
+                <span class="badge badge-primary">Primary</span>
+                <span class="badge badge-secondary">Secondary</span>
+                <span class="badge badge-success">Success</span>
+                <span class="badge badge-warning">Warning</span>
+                <span class="badge badge-error">Error</span>
+              </div>
+
+              <h4>Badge Sizes</h4>
+              <div class="demo-row">
+                <span class="badge badge-primary badge-sm">Small</span>
+                <span class="badge badge-primary badge-md">Medium</span>
+                <span class="badge badge-primary badge-lg">Large</span>
+              </div>
+            </div>
+
+            <details class="code-snippet">
+              <summary>Show HTML</summary>
+              <pre><code>&lt;span class="badge badge-primary"&gt;Primary&lt;/span&gt;
+&lt;span class="badge badge-success"&gt;Success&lt;/span&gt;
+&lt;span class="badge badge-warning"&gt;Warning&lt;/span&gt;
+&lt;span class="badge badge-error"&gt;Error&lt;/span&gt;</code></pre>
+            </details>
+
+            <div class="component-docs">
+              <h4>Variants</h4>
+              <ul>
+                <li><code>.badge-primary</code> - Primary brand color</li>
+                <li><code>.badge-secondary</code> - Secondary color</li>
+                <li><code>.badge-success</code> - Success state (green)</li>
+                <li><code>.badge-warning</code> - Warning state (yellow)</li>
+                <li><code>.badge-error</code> - Error state (red)</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Textarea Component -->
+          <div id="textarea" class="component-demo">
+            <h3>Textarea</h3>
+
+            <div class="demo-area">
+              <h4>Basic Textarea</h4>
+              <div
+                class="demo-row"
+                style="flex-direction: column; align-items: flex-start"
+              >
+                <div class="form-group">
+                  <label for="demo-textarea" class="form-label"
+                    >Description</label
+                  >
+                  <textarea
+                    id="demo-textarea"
+                    name="description"
+                    class="form-input form-textarea"
+                    rows="4"
+                    placeholder="Enter description..."
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+
+            <details class="code-snippet">
+              <summary>Show HTML</summary>
+              <pre><code>&lt;div class="form-group"&gt;
+  &lt;label for="textarea-id" class="form-label"&gt;Description&lt;/label&gt;
+  &lt;textarea id="textarea-id" name="description" class="form-input form-textarea" rows="4"&gt;&lt;/textarea&gt;
+&lt;/div&gt;</code></pre>
+            </details>
+
+            <div class="component-docs">
+              <h4>Usage</h4>
+              <ul>
+                <li>Multi-line text input for longer content</li>
+                <li>Use <code>.form-textarea</code> class</li>
+                <li>Set <code>rows</code> attribute for visible lines</li>
+                <li>
+                  Supports same states as input (error, success, disabled)
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Select Component -->
+          <div id="select" class="component-demo">
+            <h3>Select/Dropdown</h3>
+
+            <div class="demo-area">
+              <h4>Basic Select</h4>
+              <div
+                class="demo-row"
+                style="flex-direction: column; align-items: flex-start"
+              >
+                <div class="form-group">
+                  <label for="demo-select" class="form-label">Position</label>
+                  <select
+                    id="demo-select"
+                    name="position"
+                    class="form-input form-select"
+                  >
+                    <option value="">Select position</option>
+                    <option value="qb">Quarterback</option>
+                    <option value="wr">Wide Receiver</option>
+                    <option value="rb">Running Back</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <details class="code-snippet">
+              <summary>Show HTML</summary>
+              <pre><code>&lt;div class="form-group"&gt;
+  &lt;label for="select-id" class="form-label"&gt;Position&lt;/label&gt;
+  &lt;select id="select-id" name="position" class="form-input form-select"&gt;
+    &lt;option value=""&gt;Select position&lt;/option&gt;
+    &lt;option value="qb"&gt;Quarterback&lt;/option&gt;
+  &lt;/select&gt;
+&lt;/div&gt;</code></pre>
+            </details>
+
+            <div class="component-docs">
+              <h4>Usage</h4>
+              <ul>
+                <li>Dropdown selection from list of options</li>
+                <li>Use <code>.form-select</code> class</li>
+                <li>First option should be empty or placeholder</li>
+                <li>
+                  Supports <code>multiple</code> attribute for multi-select
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Checkbox Component -->
+          <div id="checkbox" class="component-demo">
+            <h3>Checkbox</h3>
+
+            <div class="demo-area">
+              <h4>Basic Checkbox</h4>
+              <div
+                class="demo-row"
+                style="flex-direction: column; align-items: flex-start"
+              >
+                <label class="form-checkbox">
+                  <input type="checkbox" id="demo-checkbox" name="checkbox" />
+                  <span>I agree to the terms</span>
+                </label>
+              </div>
+
+              <h4>Checkbox Group</h4>
+              <div
+                class="demo-row"
+                style="flex-direction: column; align-items: flex-start"
+              >
+                <fieldset class="form-group">
+                  <legend class="form-label">Select interests</legend>
+                  <div class="checkbox-group">
+                    <label class="form-checkbox">
+                      <input
+                        type="checkbox"
+                        id="interest1"
+                        name="interests"
+                        value="training"
+                      />
+                      <span>Training</span>
+                    </label>
+                    <label class="form-checkbox">
+                      <input
+                        type="checkbox"
+                        id="interest2"
+                        name="interests"
+                        value="nutrition"
+                      />
+                      <span>Nutrition</span>
+                    </label>
+                  </div>
+                </fieldset>
+              </div>
+            </div>
+
+            <details class="code-snippet">
+              <summary>Show HTML</summary>
+              <pre><code>&lt;label class="form-checkbox"&gt;
+  &lt;input type="checkbox" id="checkbox-id" name="checkbox-name"&gt;
+  &lt;span&gt;Label text&lt;/span&gt;
+&lt;/label&gt;</code></pre>
+            </details>
+
+            <div class="component-docs">
+              <h4>Usage</h4>
+              <ul>
+                <li>Binary choice or multiple selections</li>
+                <li>Use <code>.form-checkbox</code> wrapper</li>
+                <li>
+                  Use <code>&lt;fieldset&gt;</code> and
+                  <code>&lt;legend&gt;</code> for groups
+                </li>
+                <li>Supports checked, disabled, and indeterminate states</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Radio Component -->
+          <div id="radio" class="component-demo">
+            <h3>Radio</h3>
+
+            <div class="demo-area">
+              <h4>Radio Group</h4>
+              <div
+                class="demo-row"
+                style="flex-direction: column; align-items: flex-start"
+              >
+                <fieldset class="form-group">
+                  <legend class="form-label">Select option</legend>
+                  <div class="radio-group">
+                    <label class="form-radio">
+                      <input
+                        type="radio"
+                        id="radio1"
+                        name="choice"
+                        value="option1"
+                        checked
+                      />
+                      <span>Option 1</span>
+                    </label>
+                    <label class="form-radio">
+                      <input
+                        type="radio"
+                        id="radio2"
+                        name="choice"
+                        value="option2"
+                      />
+                      <span>Option 2</span>
+                    </label>
+                    <label class="form-radio">
+                      <input
+                        type="radio"
+                        id="radio3"
+                        name="choice"
+                        value="option3"
+                      />
+                      <span>Option 3</span>
+                    </label>
+                  </div>
+                </fieldset>
+              </div>
+            </div>
+
+            <details class="code-snippet">
+              <summary>Show HTML</summary>
+              <pre><code>&lt;fieldset class="form-group"&gt;
+  &lt;legend class="form-label"&gt;Select option&lt;/legend&gt;
+  &lt;div class="radio-group"&gt;
+    &lt;label class="form-radio"&gt;
+      &lt;input type="radio" id="radio1" name="choice" value="option1"&gt;
+      &lt;span&gt;Option 1&lt;/span&gt;
+    &lt;/label&gt;
+  &lt;/div&gt;
+&lt;/fieldset&gt;</code></pre>
+            </details>
+
+            <div class="component-docs">
+              <h4>Usage</h4>
+              <ul>
+                <li>Single selection from a group</li>
+                <li>All radios in group must have same <code>name</code></li>
+                <li>
+                  Use <code>&lt;fieldset&gt;</code> and
+                  <code>&lt;legend&gt;</code> for groups
+                </li>
+                <li>Only one radio can be selected per group</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Icon Component -->
+          <div id="icon" class="component-demo">
+            <h3>Icon</h3>
+
+            <div class="demo-area">
+              <h4>Lucide Icons</h4>
+              <div class="demo-row">
+                <i
+                  data-lucide="home"
+                  style="
+                    width: 24px;
+                    height: 24px;
+                    color: var(--color-text-primary);
+                  "
+                ></i>
+                <i
+                  data-lucide="user"
+                  style="
+                    width: 24px;
+                    height: 24px;
+                    color: var(--color-text-primary);
+                  "
+                ></i>
+                <i
+                  data-lucide="settings"
+                  style="
+                    width: 24px;
+                    height: 24px;
+                    color: var(--color-text-primary);
+                  "
+                ></i>
+                <i
+                  data-lucide="bell"
+                  style="
+                    width: 24px;
+                    height: 24px;
+                    color: var(--color-text-primary);
+                  "
+                ></i>
+                <i
+                  data-lucide="activity"
+                  style="
+                    width: 24px;
+                    height: 24px;
+                    color: var(--color-brand-primary);
+                  "
+                ></i>
+              </div>
+            </div>
+
+            <details class="code-snippet">
+              <summary>Show HTML</summary>
+              <pre><code>&lt;!-- Lucide Icon --&gt;
+&lt;i data-lucide="home" style="width: 24px; height: 24px;"&gt;&lt;/i&gt;
+
+&lt;!-- With Color --&gt;
+&lt;i data-lucide="activity" style="width: 24px; height: 24px; color: var(--color-brand-primary);"&gt;&lt;/i&gt;</code></pre>
+            </details>
+
+            <div class="component-docs">
+              <h4>Usage</h4>
+              <ul>
+                <li>Use Lucide icons via <code>data-lucide</code> attribute</li>
+                <li>Always set explicit width and height</li>
+                <li>
+                  Icons are initialized automatically via
+                  <code>icon-helper.js</code>
+                </li>
+                <li>Common sizes: 16px, 18px, 20px, 24px</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- MOLECULES SECTION -->
+        <section id="molecules" class="library-section">
+          <h2>Molecules</h2>
+          <p>Combinations of atoms that form functional units.</p>
+
+          <!-- Form Input Component -->
+          <div id="form-input" class="component-demo">
+            <h3>Form Input</h3>
+
+            <div class="demo-area">
+              <h4>Basic Form Input</h4>
+              <div
+                class="demo-row"
+                style="flex-direction: column; align-items: flex-start"
+              >
+                <div class="form-group">
+                  <label for="demo-username" class="form-label">Username</label>
+                  <input
+                    type="text"
+                    id="demo-username"
+                    name="username"
+                    class="form-input"
+                    placeholder="Enter your username"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="demo-email" class="form-label"
+                    >Email Address</label
+                  >
+                  <input
+                    type="email"
+                    id="demo-email"
+                    name="email"
+                    class="form-input"
+                    placeholder="athlete@example.com"
+                  />
+                  <small class="form-hint">We'll never share your email</small>
+                </div>
+
+                <div class="form-group">
+                  <label for="demo-password" class="form-label required"
+                    >Password</label
+                  >
+                  <input
+                    type="password"
+                    id="demo-password"
+                    name="password"
+                    class="form-input error"
+                    value="pass"
+                  />
+                  <div class="form-error" role="alert">
+                    Password must be at least 8 characters
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <details class="code-snippet">
+              <summary>Show HTML</summary>
+              <pre><code>&lt;div class="form-group"&gt;
+  &lt;label for="username" class="form-label"&gt;Username&lt;/label&gt;
+  &lt;input type="text" id="username" name="username" class="form-input" placeholder="Enter your username" autocomplete="username"&gt;
+&lt;/div&gt;
+
+&lt;!-- With Helper Text --&gt;
+&lt;div class="form-group"&gt;
+  &lt;label for="email" class="form-label"&gt;Email Address&lt;/label&gt;
+  &lt;input type="email" id="email" name="email" class="form-input" placeholder="athlete@example.com" autocomplete="email"&gt;
+  &lt;small class="form-hint"&gt;We'll never share your email&lt;/small&gt;
+&lt;/div&gt;
+
+&lt;!-- With Error --&gt;
+&lt;div class="form-group"&gt;
+  &lt;label for="password" class="form-label required"&gt;Password&lt;/label&gt;
+  &lt;input type="password" id="password" name="password" class="form-input error" autocomplete="current-password"&gt;
+  &lt;div class="form-error" role="alert"&gt;Password must be at least 8 characters&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+            </details>
+
+            <div class="component-docs">
+              <h4>Structure</h4>
+              <ul>
+                <li><code>.form-group</code> - Container wrapper</li>
+                <li><code>.form-label</code> - Label styling</li>
+                <li><code>.form-input</code> - Input field</li>
+                <li><code>.form-hint</code> - Helper text</li>
+                <li><code>.form-error</code> - Error message</li>
+              </ul>
+              <h4>Accessibility</h4>
+              <ul>
+                <li>
+                  Always include <code>&lt;label&gt;</code> with matching
+                  <code>id</code>
+                </li>
+                <li>Error messages use <code>role="alert"</code></li>
+                <li>
+                  Required fields marked with <code>.required</code> class
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Card Component -->
+          <div id="card" class="component-demo">
+            <h3>Card</h3>
+
+            <div class="demo-area">
+              <h4>Basic Card</h4>
+              <div class="demo-row">
+                <div class="card" style="width: 300px">
+                  <div class="card-header">
+                    <h3>Performance Summary</h3>
+                  </div>
+                  <div class="card-body">
+                    <p>Your training metrics for this week.</p>
+                  </div>
+                </div>
+              </div>
+
+              <h4>Card Variants</h4>
+              <div class="demo-row">
+                <div class="card card-elevated" style="width: 250px">
+                  <div class="card-body">
+                    <p>Elevated Card</p>
+                  </div>
+                </div>
+                <div class="card card-interactive" style="width: 250px">
+                  <div class="card-body">
+                    <p>Interactive Card</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <details class="code-snippet">
+              <summary>Show HTML</summary>
+              <pre><code>&lt;div class="card"&gt;
+  &lt;div class="card-header"&gt;
+    &lt;h3&gt;Performance Summary&lt;/h3&gt;
+  &lt;/div&gt;
+  &lt;div class="card-body"&gt;
+    &lt;p&gt;Your training metrics for this week.&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- With Footer --&gt;
+&lt;div class="card"&gt;
+  &lt;div class="card-header"&gt;Header&lt;/div&gt;
+  &lt;div class="card-body"&gt;Body&lt;/div&gt;
+  &lt;div class="card-footer"&gt;Footer&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+            </details>
+
+            <div class="component-docs">
+              <h4>Variants</h4>
+              <ul>
+                <li><code>.card</code> - Default card</li>
+                <li>
+                  <code>.card-elevated</code> - Higher shadow, high contrast
+                </li>
+                <li><code>.card-interactive</code> - Hover effects</li>
+              </ul>
+              <h4>Structure</h4>
+              <ul>
+                <li><code>.card-header</code> - Optional header section</li>
+                <li><code>.card-body</code> - Main content</li>
+                <li><code>.card-footer</code> - Optional footer section</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Search Bar Component -->
+          <div id="search-bar" class="component-demo">
+            <h3>Search Bar</h3>
+
+            <div class="demo-area">
+              <h4>Search Input</h4>
+              <div class="demo-row">
+                <div class="search-bar" style="width: 400px">
+                  <i
+                    data-lucide="search"
+                    style="
+                      width: 20px;
+                      height: 20px;
+                      color: var(--color-text-secondary);
+                    "
+                  ></i>
+                  <input
+                    type="search"
+                    class="search-input"
+                    placeholder="Search athletes, teams..."
+                  />
+                </div>
+              </div>
+            </div>
+
+            <details class="code-snippet">
+              <summary>Show HTML</summary>
+              <pre><code>&lt;div class="search-bar"&gt;
+  &lt;i data-lucide="search" style="width: 20px; height: 20px;"&gt;&lt;/i&gt;
+  &lt;input type="search" id="search-basic" name="search" class="search-input" placeholder="Search athletes, teams..." autocomplete="off"&gt;
+&lt;/div&gt;</code></pre>
+            </details>
+          </div>
+        </section>
+
+        <!-- ORGANISMS SECTION -->
+        <section id="organisms" class="library-section">
+          <h2>Organisms</h2>
+          <p>Complex components combining molecules and atoms.</p>
+
+          <!-- Navigation Sidebar -->
+          <div id="navigation-sidebar" class="component-demo">
+            <h3>Navigation Sidebar</h3>
+
+            <div class="demo-area">
+              <p>
+                <em
+                  >See
+                  <code
+                    >src/components/organisms/navigation-sidebar/navigation-sidebar.html</code
+                  >
+                  for full implementation.</em
+                >
+              </p>
+            </div>
+
+            <details class="code-snippet">
+              <summary>Show HTML</summary>
+              <pre><code>&lt;!-- See component file for full markup --&gt;
+&lt;nav class="sidebar"&gt;
+  &lt;div class="sidebar-header"&gt;
+    &lt;h2&gt;FlagFit Pro&lt;/h2&gt;
+  &lt;/div&gt;
+  &lt;ul class="sidebar-nav"&gt;
+    &lt;li&gt;&lt;a href="/dashboard"&gt;Dashboard&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="/training"&gt;Training&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/nav&gt;</code></pre>
+            </details>
+          </div>
+
+          <!-- Dashboard Header -->
+          <div id="dashboard-header" class="component-demo">
+            <h3>Dashboard Header</h3>
+
+            <div class="demo-area">
+              <p>
+                <em
+                  >See
+                  <code
+                    >src/components/organisms/dashboard-header/dashboard-header.html</code
+                  >
+                  for full implementation.</em
+                >
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- TEMPLATES SECTION -->
+        <section id="templates" class="library-section">
+          <h2>Templates</h2>
+          <p>Full page layouts combining organisms.</p>
+
+          <!-- Dashboard Layout -->
+          <div id="dashboard-layout" class="component-demo">
+            <h3>Dashboard Layout</h3>
+
+            <div class="demo-area">
+              <p>
+                <em
+                  >See
+                  <code>src/components/templates/dashboard-layout.html</code>
+                  for full page structure.</em
+                >
+              </p>
+            </div>
+          </div>
+
+          <!-- Auth Layout -->
+          <div id="auth-layout" class="component-demo">
+            <h3>Auth Layout</h3>
+
+            <div class="demo-area">
+              <p>
+                <em
+                  >See
+                  <code>src/components/templates/auth-layout.html</code> for
+                  login/register page structure.</em
+                >
+              </p>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script>
+
+      // Update active nav link on scroll
+      const sections = document.querySelectorAll(".library-section");
+      const navLinks = document.querySelectorAll(".library-sidebar a");
+
+      function updateActiveLink() {
+        let current = "";
+        sections.forEach((section) => {
+          const sectionTop = section.offsetTop;
+          const sectionHeight = section.clientHeight;
+          if (window.scrollY >= sectionTop - 100) {
+            current = section.getAttribute("id");
+          }
+        });
+
+        navLinks.forEach((link) => {
+          link.classList.remove("active");
+          if (link.getAttribute("href") === `#${current}`) {
+            link.classList.add("active");
+          }
+        });
+      }
+
+      window.addEventListener("scroll", updateActiveLink);
+      updateActiveLink();
+
+      // Tabs Component JavaScript
+      class Tabs {
+        constructor(container) {
+          this.container = container;
+          this.triggers = container.querySelectorAll(".tabs-trigger");
+          this.panels = container.querySelectorAll(".tabs-panel");
+          this.activeIndex = 0;
+          this.init();
+        }
+
+        init() {
+          this.triggers.forEach((trigger, index) => {
+            trigger.addEventListener("click", () => this.selectTab(index));
+            trigger.addEventListener("keydown", (e) => {
+              if (e.key === "ArrowRight") {
+                e.preventDefault();
+                this.selectTab((index + 1) % this.triggers.length);
+              } else if (e.key === "ArrowLeft") {
+                e.preventDefault();
+                this.selectTab(
+                  (index - 1 + this.triggers.length) % this.triggers.length,
+                );
+              } else if (e.key === "Home") {
+                e.preventDefault();
+                this.selectTab(0);
+              } else if (e.key === "End") {
+                e.preventDefault();
+                this.selectTab(this.triggers.length - 1);
+              }
+            });
+          });
+        }
+
+        selectTab(index) {
+          this.triggers.forEach((trigger, i) => {
+            const isActive = i === index;
+            trigger.classList.toggle("tabs-active", isActive);
+            trigger.setAttribute("aria-selected", isActive);
+            trigger.setAttribute("tabindex", isActive ? "0" : "-1");
+          });
+
+          this.panels.forEach((panel, i) => {
+            panel.classList.toggle("tabs-active", i === index);
+          });
+
+          this.activeIndex = index;
+          this.triggers[index].focus();
+        }
+      }
+
+      // Accordion Component JavaScript
+      class Accordion {
+        constructor(container) {
+          this.container = container;
+          this.items = container.querySelectorAll(".accordion-item");
+          this.triggers = container.querySelectorAll(".accordion-trigger");
+          this.init();
+        }
+
+        init() {
+          this.triggers.forEach((trigger) => {
+            trigger.addEventListener("click", () => this.toggle(trigger));
+            trigger.addEventListener("keydown", (e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                this.toggle(trigger);
+              }
+            });
+          });
+        }
+
+        toggle(trigger) {
+          const panel = document.getElementById(
+            trigger.getAttribute("aria-controls"),
+          );
+          const isExpanded = trigger.getAttribute("aria-expanded") === "true";
+
+          trigger.setAttribute("aria-expanded", !isExpanded);
+          panel.classList.toggle("accordion-open");
+
+          const icon = trigger.querySelector(".accordion-icon");
+          if (icon) {
+            icon.style.transform = isExpanded
+              ? "rotate(0deg)"
+              : "rotate(180deg)";
+          }
+        }
+      }
+
+      // Initialize components
+      document.querySelectorAll(".tabs[data-tabs]").forEach((container) => {
+        new Tabs(container);
+      });
+
+      document
+        .querySelectorAll(".accordion[data-accordion]")
+        .forEach((container) => {
+          new Accordion(container);
+        });
+
+      // Modal initialization
+      document.querySelectorAll(".modal-overlay").forEach((overlay) => {
+        overlay.addEventListener("click", function (e) {
+          if (e.target === overlay) {
+            overlay.classList.remove("open");
+          }
+        });
+      });
+
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") {
+          document
+            .querySelectorAll(".modal-overlay.open")
+            .forEach((overlay) => {
+              overlay.classList.remove("open");
+            });
+        }
+      });
+
+      // Copy to clipboard functionality
+      document
+        .querySelectorAll(".code-snippet pre code")
+        .forEach((codeBlock) => {
+          const button = document.createElement("button");
+          button.textContent = "Copy";
+          button.className = "copy-btn";
+          button.onclick = () => {
+            navigator.clipboard.writeText(codeBlock.textContent).then(() => {
+              button.textContent = "Copied!";
+              setTimeout(() => (button.textContent = "Copy"), 2000);
+            });
+          };
+          codeBlock.parentElement.style.position = "relative";
+          codeBlock.parentElement.appendChild(button);
+        });
+    </script>
+
+        <!-- Footer (Loaded Dynamically) -->
+    <div data-footer-container></div>
+  </body>
+</html>

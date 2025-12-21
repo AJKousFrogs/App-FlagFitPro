@@ -1,0 +1,288 @@
+<!-- 
+    Date Range Component - FlagFit Pro
+    
+    Usage: Copy this snippet for date range selection
+    States: default, focus, error, disabled
+    Accessibility:
+    - Always include <label> elements
+    - Use aria-describedby for help text
+-->
+
+<!-- Basic Date Range -->
+<div class="form-group">
+  <label class="form-label">Date Range</label>
+  <div class="date-range-container">
+    <div class="date-range-field">
+      <label for="date-range-start" class="date-range-label">Start Date</label>
+      <input
+        type="date"
+        id="date-range-start"
+        name="date-range-start"
+        class="form-input date-range-input"
+        aria-describedby="date-range-start-help"
+      />
+      <small id="date-range-start-help" class="form-help">Select start date</small>
+    </div>
+    <div class="date-range-separator">
+      <i data-lucide="arrow-right" style="width: 20px; height: 20px"></i>
+    </div>
+    <div class="date-range-field">
+      <label for="date-range-end" class="date-range-label">End Date</label>
+      <input
+        type="date"
+        id="date-range-end"
+        name="date-range-end"
+        class="form-input date-range-input"
+        aria-describedby="date-range-end-help"
+      />
+      <small id="date-range-end-help" class="form-help">Select end date</small>
+    </div>
+  </div>
+</div>
+
+<!-- Date Range with Presets -->
+<div class="form-group">
+  <label class="form-label">Date Range with Presets</label>
+  <div class="date-range-presets">
+    <button type="button" class="btn btn-secondary btn-sm date-range-preset" data-preset="today">Today</button>
+    <button type="button" class="btn btn-secondary btn-sm date-range-preset" data-preset="yesterday">Yesterday</button>
+    <button type="button" class="btn btn-secondary btn-sm date-range-preset" data-preset="last7days">Last 7 Days</button>
+    <button type="button" class="btn btn-secondary btn-sm date-range-preset" data-preset="last30days">Last 30 Days</button>
+    <button type="button" class="btn btn-secondary btn-sm date-range-preset" data-preset="thisMonth">This Month</button>
+    <button type="button" class="btn btn-secondary btn-sm date-range-preset" data-preset="lastMonth">Last Month</button>
+  </div>
+  <div class="date-range-container">
+    <div class="date-range-field">
+      <label for="date-range-preset-start" class="date-range-label">Start Date</label>
+      <input
+        type="date"
+        id="date-range-preset-start"
+        name="date-range-preset-start"
+        class="form-input date-range-input"
+      />
+    </div>
+    <div class="date-range-separator">
+      <i data-lucide="arrow-right" style="width: 20px; height: 20px"></i>
+    </div>
+    <div class="date-range-field">
+      <label for="date-range-preset-end" class="date-range-label">End Date</label>
+      <input
+        type="date"
+        id="date-range-preset-end"
+        name="date-range-preset-end"
+        class="form-input date-range-input"
+      />
+    </div>
+  </div>
+</div>
+
+<!-- Date Range with Error -->
+<div class="form-group">
+  <label class="form-label">Date Range with Validation</label>
+  <div class="date-range-container">
+    <div class="date-range-field">
+      <label for="date-range-error-start" class="date-range-label">Start Date</label>
+      <input
+        type="date"
+        id="date-range-error-start"
+        name="date-range-error-start"
+        class="form-input date-range-input error"
+        aria-invalid="true"
+        aria-describedby="date-range-error"
+      />
+    </div>
+    <div class="date-range-separator">
+      <i data-lucide="arrow-right" style="width: 20px; height: 20px"></i>
+    </div>
+    <div class="date-range-field">
+      <label for="date-range-error-end" class="date-range-label">End Date</label>
+      <input
+        type="date"
+        id="date-range-error-end"
+        name="date-range-error-end"
+        class="form-input date-range-input error"
+        aria-invalid="true"
+        aria-describedby="date-range-error"
+      />
+    </div>
+  </div>
+  <div class="form-error" id="date-range-error" role="alert">End date must be after start date</div>
+</div>
+
+<!-- Disabled Date Range -->
+<div class="form-group">
+  <label class="form-label">Disabled Date Range</label>
+  <div class="date-range-container">
+    <div class="date-range-field">
+      <label for="date-range-disabled-start" class="date-range-label">Start Date</label>
+      <input
+        type="date"
+        id="date-range-disabled-start"
+        name="date-range-disabled-start"
+        class="form-input date-range-input"
+        disabled
+      />
+    </div>
+    <div class="date-range-separator">
+      <i data-lucide="arrow-right" style="width: 20px; height: 20px"></i>
+    </div>
+    <div class="date-range-field">
+      <label for="date-range-disabled-end" class="date-range-label">End Date</label>
+      <input
+        type="date"
+        id="date-range-disabled-end"
+        name="date-range-disabled-end"
+        class="form-input date-range-input"
+        disabled
+      />
+    </div>
+  </div>
+</div>
+
+<style>
+  .date-range-container {
+    display: flex;
+    align-items: flex-end;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .date-range-field {
+    flex: 1;
+    min-width: 150px;
+  }
+
+  .date-range-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-primary, #1a1a1a);
+    margin-bottom: 0.5rem;
+  }
+
+  .date-range-input {
+    width: 100%;
+  }
+
+  .date-range-separator {
+    display: flex;
+    align-items: center;
+    padding-bottom: 0.5rem;
+    color: var(--text-secondary, #6b7280);
+  }
+
+  .date-range-presets {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+
+  .date-range-preset {
+    font-size: 0.875rem;
+  }
+
+  @media (max-width: 640px) {
+    .date-range-container {
+      flex-direction: column;
+    }
+
+    .date-range-separator {
+      transform: rotate(90deg);
+      padding: 0.5rem 0;
+    }
+  }
+</style>
+
+<script>
+  // Date range preset functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    const presetButtons = document.querySelectorAll('.date-range-preset');
+    
+    presetButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const preset = this.getAttribute('data-preset');
+        const container = this.closest('.form-group');
+        const startInput = container.querySelector('[id$="-start"]');
+        const endInput = container.querySelector('[id$="-end"]');
+        
+        if (!startInput || !endInput) return;
+        
+        const today = new Date();
+        let startDate = new Date();
+        let endDate = new Date();
+        
+        switch(preset) {
+          case 'today':
+            startDate = new Date(today);
+            endDate = new Date(today);
+            break;
+          case 'yesterday':
+            startDate = new Date(today);
+            startDate.setDate(startDate.getDate() - 1);
+            endDate = new Date(startDate);
+            break;
+          case 'last7days':
+            startDate = new Date(today);
+            startDate.setDate(startDate.getDate() - 7);
+            endDate = new Date(today);
+            break;
+          case 'last30days':
+            startDate = new Date(today);
+            startDate.setDate(startDate.getDate() - 30);
+            endDate = new Date(today);
+            break;
+          case 'thisMonth':
+            startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+            endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+            break;
+          case 'lastMonth':
+            startDate = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+            endDate = new Date(today.getFullYear(), today.getMonth(), 0);
+            break;
+        }
+        
+        startInput.value = startDate.toISOString().split('T')[0];
+        endInput.value = endDate.toISOString().split('T')[0];
+        
+        // Trigger change event
+        startInput.dispatchEvent(new Event('change'));
+        endInput.dispatchEvent(new Event('change'));
+      });
+    });
+    
+    // Validate date ranges
+    const dateRangeInputs = document.querySelectorAll('.date-range-input');
+    dateRangeInputs.forEach(input => {
+      input.addEventListener('change', function() {
+        const container = this.closest('.date-range-container');
+        if (!container) return;
+        
+        const startInput = container.querySelector('[id$="-start"]');
+        const endInput = container.querySelector('[id$="-end"]');
+        
+        if (startInput && endInput && startInput.value && endInput.value) {
+          const startDate = new Date(startInput.value);
+          const endDate = new Date(endInput.value);
+          
+          if (endDate < startDate) {
+            startInput.classList.add('error');
+            endInput.classList.add('error');
+            const errorMsg = container.parentElement.querySelector('.form-error');
+            if (errorMsg) {
+              errorMsg.textContent = 'End date must be after start date';
+            }
+          } else {
+            startInput.classList.remove('error');
+            endInput.classList.remove('error');
+            const errorMsg = container.parentElement.querySelector('.form-error');
+            if (errorMsg) {
+              errorMsg.textContent = '';
+            }
+          }
+        }
+      });
+    });
+  });
+</script>
+

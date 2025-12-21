@@ -1,0 +1,570 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>FlagFit Pro - Advanced Analytics Dashboard</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <!-- New Modular CSS Architecture -->
+    <link rel="stylesheet" href="./src/css/main.css" />
+    <!-- Page-specific styles -->
+    <link rel="stylesheet" href="./src/css/pages/analytics.css" />
+    <!-- Chatbot Component Styles -->
+    <link rel="stylesheet" href="./src/css/components/chatbot.css" />
+
+    <!-- Lucide Icons - Modern icon library similar to Radix UI -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
+    <script src="./src/icon-helper.js" defer></script>
+    <script src="./src/icon-accessibility-fix.js" defer></script>
+    <script src="./src/theme-switcher.js" defer></script>
+    <script src="./src/nav-highlight.js" defer></script>
+    <script src="./src/components/organisms/top-bar/top-bar.js" defer></script>
+    <!-- Chart.js with multiple CDN fallbacks - Load BEFORE analytics-page.js -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
+    <!-- Universal Components -->
+    <script type="module" src="./src/js/main.js"></script>
+    <!-- Preload Chatbot Component -->
+    <script type="module">
+      // Preload chatbot for faster access
+      import("./src/js/components/chatbot.js")
+        .then((module) => {
+          // Ensure chatbot is available globally
+          if (module.flagFitChatbot) {
+            window.flagFitChatbot = module.flagFitChatbot;
+            console.log("Chatbot loaded successfully");
+          }
+        })
+        .catch((error) => {
+          console.warn("Chatbot preload failed:", error);
+        });
+    </script>
+    <!-- Chart.js already loaded above -->
+    <script>
+      // Improved fallback system
+      window.addEventListener("load", function () {
+        if (typeof Chart === "undefined") {
+          console.log("Loading Chart.js fallback...");
+          const fallbackScript = document.createElement("script");
+          fallbackScript.src =
+            "https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js";
+          fallbackScript.crossOrigin = "anonymous";
+          fallbackScript.onload = function () {
+            console.log("Chart.js fallback loaded successfully");
+            if (window.initAnalyticsCharts) window.initAnalyticsCharts();
+          };
+          fallbackScript.onerror = function () {
+            console.warn("Chart.js fallback also failed, using mock charts");
+            if (window.initMockCharts) window.initMockCharts();
+          };
+          document.head.appendChild(fallbackScript);
+        } else {
+          console.log("Chart.js loaded successfully");
+          if (window.initAnalyticsCharts) window.initAnalyticsCharts();
+        }
+      });
+    </script>
+
+    <!-- Date adapter with fallback -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
+
+    <!-- Polyfills for older browsers -->
+    <script>
+      // Array.from polyfill for IE
+      if (!Array.from) {
+        Array.from = function (array) {
+          return Array.prototype.slice.call(array);
+        };
+      }
+
+      // SECURITY FIX: Replace document.write() with safe dynamic script loading
+      // document.write() is deprecated and dangerous - it can overwrite the entire page
+      // and creates XSS vulnerabilities. Use dynamic script insertion instead.
+
+      /**
+       * Safely load a polyfill script dynamically
+       * @param {string} src - Script URL to load
+       * @returns {Promise} Resolves when script is loaded
+       */
+      function loadPolyfill(src) {
+        return new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = src;
+          script.crossOrigin = 'anonymous';
+          script.onload = resolve;
+          script.onerror = reject;
+          document.head.appendChild(script);
+        });
+      }
+
+      // Promise polyfill for older browsers
+      if (!window.Promise) {
+        loadPolyfill('https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js')
+          .catch(err => console.error('Failed to load Promise polyfill:', err));
+      }
+
+      // Fetch polyfill for older browsers
+      if (!window.fetch) {
+        loadPolyfill('https://cdn.jsdelivr.net/npm/whatwg-fetch@3.6.2/dist/fetch.umd.js')
+          .catch(err => console.error('Failed to load Fetch polyfill:', err));
+      }
+    </script>
+    <!-- Common Component Loaders (Sidebar, Top Bar, Footer) -->
+    <script type="module" src="./src/js/components/common-loaders.js" defer></script>
+    <!-- AI Chat Bubble Loader (Dynamic Component) -->
+    <script type="module" src="./src/js/components/ai-chat-bubble-loader.js" defer></script>
+  
+    <!-- Supabase Configuration (Centralized) -->
+    <script src="./src/js/config/supabase-config.js" defer></script>
+    
+    <!-- Supabase JS SDK from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0" defer></script>
+    
+    <!-- Analytics Page Script - Load AFTER Chart.js -->
+    <script type="module" src="./src/js/pages/analytics-page.js" defer></script>
+
+  </head>
+  <body>
+    <!-- Skip link for accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <div class="dashboard-container">
+            <!-- Unified Sidebar Navigation (Loaded Dynamically) -->
+      <div data-sidebar-container></div>
+<main
+        class="main-content u-flex-1 u-min-width-0 u-overflow-x-hidden u-overflow-y-auto u-padding-24 u-bg-primary"
+        id="main-content"
+      >
+                <!-- Top Bar (Loaded Dynamically) -->
+        <div data-topbar-container></div>
+
+        <div class="analytics-container u-margin-y-auto">
+          <!-- Key Metrics Overview -->
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-icon" aria-hidden="true">
+                <i
+                  data-lucide="bar-chart-3"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    color: var(--icon-color-primary);
+                    stroke: var(--icon-color-primary);
+                  "
+                ></i>
+              </div>
+              <div class="metric-value">—</div>
+              <div class="metric-label">Overall Performance</div>
+              <div class="metric-trend">No data entry yet</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon" aria-hidden="true">
+                <i
+                  data-lucide="users"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    color: var(--icon-color-primary);
+                    stroke: var(--icon-color-primary);
+                  "
+                ></i>
+              </div>
+              <div class="metric-value">—</div>
+              <div class="metric-label">Team Chemistry</div>
+              <div class="metric-trend">No data entry yet</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon" aria-hidden="true">
+                <i
+                  data-lucide="zap"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    color: var(--icon-color-primary);
+                    stroke: var(--icon-color-primary);
+                  "
+                ></i>
+              </div>
+              <div class="metric-value">—</div>
+              <div class="metric-label">40-Yard Dash</div>
+              <div class="metric-trend">No data entry yet</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon" aria-hidden="true">
+                <i
+                  data-lucide="trophy"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    color: var(--icon-color-primary);
+                    stroke: var(--icon-color-primary);
+                  "
+                ></i>
+              </div>
+              <div class="metric-value">—</div>
+              <div class="metric-label">Olympic Qualification</div>
+              <div class="metric-trend">No data entry yet</div>
+            </div>
+          </div>
+
+          <!-- Charts Grid -->
+          <div class="charts-grid">
+            <!-- Performance Trends Chart -->
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3 class="chart-title card-title">Performance Trends</h3>
+                <div class="chart-actions">
+                  <button class="btn btn-secondary" type="button">
+                    Export
+                  </button>
+                  <button class="btn btn-primary" type="button">
+                    Customize
+                  </button>
+                </div>
+              </div>
+              <div class="chart-container">
+                <canvas
+                  id="performanceTrendsChart"
+                  role="img"
+                  aria-label="Performance trends chart showing weekly performance scores"
+                ></canvas>
+              </div>
+              <div class="chart-insights">
+                <div class="insight-item">
+                  <div class="insight-value">91</div>
+                  <div class="insight-label">Current Score</div>
+                </div>
+                <div class="insight-item">
+                  <div class="insight-value">+13</div>
+                  <div class="insight-label">Total Improvement</div>
+                </div>
+                <div class="insight-item">
+                  <div class="insight-value">+5.2%</div>
+                  <div class="insight-label">Weekly Trend</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Team Chemistry Radar Chart -->
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3 class="chart-title card-title">Team Chemistry Analysis</h3>
+                <div class="chart-actions">
+                  <button class="btn btn-secondary" type="button">
+                    Details
+                  </button>
+                  <button class="btn btn-primary" type="button">Improve</button>
+                </div>
+              </div>
+              <div class="chart-container">
+                <canvas
+                  id="teamChemistryChart"
+                  role="img"
+                  aria-label="Team chemistry radar chart showing communication, coordination, trust, cohesion, leadership, and adaptability scores"
+                ></canvas>
+              </div>
+              <div class="chart-insights">
+                <div class="insight-item">
+                  <div class="insight-value">8.4</div>
+                  <div class="insight-label">Overall Score</div>
+                </div>
+                <div class="insight-item">
+                  <div class="insight-value">9.1</div>
+                  <div class="insight-label">Trust Level</div>
+                </div>
+                <div class="insight-item">
+                  <div class="insight-value">7.5</div>
+                  <div class="insight-label">Leadership</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Training Distribution Chart -->
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3 class="chart-title card-title">Training Session Distribution</h3>
+                <div class="chart-actions">
+                  <button class="btn btn-secondary" type="button">
+                    Filter
+                  </button>
+                  <button class="btn btn-primary" type="button">
+                    Schedule
+                  </button>
+                </div>
+              </div>
+              <div class="chart-container">
+                <canvas
+                  id="trainingDistributionChart"
+                  role="img"
+                  aria-label="Training distribution doughnut chart showing different types of training sessions"
+                ></canvas>
+              </div>
+              <div class="chart-insights">
+                <div class="insight-item">
+                  <div class="insight-value">30</div>
+                  <div class="insight-label">Agility Sessions</div>
+                </div>
+                <div class="insight-item">
+                  <div class="insight-value">25</div>
+                  <div class="insight-label">Speed Sessions</div>
+                </div>
+                <div class="insight-item">
+                  <div class="insight-value">20</div>
+                  <div class="insight-label">Technical Sessions</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Position Performance Chart -->
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3 class="chart-title card-title">Position Performance Comparison</h3>
+                <div class="chart-actions">
+                  <button class="btn btn-secondary" type="button">
+                    Benchmarks
+                  </button>
+                  <button class="btn btn-primary" type="button">
+                    Optimize
+                  </button>
+                </div>
+              </div>
+              <div class="chart-container">
+                <canvas
+                  id="positionPerformanceChart"
+                  role="img"
+                  aria-label="Position performance bar chart comparing quarterback, wide receiver, running back, defensive back, and rusher performance"
+                ></canvas>
+              </div>
+              <div class="chart-insights">
+                <div class="insight-item">
+                  <div class="insight-value">94</div>
+                  <div class="insight-label">Lorenzo S. #21</div>
+                </div>
+                <div class="insight-item">
+                  <div class="insight-value">91</div>
+                  <div class="insight-label">Aljosa K. #55</div>
+                </div>
+                <div class="insight-item">
+                  <div class="insight-value">89</div>
+                  <div class="insight-label">Vince M. #10</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Olympic Progress Chart -->
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3 class="chart-title card-title">Olympic Qualification Progress</h3>
+                <div class="chart-actions">
+                  <button class="btn btn-secondary" type="button">
+                    Timeline
+                  </button>
+                  <button class="btn btn-primary" type="button">
+                    Strategy
+                  </button>
+                </div>
+              </div>
+              <div class="chart-container">
+                <canvas
+                  id="olympicProgressChart"
+                  role="img"
+                  aria-label="Olympic qualification progress gauge showing 73% qualified"
+                ></canvas>
+              </div>
+              <div class="chart-insights">
+                <div class="insight-item">
+                  <div class="insight-value">73%</div>
+                  <div class="insight-label">Qualified</div>
+                </div>
+                <div class="insight-item">
+                  <div class="insight-value">124</div>
+                  <div class="insight-label">Days Left</div>
+                </div>
+                <div class="insight-item">
+                  <div class="insight-value">8th</div>
+                  <div class="insight-label">World Ranking</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Injury Risk Chart -->
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3 class="chart-title card-title">Team Injury Risk Assessment</h3>
+                <div class="chart-actions">
+                  <button class="btn btn-secondary" type="button">
+                    Prevention
+                  </button>
+                  <button class="btn btn-primary" type="button">Monitor</button>
+                </div>
+              </div>
+              <div class="chart-container">
+                <canvas
+                  id="injuryRiskChart"
+                  role="img"
+                  aria-label="Injury risk assessment chart showing low, medium, and high risk percentages"
+                ></canvas>
+              </div>
+              <div class="chart-insights">
+                <div class="insight-item">
+                  <div class="insight-value">75%</div>
+                  <div class="insight-label">Low Risk</div>
+                </div>
+                <div class="insight-item">
+                  <div class="insight-value">20%</div>
+                  <div class="insight-label">Medium Risk</div>
+                </div>
+                <div class="insight-item">
+                  <div class="insight-value">5%</div>
+                  <div class="insight-label">High Risk</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Full Width Charts -->
+          <div class="charts-grid full-width-chart">
+            <!-- Speed Development Chart -->
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3 class="chart-title card-title">Speed Development Progress</h3>
+                <div class="chart-controls">
+                  <div class="control-group">
+                    <label class="control-label" for="timePeriod"
+                      >Time Period:</label
+                    >
+                    <select class="control-select" id="timePeriod">
+                      <option>Last 7 Weeks</option>
+                      <option>Last 30 Days</option>
+                      <option>Season Progress</option>
+                    </select>
+                  </div>
+                  <div class="control-group">
+                    <label class="control-label" for="metrics">Metrics:</label>
+                    <select class="control-select" id="metrics">
+                      <option>40-Yard & 10-Yard</option>
+                      <option>All Sprint Distances</option>
+                      <option>Agility Tests</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="chart-container">
+                <canvas
+                  id="speedDevelopmentChart"
+                  role="img"
+                  aria-label="Speed development line chart showing 40-yard and 10-yard sprint times over weeks"
+                ></canvas>
+              </div>
+              <div class="chart-insights">
+                <div class="insight-item">
+                  <div class="insight-value">4.46s</div>
+                  <div class="insight-label">Best 40-Yard</div>
+                </div>
+                <div class="insight-item">
+                  <div class="insight-value">1.54s</div>
+                  <div class="insight-label">Best 10-Yard</div>
+                </div>
+                <div class="insight-item">
+                  <div class="insight-value">-0.19s</div>
+                  <div class="insight-label">Total Improvement</div>
+                </div>
+                <div class="insight-item">
+                  <div class="insight-value">4.40s</div>
+                  <div class="insight-label">Olympic Target</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- User Engagement Funnel -->
+          <div class="charts-grid full-width-chart">
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3 class="chart-title card-title">User Engagement Funnel</h3>
+                <div class="chart-controls">
+                  <div class="control-group">
+                    <label class="control-label" for="dateRange"
+                      >Date Range:</label
+                    >
+                    <select class="control-select" id="dateRange">
+                      <option>Last 30 Days</option>
+                      <option>Last 90 Days</option>
+                      <option>This Season</option>
+                    </select>
+                  </div>
+                  <div class="control-group">
+                    <label class="control-label" for="userSegment"
+                      >User Segment:</label
+                    >
+                    <select class="control-select" id="userSegment">
+                      <option>All Users</option>
+                      <option>Elite Players</option>
+                      <option>Amateur Players</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="chart-container">
+                <canvas
+                  id="engagementFunnelChart"
+                  role="img"
+                  aria-label="User engagement funnel chart showing user journey from app opens to goal achievement"
+                ></canvas>
+              </div>
+              <div class="chart-insights">
+                <div class="insight-item">
+                  <div class="insight-value">32%</div>
+                  <div class="insight-label">Goal Achievement</div>
+                </div>
+                <div class="insight-item">
+                  <div class="insight-value">68%</div>
+                  <div class="insight-label">Session Completion</div>
+                </div>
+                <div class="insight-item">
+                  <div class="insight-value">85%</div>
+                  <div class="insight-label">Dashboard Engagement</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Chat Floating Bubble (Loaded Dynamically) -->
+        <div data-ai-chat-container></div>
+      </main>
+    </div>
+
+        <!-- Footer (Loaded Dynamically) -->
+    <div data-footer-container></div>
+  </body>
+</html>

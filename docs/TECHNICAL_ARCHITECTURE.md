@@ -7,93 +7,109 @@ This document outlines the comprehensive technical architecture of the elite-lev
 ## System Architecture Overview
 
 ### **Architecture Pattern: Modern Full-Stack with AI Integration**
-- **Frontend**: React 18 + Vite + TypeScript (SPA with PWA capabilities)
+
+- **Frontend**: Angular 21 + PrimeNG 21 + TypeScript (SPA with PWA capabilities)
 - **Backend**: Node.js + Express with RESTful API design
-- **Database**: PostgreSQL with Drizzle ORM for type-safe queries
+- **Database**: Supabase PostgreSQL with optimized connection pooling
 - **AI/ML**: Evidence-based recommendation engines with 120+ study integration
-- **Real-time**: WebSocket connections for live updates
+- **Real-time**: Supabase Realtime subscriptions for live updates
 - **Caching**: Multi-layer caching strategy for performance optimization
 
 ## Frontend Architecture
 
-### **React 18 Implementation (Professional Grade)**
+### **Angular 21 + PrimeNG 21 Implementation (Professional Grade)**
 
 ```typescript
 // Component Architecture Example
-interface DashboardProps {
-  userId: string;
-  olympicData: OlympicQualificationData;
-  performanceMetrics: PerformanceMetrics[];
-  teamChemistry: TeamChemistryAnalysis;
-}
+@Component({
+  selector: 'app-dashboard',
+  standalone: true,
+  imports: [CommonModule, PrimeNGModules],
+  templateUrl: './dashboard.component.html',
+  styleUrls: ['./dashboard.component.scss']
+})
+export class DashboardComponent {
+  userId = signal<string>('');
+  olympicData = signal<OlympicQualificationData | null>(null);
+  performanceMetrics = signal<PerformanceMetrics[]>([]);
+  teamChemistry = signal<TeamChemistryAnalysis | null>(null);
 
-const DashboardPage: React.FC<DashboardProps> = ({
-  userId,
-  olympicData,
-  performanceMetrics,
-  teamChemistry
-}) => {
-  // 800+ lines of sophisticated implementation
-  // Real-time data integration
-  // Advanced state management
-  // Olympic qualification tracking
-  // AI coaching integration
-};
+  constructor(
+    private performanceService: PerformanceDataService,
+    private authService: AuthService
+  ) {
+    // 800+ lines of sophisticated implementation
+    // Real-time data integration
+    // Advanced state management with Signals
+    // Olympic qualification tracking
+    // AI coaching integration
+  }
+}
 ```
 
 ### **Technology Stack**
-- **Framework**: React 18 with Concurrent Features
-- **Build System**: Vite for fast development and optimized builds
+
+- **Framework**: Angular 19 (Standalone Components)
+- **UI Library**: PrimeNG 19+ with comprehensive component suite
+- **Build System**: Angular CLI with ESBuild for fast builds
 - **Type Safety**: TypeScript with strict type checking
-- **State Management**: Zustand for global state + React Query for server state
-- **UI Components**: Radix UI primitives + Custom design system
-- **Styling**: Tailwind CSS + CSS-in-JS for dynamic styles
-- **Testing**: Vitest + React Testing Library + Playwright E2E
+- **State Management**: Angular Signals + RxJS for reactive state
+- **UI Components**: PrimeNG components + Custom design system
+- **Styling**: SCSS with CSS Custom Properties (Design Tokens)
+- **Testing**: Angular Testing Utilities + Vitest + Playwright E2E
 
 ### **Component Architecture**
 
-#### **Atomic Design Structure**
+#### **Angular Feature-Based Structure**
+
 ```
-src/components/
-├── atoms/
-│   ├── Button.tsx           # Professional button components
-│   ├── Input.tsx            # Form input components  
-│   ├── Badge.tsx            # Status and achievement badges
-│   └── ProgressBar.tsx      # Training progress indicators
-├── molecules/
-│   ├── MetricCard.tsx       # Performance metric displays
-│   ├── TrainingSession.tsx  # Individual training components
-│   ├── TeamMember.tsx       # Team roster components
-│   └── ChemistryIndicator.tsx # Team relationship displays
-├── organisms/
-│   ├── OlympicTracker.tsx   # LA28 qualification system
-│   ├── PerformanceDashboard.tsx # Analytics overview
-│   ├── SocialFeed.tsx       # Community interaction system
-│   └── TournamentBracket.tsx # Competition management
-└── templates/
-    ├── DashboardLayout.tsx  # Main app layout
-    ├── TrainingLayout.tsx   # Training-specific layout
-    └── CommunityLayout.tsx  # Social features layout
+angular/src/app/
+├── core/                    # Core services, guards, interceptors
+│   ├── services/
+│   ├── guards/
+│   └── interceptors/
+├── shared/                  # Shared components and utilities
+│   ├── components/
+│   │   ├── header/          # Header component
+│   │   ├── sidebar/         # Sidebar navigation
+│   │   ├── layout/          # Main layout components
+│   │   └── performance-dashboard/ # Performance widgets
+│   ├── directives/
+│   └── pipes/
+└── features/                # Feature modules
+    ├── auth/                # Authentication (Login, Register)
+    ├── dashboard/           # Main dashboard
+    ├── training/            # Training management
+    ├── analytics/           # Analytics and reporting
+    ├── roster/             # Team roster management
+    ├── tournaments/        # Tournament system
+    ├── community/          # Community features
+    └── wellness/           # Wellness tracking
 ```
 
 ### **Advanced Frontend Features**
 
 #### **Real-Time Data Integration**
+
 ```typescript
-// WebSocket integration for live updates
-const useRealTimeUpdates = (userId: string) => {
-  const [socket, setSocket] = useState<WebSocket | null>(null);
+// Supabase Realtime integration for live updates
+@Injectable({ providedIn: 'root' })
+export class RealtimeSyncService {
+  private supabase = inject(SupabaseClient);
   
-  useEffect(() => {
-    const ws = new WebSocket(`ws://localhost:3001/athletes/${userId}`);
-    
-    ws.onmessage = (event) => {
-      const update = JSON.parse(event.data);
-      // Handle Olympic qualification updates
-      // Process team chemistry changes
-      // Update performance metrics
-    };
-    
+  subscribeToUpdates(userId: string): Observable<any> {
+    return this.supabase
+      .channel(`athletes:${userId}`)
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'performance_metrics' },
+        (payload) => {
+          // Handle Olympic qualification updates
+          // Process team chemistry changes
+          // Update performance metrics
+        }
+      )
+      .subscribe();
+
     setSocket(ws);
     return () => ws.close();
   }, [userId]);
@@ -127,17 +143,17 @@ router.get('/api/athletes/:id/olympic-status', async (req, res) => {
     const qualificationProbability = await calculateOlympicProbability({
       performance: performanceData,
       ranking: rankingData,
-      progress: qualificationData
+      progress: qualificationData,
     });
-    
+
     res.json({
       probability: qualificationProbability,
       currentRank: rankingData.worldRank,
       nextMilestone: qualificationData.nextMilestone,
-      confidence: qualificationProbability.confidence
+      confidence: qualificationProbability.confidence,
     });
   } catch (error) {
-    res.status(500).json({ error: 'Olympic status calculation failed' });
+    res.status(500).json({ error: "Olympic status calculation failed" });
   }
 });
 ```
@@ -162,16 +178,16 @@ router.get('/api/athletes/:id/olympic-status', async (req, res) => {
 
 ```typescript
 // Core API Routes
-app.use('/api/auth', authRoutes);           // Authentication system
-app.use('/api/athletes', athleteRoutes);    // Athlete management
-app.use('/api/training', trainingRoutes);   // Training programs
-app.use('/api/nutrition', nutritionRoutes); // Nutrition tracking
-app.use('/api/community', communityRoutes); // Social features
-app.use('/api/tournaments', tournamentRoutes); // Competition management
-app.use('/api/analytics', analyticsRoutes); // Performance analytics
-app.use('/api/algorithms', algorithmRoutes); // AI/ML services
-app.use('/api/olympic', olympicRoutes);     // LA28 qualification
-app.use('/api/wearables', wearablesRoutes); // Device integration
+app.use("/api/auth", authRoutes); // Authentication system
+app.use("/api/athletes", athleteRoutes); // Athlete management
+app.use("/api/training", trainingRoutes); // Training programs
+app.use("/api/nutrition", nutritionRoutes); // Nutrition tracking
+app.use("/api/community", communityRoutes); // Social features
+app.use("/api/tournaments", tournamentRoutes); // Competition management
+app.use("/api/analytics", analyticsRoutes); // Performance analytics
+app.use("/api/algorithms", algorithmRoutes); // AI/ML services
+app.use("/api/olympic", olympicRoutes); // LA28 qualification
+app.use("/api/wearables", wearablesRoutes); // Device integration
 ```
 
 ## Database Architecture
@@ -255,19 +271,19 @@ interface RecommendationEngine {
   generateTrainingRecommendation(
     athleteProfile: AthleteProfile,
     currentPerformance: PerformanceMetrics,
-    olympicGoals: OlympicGoals
+    olympicGoals: OlympicGoals,
   ): Promise<TrainingRecommendation>;
-  
+
   // Team chemistry analysis
   analyzeTeamChemistry(
     teamMembers: TeamMember[],
-    interactionHistory: Interaction[]
+    interactionHistory: Interaction[],
   ): Promise<ChemistryAnalysis>;
-  
+
   // Performance prediction
   predictPerformance(
     historicalData: PerformanceData[],
-    trainingPlan: TrainingPlan
+    trainingPlan: TrainingPlan,
   ): Promise<PerformancePrediction>;
 }
 ```
@@ -294,16 +310,16 @@ class PerformanceAnalytics {
   async processAthleteData(athleteId: string): Promise<AnalysisResults> {
     // Data collection from multiple sources
     const rawData = await this.collectMultiSourceData(athleteId);
-    
+
     // Data cleaning and validation
     const cleanData = await this.cleanAndValidateData(rawData);
-    
+
     // Feature engineering
     const features = await this.extractFeatures(cleanData);
-    
+
     // Model application
     const predictions = await this.applyModels(features);
-    
+
     // Results interpretation
     return this.interpretResults(predictions);
   }
@@ -318,24 +334,23 @@ class PerformanceAnalytics {
 // Real-time event handling
 class RealTimeManager {
   private wss: WebSocket.Server;
-  
   constructor() {
     this.wss = new WebSocket.Server({ port: 3001 });
     this.setupEventHandlers();
   }
-  
+
   setupEventHandlers() {
     // Olympic qualification updates
-    this.on('olympic_update', this.broadcastOlympicUpdate);
-    
+    this.on("olympic_update", this.broadcastOlympicUpdate);
+
     // Team chemistry changes
-    this.on('chemistry_update', this.broadcastChemistryUpdate);
-    
+    this.on("chemistry_update", this.broadcastChemistryUpdate);
+
     // Performance milestones
-    this.on('milestone_achieved', this.broadcastMilestone);
-    
+    this.on("milestone_achieved", this.broadcastMilestone);
+
     // Tournament results
-    this.on('tournament_update', this.broadcastTournamentUpdate);
+    this.on("tournament_update", this.broadcastTournamentUpdate);
   }
 }
 ```
@@ -357,10 +372,10 @@ interface WearablesIntegration {
   appleWatch: AppleHealthKitIntegration;
   fitbit: FitbitAPIIntegration;
   garmin: GarminConnectIQIntegration;
-  
+
   // Data synchronization
   syncDeviceData(deviceType: DeviceType, userId: string): Promise<void>;
-  
+
   // Real-time monitoring
   startRealTimeMonitoring(userId: string): Promise<MonitoringSession>;
 }
@@ -447,23 +462,24 @@ testing:
 
 ### **Frontend Technology Choices**
 
-| Technology | Rationale | Alternatives Considered |
-|-----------|-----------|------------------------|
-| React 18 | Mature ecosystem, concurrent features, Olympic-grade performance | Vue.js, Angular, Svelte |
-| TypeScript | Type safety for complex sports data models | JavaScript, Flow |
-| Vite | Fast development and optimized builds | Create React App, Webpack |
-| Tailwind CSS | Rapid UI development with consistent design | Styled Components, Emotion |
-| Zustand | Lightweight state management for real-time updates | Redux, Context API |
+| Technology   | Rationale                                                        | Alternatives Considered    |
+| ------------ | ---------------------------------------------------------------- | -------------------------- |
+| Angular 21    | Enterprise-grade framework, standalone components, signals       | Vue.js, Svelte      |
+| PrimeNG 21   | Production-ready UI components with comprehensive theming        | Material UI, Ant Design   |
+| TypeScript   | Type safety for complex sports data models                       | JavaScript, Flow           |
+| Angular CLI  | Fast development and optimized builds with ESBuild                | Vite, Webpack              |
+| SCSS + Tokens| Design system with semantic tokens for consistent theming         | Tailwind CSS, Styled Components |
+| Angular Signals | Reactive state management with fine-grained reactivity          | RxJS       |
 
 ### **Backend Technology Choices**
 
-| Technology | Rationale | Alternatives Considered |
-|-----------|-----------|------------------------|
-| Node.js | JavaScript ecosystem consistency, excellent performance | Python Django, Ruby Rails |
-| Express | Lightweight, flexible, extensive middleware ecosystem | Fastify, Koa.js, NestJS |
-| PostgreSQL | ACID compliance, JSONB support, excellent performance | MongoDB, MySQL, CockroachDB |
-| Drizzle ORM | Type-safe queries, excellent PostgreSQL integration | Prisma, TypeORM, Sequelize |
-| Redis | High-performance caching and session management | Memcached, DynamoDB |
+| Technology  | Rationale                                               | Alternatives Considered     |
+| ----------- | ------------------------------------------------------- | --------------------------- |
+| Node.js     | JavaScript ecosystem consistency, excellent performance | Python Django, Ruby Rails   |
+| Express     | Lightweight, flexible, extensive middleware ecosystem   | Fastify, Koa.js, NestJS     |
+| PostgreSQL  | ACID compliance, JSONB support, excellent performance   | MongoDB, MySQL, CockroachDB |
+| Supabase Client | Type-safe queries, excellent PostgreSQL integration     | Prisma, TypeORM, Sequelize  |
+| Redis       | High-performance caching and session management         | Memcached, DynamoDB         |
 
 ## Future Architecture Considerations
 
@@ -494,5 +510,6 @@ This technical architecture represents **enterprise-grade sports technology** ca
 The architecture is production-ready for elite sports applications and exceeds the technical sophistication of leading sports training platforms.
 
 ---
-*Architecture Analysis Date: August 7, 2025*
-*Technical specifications based on complete codebase analysis*
+
+_Architecture Analysis Date: August 7, 2025_
+_Technical specifications based on complete codebase analysis_

@@ -44,6 +44,11 @@ pids
 coverage
 *.lcov
 
+# Playwright
+.playwright/
+playwright-report/
+test-results/
+
 # nyc test coverage
 .nyc_output
 
@@ -78,3 +83,22 @@ jspm_packages/
 # Temporary folders
 tmp/
 temp/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Backup files
+*.backup
+*.bak
+*.orig
+
+# Hot reload development files
+flagfit-pro-deploy.tar.gz

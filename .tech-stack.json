@@ -1,0 +1,29 @@
+{
+  "primaryStack": {
+    "framework": "Angular",
+    "version": "19",
+    "uiLibrary": "PrimeNG",
+    "uiLibraryVersion": "19",
+    "language": "TypeScript",
+    "styling": "SCSS with CSS Custom Properties",
+    "stateManagement": "Angular Signals + RxJS",
+    "buildTool": "Angular CLI with ESBuild"
+  },
+  "backend": {
+    "runtime": "Node.js",
+    "framework": "Express",
+    "database": "Neon PostgreSQL",
+    "functions": "Netlify Functions",
+    "realtime": "Supabase Realtime"
+  },
+  "legacy": {
+    "note": "Root directory contains legacy vanilla HTML/CSS/JS files",
+    "status": "reference-only",
+    "primary": false
+  },
+  "documentation": {
+    "primary": "Angular 19 + PrimeNG",
+    "migration": "Migrating from vanilla HTML/CSS/JS to Angular 19 + PrimeNG"
+  }
+}
+

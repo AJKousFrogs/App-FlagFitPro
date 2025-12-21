@@ -1,0 +1,247 @@
+/**
+ * Angular 21 Form Field Component
+ * 
+ * Reusable form field component using signals
+ * Works with both reactive forms and signal-based forms
+ */
+
+import { Component, input, signal, computed, forwardRef } from '@angular/core';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+
+export interface FormFieldConfig {
+  label: string;
+  type?: string;
+  placeholder?: string;
+  required?: boolean;
+  disabled?: boolean;
+  autocomplete?: string;
+  error?: string | null;
+  hint?: string;
+  ariaLabel?: string;
+  ariaDescribedBy?: string;
+}
+
+@Component({
+  selector: 'app-form-field',
+  standalone: true,
+  imports: [CommonModule],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => FormFieldComponent),
+      multi: true,
+    },
+  ],
+  template: `
+    <div class="form-field" [class.has-error]="hasError()">
+      <label 
+        [for]="fieldId()" 
+        [class.required]="config().required"
+        [attr.aria-label]="config().ariaLabel || config().label">
+        {{ config().label }}
+      </label>
+      
+      @if (config().type === 'textarea') {
+        <textarea
+          [id]="fieldId()"
+          [placeholder]="config().placeholder || ''"
+          [disabled]="config().disabled || disabled()"
+          [autocomplete]="config().autocomplete || 'off'"
+          [value]="value()"
+          (input)="onInput($any($event.target).value)"
+          (blur)="onBlur()"
+          [class.error]="hasError()"
+          [attr.aria-invalid]="hasError()"
+          [attr.aria-required]="config().required"
+          [attr.aria-describedby]="getAriaDescribedBy()"
+          [attr.aria-label]="config().ariaLabel"
+        ></textarea>
+      } @else {
+        <input
+          [id]="fieldId()"
+          [type]="config().type || 'text'"
+          [placeholder]="config().placeholder || ''"
+          [disabled]="config().disabled || disabled()"
+          [autocomplete]="config().autocomplete || 'off'"
+          [value]="value()"
+          (input)="onInput($any($event.target).value)"
+          (blur)="onBlur()"
+          [class.error]="hasError()"
+          [attr.aria-invalid]="hasError()"
+          [attr.aria-required]="config().required"
+          [attr.aria-describedby]="getAriaDescribedBy()"
+          [attr.aria-label]="config().ariaLabel"
+        />
+      }
+
+      @if (config().hint && !hasError()) {
+        <small 
+          [id]="fieldId() + '-hint'" 
+          class="hint"
+          [attr.aria-live]="'polite'">
+          {{ config().hint }}
+        </small>
+      }
+
+      @if (hasError()) {
+        <small 
+          [id]="fieldId() + '-error'" 
+          class="error-message" 
+          role="alert"
+          [attr.aria-live]="'polite'">
+          {{ errorMessage() }}
+        </small>
+      }
+    </div>
+  `,
+  styles: [`
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    label {
+      font-weight: 600;
+      color: var(--p-text-color);
+      font-size: 0.875rem;
+    }
+
+    label.required::after {
+      content: " *";
+      color: var(--p-error-color);
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid var(--p-surface-border);
+      border-radius: var(--p-border-radius);
+      font-size: 1rem;
+      transition: border-color 0.2s;
+    }
+
+    input:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--p-primary-color);
+    }
+
+    input.error,
+    textarea.error {
+      border-color: var(--p-error-color);
+    }
+
+    input:disabled,
+    textarea:disabled {
+      background-color: var(--p-surface-100);
+      cursor: not-allowed;
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .hint {
+      color: var(--p-text-color-secondary);
+      font-size: 0.75rem;
+    }
+
+    .error-message {
+      color: var(--p-error-color);
+      font-size: 0.75rem;
+    }
+
+    .form-field.has-error input,
+    .form-field.has-error textarea {
+      border-color: var(--p-error-color);
+    }
+
+    input:focus-visible,
+    textarea:focus-visible {
+      outline: 2px solid var(--p-primary-color);
+      outline-offset: 2px;
+    }
+
+    input[aria-invalid="true"],
+    textarea[aria-invalid="true"] {
+      border-color: var(--p-error-color);
+    }
+
+    input:disabled,
+    textarea:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+  `],
+})
+export class FormFieldComponent implements ControlValueAccessor {
+  // Angular 21: Use input() signal instead of @Input()
+  config = input<FormFieldConfig>({ label: '' });
+  fieldId = input<string>('');
+  
+  // Value remains as signal for ControlValueAccessor compatibility
+  value = signal<string>('');
+  disabled = signal<boolean>(false);
+  touched = signal<boolean>(false);
+
+  private onChange = (value: string) => {};
+  private onTouched = () => {};
+
+  hasError = computed(() => {
+    return this.touched() && !!this.config().error;
+  });
+
+  errorMessage = computed(() => {
+    return this.config().error || '';
+  });
+
+  // Accessibility: Get aria-describedby value
+  getAriaDescribedBy(): string | null {
+    const ids: string[] = [];
+    
+    if (this.config().ariaDescribedBy) {
+      ids.push(this.config().ariaDescribedBy);
+    }
+    
+    if (this.hasError()) {
+      ids.push(this.fieldId() + '-error');
+    } else if (this.config().hint) {
+      ids.push(this.fieldId() + '-hint');
+    }
+    
+    return ids.length > 0 ? ids.join(' ') : null;
+  }
+
+  onInput(value: string): void {
+    this.value.set(value);
+    this.onChange(value);
+  }
+
+  onBlur(): void {
+    this.touched.set(true);
+    this.onTouched();
+  }
+
+  // ControlValueAccessor implementation
+  writeValue(value: string): void {
+    this.value.set(value || '');
+  }
+
+  registerOnChange(fn: (value: string) => void): void {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn: () => void): void {
+    this.onTouched = fn;
+  }
+
+  setDisabledState(isDisabled: boolean): void {
+    this.disabled.set(isDisabled);
+  }
+}
+

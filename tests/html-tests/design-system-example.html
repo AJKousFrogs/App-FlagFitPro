@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Design System Example - FlagFit Pro</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <!-- New Modular CSS Architecture -->
+    <link rel="stylesheet" href="./src/css/main.css" />
+  </head>
+  <body>
+    <!-- Mobile Menu Toggle -->
+    <button
+      class="mobile-menu-toggle btn-icon lg:hidden"
+      id="mobile-toggle"
+      aria-label="Toggle menu"
+    >
+      ☰
+    </button>
+
+    <!-- Sidebar Overlay for Mobile -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <div class="dashboard-container">
+      <!-- Sidebar -->
+      <aside class="sidebar" id="sidebar">
+        <nav class="nav">
+          <!-- Brand Section -->
+          <div class="nav-section">
+            <div class="p-6 border-b">
+              <h2 class="text-xl font-bold text-primary">
+                <i
+                  data-lucide="activity"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    vertical-align: middle;
+                  "
+                ></i>
+                FlagFit Pro
+              </h2>
+              <p class="text-sm text-muted mt-1">Olympic Training System</p>
+            </div>
+          </div>
+
+          <!-- Main Navigation -->
+          <div class="nav-section">
+            <div class="nav-section-title">Main</div>
+            <a href="/dashboard.html" class="nav-item active">
+              <i
+                data-lucide="bar-chart-3"
+                style="width: 20px; height: 20px"
+              ></i>
+              Dashboard
+            </a>
+            <a href="/training.html" class="nav-item">
+              <i data-lucide="dumbbell" style="width: 20px; height: 20px"></i>
+              Training
+            </a>
+            <a href="/tournaments.html" class="nav-item">
+              <i data-lucide="trophy" style="width: 20px; height: 20px"></i>
+              Tournaments
+            </a>
+            <a href="/community.html" class="nav-item">
+              <i data-lucide="users" style="width: 20px; height: 20px"></i>
+              Community
+            </a>
+          </div>
+
+          <!-- Tools Section -->
+          <div class="nav-section">
+            <div class="nav-section-title">Tools</div>
+            <a href="/analytics.html" class="nav-item">
+              <i
+                data-lucide="bar-chart-3"
+                style="width: 20px; height: 20px"
+              ></i>
+              Analytics
+            </a>
+            <a href="/chat.html" class="nav-item">
+              <i
+                data-lucide="message-circle"
+                style="width: 20px; height: 20px"
+              ></i>
+              Team Chat
+            </a>
+            <a href="/coach.html" class="nav-item">
+              <i data-lucide="target" style="width: 20px; height: 20px"></i>
+              Coach Dashboard
+            </a>
+          </div>
+
+          <!-- Account Section -->
+          <div class="nav-section">
+            <div class="nav-section-title">Account</div>
+            <a href="/settings.html" class="nav-item">
+              <i data-lucide="settings" style="width: 20px; height: 20px"></i>
+              Settings
+            </a>
+            <a href="/login.html" class="nav-item">
+              <span class="nav-icon">🚪</span>
+              Logout
+            </a>
+          </div>
+        </nav>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- Page Header -->
+        <header class="flex items-center justify-between mb-8">
+          <div>
+            <h1 class="text-4xl font-extrabold text-primary mb-2">
+              Design System Components
+            </h1>
+            <p class="text-muted">Examples of all UI components and patterns</p>
+          </div>
+          <div class="flex gap-3">
+            <button class="btn btn-ghost">
+              <span
+                ><i
+                  data-lucide="bell"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    display: inline-block;
+                    vertical-align: middle;
+                  "
+                ></i
+              ></span>
+              Notifications
+            </button>
+            <button class="btn btn-primary">
+              <span>👤</span>
+              Profile
+            </button>
+          </div>
+        </header>
+
+        <!-- Button Examples -->
+        <section class="mb-8">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Button Components</h3>
+            </div>
+            <div class="card-content">
+              <div class="flex flex-wrap gap-3 mb-6">
+                <button class="btn btn-primary">Primary Button</button>
+                <button class="btn btn-secondary">Secondary Button</button>
+                <button class="btn btn-success">Success Button</button>
+                <button class="btn btn-danger">Danger Button</button>
+                <button class="btn btn-ghost">Ghost Button</button>
+              </div>
+
+              <div class="flex flex-wrap gap-3 mb-6">
+                <button class="btn btn-primary btn-sm">Small</button>
+                <button class="btn btn-primary">Normal</button>
+                <button class="btn btn-primary btn-lg">Large</button>
+              </div>
+
+              <div class="flex gap-3">
+                <button class="btn-icon">🏃</button>
+                <button class="btn-icon">
+                  <i
+                    data-lucide="settings"
+                    style="
+                      width: 16px;
+                      height: 16px;
+                      display: inline-block;
+                      vertical-align: middle;
+                    "
+                  ></i>
+                </button>
+                <button class="btn-icon">❤️</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Card Examples -->
+        <section class="mb-8">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="card hover-lift">
+              <div class="card-header">
+                <h4 class="card-title">Training Progress</h4>
+                <span class="text-2xl">🏃</span>
+              </div>
+              <div class="card-content">
+                <div class="text-3xl font-bold text-primary mb-2">87%</div>
+                <p class="text-muted">Weekly goal completion</p>
+              </div>
+            </div>
+
+            <div class="card card-gradient hover-lift">
+              <div class="card-header">
+                <h4 class="card-title">Performance Score</h4>
+                <span class="text-2xl">⭐</span>
+              </div>
+              <div class="card-content">
+                <div class="text-3xl font-bold mb-2">94</div>
+                <p class="opacity-90">Elite athlete level</p>
+              </div>
+            </div>
+
+            <div class="card hover-lift">
+              <div class="card-header">
+                <h4 class="card-title">Team Ranking</h4>
+                <span class="text-2xl"
+                  ><i
+                    data-lucide="trophy"
+                    style="
+                      width: 16px;
+                      height: 16px;
+                      display: inline-block;
+                      vertical-align: middle;
+                    "
+                  ></i
+                ></span>
+              </div>
+              <div class="card-content">
+                <div class="text-3xl font-bold text-success mb-2">#3</div>
+                <p class="text-muted">In regional league</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Form Examples -->
+        <section class="mb-8">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Form Components</h3>
+            </div>
+            <div class="card-content">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <div class="form-group">
+                    <label class="form-label">Player Name</label>
+                    <input
+                      type="text"
+                      class="form-input"
+                      placeholder="Enter your name"
+                    />
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">Position</label>
+                    <select class="form-select">
+                      <option>Select position</option>
+                      <option>Quarterback</option>
+                      <option>Wide Receiver</option>
+                      <option>Running Back</option>
+                      <option>Defensive Back</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">Training Goals</label>
+                    <textarea
+                      class="form-textarea"
+                      placeholder="Describe your training objectives..."
+                    ></textarea>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="form-group">
+                    <label class="form-label">Email (Error State)</label>
+                    <input
+                      type="email"
+                      class="form-input error"
+                      value="invalid-email"
+                    />
+                    <span class="form-error"
+                      >Please enter a valid email address</span
+                    >
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">Password (Success State)</label>
+                    <input
+                      type="password"
+                      class="form-input success"
+                      value="••••••••"
+                    />
+                    <span class="form-success"
+                      >Password meets all requirements</span
+                    >
+                  </div>
+
+                  <div class="flex gap-3 mt-6">
+                    <button class="btn btn-primary">Save Changes</button>
+                    <button class="btn btn-ghost">Cancel</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Typography Examples -->
+        <section class="mb-8">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Typography System</h3>
+            </div>
+            <div class="card-content">
+              <h1 class="mb-4">Heading 1 - Olympic Training Excellence</h1>
+              <h2 class="mb-4">Heading 2 - Performance Analytics Dashboard</h2>
+              <h3 class="mb-4">Heading 3 - Training Session Summary</h3>
+              <h4 class="mb-4">Heading 4 - Weekly Progress Report</h4>
+              <h5 class="mb-4">Heading 5 - Daily Workout Stats</h5>
+              <h6 class="mb-4">Heading 6 - Exercise Details</h6>
+
+              <p class="mb-4">
+                Regular paragraph text with proper line height and spacing. This
+                demonstrates the base typography used throughout the FlagFit Pro
+                application for optimal readability and professional appearance.
+              </p>
+
+              <p class="text-muted mb-4">
+                Muted text for secondary information and supporting details.
+              </p>
+
+              <div class="flex flex-wrap gap-4">
+                <span class="text-xs">Extra Small Text</span>
+                <span class="text-sm">Small Text</span>
+                <span class="text-base">Base Text</span>
+                <span class="text-lg">Large Text</span>
+                <span class="text-xl">Extra Large Text</span>
+                <span class="text-2xl">2X Large Text</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Color Examples -->
+        <section class="mb-8">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Color Palette</h3>
+            </div>
+            <div class="card-content">
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="text-center">
+                  <div
+                    class="w-full h-20 rounded-lg mb-2"
+                    style="background: var(--primary-gradient)"
+                  ></div>
+                  <div class="text-sm font-medium">Primary Gradient</div>
+                </div>
+                <div class="text-center">
+                  <div
+                    class="w-full h-20 bg-green-500 rounded-lg mb-2"
+                    style="background: var(--accent-green)"
+                  ></div>
+                  <div class="text-sm font-medium">Success Green</div>
+                </div>
+                <div class="text-center">
+                  <div
+                    class="w-full h-20 bg-red-500 rounded-lg mb-2"
+                    style="background: var(--error-red)"
+                  ></div>
+                  <div class="text-sm font-medium">Error Red</div>
+                </div>
+                <div class="text-center">
+                  <div
+                    class="w-full h-20 bg-yellow-500 rounded-lg mb-2"
+                    style="background: var(--warning-yellow)"
+                  ></div>
+                  <div class="text-sm font-medium">Warning Yellow</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Utility Classes -->
+        <section class="mb-8">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Utility Classes</h3>
+            </div>
+            <div class="card-content">
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                  <h5 class="font-semibold mb-3">Spacing</h5>
+                  <div class="space-y-2 text-sm">
+                    <div>.m-4 (margin)</div>
+                    <div>.p-6 (padding)</div>
+                    <div>.mt-8 (margin-top)</div>
+                    <div>.mb-4 (margin-bottom)</div>
+                  </div>
+                </div>
+                <div>
+                  <h5 class="font-semibold mb-3">Layout</h5>
+                  <div class="space-y-2 text-sm">
+                    <div>.flex (display: flex)</div>
+                    <div>.items-center (align items)</div>
+                    <div>.justify-between (justify)</div>
+                    <div>.w-full (width: 100%)</div>
+                  </div>
+                </div>
+                <div>
+                  <h5 class="font-semibold mb-3">Effects</h5>
+                  <div class="space-y-2 text-sm">
+                    <div>.shadow-md (box shadow)</div>
+                    <div>.rounded-xl (border radius)</div>
+                    <div>.hover-lift (hover effect)</div>
+                    <div>.animate-fade-in (animation)</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- JavaScript for Mobile Menu -->
+    <script>
+      const mobileToggle = document.getElementById("mobile-toggle");
+      const sidebar = document.getElementById("sidebar");
+      const sidebarOverlay = document.getElementById("sidebar-overlay");
+
+      function toggleMobileMenu() {
+        sidebar.classList.toggle("mobile-open");
+        sidebarOverlay.classList.toggle("active");
+      }
+
+      mobileToggle.addEventListener("click", toggleMobileMenu);
+      sidebarOverlay.addEventListener("click", toggleMobileMenu);
+
+      // Close mobile menu when clicking nav links
+      document.querySelectorAll(".nav-item").forEach((link) => {
+        link.addEventListener("click", () => {
+          if (window.innerWidth <= 1024) {
+            toggleMobileMenu();
+          }
+        });
+      });
+
+      // Handle window resize
+      window.addEventListener("resize", () => {
+        if (window.innerWidth > 1024) {
+          sidebar.classList.remove("mobile-open");
+          sidebarOverlay.classList.remove("active");
+        }
+      });
+    </script>
+
+    <!-- Footer -->
+    <footer role="contentinfo" class="main-footer">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>FlagFit Pro</h3>
+          <p>Professional flag football training and analytics platform</p>
+        </div>
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <nav aria-label="Footer navigation">
+            <ul>
+              <li><a href="/dashboard.html">Dashboard</a></li>
+              <li><a href="/training.html">Training</a></li>
+              <li><a href="/roster.html">Roster</a></li>
+              <li><a href="/analytics.html">Analytics</a></li>
+            </ul>
+          </nav>
+        </div>
+        <div class="footer-section">
+          <h4>Support</h4>
+          <nav aria-label="Support links">
+            <ul>
+              <li><a href="/settings.html">Settings</a></li>
+              <li><a href="/community.html">Community</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 FlagFit Pro. All rights reserved.</p>
+      </div>
+    </footer>
+  </body>
+</html>

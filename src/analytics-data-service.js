@@ -366,7 +366,7 @@ class AnalyticsDataService {
     // Format position performance data for Chart.js
     formatPositionPerformanceData(data) {
         try {
-            const positions = data.positions || ['Quarterback', 'Wide Receiver', 'Running Back', 'Defensive Back', 'Rusher'];
+            const positions = data.positions || ['Quarterback', 'Wide Receiver', 'Center', 'Defensive Back', 'Blitzer'];
             
             return {
                 labels: positions,
@@ -573,7 +573,7 @@ class AnalyticsDataService {
     getFallbackPositionPerformanceData() {
         try {
             return {
-                labels: ['Quarterback', 'Wide Receiver', 'Running Back', 'Defensive Back', 'Rusher'],
+                labels: ['Quarterback', 'Wide Receiver', 'Center', 'Defensive Back', 'Blitzer'],
                 datasets: [{
                     label: 'Current Performance',
                     data: [87, 92, 89, 85, 78],

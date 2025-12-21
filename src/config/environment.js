@@ -1,132 +1,186 @@
 /**
  * Environment Configuration
- * Validates and provides typed access to environment variables
+ * Centralized configuration for different deployment environments
  */
 
-class EnvironmentConfig {
-  constructor() {
-    this.config = this.loadConfig();
-    this.validateConfig();
+// Detect current environment
+const getEnvironment = () => {
+  const hostname = window.location.hostname;
+
+  // Production environments
+  if (
+    hostname.includes(".netlify.app") ||
+    hostname.includes("flagfit-pro.com")
+  ) {
+    return "production";
   }
 
-  loadConfig() {
-    return {
-      // App Configuration
-      app: {
-        name: import.meta.env.VITE_APP_NAME || 'FlagFit Pro',
-        version: import.meta.env.VITE_APP_VERSION || '1.0.0',
-        environment: import.meta.env.VITE_APP_ENVIRONMENT || 'development'
-      },
-
-      // API Configuration
-      api: {
-        pocketbaseUrl: import.meta.env.VITE_POCKETBASE_URL || import.meta.env.VITE_DATABASE_URL || (import.meta.env.DEV ? 'http://127.0.0.1:8090' : ''),
-        timeout: parseInt(import.meta.env.VITE_API_TIMEOUT) || 30000,
-        cacheTTL: parseInt(import.meta.env.VITE_CACHE_TTL) || 300000,
-        baseUrl: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001',
-        aiServiceUrl: import.meta.env.VITE_AI_SERVICE_URL || 'http://localhost:8080'
-      },
-
-      // Feature Flags
-      features: {
-        analytics: import.meta.env.VITE_ENABLE_ANALYTICS === 'true',
-        pushNotifications: import.meta.env.VITE_ENABLE_PUSH_NOTIFICATIONS === 'true',
-        wearableSync: import.meta.env.VITE_ENABLE_WEARABLE_SYNC === 'true'
-      },
-
-      // Development Configuration
-      dev: {
-        devMode: import.meta.env.VITE_DEV_MODE === 'true',
-        debugLogging: import.meta.env.VITE_DEBUG_LOGGING === 'true'
-      },
-
-      // Error Tracking - only load if enabled
-      sentry: {
-        dsn: import.meta.env.VITE_ENABLE_SENTRY === 'true' ? import.meta.env.VITE_SENTRY_DSN : null,
-        environment: import.meta.env.VITE_SENTRY_ENVIRONMENT || 'development'
-      }
-    };
+  // Staging environments
+  if (hostname.includes("staging") || hostname.includes("dev")) {
+    return "staging";
   }
 
-  validateConfig() {
-    const errors = [];
+  // Local development
+  if (
+    hostname === "localhost" ||
+    hostname === "127.0.0.1" ||
+    hostname.includes("192.168")
+  ) {
+    return "development";
+  }
 
-    // Validate required URLs - only in production
-    if (this.config.app.environment === 'production' && !this.isValidUrl(this.config.api.pocketbaseUrl)) {
-      errors.push('VITE_POCKETBASE_URL must be a valid URL');
+  // Default to development for safety
+  return "development";
+};
+
+const ENV = getEnvironment();
+
+// Helper to safely access process.env in browser
+const getEnvVar = (key, defaultValue = "") => {
+  // Check if process exists and has env property (Node.js environment)
+  if (typeof process !== "undefined" && process.env) {
+    return process.env[key] || defaultValue;
+  }
+  // For browser environment, check window._env or return default
+  if (typeof window !== "undefined" && window._env) {
+    return window._env[key] || defaultValue;
+  }
+  return defaultValue;
+};
+
+// Environment-specific configurations
+const configs = {
+  development: {
+    API_BASE_URL: getEnvVar("API_BASE_URL", ""), // Use Netlify Functions or configured API
+    DATABASE_URL: "http://localhost:5432",
+    ENABLE_MOCK_AUTH: false, // Use real authentication
+    ALLOW_UNAUTHENTICATED_DEV: getEnvVar("ALLOW_UNAUTHENTICATED_DEV", "false") === "true", // MUST be explicitly enabled
+    ENABLE_DEBUG_LOGS: true,
+    ENABLE_ANALYTICS: false,
+    YOUTUBE_API_KEY: getEnvVar("YOUTUBE_API_KEY", ""),
+    POCKETBASE_URL: getEnvVar("POCKETBASE_URL", "http://localhost:8090"),
+    NEON_DATABASE_URL: getEnvVar("NEON_DATABASE_URL", ""),
+    ENABLE_SECURE_STORAGE: false, // Disable for local dev
+  },
+
+  staging: {
+    API_BASE_URL: getEnvVar("REACT_APP_API_URL", ""), // Use Netlify Functions (relative URLs)
+    DATABASE_URL: getEnvVar("DATABASE_URL", ""),
+    ENABLE_MOCK_AUTH: false,
+    ALLOW_UNAUTHENTICATED_DEV: false, // Never allow in staging
+    ENABLE_DEBUG_LOGS: true,
+    ENABLE_ANALYTICS: true,
+    YOUTUBE_API_KEY: getEnvVar("YOUTUBE_API_KEY", ""),
+    POCKETBASE_URL: getEnvVar("POCKETBASE_URL", ""),
+    NEON_DATABASE_URL: getEnvVar("NEON_DATABASE_URL", ""),
+    ENABLE_SECURE_STORAGE: true,
+  },
+
+  production: {
+    API_BASE_URL: getEnvVar("REACT_APP_API_URL", ""), // Use Netlify Functions (relative URLs)
+    DATABASE_URL: getEnvVar("DATABASE_URL", ""),
+    ENABLE_MOCK_AUTH: false,
+    ALLOW_UNAUTHENTICATED_DEV: false, // NEVER allow in production
+    ENABLE_DEBUG_LOGS: false,
+    ENABLE_ANALYTICS: true,
+    YOUTUBE_API_KEY: getEnvVar("YOUTUBE_API_KEY", ""),
+    POCKETBASE_URL: getEnvVar("POCKETBASE_URL", ""),
+    NEON_DATABASE_URL: getEnvVar("NEON_DATABASE_URL", ""),
+    ENABLE_SECURE_STORAGE: true,
+  },
+};
+
+// Get current configuration
+const config = configs[ENV];
+
+// Validation for required environment variables
+const validateConfig = () => {
+  const warnings = [];
+
+  if (ENV === "production") {
+    // Note: DATABASE_URL and POCKETBASE_URL are backend-only variables
+    // They should be configured in Netlify Functions, not frontend
+    if (!config.API_BASE_URL) {
+      warnings.push("API_BASE_URL not configured, using default");
     }
-
-    // Validate numeric values
-    if (this.config.api.timeout < 1000) {
-      errors.push('VITE_API_TIMEOUT must be at least 1000ms');
-    }
-
-    if (this.config.api.cacheTTL < 60000) {
-      errors.push('VITE_CACHE_TTL must be at least 60000ms (1 minute)');
-    }
-
-    // Validate environment
-    const validEnvironments = ['development', 'staging', 'production', 'demo'];
-    if (!validEnvironments.includes(this.config.app.environment)) {
-      errors.push(`VITE_APP_ENVIRONMENT must be one of: ${validEnvironments.join(', ')}`);
-    }
-
-    // Skip Sentry DSN validation when Sentry is disabled
-    if (import.meta.env.VITE_ENABLE_SENTRY === 'true' && this.config.sentry.dsn && !this.isValidSentryDsn(this.config.sentry.dsn)) {
-      errors.push('VITE_SENTRY_DSN must be a valid Sentry DSN format');
-    }
-
-    if (errors.length > 0) {
-      console.error('Environment configuration errors:', errors);
-      if (this.config.app.environment === 'production') {
-        throw new Error(`Invalid environment configuration: ${errors.join(', ')}`);
-      }
-    }
   }
 
-  isValidUrl(string) {
-    try {
-      new URL(string);
-      return true;
-    } catch (_) {
-      return false;
-    }
+  // In development, validate more strictly
+  if (ENV === "development" && warnings.length > 0) {
+    // eslint-disable-next-line no-console
+    console.warn("⚠️ Environment configuration warnings:", warnings);
   }
+};
 
-  isValidSentryDsn(dsn) {
-    // Basic Sentry DSN format validation
-    const sentryDsnPattern = /^https:\/\/[a-f0-9]+@[a-z0-9.-]+\/\d+$/;
-    return sentryDsnPattern.test(dsn);
-  }
+// Feature flags based on environment
+const features = {
+  ENHANCED_ANALYTICS: true,
+  AI_PREDICTIONS: true,
+  TRAINING_MODULES: true,
+  WELLNESS_TRACKING: ENV !== "development", // Enable in staging/prod
+  SOCIAL_FEATURES: ENV === "production",
+  BETA_FEATURES: ENV !== "production",
+  ERROR_REPORTING: ENV !== "development",
+  PERFORMANCE_MONITORING: ENV !== "development",
+};
 
-  // Getters for easy access
-  get isProduction() {
-    return this.config.app.environment === 'production';
-  }
+// API endpoints configuration
+const apiEndpoints = {
+  AUTH: {
+    LOGIN: "/auth/login",
+    REGISTER: "/auth/register",
+    REFRESH: "/auth/refresh",
+    LOGOUT: "/auth/logout",
+  },
+  ANALYTICS: {
+    EVENTS: "/analytics/events",
+    PERFORMANCE: "/analytics/performance",
+    USER_BEHAVIOR: "/analytics/behavior",
+  },
+  TRAINING: {
+    SESSIONS: "/training/sessions",
+    PROGRAMS: "/training/programs",
+    EXERCISES: "/training/exercises",
+  },
+  WELLNESS: {
+    METRICS: "/wellness/metrics",
+    RECOMMENDATIONS: "/wellness/recommendations",
+  },
+};
 
-  get isDevelopment() {
-    return this.config.app.environment === 'development';
-  }
+// Security configuration
+const security = {
+  TOKEN_REFRESH_THRESHOLD: 5 * 60 * 1000, // 5 minutes before expiry
+  SESSION_TIMEOUT: 24 * 60 * 60 * 1000, // 24 hours
+  MAX_LOGIN_ATTEMPTS: 5,
+  LOCKOUT_DURATION: 15 * 60 * 1000, // 15 minutes
+  ENABLE_CSP: ENV !== "development",
+  ENABLE_HSTS: ENV === "production",
+};
 
-  get isStaging() {
-    return this.config.app.environment === 'staging';
-  }
+// Perform validation
+validateConfig();
 
-  get debugMode() {
-    return this.config.dev.devMode && this.config.dev.debugLogging;
-  }
+// Export configuration
+export { ENV, config, features, apiEndpoints, security, getEnvironment };
 
-  // Method to get configuration
-  getConfig() {
-    return this.config;
-  }
+export default {
+  ENV,
+  ...config,
+  features,
+  apiEndpoints,
+  security,
+};
 
-  // Method to get a specific configuration section
-  getSection(section) {
-    return this.config[section];
-  }
+// Log current environment (only in development)
+if (config.ENABLE_DEBUG_LOGS) {
+  // eslint-disable-next-line no-console
+  console.log(`🌍 Environment: ${ENV}`);
+  // eslint-disable-next-line no-console
+  console.log("📋 Configuration:", {
+    API_BASE_URL: config.API_BASE_URL,
+    ENABLE_MOCK_AUTH: config.ENABLE_MOCK_AUTH,
+    ENABLE_ANALYTICS: config.ENABLE_ANALYTICS,
+    features,
+  });
 }
-
-// Export singleton instance
-export const env = new EnvironmentConfig();
-export default env;

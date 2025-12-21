@@ -1,0 +1,26 @@
+{
+  "$schema": "https://modelcontextprotocol.io/schema.json",
+  "mcpServers": {
+    "context7-sports": {
+      "command": "npx",
+      "args": ["-y", "@context7/mcp-server@latest"],
+      "env": {
+        "CONTEXT7_API_KEY": "${CONTEXT7_API_KEY}",
+        "CONTEXT7_DOMAIN": "sports-science",
+        "CONTEXT7_CATEGORIES": "nutrition,training,recovery,psychology,biomechanics"
+      },
+      "description": "Context7 MCP Server - Sports science documentation and knowledge base for nutrition, training, recovery, psychology, and biomechanics",
+      "alwaysAllow": []
+    },
+    "sequential-thought": {
+      "command": "npx",
+      "args": ["-y", "@sequential-thought/mcp-server@latest"],
+      "env": {
+        "ST_REASONING_DEPTH": "3",
+        "ST_DOMAIN": "sports-coaching"
+      },
+      "description": "Sequential Thought MCP Server - Chain-of-thought reasoning framework for complex sports coaching decision making",
+      "alwaysAllow": []
+    }
+  }
+}

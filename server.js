@@ -1,608 +1,427 @@
-import express from 'express';
-import cors from 'cors';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import pg from 'pg';
-import dotenv from 'dotenv';
-import algorithmRoutes from './routes/algorithmRoutes.js';
-import dashboardRoutes from './routes/dashboardRoutes.js';
-import analyticsRoutes from './routes/analyticsRoutes.js';
+/* eslint-disable no-console */
+// Simple development server for Flag Football Training App
+// Serves static files with proper MIME types
 
-// Load environment variables
-dotenv.config();
+import express from "express";
+import path from "path";
+import cors from "cors";
+import { fileURLToPath } from "url";
 
-const { Pool } = pg;
+// ES module equivalent of __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Enhanced CORS configuration for better cross-browser support
-app.use(cors({
-  origin: [
-    'http://localhost:3000', 
-    'http://localhost:4000', 
-    'http://localhost:5173', 
-    'http://127.0.0.1:3000', 
-    'http://127.0.0.1:4000', 
-    'http://127.0.0.1:5173',
-    // Add support for common development ports
-    'http://localhost:8080',
-    'http://localhost:8000',
-    'http://localhost:5000'
-  ],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
-  optionsSuccessStatus: 200 // Some legacy browsers require this
+// Enable CORS for all routes
+app.use(cors());
+
+// Parse JSON bodies
+app.use(express.json());
+
+app.use(express.urlencoded({
+  extended: true,
+  limit: '10mb'
 }));
 
-// Enhanced middleware with better error handling
-app.use(express.json({ 
-  limit: '10mb', // Prevent large payload attacks
-  verify: (req, res, buf) => {
-    try {
-      JSON.parse(buf);
-    } catch (e) {
-      res.status(400).json({ 
-        success: false, 
-        error: 'Invalid JSON payload' 
-      });
-      throw new Error('Invalid JSON');
-    }
-  }
-}));
+// Serve static files from the root directory
+app.use(
+  express.static(".", {
+    setHeaders: (res, path) => {
+      // Set proper MIME types
+      if (path.endsWith(".js")) {
+        res.setHeader("Content-Type", "application/javascript");
+      } else if (path.endsWith(".css")) {
+        res.setHeader("Content-Type", "text/css");
+      } else if (path.endsWith(".html")) {
+        res.setHeader("Content-Type", "text/html");
+      }
+    },
+    dotfiles: 'ignore',
+    etag: true,
+    lastModified: true,
+    maxAge: '1h'
+  }),
+);
 
-app.use(express.urlencoded({ 
-  extended: true, 
-  limit: '10mb' 
-}));
-
-// Database connection with enhanced error handling
-let pool;
-try {
-  pool = new Pool({
-    connectionString: process.env.DATABASE_URL || 'postgresql://your-neon-connection-string-here',
-    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-    // Add connection timeout and retry logic
-    connectionTimeoutMillis: 15000,
-    idleTimeoutMillis: 30000,
-    max: 20,
-    // Add retry logic for connection failures
-    retryDelay: 1000,
-    maxRetries: 3
+// Health check endpoint
+app.get("/api/health", (req, res) => {
+  res.json({
+    status: "OK",
+    message: "Flag Football Training App Server is running",
+    timestamp: new Date().toISOString(),
   });
-  
-  // Test connection with better error handling
-  pool.on('connect', () => {
-    console.log('✅ Connected to Neon PostgreSQL database');
-  });
-  
-  pool.on('error', (err) => {
-    console.error('❌ Database connection error:', err);
-  });
-  
-  pool.on('acquire', () => {
-    console.log('🔗 Database client acquired');
-  });
-  
-  pool.on('release', () => {
-    console.log('🔓 Database client released');
-  });
-  
-} catch (error) {
-  console.error('❌ Failed to create database pool:', error);
-  pool = null;
-}
-
-// JWT secret (in production, use environment variable)
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
-
-// Test database connection with timeout
-const testDatabaseConnection = async () => {
-  if (!pool) {
-    console.error('❌ Database pool not available');
-    return;
-  }
-  
-  try {
-    const result = await pool.query('SELECT NOW()');
-    console.log('✅ Database connection test successful:', result.rows[0]);
-  } catch (error) {
-    console.error('❌ Database connection test failed:', error);
-  }
-};
-
-// Test connection after a short delay
-setTimeout(testDatabaseConnection, 1000);
-
-// Create users table if it doesn't exist with better error handling
-const createUsersTable = async () => {
-  if (!pool) {
-    console.error('❌ Cannot create users table: Database pool not available');
-    return;
-  }
-  
-  try {
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS users (
-        id SERIAL PRIMARY KEY,
-        email VARCHAR(255) UNIQUE NOT NULL,
-        password_hash VARCHAR(255) NOT NULL,
-        full_name VARCHAR(255),
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-    console.log('✅ Users table ready');
-  } catch (error) {
-    console.error('❌ Error creating users table:', error);
-  }
-};
-
-// Create table after connection is established
-setTimeout(createUsersTable, 2000);
-
-// Helper function to safely verify JWT tokens
-const safeJWTVerify = (token, secret) => {
-  try {
-    return new Promise((resolve, reject) => {
-      jwt.verify(token, secret, (err, decoded) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(decoded);
-        }
-      });
-    });
-  } catch (error) {
-    throw new Error('JWT verification failed');
-  }
-};
-
-// Helper function to safely hash passwords
-const safeHashPassword = async (password, saltRounds = 10) => {
-  try {
-    return await bcrypt.hash(password, saltRounds);
-  } catch (error) {
-    throw new Error('Password hashing failed');
-  }
-};
-
-// Helper function to safely compare passwords
-const safeComparePassword = async (password, hash) => {
-  try {
-    return await bcrypt.compare(password, hash);
-  } catch (error) {
-    throw new Error('Password comparison failed');
-  }
-};
-
-// Routes
-
-// Algorithm API routes
-app.use('/api/algorithms', algorithmRoutes);
-
-// Serve static files (HTML, CSS, JS) with better error handling
-app.use(express.static('.', {
-  dotfiles: 'ignore',
-  etag: true,
-  lastModified: true,
-  maxAge: '1h'
-}));
-
-// Dashboard API routes
-app.use('/api/dashboard', dashboardRoutes);
-
-// Analytics API routes
-app.use('/api/analytics', analyticsRoutes);
-
-// CSRF token endpoint - Enhanced with crypto
-app.get('/api/auth/csrf', (req, res) => {
-  try {
-    // Use crypto.randomBytes for cryptographically secure token
-    const crypto = require('crypto');
-    const csrfToken = crypto.randomBytes(32).toString('hex');
-
-    res.json({
-      success: true,
-      csrfToken: csrfToken,
-      timestamp: new Date().toISOString()
-    });
-  } catch (error) {
-    console.error('❌ CSRF token generation error:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to generate CSRF token',
-      code: 'CSRF_ERROR'
-    });
-  }
 });
 
-// Enhanced health check
-app.get('/api/health', async (req, res) => {
-  try {
-    const healthStatus = {
-      success: true,
-      message: 'API is healthy',
-      code: 200,
-      timestamp: new Date().toISOString(),
-      services: {
-        database: pool ? 'connected' : 'disconnected',
-        algorithm: 'active',
-        dashboard: 'active',
-        analytics: 'active'
-      },
-      uptime: process.uptime(),
-      memory: process.memoryUsage(),
-      environment: process.env.NODE_ENV || 'development'
-    };
-    
-    // Test database connection if available
-    if (pool) {
-      try {
-        await pool.query('SELECT 1');
-        healthStatus.services.database = 'connected';
-      } catch (dbError) {
-        healthStatus.services.database = 'error';
-        healthStatus.warnings = ['Database connection test failed'];
-      }
-    }
-    
-    res.json(healthStatus);
-  } catch (error) {
-    console.error('❌ Health check error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Health check failed',
-      code: 500,
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
-    });
-  }
-});
-
-// Enhanced user registration
-app.post('/api/auth/register', async (req, res) => {
-  try {
-    if (!pool) {
-      return res.status(503).json({
-        success: false,
-        error: 'Database service unavailable',
-        code: 'DB_UNAVAILABLE'
-      });
-    }
-    
-    const { email, password, fullName } = req.body;
-
-    // Enhanced validation
-    if (!email || !password) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'Email and password are required',
-        code: 'MISSING_CREDENTIALS'
-      });
-    }
-
-    if (password.length < 8) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'Password must be at least 8 characters long',
-        code: 'PASSWORD_TOO_SHORT'
-      });
-    }
-
-    // Email format validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({
-        success: false,
-        error: 'Invalid email format',
-        code: 'INVALID_EMAIL'
-      });
-    }
-
-    // Check if user already exists
-    const existingUser = await pool.query(
-      'SELECT id FROM users WHERE email = $1',
-      [email.trim().toLowerCase()]
-    );
-
-    if (existingUser.rows.length > 0) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'User with this email already exists',
-        code: 'USER_EXISTS'
-      });
-    }
-
-    // Hash password safely
-    const passwordHash = await safeHashPassword(password, 12); // Increased salt rounds
-
-    // Create user with better error handling
-    const result = await pool.query(
-      'INSERT INTO users (email, password_hash, full_name) VALUES ($1, $2, $3) RETURNING id, email, full_name',
-      [email.trim().toLowerCase(), passwordHash, fullName?.trim() || 'User']
-    );
-
-    const user = result.rows[0];
-
-    // Generate JWT token
-    const token = jwt.sign(
-      { 
-        userId: user.id, 
-        email: user.email,
-        role: 'player'
-      },
-      JWT_SECRET,
-      { 
-        expiresIn: '24h',
-        issuer: 'flagfit-pro',
-        audience: 'flagfit-users'
-      }
-    );
-
-    res.json({
-      success: true,
-      message: 'User registered successfully',
+// API Routes - Mock endpoints for development
+// Authentication endpoints
+app.post("/api/auth/login", (req, res) => {
+  res.json({
+    success: true,
+    data: {
+      token: "mock-jwt-token",
       user: {
-        id: user.id,
-        email: user.email,
-        fullName: user.full_name
+        id: "1",
+        email: req.body.email || "user@example.com",
+        name: "Test User",
+        role: "player",
       },
-      token
-    });
-
-  } catch (error) {
-    console.error('❌ Registration error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: 'Registration failed',
-      code: 'REGISTRATION_ERROR',
-      details: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
-    });
-  }
-});
-
-// Enhanced user login
-app.post('/api/auth/login', async (req, res) => {
-  try {
-    if (!pool) {
-      return res.status(503).json({
-        success: false,
-        error: 'Database service unavailable',
-        code: 'DB_UNAVAILABLE'
-      });
-    }
-    
-    const { email, password } = req.body;
-
-    // Enhanced validation
-    if (!email || !password) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'Email and password are required',
-        code: 'MISSING_CREDENTIALS'
-      });
-    }
-
-    // Find user
-    const result = await pool.query(
-      'SELECT id, email, password_hash, full_name FROM users WHERE email = $1',
-      [email.trim().toLowerCase()]
-    );
-
-    if (result.rows.length === 0) {
-      return res.status(401).json({ 
-        success: false, 
-        error: 'Invalid email or password',
-        code: 'INVALID_CREDENTIALS'
-      });
-    }
-
-    const user = result.rows[0];
-
-    // Verify password safely
-    const isValidPassword = await safeComparePassword(password, user.password_hash);
-
-    if (!isValidPassword) {
-      return res.status(401).json({ 
-        success: false, 
-        error: 'Invalid email or password',
-        code: 'INVALID_CREDENTIALS'
-      });
-    }
-
-    // Generate JWT token
-    const token = jwt.sign(
-      { 
-        userId: user.id, 
-        email: user.email,
-        role: 'player'
-      },
-      JWT_SECRET,
-      { 
-        expiresIn: '24h',
-        issuer: 'flagfit-pro',
-        audience: 'flagfit-users'
-      }
-    );
-
-    res.json({
-      success: true,
-      message: 'Login successful',
-      user: {
-        id: user.id,
-        email: user.email,
-        fullName: user.full_name
-      },
-      token
-    });
-
-  } catch (error) {
-    console.error('❌ Login error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: 'Login failed',
-      code: 'LOGIN_ERROR',
-      details: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
-    });
-  }
-});
-
-// Enhanced get current user
-app.get('/api/auth/me', async (req, res) => {
-  try {
-    if (!pool) {
-      return res.status(503).json({
-        success: false,
-        error: 'Database service unavailable',
-        code: 'DB_UNAVAILABLE'
-      });
-    }
-    
-    const token = req.headers.authorization?.replace('Bearer ', '');
-
-    if (!token) {
-      return res.status(401).json({ 
-        success: false, 
-        error: 'No token provided',
-        code: 'MISSING_TOKEN'
-      });
-    }
-
-    const decoded = await safeJWTVerify(token, JWT_SECRET);
-    
-    // Type guard for JwtPayload to ensure userId exists
-    const userId = typeof decoded === 'object' && 'userId' in decoded ? decoded.userId : null;
-
-    if (!userId) {
-      return res.status(401).json({ 
-        success: false, 
-        error: 'Invalid token payload',
-        code: 'INVALID_TOKEN_PAYLOAD'
-      });
-    }
-
-    const result = await pool.query(
-      'SELECT id, email, full_name FROM users WHERE id = $1',
-      [userId]
-    );
-
-    if (result.rows.length === 0) {
-      return res.status(401).json({ 
-        success: false, 
-        error: 'User not found',
-        code: 'USER_NOT_FOUND'
-      });
-    }
-
-    const user = result.rows[0];
-
-    res.json({
-      success: true,
-      user: {
-        id: user.id,
-        email: user.email,
-        fullName: user.full_name
-      }
-    });
-
-  } catch (error) {
-    console.error('❌ Get user error:', error);
-    if (error.name === 'JsonWebTokenError') {
-      res.status(401).json({ 
-        success: false, 
-        error: 'Invalid token',
-        code: 'INVALID_TOKEN'
-      });
-    } else if (error.name === 'TokenExpiredError') {
-      res.status(401).json({ 
-        success: false, 
-        error: 'Token expired',
-        code: 'TOKEN_EXPIRED'
-      });
-    } else {
-      res.status(500).json({ 
-        success: false, 
-        error: 'Authentication failed',
-        code: 'AUTH_ERROR',
-        details: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
-      });
-    }
-  }
-});
-
-// Enhanced logout
-app.post('/api/auth/logout', (req, res) => {
-  try {
-    res.json({ 
-      success: true, 
-      message: 'Logged out successfully',
-      timestamp: new Date().toISOString()
-    });
-  } catch (error) {
-    console.error('❌ Logout error:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Logout failed',
-      code: 'LOGOUT_ERROR'
-    });
-  }
-});
-
-// Global error handling middleware
-app.use((error, req, res, next) => {
-  console.error('❌ Global error handler:', error);
-  res.status(500).json({
-    success: false,
-    error: 'Internal server error',
-    code: 'INTERNAL_ERROR',
-    details: process.env.NODE_ENV === 'development' ? error.message : 'Something went wrong'
+    },
   });
 });
 
-// 404 handler for unmatched routes
-app.use('*', (req, res) => {
-  res.status(404).json({
-    success: false,
-    error: 'Endpoint not found',
-    code: 'NOT_FOUND',
-    timestamp: new Date().toISOString()
+app.post("/api/auth/register", (req, res) => {
+  res.json({
+    success: true,
+    data: {
+      token: "mock-jwt-token",
+      user: {
+        id: "1",
+        email: req.body.email,
+        name: req.body.name,
+        role: "player",
+      },
+    },
   });
 });
 
-// Graceful shutdown handling
-process.on('SIGTERM', () => {
-  console.log('🔄 SIGTERM received, shutting down gracefully...');
-  if (pool) {
-    pool.end();
-  }
-  process.exit(0);
+app.get("/api/auth/me", (req, res) => {
+  res.json({
+    success: true,
+    data: {
+      id: "1",
+      email: "user@example.com",
+      name: "Test User",
+      role: "player",
+    },
+  });
 });
 
-process.on('SIGINT', () => {
-  console.log('🔄 SIGINT received, shutting down gracefully...');
-  if (pool) {
-    pool.end();
-  }
-  process.exit(0);
+app.post("/api/auth/logout", (req, res) => {
+  res.json({ success: true, message: "Logged out successfully" });
 });
 
-// Start server with enhanced error handling
-const server = app.listen(PORT, () => {
-  console.log(`🚀 API server running on http://localhost:${PORT}`);
-  console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
-  console.log(`🔐 Auth endpoints: http://localhost:${PORT}/api/auth/*`);
-  console.log(`🧠 Algorithm endpoints: http://localhost:${PORT}/api/algorithms/*`);
-  console.log(`📈 Dashboard endpoints: http://localhost:${PORT}/api/dashboard/*`);
-  console.log(`📊 Analytics endpoints: http://localhost:${PORT}/api/analytics/*`);
+// Dashboard endpoints
+app.get("/dashboard", (req, res) => {
+  res.json({
+    success: true,
+    data: {
+      stats: {
+        trainingSessions: 24,
+        performanceScore: 85,
+        dayStreak: 7,
+        tournaments: 3,
+      },
+      upcomingSessions: [],
+      recentActivity: [],
+    },
+  });
 });
 
-// Server error handling
-server.on('error', (error) => {
-  if (error.code === 'EADDRINUSE') {
-    console.error(`❌ Port ${PORT} is already in use`);
+app.get("/api/dashboard/overview", (req, res) => {
+  res.json({
+    success: true,
+    data: {
+      stats: {
+        trainingSessions: 24,
+        performanceScore: 85,
+        dayStreak: 7,
+        tournaments: 3,
+      },
+      activities: [],
+      upcomingSessions: [],
+      performanceTrends: {
+        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+        data: [65, 72, 80, 85, 90, 88],
+      },
+      trainingDistribution: {
+        labels: ["Week 1", "Week 2", "Week 3", "Week 4"],
+        data: [12, 15, 18, 16],
+      },
+    },
+  });
+});
+
+// Also handle /dashboard endpoint for backward compatibility
+app.get("/dashboard", (req, res) => {
+  // Check if it's an API request (has Accept header for JSON)
+  const acceptHeader = req.headers.accept || "";
+  if (acceptHeader.includes("application/json")) {
+    res.json({
+      success: true,
+      data: {
+        stats: {
+          trainingSessions: 24,
+          performanceScore: 85,
+          dayStreak: 7,
+          tournaments: 3,
+        },
+        activities: [],
+        upcomingSessions: [],
+      },
+    });
   } else {
-    console.error('❌ Server error:', error);
+    // Serve HTML page
+    res.sendFile(path.join(__dirname, "dashboard.html"));
   }
-  process.exit(1);
-}); 
+});
+
+// Training endpoints
+app.get("/training-stats", (req, res) => {
+  res.json({
+    success: true,
+    data: {
+      weeklyStats: [],
+      achievements: [],
+    },
+  });
+});
+
+// Analytics endpoints
+app.get("/api/analytics/summary", (req, res) => {
+  res.json({
+    success: true,
+    data: {
+      performanceTrends: [],
+      teamChemistry: [],
+      trainingDistribution: [],
+    },
+  });
+});
+
+// Tournaments endpoints
+app.get("/api/tournaments", (req, res) => {
+  res.json({
+    success: true,
+    data: [],
+  });
+});
+
+// Community endpoints
+app.get("/api/community/feed", (req, res) => {
+  res.json({
+    success: true,
+    data: [],
+  });
+});
+
+app.post("/api/community/posts", (req, res) => {
+  res.json({
+    success: true,
+    data: {
+      id: Date.now().toString(),
+      ...req.body,
+      createdAt: new Date().toISOString(),
+    },
+  });
+});
+
+// Wellness endpoints
+app.post("/api/wellness/checkin", (req, res) => {
+  res.json({
+    success: true,
+    data: {
+      id: Date.now().toString(),
+      ...req.body,
+      createdAt: new Date().toISOString(),
+    },
+  });
+});
+
+// Coach endpoints
+app.get("/api/coach/dashboard", (req, res) => {
+  res.json({
+    success: true,
+    data: {
+      teamMembers: [],
+      stats: {},
+    },
+  });
+});
+
+// Game tracker endpoints
+app.post("/api/tournaments/createGame", (req, res) => {
+  res.json({
+    success: true,
+    data: {
+      id: Date.now().toString(),
+      ...req.body,
+      createdAt: new Date().toISOString(),
+    },
+  });
+});
+
+// Training workouts endpoint
+app.get("/api/training/workouts/:id", (req, res) => {
+  res.json({
+    success: true,
+    data: {
+      id: req.params.id,
+      exercises: [],
+    },
+  });
+});
+
+app.put("/api/training/workouts/:id", (req, res) => {
+  res.json({
+    success: true,
+    data: {
+      id: req.params.id,
+      ...req.body,
+    },
+  });
+});
+
+// Netlify Functions endpoints for local development
+// These simulate Netlify Functions behavior
+
+// Notifications endpoint
+app.get("/.netlify/functions/notifications", (req, res) => {
+  res.json({
+    success: true,
+    data: [
+      {
+        id: 1,
+        type: "training",
+        title: "Training Session Reminder",
+        message: "Speed & Agility training starts in 30 minutes",
+        time: "5 minutes ago",
+        read: false,
+        createdAt: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
+      },
+      {
+        id: 2,
+        type: "achievement",
+        title: "New Achievement Unlocked",
+        message: "You've completed 10 training sessions this month!",
+        time: "1 hour ago",
+        read: false,
+        createdAt: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
+      },
+      {
+        id: 3,
+        type: "team",
+        title: "Team Update",
+        message: "New team member joined: Alex Johnson",
+        time: "2 hours ago",
+        read: false,
+        createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+      },
+    ],
+  });
+});
+
+app.post("/.netlify/functions/notifications", (req, res) => {
+  const body = req.body || {};
+  const { notificationId, ids } = body;
+
+  if (notificationId === "all") {
+    res.json({
+      success: true,
+      data: null,
+      message: "All notifications marked as read",
+    });
+  } else if (Array.isArray(ids) && ids.length > 0) {
+    res.json({
+      success: true,
+      data: null,
+      message: `${ids.length} notifications marked as read`,
+    });
+  } else if (notificationId) {
+    res.json({
+      success: true,
+      data: null,
+      message: "Notification marked as read",
+    });
+  } else {
+    res.status(400).json({
+      success: false,
+      error: "notificationId or ids array is required",
+    });
+  }
+});
+
+// Handle PATCH /notifications/last-opened before the general PATCH route
+app.patch("/.netlify/functions/notifications/last-opened", (req, res) => {
+  res.json({
+    success: true,
+    data: null,
+    message: "Last opened timestamp updated",
+  });
+});
+
+// Notifications count endpoint
+app.get("/.netlify/functions/notifications-count", (req, res) => {
+  res.json({
+    success: true,
+    data: {
+      count: 3,
+      unread: 3,
+    },
+  });
+});
+
+// Notifications create endpoint
+app.post("/.netlify/functions/notifications-create", (req, res) => {
+  res.json({
+    success: true,
+    data: {
+      id: Date.now().toString(),
+      ...req.body,
+      createdAt: new Date().toISOString(),
+    },
+  });
+});
+
+// Notifications preferences endpoint
+app.get("/.netlify/functions/notifications-preferences", (req, res) => {
+  res.json({
+    success: true,
+    data: {
+      email: true,
+      push: true,
+      sms: false,
+    },
+  });
+});
+
+app.post("/.netlify/functions/notifications-preferences", (req, res) => {
+  res.json({
+    success: true,
+    data: req.body.preferences || {},
+    message: "Notification preferences updated",
+  });
+});
+
+// Catch-all route for SPA routing
+app.get("*", (req, res) => {
+  // If requesting an HTML file, serve it directly
+  if (req.path.endsWith(".html") || req.path === "/") {
+    const htmlFile = req.path === "/" ? "index.html" : req.path.substring(1);
+    res.sendFile(path.join(__dirname, htmlFile));
+  } else {
+    // For other routes, serve index.html (SPA behavior)
+    res.sendFile(path.join(__dirname, "index.html"));
+  }
+});
+
+// Error handling middleware
+app.use((err, req, res, _next) => {
+  console.error("Server error:", err);
+  res.status(500).json({
+    error: "Internal server error",
+    message: err.message,
+  });
+});
+
+// Start server
+app.listen(PORT, () => {
+  console.log(
+    `🏈 Flag Football Training App Server running on http://localhost:${PORT}`,
+  );
+  console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
+  console.log(`🎯 Main app: http://localhost:${PORT}/index.html`);
+});
+
+export default app;

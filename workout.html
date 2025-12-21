@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FlagFit Pro - Workout Session</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <!-- New Modular CSS Architecture -->
+    <link rel="stylesheet" href="./src/css/main.css" />
+    <!-- Page-specific styles -->
+    <link rel="stylesheet" href="./src/css/pages/workout.css" />
+    <script src="./src/theme-switcher.js" defer></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
+    <script src="./src/icon-helper.js" defer></script>
+    <!-- Universal Components -->
+    <script type="module" src="./src/js/main.js"></script>
+    <!-- Sidebar Loader (Dynamic Component) -->
+    <script type="module" src="./src/js/components/sidebar-loader.js" defer></script>
+    <!-- Top Bar Loader (Dynamic Component) -->
+    <script type="module" src="./src/js/components/top-bar-loader.js" defer></script>
+    <!-- Footer Loader (Dynamic Component) -->
+    <script type="module" src="./src/js/components/footer-loader.js" defer></script>
+  
+    <!-- Supabase Configuration (Centralized) -->
+    <script src="./src/js/config/supabase-config.js"></script>
+    
+    <!-- Supabase JS SDK from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0"></script>
+
+  </head>
+  <body>
+    <div class="back-nav">
+      <a href="/training.html" class="back-link">
+        <i data-lucide="chevron-left" class="icon-16"></i>
+        <span>Back to Training</span>
+      </a>
+    </div>
+
+    <div class="workout-container">
+      <div class="workout-header">
+        <h1 class="workout-title" id="workoutTitle">Loading Workout...</h1>
+        <div class="workout-timer" id="workoutTimer">00:00</div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+      </div>
+
+      <div class="exercise-list" id="exerciseList">
+        <!-- Exercises will be loaded here -->
+      </div>
+
+      <div class="workout-controls">
+        <button class="btn btn-primary btn-md" id="startBtn" onclick="startWorkout()">
+          Start Workout
+        </button>
+        <button class="btn btn-secondary btn-md" id="pauseBtn" onclick="pauseWorkout()" style="display: none">
+          Pause
+        </button>
+        <button class="btn btn-secondary btn-md" id="stopBtn" onclick="stopWorkout()" style="display: none">
+          Stop
+        </button>
+        <button class="btn btn-primary btn-md" id="completeBtn" onclick="completeWorkout()" style="display: none">
+          Complete
+        </button>
+      </div>
+    </div>
+
+    <script type="module">
+      import { authManager } from "./src/auth-manager.js";
+
+      let workoutSession = null;
+      let currentExerciseIndex = 0;
+      let workoutTimer = null;
+      let startTime = null;
+      let isPaused = false;
+      let elapsedTime = 0;
+
+      // Initialize workout page
+      document.addEventListener("DOMContentLoaded", async function () {
+        // Check authentication (wait for auth manager to initialize)
+        const isAuthenticated = await authManager.requireAuth();
+        if (!isAuthenticated) {
+          return; // requireAuth() already handles redirect
+        }
+
+        // Load workout session
+        loadWorkoutSession();
+      });
+
+      function loadWorkoutSession() {
+        // Get workout data from URL params or localStorage
+        const urlParams = new URLSearchParams(window.location.search);
+        const workoutType = urlParams.get("type");
+        const sessionId = urlParams.get("id");
+
+        // Try to load from localStorage first
+        const storedSession = localStorage.getItem("currentWorkout");
+        if (storedSession) {
+          workoutSession = JSON.parse(storedSession);
+        } else if (workoutType) {
+          // Create new session if not found
+          workoutSession = {
+            id: sessionId || Date.now(),
+            type: workoutType,
+            startTime: new Date().toISOString(),
+            status: "ready",
+            exercises: getWorkoutExercises(workoutType),
+          };
+          localStorage.setItem(
+            "currentWorkout",
+            JSON.stringify(workoutSession),
+          );
+        } else {
+          // No workout data, redirect back
+          window.location.href = "/training.html";
+          return;
+        }
+
+        // Update UI
+        document.getElementById("workoutTitle").textContent =
+          `${workoutSession.type} Training`.replace(/^./, (str) =>
+            str.toUpperCase(),
+          );
+        renderExercises();
+      }
+
+      function getWorkoutExercises(type) {
+        const exercises = {
+          speed: [
+            {
+              name: "40-yard dash",
+              sets: 5,
+              reps: 1,
+              rest: "2 min",
+              completed: false,
+            },
+            {
+              name: "Cone sprints",
+              sets: 3,
+              reps: 8,
+              rest: "90 sec",
+              completed: false,
+            },
+            {
+              name: "Ladder drills",
+              sets: 4,
+              reps: 1,
+              rest: "60 sec",
+              completed: false,
+            },
+          ],
+          strength: [
+            {
+              name: "Squats",
+              sets: 4,
+              reps: 12,
+              rest: "90 sec",
+              completed: false,
+            },
+            {
+              name: "Push-ups",
+              sets: 3,
+              reps: 15,
+              rest: "60 sec",
+              completed: false,
+            },
+            {
+              name: "Burpees",
+              sets: 3,
+              reps: 10,
+              rest: "90 sec",
+              completed: false,
+            },
+          ],
+          agility: [
+            {
+              name: "5-10-5 shuttle",
+              sets: 4,
+              reps: 3,
+              rest: "2 min",
+              completed: false,
+            },
+            {
+              name: "Cone weaves",
+              sets: 3,
+              reps: 5,
+              rest: "90 sec",
+              completed: false,
+            },
+            {
+              name: "T-drill",
+              sets: 3,
+              reps: 3,
+              rest: "2 min",
+              completed: false,
+            },
+          ],
+          endurance: [
+            {
+              name: "Jog",
+              sets: 1,
+              reps: "20 min",
+              rest: "none",
+              completed: false,
+            },
+            {
+              name: "High knees",
+              sets: 3,
+              reps: "30 sec",
+              rest: "30 sec",
+              completed: false,
+            },
+            {
+              name: "Mountain climbers",
+              sets: 3,
+              reps: 20,
+              rest: "45 sec",
+              completed: false,
+            },
+          ],
+        };
+        return exercises[type] || exercises.speed;
+      }
+
+      function renderExercises() {
+        const exerciseList = document.getElementById("exerciseList");
+        exerciseList.innerHTML = "";
+
+        workoutSession.exercises.forEach((exercise, index) => {
+          const exerciseItem = document.createElement("div");
+          exerciseItem.className = `exercise-item ${exercise.completed ? "completed" : ""} ${index === currentExerciseIndex ? "active" : ""}`;
+
+          exerciseItem.innerHTML = `
+                    <div class="exercise-info">
+                        <h3>${exercise.name}</h3>
+                        <p>${exercise.sets} sets × ${exercise.reps} reps | Rest: ${exercise.rest}</p>
+                    </div>
+                    <div class="exercise-actions">
+                        ${
+                          !exercise.completed
+                            ? `<button class="btn btn-primary btn-sm" onclick="completeExercise(${index})">Complete</button>`
+                            : `<span class="exercise-completed-badge">✓ Done</span>`
+                        }
+                    </div>
+                `;
+
+          exerciseList.appendChild(exerciseItem);
+        });
+
+        updateProgress();
+      }
+
+      function updateProgress() {
+        const completedCount = workoutSession.exercises.filter(
+          (ex) => ex.completed,
+        ).length;
+        const totalCount = workoutSession.exercises.length;
+        const progressPercent = (completedCount / totalCount) * 100;
+
+        document.getElementById("progressFill").style.width =
+          `${progressPercent}%`;
+
+        // Show complete button if all exercises are done
+        if (completedCount === totalCount) {
+          document.getElementById("completeBtn").style.display = "block";
+          document.getElementById("pauseBtn").style.display = "none";
+          document.getElementById("stopBtn").style.display = "none";
+        }
+      }
+
+      window.startWorkout = function () {
+        workoutSession.status = "active";
+        startTime = Date.now() - elapsedTime;
+        isPaused = false;
+
+        // Update UI
+        document.getElementById("startBtn").style.display = "none";
+        document.getElementById("pauseBtn").style.display = "block";
+        document.getElementById("stopBtn").style.display = "block";
+
+        // Start timer
+        workoutTimer = setInterval(updateTimer, 1000);
+
+        // Save session
+        localStorage.setItem("currentWorkout", JSON.stringify(workoutSession));
+      };
+
+      window.pauseWorkout = function () {
+        isPaused = true;
+        clearInterval(workoutTimer);
+
+        // Update UI
+        document.getElementById("pauseBtn").style.display = "none";
+        document.getElementById("startBtn").style.display = "block";
+        document.getElementById("startBtn").textContent = "Resume";
+      };
+
+      window.stopWorkout = function () {
+        if (
+          confirm(
+            "Are you sure you want to stop this workout? Your progress will be lost.",
+          )
+        ) {
+          clearInterval(workoutTimer);
+          localStorage.removeItem("currentWorkout");
+          window.location.href = "/training.html";
+        }
+      };
+
+      window.completeExercise = function (index) {
+        workoutSession.exercises[index].completed = true;
+
+        // Move to next exercise
+        if (index === currentExerciseIndex) {
+          currentExerciseIndex = Math.min(
+            currentExerciseIndex + 1,
+            workoutSession.exercises.length - 1,
+          );
+        }
+
+        renderExercises();
+        localStorage.setItem("currentWorkout", JSON.stringify(workoutSession));
+      };
+
+      window.completeWorkout = function () {
+        clearInterval(workoutTimer);
+
+        // Calculate final stats
+        const duration = Math.floor((Date.now() - startTime) / 1000 / 60); // minutes
+        const completedExercises = workoutSession.exercises.filter(
+          (ex) => ex.completed,
+        ).length;
+        const score = Math.round(
+          (completedExercises / workoutSession.exercises.length) * 100,
+        );
+
+        // Save workout to history
+        const workoutHistory = JSON.parse(
+          localStorage.getItem("recentWorkouts") || "[]",
+        );
+        workoutHistory.push({
+          id: workoutSession.id,
+          type: workoutSession.type,
+          date: new Date().toISOString(),
+          duration: duration,
+          score: score,
+          exercisesCompleted: completedExercises,
+          totalExercises: workoutSession.exercises.length,
+        });
+
+        // Keep only last 50 workouts
+        if (workoutHistory.length > 50) {
+          workoutHistory.splice(0, workoutHistory.length - 50);
+        }
+
+        localStorage.setItem("recentWorkouts", JSON.stringify(workoutHistory));
+        localStorage.removeItem("currentWorkout");
+
+        // Show completion message
+        alert(
+          `Workout Complete! 🎉\n\nDuration: ${duration} minutes\nScore: ${score}%\nExercises: ${completedExercises}/${workoutSession.exercises.length}`,
+        );
+
+        // Redirect back to training
+        window.location.href = "/training.html";
+      };
+
+      function updateTimer() {
+        if (!startTime || isPaused) return;
+
+        elapsedTime = Date.now() - startTime;
+        const seconds = Math.floor(elapsedTime / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const displaySeconds = seconds % 60;
+
+        document.getElementById("workoutTimer").textContent =
+          `${minutes.toString().padStart(2, "0")}:${displaySeconds.toString().padStart(2, "0")}`;
+      }
+    </script>
+
+        <!-- Footer (Loaded Dynamically) -->
+    <div data-footer-container></div>
+  </body>
+</html>

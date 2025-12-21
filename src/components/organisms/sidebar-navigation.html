@@ -1,0 +1,249 @@
+<!-- Unified Sidebar Navigation Component - Upgraded -->
+<!-- This file is loaded dynamically by sidebar-loader.js -->
+<div
+  class="sidebar"
+  id="sidebar"
+  role="navigation"
+  aria-label="Main navigation"
+>
+  <!-- Logo Section -->
+  <div class="sidebar-header">
+    <div
+      class="sidebar-logo"
+      onclick="window.location.href='/dashboard.html'"
+      title="FlagFit Pro"
+      aria-label="Go to dashboard"
+      tabindex="0"
+      role="button"
+    >
+      <i data-lucide="activity" class="icon-20 icon-inline"></i>
+    </div>
+    <div class="sidebar-brand">
+      <span class="sidebar-brand-name">FlagFit Pro</span>
+      <span class="sidebar-brand-tagline">Performance Platform</span>
+    </div>
+  </div>
+
+  <!-- Quick Actions Section -->
+  <div class="nav-section-wrapper">
+    <nav class="nav-section nav-section-quick" aria-label="Quick actions">
+      <a
+        href="/dashboard.html"
+        class="nav-item"
+        aria-label="Overview"
+        id="nav-overview"
+        data-page="dashboard"
+      >
+        <span class="nav-item-icon">
+          <i data-lucide="layout-dashboard" class="icon-24"></i>
+        </span>
+        <span class="nav-item-label">Overview</span>
+        <span class="nav-item-badge" aria-hidden="true"></span>
+      </a>
+      <a
+        href="/analytics.html"
+        class="nav-item"
+        aria-label="Analytics"
+        id="nav-analytics"
+        data-page="analytics"
+      >
+        <span class="nav-item-icon">
+          <i data-lucide="bar-chart-3" class="icon-24"></i>
+        </span>
+        <span class="nav-item-label">Analytics</span>
+        <span class="nav-item-badge" aria-hidden="true"></span>
+      </a>
+    </nav>
+  </div>
+
+  <!-- Training & Performance Section -->
+  <div class="nav-section-wrapper">
+    <button
+      class="nav-section-header"
+      aria-expanded="true"
+      aria-controls="nav-section-training"
+      id="nav-section-training-toggle"
+    >
+      <span class="nav-section-title">Training & Performance</span>
+      <i data-lucide="chevron-down" class="nav-section-chevron"></i>
+    </button>
+    <nav
+      class="nav-section nav-section-collapsible"
+      id="nav-section-training"
+      aria-labelledby="nav-section-training-toggle"
+    >
+      <a
+        href="/training.html"
+        class="nav-item"
+        aria-label="Training"
+        id="nav-training"
+        data-page="training"
+      >
+        <span class="nav-item-icon">
+          <i data-lucide="zap" class="icon-24"></i>
+        </span>
+        <span class="nav-item-label">Training</span>
+        <span class="nav-item-badge" aria-hidden="true"></span>
+      </a>
+      <a
+        href="/performance-tracking.html"
+        class="nav-item"
+        aria-label="Performance Tracking"
+        id="nav-performance-tracking"
+        data-page="performance-tracking"
+      >
+        <span class="nav-item-icon">
+          <i data-lucide="target" class="icon-24"></i>
+        </span>
+        <span class="nav-item-label">Performance</span>
+        <span class="nav-item-badge" aria-hidden="true"></span>
+      </a>
+      <a
+        href="/game-tracker.html"
+        class="nav-item"
+        aria-label="Game Tracker"
+        id="nav-game-tracker"
+        data-page="game-tracker"
+      >
+        <span class="nav-item-icon">
+          <i data-lucide="clipboard-list" class="icon-24"></i>
+        </span>
+        <span class="nav-item-label">Game Tracker</span>
+        <span class="nav-item-badge" aria-hidden="true"></span>
+      </a>
+      <a
+        href="/wellness.html"
+        class="nav-item"
+        aria-label="Wellness"
+        id="nav-wellness"
+        data-page="wellness"
+      >
+        <span class="nav-item-icon">
+          <i data-lucide="heart-pulse" class="icon-24"></i>
+        </span>
+        <span class="nav-item-label">Wellness</span>
+        <span class="nav-item-badge" aria-hidden="true"></span>
+      </a>
+    </nav>
+  </div>
+
+  <!-- Team & Community Section -->
+  <div class="nav-section-wrapper">
+    <button
+      class="nav-section-header"
+      aria-expanded="true"
+      aria-controls="nav-section-team"
+      id="nav-section-team-toggle"
+    >
+      <span class="nav-section-title">Team & Community</span>
+      <i data-lucide="chevron-down" class="nav-section-chevron"></i>
+    </button>
+    <nav
+      class="nav-section nav-section-collapsible"
+      id="nav-section-team"
+      aria-labelledby="nav-section-team-toggle"
+    >
+      <a
+        href="/roster.html"
+        class="nav-item"
+        aria-label="Roster"
+        id="nav-roster"
+        data-page="roster"
+      >
+        <span class="nav-item-icon">
+          <i data-lucide="users" class="icon-24"></i>
+        </span>
+        <span class="nav-item-label">Roster</span>
+        <span class="nav-item-badge" aria-hidden="true"></span>
+      </a>
+      <a
+        href="/tournaments.html"
+        class="nav-item"
+        aria-label="Tournaments"
+        id="nav-tournaments"
+        data-page="tournaments"
+      >
+        <span class="nav-item-icon">
+          <i data-lucide="trophy" class="icon-24"></i>
+        </span>
+        <span class="nav-item-label">Tournaments</span>
+        <span class="nav-item-badge" aria-hidden="true"></span>
+      </a>
+      <a
+        href="/community.html"
+        class="nav-item"
+        aria-label="Community"
+        id="nav-community"
+        data-page="community"
+      >
+        <span class="nav-item-icon">
+          <i data-lucide="message-circle" class="icon-24"></i>
+        </span>
+        <span class="nav-item-label">Community</span>
+        <span class="nav-item-badge" aria-hidden="true"></span>
+      </a>
+    </nav>
+  </div>
+
+  <!-- User Section (Bottom) -->
+  <div class="sidebar-footer">
+    <nav class="nav-section nav-section-footer" aria-label="User navigation">
+      <a
+        href="/settings.html"
+        class="nav-item nav-item-footer"
+        aria-label="Settings"
+        id="nav-settings"
+        data-page="settings"
+      >
+        <span class="nav-item-icon">
+          <i data-lucide="settings" class="icon-24"></i>
+        </span>
+        <span class="nav-item-label">Settings</span>
+      </a>
+    </nav>
+    
+    <!-- User Profile Card -->
+    <div class="sidebar-user-card">
+      <div class="sidebar-user-avatar">
+        <i data-lucide="user" class="icon-20"></i>
+      </div>
+      <div class="sidebar-user-info">
+        <span class="sidebar-user-name" id="sidebar-user-name">User Name</span>
+        <span class="sidebar-user-role" id="sidebar-user-role">Player</span>
+      </div>
+      <button
+        class="sidebar-user-menu-toggle"
+        aria-label="User menu"
+        aria-expanded="false"
+        aria-haspopup="true"
+        id="sidebar-user-menu-toggle"
+      >
+        <i data-lucide="more-vertical" class="icon-20"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Sidebar Overlay for Mobile -->
+<div
+  class="sidebar-overlay"
+  id="sidebar-overlay"
+  aria-hidden="true"
+></div>
+
+<!-- User Menu Dropdown -->
+<div class="sidebar-user-menu" id="sidebar-user-menu" role="menu" aria-hidden="true">
+  <a href="/profile.html" class="sidebar-user-menu-item" role="menuitem">
+    <i data-lucide="user" class="icon-18"></i>
+    <span>Profile</span>
+  </a>
+  <a href="/settings.html" class="sidebar-user-menu-item" role="menuitem">
+    <i data-lucide="settings" class="icon-18"></i>
+    <span>Settings</span>
+  </a>
+  <div class="sidebar-user-menu-divider"></div>
+  <button class="sidebar-user-menu-item sidebar-user-menu-item-danger" role="menuitem" onclick="handleLogout()">
+    <i data-lucide="log-out" class="icon-18"></i>
+    <span>Sign Out</span>
+  </button>
+</div>

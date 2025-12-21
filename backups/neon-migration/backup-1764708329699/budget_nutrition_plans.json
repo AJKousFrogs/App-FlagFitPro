@@ -1,0 +1,92 @@
+[
+  {
+    "id": 1,
+    "plan_name": "Budget Performance Nutrition",
+    "budget_per_month_euros": "150.00",
+    "target_calories": 2500,
+    "target_protein_g": 150,
+    "meal_plan_structure": [
+      "Breakfast: Oatmeal with protein",
+      "Lunch: Rice and beans with vegetables",
+      "Dinner: Chicken with potatoes",
+      "Snacks: Greek yogurt, nuts, fruit"
+    ],
+    "shopping_list": [
+      "Oats, rice, beans, chicken, eggs",
+      "Vegetables, fruits, nuts",
+      "Greek yogurt, milk",
+      "Basic supplements"
+    ],
+    "cost_breakdown": {
+      "fats": 30,
+      "proteins": 60,
+      "supplements": 20,
+      "carbohydrates": 40
+    },
+    "time_saving_tips": [
+      "Cook in batches",
+      "Use frozen vegetables",
+      "Buy in bulk",
+      "Plan meals ahead"
+    ],
+    "batch_cooking_instructions": [
+      "Cook chicken in large batches",
+      "Prepare rice and beans weekly",
+      "Make overnight oats",
+      "Freeze portions"
+    ],
+    "supplement_recommendations": [
+      "Whey protein powder",
+      "Creatine monohydrate",
+      "Multivitamin",
+      "Omega-3"
+    ],
+    "created_at": "2025-08-18T20:14:28.961Z"
+  },
+  {
+    "id": 2,
+    "plan_name": "Moderate Performance Nutrition",
+    "budget_per_month_euros": "250.00",
+    "target_calories": 2800,
+    "target_protein_g": 180,
+    "meal_plan_structure": [
+      "Breakfast: Protein smoothie with oats",
+      "Lunch: Turkey wrap with vegetables",
+      "Dinner: Salmon with quinoa",
+      "Snacks: Protein bars, nuts, fruit"
+    ],
+    "shopping_list": [
+      "Lean meats, fish, eggs",
+      "Quinoa, sweet potatoes, vegetables",
+      "Protein powder, protein bars",
+      "Quality supplements"
+    ],
+    "cost_breakdown": {
+      "fats": 40,
+      "proteins": 80,
+      "convenience": 40,
+      "supplements": 40,
+      "carbohydrates": 50
+    },
+    "time_saving_tips": [
+      "Meal prep on weekends",
+      "Use quality convenience foods",
+      "Invest in good supplements"
+    ],
+    "batch_cooking_instructions": [
+      "Prepare protein sources weekly",
+      "Cook grains in batches",
+      "Make protein bars",
+      "Portion and freeze"
+    ],
+    "supplement_recommendations": [
+      "Whey protein isolate",
+      "Creatine monohydrate",
+      "BCAAs",
+      "Multivitamin",
+      "Omega-3",
+      "Vitamin D"
+    ],
+    "created_at": "2025-08-18T20:14:28.961Z"
+  }
+]

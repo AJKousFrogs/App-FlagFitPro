@@ -1,0 +1,38 @@
+date,day,workout_type,workout_title,duration,notes,is_game_day
+2026-04-15,Monday,flag_practice,Flag Practice,120,Regular team practice,false
+2026-04-17,Wednesday,technique,Technique Training,90,Throwing mechanics and route running,false
+2026-04-20,Saturday,league_game,Austrian League Game,180,vs Opponent Team,true
+2026-04-22,Monday,flag_practice,Flag Practice,120,Regular team practice,false
+2026-04-24,Wednesday,technique,Technique Training,90,Defensive coverage drills,false
+2026-04-27,Saturday,league_game,Austrian League Game,180,vs Opponent Team,true
+2026-04-29,Monday,flag_practice,Flag Practice,120,Regular team practice,false
+2026-05-01,Wednesday,technique,Technique Training,90,Special teams work,false
+2026-05-04,Saturday,league_game,Austrian League Game,180,vs Opponent Team,true
+2026-05-06,Monday,flag_practice,Flag Practice,120,Regular team practice,false
+2026-05-08,Wednesday,technique,Technique Training,90,Game preparation,false
+2026-05-11,Saturday,league_game,Austrian League Game,180,vs Opponent Team,true
+2026-05-13,Monday,flag_practice,Flag Practice,120,Regular team practice,false
+2026-05-15,Wednesday,technique,Technique Training,90,Final preparations,false
+2026-05-18,Saturday,league_game,Austrian League Game,180,vs Opponent Team,true
+2026-05-20,Monday,flag_practice,Flag Practice,120,Regular team practice,false
+2026-05-22,Wednesday,technique,Light Technique,60,Pre-tournament light work,false
+2026-06-01,Monday,flag_practice,Flag Practice,120,Regular team practice,false
+2026-06-03,Wednesday,technique,Technique Training,90,Post-tournament return,false
+2026-06-05,Saturday,flag_practice,Flag Practice,120,Regular team practice,false
+2026-07-15,Monday,flag_practice,Flag Practice,120,Regular team practice,false
+2026-07-17,Wednesday,technique,Technique Training,90,Summer training,false
+2026-08-01,Monday,flag_practice,Flag Practice,120,Regular team practice,false
+2026-08-03,Wednesday,technique,Technique Training,90,World Championship prep,false
+2026-08-05,Friday,flag_practice,Flag Practice,120,Regular team practice,false
+2026-09-01,Monday,flag_practice,Flag Practice,120,Regular team practice,false
+2026-09-03,Wednesday,technique,Technique Training,90,Elite 8 preparation,false
+2026-09-05,Friday,flag_practice,Flag Practice,120,Regular team practice,false
+2026-09-10,Monday,flag_practice,Flag Practice,120,Regular team practice,false
+2026-09-12,Wednesday,technique,Light Technique,60,Pre-Elite 8 taper,false
+2026-09-15,Friday,flag_practice,Light Practice,60,Final preparations,false
+2026-09-25,Monday,flag_practice,Flag Practice,120,Post-Elite 8 return,false
+2026-09-27,Wednesday,technique,Technique Training,90,Regular training,false
+2026-10-01,Monday,flag_practice,Flag Practice,120,Regular team practice,false
+2026-10-03,Wednesday,technique,Technique Training,90,Regular training,false
+2026-10-05,Friday,flag_practice,Flag Practice,120,Regular team practice,false
+

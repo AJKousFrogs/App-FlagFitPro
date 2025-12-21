@@ -1,0 +1,164 @@
+import {
+  Component,
+  inject,
+  computed,
+  ChangeDetectionStrategy,
+  effect,
+} from "@angular/core";
+
+import { CommonModule } from "@angular/common";
+import { CardModule } from "primeng/card";
+import { ChartModule } from "primeng/chart";
+import { ButtonModule } from "primeng/button";
+import { TagModule } from "primeng/tag";
+import { AthleteDashboardComponent } from "./athlete-dashboard.component";
+import { CoachDashboardComponent } from "./coach-dashboard.component";
+import { AuthService } from "../../core/services/auth.service";
+import { HeaderService } from "../../core/services/header.service";
+
+@Component({
+  selector: "app-dashboard",
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    CommonModule,
+    CardModule,
+    ChartModule,
+    ButtonModule,
+    TagModule,
+    AthleteDashboardComponent,
+    CoachDashboardComponent,
+],
+  template: `
+    @if (userRole() === 'coach') {
+      <app-coach-dashboard></app-coach-dashboard>
+    } @else {
+      <app-athlete-dashboard></app-athlete-dashboard>
+    }
+    `,
+  styles: [
+    `
+      .dashboard-content {
+        padding: var(--space-6);
+      }
+
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: var(--space-6);
+      }
+
+      .dashboard-card {
+        min-height: 300px;
+      }
+
+      .activity-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-4);
+      }
+
+      .activity-item {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        padding: var(--space-3);
+        border-radius: var(--p-border-radius);
+        transition: background 0.2s;
+      }
+
+      .activity-item:hover {
+        background: var(--p-surface-50);
+      }
+
+      .activity-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--p-primary-50);
+        color: var(--p-primary-600);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .activity-content {
+        flex: 1;
+      }
+
+      .activity-title {
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+
+      .activity-time {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+      }
+
+      .sessions-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-4);
+      }
+
+      .session-item {
+        display: flex;
+        align-items: center;
+        gap: var(--space-4);
+        padding: var(--space-3);
+        border-radius: var(--p-border-radius);
+        border: 1px solid var(--p-surface-200);
+      }
+
+      .session-date {
+        text-align: center;
+        min-width: 60px;
+      }
+
+      .session-day {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--color-brand-primary);
+      }
+
+      .session-month {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+      }
+
+      .session-info {
+        flex: 1;
+      }
+
+      .session-title {
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+
+      .session-time {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+      }
+    `,
+  ],
+})
+export class DashboardComponent {
+  private authService = inject(AuthService);
+  private headerService = inject(HeaderService);
+
+  // Signal-based user role computation
+  userRole = computed(() => {
+    const user = this.authService.currentUser();
+    return user?.role || 'player';
+  });
+
+  constructor() {
+    // Configure header for dashboard using effect (zoneless change detection compatible)
+    effect(() => {
+      // Effect runs when component initializes and when dependencies change
+      this.headerService.setDashboardHeader();
+    });
+  }
+}

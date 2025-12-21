@@ -1,146 +1,272 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <!-- Security Headers -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https:; worker-src 'self';" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https:; worker-src 'self';" />
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
     <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <!-- SEO and Brand Identity -->
-    <title>FlagFit Pro - Elite Flag Football Training & Analytics Platform</title>
+    <title>FlagFit Pro - Welcome</title>
     <meta name="description" content="Professional flag football training platform with advanced analytics, AI coaching, team management, and LA28 Olympic preparation tools." />
     <meta name="keywords" content="flag football, training, analytics, coaching, sports tech, LA28, olympics" />
     <meta name="robots" content="index, follow" />
     <meta name="author" content="FlagFit Pro Development Team" />
     
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="FlagFit Pro - Elite Flag Football Training Platform" />
-    <meta property="og:description" content="Advanced flag football training with AI coaching, team analytics, and Olympic preparation tools." />
-    <meta property="og:site_name" content="FlagFit Pro" />
-    
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:title" content="FlagFit Pro - Elite Flag Football Training Platform" />
-    <meta property="twitter:description" content="Advanced flag football training with AI coaching, team analytics, and Olympic preparation tools." />
-    
-    <!-- Favicon and Touch Icons -->
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <link rel="manifest" href="/site.webmanifest" />
-    <meta name="theme-color" content="#1a1a1a" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    
-    <!-- Service Worker Registration -->
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js')
-            .then((registration) => {
-              console.log('SW registered: ', registration);
-            })
-            .catch((registrationError) => {
-              console.log('SW registration failed: ', registrationError);
-            });
-        });
-      }
-    </script>
-    
-    <!-- Preconnect to External Services -->
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    
-    <!-- Performance: Preload Critical Resources -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" as="style" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" />
-    
-    <!-- Comprehensive Performance API Polyfill for React Scheduler -->
-    <script>
-      // Initialize performance object with comprehensive timing API support
-      (function() {
-        // Ensure performance object exists
-        if (!window.performance) {
-          window.performance = {};
-        }
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <!-- New Modular CSS Architecture -->
+    <link rel="stylesheet" href="./src/css/main.css" />
+    <!-- Page-specific styles -->
+    <link rel="stylesheet" href="./src/css/pages/index.css" />
 
-        // Polyfill MessageChannel for React scheduler
-        if (!window.MessageChannel) {
-          window.MessageChannel = function() {
-            const callbacks = [];
-            this.port1 = {
-              postMessage: function(data) {
-                setTimeout(function() {
-                  callbacks.forEach(function(callback) {
-                    callback({ data: data });
-                  });
-                }, 0);
-              }
-            };
-            this.port2 = {
-              onmessage: null,
-              addEventListener: function(type, callback) {
-                if (type === 'message') {
-                  callbacks.push(callback);
-                }
-              }
-            };
-          };
-        }
-
-        // Enhanced performance timing methods
-        if (!window.performance.now) {
-          let start = Date.now();
-          window.performance.now = function() {
-            return Date.now() - start;
-          };
-        }
-
-        // Request animation frame polyfill
-        if (!window.requestAnimationFrame) {
-          window.requestAnimationFrame = function(callback) {
-            return setTimeout(callback, 1000/60);
-          };
-        }
-
-        if (!window.cancelAnimationFrame) {
-          window.cancelAnimationFrame = function(id) {
-            clearTimeout(id);
-          };
-        }
-
-        // High precision timer fallback
-        if (!window.performance.timeOrigin) {
-          window.performance.timeOrigin = Date.now();
-        }
-
-        // React Scheduler support
-        window.scheduler = window.scheduler || {
-          postTask: function(callback, options) {
-            const priority = options && options.priority || 'user-blocking';
-            const delay = priority === 'background' ? 1000 : 
-                         priority === 'user-visible' ? 100 : 0;
-            
-            return setTimeout(callback, delay);
-          },
-          
-          unstable_scheduleCallback: function(priority, callback, options) {
-            const delay = priority === 5 ? 1000 : 
-                         priority === 3 ? 100 : 0;
-            return setTimeout(callback, delay);
-          }
-        };
-      })();
-    </script>
+    <!-- Lucide Icons - Modern icon library similar to Radix UI -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
+    <script src="./src/icon-helper.js" defer></script>
+    <script src="./src/theme-switcher.js" defer></script>
+    <!-- Universal Components -->
+    <script type="module" src="./src/js/main.js"></script>
+    <!-- Footer Loader (Dynamic Component) -->
+    <script type="module" src="./src/js/components/footer-loader.js" defer></script>
   </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-    
+  <body class="page-landing">
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="hero-background">
+        <div class="hero-gradient-1"></div>
+        <div class="hero-gradient-2"></div>
+        <div class="hero-pattern"></div>
+      </div>
+
+      <div class="hero-container">
+        <div class="hero-content">
+          <div class="hero-main">
+            <div class="hero-text">
+              <div class="hero-logo-wrapper">
+                <div class="hero-logo">
+                  <i data-lucide="activity"></i>
+                </div>
+                <div class="hero-badge">🏆 Pro Platform</div>
+              </div>
+
+              <h1 class="hero-title text-display-xl text-primary leading-tight tracking-tight">
+                <span class="hero-title-line">Elevate your</span>
+                <span class="hero-title-line">
+                  <span class="hero-title-accent">Flag Football</span> Game
+                </span>
+              </h1>
+
+              <p class="hero-description text-body-lg text-secondary leading-relaxed">
+                The ultimate <strong class="text-emphasis">training and competition platform</strong> for serious players.
+                <strong class="text-emphasis">Track performance</strong>, join tournaments, and connect with a community
+                that shares your passion for the game.
+              </p>
+
+              <div id="actionButtons" class="hero-actions">
+                <div class="hero-actions-primary">
+                  <a href="/register.html" class="btn btn-primary btn-lg">
+                    <span>Get Started Free</span>
+                    <i data-lucide="arrow-right" class="icon-18"></i>
+                  </a>
+                  <p class="hero-cta-microcopy text-body-sm text-tertiary">No credit card required • For clubs and players</p>
+                </div>
+                <a href="/login.html" class="btn btn-secondary btn-lg">
+                  <i data-lucide="log-in" class="icon-18"></i>
+                  <span>Sign In</span>
+                </a>
+              </div>
+
+              <div class="hero-stats-wrapper">
+                <p class="hero-stats-label text-body-sm text-secondary">Trusted by the global flag football community</p>
+                <div class="hero-stats">
+                  <div class="hero-stat">
+                    <div class="hero-stat-number">10K+</div>
+                    <div class="hero-stat-label">Active Players</div>
+                  </div>
+                  <div class="hero-stat">
+                    <div class="hero-stat-number">500+</div>
+                    <div class="hero-stat-label">Tournaments</div>
+                  </div>
+                  <div class="hero-stat">
+                    <div class="hero-stat-number">50K+</div>
+                    <div class="hero-stat-label">Training Sessions</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="hero-visual">
+              <div class="hero-visual-container">
+                <div class="hero-visual-mockup">
+                  <div class="mockup-header">
+                    <div class="mockup-dots">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </div>
+                  </div>
+                  <div class="mockup-content">
+                    <div class="mockup-section">
+                      <div class="mockup-icon">📊</div>
+                      <div class="mockup-text">
+                        <div class="mockup-title">Training Analytics</div>
+                        <div class="mockup-subtitle">Track your progress</div>
+                      </div>
+                    </div>
+                    <div class="mockup-section">
+                      <div class="mockup-icon">🏆</div>
+                      <div class="mockup-text">
+                        <div class="mockup-title">Tournaments</div>
+                        <div class="mockup-subtitle">Compete & win</div>
+                      </div>
+                    </div>
+                    <div class="mockup-section">
+                      <div class="mockup-icon">📈</div>
+                      <div class="mockup-text">
+                        <div class="mockup-title">Performance Stats</div>
+                        <div class="mockup-subtitle">Real-time insights</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+      <div class="features-container">
+        <div class="features-header">
+          <h2 class="features-title">Everything You Need to Excel</h2>
+          <p class="features-subtitle">
+            Powerful tools designed to help you train smarter, compete better,
+            and grow faster
+          </p>
+        </div>
+
+        <div class="features-grid">
+          <div class="card card-interactive">
+            <div class="card-icon">
+              <i data-lucide="bar-chart-3" class="icon-24"></i>
+            </div>
+            <div class="card-body">
+              <h3 class="card-title">Performance Analytics</h3>
+              <p class="card-description">
+                Track every training session and game statistic. Get insights that
+                help you identify strengths and areas for improvement.
+              </p>
+              <div class="card-link">
+                <span>Learn more</span>
+                <i data-lucide="arrow-right" class="icon-18"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="card card-interactive">
+            <div class="card-icon">
+              <i data-lucide="trophy" class="icon-24"></i>
+            </div>
+            <div class="card-body">
+              <h3 class="card-title">Tournament System</h3>
+              <p class="card-description">
+                Join competitive tournaments, climb leaderboards, and compete
+                against the best players in your region.
+              </p>
+              <div class="card-link">
+                <span>Learn more</span>
+                <i data-lucide="arrow-right" class="icon-18"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="card card-interactive">
+            <div class="card-icon">
+              <i data-lucide="users" class="icon-24"></i>
+            </div>
+            <div class="card-body">
+              <h3 class="card-title">Community Hub</h3>
+              <p class="card-description">
+                Connect with players, coaches, and teams. Share strategies,
+                celebrate wins, and build lasting relationships.
+              </p>
+              <div class="card-link">
+                <span>Learn more</span>
+                <i data-lucide="arrow-right" class="icon-18"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="card card-interactive">
+            <div class="card-icon">
+              <i data-lucide="zap" class="icon-24"></i>
+            </div>
+            <div class="card-body">
+              <h3 class="card-title">Training Programs</h3>
+              <p class="card-description">
+                Access structured workouts and skill development plans designed by
+                professional coaches and trainers.
+              </p>
+              <div class="card-link">
+                <span>Learn more</span>
+                <i data-lucide="arrow-right" class="icon-18"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script type="module">
+      // Add timeout wrapper to prevent page freeze
+      const initTimeout = setTimeout(function () {
+        console.warn(
+          "Page initialization timeout - forcing page to be responsive",
+        );
+      }, 10000); // 10 second safety timeout
+
+      document.addEventListener("DOMContentLoaded", function () {
+        try {
+          // Initialize Lucide icons with error handling and timeout
+
+          // Ensure action buttons are visible
+          const actionButtons = document.getElementById("actionButtons");
+          if (actionButtons) {
+            actionButtons.style.display = "flex";
+          }
+
+          // Clear timeout on successful initialization
+          clearTimeout(initTimeout);
+        } catch (error) {
+          console.error("Error in DOMContentLoaded handler:", error);
+          clearTimeout(initTimeout);
+        }
+      });
+
+      // Fallback: if DOMContentLoaded never fires, clear timeout after 15 seconds
+      setTimeout(function () {
+        clearTimeout(initTimeout);
+      }, 15000);
+    </script>
+
     <!-- Performance monitoring -->
     <script>
       // Cache management and performance monitoring
@@ -199,5 +325,8 @@
         }
       }
     </script>
+
+    <!-- Footer (Loaded Dynamically) -->
+    <div data-footer-container></div>
   </body>
 </html>
