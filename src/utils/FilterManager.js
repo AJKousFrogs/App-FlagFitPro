@@ -3,6 +3,7 @@ import React from 'react';
 class FilterManager {
     constructor() {
         this.activeFilters = new Map();
+        this.keyboardHandler = null;
         this.init();
     }
 
@@ -144,7 +145,8 @@ class FilterManager {
     }
 
     setupKeyboardNavigation() {
-        document.addEventListener('keydown', (e) => {
+        // Store handler reference for cleanup
+        this.keyboardHandler = (e) => {
             // Arrow key navigation for filter buttons
             if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
                 const activeElement = document.activeElement;
@@ -153,20 +155,30 @@ class FilterManager {
                     if (container) {
                         const buttons = Array.from(container.querySelectorAll('button'));
                         const currentIndex = buttons.indexOf(activeElement);
-                        
+
                         let nextIndex;
                         if (e.key === 'ArrowRight') {
                             nextIndex = (currentIndex + 1) % buttons.length;
                         } else {
                             nextIndex = (currentIndex - 1 + buttons.length) % buttons.length;
                         }
-                        
+
                         buttons[nextIndex].focus();
                         e.preventDefault();
                     }
                 }
             }
-        });
+        };
+
+        document.addEventListener('keydown', this.keyboardHandler);
+    }
+
+    cleanup() {
+        // Remove keyboard event listener to prevent memory leak
+        if (this.keyboardHandler) {
+            document.removeEventListener('keydown', this.keyboardHandler);
+            this.keyboardHandler = null;
+        }
     }
 
     setupAccessibility() {
@@ -235,7 +247,10 @@ export const useFilterManager = () => {
         setFilterManager(manager);
 
         return () => {
-            // Cleanup if needed
+            // Cleanup event listeners to prevent memory leak
+            if (manager && manager.cleanup) {
+                manager.cleanup();
+            }
         };
     }, []);
 

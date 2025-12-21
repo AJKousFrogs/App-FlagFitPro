@@ -3,30 +3,45 @@
 
 // Dynamic import with fallback for older browsers
 let Chart;
-try {
-    // Try to import Chart.js
-    if (typeof window !== 'undefined' && window.Chart) {
-        Chart = window.Chart;
-    } else {
-        // Fallback for module systems
-        Chart = require('chart.js/auto');
+let chartLoadPromise = null;
+
+// Async function to load Chart.js dynamically
+async function loadChart() {
+    if (Chart) return Chart;
+
+    try {
+        // Try window.Chart first (if already loaded via script tag)
+        if (typeof window !== 'undefined' && window.Chart) {
+            Chart = window.Chart;
+            return Chart;
+        }
+
+        // Try dynamic import for ES modules
+        const chartModule = await import('chart.js/auto');
+        Chart = chartModule.default || chartModule;
+        return Chart;
+    } catch (error) {
+        console.warn('Chart.js not available, charts will not render:', error);
+        return null;
     }
-} catch (error) {
-    console.warn('Chart.js not available, charts will not render:', error);
 }
 
-// Import date adapter if available
-try {
-    if (typeof window !== 'undefined') {
-        require('chartjs-adapter-date-fns');
+// Load date adapter asynchronously
+async function loadDateAdapter() {
+    try {
+        if (typeof window !== 'undefined' && !window.chartjsDateAdapterLoaded) {
+            await import('chartjs-adapter-date-fns');
+            window.chartjsDateAdapterLoaded = true;
+        }
+    } catch (error) {
+        console.warn('Chart.js date adapter not available:', error);
     }
-} catch (error) {
-    console.warn('Chart.js date adapter not available:', error);
 }
 
 class ChartManager {
     constructor() {
         this.charts = new Map();
+        this.isReady = false;
         this.chartColors = {
             primary: '#3B82F6',
             secondary: '#10B981',
@@ -42,23 +57,35 @@ class ChartManager {
             secondary: ['#10B981', '#059669'],
             accent: ['#F59E0B', '#D97706']
         };
-        
-        // Check if Chart.js is available
+    }
+
+    async ensureChartLoaded() {
+        if (!Chart) {
+            Chart = await loadChart();
+            await loadDateAdapter();
+        }
+
         if (!Chart) {
             console.error('Chart.js is not available. Charts will not render.');
             throw new Error('Chart.js library not loaded');
         }
+
+        this.isReady = true;
+        return Chart;
     }
 
     // Initialize all charts on the dashboard
     async initializeCharts() {
         try {
             console.log('🎨 Initializing Chart.js charts...');
-            
+
             // Check if we're in a browser environment
             if (typeof window === 'undefined' || typeof document === 'undefined') {
                 throw new Error('Chart manager must run in a browser environment');
             }
+
+            // Ensure Chart.js is loaded
+            await this.ensureChartLoaded();
             
             // Performance Trends Chart
             this.createPerformanceTrendsChart();
@@ -96,18 +123,33 @@ class ChartManager {
     showChartError(error) {
         const errorMessage = document.createElement('div');
         errorMessage.className = 'error';
-        errorMessage.innerHTML = `
-            <div style="text-align: center; padding: 2rem;">
-                <h3>Chart Loading Error</h3>
-                <p>Unable to load charts: ${error.message}</p>
-                <button onclick="location.reload()" class="btn btn-primary">Refresh Page</button>
-            </div>
-        `;
-        
+
+        // Create elements safely without innerHTML to prevent XSS
+        const container = document.createElement('div');
+        container.style.textAlign = 'center';
+        container.style.padding = '2rem';
+
+        const title = document.createElement('h3');
+        title.textContent = 'Chart Loading Error';
+
+        const message = document.createElement('p');
+        // Use textContent instead of innerHTML to prevent XSS
+        message.textContent = `Unable to load charts: ${error.message}`;
+
+        const button = document.createElement('button');
+        button.className = 'btn btn-primary';
+        button.textContent = 'Refresh Page';
+        button.onclick = () => location.reload();
+
+        container.appendChild(title);
+        container.appendChild(message);
+        container.appendChild(button);
+        errorMessage.appendChild(container);
+
         // Find a good place to show the error
-        const container = document.querySelector('.dashboard-container');
-        if (container) {
-            container.appendChild(errorMessage);
+        const dashboardContainer = document.querySelector('.dashboard-container');
+        if (dashboardContainer) {
+            dashboardContainer.appendChild(errorMessage);
         } else {
             document.body.appendChild(errorMessage);
         }

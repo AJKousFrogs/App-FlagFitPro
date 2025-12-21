@@ -84,26 +84,74 @@ export const AuthProvider = ({ children }) => {
     authReducer
   );
 
+  // Token refresh mechanism
+  useEffect(() => {
+    let refreshInterval;
+
+    const setupTokenRefresh = () => {
+      // Refresh token every 20 hours (assuming 24h expiry)
+      const REFRESH_INTERVAL = 20 * 60 * 60 * 1000; // 20 hours in ms
+
+      refreshInterval = setInterval(async () => {
+        if (state.isAuthenticated && state.token) {
+          try {
+            const { authService } = await import('../services/auth.service');
+            const refreshedData = await authService.refreshToken(state.token);
+            if (refreshedData) {
+              actions.loginSuccess(refreshedData);
+            }
+          } catch (error) {
+            console.error('Token refresh failed:', error);
+            // If refresh fails, log out the user
+            actions.logout();
+          }
+        }
+      }, REFRESH_INTERVAL);
+    };
+
+    if (state.isAuthenticated) {
+      setupTokenRefresh();
+    }
+
+    return () => {
+      if (refreshInterval) {
+        clearInterval(refreshInterval);
+      }
+    };
+  }, [state.isAuthenticated, state.token, actions]);
+
   // Check authentication status on mount
   useEffect(() => {
+    let isMounted = true;
+
     const checkAuth = async () => {
       try {
         actions.checkAuthStart();
         const { authService } = await import('../services/auth.service');
         const user = await authService.getCurrentUser();
-        if (user) {
-          actions.checkAuthSuccess({ user });
-        } else {
-          actions.checkAuthFailure('No authenticated user found');
+
+        // Only update state if component is still mounted
+        if (isMounted) {
+          if (user) {
+            actions.checkAuthSuccess({ user });
+          } else {
+            actions.checkAuthFailure('No authenticated user found');
+          }
         }
       } catch (error) {
-        actions.checkAuthFailure(error.message);
+        if (isMounted) {
+          actions.checkAuthFailure(error.message);
+        }
       }
     };
 
-    // Only check auth on mount, don't depend on actions
     checkAuth();
-  }, [actions]); // Add actions dependency
+
+    // Cleanup function to prevent state updates after unmount
+    return () => {
+      isMounted = false;
+    };
+  }, [actions]);
 
   // Login function
   const login = React.useCallback(async (credentials) => {

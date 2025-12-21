@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { Classifier, LookupHelper } from '../utils/RuleEngine';
+import { COLOR_SCHEMES, TREND_ICONS } from '../config/thresholds';
 
 const InjuryRiskAssessment = () => {
   const [riskData, setRiskData] = useState({
@@ -101,33 +103,21 @@ const InjuryRiskAssessment = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  // Refactored using Classifier and LookupHelper - eliminates if-chains and switch statements
   const getRiskColor = (risk) => {
-    if (risk <= 25) return '#10b981'; // green - low risk
-    if (risk <= 50) return '#f59e0b'; // yellow - moderate risk
-    return '#ef4444'; // red - high risk
+    return Classifier.getRiskLevel(risk).color;
   };
 
   const getRiskLevel = (risk) => {
-    if (risk <= 25) return 'Low';
-    if (risk <= 50) return 'Moderate';
-    return 'High';
+    return Classifier.getRiskLevel(risk).label;
   };
 
   const getTrendIcon = (trend) => {
-    switch(trend) {
-      case 'increasing': return '📈';
-      case 'decreasing': return '📉';
-      default: return '➡️';
-    }
+    return LookupHelper.get(TREND_ICONS, trend, TREND_ICONS.default);
   };
 
   const getSeverityColor = (severity) => {
-    switch(severity) {
-      case 'high': return '#ef4444';
-      case 'medium': return '#f59e0b';
-      case 'low': return '#3b82f6';
-      default: return '#6b7280';
-    }
+    return LookupHelper.get(COLOR_SCHEMES.severity, severity, COLOR_SCHEMES.severity.default);
   };
 
   if (loading) {

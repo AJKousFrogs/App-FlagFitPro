@@ -13,43 +13,46 @@ const LoginPage = ({ onLogin }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('🔍 Form submitted!', formData);
+
+    // Only log in development mode
+    const isDev = process.env.NODE_ENV === 'development';
+    if (isDev) console.log('🔍 Form submitted!', formData);
+
     setIsLoading(true);
     setError('');
-    
+
     try {
-      // Simulate login process
-      console.log('🔄 Starting login process...');
-      
+      if (isDev) console.log('🔄 Starting login process...');
+
       // Basic validation
       if (!formData.email || !formData.password) {
-        console.log('❌ Validation failed - missing fields');
+        if (isDev) console.log('❌ Validation failed - missing fields');
         throw new Error('Please fill in all fields');
       }
-      
-      console.log('✅ Validation passed, simulating API call...');
-      
+
+      if (isDev) console.log('✅ Validation passed, simulating API call...');
+
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      console.log('📞 Calling onLogin function...');
-      
+
+      if (isDev) console.log('📞 Calling onLogin function...');
+
       // Call the onLogin function from App.jsx
       if (onLogin) {
-        console.log('✅ onLogin function exists, calling it...');
+        if (isDev) console.log('✅ onLogin function exists, calling it...');
         onLogin(formData);
       } else {
-        console.log('⚠️ onLogin function is undefined!');
+        if (isDev) console.log('⚠️ onLogin function is undefined!');
       }
-      
-      console.log('🧭 Navigating to dashboard...');
+
+      if (isDev) console.log('🧭 Navigating to dashboard...');
       // Navigate to dashboard
       navigate('/dashboard');
     } catch (err) {
-      console.log('❌ Error occurred:', err.message);
+      if (isDev) console.log('❌ Error occurred:', err.message);
       setError(err.message || 'Login failed. Please try again.');
     } finally {
-      console.log('🏁 Login process finished');
+      if (isDev) console.log('🏁 Login process finished');
       setIsLoading(false);
     }
   };
@@ -87,38 +90,45 @@ const LoginPage = ({ onLogin }) => {
           </div>
         )}
         
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} aria-label="Login form">
           <div className="form-group">
-            <label>Email</label>
+            <label htmlFor="email">Email</label>
             <input
               type="email"
+              id="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
               placeholder="Enter your email"
               required
               disabled={isLoading}
+              aria-required="true"
+              aria-invalid={error ? "true" : "false"}
             />
           </div>
-          
+
           <div className="form-group">
-            <label>Password</label>
+            <label htmlFor="password">Password</label>
             <input
               type="password"
+              id="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
               placeholder="Enter your password"
               required
               disabled={isLoading}
+              aria-required="true"
+              aria-invalid={error ? "true" : "false"}
             />
           </div>
           
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="login-btn"
             disabled={isLoading}
-            onClick={() => console.log('🔘 Button clicked!')}
+            aria-label="Sign in to your account"
+            aria-busy={isLoading}
             style={{
               cursor: 'pointer',
               backgroundColor: '#fff',
@@ -135,10 +145,18 @@ const LoginPage = ({ onLogin }) => {
         </form>
         
         <div className="login-options">
-          <button className="social-login-btn" disabled={isLoading}>
+          <button
+            className="social-login-btn"
+            disabled={isLoading}
+            aria-label="Sign in with biometric authentication"
+          >
             🔐 Biometric Login
           </button>
-          <button className="social-login-btn" disabled={isLoading}>
+          <button
+            className="social-login-btn"
+            disabled={isLoading}
+            aria-label="Sign in with phone number"
+          >
             📱 Continue with Phone
           </button>
         </div>

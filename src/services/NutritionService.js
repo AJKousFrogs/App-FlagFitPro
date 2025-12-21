@@ -6,18 +6,31 @@ class NutritionService {
     this.db = database;
   }
 
+  // Validate userId to prevent SQL injection
+  static validateUserId(userId) {
+    // Ensure userId is a positive integer
+    const parsed = parseInt(userId, 10);
+    if (isNaN(parsed) || parsed <= 0 || parsed > 2147483647) {
+      throw new Error('Invalid user ID');
+    }
+    return parsed;
+  }
+
   // Calculate personalized nutrition targets based on user profile and training
   static async calculateNutritionTargets(userId) {
     try {
+      // Validate userId before using in queries
+      userId = this.validateUserId(userId);
+
       const user = await UserModel.findById(userId);
       if (!user) throw new Error('User not found');
 
       // Get user's physical stats and training data
       const userStats = await this.db.query(`
-        SELECT 
+        SELECT
           height_cm, weight_kg, body_fat_percentage, position,
           birth_date, gender
-        FROM users 
+        FROM users
         WHERE id = $1
       `, [userId]);
 
@@ -37,30 +50,18 @@ class NutritionService {
       // Calculate age
       const age = Math.floor((Date.now() - new Date(birth_date).getTime()) / (365.25 * 24 * 60 * 60 * 1000));
 
-      // Calculate BMR using Mifflin-St Jeor equation
-      let bmr;
-      if (gender === 'male') {
-        bmr = (10 * weight_kg) + (6.25 * height_cm) - (5 * age) + 5;
-      } else {
-        bmr = (10 * weight_kg) + (6.25 * height_cm) - (5 * age) - 161;
-      }
+      // Calculate BMR using Mifflin-St Jeor equation with strategy pattern
+      const bmr = this.calculateBMR(weight_kg, height_cm, age, gender);
 
-      // Activity factor based on training load
-      let activityFactor = 1.4; // lightly active baseline
-      if (sessions_per_week >= 6) activityFactor = 1.9; // very active
-      else if (sessions_per_week >= 4) activityFactor = 1.7; // moderately active
-      else if (sessions_per_week >= 2) activityFactor = 1.5; // lightly active
+      // Activity factor using data-driven approach
+      const { ActivityLevelCalculator } = require('../utils/RuleEngine');
+      const activityLevel = ActivityLevelCalculator.getActivityLevel(sessions_per_week);
+      const activityFactor = activityLevel.multiplier;
 
-      // Position-specific adjustments
-      const positionMultipliers = {
-        'QB': 1.0,
-        'WR': 1.1,
-        'RB': 1.15,
-        'DB': 1.1,
-        'LB': 1.05
-      };
-
-      const positionMultiplier = positionMultipliers[position] || 1.0;
+      // Position-specific adjustments using centralized config
+      const { POSITION_MULTIPLIERS } = require('../config/thresholds');
+      const positionData = POSITION_MULTIPLIERS[position];
+      const positionMultiplier = positionData ? positionData.nutrition : 1.0;
       const dailyCalories = Math.round(bmr * activityFactor * positionMultiplier);
 
       // Macronutrient distribution for athletes
@@ -102,6 +103,10 @@ class NutritionService {
   // Save nutrition targets for a user
   static async saveNutritionTargets(userId, teamId, targets, goal = 'peak_performance') {
     try {
+      // Validate user and team IDs
+      userId = this.validateUserId(userId);
+      teamId = this.validateUserId(teamId);
+
       const query = `
         INSERT INTO user_nutrition_targets (
           user_id, team_id, start_date, daily_calories_target, daily_calories_min,
@@ -203,6 +208,9 @@ class NutritionService {
   // Get daily nutrition summary
   static async getDailyNutritionSummary(userId, date) {
     try {
+      // Validate userId
+      userId = this.validateUserId(userId);
+
       const query = `
         SELECT 
           COUNT(*) as meals_logged,
@@ -276,6 +284,9 @@ class NutritionService {
   // Generate meal recommendations based on targets and preferences
   static async generateMealRecommendations(userId, mealType, targetCalories, dietaryRestrictions = []) {
     try {
+      // Validate userId
+      userId = this.validateUserId(userId);
+
       // Get user's position for position-specific recommendations
       const userQuery = `SELECT position FROM users WHERE id = $1`;
       const userResult = await this.db.query(userQuery, [userId]);
@@ -366,13 +377,28 @@ class NutritionService {
   }
 
   static getCalorieMatchRating(templateCalories, targetCalories) {
-    const difference = Math.abs(templateCalories - targetCalories);
-    const percentageDiff = difference / targetCalories * 100;
-    
-    if (percentageDiff <= 10) return 'Excellent match';
-    if (percentageDiff <= 20) return 'Good match';
-    if (percentageDiff <= 30) return 'Fair match';
-    return 'Adjust portions as needed';
+    // Use CalorieMatchEvaluator with guard clauses
+    const { CalorieMatchEvaluator } = require('../utils/RuleEngine');
+    const evaluation = CalorieMatchEvaluator.evaluate(templateCalories, targetCalories);
+    return evaluation.rating;
+  }
+
+  // BMR calculation strategy - polymorphic approach
+  static calculateBMR(weight_kg, height_cm, age, gender) {
+    // Guard clause for invalid inputs
+    if (!weight_kg || !height_cm || !age) {
+      throw new Error('Invalid input for BMR calculation');
+    }
+
+    // Base calculation
+    const baseCalc = (10 * weight_kg) + (6.25 * height_cm) - (5 * age);
+
+    // Gender-specific adjustment using guard clause pattern
+    if (gender === 'male') return baseCalc + 5;
+    if (gender === 'female') return baseCalc - 161;
+
+    // Default to male if gender not specified
+    return baseCalc + 5;
   }
 
   // Search for food items in database

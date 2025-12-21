@@ -9,10 +9,14 @@ const NotificationSystem = () => {
 
   // Backend Integration - Fetch notifications
   useEffect(() => {
-    fetchNotifications();
+    if (user?.token) {
+      fetchNotifications();
+    }
   }, [user]);
 
   const fetchNotifications = async () => {
+    if (!user?.token) return;
+
     try {
       const response = await fetch('/api/notifications', {
         headers: {
@@ -33,6 +37,8 @@ const NotificationSystem = () => {
 
   // Backend Integration - Mark notification as read
   const markAsRead = async (notificationId) => {
+    if (!user?.token) return;
+
     try {
       const response = await fetch(`/api/notifications/${notificationId}/read`, {
         method: 'PUT',
@@ -60,6 +66,8 @@ const NotificationSystem = () => {
 
   // Backend Integration - Mark all as read
   const markAllAsRead = async () => {
+    if (!user?.token) return;
+
     try {
       const response = await fetch('/api/notifications/mark-all-read', {
         method: 'PUT',

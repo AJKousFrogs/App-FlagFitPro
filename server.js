@@ -196,87 +196,15 @@ app.use('/api/dashboard', dashboardRoutes);
 // Analytics API routes
 app.use('/api/analytics', analyticsRoutes);
 
-// Simple login route for testing (accepts any email/password) - Enhanced
-app.post('/api/auth/login', async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    
-    // Enhanced validation
-    if (!email || !password) {
-      return res.status(400).json({
-        success: false,
-        error: 'Email and password are required',
-        code: 'MISSING_CREDENTIALS'
-      });
-    }
-    
-    // Basic email format validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({
-        success: false,
-        error: 'Invalid email format',
-        code: 'INVALID_EMAIL'
-      });
-    }
-    
-    // For testing: accept any email and password
-    if (email && password) {
-      // Generate a simple JWT token with enhanced payload
-      const token = jwt.sign(
-        { 
-          userId: '1', 
-          email: email.trim().toLowerCase(),
-          role: 'player', // Default role
-          iat: Math.floor(Date.now() / 1000),
-          exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60) // 24 hours
-        }, 
-        JWT_SECRET, 
-        { 
-          expiresIn: '24h',
-          issuer: 'flagfit-pro',
-          audience: 'flagfit-users'
-        }
-      );
-      
-      res.json({
-        success: true,
-        message: 'Login successful',
-        data: {
-          token: token,
-          user: {
-            id: '1',
-            email: email.trim().toLowerCase(),
-            fullName: email.split('@')[0], // Use email prefix as name
-            role: 'player',
-            loginTime: new Date().toISOString()
-          }
-        }
-      });
-    } else {
-      res.status(400).json({
-        success: false,
-        error: 'Email and password are required',
-        code: 'MISSING_CREDENTIALS'
-      });
-    }
-  } catch (error) {
-    console.error('❌ Login error:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Login failed',
-      code: 'LOGIN_ERROR',
-      details: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
-    });
-  }
-});
-
-// CSRF token endpoint - Enhanced
+// CSRF token endpoint - Enhanced with crypto
 app.get('/api/auth/csrf', (req, res) => {
   try {
-    const csrfToken = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-    res.json({ 
-      success: true, 
+    // Use crypto.randomBytes for cryptographically secure token
+    const crypto = require('crypto');
+    const csrfToken = crypto.randomBytes(32).toString('hex');
+
+    res.json({
+      success: true,
       csrfToken: csrfToken,
       timestamp: new Date().toISOString()
     });

@@ -155,7 +155,8 @@ export const escapeHtml = (text) => {
 
 export const unescapeHtml = (html) => {
   const div = document.createElement('div');
-  div.innerHTML = html;
+  // Use textContent instead of innerHTML to prevent XSS
+  div.textContent = html;
   return div.textContent || div.innerText || '';
 };
 

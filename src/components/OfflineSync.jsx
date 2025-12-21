@@ -53,7 +53,14 @@ const OfflineSync = () => {
   const loadOfflineData = () => {
     const stored = localStorage.getItem('flagfit-offline-data');
     if (stored) {
-      setOfflineData(JSON.parse(stored));
+      try {
+        setOfflineData(JSON.parse(stored));
+      } catch (error) {
+        console.error('Error parsing offline data:', error);
+        // Clear corrupted data
+        localStorage.removeItem('flagfit-offline-data');
+        setOfflineData({});
+      }
     }
   };
 
@@ -80,14 +87,16 @@ const OfflineSync = () => {
       setLastSyncTime(new Date());
       
       // Update last sync time in backend
-      await fetch('/api/sync/last-sync', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${user.token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ lastSyncTime: new Date().toISOString() })
-      });
+      if (user?.token) {
+        await fetch('/api/sync/last-sync', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${user.token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ lastSyncTime: new Date().toISOString() })
+        });
+      }
       
     } catch (error) {
       console.error('Error syncing changes:', error);
@@ -97,6 +106,10 @@ const OfflineSync = () => {
 
   // Backend Integration - Sync individual change
   const syncChange = async (change) => {
+    if (!user?.token) {
+      throw new Error('User not authenticated');
+    }
+
     try {
       const response = await fetch(change.endpoint, {
         method: change.method,
@@ -124,13 +137,17 @@ const OfflineSync = () => {
       id: Date.now(),
       timestamp: new Date().toISOString()
     };
-    
+
     setPendingChanges(prev => [...prev, newChange]);
-    
+
     // Save to offline storage
-    const storedChanges = JSON.parse(localStorage.getItem('flagfit-pending-changes') || '[]');
-    storedChanges.push(newChange);
-    localStorage.setItem('flagfit-pending-changes', JSON.stringify(storedChanges));
+    try {
+      const storedChanges = JSON.parse(localStorage.getItem('flagfit-pending-changes') || '[]');
+      storedChanges.push(newChange);
+      localStorage.setItem('flagfit-pending-changes', JSON.stringify(storedChanges));
+    } catch (error) {
+      console.error('Error saving pending changes:', error);
+    }
   };
 
   // Backend Integration - Get offline data
@@ -140,6 +157,8 @@ const OfflineSync = () => {
 
   // Backend Integration - Check sync status
   const checkSyncStatus = async () => {
+    if (!user?.token) return;
+
     try {
       const response = await fetch('/api/sync/status', {
         headers: {
@@ -175,52 +194,66 @@ const OfflineSync = () => {
 
   // Minimal UI - Sync status indicator
   return (
-    <div className="offline-sync">
-      <div className="sync-status">
-        <span className={`status-indicator ${syncStatus}`}>
+    <div className="offline-sync" role="region" aria-label="Offline sync status">
+      <div className="sync-status" role="status" aria-live="polite">
+        <span className={`status-indicator ${syncStatus}`} aria-hidden="true">
           {syncStatus === 'synced' && '🟢'}
           {syncStatus === 'syncing' && '🔄'}
           {syncStatus === 'offline' && '🔴'}
           {syncStatus === 'error' && '⚠️'}
         </span>
-        
+
         <span className="status-text">
           {syncStatus === 'synced' && 'Synced'}
           {syncStatus === 'syncing' && 'Syncing...'}
           {syncStatus === 'offline' && 'Offline'}
           {syncStatus === 'error' && 'Sync Error'}
         </span>
-        
+
         {lastSyncTime && (
           <span className="last-sync">
             Last sync: {lastSyncTime.toLocaleTimeString()}
           </span>
         )}
       </div>
-      
+
       {pendingChanges.length > 0 && (
-        <div className="pending-changes">
+        <div className="pending-changes" role="alert">
           <span>📝 {pendingChanges.length} pending changes</span>
-          <button onClick={forceSync} disabled={!isOnline}>
+          <button
+            onClick={forceSync}
+            disabled={!isOnline}
+            aria-label={`Sync ${pendingChanges.length} pending changes now`}
+          >
             Sync Now
           </button>
         </div>
       )}
-      
+
       {!isOnline && (
-        <div className="offline-warning">
+        <div className="offline-warning" role="alert">
           ⚠️ You're offline. Changes will sync when connection is restored.
         </div>
       )}
-      
+
       <div className="offline-actions">
-        <button onClick={checkSyncStatus}>
+        <button
+          onClick={checkSyncStatus}
+          aria-label="Check current sync status"
+        >
           Check Sync Status
         </button>
-        <button onClick={forceSync} disabled={!isOnline}>
+        <button
+          onClick={forceSync}
+          disabled={!isOnline}
+          aria-label="Force immediate sync of all changes"
+        >
           Force Sync
         </button>
-        <button onClick={clearOfflineData}>
+        <button
+          onClick={clearOfflineData}
+          aria-label="Clear all offline data"
+        >
           Clear Offline Data
         </button>
       </div>

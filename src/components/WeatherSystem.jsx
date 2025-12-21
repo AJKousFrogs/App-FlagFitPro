@@ -24,6 +24,11 @@ const WeatherSystem = () => {
   }, [location]);
 
   const fetchUserLocation = async () => {
+    if (!user?.token) {
+      getCurrentPosition();
+      return;
+    }
+
     try {
       const response = await fetch('/api/user/location', {
         headers: {
@@ -45,15 +50,40 @@ const WeatherSystem = () => {
     }
   };
 
+  // Validate coordinates are within valid ranges
+  const validateCoordinates = (lat, lon) => {
+    const latitude = parseFloat(lat);
+    const longitude = parseFloat(lon);
+
+    if (isNaN(latitude) || isNaN(longitude)) {
+      return false;
+    }
+
+    // Valid latitude range: -90 to 90
+    // Valid longitude range: -180 to 180
+    return latitude >= -90 && latitude <= 90 &&
+           longitude >= -180 && longitude <= 180;
+  };
+
   const getCurrentPosition = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          setLocation({
-            lat: position.coords.latitude,
-            lon: position.coords.longitude,
-            name: 'Current Location'
-          });
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+
+          // Validate coordinates before using them
+          if (validateCoordinates(lat, lon)) {
+            setLocation({
+              lat,
+              lon,
+              name: 'Current Location'
+            });
+          } else {
+            console.error('Invalid coordinates received from geolocation');
+            // Default to a fallback location
+            setLocation({ lat: 40.7128, lon: -74.0060, name: 'New York' });
+          }
         },
         (error) => {
           console.error('Geolocation error:', error);
@@ -65,6 +95,8 @@ const WeatherSystem = () => {
   };
 
   const fetchWeatherData = async () => {
+    if (!user?.token) return;
+
     setIsLoading(true);
     try {
       const response = await fetch('/api/weather', {
@@ -143,6 +175,8 @@ const WeatherSystem = () => {
 
   // Backend Integration - Save weather preferences
   const saveWeatherPreferences = async (preferences) => {
+    if (!user?.token) return;
+
     try {
       const response = await fetch('/api/user/weather-preferences', {
         method: 'PUT',
@@ -163,6 +197,8 @@ const WeatherSystem = () => {
 
   // Backend Integration - Get weather history
   const getWeatherHistory = async () => {
+    if (!user?.token) return;
+
     try {
       const response = await fetch('/api/weather/history', {
         headers: {
@@ -182,6 +218,8 @@ const WeatherSystem = () => {
 
   // Backend Integration - Report weather incident
   const reportWeatherIncident = async (incident) => {
+    if (!user?.token) return;
+
     try {
       const response = await fetch('/api/weather/incident', {
         method: 'POST',

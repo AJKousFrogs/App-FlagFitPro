@@ -13,11 +13,15 @@ const SearchSystem = () => {
 
   // Backend Integration - Fetch recent searches and quick actions
   useEffect(() => {
-    fetchRecentSearches();
-    fetchQuickActions();
+    if (user?.token) {
+      fetchRecentSearches();
+      fetchQuickActions();
+    }
   }, [user]);
 
   const fetchRecentSearches = async () => {
+    if (!user?.token) return;
+
     try {
       const response = await fetch('/api/search/recent', {
         headers: {
@@ -36,6 +40,8 @@ const SearchSystem = () => {
   };
 
   const fetchQuickActions = async () => {
+    if (!user?.token) return;
+
     try {
       const response = await fetch('/api/search/quick-actions', {
         headers: {
@@ -59,6 +65,8 @@ const SearchSystem = () => {
       setResults([]);
       return;
     }
+
+    if (!user?.token) return;
 
     setIsLoading(true);
     try {
@@ -87,6 +95,8 @@ const SearchSystem = () => {
 
   // Backend Integration - Save recent search
   const saveRecentSearch = async (searchQuery) => {
+    if (!user?.token) return;
+
     try {
       await fetch('/api/search/recent', {
         method: 'POST',
@@ -103,6 +113,8 @@ const SearchSystem = () => {
 
   // Backend Integration - Execute quick action
   const executeQuickAction = async (action) => {
+    if (!user?.token) return;
+
     try {
       const response = await fetch('/api/search/quick-action', {
         method: 'POST',
