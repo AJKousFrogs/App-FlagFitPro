@@ -44,6 +44,27 @@ export const publicRoutes: Routes = [
         (m) => m.ResetPasswordComponent,
       ),
   },
+  {
+    path: "verify-email",
+    loadComponent: () =>
+      import("../../features/auth/verify-email/verify-email.component").then(
+        (m) => m.VerifyEmailComponent,
+      ),
+  },
+  {
+    path: "onboarding",
+    loadComponent: () =>
+      import("../../features/onboarding/onboarding.component").then(
+        (m) => m.OnboardingComponent,
+      ),
+  },
+  {
+    path: "accept-invitation",
+    loadComponent: () =>
+      import("../../features/team/accept-invitation/accept-invitation.component").then(
+        (m) => m.AcceptInvitationComponent,
+      ),
+  },
 ];
 
 /**
@@ -90,6 +111,46 @@ export const trainingRoutes: Routes = [
       ),
     canActivate: [authGuard],
   },
+  {
+    path: "training/schedule",
+    loadComponent: () =>
+      import("../../features/training/training-schedule/training-schedule.component").then(
+        (m) => m.TrainingScheduleComponent,
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: "training/qb/schedule",
+    loadComponent: () =>
+      import("../../features/training/qb-training-schedule/qb-training-schedule.component").then(
+        (m) => m.QbTrainingScheduleComponent,
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: "training/qb/throwing",
+    loadComponent: () =>
+      import("../../features/training/qb-throwing-tracker/qb-throwing-tracker.component").then(
+        (m) => m.QbThrowingTrackerComponent,
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: "training/qb/assessment",
+    loadComponent: () =>
+      import("../../features/training/qb-assessment-tools/qb-assessment-tools.component").then(
+        (m) => m.QbAssessmentToolsComponent,
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: "training/ai-scheduler",
+    loadComponent: () =>
+      import("../../features/training/ai-training-scheduler/ai-training-scheduler.component").then(
+        (m) => m.AiTrainingSchedulerComponent,
+      ),
+    canActivate: [authGuard],
+  },
 ];
 
 /**
@@ -105,6 +166,14 @@ export const analyticsRoutes: Routes = [
     canActivate: [authGuard, headerConfigGuard],
     resolve: { prefetch: analyticsPrefetchResolver },
     data: { preload: true, priority: 'high' },
+  },
+  {
+    path: "analytics/enhanced",
+    loadComponent: () =>
+      import("../../features/analytics/enhanced-analytics/enhanced-analytics.component").then(
+        (m) => m.EnhancedAnalyticsComponent,
+      ),
+    canActivate: [authGuard],
   },
   {
     path: "performance-tracking",
@@ -133,6 +202,22 @@ export const teamRoutes: Routes = [
     path: "coach",
     loadComponent: () =>
       import("../../features/coach/coach.component").then((m) => m.CoachComponent),
+    canActivate: [authGuard],
+  },
+  {
+    path: "coach/dashboard",
+    loadComponent: () =>
+      import("../../features/dashboard/coach-dashboard.component").then(
+        (m) => m.CoachDashboardComponent,
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: "team/create",
+    loadComponent: () =>
+      import("../../features/team/team-create/team-create.component").then(
+        (m) => m.TeamCreateComponent,
+      ),
     canActivate: [authGuard],
   },
 ];

@@ -147,7 +147,7 @@ export class SidebarComponent {
       label: "Overview",
       route: "/dashboard",
       icon: "pi-th-large",
-      ariaLabel: "Overview",
+      ariaLabel: "Dashboard Overview",
     },
     {
       label: "Training",
@@ -190,6 +190,18 @@ export class SidebarComponent {
       route: "/tournaments",
       icon: "pi-trophy",
       ariaLabel: "Tournaments",
+    },
+    {
+      label: "Community",
+      route: "/community",
+      icon: "pi-comments",
+      ariaLabel: "Community",
+    },
+    {
+      label: "Chat",
+      route: "/chat",
+      icon: "pi-comment",
+      ariaLabel: "Chat",
     },
     {
       label: "Settings",

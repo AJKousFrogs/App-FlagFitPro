@@ -298,6 +298,28 @@
             return;
           }
 
+          // Check password against leaked password database
+          try {
+            const { checkPasswordLeakedAuto } = await import('./src/js/utils/password-leak-check.js');
+            const submitButton = this.querySelector('button[type="submit"]');
+            const originalText = submitButton.innerHTML;
+            submitButton.innerHTML =
+              '<span class="spinner-mini" style="display: inline-block; margin-right: 8px;"></span> Checking password...';
+            submitButton.disabled = true;
+
+            const leakCheck = await checkPasswordLeakedAuto(password);
+            
+            if (leakCheck.leaked) {
+              showError("errorMessage", leakCheck.message || "This password has been found in data breaches. Please choose a different password.");
+              submitButton.innerHTML = originalText;
+              submitButton.disabled = false;
+              return;
+            }
+          } catch (leakCheckError) {
+            // Fail open - if leak check fails, continue with registration
+            console.warn("Password leak check failed, continuing with registration:", leakCheckError);
+          }
+
           // Show loading state
           const submitButton = this.querySelector('button[type="submit"]');
           const originalText = submitButton.innerHTML;

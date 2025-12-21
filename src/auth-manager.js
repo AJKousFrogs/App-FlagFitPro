@@ -419,6 +419,22 @@ logger.debug(
       const [firstName, ...lastNameParts] = name.split(' ');
       const lastName = lastNameParts.join(' ');
 
+      // Check password against leaked password database
+      try {
+        const { checkPasswordLeakedAuto } = await import('./js/utils/password-leak-check.js');
+        const leakCheck = await checkPasswordLeakedAuto(password);
+        
+        if (leakCheck.leaked) {
+          this.hideLoading();
+          this.showError(leakCheck.message || "This password has been found in data breaches. Please choose a different password.");
+          return { success: false, error: leakCheck.message };
+        }
+      } catch (leakCheckError) {
+        // Fail open - if leak check fails, continue with registration
+        // (but log the error for debugging)
+        logger.warn("Password leak check failed, continuing with registration:", leakCheckError);
+      }
+
       // Import Supabase client
       const { getSupabase } = await import('./js/services/supabase-client.js');
       const supabase = getSupabase();
@@ -1227,6 +1243,21 @@ logger.debug(
   async changePassword(currentPassword, newPassword) {
     try {
       this.showLoading("Changing password...");
+
+      // Check new password against leaked password database
+      try {
+        const { checkPasswordLeakedAuto } = await import('./js/utils/password-leak-check.js');
+        const leakCheck = await checkPasswordLeakedAuto(newPassword);
+        
+        if (leakCheck.leaked) {
+          this.hideLoading();
+          this.showError(leakCheck.message || "This password has been found in data breaches. Please choose a different password.");
+          return { success: false, error: leakCheck.message };
+        }
+      } catch (leakCheckError) {
+        // Fail open - if leak check fails, continue with password change
+        logger.warn("Password leak check failed, continuing with password change:", leakCheckError);
+      }
 
       const response = await apiClient.put("/api/auth/password", {
         currentPassword,

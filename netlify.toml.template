@@ -1,3 +1,7 @@
+# Netlify Configuration Template
+# Copy relevant sections to netlify.toml
+# This template shows the CORRECT redirect direction: .html → Angular routes
+
 [build]
   command = "npm ci && npm run build"
   publish = "."
@@ -9,83 +13,27 @@
   VITE_APP_NAME = "FlagFit Pro"
   VITE_APP_VERSION = "1.0.7"
   # Supabase Configuration
-  # These variables are injected into HTML files during build via scripts/inject-env-into-html.js
-  # IMPORTANT: Also set these in Netlify UI (Site Settings → Environment Variables) for redundancy
-  # This ensures they're available even if netlify.toml is not read properly
   VITE_SUPABASE_URL = "https://pvziciccwxgftcielknm.supabase.co"
   VITE_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2emljaWNjd3hnZnRjaWVsa25tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MzcwNTgsImV4cCI6MjA3NTExMzA1OH0.1nfJrtWPl6DrAwvjGvM1-CZBeyYgCaV9oDdaadpqhLU"
   VITE_ENABLE_ANALYTICS = "false"
   VITE_ENABLE_SENTRY = "false"
 
-# SECURITY: Enhanced security headers for production
+# ============================================================================
+# SECURITY HEADERS
+# ============================================================================
 [[headers]]
   for = "/*"
   [headers.values]
-    # Prevent clickjacking attacks
     X-Frame-Options = "DENY"
-
-    # Enable XSS filtering (legacy browsers)
     X-XSS-Protection = "1; mode=block"
-
-    # Prevent MIME type sniffing
     X-Content-Type-Options = "nosniff"
-
-    # Control referrer information
     Referrer-Policy = "strict-origin-when-cross-origin"
-
-    # Force HTTPS (HSTS)
     Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
-
-    # Permissions policy - disable unnecessary features
     Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()"
-
-    # Cross-Origin policies for additional isolation
-    # Using credentialless instead of require-corp to allow external resources
-    # (fonts, CDN scripts) without CORP headers while maintaining security
     Cross-Origin-Embedder-Policy = "credentialless"
     Cross-Origin-Opener-Policy = "same-origin"
-    # CORP header for same-site resources
     Cross-Origin-Resource-Policy = "same-site"
-
-    # Content Security Policy - defense in depth against XSS
-    # Note: 'unsafe-inline' is used for inline scripts/styles - consider moving to external files with nonces in production
     Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co https://*.netlify.app https://*.netlify.com https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com wss://*.supabase.co; object-src 'none'; media-src 'self'; frame-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"
-
-# CORP headers for static resources (CSS, JS, images)
-[[headers]]
-  for = "/*.css"
-  [headers.values]
-    Cross-Origin-Resource-Policy = "same-site"
-
-[[headers]]
-  for = "/*.js"
-  [headers.values]
-    Cross-Origin-Resource-Policy = "same-site"
-
-[[headers]]
-  for = "/src/**/*"
-  [headers.values]
-    Cross-Origin-Resource-Policy = "same-site"
-
-# API Routes for Dashboard (must come before page redirects)
-[[redirects]]
-  from = "/api/dashboard/*"
-  to = "/.netlify/functions/dashboard"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/dashboard"
-  to = "/.netlify/functions/dashboard"
-  status = 200
-  force = true
-
-# API Routes for Dashboard Overview (specific endpoint)
-[[redirects]]
-  from = "/api/dashboard/overview"
-  to = "/.netlify/functions/dashboard"
-  status = 200
-  force = true
 
 # ============================================================================
 # LEGACY HTML → CANONICAL ROUTES (301 Permanent Redirects)
@@ -246,53 +194,31 @@
   to = "/analytics/enhanced"
   status = 301
 
-# API Routes for Analytics
-[[redirects]]
-  from = "/api/analytics/*"
-  to = "/.netlify/functions/analytics"
-  status = 200
-  force = true
+# ============================================================================
+# API ROUTES → NETLIFY FUNCTIONS (200 Rewrites)
+# Pattern: /api/<domain>/* → /.netlify/functions/<domain-function>
+# ============================================================================
 
-# API Routes for Games
+# Dashboard API
 [[redirects]]
-  from = "/games"
-  to = "/.netlify/functions/games"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/games/*"
-  to = "/.netlify/functions/games"
-  status = 200
-  force = true
-
-# API Routes for Performance Metrics
-[[redirects]]
-  from = "/api/performance/metrics"
-  to = "/.netlify/functions/performance-metrics"
+  from = "/api/dashboard/*"
+  to = "/.netlify/functions/dashboard"
   status = 200
   force = true
 
 [[redirects]]
-  from = "/api/performance/metrics/*"
-  to = "/.netlify/functions/performance-metrics"
+  from = "/api/dashboard"
+  to = "/.netlify/functions/dashboard"
   status = 200
   force = true
 
-# API Routes for Performance Heatmap
+# Training API
 [[redirects]]
-  from = "/api/performance/heatmap"
-  to = "/.netlify/functions/performance-heatmap"
+  from = "/api/training/*"
+  to = "/.netlify/functions/training"
   status = 200
   force = true
 
-[[redirects]]
-  from = "/api/performance/heatmap/*"
-  to = "/.netlify/functions/performance-heatmap"
-  status = 200
-  force = true
-
-# API Routes for Training Sessions
 [[redirects]]
   from = "/api/training/sessions"
   to = "/.netlify/functions/training-sessions"
@@ -305,7 +231,6 @@
   status = 200
   force = true
 
-# API Routes for Training Complete
 [[redirects]]
   from = "/api/training/complete"
   to = "/.netlify/functions/training-complete"
@@ -318,7 +243,6 @@
   status = 200
   force = true
 
-# API Routes for Training Suggestions
 [[redirects]]
   from = "/api/training/suggestions"
   to = "/.netlify/functions/training-suggestions"
@@ -331,74 +255,33 @@
   status = 200
   force = true
 
-# API Routes for Training Stats
 [[redirects]]
   from = "/training-stats"
   to = "/.netlify/functions/training-stats"
   status = 200
   force = true
 
-# API Routes for Weather
 [[redirects]]
-  from = "/api/weather/current"
-  to = "/.netlify/functions/weather"
+  from = "/training-stats-enhanced"
+  to = "/.netlify/functions/training-stats-enhanced"
   status = 200
   force = true
 
+# Analytics API
 [[redirects]]
-  from = "/api/weather/*"
-  to = "/.netlify/functions/weather"
+  from = "/api/analytics/*"
+  to = "/.netlify/functions/analytics"
   status = 200
   force = true
 
-# API Routes for Nutrition
-[[redirects]]
-  from = "/api/nutrition/*"
-  to = "/.netlify/functions/nutrition"
-  status = 200
-  force = true
-
-# API Routes for Recovery
-[[redirects]]
-  from = "/api/recovery/*"
-  to = "/.netlify/functions/recovery"
-  status = 200
-  force = true
-
-# API Routes for Admin
-[[redirects]]
-  from = "/api/admin/*"
-  to = "/.netlify/functions/admin"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/admin"
-  to = "/.netlify/functions/admin"
-  status = 200
-  force = true
-
-# API Routes for Coach
-[[redirects]]
-  from = "/api/coach/*"
-  to = "/.netlify/functions/coach"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/coach"
-  to = "/.netlify/functions/coach"
-  status = 200
-  force = true
-
-# API Routes for Community
+# Community API
 [[redirects]]
   from = "/api/community/*"
   to = "/.netlify/functions/community"
   status = 200
   force = true
 
-# API Routes for Tournaments
+# Tournaments API
 [[redirects]]
   from = "/api/tournaments"
   to = "/.netlify/functions/tournaments"
@@ -411,16 +294,154 @@
   status = 200
   force = true
 
-# API Routes for Auth
-# Note: Login and Register use Supabase directly (not backend functions)
-# Only auth-me endpoint uses backend function for token verification
+# Coach API
+[[redirects]]
+  from = "/api/coach/*"
+  to = "/.netlify/functions/coach"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/coach"
+  to = "/.netlify/functions/coach"
+  status = 200
+  force = true
+
+# Player Stats API
+[[redirects]]
+  from = "/api/player-stats/*"
+  to = "/.netlify/functions/player-stats"
+  status = 200
+  force = true
+
+# Training Plan API
+[[redirects]]
+  from = "/api/training-plan"
+  to = "/.netlify/functions/training-plan"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/training-plan/*"
+  to = "/.netlify/functions/training-plan"
+  status = 200
+  force = true
+
+# Wellness API
+[[redirects]]
+  from = "/api/wellness/*"
+  to = "/.netlify/functions/wellness"
+  status = 200
+  force = true
+
+# Supplements API
+[[redirects]]
+  from = "/api/supplements/*"
+  to = "/.netlify/functions/supplements"
+  status = 200
+  force = true
+
+# Algorithms API
+[[redirects]]
+  from = "/api/algorithms/*"
+  to = "/.netlify/functions/algorithms"
+  status = 200
+  force = true
+
+# Games API
+[[redirects]]
+  from = "/games"
+  to = "/.netlify/functions/games"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/games/*"
+  to = "/.netlify/functions/games"
+  status = 200
+  force = true
+
+# Performance Data API
+[[redirects]]
+  from = "/api/performance-data/*"
+  to = "/.netlify/functions/performance-data"
+  status = 200
+  force = true
+
+# Performance Metrics API
+[[redirects]]
+  from = "/api/performance/metrics"
+  to = "/.netlify/functions/performance-metrics"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/performance/metrics/*"
+  to = "/.netlify/functions/performance-metrics"
+  status = 200
+  force = true
+
+# Performance Heatmap API
+[[redirects]]
+  from = "/api/performance/heatmap"
+  to = "/.netlify/functions/performance-heatmap"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/performance/heatmap/*"
+  to = "/.netlify/functions/performance-heatmap"
+  status = 200
+  force = true
+
+# Weather API
+[[redirects]]
+  from = "/api/weather/current"
+  to = "/.netlify/functions/weather"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/weather/*"
+  to = "/.netlify/functions/weather"
+  status = 200
+  force = true
+
+# Nutrition API
+[[redirects]]
+  from = "/api/nutrition/*"
+  to = "/.netlify/functions/nutrition"
+  status = 200
+  force = true
+
+# Recovery API
+[[redirects]]
+  from = "/api/recovery/*"
+  to = "/.netlify/functions/recovery"
+  status = 200
+  force = true
+
+# Admin API
+[[redirects]]
+  from = "/api/admin/*"
+  to = "/.netlify/functions/admin"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/admin"
+  to = "/.netlify/functions/admin"
+  status = 200
+  force = true
+
+# Auth API
 [[redirects]]
   from = "/auth-me"
   to = "/.netlify/functions/auth-me"
   status = 200
   force = true
 
-# API Routes for Notifications
+# Notifications API
 [[redirects]]
   from = "/notifications"
   to = "/.netlify/functions/notifications"
@@ -445,7 +466,6 @@
   status = 200
   force = true
 
-# API Routes for Notifications Count
 [[redirects]]
   from = "/notifications-count"
   to = "/.netlify/functions/notifications-count"
@@ -458,7 +478,6 @@
   status = 200
   force = true
 
-# API Routes for Notifications Create
 [[redirects]]
   from = "/notifications-create"
   to = "/.netlify/functions/notifications-create"
@@ -471,7 +490,6 @@
   status = 200
   force = true
 
-# API Routes for Notifications Preferences
 [[redirects]]
   from = "/notifications-preferences"
   to = "/.netlify/functions/notifications-preferences"
@@ -484,7 +502,7 @@
   status = 200
   force = true
 
-# API Routes for Knowledge Search
+# Knowledge Search API
 [[redirects]]
   from = "/knowledge-search"
   to = "/.netlify/functions/knowledge-search"
@@ -497,98 +515,42 @@
   status = 200
   force = true
 
-# API Routes for Performance Data (Wellness, Supplements, Measurements)
-[[redirects]]
-  from = "/api/performance-data/measurements"
-  to = "/.netlify/functions/performance-data"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/performance-data/performance-tests"
-  to = "/.netlify/functions/performance-data"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/performance-data/wellness"
-  to = "/.netlify/functions/performance-data"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/performance-data/supplements"
-  to = "/.netlify/functions/performance-data"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/performance-data/injuries"
-  to = "/.netlify/functions/performance-data"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/performance-data/injuries/*"
-  to = "/.netlify/functions/performance-data"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/performance-data/trends"
-  to = "/.netlify/functions/performance-data"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/performance-data/export"
-  to = "/.netlify/functions/performance-data"
-  status = 200
-  force = true
-
-# API Routes for Import Open Data
+# Import Open Data API
 [[redirects]]
   from = "/api/import-open-data"
   to = "/.netlify/functions/import-open-data"
   status = 200
   force = true
 
-# API Routes for Compute ACWR
+# Compute ACWR API
 [[redirects]]
   from = "/api/compute-acwr"
   to = "/.netlify/functions/compute-acwr"
   status = 200
   force = true
 
-# API Routes for Training Metrics
-[[redirects]]
-  from = "/api/training-metrics"
-  to = "/.netlify/functions/training-metrics"
-  status = 200
-  force = true
-
-# API Routes for Readiness Calculation
+# Readiness Calculation API
 [[redirects]]
   from = "/api/calc-readiness"
   to = "/.netlify/functions/calc-readiness"
   status = 200
   force = true
 
-# API Routes for Readiness History
+# Readiness History API
 [[redirects]]
   from = "/api/readiness-history"
   to = "/.netlify/functions/readiness-history"
   status = 200
   force = true
 
-# API Routes for Fixtures
+# Training Metrics API
 [[redirects]]
-  from = "/api/fixtures"
-  to = "/.netlify/functions/fixtures"
+  from = "/api/training-metrics"
+  to = "/.netlify/functions/training-metrics"
   status = 200
   force = true
 
-# API Routes for Trends
+# Trends API
 [[redirects]]
   from = "/api/trends/*"
   to = "/.netlify/functions/trends"
@@ -601,63 +563,10 @@
   status = 200
   force = true
 
-# API Routes for Player Stats
+# Fixtures API
 [[redirects]]
-  from = "/api/player-stats/*"
-  to = "/.netlify/functions/player-stats"
-  status = 200
-  force = true
-
-# API Routes for Training Plan
-[[redirects]]
-  from = "/api/training-plan"
-  to = "/.netlify/functions/training-plan"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/training-plan/*"
-  to = "/.netlify/functions/training-plan"
-  status = 200
-  force = true
-
-# API Routes for Wellness
-[[redirects]]
-  from = "/api/wellness/*"
-  to = "/.netlify/functions/wellness"
-  status = 200
-  force = true
-
-# API Routes for Supplements
-[[redirects]]
-  from = "/api/supplements/*"
-  to = "/.netlify/functions/supplements"
-  status = 200
-  force = true
-
-# API Routes for User Context
-[[redirects]]
-  from = "/api/user/context"
-  to = "/.netlify/functions/user-context"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/user/context/*"
-  to = "/.netlify/functions/user-context"
-  status = 200
-  force = true
-
-# API Routes for Training Stats (fix redirects)
-[[redirects]]
-  from = "/api/training/stats"
-  to = "/.netlify/functions/training-stats"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/training/stats-enhanced"
-  to = "/.netlify/functions/training-stats-enhanced"
+  from = "/api/fixtures"
+  to = "/.netlify/functions/fixtures"
   status = 200
   force = true
 
@@ -672,18 +581,17 @@
   status = 200
   force = false
 
-# Environment variables for Netlify Functions
-# NOTE: Sensitive values (SUPABASE_URL, SUPABASE_SERVICE_KEY, SUPABASE_ANON_KEY, JWT_SECRET)
-# should be set in the Netlify UI, NOT in this file, to keep them out of source control.
+# ============================================================================
+# ENVIRONMENT VARIABLES
+# NOTE: Sensitive values should be set in Netlify UI, NOT here
+# ============================================================================
 
-# Production context: all deploys from the Production branch
 [context.production.environment]
   NODE_ENV = "production"
 
-# Deploy preview context: pull/merge request deploys
 [context.deploy-preview.environment]
   NODE_ENV = "development"
 
-# Branch deploy context: all other branch deploys
 [context.branch-deploy.environment]
   NODE_ENV = "development"
+
