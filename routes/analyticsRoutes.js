@@ -1,5 +1,10 @@
-// Analytics API Routes for FlagFit Pro
-// Provides data for Chart.js visualizations and analytics dashboard
+/**
+ * Analytics Routes API
+ * Provides data for Chart.js visualizations and analytics dashboard
+ * 
+ * @module routes/analyticsRoutes
+ * @version 2.0.0
+ */
 
 import express from 'express';
 import { Pool } from 'pg';
@@ -8,92 +13,226 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const router = express.Router();
+const ROUTE_NAME = 'analytics';
 
-// Database connection with error handling and fallbacks
+// Database connection with enhanced error handling and fallbacks
 let pool;
 try {
+  const connectionString = process.env.DATABASE_URL || process.env.VITE_DATABASE_URL;
+  
+  if (!connectionString) {
+    console.warn(`⚠️  ${ROUTE_NAME.toUpperCase()}: DATABASE_URL not configured`);
+  }
+  
   pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
+    connectionString,
     ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-    // Add connection timeout and retry logic
     connectionTimeoutMillis: 10000,
     idleTimeoutMillis: 30000,
-    max: 20
+    max: 20,
+    allowExitOnIdle: false
   });
   
-  // Test connection
   pool.on('connect', () => {
-    console.log('✅ Database connected successfully');
+    console.log(`✅ ${ROUTE_NAME.toUpperCase()} database connected successfully`);
   });
   
   pool.on('error', (err) => {
-    console.error('❌ Database connection error:', err);
+    console.error(`❌ ${ROUTE_NAME.toUpperCase()} database connection error:`, err);
+    if (err.code === 'ECONNREFUSED' || err.code === 'ETIMEDOUT') {
+      console.warn(`⚠️  ${ROUTE_NAME.toUpperCase()}: Attempting to reconnect...`);
+    }
   });
   
 } catch (error) {
-  console.error('❌ Failed to create database pool:', error);
+  console.error(`❌ Failed to create ${ROUTE_NAME} database pool:`, error);
   pool = null;
 }
 
-// Helper function to safely execute database queries
+// =============================================================================
+// HELPER FUNCTIONS
+// =============================================================================
+
+/**
+ * Safely execute database queries with error handling
+ * @param {string} query - SQL query string
+ * @param {Array} params - Query parameters for parameterized queries
+ * @returns {Promise<object>} Query result object
+ * @throws {Error} If database connection is unavailable or query fails
+ */
 async function safeQuery(query, params = []) {
   if (!pool) {
     throw new Error('Database connection not available');
+  }
+  
+  if (!query || typeof query !== 'string' || query.trim().length === 0) {
+    throw new Error('Invalid query: Query string is required');
+  }
+  
+  if (!Array.isArray(params)) {
+    throw new Error('Invalid parameters: Parameters must be an array');
   }
   
   try {
     const result = await pool.query(query, params);
     return result;
   } catch (error) {
-    console.error('Database query error:', error);
+    console.error(`${ROUTE_NAME.toUpperCase()} database query error:`, {
+      message: error.message,
+      code: error.code,
+      query: query.substring(0, 100) + '...'
+    });
     throw new Error(`Database operation failed: ${error.message}`);
   }
 }
 
-// Helper function to safely parse integers
+/**
+ * Safely parse integers with validation
+ * @param {any} value - Value to parse
+ * @param {number} defaultValue - Default value if parsing fails
+ * @returns {number} Parsed integer or default value
+ */
 function safeParseInt(value, defaultValue = 0) {
   try {
-    const parsed = parseInt(value);
+    if (value === null || value === undefined) return defaultValue;
+    const parsed = parseInt(value, 10);
     return isNaN(parsed) ? defaultValue : parsed;
   } catch (error) {
     return defaultValue;
   }
 }
 
-// Helper function to safely format dates
+/**
+ * Safely format dates to ISO string
+ * @param {Date|string|number} date - Date to format
+ * @returns {string} ISO formatted date string
+ */
 function safeFormatDate(date) {
   try {
     if (!date) return new Date().toISOString();
-    return new Date(date).toISOString();
+    const dateObj = new Date(date);
+    if (isNaN(dateObj.getTime())) {
+      return new Date().toISOString();
+    }
+    return dateObj.toISOString();
   } catch (error) {
+    console.warn('Date formatting error:', error);
     return new Date().toISOString();
   }
 }
 
-// Helper function to safely calculate averages
+/**
+ * Safely calculate averages from an array of values
+ * @param {Array} values - Array of numeric values
+ * @param {number} defaultValue - Default value if calculation fails
+ * @returns {number} Average value
+ */
 function safeAverage(values, defaultValue = 0) {
   try {
     if (!Array.isArray(values) || values.length === 0) return defaultValue;
-    const sum = values.reduce((acc, val) => acc + (parseFloat(val) || 0), 0);
+    const sum = values.reduce((acc, val) => {
+      const num = parseFloat(val);
+      return acc + (isNaN(num) ? 0 : num);
+    }, 0);
     return sum / values.length;
   } catch (error) {
     return defaultValue;
   }
 }
 
-// Get performance trends data for line chart
+/**
+ * Validate user ID parameter
+ * @param {string} userId - User ID to validate
+ * @returns {object} Validation result with isValid and sanitized userId
+ */
+function validateUserId(userId) {
+  if (!userId || typeof userId !== 'string') {
+    return { isValid: false, error: 'User ID must be a non-empty string' };
+  }
+  
+  const sanitized = userId.trim();
+  
+  if (sanitized.length === 0) {
+    return { isValid: false, error: 'User ID cannot be empty' };
+  }
+  
+  if (!/^[a-zA-Z0-9_-]+$/.test(sanitized)) {
+    return { isValid: false, error: 'User ID contains invalid characters' };
+  }
+  
+  return { isValid: true, userId: sanitized };
+}
+
+/**
+ * Validate weeks parameter for time-based queries
+ * @param {number} weeks - Number of weeks
+ * @param {number} min - Minimum weeks (default: 1)
+ * @param {number} max - Maximum weeks (default: 52)
+ * @returns {object} Validation result
+ */
+function validateWeeks(weeks, min = 1, max = 52) {
+  const parsed = safeParseInt(weeks, 0);
+  
+  if (parsed < min || parsed > max) {
+    return {
+      isValid: false,
+      error: `Weeks parameter must be between ${min} and ${max}`
+    };
+  }
+  
+  return { isValid: true, weeks: parsed };
+}
+
+/**
+ * Create standardized error response
+ * @param {string} message - Error message
+ * @param {string} code - Error code
+ * @param {number} statusCode - HTTP status code
+ * @param {string} details - Additional error details (dev only)
+ * @returns {object} Error response object
+ */
+function createErrorResponse(message, code, statusCode = 500, details = null) {
+  const response = {
+    success: false,
+    error: message,
+    code,
+    timestamp: safeFormatDate(new Date())
+  };
+  
+  if (details && process.env.NODE_ENV === 'development') {
+    response.details = details;
+  }
+  
+  return { statusCode, response };
+}
+
+/**
+ * GET /performance-trends
+ * Get performance trends data for line chart visualization
+ * @query {string} userId - User ID (optional, defaults to '1')
+ * @query {number} weeks - Number of weeks to analyze (1-52, default: 7)
+ * @returns {object} Performance trends data formatted for Chart.js
+ */
 router.get('/performance-trends', async (req, res) => {
   try {
-    const userId = req.query.userId || '1';
-    const weeks = safeParseInt(req.query.weeks, 7);
+    const userIdParam = req.query.userId || '1';
     
-    // Validate input parameters
-    if (weeks < 1 || weeks > 52) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'Invalid weeks parameter. Must be between 1 and 52.' 
-      });
+    if (req.query.userId) {
+      const userIdValidation = validateUserId(userIdParam);
+      if (!userIdValidation.isValid) {
+        const { statusCode, response } = createErrorResponse(userIdValidation.error, 'INVALID_USER_ID', 400);
+        return res.status(statusCode).json(response);
+      }
     }
+    
+    const weeksValidation = validateWeeks(req.query.weeks, 1, 52);
+    if (!weeksValidation.isValid) {
+      const { statusCode, response } = createErrorResponse(weeksValidation.error, 'INVALID_WEEKS', 400);
+      return res.status(statusCode).json(response);
+    }
+    
+    const userId = userIdParam;
+    const weeks = weeksValidation.weeks || 7;
     
     // Get performance data for the specified number of weeks
     const query = `
@@ -169,12 +308,14 @@ router.get('/performance-trends', async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Performance trends error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: 'Failed to fetch performance trends',
-      details: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
-    });
+    console.error(`${ROUTE_NAME.toUpperCase()} performance trends error:`, error);
+    const { statusCode, response } = createErrorResponse(
+      'Failed to fetch performance trends',
+      'FETCH_ERROR',
+      500,
+      error.message
+    );
+    return res.status(statusCode).json(response);
   }
 });
 
@@ -491,19 +632,33 @@ router.get('/injury-risk', async (req, res) => {
   }
 });
 
-// Get speed development data for line chart
+/**
+ * GET /speed-development
+ * Get speed development metrics for line chart visualization
+ * @query {string} userId - User ID (optional, defaults to '1')
+ * @query {number} weeks - Number of weeks to analyze (1-52, default: 7)
+ * @returns {object} Speed development data formatted for Chart.js
+ */
 router.get('/speed-development', async (req, res) => {
   try {
-    const userId = req.query.userId || '1';
-    const weeks = safeParseInt(req.query.weeks, 7);
+    const userIdParam = req.query.userId || '1';
     
-    // Validate input parameters
-    if (weeks < 1 || weeks > 52) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'Invalid weeks parameter. Must be between 1 and 52.' 
-      });
+    if (req.query.userId) {
+      const userIdValidation = validateUserId(userIdParam);
+      if (!userIdValidation.isValid) {
+        const { statusCode, response } = createErrorResponse(userIdValidation.error, 'INVALID_USER_ID', 400);
+        return res.status(statusCode).json(response);
+      }
     }
+    
+    const weeksValidation = validateWeeks(req.query.weeks, 1, 52);
+    if (!weeksValidation.isValid) {
+      const { statusCode, response } = createErrorResponse(weeksValidation.error, 'INVALID_WEEKS', 400);
+      return res.status(statusCode).json(response);
+    }
+    
+    const userId = userIdParam;
+    const weeks = weeksValidation.weeks || 7;
     
     // Get speed development metrics
     const query = `
@@ -586,12 +741,14 @@ router.get('/speed-development', async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Speed development error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: 'Failed to fetch speed development data',
-      details: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
-    });
+    console.error(`${ROUTE_NAME.toUpperCase()} speed development error:`, error);
+    const { statusCode, response } = createErrorResponse(
+      'Failed to fetch speed development data',
+      'FETCH_ERROR',
+      500,
+      error.message
+    );
+    return res.status(statusCode).json(response);
   }
 });
 
@@ -719,35 +876,69 @@ router.get('/summary', async (req, res) => {
   }
 });
 
-// Health check endpoint
+/**
+ * GET /health
+ * Health check endpoint for monitoring and load balancers
+ * @returns {object} Health status with service availability
+ */
 router.get('/health', async (req, res) => {
   try {
+    const healthStatus = {
+      success: true,
+      status: 'healthy',
+      service: ROUTE_NAME,
+      version: '2.0.0',
+      timestamp: safeFormatDate(new Date()),
+      database: pool ? 'disconnected' : 'not_configured'
+    };
+
     if (!pool) {
-      return res.status(503).json({
-        success: false,
-        status: 'unhealthy',
-        message: 'Database connection not available'
-      });
+      healthStatus.success = false;
+      healthStatus.status = 'unhealthy';
+      healthStatus.message = 'Database connection not available';
+      return res.status(503).json(healthStatus);
     }
     
     // Test database connection
+    const startTime = Date.now();
     await pool.query('SELECT 1');
+    const responseTime = Date.now() - startTime;
     
-    res.json({
-      success: true,
-      status: 'healthy',
-      timestamp: safeFormatDate(new Date()),
-      database: 'connected'
-    });
+    healthStatus.database = 'connected';
+    healthStatus.databaseResponseTime = `${responseTime}ms`;
+    
+    res.json(healthStatus);
   } catch (error) {
-    console.error('Health check error:', error);
+    console.error(`${ROUTE_NAME.toUpperCase()} health check error:`, error);
     res.status(503).json({
       success: false,
       status: 'unhealthy',
+      service: ROUTE_NAME,
       message: 'Database connection failed',
-      timestamp: safeFormatDate(new Date())
+      timestamp: safeFormatDate(new Date()),
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
+});
+
+// =============================================================================
+// ERROR HANDLING MIDDLEWARE
+// =============================================================================
+
+/**
+ * Global error handler (catches unhandled errors)
+ */
+router.use((err, req, res, next) => {
+  console.error(`${ROUTE_NAME.toUpperCase()} unhandled error:`, err);
+  
+  const { statusCode, response } = createErrorResponse(
+    'An unexpected error occurred',
+    'INTERNAL_ERROR',
+    500,
+    process.env.NODE_ENV === 'development' ? err.message : null
+  );
+  
+  res.status(statusCode).json(response);
 });
 
 export default router;
