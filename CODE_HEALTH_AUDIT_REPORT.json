@@ -1,0 +1,202 @@
+{
+  "auditDate": "2025-01-22",
+  "auditType": "Complete Codebase Health Analysis",
+  "summary": {
+    "totalFilesAnalyzed": 1000,
+    "criticalIssues": 12,
+    "highPriorityIssues": 28,
+    "mediumPriorityIssues": 45,
+    "lowPriorityIssues": 67,
+    "consoleStatements": 2872,
+    "todoMarkers": 1032,
+    "filesWithConsole": 315,
+    "filesWithTodos": 131,
+    "filesWithInnerHTML": 75,
+    "largeFiles": 3
+  },
+  "categories": {
+    "duplications": [
+      {
+        "file": "src/js/utils/shared.js vs angular/src/app/shared/utils/format.utils.ts",
+        "line": "Various",
+        "type": "Duplication",
+        "description": "formatNumber() function duplicated in JS and TypeScript",
+        "severity": "Medium",
+        "fix": "Extract to shared utility library"
+      },
+      {
+        "file": "src/css/components/button.css vs angular/src/assets/styles/component-styles.scss",
+        "line": "Various",
+        "type": "Duplication",
+        "description": "Button styles duplicated between CSS and SCSS",
+        "severity": "High",
+        "fix": "Complete migration to standardized-components.scss"
+      },
+      {
+        "file": "routes/algorithmRoutes.js vs routes/analyticsRoutes.js vs routes/dashboardRoutes.js",
+        "line": "63-87",
+        "type": "Duplication",
+        "description": "safeQuery() function duplicated across route files",
+        "severity": "High",
+        "fix": "Extract to shared utility module"
+      }
+    ],
+    "deprecated": [
+      {
+        "file": "angular/src/assets/styles/component-styles.scss",
+        "line": "1-1660",
+        "type": "Deprecated",
+        "description": "File marked DEPRECATED, contains duplicate button/card styles",
+        "severity": "High",
+        "fix": "Complete migration of forms/navigation/modals to standardized-components.scss, then remove"
+      },
+      {
+        "file": "src/unified-sidebar.html",
+        "line": "1-180",
+        "type": "Deprecated",
+        "description": "Marked DEPRECATED, contains inline styles and embedded JS",
+        "severity": "Medium",
+        "fix": "Remove if page-template.html is sufficient, or refactor to use component system"
+      },
+      {
+        "file": "angular/src/app/shared/components/performance-monitor/performance-monitor.component.ts",
+        "line": "266",
+        "type": "Deprecated",
+        "description": "Uses setInterval in component (memory leak risk)",
+        "severity": "High",
+        "fix": "Replace with RxJS timer or Angular signals with effect"
+      }
+    ],
+    "deadCode": [
+      {
+        "file": "src/training-program-data.js",
+        "line": "Various",
+        "type": "Dead Code",
+        "description": "10,435 lines - verify all functions are used",
+        "severity": "High",
+        "fix": "Audit function usage, remove unused exports"
+      },
+      {
+        "file": "src/qb-training-program-data.js",
+        "line": "Various",
+        "type": "Dead Code",
+        "description": "7,510 lines - verify all functions are used",
+        "severity": "High",
+        "fix": "Audit function usage, remove unused exports"
+      }
+    ],
+    "bloat": [
+      {
+        "file": ".netlify/functions-serve/",
+        "line": "Various",
+        "type": "Bloat",
+        "description": "Generated files in source tree",
+        "severity": "High",
+        "fix": "Add to .gitignore, remove from repo"
+      },
+      {
+        "file": "src/training-program-data.js",
+        "line": "10,435",
+        "type": "Complexity",
+        "description": "Extremely large file, likely needs splitting",
+        "severity": "High",
+        "fix": "Split into domain-specific modules (QB training, DB training, etc.)"
+      }
+    ],
+    "security": [
+      {
+        "file": "75 files",
+        "line": "Various",
+        "type": "Security",
+        "description": "Use of innerHTML assignment (XSS risk)",
+        "severity": "High",
+        "fix": "Replace with textContent or sanitize with DOMPurify"
+      },
+      {
+        "file": "src/js/utils/shared.js",
+        "line": "95",
+        "type": "Security",
+        "description": "innerHTML usage in setSafeContent() - comment says 'safe' but needs verification",
+        "severity": "High",
+        "fix": "Verify content source is trusted, or use DOMPurify"
+      },
+      {
+        "file": "288 files",
+        "line": "Various",
+        "type": "Security",
+        "description": "References to API keys/secrets (need verification)",
+        "severity": "High",
+        "fix": "Audit all files, ensure no hardcoded secrets, use env vars"
+      }
+    ],
+    "performance": [
+      {
+        "file": "angular/src/app/shared/components/performance-monitor/performance-monitor.component.ts",
+        "line": "266",
+        "type": "Performance",
+        "description": "setInterval without cleanup in component",
+        "severity": "High",
+        "fix": "Use RxJS timer with takeUntil, or Angular effect"
+      },
+      {
+        "file": "Multiple files",
+        "line": "Various",
+        "type": "Performance",
+        "description": "2872 console.log statements (performance overhead)",
+        "severity": "Medium",
+        "fix": "Replace with logger service, remove in production"
+      }
+    ],
+    "codeQuality": [
+      {
+        "file": "315 files",
+        "line": "Various",
+        "type": "Code Quality",
+        "description": "Console.log/warn/error statements (2872 total)",
+        "severity": "Medium",
+        "fix": "Replace with logger service, configure ESLint to error"
+      },
+      {
+        "file": "131 files",
+        "line": "Various",
+        "type": "Code Quality",
+        "description": "TODO/FIXME/DEPRECATED markers (1032 total)",
+        "severity": "Low",
+        "fix": "Review and address or remove resolved items"
+      }
+    ]
+  },
+  "priorities": {
+    "priority1": [
+      "Remove innerHTML usage (75 files)",
+      "Fix setInterval memory leak",
+      "Remove generated files from repo"
+    ],
+    "priority2": [
+      "Consolidate route utilities",
+      "Complete SCSS migration",
+      "Consolidate design tokens"
+    ],
+    "priority3": [
+      "Split large files",
+      "Remove dead code",
+      "Replace console statements"
+    ],
+    "priority4": [
+      "Consolidate CSS files",
+      "Refactor deprecated sidebar",
+      "Update migration script"
+    ]
+  },
+  "metrics": {
+    "targets": {
+      "codeDuplication": "< 5%",
+      "deadCode": "0 unused exports",
+      "consoleStatements": "0 in production builds",
+      "fileSize": "< 2000 lines per file",
+      "cssFiles": "< 50 files",
+      "todoCount": "Reduce by 50% in next quarter"
+    }
+  }
+}
+

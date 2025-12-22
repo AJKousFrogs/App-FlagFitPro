@@ -1,30 +1,34 @@
 /* ================================================================
    FLAGFIT PRO - COMPONENT STYLES
-   Comprehensive Production-Ready Component Library
-   Angular 19 + PrimeNG Compatible
-   ================================================================
+   ⚠️ FULLY DEPRECATED - DO NOT USE ⚠️
    
-   USAGE:
-   @import './assets/styles/component-styles.scss';
+   This file has been completely migrated to standardized-components.scss.
+   All styles (buttons, cards, forms, navigation, modals, tables, badges,
+   alerts, loading states, and utilities) are now in standardized-components.scss.
    
-   This file contains ALL component styles for FlagFit Pro:
-   - Buttons (6 variants)
-   - Cards (multiple variants)
-   - Forms (inputs, selects, checkboxes, etc.)
-   - Navigation (header, sidebar, footer)
-   - Modals & Dialogs
-   - Tables
-   - Badges & Tags
-   - Alerts & Notifications
-   - Loading States
-   - And more...
+   This file is kept temporarily for reference only and will be removed
+   in a future release. DO NOT import or use this file.
+   
+   MIGRATION STATUS: ✅ COMPLETE
+   - Buttons: ✅ Migrated
+   - Cards: ✅ Migrated
+   - Forms: ✅ Migrated
+   - Navigation: ✅ Migrated
+   - Modals: ✅ Migrated
+   - Tables: ✅ Migrated
+   - Badges/Tags: ✅ Migrated
+   - Alerts/Toasts: ✅ Migrated
+   - Loading States: ✅ Migrated
+   - Utilities: ✅ Migrated
+   
+   USE INSTEAD: standardized-components.scss
    ================================================================ */
 
-@import './design-tokens.scss';
+@import './design-system-tokens.scss';
 
 /* ================================================================
-   BUTTONS
-   6 Standard Variants: Primary, Secondary, Outlined, Text, Danger, Success
+   BUTTONS - DEPRECATED
+   Use standardized-components.scss instead for buttons
    ================================================================ */
 
 /* Base Button Styles */
@@ -261,8 +265,8 @@
 }
 
 /* ================================================================
-   CARDS
-   Multiple Variants: Default, Elevated, Outlined, Interactive
+   CARDS - DEPRECATED
+   Use standardized-components.scss instead for cards
    ================================================================ */
 
 .card {

@@ -21,6 +21,7 @@ import { ContextService } from "../../core/services/context.service";
 import { PerformanceMonitorService } from "../../core/services/performance-monitor.service";
 import { HapticFeedbackService } from "../../core/services/haptic-feedback.service";
 import { ApiService } from "../../core/services/api.service";
+import { LoggerService } from "../../core/services/logger.service";
 
 interface Insight {
   id: string;
@@ -574,6 +575,7 @@ export class AITrainingCompanionComponent implements OnInit, OnDestroy {
   private hapticService = inject(HapticFeedbackService);
   private apiService = inject(ApiService);
   private destroyRef = inject(DestroyRef);
+  private logger = inject(LoggerService);
 
   isActive = signal(false);
   isMinimized = signal(false);
@@ -620,7 +622,7 @@ export class AITrainingCompanionComponent implements OnInit, OnDestroy {
       window.SpeechRecognition || window.webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
-      console.warn("Speech recognition not supported");
+      this.logger.warn("Speech recognition not supported");
       return;
     }
 
@@ -637,7 +639,7 @@ export class AITrainingCompanionComponent implements OnInit, OnDestroy {
     };
 
     this.speechRecognition.onerror = (event: any) => {
-      console.error("Speech recognition error:", event.error);
+      this.logger.error("Speech recognition error:", event.error);
       this.isListening.set(false);
       this.aiStatus.set("idle");
     };
@@ -670,7 +672,7 @@ export class AITrainingCompanionComponent implements OnInit, OnDestroy {
       this.aiStatus.set("listening");
       this.hapticService.trigger("medium");
     } catch (error) {
-      console.error("Failed to start speech recognition:", error);
+      this.logger.error("Failed to start speech recognition:", error);
     }
   }
 

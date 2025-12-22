@@ -15,7 +15,6 @@ import {
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
-import { ToggleSwitch } from "primeng/toggleswitch";
 import { Select } from "primeng/select";
 import { MessageService } from "primeng/api";
 import { ToastModule } from "primeng/toast";
@@ -33,7 +32,6 @@ import { AuthService } from "../../core/services/auth.service";
     CardModule,
     ButtonModule,
     InputTextModule,
-    ToggleSwitch,
     Select,
     ToastModule,
     MainLayoutComponent,

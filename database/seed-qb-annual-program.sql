@@ -1,6 +1,9 @@
 -- =====================================================
--- QB ANNUAL PROGRAM 2025-2026 SEED DATA
+-- QB ANNUAL PROGRAM 2025-2026 SEED DATA (ORIGINAL)
 -- =====================================================
+-- NOTE: This is the ORIGINAL seed file. For the CORRECTED version
+-- with proper throwing volume progression, use seed-qb-annual-program-corrected.sql
+--
 -- Based on Ljubljana Frogs QB Annual Program
 -- November 2025 - October 2026
 -- Progressive periodization with ACWR monitoring

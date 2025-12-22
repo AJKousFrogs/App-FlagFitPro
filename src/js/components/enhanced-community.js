@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Enhanced Community Component
  * 
@@ -13,8 +14,8 @@
  */
 
 import { realtimeManager } from '../services/supabase-client.js';
-import { escapeHtml, sanitizeUrl } from '../js/utils/sanitize.js';
-import { getInitials, getTimeAgo } from '../js/utils/shared.js';
+import { escapeHtml, sanitizeUrl } from '../utils/sanitize.js';
+import { getInitials, getTimeAgo } from '../utils/shared.js';
 
 class EnhancedCommunity {
   constructor() {
@@ -465,7 +466,7 @@ class EnhancedCommunity {
     const postId = like.post_id;
     if (!postId) return;
 
-    let postLikes = this.likes.get(postId) || new Set();
+    const postLikes = this.likes.get(postId) || new Set();
     const post = this.posts.find(p => p.id === postId);
 
     switch (eventType) {

@@ -10,17 +10,28 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Get Supabase credentials from environment variables
+// SECURITY: Never hardcode credentials - use environment variables
+const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || '';
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || '';
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error('❌ Error: Missing Supabase credentials');
+  console.error('Please set SUPABASE_URL and SUPABASE_ANON_KEY environment variables');
+  console.error('Example: SUPABASE_URL=https://your-project.supabase.co SUPABASE_ANON_KEY=your_key node add-supabase-config.js');
+  process.exit(1);
+}
+
 const supabaseConfig = `
     <!-- Supabase JS SDK from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0"></script>
 
     <!-- Supabase Configuration -->
     <script>
-      // Set Supabase config in window for production
-      window._env = {
-        SUPABASE_URL: 'https://pvziciccwxgftcielknm.supabase.co',
-        SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2emljaWNjd3hnZnRjaWVsa25tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MzcwNTgsImV4cCI6MjA3NTExMzA1OH0.1nfJrtWPl6DrAwvjGvM1-CZBeyYgCaV9oDdaadpqhLU'
-      };
+      // Set Supabase config in window (from environment variables)
+      window._env = window._env || {};
+      window._env.SUPABASE_URL = '${supabaseUrl}';
+      window._env.SUPABASE_ANON_KEY = '${supabaseAnonKey}';
     </script>
 `;
 
@@ -55,6 +66,7 @@ pagesToUpdate.forEach(filename => {
   const filePath = path.join(__dirname, filename);
 
   if (!fs.existsSync(filePath)) {
+    // eslint-disable-next-line no-console
     console.log(`⚠️  Skipped: ${filename} (file not found)`);
     skipped++;
     return;
@@ -64,6 +76,7 @@ pagesToUpdate.forEach(filename => {
 
   // Check if already has Supabase config
   if (content.includes('window._env') && content.includes('SUPABASE_URL')) {
+    // eslint-disable-next-line no-console
     console.log(`✅ Skipped: ${filename} (already has config)`);
     skipped++;
     return;
@@ -77,6 +90,7 @@ pagesToUpdate.forEach(filename => {
     // Insert before first script tag
     content = content.replace(/<script/, supabaseConfig + '\n    <script');
   } else {
+    // eslint-disable-next-line no-console
     console.log(`⚠️  Skipped: ${filename} (no insertion point found)`);
     skipped++;
     return;
@@ -84,10 +98,14 @@ pagesToUpdate.forEach(filename => {
 
   // Write back to file
   fs.writeFileSync(filePath, content);
+  // eslint-disable-next-line no-console
   console.log(`✅ Updated: ${filename}`);
   updated++;
 });
 
+// eslint-disable-next-line no-console
 console.log(`\n📊 Summary:`);
+// eslint-disable-next-line no-console
 console.log(`   Updated: ${updated} files`);
+// eslint-disable-next-line no-console
 console.log(`   Skipped: ${skipped} files`);

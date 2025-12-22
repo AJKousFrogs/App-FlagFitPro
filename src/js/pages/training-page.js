@@ -9,6 +9,7 @@ import {
   initializeLucideIcons,
   announceToScreenReader,
   debounce,
+  setSafeContent,
 } from "../utils/shared.js";
 import TrainingVideoComponent from "../../training-video-component.js";
 import { errorHandler } from "../utils/unified-error-handler.js";
@@ -16,6 +17,7 @@ import { errorHandler } from "../utils/unified-error-handler.js";
 import { workoutService } from "../services/workoutService.js";
 import { scheduleService } from "../services/scheduleService.js";
 import { statsService } from "../services/statsService.js";
+import { trainingApiService } from "../services/training-api-service.js";
 // State & Renderers
 import { trainingPageState } from "./training-page-state.js";
 import { renderPage, renderWeeklySchedule } from "./training-page-renderers.js";
@@ -120,25 +122,352 @@ function toggleSidebar() {
 function initializeTrainingVideos() {
   try {
     logger.debug("🎥 Initializing YouTube training videos...");
-    const videoComponent = new TrainingVideoComponent(
-      "training-videos-container",
-    );
+    // Use day-specific video loader instead of generic component
+    window.initializeTrainingVideos = loadDaySpecificVideos;
+    // Load videos for today by default
+    loadDaySpecificVideos();
     logger.debug("✅ Training videos component initialized");
   } catch (error) {
     logger.error("❌ Error initializing training videos:", error);
     // Show fallback message
     const container = document.getElementById("training-videos-container");
     if (container) {
-      container.innerHTML = `
-                <div style="background: var(--surface-primary); border: 1px solid var(--color-border-primary); text-align: center; padding: 2rem; border-radius: 12px;">
-                    <h3 style="color: var(--text-primary); margin-bottom: 1rem;">📺 Training Videos</h3>
-                    <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Training videos are temporarily unavailable.</p>
-                    <a href="https://www.youtube.com/results?search_query=flag+football+training+drills" target="_blank" class="btn btn-primary">
-                        Search YouTube Manually
-                    </a>
-                </div>
-            `;
+      // Create fallback message using DOM methods instead of innerHTML
+      const fallbackDiv = document.createElement("div");
+      fallbackDiv.style.cssText = "background: var(--surface-primary); border: 1px solid var(--color-border-primary); text-align: center; padding: 2rem; border-radius: 12px;";
+      
+      const heading = document.createElement("h3");
+      heading.style.cssText = "color: var(--text-primary); margin-bottom: 1rem;";
+      heading.textContent = "📺 Training Videos";
+      
+      const message = document.createElement("p");
+      message.style.cssText = "color: var(--text-secondary); margin-bottom: 1.5rem;";
+      message.textContent = "Training videos are temporarily unavailable.";
+      
+      const link = document.createElement("a");
+      link.href = "https://www.youtube.com/results?search_query=flag+football+training+drills";
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.className = "btn btn-primary";
+      link.textContent = "Search YouTube Manually";
+      
+      fallbackDiv.appendChild(heading);
+      fallbackDiv.appendChild(message);
+      fallbackDiv.appendChild(link);
+      
+      container.textContent = "";
+      container.appendChild(fallbackDiv);
     }
+  }
+}
+
+/**
+ * Load day-specific videos for a given date
+ * Shows: Morning routine, foam rolling, and training session videos
+ */
+async function loadDaySpecificVideos(selectedDate = null) {
+  const container = document.getElementById("training-videos-container");
+  if (!container) {
+    logger.warn("Training videos container not found");
+    return;
+  }
+
+  try {
+    const date = selectedDate || new Date();
+    const dateStr = date.toISOString().split('T')[0];
+    const dayOfWeek = date.getDay();
+    const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const dayName = dayNames[dayOfWeek];
+    const displayDayName = dayName.charAt(0).toUpperCase() + dayName.slice(1);
+
+    // Import protocols
+    const { MORNING_MOBILITY_ROUTINE, DAILY_FOAM_ROLLING } = await import("../../js/data/shared-protocols.js");
+    const { apiClient, API_ENDPOINTS } = await import("../../api-config.js");
+
+    // Get morning routine video for this day
+    const morningRoutine = MORNING_MOBILITY_ROUTINE.dailyRoutines[dayName];
+    const foamRolling = DAILY_FOAM_ROLLING;
+
+    // Load training session for this date
+    let trainingSession = null;
+    try {
+      const response = await apiClient.get(API_ENDPOINTS.training.sessions, {
+        startDate: dateStr,
+        endDate: dateStr,
+        includeUpcoming: true,
+        limit: 10
+      });
+
+      if (response && response.success && response.data) {
+        const sessions = Array.isArray(response.data) ? response.data : (response.data.sessions || []);
+        trainingSession = sessions.find(s => {
+          const sessionDate = s.session_date || s.date || (s.created_at ? new Date(s.created_at).toISOString().split('T')[0] : null);
+          return sessionDate === dateStr;
+        });
+      }
+    } catch (apiError) {
+      logger.debug("Could not load training session from API:", apiError);
+    }
+
+    // If no session found, try schedule
+    if (!trainingSession) {
+      try {
+        const scheduleResponse = await apiClient.get(API_ENDPOINTS.training?.schedule || '/api/training/schedule', {
+          date: dateStr
+        });
+        if (scheduleResponse && scheduleResponse.success && scheduleResponse.data) {
+          const schedule = scheduleResponse.data.schedule || scheduleResponse.data;
+          const daySchedule = Array.isArray(schedule) 
+            ? schedule.find(s => {
+                const sDate = s.date ? new Date(s.date) : null;
+                return sDate && sDate.toISOString().split('T')[0] === dateStr;
+              })
+            : null;
+          
+          if (daySchedule) {
+            trainingSession = {
+              session_type: daySchedule.session_type || daySchedule.type || daySchedule.title,
+              session_time: daySchedule.time || daySchedule.session_time || '18:30',
+              duration_minutes: daySchedule.duration || daySchedule.duration_minutes || 70,
+            };
+          }
+        }
+      } catch (scheduleError) {
+        logger.debug("Could not load schedule:", scheduleError);
+      }
+    }
+
+    // Determine video categories based on training session type
+    let trainingVideoCategories = [];
+    if (trainingSession) {
+      const sessionType = (trainingSession.session_type || '').toLowerCase();
+      if (sessionType.includes('speed') || sessionType.includes('sprint')) {
+        trainingVideoCategories = ['warm-up', 'sprint-drills', 'cool-down'];
+      } else if (sessionType.includes('strength')) {
+        trainingVideoCategories = ['warm-up', 'plyometrics', 'cool-down'];
+      } else if (sessionType.includes('agility')) {
+        trainingVideoCategories = ['warm-up', 'agility', 'flag-specific', 'cool-down'];
+      } else {
+        trainingVideoCategories = ['warm-up', 'sprint-drills', 'agility', 'cool-down'];
+      }
+    } else {
+      // Default training videos
+      trainingVideoCategories = ['warm-up', 'sprint-drills', 'agility', 'cool-down'];
+    }
+
+    // Load training videos using YouTube service
+    const { youTubeTrainingService } = await import("../../youtube-training-service.js");
+    const trainingVideos = {};
+    for (const category of trainingVideoCategories) {
+      try {
+        trainingVideos[category] = await youTubeTrainingService.getTrainingVideos(category, 3);
+      } catch (error) {
+        logger.warn(`Could not load ${category} videos:`, error);
+        trainingVideos[category] = [];
+      }
+    }
+
+    // Render videos
+    renderDaySpecificVideos(container, {
+      date,
+      dateStr,
+      dayName: displayDayName,
+      morningRoutine,
+      foamRolling,
+      trainingSession,
+      trainingVideos
+    });
+
+  } catch (error) {
+    logger.error("Error loading day-specific videos:", error);
+    // Create error message using DOM methods instead of innerHTML
+    const errorDiv = document.createElement("div");
+    errorDiv.style.cssText = "background: var(--surface-primary); border: 1px solid var(--color-border-primary); text-align: center; padding: 2rem; border-radius: 12px;";
+    
+    const heading = document.createElement("h3");
+    heading.style.cssText = "color: var(--text-primary); margin-bottom: 1rem;";
+    heading.textContent = "📺 Training Videos";
+    
+    const message = document.createElement("p");
+    message.style.cssText = "color: var(--text-secondary); margin-bottom: 1.5rem;";
+    message.textContent = "Unable to load videos. Please try again later.";
+    
+    errorDiv.appendChild(heading);
+    errorDiv.appendChild(message);
+    
+    container.textContent = "";
+    container.appendChild(errorDiv);
+  }
+}
+
+/**
+ * Render day-specific videos in the container
+ */
+function renderDaySpecificVideos(container, data) {
+  const { date, dateStr, dayName, morningRoutine, foamRolling, trainingSession, trainingVideos } = data;
+  
+  // Format date for display
+  const formattedDate = date.toLocaleDateString('en-GB', { 
+    day: '2-digit', 
+    month: '2-digit', 
+    year: 'numeric' 
+  });
+
+  let html = `
+    <div class="day-videos-container" style="max-width: 1200px; margin: 0 auto;">
+      <!-- Date Picker -->
+      <div style="margin-bottom: 2rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+        <label for="video-date-picker" style="font-weight: 600; color: var(--text-primary);">
+          Select Date:
+        </label>
+        <input 
+          type="date" 
+          id="video-date-picker" 
+          value="${dateStr}"
+          style="padding: 0.5rem; border: 1px solid var(--color-border-primary); border-radius: 6px; font-size: 1rem;"
+        />
+        <span style="color: var(--text-secondary); font-size: 0.9rem;">
+          ${dayName}, ${formattedDate}
+        </span>
+      </div>
+
+      <!-- Morning Routine Video -->
+      <div class="video-section" style="margin-bottom: 2rem;">
+        <h3 style="color: var(--text-primary); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+          <span>🌅</span>
+          <span>Morning Mobility Routine - ${dayName}</span>
+        </h3>
+        <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; background: #000;">
+          <iframe 
+            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"
+            src="https://www.youtube.com/embed/${morningRoutine.videoId}?rel=0&modestbranding=1"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+            title="${dayName} Morning Mobility Routine">
+          </iframe>
+        </div>
+        <p style="color: var(--text-secondary); margin-top: 0.5rem; font-size: 0.9rem;">
+          <strong>Focus:</strong> ${morningRoutine.focus}
+        </p>
+        <a href="${morningRoutine.videoUrl}" target="_blank" rel="noopener noreferrer" 
+           style="color: var(--color-brand-primary); text-decoration: none; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 0.25rem;">
+          <span>📺</span> Open in YouTube
+        </a>
+      </div>
+
+      <!-- Foam Rolling Video -->
+      <div class="video-section" style="margin-bottom: 2rem;">
+        <h3 style="color: var(--text-primary); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+          <span>🧘</span>
+          <span>Daily Foam Rolling Routine</span>
+        </h3>
+        <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; background: #000;">
+          <iframe 
+            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"
+            src="https://www.youtube.com/embed/${foamRolling.videoId}?rel=0&modestbranding=1"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+            title="Daily Foam Rolling Routine">
+          </iframe>
+        </div>
+        <p style="color: var(--text-secondary); margin-top: 0.5rem; font-size: 0.9rem;">
+          <strong>Duration:</strong> ${foamRolling.duration} • <strong>Focus:</strong> ${foamRolling.focus}
+        </p>
+        <a href="${foamRolling.videoUrl}" target="_blank" rel="noopener noreferrer" 
+           style="color: var(--color-brand-primary); text-decoration: none; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 0.25rem;">
+          <span>📺</span> Open in YouTube
+        </a>
+      </div>
+
+      <!-- Training Session Videos -->
+      <div class="video-section">
+        <h3 style="color: var(--text-primary); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+          <span>🏋️</span>
+          <span>Training Session Videos${trainingSession ? ` - ${trainingSession.session_type || 'Training'}` : ''}</span>
+        </h3>
+  `;
+
+  // Render training videos by category
+  const categoryNames = {
+    'warm-up': '🔥 Warm-Up & Activation',
+    'sprint-drills': '⚡ Sprint Drills',
+    'agility': '🏃 Agility & Change of Direction',
+    'plyometrics': '💪 Power & Plyometrics',
+    'flag-specific': '🏈 Flag Football Specific',
+    'cool-down': '😌 Cool-Down & Recovery'
+  };
+
+  for (const [category, videos] of Object.entries(trainingVideos)) {
+    if (videos && videos.length > 0) {
+      html += `
+        <div style="margin-bottom: 2rem;">
+          <h4 style="color: var(--text-primary); margin-bottom: 0.75rem; font-size: 1.1rem;">
+            ${categoryNames[category] || category}
+          </h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+      `;
+
+      videos.forEach(video => {
+        html += `
+          <div style="border: 1px solid var(--color-border-primary); border-radius: 8px; overflow: hidden; background: var(--surface-primary);">
+            <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; background: #000;">
+              <iframe 
+                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"
+                src="https://www.youtube.com/embed/${video.id}?rel=0&modestbranding=1"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+                title="${video.title || 'Training Video'}">
+              </iframe>
+            </div>
+            <div style="padding: 0.75rem;">
+              <h5 style="margin: 0 0 0.25rem 0; color: var(--text-primary); font-size: 0.9rem; line-height: 1.3;">
+                ${video.title || 'Training Video'}
+              </h5>
+              ${video.channelTitle ? `<p style="margin: 0; color: var(--text-secondary); font-size: 0.8rem;">${video.channelTitle}</p>` : ''}
+            </div>
+          </div>
+        `;
+      });
+
+      html += `
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  if (Object.values(trainingVideos).every(v => !v || v.length === 0)) {
+    html += `
+      <div style="text-align: center; padding: 2rem; background: var(--surface-secondary); border-radius: 8px;">
+        <p style="color: var(--text-secondary); margin: 0;">
+          ${trainingSession ? `No training videos available for ${trainingSession.session_type || 'this session'}.` : 'No training scheduled for this date.'}
+        </p>
+      </div>
+    `;
+  }
+
+  html += `
+      </div>
+    </div>
+  `;
+
+  // Use setSafeContent to sanitize HTML before insertion
+  // Note: HTML contains YouTube video data which is relatively trusted,
+  // but we sanitize to prevent any potential XSS from malformed data
+  setSafeContent(container, html, true, true);
+
+  // Add date picker event listener
+  const datePicker = document.getElementById('video-date-picker');
+  if (datePicker) {
+    datePicker.addEventListener('change', (e) => {
+      const newDate = new Date(e.target.value);
+      loadDaySpecificVideos(newDate);
+    });
+  }
+
+  // Initialize Lucide icons if available
+  if (typeof lucide !== 'undefined') {
+    lucide.createIcons();
   }
 }
 
@@ -184,7 +513,6 @@ async function initializePageState() {
   // Load recent workouts from backend API (with localStorage fallback)
   let recentWorkouts = [];
   try {
-    const { trainingApiService } = await import("../services/training-api-service.js");
     recentWorkouts = await trainingApiService.getTrainingSessions({ limit: 50 });
     
     // If API returns empty and we have localStorage data, use it as fallback
@@ -785,7 +1113,9 @@ function createTrainingPlanModal(title, plan) {
   header.appendChild(closeBtn);
 
   const content = document.createElement("div");
-  content.innerHTML = formatTrainingPlan(plan);
+  // Use setSafeContent to sanitize HTML from formatTrainingPlan
+  const planHtml = formatTrainingPlan(plan);
+  setSafeContent(content, planHtml, true, true);
 
   modalContent.appendChild(header);
   modalContent.appendChild(content);

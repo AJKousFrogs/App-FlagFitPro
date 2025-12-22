@@ -207,8 +207,8 @@ class NotificationStore {
       if (window.ErrorHandler) {
         window.ErrorHandler.showError(errorMessage);
       } else {
-        // Fallback: use console if ErrorHandler not available
-        console.error("Notification error:", errorMessage);
+        // Fallback: use logger if ErrorHandler not available
+        logger.error("Notification error:", errorMessage);
       }
 
       throw error;
@@ -262,8 +262,8 @@ class NotificationStore {
       if (window.ErrorHandler) {
         window.ErrorHandler.showError(errorMessage);
       } else {
-        // Fallback: use console if ErrorHandler not available
-        console.error("Notification error:", errorMessage);
+        // Fallback: use logger if ErrorHandler not available
+        logger.error("Notification error:", errorMessage);
       }
 
       throw error;
@@ -779,20 +779,20 @@ class DashboardPage {
       lucide.createIcons(banner);
     }
 
-    // Add event listeners
-    const completeBtn = document.getElementById("complete-profile-btn");
-    const dismissBtn = document.getElementById("dismiss-profile-banner");
+    // Add event listeners (buttons already created above)
+    const completeBtnEl = document.getElementById("complete-profile-btn");
+    const dismissBtnEl = document.getElementById("dismiss-profile-banner");
 
-    if (completeBtn) {
-      completeBtn.addEventListener("click", async () => {
+    if (completeBtnEl) {
+      completeBtnEl.addEventListener("click", async () => {
         const { profileCompletionManager } = await import("../../profile-completion.js");
         profileCompletionManager.showProfileCompletionModal(false); // false = not required, can skip
         this.hideProfileCompletionBanner();
       });
     }
 
-    if (dismissBtn) {
-      dismissBtn.addEventListener("click", () => {
+    if (dismissBtnEl) {
+      dismissBtnEl.addEventListener("click", () => {
         this.hideProfileCompletionBanner();
         // Store dismissal to not show again for this session
         sessionStorage.setItem("profile-banner-dismissed", "true");
@@ -1294,28 +1294,22 @@ class DashboardPage {
     button.style.opacity = "0.7";
 
     try {
-      // Get current user
+      // Wait for auth manager to initialize
+      await authManager.waitForInit();
+
+      // Get current user (may be null if not authenticated)
       const user = authManager.getCurrentUser();
-
-      // Check if we're in development mode
-      const isDevelopment =
-        window.location.hostname === "localhost" ||
-        window.location.hostname === "127.0.0.1";
-
-      if (!user && !isDevelopment) {
-        throw new Error("User not authenticated");
-      }
-
-      if (!user && isDevelopment) {
-        logger.debug(
-          "Development mode: Submitting wellness check-in without authentication",
-        );
-      }
 
       // Prepare wellness data for selected date
       const dateStr = this.formatDateForInput(this.selectedDate);
+      
+      // Use user ID if available, otherwise use a fallback identifier
+      const userId = user
+        ? user.id || user.email
+        : storageService.get("userId", "anonymous", { usePrefix: false });
+
       const wellnessCheckIn = {
-        userId: user ? user.id || user.email : "demo-user",
+        userId: userId,
         date: dateStr,
         energy: this.wellnessData.energy,
         sleep: this.wellnessData.sleep,
@@ -1324,25 +1318,53 @@ class DashboardPage {
         timestamp: new Date().toISOString(),
       };
 
-      // Save to API (or localStorage for demo)
-      try {
-        await apiClient.post(API_ENDPOINTS.wellness.checkin, wellnessCheckIn);
-        logger.success("Wellness check-in submitted successfully");
-      } catch (apiError) {
-        // Fallback to localStorage for demo/testing
-        logger.warn("API unavailable, saving to localStorage:", apiError);
-        const saved = storageService.get("wellnessCheckIns", [], { usePrefix: false });
-        // Remove existing entry for this date
-        const filtered = saved.filter((w) => w.date !== dateStr);
-        filtered.push(wellnessCheckIn);
-        storageService.set("wellnessCheckIns", filtered, { usePrefix: false });
+      // Try API only if user is authenticated
+      if (user) {
+        try {
+          // Use performance-data endpoint for wellness (POST)
+          const endpoint = API_ENDPOINTS.performanceData?.wellness || '/api/performance-data/wellness';
+          await apiClient.post(endpoint, wellnessCheckIn);
+          logger.success("Wellness check-in submitted successfully");
+          
+          // Show success message
+          this.showNotification(
+            "Wellness check-in submitted successfully! ✓",
+            "success",
+          );
+
+          // Reload data to show updated status
+          await this.loadDateData();
+
+          // Reset button after delay
+          setTimeout(() => {
+            button.disabled = false;
+            button.textContent = originalText;
+            button.style.opacity = "1";
+          }, 1500);
+          return; // Successfully saved to API, exit early
+        } catch (apiError) {
+          logger.warn("API unavailable, saving to localStorage:", apiError);
+          // Fall through to localStorage save
+        }
+      } else {
+        logger.debug("User not authenticated, saving to localStorage");
       }
+
+      // Fallback to localStorage (for unauthenticated users or API failures)
+      const saved = storageService.get("wellnessCheckIns", [], { usePrefix: false });
+      // Remove existing entry for this date
+      const filtered = saved.filter((w) => w.date !== dateStr);
+      filtered.push(wellnessCheckIn);
+      storageService.set("wellnessCheckIns", filtered, { usePrefix: false });
 
       // Show success message
       this.showNotification(
-        "Wellness check-in submitted successfully! ✓",
+        "Wellness check-in saved locally! ✓",
         "success",
       );
+
+      // Reload data to show updated status
+      await this.loadDateData();
 
       // Reset button after delay
       setTimeout(() => {
@@ -1391,22 +1413,27 @@ class DashboardPage {
         // Continue with demo mode instead of throwing error
       }
 
-      // Get training session details
-      const trainingTime =
-        document.querySelector(".training-time")?.textContent || "18:30";
-      const trainingType = trainingTime.includes("Speed & Agility")
-        ? "Speed & Agility"
-        : "Training";
-      const coach =
-        document.querySelector(".training-info")?.textContent ||
-        "Coach: Ales Zaksek";
+      // Get training session details from button dataset or card
+      const button = e.target.closest(".btn-start-session") || e.target;
+      const trainingType = button.dataset.sessionType || 
+        document.querySelector(".training-time")?.textContent?.split("—")[1]?.trim() || 
+        "Training";
+      const trainingTime = button.dataset.sessionTime || 
+        document.querySelector(".training-time")?.textContent?.match(/\d{2}:\d{2}/)?.[0] || 
+        "18:30";
+      const coach = button.dataset.coach || 
+        document.querySelector(".training-info")?.textContent?.replace("Coach: ", "") ||
+        "Ales Zaksek";
+      const duration = button.dataset.duration || 70;
 
       const sessionData = {
         userId: user ? user.id || user.email : "demo-user",
         sessionType: trainingType,
-        coach: coach.replace("Coach: ", ""),
+        coach: coach,
         startTime: new Date().toISOString(),
         scheduledTime: trainingTime,
+        duration_minutes: parseInt(duration) || 70,
+        session_date: button.dataset.date || this.formatDateForInput(this.selectedDate),
       };
 
       logger.debug("📝 Session data:", sessionData);
@@ -1450,7 +1477,6 @@ class DashboardPage {
       }, 1000);
     } catch (error) {
       logger.error("❌ Failed to start training session:", error);
-      console.error("Start session error:", error);
       this.showNotification(
         "Failed to start session. Please try again.",
         "error",
@@ -1645,15 +1671,52 @@ class DashboardPage {
     today.setHours(0, 0, 0, 0);
     this.selectedDate = today;
     datePicker.value = this.formatDateForInput(today);
+    
+    // Update date picker display to show dd.mm.yyyy format
+    this.updateDatePickerDisplay();
+    
     this.updateDateStatus();
 
-    // Date picker change handler
+    // Date picker change handler - prevent future dates
     datePicker.addEventListener("change", (e) => {
       const selectedDate = new Date(e.target.value);
       selectedDate.setHours(0, 0, 0, 0);
+      
+      // Don't allow selecting future dates
+      if (this.isFuture(selectedDate)) {
+        this.showNotification("Cannot select future dates", "warning");
+        // Reset to today
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        this.selectedDate = today;
+        datePicker.value = this.formatDateForInput(today);
+        this.updateDateStatus();
+        this.loadDateData();
+        return;
+      }
+      
       this.selectedDate = selectedDate;
+      this.updateDatePickerDisplay();
       this.updateDateStatus();
       this.loadDateData();
+    });
+    
+    // Set max date to today to prevent selecting future dates in the date picker
+    datePicker.setAttribute("max", this.formatDateForInput(today));
+
+    // Make date display clickable to open calendar
+    const dateDisplay = document.getElementById("date-picker-display");
+    if (dateDisplay) {
+      dateDisplay.style.pointerEvents = "auto";
+      dateDisplay.style.cursor = "pointer";
+      dateDisplay.addEventListener("click", () => {
+        datePicker.showPicker?.() || datePicker.click();
+      });
+    }
+
+    // Update display when date picker value changes
+    datePicker.addEventListener("change", () => {
+      this.updateDatePickerDisplay();
     });
 
     // Previous day button
@@ -1662,19 +1725,26 @@ class DashboardPage {
         const prevDate = new Date(this.selectedDate);
         prevDate.setDate(prevDate.getDate() - 1);
         this.selectedDate = prevDate;
-        datePicker.value = this.formatDateForInput(prevDate);
+        this.updateDatePickerDisplay();
         this.updateDateStatus();
         this.loadDateData();
       });
     }
 
-    // Next day button
+    // Next day button - prevent going to future dates
     if (nextBtn) {
       nextBtn.addEventListener("click", () => {
         const nextDate = new Date(this.selectedDate);
         nextDate.setDate(nextDate.getDate() + 1);
+        
+        // Don't allow selecting future dates
+        if (this.isFuture(nextDate)) {
+          this.showNotification("Cannot select future dates", "warning");
+          return;
+        }
+        
         this.selectedDate = nextDate;
-        datePicker.value = this.formatDateForInput(nextDate);
+        this.updateDatePickerDisplay();
         this.updateDateStatus();
         this.loadDateData();
       });
@@ -1686,7 +1756,7 @@ class DashboardPage {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         this.selectedDate = today;
-        datePicker.value = this.formatDateForInput(today);
+        this.updateDatePickerDisplay();
         this.updateDateStatus();
         this.loadDateData();
       });
@@ -1698,6 +1768,13 @@ class DashboardPage {
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
+  }
+
+  formatDateForDisplayDDMMYYYY(date) {
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}.${month}.${year}`;
   }
 
   formatDateForDisplay(date) {
@@ -1720,6 +1797,21 @@ class DashboardPage {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     return date.getTime() > today.getTime();
+  }
+
+  updateDatePickerDisplay() {
+    const datePicker = document.getElementById("dashboard-date-picker");
+    const dateDisplay = document.getElementById("date-picker-display");
+    
+    if (!datePicker) return;
+
+    // Update the date picker value (for HTML5 date input)
+    datePicker.value = this.formatDateForInput(this.selectedDate);
+    
+    // Update custom display overlay to show dd.mm.yyyy format
+    if (dateDisplay) {
+      dateDisplay.textContent = this.formatDateForDisplayDDMMYYYY(this.selectedDate);
+    }
   }
 
   updateDateStatus() {
@@ -1784,6 +1876,9 @@ class DashboardPage {
       // Load supplements for selected date
       const supplementsLoaded = await this.loadSupplementsForDate(dateStr);
 
+      // Load training data for selected date
+      await this.loadTrainingForDate(dateStr);
+
       // Restore date status first (includes date text)
       this.updateDateStatus();
 
@@ -1814,6 +1909,16 @@ class DashboardPage {
   updateDateDataStatus(wellnessLoaded, supplementsLoaded) {
     const info = document.getElementById("date-info");
     if (!info) {return;}
+
+    const isFuture = this.isFuture(this.selectedDate);
+    
+    // For future dates, show appropriate message
+    if (isFuture) {
+      info.classList.remove("has-data", "no-data");
+      info.classList.add("no-data");
+      // Don't append status text for future dates - CSS will handle "(No entries)"
+      return;
+    }
 
     const hasWellness =
       wellnessLoaded &&
@@ -1854,21 +1959,47 @@ class DashboardPage {
       const user = authManager.getCurrentUser();
       if (!user) {return false;}
 
-      // Try API first
+      // Skip API call for future dates
+      const isFuture = this.isFuture(this.selectedDate);
+      if (isFuture) {
+        this.wellnessData = {
+          energy: null,
+          sleep: null,
+          mood: null,
+          trainingLoad: null,
+        };
+        this.updateWellnessUI();
+        return false; // No data for future dates
+      }
+
+      // Try API first - use performance-data endpoint for wellness data
       try {
-        const response = await apiClient.get(API_ENDPOINTS.wellness.checkin, {
+        const endpoint = API_ENDPOINTS.performanceData?.wellness || API_ENDPOINTS.wellness?.get || '/api/performance-data/wellness';
+        const response = await apiClient.get(endpoint, {
           date: dateStr,
+          type: 'wellness',
         });
+        
+        // Handle array response (from performance-data endpoint)
         if (response && response.data) {
-          const wellness = response.data;
-          this.wellnessData = {
-            energy: wellness.energy || null,
-            sleep: wellness.sleep || null,
-            mood: wellness.mood || null,
-            trainingLoad: wellness.trainingLoad || null,
-          };
-          this.updateWellnessUI();
-          return true; // Data loaded
+          let wellness = null;
+          if (Array.isArray(response.data)) {
+            // Find wellness entry for the specific date
+            wellness = response.data.find(w => w.date === dateStr);
+          } else if (response.data.date === dateStr) {
+            wellness = response.data;
+          }
+          
+          if (wellness) {
+            this.wellnessData = {
+              energy: wellness.energy || null,
+              sleep: wellness.sleep || null,
+              mood: wellness.mood || null,
+              trainingLoad: wellness.trainingLoad || null,
+            };
+            this.updateWellnessUI();
+            return true; // Data loaded
+          }
         }
       } catch (apiError) {
         // Fallback to localStorage
@@ -1943,6 +2074,17 @@ class DashboardPage {
       const user = authManager.getCurrentUser();
       if (!user) {return false;}
 
+      // Skip API call for future dates
+      const isFuture = this.isFuture(this.selectedDate);
+      if (isFuture) {
+        // Reset all supplements to false for future dates
+        Object.keys(this.supplements).forEach((key) => {
+          this.supplements[key] = { taken: false, time: null };
+        });
+        this.updateSupplementsUI();
+        return false; // No data for future dates
+      }
+
       // Reset all supplements to false
       Object.keys(this.supplements).forEach((key) => {
         this.supplements[key] = { taken: false, time: null };
@@ -1950,13 +2092,27 @@ class DashboardPage {
 
       let hasData = false;
 
-      // Try API first
+      // Try API first - use performance-data endpoint for supplements
       try {
-        const response = await apiClient.get(API_ENDPOINTS.supplements.log, {
+        const endpoint = API_ENDPOINTS.performanceData?.supplements || API_ENDPOINTS.supplements?.get || '/api/performance-data/supplements';
+        const response = await apiClient.get(endpoint, {
           date: dateStr,
+          type: 'supplements',
         });
-        if (response && response.data && Array.isArray(response.data)) {
-          response.data.forEach((log) => {
+        
+        if (response && response.data) {
+          let supplements = [];
+          if (Array.isArray(response.data)) {
+            // Filter supplements for the specific date
+            supplements = response.data.filter(s => {
+              const logDate = s.date || (s.timestamp ? new Date(s.timestamp).toISOString().split('T')[0] : null);
+              return logDate === dateStr;
+            });
+          } else if (response.data.date === dateStr) {
+            supplements = [response.data];
+          }
+          
+          supplements.forEach((log) => {
             if (log.supplement && this.supplements[log.supplement]) {
               this.supplements[log.supplement] = {
                 taken: log.taken || false,
@@ -1965,8 +2121,11 @@ class DashboardPage {
               if (log.taken) {hasData = true;}
             }
           });
-          this.updateSupplementsUI();
-          return hasData;
+          
+          if (supplements.length > 0) {
+            this.updateSupplementsUI();
+            return hasData;
+          }
         }
       } catch (apiError) {
         // Fallback to localStorage
@@ -2019,6 +2178,156 @@ class DashboardPage {
     });
   }
 
+  /**
+   * Load training sessions for selected date
+   */
+  async loadTrainingForDate(dateStr) {
+    try {
+      const user = authManager.getCurrentUser();
+      const isToday = this.isToday(this.selectedDate);
+      
+      // Get day of week (0 = Sunday, 6 = Saturday)
+      const dayOfWeek = this.selectedDate.getDay();
+      const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      const dayName = dayNames[dayOfWeek];
+
+      let trainingSession = null;
+
+      // Try API first
+      try {
+        const response = await apiClient.get(API_ENDPOINTS.training.sessions, {
+          startDate: dateStr,
+          endDate: dateStr,
+          includeUpcoming: true, // Include today and future dates
+          limit: 10
+        });
+
+        if (response && response.success && response.data) {
+          const sessions = Array.isArray(response.data) ? response.data : (response.data.sessions || []);
+          // Find session for this specific date
+          trainingSession = sessions.find(s => {
+            const sessionDate = s.session_date || s.date || (s.created_at ? new Date(s.created_at).toISOString().split('T')[0] : null);
+            return sessionDate === dateStr;
+          });
+        }
+      } catch (apiError) {
+        logger.warn("API unavailable, checking localStorage:", apiError);
+      }
+
+      // Fallback: Check training plan or schedule for this day of week
+      if (!trainingSession) {
+        try {
+          // Try to get training plan for this week
+          const trainingPlanResponse = await apiClient.get(API_ENDPOINTS.training?.schedule || '/api/training/schedule', {
+            date: dateStr
+          });
+
+          if (trainingPlanResponse && trainingPlanResponse.success && trainingPlanResponse.data) {
+            const schedule = trainingPlanResponse.data.schedule || trainingPlanResponse.data;
+            // Find training for this day of week
+            const daySchedule = Array.isArray(schedule) 
+              ? schedule.find(s => {
+                  const sDate = s.date ? new Date(s.date) : null;
+                  return sDate && sDate.toISOString().split('T')[0] === dateStr;
+                })
+              : null;
+            
+            if (daySchedule) {
+              trainingSession = {
+                session_type: daySchedule.session_type || daySchedule.type || daySchedule.title,
+                session_time: daySchedule.time || daySchedule.session_time || '18:30',
+                duration_minutes: daySchedule.duration || daySchedule.duration_minutes || 70,
+                coach: daySchedule.coach || 'Ales Zaksek',
+                date: dateStr
+              };
+            }
+          }
+        } catch (planError) {
+          logger.debug("Could not load training plan:", planError);
+        }
+      }
+
+      // Update training card UI
+      this.updateTrainingCard(trainingSession, dayName, isToday);
+
+      return trainingSession;
+    } catch (error) {
+      logger.error("Failed to load training for date:", error);
+      this.updateTrainingCard(null, null, false);
+      return null;
+    }
+  }
+
+  /**
+   * Update the training card with real data
+   */
+  updateTrainingCard(trainingSession, dayName, isToday) {
+    const trainingCard = document.querySelector('.todays-training-card');
+    if (!trainingCard) return;
+
+    const trainingTimeEl = trainingCard.querySelector('.training-time');
+    const trainingInfoEls = trainingCard.querySelectorAll('.training-info');
+    const startSessionBtn = trainingCard.querySelector('.btn-start-session');
+    const sectionTitle = trainingCard.querySelector('.section-title');
+
+    // Update title based on whether it's today
+    if (sectionTitle) {
+      if (isToday) {
+        sectionTitle.textContent = "TODAY'S TRAINING";
+      } else if (dayName) {
+        sectionTitle.textContent = `${dayName.toUpperCase()}'S TRAINING`;
+      } else {
+        sectionTitle.textContent = "TRAINING";
+      }
+    }
+
+    if (trainingSession) {
+      // Format time (e.g., "18:30" or extract from session_time)
+      const sessionTime = trainingSession.session_time || trainingSession.time || '18:30';
+      const sessionType = trainingSession.session_type || trainingSession.type || 'Training';
+      const duration = trainingSession.duration_minutes || trainingSession.duration || 70;
+      const coach = trainingSession.coach || trainingSession.coach_name || 'Ales Zaksek';
+
+      // Update training time display
+      if (trainingTimeEl) {
+        trainingTimeEl.textContent = `🕒 ${sessionTime} — ${sessionType}`;
+      }
+
+      // Update training info (coach and duration)
+      if (trainingInfoEls.length >= 1) {
+        trainingInfoEls[0].textContent = `Coach: ${coach}`;
+      }
+      if (trainingInfoEls.length >= 2) {
+        trainingInfoEls[1].textContent = `Duration: ${duration} min`;
+      }
+
+      // Store session data for START SESSION button
+      if (startSessionBtn) {
+        startSessionBtn.dataset.sessionType = sessionType;
+        startSessionBtn.dataset.sessionTime = sessionTime;
+        startSessionBtn.dataset.duration = duration;
+        startSessionBtn.dataset.coach = coach;
+        startSessionBtn.dataset.date = this.formatDateForInput(this.selectedDate);
+      }
+    } else {
+      // No training scheduled
+      if (trainingTimeEl) {
+        trainingTimeEl.textContent = '🕒 No training scheduled';
+      }
+      if (trainingInfoEls.length >= 1) {
+        trainingInfoEls[0].textContent = '';
+      }
+      if (trainingInfoEls.length >= 2) {
+        trainingInfoEls[1].textContent = '';
+      }
+      if (startSessionBtn) {
+        startSessionBtn.disabled = true;
+        startSessionBtn.textContent = 'NO SESSION';
+        delete startSessionBtn.dataset.sessionType;
+      }
+    }
+  }
+
   loadSavedData() {
     // This method is now replaced by loadDateData()
     // Keeping for backward compatibility but redirecting to loadDateData
@@ -2037,67 +2346,8 @@ class DashboardPage {
       errorHandler.showInfo(message);
     }
 
-    // Legacy notification code kept as fallback
+    // Legacy notification code removed - using errorHandler instead
     return;
-
-    // Create notification element
-    const notification = document.createElement("div");
-    notification.className = `dashboard-notification dashboard-notification-${type}`;
-    notification.textContent = message;
-    notification.style.cssText = `
-      position: fixed;
-      top: 80px;
-      right: 20px;
-      padding: 12px 20px;
-      background: ${type === "success" ? "#10b981" : type === "error" ? "#ef4444" : "#3b82f6"};
-      color: white;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      z-index: 10000;
-      font-size: 14px;
-      font-weight: 500;
-      animation: slideIn 0.3s ease-out;
-      max-width: 300px;
-    `;
-
-    // Add animation
-    const style = document.createElement("style");
-    style.textContent = `
-      @keyframes slideIn {
-        from {
-          transform: translateX(100%);
-          opacity: 0;
-        }
-        to {
-          transform: translateX(0);
-          opacity: 1;
-        }
-      }
-      @keyframes slideOut {
-        from {
-          transform: translateX(0);
-          opacity: 1;
-        }
-        to {
-          transform: translateX(100%);
-          opacity: 0;
-        }
-      }
-    `;
-    if (!document.getElementById("dashboard-notification-styles")) {
-      style.id = "dashboard-notification-styles";
-      document.head.appendChild(style);
-    }
-
-    document.body.appendChild(notification);
-
-    // Remove after 3 seconds
-    setTimeout(() => {
-      notification.style.animation = "slideOut 0.3s ease-out";
-      setTimeout(() => {
-        notification.remove();
-      }, 300);
-    }, 3000);
   }
 
   setupInjuryTracking() {

@@ -150,9 +150,8 @@ class SentryService {
       return window._env.VITE_SENTRY_DSN;
     }
 
-    if (import.meta.env?.VITE_SENTRY_DSN) {
-      return import.meta.env.VITE_SENTRY_DSN;
-    }
+    // Note: import.meta.env check removed to avoid syntax errors
+    // Configuration should come from window._env (set by build process or dev server)
 
     return null;
   }

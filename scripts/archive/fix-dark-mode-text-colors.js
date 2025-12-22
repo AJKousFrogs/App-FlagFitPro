@@ -1,8 +1,9 @@
+/* eslint-disable no-console */
 // Script to fix all dark text colors to white/light grey in dark mode
 import fs from "fs";
-import path from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
+import path from "path";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -33,7 +34,6 @@ const darkTextColors = {
   "#047857": "var(--dark-text-primary)",
   "#065f46": "var(--dark-text-secondary)",
   "#14532d": "var(--dark-text-secondary)",
-  "#15803d": "var(--dark-text-primary)",
   "#15803d": "var(--dark-text-primary)",
 };
 

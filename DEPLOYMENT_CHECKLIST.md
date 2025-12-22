@@ -9,7 +9,9 @@ Ensure these are set in Netlify Dashboard → Site Settings → Environment Vari
 - [ ] `SUPABASE_URL` - Your Supabase project URL
 - [ ] `SUPABASE_SERVICE_KEY` - Supabase service role key (for admin operations)
 - [ ] `SUPABASE_ANON_KEY` - Supabase anonymous key (for client operations)
-- [ ] `DATABASE_URL` or `NEON_DATABASE_URL` - PostgreSQL connection string (if using Neon)
+- [ ] `SUPABASE_URL` - Supabase project URL
+- [ ] `SUPABASE_SERVICE_KEY` - Supabase service role key
+- [ ] `SUPABASE_ANON_KEY` - Supabase anonymous key
 
 ### 2. Database Migrations ✅
 Run the following migration to ensure database schema is up to date:
@@ -192,7 +194,7 @@ All required indexes are created in the migration. Monitor:
 
 ## Support Contacts
 
-- **Database Issues:** Check Supabase/Neon dashboard
+- **Database Issues:** Check Supabase dashboard
 - **Function Errors:** Check Netlify Function logs
 - **Frontend Issues:** Check browser console and Angular build logs
 

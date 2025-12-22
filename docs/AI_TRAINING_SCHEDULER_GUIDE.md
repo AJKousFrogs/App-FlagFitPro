@@ -1,5 +1,11 @@
 # AI-Powered Training Scheduler Guide
 
+**Version**: 1.0  
+**Last Updated**: January 2025  
+**Status**: ✅ Production Ready
+
+---
+
 ## Overview
 
 The AI Training Scheduler intelligently adjusts your training periodization based on:
@@ -219,6 +225,19 @@ For questions or issues:
 2. Review example profile (Aljoša Kous)
 3. Verify your schedule format matches CSV template
 4. Check browser console for errors
+
+## 🔗 **Related Documentation**
+
+- [AI Scheduler Summary](AI_SCHEDULER_SUMMARY.md) - Implementation summary
+- [Comprehensive Offseason Periodization](COMPREHENSIVE_OFFSEASON_PERIODIZATION.md) - Periodization plans
+- [Evidence-Based Configuration Guide](EVIDENCE_BASED_CONFIGURATION_GUIDE.md) - Evidence-based configurations
+
+## 📝 **Changelog**
+
+- **v1.0 (2025-01)**: Initial user guide
+- Complete usage instructions documented
+- Periodization rules explained
+- Troubleshooting section added
 
 ---
 

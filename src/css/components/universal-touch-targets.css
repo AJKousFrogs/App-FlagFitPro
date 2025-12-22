@@ -98,200 +98,15 @@ input[type="reset"] {
 
 /* ================================================================
    BUTTON HIERARCHY SYSTEM
+   DEPRECATED: Button styles moved to standardized-components.scss
+   This section kept for legacy HTML pages only.
+   For Angular components, use: angular/src/assets/styles/standardized-components.scss
    ================================================================ */
 
-/* Primary buttons - main actions */
-.btn-primary,
-.btn.btn-primary,
-button.primary {
-  background: var(--color-brand-primary);
-  color: #ffffff;
-  border-color: var(--color-brand-primary);
-  font-weight: var(--font-weight-semibold, 600);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.btn-primary:hover {
-  background: var(--color-brand-primary-600, #0ea55a);
-  border-color: var(--color-brand-primary-600, #0ea55a);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-}
-
-.btn-primary:active {
-  transform: translateY(1px);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-.btn-primary:focus-visible {
-  outline: 2px solid var(--color-brand-primary);
-  outline-offset: 2px;
-}
-
-/* Secondary buttons - secondary actions */
-.btn-secondary,
-.btn.btn-secondary,
-button.secondary {
-  background: var(--surface-primary, #ffffff);
-  color: var(--color-text-primary);
-  border-color: var(--border-strong, #d4d4d4);
-}
-
-.btn-secondary:hover {
-  background: var(--surface-secondary, #f8fafc);
-  border-color: var(--border-strong, #d4d4d4);
-}
-
-.btn-secondary:active {
-  background: var(--surface-tertiary, #f1f5f9);
-}
-
-/* Success buttons */
-.btn-success {
-  background: var(--status-success-600, #16a34a);
-  color: #ffffff;
-  border-color: var(--status-success-600, #16a34a);
-}
-
-.btn-success:hover {
-  background: var(--status-success-700, #15803d);
-  border-color: var(--status-success-700, #15803d);
-}
-
-/* Warning buttons */
-.btn-warning {
-  background: var(--status-warning-500, #f59e0b);
-  color: #ffffff;
-  border-color: var(--status-warning-500, #f59e0b);
-}
-
-.btn-warning:hover {
-  background: var(--status-warning-600, #d97706);
-  border-color: var(--status-warning-600, #d97706);
-}
-
-/* Danger/Error buttons */
-.btn-danger,
-.btn-error {
-  background: var(--status-error-500, #ef4444);
-  color: #ffffff;
-  border-color: var(--status-error-500, #ef4444);
-}
-
-.btn-danger:hover,
-.btn-error:hover {
-  background: var(--status-error-600, #dc2626);
-  border-color: var(--status-error-600, #dc2626);
-}
-
-/* Ghost/outline buttons */
-.btn-ghost,
-.btn-outline {
-  background: transparent;
-  color: var(--color-text-secondary);
-  border-color: transparent;
-}
-
-.btn-ghost:hover,
-.btn-outline:hover {
-  background: var(--surface-secondary, #f8fafc);
-  color: var(--color-text-primary);
-}
-
-/* ================================================================
-   BUTTON SIZES
-   ================================================================ */
-
-.btn-sm,
-.btn.small {
-  min-height: var(--button-height-sm);
-  padding: var(--interactive-padding-sm);
-  font-size: var(--font-size-sm, 14px);
-}
-
-.btn-md,
-.btn.medium,
-.btn {
-  min-height: var(--button-height-md);
-  padding: var(--interactive-padding-md);
-  font-size: var(--font-size-base, 16px);
-}
-
-.btn-lg,
-.btn.large {
-  min-height: var(--button-height-lg);
-  padding: var(--interactive-padding-lg);
-  font-size: var(--font-size-lg, 18px);
-  font-weight: var(--font-weight-semibold, 600);
-}
-
-.btn-xl,
-.btn.extra-large {
-  min-height: var(--button-height-xl);
-  padding: var(--interactive-padding-xl);
-  font-size: var(--font-size-xl, 20px);
-  font-weight: var(--font-weight-semibold, 600);
-}
-
-/* Full width buttons */
-.btn-full,
-.btn-full-width {
-  width: 100%;
-  justify-content: center;
-}
-
-/* ================================================================
-   ICON BUTTONS
-   ================================================================ */
-
-.btn-icon,
-.icon-button {
-  width: var(--touch-target-comfortable);
-  height: var(--touch-target-comfortable);
-  padding: var(--spacing-3, 12px);
-  border-radius: var(--radius-md, 8px);
-}
-
-.btn-icon-sm {
-  width: var(--touch-target-min);
-  height: var(--touch-target-min);
-  padding: var(--spacing-2, 8px);
-}
-
-.btn-icon-lg {
-  width: var(--touch-target-large);
-  height: var(--touch-target-large);
-  padding: var(--spacing-4, 16px);
-}
-
-/* Icon sizing within buttons */
-.btn .icon,
-.btn [data-lucide],
-.btn svg {
-  width: 16px;
-  height: 16px;
-  flex-shrink: 0;
-}
-
-.btn-sm .icon,
-.btn-sm [data-lucide],
-.btn-sm svg {
-  width: 14px;
-  height: 14px;
-}
-
-.btn-lg .icon,
-.btn-lg [data-lucide],
-.btn-lg svg {
-  width: 18px;
-  height: 18px;
-}
-
-.btn-xl .icon,
-.btn-xl [data-lucide],
-.btn-xl svg {
-  width: 20px;
-  height: 20px;
-}
+/* NOTE: Button variant styles (.btn-primary, .btn-secondary, etc.) 
+   have been moved to standardized-components.scss to avoid duplication.
+   This file now only handles touch target sizing and base interactive element rules.
+*/
 
 /* ================================================================
    NAVIGATION TOUCH TARGETS
@@ -354,26 +169,14 @@ label {
 
 /* ================================================================
    CARD AND INTERACTIVE AREA TOUCH TARGETS
+   DEPRECATED: Card styles moved to standardized-components.scss
+   This section kept for legacy HTML pages only.
+   For Angular components, use: angular/src/assets/styles/standardized-components.scss
    ================================================================ */
 
-.card-interactive,
-.clickable-card {
-  cursor: pointer;
-  padding: var(--spacing-4, 16px);
-  border-radius: var(--radius-lg, 12px);
-  transition: all var(--motion-duration-fast, 200ms) ease;
-}
-
-.card-interactive:hover,
-.clickable-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.card-interactive:active,
-.clickable-card:active {
-  transform: translateY(0);
-}
+/* NOTE: Card styles (.card-interactive, etc.) have been moved to 
+   standardized-components.scss. This file now only ensures touch targets.
+*/
 
 /* ================================================================
    TABLE INTERACTIVE ELEMENTS

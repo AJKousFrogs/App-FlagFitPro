@@ -35,10 +35,10 @@
     <script type="module" src="./src/js/components/common-loaders.js" defer></script>
   
     <!-- Supabase Configuration (Centralized) -->
-    <script src="./src/js/config/supabase-config.js"></script>
+    <script src="./src/js/config/supabase-config.js" defer></script>
     
     <!-- Supabase JS SDK from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0" defer></script>
 
   </head>
   <body>
@@ -51,9 +51,9 @@
       <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
       <!-- Main content area -->
-      <div class="main-content">
-        <!-- Top bar -->
-        <top-bar></top-bar>
+      <main class="main-content" id="main-content">
+        <!-- Top Bar (Loaded Dynamically) -->
+        <div data-topbar-container></div>
 
         <!-- Page content -->
         <div class="content-area">
@@ -150,13 +150,38 @@
                     </select>
                   </div>
                   <div class="form-group">
-                    <label for="temperature">Temperature (°F)</label>
-                    <input
-                      type="number"
-                      id="temperature"
-                      class="form-control"
-                      placeholder="72"
-                    />
+                    <label for="temperature">Temperature</label>
+                    <!-- Unit Toggle -->
+                    <div class="unit-toggle-group" style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem;">
+                      <button 
+                        type="button" 
+                        class="unit-toggle-btn unit-toggle-active" 
+                        data-unit="fahrenheit"
+                        id="temperature-unit-fahrenheit"
+                        style="flex: 1; padding: 0.5rem 1rem; border: 2px solid var(--color-brand-primary, #10c96b); background: var(--color-brand-primary, #10c96b); color: white; border-radius: 0.5rem; cursor: pointer; font-weight: 600; font-size: 0.875rem; transition: all 0.2s;">
+                        Fahrenheit (°F)
+                      </button>
+                      <button 
+                        type="button" 
+                        class="unit-toggle-btn" 
+                        data-unit="celsius"
+                        id="temperature-unit-celsius"
+                        style="flex: 1; padding: 0.5rem 1rem; border: 2px solid var(--color-border-secondary, #e5e7eb); background: white; color: var(--color-text-secondary, #6b7280); border-radius: 0.5rem; cursor: pointer; font-weight: 600; font-size: 0.875rem; transition: all 0.2s;">
+                        Celsius (°C)
+                      </button>
+                    </div>
+                    <div class="input-group">
+                      <input
+                        type="number"
+                        id="temperature"
+                        name="temperature"
+                        class="form-control"
+                        placeholder="Enter temperature in Fahrenheit"
+                        step="0.1"
+                      />
+                      <span class="input-suffix" id="temperature-unit-label">°F</span>
+                    </div>
+                    <input type="hidden" id="temperature-unit" name="temperatureUnit" value="fahrenheit">
                   </div>
                   <div class="form-group">
                     <label for="field-conditions">Field Conditions</label>
@@ -275,15 +300,40 @@
                         </select>
                       </div>
                       <div class="form-group">
-                        <label for="distance">Distance (yards)</label>
-                        <input
-                          type="number"
-                          id="distance"
-                          class="form-control"
-                          placeholder="10"
-                          min="1"
-                          required
-                        />
+                        <label for="distance">Distance</label>
+                        <!-- Unit Toggle -->
+                        <div class="unit-toggle-group" style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem;">
+                          <button 
+                            type="button" 
+                            class="unit-toggle-btn unit-toggle-active" 
+                            data-unit="imperial"
+                            id="distance-unit-imperial"
+                            style="flex: 1; padding: 0.5rem 1rem; border: 2px solid var(--color-brand-primary, #10c96b); background: var(--color-brand-primary, #10c96b); color: white; border-radius: 0.5rem; cursor: pointer; font-weight: 600; font-size: 0.875rem; transition: all 0.2s;">
+                            Yards
+                          </button>
+                          <button 
+                            type="button" 
+                            class="unit-toggle-btn" 
+                            data-unit="metric"
+                            id="distance-unit-metric"
+                            style="flex: 1; padding: 0.5rem 1rem; border: 2px solid var(--color-border-secondary, #e5e7eb); background: white; color: var(--color-text-secondary, #6b7280); border-radius: 0.5rem; cursor: pointer; font-weight: 600; font-size: 0.875rem; transition: all 0.2s;">
+                            Meters
+                          </button>
+                        </div>
+                        <div class="input-group">
+                          <input
+                            type="number"
+                            id="distance"
+                            name="distance"
+                            class="form-control"
+                            placeholder="Enter distance in yards"
+                            min="1"
+                            step="0.1"
+                            required
+                          />
+                          <span class="input-suffix" id="distance-unit-label">yds</span>
+                        </div>
+                        <input type="hidden" id="distance-unit" name="distanceUnit" value="imperial">
                       </div>
                       <div class="form-group">
                         <label for="yard-line">Yard Line</label>
@@ -382,14 +432,39 @@
                         </select>
                       </div>
                       <div class="form-group">
-                        <label for="route-depth">Route Depth (yards)</label>
-                        <input
-                          type="number"
-                          id="route-depth"
-                          class="form-control"
-                          placeholder="10"
-                          min="0"
-                        />
+                        <label for="route-depth">Route Depth</label>
+                        <!-- Unit Toggle -->
+                        <div class="unit-toggle-group" style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem;">
+                          <button 
+                            type="button" 
+                            class="unit-toggle-btn unit-toggle-active" 
+                            data-unit="imperial"
+                            id="route-depth-unit-imperial"
+                            style="flex: 1; padding: 0.5rem 1rem; border: 2px solid var(--color-brand-primary, #10c96b); background: var(--color-brand-primary, #10c96b); color: white; border-radius: 0.5rem; cursor: pointer; font-weight: 600; font-size: 0.875rem; transition: all 0.2s;">
+                            Yards
+                          </button>
+                          <button 
+                            type="button" 
+                            class="unit-toggle-btn" 
+                            data-unit="metric"
+                            id="route-depth-unit-metric"
+                            style="flex: 1; padding: 0.5rem 1rem; border: 2px solid var(--color-border-secondary, #e5e7eb); background: white; color: var(--color-text-secondary, #6b7280); border-radius: 0.5rem; cursor: pointer; font-weight: 600; font-size: 0.875rem; transition: all 0.2s;">
+                            Meters
+                          </button>
+                        </div>
+                        <div class="input-group">
+                          <input
+                            type="number"
+                            id="route-depth"
+                            name="routeDepth"
+                            class="form-control"
+                            placeholder="Enter route depth in yards"
+                            min="0"
+                            step="0.1"
+                          />
+                          <span class="input-suffix" id="route-depth-unit-label">yds</span>
+                        </div>
+                        <input type="hidden" id="route-depth-unit" name="routeDepthUnit" value="imperial">
                       </div>
                     </div>
 
@@ -662,5 +737,16 @@
         </div>
       </div>
     </div>
+
+    <!-- Unit Toggle Helper -->
+    <script type="module">
+      import { setupUnitToggle } from './src/js/utils/unit-toggle-helper.js';
+      
+      // Initialize unit toggles
+      document.addEventListener('DOMContentLoaded', () => {
+        setupUnitToggle('distance', 'distance', 'distance-unit-label', 'distance-unit');
+        setupUnitToggle('distance', 'route-depth', 'route-depth-unit-label', 'route-depth-unit');
+      });
+    </script>
   </body>
 </html>

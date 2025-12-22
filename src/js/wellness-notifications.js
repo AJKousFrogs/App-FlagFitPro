@@ -6,18 +6,26 @@
 (function() {
   'use strict';
 
+  // Use logger from window if available, otherwise fallback to console
+  const logger = window.logger || {
+    debug: (...args) => console.log(...args),
+    info: (...args) => console.log(...args),
+    warn: (...args) => console.warn(...args),
+    error: (...args) => console.error(...args),
+  };
+
   // Get storageService from global window object
   const storageService = window.storageService;
 
   // Wait for notification manager to be available
   function initWellnessNotifications() {
     if (!window.notificationManager) {
-      console.log('[Wellness] Waiting for notification manager...');
+      logger.debug('[Wellness] Waiting for notification manager...');
       setTimeout(initWellnessNotifications, 100);
       return;
     }
 
-    console.log('[Wellness] Initializing wellness notifications');
+    logger.info('[Wellness] Initializing wellness notifications');
 
     // Check if this is first visit
     const hasSeenPrompt = storageService.get('wellnessNotificationPromptSeen', null, { usePrefix: false });
@@ -50,7 +58,8 @@
     // Create prompt modal
     const modal = document.createElement('div');
     modal.className = 'notification-prompt-modal';
-    modal.innerHTML = `
+    // Build modal HTML (static content, safe)
+    const modalHtml = `
       <div class="notification-prompt-overlay"></div>
       <div class="notification-prompt-content">
         <div class="notification-prompt-icon">🔔</div>
@@ -80,6 +89,25 @@
         </div>
       </div>
     `;
+
+    // Use setSafeContent to sanitize HTML before insertion
+    setSafeContent(modal, modalHtml, true, true);
+    
+    // Replace onclick with addEventListener
+    const enableBtn = modal.querySelector('#enable-notifications');
+    const laterBtn = modal.querySelector('#maybe-later');
+    
+    if (enableBtn) {
+      enableBtn.addEventListener('click', handleEnableNotifications);
+    }
+    if (laterBtn) {
+      laterBtn.addEventListener('click', () => {
+        if (storageService) {
+          storageService.set('wellnessNotificationPromptSeen', true, { usePrefix: false });
+        }
+        modal.remove();
+      });
+    }
 
     // Add styles
     const style = document.createElement('style');
@@ -214,15 +242,23 @@
       const granted = await window.notificationManager.requestPermission();
 
       if (granted) {
-        // Show success message
-        modal.querySelector('.notification-prompt-content').innerHTML = `
+        // Show success message using setSafeContent
+        const contentEl = modal.querySelector('.notification-prompt-content');
+        const successHtml = `
           <div class="notification-prompt-icon">✅</div>
           <h3>You're all set!</h3>
           <p>You'll receive daily wellness reminders at 9:00 PM.</p>
-          <button class="btn-primary" onclick="this.closest('.notification-prompt-modal').remove()">
+          <button class="btn-primary got-it-btn">
             Got it!
           </button>
         `;
+        setSafeContent(contentEl, successHtml, true, true);
+        
+        // Replace onclick with addEventListener
+        const gotItBtn = contentEl.querySelector('.got-it-btn');
+        if (gotItBtn) {
+          gotItBtn.addEventListener('click', () => modal.remove());
+        }
 
         // Auto-close after 2 seconds
         setTimeout(() => {
@@ -255,7 +291,7 @@
     // For now, we'll listen for custom events
 
     document.addEventListener('wellnessSubmitted', (event) => {
-      console.log('[Wellness] Wellness submitted:', event.detail);
+      logger.debug('[Wellness] Wellness submitted:', event.detail);
 
       if (window.notificationManager && window.notificationManager.isEnabled()) {
         // Show confirmation notification
@@ -296,7 +332,7 @@
         }
       }
     } catch (error) {
-      console.warn('[Wellness Notifications] Error checking streak:', error);
+      logger.warn('[Wellness Notifications] Error checking streak:', error);
     }
   }
 
@@ -339,7 +375,7 @@
     // Stash the event so it can be triggered later
     deferredPrompt = e;
 
-    console.log('[PWA] Install prompt available');
+    logger.info('[PWA] Install prompt available');
 
     // Show custom install button
     showInstallButton();
@@ -348,17 +384,20 @@
   function showInstallButton() {
     // Check if already installed
     if (window.matchMedia('(display-mode: standalone)').matches) {
-      console.log('[PWA] Already installed');
+      logger.info('[PWA] Already installed');
       return;
     }
 
-    // Create install button
+    // Create install button using DOM methods
     const installBtn = document.createElement('button');
     installBtn.className = 'pwa-install-btn';
-    installBtn.innerHTML = `
-      <span class="pwa-install-icon">📱</span>
-      <span>Install App</span>
-    `;
+    const iconSpan = document.createElement('span');
+    iconSpan.className = 'pwa-install-icon';
+    iconSpan.textContent = '📱';
+    const textSpan = document.createElement('span');
+    textSpan.textContent = 'Install App';
+    installBtn.appendChild(iconSpan);
+    installBtn.appendChild(textSpan);
 
     // Add styles
     const style = document.createElement('style');
@@ -426,10 +465,10 @@
       // Wait for the user to respond to the prompt
       const { outcome } = await deferredPrompt.userChoice;
 
-      console.log(`[PWA] User response: ${outcome}`);
+      logger.debug(`[PWA] User response: ${outcome}`);
 
       if (outcome === 'accepted') {
-        console.log('[PWA] App installed');
+        logger.info('[PWA] App installed');
         installBtn.remove();
       }
 
@@ -445,5 +484,5 @@
     initWellnessNotifications();
   }
 
-  console.log('[Wellness] Wellness notifications script loaded');
+  logger.info('[Wellness] Wellness notifications script loaded');
 })();

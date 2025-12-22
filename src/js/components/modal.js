@@ -3,6 +3,8 @@
  * Reusable modal component with accessibility features
  */
 
+import { setSafeContent, escapeHtml } from '../utils/shared.js';
+
 class Modal {
   constructor(options = {}) {
     this.id = options.id || `modal-${Date.now()}`;
@@ -17,33 +19,62 @@ class Modal {
   }
 
   /**
-   * Create modal HTML structure
+   * Create modal element using DOM methods
    */
-  createHTML() {
-    return `
-            <div class="modal-overlay" id="${this.id}-overlay" role="dialog" aria-modal="true" aria-labelledby="${this.id}-title">
-                <div class="modal-content" id="${this.id}-content">
-                    <div class="modal-header">
-                        <h2 class="modal-title" id="${this.id}-title">${this.title}</h2>
-                        <button class="modal-close" aria-label="Close modal" data-modal-close type="button">
-                            <i data-lucide="x" class="icon-20"></i>
-                        </button>
-                    </div>
-                    <div class="modal-body" id="${this.id}-body">
-                        ${this.content}
-                    </div>
-                    ${
-                      this.footer
-                        ? `
-                    <div class="modal-footer" id="${this.id}-footer">
-                        ${this.footer}
-                    </div>
-                    `
-                        : ""
-                    }
-                </div>
-            </div>
-        `;
+  createModalElement() {
+    const overlay = document.createElement("div");
+    overlay.className = "modal-overlay";
+    overlay.id = `${this.id}-overlay`;
+    overlay.setAttribute("role", "dialog");
+    overlay.setAttribute("aria-modal", "true");
+    overlay.setAttribute("aria-labelledby", `${this.id}-title`);
+
+    const content = document.createElement("div");
+    content.className = "modal-content";
+    content.id = `${this.id}-content`;
+
+    const header = document.createElement("div");
+    header.className = "modal-header";
+
+    const title = document.createElement("h2");
+    title.className = "modal-title";
+    title.id = `${this.id}-title`;
+    title.textContent = this.title;
+
+    const closeBtn = document.createElement("button");
+    closeBtn.className = "modal-close";
+    closeBtn.setAttribute("aria-label", "Close modal");
+    closeBtn.setAttribute("data-modal-close", "");
+    closeBtn.type = "button";
+
+    const closeIcon = document.createElement("i");
+    closeIcon.setAttribute("data-lucide", "x");
+    closeIcon.className = "icon-20";
+    closeBtn.appendChild(closeIcon);
+
+    header.appendChild(title);
+    header.appendChild(closeBtn);
+
+    const body = document.createElement("div");
+    body.className = "modal-body";
+    body.id = `${this.id}-body`;
+    // Use setSafeContent to sanitize content
+    setSafeContent(body, this.content, true, true);
+
+    content.appendChild(header);
+    content.appendChild(body);
+
+    if (this.footer) {
+      const footer = document.createElement("div");
+      footer.className = "modal-footer";
+      footer.id = `${this.id}-footer`;
+      // Use setSafeContent to sanitize footer content
+      setSafeContent(footer, this.footer, true, true);
+      content.appendChild(footer);
+    }
+
+    overlay.appendChild(content);
+    return overlay;
   }
 
   /**
@@ -53,11 +84,8 @@ class Modal {
     // Store current focus
     this.previousFocus = document.activeElement;
 
-    // Create modal element
-    const modalHTML = this.createHTML();
-    const tempDiv = document.createElement("div");
-    tempDiv.innerHTML = modalHTML;
-    this.modalElement = tempDiv.firstElementChild;
+    // Create modal element using DOM methods instead of innerHTML
+    this.modalElement = this.createModalElement();
 
     // Add to DOM
     document.body.appendChild(this.modalElement);
@@ -210,7 +238,8 @@ class Modal {
     if (!this.modalElement) {return;}
     const body = this.modalElement.querySelector(".modal-body");
     if (body) {
-      body.innerHTML = content;
+      // Use setSafeContent to sanitize content
+      setSafeContent(body, content, true, true);
       // Re-initialize icons if needed
       if (typeof lucide !== "undefined") {
         lucide.createIcons();

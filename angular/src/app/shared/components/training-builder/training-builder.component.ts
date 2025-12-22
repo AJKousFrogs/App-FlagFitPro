@@ -26,6 +26,7 @@ import { ToggleButtonModule } from 'primeng/togglebutton';
 import { AIService } from '../../../core/services/ai.service';
 import { WeatherService } from '../../../core/services/weather.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { LoggerService } from '../../../core/services/logger.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 interface TrainingExercise {
@@ -541,6 +542,7 @@ export class TrainingBuilderComponent {
   private aiService = inject(AIService);
   private weatherService = inject(WeatherService);
   private authService = inject(AuthService);
+  private logger = inject(LoggerService);
 
   activeStep = 0;
 
@@ -656,14 +658,13 @@ export class TrainingBuilderComponent {
   });
 
   constructor() {
+    // Initialize form
     this.sessionForm = this.fb.group({
       duration: [60, [Validators.required, Validators.min(15), Validators.max(120)]],
       intensity: ['medium', Validators.required],
       equipment: [[]],
     });
-  }
-
-  constructor() {
+    
     // Angular 21: Initialize in constructor instead of OnInit
     this.loadWeatherData();
     this.loadAISuggestions();
@@ -700,7 +701,7 @@ export class TrainingBuilderComponent {
         },
         error: () => {
           // Continue with default goals if AI service fails
-          console.debug('AI service not available, using default goals');
+          this.logger.debug('AI service not available, using default goals');
         },
       });
   }
@@ -936,22 +937,22 @@ export class TrainingBuilderComponent {
 
   previewExercise(event: any) {
     // Open exercise preview modal
-    console.log('Preview exercise:', event);
+    this.logger.debug('Preview exercise:', event);
   }
 
   modifyExercise(event: any) {
     // Open exercise modification modal
-    console.log('Modify exercise:', event);
+    this.logger.debug('Modify exercise:', event);
   }
 
   startSession() {
     // Navigate to active session view
-    console.log('Starting session with:', this.generatedExercises());
+    this.logger.debug('Starting session with:', this.generatedExercises());
   }
 
   saveSession() {
     // Save session template
-    console.log('Saving session template');
+    this.logger.debug('Saving session template');
   }
 
   trackByGoalId(index: number, goal: Goal): string {

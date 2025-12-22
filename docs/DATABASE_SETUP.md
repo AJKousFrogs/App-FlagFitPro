@@ -1,8 +1,21 @@
 # FlagFit Pro Database Setup Guide
 
+**Version**: 1.0  
+**Last Updated**: January 2025  
+**Status**: ✅ Production Ready
+
+---
+
 ## Overview
 
 This guide covers the comprehensive database setup for FlagFit Pro, including nutrition, recovery, AI coaching, and sports science research systems.
+
+### Database Systems
+
+- **Nutrition System**: USDA FoodData Central integration and sports nutrition plans
+- **Recovery System**: Cryotherapy, compression, manual therapy, and heat therapy protocols
+- **AI Coaches & Sport Psychology**: AI coach profiles and mental training techniques
+- **Sports Science Research**: Research institutions, studies, and evidence-based protocols
 
 ## Database Architecture
 
@@ -42,7 +55,7 @@ The FlagFit Pro database consists of four main systems:
 
 ### Database Requirements
 
-- Neon PostgreSQL (recommended) or PostgreSQL 12+
+- Supabase PostgreSQL (recommended) or PostgreSQL 12+
 - Database user with CREATE, INSERT, UPDATE, DELETE permissions
 - Sufficient storage space (minimum 2GB recommended)
 
@@ -209,7 +222,7 @@ ORDER BY record_count DESC;
 ### Common Issues
 
 1. **Database Connection Failed**
-   - Verify Neon PostgreSQL connection
+   - Verify Supabase PostgreSQL connection
    - Check database credentials in `.env`
    - Ensure database exists and is accessible
 
@@ -234,7 +247,7 @@ To completely reset the database:
 
 ```bash
 # Drop and recreate database (for local PostgreSQL only)
-# For Neon PostgreSQL, use the Neon console to reset the database
+# For Supabase PostgreSQL, use the Supabase dashboard to reset the database
 dropdb flagfootball_dev
 createdb flagfootball_dev
 
@@ -254,7 +267,7 @@ node scripts/setupDatabase.js
 
 ```bash
 # Create database backup (for local PostgreSQL)
-# For Neon PostgreSQL, use the Neon console for backups
+# For Supabase PostgreSQL, use the Supabase dashboard for backups
 pg_dump flagfootball_dev > backup_$(date +%Y%m%d).sql
 
 # Restore from backup
@@ -282,6 +295,21 @@ For database setup issues:
 2. Review database logs
 3. Verify environment configuration
 4. Contact the development team
+
+## 🔗 **Related Documentation**
+
+- [Comprehensive Database Schema Summary](COMPREHENSIVE_DATABASE_SCHEMA_SUMMARY.md) - Complete schema overview
+- [Database Integration Summary](DATABASE_INTEGRATION_SUMMARY.md) - Integration patterns
+- [Database Connection Manager API](DATABASE_CONNECTION_MANAGER_API.md) - Connection pooling
+- [Backend Setup](BACKEND_SETUP.md) - Backend API setup guide
+- [Architecture](ARCHITECTURE.md) - System architecture overview
+
+## 📝 **Changelog**
+
+- **v1.0 (2025-01)**: Initial database setup guide
+- Comprehensive database systems documented
+- Setup scripts and verification procedures added
+- Maintenance and backup strategies documented
 
 ## License
 

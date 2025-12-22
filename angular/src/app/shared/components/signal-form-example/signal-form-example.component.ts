@@ -19,6 +19,7 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { MessageModule } from 'primeng/message';
 import { FormValidators, combineValidators, createSignalFormField } from '../../utils/form.utils';
+import { LoggerService } from '../../../core/services/logger.service';
 
 /**
  * Angular 21 Forms Example Component
@@ -276,6 +277,7 @@ import { FormValidators, combineValidators, createSignalFormField } from '../../
 })
 export class SignalFormExampleComponent {
   private fb = inject(FormBuilder);
+  private logger = inject(LoggerService);
 
   // Reactive Form (Traditional)
   reactiveForm: FormGroup;
@@ -309,7 +311,7 @@ export class SignalFormExampleComponent {
 
   onReactiveSubmit(): void {
     if (this.reactiveForm.valid) {
-      console.log('Reactive Form Submitted:', this.reactiveForm.value);
+      this.logger.debug('Reactive Form Submitted:', this.reactiveForm.value);
       // Handle submission
     } else {
       this.reactiveForm.markAllAsTouched();
@@ -323,7 +325,7 @@ export class SignalFormExampleComponent {
     this.emailField.touched.set(true);
 
     if (this.isSignalFormValid()) {
-      console.log('Signal Form Submitted:', {
+      this.logger.debug('Signal Form Submitted:', {
         name: this.nameSignal(),
         email: this.emailSignal(),
       });

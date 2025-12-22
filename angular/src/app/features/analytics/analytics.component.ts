@@ -10,10 +10,10 @@ import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { ChartModule } from "primeng/chart";
-import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
-import { Tabs, TabPanel } from "primeng/tabs";
 import { TagModule } from "primeng/tag";
+import { Tabs, TabPanel } from "primeng/tabs";
+import { Select } from "primeng/select";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import {
@@ -32,6 +32,7 @@ import {
 import { AuthService } from "../../core/services/auth.service";
 import { TrainingStatsCalculationService } from "../../core/services/training-stats-calculation.service";
 import { TrainingDataService } from "../../core/services/training-data.service";
+import { LoggerService } from "../../core/services/logger.service";
 
 interface Metric {
   icon: string;
@@ -51,11 +52,11 @@ interface Metric {
     CardModule,
     ButtonModule,
     ChartModule,
-    Select,
     TableModule,
+    TagModule,
     Tabs,
     TabPanel,
-    TagModule,
+    Select,
     MainLayoutComponent,
     PageHeaderComponent,
   ],
@@ -179,7 +180,6 @@ interface Metric {
           <!-- Training Distribution Chart -->
           @defer (on viewport) {
             <p-card class="chart-card">
-          <p-card class="chart-card">
             <ng-template pTemplate="header">
               <div class="chart-header">
                 <h3 class="chart-title">Training Session Distribution</h3>
@@ -911,6 +911,7 @@ export class AnalyticsComponent implements OnInit {
   private authService = inject(AuthService);
   private trainingStatsService = inject(TrainingStatsCalculationService);
   private trainingDataService = inject(TrainingDataService);
+  private logger = inject(LoggerService);
 
   metrics = signal<Metric[]>([]);
   performanceChartData = signal<any>(null);
@@ -1000,7 +1001,7 @@ export class AnalyticsComponent implements OnInit {
         }
       },
       error: (error) => {
-        console.error("Error loading training statistics:", error);
+        this.logger.error("Error loading training statistics:", error);
       },
     });
 
@@ -1011,7 +1012,7 @@ export class AnalyticsComponent implements OnInit {
         this.acwrData.set(acwr);
       },
       error: (error) => {
-        console.error("Error loading training sessions for ACWR:", error);
+        this.logger.error("Error loading training sessions for ACWR:", error);
       },
     });
   }
@@ -1026,7 +1027,7 @@ export class AnalyticsComponent implements OnInit {
         this.playerGameStats.set(games);
       },
       error: (error) => {
-        console.error("Error loading player game stats:", error);
+        this.logger.error("Error loading player game stats:", error);
       },
     });
 
@@ -1039,7 +1040,7 @@ export class AnalyticsComponent implements OnInit {
           this.playerSeasonStats.set(stats);
         },
         error: (error) => {
-          console.error("Error loading season stats:", error);
+          this.logger.error("Error loading season stats:", error);
         },
       });
 
@@ -1051,7 +1052,7 @@ export class AnalyticsComponent implements OnInit {
           this.playerMultiSeasonStats.set(stats);
         },
         error: (error) => {
-          console.error("Error loading multi-season stats:", error);
+          this.logger.error("Error loading multi-season stats:", error);
         },
       });
   }

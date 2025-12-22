@@ -1,10 +1,11 @@
+/* eslint-disable no-console */
 // Comprehensive Responsive Design Audit Script
 // Checks all HTML and CSS files for responsive design implementation
 
 import fs from "fs";
-import path from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
+import path from "path";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

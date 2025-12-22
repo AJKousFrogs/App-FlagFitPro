@@ -2,6 +2,23 @@
 -- Description: Core user, team, and training tables
 -- Created: 2024-10-15
 
+-- =============================================================================
+-- CORE FUNCTION: Update updated_at timestamp
+-- This function is used by triggers across the database
+-- =============================================================================
+
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- =============================================================================
+-- CORE TABLES
+-- =============================================================================
+
 -- Users table (core user management)
 CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

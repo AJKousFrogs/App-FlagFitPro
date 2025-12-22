@@ -11,11 +11,6 @@ import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
 import { ButtonModule } from "primeng/button";
 import { TagModule } from "primeng/tag";
-import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
-import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
-import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
-import { PerformanceDashboardComponent } from "../../shared/components/performance-dashboard/performance-dashboard.component";
-import { WellnessWidgetComponent } from "../../shared/components/wellness-widget/wellness-widget.component";
 import { AthleteDashboardComponent } from "./athlete-dashboard.component";
 import { CoachDashboardComponent } from "./coach-dashboard.component";
 import { AuthService } from "../../core/services/auth.service";
@@ -31,11 +26,6 @@ import { HeaderService } from "../../core/services/header.service";
     ChartModule,
     ButtonModule,
     TagModule,
-    MainLayoutComponent,
-    PageHeaderComponent,
-    StatsGridComponent,
-    PerformanceDashboardComponent,
-    WellnessWidgetComponent,
     AthleteDashboardComponent,
     CoachDashboardComponent,
 ],

@@ -13,6 +13,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { ApiService } from './api.service';
+import { LoggerService } from './logger.service';
 
 export interface CalibrationLogEntry {
   athleteId: string;
@@ -52,6 +53,7 @@ export interface CalibrationLogEntry {
 })
 export class CalibrationLoggingService {
   private apiService = inject(ApiService);
+  private logger = inject(LoggerService);
   
   // Local cache of recent logs (for offline support)
   private localLogCache: CalibrationLogEntry[] = [];
@@ -69,10 +71,10 @@ export class CalibrationLoggingService {
     // Send to backend (async, don't block)
     this.apiService.post('/api/calibration-logs', entry).subscribe({
       next: () => {
-        console.log('[CalibrationLogging] Recommendation logged:', entry.recommendation.type);
+        this.logger.info('[CalibrationLogging] Recommendation logged:', entry.recommendation.type);
       },
       error: (err) => {
-        console.error('[CalibrationLogging] Failed to log recommendation:', err);
+        this.logger.error('[CalibrationLogging] Failed to log recommendation:', err);
         // Keep in local cache for retry
       },
     });
@@ -110,10 +112,10 @@ export class CalibrationLoggingService {
     // Send to backend
     this.apiService.post('/api/calibration-logs/outcome', entry).subscribe({
       next: () => {
-        console.log('[CalibrationLogging] Outcome logged');
+        this.logger.info('[CalibrationLogging] Outcome logged');
       },
       error: (err) => {
-        console.error('[CalibrationLogging] Failed to log outcome:', err);
+        this.logger.error('[CalibrationLogging] Failed to log outcome:', err);
       },
     });
 

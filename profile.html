@@ -32,15 +32,17 @@
     <!-- Universal Components -->
     <script type="module" src="./src/js/main.js"></script>
     <!-- Sidebar Utilities -->
-    <script src="./src/js/utils/sidebar-utils.js"></script>
+    <script src="./src/js/utils/sidebar-utils.js" defer></script>
     <!-- Common Component Loaders (Sidebar, Top Bar, Footer) -->
     <script type="module" src="./src/js/components/common-loaders.js" defer></script>
+    <!-- Event Handlers (Phase 2 - Replaces inline onclick handlers) -->
+    <script type="module" src="./src/js/utils/event-handlers.js" defer></script>
   
     <!-- Supabase Configuration (Centralized) -->
-    <script src="./src/js/config/supabase-config.js"></script>
+    <script src="./src/js/config/supabase-config.js" defer></script>
     
     <!-- Supabase JS SDK from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0" defer></script>
 
   </head>
   <body>
@@ -75,7 +77,8 @@
             <div class="profile-actions">
               <button
                 class="btn btn-secondary"
-                onclick="window.location.href='/settings.html'"
+                data-navigate-to="/settings.html"
+                aria-label="Go to settings page"
               >
                 <i data-lucide="settings" class="icon-16"></i>
                 Edit Profile

@@ -5,6 +5,7 @@ import { apiClient } from "../../api-client.js";
 import { API_ENDPOINTS } from "../../api-config.js";
 import { authManager } from "../../auth-manager.js";
 import { errorHandler } from "../utils/unified-error-handler.js";
+import { logger } from "../../logger.js";
 
 class AnalyticsPage {
   constructor() {
@@ -14,6 +15,8 @@ class AnalyticsPage {
 
   async init() {
     // Wait for DOM and Chart.js to be ready
+    await this.waitForChartJS();
+    
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", () => {
         this.initializeCharts();
@@ -23,18 +26,38 @@ class AnalyticsPage {
     }
   }
 
+  /**
+   * Wait for Chart.js to be available
+   * Retries up to 10 times with 100ms delay between attempts
+   */
+  async waitForChartJS(maxAttempts = 10, delay = 100) {
+    for (let i = 0; i < maxAttempts; i++) {
+      if (typeof Chart !== "undefined") {
+        return true;
+      }
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+    
+    // If Chart.js still not loaded, log error and return false
+    if (typeof Chart === "undefined") {
+      logger.error("Chart.js not loaded after waiting. Please ensure Chart.js is loaded before analytics-page.js");
+      return false;
+    }
+    return true;
+  }
+
   async initializeCharts() {
     // Check if Chart.js is loaded
     if (typeof Chart === "undefined") {
-      console.error("Chart.js not loaded");
+      logger.error("Chart.js not loaded");
       return;
     }
 
-    console.log("🚀 Initializing FlagFit Pro Analytics Dashboard...");
+    logger.info("🚀 Initializing FlagFit Pro Analytics Dashboard...");
 
     // Check authentication
     if (!authManager.requireAuth()) {
-      console.error("User not authenticated");
+      logger.error("User not authenticated");
       return;
     }
 
@@ -60,16 +83,16 @@ class AnalyticsPage {
           try {
             this[`init${chart}Chart`]();
           } catch (error) {
-            console.error(`Error initializing ${chart} chart:`, error);
+            logger.error(`Error initializing ${chart} chart:`, error);
           }
         });
       });
 
-      console.log("✅ All charts initialized successfully!");
+      logger.info("✅ All charts initialized successfully!");
     } catch (error) {
-      console.error("Error loading analytics data:", error);
-      // Fallback to hardcoded data
-      this.loadFallbackData();
+      logger.error("Error loading analytics data:", error);
+      // Don't load fallback data for authenticated users - show empty state instead
+      this.showEmptyState();
     }
   }
 
@@ -109,16 +132,29 @@ class AnalyticsPage {
         speedDevelopment: speedDevelopment.success ? speedDevelopment.data : null,
       };
     } catch (error) {
-      console.error("Error fetching analytics data:", error);
+      logger.error("Error fetching analytics data:", error);
       throw error;
     }
   }
 
   updateMetricsDisplay() {
-    if (!this.analyticsData || !this.analyticsData.metrics) {return;}
+    const metricCards = document.querySelectorAll(".metric-card");
+    
+    // If no data, show "No data" for all metrics
+    if (!this.analyticsData || !this.analyticsData.metrics || this.analyticsData.metrics.length === 0) {
+      metricCards.forEach((card) => {
+        const valueEl = card.querySelector(".metric-value");
+        const trendEl = card.querySelector(".metric-trend");
+        if (valueEl) {valueEl.textContent = "—";}
+        if (trendEl) {
+          trendEl.textContent = "No data entry yet";
+          trendEl.className = "metric-trend";
+        }
+      });
+      return;
+    }
 
     const metrics = this.analyticsData.metrics;
-    const metricCards = document.querySelectorAll(".metric-card");
 
     metrics.forEach((metric, index) => {
       if (metricCards[index]) {
@@ -126,11 +162,23 @@ class AnalyticsPage {
         const labelEl = metricCards[index].querySelector(".metric-label");
         const trendEl = metricCards[index].querySelector(".metric-trend");
 
-        if (valueEl) {valueEl.textContent = metric.value;}
-        if (labelEl) {labelEl.textContent = metric.label;}
+        if (valueEl) {
+          // Show 0 or "—" if value is null/undefined/0
+          if (metric.value === null || metric.value === undefined || metric.value === 0) {
+            valueEl.textContent = "—";
+          } else {
+            valueEl.textContent = metric.value;
+          }
+        }
+        if (labelEl && metric.label) {labelEl.textContent = metric.label;}
         if (trendEl) {
-          trendEl.textContent = metric.trend;
-          trendEl.className = `metric-trend trend-${metric.trendType}`;
+          if (metric.trend) {
+            trendEl.textContent = metric.trend;
+            trendEl.className = `metric-trend trend-${metric.trendType || 'neutral'}`;
+          } else {
+            trendEl.textContent = "No data entry yet";
+            trendEl.className = "metric-trend";
+          }
         }
       }
     });
@@ -140,10 +188,13 @@ class AnalyticsPage {
     const ctx = document.getElementById("performanceTrendsChart");
     if (!ctx) {return;}
 
-    const data = this.chartData?.performanceTrends || {
-      labels: ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6", "Week 7"],
-      values: [78, 82, 85, 79, 88, 91, 87],
-    };
+    const data = this.chartData?.performanceTrends;
+    
+    // If no data, show empty chart with message
+    if (!data || !data.values || data.values.length === 0) {
+      this.showNoDataMessage(ctx.closest(".chart-card"), "Performance Trends");
+      return;
+    }
 
     this.charts.performanceTrends = new Chart(ctx, {
       type: "line",
@@ -182,10 +233,13 @@ class AnalyticsPage {
     const ctx = document.getElementById("teamChemistryChart");
     if (!ctx) {return;}
 
-    const data = this.chartData?.teamChemistry || {
-      labels: ["Communication", "Coordination", "Trust", "Cohesion", "Leadership", "Adaptability"],
-      values: [8.4, 9.1, 7.5, 8.8, 9.2, 8.0],
-    };
+    const data = this.chartData?.teamChemistry;
+    
+    // If no data, show empty chart with message
+    if (!data || !data.values || data.values.length === 0) {
+      this.showNoDataMessage(ctx.closest(".chart-card"), "Team Chemistry");
+      return;
+    }
 
     this.charts.teamChemistry = new Chart(ctx, {
       type: "radar",
@@ -222,10 +276,13 @@ class AnalyticsPage {
     const ctx = document.getElementById("trainingDistributionChart");
     if (!ctx) {return;}
 
-    const data = this.chartData?.trainingDistribution || {
-      labels: ["Speed Training", "Strength", "Agility", "Endurance", "Technique"],
-      values: [25, 20, 22, 18, 15],
-    };
+    const data = this.chartData?.trainingDistribution;
+    
+    // If no data, show empty chart with message
+    if (!data || !data.values || data.values.length === 0) {
+      this.showNoDataMessage(ctx.closest(".chart-card"), "Training Distribution");
+      return;
+    }
 
     this.charts.trainingDistribution = new Chart(ctx, {
       type: "doughnut",
@@ -267,10 +324,13 @@ class AnalyticsPage {
     const ctx = document.getElementById("positionPerformanceChart");
     if (!ctx) {return;}
 
-    const data = this.chartData?.positionPerformance || {
-      labels: ["QB", "WR", "RB", "DB", "Rusher"],
-      values: [94, 91, 89, 87, 85],
-    };
+    const data = this.chartData?.positionPerformance;
+    
+    // If no data, show empty chart with message
+    if (!data || !data.values || data.values.length === 0) {
+      this.showNoDataMessage(ctx.closest(".chart-card"), "Position Performance");
+      return;
+    }
 
     this.charts.positionPerformance = new Chart(ctx, {
       type: "bar",
@@ -316,9 +376,15 @@ class AnalyticsPage {
     const ctx = document.getElementById("olympicProgressChart");
     if (!ctx) {return;}
 
-    // This would come from analytics summary
-    const progress = this.analyticsData?.metrics?.find(m => m.label === "Olympic Qualification")?.value || "73%";
-    const progressValue = parseInt(progress.replace("%", ""));
+    // Get progress from analytics summary
+    const progressMetric = this.analyticsData?.metrics?.find(m => m.label === "Olympic Qualification");
+    if (!progressMetric || !progressMetric.value) {
+      this.showNoDataMessage(ctx.closest(".chart-card"), "Olympic Qualification");
+      return;
+    }
+    
+    const progress = progressMetric.value;
+    const progressValue = parseInt(String(progress).replace("%", "")) || 0;
 
     this.charts.olympicProgress = new Chart(ctx, {
       type: "doughnut",
@@ -347,14 +413,21 @@ class AnalyticsPage {
     const ctx = document.getElementById("injuryRiskChart");
     if (!ctx) {return;}
 
-    // Default values - would come from analytics endpoint
+    const data = this.chartData?.injuryRisk;
+    
+    // If no data, show empty chart with message
+    if (!data || !data.values || data.values.length === 0) {
+      this.showNoDataMessage(ctx.closest(".chart-card"), "Injury Risk");
+      return;
+    }
+
     this.charts.injuryRisk = new Chart(ctx, {
       type: "pie",
       data: {
-        labels: ["Low Risk", "Medium Risk", "High Risk"],
+        labels: data.labels || ["Low Risk", "Medium Risk", "High Risk"],
         datasets: [
           {
-            data: [60, 30, 10],
+            data: data.values,
             backgroundColor: [
               "var(--primary-500)",
               "var(--tertiary-500)",
@@ -374,13 +447,13 @@ class AnalyticsPage {
     const ctx = document.getElementById("speedDevelopmentChart");
     if (!ctx) {return;}
 
-    const data = this.chartData?.speedDevelopment || {
-      labels: ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6"],
-      datasets: [
-        { label: "40-yard Dash", data: [5.2, 5.1, 4.9, 4.8, 4.7, 4.52] },
-        { label: "10-yard Split", data: [1.8, 1.75, 1.7, 1.68, 1.65, 1.62] },
-      ],
-    };
+    const data = this.chartData?.speedDevelopment;
+    
+    // If no data, show empty chart with message
+    if (!data || !data.datasets || data.datasets.length === 0 || !data.datasets.some(ds => ds.data && ds.data.length > 0)) {
+      this.showNoDataMessage(ctx.closest(".chart-card"), "Speed Development");
+      return;
+    }
 
     this.charts.speedDevelopment = new Chart(ctx, {
       type: "line",
@@ -418,11 +491,18 @@ class AnalyticsPage {
     const ctx = document.getElementById("engagementFunnelChart");
     if (!ctx) {return;}
 
-    // Default values - would come from analytics endpoint
+    const data = this.chartData?.engagementFunnel;
+    
+    // If no data, show empty chart with message
+    if (!data || !data.values || data.values.length === 0) {
+      this.showNoDataMessage(ctx.closest(".chart-card"), "Engagement Funnel");
+      return;
+    }
+
     this.charts.engagementFunnel = new Chart(ctx, {
       type: "bar",
       data: {
-        labels: [
+        labels: data.labels || [
           "App Opens",
           "Training Started",
           "Session Completed",
@@ -432,7 +512,7 @@ class AnalyticsPage {
         datasets: [
           {
             label: "Users",
-            data: [1000, 780, 680, 450, 320],
+            data: data.values,
             backgroundColor: "var(--primary-500)",
           },
         ],
@@ -448,33 +528,68 @@ class AnalyticsPage {
     });
   }
 
-  loadFallbackData() {
-    // Fallback to hardcoded data if API fails
-    this.chartData = {
-      performanceTrends: {
-        labels: ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6", "Week 7"],
-        values: [78, 82, 85, 79, 88, 91, 87],
-      },
-      teamChemistry: {
-        labels: ["Communication", "Coordination", "Trust", "Cohesion", "Leadership", "Adaptability"],
-        values: [8.4, 9.1, 7.5, 8.8, 9.2, 8.0],
-      },
-      trainingDistribution: {
-        labels: ["Speed Training", "Strength", "Agility", "Endurance", "Technique"],
-        values: [25, 20, 22, 18, 15],
-      },
-      positionPerformance: {
-        labels: ["QB", "WR", "RB", "DB", "Rusher"],
-        values: [94, 91, 89, 87, 85],
-      },
-      speedDevelopment: {
-        labels: ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6"],
-        datasets: [
-          { label: "40-yard Dash", data: [5.2, 5.1, 4.9, 4.8, 4.7, 4.52] },
-          { label: "10-yard Split", data: [1.8, 1.75, 1.7, 1.68, 1.65, 1.62] },
-        ],
-      },
-    };
+  /**
+   * Show empty state message for charts when no data is available
+   */
+  showNoDataMessage(chartCard, chartName) {
+    if (!chartCard) return;
+    
+    const canvas = chartCard.querySelector("canvas");
+    if (canvas) {
+      canvas.style.display = "none";
+    }
+    
+    // Check if message already exists
+    let noDataMsg = chartCard.querySelector(".no-data-message");
+    if (!noDataMsg) {
+      noDataMsg = document.createElement("div");
+      noDataMsg.className = "no-data-message";
+      noDataMsg.style.cssText = `
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem;
+        text-align: center;
+        color: var(--color-text-tertiary);
+        min-height: 300px;
+      `;
+      // Create no data message using DOM methods instead of innerHTML
+      const iconDiv = document.createElement("div");
+      iconDiv.style.cssText = "font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;";
+      iconDiv.textContent = "📊";
+      
+      const titleDiv = document.createElement("div");
+      titleDiv.style.cssText = "font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--color-text-secondary);";
+      titleDiv.textContent = "No Data Available";
+      
+      const messageDiv = document.createElement("div");
+      messageDiv.style.cssText = "font-size: 0.875rem;";
+      messageDiv.textContent = `No ${chartName} data has been entered yet.`;
+      
+      noDataMsg.appendChild(iconDiv);
+      noDataMsg.appendChild(titleDiv);
+      noDataMsg.appendChild(messageDiv);
+      chartCard.appendChild(noDataMsg);
+    }
+  }
+
+  /**
+   * Show empty state for entire analytics page
+   */
+  showEmptyState() {
+    // Update metrics to show "No data"
+    this.updateMetricsDisplay();
+    
+    // Show empty messages for all charts
+    const chartCards = document.querySelectorAll(".chart-card");
+    chartCards.forEach((card) => {
+      const canvas = card.querySelector("canvas");
+      if (canvas && !canvas.closest(".no-data-message")) {
+        const chartName = card.querySelector(".chart-title")?.textContent || "Chart";
+        this.showNoDataMessage(card, chartName);
+      }
+    });
   }
 }
 

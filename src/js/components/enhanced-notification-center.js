@@ -13,6 +13,8 @@
  */
 
 import { realtimeManager } from '../services/supabase-client.js';
+import { setSafeContent } from '../utils/shared.js';
+import { logger } from '../../logger.js';
 
 class EnhancedNotificationCenter {
   constructor() {
@@ -92,7 +94,7 @@ class EnhancedNotificationCenter {
     // Initialize panel UI
     this.initPanel();
 
-    console.log('[NotificationCenter] Enhanced notification center initialized');
+    logger.info('[NotificationCenter] Enhanced notification center initialized');
   }
 
   /**
@@ -114,7 +116,7 @@ class EnhancedNotificationCenter {
         this.currentGroupBy = prefs.groupBy || 'date';
       }
     } catch (error) {
-      console.warn('[NotificationCenter] Failed to load preferences:', error);
+      logger.warn('[NotificationCenter] Failed to load preferences:', error);
     }
   }
 
@@ -132,7 +134,7 @@ class EnhancedNotificationCenter {
         }, { usePrefix: false });
       }
     } catch (error) {
-      console.warn('[NotificationCenter] Failed to save preferences:', error);
+      logger.warn('[NotificationCenter] Failed to save preferences:', error);
     }
   }
 
@@ -144,7 +146,7 @@ class EnhancedNotificationCenter {
       // Get current user ID
       const userId = this.getCurrentUserId();
       if (!userId) {
-        console.warn('[NotificationCenter] No user ID available for real-time subscription');
+        logger.warn('[NotificationCenter] No user ID available for real-time subscription');
         return;
       }
 
@@ -185,9 +187,9 @@ class EnhancedNotificationCenter {
         }
       };
 
-      console.log('[NotificationCenter] Real-time subscription active');
+      logger.info('[NotificationCenter] Real-time subscription active');
     } catch (error) {
-      console.error('[NotificationCenter] Failed to setup real-time subscription:', error);
+      logger.error('[NotificationCenter] Failed to setup real-time subscription:', error);
     }
   }
 
@@ -206,7 +208,7 @@ class EnhancedNotificationCenter {
       }
       return null;
     } catch (error) {
-      console.warn('[NotificationCenter] Failed to get user ID:', error);
+      logger.warn('[NotificationCenter] Failed to get user ID:', error);
       return null;
     }
   }
@@ -217,12 +219,12 @@ class EnhancedNotificationCenter {
   onNewNotification(payload) {
     // Handle both direct notification object and payload structure
     const notification = payload.new || payload;
-    console.log('[NotificationCenter] New notification received:', notification);
+    logger.debug('[NotificationCenter] New notification received:', notification);
     
     // Refresh notifications from store
     if (this.notificationStore) {
       this.notificationStore.loadNotifications().catch(err => {
-        console.warn('[NotificationCenter] Failed to refresh notifications:', err);
+        logger.warn('[NotificationCenter] Failed to refresh notifications:', err);
       });
     }
 
@@ -263,12 +265,12 @@ class EnhancedNotificationCenter {
   onNotificationUpdate(payload) {
     // Handle both direct notification object and payload structure
     const notification = payload.new || payload;
-    console.log('[NotificationCenter] Notification updated:', notification);
+    logger.debug('[NotificationCenter] Notification updated:', notification);
     
     // Refresh notifications from store
     if (this.notificationStore) {
       this.notificationStore.loadNotifications().catch(err => {
-        console.warn('[NotificationCenter] Failed to refresh notifications:', err);
+        logger.warn('[NotificationCenter] Failed to refresh notifications:', err);
       });
     }
 
@@ -295,7 +297,7 @@ class EnhancedNotificationCenter {
   initPanel() {
     const panel = document.getElementById('notification-panel');
     if (!panel) {
-      console.warn('[NotificationCenter] Notification panel not found');
+      logger.warn('[NotificationCenter] Notification panel not found');
       return;
     }
 
@@ -360,16 +362,39 @@ class EnhancedNotificationCenter {
 
     // Enhance actions section
     if (actions) {
-      actions.innerHTML = `
-        <button class="notification-action-btn" onclick="window.enhancedNotificationCenter?.markAllAsRead()">
+      // Build actions HTML (static content, safe)
+      const actionsHtml = `
+        <button class="notification-action-btn mark-all-read-btn">
           <i data-lucide="check-circle"></i>
           Mark all as read
         </button>
-        <button class="notification-action-btn" onclick="window.enhancedNotificationCenter?.togglePreferences()">
+        <button class="notification-action-btn toggle-preferences-btn">
           <i data-lucide="settings"></i>
           Settings
         </button>
       `;
+      // Use setSafeContent to sanitize HTML before insertion
+      setSafeContent(actions, actionsHtml, true, true);
+      
+      // Replace onclick with addEventListener
+      const markAllBtn = actions.querySelector('.mark-all-read-btn');
+      const togglePrefsBtn = actions.querySelector('.toggle-preferences-btn');
+      
+      if (markAllBtn && window.enhancedNotificationCenter) {
+        markAllBtn.addEventListener('click', () => {
+          if (window.enhancedNotificationCenter.markAllAsRead) {
+            window.enhancedNotificationCenter.markAllAsRead();
+          }
+        });
+      }
+      
+      if (togglePrefsBtn && window.enhancedNotificationCenter) {
+        togglePrefsBtn.addEventListener('click', () => {
+          if (window.enhancedNotificationCenter.togglePreferences) {
+            window.enhancedNotificationCenter.togglePreferences();
+          }
+        });
+      }
     }
 
     // Initialize Lucide icons
@@ -466,7 +491,7 @@ class EnhancedNotificationCenter {
         element.classList.add('read');
         element.classList.remove('unread', 'new');
       } catch (error) {
-        console.warn('[NotificationCenter] Failed to mark as read:', error);
+        logger.warn('[NotificationCenter] Failed to mark as read:', error);
       }
     }
 
@@ -515,7 +540,7 @@ class EnhancedNotificationCenter {
 
       this.render();
     } catch (error) {
-      console.warn('[NotificationCenter] Failed to load more notifications:', error);
+      logger.warn('[NotificationCenter] Failed to load more notifications:', error);
       this.page--; // Revert page increment
     } finally {
       this.isLoading = false;
@@ -540,11 +565,15 @@ class EnhancedNotificationCenter {
 
     // Render
     if (notifications.length === 0) {
-      list.innerHTML = this.renderEmptyState();
+      // Use setSafeContent to sanitize HTML before insertion
+      const emptyHtml = this.renderEmptyState();
+      setSafeContent(list, emptyHtml, true, true);
       return;
     }
 
-    list.innerHTML = this.renderGroupedNotifications(grouped);
+    // Use setSafeContent to sanitize HTML before insertion
+    const groupedHtml = this.renderGroupedNotifications(grouped);
+    setSafeContent(list, groupedHtml, true, true);
 
     // Re-initialize Lucide icons
     if (typeof lucide !== 'undefined') {
@@ -781,7 +810,7 @@ class EnhancedNotificationCenter {
       // Refresh badge
       await this.notificationStore.refreshBadge();
     } catch (error) {
-      console.warn('[NotificationCenter] Failed to mark all as read:', error);
+      logger.warn('[NotificationCenter] Failed to mark all as read:', error);
     }
   }
 
@@ -790,7 +819,7 @@ class EnhancedNotificationCenter {
    */
   togglePreferences() {
     // TODO: Implement preferences panel
-    console.log('[NotificationCenter] Preferences toggle');
+    logger.debug('[NotificationCenter] Preferences toggle');
   }
 
   /**
@@ -801,10 +830,10 @@ class EnhancedNotificationCenter {
       const audio = new Audio('/sounds/notification.mp3');
       audio.volume = 0.3;
       audio.play().catch(err => {
-        console.debug('[NotificationCenter] Could not play sound:', err);
+        logger.debug('[NotificationCenter] Could not play sound:', err);
       });
     } catch (error) {
-      console.debug('[NotificationCenter] Sound not available:', error);
+      logger.debug('[NotificationCenter] Sound not available:', error);
     }
   }
 

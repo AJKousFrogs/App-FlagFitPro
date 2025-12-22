@@ -13,9 +13,9 @@ _Complete setup, environment configuration, and deployment guide_
 git clone https://github.com/AJKous31/app-new-flag.git
 cd flag-football-app
 
-# Copy environment template
-cp .env.example .env.local
-# Edit .env.local with your actual API keys
+# Create .env.local file (if it doesn't exist)
+# The file should already exist with Supabase credentials
+# If not, create it and add your API keys
 ```
 
 ### **2. Essential Environment Variables**
@@ -128,17 +128,23 @@ project-root/
 
 ### **Development Environment (.env.local)**
 
+The `.env.local` file is automatically loaded by dev servers (`dev-server.cjs` and `dev-server-enhanced.cjs`) using dotenv.
+
 ```bash
+# Supabase Configuration (REQUIRED)
+SUPABASE_URL=https://pvziciccwxgftcielknm.supabase.co
+SUPABASE_ANON_KEY=sb_publishable_4mRqHbz4cFVXzpDi8nJc3A_rknKjryk
+SUPABASE_SERVICE_KEY=sb_secret_ZbZdfro3oCkX1wAiyYg__g_SUrhZI1R
+
+# Vite environment variables (for frontend)
+VITE_SUPABASE_URL=https://pvziciccwxgftcielknm.supabase.co
+VITE_SUPABASE_ANON_KEY=sb_publishable_4mRqHbz4cFVXzpDi8nJc3A_rknKjryk
+
 # Development Mode
 NODE_ENV=development
 VITE_APP_ENV=development
 
-# Database
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_ANON_KEY=your_anon_key
-SUPABASE_SERVICE_KEY=your_service_key
-
-# Security
+# Security (if needed)
 JWT_SECRET=dev_jwt_secret_minimum_32_characters_long
 CSRF_SECRET=dev_csrf_secret_here
 
@@ -152,8 +158,13 @@ OPENAI_API_KEY=sk-your-openai-key
 # Development Features
 VITE_ENABLE_MOCK_DATA=true
 VITE_ENABLE_DEBUG_LOGS=true
-VITE_API_BASE_URL=http://localhost:5173
+VITE_API_BASE_URL=http://localhost:4000
 ```
+
+**Note:** Dev servers automatically:
+- Load `.env.local` on startup
+- Inject variables into `window._env` for frontend
+- Set them in `localStorage` for development (localhost only)
 
 ### **Testing Configuration (.env.test)**
 
@@ -280,45 +291,12 @@ VITE_ENABLE_DEBUG_LOGS=false
    - Monitor build logs for errors
    - Site goes live at: `https://your-site-name.netlify.app`
 
-### **Vercel Deployment (Alternative)**
+### **Alternative Deployment Options**
 
-**vercel.json**
-
-```json
-{
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "buildCommand": "npm run build",
-        "distDir": "dist"
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
-  ],
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "X-Frame-Options",
-          "value": "DENY"
-        },
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        }
-      ]
-    }
-  ]
-}
-```
+For other hosting platforms, configure build settings according to their documentation. Ensure:
+- Build command: `cd angular && npm run build`
+- Output directory: `angular/dist/flagfit-pro`
+- Environment variables are properly configured
 
 ---
 
@@ -452,10 +430,13 @@ curl -X POST localhost:5173/api/auth/login \
 // main.js
 import * as Sentry from "@sentry/browser";
 
-if (import.meta.env.PROD) {
+// Get DSN from window._env (set by dev server or build process)
+const sentryDsn = window._env?.VITE_SENTRY_DSN;
+
+if (sentryDsn && window.location.hostname !== 'localhost') {
   Sentry.init({
-    dsn: import.meta.env.VITE_SENTRY_DSN,
-    environment: import.meta.env.VITE_APP_ENV,
+    dsn: sentryDsn,
+    environment: window._env?.VITE_APP_ENV || 'production',
     tracesSampleRate: 0.1,
   });
 }
@@ -468,7 +449,8 @@ if (import.meta.env.PROD) {
 import { gtag } from "gtag";
 
 export function trackEvent(action, category, label, value) {
-  if (import.meta.env.PROD) {
+  // Only track in production (not localhost)
+  if (window.location.hostname !== 'localhost') {
     gtag("event", action, {
       event_category: category,
       event_label: label,
@@ -477,6 +459,8 @@ export function trackEvent(action, category, label, value) {
   }
 }
 ```
+
+**Note:** `import.meta.env` is no longer used. Configuration comes from `window._env` (set by dev servers or build process).
 
 ### **Performance Monitoring**
 
@@ -569,7 +553,7 @@ npm run type-check       # TypeScript checking
 # Deployment
 git push origin main     # Trigger Netlify deploy
 netlify deploy --prod    # Manual Netlify deploy
-vercel --prod           # Vercel deployment
+# Deploy to your chosen hosting platform
 
 # Utilities
 npm run clean           # Clean build artifacts

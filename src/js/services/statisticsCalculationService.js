@@ -187,7 +187,7 @@ class StatisticsCalculationService {
 
     // Calculate current streak (backwards from today)
     let currentStreak = 0;
-    let expectedDate = new Date(refNormalized);
+    const expectedDate = new Date(refNormalized);
 
     for (const workoutDate of workoutDates) {
       const dayDifference =

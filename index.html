@@ -3,7 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https:; worker-src 'self';" />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
+    
+    <!-- SEO and Brand Identity -->
     <title>FlagFit Pro - Welcome</title>
+    <meta name="description" content="Professional flag football training platform with advanced analytics, AI coaching, team management, and LA28 Olympic preparation tools." />
+    <meta name="keywords" content="flag football, training, analytics, coaching, sports tech, LA28, olympics" />
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="FlagFit Pro Development Team" />
+    
     <link
       rel="icon"
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
@@ -254,7 +267,66 @@
       }, 15000);
     </script>
 
-        <!-- Footer (Loaded Dynamically) -->
+    <!-- Performance monitoring -->
+    <script>
+      // Cache management and performance monitoring
+      if ('caches' in window) {
+        // Clear old caches on version updates
+        window.addEventListener('load', function() {
+          caches.keys().then(function(cacheNames) {
+            return Promise.all(
+              cacheNames.map(function(cacheName) {
+                if (cacheName.includes('old-version')) {
+                  return caches.delete(cacheName);
+                }
+              })
+            );
+          }).then(function() {
+            console.log('All caches cleared');
+          });
+        });
+      }
+      
+      // Basic error tracking
+      window.addEventListener('error', function(e) {
+        console.error('Global error:', e.error);
+      });
+      
+      window.addEventListener('unhandledrejection', function(e) {
+        console.error('Unhandled promise rejection:', e.reason);
+      });
+      
+      // Performance measurement
+      window.addEventListener('load', function() {
+        if (window.performance && window.performance.measure) {
+          try {
+            performance.measure('app-load', 'navigationStart');
+            const measure = performance.getEntriesByName('app-load')[0];
+            console.log('App load time:', measure.duration + 'ms');
+          } catch (e) {
+            // Fallback measurement
+            console.log('Page loaded in:', Date.now() - performance.timeOrigin + 'ms');
+          }
+        }
+      });
+      
+      // Clear service worker cache if needed
+      if ('serviceWorker' in navigator && 'caches' in window) {
+        window.clearSWCache = function() {
+          caches.keys().then(function(cacheNames) {
+            return Promise.all(
+              cacheNames.map(function(cacheName) {
+                return caches.delete(cacheName);
+              })
+            );
+          }).then(function() {
+            console.log('All caches cleared');
+          });
+        }
+      }
+    </script>
+
+    <!-- Footer (Loaded Dynamically) -->
     <div data-footer-container></div>
   </body>
 </html>

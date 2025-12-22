@@ -10,6 +10,7 @@ import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { ProgressBarModule } from "primeng/progressbar";
 import { WellnessService } from "../../../core/services/wellness.service";
+import { LoggerService } from "../../../core/services/logger.service";
 
 interface WellnessMetric {
   icon: string;
@@ -256,6 +257,7 @@ interface WellnessMetric {
 export class WellnessWidgetComponent {
   private wellnessService = inject(WellnessService);
   private router = inject(Router);
+  private logger = inject(LoggerService);
 
   overallScore = signal<number>(0);
   statusLabel = signal<string>("N/A");
@@ -327,7 +329,7 @@ export class WellnessWidgetComponent {
         }
       },
       error: (err) => {
-        console.error("Error loading wellness data for widget:", err);
+        this.logger.error("Error loading wellness data for widget:", err);
         this.overallScore.set(0);
         this.statusLabel.set("Error");
         this.statusColor.set("#ef4444");

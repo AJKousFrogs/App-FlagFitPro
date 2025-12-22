@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable no-console */
 /**
  * Process Research Articles into Knowledge Base Entries
  *
@@ -19,7 +20,7 @@ config({ path: join(__dirname, "..", ".env") });
 const { Pool } = pg;
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL || process.env.NEON_DATABASE_URL,
+  connectionString: process.env.DATABASE_URL || process.env.SUPABASE_DB_URL,
   ssl: process.env.DATABASE_URL?.includes("localhost")
     ? false
     : { rejectUnauthorized: false },

@@ -32,15 +32,15 @@
     <!-- Universal Components -->
     <script type="module" src="./src/js/main.js"></script>
     <!-- Sidebar Utilities -->
-    <script src="./src/js/utils/sidebar-utils.js"></script>
+    <script src="./src/js/utils/sidebar-utils.js" defer></script>
     <!-- Common Component Loaders (Sidebar, Top Bar, Footer) -->
     <script type="module" src="./src/js/components/common-loaders.js" defer></script>
   
     <!-- Supabase Configuration (Centralized) -->
-    <script src="./src/js/config/supabase-config.js"></script>
+    <script src="./src/js/config/supabase-config.js" defer></script>
     
     <!-- Supabase JS SDK from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0" defer></script>
 
   </head>
   <body>
@@ -110,219 +110,12 @@
             </div>
 
             <div id="postsContainer">
-              <div id="community-loading" class="community-loading" style="display: none;">
+              <div id="community-loading" class="community-loading" style="display: flex;">
                 <div class="community-loading-spinner"></div>
                 <span style="margin-left: var(--space-3);">Loading community feed...</span>
               </div>
               <div id="community-error" class="community-error" style="display: none;"></div>
-              <div class="post">
-                <div class="post-header">
-                  <div class="post-avatar">CM</div>
-                  <div class="post-info">
-                    <div class="post-author">Coach Mike Thompson</div>
-                    <div class="post-meta">
-                      2 hours ago •
-                      <i data-lucide="map-pin" class="icon-14"></i>
-                      Training Field
-                    </div>
-                  </div>
-                </div>
-                <div class="post-content">
-                  <div class="post-text">
-                    Great practice session today! I'm seeing incredible
-                    improvement in everyone's route running. The precision
-                    passing drill really paid off. Keep up the momentum team!
-                    <i data-lucide="activity" class="icon-16"></i>
-                    <i data-lucide="dumbbell" class="icon-16"></i>
-                  </div>
-                </div>
-                <div class="post-engagement">
-                  <div class="engagement-stats">
-                    <span
-                      ><i data-lucide="thumbs-up" class="icon-14"></i> 24
-                      likes</span
-                    >
-                    <span
-                      ><i data-lucide="message-circle" class="icon-14"></i> 8
-                      comments</span
-                    >
-                    <span
-                      ><i data-lucide="share-2" class="icon-14"></i> 3
-                      shares</span
-                    >
-                  </div>
-                  <div class="engagement-actions">
-                    <button
-                      class="action-btn"
-                      onclick="toggleLike(this, 'post1')"
-                    >
-                      <i data-lucide="thumbs-up" class="icon-16"></i> Like
-                    </button>
-                    <button
-                      class="action-btn"
-                      onclick="toggleComments('post1')"
-                    >
-                      <i data-lucide="message-circle" class="icon-16"></i>
-                      Comment
-                    </button>
-                    <button class="action-btn">
-                      <i data-lucide="share-2" class="icon-16"></i> Share
-                    </button>
-                  </div>
-                </div>
-                <div class="comments-section" id="comments-post1">
-                  <div class="comment">
-                    <div class="comment-avatar">SC</div>
-                    <div class="comment-content">
-                      <div class="comment-author">Sarah Chen</div>
-                      <div class="comment-text">
-                        Couldn't agree more! My timing felt perfect today.
-                      </div>
-                      <div class="comment-time">1 hour ago</div>
-                    </div>
-                  </div>
-                  <div class="comment">
-                    <div class="comment-avatar">JD</div>
-                    <div class="comment-content">
-                      <div class="comment-author">Jake Davis</div>
-                      <div class="comment-text">
-                        Those cone drills are really helping with my cuts!
-                      </div>
-                      <div class="comment-time">45 minutes ago</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="post">
-                <div class="post-header">
-                  <div class="post-avatar">AL</div>
-                  <div class="post-info">
-                    <div class="post-author">Alex Rodriguez</div>
-                    <div class="post-meta">
-                      4 hours ago •
-                      <i data-lucide="trophy" class="icon-14"></i>
-                      Tournament Victory
-                    </div>
-                  </div>
-                </div>
-                <div class="post-content">
-                  <div class="achievement-badge">
-                    <i data-lucide="trophy" class="icon-16"></i>
-                    Tournament Champion! First place in the Regional
-                    Championship!
-                  </div>
-                  <div class="post-text">
-                    What an incredible weekend! Our team played phenomenally and
-                    took home the championship trophy. Special thanks to
-                    everyone who supported us. This one's for the community!
-                    <i data-lucide="heart" class="icon-16"></i>
-                  </div>
-                </div>
-                <div class="post-engagement">
-                  <div class="engagement-stats">
-                    <span
-                      ><i data-lucide="thumbs-up" class="icon-14"></i> 87
-                      likes</span
-                    >
-                    <span
-                      ><i data-lucide="message-circle" class="icon-14"></i> 23
-                      comments</span
-                    >
-                    <span
-                      ><i data-lucide="share-2" class="icon-14"></i> 12
-                      shares</span
-                    >
-                  </div>
-                  <div class="engagement-actions">
-                    <button
-                      class="action-btn liked"
-                      onclick="toggleLike(this, 'post2')"
-                    >
-                      <i data-lucide="heart" class="icon-16"></i> Loved
-                    </button>
-                    <button
-                      class="action-btn"
-                      onclick="toggleComments('post2')"
-                    >
-                      <i data-lucide="message-circle" class="icon-16"></i>
-                      Comment
-                    </button>
-                    <button class="action-btn">
-                      <i data-lucide="share-2" class="icon-16"></i> Share
-                    </button>
-                  </div>
-                </div>
-                <div class="comments-section" id="comments-post2">
-                  <div class="comment">
-                    <div class="comment-avatar">MT</div>
-                    <div class="comment-content">
-                      <div class="comment-author">Maya Thompson</div>
-                      <div class="comment-text">
-                        Congratulations! Well deserved victory! 🎉
-                      </div>
-                      <div class="comment-time">3 hours ago</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="post">
-                <div class="post-header">
-                  <div class="post-avatar">RJ</div>
-                  <div class="post-info">
-                    <div class="post-author">Riley Johnson</div>
-                    <div class="post-meta">
-                      6 hours ago •
-                      <i data-lucide="zap" class="icon-14"></i>
-                      Training Tips
-                    </div>
-                  </div>
-                </div>
-                <div class="post-content">
-                  <div class="post-text">
-                    Pro tip for new players: Focus on your flag positioning!
-                    Keep them loose enough to grab but not so loose they fall
-                    off during runs. Game changer for defense!
-                    <i data-lucide="target" class="icon-16"></i>
-                  </div>
-                </div>
-                <div class="post-engagement">
-                  <div class="engagement-stats">
-                    <span
-                      ><i data-lucide="thumbs-up" class="icon-14"></i> 42
-                      likes</span
-                    >
-                    <span
-                      ><i data-lucide="message-circle" class="icon-14"></i> 15
-                      comments</span
-                    >
-                    <span
-                      ><i data-lucide="share-2" class="icon-14"></i> 8
-                      shares</span
-                    >
-                  </div>
-                  <div class="engagement-actions">
-                    <button
-                      class="action-btn"
-                      onclick="toggleLike(this, 'post3')"
-                    >
-                      <i data-lucide="thumbs-up" class="icon-16"></i> Like
-                    </button>
-                    <button
-                      class="action-btn"
-                      onclick="toggleComments('post3')"
-                    >
-                      <i data-lucide="message-circle" class="icon-16"></i>
-                      Comment
-                    </button>
-                    <button class="action-btn">
-                      <i data-lucide="share-2" class="icon-16"></i> Share
-                    </button>
-                  </div>
-                </div>
-                <div class="comments-section" id="comments-post3"></div>
-              </div>
+              <!-- Posts will be dynamically loaded here -->
             </div>
           </div>
 
@@ -478,15 +271,13 @@
                 await enhancedCommunity.loadPosts();
               } catch (error) {
                 console.warn('[Community] Failed to load more posts:', error);
-                // Fallback to demo posts
-                addDemoPosts();
+                // Don't load demo posts - only show real data
+                console.warn('[Community] Failed to load more posts');
               }
             } else {
-              // Fallback: simulate loading more posts
-              setTimeout(() => {
-                addDemoPosts();
-                isLoading = false;
-              }, 1000);
+              // Don't load demo posts - only show real data
+              console.warn('[Community] No more posts available');
+              isLoading = false;
             }
             isLoading = false;
           }
@@ -515,38 +306,57 @@
           return;
         }
 
-        // Clear existing posts (except create post form and loading/error)
-        const createPostForm = container.querySelector('.create-post');
-        const existingPosts = Array.from(container.querySelectorAll('.post'));
-        
-        // Remove old posts
-        existingPosts.forEach(post => post.remove());
+        // Clear ALL existing posts (including any mock data)
+        const allPosts = Array.from(container.querySelectorAll('.post'));
+        allPosts.forEach(post => post.remove());
 
-        // Render posts
+        // Clear empty state if exists
+        const emptyState = container.querySelector('.community-empty');
+        if (emptyState) emptyState.remove();
+
+        // Render posts from API only
         if (data.posts && data.posts.length > 0) {
           data.posts.forEach(post => {
             const postHTML = createPostHTML(post, authManager.getCurrentUser());
             container.insertAdjacentHTML('beforeend', postHTML);
           });
+          
+          // Initialize Lucide icons for new posts
+          if (typeof lucide !== 'undefined') {
+            lucide.createIcons(container);
+          }
         } else if (!data.isLoading) {
-          // Show empty state
+          // Show empty state only if no posts and not loading
           const emptyHTML = '<div class="community-empty">No posts yet. Be the first to share something!</div>';
           container.insertAdjacentHTML('beforeend', emptyHTML);
         }
 
         // Render comments
-        if (data.comments) {
+        if (data.comments && data.comments.size > 0) {
           data.comments.forEach((comments, postId) => {
             const commentsSection = document.getElementById(`comments-${postId}`);
             if (commentsSection && comments.length > 0) {
               // Keep comment input container
               const inputContainer = commentsSection.querySelector('.comment-input-container');
-              commentsSection.innerHTML = comments.map(comment => 
-                createCommentHTML(comment)
-              ).join('');
-              if (inputContainer) {
-                commentsSection.appendChild(inputContainer);
-              } else {
+              const existingComments = commentsSection.querySelectorAll('.comment');
+              existingComments.forEach(c => c.remove());
+              
+              comments.forEach(comment => {
+                const commentHTML = createCommentHTML(comment);
+                commentsSection.insertAdjacentHTML('beforeend', commentHTML);
+              });
+              
+              // Initialize Lucide icons for comments
+              if (typeof lucide !== 'undefined') {
+                lucide.createIcons(commentsSection);
+              }
+            } else if (commentsSection && comments.length === 0) {
+              // Clear comments if empty
+              const existingComments = commentsSection.querySelectorAll('.comment');
+              existingComments.forEach(c => c.remove());
+            }
+          });
+        }
                 commentsSection.insertAdjacentHTML('beforeend', `
                   <div class="comment-input-container">
                     <textarea
@@ -696,15 +506,42 @@
       }
 
       async function loadCommunityFeed() {
+        const container = document.getElementById("postsContainer");
+        const loadingEl = document.getElementById("community-loading");
+        const errorEl = document.getElementById("community-error");
+        
         try {
+          if (loadingEl) loadingEl.style.display = 'flex';
+          if (errorEl) errorEl.style.display = 'none';
+          
           const response = await apiClient.get("/api/community/feed");
 
-          if (response.success && response.data.posts) {
+          if (response.success && response.data?.posts && response.data.posts.length > 0) {
             updateFeed(response.data.posts);
+            if (loadingEl) loadingEl.style.display = 'none';
+          } else {
+            // No posts from API - show empty state
+            if (loadingEl) loadingEl.style.display = 'none';
+            if (container) {
+              const emptyHTML = '<div class="community-empty">No posts yet. Be the first to share something!</div>';
+              container.insertAdjacentHTML('beforeend', emptyHTML);
+            }
           }
         } catch (error) {
           console.error("Failed to load community feed:", error);
-          // Keep existing demo posts if API fails
+          if (loadingEl) loadingEl.style.display = 'none';
+          
+          // Show error message, but don't show mock data
+          if (errorEl) {
+            errorEl.textContent = 'Failed to load community feed. Please try again later.';
+            errorEl.style.display = 'block';
+          }
+          
+          // Only show mock data if explicitly enabled for development
+          if (window.ENABLE_MOCK_DATA === true) {
+            console.warn('[Community] Using mock data (development mode)');
+            loadMockPosts();
+          }
         }
       }
 
@@ -752,7 +589,7 @@
                             <button class="action-btn" onclick="toggleComments('${escapeHtml(post.id)}')">
                                 <i data-lucide="message-circle" class="icon-16"></i> Comment
                             </button>
-                            <button class="action-btn">
+                            <button class="action-btn" onclick="sharePost('${escapeHtml(post.id)}')" aria-label="Share post">
                                 <i data-lucide="share-2" class="icon-16"></i> Share
                             </button>
                         </div>
@@ -957,10 +794,52 @@
       };
 
       window.scrollToCreatePost = function () {
-        document
-          .querySelector(".create-post")
-          .scrollIntoView({ behavior: "smooth" });
-        document.getElementById("postInput").focus();
+        const createPostEl = document.querySelector(".create-post");
+        if (createPostEl) {
+          createPostEl.scrollIntoView({ behavior: "smooth" });
+          const postInput = document.getElementById("postInput");
+          if (postInput) postInput.focus();
+        }
+      };
+
+      /**
+       * Share a post
+       */
+      window.sharePost = async function (postId) {
+        try {
+          const post = communityInitialized && enhancedCommunity.posts 
+            ? enhancedCommunity.posts.find(p => p.id === postId)
+            : null;
+          
+          if (!post) {
+            console.warn('[Community] Post not found:', postId);
+            // Fallback: just copy the URL
+            const shareUrl = window.location.href + `#post-${postId}`;
+            await navigator.clipboard.writeText(shareUrl);
+            authManager.showSuccess('Post link copied to clipboard!');
+            return;
+          }
+
+          // Check if Web Share API is available
+          if (navigator.share) {
+            await navigator.share({
+              title: `Post by ${post.author}`,
+              text: post.content.substring(0, 200) + (post.content.length > 200 ? '...' : ''),
+              url: window.location.href + `#post-${postId}`
+            });
+            authManager.showSuccess('Post shared successfully!');
+          } else {
+            // Fallback: Copy to clipboard
+            const shareUrl = window.location.href + `#post-${postId}`;
+            await navigator.clipboard.writeText(shareUrl);
+            authManager.showSuccess('Post link copied to clipboard!');
+          }
+        } catch (error) {
+          if (error.name !== 'AbortError') {
+            console.error('[Community] Failed to share post:', error);
+            authManager.showError('Failed to share post. Please try again.');
+          }
+        }
       };
 
       document.addEventListener("DOMContentLoaded", initCommunityPage);

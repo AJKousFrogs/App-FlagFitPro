@@ -16,6 +16,8 @@
     />
     <!-- New Modular CSS Architecture -->
     <link rel="stylesheet" href="./src/css/main.css" />
+    <!-- Inline styles replacement utilities -->
+    <link rel="stylesheet" href="./src/css/utilities/inline-styles-replacement.css" />
     <script src="./src/theme-switcher.js" defer></script>
     <script src="./src/nav-highlight.js" defer></script>
     <script src="./src/components/organisms/top-bar/top-bar.js" defer></script>
@@ -23,18 +25,17 @@
       src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"
       crossorigin="anonymous"
       defer
-    >
-      <!-- Universal Components -->
-      <script type="module" src="./src/js/main.js">
-    </script>
+    ></script>
+    <!-- Universal Components -->
+    <script type="module" src="./src/js/main.js"></script>
     <!-- Common Component Loaders (Sidebar, Top Bar, Footer) -->
     <script type="module" src="./src/js/components/common-loaders.js" defer></script>
   
     <!-- Supabase Configuration (Centralized) -->
-    <script src="./src/js/config/supabase-config.js"></script>
+    <script src="./src/js/config/supabase-config.js" defer></script>
     
     <!-- Supabase JS SDK from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0" defer></script>
 
   </head>
   <body>
@@ -55,16 +56,16 @@
         <!-- Page Title Section (Hero) -->
         <div
           class="hero-section"
-          style="margin-bottom: var(--spacing-layout-md)"
+          class="u-margin-bottom-16"
         >
           <div class="hero-card">
             <h1
               class="hero-main-title"
-              style="margin-bottom: var(--primitive-space-8)"
+              class="u-margin-bottom-8"
             >
               Team Management Dashboard
             </h1>
-            <p style="margin: 0; color: var(--color-text-secondary)">
+            <p class="u-margin-0 text-secondary">
               Manage your team roster, track chemistry, and optimize Olympic
               readiness
             </p>

@@ -12,6 +12,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { ApiService } from './api.service';
+import { LoggerService } from './logger.service';
 
 export interface ACWRData {
   session_date: string;
@@ -45,6 +46,7 @@ export interface ImportDatasetResponse {
 export class TrainingMetricsService {
   private apiService = inject(ApiService);
   private http = inject(HttpClient);
+  private logger = inject(LoggerService);
 
   /**
    * Get ACWR data for an athlete using the stored procedure
@@ -56,7 +58,7 @@ export class TrainingMetricsService {
     ).pipe(
       map(response => response.data?.data || []),
       catchError(error => {
-        console.error('Error fetching ACWR:', error);
+        this.logger.error('Error fetching ACWR:', error);
         return throwError(() => error);
       })
     ).toPromise().then(result => result || []);
@@ -77,7 +79,7 @@ export class TrainingMetricsService {
     ).pipe(
       map(response => response.data || { ok: false, metrics: { total_volume: 0, high_speed_distance: 0, sprint_count: 0, duration_minutes: 0 } }),
       catchError(error => {
-        console.error('Error importing dataset:', error);
+        this.logger.error('Error importing dataset:', error);
         return throwError(() => error);
       })
     ).toPromise().then(result => result || { ok: false, metrics: { total_volume: 0, high_speed_distance: 0, sprint_count: 0, duration_minutes: 0 } });
@@ -96,7 +98,7 @@ export class TrainingMetricsService {
     ).pipe(
       map(response => response.data || []),
       catchError(error => {
-        console.error('Error fetching flag metrics:', error);
+        this.logger.error('Error fetching flag metrics:', error);
         return throwError(() => error);
       })
     ).toPromise().then(result => result || []);

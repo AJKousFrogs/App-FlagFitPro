@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // FlagFit AI Chatbot Component
 // Provides intelligent responses about sports psychology, nutrition, speed training, injuries, recovery, etc.
 
@@ -289,17 +290,38 @@ class FlagFitChatbot {
     welcomeContent.className = "message-content";
     const welcomeText = document.createElement("div");
     welcomeText.className = "message-text";
-    welcomeText.innerHTML = `👋 Hello! I'm your FlagFit AI Assistant. I can help you with:
-<ul style="margin: 8px 0 0 20px; padding-left: 0;">
-  <li>Sports psychology & mental training</li>
-  <li>Nutrition & supplements</li>
-  <li>Speed & agility development</li>
-  <li>Injury prevention & treatment</li>
-  <li>Recovery strategies</li>
-  <li>Training programs</li>
-</ul>
-<br>
-What would you like to know?`;
+    
+    // Create welcome message using DOM methods instead of innerHTML
+    const welcomeGreeting = document.createTextNode("👋 Hello! I'm your FlagFit AI Assistant. I can help you with:");
+    welcomeText.appendChild(welcomeGreeting);
+    
+    const welcomeList = document.createElement("ul");
+    welcomeList.style.margin = "8px 0 0 20px";
+    welcomeList.style.paddingLeft = "0";
+    
+    const topics = [
+      "Sports psychology & mental training",
+      "Nutrition & supplements",
+      "Speed & agility development",
+      "Injury prevention & treatment",
+      "Recovery strategies",
+      "Training programs"
+    ];
+    
+    topics.forEach(topic => {
+      const listItem = document.createElement("li");
+      listItem.textContent = topic;
+      welcomeList.appendChild(listItem);
+    });
+    
+    welcomeText.appendChild(welcomeList);
+    
+    const br = document.createElement("br");
+    welcomeText.appendChild(br);
+    
+    const questionText = document.createTextNode("What would you like to know?");
+    welcomeText.appendChild(questionText);
+    
     welcomeContent.appendChild(welcomeText);
     welcomeMessage.appendChild(welcomeAvatar);
     welcomeMessage.appendChild(welcomeContent);
@@ -307,37 +329,59 @@ What would you like to know?`;
     
     modalContent.appendChild(header);
     modalContent.appendChild(messagesContainer);
+    
+    // Create input container
+    const inputContainer = document.createElement("div");
+    inputContainer.className = "chatbot-input-container";
+    
+    const inputWrapper = document.createElement("div");
+    inputWrapper.className = "chatbot-input-wrapper";
+    
+    const textarea = document.createElement("textarea");
+    textarea.id = "chatbot-input";
+    textarea.className = "chatbot-input";
+    textarea.placeholder = "Ask me anything about training, nutrition, psychology...";
+    textarea.rows = 1;
+    textarea.setAttribute("aria-label", "Chatbot input");
+    
+    const sendBtn = document.createElement("button");
+    sendBtn.id = "chatbot-send";
+    sendBtn.className = "chatbot-send-btn";
+    sendBtn.type = "button";
+    sendBtn.setAttribute("aria-label", "Send message");
+    sendBtn.disabled = true;
+    
+    const sendIcon = document.createElement("i");
+    sendIcon.setAttribute("data-lucide", "send");
+    sendIcon.className = "icon-18";
+    sendBtn.appendChild(sendIcon);
+    
+    inputWrapper.appendChild(textarea);
+    inputWrapper.appendChild(sendBtn);
+    
+    const quickActions = document.createElement("div");
+    quickActions.className = "chatbot-quick-actions";
+    
+    const topics = [
+      { topic: "psychology", label: "🧠 Psychology" },
+      { topic: "nutrition", label: "🍎 Nutrition" },
+      { topic: "speed", label: "⚡ Speed" },
+      { topic: "injury", label: "🩹 Injuries" },
+      { topic: "recovery", label: "💤 Recovery" }
+    ];
+    
+    topics.forEach(({ topic, label }) => {
+      const quickBtn = document.createElement("button");
+      quickBtn.className = "chatbot-quick-btn";
+      quickBtn.setAttribute("data-topic", topic);
+      quickBtn.textContent = label;
+      quickActions.appendChild(quickBtn);
+    });
+    
+    inputContainer.appendChild(inputWrapper);
+    inputContainer.appendChild(quickActions);
+    modalContent.appendChild(inputContainer);
     modal.appendChild(modalContent);
-
-        <div class="chatbot-input-container">
-          <div class="chatbot-input-wrapper">
-            <textarea
-              id="chatbot-input"
-              class="chatbot-input"
-              placeholder="Ask me anything about training, nutrition, psychology..."
-              rows="1"
-              aria-label="Chatbot input"
-            ></textarea>
-            <button
-              id="chatbot-send"
-              class="chatbot-send-btn"
-              type="button"
-              aria-label="Send message"
-              disabled
-            >
-              <i data-lucide="send" class="icon-18"></i>
-            </button>
-          </div>
-          <div class="chatbot-quick-actions">
-            <button class="chatbot-quick-btn" data-topic="psychology">🧠 Psychology</button>
-            <button class="chatbot-quick-btn" data-topic="nutrition">🍎 Nutrition</button>
-            <button class="chatbot-quick-btn" data-topic="speed">⚡ Speed</button>
-            <button class="chatbot-quick-btn" data-topic="injury">🩹 Injuries</button>
-            <button class="chatbot-quick-btn" data-topic="recovery">💤 Recovery</button>
-          </div>
-        </div>
-      </div>
-    `;
 
     document.body.appendChild(modal);
     this.modal = modal;
@@ -688,17 +732,38 @@ What would you like to know?`;
       welcomeContent.className = "message-content";
       const welcomeText = document.createElement("div");
       welcomeText.className = "message-text";
-      welcomeText.innerHTML = `👋 Hello! I'm your FlagFit AI Assistant. I can help you with:
-<ul style="margin: 8px 0 0 20px; padding-left: 0;">
-  <li>Sports psychology & mental training</li>
-  <li>Nutrition & supplements</li>
-  <li>Speed & agility development</li>
-  <li>Injury prevention & treatment</li>
-  <li>Recovery strategies</li>
-  <li>Training programs</li>
-</ul>
-<br>
-What would you like to know?`;
+      
+      // Create welcome message using DOM methods instead of innerHTML
+      const welcomeGreeting = document.createTextNode("👋 Hello! I'm your FlagFit AI Assistant. I can help you with:");
+      welcomeText.appendChild(welcomeGreeting);
+      
+      const welcomeList = document.createElement("ul");
+      welcomeList.style.margin = "8px 0 0 20px";
+      welcomeList.style.paddingLeft = "0";
+      
+      const topics = [
+        "Sports psychology & mental training",
+        "Nutrition & supplements",
+        "Speed & agility development",
+        "Injury prevention & treatment",
+        "Recovery strategies",
+        "Training programs"
+      ];
+      
+      topics.forEach(topic => {
+        const listItem = document.createElement("li");
+        listItem.textContent = topic;
+        welcomeList.appendChild(listItem);
+      });
+      
+      welcomeText.appendChild(welcomeList);
+      
+      const br = document.createElement("br");
+      welcomeText.appendChild(br);
+      
+      const questionText = document.createTextNode("What would you like to know?");
+      welcomeText.appendChild(questionText);
+      
       welcomeContent.appendChild(welcomeText);
       welcomeMessage.appendChild(welcomeAvatar);
       welcomeMessage.appendChild(welcomeContent);
@@ -932,9 +997,9 @@ What would you like to know?`;
       try {
         response = await Promise.race([
           this.getResponse(message),
-          new Promise((_, reject) => 
-            setTimeout(() => reject(new Error("Timeout")), this.timeoutDuration)
-          )
+          new Promise((_, reject) => {
+            setTimeout(() => reject(new Error("Timeout")), this.timeoutDuration);
+          })
         ]);
         
         // Success - break retry loop
@@ -945,7 +1010,9 @@ What would you like to know?`;
         
         // Don't retry on timeout if it's the last attempt
         if (attempt < this.retryAttempts && error.message !== "Timeout") {
-          await new Promise(resolve => setTimeout(resolve, this.retryDelay * attempt));
+          await new Promise(resolve => {
+            setTimeout(resolve, this.retryDelay * attempt);
+          });
           continue;
         }
       }
@@ -1036,7 +1103,6 @@ What would you like to know?`;
     messagesContainer.appendChild(messageDiv);
     this.currentStreamingMessage = messageDiv;
     
-    const textElement = messageDiv.querySelector(".message-text");
     let currentText = "";
     const words = text.split(/(\s+)/);
     let wordIndex = 0;
@@ -1049,9 +1115,12 @@ What would you like to know?`;
           wordIndex++;
           
           // Format and update - formatBotMessage returns HTML for formatting
+          // formatBotMessage already escapes HTML and sanitizes URLs, so content is safe
           // Use a temporary container to safely insert formatted HTML
           const temp = document.createElement('div');
-          temp.innerHTML = this.formatBotMessage(currentText);
+          const formattedHtml = this.formatBotMessage(currentText);
+          // Use setSafeContent for consistency - formatBotMessage already escaped HTML, but we sanitize for extra safety
+          setSafeContent(temp, formattedHtml, true, true);
           textElement.textContent = '';
           while (temp.firstChild) {
             textElement.appendChild(temp.firstChild);
@@ -1736,9 +1805,12 @@ What would you like to know?`;
       content.className = "message-content";
       const textEl = document.createElement("div");
       textEl.className = "message-text";
-      // formatBotMessage returns HTML for formatting - use temporary container
+      // formatBotMessage returns HTML for formatting - use setSafeContent for consistency
+      // formatBotMessage already escapes HTML and sanitizes URLs, but we sanitize for extra safety
       const temp = document.createElement('div');
-      temp.innerHTML = this.formatBotMessage(text);
+      const formattedHtml = this.formatBotMessage(text);
+      // Use setSafeContent for safe HTML insertion
+      setSafeContent(temp, formattedHtml, true, true);
       while (temp.firstChild) {
         textEl.appendChild(temp.firstChild);
       }
@@ -1772,8 +1844,12 @@ What would you like to know?`;
     formatted = formatted.replace(/^##\s+(.+)$/gm, "<h2>$1</h2>");
     formatted = formatted.replace(/^#\s+(.+)$/gm, "<h1>$1</h1>");
 
-    // Convert links [text](url)
-    formatted = formatted.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+    // Convert links [text](url) with URL sanitization
+    formatted = formatted.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, linkText, url) => {
+      // Sanitize URL to prevent javascript: and data: protocols
+      const sanitizedUrl = this.sanitizeUrl(url);
+      return `<a href="${sanitizedUrl}" target="_blank" rel="noopener noreferrer">${linkText}</a>`;
+    });
 
     // Convert blockquotes (> text)
     formatted = formatted.replace(/^>\s+(.+)$/gm, "<blockquote>$1</blockquote>");
@@ -1806,6 +1882,36 @@ What would you like to know?`;
     const div = document.createElement("div");
     div.textContent = text;
     return div.innerHTML;
+  }
+
+  /**
+   * Sanitize URL to prevent XSS via href attributes
+   * @param {string} url - URL to sanitize
+   * @returns {string} Sanitized URL or empty string if dangerous
+   */
+  sanitizeUrl(url) {
+    if (!url) {
+      return '';
+    }
+
+    const str = String(url).trim();
+
+    // Allow only safe protocols
+    const safeProtocols = /^(https?|mailto|tel|sms):/i;
+    const hasProtocol = /^[a-z][a-z0-9+.-]*:/i.test(str);
+
+    if (hasProtocol && !safeProtocols.test(str)) {
+      logger.warn('[Chatbot] Blocked unsafe URL protocol:', str.substring(0, 50));
+      return '';
+    }
+
+    // Block javascript: and data: URLs
+    if (/^(javascript|data|vbscript):/i.test(str)) {
+      logger.warn('[Chatbot] Blocked XSS URL attempt');
+      return '';
+    }
+
+    return str;
   }
 
   showTypingIndicator() {

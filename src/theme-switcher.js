@@ -11,7 +11,16 @@ const storage = {
     // Fallback to direct localStorage access
     try {
       const storedValue = localStorage.getItem(key);
-      return storedValue ? JSON.parse(storedValue) : defaultValue;
+      if (!storedValue) return defaultValue;
+      
+      // Try to parse as JSON first, but handle plain strings
+      try {
+        const parsed = JSON.parse(storedValue);
+        return parsed;
+      } catch (e) {
+        // If parsing fails, it's likely a plain string - return as-is
+        return storedValue;
+      }
     } catch (e) {
       return defaultValue;
     }
@@ -23,15 +32,22 @@ const storage = {
     }
     // Fallback to direct localStorage access
     try {
-      localStorage.setItem(key, JSON.stringify(value));
+      // For theme, store as plain string for compatibility
+      // Other values can be stored as JSON
+      if (key === "theme" && typeof value === "string") {
+        localStorage.setItem(key, value);
+      } else {
+        localStorage.setItem(key, JSON.stringify(value));
+      }
       return true;
     } catch (e) {
-      console.error('Failed to save to localStorage:', e);
+      logger.error('Failed to save to localStorage:', e);
       return false;
     }
   }
 };
 
+/* eslint-disable no-console */
 // Optional logger - use if available, otherwise fallback to console
 let logger;
 try {
@@ -110,6 +126,28 @@ class ThemeSwitcher {
     // Check if toggle already exists in HTML - attach listeners instead of creating
     const existingToggle = document.getElementById("theme-toggle");
     const headerToggle = document.getElementById("header-theme-toggle");
+    const headerToggleButton = document.getElementById("header-theme-toggle-button");
+
+    // Handle button version (icon-based toggle)
+    if (headerToggleButton) {
+      // Initialize button state based on saved theme
+      this.updateButtonState(headerToggleButton, this.currentTheme);
+
+      // Remove any existing listeners to avoid duplicates
+      const newButton = headerToggleButton.cloneNode(true);
+      headerToggleButton.parentNode.replaceChild(newButton, headerToggleButton);
+
+      // Add click event listener to the button
+      newButton.addEventListener("click", (e) => {
+        e.preventDefault();
+        const newTheme = this.currentTheme === "dark" ? "light" : "dark";
+        this.switchTheme(newTheme);
+      });
+
+      // Update button state when theme changes
+      this.updateButtonState(newButton, this.currentTheme);
+      return;
+    }
 
     if (existingToggle || headerToggle) {
       // Toggle already exists in HTML - attach event listeners and initialize state
@@ -247,6 +285,12 @@ class ThemeSwitcher {
       }
     }
 
+    // Update button version if it exists
+    const headerToggleButton = document.getElementById("header-theme-toggle-button");
+    if (headerToggleButton) {
+      this.updateButtonState(headerToggleButton, theme);
+    }
+
     // Update text to match toggle state
     this.updateToggleText(theme);
 
@@ -275,12 +319,30 @@ class ThemeSwitcher {
     textElements.forEach((textElement) => {
       // Check if it's the header toggle (has emoji)
       const container = textElement.closest(".theme-toggle-container");
-      if (container && container.querySelector("#header-theme-toggle")) {
+      if (container && (container.querySelector("#header-theme-toggle") || container.querySelector("#header-theme-toggle-button"))) {
         textElement.textContent = theme === "dark" ? "🌙 Dark" : "☀️ Light";
       } else {
         textElement.textContent = theme === "dark" ? "Dark" : "Light";
       }
     });
+  }
+
+  updateButtonState(button, theme) {
+    if (!button) return;
+    
+    // Update aria-label and title for accessibility
+    if (theme === "dark") {
+      button.setAttribute("aria-label", "Switch to light theme");
+      button.setAttribute("title", "Switch to light theme");
+    } else {
+      button.setAttribute("aria-label", "Switch to dark theme");
+      button.setAttribute("title", "Switch to dark theme");
+    }
+    
+    // CSS handles icon visibility via opacity transitions based on data-theme attribute
+    // Just ensure the button is visible
+    button.style.display = "";
+    button.style.visibility = "visible";
   }
 }
 

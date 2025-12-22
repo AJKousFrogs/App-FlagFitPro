@@ -5,6 +5,8 @@
 
 import { aiTrainingScheduler } from "../services/aiTrainingScheduler.js";
 import { playerProfileService } from "../services/playerProfileService.js";
+import { setSafeContent } from "../utils/shared.js";
+import { logger } from "../../logger.js";
 
 class AISchedulerUI {
   constructor(containerId) {
@@ -19,7 +21,7 @@ class AISchedulerUI {
    */
   async init() {
     if (!this.container) {
-      console.error("Container not found:", this.containerId || "unknown");
+      logger.error("Container not found:", this.containerId || "unknown");
       return;
     }
 
@@ -33,7 +35,8 @@ class AISchedulerUI {
    * Render the main UI
    */
   render() {
-    this.container.innerHTML = `
+    // Build main UI HTML
+    const mainHtml = `
       <div class="ai-scheduler-container">
         <div class="scheduler-header">
           <h2>🤖 AI-Powered Training Scheduler</h2>
@@ -66,6 +69,9 @@ class AISchedulerUI {
         </div>
       </div>
     `;
+
+    // Use setSafeContent to sanitize HTML before insertion
+    setSafeContent(this.container, mainHtml, true, true);
 
     this.attachEventListeners();
   }
@@ -100,10 +106,11 @@ class AISchedulerUI {
         <div class="form-group">
           <label>Position:</label>
           <select id="player-position">
-            <option value="WR/DB">WR/DB</option>
             <option value="QB">QB</option>
-            <option value="RB">RB</option>
-            <option value="OL/DL">OL/DL</option>
+            <option value="WR">WR</option>
+            <option value="Center">Center</option>
+            <option value="DB">DB</option>
+            <option value="Blitzer">Blitzer</option>
           </select>
         </div>
         <button id="create-profile-btn" class="btn btn-primary">Create Profile</button>
@@ -158,9 +165,12 @@ class AISchedulerUI {
    * Render generation section
    */
   renderGenerationSection() {
-    // Set default dates based on program if not already set
-    const defaultStart = '2025-12-01';
-    const defaultEnd = '2026-10-31';
+    // Set default dates - start from today, end 10 months later
+    const today = new Date();
+    const defaultStart = today.toISOString().split('T')[0];
+    const endDate = new Date(today);
+    endDate.setMonth(endDate.getMonth() + 10);
+    const defaultEnd = endDate.toISOString().split('T')[0];
     
     return `
       <div class="generation-controls">
@@ -506,7 +516,9 @@ class AISchedulerUI {
       // Update the schedule display with the rendered HTML
       const scheduleDisplayEl = document.getElementById("schedule-display");
       if (scheduleDisplayEl) {
-        scheduleDisplayEl.innerHTML = this.renderScheduleDisplay();
+        // Use setSafeContent to sanitize HTML before insertion
+        const scheduleHtml = this.renderScheduleDisplay();
+        setSafeContent(scheduleDisplayEl, scheduleHtml, true, true);
         scheduleDisplayEl.style.display = "block";
       }
 
@@ -525,7 +537,7 @@ class AISchedulerUI {
         });
       }
     } catch (error) {
-      console.error("Error generating schedule:", error);
+      logger.error("Error generating schedule:", error);
       if (statusEl) {
         statusEl.textContent = "Error generating schedule: " + error.message;
         statusEl.className = "status-message error";
@@ -564,7 +576,7 @@ class AISchedulerUI {
    */
   syncWithTrainingSchedule() {
     if (!this.currentSchedule) {
-      console.warn('No schedule generated yet');
+      logger.warn('No schedule generated yet');
       return;
     }
 
@@ -576,7 +588,7 @@ class AISchedulerUI {
       detail: this.currentSchedule
     }));
 
-    console.log('Schedule synced with training schedule page');
+    logger.debug('Schedule synced with training schedule page');
   }
 }
 

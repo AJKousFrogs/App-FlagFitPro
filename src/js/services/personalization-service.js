@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // Personalization Service
 // Enriches chatbot questions with user profile data (body metrics, injuries, training schedule, position)
 

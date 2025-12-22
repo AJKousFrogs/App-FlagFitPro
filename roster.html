@@ -50,12 +50,14 @@
     <script type="module" src="./src/js/components/common-loaders.js" defer></script>
     <!-- AI Chat Bubble Loader (Dynamic Component) -->
     <script type="module" src="./src/js/components/ai-chat-bubble-loader.js" defer></script>
+    <!-- Event Handlers (Phase 2 - Replaces inline onclick handlers) -->
+    <script type="module" src="./src/js/utils/event-handlers.js" defer></script>
   
     <!-- Supabase Configuration (Centralized) -->
-    <script src="./src/js/config/supabase-config.js"></script>
+    <script src="./src/js/config/supabase-config.js" defer></script>
     
     <!-- Supabase JS SDK from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0" defer></script>
 
   </head>
   <body>
@@ -70,11 +72,10 @@
         <div class="card card-elevated">
           <div class="card-body">
             <div
-              class="u-text-body-sm u-text-secondary u-margin-bottom-4"
-              style="line-height: 1.4; font-weight: 500"
+              class="u-text-body-sm u-text-secondary u-margin-bottom-4 u-line-height-1-4 u-font-weight-500"
             >
               <span>International</span>
-              <span style="margin: 0 var(--space-1, 4px); opacity: 0.5">•</span>
+              <span class="u-margin-x-space-1 u-opacity-50">•</span>
               <span>Flag Football</span>
             </div>
             <h2 class="text-heading-xl text-primary space-normal">
@@ -93,19 +94,15 @@
             <h2 class="card-title text-heading-lg text-primary u-display-flex u-align-center u-gap-8 u-margin-0">
               <i
                 data-lucide="trophy"
-                class="icon-20"
-                style="color: var(--color-brand-primary)"
+                class="icon-20 u-color-brand-primary"
               ></i>
               Team Overview
             </h2>
           </div>
           <div class="card-body">
             <div
-              class="team-overview u-display-grid"
+              class="team-overview u-display-grid u-grid-auto-fit-200"
               id="team-overview"
-              style="
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-              "
             >
               <!-- Stats will be populated by JavaScript -->
             </div>
@@ -113,22 +110,23 @@
         </div>
 
         <!-- Roster Controls -->
-        <div class="card" id="roster-controls" style="display: none;">
+        <div class="card u-display-none" id="roster-controls">
           <div class="card-body">
-            <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: center;">
+            <div class="u-flex-wrap-align-center u-gap-16">
               <!-- Search -->
-              <div style="flex: 1; min-width: 200px;">
-                <div style="position: relative;">
+              <div class="u-flex-1-min-200">
+                <div class="search-input-wrapper">
                   <i
                     data-lucide="search"
-                    class="icon-18"
-                    style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); pointer-events: none;"
+                    class="icon-18 search-icon"
+                    aria-hidden="true"
                   ></i>
                   <input
                     type="text"
                     id="roster-search"
+                    class="search-input"
                     placeholder="Search players..."
-                    style="width: 100%; padding: 10px 12px 10px 40px; border: 2px solid var(--color-border-secondary); border-radius: 8px; font-size: 0.95rem; background: var(--surface-primary); color: var(--text-primary);"
+                    aria-label="Search players by name or position"
                   />
                 </div>
               </div>
@@ -137,7 +135,8 @@
               <div>
                 <select
                   id="position-filter"
-                  style="padding: 10px 32px 10px 12px; border: 2px solid var(--color-border-secondary); border-radius: 8px; font-size: 0.95rem; background: var(--surface-primary); color: var(--text-primary); cursor: pointer;"
+                  class="filter-select"
+                  aria-label="Filter players by position"
                 >
                   <option value="all">All Positions</option>
                   <!-- Options will be populated dynamically -->
@@ -145,22 +144,22 @@
               </div>
 
               <!-- View Toggle -->
-              <div style="display: flex; gap: 4px; background: var(--surface-secondary); padding: 4px; border-radius: 8px;">
+              <div class="view-toggle-container" role="group" aria-label="View options">
                 <button
                   id="view-grid"
                   class="view-toggle-btn active"
                   aria-label="Grid view"
-                  style="padding: 8px 12px; border: none; background: transparent; border-radius: 6px; cursor: pointer; color: var(--text-secondary); transition: all 0.2s;"
+                  aria-pressed="true"
                 >
-                  <i data-lucide="grid" class="icon-18"></i>
+                  <i data-lucide="grid" class="icon-18" aria-hidden="true"></i>
                 </button>
                 <button
                   id="view-table"
                   class="view-toggle-btn"
                   aria-label="Table view"
-                  style="padding: 8px 12px; border: none; background: transparent; border-radius: 6px; cursor: pointer; color: var(--text-secondary); transition: all 0.2s;"
+                  aria-pressed="false"
                 >
-                  <i data-lucide="list" class="icon-18"></i>
+                  <i data-lucide="list" class="icon-18" aria-hidden="true"></i>
                 </button>
               </div>
             </div>
@@ -168,7 +167,7 @@
         </div>
 
         <!-- Coaching Staff -->
-        <div class="position-section" id="coaching-section" style="display: none;">
+        <div class="position-section u-display-none" id="coaching-section">
           <h2
             class="u-text-heading-xl u-font-weight-700 u-text-primary u-display-flex u-align-center u-gap-8"
           >
@@ -194,7 +193,7 @@
         </div>
 
         <!-- Table View -->
-        <div class="card" id="roster-table-view" style="display: none;">
+        <div class="card u-display-none" id="roster-table-view" aria-live="polite" aria-atomic="false">
           <div class="card-body">
             <div class="table-wrapper" style="overflow-x: auto;">
               <table class="roster-table" role="table" style="width: 100%; border-collapse: collapse;">
@@ -360,7 +359,8 @@
               ? `<button
                   class="btn btn-primary"
                   style="padding: 16px 32px; font-size: 1.1rem; font-weight: 600;"
-                  onclick="window.location.href='/team-create.html'"
+                  data-navigate-to="/team-create.html"
+                  aria-label="Create a new team"
                 >
                   <i data-lucide="plus" class="icon-20" style="margin-right: 8px;"></i>
                   Create Team
@@ -378,23 +378,23 @@
                   <h3 class="card-title u-margin-0">How It Works</h3>
                 </div>
                 <div class="card-body">
-                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px;">
-                    <div style="display: flex; gap: 16px;">
-                      <div style="flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; background: var(--gradient-primary); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">1</div>
+                  <div class="how-it-works-grid">
+                    <div class="how-it-works-item">
+                      <div class="how-it-works-number" aria-label="Step 1">1</div>
                       <div>
                         <h4 class="text-heading-sm text-primary font-semibold space-tight">Create Your Team</h4>
                         <p class="text-body-sm text-secondary">Set up your team name, league, and basic information</p>
                       </div>
                     </div>
-                    <div style="display: flex; gap: 16px;">
-                      <div style="flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; background: var(--gradient-primary); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">2</div>
+                    <div class="how-it-works-item">
+                      <div class="how-it-works-number" aria-label="Step 2">2</div>
                       <div>
                         <h4 class="text-heading-sm text-primary font-semibold space-tight">Invite Players</h4>
                         <p class="text-body-sm text-secondary">Send email invitations to your players to join</p>
                       </div>
                     </div>
-                    <div style="display: flex; gap: 16px;">
-                      <div style="flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; background: var(--gradient-primary); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">3</div>
+                    <div class="how-it-works-item">
+                      <div class="how-it-works-number" aria-label="Step 3">3</div>
                       <div>
                         <h4 class="text-heading-sm text-primary font-semibold space-tight">Start Training</h4>
                         <p class="text-body-sm text-secondary">Assign training programs and track progress</p>
@@ -404,7 +404,7 @@
                 </div>
               </div>
 
-              <div class="card" style="margin-top: 24px; display: none;" id="inviteCard">
+              <div class="card u-margin-top-24 u-display-none" id="inviteCard" aria-live="polite">
                 <div class="card-header">
                   <h3 class="card-title u-margin-0">
                     <i data-lucide="mail" class="icon-20" style="margin-right: 8px;"></i>
@@ -413,33 +413,37 @@
                 </div>
                 <div class="card-body">
                   <form id="inviteForm">
-                    <div style="margin-bottom: 16px;">
-                      <label style="display: block; font-weight: 600; margin-bottom: 8px;">Player Email</label>
-                      <input type="email" id="inviteEmail" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;" placeholder="player@example.com" required />
+                    <div class="form-field-group">
+                      <label for="inviteEmail" class="form-label">Player Email</label>
+                      <input type="email" id="inviteEmail" class="form-input" placeholder="player@example.com" required aria-required="true" aria-describedby="inviteEmail-desc" />
+                      <span id="inviteEmail-desc" class="sr-only">Enter the email address of the player you want to invite</span>
                     </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                    <div class="form-grid-2-col">
                       <div>
-                        <label style="display: block; font-weight: 600; margin-bottom: 8px;">Role</label>
-                        <select id="inviteRole" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                        <label for="inviteRole" class="form-label">Role</label>
+                        <select id="inviteRole" class="form-input" aria-describedby="inviteRole-desc">
                           <option value="player">Player</option>
                           <option value="assistant_coach">Assistant Coach</option>
                         </select>
+                        <span id="inviteRole-desc" class="sr-only">Select the role for this team member</span>
                       </div>
                       <div>
-                        <label style="display: block; font-weight: 600; margin-bottom: 8px;">Position (Optional)</label>
-                        <input type="text" id="invitePosition" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;" placeholder="e.g., QB, WR" />
+                        <label for="invitePosition" class="form-label">Position (Optional)</label>
+                        <input type="text" id="invitePosition" class="form-input" placeholder="e.g., QB, WR" aria-describedby="invitePosition-desc" />
+                        <span id="invitePosition-desc" class="sr-only">Optional: Enter the player's position</span>
                       </div>
                     </div>
-                    <div style="margin-bottom: 16px;">
-                      <label style="display: block; font-weight: 600; margin-bottom: 8px;">Personal Message (Optional)</label>
-                      <textarea id="inviteMessage" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;" placeholder="Welcome to the team!" rows="3"></textarea>
+                    <div class="form-field-group">
+                      <label for="inviteMessage" class="form-label">Personal Message (Optional)</label>
+                      <textarea id="inviteMessage" class="form-input" placeholder="Welcome to the team!" rows="3" aria-describedby="inviteMessage-desc"></textarea>
+                      <span id="inviteMessage-desc" class="sr-only">Optional: Add a personal message to the invitation</span>
                     </div>
-                    <button type="submit" class="btn btn-primary" id="sendInviteBtn" style="width: 100%;">
-                      <i data-lucide="send" class="icon-18" style="margin-right: 8px;"></i>
+                    <button type="submit" class="btn btn-primary form-button-full" id="sendInviteBtn" aria-label="Send invitation to player">
+                      <i data-lucide="send" class="icon-18 u-margin-right-8" aria-hidden="true"></i>
                       Send Invitation
                     </button>
                   </form>
-                  <div id="pendingInvitations" style="margin-top: 24px; display: none;"></div>
+                  <div id="pendingInvitations" class="u-margin-top-24 u-display-none" aria-live="polite" aria-atomic="true"></div>
                 </div>
               </div>`
             : ''
@@ -1004,10 +1008,9 @@
         const positionMap = {
           'QB': 'Quarterback',
           'WR': 'Wide Receiver',
-          'RB': 'Running Back',
-          'C': 'Center',
+          'Center': 'Center',
           'DB': 'Defensive Back',
-          'LB': 'Linebacker'
+          'Blitzer': 'Blitzer'
         };
 
         // Keep "All Positions" option, then add available positions
@@ -1350,6 +1353,10 @@
           return;
         }
 
+        if (staffContainer) {
+          staffContainer.setAttribute('aria-live', 'polite');
+          staffContainer.setAttribute('aria-atomic', 'false');
+        }
         staffContainer.innerHTML = staff
           .map(
             (member) => `
@@ -1385,7 +1392,7 @@
                         ${
                           member.achievements && member.achievements.length > 0
                             ? `
-                            <div class="u-margin-top-16 u-padding-top-16" style="border-top: 1px solid var(--color-border-secondary);">
+                            <div class="u-margin-top-16 u-padding-top-16 u-border-top-1">
                                 <div class="u-text-caption u-text-secondary u-margin-bottom-8 u-font-weight-500">Key Achievements:</div>
                                 ${member.achievements
                                   .slice(0, 2)

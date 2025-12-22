@@ -2,6 +2,7 @@ import { Injectable, inject } from "@angular/core";
 import { Observable, from } from "rxjs";
 import { map, catchError } from "rxjs/operators";
 import { ApiService, API_ENDPOINTS } from "./api.service";
+import { LoggerService } from "./logger.service";
 
 export interface TrainingSession {
   id?: string;
@@ -53,6 +54,7 @@ export interface TrainingSessionsOptions {
 })
 export class TrainingDataService {
   private apiService = inject(ApiService);
+  private logger = inject(LoggerService);
 
   /**
    * Get all training sessions for the current user
@@ -63,23 +65,23 @@ export class TrainingDataService {
     const params: Record<string, any> = {};
     
     if (options?.startDate) {
-      params.startDate = options.startDate;
+      params['startDate'] = options.startDate;
     }
     
     if (options?.endDate) {
-      params.endDate = options.endDate;
+      params['endDate'] = options.endDate;
     }
     
     if (options?.includeUpcoming) {
-      params.includeUpcoming = options.includeUpcoming.toString();
+      params['includeUpcoming'] = options.includeUpcoming.toString();
     }
     
     if (options?.status) {
-      params.status = options.status;
+      params['status'] = options.status;
     }
     
     if (options?.limit) {
-      params.limit = options.limit.toString();
+      params['limit'] = options.limit.toString();
     }
 
     return this.apiService.get<TrainingSession[]>(
@@ -88,13 +90,13 @@ export class TrainingDataService {
     ).pipe(
       map((response) => {
         if (response.error) {
-          console.error("Error fetching training sessions:", response.error);
+          this.logger.error("Error fetching training sessions:", response.error);
           return [];
         }
         return response.data || [];
       }),
       catchError((error) => {
-        console.error("Error fetching training sessions:", error);
+        this.logger.error("Error fetching training sessions:", error);
         return from(Promise.resolve([]));
       })
     );
@@ -126,13 +128,13 @@ export class TrainingDataService {
     ).pipe(
       map((response) => {
         if (response.error) {
-          console.error("Error creating training session:", response.error);
+          this.logger.error("Error creating training session:", response.error);
           throw new Error(response.error);
         }
         return response.data || null;
       }),
       catchError((error) => {
-        console.error("Error creating training session:", error);
+        this.logger.error("Error creating training session:", error);
         throw error;
       })
     );
@@ -146,7 +148,7 @@ export class TrainingDataService {
     id: string,
     updates: Partial<TrainingSession>
   ): Observable<TrainingSession | null> {
-    console.warn("Update training session not yet implemented via API");
+    this.logger.warn("Update training session not yet implemented via API");
     return from(Promise.resolve(null));
   }
 
@@ -155,7 +157,7 @@ export class TrainingDataService {
    * Note: May need a DELETE endpoint - for now returns false
    */
   deleteTrainingSession(id: string): Observable<boolean> {
-    console.warn("Delete training session not yet implemented via API");
+    this.logger.warn("Delete training session not yet implemented via API");
     return from(Promise.resolve(false));
   }
 
@@ -167,11 +169,11 @@ export class TrainingDataService {
     const params: Record<string, any> = {};
     
     if (options?.startDate) {
-      params.startDate = options.startDate;
+      params['startDate'] = options.startDate;
     }
     
     if (options?.endDate) {
-      params.endDate = options.endDate;
+      params['endDate'] = options.endDate;
     }
 
     return this.apiService.get<TrainingStats>(
@@ -180,7 +182,7 @@ export class TrainingDataService {
     ).pipe(
       map((response) => {
         if (response.error) {
-          console.error("Error fetching training stats:", response.error);
+          this.logger.error("Error fetching training stats:", response.error);
           return {
             total_sessions: 0,
             total_duration: 0,
@@ -203,26 +205,26 @@ export class TrainingDataService {
 
         // Map backend response to TrainingStats interface
         return {
-          total_sessions: stats.totalSessions || 0,
-          total_duration: stats.totalDuration || 0,
-          avg_duration: stats.avgDuration || 0,
-          sessions_this_week: stats.weeklySessions || 0,
+          total_sessions: stats.total_sessions || 0,
+          total_duration: stats.total_duration || 0,
+          avg_duration: stats.avg_duration || 0,
+          sessions_this_week: stats.weekly_sessions || 0,
           sessions_this_month: 0, // Can be calculated if needed
-          total_load: stats.totalLoad,
-          avg_load: stats.avgLoad,
-          current_streak: stats.currentStreak,
+          total_load: stats.total_load,
+          avg_load: stats.avg_load,
+          current_streak: stats.current_streak,
           acwr: stats.acwr,
-          acute_load: stats.acuteLoad,
-          chronic_load: stats.chronicLoad,
-          acwr_risk_zone: stats.acwrRiskZone,
-          weekly_volume: stats.weeklyVolume,
-          weekly_duration: stats.weeklyDuration,
-          weekly_sessions: stats.weeklySessions,
-          weekly_avg_intensity: stats.weeklyAvgIntensity,
+          acute_load: stats.acute_load,
+          chronic_load: stats.chronic_load,
+          acwr_risk_zone: stats.acwr_risk_zone,
+          weekly_volume: stats.weekly_volume,
+          weekly_duration: stats.weekly_duration,
+          weekly_sessions: stats.weekly_sessions,
+          weekly_avg_intensity: stats.weekly_avg_intensity,
         };
       }),
       catchError((error) => {
-        console.error("Error fetching training stats:", error);
+        this.logger.error("Error fetching training stats:", error);
         return from(Promise.resolve({
           total_sessions: 0,
           total_duration: 0,

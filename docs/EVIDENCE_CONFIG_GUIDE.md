@@ -1,8 +1,22 @@
 # Evidence Configuration System Guide
 
+**Version**: 1.0  
+**Last Updated**: January 2025  
+**Status**: ✅ Production Ready
+
+---
+
 ## Overview
 
 The Evidence Configuration System provides a centralized, versioned approach to managing evidence-based training parameters. It makes explicit what comes from research vs. what coaches can override, and enables real-world calibration over time.
+
+### Key Features
+
+- **Versioned Presets**: Multiple evidence-based configuration presets
+- **Science vs. Coach Choice**: Clear distinction between research-based and customizable parameters
+- **Calibration Logging**: Track recommendations and outcomes for optimization
+- **UI Integration**: Evidence preset indicators and details dialogs
+- **Backend Integration**: Calibration logging endpoints and statistics
 
 ---
 
@@ -279,6 +293,19 @@ When new research emerges:
 5. **Team-specific presets**: Create custom presets based on team calibration
 
 ---
+
+## 🔗 **Related Documentation**
+
+- [Evidence-Based Configuration Guide](EVIDENCE_BASED_CONFIGURATION_GUIDE.md) - ACWR, readiness, and tapering logic
+- [AI Training Scheduler Guide](AI_TRAINING_SCHEDULER_GUIDE.md) - Training scheduler integration
+- [Architecture](ARCHITECTURE.md) - System architecture overview
+
+## 📝 **Changelog**
+
+- **v1.0 (2026-01)**: Initial evidence configuration system guide
+- Preset structure and versioning documented
+- Calibration logging system explained
+- UI and backend integration documented
 
 **Version**: 1.0  
 **Last Updated**: January 2026  

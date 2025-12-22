@@ -9,7 +9,7 @@
    This file provides consistent layout patterns across all pages.
    ================================================================ */
 
-@import './design-system-tokens.scss';
+@use './design-system-tokens.scss' as *;
 
 /* ================================================================
    PAGE HEADER

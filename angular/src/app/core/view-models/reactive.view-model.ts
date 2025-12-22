@@ -35,9 +35,10 @@
  *   });
  * }
  * ```
+ */
 
-import { Injectable, signal, computed } from '@angular/core';
-import { Observable, Subject, shareReplay } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { Observable, shareReplay } from 'rxjs';
 import { BaseViewModel } from './base.view-model';
 
 @Injectable()
@@ -77,5 +78,12 @@ export abstract class ReactiveViewModel extends BaseViewModel {
     super.reset();
     this.streams.clear();
   }
-}
 
+  /**
+   * Initialize the view model
+   * Override in subclasses to set up initial data loading
+   */
+  override initialize(...args: any[]): void {
+    // Override in subclasses if needed
+  }
+}

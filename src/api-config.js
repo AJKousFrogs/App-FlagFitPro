@@ -71,28 +71,21 @@ const normalizeEndpoint = (endpoint) => {
 };
 
 // API Endpoints - Using centralized configuration
+// All endpoints use /api/... format - Netlify redirects handle routing to functions
 export const API_ENDPOINTS = {
   // Authentication endpoints
   auth: {
-    login: API_BASE_URL.includes("netlify/functions")
-      ? "/auth-login"
-      : apiEndpoints.AUTH.LOGIN,
-    register: API_BASE_URL.includes("netlify/functions")
-      ? "/auth-register"
-      : apiEndpoints.AUTH.REGISTER,
-    logout: apiEndpoints.AUTH.LOGOUT,
-    refresh: apiEndpoints.AUTH.REFRESH,
-    me: API_BASE_URL.includes("netlify/functions")
-      ? "/auth-me"
-      : normalizeEndpoint("/api/auth/me"),
+    login: normalizeEndpoint("/api/auth/login"),
+    register: normalizeEndpoint("/api/auth/register"),
+    logout: normalizeEndpoint("/api/auth/logout"),
+    refresh: normalizeEndpoint("/api/auth/refresh"),
+    me: normalizeEndpoint("/api/auth/me"),
     csrf: normalizeEndpoint("/api/auth/csrf"),
   },
 
-  // Dashboard (Netlify Functions)
+  // Dashboard endpoints
   dashboard: {
-    overview: API_BASE_URL.includes("netlify/functions")
-      ? "/dashboard"
-      : normalizeEndpoint("/api/dashboard/overview"),
+    overview: normalizeEndpoint("/api/dashboard/overview"),
     trainingCalendar: normalizeEndpoint("/api/dashboard/training-calendar"),
     olympicQualification: normalizeEndpoint(
       "/api/dashboard/olympic-qualification",
@@ -100,36 +93,21 @@ export const API_ENDPOINTS = {
     sponsorRewards: normalizeEndpoint("/api/dashboard/sponsor-rewards"),
     wearables: normalizeEndpoint("/api/dashboard/wearables"),
     teamChemistry: normalizeEndpoint("/api/dashboard/team-chemistry"),
-    notifications: API_BASE_URL.includes("netlify/functions")
-      ? "/notifications"
-      : normalizeEndpoint("/api/dashboard/notifications"),
-    notificationsCount: API_BASE_URL.includes("netlify/functions")
-      ? "/notifications-count"
-      : normalizeEndpoint("/api/dashboard/notifications/count"),
-    notificationsCreate: API_BASE_URL.includes("netlify/functions")
-      ? "/notifications-create"
-      : normalizeEndpoint("/api/dashboard/notifications/create"),
-    notificationsPreferences: API_BASE_URL.includes("netlify/functions")
-      ? "/notifications-preferences"
-      : normalizeEndpoint("/api/dashboard/notifications/preferences"),
+    notifications: normalizeEndpoint("/api/dashboard/notifications"),
+    notificationsCount: normalizeEndpoint("/api/dashboard/notifications/count"),
+    notificationsCreate: normalizeEndpoint("/api/dashboard/notifications/create"),
+    notificationsPreferences: normalizeEndpoint("/api/dashboard/notifications/preferences"),
     dailyQuote: normalizeEndpoint("/api/dashboard/daily-quote"),
     health: normalizeEndpoint("/api/dashboard/health"),
   },
 
-  // Training (Netlify Functions)
+  // Training endpoints
   training: {
-    stats: API_BASE_URL.includes("netlify/functions")
-      ? "/training-stats"
-      : normalizeEndpoint("/api/training/stats"),
-    statsEnhanced: API_BASE_URL.includes("netlify/functions")
-      ? "/training-stats-enhanced"
-      : normalizeEndpoint("/api/training/stats-enhanced"),
-    sessions: API_BASE_URL.includes("netlify/functions")
-      ? "/training-sessions"
-      : normalizeEndpoint("/api/training/sessions"),
-    complete: API_BASE_URL.includes("netlify/functions")
-      ? "/training-stats"
-      : normalizeEndpoint("/api/training/complete"),
+    stats: normalizeEndpoint("/api/training/stats"),
+    statsEnhanced: normalizeEndpoint("/api/training/stats-enhanced"),
+    sessions: normalizeEndpoint("/api/training/sessions"),
+    complete: normalizeEndpoint("/api/training/complete"),
+    suggestions: normalizeEndpoint("/api/training/suggestions"),
   },
 
   // Analytics
@@ -159,46 +137,23 @@ export const API_ENDPOINTS = {
     health: normalizeEndpoint("/api/coach/health"),
   },
 
-  // Community (Netlify Functions)
+  // Community endpoints
   community: {
-    feed: API_BASE_URL.includes("netlify/functions")
-      ? "/community?feed=true"
-      : normalizeEndpoint("/api/community/feed"),
-    createPost: API_BASE_URL.includes("netlify/functions")
-      ? "/community"
-      : normalizeEndpoint("/api/community/posts"),
-    getComments: (postId) =>
-      API_BASE_URL.includes("netlify/functions")
-        ? `/community?postId=${postId}`
-        : normalizeEndpoint(`/api/community/posts/${postId}/comments`),
-    likePost: (postId) =>
-      API_BASE_URL.includes("netlify/functions")
-        ? `/community?like=${postId}`
-        : normalizeEndpoint(`/api/community/posts/${postId}/like`),
-    leaderboard: API_BASE_URL.includes("netlify/functions")
-      ? "/community?leaderboard=true"
-      : normalizeEndpoint("/api/community/leaderboard"),
+    feed: normalizeEndpoint("/api/community/feed"),
+    createPost: normalizeEndpoint("/api/community/posts"),
+    getComments: (postId) => normalizeEndpoint(`/api/community/posts/${postId}/comments`),
+    likePost: (postId) => normalizeEndpoint(`/api/community/posts/${postId}/like`),
+    leaderboard: normalizeEndpoint("/api/community/leaderboard"),
     challenges: normalizeEndpoint("/api/community/challenges"),
     health: normalizeEndpoint("/api/community/health"),
   },
 
-  // Tournaments (Netlify Functions)
+  // Tournaments endpoints
   tournaments: {
-    list: API_BASE_URL.includes("netlify/functions")
-      ? "/tournaments"
-      : normalizeEndpoint("/api/tournaments"),
-    details: (tournamentId) =>
-      API_BASE_URL.includes("netlify/functions")
-        ? `/tournaments?id=${tournamentId}`
-        : normalizeEndpoint(`/api/tournaments/${tournamentId}`),
-    register: (tournamentId) =>
-      API_BASE_URL.includes("netlify/functions")
-        ? `/tournaments?register=${tournamentId}`
-        : normalizeEndpoint(`/api/tournaments/${tournamentId}/register`),
-    bracket: (tournamentId) =>
-      API_BASE_URL.includes("netlify/functions")
-        ? `/tournaments?bracket=${tournamentId}`
-        : normalizeEndpoint(`/api/tournaments/${tournamentId}/bracket`),
+    list: normalizeEndpoint("/api/tournaments"),
+    details: (tournamentId) => normalizeEndpoint(`/api/tournaments/${tournamentId}`),
+    register: (tournamentId) => normalizeEndpoint(`/api/tournaments/${tournamentId}/register`),
+    bracket: (tournamentId) => normalizeEndpoint(`/api/tournaments/${tournamentId}/bracket`),
     health: normalizeEndpoint("/api/tournaments/health"),
   },
 
@@ -207,41 +162,39 @@ export const API_ENDPOINTS = {
     health: normalizeEndpoint("/api/algorithms/health"),
   },
 
-  // Knowledge Base
+  // Knowledge Base endpoints
   knowledge: {
-    search: API_BASE_URL.includes("netlify/functions")
-      ? "/knowledge-search"
-      : normalizeEndpoint("/api/knowledge/search"),
-    entry: (topic) =>
-      API_BASE_URL.includes("netlify/functions")
-        ? `/knowledge-search?topic=${topic}`
-        : normalizeEndpoint(`/api/knowledge/entry/${topic}`),
-    articles: API_BASE_URL.includes("netlify/functions")
-      ? "/knowledge-search"
-      : normalizeEndpoint("/api/knowledge/articles"),
+    search: normalizeEndpoint("/api/knowledge/search"),
+    entry: (topic) => normalizeEndpoint(`/api/knowledge/entry/${topic}`),
+    articles: normalizeEndpoint("/api/knowledge/articles"),
   },
 
-  // Wellness
+  // Wellness endpoints
   wellness: {
     checkin: normalizeEndpoint("/api/wellness/checkin"),
-    injuries: API_BASE_URL.includes("netlify/functions")
-      ? "/performance-data?type=injuries"
-      : normalizeEndpoint("/api/wellness/injuries"),
+    injuries: normalizeEndpoint("/api/wellness/injuries"),
   },
 
-  // Readiness Score
+  // Readiness Score endpoints
   readiness: {
-    calculate: API_BASE_URL.includes("netlify/functions")
-      ? "/calc-readiness"
-      : normalizeEndpoint("/api/calc-readiness"),
-    history: API_BASE_URL.includes("netlify/functions")
-      ? "/readiness-history"
-      : normalizeEndpoint("/api/readiness-history"),
+    calculate: normalizeEndpoint("/api/calc-readiness"),
+    history: normalizeEndpoint("/api/readiness-history"),
   },
 
-  // Supplements
+  // Supplements endpoints
   supplements: {
     log: normalizeEndpoint("/api/supplements/log"),
+    get: normalizeEndpoint("/api/performance-data/supplements"),
+  },
+
+  // Performance Data endpoints
+  performanceData: {
+    wellness: normalizeEndpoint("/api/performance-data/wellness"),
+    supplements: normalizeEndpoint("/api/performance-data/supplements"),
+    measurements: normalizeEndpoint("/api/performance-data/measurements"),
+    injuries: normalizeEndpoint("/api/performance-data/injuries"),
+    trends: normalizeEndpoint("/api/performance-data/trends"),
+    export: normalizeEndpoint("/api/performance-data/export"),
   },
 
   // Games
@@ -256,25 +209,21 @@ export const API_ENDPOINTS = {
       normalizeEndpoint(`/games/${gameId}/player-stats`),
   },
 
-  // Player Statistics (Centralized - always up to and including today)
+  // Player Statistics endpoints (Centralized - always up to and including today)
   playerStats: {
-    aggregated: API_BASE_URL.includes("netlify/functions")
-      ? "/player-stats/aggregated"
-      : normalizeEndpoint("/api/player-stats/aggregated"),
-    dateRange: API_BASE_URL.includes("netlify/functions")
-      ? "/player-stats/date-range"
-      : normalizeEndpoint("/api/player-stats/date-range"),
+    aggregated: normalizeEndpoint("/api/player-stats/aggregated"),
+    dateRange: normalizeEndpoint("/api/player-stats/date-range"),
   },
 
-  // Training Plan (Evidence-based, date-filtered)
+  // Training Plan endpoints (Evidence-based, date-filtered)
   trainingPlan: {
-    today: API_BASE_URL.includes("netlify/functions")
-      ? "/training-plan"
-      : normalizeEndpoint("/api/training-plan"),
-    date: (date) =>
-      API_BASE_URL.includes("netlify/functions")
-        ? `/training-plan?date=${date}`
-        : normalizeEndpoint(`/api/training-plan?date=${date}`),
+    today: normalizeEndpoint("/api/training-plan"),
+    date: (date) => normalizeEndpoint(`/api/training-plan?date=${date}`),
+  },
+
+  // User Context endpoint (for AI coaching)
+  user: {
+    context: normalizeEndpoint("/api/user/context"),
   },
 
   // General

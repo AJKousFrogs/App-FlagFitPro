@@ -1,3 +1,4 @@
+/* global logger */
 /**
  * FlagFit Pro - HTML Sanitization Utilities
  * Prevents XSS attacks by escaping user-generated content

@@ -274,7 +274,8 @@ function validateJWT(event, jwt, secret) {
  * @param {object} event - Netlify function event
  */
 function logFunctionCall(functionName, event) {
-  console.log(`[${functionName}] ${event.httpMethod} request from ${event.headers['x-forwarded-for'] || 'unknown'}`);
+  const ip = (event.headers && event.headers['x-forwarded-for']) || (event.headers && event.headers['X-Forwarded-For']) || 'unknown';
+  console.log(`[${functionName}] ${event.httpMethod} request from ${ip}`);
 }
 
 module.exports = {

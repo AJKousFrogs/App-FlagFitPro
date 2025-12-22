@@ -20,6 +20,8 @@ import { MessageService } from "primeng/api";
 import { ToastModule } from "primeng/toast";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { AuthService } from "../../../core/services/auth.service";
+import { SupabaseService } from "../../../core/services/supabase.service";
+import { LoggerService } from "../../../core/services/logger.service";
 
 @Component({
   selector: "app-register",
@@ -218,8 +220,10 @@ import { AuthService } from "../../../core/services/auth.service";
 export class RegisterComponent {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
+  private supabaseService = inject(SupabaseService);
   private router = inject(Router);
   private messageService = inject(MessageService);
+  private logger = inject(LoggerService);
 
   registerForm: FormGroup;
   isLoading = signal(false);
@@ -285,10 +289,60 @@ export class RegisterComponent {
     return "";
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();
       return;
+    }
+
+    // Check password against leaked password database
+    try {
+      const password = this.registerForm.value.password;
+      const supabaseUrl = (window as any)._env?.SUPABASE_URL || (window as any)._env?.VITE_SUPABASE_URL;
+      
+      if (supabaseUrl) {
+        // Get auth token if available
+        let supabaseToken = null;
+        try {
+          const session = this.supabaseService.getSession();
+          supabaseToken = session?.access_token || null;
+        } catch (e) {
+          // Token not available, continue without it
+        }
+
+        // Check password via Supabase Edge Function
+        const functionUrl = `${supabaseUrl}/functions/v1/enable-leaked-password-protection`;
+        const headers: any = {
+          'Content-Type': 'application/json',
+        };
+        if (supabaseToken) {
+          headers['Authorization'] = `Bearer ${supabaseToken}`;
+        }
+
+        const response = await fetch(functionUrl, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({
+            action: 'check',
+            password: password,
+          }),
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          if (result.leaked) {
+            this.messageService.add({
+              severity: "error",
+              summary: "Password Security",
+              detail: result.message || "This password has been found in data breaches. Please choose a different password.",
+            });
+            return;
+          }
+        }
+      }
+    } catch (leakCheckError) {
+      // Fail open - if leak check fails, continue with registration
+      this.logger.warn("Password leak check failed, continuing with registration:", leakCheckError);
     }
 
     this.isLoading.set(true);

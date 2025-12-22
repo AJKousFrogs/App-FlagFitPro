@@ -2,7 +2,7 @@
 
 ## ✅ Migration Complete!
 
-Your data has been successfully migrated from Neon to Supabase.
+Your data is now using Supabase PostgreSQL.
 **373 rows** across **72 tables** are now in Supabase.
 
 ---
@@ -181,8 +181,8 @@ CREATE POLICY "Users can manage own wearables" ON wearables_data FOR ALL
 
 ## 📋 Step 6: Monitor for 30 Days
 
-### Keep Neon Running as Backup:
-- Don't disable Neon in Netlify yet
+### Migration Complete:
+- All data is now in Supabase
 - Keep it as a safety net for 30 days
 - Monitor your app for any issues
 
@@ -194,19 +194,19 @@ CREATE POLICY "Users can manage own wearables" ON wearables_data FOR ALL
 
 ### After 30 Days (if all is well):
 
-1. **Remove Neon from Netlify:**
-   - Go to Netlify → Integrations
-   - Disable Neon extension
+1. **Clean up old database references:**
+   - Remove any old database integration references from Netlify
+   - Ensure only Supabase environment variables are set
 
-2. **Remove Neon Environment Variables:**
+2. **Verify Supabase Environment Variables:**
    ```
-   DATABASE_URL
-   VITE_NEON_DATABASE_URL
-   VITE_DATABASE_URL
+   SUPABASE_URL
+   SUPABASE_SERVICE_KEY
+   SUPABASE_ANON_KEY
    ```
 
 3. **Update .env file:**
-   - Remove all Neon references
+   - Ensure all references point to Supabase
    - Keep only Supabase credentials
 
 ---
@@ -234,7 +234,7 @@ CREATE POLICY "Users can manage own wearables" ON wearables_data FOR ALL
 - **Supabase Dashboard:** https://supabase.com/dashboard/project/pvziciccwxgftcielknm
 - **Supabase Auth Docs:** https://supabase.com/docs/guides/auth
 - **RLS Docs:** https://supabase.com/docs/guides/auth/row-level-security
-- **Your Backups:** `/backups/neon-migration/`
+- **Your Backups:** `/backups/` (if any migration backups exist)
 
 ---
 
@@ -246,7 +246,7 @@ CREATE POLICY "Users can manage own wearables" ON wearables_data FOR ALL
 - [ ] Enable RLS on user tables
 - [ ] Deploy to production
 - [ ] Monitor for 30 days
-- [ ] Remove Neon (after 30 days)
+- [ ] Verify all Supabase connections are working
 
 ---
 

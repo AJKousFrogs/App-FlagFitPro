@@ -1,7 +1,21 @@
+-- =====================================================
 -- Seed Test Accounts for FlagFit Pro
+-- =====================================================
+-- Creates test accounts for development and testing
+-- 
 -- Test credentials:
 --   Player: test@flagfitpro.com / TestPassword123!
 --   Coach: coach.test@flagfitpro.com / TestPassword123!
+--
+-- PREREQUISITES:
+-- - Supabase Auth schema must be initialized
+-- - This script requires direct access to auth.users table
+-- - For Neon DB, ensure Supabase Auth is properly configured
+--
+-- USAGE:
+-- Run this script after schema.sql to create test accounts
+-- Safe to run multiple times (idempotent)
+-- =====================================================
 
 -- Delete existing test accounts (idempotent - safe to run multiple times)
 DELETE FROM auth.users WHERE email IN ('test@flagfitpro.com', 'coach.test@flagfitpro.com');

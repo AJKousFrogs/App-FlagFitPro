@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Top Bar Loader
  * Dynamically loads and injects the unified top bar component

@@ -1,5 +1,5 @@
 // Exercise Library Page - Optimized with pagination, debouncing, and DocumentFragment
-import { debounce } from "../utils/shared.js";
+import { debounce, setSafeContent } from "../utils/shared.js";
 import { logger } from "../../logger.js";
 import { escapeHtml } from "../utils/sanitize.js";
 import { errorHandler } from "../utils/unified-error-handler.js";
@@ -26,12 +26,12 @@ export class ExerciseLibraryPage {
       // Dynamically import the large exercise library (non-blocking)
       // Add timeout to prevent hanging
       const importPromise = import("../../training-program-data.js");
-      const timeoutPromise = new Promise((_, reject) =>
+      const timeoutPromise = new Promise((_, reject) => {
         setTimeout(
           () => reject(new Error("Import timeout after 10 seconds")),
           10000,
-        ),
-      );
+        );
+      });
 
       const module = await Promise.race([importPromise, timeoutPromise]);
       const { EXERCISE_LIBRARY } = module;
@@ -294,12 +294,9 @@ export class ExerciseLibraryPage {
     // Create video div with icon
     const videoDiv = document.createElement("div");
     videoDiv.className = "exercise-video";
-    // getExerciseIcon returns HTML string, use temp container
-    const iconTemp = document.createElement("div");
-    iconTemp.innerHTML = this.getExerciseIcon(exercise.category);
-    while (iconTemp.firstChild) {
-      videoDiv.appendChild(iconTemp.firstChild);
-    }
+    // getExerciseIcon returns HTML string, use setSafeContent for safety
+    const iconHtml = this.getExerciseIcon(exercise.category);
+    setSafeContent(videoDiv, iconHtml, true, true);
     
     const content = document.createElement("div");
     content.className = "exercise-content";
@@ -360,19 +357,17 @@ export class ExerciseLibraryPage {
   }
 
   getExerciseIcon(category) {
+    const iconStyle = 'width: 16px; height: 16px; display: inline-block; vertical-align: middle; color: var(--icon-color-primary); stroke: var(--icon-color-primary);';
     const icons = {
-      "Posterior Chain": "🦵",
-      Plyometric:
-        '<i data-lucide="zap" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>',
-      Sprint: "🏃‍♂️",
-      Strength:
-        '<i data-lucide="dumbbell" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>',
-      Core: '<i data-lucide="target" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>',
-      Recovery: "🧘",
-      Agility:
-        '<i data-lucide="activity" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i>',
+      "Posterior Chain": '<i data-lucide="leg" style="' + iconStyle + '"></i>',
+      Plyometric: '<i data-lucide="zap" style="' + iconStyle + '"></i>',
+      Sprint: '<i data-lucide="running" style="' + iconStyle + '"></i>',
+      Strength: '<i data-lucide="dumbbell" style="' + iconStyle + '"></i>',
+      Core: '<i data-lucide="target" style="' + iconStyle + '"></i>',
+      Recovery: '<i data-lucide="heart" style="' + iconStyle + '"></i>',
+      Agility: '<i data-lucide="activity" style="' + iconStyle + '"></i>',
     };
-    return icons[category] || "🏋️‍♂️";
+    return icons[category] || '<i data-lucide="dumbbell" style="' + iconStyle + '"></i>';
   }
 
   updateStats() {
@@ -407,14 +402,18 @@ export class ExerciseLibraryPage {
     exerciseGrid.textContent = "";
     const loadingDiv = document.createElement("div");
     loadingDiv.style.cssText = "grid-column: 1 / -1; text-align: center; padding: var(--space-12);";
-    const icon = document.createElement("div");
-    icon.style.cssText = "font-size: 2rem; margin-bottom: var(--space-4);";
-    icon.textContent = "⏳";
+    const icon = document.createElement("i");
+    icon.setAttribute("data-lucide", "loader-2");
+    icon.style.cssText = "width: 48px; height: 48px; display: inline-block; margin-bottom: var(--space-4); color: var(--icon-color-primary);";
+    icon.classList.add("icon-spin");
     const h3 = document.createElement("h3");
     h3.textContent = "Loading exercises...";
     loadingDiv.appendChild(icon);
     loadingDiv.appendChild(h3);
     exerciseGrid.appendChild(loadingDiv);
+    if (typeof lucide !== "undefined") {
+      lucide.createIcons(exerciseGrid);
+    }
   }
 
   showNoResults() {
@@ -448,9 +447,9 @@ export class ExerciseLibraryPage {
     exerciseGrid.textContent = "";
     const errorDiv = document.createElement("div");
     errorDiv.style.cssText = "grid-column: 1 / -1; text-align: center; padding: var(--space-12); color: var(--color-error);";
-    const icon = document.createElement("div");
-    icon.style.cssText = "font-size: 2rem; margin-bottom: var(--space-4);";
-    icon.textContent = "❌";
+    const icon = document.createElement("i");
+    icon.setAttribute("data-lucide", "x-circle");
+    icon.style.cssText = "width: 48px; height: 48px; display: inline-block; margin-bottom: var(--space-4); color: var(--color-error);";
     const h3 = document.createElement("h3");
     h3.textContent = message;
     const p = document.createElement("p");
@@ -459,6 +458,9 @@ export class ExerciseLibraryPage {
     errorDiv.appendChild(h3);
     errorDiv.appendChild(p);
     exerciseGrid.appendChild(errorDiv);
+    if (typeof lucide !== "undefined") {
+      lucide.createIcons(exerciseGrid);
+    }
   }
 
   openExerciseModal(name) {
@@ -481,11 +483,8 @@ export class ExerciseLibraryPage {
     categorySpan.textContent = exercise.category || "";
     modalCategory.appendChild(categorySpan);
 
-    // Use DocumentFragment for modal content
-    const fragment = document.createDocumentFragment();
-    const tempDiv = document.createElement("div");
-
-    tempDiv.innerHTML = `
+    // Build modal content HTML (data is already escaped via escapeHtml)
+    const modalHtml = `
       <div class="exercise-video" style="margin-bottom: var(--space-6);">
         ${this.getExerciseIcon(exercise.category)}
         <div style="position: absolute; bottom: var(--space-2); right: var(--space-2); background: rgba(0,0,0,0.7); color: var(--color-text-primary); padding: var(--space-1) var(--space-2); border-radius: var(--radius-sm); font-size: var(--text-xs);">
@@ -544,7 +543,7 @@ export class ExerciseLibraryPage {
           ? `
         <div class="safety-notes">
           <div class="safety-title">
-            <span>⚠️</span>
+            <i data-lucide="alert-triangle" style="width: 20px; height: 20px; display: inline-block; vertical-align: middle; margin-right: 8px; color: var(--color-warning);"></i>
             <span>Safety Notes</span>
           </div>
           <ul style="margin: 0; padding-left: var(--space-4);">

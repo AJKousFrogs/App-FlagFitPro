@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable no-console */
 
 // Feature Validation Framework
 // Validates all Olympic-level claims and performance metrics
@@ -483,15 +484,11 @@ class FeatureValidator {
   }
 
   async testSessionManagement() {
+    // Check for session management
+    const authManagerPath = "./src/auth-manager.js";
     try {
-      // Check for session management
-      const authManagerPath = "./src/auth-manager.js";
-      try {
-        const content = await fs.readFile(authManagerPath, "utf8");
-        return content.includes("session") || content.includes("token") || content.includes("localStorage");
-      } catch {
-        return false;
-      }
+      const content = await fs.readFile(authManagerPath, "utf8");
+      return content.includes("session") || content.includes("token") || content.includes("localStorage");
     } catch {
       return false;
     }
@@ -501,7 +498,7 @@ class FeatureValidator {
     try {
       // Check for connection pooling configuration
       const supabaseUrl = process.env.SUPABASE_URL;
-      const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+      const supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
       
       if (!supabaseUrl || !supabaseKey) {
         return {
@@ -541,7 +538,7 @@ class FeatureValidator {
   async testQueryPerformance() {
     try {
       const supabaseUrl = process.env.SUPABASE_URL;
-      const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+      const supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
       
       if (!supabaseUrl || !supabaseKey) {
         return {
@@ -598,7 +595,7 @@ class FeatureValidator {
   async testSchemaIntegrity() {
     try {
       const supabaseUrl = process.env.SUPABASE_URL;
-      const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+      const supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
       
       if (!supabaseUrl || !supabaseKey) {
         return false;
@@ -824,7 +821,7 @@ class FeatureValidator {
       // Also check database for research data
       try {
         const supabaseUrl = process.env.SUPABASE_URL;
-        const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+        const supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
         
         if (supabaseUrl && supabaseKey) {
           const supabase = createClient(supabaseUrl, supabaseKey);

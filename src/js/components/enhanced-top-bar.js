@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Enhanced Top Bar Component
  * Handles keyboard shortcuts, enhanced search, notifications, and user menu

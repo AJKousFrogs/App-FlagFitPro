@@ -80,6 +80,29 @@ export const MORNING_MOBILITY_ROUTINE = {
 };
 
 /**
+ * Daily Foam Rolling Routine
+ * Complete foam rolling protocol for daily recovery
+ */
+export const DAILY_FOAM_ROLLING = {
+  title: "Daily Foam Rolling Routine",
+  description: "Complete foam rolling protocol for full body recovery and mobility",
+  duration: "10-15 minutes",
+  frequency: "Daily",
+  videoId: "jQRsF9wLJ4E", // Generic foam rolling tutorial
+  videoUrl: "https://www.youtube.com/watch?v=jQRsF9wLJ4E",
+  focus: "Full body recovery and mobility",
+  areas: [
+    "Calves",
+    "Hamstrings",
+    "Quads",
+    "IT band",
+    "Glutes",
+    "Lower back",
+    "Upper back",
+  ],
+};
+
+/**
  * Universal Warm-Up Protocol
  * Used before EVERY training session
  * 15-20 minutes
@@ -838,6 +861,7 @@ export const SESSION_STRUCTURE = {
 
 export default {
   MORNING_MOBILITY_ROUTINE,
+  DAILY_FOAM_ROLLING,
   UNIVERSAL_WARMUP,
   SUNDAY_RECOVERY_PROTOCOL,
   VOLUME_GUIDELINES,

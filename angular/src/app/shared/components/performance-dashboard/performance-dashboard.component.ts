@@ -9,6 +9,7 @@ import {
   inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { CardModule } from 'primeng/card';
 import { ChartModule } from 'primeng/chart';
 import { TagModule } from 'primeng/tag';
@@ -17,6 +18,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { interval, takeUntil, Subject } from 'rxjs';
 import { ApiService, API_ENDPOINTS } from '../../../core/services/api.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { LoggerService } from '../../../core/services/logger.service';
 
 interface PerformanceMetric {
   id: string;
@@ -36,6 +38,7 @@ interface PerformanceMetric {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
+    FormsModule,
     CardModule,
     ChartModule,
     TagModule,
@@ -65,7 +68,7 @@ interface PerformanceMetric {
             <div class="metric-visualization">
               <div class="metric-value-container">
                 <p-knob
-                  [value]="metric.value"
+                  [ngModel]="metric.value"
                   [min]="0"
                   [max]="metric.target * 1.2"
                   [size]="120"
@@ -266,6 +269,7 @@ export class PerformanceDashboardComponent implements OnInit, OnDestroy {
 
   private apiService = inject(ApiService);
   private destroy$ = new Subject<void>();
+  private logger = inject(LoggerService);
 
   metrics = signal<PerformanceMetric[]>([
     {
@@ -387,7 +391,7 @@ export class PerformanceDashboardComponent implements OnInit, OnDestroy {
         },
         error: () => {
           // Use default mock metrics if API fails
-          console.debug('Performance API not available, using default metrics');
+          this.logger.debug('Performance API not available, using default metrics');
         },
       });
   }

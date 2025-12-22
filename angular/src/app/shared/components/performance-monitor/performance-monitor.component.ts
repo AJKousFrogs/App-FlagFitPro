@@ -6,6 +6,7 @@ import {
   computed,
   signal,
   ChangeDetectionStrategy,
+  DestroyRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ButtonModule } from "primeng/button";
@@ -13,6 +14,8 @@ import { ProgressBarModule } from "primeng/progressbar";
 import { MessageModule } from "primeng/message";
 import { PerformanceMonitorService } from "../../../core/services/performance-monitor.service";
 import { MessageService } from "primeng/api";
+import { timer } from "rxjs";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
   selector: "app-performance-monitor",
@@ -245,6 +248,7 @@ import { MessageService } from "primeng/api";
 export class PerformanceMonitorComponent implements OnInit, OnDestroy {
   private performanceMonitorService = inject(PerformanceMonitorService);
   private messageService = inject(MessageService);
+  private destroyRef = inject(DestroyRef);
 
   showMonitor = signal(false);
   performanceMetrics = computed(() =>
@@ -261,14 +265,18 @@ export class PerformanceMonitorComponent implements OnInit, OnDestroy {
     // Show monitor if there are issues
     this.checkAndShowMonitor();
 
-    // Subscribe to metrics changes
-    // In a real implementation, you might want to use an effect or subscription
-    setInterval(() => {
-      this.checkAndShowMonitor();
-    }, 5000);
+    // Subscribe to metrics changes using RxJS timer with automatic cleanup
+    // timer(0, 5000) emits immediately, then every 5 seconds
+    // takeUntilDestroyed automatically unsubscribes when component is destroyed
+    timer(0, 5000)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.checkAndShowMonitor();
+      });
   }
 
   ngOnDestroy(): void {
+    // Cleanup is handled automatically by takeUntilDestroyed
     // Service cleanup is handled by the service itself
   }
 

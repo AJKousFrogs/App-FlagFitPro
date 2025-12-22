@@ -1,6 +1,8 @@
+/* eslint-disable no-console */
 /**
  * Icon Helper - FlagFit Pro
  * Initializes Lucide icons throughout the application
+ * Note: This file intentionally intercepts console.error to suppress Lucide icon errors
  */
 
 (function () {

@@ -307,3 +307,28 @@ WHERE schemaname = 'public'
   )
 ORDER BY tablename;
 
+-- ============================================================================
+-- VERIFICATION: Check policy optimization (auth functions wrapped in SELECT)
+-- ============================================================================
+-- This query verifies that all policies use optimized auth function calls
+SELECT 
+    tablename,
+    policyname,
+    CASE 
+        WHEN qual LIKE '%(SELECT auth.%()%' THEN 'OPTIMIZED ✓'
+        WHEN qual LIKE '%auth.%()%' THEN 'NEEDS OPTIMIZATION ⚠'
+        ELSE 'CHECK MANUALLY'
+    END as optimization_status,
+    qual
+FROM pg_policies
+WHERE schemaname = 'public' 
+  AND tablename IN (
+    'notifications',
+    'performance_metrics',
+    'supplement_protocols',
+    'training_analytics',
+    'user_behavior',
+    'wearables_data'
+  )
+ORDER BY tablename, policyname;
+

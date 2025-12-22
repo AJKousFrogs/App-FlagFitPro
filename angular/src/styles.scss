@@ -4,19 +4,20 @@
    ================================================================ */
 
 /* Design System Tokens - Single source of truth */
-@import "./assets/styles/design-system-tokens.scss";
+@use "./assets/styles/design-system-tokens.scss" as *;
 
 /* Standardized Components - All components use same variants */
-@import "./assets/styles/standardized-components.scss";
+@use "./assets/styles/standardized-components.scss" as *;
 
 /* Layout System - Reusable layout patterns */
-@import "./assets/styles/layout-system.scss";
+@use "./assets/styles/layout-system.scss" as *;
 
 /* PrimeIcons - CSS file, must use @import */
 @import "primeicons/primeicons.css";
 
-/* Angular Material Theme */
-@import "@angular/material/prebuilt-themes/indigo-pink.css";
+/* Note: Angular Material theme removed - only CDK drag-drop is used, not full Material library
+ * This saves ~50-80KB in bundle size
+ */
 
 /* Global Styles */
 * {

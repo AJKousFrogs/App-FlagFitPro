@@ -5,6 +5,7 @@
  */
 
 import { MORNING_MOBILITY_ROUTINE } from "../data/shared-protocols.js";
+import { logger } from "../../logger.js";
 
 // Dynamic import for team data and API (to avoid circular dependencies)
 let getAllPlayers = null;
@@ -18,7 +19,7 @@ async function loadDependencies() {
       const teamData = await import("../../real-team-data.js");
       getAllPlayers = teamData.getAllPlayers;
     } catch (error) {
-      console.warn("Failed to load team data:", error);
+      logger.warn("Failed to load team data:", error);
       getAllPlayers = () => [];
     }
   }
@@ -29,7 +30,7 @@ async function loadDependencies() {
       apiClient = apiConfig.apiClient;
       API_ENDPOINTS = apiConfig.API_ENDPOINTS;
     } catch (error) {
-      console.warn("Failed to load API config:", error);
+      logger.warn("Failed to load API config:", error);
     }
   }
 }
@@ -52,7 +53,7 @@ function getSearchHistory() {
     const history = localStorage.getItem(SEARCH_HISTORY_KEY);
     return history ? JSON.parse(history) : [];
   } catch (error) {
-    console.warn("Failed to load search history:", error);
+    logger.warn("Failed to load search history:", error);
     return [];
   }
 }
@@ -76,7 +77,7 @@ function saveToHistory(query) {
     const limited = filtered.slice(0, MAX_HISTORY_ITEMS);
     localStorage.setItem(SEARCH_HISTORY_KEY, JSON.stringify(limited));
   } catch (error) {
-    console.warn("Failed to save search history:", error);
+    logger.warn("Failed to save search history:", error);
   }
 }
 
@@ -87,7 +88,7 @@ export function clearSearchHistory() {
   try {
     localStorage.removeItem(SEARCH_HISTORY_KEY);
   } catch (error) {
-    console.warn("Failed to clear search history:", error);
+    logger.warn("Failed to clear search history:", error);
   }
 }
 
@@ -171,7 +172,7 @@ function fuzzyMatch(text, query, threshold = 0.7) {
   const textWords = normalizedText.split(/\s+/);
   const queryWords = normalizedQuery.split(/\s+/);
   let bestScore = 0;
-  let matchedWords = [];
+  const matchedWords = [];
   
   for (const queryWord of queryWords) {
     for (const textWord of textWords) {
@@ -225,7 +226,7 @@ function parseQuery(query) {
   }
   
   // Remove exact phrases from query for further processing
-  let processedQuery = trimmed.replace(exactPhraseRegex, "");
+  const processedQuery = trimmed.replace(exactPhraseRegex, "");
   
   // Extract excluded terms (prefixed with -)
   const words = processedQuery.split(/\s+/);

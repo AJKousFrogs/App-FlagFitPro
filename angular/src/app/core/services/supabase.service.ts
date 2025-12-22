@@ -1,6 +1,7 @@
-import { Injectable, signal, computed } from "@angular/core";
+import { Injectable, inject, signal, computed } from "@angular/core";
 import { createClient, SupabaseClient, User, Session, AuthChangeEvent } from "@supabase/supabase-js";
 import { environment } from "../../../environments/environment";
+import { LoggerService } from "./logger.service";
 
 @Injectable({
   providedIn: "root",
@@ -21,6 +22,16 @@ export class SupabaseService {
   readonly userId = computed(() => this._currentUser()?.id ?? null);
 
   constructor() {
+    // Validate Supabase configuration
+    if (!environment.supabase.url || !environment.supabase.anonKey) {
+      this.logger.error('[SupabaseService] Missing Supabase configuration!');
+      this.logger.error('[SupabaseService] URL:', environment.supabase.url || 'MISSING');
+      this.logger.error('[SupabaseService] AnonKey:', environment.supabase.anonKey ? 'SET' : 'MISSING');
+      this.logger.error('[SupabaseService] For local dev, ensure dev server injects window._env');
+      this.logger.error('[SupabaseService] For production, use Angular file replacement to inject values');
+      throw new Error('Supabase configuration is required. Set SUPABASE_URL and SUPABASE_ANON_KEY.');
+    }
+
     this.supabase = createClient(
       environment.supabase.url,
       environment.supabase.anonKey
@@ -38,7 +49,7 @@ export class SupabaseService {
 
     // Listen for auth changes
     this.supabase.auth.onAuthStateChange((event: AuthChangeEvent, session: Session | null) => {
-      console.log("Auth state changed:", event);
+      this.logger.debug("Auth state changed:", event);
       this._session.set(session);
       this._currentUser.set(session?.user ?? null);
     });

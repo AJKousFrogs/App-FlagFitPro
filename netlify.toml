@@ -1,5 +1,21 @@
 [build]
+  command = "npm ci && npm run build"
   publish = "."
+
+[build.environment]
+  NODE_VERSION = "18"
+  NPM_FLAGS = "--legacy-peer-deps"
+  VITE_APP_ENVIRONMENT = "production"
+  VITE_APP_NAME = "FlagFit Pro"
+  VITE_APP_VERSION = "1.0.7"
+  # Supabase Configuration
+  # These variables are injected into HTML files during build via scripts/inject-env-into-html.js
+  # IMPORTANT: Also set these in Netlify UI (Site Settings → Environment Variables) for redundancy
+  # This ensures they're available even if netlify.toml is not read properly
+  VITE_SUPABASE_URL = "https://pvziciccwxgftcielknm.supabase.co"
+  VITE_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2emljaWNjd3hnZnRjaWVsa25tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MzcwNTgsImV4cCI6MjA3NTExMzA1OH0.1nfJrtWPl6DrAwvjGvM1-CZBeyYgCaV9oDdaadpqhLU"
+  VITE_ENABLE_ANALYTICS = "false"
+  VITE_ENABLE_SENTRY = "false"
 
 # SECURITY: Enhanced security headers for production
 [[headers]]
@@ -33,7 +49,7 @@
 
     # Content Security Policy - defense in depth against XSS
     # Note: 'unsafe-inline' is used for inline scripts/styles - consider moving to external files with nonces in production
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co https://*.netlify.app https://*.netlify.com https://cdn.jsdelivr.net wss://*.supabase.co; object-src 'none'; media-src 'self'; frame-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co https://*.netlify.app https://*.netlify.com https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com wss://*.supabase.co; object-src 'none'; media-src 'self'; frame-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"
 
 # CORP headers for static resources (CSS, JS, images)
 [[headers]]
@@ -71,35 +87,163 @@
   status = 200
   force = true
 
-# Handle direct page access (not SPA routing)
+# ============================================================================
+# LEGACY HTML → CANONICAL ROUTES (301 Permanent Redirects)
+# Direction: .html → Angular route (NOT the other way around)
+# ============================================================================
+
+# Core Pages
 [[redirects]]
-  from = "/dashboard"
-  to = "/dashboard.html"
+  from = "/dashboard.html"
+  to = "/dashboard"
   status = 301
 
 [[redirects]]
-  from = "/login"
-  to = "/login.html"
+  from = "/training.html"
+  to = "/training"
   status = 301
 
 [[redirects]]
-  from = "/training"
-  to = "/training.html"
+  from = "/analytics.html"
+  to = "/analytics"
   status = 301
 
 [[redirects]]
-  from = "/chat"
-  to = "/chat.html"
+  from = "/roster.html"
+  to = "/roster"
   status = 301
 
 [[redirects]]
-  from = "/tournaments"
-  to = "/tournaments.html"
+  from = "/tournaments.html"
+  to = "/tournaments"
   status = 301
 
 [[redirects]]
-  from = "/community"
-  to = "/community.html"
+  from = "/community.html"
+  to = "/community"
+  status = 301
+
+[[redirects]]
+  from = "/chat.html"
+  to = "/chat"
+  status = 301
+
+[[redirects]]
+  from = "/settings.html"
+  to = "/settings"
+  status = 301
+
+[[redirects]]
+  from = "/profile.html"
+  to = "/profile"
+  status = 301
+
+# Auth Pages
+[[redirects]]
+  from = "/login.html"
+  to = "/login"
+  status = 301
+
+[[redirects]]
+  from = "/register.html"
+  to = "/register"
+  status = 301
+
+[[redirects]]
+  from = "/reset-password.html"
+  to = "/reset-password"
+  status = 301
+
+[[redirects]]
+  from = "/verify-email.html"
+  to = "/verify-email"
+  status = 301
+
+# Training Pages
+[[redirects]]
+  from = "/workout.html"
+  to = "/workout"
+  status = 301
+
+[[redirects]]
+  from = "/exercise-library.html"
+  to = "/exercise-library"
+  status = 301
+
+[[redirects]]
+  from = "/training-schedule.html"
+  to = "/training/schedule"
+  status = 301
+
+[[redirects]]
+  from = "/qb-training-schedule.html"
+  to = "/training/qb/schedule"
+  status = 301
+
+[[redirects]]
+  from = "/qb-throwing-tracker.html"
+  to = "/training/qb/throwing"
+  status = 301
+
+[[redirects]]
+  from = "/qb-assessment-tools.html"
+  to = "/training/qb/assessment"
+  status = 301
+
+[[redirects]]
+  from = "/ai-training-scheduler.html"
+  to = "/training/ai-scheduler"
+  status = 301
+
+# Other Pages
+[[redirects]]
+  from = "/onboarding.html"
+  to = "/onboarding"
+  status = 301
+
+[[redirects]]
+  from = "/accept-invitation.html"
+  to = "/accept-invitation"
+  status = 301
+
+[[redirects]]
+  from = "/team-create.html"
+  to = "/team/create"
+  status = 301
+
+[[redirects]]
+  from = "/coach-dashboard.html"
+  to = "/coach/dashboard"
+  status = 301
+
+[[redirects]]
+  from = "/coach.html"
+  to = "/coach"
+  status = 301
+
+[[redirects]]
+  from = "/game-tracker.html"
+  to = "/game-tracker"
+  status = 301
+
+[[redirects]]
+  from = "/performance-tracking.html"
+  to = "/performance-tracking"
+  status = 301
+
+[[redirects]]
+  from = "/wellness.html"
+  to = "/wellness"
+  status = 301
+
+[[redirects]]
+  from = "/analytics-dashboard.html"
+  to = "/analytics"
+  status = 301
+
+[[redirects]]
+  from = "/enhanced-analytics.html"
+  to = "/analytics/enhanced"
   status = 301
 
 # API Routes for Analytics
@@ -161,10 +305,89 @@
   status = 200
   force = true
 
+# API Routes for Training Complete
+[[redirects]]
+  from = "/api/training/complete"
+  to = "/.netlify/functions/training-complete"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/training/complete/*"
+  to = "/.netlify/functions/training-complete"
+  status = 200
+  force = true
+
+# API Routes for Training Suggestions
+[[redirects]]
+  from = "/api/training/suggestions"
+  to = "/.netlify/functions/training-suggestions"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/training/suggestions/*"
+  to = "/.netlify/functions/training-suggestions"
+  status = 200
+  force = true
+
 # API Routes for Training Stats
 [[redirects]]
   from = "/training-stats"
   to = "/.netlify/functions/training-stats"
+  status = 200
+  force = true
+
+# API Routes for Weather
+[[redirects]]
+  from = "/api/weather/current"
+  to = "/.netlify/functions/weather"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/weather/*"
+  to = "/.netlify/functions/weather"
+  status = 200
+  force = true
+
+# API Routes for Nutrition
+[[redirects]]
+  from = "/api/nutrition/*"
+  to = "/.netlify/functions/nutrition"
+  status = 200
+  force = true
+
+# API Routes for Recovery
+[[redirects]]
+  from = "/api/recovery/*"
+  to = "/.netlify/functions/recovery"
+  status = 200
+  force = true
+
+# API Routes for Admin
+[[redirects]]
+  from = "/api/admin/*"
+  to = "/.netlify/functions/admin"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/admin"
+  to = "/.netlify/functions/admin"
+  status = 200
+  force = true
+
+# API Routes for Coach
+[[redirects]]
+  from = "/api/coach/*"
+  to = "/.netlify/functions/coach"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/coach"
+  to = "/.netlify/functions/coach"
   status = 200
   force = true
 
@@ -189,18 +412,8 @@
   force = true
 
 # API Routes for Auth
-[[redirects]]
-  from = "/auth-login"
-  to = "/.netlify/functions/auth-login"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/auth-register"
-  to = "/.netlify/functions/auth-register"
-  status = 200
-  force = true
-
+# Note: Login and Register use Supabase directly (not backend functions)
+# Only auth-me endpoint uses backend function for token verification
 [[redirects]]
   from = "/auth-me"
   to = "/.netlify/functions/auth-me"
@@ -387,6 +600,77 @@
   to = "/.netlify/functions/trends"
   status = 200
   force = true
+
+# API Routes for Player Stats
+[[redirects]]
+  from = "/api/player-stats/*"
+  to = "/.netlify/functions/player-stats"
+  status = 200
+  force = true
+
+# API Routes for Training Plan
+[[redirects]]
+  from = "/api/training-plan"
+  to = "/.netlify/functions/training-plan"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/training-plan/*"
+  to = "/.netlify/functions/training-plan"
+  status = 200
+  force = true
+
+# API Routes for Wellness
+[[redirects]]
+  from = "/api/wellness/*"
+  to = "/.netlify/functions/wellness"
+  status = 200
+  force = true
+
+# API Routes for Supplements
+[[redirects]]
+  from = "/api/supplements/*"
+  to = "/.netlify/functions/supplements"
+  status = 200
+  force = true
+
+# API Routes for User Context
+[[redirects]]
+  from = "/api/user/context"
+  to = "/.netlify/functions/user-context"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/user/context/*"
+  to = "/.netlify/functions/user-context"
+  status = 200
+  force = true
+
+# API Routes for Training Stats (fix redirects)
+[[redirects]]
+  from = "/api/training/stats"
+  to = "/.netlify/functions/training-stats"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/training/stats-enhanced"
+  to = "/.netlify/functions/training-stats-enhanced"
+  status = 200
+  force = true
+
+# ============================================================================
+# SPA FALLBACK (200 Rewrite)
+# All non-asset, non-API paths → /index.html for Angular Router
+# Netlify automatically excludes /api/* and static assets
+# ============================================================================
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = false
 
 # Environment variables for Netlify Functions
 # NOTE: Sensitive values (SUPABASE_URL, SUPABASE_SERVICE_KEY, SUPABASE_ANON_KEY, JWT_SECRET)

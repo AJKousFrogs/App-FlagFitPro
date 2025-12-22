@@ -19,5 +19,6 @@ import './top-bar-loader.js';
 // Load footer
 import './footer-loader.js';
 
+// eslint-disable-next-line no-console
 console.log('[Common Loaders] All common components loaded');
 

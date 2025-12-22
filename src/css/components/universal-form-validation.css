@@ -1,6 +1,9 @@
 /**
  * Universal Form Validation Styles
  * Standardizes form validation appearance across all forms
+ * 
+ * NOTE: Basic form input styles are in standardized-components.scss
+ * This file focuses on validation states and error handling
  */
 
 /* ================================================================

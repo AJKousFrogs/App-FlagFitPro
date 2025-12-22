@@ -1,6 +1,8 @@
 // Message Display Utilities - FlagFit Pro
 // Shared functions for showing/hiding alert messages across pages
 
+import { logger } from '../../logger.js';
+
 /**
  * Show a message in a specified element
  * @param {string} elementId - ID of the element to show message in
@@ -12,7 +14,7 @@
 export function showMessage(elementId, message, options = {}) {
   const element = document.getElementById(elementId);
   if (!element) {
-    console.warn(`Message element with ID "${elementId}" not found`);
+    logger.warn(`Message element with ID "${elementId}" not found`);
     return;
   }
 

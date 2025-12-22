@@ -47,6 +47,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 @Injectable()
 export abstract class BaseViewModel {
   protected destroyRef = inject(DestroyRef);
+  protected logger = inject(LoggerService);
   protected destroy$ = new Subject<void>();
 
   // Common state signals
@@ -117,7 +118,7 @@ export abstract class BaseViewModel {
   protected handleError(error: any): void {
     const errorMessage = error?.message || error?.error?.message || 'An error occurred';
     this.error.set(errorMessage);
-    console.error('[ViewModel Error]', error);
+    this.logger.error('[ViewModel Error]', error);
   }
 
   /**

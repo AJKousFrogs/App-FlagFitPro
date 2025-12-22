@@ -279,12 +279,12 @@ describe("API Configuration - Comprehensive Tests", () => {
 
   describe("Request Timeout", () => {
     it("should timeout long-running requests", async () => {
-      const timeoutPromise = new Promise((resolve) =>
+      const timeoutPromise = new Promise((resolve) => {
         setTimeout(
           () => resolve(createMockApiResponse({ data: "delayed" })),
           10000,
-        ),
-      );
+        );
+      });
 
       global.fetch.mockReturnValue(timeoutPromise);
       apiConfig.makeRequest = vi

@@ -14,6 +14,7 @@
 
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { ApiService } from './api.service';
+import { LoggerService } from './logger.service';
 
 export interface Notification {
   id: string;
@@ -39,6 +40,7 @@ export interface NotificationState {
 })
 export class NotificationStateService {
   private apiService = inject(ApiService);
+  private logger = inject(LoggerService);
 
   // State signals
   private readonly notifications = signal<Notification[]>([]);
@@ -102,7 +104,7 @@ export class NotificationStateService {
       const errorMessage = error?.message || 'Failed to load notifications';
       this.error.set(errorMessage);
       this.loading.set(false);
-      console.error('Error loading notifications:', error);
+      this.logger.error('Error loading notifications:', error);
       throw error;
     }
   }
@@ -142,7 +144,7 @@ export class NotificationStateService {
       this.notifications.set(previousState);
       const errorMessage = error?.message || 'Failed to mark notification as read';
       this.error.set(errorMessage);
-      console.error('Error marking notification as read:', error);
+      this.logger.error('Error marking notification as read:', error);
       throw error;
     }
   }
@@ -182,7 +184,7 @@ export class NotificationStateService {
       this.notifications.set(previousState);
       const errorMessage = error?.message || 'Failed to mark all notifications as read';
       this.error.set(errorMessage);
-      console.error('Error marking all notifications as read:', error);
+      this.logger.error('Error marking all notifications as read:', error);
       throw error;
     }
   }
@@ -223,7 +225,7 @@ export class NotificationStateService {
       this.notifications.set(previousState);
       const errorMessage = error?.message || 'Failed to mark notifications as read';
       this.error.set(errorMessage);
-      console.error('Error marking notifications as read:', error);
+      this.logger.error('Error marking notifications as read:', error);
       throw error;
     }
   }
@@ -255,7 +257,7 @@ export class NotificationStateService {
 
       return count;
     } catch (error: any) {
-      console.warn('Error refreshing badge count:', error);
+      this.logger.warn('Error refreshing badge count:', error);
       // Return current count as fallback
       return this.unreadCount();
     }
@@ -273,7 +275,7 @@ export class NotificationStateService {
 
       this.lastOpenedAt.set(new Date().toISOString());
     } catch (error: any) {
-      console.warn('Error updating last opened timestamp:', error);
+      this.logger.warn('Error updating last opened timestamp:', error);
       // Non-critical error, don't throw
     }
   }

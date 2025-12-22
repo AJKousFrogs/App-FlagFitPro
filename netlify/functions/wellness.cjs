@@ -1,0 +1,185 @@
+// Netlify Function: Wellness API
+// Handles wellness check-ins and wellness data retrieval
+
+const { baseHandler } = require('./utils/base-handler.cjs');
+const { createSuccessResponse, createErrorResponse } = require('./utils/error-handler.cjs');
+const { supabaseAdmin, db } = require('./supabase-client.cjs');
+
+/**
+ * Create wellness check-in
+ * POST /api/wellness/checkin
+ */
+async function createWellnessCheckin(userId, checkinData) {
+  try {
+    const {
+      readiness,
+      sleep,
+      energy,
+      mood,
+      soreness,
+      notes
+    } = checkinData;
+
+    // Validate required fields
+    if (readiness === undefined || readiness === null) {
+      throw new Error('readiness is required (1-10)');
+    }
+
+    // Validate ranges
+    if (readiness < 1 || readiness > 10) {
+      throw new Error('readiness must be between 1 and 10');
+    }
+
+    if (sleep !== undefined && (sleep < 0 || sleep > 24)) {
+      throw new Error('sleep must be between 0 and 24 hours');
+    }
+
+    if (energy !== undefined && (energy < 1 || energy > 10)) {
+      throw new Error('energy must be between 1 and 10');
+    }
+
+    if (mood !== undefined && (mood < 1 || mood > 10)) {
+      throw new Error('mood must be between 1 and 10');
+    }
+
+    if (soreness !== undefined && (soreness < 1 || soreness > 10)) {
+      throw new Error('soreness must be between 1 and 10');
+    }
+
+    // Insert wellness check-in
+    const { data, error } = await supabaseAdmin
+      .from('wellness_checkins')
+      .insert({
+        user_id: userId,
+        readiness: readiness,
+        sleep: sleep || null,
+        energy: energy || null,
+        mood: mood || null,
+        soreness: soreness || null,
+        notes: notes || null,
+        created_at: new Date().toISOString()
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error creating wellness check-in:', error);
+      throw error;
+    }
+
+    return {
+      id: data.id,
+      checkinAt: data.created_at,
+      readiness: data.readiness,
+      sleep: data.sleep,
+      energy: data.energy,
+      mood: data.mood,
+      soreness: data.soreness,
+      notes: data.notes
+    };
+  } catch (error) {
+    console.error('Error in createWellnessCheckin:', error);
+    throw error;
+  }
+}
+
+/**
+ * Get wellness check-ins for user
+ * GET /api/wellness/checkins
+ */
+async function getWellnessCheckins(userId, limit = 30) {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('wellness_checkins')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(limit);
+
+    if (error) {
+      console.error('Error fetching wellness check-ins:', error);
+      throw error;
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error('Error in getWellnessCheckins:', error);
+    throw error;
+  }
+}
+
+/**
+ * Get latest wellness check-in
+ * GET /api/wellness/latest
+ */
+async function getLatestWellnessCheckin(userId) {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('wellness_checkins')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single();
+
+    if (error) {
+      // If no check-ins exist, return null
+      if (error.code === 'PGRST116') {
+        return null;
+      }
+      console.error('Error fetching latest wellness check-in:', error);
+      throw error;
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error in getLatestWellnessCheckin:', error);
+    throw error;
+  }
+}
+
+exports.handler = async (event, context) => {
+  // Extract sub-path
+  const path = event.path.replace("/.netlify/functions/wellness", "");
+
+  return baseHandler(event, context, {
+    functionName: 'wellness',
+    allowedMethods: ['GET', 'POST'],
+    rateLimitType: event.httpMethod === 'POST' ? 'CREATE' : 'READ',
+    handler: async (event, context, { userId }) => {
+      if (event.httpMethod === 'POST') {
+        // Handle POST /api/wellness/checkin
+        if (path.includes('/checkin') || path.endsWith('/checkin')) {
+          let checkinData = {};
+          try {
+            checkinData = JSON.parse(event.body || '{}');
+          } catch (parseError) {
+            return createErrorResponse('Invalid JSON in request body', 400, 'invalid_json');
+          }
+
+          const result = await createWellnessCheckin(userId, checkinData);
+          return createSuccessResponse(result, 201, 'Wellness check-in created');
+        }
+
+        return createErrorResponse('Endpoint not found', 404, 'not_found');
+      }
+
+      // Handle GET requests
+      if (path.includes('/latest') || path.endsWith('/latest')) {
+        const result = await getLatestWellnessCheckin(userId);
+        return createSuccessResponse(result);
+      }
+
+      if (path.includes('/checkins') || path.endsWith('/checkins')) {
+        const limit = parseInt(event.queryStringParameters?.limit) || 30;
+        const result = await getWellnessCheckins(userId, limit);
+        return createSuccessResponse({ checkins: result });
+      }
+
+      // Default: return latest check-in
+      const result = await getLatestWellnessCheckin(userId);
+      return createSuccessResponse(result);
+    }
+  });
+};
+

@@ -8,6 +8,7 @@ import {
   showFieldSuccess,
   clearFieldState,
   announceToScreenReader,
+  setSafeContent,
 } from "../utils/shared.js";
 import { storageService } from "../services/storage-service-unified.js";
 
@@ -15,6 +16,9 @@ import { storageService } from "../services/storage-service-unified.js";
 document.addEventListener("DOMContentLoaded", async function () {
   // Initialize Lucide icons
   initializeLucideIcons();
+
+  // Expose authManager globally for enhanced-settings.js
+  window.authManager = authManager;
 
   // Wait for auth manager to initialize
   await authManager.waitForInit();
@@ -461,14 +465,33 @@ window.saveSettings = async function (event) {
   const button =
     event?.target || document.querySelector('button[onclick*="saveSettings"]');
   if (!button) {return;}
-  const originalText = button.innerHTML;
-  button.innerHTML =
-    '<span><i data-lucide="check-circle" style="width: 16px;  height: 16px;  display: inline-block;  vertical-align: middle ;   color: var(--icon-color-primary); stroke: var(--icon-color-primary);"></i></span> Saved!';
+  // Store original text content (not innerHTML)
+  const originalText = button.textContent || button.innerHTML;
+  const originalHTML = button.innerHTML;
+  
+  // Create saved state using DOM methods
+  button.textContent = "";
+  const checkIcon = document.createElement("i");
+  checkIcon.setAttribute("data-lucide", "check-circle");
+  checkIcon.style.cssText = "width: 16px; height: 16px; display: inline-block; vertical-align: middle; color: var(--icon-color-primary); stroke: var(--icon-color-primary);";
+  const savedText = document.createTextNode(" Saved!");
+  button.appendChild(checkIcon);
+  button.appendChild(savedText);
   button.style.background = "var(--success)";
+  
+  // Re-initialize icons
+  if (typeof lucide !== "undefined") {
+    lucide.createIcons(button);
+  }
 
   setTimeout(() => {
-    button.innerHTML = originalText;
+    // Restore original content
+    button.textContent = "";
+    setSafeContent(button, originalHTML, true, true);
     button.style.background = "var(--primary)";
+    if (typeof lucide !== "undefined") {
+      lucide.createIcons(button);
+    }
   }, 2000);
 
   logger.debug("Settings saved:", settings);
@@ -519,32 +542,92 @@ function showDeleteAccountModal() {
         justify-content: center; z-index: var(--z-index-modal, 1400);
     `;
 
-  modal.innerHTML = `
-        <div style="background: var(--dark-text-primary); padding: 2rem; border-radius: 12px; max-width: 500px; width: 90%; border: 2px solid var(--error);">
-            <h3 style="margin-bottom: 1rem; color: var(--error); display: flex; align-items: center; gap: 0.5rem;">
-                ⚠️ Delete Account
-            </h3>
-            <div style="margin-bottom: 1.5rem; color: var(--dark-text-secondary);">
-                <p><strong>This action cannot be undone!</strong></p>
-                <p>Deleting your account will permanently remove:</p>
-                <ul style="margin-left: 1rem; margin-top: 0.5rem;">
-                    <li>All training data and progress</li>
-                    <li>Workout history and achievements</li>
-                    <li>Team memberships and connections</li>
-                    <li>Settings and preferences</li>
-                </ul>
-            </div>
-            <div style="margin-bottom: 1.5rem;">
-                <label style="display: block; margin-bottom: 0.5rem; font-weight: var(--font-weight-medium, 500);">Type "DELETE" to confirm:</label>
-                <input type="text" id="deleteConfirmation" style="width: 100%; padding: 0.75rem; border: 2px solid var(--error); border-radius: 6px; font-family: monospace;"
-                       placeholder="Type DELETE here" autocomplete="off" oninput="validateDeleteInput(this)">
-            </div>
-            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
-                <button onclick="this.closest('div').remove()" style="padding: 0.75rem 1.5rem; border: 1px solid var(--dark-border); background: var(--dark-text-primary); border-radius: 6px; cursor: pointer;">Cancel</button>
-                <button id="confirmDeleteBtn" onclick="confirmAccountDeletion()" disabled style="padding: 0.75rem 1.5rem; background: var(--error); color: var(--dark-text-primary); border: none; border-radius: 6px; cursor: not-allowed; opacity: 0.5;">Delete Account</button>
-            </div>
-        </div>
-    `;
+  // Create modal content using DOM methods instead of innerHTML
+  const modalContent = document.createElement("div");
+  modalContent.style.cssText = "background: var(--dark-text-primary); padding: 2rem; border-radius: 12px; max-width: 500px; width: 90%; border: 2px solid var(--error);";
+  
+  const heading = document.createElement("h3");
+  heading.style.cssText = "margin-bottom: 1rem; color: var(--error); display: flex; align-items: center; gap: 0.5rem;";
+  heading.textContent = "⚠️ Delete Account";
+  
+  const warningDiv = document.createElement("div");
+  warningDiv.style.cssText = "margin-bottom: 1.5rem; color: var(--dark-text-secondary);";
+  
+  const warning1 = document.createElement("p");
+  const strong1 = document.createElement("strong");
+  strong1.textContent = "This action cannot be undone!";
+  warning1.appendChild(strong1);
+  
+  const warning2 = document.createElement("p");
+  warning2.textContent = "Deleting your account will permanently remove:";
+  
+  const warningList = document.createElement("ul");
+  warningList.style.cssText = "margin-left: 1rem; margin-top: 0.5rem;";
+  const items = [
+    "All training data and progress",
+    "Workout history and achievements",
+    "Team memberships and connections",
+    "Settings and preferences"
+  ];
+  items.forEach(itemText => {
+    const li = document.createElement("li");
+    li.textContent = itemText;
+    warningList.appendChild(li);
+  });
+  
+  warningDiv.appendChild(warning1);
+  warningDiv.appendChild(warning2);
+  warningDiv.appendChild(warningList);
+  
+  const inputDiv = document.createElement("div");
+  inputDiv.style.cssText = "margin-bottom: 1.5rem;";
+  
+  const label = document.createElement("label");
+  label.style.cssText = "display: block; margin-bottom: 0.5rem; font-weight: var(--font-weight-medium, 500);";
+  label.textContent = 'Type "DELETE" to confirm:';
+  
+  const input = document.createElement("input");
+  input.type = "text";
+  input.id = "deleteConfirmation";
+  input.style.cssText = "width: 100%; padding: 0.75rem; border: 2px solid var(--error); border-radius: 6px; font-family: monospace;";
+  input.placeholder = "Type DELETE here";
+  input.autocomplete = "off";
+  input.addEventListener("input", function() {
+    if (typeof validateDeleteInput === "function") {
+      validateDeleteInput(this);
+    }
+  });
+  
+  inputDiv.appendChild(label);
+  inputDiv.appendChild(input);
+  
+  const buttonDiv = document.createElement("div");
+  buttonDiv.style.cssText = "display: flex; gap: 1rem; justify-content: flex-end;";
+  
+  const cancelBtn = document.createElement("button");
+  cancelBtn.style.cssText = "padding: 0.75rem 1.5rem; border: 1px solid var(--dark-border); background: var(--dark-text-primary); border-radius: 6px; cursor: pointer;";
+  cancelBtn.textContent = "Cancel";
+  cancelBtn.addEventListener("click", () => modal.remove());
+  
+  const deleteBtn = document.createElement("button");
+  deleteBtn.id = "confirmDeleteBtn";
+  deleteBtn.disabled = true;
+  deleteBtn.style.cssText = "padding: 0.75rem 1.5rem; background: var(--error); color: var(--dark-text-primary); border: none; border-radius: 6px; cursor: not-allowed; opacity: 0.5;";
+  deleteBtn.textContent = "Delete Account";
+  deleteBtn.addEventListener("click", () => {
+    if (typeof confirmAccountDeletion === "function") {
+      confirmAccountDeletion();
+    }
+  });
+  
+  buttonDiv.appendChild(cancelBtn);
+  buttonDiv.appendChild(deleteBtn);
+  
+  modalContent.appendChild(heading);
+  modalContent.appendChild(warningDiv);
+  modalContent.appendChild(inputDiv);
+  modalContent.appendChild(buttonDiv);
+  modal.appendChild(modalContent);
 
   document.body.appendChild(modal);
 }
@@ -580,7 +663,7 @@ window.confirmAccountDeletion = function () {
 
   // Production mode - implement actual deletion
   const deleteButton = document.getElementById("confirmDeleteBtn");
-  deleteButton.innerHTML = "⏳ Deleting...";
+  deleteButton.textContent = "⏳ Deleting...";
   deleteButton.disabled = true;
 
   // Simulate API call to delete account
@@ -600,7 +683,7 @@ window.confirmAccountDeletion = function () {
       window.location.href = "/index.html";
     } catch (error) {
       alert("Error deleting account. Please try again or contact support.");
-      deleteButton.innerHTML = "Delete Account";
+      deleteButton.textContent = "Delete Account";
       deleteButton.disabled = false;
     }
   }, 2000);

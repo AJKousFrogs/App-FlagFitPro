@@ -4,7 +4,10 @@
    ================================================================ */
 
 /* ================================================================
-   BUTTONS
+   BUTTONS - DEPRECATED
+   NOTE: Button styles have been moved to standardized-components.scss
+   This file is kept for legacy HTML pages only.
+   For Angular components, use: angular/src/assets/styles/standardized-components.scss
    ================================================================ */
 
 .btn {
@@ -87,7 +90,10 @@
 }
 
 /* ================================================================
-   CARDS
+   CARDS - DEPRECATED
+   NOTE: Card styles have been moved to standardized-components.scss
+   This file is kept for legacy HTML pages only.
+   For Angular components, use: angular/src/assets/styles/standardized-components.scss
    ================================================================ */
 
 .card {
@@ -130,7 +136,10 @@
 }
 
 /* ================================================================
-   FORMS
+   FORMS - DEPRECATED
+   NOTE: Basic form styles have been moved to standardized-components.scss
+   This file is kept for legacy HTML pages only.
+   For Angular components, use: angular/src/assets/styles/standardized-components.scss
    ================================================================ */
 
 .form-group {

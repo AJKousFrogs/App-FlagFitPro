@@ -1,20 +1,24 @@
 /* ================================================================
    FLAGFIT PRO - DESIGN TOKENS
-   Comprehensive Production-Ready Token System
-   Angular 19 + PrimeNG Compatible
-   ================================================================
+   ⚠️ FULLY DEPRECATED - DO NOT USE ⚠️
    
-   USAGE:
-   @import './assets/styles/design-tokens.scss';
+   This file has been completely merged into design-system-tokens.scss.
+   All tokens (primitive colors, typography system, gradients, dark mode,
+   utility classes) are now in design-system-tokens.scss.
    
-   This file contains ALL design tokens for FlagFit Pro:
-   - Color tokens (semantic + primitive)
-   - Spacing tokens (8-point grid)
-   - Typography tokens (Poppins font family)
-   - Shadow tokens
-   - Border radius tokens
-   - Z-index tokens
-   - Dark mode support
+   This file is kept temporarily for reference only and will be removed
+   in a future release. DO NOT import or use this file.
+   
+   MIGRATION STATUS: ✅ COMPLETE
+   - Primitive color tokens: ✅ Merged
+   - Typography system variables: ✅ Merged
+   - Gradient tokens: ✅ Merged
+   - Dark mode support: ✅ Merged
+   - Utility classes: ✅ Merged
+   - PrimeNG integration: ✅ Merged
+   - Accessibility tokens: ✅ Merged
+   
+   USE INSTEAD: design-system-tokens.scss
    ================================================================ */
 
 // ================================================================

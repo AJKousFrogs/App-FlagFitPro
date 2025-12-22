@@ -11,6 +11,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { ApiService } from './api.service';
+import { LoggerService } from './logger.service';
 
 export interface ChangeOfDirectionTrend {
   current: number;
@@ -47,6 +48,7 @@ export interface GamePerformanceTrend {
 })
 export class TrendsService {
   private apiService = inject(ApiService);
+  private logger = inject(LoggerService);
 
   /**
    * Get change of direction sessions trend (last 4 weeks)
@@ -61,7 +63,7 @@ export class TrendsService {
         return res.data || ({} as ChangeOfDirectionTrend);
       }),
       catchError(error => {
-        console.error('Error fetching change of direction trend:', error);
+        this.logger.error('Error fetching change of direction trend:', error);
         return throwError(() => error);
       })
     );
@@ -80,7 +82,7 @@ export class TrendsService {
         return res.data || ({} as SprintVolumeTrend);
       }),
       catchError(error => {
-        console.error('Error fetching sprint volume trend:', error);
+        this.logger.error('Error fetching sprint volume trend:', error);
         return throwError(() => error);
       })
     );
@@ -99,7 +101,7 @@ export class TrendsService {
         return res.data || ({} as GamePerformanceTrend);
       }),
       catchError(error => {
-        console.error('Error fetching game performance trend:', error);
+        this.logger.error('Error fetching game performance trend:', error);
         return throwError(() => error);
       })
     );

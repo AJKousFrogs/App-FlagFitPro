@@ -4,6 +4,8 @@
  * 100% FREE - Uses browser Notification API
  */
 
+import { logger } from '../logger.js';
+
 // Access storageService from global window object
 const storageService = window.storageService;
 
@@ -24,7 +26,7 @@ class NotificationManager {
    */
   async init() {
     if (!this.isSupported) {
-      console.warn('[Notifications] Not supported in this browser');
+      logger.warn('[Notifications] Not supported in this browser');
       return false;
     }
 
@@ -35,12 +37,12 @@ class NotificationManager {
           scope: '/'
         });
 
-        console.log('[Notifications] Service Worker registered:', this.swRegistration);
+        logger.info('[Notifications] Service Worker registered:', this.swRegistration);
 
         // Check for updates
         this.swRegistration.addEventListener('updatefound', () => {
           const newWorker = this.swRegistration.installing;
-          console.log('[Notifications] Service Worker update found');
+          logger.info('[Notifications] Service Worker update found');
 
           newWorker.addEventListener('statechange', () => {
             if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
@@ -52,7 +54,7 @@ class NotificationManager {
 
         return true;
       } catch (error) {
-        console.error('[Notifications] Service Worker registration failed:', error);
+        logger.error('[Notifications] Service Worker registration failed:', error);
         return false;
       }
     }
@@ -77,15 +79,15 @@ class NotificationManager {
       this.permission = permission;
 
       if (permission === 'granted') {
-        console.log('[Notifications] Permission granted');
+        logger.info('[Notifications] Permission granted');
         this.scheduleDefaultReminders();
         return true;
       } else {
-        console.log('[Notifications] Permission denied');
+        logger.info('[Notifications] Permission denied');
         return false;
       }
     } catch (error) {
-      console.error('[Notifications] Permission request failed:', error);
+      logger.error('[Notifications] Permission request failed:', error);
       return false;
     }
   }
@@ -114,7 +116,7 @@ class NotificationManager {
           }
         );
       } catch (error) {
-        console.warn('[Notifications] Failed to create notification in backend:', error);
+        logger.warn('[Notifications] Failed to create notification in backend:', error);
         // Continue to show push notification even if backend creation fails
       }
     }
@@ -129,18 +131,18 @@ class NotificationManager {
           const typePrefs = prefsResponse.data[type];
           // Don't show push if muted or push disabled
           if (typePrefs && (typePrefs.muted || !typePrefs.pushEnabled)) {
-            console.log(`[Notifications] Push notification for ${type} is muted or disabled`);
+            logger.debug(`[Notifications] Push notification for ${type} is muted or disabled`);
             return null;
           }
         }
       } catch (error) {
-        console.warn('[Notifications] Failed to check preferences:', error);
+        logger.warn('[Notifications] Failed to check preferences:', error);
         // Continue to show notification if preference check fails
       }
     }
 
     if (!this.isSupported || this.permission !== 'granted') {
-      console.warn('[Notifications] Cannot show notification - permission not granted');
+      logger.warn('[Notifications] Cannot show notification - permission not granted');
       return null;
     }
 
@@ -164,7 +166,7 @@ class NotificationManager {
       // Fallback to basic notification
       return new Notification(title, finalOptions);
     } catch (error) {
-      console.error('[Notifications] Failed to show notification:', error);
+      logger.error('[Notifications] Failed to show notification:', error);
       return null;
     }
   }
@@ -186,7 +188,7 @@ class NotificationManager {
 
     const timeUntilReminder = scheduledTime - now;
 
-    console.log(`[Notifications] Wellness reminder scheduled for ${scheduledTime.toLocaleString()}`);
+    logger.info(`[Notifications] Wellness reminder scheduled for ${scheduledTime.toLocaleString()}`);
 
     setTimeout(() => {
       this.show('Time for your wellness check-in! 💪', {
@@ -293,7 +295,7 @@ class NotificationManager {
     const savedTime = storageService.get('wellnessReminderTime', '21:00', { usePrefix: false });
     this.scheduleWellnessReminder(savedTime);
 
-    console.log('[Notifications] Default reminders scheduled');
+    logger.info('[Notifications] Default reminders scheduled');
   }
 
   /**
@@ -303,7 +305,7 @@ class NotificationManager {
     // Clear from localStorage
     storageService.remove('wellnessReminderTime', { usePrefix: false });
 
-    console.log('[Notifications] All reminders cancelled');
+    logger.info('[Notifications] All reminders cancelled');
   }
 
   /**
@@ -362,4 +364,4 @@ if (typeof module !== 'undefined' && module.exports) {
 // Make available globally
 window.notificationManager = notificationManager;
 
-console.log('[Notifications] Notification Manager loaded');
+logger.info('[Notifications] Notification Manager loaded');

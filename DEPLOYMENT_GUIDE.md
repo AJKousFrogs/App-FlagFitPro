@@ -25,7 +25,9 @@ SUPABASE_SERVICE_KEY=sb_secret_ZbZdfro3oCkX1wAiyYg__g_SUrhZI1R
 JWT_SECRET=flagfit-pro-jwt-secret-key-2025-production
 
 # Database (REQUIRED)
-DATABASE_URL=postgresql://neondb_owner:npg_SGzisOP7xC5I@ep-lingering-firefly-abgqjibg-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_KEY=your-service-key
+SUPABASE_ANON_KEY=your-anon-key
 
 # Optional: Third-party APIs
 VITE_YOUTUBE_API_KEY=your_youtube_api_key_here
@@ -113,7 +115,7 @@ After deployment, test these critical features:
 
 **Solution:**
 1. Verify `DATABASE_URL` is set in Netlify
-2. Check Neon database is active
+2. Check Supabase project is active
 3. Test connection from Netlify Functions logs
 
 ### Issue: "CORS errors"

@@ -1,5 +1,10 @@
--- Create missing database tables for FlagFit Pro
+-- ============================================================================
+-- Create Missing Database Tables for FlagFit Pro
+-- ============================================================================
 -- This script creates the tables that are referenced in the API routes
+-- Includes RLS policies for security
+-- Run this script in your Neon DB / Supabase SQL Editor
+-- ============================================================================
 
 -- Team Chemistry Table
 CREATE TABLE IF NOT EXISTS team_chemistry (
@@ -268,6 +273,187 @@ INSERT INTO notifications (user_id, notification_type, message, priority) VALUES
 ('1', 'weather', 'Weather alert: Tomorrow''s practice moved to 6PM', 'medium'),
 ('1', 'tournament', 'European Championship bracket updated', 'low')
 ON CONFLICT DO NOTHING;
+
+-- ============================================================================
+-- Enable Row Level Security (RLS) on all tables
+-- ============================================================================
+
+ALTER TABLE team_chemistry ENABLE ROW LEVEL SECURITY;
+ALTER TABLE training_sessions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE performance_metrics ENABLE ROW LEVEL SECURITY;
+ALTER TABLE olympic_qualification ENABLE ROW LEVEL SECURITY;
+ALTER TABLE performance_benchmarks ENABLE ROW LEVEL SECURITY;
+ALTER TABLE sponsor_rewards ENABLE ROW LEVEL SECURITY;
+ALTER TABLE sponsor_products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE wearables_data ENABLE ROW LEVEL SECURITY;
+ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
+ALTER TABLE daily_quotes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE training_analytics ENABLE ROW LEVEL SECURITY;
+ALTER TABLE team_chemistry_metrics ENABLE ROW LEVEL SECURITY;
+ALTER TABLE team_members ENABLE ROW LEVEL SECURITY;
+ALTER TABLE flag_football_positions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE player_position_history ENABLE ROW LEVEL SECURITY;
+ALTER TABLE position_specific_metrics ENABLE ROW LEVEL SECURITY;
+ALTER TABLE player_game_status ENABLE ROW LEVEL SECURITY;
+ALTER TABLE analytics_events ENABLE ROW LEVEL SECURITY;
+
+-- ============================================================================
+-- RLS Policies for tables with VARCHAR(255) user_id columns
+-- ============================================================================
+-- Note: These tables use VARCHAR(255) for user_id, so we cast auth.uid() to text
+-- Optimized: auth.uid() wrapped in (SELECT ...) for better performance
+
+-- Team Chemistry Policies
+DROP POLICY IF EXISTS "Users can view own team chemistry" ON team_chemistry;
+DROP POLICY IF EXISTS "Users can update own team chemistry" ON team_chemistry;
+
+CREATE POLICY "Users can view own team chemistry"
+ON team_chemistry FOR SELECT
+TO authenticated
+USING (user_id = (SELECT auth.uid())::text);
+
+CREATE POLICY "Users can update own team chemistry"
+ON team_chemistry FOR UPDATE
+TO authenticated
+USING (user_id = (SELECT auth.uid())::text)
+WITH CHECK (user_id = (SELECT auth.uid())::text);
+
+-- Performance Metrics Policies (already handled in apply-rls-policies-missing-tables.sql)
+-- Skipping to avoid duplication
+
+-- Olympic Qualification Policies
+DROP POLICY IF EXISTS "Users can view own qualification" ON olympic_qualification;
+DROP POLICY IF EXISTS "Users can update own qualification" ON olympic_qualification;
+
+CREATE POLICY "Users can view own qualification"
+ON olympic_qualification FOR SELECT
+TO authenticated
+USING (user_id = (SELECT auth.uid())::text);
+
+CREATE POLICY "Users can update own qualification"
+ON olympic_qualification FOR UPDATE
+TO authenticated
+USING (user_id = (SELECT auth.uid())::text)
+WITH CHECK (user_id = (SELECT auth.uid())::text);
+
+-- Performance Benchmarks Policies
+DROP POLICY IF EXISTS "Users can view own benchmarks" ON performance_benchmarks;
+DROP POLICY IF EXISTS "Users can create own benchmarks" ON performance_benchmarks;
+DROP POLICY IF EXISTS "Users can update own benchmarks" ON performance_benchmarks;
+
+CREATE POLICY "Users can view own benchmarks"
+ON performance_benchmarks FOR SELECT
+TO authenticated
+USING (user_id = (SELECT auth.uid())::text);
+
+CREATE POLICY "Users can create own benchmarks"
+ON performance_benchmarks FOR INSERT
+TO authenticated
+WITH CHECK (user_id = (SELECT auth.uid())::text);
+
+CREATE POLICY "Users can update own benchmarks"
+ON performance_benchmarks FOR UPDATE
+TO authenticated
+USING (user_id = (SELECT auth.uid())::text)
+WITH CHECK (user_id = (SELECT auth.uid())::text);
+
+-- Sponsor Rewards Policies
+DROP POLICY IF EXISTS "Users can view own sponsor rewards" ON sponsor_rewards;
+DROP POLICY IF EXISTS "Users can update own sponsor rewards" ON sponsor_rewards;
+
+CREATE POLICY "Users can view own sponsor rewards"
+ON sponsor_rewards FOR SELECT
+TO authenticated
+USING (user_id = (SELECT auth.uid())::text);
+
+CREATE POLICY "Users can update own sponsor rewards"
+ON sponsor_rewards FOR UPDATE
+TO authenticated
+USING (user_id = (SELECT auth.uid())::text)
+WITH CHECK (user_id = (SELECT auth.uid())::text);
+
+-- Sponsor Products Policies (public read)
+DROP POLICY IF EXISTS "Anyone can view sponsor products" ON sponsor_products;
+
+CREATE POLICY "Anyone can view sponsor products"
+ON sponsor_products FOR SELECT
+TO authenticated
+USING (true);
+
+-- Daily Quotes Policies (public read)
+DROP POLICY IF EXISTS "Anyone can view daily quotes" ON daily_quotes;
+
+CREATE POLICY "Anyone can view daily quotes"
+ON daily_quotes FOR SELECT
+TO authenticated
+USING (is_active = true);
+
+-- Team Chemistry Metrics Policies
+DROP POLICY IF EXISTS "Users can view team chemistry metrics" ON team_chemistry_metrics;
+
+CREATE POLICY "Users can view team chemistry metrics"
+ON team_chemistry_metrics FOR SELECT
+TO authenticated
+USING (
+    team_id IN (
+        SELECT team_id::text FROM team_members
+        WHERE player_id = (SELECT auth.uid())::text
+    )
+);
+
+-- Team Members Policies
+DROP POLICY IF EXISTS "Users can view team members" ON team_members;
+
+CREATE POLICY "Users can view team members"
+ON team_members FOR SELECT
+TO authenticated
+USING (
+    team_id IN (
+        SELECT team_id FROM team_members
+        WHERE player_id = (SELECT auth.uid())::text
+    )
+    OR player_id = (SELECT auth.uid())::text
+);
+
+-- Flag Football Positions Policies (public read)
+DROP POLICY IF EXISTS "Anyone can view positions" ON flag_football_positions;
+
+CREATE POLICY "Anyone can view positions"
+ON flag_football_positions FOR SELECT
+TO authenticated
+USING (true);
+
+-- Player Position History Policies
+DROP POLICY IF EXISTS "Users can view own position history" ON player_position_history;
+
+CREATE POLICY "Users can view own position history"
+ON player_position_history FOR SELECT
+TO authenticated
+USING (player_id = (SELECT auth.uid())::text);
+
+-- Position Specific Metrics Policies
+DROP POLICY IF EXISTS "Users can view own position metrics" ON position_specific_metrics;
+
+CREATE POLICY "Users can view own position metrics"
+ON position_specific_metrics FOR SELECT
+TO authenticated
+USING (
+    position_id IN (
+        SELECT position_id FROM player_position_history
+        WHERE player_id = (SELECT auth.uid())::text
+    )
+);
+
+-- Player Game Status Policies
+DROP POLICY IF EXISTS "Users can view own game status" ON player_game_status;
+
+CREATE POLICY "Users can view own game status"
+ON player_game_status FOR SELECT
+TO authenticated
+USING (player_id = (SELECT auth.uid())::text);
+
+-- Analytics Events Policies (handled separately, but ensure RLS is enabled)
+-- Note: Specific policies should be created in analytics-specific migration files
 
 COMMIT;
 

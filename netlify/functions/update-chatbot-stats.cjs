@@ -2,12 +2,10 @@
 // Updates chatbot usage statistics and tracks preferred topics
 
 const { Pool } = require('pg');
-const { createClient } = require('@supabase/supabase-js');
+const { authenticateRequest } = require('./utils/auth-helper.cjs');
 
-// Initialize Supabase client for auth
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_ANON_KEY;
-const supabase = createClient(supabaseUrl, supabaseKey);
+// Use shared auth helper for consistency with other backend functions
+// This ensures consistent authentication patterns across all Netlify functions
 
 // Database connection
 const pool = new Pool({
@@ -15,25 +13,8 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false },
 });
 
-// Helper function to get user from auth token
-async function getUserFromToken(authHeader) {
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return null;
-  }
-
-  const token = authHeader.replace('Bearer ', '');
-  
-  try {
-    const { data: { user }, error } = await supabase.auth.getUser(token);
-    if (error || !user) {
-      return null;
-    }
-    return user;
-  } catch (error) {
-    console.error('Error verifying token:', error);
-    return null;
-  }
-}
+// Authentication is handled by authenticateRequest from auth-helper.cjs
+// This ensures consistent auth patterns across all backend functions
 
 // Helper function to create success response
 function createSuccessResponse(data) {
@@ -80,15 +61,17 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    // Get user from auth token
-    const authHeader = event.headers.authorization || event.headers.Authorization;
-    const user = await getUserFromToken(authHeader);
-
-    if (!user) {
-      return createErrorResponse('Unauthorized - Invalid or missing token', 401);
+    // Authenticate request using shared auth helper
+    const authResult = await authenticateRequest(event);
+    
+    if (!authResult.success || !authResult.user) {
+      return createErrorResponse(
+        authResult.error?.message || 'Unauthorized - Invalid or missing token',
+        401
+      );
     }
 
-    const userId = user.id;
+    const userId = authResult.user.id;
 
     // Parse request body
     let bodyData = {};

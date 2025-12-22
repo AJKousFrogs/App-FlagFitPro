@@ -24,10 +24,10 @@
     <link rel="stylesheet" href="./src/css/oauth.css" />
 
     <!-- Supabase Configuration (Centralized) -->
-    <script src="./src/js/config/supabase-config.js"></script>
+    <script src="./src/js/config/supabase-config.js" defer></script>
     
     <!-- Supabase JS SDK from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0" defer></script>
 
     <!-- Lucide Icons - Modern icon library similar to Radix UI -->
     <script
@@ -57,12 +57,12 @@
       <div
         class="error-message u-bg-error u-padding-16 u-margin-bottom-20 u-text-body-sm u-text-error u-radius-md"
         id="errorMessage"
-        style="display: none; border: 1px solid var(--color-status-error)"
+        class="u-display-none border-error"
       ></div>
       <div
         class="success-message u-bg-success u-padding-16 u-margin-bottom-20 u-text-body-sm u-text-success u-radius-md"
         id="successMessage"
-        style="display: none; border: 1px solid var(--color-status-success)"
+        class="u-display-none border-success"
       ></div>
 
       <form id="registerForm">
@@ -83,7 +83,7 @@
             id="name-error"
             class="form-error"
             role="alert"
-            style="display: none"
+            class="u-display-none"
           ></div>
           <small id="name-success" class="form-success" style="display: none"
             >Valid name</small
@@ -107,7 +107,7 @@
             id="email-error"
             class="form-error"
             role="alert"
-            style="display: none"
+            class="u-display-none"
           ></div>
           <small id="email-success" class="form-success" style="display: none"
             >Valid email</small
@@ -131,12 +131,12 @@
             id="password-error"
             class="form-error"
             role="alert"
-            style="display: none"
+            class="u-display-none"
           ></div>
           <small
             id="password-success"
             class="form-success"
-            style="display: none"
+            class="u-display-none"
             >Password is valid</small
           >
           <div
@@ -168,12 +168,12 @@
             id="confirmPassword-error"
             class="form-error"
             role="alert"
-            style="display: none"
+            class="u-display-none"
           ></div>
           <small
             id="confirmPassword-success"
             class="form-success"
-            style="display: none"
+            class="u-display-none"
             >Passwords match</small
           >
         </div>
@@ -296,6 +296,28 @@
           // Validate all form inputs
           if (!validateRegisterForm(name, email, password, confirmPassword)) {
             return;
+          }
+
+          // Check password against leaked password database
+          try {
+            const { checkPasswordLeakedAuto } = await import('./src/js/utils/password-leak-check.js');
+            const submitButton = this.querySelector('button[type="submit"]');
+            const originalText = submitButton.innerHTML;
+            submitButton.innerHTML =
+              '<span class="spinner-mini" style="display: inline-block; margin-right: 8px;"></span> Checking password...';
+            submitButton.disabled = true;
+
+            const leakCheck = await checkPasswordLeakedAuto(password);
+            
+            if (leakCheck.leaked) {
+              showError("errorMessage", leakCheck.message || "This password has been found in data breaches. Please choose a different password.");
+              submitButton.innerHTML = originalText;
+              submitButton.disabled = false;
+              return;
+            }
+          } catch (leakCheckError) {
+            // Fail open - if leak check fails, continue with registration
+            console.warn("Password leak check failed, continuing with registration:", leakCheckError);
           }
 
           // Show loading state

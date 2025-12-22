@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from "@angular/common/http";
 import { Observable, throwError } from "rxjs";
 import { catchError, map } from "rxjs/operators";
 import { environment } from "../../../environments/environment";
+import { LoggerService } from "./logger.service";
 
 export interface ApiResponse<T = any> {
   success: boolean;
@@ -49,8 +50,14 @@ export class ApiService {
   }
 
   private normalizeEndpoint(endpoint: string): string {
-    if (endpoint.startsWith("/api/") && this.baseUrl.endsWith("/api")) {
-      return endpoint.replace(/^\/api/, "");
+    // If baseUrl is /.netlify/functions, keep /api/ prefix (redirects handle it)
+    // If baseUrl ends with /api, remove /api/ prefix
+    if (endpoint.startsWith("/api/")) {
+      if (this.baseUrl.endsWith("/api")) {
+        return endpoint.replace(/^\/api/, "");
+      }
+      // For Netlify functions, keep the /api/ prefix - redirects will handle routing
+      return endpoint;
     }
     return endpoint;
   }
@@ -118,7 +125,7 @@ export class ApiService {
 
     // Fallback to mock API in development
     if (this.baseUrl.includes("localhost") || this.baseUrl === "mock://api") {
-      console.debug("API server not available, using mock data");
+      this.logger.debug("API server not available, using mock data");
     }
 
     return throwError(() => new Error(errorMessage));
@@ -126,14 +133,14 @@ export class ApiService {
 }
 
 // API Endpoints Configuration
+// Note: Auth login/register/logout use Supabase directly via SupabaseService
+// Only auth-me endpoint uses backend API for token verification
 export const API_ENDPOINTS = {
   auth: {
-    login: "/auth-login",
-    register: "/auth-register",
-    logout: "/api/auth/logout",
-    refresh: "/api/auth/refresh",
-    me: "/auth-me",
-    csrf: "/api/auth/csrf",
+    me: "/auth-me", // ✅ Exists - used for token verification
+    // login/register: Use SupabaseService.signIn()/signUp() directly
+    // logout: Use SupabaseService.signOut() directly
+    // refresh/csrf: Not implemented - using Supabase session management
   },
   dashboard: {
     overview: "/api/dashboard/overview",

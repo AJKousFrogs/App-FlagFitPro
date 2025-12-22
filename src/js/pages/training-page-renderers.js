@@ -4,6 +4,7 @@
  */
 
 import { workoutService } from "../services/workoutService.js";
+import { setSafeContent } from "../utils/shared.js";
 
 /**
  * Render user header with name
@@ -30,7 +31,14 @@ export function renderWeeklyProgress(stats) {
   if (weeklyProgressValue && weeklyProgressValue.textContent.includes("/")) {
     const currentProgress = Math.min(stats.sessionsCompleted, 7);
     const progressPercent = Math.round((currentProgress / 7) * 100);
-    weeklyProgressValue.innerHTML = `${currentProgress}<span class="u-text-body-lg u-text-secondary">/7</span>`;
+    // Use DOM methods instead of innerHTML
+    weeklyProgressValue.textContent = "";
+    const progressText = document.createTextNode(`${currentProgress}`);
+    const span = document.createElement("span");
+    span.className = "u-text-body-lg u-text-secondary";
+    span.textContent = "/7";
+    weeklyProgressValue.appendChild(progressText);
+    weeklyProgressValue.appendChild(span);
 
     // Update progress bar
     const statCard = weeklyProgressValue.closest(".stat-card");
@@ -83,7 +91,8 @@ function renderDayCard(day, scheduleSettings) {
   const dateFormatted = date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
   const statusLabel = isCompleted ? "Completed" : workoutType ? "Scheduled" : "No workout scheduled";
   
-  dayCard.innerHTML = `
+  // Build day card HTML (data is from trusted sources, but we sanitize for safety)
+  const dayCardHtml = `
         <div class="day-header">
             <div>
                 <div class="day-name u-font-weight-600 u-text-primary">${dayName}</div>
@@ -144,6 +153,23 @@ function renderDayCard(day, scheduleSettings) {
         }
     `;
 
+  // Use setSafeContent to sanitize HTML before insertion
+  setSafeContent(dayCard, dayCardHtml, true, true);
+  
+  // Replace onclick attributes with addEventListener
+  const startBtn = dayCard.querySelector('.day-action-btn');
+  if (startBtn && workoutType && !isCompleted) {
+    const originalOnclick = startBtn.getAttribute('onclick');
+    startBtn.removeAttribute('onclick');
+    if (originalOnclick && originalOnclick.includes('startDayWorkout')) {
+      startBtn.addEventListener('click', () => {
+        if (typeof startDayWorkout === 'function') {
+          startDayWorkout(workoutType, date.toISOString());
+        }
+      });
+    }
+  }
+
   return dayCard;
 }
 
@@ -158,7 +184,8 @@ export function renderWeeklySchedule(
   const scheduleGrid = document.getElementById("weekly-schedule-grid");
   if (!scheduleGrid) {return;}
 
-  scheduleGrid.innerHTML = "";
+  // Clear schedule grid using replaceChildren for consistency (faster than innerHTML = "")
+  scheduleGrid.replaceChildren();
 
   weeklySchedule.forEach((day) => {
     const dayCard = renderDayCard(day, scheduleSettings);

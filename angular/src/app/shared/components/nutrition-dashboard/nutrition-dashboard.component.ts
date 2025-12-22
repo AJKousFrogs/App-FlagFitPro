@@ -17,6 +17,7 @@ import { DataViewModule } from 'primeng/dataview';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { NutritionService, NutritionGoal } from '../../../core/services/nutrition.service';
 import { firstValueFrom } from 'rxjs';
+import { LoggerService } from '../../../core/services/logger.service';
 
 @Component({
   selector: 'app-nutrition-dashboard',
@@ -471,6 +472,7 @@ import { firstValueFrom } from 'rxjs';
 })
 export class NutritionDashboardComponent {
   private nutritionService = inject(NutritionService);
+  private logger = inject(LoggerService);
 
   selectedFood: any = null;
   foodSuggestions = signal<any[]>([]);
@@ -595,7 +597,7 @@ export class NutritionDashboardComponent {
 
   executeInsightAction(insight: any) {
     // Handle insight actions (e.g., add recommended food, adjust meal timing)
-    console.log('Executing insight action:', insight);
+    this.logger.debug('Executing insight action:', insight);
   }
 }
 

@@ -9,6 +9,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { AcwrService } from './acwr.service';
 import { ReadinessService } from './readiness.service';
 import { ApiService } from './api.service';
+import { LoggerService } from './logger.service';
 
 export type TrainingGoal = 'speed' | 'change-of-direction' | 'agility' | 'route-running' | 'defense' | 'power' | 'endurance';
 export type SessionType = 'speed' | 'agility' | 'strength' | 'technique' | 'conditioning' | 'recovery' | 'game';
@@ -53,6 +54,7 @@ export class TrainingPlanService {
   private acwrService = inject(AcwrService);
   private readinessService = inject(ReadinessService);
   private apiService = inject(ApiService);
+  private logger = inject(LoggerService);
 
   readonly currentPlan = signal<WeeklyTrainingPlan | null>(null);
   readonly loading = signal(false);
@@ -416,7 +418,7 @@ export class TrainingPlanService {
       
       return (response.data || []).map(f => new Date(f.game_start));
     } catch (error) {
-      console.error('Error fetching fixtures:', error);
+      this.logger.error('Error fetching fixtures:', error);
       return [];
     }
   }
@@ -452,7 +454,7 @@ export class TrainingPlanService {
       this.loading.set(false);
       return false;
     } catch (error) {
-      console.error('Error saving training plan:', error);
+      this.logger.error('Error saving training plan:', error);
       this.loading.set(false);
       return false;
     }
@@ -485,7 +487,7 @@ export class TrainingPlanService {
       this.loading.set(false);
       return null;
     } catch (error) {
-      console.error('Error loading training plan:', error);
+      this.logger.error('Error loading training plan:', error);
       this.loading.set(false);
       return null;
     }
@@ -503,7 +505,7 @@ export class TrainingPlanService {
 
       return response.data || [];
     } catch (error) {
-      console.error('Error fetching plan history:', error);
+      this.logger.error('Error fetching plan history:', error);
       return [];
     }
   }
@@ -526,7 +528,7 @@ export class TrainingPlanService {
 
       return response.success !== false;
     } catch (error) {
-      console.error('Error deleting training plan:', error);
+      this.logger.error('Error deleting training plan:', error);
       return false;
     }
   }
@@ -551,7 +553,7 @@ export class TrainingPlanService {
 
     // If save failed, still return the plan (it's in memory)
     // but log the error
-    console.warn('Failed to save training plan, but plan generated successfully');
+    this.logger.warn('Failed to save training plan, but plan generated successfully');
     return plan;
   }
 }

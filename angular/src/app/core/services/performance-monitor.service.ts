@@ -1,5 +1,6 @@
 import { Injectable, inject, signal, computed, effect } from "@angular/core";
 import { MessageService } from "primeng/api";
+import { LoggerService } from "./logger.service";
 
 export interface PerformanceMetric {
   label: string;
@@ -17,6 +18,7 @@ export interface PerformanceMetric {
 })
 export class PerformanceMonitorService {
   private messageService = inject(MessageService);
+  private logger = inject(LoggerService);
 
   metrics = signal<PerformanceMetric[]>([]);
   private performanceObserver?: PerformanceObserver;
@@ -60,7 +62,7 @@ export class PerformanceMonitorService {
         });
       } catch (e) {
         // Fallback for browsers that don't support all entry types
-        console.debug("Some performance entry types not supported");
+        this.logger.debug("Some performance entry types not supported");
       }
 
       // Try to observe LCP and CLS separately if supported
@@ -72,7 +74,7 @@ export class PerformanceMonitorService {
         });
         lcpObserver.observe({ entryTypes: ["largest-contentful-paint"] });
       } catch (e) {
-        console.debug("LCP observation not supported");
+        this.logger.debug("LCP observation not supported");
       }
 
       try {
@@ -83,10 +85,10 @@ export class PerformanceMonitorService {
         });
         clsObserver.observe({ entryTypes: ["layout-shift"] });
       } catch (e) {
-        console.debug("CLS observation not supported");
+        this.logger.debug("CLS observation not supported");
       }
     } catch (error) {
-      console.warn("PerformanceObserver not fully supported", error);
+      this.logger.warn("PerformanceObserver not fully supported", error);
     }
 
     // Regular metrics collection
@@ -272,7 +274,7 @@ export class PerformanceMonitorService {
   private clearUnusedChartInstances(): void {
     // This would clear unused chart instances
     // Implementation depends on chart library being used
-    console.log("Clearing unused chart instances");
+    this.logger.debug("Clearing unused chart instances");
   }
 
   private prefetchCriticalResources(): void {
@@ -311,7 +313,7 @@ export class PerformanceMonitorService {
       url: window.location.href,
     };
 
-    console.log("Performance Issue Report:", issueReport);
+    this.logger.info("Performance Issue Report:", issueReport);
     // In a real application, this would send the report to a backend service
     this.showToast(
       "info",

@@ -1,6 +1,16 @@
 # 🏗️ Flag Football App - Logical Architecture
 
-_Comprehensive System Design and Dependencies_
+**Version**: 2.0  
+**Last Updated**: December 2024  
+**Status**: ✅ Production Ready
+
+_Comprehensive System Design and Dependencies - Updated for Angular 21 + PrimeNG 21 + Supabase_
+
+---
+
+## Overview
+
+This document provides a complete overview of the Flag Football Training App's logical architecture, including system design, dependencies, open-source API endpoints, data flow, security architecture, and deployment architecture.
 
 ## 📋 Table of Contents
 
@@ -34,12 +44,13 @@ A comprehensive flag football management platform that prioritizes **player safe
 ┌─────────────────────────────────────────────┐
 │              PRESENTATION LAYER             │
 ├─────────────────────────────────────────────┤
-│  🖥️  React Frontend Application            │
+│  🖥️  Angular 21 Frontend Application      │
 │  ├── 📱 Mobile-Responsive Components       │
-│  ├── 🎨 Tailwind CSS + Radix UI           │
-│  ├── 🔄 State Management (Zustand)         │
-│  ├── 🧭 Routing (React Router)             │
-│  └── 📊 Data Visualization (Recharts)      │
+│  ├── 🎨 PrimeNG 21 + SCSS Design Tokens   │
+│  ├── 🔄 State Management (Angular Signals) │
+│  ├── 🧭 Routing (Angular Router)          │
+│  ├── ⚡ Zoneless Change Detection          │
+│  └── 📊 Data Visualization (Chart.js)     │
 ├─────────────────────────────────────────────┤
 │  🔔 Real-time Notifications                │
 │  ├── 📲 Push Notifications (Web API)       │
@@ -95,7 +106,7 @@ A comprehensive flag football management platform that prioritizes **player safe
 ┌─────────────────────────────────────────────┐
 │                DATA LAYER                   │
 ├─────────────────────────────────────────────┤
-│  🗄️ Primary Database (Neon PostgreSQL)     │
+│  🗄️ Primary Database (Supabase PostgreSQL) │
 │  ├── 👤 User Profiles & Authentication     │
 │  ├── 🏈 Training Data & Performance        │
 │  ├── 🏥 Medical & Emergency Information    │
@@ -128,20 +139,23 @@ A comprehensive flag football management platform that prioritizes **player safe
 ```json
 {
   "primary": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-router-dom": "^6.22.3"
+    "@angular/core": "^21.0.6",
+    "@angular/common": "^21.0.6",
+    "@angular/router": "^21.0.6",
+    "@angular/platform-browser": "^21.0.6"
   },
   "ui_framework": {
-    "@radix-ui/react-*": "^1.x.x",
-    "tailwindcss": "^3.4.17",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "tailwind-merge": "^3.3.1"
+    "primeng": "^21.0.2",
+    "primeicons": "^7.0.0",
+    "@angular/material": "^21.0.6",
+    "@angular/cdk": "^21.0.6"
   },
   "visualization": {
-    "recharts": "^3.1.0",
-    "lucide-react": "^0.344.0"
+    "chart.js": "^4.5.1"
+  },
+  "styling": {
+    "scss": "Native Angular SCSS",
+    "design_tokens": "CSS Custom Properties"
   }
 }
 ```
@@ -151,16 +165,19 @@ A comprehensive flag football management platform that prioritizes **player safe
 ```json
 {
   "state_management": {
-    "zustand": "^5.0.6",
-    "@tanstack/react-query": "^5.83.0"
+    "angular_signals": "Native Angular 21 Signals",
+    "rxjs": "~7.8.2",
+    "computed": "Angular computed() for derived state",
+    "effect": "Angular effect() for side effects"
   },
   "forms": {
-    "react-hook-form": "^7.60.0",
-    "@hookform/resolvers": "^5.1.1"
+    "@angular/forms": "^21.0.6",
+    "reactive_forms": "Angular Reactive Forms",
+    "signal_forms": "Angular 21 signal-based forms"
   },
   "validation": {
-    "zod": "^3.22.4",
-    "yup": "^1.4.0"
+    "angular_validators": "Built-in Angular validators",
+    "custom_validators": "Type-safe custom validators"
   }
 }
 ```
@@ -170,17 +187,23 @@ A comprehensive flag football management platform that prioritizes **player safe
 ```json
 {
   "database": {
-    "@neondatabase/serverless": "^1.0.1",
-    "drizzle-orm": "^0.44.3",
-    "drizzle-kit": "^0.31.4"
+    "@supabase/supabase-js": "^2.88.0",
+    "postgresql": "Supabase PostgreSQL (managed)",
+    "realtime": "Supabase Realtime subscriptions"
   },
   "auth": {
-    "jose": "^5.2.0",
-    "jsonwebtoken": "^9.0.0"
+    "supabase_auth": "Built-in Supabase Auth",
+    "jsonwebtoken": "^9.0.2",
+    "oauth": "Supabase OAuth providers"
+  },
+  "backend": {
+    "express": "^5.2.1",
+    "netlify_functions": "Serverless functions",
+    "nodejs": "Runtime environment"
   },
   "file_handling": {
-    "uploadcare": "^6.14.1",
-    "cloudinary": "^2.0.1"
+    "supabase_storage": "Supabase Storage",
+    "firebase_storage": "^11.10.0 (optional)"
   }
 }
 ```
@@ -190,16 +213,20 @@ A comprehensive flag football management platform that prioritizes **player safe
 ```json
 {
   "realtime": {
-    "socket.io-client": "^4.7.4",
-    "pusher-js": "^8.4.0-rc2"
+    "supabase_realtime": "Supabase Realtime channels",
+    "websockets": "Native WebSocket support"
   },
   "notifications": {
     "web-push": "^3.6.7",
-    "node-pushnotifications": "^3.0.2"
+    "supabase_notifications": "Supabase push notifications"
   },
   "communication": {
-    "@emailjs/browser": "^4.3.3",
-    "twilio": "^4.20.1"
+    "nodemailer": "^7.0.11",
+    "emailjs": "EmailJS integration (optional)"
+  },
+  "firebase": {
+    "@angular/fire": "^21.0.0-rc.0",
+    "firebase": "^11.10.0"
   }
 }
 ```
@@ -209,18 +236,17 @@ A comprehensive flag football management platform that prioritizes **player safe
 ```json
 {
   "media": {
-    "react-webcam": "^7.2.0",
-    "video.js": "^8.6.1",
-    "fabric": "^5.3.0"
+    "@angular/youtube-player": "^21.0.0",
+    "video_js": "HTML5 Video support",
+    "webcam": "WebRTC API integration"
   },
   "analytics": {
-    "@sentry/react": "^9.38.0",
-    "mixpanel-browser": "^2.47.0",
-    "posthog-js": "^1.103.0"
+    "@angular/fire/analytics": "Firebase Analytics",
+    "custom_analytics": "Custom tracking service"
   },
   "performance": {
-    "web-vitals": "^3.5.2",
-    "@vercel/analytics": "^1.1.1"
+    "angular_devtools": "Angular DevTools",
+    "performance_monitor": "Custom performance monitoring"
   }
 }
 ```
@@ -230,20 +256,21 @@ A comprehensive flag football management platform that prioritizes **player safe
 ```json
 {
   "testing": {
-    "vitest": "^3.2.4",
-    "@testing-library/react": "^16.3.0",
-    "@testing-library/jest-dom": "^6.6.3",
-    "msw": "^2.1.2"
+    "vitest": "^4.0.15",
+    "@angular/core/testing": "Angular Testing Utilities",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3"
   },
   "development": {
-    "vite": "7.0.5",
-    "@vitejs/plugin-react": "^4.0.0",
-    "eslint": "^8.0.0",
-    "prettier": "^3.0.0"
+    "@angular/cli": "^21.0.4",
+    "@angular-devkit/build-angular": "^21.0.4",
+    "typescript": "~5.9.3",
+    "eslint": "^9.19.0",
+    "prettier": "^3.4.2"
   },
   "monitoring": {
-    "lighthouse": "^11.4.0",
-    "bundlemon": "^2.1.0"
+    "angular_devtools": "Built-in Angular DevTools",
+    "performance_monitoring": "Custom load monitoring"
   }
 }
 ```
@@ -515,21 +542,22 @@ interface SecurityLayers {
 
 ```yaml
 hosting:
-  primary: "Vercel" # Auto-scaling, global CDN
-  alternative: "Netlify" # Backup deployment option
+  primary: "Netlify" # Auto-scaling, global CDN, SSR support
+  alternative: "Other platforms" # Alternative deployment options
 
 database:
-  primary: "Neon PostgreSQL" # Serverless, auto-scaling
+  primary: "Supabase PostgreSQL" # Managed PostgreSQL with RLS
   backup: "Automated daily backups with point-in-time recovery"
+  realtime: "Supabase Realtime subscriptions"
 
 cdn:
-  assets: "Vercel Edge Network"
-  media: "Cloudinary CDN"
+  assets: "Netlify CDN"
+  media: "Supabase Storage CDN"
 
 monitoring:
-  errors: "Sentry"
-  performance: "Vercel Analytics"
-  uptime: "Built-in health checks"
+  errors: "Sentry (optional)"
+  performance: "Angular DevTools + Custom monitoring"
+  uptime: "Netlify health checks"
 ```
 
 ### 2. **Environment Configuration**
@@ -537,20 +565,23 @@ monitoring:
 ```typescript
 interface Environments {
   development: {
-    database: "local_neon_branch";
+    database: "local_supabase_instance";
     apis: "sandbox_endpoints";
     features: "all_enabled";
+    angular: "development_mode";
   };
   staging: {
-    database: "staging_neon_branch";
+    database: "staging_supabase_project";
     apis: "production_endpoints";
     features: "feature_flags_controlled";
+    angular: "production_build";
   };
   production: {
-    database: "production_neon_main";
+    database: "production_supabase_project";
     apis: "production_endpoints";
     features: "stable_only";
     monitoring: "full_observability";
+    angular: "production_optimized";
   };
 }
 ```
@@ -567,7 +598,7 @@ interface Environments {
 
 ### 2. **Database Optimization**
 
-- **Connection pooling** with Neon
+- **Connection pooling** with Supabase
 - **Query optimization** with proper indexing
 - **Read replicas** for analytics queries
 - **Caching strategy** for frequently accessed data
@@ -594,6 +625,27 @@ interface Environments {
 - **IoT integration** for wearable devices
 - **AR/VR training** modules
 - **Blockchain** for achievement verification
+
+## 🔗 **Related Documentation**
+
+- [Backend Setup](BACKEND_SETUP.md) - Backend API setup guide
+- [Database Setup](DATABASE_SETUP.md) - Database configuration
+- [API Documentation](API_DOCUMENTATION.md) - Complete API reference
+- [Authentication Pattern](AUTHENTICATION_PATTERN.md) - Authentication architecture
+
+## 📝 **Changelog**
+
+- **v2.0 (2024-12)**: Updated to Angular 21 + PrimeNG 21 + Supabase
+  - Migrated to Angular 21
+  - Updated UI framework to PrimeNG 21
+  - Migrated database to Supabase PostgreSQL
+  - Updated state management to Angular Signals
+  - Implemented zoneless change detection
+  - Updated all dependencies to latest versions
+- **v1.0 (2024-12)**: Initial architecture documentation
+  - Comprehensive system design documented
+  - Open-source API endpoints cataloged
+  - Security and deployment architecture defined
 
 ---
 

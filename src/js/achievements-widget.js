@@ -5,6 +5,34 @@
 
 (function() {
   'use strict';
+  
+  // Use logger from window if available, otherwise fallback to console
+  const logger = window.logger || {
+    debug: (...args) => console.log(...args),
+    info: (...args) => console.log(...args),
+    warn: (...args) => console.warn(...args),
+    error: (...args) => console.error(...args),
+  };
+  
+  // Helper function to safely set HTML content
+  function setSafeContent(element, content, isHTML, allowRichText) {
+    if (!element) return;
+    if (!isHTML) {
+      element.textContent = content;
+      return;
+    }
+    // Use temp container pattern for safe HTML insertion
+    const temp = document.createElement('div');
+    temp.textContent = content; // First escape everything
+    let sanitized = temp.innerHTML;
+    if (allowRichText) {
+      // Allow basic formatting tags
+      const allowedTags = ['b', 'i', 'em', 'strong', 'br', 'span', 'div', 'h2', 'h3', 'button', 'i'];
+      const tagPattern = new RegExp(`&lt;(/?)(${allowedTags.join('|')})([^&]*?)&gt;`, 'gi');
+      sanitized = sanitized.replace(tagPattern, '<$1$2$3>');
+    }
+    element.innerHTML = sanitized;
+  }
 
   /**
    * Create and render achievements widget
@@ -12,14 +40,14 @@
   function renderAchievementsWidget(containerId) {
     // Wait for achievements service to be available
     if (!window.achievementsService) {
-      console.log('[Achievements Widget] Waiting for achievements service...');
+      logger.debug('[Achievements Widget] Waiting for achievements service...');
       setTimeout(() => renderAchievementsWidget(containerId), 100);
       return;
     }
 
     const container = document.getElementById(containerId);
     if (!container) {
-      console.error(`[Achievements Widget] Container #${containerId} not found`);
+      logger.error(`[Achievements Widget] Container #${containerId} not found`);
       return;
     }
 
@@ -32,10 +60,11 @@
     // Create widget HTML
     const widget = document.createElement('div');
     widget.className = 'achievements-widget';
-    widget.innerHTML = `
+    // Build widget HTML (data is from trusted service, but we sanitize for safety)
+    const widgetHtml = `
       <div class="achievements-header">
         <div class="achievements-title">
-          <h3>🏆 Achievements</h3>
+          <h3><i data-lucide="trophy" style="width: 20px; height: 20px; display: inline-block; vertical-align: middle; margin-right: 8px;"></i>Achievements</h3>
           <span class="achievements-count">${unlockedCount}/${allAchievements.length}</span>
         </div>
         <div class="achievements-points">
@@ -62,14 +91,33 @@
       </div>
     `;
 
+    // Use setSafeContent to sanitize HTML before insertion
+    setSafeContent(widget, widgetHtml, true, true);
+
     // Add styles
     addAchievementsStyles();
 
-    // Clear and append
-    container.innerHTML = '';
+    // Clear and append using replaceChildren for consistency
+    container.replaceChildren();
     container.appendChild(widget);
+    
+    // Replace onclick with addEventListener
+    const viewAllBtn = widget.querySelector('.view-all-btn');
+    if (viewAllBtn) {
+      viewAllBtn.removeAttribute('onclick');
+      viewAllBtn.addEventListener('click', () => {
+        if (typeof showAllAchievements === 'function') {
+          showAllAchievements();
+        }
+      });
+    }
+    
+    // Initialize Lucide icons
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons(widget);
+    }
 
-    console.log('[Achievements Widget] Rendered successfully');
+    logger.info('[Achievements Widget] Rendered successfully');
   }
 
   /**
@@ -87,13 +135,16 @@
     const topAchievements = sorted.slice(0, 6);
 
     return topAchievements.map(achievement => `
-      <div class="achievement-badge ${achievement.unlocked ? 'unlocked' : 'locked'}"
+      <div class="achievement-badge ${achievement.unlocked ? 'unlocked' : 'locked'} rarity-${achievement.rarity || 'common'}"
            title="${achievement.description}">
-        <div class="achievement-icon">${achievement.icon}</div>
+        <div class="achievement-icon">
+          <i data-lucide="${achievement.icon}" style="width: 32px; height: 32px;"></i>
+        </div>
         <div class="achievement-name">${achievement.name}</div>
         <div class="achievement-points">${achievement.points} pts</div>
-        ${achievement.unlocked ? '<div class="achievement-check">✓</div>' : ''}
-        ${!achievement.unlocked ? '<div class="achievement-lock">🔒</div>' : ''}
+        ${achievement.rarity && achievement.rarity !== 'common' ? `<div class="achievement-rarity rarity-${achievement.rarity}">${achievement.rarity.toUpperCase()}</div>` : ''}
+        ${achievement.unlocked ? '<div class="achievement-check"><i data-lucide="check" style="width: 16px; height: 16px;"></i></div>' : ''}
+        ${!achievement.unlocked ? '<div class="achievement-lock"><i data-lucide="lock" style="width: 16px; height: 16px;"></i></div>' : ''}
       </div>
     `).join('');
   }
@@ -213,11 +264,71 @@
       }
 
       .achievement-badge.unlocked {
-        background: linear-gradient(135deg, var(--brand-primary-700, #089949) 0%, #10c96b 100%);
         color: white;
         border-color: var(--brand-primary-900, #036d35);
         transform: scale(1);
         animation: unlock-bounce 0.5s ease-out;
+      }
+
+      /* Rarity-based styling */
+      .achievement-badge.unlocked.rarity-common {
+        background: linear-gradient(135deg, #6b7280 0%, #9ca3af 100%);
+        border-color: #4b5563;
+      }
+
+      .achievement-badge.unlocked.rarity-rare {
+        background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+        border-color: #2563eb;
+      }
+
+      .achievement-badge.unlocked.rarity-epic {
+        background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
+        border-color: #7c3aed;
+      }
+
+      .achievement-badge.unlocked.rarity-legendary {
+        background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+        border-color: #d97706;
+        box-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
+        animation: legendary-glow 2s ease-in-out infinite;
+      }
+
+      @keyframes legendary-glow {
+        0%, 100% {
+          box-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
+        }
+        50% {
+          box-shadow: 0 0 30px rgba(245, 158, 11, 0.8);
+        }
+      }
+
+      .achievement-rarity {
+        position: absolute;
+        bottom: 4px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.6rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        opacity: 0.9;
+      }
+
+      .achievement-rarity.rarity-rare {
+        background: rgba(59, 130, 246, 0.3);
+        color: #dbeafe;
+      }
+
+      .achievement-rarity.rarity-epic {
+        background: rgba(139, 92, 246, 0.3);
+        color: #e9d5ff;
+      }
+
+      .achievement-rarity.rarity-legendary {
+        background: rgba(245, 158, 11, 0.3);
+        color: #fef3c7;
       }
 
       @keyframes unlock-bounce {
@@ -250,8 +361,43 @@
       }
 
       .achievement-icon {
-        font-size: 2.5rem;
         margin-bottom: var(--space-2, 8px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .achievement-icon i {
+        color: var(--text-primary, #1a1a1a);
+      }
+      
+      .achievement-badge.unlocked .achievement-icon i {
+        color: white;
+      }
+      
+      .achievement-badge.locked .achievement-icon i {
+        opacity: 0.5;
+        filter: grayscale(100%);
+      }
+      
+      .achievement-check {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .achievement-check i {
+        color: var(--brand-primary-700, #089949);
+      }
+      
+      .achievement-lock {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .achievement-lock i {
+        color: var(--text-secondary, #6b7280);
       }
 
       .achievement-name {
@@ -330,8 +476,9 @@
           grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
         }
 
-        .achievement-icon {
-          font-size: 2rem;
+        .achievement-icon i {
+          width: 24px;
+          height: 24px;
         }
 
         .achievement-name {
@@ -350,17 +497,18 @@
     if (!window.achievementsService) {return;}
 
     const service = window.achievementsService;
-    const categories = ['wellness', 'training', 'performance', 'social', 'special'];
+    const categories = ['wellness', 'training', 'performance', 'games', 'tournaments', 'qb', 'social', 'special'];
 
     // Create modal
     const modal = document.createElement('div');
     modal.className = 'achievements-modal';
-    modal.innerHTML = `
-      <div class="achievements-modal-overlay" onclick="this.parentElement.remove()"></div>
+    // Build modal HTML (data is from trusted service, but we sanitize for safety)
+    const modalHtml = `
+      <div class="achievements-modal-overlay"></div>
       <div class="achievements-modal-content">
         <div class="modal-header">
-          <h2>🏆 All Achievements</h2>
-          <button class="modal-close" onclick="this.closest('.achievements-modal').remove()">×</button>
+          <h2><i data-lucide="trophy" style="width: 24px; height: 24px; display: inline-block; vertical-align: middle; margin-right: 8px;"></i>All Achievements</h2>
+          <button class="modal-close">×</button>
         </div>
 
         <div class="modal-stats">
@@ -378,6 +526,34 @@
           </div>
         </div>
 
+        <div class="rarity-stats">
+          ${(() => {
+            const rarityStats = service.getRarityStats();
+            return `
+              <div class="rarity-stat-item rarity-common">
+                <span class="rarity-icon">⚪</span>
+                <span class="rarity-count">${rarityStats.common}</span>
+                <span class="rarity-label">Common</span>
+              </div>
+              <div class="rarity-stat-item rarity-rare">
+                <span class="rarity-icon">🔵</span>
+                <span class="rarity-count">${rarityStats.rare}</span>
+                <span class="rarity-label">Rare</span>
+              </div>
+              <div class="rarity-stat-item rarity-epic">
+                <span class="rarity-icon">🟣</span>
+                <span class="rarity-count">${rarityStats.epic}</span>
+                <span class="rarity-label">Epic</span>
+              </div>
+              <div class="rarity-stat-item rarity-legendary">
+                <span class="rarity-icon">🟡</span>
+                <span class="rarity-count">${rarityStats.legendary}</span>
+                <span class="rarity-label">Legendary</span>
+              </div>
+            `;
+          })()}
+        </div>
+
         ${categories.map(category => {
           const categoryAchievements = service.getAchievementsByCategory(category);
           if (categoryAchievements.length === 0) {return '';}
@@ -387,13 +563,16 @@
               <h3 class="category-title">${category.charAt(0).toUpperCase() + category.slice(1)}</h3>
               <div class="achievements-grid">
                 ${categoryAchievements.map(a => `
-                  <div class="achievement-badge ${a.unlocked ? 'unlocked' : 'locked'}">
-                    <div class="achievement-icon">${a.icon}</div>
+                  <div class="achievement-badge ${a.unlocked ? 'unlocked' : 'locked'} rarity-${a.rarity || 'common'}">
+                    <div class="achievement-icon">
+                      <i data-lucide="${a.icon}" style="width: 32px; height: 32px;"></i>
+                    </div>
                     <div class="achievement-name">${a.name}</div>
                     <div class="achievement-description">${a.description}</div>
                     <div class="achievement-points">${a.points} pts</div>
-                    ${a.unlocked ? '<div class="achievement-check">✓</div>' : ''}
-                    ${!a.unlocked ? '<div class="achievement-lock">🔒</div>' : ''}
+                    ${a.rarity && a.rarity !== 'common' ? `<div class="achievement-rarity rarity-${a.rarity}">${a.rarity.toUpperCase()}</div>` : ''}
+                    ${a.unlocked ? '<div class="achievement-check"><i data-lucide="check" style="width: 16px; height: 16px;"></i></div>' : ''}
+                    ${!a.unlocked ? '<div class="achievement-lock"><i data-lucide="lock" style="width: 16px; height: 16px;"></i></div>' : ''}
                   </div>
                 `).join('')}
               </div>
@@ -402,6 +581,20 @@
         }).join('')}
       </div>
     `;
+
+    // Use setSafeContent to sanitize HTML before insertion
+    setSafeContent(modal, modalHtml, true, true);
+    
+    // Replace onclick with addEventListener
+    const overlay = modal.querySelector('.achievements-modal-overlay');
+    const closeBtn = modal.querySelector('.modal-close');
+    
+    if (overlay) {
+      overlay.addEventListener('click', () => modal.remove());
+    }
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => modal.remove());
+    }
 
     // Add modal styles
     const modalStyles = document.createElement('style');
@@ -520,10 +713,65 @@
       .achievement-badge.unlocked .achievement-description {
         color: rgba(255, 255, 255, 0.85);
       }
+
+      .rarity-stats {
+        display: flex;
+        gap: var(--space-3, 12px);
+        margin-bottom: var(--space-6, 32px);
+        padding: var(--space-4, 16px);
+        background: var(--surface-secondary, #f3f4f6);
+        border-radius: 12px;
+        justify-content: space-around;
+      }
+
+      .rarity-stat-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .rarity-icon {
+        font-size: 1.5rem;
+      }
+
+      .rarity-count {
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+
+      .rarity-stat-item.rarity-common .rarity-count {
+        color: #6b7280;
+      }
+
+      .rarity-stat-item.rarity-rare .rarity-count {
+        color: #3b82f6;
+      }
+
+      .rarity-stat-item.rarity-epic .rarity-count {
+        color: #8b5cf6;
+      }
+
+      .rarity-stat-item.rarity-legendary .rarity-count {
+        color: #f59e0b;
+      }
+
+      .rarity-label {
+        font-size: 0.75rem;
+        color: var(--text-secondary, #6b7280);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 600;
+      }
     `;
 
     document.head.appendChild(modalStyles);
     document.body.appendChild(modal);
+    
+    // Initialize Lucide icons in modal
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons(modal);
+    }
   };
 
   // Auto-render widget if container exists
@@ -542,5 +790,5 @@
   // Export for manual rendering
   window.renderAchievementsWidget = renderAchievementsWidget;
 
-  console.log('[Achievements Widget] Widget script loaded');
+  logger.info('[Achievements Widget] Widget script loaded');
 })();

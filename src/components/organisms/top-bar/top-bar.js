@@ -6,12 +6,12 @@
 (function () {
   "use strict";
 
-  // Logger fallback - use window.logger if available, otherwise console
+  // Logger fallback - use window.logger if available, otherwise silent logger
   const logger = window.logger || {
-    error: (...args) => console.error(...args),
-    warn: (...args) => console.warn(...args),
-    info: (...args) => console.info(...args),
-    debug: (...args) => console.debug(...args),
+    error: () => {},
+    warn: () => {},
+    info: () => {},
+    debug: () => {},
   };
 
   // Global function stubs (can be overridden by other scripts)
@@ -489,7 +489,7 @@
         const count = await window.getNotificationCount();
         setBadge(count);
       } catch (error) {
-        console.warn("Failed to initialize badge:", error);
+        logger.warn("Failed to initialize badge:", error);
         setBadge(0);
       }
     };
@@ -692,52 +692,107 @@
    * Theme Toggle Implementation
    * Handles theme toggle interactions and syncs with theme-switcher.js
    */
+  // Store observer outside function to prevent redeclaration
+  if (typeof window.topBarThemeObserver === 'undefined') {
+    window.topBarThemeObserver = null;
+  }
+  
   function initThemeToggle() {
     const themeToggle = document.getElementById("header-theme-toggle");
+    const themeToggleButton = document.getElementById("header-theme-toggle-button");
+    
+    // Handle button version
+    if (themeToggleButton) {
+      // theme-switcher.js handles the toggle logic and event listeners
+      // This function just syncs the visual state when theme changes
+      const getCurrentTheme = () => {
+        return document.documentElement.getAttribute("data-theme") || 
+               localStorage.getItem("theme") ||
+               "light";
+      };
+      
+      const currentTheme = getCurrentTheme();
+      updateButtonVisualState(themeToggleButton, currentTheme);
+
+      // Disconnect existing observer if it exists
+      if (window.topBarThemeObserver) {
+        window.topBarThemeObserver.disconnect();
+      }
+
+      // Listen for theme changes from theme-switcher.js or other sources
+      window.topBarThemeObserver = new MutationObserver(() => {
+        const newTheme = getCurrentTheme();
+        updateButtonVisualState(themeToggleButton, newTheme);
+      });
+
+      window.topBarThemeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["data-theme"],
+      });
+
+      // Also listen for storage changes (in case theme changes in another tab)
+      window.addEventListener("storage", (e) => {
+        if (e.key === "theme") {
+          const newTheme = e.newValue || "light";
+          document.documentElement.setAttribute("data-theme", newTheme);
+          document.body.setAttribute("data-theme", newTheme);
+          updateButtonVisualState(themeToggleButton, newTheme);
+        }
+      });
+      
+      return;
+    }
+    
+    // Handle checkbox version
     if (!themeToggle) {return;}
 
+    // theme-switcher.js handles the toggle logic and event listeners
+    // This function just syncs the visual state when theme changes
+    
     // Initialize toggle state based on current theme
-    const currentTheme =
-      document.documentElement.getAttribute("data-theme") || "dark";
+    const getCurrentTheme = () => {
+      return document.documentElement.getAttribute("data-theme") || 
+             localStorage.getItem("theme") ||
+             "light";
+    };
+    
+    const currentTheme = getCurrentTheme();
     themeToggle.checked = currentTheme === "dark";
-
-    // Update toggle visual state
     updateToggleVisualState(currentTheme);
 
-    // Handle toggle change
-    themeToggle.addEventListener("change", (e) => {
-      const newTheme = e.target.checked ? "dark" : "light";
+    // Disconnect existing observer if it exists
+    if (window.topBarThemeObserver) {
+      window.topBarThemeObserver.disconnect();
+    }
 
-      // Use global theme switcher if available, otherwise fallback
-      if (window.themeSwitcher) {
-        window.themeSwitcher.switchTheme(newTheme);
-      } else {
-        // Fallback implementation
-        document.documentElement.setAttribute("data-theme", newTheme);
-        document.body.setAttribute("data-theme", newTheme);
-        localStorage.setItem("theme", newTheme);
+    // Listen for theme changes from theme-switcher.js or other sources
+    window.topBarThemeObserver = new MutationObserver(() => {
+      const newTheme = getCurrentTheme();
+      if (themeToggle.checked !== (newTheme === "dark")) {
+        themeToggle.checked = newTheme === "dark";
         updateToggleVisualState(newTheme);
       }
     });
 
-    // Listen for theme changes from other sources (e.g., settings page)
-    const observer = new MutationObserver(() => {
-      const currentTheme =
-        document.documentElement.getAttribute("data-theme") || "dark";
-      if (themeToggle.checked !== (currentTheme === "dark")) {
-        themeToggle.checked = currentTheme === "dark";
-        updateToggleVisualState(currentTheme);
-      }
-    });
-
-    observer.observe(document.documentElement, {
+    window.topBarThemeObserver.observe(document.documentElement, {
       attributes: true,
       attributeFilter: ["data-theme"],
+    });
+
+    // Also listen for storage changes (in case theme changes in another tab)
+    window.addEventListener("storage", (e) => {
+      if (e.key === "theme") {
+        const newTheme = e.newValue || "light";
+        document.documentElement.setAttribute("data-theme", newTheme);
+        document.body.setAttribute("data-theme", newTheme);
+        themeToggle.checked = newTheme === "dark";
+        updateToggleVisualState(newTheme);
+      }
     });
   }
 
   /**
-   * Update theme toggle visual state
+   * Update theme toggle visual state (for checkbox version)
    */
   function updateToggleVisualState(theme) {
     const toggleDot = document.getElementById("theme-toggle-dot");
@@ -755,5 +810,26 @@
         toggleText.textContent = "☀️ Light";
       }
     }
+  }
+
+  /**
+   * Update button visual state (for button version)
+   */
+  function updateButtonVisualState(button, theme) {
+    if (!button) return;
+    
+    // Update aria-label and title for accessibility
+    if (theme === "dark") {
+      button.setAttribute("aria-label", "Switch to light theme");
+      button.setAttribute("title", "Switch to light theme");
+    } else {
+      button.setAttribute("aria-label", "Switch to dark theme");
+      button.setAttribute("title", "Switch to dark theme");
+    }
+    
+    // CSS handles icon visibility via opacity transitions based on data-theme attribute
+    // Just ensure the button is visible
+    button.style.display = "";
+    button.style.visibility = "visible";
   }
 })();

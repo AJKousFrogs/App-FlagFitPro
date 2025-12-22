@@ -182,7 +182,9 @@ export async function withRetry(operation, options = {}) {
       logger.warn(`[Retry] Attempt ${attempt} failed, retrying in ${currentDelay}ms...`);
 
       // Wait before retrying
-      await new Promise(resolve => setTimeout(resolve, currentDelay));
+      await new Promise(resolve => {
+        setTimeout(resolve, currentDelay);
+      });
 
       // Increase delay for next attempt (exponential backoff)
       currentDelay *= backoff;
@@ -292,4 +294,4 @@ export default {
   setupGlobalErrorHandlers
 };
 
-console.log('[Error Handling] Standardized error handling utilities loaded');
+logger.info('[Error Handling] Standardized error handling utilities loaded');

@@ -13,6 +13,8 @@
 
 import { realtimeManager } from '../services/supabase-client.js';
 import { aiTrainingScheduler } from '../services/aiTrainingScheduler.js';
+import { setSafeContent } from '../utils/shared.js';
+import { logger } from '../../logger.js';
 
 class EnhancedTrainingSchedule {
   constructor() {
@@ -33,7 +35,7 @@ class EnhancedTrainingSchedule {
   async init(containerId, options = {}) {
     this.container = document.getElementById(containerId);
     if (!this.container) {
-      console.warn('[TrainingSchedule] Container not found:', containerId);
+      logger.warn('[TrainingSchedule] Container not found:', containerId);
       return;
     }
 
@@ -63,7 +65,7 @@ class EnhancedTrainingSchedule {
     // Setup event listeners
     this.setupEventListeners();
 
-    console.log('[TrainingSchedule] Enhanced training schedule initialized');
+    logger.info('[TrainingSchedule] Enhanced training schedule initialized');
   }
 
   /**
@@ -97,7 +99,7 @@ class EnhancedTrainingSchedule {
         this.notifyListeners();
       }
     } catch (error) {
-      console.warn('[TrainingSchedule] Failed to load schedule:', error);
+      logger.warn('[TrainingSchedule] Failed to load schedule:', error);
     } finally {
       this.isLoading = false;
     }
@@ -108,9 +110,14 @@ class EnhancedTrainingSchedule {
    */
   async setupRealtimeSubscription() {
     try {
+      // Wait for authManager to initialize if available
+      if (window.authManager && typeof window.authManager.waitForInit === 'function') {
+        await window.authManager.waitForInit();
+      }
+
       const userId = this.getCurrentUserId();
       if (!userId) {
-        console.warn('[TrainingSchedule] No user ID for real-time subscription');
+        logger.debug('[TrainingSchedule] No user ID for real-time subscription - user may not be authenticated');
         return;
       }
 
@@ -127,9 +134,9 @@ class EnhancedTrainingSchedule {
       );
 
       this.realtimeSubscription = subscription;
-      console.log('[TrainingSchedule] Real-time subscription active');
+      logger.info('[TrainingSchedule] Real-time subscription active');
     } catch (error) {
-      console.error('[TrainingSchedule] Failed to setup real-time subscription:', error);
+      logger.error('[TrainingSchedule] Failed to setup real-time subscription:', error);
     }
   }
 
@@ -142,7 +149,7 @@ class EnhancedTrainingSchedule {
 
     if (!session) return;
 
-    console.log('[TrainingSchedule] Real-time update:', eventType, session);
+    logger.debug('[TrainingSchedule] Real-time update:', eventType, session);
 
     switch (eventType) {
       case 'INSERT':
@@ -167,7 +174,7 @@ class EnhancedTrainingSchedule {
   async loadAIRecommendations() {
     try {
       if (!aiTrainingScheduler) {
-        console.warn('[TrainingSchedule] AI scheduler not available');
+        logger.warn('[TrainingSchedule] AI scheduler not available');
         return;
       }
 
@@ -179,7 +186,7 @@ class EnhancedTrainingSchedule {
       this.aiRecommendations = recommendations || [];
       this.notifyListeners();
     } catch (error) {
-      console.warn('[TrainingSchedule] Failed to load AI recommendations:', error);
+      logger.warn('[TrainingSchedule] Failed to load AI recommendations:', error);
     }
   }
 
@@ -327,7 +334,7 @@ class EnhancedTrainingSchedule {
         window.storageService.set('trainingSchedule', this.schedule, { usePrefix: false });
       }
     } catch (error) {
-      console.warn('[TrainingSchedule] Failed to save schedule:', error);
+      logger.warn('[TrainingSchedule] Failed to save schedule:', error);
     }
   }
 
@@ -346,12 +353,18 @@ class EnhancedTrainingSchedule {
    */
   getCurrentUserId() {
     try {
-      if (window.authManager && window.authManager.getUserId) {
-        return window.authManager.getUserId();
+      if (window.authManager) {
+        const user = window.authManager.getCurrentUser();
+        return user?.id || user?.user_id || null;
       }
-      const userData = window.storageService?.get('user', null, { usePrefix: false });
-      return userData?.id || null;
+      // Fallback: try to get from storage
+      if (window.storageService) {
+        const userData = window.storageService.get('user', null, { usePrefix: false });
+        return userData?.id || userData?.user_id || null;
+      }
+      return null;
     } catch (error) {
+      logger.warn('[TrainingSchedule] Failed to get user ID:', error);
       return null;
     }
   }
@@ -363,19 +376,27 @@ class EnhancedTrainingSchedule {
     if (!this.container) return;
 
     if (this.isLoading) {
-      this.container.innerHTML = this.renderLoading();
+      // Use setSafeContent to sanitize HTML before insertion
+      const loadingHtml = this.renderLoading();
+      setSafeContent(this.container, loadingHtml, true, true);
       return;
     }
 
     switch (this.viewMode) {
       case 'week':
-        this.container.innerHTML = this.renderWeekView();
+        // Use setSafeContent to sanitize HTML before insertion
+        const weekHtml = this.renderWeekView();
+        setSafeContent(this.container, weekHtml, true, true);
         break;
       case 'month':
-        this.container.innerHTML = this.renderMonthView();
+        // Use setSafeContent to sanitize HTML before insertion
+        const monthHtml = this.renderMonthView();
+        setSafeContent(this.container, monthHtml, true, true);
         break;
       case 'timeline':
-        this.container.innerHTML = this.renderTimelineView();
+        // Use setSafeContent to sanitize HTML before insertion
+        const timelineHtml = this.renderTimelineView();
+        setSafeContent(this.container, timelineHtml, true, true);
         break;
     }
 
@@ -486,7 +507,7 @@ class EnhancedTrainingSchedule {
         <div class="session-header">
           <div class="session-time">${time}</div>
           <div class="session-type" style="background: ${typeConfig.bgColor}; color: ${typeConfig.color};">
-            ${typeConfig.icon} ${typeConfig.label}
+            <i data-lucide="${typeConfig.icon}" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i> ${typeConfig.label}
           </div>
         </div>
         <div class="session-title">${session.title || session.name || 'Training Session'}</div>
@@ -571,11 +592,11 @@ class EnhancedTrainingSchedule {
    */
   getTypeConfig(type) {
     const configs = {
-      training: { icon: '🏃', label: 'Training', color: '#3b82f6', bgColor: 'rgba(59, 130, 246, 0.1)' },
-      game: { icon: '🏈', label: 'Game', color: '#ef4444', bgColor: 'rgba(239, 68, 68, 0.1)' },
-      recovery: { icon: '💚', label: 'Recovery', color: '#10b981', bgColor: 'rgba(16, 185, 129, 0.1)' },
-      practice: { icon: '⚽', label: 'Practice', color: '#f59e0b', bgColor: 'rgba(245, 158, 11, 0.1)' },
-      tournament: { icon: '🏆', label: 'Tournament', color: '#8b5cf6', bgColor: 'rgba(139, 92, 246, 0.1)' }
+      training: { icon: 'running', label: 'Training', color: '#3b82f6', bgColor: 'rgba(59, 130, 246, 0.1)' },
+      game: { icon: 'football', label: 'Game', color: '#ef4444', bgColor: 'rgba(239, 68, 68, 0.1)' },
+      recovery: { icon: 'heart', label: 'Recovery', color: '#10b981', bgColor: 'rgba(16, 185, 129, 0.1)' },
+      practice: { icon: 'target', label: 'Practice', color: '#f59e0b', bgColor: 'rgba(245, 158, 11, 0.1)' },
+      tournament: { icon: 'trophy', label: 'Tournament', color: '#8b5cf6', bgColor: 'rgba(139, 92, 246, 0.1)' }
     };
     return configs[type] || configs.training;
   }
@@ -608,7 +629,7 @@ class EnhancedTrainingSchedule {
    */
   setupDragAndDrop() {
     // TODO: Implement drag and drop
-    console.log('[TrainingSchedule] Drag and drop setup');
+    logger.debug('[TrainingSchedule] Drag and drop setup');
   }
 
   /**
@@ -653,7 +674,7 @@ class EnhancedTrainingSchedule {
           aiRecommendations: [...this.aiRecommendations]
         });
       } catch (error) {
-        console.error('[TrainingSchedule] Listener error:', error);
+        logger.error('[TrainingSchedule] Listener error:', error);
       }
     });
   }

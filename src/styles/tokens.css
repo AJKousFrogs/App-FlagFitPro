@@ -1,0 +1,288 @@
+/* ====== FLAGFIT PRO DESIGN TOKENS - OPTIMIZED VERSION 5.1 ====== */
+
+/* ========================================
+   CORE COLOR PALETTE - GREEN & WHITE THEME
+   ======================================== */
+
+:root {
+  /* === PRIMARY BRAND COLORS === */
+  --brand-primary: #089949;           /* Dark green - main brand */
+  --brand-primary-hover: #067a3c;     /* Darker green for hover */
+  --brand-primary-light: #0ab85a;     /* Lighter green variant */
+  --brand-primary-alpha-10: rgba(8, 153, 73, 0.1);
+  --brand-primary-alpha-20: rgba(8, 153, 73, 0.2);
+  --brand-primary-alpha-30: rgba(8, 153, 73, 0.3);
+  
+  --brand-secondary: #10c96b;         /* Medium green */
+  --brand-secondary-hover: #0eb55d;   /* Medium green hover */
+  --brand-secondary-light: #20d97b;   /* Lighter medium green */
+  
+  --brand-light: #d0f0eb;            /* Light green backgrounds */
+  --brand-lightest: #f0f9f7;         /* Very light green */
+  
+  /* === SEMANTIC COLORS === */
+  --color-success: #f1c40f;           /* Yellow - success states */
+  --color-success-hover: #f39c12;     /* Darker yellow */
+  --color-success-light: #f4d03f;     /* Lighter yellow */
+  --color-success-bg: #fefce8;        /* Light yellow background */
+  
+  --color-warning: #ef4444;           /* Red - warning/danger */
+  --color-warning-hover: #dc2626;     /* Darker red */
+  --color-warning-light: #f87171;     /* Lighter red */
+  --color-warning-bg: #fef2f2;        /* Light red background */
+  
+  --color-info: #089949;              /* Green - informational */
+  --color-info-hover: #067a3c;        /* Darker info green */
+  --color-info-bg: #f0f9f7;          /* Light green background */
+  
+  /* === NEUTRAL COLORS === */
+  --color-black: #1a1a1a;            /* Pure black for text */
+  --color-white: #ffffff;            /* Pure white */
+  --color-gray-50: #f9f9f9;          /* Lightest gray */
+  --color-gray-100: #f5f5f5;         /* Very light gray */
+  --color-gray-200: #e5e5e5;         /* Light gray */
+  --color-gray-300: #d0d0d0;         /* Medium light gray */
+  --color-gray-400: #a0a0a0;         /* Medium gray */
+  --color-gray-500: #6b6b6b;         /* Medium dark gray */
+  --color-gray-600: #4a4a4a;         /* Dark gray */
+  --color-gray-700: #333333;         /* Darker gray */
+  --color-gray-800: #1f1f1f;         /* Very dark gray */
+  --color-gray-900: #0a0a0a;         /* Almost black */
+  
+  /* === TEXT COLORS === */
+  --text-primary: var(--color-black);
+  --text-secondary: var(--color-gray-600);
+  --text-tertiary: var(--color-gray-500);
+  --text-muted: var(--color-gray-400);
+  --text-on-green: var(--color-white);
+  --text-on-white: var(--brand-primary);
+  --text-inverse: var(--color-white);
+  
+  /* === SURFACE & BACKGROUND COLORS === */
+  --surface-primary: var(--color-white);
+  --surface-secondary: #f8faf9;       /* Off-white with green tint */
+  --surface-tertiary: var(--brand-lightest);
+  --surface-dark: var(--color-gray-800);
+  --surface-overlay: rgba(0, 0, 0, 0.5);
+  
+  /* === BORDER COLORS === */
+  --border-primary: var(--color-gray-200);
+  --border-secondary: var(--color-gray-300);
+  --border-focus: var(--brand-primary);
+  --border-error: var(--color-warning);
+  --border-success: var(--color-success);
+  
+  /* === SHADOW TOKENS === */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1);
+  --shadow-focus: 0 0 0 3px var(--brand-primary-alpha-20);
+  --shadow-error: 0 0 0 3px rgba(239, 68, 68, 0.2);
+  
+  /* === SPACING TOKENS (8pt grid system) === */
+  --space-0: 0;
+  --space-1: 0.25rem;  /* 4px */
+  --space-2: 0.5rem;   /* 8px */
+  --space-3: 0.75rem;  /* 12px */
+  --space-4: 1rem;     /* 16px */
+  --space-5: 1.25rem;  /* 20px */
+  --space-6: 1.5rem;   /* 24px */
+  --space-8: 2rem;     /* 32px */
+  --space-10: 2.5rem;  /* 40px */
+  --space-12: 3rem;    /* 48px */
+  --space-16: 4rem;    /* 64px */
+  --space-20: 5rem;    /* 80px */
+  --space-24: 6rem;    /* 96px */
+  
+  /* === BORDER RADIUS TOKENS === */
+  --radius-none: 0;
+  --radius-sm: 0.375rem;  /* 6px */
+  --radius-md: 0.5rem;    /* 8px */
+  --radius-lg: 0.75rem;   /* 12px */
+  --radius-xl: 1rem;      /* 16px */
+  --radius-2xl: 1.5rem;   /* 24px */
+  --radius-full: 9999px;  /* Fully rounded */
+  
+  /* === TYPOGRAPHY TOKENS === */
+  --font-family-primary: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-family-mono: 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
+  
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+  
+  --font-size-xs: 0.75rem;    /* 12px */
+  --font-size-sm: 0.875rem;   /* 14px */
+  --font-size-base: 1rem;     /* 16px */
+  --font-size-lg: 1.125rem;   /* 18px */
+  --font-size-xl: 1.25rem;    /* 20px */
+  --font-size-2xl: 1.5rem;    /* 24px */
+  --font-size-3xl: 1.875rem;  /* 30px */
+  --font-size-4xl: 2.5rem;    /* 40px */
+  --font-size-5xl: 3rem;      /* 48px */
+  
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.4;
+  --line-height-relaxed: 1.6;
+  
+  /* === Z-INDEX TOKENS === */
+  --z-index-dropdown: 1000;
+  --z-index-modal: 1050;
+  --z-index-overlay: 1040;
+  --z-index-tooltip: 1060;
+  --z-index-notification: 1070;
+  
+  /* === TRANSITION TOKENS === */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
+  --transition-slow: 0.3s ease;
+  --transition-all: all var(--transition-normal);
+  
+  /* === COMPONENT-SPECIFIC TOKENS === */
+  --button-height-sm: 2rem;    /* 32px */
+  --button-height-md: 2.75rem; /* 44px - accessibility minimum */
+  --button-height-lg: 3.5rem;  /* 56px */
+  
+  --input-height-sm: 2rem;     /* 32px */
+  --input-height-md: 2.75rem;  /* 44px */
+  --input-height-lg: 3.5rem;   /* 56px */
+  
+  --card-padding: var(--space-6);
+  --card-radius: var(--radius-lg);
+  
+  /* === LAYOUT TOKENS === */
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+  --container-2xl: 1536px;
+  
+  --sidebar-width: 280px;
+  --sidebar-collapsed: 80px;
+  --header-height: 64px;
+  --footer-height: 120px;
+  
+  /* === GRID TOKENS === */
+  --grid-gap-sm: var(--space-2);
+  --grid-gap-md: var(--space-4);
+  --grid-gap-lg: var(--space-6);
+  
+  /* === BREAKPOINT TOKENS (for CSS custom properties) === */
+  --bp-sm: 640px;
+  --bp-md: 768px;
+  --bp-lg: 1024px;
+  --bp-xl: 1280px;
+  --bp-2xl: 1536px;
+}
+
+/* ========================================
+   SEMANTIC TOKEN ALIASES
+   ======================================== */
+
+:root {
+  /* Button variants */
+  --btn-primary-bg: var(--brand-primary);
+  --btn-primary-hover: var(--brand-primary-hover);
+  --btn-primary-text: var(--text-on-green);
+  --btn-primary-border: var(--brand-primary);
+  
+  --btn-secondary-bg: var(--brand-secondary);
+  --btn-secondary-hover: var(--brand-secondary-hover);
+  --btn-secondary-text: var(--text-on-green);
+  --btn-secondary-border: var(--brand-secondary);
+  
+  --btn-outline-bg: transparent;
+  --btn-outline-hover: var(--brand-primary);
+  --btn-outline-text: var(--brand-primary);
+  --btn-outline-hover-text: var(--text-on-green);
+  --btn-outline-border: var(--brand-primary);
+  
+  --btn-ghost-bg: transparent;
+  --btn-ghost-hover: var(--brand-primary-alpha-10);
+  --btn-ghost-text: var(--brand-primary);
+  --btn-ghost-border: transparent;
+  
+  /* Form elements */
+  --form-input-bg: var(--surface-primary);
+  --form-input-border: var(--border-primary);
+  --form-input-focus-border: var(--border-focus);
+  --form-input-text: var(--text-primary);
+  --form-input-placeholder: var(--text-muted);
+  --form-input-disabled-bg: var(--color-gray-50);
+  --form-input-disabled-text: var(--text-muted);
+  
+  /* Navigation */
+  --nav-bg: var(--surface-primary);
+  --nav-border: var(--border-primary);
+  --nav-text: var(--text-secondary);
+  --nav-text-hover: var(--brand-primary);
+  --nav-text-active: var(--brand-primary);
+  --nav-indicator: var(--brand-primary);
+  
+  /* Cards */
+  --card-bg: var(--surface-primary);
+  --card-border: var(--border-primary);
+  --card-shadow: var(--shadow-sm);
+  --card-hover-shadow: var(--shadow-md);
+  
+  /* Status indicators */
+  --status-success-bg: var(--color-success-bg);
+  --status-success-text: var(--color-success);
+  --status-warning-bg: var(--color-warning-bg);
+  --status-warning-text: var(--color-warning);
+  --status-info-bg: var(--color-info-bg);
+  --status-info-text: var(--color-info);
+}
+
+/* ========================================
+   DARK MODE OVERRIDES (future-ready)
+   ======================================== */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface-primary: var(--color-gray-900);
+    --surface-secondary: var(--color-gray-800);
+    --surface-tertiary: var(--color-gray-700);
+    
+    --text-primary: var(--color-white);
+    --text-secondary: var(--color-gray-200);
+    --text-tertiary: var(--color-gray-300);
+    --text-muted: var(--color-gray-400);
+    
+    --border-primary: var(--color-gray-600);
+    --border-secondary: var(--color-gray-500);
+    
+    --card-bg: var(--color-gray-800);
+    --nav-bg: var(--color-gray-900);
+  }
+}
+
+/* ========================================
+   HIGH CONTRAST MODE SUPPORT
+   ======================================== */
+
+@media (prefers-contrast: high) {
+  :root {
+    --border-primary: var(--color-black);
+    --border-secondary: var(--color-gray-700);
+    --text-muted: var(--color-gray-600);
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* ========================================
+   REDUCED MOTION SUPPORT
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --transition-fast: none;
+    --transition-normal: none;
+    --transition-slow: none;
+    --transition-all: none;
+  }
+}

@@ -38,6 +38,49 @@ export class WellnessService {
   }
 
   /**
+   * Convert wellness_data format to wellness_logs format
+   */
+  mapToWellnessLogs(data, userId) {
+    // Convert user_id to UUID format if needed (wellness_logs uses athlete_id UUID)
+    const athleteId = userId; // Assume it's already a UUID or will be converted by Supabase
+    
+    return {
+      athlete_id: athleteId,
+      log_date: data.date,
+      fatigue: data.energy ? Math.max(1, Math.min(10, 11 - data.energy)) : 5, // Invert energy to estimate fatigue
+      sleep_quality: data.sleep ?? 5,
+      soreness: data.soreness ?? 5,
+      energy: data.energy ?? null,
+      stress: data.stress ?? null,
+      mood: data.mood ?? null,
+      sleep_hours: null, // Not available in wellness_data format
+    };
+  }
+
+  /**
+   * Convert wellness_logs format back to wellness_data format for compatibility
+   */
+  mapFromWellnessLogs(data) {
+    if (!data) return null;
+    
+    return {
+      id: data.id,
+      user_id: data.athlete_id,
+      date: data.log_date,
+      sleep: data.sleep_quality,
+      energy: data.energy,
+      stress: data.stress,
+      soreness: data.soreness,
+      motivation: null, // Not in wellness_logs
+      mood: data.mood,
+      hydration: null, // Not in wellness_logs
+      notes: null, // Not in wellness_logs
+      created_at: data.created_at,
+      updated_at: data.created_at,
+    };
+  }
+
+  /**
    * Save wellness data for a specific date
    */
   async saveWellnessData(data) {
@@ -48,8 +91,8 @@ export class WellnessService {
     const userId = await this.getUserId();
     const date = data.date || new Date().toISOString().split('T')[0];
 
-    const wellnessEntry = {
-      user_id: userId,
+    // Map to wellness_logs format
+    const wellnessEntry = this.mapToWellnessLogs({
       date: date,
       sleep: data.sleep ?? null,
       energy: data.energy ?? null,
@@ -58,41 +101,40 @@ export class WellnessService {
       motivation: data.motivation ?? null,
       mood: data.mood ?? null,
       hydration: data.hydration ?? null,
-      notes: data.notes || null,
-    };
+    }, userId);
 
     try {
       // Check if entry exists for this date
       const { data: existing } = await this.supabase
-        .from('wellness_data')
+        .from('wellness_logs')
         .select('id')
-        .eq('user_id', userId)
-        .eq('date', date)
+        .eq('athlete_id', userId)
+        .eq('log_date', date)
         .single();
 
       let result;
       if (existing) {
         // Update existing entry
         const { data, error } = await this.supabase
-          .from('wellness_data')
+          .from('wellness_logs')
           .update(wellnessEntry)
           .eq('id', existing.id)
           .select()
           .single();
 
         if (error) throw error;
-        result = data;
+        result = this.mapFromWellnessLogs(data);
         logger.success('[Wellness] Updated wellness entry for', date);
       } else {
         // Insert new entry
         const { data, error } = await this.supabase
-          .from('wellness_data')
+          .from('wellness_logs')
           .insert(wellnessEntry)
           .select()
           .single();
 
         if (error) throw error;
-        result = data;
+        result = this.mapFromWellnessLogs(data);
         logger.success('[Wellness] Created wellness entry for', date);
       }
 
@@ -134,10 +176,10 @@ export class WellnessService {
 
     try {
       const { data, error } = await this.supabase
-        .from('wellness_data')
+        .from('wellness_logs')
         .select('*')
-        .eq('user_id', userId)
-        .eq('date', date)
+        .eq('athlete_id', userId)
+        .eq('log_date', date)
         .single();
 
       if (error && error.code !== 'PGRST116') {
@@ -145,7 +187,7 @@ export class WellnessService {
         throw error;
       }
 
-      const result = data || null;
+      const result = data ? this.mapFromWellnessLogs(data) : null;
 
       // Cache result
       this.cache.set(cacheKey, {
@@ -181,22 +223,25 @@ export class WellnessService {
 
     try {
       const { data, error } = await this.supabase
-        .from('wellness_data')
+        .from('wellness_logs')
         .select('*')
-        .eq('user_id', userId)
-        .gte('date', startDate)
-        .lte('date', endDate)
-        .order('date', { ascending: false });
+        .eq('athlete_id', userId)
+        .gte('log_date', startDate)
+        .lte('log_date', endDate)
+        .order('log_date', { ascending: false });
 
       if (error) throw error;
 
+      // Map results back to wellness_data format
+      const mappedData = (data || []).map(entry => this.mapFromWellnessLogs(entry));
+
       // Cache result
       this.cache.set(cacheKey, {
-        data: data || [],
+        data: mappedData,
         timestamp: Date.now(),
       });
 
-      return data || [];
+      return mappedData;
     } catch (error) {
       logger.error('[Wellness] Error fetching wellness history:', error);
       return [];
@@ -299,10 +344,10 @@ export class WellnessService {
 
     try {
       const { data, error } = await this.supabase
-        .from('wellness_data')
+        .from('wellness_logs')
         .select('*')
-        .eq('user_id', userId)
-        .order('date', { ascending: false })
+        .eq('athlete_id', userId)
+        .order('log_date', { ascending: false })
         .limit(1)
         .single();
 
@@ -310,7 +355,7 @@ export class WellnessService {
         throw error;
       }
 
-      const result = data || null;
+      const result = data ? this.mapFromWellnessLogs(data) : null;
 
       // Cache result
       this.cache.set(cacheKey, {
@@ -336,15 +381,15 @@ export class WellnessService {
 
     if (history.length === 0) return 0;
 
-    // Sort by date descending
-    const sorted = history.sort((a, b) => new Date(b.date) - new Date(a.date));
+    // Sort by date descending (date field is mapped from log_date)
+    const sorted = history.sort((a, b) => new Date(b.date || b.log_date) - new Date(a.date || a.log_date));
 
     let streak = 0;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
     for (const entry of sorted) {
-      const entryDate = new Date(entry.date);
+      const entryDate = new Date(entry.date || entry.log_date);
       entryDate.setHours(0, 0, 0, 0);
 
       const daysDiff = Math.floor((today - entryDate) / (1000 * 60 * 60 * 24));

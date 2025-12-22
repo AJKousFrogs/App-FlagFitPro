@@ -18,8 +18,24 @@
 -- =====================================================
 
 -- =====================================================
+-- PREREQUISITE: Ensure positions exist
+-- =====================================================
+-- Positions should already be seeded from schema.sql, but ensure they exist
+INSERT INTO positions (name, display_name, description) VALUES
+  ('QB', 'Quarterback', 'Field general, responsible for passing and leadership'),
+  ('WR', 'Wide Receiver', 'Primary pass catchers and route runners'),
+  ('DB', 'Defensive Back', 'Coverage specialists and ball hawks'),
+  ('Center', 'Center', 'Snaps the ball and protects the QB'),
+  ('LB', 'Linebacker', 'Versatile defenders, rush and coverage'),
+  ('Blitzer', 'Blitzer', 'Specialized pass rushers')
+ON CONFLICT (name) DO NOTHING;
+
+-- =====================================================
 -- STEP 1: Create the QB Annual Program
 -- =====================================================
+
+-- Delete existing program if re-running (idempotent)
+DELETE FROM training_programs WHERE id = '11111111-1111-1111-1111-111111111111'::UUID;
 
 INSERT INTO training_programs (
   id,
@@ -42,6 +58,9 @@ INSERT INTO training_programs (
 -- =====================================================
 -- STEP 2: Create Training Phases (Periodization)
 -- =====================================================
+
+-- Delete existing phases if re-running (idempotent)
+DELETE FROM training_phases WHERE program_id = '11111111-1111-1111-1111-111111111111'::UUID;
 
 -- Phase 0: Pre-Season Preparation (November 2025)
 INSERT INTO training_phases (id, program_id, name, description, start_date, end_date, phase_order, focus_areas) VALUES (
@@ -132,6 +151,11 @@ INSERT INTO training_phases (id, program_id, name, description, start_date, end_
 -- =====================================================
 -- PROPER GRADUAL PROGRESSION OVER 5 MONTHS
 
+-- Delete existing weeks if re-running (idempotent)
+DELETE FROM training_weeks WHERE phase_id IN (
+  SELECT id FROM training_phases WHERE program_id = '11111111-1111-1111-1111-111111111111'::UUID
+);
+
 -- ========== NOVEMBER 2025 (Pre-Season) ==========
 -- Throwing volume: 50-80 throws/week
 
@@ -204,43 +228,64 @@ INSERT INTO training_weeks (id, phase_id, week_number, start_date, end_date, loa
 -- =====================================================
 -- CORRECTED THROWING VOLUME EXERCISES
 -- =====================================================
--- Update throwing volume exercises to reflect gradual progression
+-- Insert/update throwing volume exercises to reflect gradual progression
+-- Uses INSERT ... ON CONFLICT DO UPDATE for idempotency
 
 -- 50 throws (November start)
 INSERT INTO exercises (id, name, category, position_specific, applicable_positions, metrics_tracked, description) VALUES
-  ('44444450-4444-4444-4444-444444444450'::UUID, 'Throwing Volume Session - 50 Throws', 'Position-Specific', true, ARRAY[(SELECT id FROM positions WHERE name = 'QB')], ARRAY['Throws', 'Duration'], 'Return to throwing session. 50 total throws with focus on mechanics and arm health. Baseline volume for off-season.');
+  ('44444450-4444-4444-4444-444444444450'::UUID, 'Throwing Volume Session - 50 Throws', 'Position-Specific', true, ARRAY[(SELECT id FROM positions WHERE name = 'QB')], ARRAY['Throws', 'Duration'], 'Return to throwing session. 50 total throws with focus on mechanics and arm health. Baseline volume for off-season.')
+ON CONFLICT (id) DO UPDATE SET
+  name = EXCLUDED.name,
+  description = EXCLUDED.description;
 
--- Update existing exercises for correct progression
-UPDATE exercises SET
-  name = 'Throwing Volume Session - 80 Throws',
-  description = 'Foundation phase throwing session. 80 total throws. Gradual volume increase from 50. Focus on mechanics over velocity.'
-WHERE id = '44444451-4444-4444-4444-444444444451';
+-- 80 throws (Foundation phase)
+INSERT INTO exercises (id, name, category, position_specific, applicable_positions, metrics_tracked, description) VALUES
+  ('44444451-4444-4444-4444-444444444451'::UUID, 'Throwing Volume Session - 80 Throws', 'Position-Specific', true, ARRAY[(SELECT id FROM positions WHERE name = 'QB')], ARRAY['Throws', 'Duration'], 'Foundation phase throwing session. 80 total throws. Gradual volume increase from 50. Focus on mechanics over velocity.')
+ON CONFLICT (id) DO UPDATE SET
+  name = EXCLUDED.name,
+  description = EXCLUDED.description;
 
 -- 120 throws (end of Foundation)
 INSERT INTO exercises (id, name, category, position_specific, applicable_positions, metrics_tracked, description) VALUES
-  ('44444456-4444-4444-4444-444444444456'::UUID, 'Throwing Volume Session - 120 Throws', 'Position-Specific', true, ARRAY[(SELECT id FROM positions WHERE name = 'QB')], ARRAY['Throws', 'Duration'], 'End of Foundation phase. 120 total throws. Solid base established.');
+  ('44444456-4444-4444-4444-444444444456'::UUID, 'Throwing Volume Session - 120 Throws', 'Position-Specific', true, ARRAY[(SELECT id FROM positions WHERE name = 'QB')], ARRAY['Throws', 'Duration'], 'End of Foundation phase. 120 total throws. Solid base established.')
+ON CONFLICT (id) DO UPDATE SET
+  name = EXCLUDED.name,
+  description = EXCLUDED.description;
 
 -- 160 throws (mid Power phase)
 INSERT INTO exercises (id, name, category, position_specific, applicable_positions, metrics_tracked, description) VALUES
-  ('44444457-4444-4444-4444-444444444457'::UUID, 'Throwing Volume Session - 160 Throws', 'Position-Specific', true, ARRAY[(SELECT id FROM positions WHERE name = 'QB')], ARRAY['Throws', 'Duration'], 'Mid Power phase. 160 total throws. Volume steadily increasing.');
+  ('44444457-4444-4444-4444-444444444457'::UUID, 'Throwing Volume Session - 160 Throws', 'Position-Specific', true, ARRAY[(SELECT id FROM positions WHERE name = 'QB')], ARRAY['Throws', 'Duration'], 'Mid Power phase. 160 total throws. Volume steadily increasing.')
+ON CONFLICT (id) DO UPDATE SET
+  name = EXCLUDED.name,
+  description = EXCLUDED.description;
 
-UPDATE exercises SET
-  name = 'Throwing Volume Session - 200 Throws',
-  description = 'Power phase throwing session. 200 total throws. Approaching higher volumes. Monitor arm health and RPE closely.'
-WHERE id = '44444453-4444-4444-4444-444444444453';
+-- 200 throws (Power phase)
+INSERT INTO exercises (id, name, category, position_specific, applicable_positions, metrics_tracked, description) VALUES
+  ('44444453-4444-4444-4444-444444444453'::UUID, 'Throwing Volume Session - 200 Throws', 'Position-Specific', true, ARRAY[(SELECT id FROM positions WHERE name = 'QB')], ARRAY['Throws', 'Duration'], 'Power phase throwing session. 200 total throws. Approaching higher volumes. Monitor arm health and RPE closely.')
+ON CONFLICT (id) DO UPDATE SET
+  name = EXCLUDED.name,
+  description = EXCLUDED.description;
 
 -- 240 throws (early Explosive)
 INSERT INTO exercises (id, name, category, position_specific, applicable_positions, metrics_tracked, description) VALUES
-  ('44444458-4444-4444-4444-444444444458'::UUID, 'Throwing Volume Session - 240 Throws', 'Position-Specific', true, ARRAY[(SELECT id FROM positions WHERE name = 'QB')], ARRAY['Throws', 'Duration'], 'Explosive phase. 240 total throws. Final push toward peak volume.');
+  ('44444458-4444-4444-4444-444444444458'::UUID, 'Throwing Volume Session - 240 Throws', 'Position-Specific', true, ARRAY[(SELECT id FROM positions WHERE name = 'QB')], ARRAY['Throws', 'Duration'], 'Explosive phase. 240 total throws. Final push toward peak volume.')
+ON CONFLICT (id) DO UPDATE SET
+  name = EXCLUDED.name,
+  description = EXCLUDED.description;
 
 -- 280 throws (late Explosive)
 INSERT INTO exercises (id, name, category, position_specific, applicable_positions, metrics_tracked, description) VALUES
-  ('44444459-4444-4444-4444-444444444459'::UUID, 'Throwing Volume Session - 280 Throws', 'Position-Specific', true, ARRAY[(SELECT id FROM positions WHERE name = 'QB')], ARRAY['Throws', 'Duration'], 'Late Explosive phase. 280 total throws. Nearly at peak volume.');
+  ('44444459-4444-4444-4444-444444444459'::UUID, 'Throwing Volume Session - 280 Throws', 'Position-Specific', true, ARRAY[(SELECT id FROM positions WHERE name = 'QB')], ARRAY['Throws', 'Duration'], 'Late Explosive phase. 280 total throws. Nearly at peak volume.')
+ON CONFLICT (id) DO UPDATE SET
+  name = EXCLUDED.name,
+  description = EXCLUDED.description;
 
-UPDATE exercises SET
-  name = 'Throwing Volume Session - 320 Throws (PEAK)',
-  description = 'PEAK VOLUME - Tournament Season. 320 total throws. MAINTAIN this volume throughout entire season (April-June). Includes game simulation and full route tree work. ACWR monitoring critical.'
-WHERE id = '44444454-4444-4444-4444-444444444454';
+-- 320 throws (PEAK - Tournament Season)
+INSERT INTO exercises (id, name, category, position_specific, applicable_positions, metrics_tracked, description) VALUES
+  ('44444454-4444-4444-4444-444444444454'::UUID, 'Throwing Volume Session - 320 Throws (PEAK)', 'Position-Specific', true, ARRAY[(SELECT id FROM positions WHERE name = 'QB')], ARRAY['Throws', 'Duration'], 'PEAK VOLUME - Tournament Season. 320 total throws. MAINTAIN this volume throughout entire season (April-June). Includes game simulation and full route tree work. ACWR monitoring critical.')
+ON CONFLICT (id) DO UPDATE SET
+  name = EXCLUDED.name,
+  description = EXCLUDED.description;
 
 -- =====================================================
 -- VISUALIZATION: Throwing Volume Progression Chart

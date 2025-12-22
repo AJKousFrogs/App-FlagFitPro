@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable no-console */
 /**
  * Fetch Research Articles from Open Sources
  *
@@ -31,7 +32,7 @@ const { Pool } = pg;
 
 // Database connection
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL || process.env.NEON_DATABASE_URL,
+  connectionString: process.env.DATABASE_URL || process.env.SUPABASE_DB_URL,
   ssl: process.env.DATABASE_URL?.includes("localhost")
     ? false
     : { rejectUnauthorized: false },

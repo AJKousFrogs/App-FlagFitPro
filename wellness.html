@@ -36,7 +36,7 @@
     <!-- Note: frame-ancestors and X-Frame-Options must be set via HTTP headers, not meta tags -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https: wss:; base-uri 'self'; form-action 'self'"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https: wss:; base-uri 'self'; form-action 'self'"
     />
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
     <!-- Note: X-Frame-Options must be set via HTTP header, not meta tag -->
@@ -69,7 +69,7 @@
     <script src="./src/js/utils/sidebar-utils.js"></script>
 
     <!-- PWA Notification Manager -->
-    <script src="./src/js/notification-manager.js" defer></script>
+    <script type="module" src="./src/js/notification-manager.js" defer></script>
     <!-- Wellness Notifications Integration -->
     <script src="./src/js/wellness-notifications.js" defer></script>
     <!-- Achievements System -->
@@ -86,10 +86,10 @@
     <script type="module" src="./src/js/components/common-loaders.js" defer></script>
   
     <!-- Supabase Configuration (Centralized) -->
-    <script src="./src/js/config/supabase-config.js"></script>
+    <script src="./src/js/config/supabase-config.js" defer></script>
     
     <!-- Supabase JS SDK from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0" defer></script>
 
   </head>
   <body>

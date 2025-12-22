@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 /**
  * Test Supabase Connection
  */

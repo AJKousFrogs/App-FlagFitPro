@@ -20,6 +20,7 @@ import { BadgeModule } from "primeng/badge";
 import { AuthService } from "../../../core/services/auth.service";
 import { HeaderService, HeaderConfig } from "../../../core/services/header.service";
 import { MenuItem } from "primeng/api";
+import { LoggerService } from '../../../core/services/logger.service';
 
 @Component({
   selector: "app-header",
@@ -383,6 +384,7 @@ export class HeaderComponent {
   private authService = inject(AuthService);
   private headerService = inject(HeaderService);
   private router = inject(Router);
+  private logger = inject(LoggerService);
 
   // Angular 21: Use output() signal instead of @Output() EventEmitter
   toggleSidebar = output<void>();
@@ -458,7 +460,7 @@ export class HeaderComponent {
   onSearch(): void {
     if (this.searchQuery().trim()) {
       // Implement search logic
-      console.log("Searching for:", this.searchQuery());
+      this.logger.debug("Searching for:", this.searchQuery());
       // TODO: Navigate to search results or trigger search service
     }
   }
@@ -466,7 +468,7 @@ export class HeaderComponent {
   toggleNotifications(): void {
     // Toggle notifications panel
     // TODO: Implement notifications panel toggle
-    console.log("Toggle notifications");
+    this.logger.debug("Toggle notifications");
   }
 
   openSettings(): void {

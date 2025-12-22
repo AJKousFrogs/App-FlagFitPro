@@ -7,10 +7,12 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>" />
     <link rel="stylesheet" href="./src/css/main.css" />
     <!-- Supabase Configuration (Centralized) -->
-    <script src="./src/js/config/supabase-config.js"></script>
+    <script src="./src/js/config/supabase-config.js" defer></script>
     
     <!-- Supabase JS SDK from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.88.0" defer></script>
+    <!-- Event Handlers (Phase 2 - Replaces inline onclick handlers) -->
+    <script type="module" src="./src/js/utils/event-handlers.js" defer></script>
     <style>
       * {
         box-sizing: border-box;
@@ -363,7 +365,7 @@
 
       <div class="resend-section" id="resendSection" style="display: none;">
         <p class="resend-text">Didn't receive the email? We can send you a new verification link.</p>
-        <form class="resend-form" id="resendForm" onsubmit="handleResend(event)">
+        <form class="resend-form" id="resendForm" data-form-submit="handleResend">
           <input
             type="email"
             class="form-input"

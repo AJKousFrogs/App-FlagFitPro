@@ -5,6 +5,8 @@ import { gameStatsService } from "../services/gameStatsService.js";
 import { logger } from "../../logger.js";
 import { errorHandler } from "../utils/unified-error-handler.js";
 import { escapeHtml } from "../utils/html-escape.js";
+import { unitManager } from "../../unit-manager.js";
+import { setSafeContent } from "../utils/shared.js";
 
 class GameTrackerPage {
   constructor() {
@@ -149,9 +151,9 @@ class GameTrackerPage {
         { id: "player_1", name: "Player 1", position: "QB" },
         { id: "player_2", name: "Player 2", position: "WR" },
         { id: "player_3", name: "Player 3", position: "WR" },
-        { id: "player_4", name: "Player 4", position: "RB" },
+        { id: "player_4", name: "Player 4", position: "Center" },
         { id: "player_5", name: "Player 5", position: "DB" },
-        { id: "player_6", name: "Player 6", position: "DB" },
+        { id: "player_6", name: "Player 6", position: "Blitzer" },
       ];
     }
 
@@ -187,8 +189,19 @@ class GameTrackerPage {
     const location = document.getElementById("location").value;
     const homeAway = document.getElementById("home-away").value;
     const weather = document.getElementById("weather").value;
-    const temperature = document.getElementById("temperature").value;
+    const temperatureValue = parseFloat(document.getElementById("temperature").value);
+    const temperatureUnit = document.getElementById("temperature-unit")?.value || "fahrenheit";
     const fieldConditions = document.getElementById("field-conditions").value;
+
+    // Convert temperature to Fahrenheit for storage (API expects Fahrenheit)
+    let temperatureFahrenheit = null;
+    if (!isNaN(temperatureValue)) {
+      if (temperatureUnit === "celsius") {
+        temperatureFahrenheit = (temperatureValue * 9 / 5) + 32;
+      } else {
+        temperatureFahrenheit = temperatureValue;
+      }
+    }
 
     // Create game object
     this.currentGame = {
@@ -200,7 +213,8 @@ class GameTrackerPage {
       location,
       isHomeGame: homeAway === "home",
       weather,
-      temperature: temperature ? parseInt(temperature) : null,
+      temperature: temperatureFahrenheit ? Math.round(temperatureFahrenheit) : null,
+      temperatureUnit: temperatureUnit, // Store unit for display
       fieldConditions,
       teamScore: 0,
       opponentScore: 0,
@@ -212,7 +226,7 @@ class GameTrackerPage {
     try {
       await gameStatsService.saveGame(this.currentGame);
     } catch (error) {
-      console.error("Error saving game:", error);
+      logger.error("Error saving game:", error);
       // Game is still saved to localStorage as fallback
     }
 
@@ -268,21 +282,32 @@ class GameTrackerPage {
 
     if (!gamesList) {return;}
 
-    // Show loading state
-    gamesList.innerHTML = `
-      <div class="empty-state">
-        <i data-lucide="loader" class="icon-48 spinning"></i>
-        <p>Loading games...</p>
-      </div>
-    `;
-    lucide.createIcons();
+    // Show loading state using DOM methods
+    gamesList.textContent = "";
+    const emptyState = document.createElement("div");
+    emptyState.className = "empty-state";
+    
+    const loaderIcon = document.createElement("i");
+    loaderIcon.setAttribute("data-lucide", "loader");
+    loaderIcon.className = "icon-48 spinning";
+    
+    const loadingText = document.createElement("p");
+    loadingText.textContent = "Loading games...";
+    
+    emptyState.appendChild(loaderIcon);
+    emptyState.appendChild(loadingText);
+    gamesList.appendChild(emptyState);
+    
+    if (typeof lucide !== "undefined") {
+      lucide.createIcons();
+    }
 
     try {
       // Try to load from backend (async)
       const games = await gameStatsService.getAllGames();
       this.renderGamesList(games, gamesList);
     } catch (error) {
-      console.error("Error loading games:", error);
+      logger.error("Error loading games:", error);
       // Fallback to localStorage (synchronous mode)
       const games = await gameStatsService.getAllGames({ forceSync: true });
       this.renderGamesList(games, gamesList);
@@ -290,24 +315,38 @@ class GameTrackerPage {
   }
 
   renderGamesList(games, gamesList) {
+    gamesList.textContent = "";
+    
     if (games.length === 0) {
-      gamesList.innerHTML = `
-        <div class="empty-state">
-          <i data-lucide="calendar" class="icon-48"></i>
-          <p>No games tracked yet</p>
-        </div>
-      `;
-      lucide.createIcons();
+      // Create empty state using DOM methods
+      const emptyState = document.createElement("div");
+      emptyState.className = "empty-state";
+      
+      const calendarIcon = document.createElement("i");
+      calendarIcon.setAttribute("data-lucide", "calendar");
+      calendarIcon.className = "icon-48";
+      
+      const emptyText = document.createElement("p");
+      emptyText.textContent = "No games tracked yet";
+      
+      emptyState.appendChild(calendarIcon);
+      emptyState.appendChild(emptyText);
+      gamesList.appendChild(emptyState);
+      
+      if (typeof lucide !== "undefined") {
+        lucide.createIcons();
+      }
       return;
     }
 
-    gamesList.innerHTML = games
+    // Build games list HTML (data is escaped via escapeHtml)
+    const gamesHtml = games
       .map((game) => {
         const result = this.determineGameResult(game);
         const safeOpponentName = escapeHtml(game.opponentName);
         const safeGameId = escapeHtml(game.gameId);
         return `
-        <div class="game-item" onclick="window.gameTrackerPage.loadGame('${safeGameId}')">
+        <div class="game-item" data-game-id="${safeGameId}">
           <div class="game-item-header">
             <div class="game-date">
               ${new Date(game.gameDate).toLocaleDateString("en-US", {
@@ -350,7 +389,26 @@ class GameTrackerPage {
       })
       .join("");
 
-    lucide.createIcons();
+    // Use setSafeContent to sanitize HTML before insertion
+    // Data is already escaped via escapeHtml(), but we sanitize for extra safety
+    setSafeContent(gamesList, gamesHtml, true, true);
+    
+    // Add click event listeners to game items (replacing onclick attributes)
+    gamesList.querySelectorAll('.game-item').forEach(item => {
+      const gameId = item.getAttribute('data-game-id');
+      if (gameId) {
+        item.addEventListener('click', () => {
+          if (window.gameTrackerPage && typeof window.gameTrackerPage.loadGame === 'function') {
+            window.gameTrackerPage.loadGame(gameId);
+          }
+        });
+        item.style.cursor = 'pointer';
+      }
+    });
+
+    if (typeof lucide !== "undefined") {
+      lucide.createIcons();
+    }
   }
 
   determineGameResult(game) {
@@ -468,11 +526,27 @@ class GameTrackerPage {
 
     this.playCounter++;
 
+    // Get distance unit and convert if needed
+    const distanceUnit = document.getElementById("distance-unit")?.value || "imperial";
+    const distanceValue = parseFloat(document.getElementById("distance").value) || 0;
+    const distanceMeters = distanceUnit === "imperial" 
+      ? unitManager.convertDistance(distanceValue, "yards", "meters")
+      : distanceValue;
+
+    // Get route depth unit and convert if needed
+    const routeDepthUnit = document.getElementById("route-depth-unit")?.value || "imperial";
+    const routeDepthValue = parseFloat(document.getElementById("route-depth").value) || 0;
+    const routeDepthMeters = routeDepthUnit === "imperial"
+      ? unitManager.convertDistance(routeDepthValue, "yards", "meters")
+      : routeDepthValue;
+
     const basePlay = {
       playNumber: this.playCounter,
       quarter: parseInt(document.getElementById("quarter").value),
       down: parseInt(document.getElementById("down").value),
-      distance: parseInt(document.getElementById("distance").value),
+      distance: distanceMeters, // Store in meters for API
+      distanceDisplay: distanceValue, // Keep original for display
+      distanceUnit: distanceUnit, // Keep unit for display
       yardLine: parseInt(document.getElementById("yard-line").value),
       playType: playType,
       playNotes: document.getElementById("play-notes").value,
@@ -488,7 +562,9 @@ class GameTrackerPage {
         quarterbackId: document.getElementById("quarterback").value,
         receiverId: document.getElementById("receiver").value,
         routeType: document.getElementById("route-type").value,
-        routeDepth: parseInt(document.getElementById("route-depth").value) || 0,
+        routeDepth: routeDepthMeters, // Store in meters for API
+        routeDepthDisplay: routeDepthValue, // Keep original for display
+        routeDepthUnit: routeDepthUnit, // Keep unit for display
         outcome: document.getElementById("pass-outcome").value,
         throwAccuracy: document.getElementById("throw-accuracy").value,
         isDrop: document.getElementById("pass-outcome").value === "drop",
@@ -496,11 +572,18 @@ class GameTrackerPage {
         dropReason: document.getElementById("drop-reason").value,
       };
     } else if (playType === "run") {
+      const yardsGainedValue = parseFloat(document.getElementById("yards-gained").value) || 0;
+      const yardsGainedUnit = localStorage.getItem("flagfit_distance_unit") || "imperial";
+      const yardsGainedMeters = yardsGainedUnit === "imperial"
+        ? unitManager.convertDistance(yardsGainedValue, "yards", "meters")
+        : yardsGainedValue;
+      
       play = {
         ...play,
         ballCarrierId: document.getElementById("ball-carrier").value,
-        yardsGained:
-          parseInt(document.getElementById("yards-gained").value) || 0,
+        yardsGained: yardsGainedMeters, // Store in meters for API
+        yardsGainedDisplay: yardsGainedValue, // Keep original for display
+        yardsGainedUnit: yardsGainedUnit, // Keep unit for display
       };
     } else if (playType === "flag_pull") {
       play = {
@@ -519,13 +602,13 @@ class GameTrackerPage {
 
     // Save play to backend
     this.savePlayToBackend(play).catch((error) => {
-      console.error("Error saving play to backend:", error);
+      logger.error("Error saving play to backend:", error);
       // Continue with local save
     });
 
     // Save game to service (localStorage + backend)
     gameStatsService.saveGame(this.currentGame).catch((error) => {
-      console.error("Error saving game:", error);
+      logger.error("Error saving game:", error);
     });
 
     logger.info("Play saved:", play);
@@ -552,14 +635,15 @@ class GameTrackerPage {
         teamId: this.currentGame.teamId,
         quarter: play.quarter,
         down: play.down,
-        distance: play.distance,
+        distance: play.distance || play.distanceDisplay, // Use meters if converted, otherwise display value
         yardLine: play.yardLine,
         playType: play.playType,
         playCategory: "offensive", // or "defensive" based on play type
         primaryPlayerId: play.quarterbackId || play.ballCarrierId || play.defenderId,
         secondaryPlayerIds: play.receiverId ? [play.receiverId] : [],
         playResult: play.outcome || (play.isSuccessful ? "flag_pull" : "missed"),
-        yardsGained: play.yardsGained || 0,
+        yardsGained: play.yardsGained || play.yardsGainedDisplay || 0, // Use meters if converted
+        routeDepth: play.routeDepth || play.routeDepthDisplay || null, // Use meters if converted
         yardsAfterCatch: 0, // Could be calculated
         isSuccessful: play.outcome === "completion" || play.isSuccessful || false,
         isTurnover: play.outcome === "interception" || false,
@@ -575,7 +659,7 @@ class GameTrackerPage {
         logger.info("Play saved to backend:", response.data);
       }
     } catch (error) {
-      console.error("Error saving play to backend:", error);
+      logger.error("Error saving play to backend:", error);
       throw error;
     }
   }
@@ -616,21 +700,35 @@ class GameTrackerPage {
 
     if (!recentPlaysList) {return;}
 
+    recentPlaysList.textContent = "";
+    
     if (this.plays.length === 0) {
-      recentPlaysList.innerHTML = `
-        <div class="empty-state">
-          <i data-lucide="clipboard" class="icon-48"></i>
-          <p>No plays tracked yet. Start tracking plays above!</p>
-        </div>
-      `;
-      lucide.createIcons();
+      // Create empty state using DOM methods
+      const emptyState = document.createElement("div");
+      emptyState.className = "empty-state";
+      
+      const clipboardIcon = document.createElement("i");
+      clipboardIcon.setAttribute("data-lucide", "clipboard");
+      clipboardIcon.className = "icon-48";
+      
+      const emptyText = document.createElement("p");
+      emptyText.textContent = "No plays tracked yet. Start tracking plays above!";
+      
+      emptyState.appendChild(clipboardIcon);
+      emptyState.appendChild(emptyText);
+      recentPlaysList.appendChild(emptyState);
+      
+      if (typeof lucide !== "undefined") {
+        lucide.createIcons();
+      }
       return;
     }
 
     // Show last 10 plays, most recent first
     const recentPlays = [...this.plays].reverse().slice(0, 10);
 
-    recentPlaysList.innerHTML = recentPlays
+    // Build plays HTML (data is escaped via escapeHtml)
+    const playsHtml = recentPlays
       .map((play) => {
         const badge = this.getPlayBadge(play);
         const description = this.getPlayDescription(play);
@@ -641,7 +739,7 @@ class GameTrackerPage {
           <div class="play-item-content">
             <div class="play-item-header">
               <span class="play-number">#${play.playNumber}</span>
-              <span class="play-context">Q${play.quarter} • ${play.down}${this.getOrdinal(play.down)} & ${play.distance}</span>
+              <span class="play-context">Q${play.quarter} • ${play.down}${this.getOrdinal(play.down)} & ${this.formatDistance(play)}</span>
             </div>
             <div class="play-description">${description}</div>
             <div class="play-details">
@@ -690,16 +788,62 @@ class GameTrackerPage {
       const qb = getPlayerName(play.quarterbackId);
       const receiver = getPlayerName(play.receiverId);
       const route = escapeHtml(play.routeType || "route");
-      return `${qb} to ${receiver} on ${route}`;
+      const routeDepth = this.formatRouteDepth(play);
+      return `${qb} to ${receiver} on ${route}${routeDepth ? ` (${routeDepth})` : ""}`;
     } else if (play.playType === "run") {
       const carrier = getPlayerName(play.ballCarrierId);
-      return `${carrier} runs for ${play.yardsGained} yards`;
+      const yardsGained = this.formatYardsGained(play);
+      return `${carrier} runs for ${yardsGained}`;
     } else if (play.playType === "flag_pull") {
       const defender = getPlayerName(play.defenderId);
       const carrier = getPlayerName(play.ballCarrierId);
       return `${defender} ${play.isSuccessful ? "pulls flag on" : "misses"} ${carrier}`;
     }
     return "Play";
+  }
+
+  formatDistance(play) {
+    const preferredUnit = localStorage.getItem("flagfit_distance_unit") || "imperial";
+    if (play.distanceDisplay && play.distanceUnit) {
+      // Use stored display value and unit
+      return `${play.distanceDisplay} ${play.distanceUnit === "imperial" ? "yds" : "m"}`;
+    } else if (play.distance) {
+      // Convert from meters to preferred unit
+      const distanceValue = preferredUnit === "imperial"
+        ? unitManager.convertDistance(play.distance, "meters", "yards")
+        : play.distance;
+      return `${Math.round(distanceValue)} ${preferredUnit === "imperial" ? "yds" : "m"}`;
+    }
+    return "0 yds";
+  }
+
+  formatYardsGained(play) {
+    const preferredUnit = localStorage.getItem("flagfit_distance_unit") || "imperial";
+    if (play.yardsGainedDisplay && play.yardsGainedUnit) {
+      // Use stored display value and unit
+      return `${play.yardsGainedDisplay} ${play.yardsGainedUnit === "imperial" ? "yds" : "m"}`;
+    } else if (play.yardsGained) {
+      // Convert from meters to preferred unit
+      const yardsValue = preferredUnit === "imperial"
+        ? unitManager.convertDistance(play.yardsGained, "meters", "yards")
+        : play.yardsGained;
+      return `${Math.round(yardsValue)} ${preferredUnit === "imperial" ? "yds" : "m"}`;
+    }
+    return "0 yds";
+  }
+
+  formatRouteDepth(play) {
+    if (!play.routeDepth && !play.routeDepthDisplay) return "";
+    const preferredUnit = localStorage.getItem("flagfit_distance_unit") || "imperial";
+    if (play.routeDepthDisplay && play.routeDepthUnit) {
+      return `${play.routeDepthDisplay} ${play.routeDepthUnit === "imperial" ? "yds" : "m"}`;
+    } else if (play.routeDepth) {
+      const depthValue = preferredUnit === "imperial"
+        ? unitManager.convertDistance(play.routeDepth, "meters", "yards")
+        : play.routeDepth;
+      return `${depthValue.toFixed(1)} ${preferredUnit === "imperial" ? "yds" : "m"}`;
+    }
+    return "";
   }
 
   getOrdinal(n) {
@@ -786,7 +930,7 @@ class GameTrackerPage {
           );
         }
       } catch (error) {
-        console.error("Error saving final game state:", error);
+        logger.error("Error saving final game state:", error);
         // Continue anyway - game is saved to localStorage
       }
 

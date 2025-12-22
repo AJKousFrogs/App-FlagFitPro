@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Storage Migration Script
  * Migrates files from old storage patterns to unified storage service

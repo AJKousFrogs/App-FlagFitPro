@@ -25,6 +25,7 @@ import { TrendsService } from "../../core/services/trends.service";
 import { HeaderService } from "../../core/services/header.service";
 import { TrainingDataService } from "../../core/services/training-data.service";
 import { RealtimeBaseComponent } from "../../shared/components/realtime-base.component";
+import { LoggerService } from "../../core/services/logger.service";
 
 @Component({
   selector: "app-athlete-dashboard",
@@ -230,6 +231,7 @@ export class AthleteDashboardComponent extends RealtimeBaseComponent implements 
   private trendsService = inject(TrendsService);
   private headerService = inject(HeaderService);
   private trainingDataService = inject(TrainingDataService);
+  private logger = inject(LoggerService);
 
   athleteId = signal<string | undefined>(undefined);
   todayWorkload = signal<number>(0);
@@ -273,7 +275,7 @@ export class AthleteDashboardComponent extends RealtimeBaseComponent implements 
 
     // Subscribe to training sessions updates
     const trainingUnsub = this.realtimeService.subscribeToTrainingSessions((event) => {
-      console.log('🔴 LIVE: Training session updated', event);
+      this.logger.debug('🔴 LIVE: Training session updated', event);
       // Reload today's workload when training data changes
       this.loadTodayWorkload(userId);
       this.loadNextSession(userId);
@@ -282,7 +284,7 @@ export class AthleteDashboardComponent extends RealtimeBaseComponent implements 
 
     // Subscribe to readiness updates
     const readinessUnsub = this.realtimeService.subscribeToReadiness((event) => {
-      console.log('🔴 LIVE: Readiness updated', event);
+      this.logger.debug('🔴 LIVE: Readiness updated', event);
       // Reload readiness when it changes
       this.readinessService.calculateToday(userId).pipe(
         takeUntilDestroyed()
@@ -292,13 +294,13 @@ export class AthleteDashboardComponent extends RealtimeBaseComponent implements 
 
     // Subscribe to performance metrics updates
     const performanceUnsub = this.realtimeService.subscribeToPerformance((event) => {
-      console.log('🔴 LIVE: Performance metrics updated', event);
+      this.logger.debug('🔴 LIVE: Performance metrics updated', event);
       // Reload trends when performance data changes
       this.loadTrends(userId);
     });
     this.addSubscription(performanceUnsub);
 
-    console.log('✅ Real-time subscriptions active for athlete dashboard');
+    this.logger.debug('✅ Real-time subscriptions active for athlete dashboard');
   }
 
   loadDashboardData(): void {

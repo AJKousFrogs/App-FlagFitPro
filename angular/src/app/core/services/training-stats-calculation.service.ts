@@ -11,6 +11,7 @@ import { Observable, from } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { TrainingDataService, TrainingSession } from './training-data.service';
 import { ApiService, API_ENDPOINTS } from './api.service';
+import { LoggerService } from './logger.service';
 
 export interface ACWRData {
   acwr: number | null;
@@ -74,6 +75,7 @@ export interface TrainingStatsData {
 export class TrainingStatsCalculationService {
   private apiService = inject(ApiService);
   private trainingDataService = inject(TrainingDataService);
+  private logger = inject(LoggerService);
 
   /**
    * Get comprehensive training statistics
@@ -83,11 +85,11 @@ export class TrainingStatsCalculationService {
     const params: Record<string, any> = {};
     
     if (options?.startDate) {
-      params.startDate = options.startDate;
+      params['startDate'] = options.startDate;
     }
     
     if (options?.endDate) {
-      params.endDate = options.endDate;
+      params['endDate'] = options.endDate;
     }
 
     return this.apiService.get<TrainingStatsData>(
@@ -96,7 +98,7 @@ export class TrainingStatsCalculationService {
     ).pipe(
       map((response) => {
         if (response.error || !response.data) {
-          console.error('Error fetching training stats:', response.error);
+          this.logger.error('Error fetching training stats:', response.error);
           return this.getEmptyStats();
         }
         return response.data;
@@ -144,7 +146,7 @@ export class TrainingStatsCalculationService {
 
     const acuteSessions = validSessions.filter(s => {
       const sessionDate = s.session_date || s.date;
-      return sessionDate >= acuteStartStr && sessionDate <= todayStr;
+      return sessionDate && sessionDate >= acuteStartStr && sessionDate <= todayStr;
     });
 
     const acuteLoad = acuteSessions.reduce((sum, s) => sum + calculateLoad(s), 0);
@@ -156,7 +158,7 @@ export class TrainingStatsCalculationService {
 
     const chronicSessions = validSessions.filter(s => {
       const sessionDate = s.session_date || s.date;
-      return sessionDate >= chronicStartStr && sessionDate <= todayStr;
+      return sessionDate && sessionDate >= chronicStartStr && sessionDate <= todayStr;
     });
 
     const chronicTotalLoad = chronicSessions.reduce((sum, s) => sum + calculateLoad(s), 0);

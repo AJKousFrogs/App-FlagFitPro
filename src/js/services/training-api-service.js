@@ -6,7 +6,7 @@
 
 import { API_BASE_URL, API_ENDPOINTS } from "../../api-config.js";
 import { logger } from "../../logger.js";
-import { authManager } from "../auth/auth-manager.js";
+import { authManager } from "../../auth-manager.js";
 
 class TrainingApiService {
   constructor() {

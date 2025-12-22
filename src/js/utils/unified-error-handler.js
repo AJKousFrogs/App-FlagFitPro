@@ -5,6 +5,7 @@
 
 import { logger } from '../../logger.js';
 import { escapeHtml } from './sanitize.js';
+import { setSafeContent } from './shared.js';
 
 // Lazy-load Sentry service (only in production)
 let sentryService = null;
@@ -363,17 +364,27 @@ export class UnifiedErrorHandler {
 
     const icon = this.getNotificationIcon(type);
 
-    notification.innerHTML = `
+    // Build notification HTML (message is escaped via escapeHtml)
+    const notificationHtml = `
       <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
         <span style="flex-shrink: 0; font-size: 1rem;">${icon}</span>
         <span style="flex: 1;">${escapeHtml(message)}</span>
-        <button onclick="this.closest('.error-notification').remove()"
+        <button class="notification-close-btn"
                 style="background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer;
-                       opacity: 0.8; padding: 0; margin: 0; line-height: 1; flex-shrink: 0;"
-                onmouseover="this.style.opacity='1'"
-                onmouseout="this.style.opacity='0.8'">×</button>
+                       opacity: 0.8; padding: 0; margin: 0; line-height: 1; flex-shrink: 0;">×</button>
       </div>
     `;
+    
+    // Use setSafeContent to sanitize HTML before insertion
+    setSafeContent(notification, notificationHtml, true, true);
+    
+    // Replace onclick and onmouseover/out with addEventListener
+    const closeBtn = notification.querySelector('.notification-close-btn');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => notification.remove());
+      closeBtn.addEventListener('mouseover', () => { closeBtn.style.opacity = '1'; });
+      closeBtn.addEventListener('mouseout', () => { closeBtn.style.opacity = '0.8'; });
+    }
 
     return notification;
   }
@@ -433,7 +444,8 @@ export class UnifiedErrorHandler {
 
     notification.style.cssText = this.getNotificationStyles('error');
 
-    notification.innerHTML = `
+    // Build notification HTML (message is escaped via escapeHtml)
+    const notificationHtml = `
       <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
         <span style="flex-shrink: 0; font-size: 1rem;">❌</span>
         <div style="flex: 1;">
@@ -441,17 +453,26 @@ export class UnifiedErrorHandler {
           <button class="retry-btn"
                   style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);
                          color: white; padding: 0.25rem 0.75rem; border-radius: 4px; cursor: pointer;
-                         font-size: 0.75rem; font-weight: 500; margin-top: 0.5rem;"
-                  onmouseover="this.style.background='rgba(255,255,255,0.3)'"
-                  onmouseout="this.style.background='rgba(255,255,255,0.2)'">Retry</button>
+                         font-size: 0.75rem; font-weight: 500; margin-top: 0.5rem;">Retry</button>
         </div>
-        <button onclick="this.closest('.error-notification').remove()"
+        <button class="notification-close-btn"
                 style="background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer;
-                       opacity: 0.8; padding: 0; margin: 0; line-height: 1; flex-shrink: 0;"
-                onmouseover="this.style.opacity='1'"
-                onmouseout="this.style.opacity='0.8'">×</button>
+                       opacity: 0.8; padding: 0; margin: 0; line-height: 1; flex-shrink: 0;">×</button>
       </div>
     `;
+    
+    // Use setSafeContent to sanitize HTML before insertion
+    setSafeContent(notification, notificationHtml, true, true);
+    
+    // Replace onclick and onmouseover/out with addEventListener
+    const closeBtn = notification.querySelector('.notification-close-btn');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => notification.remove());
+      closeBtn.addEventListener('mouseover', () => { closeBtn.style.opacity = '1'; });
+      closeBtn.addEventListener('mouseout', () => { closeBtn.style.opacity = '0.8'; });
+    }
+    
+    // Note: retryCallback is passed as parameter to showErrorWithRetry, handled below
 
     document.body.appendChild(notification);
 
@@ -554,7 +575,9 @@ export class UnifiedErrorHandler {
 
         logger.warn(`[Retry] Attempt ${attempt}/${maxAttempts} failed, retrying in ${currentDelay}ms...`);
 
-        await new Promise(resolve => setTimeout(resolve, currentDelay));
+        await new Promise(resolve => {
+          setTimeout(resolve, currentDelay);
+        });
         currentDelay *= backoff;
       }
     }
@@ -757,4 +780,4 @@ if (typeof window !== 'undefined') {
   }
 }
 
-console.log('[Unified Error Handler] Module loaded');
+logger.info('[Unified Error Handler] Module loaded');

@@ -15,6 +15,7 @@
  */
 
 import { Injectable, signal, computed, effect, inject } from '@angular/core';
+import { LoggerService } from './logger.service';
 import {
   LoadAlert,
   ACWRData,
@@ -31,6 +32,7 @@ import { AcwrService } from './acwr.service';
 export class AcwrAlertsService {
   // Inject dependencies using inject() for Angular 21 best practices
   private readonly acwrService = inject(AcwrService);
+  private logger = inject(LoggerService);
 
   // Active alerts
   private readonly alerts = signal<LoadAlert[]>([]);
@@ -166,7 +168,7 @@ export class AcwrAlertsService {
    */
   private sendNotification(alert: LoadAlert): void {
     // TODO: Integrate with your notification system
-    console.log('🔔 Alert:', alert.message);
+    this.logger.info('🔔 Alert:', alert.message);
 
     // Could trigger browser notification
     if ('Notification' in window && Notification.permission === 'granted') {
@@ -184,7 +186,7 @@ export class AcwrAlertsService {
    */
   private notifyCoach(alert: LoadAlert): void {
     // TODO: Send email/SMS to coach
-    console.log('📧 Notifying coach of critical alert:', alert.message);
+    this.logger.info('📧 Notifying coach of critical alert:', alert.message);
 
     // Could trigger:
     // - Email via backend API
@@ -346,7 +348,7 @@ export class AcwrAlertsService {
    */
   public async requestNotificationPermission(): Promise<boolean> {
     if (!('Notification' in window)) {
-      console.warn('Browser does not support notifications');
+      this.logger.warn('Browser does not support notifications');
       return false;
     }
 

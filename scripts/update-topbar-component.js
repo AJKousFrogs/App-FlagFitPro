@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Automated Script to Replace Top Bar with Dynamic Component
  * Replaces top bar HTML markup with dynamic loader across multiple files

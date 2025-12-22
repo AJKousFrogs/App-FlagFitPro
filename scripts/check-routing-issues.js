@@ -1,10 +1,11 @@
+/* eslint-disable no-console */
 // Comprehensive Routing Issues Checker
 // Checks for incorrect import paths, URLs, API endpoints, and asset references
 
 import fs from "fs";
-import path from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
+import path from "path";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -103,6 +104,7 @@ function checkHrefLinks(filePath, content) {
       href.startsWith("#") ||
       href.startsWith("mailto:") ||
       href.startsWith("tel:") ||
+      // eslint-disable-next-line no-script-url
       href.startsWith("javascript:") ||
       href === "" ||
       href.startsWith("data:")

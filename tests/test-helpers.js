@@ -15,9 +15,9 @@ export const createMockApiResponse = (data, options = {}) => {
   };
 
   if (delay > 0) {
-    return new Promise((resolve) =>
-      setTimeout(() => resolve(mockResponse), delay),
-    );
+    return new Promise((resolve) => {
+      setTimeout(() => resolve(mockResponse), delay);
+    });
   }
 
   return Promise.resolve(mockResponse);

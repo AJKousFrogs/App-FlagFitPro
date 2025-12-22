@@ -10,13 +10,13 @@ import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { ChartModule } from "primeng/chart";
-import { DatePicker } from "primeng/datepicker";
 import { InputNumberModule } from "primeng/inputnumber";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
 import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { WellnessService } from "../../core/services/wellness.service";
+import { LoggerService } from "../../core/services/logger.service";
 
 interface WellnessMetric {
   label: string;
@@ -35,7 +35,6 @@ interface WellnessMetric {
     CardModule,
     ButtonModule,
     ChartModule,
-    DatePicker,
     InputNumberModule,
     MainLayoutComponent,
     PageHeaderComponent,
@@ -209,6 +208,7 @@ interface WellnessMetric {
 })
 export class WellnessComponent implements OnInit {
   private wellnessService = inject(WellnessService);
+  private logger = inject(LoggerService);
 
   metrics = signal<WellnessMetric[]>([]);
   wellnessStats = signal<any[]>([]);
@@ -309,7 +309,7 @@ export class WellnessComponent implements OnInit {
         }
       },
       error: (err) => {
-        console.error('Error loading wellness data:', err);
+        this.logger.error('Error loading wellness data:', err);
         this.loadFallbackData();
       },
     });
@@ -397,7 +397,7 @@ export class WellnessComponent implements OnInit {
         }
       },
       error: (err) => {
-        console.error('Error submitting wellness check-in:', err);
+        this.logger.error('Error submitting wellness check-in:', err);
       },
     });
   }

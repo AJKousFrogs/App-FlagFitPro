@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable no-console */
 
 // Comprehensive Health Check Script for Production Readiness
 // Validates all aspects of the Flag Football app before deployment
@@ -711,7 +712,7 @@ class HealthChecker {
 
     try {
       const supabaseUrl = process.env.SUPABASE_URL;
-      const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+      const supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
 
       if (!supabaseUrl || !supabaseKey) {
         database.issues.push("Missing Supabase environment variables");
@@ -898,7 +899,7 @@ class HealthChecker {
 
       // Optional but recommended
       const recommendedVars = [
-        'SUPABASE_SERVICE_ROLE_KEY',
+        'SUPABASE_SERVICE_KEY',
         'JWT_SECRET',
         'NODE_ENV',
       ];
