@@ -509,7 +509,7 @@ class DashboardPage {
    */
   showNotificationLoading() {
     const notificationList = document.getElementById("notification-list");
-    if (!notificationList) return;
+    if (!notificationList) {return;}
 
     // Clear and create loading state using DOM manipulation
     notificationList.textContent = '';
@@ -533,7 +533,7 @@ class DashboardPage {
    */
   showNotificationError(error) {
     const notificationList = document.getElementById("notification-list");
-    if (!notificationList) return;
+    if (!notificationList) {return;}
 
     // Clear and create error state using DOM manipulation
     notificationList.textContent = '';
@@ -570,7 +570,7 @@ class DashboardPage {
     const badge = document.getElementById("notification-badge");
     const live = document.getElementById("notification-live");
 
-    if (!badge || !live) return;
+    if (!badge || !live) {return;}
 
     if (count > 0) {
       badge.textContent = String(count);
@@ -932,7 +932,7 @@ class DashboardPage {
     const panel = document.getElementById("notification-panel");
     const bell = document.getElementById("notification-bell");
 
-    if (!panel || !bell) return;
+    if (!panel || !bell) {return;}
 
     panel.classList.add("is-open");
     bell.setAttribute("aria-expanded", "true");
@@ -954,7 +954,7 @@ class DashboardPage {
     const panel = document.getElementById("notification-panel");
     const bell = document.getElementById("notification-bell");
 
-    if (!panel || !bell) return;
+    if (!panel || !bell) {return;}
 
     panel.classList.remove("is-open");
     bell.setAttribute("aria-expanded", "false");
@@ -975,7 +975,7 @@ class DashboardPage {
       const panel = document.getElementById("notification-panel");
       const bell = document.getElementById("notification-bell");
 
-      if (!panel || !bell) return;
+      if (!panel || !bell) {return;}
 
       // Check if click is outside panel and not on bell
       const clickedPanel = panel.contains(e.target);
@@ -1807,7 +1807,7 @@ class DashboardPage {
     const datePicker = document.getElementById("dashboard-date-picker");
     const dateDisplay = document.getElementById("date-picker-display");
     
-    if (!datePicker) return;
+    if (!datePicker) {return;}
 
     // Update the date picker value (for HTML5 date input)
     datePicker.value = this.formatDateForInput(this.selectedDate);
@@ -2267,7 +2267,7 @@ class DashboardPage {
    */
   updateTrainingCard(trainingSession, dayName, isToday) {
     const trainingCard = document.querySelector('.todays-training-card');
-    if (!trainingCard) return;
+    if (!trainingCard) {return;}
 
     const trainingTimeEl = trainingCard.querySelector('.training-time');
     const trainingInfoEls = trainingCard.querySelectorAll('.training-info');
@@ -2351,7 +2351,7 @@ class DashboardPage {
     }
 
     // Legacy notification code removed - using errorHandler instead
-    return;
+    
   }
 
   setupInjuryTracking() {

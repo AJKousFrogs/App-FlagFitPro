@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* eslint-disable no-console */
+ 
 
 /**
  * Test Automation Script for Flag Football Training App

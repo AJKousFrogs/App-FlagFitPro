@@ -662,7 +662,7 @@ class FlagFitChatbot {
             // Clear existing messages except welcome
             const existingMessages = messagesContainer.querySelectorAll(".chatbot-message");
             existingMessages.forEach((msg, index) => {
-              if (index > 0) msg.remove(); // Keep welcome message
+              if (index > 0) {msg.remove();} // Keep welcome message
             });
 
             // Render stored messages
@@ -1157,7 +1157,7 @@ class FlagFitChatbot {
 
   showProgressIndicator() {
     const messagesContainer = document.getElementById("chatbot-messages");
-    if (!messagesContainer) return null;
+    if (!messagesContainer) {return null;}
 
     const progressBar = document.createElement("div");
     progressBar.className = "chatbot-progress-bar";
@@ -1175,7 +1175,7 @@ class FlagFitChatbot {
     let progress = 0;
     const interval = setInterval(() => {
       progress += 2; // Increase by 2% every ~600ms (30s total)
-      if (progress > 95) progress = 95; // Cap at 95%
+      if (progress > 95) {progress = 95;} // Cap at 95%
       
       const fill = progressBar.querySelector(".chatbot-progress-fill");
       if (fill) {
@@ -1188,7 +1188,7 @@ class FlagFitChatbot {
 
   showErrorMessage(message) {
     const messagesContainer = document.getElementById("chatbot-messages");
-    if (!messagesContainer) return;
+    if (!messagesContainer) {return;}
 
     // Remove existing error message if any
     const existingError = document.getElementById("chatbot-error-message");
@@ -1865,7 +1865,7 @@ class FlagFitChatbot {
     // Convert numbered lists
     formatted = formatted.replace(/^\d+\.\s+(.+)$/gm, "<li>$1</li>");
     formatted = formatted.replace(/(<li>.*?<\/li>(?:<br>)?)+/g, (match) => {
-      if (match.includes('<ul')) return match; // Already wrapped
+      if (match.includes('<ul')) {return match;} // Already wrapped
       return `<ol style='margin: 8px 0; padding-left: 20px;'>${match.replace(/<br>/g, "")}</ol>`;
     });
 
@@ -1875,6 +1875,8 @@ class FlagFitChatbot {
   escapeHtml(text) {
     const div = document.createElement("div");
     div.textContent = text;
+    // Safe: Using textContent then reading innerHTML for escaping purposes only
+    // eslint-disable-next-line no-restricted-syntax
     return div.innerHTML;
   }
 

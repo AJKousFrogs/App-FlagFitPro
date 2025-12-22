@@ -95,8 +95,9 @@ export class SecureDOMUtils {
 
     // Sanitize and process template
     const sanitizedTemplate = this.sanitizeTemplate(templateString, data);
-    // eslint-disable-next-line no-restricted-syntax
+     
     // Safe: Using temp container pattern for sanitized content
+    // eslint-disable-next-line no-restricted-syntax
     temp.innerHTML = sanitizedTemplate;
 
     // Replace content safely
@@ -148,8 +149,9 @@ export class SecureDOMUtils {
     }
 
     // Only for truly trusted content (e.g., static templates, server responses with CSRF protection)
-    // eslint-disable-next-line no-restricted-syntax
+     
     // Safe: Explicitly marked as trusted content - use with caution
+    // eslint-disable-next-line no-restricted-syntax
     element.innerHTML = htmlContent;
   }
 
@@ -160,8 +162,9 @@ export class SecureDOMUtils {
    */
   static createFragmentFromHTML(html) {
     const template = document.createElement("template");
-    // eslint-disable-next-line no-restricted-syntax
+     
     // Safe: Using template element with sanitized content
+    // eslint-disable-next-line no-restricted-syntax
     template.innerHTML = this.sanitizeTemplate(html, {});
     return template.content;
   }

@@ -346,8 +346,8 @@ function showPlayerModal(mode, player = null) {
       element.addEventListener('click', (e) => {
         e.preventDefault();
         // Handle form submission
-        if (typeof handlePlayerFormSubmit === 'function') {
-          handlePlayerFormSubmit(e);
+        if (typeof window.handlePlayerFormSubmit === 'function') {
+          window.handlePlayerFormSubmit(e);
         }
       });
     }

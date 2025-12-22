@@ -41,7 +41,7 @@ const { applyRateLimit } = require("./utils/rate-limiter.cjs");
  * Convert 1-10 scale to 1-5 scale (standard athlete monitoring scale)
  */
 function scaleTo1to5(value) {
-  if (value === null || value === undefined) return null;
+  if (value === null || value === undefined) {return null;}
   // Map 1-10 to 1-5: 1-2→1, 3-4→2, 5-6→3, 7-8→4, 9-10→5
   return Math.ceil(value / 2);
 }
@@ -259,8 +259,8 @@ exports.handler = async (event, context) => {
       // Use rpe if available, otherwise use intensity_level as fallback
       const rpe = s.rpe !== null && s.rpe !== undefined ? s.rpe : (s.intensity_level || 0);
       
-      if (!duration || !sessionDate) continue;
-      if (rpe === 0 || rpe === null) continue; // Skip if no RPE/intensity data
+      if (!duration || !sessionDate) {continue;}
+      if (rpe === 0 || rpe === null) {continue;} // Skip if no RPE/intensity data
       
       const load = duration * rpe; // session-RPE
       const key = sessionDate;
@@ -328,10 +328,7 @@ exports.handler = async (event, context) => {
     // Workload score (ACWR-based)
     // Literature flags >1.5 as high risk, ~0.8-1.3 safer range (Gabbett 2016)
     let workloadScore = 100;
-    if (acwr > 1.8) workloadScore -= 40;
-    else if (acwr > 1.5) workloadScore -= 30;
-    else if (acwr > 1.3) workloadScore -= 15;
-    else if (acwr < 0.7) workloadScore -= 10;
+    if (acwr > 1.8) {workloadScore -= 40;} else if (acwr > 1.5) {workloadScore -= 30;} else if (acwr > 1.3) {workloadScore -= 15;} else if (acwr < 0.7) {workloadScore -= 10;}
 
     // Wellness Index score (using calculated subscore)
     // Modeled on common athlete monitoring scales (1-5 ratings)
@@ -342,17 +339,13 @@ exports.handler = async (event, context) => {
     // Strong evidence base: sleep duration/quality strongly linked to readiness
     // (Halson 2014, Fullagar et al. 2015)
     let sleepScore = 100;
-    if (wellness.sleep_quality <= 4) sleepScore -= 25;
-    else if (wellness.sleep_quality <= 6) sleepScore -= 15;
-    if (wellness.sleep_hours !== null && wellness.sleep_hours < 6) sleepScore -= 10;
-    else if (wellness.sleep_hours !== null && wellness.sleep_hours < 7) sleepScore -= 5;
+    if (wellness.sleep_quality <= 4) {sleepScore -= 25;} else if (wellness.sleep_quality <= 6) {sleepScore -= 15;}
+    if (wellness.sleep_hours !== null && wellness.sleep_hours < 6) {sleepScore -= 10;} else if (wellness.sleep_hours !== null && wellness.sleep_hours < 7) {sleepScore -= 5;}
 
     // Game proximity score
     // Post-match metrics worst 1-2 days after, improve by day 3-4
     let proximityScore = 100;
-    if (gameProximityHours <= 24) proximityScore -= 25;
-    else if (gameProximityHours <= 48) proximityScore -= 15;
-    else if (gameProximityHours <= 72) proximityScore -= 5;
+    if (gameProximityHours <= 24) {proximityScore -= 25;} else if (gameProximityHours <= 48) {proximityScore -= 15;} else if (gameProximityHours <= 72) {proximityScore -= 5;}
 
     // Team-sport optimized weightings (evidence-based adjustments)
     // Increased wellness/sleep influence based on team-sport research

@@ -555,12 +555,8 @@ export class ExerciseLibraryPage {
       }
     `;
 
-    while (tempDiv.firstChild) {
-      fragment.appendChild(tempDiv.firstChild);
-    }
-
-    modalBody.textContent = "";
-    modalBody.appendChild(fragment);
+    // Use setSafeContent to safely insert HTML content
+    setSafeContent(modalBody, modalHtml, true, true);
 
     modal.style.display = "block";
     document.body.style.overflow = "hidden";
@@ -575,6 +571,8 @@ export class ExerciseLibraryPage {
     if (!text) {return "";}
     const div = document.createElement("div");
     div.textContent = text;
+    // Safe: Using textContent then reading innerHTML for escaping purposes only
+    // eslint-disable-next-line no-restricted-syntax
     return div.innerHTML;
   }
 

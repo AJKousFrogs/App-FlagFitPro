@@ -55,7 +55,7 @@ async function calculateACWR(userId, date) {
       .lte("session_date", todayEndOfDay.toISOString().split("T")[0])
       .in("status", ["completed", "in_progress"]);
 
-    if (acuteError && acuteError.code !== "42P01") throw acuteError;
+    if (acuteError && acuteError.code !== "42P01") {throw acuteError;}
 
     // Get chronic loads (last 28 days)
     const { data: chronicSessions, error: chronicError } = await supabaseAdmin
@@ -66,7 +66,7 @@ async function calculateACWR(userId, date) {
       .lte("session_date", todayEndOfDay.toISOString().split("T")[0])
       .in("status", ["completed", "in_progress"]);
 
-    if (chronicError && chronicError.code !== "42P01") throw chronicError;
+    if (chronicError && chronicError.code !== "42P01") {throw chronicError;}
 
     // Calculate loads (duration × intensity × RPE)
     const calculateLoad = (session) => {
@@ -158,7 +158,7 @@ async function determinePeriodizationPhase(userId, date) {
       .gte("end_date", date.toISOString().split("T")[0])
       .limit(1);
 
-    if (programError && programError.code !== "42P01") throw programError;
+    if (programError && programError.code !== "42P01") {throw programError;}
 
     if (programs && programs.length > 0 && programs[0].training_phases) {
       const phases = programs[0].training_phases;
@@ -226,7 +226,7 @@ async function getUpcomingGames(userId, date, daysAhead = 14) {
       .eq("user_id", userId)
       .limit(1);
 
-    if (teamError) throw teamError;
+    if (teamError) {throw teamError;}
 
     const teamId =
       teamMemberships && teamMemberships.length > 0
@@ -246,7 +246,7 @@ async function getUpcomingGames(userId, date, daysAhead = 14) {
       .lte("game_date", endDate.toISOString().split("T")[0])
       .order("game_date", { ascending: true });
 
-    if (gamesError && gamesError.code !== "42P01") throw gamesError;
+    if (gamesError && gamesError.code !== "42P01") {throw gamesError;}
 
     // Separate domestic and international
     const domestic = [];
@@ -305,7 +305,7 @@ async function getTodaySessions(userId, date) {
       .eq("session_date", dateStr)
       .order("session_time", { ascending: true });
 
-    if (error && error.code !== "42P01") throw error;
+    if (error && error.code !== "42P01") {throw error;}
 
     return sessions || [];
   } catch (error) {
@@ -340,7 +340,7 @@ async function getTrainingHistory(userId, daysBack = 30) {
       .order("session_date", { ascending: false })
       .order("session_time", { ascending: true });
 
-    if (error && error.code !== "42P01") throw error;
+    if (error && error.code !== "42P01") {throw error;}
 
     return sessions || [];
   } catch (error) {

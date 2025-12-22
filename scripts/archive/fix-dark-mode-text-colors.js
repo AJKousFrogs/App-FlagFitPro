@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+ 
 // Script to fix all dark text colors to white/light grey in dark mode
 import fs from "fs";
 import { fileURLToPath } from "url";

@@ -26,7 +26,7 @@ async function getCoachDashboard(userId) {
           .eq('id', member.user_id)
           .single();
 
-        if (userError || !userData) continue;
+        if (userError || !userData) {continue;}
 
         // Get recent training sessions for ACWR calculation
         const { data: sessions, error: sessionsError } = await supabaseAdmin

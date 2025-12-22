@@ -34,7 +34,7 @@ function getAllowedOrigins() {
  * @returns {string|null} Origin or null
  */
 function extractOrigin(url) {
-  if (!url) return null;
+  if (!url) {return null;}
 
   try {
     const parsed = new URL(url);

@@ -53,7 +53,7 @@ const getPlayerAggregatedStats = async (playerId, options = {}) => {
 
     const { data: games, error: gamesError } = await gamesQuery;
 
-    if (gamesError) throw gamesError;
+    if (gamesError) {throw gamesError;}
 
     if (!games || games.length === 0) {
       return getEmptyStats();
@@ -68,7 +68,7 @@ const getPlayerAggregatedStats = async (playerId, options = {}) => {
       .in("game_id", gameIds)
       .eq("primary_player_id", playerId);
 
-    if (primaryError) throw primaryError;
+    if (primaryError) {throw primaryError;}
 
     const { data: secondaryPlays, error: secondaryError } = await supabaseAdmin
       .from("game_events")
@@ -76,7 +76,7 @@ const getPlayerAggregatedStats = async (playerId, options = {}) => {
       .in("game_id", gameIds)
       .contains("secondary_player_ids", [playerId]);
 
-    if (secondaryError) throw secondaryError;
+    if (secondaryError) {throw secondaryError;}
 
     // Combine and deduplicate plays
     const allPlays = [...(primaryPlays || []), ...(secondaryPlays || [])];
@@ -339,7 +339,7 @@ const getPlayerStatsByDateRange = async (playerId, startDate, endDate) => {
       .lte("game_date", endDateInclusive.toISOString())
       .order("game_date", { ascending: false });
 
-    if (gamesError) throw gamesError;
+    if (gamesError) {throw gamesError;}
 
     if (!games || games.length === 0) {
       return getEmptyStats();
@@ -353,7 +353,7 @@ const getPlayerStatsByDateRange = async (playerId, startDate, endDate) => {
       .in("game_id", gameIds)
       .eq("primary_player_id", playerId);
 
-    if (primaryError) throw primaryError;
+    if (primaryError) {throw primaryError;}
 
     const { data: secondaryPlays, error: secondaryError } = await supabaseAdmin
       .from("game_events")
@@ -361,7 +361,7 @@ const getPlayerStatsByDateRange = async (playerId, startDate, endDate) => {
       .in("game_id", gameIds)
       .contains("secondary_player_ids", [playerId]);
 
-    if (secondaryError) throw secondaryError;
+    if (secondaryError) {throw secondaryError;}
 
     const allPlays = [...(primaryPlays || []), ...(secondaryPlays || [])];
     const uniquePlays = Array.from(

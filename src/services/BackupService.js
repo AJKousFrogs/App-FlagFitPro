@@ -13,7 +13,11 @@ class BackupService {
       logger.info('Creating backup...', metadata);
       
       // Simulate backup process
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => {
+        setTimeout(() => {
+          resolve();
+        }, 1000);
+      });
       
       const backup = {
         id: Date.now().toString(),
@@ -44,7 +48,11 @@ class BackupService {
       }
       
       logger.info('Restoring backup:', backupId);
-      await new Promise(resolve => setTimeout(resolve, 800));
+      await new Promise(resolve => {
+        setTimeout(() => {
+          resolve();
+        }, 800);
+      });
       
       const data = JSON.parse(backup.data);
       logger.info('Backup restored successfully');

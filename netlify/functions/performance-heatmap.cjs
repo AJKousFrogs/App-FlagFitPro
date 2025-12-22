@@ -18,7 +18,7 @@ const { applyRateLimit } = require("./utils/rate-limiter.cjs");
  */
 function calculateIntensity(duration, intensityLevel, sessionType) {
   // Base intensity calculation
-  let baseIntensity = intensityLevel || 5;
+  const baseIntensity = intensityLevel || 5;
   
   // Adjust based on session type
   const typeMultipliers = {
@@ -79,7 +79,7 @@ async function getHeatmapData(userId, timeRange) {
     const sessionsByDate = {};
     trainingSessions.forEach((session) => {
       const date = session.session_date || session.completed_at?.split("T")[0];
-      if (!date) return;
+      if (!date) {return;}
 
       if (!sessionsByDate[date]) {
         sessionsByDate[date] = [];

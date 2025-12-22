@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+ 
 // Script to fix duplicate style attributes and clean up icon styles
 import fs from "fs";
 import { fileURLToPath } from "url";

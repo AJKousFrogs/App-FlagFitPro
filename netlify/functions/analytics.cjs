@@ -34,7 +34,7 @@ const getPerformanceTrends = async (userId, weeks = 7) => {
       .lte("completed_at", todayEndOfDay.toISOString())
       .order("completed_at", { ascending: true });
 
-    if (error) throw error;
+    if (error) {throw error;}
 
     // Group by week and calculate average performance
     const weeklyData = {};
@@ -118,7 +118,7 @@ const getTeamChemistry = async (userId) => {
       .select("user_id")
       .eq("team_id", teamId);
 
-    if (membersError) throw membersError;
+    if (membersError) {throw membersError;}
 
     // Calculate chemistry metrics based on training sessions together
     // Always filters data up to and including today
@@ -134,7 +134,7 @@ const getTeamChemistry = async (userId) => {
       .gte("completed_at", thirtyDaysAgo.toISOString())
       .lte("completed_at", todayEndOfDay.toISOString());
 
-    if (sessionsError) throw sessionsError;
+    if (sessionsError) {throw sessionsError;}
 
     // Calculate metrics (simplified - in real app, would use more sophisticated algorithms)
     const totalSessions = teamSessions.length;
@@ -191,7 +191,7 @@ const getTrainingDistribution = async (userId, period = "30days") => {
       .gte("completed_at", startDate.toISOString())
       .lte("completed_at", todayEndOfDay.toISOString());
 
-    if (error) throw error;
+    if (error) {throw error;}
 
     // Count by workout type
     const distribution = {};
@@ -252,7 +252,7 @@ const getPositionPerformance = async (userId) => {
       `)
       .eq("team_id", teamId);
 
-    if (membersError) throw membersError;
+    if (membersError) {throw membersError;}
 
     // Get performance scores for each member
     // Always filters data up to and including today
@@ -268,7 +268,7 @@ const getPositionPerformance = async (userId) => {
       .gte("completed_at", thirtyDaysAgo.toISOString())
       .lte("completed_at", todayEndOfDay.toISOString());
 
-    if (sessionsError) throw sessionsError;
+    if (sessionsError) {throw sessionsError;}
 
     // Calculate average score per user
     const userScores = {};
@@ -284,7 +284,7 @@ const getPositionPerformance = async (userId) => {
     const positionData = {};
     members.forEach((member) => {
       const user = member.users;
-      if (!user) return;
+      if (!user) {return;}
       const position = user.position || "Other";
       const avgScore = userScores[user.id]
         ? userScores[user.id].total / userScores[user.id].count
@@ -347,7 +347,7 @@ const getSpeedDevelopment = async (userId, weeks = 7) => {
       .lte("completed_at", todayEndOfDay.toISOString())
       .order("completed_at", { ascending: true });
 
-    if (error) throw error;
+    if (error) {throw error;}
 
     // Group by week
     const weeklyData = { "40YardDash": {}, "10YardSplit": {} };
@@ -468,7 +468,7 @@ function getWeekNumber(date) {
 function parseWeekKey(weekKey) {
   // Parse "2024-W15" format
   const match = weekKey.match(/(\d{4})-W(\d+)/);
-  if (!match) return null;
+  if (!match) {return null;}
   const year = parseInt(match[1]);
   const week = parseInt(match[2]);
   const date = new Date(year, 0, 1 + (week - 1) * 7);

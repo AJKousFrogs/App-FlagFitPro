@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* eslint-disable no-console */
+ 
 
 // Feature Validation Framework
 // Validates all Olympic-level claims and performance metrics

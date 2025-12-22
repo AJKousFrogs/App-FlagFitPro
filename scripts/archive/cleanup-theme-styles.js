@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+ 
 // Script to clean up old styles and ensure consistent dark theme
 import fs from "fs";
 import { fileURLToPath } from "url";

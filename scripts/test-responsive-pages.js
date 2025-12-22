@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+ 
 // Comprehensive Responsive Page Testing Script
 // Tests all HTML pages for responsive design issues
 

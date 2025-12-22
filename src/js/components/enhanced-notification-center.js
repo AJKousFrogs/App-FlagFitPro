@@ -725,6 +725,8 @@ class EnhancedNotificationCenter {
     const escapeHtml = (text) => {
       const div = document.createElement('div');
       div.textContent = text;
+      // Safe: Using textContent then reading innerHTML for escaping purposes only
+      // eslint-disable-next-line no-restricted-syntax
       return div.innerHTML;
     };
 

@@ -67,7 +67,7 @@ const db = {
           .select("id, email, name, role, avatar_url, email_verified, created_at, updated_at")
           .single();
 
-        if (error) throw enhanceSupabaseError(error, 'create user');
+        if (error) {throw enhanceSupabaseError(error, 'create user');}
         return data;
       } catch (error) {
         throw enhanceSupabaseError(error, 'create user');
@@ -105,7 +105,7 @@ const db = {
           .select("id, email, name, role, avatar_url, email_verified, created_at, updated_at")
           .single();
 
-        if (error) throw enhanceSupabaseError(error, 'update user');
+        if (error) {throw enhanceSupabaseError(error, 'update user');}
         return data;
       } catch (error) {
         throw enhanceSupabaseError(error, 'update user');
@@ -128,7 +128,7 @@ const db = {
           .select("id, email, name, role, avatar_url, email_verified, created_at, updated_at")
           .single();
 
-        if (error) throw enhanceSupabaseError(error, 'setVerificationToken');
+        if (error) {throw enhanceSupabaseError(error, 'setVerificationToken');}
         return data;
       } catch (error) {
         throw enhanceSupabaseError(error, 'setVerificationToken');
@@ -176,7 +176,7 @@ const db = {
           .select("id, email, name, role, avatar_url, email_verified, created_at, updated_at")
           .single();
 
-        if (error) throw enhanceSupabaseError(error, 'verifyEmail');
+        if (error) {throw enhanceSupabaseError(error, 'verifyEmail');}
         return { alreadyVerified: false, user: data };
       } catch (error) {
         // Don't enhance user-friendly errors
@@ -201,7 +201,7 @@ const db = {
           .eq("user_id", userId)
           .order("completed_at", { ascending: false });
 
-        if (error) throw enhanceSupabaseError(error, 'getUserStats');
+        if (error) {throw enhanceSupabaseError(error, 'getUserStats');}
         return data || [];
       } catch (error) {
         throw enhanceSupabaseError(error, 'getUserStats');
@@ -218,7 +218,7 @@ const db = {
           .select("id, user_id, session_date, session_type, duration_minutes, intensity_level, status, score, completed_at, created_at, updated_at")
           .single();
 
-        if (error) throw enhanceSupabaseError(error, 'createSession');
+        if (error) {throw enhanceSupabaseError(error, 'createSession');}
         return data;
       } catch (error) {
         throw enhanceSupabaseError(error, 'createSession');
@@ -236,7 +236,7 @@ const db = {
           .order("completed_at", { ascending: false })
           .limit(limit);
 
-        if (error) throw enhanceSupabaseError(error, 'getRecentSessions');
+        if (error) {throw enhanceSupabaseError(error, 'getRecentSessions');}
         return data || [];
       } catch (error) {
         throw enhanceSupabaseError(error, 'getRecentSessions');
@@ -269,7 +269,7 @@ const db = {
           )
           .eq("user_id", userId);
 
-        if (error) throw enhanceSupabaseError(error, 'getUserTeams');
+        if (error) {throw enhanceSupabaseError(error, 'getUserTeams');}
         return data || [];
       } catch (error) {
         throw enhanceSupabaseError(error, 'getUserTeams');
@@ -300,7 +300,7 @@ const db = {
           )
           .eq("team_id", teamId);
 
-        if (error) throw enhanceSupabaseError(error, 'getTeamMembers');
+        if (error) {throw enhanceSupabaseError(error, 'getTeamMembers');}
         return data || [];
       } catch (error) {
         throw enhanceSupabaseError(error, 'getTeamMembers');
@@ -335,7 +335,7 @@ const db = {
           .order("created_at", { ascending: false })
           .limit(limit);
 
-        if (error) throw enhanceSupabaseError(error, 'getFeedPosts');
+        if (error) {throw enhanceSupabaseError(error, 'getFeedPosts');}
         return data || [];
       } catch (error) {
         throw enhanceSupabaseError(error, 'getFeedPosts');
@@ -367,7 +367,7 @@ const db = {
           )
           .single();
 
-        if (error) throw enhanceSupabaseError(error, 'createPost');
+        if (error) {throw enhanceSupabaseError(error, 'createPost');}
         return data;
       } catch (error) {
         throw enhanceSupabaseError(error, 'createPost');
@@ -393,7 +393,7 @@ const db = {
 
         const { data, error } = await query;
 
-        if (error) throw enhanceSupabaseError(error, 'getTournamentList');
+        if (error) {throw enhanceSupabaseError(error, 'getTournamentList');}
         return data || [];
       } catch (error) {
         throw enhanceSupabaseError(error, 'getTournamentList');
@@ -432,7 +432,7 @@ const db = {
           .eq("id", tournamentId)
           .single();
 
-        if (error) throw enhanceSupabaseError(error, 'getTournamentDetails');
+        if (error) {throw enhanceSupabaseError(error, 'getTournamentDetails');}
         return data;
       } catch (error) {
         throw enhanceSupabaseError(error, 'getTournamentDetails');
@@ -479,7 +479,7 @@ const db = {
 
         const { data, error } = await query;
 
-        if (error) throw enhanceSupabaseError(error, 'getRecentGames');
+        if (error) {throw enhanceSupabaseError(error, 'getRecentGames');}
         return data || [];
       } catch (error) {
         throw enhanceSupabaseError(error, 'getRecentGames');
@@ -514,7 +514,7 @@ const db = {
           .order("created_at", { ascending: false })
           .limit(limit);
 
-        if (error) throw enhanceSupabaseError(error, 'getMessages');
+        if (error) {throw enhanceSupabaseError(error, 'getMessages');}
         return data?.reverse() || []; // Reverse to show oldest first
       } catch (error) {
         throw enhanceSupabaseError(error, 'getMessages');
@@ -545,7 +545,7 @@ const db = {
           )
           .single();
 
-        if (error) throw enhanceSupabaseError(error, 'createMessage');
+        if (error) {throw enhanceSupabaseError(error, 'createMessage');}
         return data;
       } catch (error) {
         throw enhanceSupabaseError(error, 'createMessage');
@@ -587,7 +587,7 @@ const db = {
 
         const { data, error } = await query;
 
-        if (error) throw enhanceSupabaseError(error, 'getUserNotifications');
+        if (error) {throw enhanceSupabaseError(error, 'getUserNotifications');}
 
         // Filter out muted types in memory (more reliable than query filter)
         let filteredData = data || [];
@@ -635,7 +635,7 @@ const db = {
           .select("id, user_id, notification_type, message, is_read, created_at, updated_at")
           .single();
 
-        if (error) throw enhanceSupabaseError(error, 'markAsRead');
+        if (error) {throw enhanceSupabaseError(error, 'markAsRead');}
         return data;
       } catch (error) {
         throw enhanceSupabaseError(error, 'markAsRead');
@@ -660,7 +660,7 @@ const db = {
           .in("id", notificationIds)
           .select("id, user_id, notification_type, message, is_read, created_at, updated_at");
 
-        if (error) throw enhanceSupabaseError(error, 'markManyAsRead');
+        if (error) {throw enhanceSupabaseError(error, 'markManyAsRead');}
         return data || [];
       } catch (error) {
         throw enhanceSupabaseError(error, 'markManyAsRead');
@@ -681,7 +681,7 @@ const db = {
           .eq("is_read", false)
           .select("id, user_id, notification_type, message, is_read, created_at, updated_at");
 
-        if (error) throw enhanceSupabaseError(error, 'markAllAsRead');
+        if (error) {throw enhanceSupabaseError(error, 'markAllAsRead');}
         return data || [];
       } catch (error) {
         throw enhanceSupabaseError(error, 'markAllAsRead');
@@ -695,7 +695,7 @@ const db = {
         // Get muted categories
         const mutedTypes = await this.getMutedTypes(userId);
         
-        let query = supabaseAdmin
+        const query = supabaseAdmin
           .from("notifications")
           .select("*", { count: 'exact', head: true })
           .eq("user_id", userId)
@@ -703,7 +703,7 @@ const db = {
         
         const { count: totalCount, error } = await query;
         
-        if (error) throw enhanceSupabaseError(error, 'getUnreadCount');
+        if (error) {throw enhanceSupabaseError(error, 'getUnreadCount');}
         
         // Filter out muted types - for accurate count, subtract muted unread count
         let count = totalCount || 0;
@@ -754,7 +754,7 @@ const db = {
           .select("id, user_id, notification_type, message, is_read, created_at, updated_at")
           .single();
 
-        if (error) throw enhanceSupabaseError(error, 'createNotification');
+        if (error) {throw enhanceSupabaseError(error, 'createNotification');}
         return data;
       } catch (error) {
         throw enhanceSupabaseError(error, 'createNotification');
@@ -772,7 +772,7 @@ const db = {
           .select("id, notification_last_opened_at")
           .single();
 
-        if (error) throw enhanceSupabaseError(error, 'updateLastOpenedAt');
+        if (error) {throw enhanceSupabaseError(error, 'updateLastOpenedAt');}
         return data;
       } catch (error) {
         throw enhanceSupabaseError(error, 'updateLastOpenedAt');
@@ -789,7 +789,7 @@ const db = {
           .eq("id", userId)
           .single();
 
-        if (error) throw enhanceSupabaseError(error, 'getLastOpenedAt');
+        if (error) {throw enhanceSupabaseError(error, 'getLastOpenedAt');}
         return data?.notification_last_opened_at || null;
       } catch (error) {
         throw enhanceSupabaseError(error, 'getLastOpenedAt');
@@ -806,7 +806,7 @@ const db = {
           .eq("user_id", userId)
           .eq("muted", true);
 
-        if (error) throw enhanceSupabaseError(error, 'getMutedTypes');
+        if (error) {throw enhanceSupabaseError(error, 'getMutedTypes');}
         return (data || []).map(p => p.notification_type);
       } catch (error) {
         // If table doesn't exist yet, return empty array
@@ -826,7 +826,7 @@ const db = {
           .select("notification_type, muted, push_enabled, in_app_enabled")
           .eq("user_id", userId);
 
-        if (error) throw enhanceSupabaseError(error, 'getUserPreferences');
+        if (error) {throw enhanceSupabaseError(error, 'getUserPreferences');}
         
         // Return as object keyed by type
         const preferences = {};
@@ -866,7 +866,7 @@ const db = {
           .upsert(updates, { onConflict: 'user_id,notification_type' })
           .select();
 
-        if (error) throw enhanceSupabaseError(error, 'updateUserPreferences');
+        if (error) {throw enhanceSupabaseError(error, 'updateUserPreferences');}
         return data;
       } catch (error) {
         throw enhanceSupabaseError(error, 'updateUserPreferences');
@@ -886,7 +886,7 @@ const db = {
           .eq("is_active", true)
           .order("display_order", { ascending: true });
 
-        if (error) throw enhanceSupabaseError(error, 'getActiveSponsors');
+        if (error) {throw enhanceSupabaseError(error, 'getActiveSponsors');}
         return data || [];
       } catch (error) {
         throw enhanceSupabaseError(error, 'getActiveSponsors');
@@ -966,10 +966,10 @@ function getTimeAgo(dateString) {
   const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
   const diffDays = Math.floor(diffHours / 24);
 
-  if (diffMinutes < 1) return "Just now";
-  if (diffMinutes < 60) return `${diffMinutes} minute${diffMinutes !== 1 ? "s" : ""} ago`;
-  if (diffHours < 24) return `${diffHours} hour${diffHours !== 1 ? "s" : ""} ago`;
-  if (diffDays < 7) return `${diffDays} day${diffDays !== 1 ? "s" : ""} ago`;
+  if (diffMinutes < 1) {return "Just now";}
+  if (diffMinutes < 60) {return `${diffMinutes} minute${diffMinutes !== 1 ? "s" : ""} ago`;}
+  if (diffHours < 24) {return `${diffHours} hour${diffHours !== 1 ? "s" : ""} ago`;}
+  if (diffDays < 7) {return `${diffDays} day${diffDays !== 1 ? "s" : ""} ago`;}
   const weeks = Math.floor(diffDays / 7);
   return `${weeks} week${weeks !== 1 ? "s" : ""} ago`;
 }
@@ -978,9 +978,9 @@ function getTimeAgo(dateString) {
 function checkEnvVars() {
   if (!supabaseUrl || !supabaseServiceKey || !supabaseAnonKey) {
     const missing = [];
-    if (!supabaseUrl) missing.push("SUPABASE_URL");
-    if (!supabaseServiceKey) missing.push("SUPABASE_SERVICE_KEY");
-    if (!supabaseAnonKey) missing.push("SUPABASE_ANON_KEY");
+    if (!supabaseUrl) {missing.push("SUPABASE_URL");}
+    if (!supabaseServiceKey) {missing.push("SUPABASE_SERVICE_KEY");}
+    if (!supabaseAnonKey) {missing.push("SUPABASE_ANON_KEY");}
     
     console.error("Missing environment variables:", missing.join(", "));
     console.error("Current env vars:", {

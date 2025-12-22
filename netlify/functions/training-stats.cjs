@@ -248,7 +248,7 @@ exports.handler = async (event, context) => {
 
       // Save to Supabase database
       const sessionData = await db.training.createSession({
-        user_id: decoded.userId,
+        user_id: userId,
         workout_type: workoutType,
         duration: parseInt(duration),
         score: score || Math.floor(Math.random() * 20) + 80,

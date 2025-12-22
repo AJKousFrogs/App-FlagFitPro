@@ -239,7 +239,7 @@
         .join("");
 
       // Use temp container pattern to safely insert HTML (highlightText returns HTML)
-      // eslint-disable-next-line no-restricted-syntax
+       
       const temp = document.createElement('div');
       // eslint-disable-next-line no-restricted-syntax
       temp.innerHTML = resultsHTML;

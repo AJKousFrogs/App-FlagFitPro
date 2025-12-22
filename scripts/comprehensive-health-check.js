@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* eslint-disable no-console */
+ 
 
 // Comprehensive Health Check Script for Production Readiness
 // Validates all aspects of the Flag Football app before deployment

@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+ 
 // Comprehensive Responsive Design Audit Script
 // Checks all HTML and CSS files for responsive design implementation
 

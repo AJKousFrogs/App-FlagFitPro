@@ -113,13 +113,38 @@ export function initNavigationHandlers() {
 // ================================================================
 // MODAL HANDLERS
 // ================================================================
+// Define modal functions before they're used
+window.closeModal = function(modalId) {
+  const modal = document.getElementById(modalId) || document.querySelector(`[data-modal="${modalId}"]`);
+  if (modal) {
+    modal.classList.add('modal-hidden', 'u-display-none');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('modal-open');
+  }
+};
+
+window.openModal = function(modalId) {
+  const modal = document.getElementById(modalId) || document.querySelector(`[data-modal="${modalId}"]`);
+  if (modal) {
+    modal.classList.remove('modal-hidden', 'u-display-none');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('modal-open');
+    
+    // Focus first focusable element
+    const firstInput = modal.querySelector('input, button, textarea, select, [tabindex]:not([tabindex="-1"])');
+    if (firstInput) {
+      firstInput.focus();
+    }
+  }
+};
+
 export function initModalHandlers() {
   // Close modal buttons
   document.querySelectorAll('[data-modal-close]').forEach(button => {
     button.addEventListener('click', (e) => {
       e.preventDefault();
       const modalId = button.getAttribute('data-modal-close');
-      closeModal(modalId);
+      window.closeModal(modalId);
     });
   });
   
@@ -128,7 +153,7 @@ export function initModalHandlers() {
     button.addEventListener('click', (e) => {
       e.preventDefault();
       const modalId = button.getAttribute('data-modal-open');
-      openModal(modalId);
+      window.openModal(modalId);
     });
   });
 }
@@ -204,8 +229,8 @@ export function initButtonActionHandlers() {
           e.preventDefault();
           const text = button.getAttribute('data-copy-text') || 
                       button.closest('[data-copy-target]')?.querySelector('[data-copy-content]')?.textContent;
-          if (text) {
-            copyToClipboard(text, button);
+          if (text && window.copyToClipboard) {
+            window.copyToClipboard(text, button);
           } else if (window.copyToClipboard) {
             window.copyToClipboard();
           }

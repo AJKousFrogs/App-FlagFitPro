@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* eslint-disable no-console */
+ 
 
 /**
  * Apply Comprehensive Spacing System to All HTML Pages

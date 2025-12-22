@@ -338,7 +338,7 @@ const bugFixer = {
       fixed = lines
         .map((line) => {
           const trimmed = line.replace(/\s+$/, "");
-          if (trimmed !== line) changes++;
+          if (trimmed !== line) {changes++;}
           return trimmed;
         })
         .join("\n");

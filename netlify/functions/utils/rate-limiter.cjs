@@ -8,7 +8,7 @@ const rateLimitStore = new Map();
 setInterval(() => {
   const now = Date.now();
   for (const [key, data] of rateLimitStore.entries()) {
-    if (now > data.resetAt) rateLimitStore.delete(key);
+    if (now > data.resetAt) {rateLimitStore.delete(key);}
   }
 }, 300000);
 function checkRateLimit(identifier, options = RATE_LIMITS.DEFAULT) {
@@ -40,9 +40,9 @@ function applyRateLimit(event, limitType = "DEFAULT") {
   return null;
 }
 function getRateLimitType(method, path) {
-  if (path.includes("/auth") || path.includes("/login")) return "AUTH";
-  if (method === "POST" || method === "PUT" || method === "DELETE") return "CREATE";
-  if (method === "GET") return "READ";
+  if (path.includes("/auth") || path.includes("/login")) {return "AUTH";}
+  if (method === "POST" || method === "PUT" || method === "DELETE") {return "CREATE";}
+  if (method === "GET") {return "READ";}
   return "DEFAULT";
 }
 module.exports = { checkRateLimit, applyRateLimit, getRateLimitType, RATE_LIMITS };

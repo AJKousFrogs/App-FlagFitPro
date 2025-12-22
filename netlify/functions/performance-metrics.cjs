@@ -81,7 +81,7 @@ async function getPerformanceMetrics(userId) {
       .filter(Boolean);
 
     let speedValue = 18.5; // Default
-    let speedTarget = 20.0;
+    const speedTarget = 20.0;
     let speedTrend = { trend: "stable", trendValue: 0 };
 
     if (speedValues.length > 0) {
@@ -116,7 +116,7 @@ async function getPerformanceMetrics(userId) {
     );
 
     let accuracyValue = 87.3;
-    let accuracyTarget = 90.0;
+    const accuracyTarget = 90.0;
     let accuracyTrend = { trend: "stable", trendValue: 0 };
 
     if (accuracyTests.length > 0) {
@@ -147,7 +147,7 @@ async function getPerformanceMetrics(userId) {
     );
 
     let enduranceValue = 75;
-    let enduranceTarget = 80;
+    const enduranceTarget = 80;
     let enduranceTrend = { trend: "stable", trendValue: 0 };
 
     if (enduranceSessions.length > 0) {

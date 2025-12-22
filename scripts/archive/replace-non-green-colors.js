@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+ 
 // Script to replace all purple, blue, pink colors with green theme colors
 import fs from "fs";
 import { fileURLToPath } from "url";

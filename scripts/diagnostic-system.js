@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* eslint-disable no-console */
+ 
 
 // Unified Diagnostic System
 // Combines health checks, feature validation, and runtime diagnostics

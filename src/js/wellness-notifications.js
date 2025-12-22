@@ -4,6 +4,7 @@
  */
 
 import { logger } from '../logger.js';
+import { setSafeContent } from './utils/shared.js';
 
 (function() {
   'use strict';
@@ -36,6 +37,24 @@ import { logger } from '../logger.js';
 
     // Check for wellness streaks
     checkWellnessStreak();
+  }
+
+  /**
+   * Handle enabling notifications
+   */
+  async function handleEnableNotifications() {
+    if (!window.notificationManager) {
+      logger.warn('[Wellness] Notification manager not available');
+      return;
+    }
+
+    const granted = await window.notificationManager.requestPermission();
+    if (granted) {
+      logger.info('[Wellness] Notifications enabled');
+      if (storageService) {
+        storageService.set('wellnessNotificationPromptSeen', true, { usePrefix: false });
+      }
+    }
   }
 
   /**

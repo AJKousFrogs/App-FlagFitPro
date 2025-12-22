@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+ 
 // Script to fix responsive design issues across all files
 import fs from "fs";
 import { fileURLToPath } from "url";

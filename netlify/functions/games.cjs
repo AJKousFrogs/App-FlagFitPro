@@ -65,7 +65,7 @@ const createGame = async (userId, gameData) => {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {throw error;}
     return data;
   } catch (error) {
     console.error("Error creating game:", error);
@@ -86,7 +86,7 @@ const getGames = async (userId, options = {}) => {
       .eq("user_id", userId)
       .limit(1);
 
-    if (teamError) throw teamError;
+    if (teamError) {throw teamError;}
 
     const teamId = teamMemberships && teamMemberships.length > 0
       ? teamMemberships[0].team_id
@@ -127,7 +127,7 @@ const getGames = async (userId, options = {}) => {
 
     const { data, error } = await query;
 
-    if (error) throw error;
+    if (error) {throw error;}
     return data || [];
   } catch (error) {
     console.error("Error getting games:", error);
@@ -204,7 +204,7 @@ const updateGame = async (userId, gameId, updates) => {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {throw error;}
     return data;
   } catch (error) {
     console.error("Error updating game:", error);
@@ -225,7 +225,7 @@ const savePlay = async (gameId, playData) => {
       .order("play_number", { ascending: false })
       .limit(1);
 
-    if (countError && countError.code !== "PGRST116") throw countError;
+    if (countError && countError.code !== "PGRST116") {throw countError;}
 
     const playNumber = existingPlays && existingPlays.length > 0
       ? existingPlays[0].play_number + 1
@@ -256,7 +256,7 @@ const savePlay = async (gameId, playData) => {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {throw error;}
     return data;
   } catch (error) {
     console.error("Error saving play:", error);
@@ -276,7 +276,7 @@ const getGameStats = async (gameId) => {
       .eq("game_id", gameId)
       .order("play_number", { ascending: true });
 
-    if (playsError) throw playsError;
+    if (playsError) {throw playsError;}
 
     // Calculate statistics
     const stats = {
@@ -331,7 +331,7 @@ const getPlayerGameStats = async (playerId, gameId) => {
       .eq("game_id", gameId)
       .eq("primary_player_id", playerId);
 
-    if (error1) throw error1;
+    if (error1) {throw error1;}
 
     // Query 2: Get plays where player is in secondary players array
     const { data: secondaryPlays, error: error2 } = await supabaseAdmin
@@ -340,7 +340,7 @@ const getPlayerGameStats = async (playerId, gameId) => {
       .eq("game_id", gameId)
       .contains("secondary_player_ids", [playerId]);
 
-    if (error2) throw error2;
+    if (error2) {throw error2;}
 
     // Combine results and remove duplicates
     const allPlays = [...(primaryPlays || []), ...(secondaryPlays || [])];

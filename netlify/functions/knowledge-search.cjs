@@ -99,7 +99,7 @@ exports.handler = async (event, context) => {
       }
 
       // Search knowledge base entries with governance filters
-      let searchQuery = `
+      const searchQuery = `
         SELECT 
           kbe.*,
           array_agg(DISTINCT ra.id) as supporting_articles,

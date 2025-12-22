@@ -15,7 +15,11 @@ class AuthService {
       logger.info('AuthService: Processing login for:', credentials.email);
       
       // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise(resolve => {
+        setTimeout(() => {
+          resolve();
+        }, 500);
+      });
       
       // Mock validation - accept any email/password for development
       if (!credentials.email || !credentials.password) {
@@ -66,7 +70,11 @@ class AuthService {
       logger.info('AuthService: Processing registration for:', userData.email);
       
       // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 700));
+      await new Promise(resolve => {
+        setTimeout(() => {
+          resolve();
+        }, 700);
+      });
       
       // Mock validation
       if (!userData.email || !userData.password) {
@@ -149,7 +157,11 @@ class AuthService {
       logger.info('AuthService: Processing logout');
       
       // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 200));
+      await new Promise(resolve => {
+        setTimeout(() => {
+          resolve();
+        }, 200);
+      });
       
       // Clear memory
       this.currentUser = null;
@@ -177,7 +189,11 @@ class AuthService {
       }
 
       // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise(resolve => {
+        setTimeout(() => {
+          resolve();
+        }, 500);
+      });
       
       // Update user object
       const updatedUser = {
@@ -213,7 +229,11 @@ class AuthService {
       }
 
       // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 300));
+      await new Promise(resolve => {
+        setTimeout(() => {
+          resolve();
+        }, 300);
+      });
 
       // Create new mock token
       const newToken = 'mock_jwt_token_' + Date.now();

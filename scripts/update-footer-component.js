@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+ 
 /**
  * Automated Script to Replace Footer with Dynamic Component
  * Replaces footer HTML markup with dynamic loader across multiple files

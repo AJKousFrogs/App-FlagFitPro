@@ -17,7 +17,7 @@ import { logger } from '../logger.js';
       return;
     }
     // Use temp container pattern for safe HTML insertion
-    // eslint-disable-next-line no-restricted-syntax
+     
     const temp = document.createElement('div');
     // eslint-disable-next-line no-restricted-syntax
     temp.innerHTML = content; // Content is already sanitized by caller

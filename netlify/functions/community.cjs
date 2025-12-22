@@ -78,7 +78,7 @@ const getCommunityFeed = async (userId, limit = 20) => {
 
     const { data: posts, error } = await query;
 
-    if (error) throw error;
+    if (error) {throw error;}
 
     // Transform database format to match frontend format
     return (posts || []).map(post => ({
@@ -122,7 +122,7 @@ const getCommunityLeaderboard = async (category = "overall", limit = 10) => {
       `)
       .eq("is_published", true);
     
-    if (error) throw error;
+    if (error) {throw error;}
     
     // Aggregate by user
     const userStats = {};

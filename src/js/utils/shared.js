@@ -102,9 +102,10 @@ export function setSafeContent(element, content, isHTML = false, sanitize = true
     
     // Create a temporary container and move nodes
     // This approach is safer than direct innerHTML assignment
-    // eslint-disable-next-line no-restricted-syntax
+     
     // Safe: Using temp container pattern for sanitized content
     const temp = document.createElement('div');
+    // eslint-disable-next-line no-restricted-syntax
     temp.innerHTML = safeContent;
     while (temp.firstChild) {
       element.appendChild(temp.firstChild);

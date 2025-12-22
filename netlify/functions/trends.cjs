@@ -163,8 +163,7 @@ async function getGamePerformanceTrend(athleteId, games = 5) {
     const recentAvg = recent.reduce((sum, p) => sum + p, 0) / recent.length;
     const olderAvg = older.reduce((sum, p) => sum + p, 0) / older.length;
     
-    if (recentAvg > olderAvg * 1.05) trend = 'improving';
-    else if (recentAvg < olderAvg * 0.95) trend = 'declining';
+    if (recentAvg > olderAvg * 1.05) {trend = 'improving';} else if (recentAvg < olderAvg * 0.95) {trend = 'declining';}
   }
 
   return {

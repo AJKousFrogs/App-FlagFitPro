@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+ 
 // Script to add theme toggle switch to all HTML pages
 import fs from "fs";
 import { fileURLToPath } from "url";

@@ -34,7 +34,7 @@ async function getTrainingLoads(userId, startDate, endDate) {
       .lte("session_date", endDate.toISOString().split("T")[0])
       .order("session_date", { ascending: true });
 
-    if (error) throw error;
+    if (error) {throw error;}
 
     return data.map((row) => row.training_load || 0);
   } catch (error) {
@@ -247,7 +247,7 @@ async function calculateTSB(userId, date) {
  * Calculate Exponentially Weighted Moving Average
  */
 function calculateEWMA(trainingHistory, timeConstant) {
-  if (trainingHistory.length === 0) return 0;
+  if (trainingHistory.length === 0) {return 0;}
 
   const sorted = [...trainingHistory].sort(
     (a, b) => new Date(a.date) - new Date(b.date),
@@ -393,10 +393,7 @@ async function handleInjuryRisk(method, userId, query) {
 
   // Determine risk level
   let riskLevel;
-  if (compositeRisk < 0.2) riskLevel = "low";
-  else if (compositeRisk < 0.4) riskLevel = "moderate";
-  else if (compositeRisk < 0.7) riskLevel = "high";
-  else riskLevel = "critical";
+  if (compositeRisk < 0.2) {riskLevel = "low";} else if (compositeRisk < 0.4) {riskLevel = "moderate";} else if (compositeRisk < 0.7) {riskLevel = "high";} else {riskLevel = "critical";}
 
   return {
     statusCode: 200,

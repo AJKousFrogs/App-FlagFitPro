@@ -171,7 +171,11 @@ class EnhancedSettings {
       const startTime = Date.now();
       
       while (!window.authManager && (Date.now() - startTime) < maxWait) {
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise(resolve => {
+          setTimeout(() => {
+            resolve();
+          }, 100);
+        });
       }
       
       if (window.authManager) {

@@ -137,8 +137,8 @@ async function getRecoveryProtocols(userId) {
     .filter(p => p.suitable)
     .sort((a, b) => {
       // Prioritize protocols that address current needs
-      if (metrics.needsRecovery && a.type === 'cryotherapy') return -1;
-      if (metrics.stressLevel >= 6 && a.type === 'mental-recovery') return -1;
+      if (metrics.needsRecovery && a.type === 'cryotherapy') {return -1;}
+      if (metrics.stressLevel >= 6 && a.type === 'mental-recovery') {return -1;}
       return 0;
     });
 }
