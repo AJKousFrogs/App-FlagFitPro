@@ -182,8 +182,8 @@ class EnhancedNotificationCenter {
       // Store subscriptions for cleanup
       this.realtimeSubscription = {
         unsubscribe: () => {
-          if (insertSub && insertSub.unsubscribe) insertSub.unsubscribe();
-          if (updateSub && updateSub.unsubscribe) updateSub.unsubscribe();
+          if (insertSub && insertSub.unsubscribe) {insertSub.unsubscribe();}
+          if (updateSub && updateSub.unsubscribe) {updateSub.unsubscribe();}
         }
       };
 
@@ -318,7 +318,7 @@ class EnhancedNotificationCenter {
    */
   enhancePanelHTML() {
     const panel = this.panel;
-    if (!panel) return;
+    if (!panel) {return;}
 
     // Check if already enhanced
     if (panel.querySelector('.notification-filters')) {
@@ -329,7 +329,7 @@ class EnhancedNotificationCenter {
     const list = panel.querySelector('#notification-list');
     const actions = panel.querySelector('.notification-actions');
 
-    if (!header || !list) return;
+    if (!header || !list) {return;}
 
     // Add filters section after header
     const filtersHTML = `
@@ -408,7 +408,7 @@ class EnhancedNotificationCenter {
    */
   setupEventListeners() {
     const panel = this.panel;
-    if (!panel) return;
+    if (!panel) {return;}
 
     // Filter tabs
     panel.querySelectorAll('.filter-tab').forEach(tab => {
@@ -479,10 +479,10 @@ class EnhancedNotificationCenter {
    * Handle notification click
    */
   async handleNotificationClick(id, element) {
-    if (!this.notificationStore) return;
+    if (!this.notificationStore) {return;}
 
     const notification = this.notificationStore.notifications.find(n => String(n.id) === String(id));
-    if (!notification) return;
+    if (!notification) {return;}
 
     // Mark as read if unread
     if (!notification.read) {
@@ -507,7 +507,7 @@ class EnhancedNotificationCenter {
    * Handle scroll for infinite scroll
    */
   handleScroll(list) {
-    if (this.isLoading || !this.hasMore) return;
+    if (this.isLoading || !this.hasMore) {return;}
 
     const scrollTop = list.scrollTop;
     const scrollHeight = list.scrollHeight;
@@ -523,7 +523,7 @@ class EnhancedNotificationCenter {
    * Load more notifications
    */
   async loadMore() {
-    if (this.isLoading || !this.hasMore || !this.notificationStore) return;
+    if (this.isLoading || !this.hasMore || !this.notificationStore) {return;}
 
     this.isLoading = true;
     this.page++;
@@ -552,7 +552,7 @@ class EnhancedNotificationCenter {
    */
   render() {
     const list = document.getElementById('notification-list');
-    if (!list || !this.notificationStore) return;
+    if (!list || !this.notificationStore) {return;}
 
     const state = this.notificationStore.getState();
     let notifications = [...state.notifications];
@@ -758,7 +758,7 @@ class EnhancedNotificationCenter {
    * Format time relative to now
    */
   formatTime(dateString) {
-    if (!dateString) return '';
+    if (!dateString) {return '';}
 
     const date = new Date(dateString);
     const now = new Date();
@@ -784,7 +784,7 @@ class EnhancedNotificationCenter {
    * Mark notification as read
    */
   async markAsRead(id) {
-    if (!this.notificationStore) return;
+    if (!this.notificationStore) {return;}
 
     try {
       await this.notificationStore.markOneRead(id);
@@ -793,7 +793,7 @@ class EnhancedNotificationCenter {
       // Refresh badge
       await this.notificationStore.refreshBadge();
     } catch (error) {
-      console.warn('[NotificationCenter] Failed to mark as read:', error);
+      logger.warn('[NotificationCenter] Failed to mark as read:', error);
     }
   }
 
@@ -801,7 +801,7 @@ class EnhancedNotificationCenter {
    * Mark all as read
    */
   async markAllAsRead() {
-    if (!this.notificationStore) return;
+    if (!this.notificationStore) {return;}
 
     try {
       await this.notificationStore.markAllRead();

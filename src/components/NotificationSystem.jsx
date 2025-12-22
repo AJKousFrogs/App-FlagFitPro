@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { logger } from '../logger.js';
 
 const NotificationSystem = () => {
   const [notifications, setNotifications] = useState([]);
@@ -31,7 +32,7 @@ const NotificationSystem = () => {
         setUnreadCount(data.unreadCount);
       }
     } catch (error) {
-      console.error('Error fetching notifications:', error);
+      logger.error('Error fetching notifications:', error);
     }
   };
 
@@ -60,7 +61,7 @@ const NotificationSystem = () => {
         setUnreadCount(prev => Math.max(0, prev - 1));
       }
     } catch (error) {
-      console.error('Error marking notification as read:', error);
+      logger.error('Error marking notification as read:', error);
     }
   };
 
@@ -82,7 +83,7 @@ const NotificationSystem = () => {
         setUnreadCount(0);
       }
     } catch (error) {
-      console.error('Error marking all notifications as read:', error);
+      logger.error('Error marking all notifications as read:', error);
     }
   };
 

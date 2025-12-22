@@ -3,6 +3,7 @@
 
 import { logger } from "./logger.js";
 import { storageService } from "./js/services/storage-service-unified.js";
+import { setSafeContent } from "./js/utils/shared.js";
 
 export class ProfileCompletionManager {
   constructor() {
@@ -68,7 +69,8 @@ export class ProfileCompletionManager {
     const roleSpecificFields = isCoach ? this.getCoachFields(storedProfile) : this.getPlayerFields(storedProfile);
     const physicalStatsSection = !isCoach ? this.getPlayerPhysicalStats(storedProfile) : '';
 
-    modal.innerHTML = `
+    // Build modal HTML string (NOTE: This should be refactored to use DOM methods for better security)
+    const modalHTML = `
       <div class="profile-completion-overlay"></div>
       <div class="profile-completion-content">
         <div class="profile-completion-header">
@@ -143,6 +145,9 @@ export class ProfileCompletionManager {
       </div>
     `;
 
+    // Use setSafeContent to set modal HTML (sanitizes content)
+    setSafeContent(modal, modalHTML, true);
+
     document.body.appendChild(modal);
 
     // Initialize Lucide icons
@@ -185,8 +190,8 @@ export class ProfileCompletionManager {
         const metricDiv = modal.querySelector(`#${field}-metric`);
 
         if (unit === "imperial") {
-          if (imperialDiv) imperialDiv.style.display = field === "height" ? "flex" : "block";
-          if (metricDiv) metricDiv.style.display = "none";
+          if (imperialDiv) {imperialDiv.style.display = field === "height" ? "flex" : "block";}
+          if (metricDiv) {metricDiv.style.display = "none";}
 
           // Convert values if present
           if (field === "height") {
@@ -210,8 +215,8 @@ export class ProfileCompletionManager {
             }
           }
         } else {
-          if (imperialDiv) imperialDiv.style.display = "none";
-          if (metricDiv) metricDiv.style.display = "block";
+          if (imperialDiv) {imperialDiv.style.display = "none";}
+          if (metricDiv) {metricDiv.style.display = "block";}
 
           // Convert values if present
           if (field === "height") {

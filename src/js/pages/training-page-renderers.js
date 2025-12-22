@@ -163,8 +163,8 @@ function renderDayCard(day, scheduleSettings) {
     startBtn.removeAttribute('onclick');
     if (originalOnclick && originalOnclick.includes('startDayWorkout')) {
       startBtn.addEventListener('click', () => {
-        if (typeof startDayWorkout === 'function') {
-          startDayWorkout(workoutType, date.toISOString());
+        if (typeof window.startDayWorkout === 'function') {
+          window.startDayWorkout(workoutType, date.toISOString());
         }
       });
     }

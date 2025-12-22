@@ -2,6 +2,7 @@
 // Provides keyboard navigation and command palette
 
 import { ErrorHandler } from "./error-handler.js";
+import { setSafeContent } from "./js/utils/shared.js";
 
 export class KeyboardShortcuts {
   constructor() {
@@ -142,38 +143,84 @@ export class KeyboardShortcuts {
 
     const commands = this.getAvailableCommands();
 
-    palette.innerHTML = `
-      <div class="command-palette-overlay"></div>
-      <div class="command-palette-content">
-        <div class="command-palette-header">
-          <i data-lucide="command" aria-hidden="true"></i>
-          <input type="text" 
-                 class="command-palette-input" 
-                 placeholder="Type a command or search..."
-                 autocomplete="off"
-                 aria-label="Command input">
-        </div>
-        <div class="command-palette-list" role="listbox">
-          ${commands
-            .map(
-              (cmd, index) => `
-            <button class="command-palette-item ${index === 0 ? "selected" : ""}" 
-                    data-command="${cmd.id}"
-                    role="option"
-                    ${index === 0 ? 'aria-selected="true"' : ""}>
-              <div class="command-palette-item-icon">${cmd.icon || ""}</div>
-              <div class="command-palette-item-content">
-                <div class="command-palette-item-title">${cmd.title}</div>
-                ${cmd.description ? `<div class="command-palette-item-description">${cmd.description}</div>` : ""}
-              </div>
-              ${cmd.shortcut ? `<div class="command-palette-item-shortcut">${cmd.shortcut}</div>` : ""}
-            </button>
-          `,
-            )
-            .join("")}
-        </div>
-      </div>
-    `;
+    // Create overlay
+    const overlay = document.createElement("div");
+    overlay.className = "command-palette-overlay";
+
+    // Create content container
+    const content = document.createElement("div");
+    content.className = "command-palette-content";
+
+    // Create header
+    const header = document.createElement("div");
+    header.className = "command-palette-header";
+    const icon = document.createElement("i");
+    icon.setAttribute("data-lucide", "command");
+    icon.setAttribute("aria-hidden", "true");
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "command-palette-input";
+    input.placeholder = "Type a command or search...";
+    input.autocomplete = "off";
+    input.setAttribute("aria-label", "Command input");
+    header.appendChild(icon);
+    header.appendChild(input);
+
+    // Create list
+    const list = document.createElement("div");
+    list.className = "command-palette-list";
+    list.setAttribute("role", "listbox");
+
+    // Create command items
+    commands.forEach((cmd, index) => {
+      const item = document.createElement("button");
+      item.className = `command-palette-item ${index === 0 ? "selected" : ""}`;
+      item.setAttribute("data-command", cmd.id);
+      item.setAttribute("role", "option");
+      if (index === 0) {
+        item.setAttribute("aria-selected", "true");
+      }
+
+      const iconDiv = document.createElement("div");
+      iconDiv.className = "command-palette-item-icon";
+      if (cmd.icon) {
+        setSafeContent(iconDiv, cmd.icon, true);
+      }
+
+      const contentDiv = document.createElement("div");
+      contentDiv.className = "command-palette-item-content";
+
+      const titleDiv = document.createElement("div");
+      titleDiv.className = "command-palette-item-title";
+      setSafeContent(titleDiv, cmd.title);
+
+      contentDiv.appendChild(titleDiv);
+
+      if (cmd.description) {
+        const descDiv = document.createElement("div");
+        descDiv.className = "command-palette-item-description";
+        setSafeContent(descDiv, cmd.description);
+        contentDiv.appendChild(descDiv);
+      }
+
+      item.appendChild(iconDiv);
+      item.appendChild(contentDiv);
+
+      if (cmd.shortcut) {
+        const shortcutDiv = document.createElement("div");
+        shortcutDiv.className = "command-palette-item-shortcut";
+        setSafeContent(shortcutDiv, cmd.shortcut);
+        item.appendChild(shortcutDiv);
+      }
+
+      list.appendChild(item);
+    });
+
+    // Assemble palette
+    content.appendChild(header);
+    content.appendChild(list);
+    palette.appendChild(overlay);
+    palette.appendChild(content);
 
     document.body.appendChild(palette);
 
@@ -181,8 +228,7 @@ export class KeyboardShortcuts {
       lucide.createIcons();
     }
 
-    const input = palette.querySelector(".command-palette-input");
-    const list = palette.querySelector(".command-palette-list");
+    // Input and list already created above
     let selectedIndex = 0;
 
     input.focus();

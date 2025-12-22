@@ -1,6 +1,8 @@
 // Help System for FlagFit Pro
 // Provides contextual help, FAQs, and user documentation
 
+import { setSafeContent } from "./js/utils/shared.js";
+
 export class HelpSystem {
   constructor() {
     this.faqs = [
@@ -85,12 +87,20 @@ export class HelpSystem {
     helpItem.id = "help-menu-item";
     helpItem.href = "#";
     helpItem.className = "nav-item";
-    helpItem.innerHTML = `
-      <div class="nav-item-icon">
-        <i data-lucide="help-circle" aria-hidden="true"></i>
-      </div>
-      <span>Help</span>
-    `;
+
+    const iconDiv = document.createElement("div");
+    iconDiv.className = "nav-item-icon";
+    const icon = document.createElement("i");
+    icon.setAttribute("data-lucide", "help-circle");
+    icon.setAttribute("aria-hidden", "true");
+    iconDiv.appendChild(icon);
+
+    const span = document.createElement("span");
+    setSafeContent(span, "Help");
+
+    helpItem.appendChild(iconDiv);
+    helpItem.appendChild(span);
+
     helpItem.addEventListener("click", (e) => {
       e.preventDefault();
       this.showHelpModal();
@@ -115,37 +125,92 @@ export class HelpSystem {
     modal.setAttribute("aria-labelledby", "help-title");
     modal.setAttribute("aria-modal", "true");
 
-    modal.innerHTML = `
-      <div class="help-overlay"></div>
-      <div class="help-content">
-        <div class="help-header">
-          <h2 id="help-title">Help & Support</h2>
-          <button class="help-close" aria-label="Close help">
-            <i data-lucide="x" aria-hidden="true"></i>
-          </button>
-        </div>
-        <div class="help-body">
-          <div class="help-tabs">
-            <button class="help-tab active" data-tab="faq">FAQ</button>
-            <button class="help-tab" data-tab="guide">User Guide</button>
-            <button class="help-tab" data-tab="shortcuts">Shortcuts</button>
-            <button class="help-tab" data-tab="contact">Contact</button>
-          </div>
-          <div class="help-tab-content" id="help-faq">
-            ${this.renderFAQ()}
-          </div>
-          <div class="help-tab-content" id="help-guide" style="display: none;">
-            ${this.renderUserGuide()}
-          </div>
-          <div class="help-tab-content" id="help-shortcuts" style="display: none;">
-            ${this.renderShortcuts()}
-          </div>
-          <div class="help-tab-content" id="help-contact" style="display: none;">
-            ${this.renderContact()}
-          </div>
-        </div>
-      </div>
-    `;
+    // Create overlay
+    const overlay = document.createElement("div");
+    overlay.className = "help-overlay";
+
+    // Create content container
+    const content = document.createElement("div");
+    content.className = "help-content";
+
+    // Create header
+    const header = document.createElement("div");
+    header.className = "help-header";
+    const title = document.createElement("h2");
+    title.id = "help-title";
+    setSafeContent(title, "Help & Support");
+    const closeBtn = document.createElement("button");
+    closeBtn.className = "help-close";
+    closeBtn.setAttribute("aria-label", "Close help");
+    const closeIcon = document.createElement("i");
+    closeIcon.setAttribute("data-lucide", "x");
+    closeIcon.setAttribute("aria-hidden", "true");
+    closeBtn.appendChild(closeIcon);
+    header.appendChild(title);
+    header.appendChild(closeBtn);
+
+    // Create body
+    const body = document.createElement("div");
+    body.className = "help-body";
+
+    // Create tabs
+    const tabs = document.createElement("div");
+    tabs.className = "help-tabs";
+    const faqTab = document.createElement("button");
+    faqTab.className = "help-tab active";
+    faqTab.setAttribute("data-tab", "faq");
+    setSafeContent(faqTab, "FAQ");
+    const guideTab = document.createElement("button");
+    guideTab.className = "help-tab";
+    guideTab.setAttribute("data-tab", "guide");
+    setSafeContent(guideTab, "User Guide");
+    const shortcutsTab = document.createElement("button");
+    shortcutsTab.className = "help-tab";
+    shortcutsTab.setAttribute("data-tab", "shortcuts");
+    setSafeContent(shortcutsTab, "Shortcuts");
+    const contactTab = document.createElement("button");
+    contactTab.className = "help-tab";
+    contactTab.setAttribute("data-tab", "contact");
+    setSafeContent(contactTab, "Contact");
+    tabs.appendChild(faqTab);
+    tabs.appendChild(guideTab);
+    tabs.appendChild(shortcutsTab);
+    tabs.appendChild(contactTab);
+
+    // Create tab content containers
+    const faqContent = document.createElement("div");
+    faqContent.className = "help-tab-content";
+    faqContent.id = "help-faq";
+    setSafeContent(faqContent, this.renderFAQ(), true);
+
+    const guideContent = document.createElement("div");
+    guideContent.className = "help-tab-content";
+    guideContent.id = "help-guide";
+    guideContent.style.display = "none";
+    setSafeContent(guideContent, this.renderUserGuide(), true);
+
+    const shortcutsContent = document.createElement("div");
+    shortcutsContent.className = "help-tab-content";
+    shortcutsContent.id = "help-shortcuts";
+    shortcutsContent.style.display = "none";
+    setSafeContent(shortcutsContent, this.renderShortcuts(), true);
+
+    const contactContent = document.createElement("div");
+    contactContent.className = "help-tab-content";
+    contactContent.id = "help-contact";
+    contactContent.style.display = "none";
+    setSafeContent(contactContent, this.renderContact(), true);
+
+    // Assemble modal
+    body.appendChild(tabs);
+    body.appendChild(faqContent);
+    body.appendChild(guideContent);
+    body.appendChild(shortcutsContent);
+    body.appendChild(contactContent);
+    content.appendChild(header);
+    content.appendChild(body);
+    modal.appendChild(overlay);
+    modal.appendChild(content);
 
     document.body.appendChild(modal);
 

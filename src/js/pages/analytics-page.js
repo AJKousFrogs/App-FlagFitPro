@@ -35,7 +35,9 @@ class AnalyticsPage {
       if (typeof Chart !== "undefined") {
         return true;
       }
-      await new Promise(resolve => setTimeout(resolve, delay));
+      await new Promise(resolve => {
+        setTimeout(resolve, delay);
+      });
     }
     
     // If Chart.js still not loaded, log error and return false
@@ -532,7 +534,7 @@ class AnalyticsPage {
    * Show empty state message for charts when no data is available
    */
   showNoDataMessage(chartCard, chartName) {
-    if (!chartCard) return;
+    if (!chartCard) {return;}
     
     const canvas = chartCard.querySelector("canvas");
     if (canvas) {

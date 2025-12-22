@@ -4,6 +4,7 @@
 import { youTubeTrainingService } from "./youtube-training-service.js";
 import { ComponentWithCleanup } from "./event-cleanup-utils.js";
 import { logger } from "./logger.js";
+import { setSafeContent } from "./js/utils/shared.js";
 
 class TrainingVideoComponent extends ComponentWithCleanup {
   constructor(containerId) {
@@ -26,7 +27,8 @@ class TrainingVideoComponent extends ComponentWithCleanup {
   }
 
   render() {
-    this.container.innerHTML = `
+    // Build component HTML string
+    const componentHTML = `
             <div class="training-video-component">
                 <div class="video-header">
                     <h3 class="video-title">Training Videos</h3>
@@ -405,6 +407,9 @@ class TrainingVideoComponent extends ComponentWithCleanup {
                 }
             </style>
         `;
+
+    // Use setSafeContent to set component HTML (sanitizes content)
+    setSafeContent(this.container, componentHTML, true);
   }
 
   attachEventListeners() {
@@ -486,29 +491,54 @@ class TrainingVideoComponent extends ComponentWithCleanup {
     const videoGrid = document.getElementById("video-grid");
 
     if (videos.length === 0) {
-      videoGrid.innerHTML = `
-                <div class="no-videos">
-                    <span style="font-size: 2rem;">📺</span>
-                    <p>No videos found for this category</p>
-                </div>
-            `;
+      const noVideosDiv = document.createElement("div");
+      noVideosDiv.className = "no-videos";
+      const icon = document.createElement("span");
+      icon.style.fontSize = "2rem";
+      icon.textContent = "📺";
+      const p = document.createElement("p");
+      p.textContent = "No videos found for this category";
+      noVideosDiv.appendChild(icon);
+      noVideosDiv.appendChild(p);
+      videoGrid.textContent = "";
+      videoGrid.appendChild(noVideosDiv);
       return;
     }
 
-    videoGrid.innerHTML = videos
-      .map(
-        (video) => `
-            <div class="video-card" data-video-id="${video.id}">
-                <img src="${video.thumbnail}" alt="${video.title}" class="video-thumbnail"
-                     onerror="this.src='data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"320\" height=\"180\" viewBox=\"0 0 320 180\"><rect width=\"320\" height=\"180\" fill=\"%23f3f4f6\"/><text x=\"160\" y=\"90\" text-anchor=\"middle\" dy=\".3em\" fill=\"%236b7280\">📺</text></svg>'">
-                <div class="video-card-content">
-                    <h5 class="video-card-title">${video.title}</h5>
-                    <p class="video-card-channel">${video.channelTitle}</p>
-                </div>
-            </div>
-        `,
-      )
-      .join("");
+    // Clear grid
+    videoGrid.textContent = "";
+
+    // Create video cards using DOM methods
+    videos.forEach((video) => {
+      const card = document.createElement("div");
+      card.className = "video-card";
+      card.setAttribute("data-video-id", video.id);
+
+      const img = document.createElement("img");
+      img.src = video.thumbnail;
+      img.alt = video.title;
+      img.className = "video-thumbnail";
+      img.onerror = function() {
+        this.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="320" height="180" viewBox="0 0 320 180"><rect width="320" height="180" fill="%23f3f4f6"/><text x="160" y="90" text-anchor="middle" dy=".3em" fill="%236b7280">📺</text></svg>';
+      };
+
+      const content = document.createElement("div");
+      content.className = "video-card-content";
+
+      const title = document.createElement("h5");
+      title.className = "video-card-title";
+      setSafeContent(title, video.title);
+
+      const channel = document.createElement("p");
+      channel.className = "video-card-channel";
+      setSafeContent(channel, video.channelTitle);
+
+      content.appendChild(title);
+      content.appendChild(channel);
+      card.appendChild(img);
+      card.appendChild(content);
+      videoGrid.appendChild(card);
+    });
 
     // Add click handlers to video cards
     videoGrid.querySelectorAll(".video-card").forEach((card) => {
@@ -525,31 +555,53 @@ class TrainingVideoComponent extends ComponentWithCleanup {
   renderPlaylist(playlist) {
     const videoGrid = document.getElementById("video-grid");
 
-    let playlistHTML = "";
-    playlist.forEach((section) => {
-      playlistHTML += `
-                <div class="playlist-section">
-                    <h5 class="playlist-section-title">${section.categoryName}</h5>
-                    <div class="playlist-videos">
-                        ${section.videos
-                          .map(
-                            (video) => `
-                            <div class="video-card playlist-video" data-video-id="${video.id}">
-                                <img src="${video.thumbnail}" alt="${video.title}" class="video-thumbnail">
-                                <div class="video-card-content">
-                                    <h6 class="video-card-title">${video.title}</h6>
-                                    <p class="video-card-channel">${video.channelTitle}</p>
-                                </div>
-                            </div>
-                        `,
-                          )
-                          .join("")}
-                    </div>
-                </div>
-            `;
-    });
+    // Clear grid
+    videoGrid.textContent = "";
 
-    videoGrid.innerHTML = playlistHTML;
+    // Create playlist sections using DOM methods
+    playlist.forEach((section) => {
+      const sectionDiv = document.createElement("div");
+      sectionDiv.className = "playlist-section";
+
+      const title = document.createElement("h5");
+      title.className = "playlist-section-title";
+      setSafeContent(title, section.categoryName);
+
+      const videosDiv = document.createElement("div");
+      videosDiv.className = "playlist-videos";
+
+      section.videos.forEach((video) => {
+        const card = document.createElement("div");
+        card.className = "video-card playlist-video";
+        card.setAttribute("data-video-id", video.id);
+
+        const img = document.createElement("img");
+        img.src = video.thumbnail;
+        img.alt = video.title;
+        img.className = "video-thumbnail";
+
+        const content = document.createElement("div");
+        content.className = "video-card-content";
+
+        const cardTitle = document.createElement("h6");
+        cardTitle.className = "video-card-title";
+        setSafeContent(cardTitle, video.title);
+
+        const channel = document.createElement("p");
+        channel.className = "video-card-channel";
+        setSafeContent(channel, video.channelTitle);
+
+        content.appendChild(cardTitle);
+        content.appendChild(channel);
+        card.appendChild(img);
+        card.appendChild(content);
+        videosDiv.appendChild(card);
+      });
+
+      sectionDiv.appendChild(title);
+      sectionDiv.appendChild(videosDiv);
+      videoGrid.appendChild(sectionDiv);
+    });
 
     // Add click handlers
     videoGrid.querySelectorAll(".video-card").forEach((card) => {
@@ -586,29 +638,47 @@ class TrainingVideoComponent extends ComponentWithCleanup {
     const videoPlayer = document.getElementById("video-player");
     const videoInfo = document.getElementById("video-info");
 
+    videoPlayer.textContent = "";
+
     if (video.fallback) {
       // Show placeholder for fallback videos
-      videoPlayer.innerHTML = `
-                <div class="video-placeholder">
-                    <div class="placeholder-content">
-                        <span class="placeholder-icon">📺</span>
-                        <h4>${video.title}</h4>
-                        <p>This is a demo video. Configure YouTube API for real videos.</p>
-                        <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(video.title)}"
-                           target="_blank" class="btn btn-primary">Search on YouTube</a>
-                    </div>
-                </div>
-            `;
+      const placeholder = document.createElement("div");
+      placeholder.className = "video-placeholder";
+
+      const content = document.createElement("div");
+      content.className = "placeholder-content";
+
+      const icon = document.createElement("span");
+      icon.className = "placeholder-icon";
+      icon.textContent = "📺";
+
+      const h4 = document.createElement("h4");
+      setSafeContent(h4, video.title);
+
+      const p = document.createElement("p");
+      p.textContent = "This is a demo video. Configure YouTube API for real videos.";
+
+      const link = document.createElement("a");
+      link.href = `https://www.youtube.com/results?search_query=${encodeURIComponent(video.title)}`;
+      link.target = "_blank";
+      link.className = "btn btn-primary";
+      link.textContent = "Search on YouTube";
+
+      content.appendChild(icon);
+      content.appendChild(h4);
+      content.appendChild(p);
+      content.appendChild(link);
+      placeholder.appendChild(content);
+      videoPlayer.appendChild(placeholder);
     } else {
       // Embed real video
-      videoPlayer.innerHTML = `
-                <iframe
-                    src="${video.embedUrl}?autoplay=0&rel=0&modestbranding=1"
-                    frameborder="0"
-                    allowfullscreen
-                    style="width: 100%; height: 100%;">
-                </iframe>
-            `;
+      const iframe = document.createElement("iframe");
+      iframe.src = `${video.embedUrl}?autoplay=0&rel=0&modestbranding=1`;
+      iframe.frameBorder = "0";
+      iframe.allowFullscreen = true;
+      iframe.style.width = "100%";
+      iframe.style.height = "100%";
+      videoPlayer.appendChild(iframe);
     }
 
     // Update video info
@@ -635,29 +705,54 @@ class TrainingVideoComponent extends ComponentWithCleanup {
             justify-content: center; z-index: 1000;
         `;
 
-    modal.innerHTML = `
-            <div style="background: white; padding: 2rem; border-radius: 12px; width: 90%; max-width: 400px;">
-                <h3 style="margin-bottom: 1rem;">Search Training Exercise</h3>
-                <form id="exercise-search-form">
-                    <div style="margin-bottom: 1rem;">
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
-                            Search for specific exercise or technique:
-                        </label>
-                        <input type="text" id="exercise-search" placeholder="e.g., A skips, B skips, sprint starts"
-                               style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 6px;">
-                    </div>
-                    <div style="display: flex; gap: 1rem; justify-content: flex-end;">
-                        <button type="button" onclick="this.closest('div[style*=\"position: fixed\"]').remove()"
-                                style="background: #f3f4f6; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer;">
-                            Cancel
-                        </button>
-                        <button type="submit" style="background: var(--primary); color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer;">
-                            Search
-                        </button>
-                    </div>
-                </form>
-            </div>
-        `;
+    const content = document.createElement("div");
+    content.style.cssText = "background: white; padding: 2rem; border-radius: 12px; width: 90%; max-width: 400px;";
+
+    const h3 = document.createElement("h3");
+    h3.style.marginBottom = "1rem";
+    setSafeContent(h3, "Search Training Exercise");
+
+    const form = document.createElement("form");
+    form.id = "exercise-search-form";
+
+    const inputDiv = document.createElement("div");
+    inputDiv.style.marginBottom = "1rem";
+
+    const label = document.createElement("label");
+    label.style.cssText = "display: block; margin-bottom: 0.5rem; font-weight: 500;";
+    label.textContent = "Search for specific exercise or technique:";
+
+    const input = document.createElement("input");
+    input.type = "text";
+    input.id = "exercise-search";
+    input.placeholder = "e.g., A skips, B skips, sprint starts";
+    input.style.cssText = "width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 6px;";
+
+    inputDiv.appendChild(label);
+    inputDiv.appendChild(input);
+
+    const buttonsDiv = document.createElement("div");
+    buttonsDiv.style.cssText = "display: flex; gap: 1rem; justify-content: flex-end;";
+
+    const cancelBtn = document.createElement("button");
+    cancelBtn.type = "button";
+    cancelBtn.style.cssText = "background: #f3f4f6; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer;";
+    cancelBtn.textContent = "Cancel";
+    cancelBtn.addEventListener("click", () => modal.remove());
+
+    const submitBtn = document.createElement("button");
+    submitBtn.type = "submit";
+    submitBtn.style.cssText = "background: var(--primary); color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer;";
+    submitBtn.textContent = "Search";
+
+    buttonsDiv.appendChild(cancelBtn);
+    buttonsDiv.appendChild(submitBtn);
+
+    form.appendChild(inputDiv);
+    form.appendChild(buttonsDiv);
+    content.appendChild(h3);
+    content.appendChild(form);
+    modal.appendChild(content);
 
     modal
       .querySelector("#exercise-search-form")
@@ -712,20 +807,37 @@ class TrainingVideoComponent extends ComponentWithCleanup {
   showError() {
     this.hideLoading();
     document.getElementById("video-error").classList.remove("hidden");
-    document.getElementById("video-grid").innerHTML = "";
+    document.getElementById("video-grid").textContent = "";
   }
 
   clearVideoGrid() {
-    document.getElementById("video-grid").innerHTML = "";
-    document.getElementById("video-player").innerHTML = `
-            <div class="video-placeholder">
-                <div class="placeholder-content">
-                    <span class="placeholder-icon">📺</span>
-                    <h4>Select a training video</h4>
-                    <p>Choose a category to browse warm-up drills, sprint techniques, and more</p>
-                </div>
-            </div>
-        `;
+    document.getElementById("video-grid").textContent = "";
+
+    const videoPlayer = document.getElementById("video-player");
+    videoPlayer.textContent = "";
+
+    const placeholder = document.createElement("div");
+    placeholder.className = "video-placeholder";
+
+    const content = document.createElement("div");
+    content.className = "placeholder-content";
+
+    const icon = document.createElement("span");
+    icon.className = "placeholder-icon";
+    icon.textContent = "📺";
+
+    const h4 = document.createElement("h4");
+    setSafeContent(h4, "Select a training video");
+
+    const p = document.createElement("p");
+    p.textContent = "Choose a category to browse warm-up drills, sprint techniques, and more";
+
+    content.appendChild(icon);
+    content.appendChild(h4);
+    content.appendChild(p);
+    placeholder.appendChild(content);
+    videoPlayer.appendChild(placeholder);
+
     document.getElementById("video-info").classList.add("hidden");
   }
 
@@ -739,7 +851,7 @@ class TrainingVideoComponent extends ComponentWithCleanup {
     this.currentCategory = null;
 
     if (this.container) {
-      this.container.innerHTML = "";
+      this.container.textContent = "";
     }
 
     logger.debug("TrainingVideoComponent destroyed and cleaned up");

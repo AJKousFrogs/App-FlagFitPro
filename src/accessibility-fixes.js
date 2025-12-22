@@ -175,8 +175,11 @@ function fixHeadingStructure() {
       .slice(1)
       .forEach((h1) => {
         const h2 = document.createElement("h2");
-        h2.innerHTML = h1.innerHTML;
         h2.className = h1.className;
+        // Clone all child nodes safely
+        Array.from(h1.childNodes).forEach((node) => {
+          h2.appendChild(node.cloneNode(true));
+        });
         h1.parentNode.replaceChild(h2, h1);
       });
   }

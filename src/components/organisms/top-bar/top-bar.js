@@ -170,14 +170,14 @@
 
     // Highlight matches in text
     const highlightText = (text, query, matchedTexts = []) => {
-      if (!text || !query) return text;
+      if (!text || !query) {return text;}
       
       // Use matchedTexts if available, otherwise use query
       const termsToHighlight = matchedTexts.length > 0 ? matchedTexts : [query];
       let highlighted = text;
       
       for (const term of termsToHighlight) {
-        if (!term || !term.trim()) continue;
+        if (!term || !term.trim()) {continue;}
         // Escape special regex characters
         const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         const regex = new RegExp(`(${escapedTerm})`, 'gi');
@@ -198,14 +198,18 @@
       showingHistory = isHistory;
       
       if (isHistory && results.length === 0) {
-        listbox.innerHTML = "";
+        listbox.textContent = "";
         listbox.hidden = true;
         input.setAttribute("aria-expanded", "false");
         status.textContent = "";
         return;
       }
 
-      listbox.innerHTML = results
+      // Clear listbox
+      listbox.textContent = "";
+
+      // Build results HTML string (highlightText returns HTML with highlighting)
+      const resultsHTML = results
         .map(
           (r, i) => {
             if (isHistory) {
@@ -233,6 +237,15 @@
           },
         )
         .join("");
+
+      // Use temp container pattern to safely insert HTML (highlightText returns HTML)
+      // eslint-disable-next-line no-restricted-syntax
+      const temp = document.createElement('div');
+      // eslint-disable-next-line no-restricted-syntax
+      temp.innerHTML = resultsHTML;
+      while (temp.firstChild) {
+        listbox.appendChild(temp.firstChild);
+      }
 
       listbox.hidden = results.length === 0;
       input.setAttribute("aria-expanded", String(!listbox.hidden));
@@ -816,7 +829,7 @@
    * Update button visual state (for button version)
    */
   function updateButtonVisualState(button, theme) {
-    if (!button) return;
+    if (!button) {return;}
     
     // Update aria-label and title for accessibility
     if (theme === "dark") {

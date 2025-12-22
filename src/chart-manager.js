@@ -1,13 +1,15 @@
 // Chart.js Integration Manager for FlagFit Pro
 // Handles all data visualization and chart creation
 
+import { logger } from "./logger.js";
+
 // Dynamic import with fallback for older browsers
 let Chart;
-let chartLoadPromise = null;
+const chartLoadPromise = null;
 
 // Async function to load Chart.js dynamically
 async function loadChart() {
-    if (Chart) return Chart;
+    if (Chart) {return Chart;}
 
     try {
         // Try window.Chart first (if already loaded via script tag)
@@ -21,7 +23,7 @@ async function loadChart() {
         Chart = chartModule.default || chartModule;
         return Chart;
     } catch (error) {
-        console.warn('Chart.js not available, charts will not render:', error);
+        logger.warn('Chart.js not available, charts will not render:', error);
         return null;
     }
 }
@@ -34,7 +36,7 @@ async function loadDateAdapter() {
             window.chartjsDateAdapterLoaded = true;
         }
     } catch (error) {
-        console.warn('Chart.js date adapter not available:', error);
+        logger.warn('Chart.js date adapter not available:', error);
     }
 }
 
@@ -66,7 +68,7 @@ class ChartManager {
         }
 
         if (!Chart) {
-            console.error('Chart.js is not available. Charts will not render.');
+            logger.error('Chart.js is not available. Charts will not render.');
             throw new Error('Chart.js library not loaded');
         }
 
@@ -77,7 +79,7 @@ class ChartManager {
     // Initialize all charts on the dashboard
     async initializeCharts() {
         try {
-            console.log('🎨 Initializing Chart.js charts...');
+            logger.info('🎨 Initializing Chart.js charts...');
 
             // Check if we're in a browser environment
             if (typeof window === 'undefined' || typeof document === 'undefined') {
@@ -111,9 +113,9 @@ class ChartManager {
             // User Engagement Funnel
             this.createEngagementFunnelChart();
             
-            console.log('✅ All charts initialized successfully');
+            logger.info('✅ All charts initialized successfully');
         } catch (error) {
-            console.error('❌ Error initializing charts:', error);
+            logger.error('❌ Error initializing charts:', error);
             // Show user-friendly error message
             this.showChartError(error);
         }
@@ -158,7 +160,7 @@ class ChartManager {
     // Create performance trends line chart
     createPerformanceTrendsChart() {
         const ctx = this.getChartContext('performanceTrendsChart');
-        if (!ctx) return;
+        if (!ctx) {return;}
 
         try {
             const chart = new Chart(ctx, {
@@ -250,14 +252,14 @@ class ChartManager {
 
             this.charts.set('performanceTrends', chart);
         } catch (error) {
-            console.error('Error creating performance trends chart:', error);
+            logger.error('Error creating performance trends chart:', error);
         }
     }
 
     // Create team chemistry radar chart
     createTeamChemistryChart() {
         const ctx = this.getChartContext('teamChemistryChart');
-        if (!ctx) return;
+        if (!ctx) {return;}
 
         try {
             const chart = new Chart(ctx, {
@@ -329,14 +331,14 @@ class ChartManager {
 
             this.charts.set('teamChemistry', chart);
         } catch (error) {
-            console.error('Error creating team chemistry chart:', error);
+            logger.error('Error creating team chemistry chart:', error);
         }
     }
 
     // Create training distribution pie chart
     createTrainingDistributionChart() {
         const ctx = this.getChartContext('trainingDistributionChart');
-        if (!ctx) return;
+        if (!ctx) {return;}
 
         try {
             const chart = new Chart(ctx, {
@@ -392,14 +394,14 @@ class ChartManager {
 
             this.charts.set('trainingDistribution', chart);
         } catch (error) {
-            console.error('Error creating training distribution chart:', error);
+            logger.error('Error creating training distribution chart:', error);
         }
     }
 
     // Create position performance comparison bar chart
     createPositionPerformanceChart() {
         const ctx = this.getChartContext('positionPerformanceChart');
-        if (!ctx) return;
+        if (!ctx) {return;}
 
         try {
             const chart = new Chart(ctx, {
@@ -471,14 +473,14 @@ class ChartManager {
 
             this.charts.set('positionPerformance', chart);
         } catch (error) {
-            console.error('Error creating position performance chart:', error);
+            logger.error('Error creating position performance chart:', error);
         }
     }
 
     // Create Olympic qualification progress gauge
     createOlympicProgressChart() {
         const ctx = this.getChartContext('olympicProgressChart');
-        if (!ctx) return;
+        if (!ctx) {return;}
 
         try {
             const chart = new Chart(ctx, {
@@ -547,14 +549,14 @@ class ChartManager {
 
             this.charts.set('olympicProgress', chart);
         } catch (error) {
-            console.error('Error creating Olympic progress chart:', error);
+            logger.error('Error creating Olympic progress chart:', error);
         }
     }
 
     // Create injury risk gauge chart
     createInjuryRiskChart() {
         const ctx = this.getChartContext('injuryRiskChart');
-        if (!ctx) return;
+        if (!ctx) {return;}
 
         try {
             const chart = new Chart(ctx, {
@@ -598,14 +600,14 @@ class ChartManager {
 
             this.charts.set('injuryRisk', chart);
         } catch (error) {
-            console.error('Error creating injury risk chart:', error);
+            logger.error('Error creating injury risk chart:', error);
         }
     }
 
     // Create speed development line chart
     createSpeedDevelopmentChart() {
         const ctx = this.getChartContext('speedDevelopmentChart');
-        if (!ctx) return;
+        if (!ctx) {return;}
 
         try {
             const chart = new Chart(ctx, {
@@ -689,14 +691,14 @@ class ChartManager {
 
             this.charts.set('speedDevelopment', chart);
         } catch (error) {
-            console.error('Error creating speed development chart:', error);
+            logger.error('Error creating speed development chart:', error);
         }
     }
 
     // Create user engagement funnel chart
     createEngagementFunnelChart() {
         const ctx = this.getChartContext('engagementFunnelChart');
-        if (!ctx) return;
+        if (!ctx) {return;}
 
         try {
             const chart = new Chart(ctx, {
@@ -771,7 +773,7 @@ class ChartManager {
 
             this.charts.set('engagementFunnel', chart);
         } catch (error) {
-            console.error('Error creating engagement funnel chart:', error);
+            logger.error('Error creating engagement funnel chart:', error);
         }
     }
 
@@ -780,19 +782,19 @@ class ChartManager {
         try {
             const canvas = document.getElementById(canvasId);
             if (!canvas) {
-                console.warn(`Canvas element with id '${canvasId}' not found`);
+                logger.warn(`Canvas element with id '${canvasId}' not found`);
                 return null;
             }
             
             const ctx = canvas.getContext('2d');
             if (!ctx) {
-                console.error(`Unable to get 2D context for canvas '${canvasId}'`);
+                logger.error(`Unable to get 2D context for canvas '${canvasId}'`);
                 return null;
             }
             
             return ctx;
         } catch (error) {
-            console.error(`Error getting chart context for '${canvasId}':`, error);
+            logger.error(`Error getting chart context for '${canvasId}':`, error);
             return null;
         }
     }
@@ -810,7 +812,7 @@ class ChartManager {
             gradient.addColorStop(1, colors[1]);
             return gradient;
         } catch (error) {
-            console.warn('Gradient creation failed, using solid color:', error);
+            logger.warn('Gradient creation failed, using solid color:', error);
             return colors[0];
         }
     }
@@ -824,7 +826,7 @@ class ChartManager {
                 chart.update();
             }
         } catch (error) {
-            console.error(`Error updating chart '${chartName}':`, error);
+            logger.error(`Error updating chart '${chartName}':`, error);
         }
     }
 
@@ -837,7 +839,7 @@ class ChartManager {
                 }
             });
         } catch (error) {
-            console.error('Error resizing charts:', error);
+            logger.error('Error resizing charts:', error);
         }
     }
 
@@ -851,7 +853,7 @@ class ChartManager {
             });
             this.charts.clear();
         } catch (error) {
-            console.error('Error destroying charts:', error);
+            logger.error('Error destroying charts:', error);
         }
     }
 

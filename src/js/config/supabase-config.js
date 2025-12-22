@@ -23,7 +23,7 @@
   // 1. window._env (set by build process, dev server, or inline script)
   // 2. localStorage (for local development/testing)
   const getConfigValue = (key) => {
-    if (typeof window === 'undefined') return null;
+    if (typeof window === 'undefined') {return null;}
     
     // First check window._env (set by build process or inline script)
     if (window._env && window._env[key]) {
@@ -58,13 +58,23 @@
                            window.location.hostname === '127.0.0.1';
       
       if (isDevelopment) {
+        // Note: This is a config file loaded as a script, not a module
+        // Using console.warn here is acceptable as logger may not be available yet
+        // eslint-disable-next-line no-console
         console.warn('[Supabase Config] Missing credentials. Set SUPABASE_URL and SUPABASE_ANON_KEY environment variables.');
+        // eslint-disable-next-line no-console
         console.warn('[Supabase Config] Or set them in localStorage for local development.');
       } else {
         // Production: More detailed error message
+        // Note: This is a config file loaded as a script, not a module
+        // Using console.error here is acceptable as logger may not be available yet
+        // eslint-disable-next-line no-console
         console.error('[Supabase Config] CRITICAL: Missing Supabase configuration in production');
+        // eslint-disable-next-line no-console
         console.error('[Supabase Config] Environment variables VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY must be set during build.');
+        // eslint-disable-next-line no-console
         console.error('[Supabase Config] Check Netlify build logs and ensure variables are set in Netlify UI.');
+        // eslint-disable-next-line no-console
         console.error('[Supabase Config] window._env:', window._env);
       }
     }

@@ -1,4 +1,5 @@
 import React from 'react';
+import { logger } from '../logger.js';
 
 class BackupErrorBoundary extends React.Component {
   constructor(props) {
@@ -11,7 +12,7 @@ class BackupErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    console.error('Backup Error Boundary:', error, errorInfo);
+    logger.error('Backup Error Boundary:', error, errorInfo);
   }
 
   render() {

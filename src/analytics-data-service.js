@@ -1,6 +1,10 @@
 // Analytics Data Service for FlagFit Pro
 // Fetches and formats data from the database for Chart.js visualization
 
+import { logger } from "./logger.js";
+
+/* global XMLHttpRequest */
+
 class AnalyticsDataService {
     constructor() {
         this.baseURL = 'http://localhost:3001/api';
@@ -17,7 +21,7 @@ class AnalyticsDataService {
         
         // Check if fetch is available
         if (typeof fetch === 'undefined') {
-            console.warn('Fetch API not available, using XMLHttpRequest fallback');
+            logger.warn('Fetch API not available, using XMLHttpRequest fallback');
             this.useXHR = true;
         } else {
             this.useXHR = false;
@@ -61,7 +65,7 @@ class AnalyticsDataService {
             const data = await response.json();
             return data;
         } catch (error) {
-            console.error(`API call failed for ${endpoint}:`, error);
+            logger.error(`API call failed for ${endpoint}:`, error);
             throw error;
         }
     }
@@ -130,7 +134,7 @@ class AnalyticsDataService {
                 return null;
             }
         } catch (error) {
-            console.warn('Cache access error:', error);
+            logger.warn('Cache access error:', error);
             return null;
         }
     }
@@ -149,7 +153,7 @@ class AnalyticsDataService {
                 this.cache.set(key, cacheEntry);
             }
         } catch (error) {
-            console.warn('Cache set error:', error);
+            logger.warn('Cache set error:', error);
         }
     }
 
@@ -157,14 +161,14 @@ class AnalyticsDataService {
     async getPerformanceTrendsData(userId = '1', weeks = 7) {
         const cacheKey = `performance-trends-${userId}-${weeks}`;
         const cached = this.getCachedData(cacheKey);
-        if (cached) return cached;
+        if (cached) {return cached;}
 
         try {
             const data = await this.apiCall(`/analytics/performance-trends?userId=${userId}&weeks=${weeks}`);
             this.setCachedData(cacheKey, data);
             return this.formatPerformanceTrendsData(data);
         } catch (error) {
-            console.error('Failed to fetch performance trends:', error);
+            logger.error('Failed to fetch performance trends:', error);
             return this.getFallbackPerformanceTrendsData(weeks);
         }
     }
@@ -173,14 +177,14 @@ class AnalyticsDataService {
     async getTeamChemistryData(userId = '1') {
         const cacheKey = `team-chemistry-${userId}`;
         const cached = this.getCachedData(cacheKey);
-        if (cached) return cached;
+        if (cached) {return cached;}
 
         try {
             const data = await this.apiCall(`/analytics/team-chemistry?userId=${userId}`);
             this.setCachedData(cacheKey, data);
             return this.formatTeamChemistryData(data);
         } catch (error) {
-            console.error('Failed to fetch team chemistry:', error);
+            logger.error('Failed to fetch team chemistry:', error);
             return this.getFallbackTeamChemistryData();
         }
     }
@@ -189,14 +193,14 @@ class AnalyticsDataService {
     async getTrainingDistributionData(userId = '1', period = '30days') {
         const cacheKey = `training-distribution-${userId}-${period}`;
         const cached = this.getCachedData(cacheKey);
-        if (cached) return cached;
+        if (cached) {return cached;}
 
         try {
             const data = await this.apiCall(`/analytics/training-distribution?userId=${userId}&period=${period}`);
             this.setCachedData(cacheKey, data);
             return this.formatTrainingDistributionData(data);
         } catch (error) {
-            console.error('Failed to fetch training distribution:', error);
+            logger.error('Failed to fetch training distribution:', error);
             return this.getFallbackTrainingDistributionData();
         }
     }
@@ -205,14 +209,14 @@ class AnalyticsDataService {
     async getPositionPerformanceData(userId = '1') {
         const cacheKey = `position-performance-${userId}`;
         const cached = this.getCachedData(cacheKey);
-        if (cached) return cached;
+        if (cached) {return cached;}
 
         try {
             const data = await this.apiCall(`/analytics/position-performance?userId=${userId}`);
             this.setCachedData(cacheKey, data);
             return this.formatPositionPerformanceData(data);
         } catch (error) {
-            console.error('Failed to fetch position performance:', error);
+            logger.error('Failed to fetch position performance:', error);
             return this.getFallbackPositionPerformanceData();
         }
     }
@@ -221,14 +225,14 @@ class AnalyticsDataService {
     async getOlympicQualificationData(userId = '1') {
         const cacheKey = `olympic-qualification-${userId}`;
         const cached = this.getCachedData(cacheKey);
-        if (cached) return cached;
+        if (cached) {return cached;}
 
         try {
             const data = await this.apiCall(`/dashboard/olympic-qualification?userId=${userId}`);
             this.setCachedData(cacheKey, data);
             return this.formatOlympicQualificationData(data);
         } catch (error) {
-            console.error('Failed to fetch Olympic data:', error);
+            logger.error('Failed to fetch Olympic data:', error);
             return this.getFallbackOlympicQualificationData();
         }
     }
@@ -237,14 +241,14 @@ class AnalyticsDataService {
     async getInjuryRiskData(userId = '1') {
         const cacheKey = `injury-risk-${userId}`;
         const cached = this.getCachedData(cacheKey);
-        if (cached) return cached;
+        if (cached) {return cached;}
 
         try {
             const data = await this.apiCall(`/analytics/injury-risk?userId=${userId}`);
             this.setCachedData(cacheKey, data);
             return this.formatInjuryRiskData(data);
         } catch (error) {
-            console.error('Failed to fetch injury risk data:', error);
+            logger.error('Failed to fetch injury risk data:', error);
             return this.getFallbackInjuryRiskData();
         }
     }
@@ -253,14 +257,14 @@ class AnalyticsDataService {
     async getSpeedDevelopmentData(userId = '1', weeks = 7) {
         const cacheKey = `speed-development-${userId}-${weeks}`;
         const cached = this.getCachedData(cacheKey);
-        if (cached) return cached;
+        if (cached) {return cached;}
 
         try {
             const data = await this.apiCall(`/analytics/speed-development?userId=${userId}&weeks=${weeks}`);
             this.setCachedData(cacheKey, data);
             return this.formatSpeedDevelopmentData(data);
         } catch (error) {
-            console.error('Failed to fetch speed development data:', error);
+            logger.error('Failed to fetch speed development data:', error);
             return this.getFallbackSpeedDevelopmentData(weeks);
         }
     }
@@ -269,14 +273,14 @@ class AnalyticsDataService {
     async getUserEngagementData(period = '30days') {
         const cacheKey = `user-engagement-${period}`;
         const cached = this.getCachedData(cacheKey);
-        if (cached) return cached;
+        if (cached) {return cached;}
 
         try {
             const data = await this.apiCall(`/analytics/user-engagement?period=${period}`);
             this.setCachedData(cacheKey, data);
             return this.formatUserEngagementData(data);
         } catch (error) {
-            console.error('Failed to fetch user engagement data:', error);
+            logger.error('Failed to fetch user engagement data:', error);
             return this.getFallbackUserEngagementData();
         }
     }
@@ -307,7 +311,7 @@ class AnalyticsDataService {
                 }]
             };
         } catch (error) {
-            console.error('Error formatting performance trends data:', error);
+            logger.error('Error formatting performance trends data:', error);
             return this.getFallbackPerformanceTrendsData();
         }
     }
@@ -335,7 +339,7 @@ class AnalyticsDataService {
                 }]
             };
         } catch (error) {
-            console.error('Error formatting team chemistry data:', error);
+            logger.error('Error formatting team chemistry data:', error);
             return this.getFallbackTeamChemistryData();
         }
     }
@@ -358,7 +362,7 @@ class AnalyticsDataService {
                 }]
             };
         } catch (error) {
-            console.error('Error formatting training distribution data:', error);
+            logger.error('Error formatting training distribution data:', error);
             return this.getFallbackTrainingDistributionData();
         }
     }
@@ -387,7 +391,7 @@ class AnalyticsDataService {
                 }]
             };
         } catch (error) {
-            console.error('Error formatting position performance data:', error);
+            logger.error('Error formatting position performance data:', error);
             return this.getFallbackPositionPerformanceData();
         }
     }
@@ -409,7 +413,7 @@ class AnalyticsDataService {
                 }]
             };
         } catch (error) {
-            console.error('Error formatting Olympic qualification data:', error);
+            logger.error('Error formatting Olympic qualification data:', error);
             return this.getFallbackOlympicQualificationData();
         }
     }
@@ -431,7 +435,7 @@ class AnalyticsDataService {
                 }]
             };
         } catch (error) {
-            console.error('Error formatting injury risk data:', error);
+            logger.error('Error formatting injury risk data:', error);
             return this.getFallbackInjuryRiskData();
         }
     }
@@ -462,7 +466,7 @@ class AnalyticsDataService {
                 }]
             };
         } catch (error) {
-            console.error('Error formatting speed development data:', error);
+            logger.error('Error formatting speed development data:', error);
             return this.getFallbackSpeedDevelopmentData();
         }
     }
@@ -487,20 +491,19 @@ class AnalyticsDataService {
                 }]
             };
         } catch (error) {
-            console.error('Error formatting user engagement data:', error);
+            logger.error('Error formatting user engagement data:', error);
             return this.getFallbackUserEngagementData();
         }
     }
 
     // Fallback data methods
     getFallbackPerformanceTrendsData(weeks = 7) {
-        try {
-            const weekLabels = [];
-            for (let i = 1; i <= weeks; i++) {
-                weekLabels.push(`Week ${i}`);
-            }
-            
-            return {
+        const weekLabels = [];
+        for (let i = 1; i <= weeks; i++) {
+            weekLabels.push(`Week ${i}`);
+        }
+        
+        return {
                 labels: weekLabels,
                 datasets: [{
                     label: 'Overall Performance Score',
@@ -520,15 +523,10 @@ class AnalyticsDataService {
                     tension: 0.4
                 }]
             };
-        } catch (error) {
-            console.error('Error creating fallback performance trends data:', error);
-            return { labels: [], datasets: [] };
-        }
     }
 
     getFallbackTeamChemistryData() {
-        try {
-            return {
+        return {
                 labels: ['Communication', 'Coordination', 'Trust', 'Cohesion', 'Leadership', 'Adaptability'],
                 datasets: [{
                     label: 'Current Team Chemistry',
@@ -545,15 +543,10 @@ class AnalyticsDataService {
                     borderDash: [5, 5]
                 }]
             };
-        } catch (error) {
-            console.error('Error creating fallback team chemistry data:', error);
-            return { labels: [], datasets: [] };
-        }
     }
 
     getFallbackTrainingDistributionData() {
-        try {
-            return {
+        return {
                 labels: ['Agility Training', 'Speed Development', 'Technical Skills', 'Strength Training', 'Recovery Sessions'],
                 datasets: [{
                     data: [30, 25, 20, 15, 10],
@@ -564,15 +557,10 @@ class AnalyticsDataService {
                     borderWidth: 3
                 }]
             };
-        } catch (error) {
-            console.error('Error creating fallback training distribution data:', error);
-            return { labels: [], datasets: [] };
-        }
     }
 
     getFallbackPositionPerformanceData() {
-        try {
-            return {
+        return {
                 labels: ['Quarterback', 'Wide Receiver', 'Center', 'Defensive Back', 'Blitzer'],
                 datasets: [{
                     label: 'Current Performance',
@@ -590,15 +578,10 @@ class AnalyticsDataService {
                     borderRadius: 8
                 }]
             };
-        } catch (error) {
-            console.error('Error creating fallback position performance data:', error);
-            return { labels: [], datasets: [] };
-        }
     }
 
     getFallbackOlympicQualificationData() {
-        try {
-            return {
+        return {
                 labels: ['Qualification Progress', 'Remaining'],
                 datasets: [{
                     data: [73, 27],
@@ -608,38 +591,28 @@ class AnalyticsDataService {
                     cutout: '75%'
                 }]
             };
-        } catch (error) {
-            console.error('Error creating fallback Olympic qualification data:', error);
-            return { labels: [], datasets: [] };
-        }
     }
 
     getFallbackInjuryRiskData() {
-        try {
-            return {
-                labels: ['Low Risk', 'Medium Risk', 'High Risk'],
-                datasets: [{
-                    data: [75, 20, 5],
-                    backgroundColor: ['#22C55E', '#F59E0B', '#EF4444'],
-                    borderColor: '#ffffff',
-                    borderWidth: 3,
-                    cutout: '60%'
-                }]
-            };
-        } catch (error) {
-            console.error('Error creating fallback injury risk data:', error);
-            return { labels: [], datasets: [] };
-        }
+        return {
+            labels: ['Low Risk', 'Medium Risk', 'High Risk'],
+            datasets: [{
+                data: [75, 20, 5],
+                backgroundColor: ['#22C55E', '#F59E0B', '#EF4444'],
+                borderColor: '#ffffff',
+                borderWidth: 3,
+                cutout: '60%'
+            }]
+        };
     }
 
     getFallbackSpeedDevelopmentData(weeks = 7) {
-        try {
-            const weekLabels = [];
-            for (let i = 1; i <= weeks; i++) {
-                weekLabels.push(`Week ${i}`);
-            }
-            
-            return {
+        const weekLabels = [];
+        for (let i = 1; i <= weeks; i++) {
+            weekLabels.push(`Week ${i}`);
+        }
+        
+        return {
                 labels: weekLabels,
                 datasets: [{
                     label: '40-Yard Dash Time',
@@ -659,15 +632,10 @@ class AnalyticsDataService {
                     tension: 0.4
                 }]
             };
-        } catch (error) {
-            console.error('Error creating fallback speed development data:', error);
-            return { labels: [], datasets: [] };
-        }
     }
 
     getFallbackUserEngagementData() {
-        try {
-            return {
+        return {
                 labels: ['App Opens', 'Dashboard Views', 'Training Started', 'Session Complete', 'Goal Set', 'Goal Achieved'],
                 datasets: [{
                     label: 'User Engagement Funnel',
@@ -680,10 +648,6 @@ class AnalyticsDataService {
                     borderRadius: 8
                 }]
             };
-        } catch (error) {
-            console.error('Error creating fallback user engagement data:', error);
-            return { labels: [], datasets: [] };
-        }
     }
 
     // Clear cache
@@ -695,7 +659,7 @@ class AnalyticsDataService {
                 this.cache.clear();
             }
         } catch (error) {
-            console.warn('Error clearing cache:', error);
+            logger.warn('Error clearing cache:', error);
         }
     }
 
@@ -723,7 +687,7 @@ class AnalyticsDataService {
                     ttl: this.cacheTTL
                 };
             } else {
-                this.cache.forEach((value, key) => {
+                this.cache.forEach((value, _key) => {
                     if (now - value.timestamp < this.cacheTTL) {
                         validEntries++;
                     } else {
@@ -739,7 +703,7 @@ class AnalyticsDataService {
                 };
             }
         } catch (error) {
-            console.warn('Error getting cache stats:', error);
+            logger.warn('Error getting cache stats:', error);
             return { total: 0, valid: 0, expired: 0, ttl: this.cacheTTL };
         }
     }

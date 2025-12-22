@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /**
  * Footer Loader
  * Dynamically loads and injects the unified footer component
@@ -7,6 +6,7 @@
 
 import { BaseComponentLoader } from './base-component-loader.js';
 import { onDOMReady } from '../utils/dom-ready.js';
+import { logger } from '../../logger.js';
 
 class FooterLoader extends BaseComponentLoader {
   constructor() {
@@ -55,7 +55,7 @@ class FooterLoader extends BaseComponentLoader {
    */
   afterLoad() {
     super.afterLoad();
-    console.log(`[Footer Loader] Footer loaded successfully (${this.footerType})`);
+    logger.info(`[Footer Loader] Footer loaded successfully (${this.footerType})`);
   }
 }
 

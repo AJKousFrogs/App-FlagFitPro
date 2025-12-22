@@ -110,10 +110,19 @@ export class AccessibilityUtils {
   static addSkipLinks() {
     const skipLinks = document.createElement("div");
     skipLinks.className = "skip-links";
-    skipLinks.innerHTML = `
-      <a href="#main-content" class="skip-link">Skip to main content</a>
-      <a href="#navigation" class="skip-link">Skip to navigation</a>
-    `;
+
+    const mainLink = document.createElement("a");
+    mainLink.href = "#main-content";
+    mainLink.className = "skip-link";
+    mainLink.textContent = "Skip to main content";
+
+    const navLink = document.createElement("a");
+    navLink.href = "#navigation";
+    navLink.className = "skip-link";
+    navLink.textContent = "Skip to navigation";
+
+    skipLinks.appendChild(mainLink);
+    skipLinks.appendChild(navLink);
 
     const style = document.createElement("style");
     style.textContent = `

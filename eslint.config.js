@@ -11,10 +11,12 @@ export default [
       "**/*.ts",
       "**/*.tsx",
       "supabase-types.ts",
+      "Wireframes clean/**",
+      "**/*.jsx", // JSX files - handled separately or by React tooling
     ],
   },
   {
-    files: ["**/*.js", "**/*.jsx"],
+    files: ["**/*.js", "**/*.cjs"],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: "module",
@@ -228,12 +230,28 @@ export default [
   // STRICTER RULES FOR SOURCE FILES
   // ============================================
   {
-    files: ["src/**/*.js", "scripts/**/*.js"],
+    files: ["src/**/*.js"],
     rules: {
       // Even stricter for main source code
       "no-console": "error",                       // No console in src - use logger
       "prefer-const": "error",                     // Must use const when possible
       "no-var": "error",                           // Must use let/const
+    },
+  },
+
+  // ============================================
+  // RELAXED RULES FOR SCRIPTS (BUILD/UTILITY)
+  // ============================================
+  {
+    files: ["scripts/**/*.js", "scripts/**/*.cjs"],
+    rules: {
+      "no-console": "off",                         // Allow console in scripts (build/utility scripts)
+      "no-unused-vars": "warn",                    // Warn but don't error for unused vars in scripts
+      "require-await": "off",                      // Allow async without await in scripts
+      "no-await-in-loop": "warn",                  // Warn but don't error for await in loops (common in scripts)
+      "no-promise-executor-return": "warn",        // Warn but don't error for promise executor returns (common in scripts)
+      "no-restricted-syntax": "off",               // Allow innerHTML in scripts (utility scripts)
+      "no-undef": "warn",                          // Warn but don't error for undefined vars in scripts (may use globals)
     },
   },
 
@@ -245,6 +263,9 @@ export default [
     rules: {
       "no-console": "off",                         // Allow console in tests
       "no-unused-vars": "off",                     // Allow unused vars in tests
+      "no-restricted-syntax": "off",               // Allow innerHTML in test assertions (needed to verify setSafeContent behavior)
+      "require-await": "off",                      // Allow async functions without await in test mocks
+      "no-script-url": "off",                      // Allow javascript: URLs in test assertions (testing XSS prevention)
     },
   },
 

@@ -131,7 +131,7 @@ class ComprehensiveDatabaseAudit {
             console.log(`   ⚠️ ${tableName}: 0 records (table exists but empty)`);
             implementedTables++;
           }
-        } catch (error) {
+        } catch (_error) {
           console.log(`   ❌ ${tableName}: Table does not exist`);
         }
       }

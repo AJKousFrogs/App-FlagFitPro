@@ -1,5 +1,6 @@
 
 import UserModel from '../database/models/User.js';
+import { logger } from '../logger.js';
 
 class NutritionService {
   constructor(database) {
@@ -23,7 +24,7 @@ class NutritionService {
       userId = this.validateUserId(userId);
 
       const user = await UserModel.findById(userId);
-      if (!user) throw new Error('User not found');
+      if (!user) {throw new Error('User not found');}
 
       // Get user's physical stats and training data
       const userStats = await this.db.query(`
@@ -95,7 +96,7 @@ class NutritionService {
 
       return nutritionTargets;
     } catch (error) {
-      console.error('Error calculating nutrition targets:', error);
+      logger.error('Error calculating nutrition targets:', error);
       throw error;
     }
   }
@@ -139,7 +140,7 @@ class NutritionService {
 
       return result.rows[0];
     } catch (error) {
-      console.error('Error saving nutrition targets:', error);
+      logger.error('Error saving nutrition targets:', error);
       throw error;
     }
   }
@@ -200,7 +201,7 @@ class NutritionService {
 
       return mealResult.rows[0];
     } catch (error) {
-      console.error('Error logging meal:', error);
+      logger.error('Error logging meal:', error);
       throw error;
     }
   }
@@ -276,7 +277,7 @@ class NutritionService {
         } : null
       };
     } catch (error) {
-      console.error('Error getting daily nutrition summary:', error);
+      logger.error('Error getting daily nutrition summary:', error);
       throw error;
     }
   }
@@ -321,7 +322,7 @@ class NutritionService {
       `;
 
       const params = [mealType, targetCalories];
-      if (restrictionFilter) params.push(dietaryRestrictions);
+      if (restrictionFilter) {params.push(dietaryRestrictions);}
       params.push(position?.toLowerCase());
 
       const result = await this.db.query(query, params);
@@ -336,7 +337,7 @@ class NutritionService {
 
       return recommendations;
     } catch (error) {
-      console.error('Error generating meal recommendations:', error);
+      logger.error('Error generating meal recommendations:', error);
       throw error;
     }
   }
@@ -394,8 +395,8 @@ class NutritionService {
     const baseCalc = (10 * weight_kg) + (6.25 * height_cm) - (5 * age);
 
     // Gender-specific adjustment using guard clause pattern
-    if (gender === 'male') return baseCalc + 5;
-    if (gender === 'female') return baseCalc - 161;
+    if (gender === 'male') {return baseCalc + 5;}
+    if (gender === 'female') {return baseCalc - 161;}
 
     // Default to male if gender not specified
     return baseCalc + 5;
@@ -436,7 +437,7 @@ class NutritionService {
       const result = await this.db.query(query, params);
       return result.rows;
     } catch (error) {
-      console.error('Error searching food items:', error);
+      logger.error('Error searching food items:', error);
       throw error;
     }
   }

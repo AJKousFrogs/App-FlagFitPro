@@ -67,10 +67,10 @@ export async function safeQuery(pool, query, params = [], routeName = 'unknown')
  */
 export function safeParseInt(value, defaultValue = 0) {
   try {
-    if (value === null || value === undefined) return defaultValue;
+    if (value === null || value === undefined) {return defaultValue;}
     const parsed = parseInt(value, 10);
     return isNaN(parsed) ? defaultValue : parsed;
-  } catch (error) {
+  } catch (_error) {
     return defaultValue;
   }
 }
@@ -89,10 +89,10 @@ export function safeParseInt(value, defaultValue = 0) {
  */
 export function safeFormatDate(date) {
   try {
-    if (!date) return new Date().toISOString();
+    if (!date) {return new Date().toISOString();}
     const dateObj = date instanceof Date ? date : new Date(date);
     return dateObj.toISOString();
-  } catch (error) {
+  } catch (_error) {
     return new Date().toISOString();
   }
 }

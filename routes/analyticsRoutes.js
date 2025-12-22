@@ -62,7 +62,7 @@ try {
  * @returns {Promise<object>} Query result object
  */
 async function executeQuery(query, params = []) {
-  return safeQuery(pool, query, params, ROUTE_NAME);
+  return await safeQuery(pool, query, params, ROUTE_NAME);
 }
 
 // parseIntSafe and formatDate removed - unused functions (use safeParseInt and safeFormatDate from query-helper instead)
@@ -75,13 +75,13 @@ async function executeQuery(query, params = []) {
  */
 function safeAverage(values, defaultValue = 0) {
   try {
-    if (!Array.isArray(values) || values.length === 0) return defaultValue;
+    if (!Array.isArray(values) || values.length === 0) {return defaultValue;}
     const sum = values.reduce((acc, val) => {
       const num = parseFloat(val);
       return acc + (isNaN(num) ? 0 : num);
     }, 0);
     return sum / values.length;
-  } catch (error) {
+  } catch (_error) {
     return defaultValue;
   }
 }
@@ -768,7 +768,7 @@ router.get('/user-engagement', async (req, res) => {
         stages: stages,
         userCounts: userCounts,
         conversionRates: stages.map((stage, index) => {
-          if (index === 0) return 100;
+          if (index === 0) {return 100;}
           return Math.round((userCounts[index] / userCounts[0]) * 100);
         }),
         period: period,
@@ -874,7 +874,7 @@ router.get('/health', async (req, res) => {
 /**
  * Global error handler (catches unhandled errors)
  */
-router.use((err, req, res, next) => {
+router.use((err, req, res, _next) => {
   serverLogger.error(`${ROUTE_NAME.toUpperCase()} unhandled error:`, err);
   
   const { statusCode, response } = createErrorResponse(

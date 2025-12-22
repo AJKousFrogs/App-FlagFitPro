@@ -2,6 +2,7 @@
 // Handles new user onboarding flow and feature discovery
 
 import { storageService } from "./js/services/storage-service-unified.js";
+import { setSafeContent } from "./js/utils/shared.js";
 
 export class OnboardingManager {
   constructor() {
@@ -176,7 +177,8 @@ export class OnboardingManager {
     const currentStepData = steps[this.currentStep];
     const progress = ((this.currentStep + 1) / this.totalSteps) * 100;
 
-    modal.innerHTML = `
+    // Build modal HTML string
+    const modalHTML = `
       <div class="onboarding-overlay"></div>
       <div class="onboarding-content">
         <div class="onboarding-header">
@@ -221,6 +223,9 @@ export class OnboardingManager {
         </div>
       </div>
     `;
+
+    // Use setSafeContent to set modal HTML (sanitizes content)
+    setSafeContent(modal, modalHTML, true);
 
     document.body.appendChild(modal);
 
@@ -364,12 +369,27 @@ export class OnboardingManager {
   showWelcomeMessage() {
     const welcome = document.createElement("div");
     welcome.className = "onboarding-welcome";
-    welcome.innerHTML = `
-      <div class="onboarding-welcome-content">
-        <i data-lucide="check-circle" aria-hidden="true"></i>
-        <p>Welcome to FlagFit Pro! Press <kbd>?</kbd> for keyboard shortcuts.</p>
-      </div>
-    `;
+
+    const content = document.createElement("div");
+    content.className = "onboarding-welcome-content";
+
+    const icon = document.createElement("i");
+    icon.setAttribute("data-lucide", "check-circle");
+    icon.setAttribute("aria-hidden", "true");
+
+    const p = document.createElement("p");
+    const text = document.createTextNode("Welcome to FlagFit Pro! Press ");
+    const kbd = document.createElement("kbd");
+    kbd.textContent = "?";
+    const text2 = document.createTextNode(" for keyboard shortcuts.");
+    p.appendChild(text);
+    p.appendChild(kbd);
+    p.appendChild(text2);
+
+    content.appendChild(icon);
+    content.appendChild(p);
+    welcome.appendChild(content);
+
     document.body.appendChild(welcome);
 
     if (typeof lucide !== "undefined") {

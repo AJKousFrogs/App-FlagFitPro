@@ -144,7 +144,7 @@ export class EnhancedChartConfig {
     const container = document.getElementById(containerId);
     if (!container) {return;}
 
-    container.innerHTML = "";
+    container.textContent = "";
     const datasets = chart.data.datasets;
 
     datasets.forEach((dataset, index) => {

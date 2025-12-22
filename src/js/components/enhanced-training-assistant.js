@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /**
  * Enhanced Training AI Assistant
  * 
@@ -13,6 +12,7 @@
  */
 
 import { flagFitChatbot } from './chatbot.js';
+import { logger } from '../../logger.js';
 
 class EnhancedTrainingAssistant {
   constructor() {
@@ -32,7 +32,7 @@ class EnhancedTrainingAssistant {
    * Initialize the enhanced training assistant
    */
   async init() {
-    if (this.isInitialized) return;
+    if (this.isInitialized) {return;}
 
     // Load training context
     await this.loadTrainingContext();
@@ -44,7 +44,7 @@ class EnhancedTrainingAssistant {
     this.setupTrainingHandlers();
 
     this.isInitialized = true;
-    console.log('[TrainingAssistant] Enhanced training assistant initialized');
+    logger.info('[TrainingAssistant] Enhanced training assistant initialized');
   }
 
   /**
@@ -88,7 +88,7 @@ class EnhancedTrainingAssistant {
             this.trainingContext.performanceMetrics = metricsRes.data;
           }
         } catch (error) {
-          console.warn('[TrainingAssistant] Failed to load from API:', error);
+          logger.warn('[TrainingAssistant] Failed to load from API:', error);
         }
       }
 
@@ -98,7 +98,7 @@ class EnhancedTrainingAssistant {
         this.trainingContext.injuries = window.storageService.get('injuries', [], { usePrefix: false });
       }
     } catch (error) {
-      console.warn('[TrainingAssistant] Failed to load training context:', error);
+      logger.warn('[TrainingAssistant] Failed to load training context:', error);
     }
   }
 
@@ -115,7 +115,7 @@ class EnhancedTrainingAssistant {
         const chatbotModule = await import('./chatbot.js');
         this.chatbot = chatbotModule.flagFitChatbot;
       } catch (error) {
-        console.error('[TrainingAssistant] Failed to load chatbot:', error);
+        logger.error('[TrainingAssistant] Failed to load chatbot:', error);
         return;
       }
     }
@@ -134,7 +134,7 @@ class EnhancedTrainingAssistant {
    * Add training-specific knowledge base
    */
   addTrainingKnowledgeBase() {
-    if (!this.chatbot || !this.chatbot.knowledgeBase) return;
+    if (!this.chatbot || !this.chatbot.knowledgeBase) {return;}
 
     // Extend knowledge base with training-specific content
     this.chatbot.knowledgeBase.training_schedule = {
@@ -169,7 +169,7 @@ class EnhancedTrainingAssistant {
    * Enhance question parser with training intents
    */
   enhanceQuestionParser() {
-    if (!this.chatbot || !this.chatbot.parseQuestion) return;
+    if (!this.chatbot || !this.chatbot.parseQuestion) {return;}
 
     const originalParse = this.chatbot.parseQuestion.bind(this.chatbot);
 
@@ -199,7 +199,7 @@ class EnhancedTrainingAssistant {
    * Enhance answer generator with training context
    */
   enhanceAnswerGenerator() {
-    if (!this.chatbot || !this.chatbot.generateAnswer) return;
+    if (!this.chatbot || !this.chatbot.generateAnswer) {return;}
 
     const originalGenerate = this.chatbot.generateAnswer.bind(this.chatbot);
 
@@ -358,7 +358,7 @@ class EnhancedTrainingAssistant {
    * Calculate recent training load
    */
   calculateRecentTrainingLoad() {
-    if (this.trainingContext.recentWorkouts.length === 0) return 0;
+    if (this.trainingContext.recentWorkouts.length === 0) {return 0;}
 
     const last7Days = this.trainingContext.recentWorkouts.filter(workout => {
       const workoutDate = new Date(workout.date || workout.created_at);
@@ -387,7 +387,7 @@ class EnhancedTrainingAssistant {
    * Add custom commands
    */
   addCustomCommands() {
-    if (!this.chatbot) return;
+    if (!this.chatbot) {return;}
 
     // Add "show schedule" command
     this.chatbot.addCommand?.('show schedule', () => {

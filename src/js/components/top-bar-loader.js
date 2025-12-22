@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /**
  * Top Bar Loader
  * Dynamically loads and injects the unified top bar component
@@ -8,6 +7,7 @@
 import { BaseComponentLoader } from './base-component-loader.js';
 import { onDOMReady } from '../utils/dom-ready.js';
 import { getInitials } from '../utils/shared.js';
+import { logger } from '../../logger.js';
 
 class TopBarLoader extends BaseComponentLoader {
   constructor() {
@@ -93,7 +93,7 @@ class TopBarLoader extends BaseComponentLoader {
         window.enhancedTopBar = new EnhancedTopBar();
       }
     } catch (error) {
-      console.warn('[Top Bar Loader] Could not load enhanced top bar:', error);
+      logger.warn('[Top Bar Loader] Could not load enhanced top bar:', error);
     }
   }
 }

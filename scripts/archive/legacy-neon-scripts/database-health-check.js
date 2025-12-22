@@ -115,9 +115,9 @@ class DatabaseHealthChecker {
       ];
 
       for (const query of countQueries) {
+        const tableName = query.match(/FROM (\w+)/)?.[1] || 'unknown';
         try {
           const result = await sql(query);
-          const tableName = query.match(/FROM (\w+)/)[1];
           const count = result[0]?.count || 0;
           
           this.results.data.counts[tableName] = count;

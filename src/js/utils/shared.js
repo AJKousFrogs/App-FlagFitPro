@@ -86,7 +86,7 @@ export function createElementWithClass(tag, className, innerHTML = "") {
  * @returns {void}
  */
 export function setSafeContent(element, content, isHTML = false, sanitize = true) {
-  if (!element) return;
+  if (!element) {return;}
   
   // Clear existing content
   element.textContent = '';
@@ -102,6 +102,8 @@ export function setSafeContent(element, content, isHTML = false, sanitize = true
     
     // Create a temporary container and move nodes
     // This approach is safer than direct innerHTML assignment
+    // eslint-disable-next-line no-restricted-syntax
+    // Safe: Using temp container pattern for sanitized content
     const temp = document.createElement('div');
     temp.innerHTML = safeContent;
     while (temp.firstChild) {

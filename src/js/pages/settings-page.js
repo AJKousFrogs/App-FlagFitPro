@@ -465,9 +465,11 @@ window.saveSettings = async function (event) {
   const button =
     event?.target || document.querySelector('button[onclick*="saveSettings"]');
   if (!button) {return;}
-  // Store original text content (not innerHTML)
-  const originalText = button.textContent || button.innerHTML;
-  const originalHTML = button.innerHTML;
+  // Store original button content safely using temp container pattern
+  const temp = document.createElement('div');
+  temp.appendChild(button.cloneNode(true));
+  // eslint-disable-next-line no-restricted-syntax -- Safe extraction of existing button HTML for restoration (temp container pattern)
+  const originalHTML = temp.innerHTML;
   
   // Create saved state using DOM methods
   button.textContent = "";
@@ -593,8 +595,8 @@ function showDeleteAccountModal() {
   input.placeholder = "Type DELETE here";
   input.autocomplete = "off";
   input.addEventListener("input", function() {
-    if (typeof validateDeleteInput === "function") {
-      validateDeleteInput(this);
+    if (typeof window.validateDeleteInput === "function") {
+      window.validateDeleteInput(this);
     }
   });
   
@@ -615,8 +617,8 @@ function showDeleteAccountModal() {
   deleteBtn.style.cssText = "padding: 0.75rem 1.5rem; background: var(--error); color: var(--dark-text-primary); border: none; border-radius: 6px; cursor: not-allowed; opacity: 0.5;";
   deleteBtn.textContent = "Delete Account";
   deleteBtn.addEventListener("click", () => {
-    if (typeof confirmAccountDeletion === "function") {
-      confirmAccountDeletion();
+    if (typeof window.confirmAccountDeletion === "function") {
+      window.confirmAccountDeletion();
     }
   });
   

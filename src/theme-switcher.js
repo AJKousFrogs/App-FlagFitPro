@@ -1,6 +1,8 @@
 // Theme Switcher - Toggle between light and dark mode
 // Handles theme switching and persistence
 
+import { logger } from './logger.js';
+
 // Create a simple storage wrapper that works with or without storageService
 const storage = {
   get: (key, defaultValue, options = {}) => {
@@ -11,7 +13,7 @@ const storage = {
     // Fallback to direct localStorage access
     try {
       const storedValue = localStorage.getItem(key);
-      if (!storedValue) return defaultValue;
+      if (!storedValue) {return defaultValue;}
       
       // Try to parse as JSON first, but handle plain strings
       try {
@@ -41,51 +43,14 @@ const storage = {
       }
       return true;
     } catch (e) {
-      logger.error('Failed to save to localStorage:', e);
+      loggerInstance.error('Failed to save to localStorage:', e);
       return false;
     }
   }
 };
 
-/* eslint-disable no-console */
-// Optional logger - use if available, otherwise fallback to console
-let logger;
-try {
-  // Try to import logger if available
-  if (typeof window !== "undefined" && window.logger) {
-    logger = window.logger;
-  } else {
-    // Create a simple logger fallback
-    logger = {
-      debug: (...args) => {
-        if (
-          typeof window !== "undefined" &&
-          window.location.hostname === "localhost"
-        ) {
-          console.log(...args);
-        }
-      },
-      info: (...args) => console.log(...args),
-      warn: (...args) => console.warn(...args),
-      error: (...args) => console.error(...args),
-    };
-  }
-} catch (e) {
-  // Fallback logger if import fails
-  logger = {
-    debug: (...args) => {
-      if (
-        typeof window !== "undefined" &&
-        window.location.hostname === "localhost"
-      ) {
-        console.log(...args);
-      }
-    },
-    info: (...args) => console.log(...args),
-    warn: (...args) => console.warn(...args),
-    error: (...args) => console.error(...args),
-  };
-}
+// Use logger - prefer window.logger for script tag compatibility, otherwise use imported logger
+const loggerInstance = (typeof window !== "undefined" && window.logger) ? window.logger : logger;
 
 class ThemeSwitcher {
   constructor() {
@@ -184,13 +149,30 @@ class ThemeSwitcher {
     const toggleContainer = document.createElement("div");
     toggleContainer.className = "theme-toggle-container";
     const isDark = this.currentTheme === "dark";
-    toggleContainer.innerHTML = `
-            <label class="theme-toggle-label" title="Toggle ${isDark ? "Light" : "Dark"} Mode">
-                <input type="checkbox" id="theme-toggle" class="theme-toggle-input" ${isDark ? "checked" : ""}>
-                <span class="theme-toggle-slider"></span>
-                <span class="theme-toggle-text">${isDark ? "Dark" : "Light"}</span>
-            </label>
-        `;
+
+    const label = document.createElement("label");
+    label.className = "theme-toggle-label";
+    label.title = `Toggle ${isDark ? "Light" : "Dark"} Mode`;
+
+    const input = document.createElement("input");
+    input.type = "checkbox";
+    input.id = "theme-toggle";
+    input.className = "theme-toggle-input";
+    if (isDark) {
+      input.checked = true;
+    }
+
+    const slider = document.createElement("span");
+    slider.className = "theme-toggle-slider";
+
+    const text = document.createElement("span");
+    text.className = "theme-toggle-text";
+    text.textContent = isDark ? "Dark" : "Light";
+
+    label.appendChild(input);
+    label.appendChild(slider);
+    label.appendChild(text);
+    toggleContainer.appendChild(label);
 
     // Insert before user menu
     const userMenu = headerRight.querySelector(".user-menu");
@@ -218,7 +200,7 @@ class ThemeSwitcher {
   }
 
   applyTheme(theme) {
-    logger.debug("🎨 Applying theme:", theme);
+    loggerInstance.debug("🎨 Applying theme:", theme);
 
     // Set data-theme attribute on html FIRST - this updates CSS variables
     document.documentElement.setAttribute("data-theme", theme);
@@ -227,11 +209,11 @@ class ThemeSwitcher {
     document.body.setAttribute("data-theme", theme);
 
     // Verify it was set
-    logger.debug(
+    loggerInstance.debug(
       "✅ data-theme set on html:",
       document.documentElement.getAttribute("data-theme"),
     );
-    logger.debug(
+    loggerInstance.debug(
       "✅ data-theme set on body:",
       document.body.getAttribute("data-theme"),
     );
@@ -251,7 +233,7 @@ class ThemeSwitcher {
     if (toggle) {
       // Toggle checked = dark theme, unchecked = light theme
       toggle.checked = theme === "dark";
-      logger.debug(
+      loggerInstance.debug(
         "✅ Toggle state updated:",
         toggle.checked,
         "for theme:",
@@ -308,8 +290,8 @@ class ThemeSwitcher {
     setTimeout(() => {
       const computedBg = window.getComputedStyle(document.body).backgroundColor;
       const computedColor = window.getComputedStyle(document.body).color;
-      logger.debug("✅ Computed body background:", computedBg);
-      logger.debug("✅ Computed body color:", computedColor);
+      loggerInstance.debug("✅ Computed body background:", computedBg);
+      loggerInstance.debug("✅ Computed body color:", computedColor);
     }, 10);
   }
 
@@ -328,7 +310,7 @@ class ThemeSwitcher {
   }
 
   updateButtonState(button, theme) {
-    if (!button) return;
+    if (!button) {return;}
     
     // Update aria-label and title for accessibility
     if (theme === "dark") {

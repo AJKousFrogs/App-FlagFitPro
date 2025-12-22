@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /**
  * Sidebar Navigation Loader
  * Dynamically loads and injects the unified sidebar component
@@ -7,6 +6,7 @@
 
 import { BaseComponentLoader } from './base-component-loader.js';
 import { onDOMReady } from '../utils/dom-ready.js';
+import { logger } from '../../logger.js';
 
 class SidebarLoader extends BaseComponentLoader {
   constructor() {
@@ -63,7 +63,7 @@ class SidebarLoader extends BaseComponentLoader {
    */
   async initializeEnhancedFeatures() {
     const sidebar = document.getElementById('sidebar');
-    if (!sidebar) return;
+    if (!sidebar) {return;}
 
     // Ensure Lucide icons are initialized (base loader handles this, but double-check)
     if (typeof lucide !== 'undefined' && lucide.createIcons) {
@@ -78,7 +78,7 @@ class SidebarLoader extends BaseComponentLoader {
         window.enhancedSidebarNav = new EnhancedSidebarNav();
       }
     } catch (error) {
-      console.warn('[Sidebar Loader] Could not load enhanced sidebar navigation:', error);
+      logger.warn('[Sidebar Loader] Could not load enhanced sidebar navigation:', error);
     }
   }
 

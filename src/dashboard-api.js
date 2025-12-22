@@ -1,6 +1,8 @@
 // Dashboard API Integration
 // Handles all communication between the HTML wireframe and backend database
 
+import { logger } from './logger.js';
+
 class DashboardAPI {
     constructor() {
         // Use environment variable or fallback to localhost
@@ -59,7 +61,7 @@ class DashboardAPI {
             if (error.name === 'AbortError') {
                 throw new Error('Request timeout - server took too long to respond');
             }
-            console.error(`API call failed for ${endpoint}:`, error);
+            logger.error(`API call failed for ${endpoint}:`, error);
             throw error;
         }
     }
@@ -68,14 +70,14 @@ class DashboardAPI {
     async getDashboardOverview() {
         const cacheKey = 'dashboard-overview';
         const cached = this.getCachedData(cacheKey);
-        if (cached) return cached;
+        if (cached) {return cached;}
 
         try {
             const data = await this.apiCall(`/dashboard/overview?userId=${this.userId}`);
             this.setCachedData(cacheKey, data);
             return data;
         } catch (error) {
-            console.error('Failed to fetch dashboard overview:', error);
+            logger.error('Failed to fetch dashboard overview:', error);
             return this.getFallbackOverview();
         }
     }
@@ -84,14 +86,14 @@ class DashboardAPI {
     async getTrainingCalendar() {
         const cacheKey = 'training-calendar';
         const cached = this.getCachedData(cacheKey);
-        if (cached) return cached;
+        if (cached) {return cached;}
 
         try {
             const data = await this.apiCall(`/dashboard/training-calendar?userId=${this.userId}`);
             this.setCachedData(cacheKey, data);
             return data;
         } catch (error) {
-            console.error('Failed to fetch training calendar:', error);
+            logger.error('Failed to fetch training calendar:', error);
             return this.getFallbackCalendar();
         }
     }
@@ -100,14 +102,14 @@ class DashboardAPI {
     async getOlympicQualification() {
         const cacheKey = 'olympic-qualification';
         const cached = this.getCachedData(cacheKey);
-        if (cached) return cached;
+        if (cached) {return cached;}
 
         try {
             const data = await this.apiCall(`/dashboard/olympic-qualification?userId=${this.userId}`);
             this.setCachedData(cacheKey, data);
             return data;
         } catch (error) {
-            console.error('Failed to fetch Olympic data:', error);
+            logger.error('Failed to fetch Olympic data:', error);
             return this.getFallbackOlympicData();
         }
     }
@@ -116,14 +118,14 @@ class DashboardAPI {
     async getSponsorRewards() {
         const cacheKey = 'sponsor-rewards';
         const cached = this.getCachedData(cacheKey);
-        if (cached) return cached;
+        if (cached) {return cached;}
 
         try {
             const data = await this.apiCall(`/dashboard/sponsor-rewards?userId=${this.userId}`);
             this.setCachedData(cacheKey, data);
             return data;
         } catch (error) {
-            console.error('Failed to fetch sponsor data:', error);
+            logger.error('Failed to fetch sponsor data:', error);
             return this.getFallbackSponsorData();
         }
     }
@@ -132,14 +134,14 @@ class DashboardAPI {
     async getWearables() {
         const cacheKey = 'wearables';
         const cached = this.getCachedData(cacheKey);
-        if (cached) return cached;
+        if (cached) {return cached;}
 
         try {
             const data = await this.apiCall(`/dashboard/wearables?userId=${this.userId}`);
             this.setCachedData(cacheKey, data);
             return data;
         } catch (error) {
-            console.error('Failed to fetch wearables data:', error);
+            logger.error('Failed to fetch wearables data:', error);
             return this.getFallbackWearablesData();
         }
     }
@@ -148,14 +150,14 @@ class DashboardAPI {
     async getTeamChemistry() {
         const cacheKey = 'team-chemistry';
         const cached = this.getCachedData(cacheKey);
-        if (cached) return cached;
+        if (cached) {return cached;}
 
         try {
             const data = await this.apiCall(`/dashboard/team-chemistry?userId=${this.userId}`);
             this.setCachedData(cacheKey, data);
             return data;
         } catch (error) {
-            console.error('Failed to fetch team chemistry data:', error);
+            logger.error('Failed to fetch team chemistry data:', error);
             return this.getFallbackChemistryData();
         }
     }
@@ -164,14 +166,14 @@ class DashboardAPI {
     async getNotifications() {
         const cacheKey = 'notifications';
         const cached = this.getCachedData(cacheKey);
-        if (cached) return cached;
+        if (cached) {return cached;}
 
         try {
             const data = await this.apiCall(`/dashboard/notifications?userId=${this.userId}`);
             this.setCachedData(cacheKey, data);
             return data;
         } catch (error) {
-            console.error('Failed to fetch notifications:', error);
+            logger.error('Failed to fetch notifications:', error);
             return this.getFallbackNotifications();
         }
     }
@@ -180,14 +182,14 @@ class DashboardAPI {
     async getDailyQuote() {
         const cacheKey = 'daily-quote';
         const cached = this.getCachedData(cacheKey);
-        if (cached) return cached;
+        if (cached) {return cached;}
 
         try {
             const data = await this.apiCall('/dashboard/daily-quote');
             this.setCachedData(cacheKey, data);
             return data;
         } catch (error) {
-            console.error('Failed to fetch daily quote:', error);
+            logger.error('Failed to fetch daily quote:', error);
             return this.getFallbackQuote();
         }
     }

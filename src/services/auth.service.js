@@ -1,6 +1,8 @@
 // Mock Authentication Service for Development
 // This simulates backend authentication functionality
 
+import { logger } from '../logger.js';
+
 class AuthService {
   constructor() {
     this.currentUser = null;
@@ -10,7 +12,7 @@ class AuthService {
 
   async login(credentials) {
     try {
-      console.log('AuthService: Processing login for:', credentials.email);
+      logger.info('AuthService: Processing login for:', credentials.email);
       
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 500));
@@ -46,7 +48,7 @@ class AuthService {
       localStorage.setItem('flagfit_token', token);
       localStorage.setItem('flagfit_auth', 'true');
 
-      console.log('AuthService: Login successful for user:', user.email);
+      logger.info('AuthService: Login successful for user:', user.email);
 
       return {
         user,
@@ -54,14 +56,14 @@ class AuthService {
         isAuthenticated: true
       };
     } catch (error) {
-      console.error('AuthService: Login failed:', error.message);
+      logger.error('AuthService: Login failed:', error.message);
       throw error;
     }
   }
 
   async register(userData) {
     try {
-      console.log('AuthService: Processing registration for:', userData.email);
+      logger.info('AuthService: Processing registration for:', userData.email);
       
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 700));
@@ -100,7 +102,7 @@ class AuthService {
       localStorage.setItem('flagfit_token', token);
       localStorage.setItem('flagfit_auth', 'true');
 
-      console.log('AuthService: Registration successful for user:', user.email);
+      logger.info('AuthService: Registration successful for user:', user.email);
 
       return {
         user,
@@ -108,7 +110,7 @@ class AuthService {
         isAuthenticated: true
       };
     } catch (error) {
-      console.error('AuthService: Registration failed:', error.message);
+      logger.error('AuthService: Registration failed:', error.message);
       throw error;
     }
   }
@@ -131,20 +133,20 @@ class AuthService {
         this.token = storedToken;
         this.isAuthenticated = true;
         
-        console.log('AuthService: Retrieved user from storage:', user.email);
+        logger.info('AuthService: Retrieved user from storage:', user.email);
         return user;
       }
 
       return null;
     } catch (error) {
-      console.error('AuthService: Error getting current user:', error.message);
+      logger.error('AuthService: Error getting current user:', error.message);
       return null;
     }
   }
 
   async logout() {
     try {
-      console.log('AuthService: Processing logout');
+      logger.info('AuthService: Processing logout');
       
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 200));
@@ -159,16 +161,16 @@ class AuthService {
       localStorage.removeItem('flagfit_token');
       localStorage.removeItem('flagfit_auth');
 
-      console.log('AuthService: Logout successful');
+      logger.info('AuthService: Logout successful');
     } catch (error) {
-      console.error('AuthService: Logout error:', error.message);
+      logger.error('AuthService: Logout error:', error.message);
       throw error;
     }
   }
 
   async updateProfile(profileData) {
     try {
-      console.log('AuthService: Updating profile');
+      logger.info('AuthService: Updating profile');
       
       if (!this.isAuthenticated || !this.currentUser) {
         throw new Error('User not authenticated');
@@ -191,7 +193,7 @@ class AuthService {
       this.currentUser = updatedUser;
       localStorage.setItem('flagfit_user', JSON.stringify(updatedUser));
 
-      console.log('AuthService: Profile updated successfully');
+      logger.info('AuthService: Profile updated successfully');
 
       return {
         user: updatedUser,
@@ -199,7 +201,7 @@ class AuthService {
         isAuthenticated: true
       };
     } catch (error) {
-      console.error('AuthService: Profile update failed:', error.message);
+      logger.error('AuthService: Profile update failed:', error.message);
       throw error;
     }
   }
@@ -218,7 +220,7 @@ class AuthService {
       this.token = newToken;
       localStorage.setItem('flagfit_token', newToken);
 
-      console.log('AuthService: Token refreshed successfully');
+      logger.info('AuthService: Token refreshed successfully');
 
       // Return user and new token
       return {
@@ -227,7 +229,7 @@ class AuthService {
         isAuthenticated: true
       };
     } catch (error) {
-      console.error('AuthService: Token refresh failed:', error.message);
+      logger.error('AuthService: Token refresh failed:', error.message);
       throw error;
     }
   }

@@ -908,4 +908,4 @@ export const ANNUAL_TRAINING_PROGRAM = {
 };
 
 // Exercise Library with detailed instructions
-export default TRAINING_PROGRAM;
+export default ANNUAL_TRAINING_PROGRAM;

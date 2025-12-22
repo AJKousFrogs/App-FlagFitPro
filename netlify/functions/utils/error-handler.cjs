@@ -258,6 +258,7 @@ function validateJWT(event, jwt, secret) {
 
   try {
     const decoded = jwt.verify(token, secret);
+    // eslint-disable-next-line no-undef -- decoded is defined in try block above
     return { success: true, decoded };
   } catch (jwtError) {
     console.error('[JWT Validation] Error:', jwtError.message);
@@ -278,6 +279,7 @@ function logFunctionCall(functionName, event) {
   console.log(`[${functionName}] ${event.httpMethod} request from ${ip}`);
 }
 
+// Export functions for use in other Netlify functions
 module.exports = {
   ErrorType,
   CORS_HEADERS,

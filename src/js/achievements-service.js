@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /**
  * FlagFit Pro - Achievements Service
  * Gamification system for tracking milestones and motivating users
@@ -6,6 +5,7 @@
  */
 
 import { storageService } from './services/storage-service-unified.js';
+import { logger } from '../logger.js';
 
 class AchievementsService {
   constructor() {
@@ -870,7 +870,7 @@ class AchievementsService {
         }
       });
     } catch (error) {
-      console.error('[Achievements] Error loading achievements:', error);
+      logger.error('[Achievements] Error loading achievements:', error);
     }
   }
 
@@ -884,7 +884,7 @@ class AchievementsService {
 
       storageService.set(this.storageKey, unlockedIds, { usePrefix: false });
     } catch (error) {
-      console.error('[Achievements] Error saving achievements:', error);
+      logger.error('[Achievements] Error saving achievements:', error);
     }
   }
 
@@ -921,7 +921,7 @@ class AchievementsService {
           window.notificationManager.notifyAchievement(achievement);
         }
 
-        console.log(`[Achievements] Unlocked: ${achievement.name} (${achievement.rarity})`);
+        logger.info(`[Achievements] Unlocked: ${achievement.name} (${achievement.rarity})`);
       }
     });
 
@@ -958,7 +958,7 @@ class AchievementsService {
       });
       storageService.set(this.historyKey, history, { usePrefix: false });
     } catch (error) {
-      console.error('[Achievements] Error adding to history:', error);
+      logger.error('[Achievements] Error adding to history:', error);
     }
   }
 
@@ -1034,7 +1034,7 @@ class AchievementsService {
     try {
       return storageService.get(this.historyKey, [], { usePrefix: false });
     } catch (error) {
-      console.error('[Achievements] Error getting history:', error);
+      logger.error('[Achievements] Error getting history:', error);
       return [];
     }
   }
@@ -1049,7 +1049,7 @@ class AchievementsService {
       a.unlocked = false;
       delete a.unlockedAt;
     });
-    console.log('[Achievements] All achievements reset');
+    logger.info('[Achievements] All achievements reset');
   }
 
   /**
@@ -1076,6 +1076,6 @@ if (typeof module !== 'undefined' && module.exports) {
   module.exports = achievementsService;
 }
 
-console.log('[Achievements] Achievements Service loaded');
-console.log(`[Achievements] ${achievementsService.getAllAchievements().length} achievements available`);
-console.log(`[Achievements] ${achievementsService.getUnlockedAchievements().length} unlocked`);
+logger.info('[Achievements] Achievements Service loaded');
+logger.info(`[Achievements] ${achievementsService.getAllAchievements().length} achievements available`);
+logger.info(`[Achievements] ${achievementsService.getUnlockedAchievements().length} unlocked`);

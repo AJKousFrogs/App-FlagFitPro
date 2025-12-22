@@ -13,7 +13,11 @@ import { initializeLucideIcons } from "../utils/shared.js";
  * Helper: Set button loading state safely
  */
 function setButtonLoading(button, loadingText = "Loading...") {
-  const originalHTML = button.innerHTML;
+  // Store original button content safely using temp container pattern
+  const temp = document.createElement('div');
+  temp.appendChild(button.cloneNode(true));
+  // eslint-disable-next-line no-restricted-syntax -- Safe extraction of existing button HTML for restoration (temp container pattern)
+  const originalHTML = temp.innerHTML;
   button.dataset.originalHtml = originalHTML;
   button.disabled = true;
   
@@ -1414,17 +1418,17 @@ class DashboardPage {
       }
 
       // Get training session details from button dataset or card
-      const button = e.target.closest(".btn-start-session") || e.target;
-      const trainingType = button.dataset.sessionType || 
+      const sessionButton = e.target.closest(".btn-start-session") || e.target;
+      const trainingType = sessionButton.dataset.sessionType || 
         document.querySelector(".training-time")?.textContent?.split("—")[1]?.trim() || 
         "Training";
-      const trainingTime = button.dataset.sessionTime || 
+      const trainingTime = sessionButton.dataset.sessionTime || 
         document.querySelector(".training-time")?.textContent?.match(/\d{2}:\d{2}/)?.[0] || 
         "18:30";
-      const coach = button.dataset.coach || 
+      const coach = sessionButton.dataset.coach || 
         document.querySelector(".training-info")?.textContent?.replace("Coach: ", "") ||
         "Ales Zaksek";
-      const duration = button.dataset.duration || 70;
+      const duration = sessionButton.dataset.duration || 70;
 
       const sessionData = {
         userId: user ? user.id || user.email : "demo-user",
@@ -1433,7 +1437,7 @@ class DashboardPage {
         startTime: new Date().toISOString(),
         scheduledTime: trainingTime,
         duration_minutes: parseInt(duration) || 70,
-        session_date: button.dataset.date || this.formatDateForInput(this.selectedDate),
+        session_date: sessionButton.dataset.date || this.formatDateForInput(this.selectedDate),
       };
 
       logger.debug("📝 Session data:", sessionData);

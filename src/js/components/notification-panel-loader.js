@@ -35,8 +35,8 @@ export async function loadNotificationPanel() {
   const closeBtn = document.createElement("button");
   closeBtn.setAttribute("aria-label", "Close notifications");
   closeBtn.addEventListener("click", () => {
-    if (typeof toggleNotifications === "function") {
-      toggleNotifications();
+    if (typeof window.toggleNotifications === "function") {
+      window.toggleNotifications();
     }
   });
   const closeIcon = document.createElement("i");
@@ -56,8 +56,8 @@ export async function loadNotificationPanel() {
   const markAllBtn = document.createElement("button");
   markAllBtn.className = "notification-action-btn";
   markAllBtn.addEventListener("click", () => {
-    if (typeof markAllAsRead === "function") {
-      markAllAsRead();
+    if (typeof window.markAllAsRead === "function") {
+      window.markAllAsRead();
     }
   });
   const checkIcon = document.createElement("i");

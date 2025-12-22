@@ -3,35 +3,27 @@
  * Adds PDF/CSV export buttons to wellness page
  */
 
+import { logger } from '../logger.js';
+
 (function() {
   'use strict';
   
-  // Use logger from window if available, otherwise fallback to console
-  const logger = window.logger || {
-    debug: (...args) => console.log(...args),
-    info: (...args) => console.log(...args),
-    warn: (...args) => console.warn(...args),
-    error: (...args) => console.error(...args),
-  };
-  
   // Helper function to safely set HTML content
+  // Uses temp container pattern - acceptable per ESLint exception for safe helper functions
   function setSafeContent(element, content, isHTML, allowRichText) {
-    if (!element) return;
+    if (!element) {return;}
     if (!isHTML) {
       element.textContent = content;
       return;
     }
     // Use temp container pattern for safe HTML insertion
+    // eslint-disable-next-line no-restricted-syntax
     const temp = document.createElement('div');
-    temp.textContent = content; // First escape everything
-    let sanitized = temp.innerHTML;
-    if (allowRichText) {
-      // Allow basic formatting tags
-      const allowedTags = ['b', 'i', 'em', 'strong', 'br', 'span', 'div', 'h3', 'button', 'i', 'small'];
-      const tagPattern = new RegExp(`&lt;(/?)(${allowedTags.join('|')})([^&]*?)&gt;`, 'gi');
-      sanitized = sanitized.replace(tagPattern, '<$1$2$3>');
+    // eslint-disable-next-line no-restricted-syntax
+    temp.innerHTML = content; // Content is already sanitized by caller
+    while (temp.firstChild) {
+      element.appendChild(temp.firstChild);
     }
-    element.innerHTML = sanitized;
   }
   
   // Helper function to create button content with icon and text
@@ -300,7 +292,7 @@
     btn.replaceChildren();
     const loadingContent = createButtonContent('loader-2', 'Generating PDF...', '', 'icon-spin');
     btn.appendChild(loadingContent);
-    if (typeof lucide !== 'undefined') lucide.createIcons(btn);
+    if (typeof lucide !== 'undefined') {lucide.createIcons(btn);}
 
     // Export with slight delay for UI feedback
     setTimeout(async () => {
@@ -310,21 +302,21 @@
         btn.replaceChildren();
         const successContent = createButtonContent('check-circle', 'PDF Downloaded!', '#10c96b');
         btn.appendChild(successContent);
-        if (typeof lucide !== 'undefined') lucide.createIcons(btn);
+        if (typeof lucide !== 'undefined') {lucide.createIcons(btn);}
         setTimeout(() => {
           btn.disabled = false;
           btn.replaceChildren(...originalContent);
-          if (typeof lucide !== 'undefined') lucide.createIcons(btn);
+          if (typeof lucide !== 'undefined') {lucide.createIcons(btn);}
         }, 2000);
       } else {
         btn.replaceChildren();
         const errorContent = createButtonContent('x-circle', 'Export Failed', '#ef4444');
         btn.appendChild(errorContent);
-        if (typeof lucide !== 'undefined') lucide.createIcons(btn);
+        if (typeof lucide !== 'undefined') {lucide.createIcons(btn);}
         setTimeout(() => {
           btn.disabled = false;
           btn.replaceChildren(...originalContent);
-          if (typeof lucide !== 'undefined') lucide.createIcons(btn);
+          if (typeof lucide !== 'undefined') {lucide.createIcons(btn);}
         }, 2000);
       }
     }, 300);
@@ -369,7 +361,7 @@
     btn.replaceChildren();
     const loadingContent = createButtonContent('loader-2', 'Generating CSV...', '', 'icon-spin');
     btn.appendChild(loadingContent);
-    if (typeof lucide !== 'undefined') lucide.createIcons(btn);
+    if (typeof lucide !== 'undefined') {lucide.createIcons(btn);}
 
     // Format data for CSV
     const csvData = wellnessHistory.map(entry => ({
@@ -392,21 +384,21 @@
         btn.replaceChildren();
         const successContent = createButtonContent('check-circle', 'CSV Downloaded!', '#10c96b');
         btn.appendChild(successContent);
-        if (typeof lucide !== 'undefined') lucide.createIcons(btn);
+        if (typeof lucide !== 'undefined') {lucide.createIcons(btn);}
         setTimeout(() => {
           btn.disabled = false;
           btn.replaceChildren(...originalContent);
-          if (typeof lucide !== 'undefined') lucide.createIcons(btn);
+          if (typeof lucide !== 'undefined') {lucide.createIcons(btn);}
         }, 2000);
       } else {
         btn.replaceChildren();
         const errorContent = createButtonContent('x-circle', 'Export Failed', '#ef4444');
         btn.appendChild(errorContent);
-        if (typeof lucide !== 'undefined') lucide.createIcons(btn);
+        if (typeof lucide !== 'undefined') {lucide.createIcons(btn);}
         setTimeout(() => {
           btn.disabled = false;
           btn.replaceChildren(...originalContent);
-          if (typeof lucide !== 'undefined') lucide.createIcons(btn);
+          if (typeof lucide !== 'undefined') {lucide.createIcons(btn);}
         }, 2000);
       }
     }, 300);

@@ -63,7 +63,7 @@ function getSearchHistory() {
  * @param {string} query - Search query to save
  */
 function saveToHistory(query) {
-  if (!query || !query.trim()) return;
+  if (!query || !query.trim()) {return;}
   
   try {
     const history = getSearchHistory();
@@ -111,13 +111,13 @@ function levenshteinDistance(str1, str2) {
   const len1 = str1.length;
   const len2 = str2.length;
   
-  if (len1 === 0) return len2;
-  if (len2 === 0) return len1;
+  if (len1 === 0) {return len2;}
+  if (len2 === 0) {return len1;}
   
   const matrix = Array(len2 + 1).fill(null).map(() => Array(len1 + 1).fill(null));
   
-  for (let i = 0; i <= len1; i++) matrix[0][i] = i;
-  for (let j = 0; j <= len2; j++) matrix[j][0] = j;
+  for (let i = 0; i <= len1; i++) {matrix[0][i] = i;}
+  for (let j = 0; j <= len2; j++) {matrix[j][0] = j;}
   
   for (let j = 1; j <= len2; j++) {
     for (let i = 1; i <= len1; i++) {
@@ -141,7 +141,7 @@ function levenshteinDistance(str1, str2) {
  */
 function calculateSimilarity(str1, str2) {
   const maxLen = Math.max(str1.length, str2.length);
-  if (maxLen === 0) return 1;
+  if (maxLen === 0) {return 1;}
   
   const distance = levenshteinDistance(str1, str2);
   return 1 - (distance / maxLen);
@@ -249,13 +249,13 @@ function parseQuery(query) {
  * @returns {string} HTML with highlighted terms
  */
 export function highlightMatches(text, query) {
-  if (!text || !query) return text;
+  if (!text || !query) {return text;}
   
   const terms = Array.isArray(query) ? query : [query];
   let highlighted = text;
   
   for (const term of terms) {
-    if (!term || !term.trim()) continue;
+    if (!term || !term.trim()) {continue;}
     
     const normalizedTerm = normalizeText(term);
     const regex = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
@@ -427,7 +427,7 @@ async function loadPlayers() {
         return localPlayers;
       }
     } catch (error) {
-      console.warn("Failed to load local players data:", error);
+      logger.warn("Failed to load local players data:", error);
     }
   }
 
@@ -490,7 +490,7 @@ function searchPlayers(query, players, parsedQuery = null) {
         break;
       }
     }
-    if (shouldExclude) continue;
+    if (shouldExclude) {continue;}
 
     // Check exact phrases
     let exactPhraseMatch = false;
@@ -669,7 +669,7 @@ export async function performGlobalSearch(query, options = {}) {
         break;
       }
     }
-    if (shouldExclude) continue;
+    if (shouldExclude) {continue;}
 
     // Check exact phrases
     let exactPhraseMatch = false;
@@ -777,7 +777,7 @@ export async function performGlobalSearch(query, options = {}) {
     const playerResults = searchPlayers(query, players, parsedQuery);
     results.push(...playerResults);
   } catch (error) {
-    console.warn("Error searching players:", error);
+    logger.warn("Error searching players:", error);
   }
 
   // Search knowledge base (async)
@@ -785,7 +785,7 @@ export async function performGlobalSearch(query, options = {}) {
     const knowledgeResults = await searchKnowledgeBase(query);
     results.push(...knowledgeResults);
   } catch (error) {
-    console.warn("Error searching knowledge base:", error);
+    logger.warn("Error searching knowledge base:", error);
   }
 
   // Search tournaments (async)
@@ -793,7 +793,7 @@ export async function performGlobalSearch(query, options = {}) {
     const tournamentResults = await searchTournaments(query, parsedQuery);
     results.push(...tournamentResults);
   } catch (error) {
-    console.warn("Error searching tournaments:", error);
+    logger.warn("Error searching tournaments:", error);
   }
 
   // Search games (async)
@@ -801,7 +801,7 @@ export async function performGlobalSearch(query, options = {}) {
     const gameResults = await searchGames(query, parsedQuery);
     results.push(...gameResults);
   } catch (error) {
-    console.warn("Error searching games:", error);
+    logger.warn("Error searching games:", error);
   }
 
   // Search community posts (async)
@@ -809,7 +809,7 @@ export async function performGlobalSearch(query, options = {}) {
     const communityResults = await searchCommunityPosts(query, parsedQuery);
     results.push(...communityResults);
   } catch (error) {
-    console.warn("Error searching community posts:", error);
+    logger.warn("Error searching community posts:", error);
   }
 
   // Sort by score (highest first)
@@ -862,7 +862,7 @@ async function searchKnowledgeBase(query) {
       score: 40, // Medium priority
     }));
   } catch (error) {
-    console.debug("Knowledge base search failed:", error);
+    logger.debug("Knowledge base search failed:", error);
     return [];
   }
 }
@@ -910,7 +910,7 @@ async function searchTournaments(query, parsedQuery = null) {
           break;
         }
       }
-      if (shouldExclude) continue;
+      if (shouldExclude) {continue;}
 
       let score = 0;
       const matchedTexts = [];
@@ -974,7 +974,7 @@ async function searchTournaments(query, parsedQuery = null) {
 
     return results;
   } catch (error) {
-    console.debug("Tournament search failed:", error);
+    logger.debug("Tournament search failed:", error);
     return [];
   }
 }
@@ -1022,7 +1022,7 @@ async function searchGames(query, parsedQuery = null) {
           break;
         }
       }
-      if (shouldExclude) continue;
+      if (shouldExclude) {continue;}
 
       let score = 0;
       const matchedTexts = [];
@@ -1071,7 +1071,7 @@ async function searchGames(query, parsedQuery = null) {
 
     return results;
   } catch (error) {
-    console.debug("Game search failed:", error);
+    logger.debug("Game search failed:", error);
     return [];
   }
 }
@@ -1116,7 +1116,7 @@ async function searchCommunityPosts(query, parsedQuery = null) {
           break;
         }
       }
-      if (shouldExclude) continue;
+      if (shouldExclude) {continue;}
 
       let score = 0;
       const matchedTexts = [];
@@ -1170,7 +1170,7 @@ async function searchCommunityPosts(query, parsedQuery = null) {
 
     return results;
   } catch (error) {
-    console.debug("Community search failed:", error);
+    logger.debug("Community search failed:", error);
     return [];
   }
 }

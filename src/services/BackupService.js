@@ -1,4 +1,6 @@
 // Mock Backup Service for Development
+import { logger } from '../logger.js';
+
 class BackupService {
   constructor() {
     this.backups = [];
@@ -8,7 +10,7 @@ class BackupService {
   async createBackup(data, metadata = {}) {
     try {
       this.isBackingUp = true;
-      console.log('Creating backup...', metadata);
+      logger.info('Creating backup...', metadata);
       
       // Simulate backup process
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -24,10 +26,10 @@ class BackupService {
       this.backups.push(backup);
       localStorage.setItem('flagfit_backups', JSON.stringify(this.backups));
       
-      console.log('Backup created successfully:', backup.id);
+      logger.info('Backup created successfully:', backup.id);
       return backup;
     } catch (error) {
-      console.error('Backup failed:', error);
+      logger.error('Backup failed:', error);
       throw error;
     } finally {
       this.isBackingUp = false;
@@ -41,14 +43,14 @@ class BackupService {
         throw new Error('Backup not found');
       }
       
-      console.log('Restoring backup:', backupId);
+      logger.info('Restoring backup:', backupId);
       await new Promise(resolve => setTimeout(resolve, 800));
       
       const data = JSON.parse(backup.data);
-      console.log('Backup restored successfully');
+      logger.info('Backup restored successfully');
       return data;
     } catch (error) {
-      console.error('Restore failed:', error);
+      logger.error('Restore failed:', error);
       throw error;
     }
   }
@@ -60,7 +62,7 @@ class BackupService {
   async deleteBackup(backupId) {
     this.backups = this.backups.filter(b => b.id !== backupId);
     localStorage.setItem('flagfit_backups', JSON.stringify(this.backups));
-    console.log('Backup deleted:', backupId);
+    logger.info('Backup deleted:', backupId);
   }
 
   isRunning() {

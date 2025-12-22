@@ -6,8 +6,8 @@
  */
 
 import { execSync } from 'child_process';
-import { readFileSync, existsSync, statSync } from 'fs';
-import { join, dirname } from 'path';
+import { readFileSync, existsSync, statSync, readdirSync } from 'fs';
+import { join, dirname, relative } from 'path';
 import { fileURLToPath } from 'url';
 import { performance } from 'perf_hooks';
 
@@ -168,7 +168,7 @@ class AppPerformanceChecker {
   }
 
   formatBytes(bytes) {
-    if (bytes === 0) return '0 B';
+    if (bytes === 0) {return '0 B';}
     const k = 1024;
     const sizes = ['B', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
@@ -212,7 +212,7 @@ class AppPerformanceChecker {
           sourceMaps.push(file);
         }
       });
-    } catch (error) {
+    } catch (_error) {
       // Ignore errors
     }
     
@@ -252,7 +252,7 @@ class AppPerformanceChecker {
     try {
       const response = await fetch('http://localhost:4000');
       return response.ok;
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   }
@@ -261,7 +261,7 @@ class AppPerformanceChecker {
     try {
       const response = await fetch('http://localhost:4000/@vite/client');
       return response.ok;
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   }
@@ -337,7 +337,7 @@ class AppPerformanceChecker {
         } else {
           console.log('   ✅ All packages are up to date');
         }
-      } catch (error) {
+      } catch (_error) {
         console.log('   ℹ️  Could not check for outdated packages');
       }
 

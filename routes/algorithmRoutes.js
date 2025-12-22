@@ -10,7 +10,7 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import { Pool } from 'pg';
 import dotenv from 'dotenv';
-import { safeQuery, safeFormatDate } from './utils/query-helper.js';
+import { safeFormatDate } from './utils/query-helper.js';
 import { serverLogger } from './utils/server-logger.js';
 
 dotenv.config();
@@ -85,7 +85,7 @@ function safeJWTVerify(token, secret) {
         }
       });
     });
-  } catch (error) {
+  } catch (_error) {
     throw new Error('JWT verification failed');
   }
 }
@@ -273,6 +273,7 @@ router.get('/health', async (req, res) => {
  * @param {string} userId - User ID from URL parameter
  * @returns {object} Comprehensive recommendations data
  */
+// eslint-disable-next-line require-await
 router.get('/comprehensive/:userId', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.params;
@@ -329,6 +330,7 @@ router.get('/comprehensive/:userId', authenticateToken, async (req, res) => {
  * @param {string} userId - User ID from URL parameter
  * @returns {object} Training recommendations data
  */
+// eslint-disable-next-line require-await
 router.get('/training/recommendations/:userId', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.params;
@@ -371,6 +373,7 @@ router.get('/training/recommendations/:userId', authenticateToken, async (req, r
  * GET /supplements/recommendations/:userId
  * Get personalized supplement recommendations
  */
+// eslint-disable-next-line require-await
 router.get('/supplements/recommendations/:userId', authenticateToken, async (req, res) => {
   try {
     const validation = validateUserId(req.params.userId);
@@ -401,6 +404,7 @@ router.get('/supplements/recommendations/:userId', authenticateToken, async (req
  * GET /recovery/optimization/:userId
  * Get recovery optimization plans
  */
+// eslint-disable-next-line require-await
 router.get('/recovery/optimization/:userId', authenticateToken, async (req, res) => {
   try {
     const validation = validateUserId(req.params.userId);
@@ -431,6 +435,7 @@ router.get('/recovery/optimization/:userId', authenticateToken, async (req, res)
  * GET /performance/predictions/:userId
  * Get performance predictions
  */
+// eslint-disable-next-line require-await
 router.get('/performance/predictions/:userId', authenticateToken, async (req, res) => {
   try {
     const validation = validateUserId(req.params.userId);
@@ -461,6 +466,7 @@ router.get('/performance/predictions/:userId', authenticateToken, async (req, re
  * GET /la28/qualification/:userId
  * Get LA28 qualification roadmaps
  */
+// eslint-disable-next-line require-await
 router.get('/la28/qualification/:userId', authenticateToken, async (req, res) => {
   try {
     const validation = validateUserId(req.params.userId);
@@ -491,6 +497,7 @@ router.get('/la28/qualification/:userId', authenticateToken, async (req, res) =>
  * GET /dashboard/:userId
  * Get comprehensive dashboard algorithm data
  */
+// eslint-disable-next-line require-await
 router.get('/dashboard/:userId', authenticateToken, async (req, res) => {
   try {
     const validation = validateUserId(req.params.userId);
@@ -538,7 +545,7 @@ router.use('*', (req, res) => {
 /**
  * Global error handler (catches unhandled errors)
  */
-router.use((err, req, res, next) => {
+router.use((err, req, res, _next) => {
   serverLogger.error(`${ROUTE_NAME.toUpperCase()} unhandled error:`, err);
   
   const { statusCode, response } = createErrorResponse(

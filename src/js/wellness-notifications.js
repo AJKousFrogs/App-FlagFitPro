@@ -3,16 +3,10 @@
  * Integrates push notifications with wellness tracking
  */
 
+import { logger } from '../logger.js';
+
 (function() {
   'use strict';
-
-  // Use logger from window if available, otherwise fallback to console
-  const logger = window.logger || {
-    debug: (...args) => console.log(...args),
-    info: (...args) => console.log(...args),
-    warn: (...args) => console.warn(...args),
-    error: (...args) => console.error(...args),
-  };
 
   // Get storageService from global window object
   const storageService = window.storageService;

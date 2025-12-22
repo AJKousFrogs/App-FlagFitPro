@@ -2,6 +2,7 @@
 // Handles Google, Facebook, and Apple authentication with role selection
 
 import { logger } from '../logger.js';
+import { setSafeContent } from '../../js/utils/shared.js';
 
 export class OAuthButtons {
   constructor(containerSelector, options = {}) {
@@ -111,7 +112,8 @@ export class OAuthButtons {
       </div>
     `;
 
-    this.container.innerHTML = html;
+    // Use setSafeContent to set container HTML (sanitizes content)
+    setSafeContent(this.container, html, true);
     this.attachEventListeners();
   }
 

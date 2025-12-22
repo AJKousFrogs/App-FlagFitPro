@@ -16,7 +16,7 @@ export function initSidebarToggle() {
   sidebarOverlays.forEach(overlay => {
     overlay.addEventListener('click', (e) => {
       e.preventDefault();
-      toggleSidebar();
+      window.toggleSidebar();
     });
   });
 }
@@ -46,7 +46,9 @@ export function initTabSwitching() {
     button.addEventListener('click', (e) => {
       e.preventDefault();
       const tabId = button.getAttribute('data-tab-switch');
-      switchTab(tabId, e);
+      if (typeof window.switchTab === 'function') {
+        window.switchTab(tabId, e);
+      }
     });
   });
 }
@@ -167,14 +169,14 @@ export function initButtonActionHandlers() {
       case 'log-session':
         button.addEventListener('click', (e) => {
           e.preventDefault();
-          if (window.logSession) window.logSession();
+          if (window.logSession) {window.logSession();}
         });
         break;
         
       case 'start-quick-session':
         button.addEventListener('click', (e) => {
           e.preventDefault();
-          if (window.startQuickSession) window.startQuickSession();
+          if (window.startQuickSession) {window.startQuickSession();}
         });
         break;
         
@@ -193,7 +195,7 @@ export function initButtonActionHandlers() {
       case 'generate-code':
         button.addEventListener('click', (e) => {
           e.preventDefault();
-          if (window.generateCode) window.generateCode();
+          if (window.generateCode) {window.generateCode();}
         });
         break;
         

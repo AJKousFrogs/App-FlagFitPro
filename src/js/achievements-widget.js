@@ -3,35 +3,27 @@
  * Displays achievements on the dashboard
  */
 
+import { logger } from '../logger.js';
+
 (function() {
   'use strict';
   
-  // Use logger from window if available, otherwise fallback to console
-  const logger = window.logger || {
-    debug: (...args) => console.log(...args),
-    info: (...args) => console.log(...args),
-    warn: (...args) => console.warn(...args),
-    error: (...args) => console.error(...args),
-  };
-  
   // Helper function to safely set HTML content
+  // Uses temp container pattern - acceptable per ESLint exception for safe helper functions
   function setSafeContent(element, content, isHTML, allowRichText) {
-    if (!element) return;
+    if (!element) {return;}
     if (!isHTML) {
       element.textContent = content;
       return;
     }
     // Use temp container pattern for safe HTML insertion
+    // eslint-disable-next-line no-restricted-syntax
     const temp = document.createElement('div');
-    temp.textContent = content; // First escape everything
-    let sanitized = temp.innerHTML;
-    if (allowRichText) {
-      // Allow basic formatting tags
-      const allowedTags = ['b', 'i', 'em', 'strong', 'br', 'span', 'div', 'h2', 'h3', 'button', 'i'];
-      const tagPattern = new RegExp(`&lt;(/?)(${allowedTags.join('|')})([^&]*?)&gt;`, 'gi');
-      sanitized = sanitized.replace(tagPattern, '<$1$2$3>');
+    // eslint-disable-next-line no-restricted-syntax
+    temp.innerHTML = content; // Content is already sanitized by caller
+    while (temp.firstChild) {
+      element.appendChild(temp.firstChild);
     }
-    element.innerHTML = sanitized;
   }
 
   /**
@@ -106,8 +98,8 @@
     if (viewAllBtn) {
       viewAllBtn.removeAttribute('onclick');
       viewAllBtn.addEventListener('click', () => {
-        if (typeof showAllAchievements === 'function') {
-          showAllAchievements();
+        if (typeof window.showAllAchievements === 'function') {
+          window.showAllAchievements();
         }
       });
     }

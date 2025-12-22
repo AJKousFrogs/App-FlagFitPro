@@ -798,7 +798,11 @@ async function sendMessage() {
   const user = authManager.getCurrentUser();
 
   // Show loading state with accessibility
-  const originalBtnText = sendBtn.innerHTML;
+  // Store original button content safely using temp container pattern
+  const tempContainer = document.createElement('div');
+  tempContainer.appendChild(sendBtn.cloneNode(true));
+  // eslint-disable-next-line no-restricted-syntax -- Safe extraction of existing button HTML for restoration (temp container pattern)
+  const originalBtnText = tempContainer.innerHTML;
   sendBtn.textContent = "";
   const loadingSpan = document.createElement("span");
   loadingSpan.setAttribute("aria-hidden", "true");

@@ -1,8 +1,9 @@
-/* eslint-disable no-console */
 /**
  * Enhanced Sidebar Navigation Component
  * Handles collapsible sections, user menu, and improved interactions
  */
+
+import { logger } from '../../logger.js';
 
 class EnhancedSidebarNav {
   constructor() {
@@ -24,7 +25,7 @@ class EnhancedSidebarNav {
 
   setup() {
     this.sidebar = document.getElementById('sidebar');
-    if (!this.sidebar) return;
+    if (!this.sidebar) {return;}
 
     this.setupCollapsibleSections();
     this.setupUserMenu();
@@ -62,7 +63,7 @@ class EnhancedSidebarNav {
     const sectionId = header.getAttribute('aria-controls');
     const section = document.getElementById(sectionId);
     const wrapper = header.closest('.nav-section-wrapper');
-    if (!section || !wrapper) return;
+    if (!section || !wrapper) {return;}
 
     header.setAttribute('aria-expanded', expand.toString());
     
@@ -95,7 +96,7 @@ class EnhancedSidebarNav {
     this.userMenuToggle = document.getElementById('sidebar-user-menu-toggle');
     this.userMenu = document.getElementById('sidebar-user-menu');
     
-    if (!this.userMenuToggle || !this.userMenu) return;
+    if (!this.userMenuToggle || !this.userMenu) {return;}
 
     this.userMenuToggle.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -156,7 +157,7 @@ class EnhancedSidebarNav {
       const menuItems = Array.from(this.userMenu.querySelectorAll('.sidebar-user-menu-item'));
       
       this.userMenu.addEventListener('keydown', (e) => {
-        if (this.userMenu.getAttribute('aria-hidden') === 'true') return;
+        if (this.userMenu.getAttribute('aria-hidden') === 'true') {return;}
 
         const currentIndex = menuItems.indexOf(document.activeElement);
         let nextIndex = currentIndex;
@@ -202,7 +203,7 @@ class EnhancedSidebarNav {
         }
       }
     } catch (e) {
-      console.warn('Could not load user info:', e);
+      logger.warn('Could not load user info:', e);
     }
   }
 

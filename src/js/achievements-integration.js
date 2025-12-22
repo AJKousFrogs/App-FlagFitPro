@@ -1,8 +1,9 @@
-/* eslint-disable no-console */
 /**
  * FlagFit Pro - Achievements Integration
  * Automatically checks achievements when users log activities
  */
+
+import { logger } from '../logger.js';
 
 (function() {
   'use strict';
@@ -14,7 +15,7 @@
       return;
     }
 
-    console.log('[Achievements Integration] Initializing...');
+    logger.info('[Achievements Integration] Initializing...');
 
     // Listen for wellness submissions
     document.addEventListener('wellnessSubmitted', handleWellnessSubmitted);
@@ -43,7 +44,7 @@
     document.addEventListener('communityPost', handleCommunityPost);
     document.addEventListener('communityLike', handleCommunityLike);
 
-    console.log('[Achievements Integration] Ready');
+    logger.info('[Achievements Integration] Ready');
   }
 
   /**
@@ -59,7 +60,7 @@
     const newAchievements = window.achievementsService.checkAchievements(userData);
 
     if (newAchievements.length > 0) {
-      console.log(`[Achievements] Unlocked ${newAchievements.length} new achievement(s)!`);
+      logger.info(`[Achievements] Unlocked ${newAchievements.length} new achievement(s)!`);
 
       // Refresh widget if it exists
       if (window.renderAchievementsWidget && document.getElementById('achievements-widget-container')) {
@@ -91,7 +92,7 @@
     const newAchievements = window.achievementsService.checkAchievements(userData);
 
     if (newAchievements.length > 0) {
-      console.log(`[Achievements] Unlocked ${newAchievements.length} new achievement(s)!`);
+      logger.info(`[Achievements] Unlocked ${newAchievements.length} new achievement(s)!`);
 
       // Refresh widget
       if (window.renderAchievementsWidget && document.getElementById('achievements-widget-container')) {
@@ -336,7 +337,7 @@
     const newAchievements = window.achievementsService.checkAchievements(userData);
 
     if (newAchievements.length > 0) {
-      console.log(`[Achievements] Unlocked ${newAchievements.length} new achievement(s)!`);
+      logger.info(`[Achievements] Unlocked ${newAchievements.length} new achievement(s)!`);
       refreshWidget();
     }
   }
@@ -534,5 +535,5 @@
     initAchievementsIntegration();
   }
 
-  console.log('[Achievements Integration] Script loaded');
+  logger.info('[Achievements Integration] Script loaded');
 })();

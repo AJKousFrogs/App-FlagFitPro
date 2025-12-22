@@ -1,6 +1,8 @@
 // Error Prevention Utilities for FlagFit Pro
 // Provides date validation, duplicate detection, and input constraints
 
+import { setSafeContent } from "./js/utils/shared.js";
+
 export class ErrorPrevention {
   constructor() {
     this.init();
@@ -139,10 +141,16 @@ export class ErrorPrevention {
     const errorDiv = document.createElement("div");
     errorDiv.className = "field-error";
     errorDiv.setAttribute("role", "alert");
-    errorDiv.innerHTML = `
-      <i data-lucide="alert-circle" aria-hidden="true"></i>
-      <span>${message}</span>
-    `;
+
+    const icon = document.createElement("i");
+    icon.setAttribute("data-lucide", "alert-circle");
+    icon.setAttribute("aria-hidden", "true");
+
+    const span = document.createElement("span");
+    setSafeContent(span, message);
+
+    errorDiv.appendChild(icon);
+    errorDiv.appendChild(span);
 
     element.parentElement.appendChild(errorDiv);
 

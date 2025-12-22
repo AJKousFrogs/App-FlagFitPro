@@ -1,9 +1,10 @@
-/* eslint-disable no-console */
 /**
  * FlagFit Pro - Export Service
  * Export data to PDF and CSV formats
  * 100% FREE - Uses jsPDF (loaded via CDN)
  */
+
+import { logger } from '../logger.js';
 
 class ExportService {
   constructor() {
@@ -39,7 +40,7 @@ class ExportService {
           setTimeout(() => {
             if (window.jspdf || window.jsPDF || (typeof jspdf !== 'undefined')) {
               this.jsPDFLoaded = true;
-              console.log('[Export] jsPDF loaded successfully');
+              logger.info('[Export] jsPDF loaded successfully');
               resolve();
             } else {
               reject(new Error('jsPDF not available after load'));
@@ -53,7 +54,7 @@ class ExportService {
         document.head.appendChild(script);
       });
     } catch (error) {
-      console.error('[Export] Failed to load jsPDF:', error);
+      logger.error('[Export] Failed to load jsPDF:', error);
       // Try fallback CDN
       try {
         const fallbackScript = document.createElement('script');
@@ -64,7 +65,7 @@ class ExportService {
             setTimeout(() => {
               if (window.jspdf || window.jsPDF || (typeof jspdf !== 'undefined')) {
                 this.jsPDFLoaded = true;
-                console.log('[Export] jsPDF loaded from fallback CDN');
+                logger.info('[Export] jsPDF loaded from fallback CDN');
                 resolve();
               } else {
                 reject(new Error('jsPDF not available after fallback load'));
@@ -75,7 +76,7 @@ class ExportService {
           document.head.appendChild(fallbackScript);
         });
       } catch (fallbackError) {
-        console.error('[Export] Failed to load jsPDF from fallback:', fallbackError);
+        logger.error('[Export] Failed to load jsPDF from fallback:', fallbackError);
       }
     }
   }
@@ -85,7 +86,7 @@ class ExportService {
    */
   exportToCSV(data, filename = 'flagfit-export.csv') {
     if (!data || data.length === 0) {
-      console.warn('[Export] No data to export');
+      logger.warn('[Export] No data to export');
       return;
     }
 
@@ -119,10 +120,10 @@ class ExportService {
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       this.downloadFile(blob, filename);
 
-      console.log(`[Export] CSV exported: ${filename}`);
+      logger.info(`[Export] CSV exported: ${filename}`);
       return true;
     } catch (error) {
-      console.error('[Export] CSV export failed:', error);
+      logger.error('[Export] CSV export failed:', error);
       return false;
     }
   }
@@ -136,7 +137,7 @@ class ExportService {
     }
 
     if (!window.jspdf || !window.jspdf.jsPDF) {
-      console.error('[Export] jsPDF not available');
+      logger.error('[Export] jsPDF not available');
       alert('PDF export is loading. Please try again in a moment.');
       return false;
     }
@@ -246,10 +247,10 @@ class ExportService {
       // Save PDF
       doc.save(filename);
 
-      console.log(`[Export] PDF exported: ${filename}`);
+      logger.info(`[Export] PDF exported: ${filename}`);
       return true;
     } catch (error) {
-      console.error('[Export] PDF export failed:', error);
+      logger.error('[Export] PDF export failed:', error);
       alert('PDF export failed. Please try again.');
       return false;
     }
@@ -264,7 +265,7 @@ class ExportService {
     }
 
     if (!window.jspdf || !window.jspdf.jsPDF) {
-      console.error('[Export] jsPDF not available');
+      logger.error('[Export] jsPDF not available');
       return false;
     }
 
@@ -347,10 +348,10 @@ class ExportService {
       }
 
       doc.save(filename);
-      console.log(`[Export] Achievements PDF exported: ${filename}`);
+      logger.info(`[Export] Achievements PDF exported: ${filename}`);
       return true;
     } catch (error) {
-      console.error('[Export] Achievements PDF export failed:', error);
+      logger.error('[Export] Achievements PDF export failed:', error);
       return false;
     }
   }
@@ -378,7 +379,7 @@ class ExportService {
    */
   exportTrainingToCSV(trainingData, filename = 'flagfit-training-history.csv') {
     if (!trainingData || trainingData.length === 0) {
-      console.warn('[Export] No training data to export');
+      logger.warn('[Export] No training data to export');
       return false;
     }
 
@@ -407,4 +408,4 @@ if (typeof module !== 'undefined' && module.exports) {
   module.exports = exportService;
 }
 
-console.log('[Export] Export Service loaded');
+logger.info('[Export] Export Service loaded');

@@ -135,7 +135,7 @@ export class PerformanceUtils {
       );
 
       // Clear existing items
-      content.innerHTML = "";
+      content.textContent = "";
 
       // Set total height for scrollbar
       content.style.height = `${items.length * itemHeight}px`;

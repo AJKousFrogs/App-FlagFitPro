@@ -1,4 +1,4 @@
-/* eslint-disable no-promise-executor-return */
+ 
 // Performance Trend Visualization Charts
 // Creates interactive charts for athlete performance data using Chart.js
 
@@ -345,7 +345,7 @@ export class PerformanceCharts {
     const grouped = {};
     performanceHistory.forEach((test) => {
       if (!grouped[test.testType]) {grouped[test.testType] = [];}
-      // eslint-disable-next-line no-promise-executor-return
+       
       void grouped[test.testType].push({
         x: test.timestamp,
         y: test.result,
@@ -517,16 +517,33 @@ export class PerformanceCharts {
   showDataPointDetails(type, label, value, event) {
     const tooltip = document.createElement("div");
     tooltip.className = "chart-tooltip";
-    tooltip.innerHTML = `
-            <div class="tooltip-header">${label}</div>
-            <div class="tooltip-content">
-                <div>Date: ${new Date(value.x).toLocaleDateString()}</div>
-                <div>Value: ${value.y}</div>
-                <div class="tooltip-actions">
-                    <button onclick="this.parentElement.parentElement.parentElement.remove()">Close</button>
-                </div>
-            </div>
-        `;
+
+    const header = document.createElement("div");
+    header.className = "tooltip-header";
+    header.textContent = label;
+
+    const content = document.createElement("div");
+    content.className = "tooltip-content";
+
+    const dateDiv = document.createElement("div");
+    dateDiv.textContent = `Date: ${new Date(value.x).toLocaleDateString()}`;
+
+    const valueDiv = document.createElement("div");
+    valueDiv.textContent = `Value: ${value.y}`;
+
+    const actionsDiv = document.createElement("div");
+    actionsDiv.className = "tooltip-actions";
+
+    const closeBtn = document.createElement("button");
+    closeBtn.textContent = "Close";
+    closeBtn.addEventListener("click", () => tooltip.remove());
+
+    actionsDiv.appendChild(closeBtn);
+    content.appendChild(dateDiv);
+    content.appendChild(valueDiv);
+    content.appendChild(actionsDiv);
+    tooltip.appendChild(header);
+    tooltip.appendChild(content);
 
     tooltip.style.cssText = `
             position: fixed;
@@ -544,7 +561,7 @@ export class PerformanceCharts {
     document.body.appendChild(tooltip);
 
     // Remove after 5 seconds
-    // eslint-disable-next-line no-promise-executor-return
+     
     void setTimeout(() => {
       if (tooltip.parentElement) {
         tooltip.remove();
@@ -561,7 +578,7 @@ export class PerformanceCharts {
     return 70; // stable
   }
 
-  // eslint-disable-next-line no-promise-executor-return
+   
   calculateWellnessScore(wellness) {
     if (!wellness || !wellness.averageScore) {return 50;}
     return Math.min(100, wellness.averageScore * 10);

@@ -2,6 +2,7 @@
 // Provides undo functionality and confirmation dialogs
 
 import { logger } from "./logger.js";
+import { setSafeContent } from "./js/utils/shared.js";
 
 export class UndoManager {
   constructor() {
@@ -119,34 +120,60 @@ export class UndoManager {
     modal.setAttribute("aria-labelledby", "confirmation-title");
     modal.setAttribute("aria-modal", "true");
 
-    modal.innerHTML = `
-      <div class="confirmation-overlay"></div>
-      <div class="confirmation-content">
-        <div class="confirmation-header">
-          <h3 id="confirmation-title">${title}</h3>
-        </div>
-        <div class="confirmation-body">
-          <p>${message}</p>
-        </div>
-        <div class="confirmation-footer">
-          <button class="btn btn-secondary confirmation-cancel">${cancelText}</button>
-          <button class="btn ${destructive ? "btn-danger" : "btn-primary"} confirmation-confirm">${confirmText}</button>
-        </div>
-      </div>
-    `;
+    // Create overlay
+    const overlay = document.createElement("div");
+    overlay.className = "confirmation-overlay";
+
+    // Create content container
+    const content = document.createElement("div");
+    content.className = "confirmation-content";
+
+    // Create header
+    const header = document.createElement("div");
+    header.className = "confirmation-header";
+    const titleEl = document.createElement("h3");
+    titleEl.id = "confirmation-title";
+    setSafeContent(titleEl, title);
+    header.appendChild(titleEl);
+
+    // Create body
+    const body = document.createElement("div");
+    body.className = "confirmation-body";
+    const messageEl = document.createElement("p");
+    setSafeContent(messageEl, message);
+    body.appendChild(messageEl);
+
+    // Create footer
+    const footer = document.createElement("div");
+    footer.className = "confirmation-footer";
+    const cancelBtn = document.createElement("button");
+    cancelBtn.className = "btn btn-secondary confirmation-cancel";
+    setSafeContent(cancelBtn, cancelText);
+    const confirmBtn = document.createElement("button");
+    confirmBtn.className = `btn ${destructive ? "btn-danger" : "btn-primary"} confirmation-confirm`;
+    setSafeContent(confirmBtn, confirmText);
+    footer.appendChild(cancelBtn);
+    footer.appendChild(confirmBtn);
+
+    // Assemble modal
+    content.appendChild(header);
+    content.appendChild(body);
+    content.appendChild(footer);
+    modal.appendChild(overlay);
+    modal.appendChild(content);
 
     document.body.appendChild(modal);
 
-    const confirmBtn = modal.querySelector(".confirmation-confirm");
-    const cancelBtn = modal.querySelector(".confirmation-cancel");
-    const overlay = modal.querySelector(".confirmation-overlay");
+    // Elements already created above, just get references
+    const confirmBtnRef = modal.querySelector(".confirmation-confirm");
+    const cancelBtnRef = modal.querySelector(".confirmation-cancel");
 
-    confirmBtn.addEventListener("click", () => {
+    confirmBtnRef.addEventListener("click", () => {
       if (onConfirm) {onConfirm();}
       this.closeConfirmation(modal);
     });
 
-    cancelBtn.addEventListener("click", () => {
+    cancelBtnRef.addEventListener("click", () => {
       if (onCancel) {onCancel();}
       this.closeConfirmation(modal);
     });
@@ -167,7 +194,7 @@ export class UndoManager {
       }
     });
 
-    confirmBtn.focus();
+    confirmBtnRef.focus();
     this.trapFocus(modal);
   }
 
@@ -243,16 +270,23 @@ export class UndoManager {
   showUndoNotification(action) {
     const notification = document.createElement("div");
     notification.className = "undo-notification";
-    notification.innerHTML = `
-      <div class="undo-notification-content">
-        <span>${action.itemName} deleted</span>
-        <button class="undo-button" data-action-id="${action.timestamp}">Undo</button>
-      </div>
-    `;
+
+    const content = document.createElement("div");
+    content.className = "undo-notification-content";
+
+    const span = document.createElement("span");
+    setSafeContent(span, `${action.itemName} deleted`);
+
+    const undoBtn = document.createElement("button");
+    undoBtn.className = "undo-button";
+    undoBtn.setAttribute("data-action-id", String(action.timestamp));
+    setSafeContent(undoBtn, "Undo");
+
+    content.appendChild(span);
+    content.appendChild(undoBtn);
+    notification.appendChild(content);
 
     document.body.appendChild(notification);
-
-    const undoBtn = notification.querySelector(".undo-button");
     undoBtn.addEventListener("click", () => {
       this.undoAction(action);
       notification.remove();
@@ -308,12 +342,20 @@ export class UndoManager {
   showSuccessNotification(message) {
     const notification = document.createElement("div");
     notification.className = "success-notification";
-    notification.innerHTML = `
-      <div class="success-notification-content">
-        <i data-lucide="check-circle" aria-hidden="true"></i>
-        <span>${message}</span>
-      </div>
-    `;
+
+    const content = document.createElement("div");
+    content.className = "success-notification-content";
+
+    const icon = document.createElement("i");
+    icon.setAttribute("data-lucide", "check-circle");
+    icon.setAttribute("aria-hidden", "true");
+
+    const span = document.createElement("span");
+    setSafeContent(span, message);
+
+    content.appendChild(icon);
+    content.appendChild(span);
+    notification.appendChild(content);
 
     document.body.appendChild(notification);
 

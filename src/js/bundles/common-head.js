@@ -20,7 +20,7 @@ import '../../icon-helper.js';
 
 // Load theme switcher
 import '../../theme-switcher.js';
+import { logger } from '../../logger.js';
 
-// eslint-disable-next-line no-console
-console.log('[Common Head] Head scripts loaded');
+logger.info('[Common Head] Head scripts loaded');
 

@@ -10,6 +10,7 @@ import express from 'express';
 import { Pool } from 'pg';
 import dotenv from 'dotenv';
 import { safeQuery, safeParseInt, safeFormatDate } from './utils/query-helper.js';
+import { serverLogger } from './utils/server-logger.js';
 
 dotenv.config();
 
@@ -61,7 +62,7 @@ try {
  * @returns {Promise<object>} Query result object
  */
 async function executeQuery(query, params = []) {
-  return safeQuery(pool, query, params, ROUTE_NAME);
+  return await safeQuery(pool, query, params, ROUTE_NAME);
 }
 
 /**
@@ -72,10 +73,10 @@ async function executeQuery(query, params = []) {
  */
 function safeParseFloat(value, defaultValue = 0) {
   try {
-    if (value === null || value === undefined) return defaultValue;
+    if (value === null || value === undefined) {return defaultValue;}
     const parsed = parseFloat(value);
     return isNaN(parsed) ? defaultValue : parsed;
-  } catch (error) {
+  } catch (_error) {
     return defaultValue;
   }
 }
@@ -94,11 +95,11 @@ function safePercentage(numerator, denominator, defaultValue = 0) {
     const num = safeParseFloat(numerator, 0);
     const den = safeParseFloat(denominator, 0);
     
-    if (!den || den === 0) return defaultValue;
+    if (!den || den === 0) {return defaultValue;}
     
     const percentage = (num / den) * 100;
     return Math.max(0, Math.min(100, Math.round(percentage)));
-  } catch (error) {
+  } catch (_error) {
     return defaultValue;
   }
 }
@@ -716,7 +717,7 @@ router.get('/health', async (req, res) => {
 /**
  * Global error handler (catches unhandled errors)
  */
-router.use((err, req, res, next) => {
+router.use((err, req, res, _next) => {
   serverLogger.error(`${ROUTE_NAME.toUpperCase()} unhandled error:`, err);
   
   const { statusCode, response } = createErrorResponse(

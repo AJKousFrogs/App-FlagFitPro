@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /**
  * Enhanced Community Component
  * 
@@ -16,6 +15,7 @@
 import { realtimeManager } from '../services/supabase-client.js';
 import { escapeHtml, sanitizeUrl } from '../utils/sanitize.js';
 import { getInitials, getTimeAgo } from '../utils/shared.js';
+import { logger } from '../../logger.js';
 
 class EnhancedCommunity {
   constructor() {
@@ -44,7 +44,7 @@ class EnhancedCommunity {
   async init(containerId, options = {}) {
     this.container = document.getElementById(containerId);
     if (!this.container) {
-      console.warn('[Community] Container not found:', containerId);
+      logger.warn('[Community] Container not found:', containerId);
       return;
     }
 
@@ -58,7 +58,7 @@ class EnhancedCommunity {
     // Get current user
     this.currentUserId = this.getCurrentUserId();
     if (!this.currentUserId) {
-      console.warn('[Community] No user ID found');
+      logger.warn('[Community] No user ID found');
       return;
     }
 
@@ -76,7 +76,7 @@ class EnhancedCommunity {
     // Setup event listeners
     this.setupEventListeners();
 
-    console.log('[Community] Enhanced community initialized');
+    logger.info('[Community] Enhanced community initialized');
   }
 
   /**
@@ -96,7 +96,7 @@ class EnhancedCommunity {
       }
       return null;
     } catch (error) {
-      console.warn('[Community] Failed to get user ID:', error);
+      logger.warn('[Community] Failed to get user ID:', error);
       return null;
     }
   }
@@ -121,7 +121,7 @@ class EnhancedCommunity {
 
       this.notifyListeners();
     } catch (error) {
-      console.error('[Community] Failed to load initial data:', error);
+      logger.error('[Community] Failed to load initial data:', error);
       this.showError('Failed to load community feed. Please refresh the page.');
     } finally {
       this.isLoading = false;
@@ -171,7 +171,7 @@ class EnhancedCommunity {
         return transformedPosts;
       }
     } catch (error) {
-      console.error('[Community] Failed to load posts:', error);
+      logger.error('[Community] Failed to load posts:', error);
       throw error;
     }
   }
@@ -214,7 +214,7 @@ class EnhancedCommunity {
         this.notifyListeners();
       }
     } catch (error) {
-      console.warn('[Community] Failed to load likes for post:', postId, error);
+      logger.warn('[Community] Failed to load likes for post:', postId, error);
     }
   }
 
@@ -243,7 +243,7 @@ class EnhancedCommunity {
         return comments;
       }
     } catch (error) {
-      console.error('[Community] Failed to load comments:', error);
+      logger.error('[Community] Failed to load comments:', error);
       return [];
     }
   }
@@ -270,7 +270,7 @@ class EnhancedCommunity {
         ];
       }
     } catch (error) {
-      console.warn('[Community] Failed to load trending topics:', error);
+      logger.warn('[Community] Failed to load trending topics:', error);
       // Use fallback topics
       this.trendingTopics = [
         { name: 'FlagFootballTips', count: 142 },
@@ -297,7 +297,7 @@ class EnhancedCommunity {
         this.leaderboard = [];
       }
     } catch (error) {
-      console.warn('[Community] Failed to load leaderboard:', error);
+      logger.warn('[Community] Failed to load leaderboard:', error);
       this.leaderboard = [];
     }
   }
@@ -319,7 +319,7 @@ class EnhancedCommunity {
         this.suggestedUsers = [];
       }
     } catch (error) {
-      console.warn('[Community] Failed to load suggested users:', error);
+      logger.warn('[Community] Failed to load suggested users:', error);
       this.suggestedUsers = [];
     }
   }
@@ -363,9 +363,9 @@ class EnhancedCommunity {
         }
       );
 
-      console.log('[Community] Real-time subscriptions active');
+      logger.info('[Community] Real-time subscriptions active');
     } catch (error) {
-      console.error('[Community] Failed to setup real-time subscriptions:', error);
+      logger.error('[Community] Failed to setup real-time subscriptions:', error);
     }
   }
 
@@ -376,9 +376,9 @@ class EnhancedCommunity {
     const eventType = payload.eventType || 'INSERT';
     const post = payload.new || payload.old;
 
-    if (!post) return;
+    if (!post) {return;}
 
-    console.log('[Community] Real-time post update:', eventType, post);
+    logger.info('[Community] Real-time post update:', eventType, post);
 
     switch (eventType) {
       case 'INSERT':
@@ -412,10 +412,10 @@ class EnhancedCommunity {
     const eventType = payload.eventType || 'INSERT';
     const comment = payload.new || payload.old;
 
-    if (!comment) return;
+    if (!comment) {return;}
 
     const postId = comment.post_id;
-    if (!postId) return;
+    if (!postId) {return;}
 
     let postComments = this.comments.get(postId) || [];
 
@@ -461,10 +461,10 @@ class EnhancedCommunity {
     const eventType = payload.eventType || 'INSERT';
     const like = payload.new || payload.old;
 
-    if (!like) return;
+    if (!like) {return;}
 
     const postId = like.post_id;
-    if (!postId) return;
+    if (!postId) {return;}
 
     const postLikes = this.likes.get(postId) || new Set();
     const post = this.posts.find(p => p.id === postId);
@@ -542,7 +542,7 @@ class EnhancedCommunity {
         throw new Error('Failed to create post');
       }
     } catch (error) {
-      console.error('[Community] Failed to create post:', error);
+      logger.error('[Community] Failed to create post:', error);
       // Remove optimistic post on error
       this.posts = this.posts.filter(p => p.id !== optimisticPost.id);
       this.render();
@@ -555,7 +555,7 @@ class EnhancedCommunity {
    */
   async toggleLike(postId) {
     const post = this.posts.find(p => p.id === postId);
-    if (!post) return;
+    if (!post) {return;}
 
     const wasLiked = post.isLiked;
     const oldLikes = post.likes;
@@ -581,7 +581,7 @@ class EnhancedCommunity {
         throw new Error('Failed to toggle like');
       }
     } catch (error) {
-      console.error('[Community] Failed to toggle like:', error);
+      logger.error('[Community] Failed to toggle like:', error);
       // Revert optimistic update
       post.isLiked = wasLiked;
       post.likes = oldLikes;
@@ -598,7 +598,7 @@ class EnhancedCommunity {
     }
 
     const post = this.posts.find(p => p.id === postId);
-    if (!post) return;
+    if (!post) {return;}
 
     // Optimistic update
     const optimisticComment = {
@@ -652,7 +652,7 @@ class EnhancedCommunity {
         throw new Error('Failed to add comment');
       }
     } catch (error) {
-      console.error('[Community] Failed to add comment:', error);
+      logger.error('[Community] Failed to add comment:', error);
       // Remove optimistic comment
       postComments = this.comments.get(postId) || [];
       this.comments.set(postId, postComments.filter(c => c.id !== optimisticComment.id));
@@ -739,7 +739,7 @@ class EnhancedCommunity {
       
       return await response.json();
     } catch (error) {
-      console.error('[Community] API call failed:', error);
+      logger.error('[Community] API call failed:', error);
       throw error;
     }
   }
@@ -767,7 +767,7 @@ class EnhancedCommunity {
    * Render the community UI
    */
   render() {
-    if (!this.container) return;
+    if (!this.container) {return;}
 
     // This will be called from the HTML page
     // The page will use the data from this component
@@ -781,7 +781,7 @@ class EnhancedCommunity {
     if (this.options.enableNotifications && window.authManager) {
       window.authManager.showSuccess(message);
     } else {
-      console.log('[Community]', message);
+      logger.info('[Community]', message);
     }
   }
 
@@ -792,7 +792,7 @@ class EnhancedCommunity {
     if (window.authManager) {
       window.authManager.showError(message);
     } else {
-      console.error('[Community]', message);
+      logger.error('[Community]', message);
     }
   }
 
@@ -826,7 +826,7 @@ class EnhancedCommunity {
           isLoading: this.isLoading
         });
       } catch (error) {
-        console.error('[Community] Listener error:', error);
+        logger.error('[Community] Listener error:', error);
       }
     });
   }
@@ -849,7 +849,7 @@ class EnhancedCommunity {
     };
 
     this.listeners.clear();
-    console.log('[Community] Enhanced community destroyed');
+    logger.info('[Community] Enhanced community destroyed');
   }
 }
 

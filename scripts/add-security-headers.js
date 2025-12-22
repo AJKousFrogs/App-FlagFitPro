@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-/* eslint-disable no-console */
 
 /**
  * Security Headers and SRI Implementation Script
@@ -8,10 +7,10 @@
 
 import fs from "fs";
 import { fileURLToPath } from "url";
-import { dirname } from "path";
+import path from "path";
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __dirname = path.dirname(__filename);
 const projectRoot = path.join(__dirname, "..");
 
 // Known external resources with their SRI hashes (reserved for future use)

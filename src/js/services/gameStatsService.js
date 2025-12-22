@@ -176,7 +176,7 @@ class GameStatsService {
           }
         }
       } catch (error) {
-        console.error("Error loading games from backend:", error);
+        logger.error("Error loading games from backend:", error);
         // Fall through to localStorage
       }
     }
@@ -185,7 +185,7 @@ class GameStatsService {
     try {
       return storageService.get(this.storageKey, [], { usePrefix: false });
     } catch (error) {
-      console.error("Error loading games from localStorage:", error);
+      logger.error("Error loading games from localStorage:", error);
       return [];
     }
   }
@@ -198,7 +198,7 @@ class GameStatsService {
     try {
       return storageService.get(this.currentGameKey, null, { usePrefix: false });
     } catch (error) {
-      console.error("Error loading current game:", error);
+      logger.error("Error loading current game:", error);
       return null;
     }
   }
@@ -212,14 +212,14 @@ class GameStatsService {
     try {
       const games = this.getAllGames({ forceSync: true });
       if (!Array.isArray(games)) {
-        console.warn("getAllGames() did not return an array in deleteGame");
+        logger.warn("getAllGames() did not return an array in deleteGame");
         return false;
       }
       const filteredGames = games.filter((g) => g.gameId !== gameId);
       storageService.set(this.storageKey, filteredGames, { usePrefix: false });
       return true;
     } catch (error) {
-      console.error("Error deleting game:", error);
+      logger.error("Error deleting game:", error);
       return false;
     }
   }
@@ -233,7 +233,7 @@ class GameStatsService {
   getGamesByDateRange(startDate, endDate) {
     const games = this.getAllGames({ forceSync: true });
     if (!Array.isArray(games)) {
-      console.warn("getAllGames() did not return an array in getGamesByDateRange");
+      logger.warn("getAllGames() did not return an array in getGamesByDateRange");
       return [];
     }
     return games.filter((game) => {
@@ -257,8 +257,8 @@ class GameStatsService {
         const token = storageService.get("authToken", null, { usePrefix: false });
         if (token) {
           const params = new URLSearchParams();
-          if (options.season) params.append("season", options.season);
-          if (options.teamId) params.append("teamId", options.teamId);
+          if (options.season) {params.append("season", options.season);}
+          if (options.teamId) {params.append("teamId", options.teamId);}
           
           const url = `${API_ENDPOINTS.playerStats.aggregated}?playerId=${playerId}${params.toString() ? '&' + params.toString() : ''}`;
           const response = await apiClient.get(url);
@@ -291,7 +291,7 @@ class GameStatsService {
           }
         }
       } catch (error) {
-        console.warn("Error fetching stats from backend, falling back to local calculation:", error);
+        logger.warn("Error fetching stats from backend, falling back to local calculation:", error);
         // Fall through to local calculation
       }
     }
@@ -429,7 +429,7 @@ class GameStatsService {
           }
         }
       } catch (error) {
-        console.error("Error fetching stats by date range:", error);
+        logger.error("Error fetching stats by date range:", error);
         throw error;
       }
     }
@@ -458,18 +458,18 @@ class GameStatsService {
     };
 
     games.forEach((game) => {
-      if (!game.plays) return;
+      if (!game.plays) {return;}
       game.plays.forEach((play) => {
         // Aggregate stats (same logic as getPlayerStats)
         if (play.quarterbackId === playerId && play.playType === "pass") {
           stats.passAttempts++;
-          if (play.outcome === "completion") stats.completions++;
-          if (play.outcome === "interception") stats.interceptions++;
+          if (play.outcome === "completion") {stats.completions++;}
+          if (play.outcome === "interception") {stats.interceptions++;}
         }
         if (play.receiverId === playerId && play.playType === "pass") {
           stats.targets++;
-          if (play.outcome === "completion") stats.receptions++;
-          if (play.isDrop) stats.drops++;
+          if (play.outcome === "completion") {stats.receptions++;}
+          if (play.isDrop) {stats.drops++;}
         }
         if (play.ballCarrierId === playerId && play.playType === "run") {
           stats.rushingAttempts++;
@@ -477,8 +477,7 @@ class GameStatsService {
         }
         if (play.defenderId === playerId && play.playType === "flag_pull") {
           stats.flagPullAttempts++;
-          if (play.isSuccessful) stats.flagPulls++;
-          else stats.missedFlagPulls++;
+          if (play.isSuccessful) {stats.flagPulls++;} else {stats.missedFlagPulls++;}
         }
       });
     });
@@ -505,7 +504,7 @@ class GameStatsService {
   getPlayerDropAnalysis(playerId) {
     const games = this.getAllGames({ forceSync: true });
     if (!Array.isArray(games)) {
-      console.warn("getAllGames() did not return an array in getPlayerDropAnalysis");
+      logger.warn("getAllGames() did not return an array in getPlayerDropAnalysis");
       return { totalDrops: 0, dropRate: 0, drops: [] };
     }
     const drops = [];
@@ -566,7 +565,7 @@ class GameStatsService {
   getDefenderFlagPullAnalysis(playerId) {
     const games = this.getAllGames({ forceSync: true });
     if (!Array.isArray(games)) {
-      console.warn("getAllGames() did not return an array in getDefenderFlagPullAnalysis");
+      logger.warn("getAllGames() did not return an array in getDefenderFlagPullAnalysis");
       return { successRate: 0, attempts: [] };
     }
     const attempts = [];
@@ -623,7 +622,7 @@ class GameStatsService {
   getQBAccuracyAnalysis(playerId) {
     const games = this.getAllGames({ forceSync: true });
     if (!Array.isArray(games)) {
-      console.warn("getAllGames() did not return an array in getPlayerThrowAnalysis");
+      logger.warn("getAllGames() did not return an array in getPlayerThrowAnalysis");
       return { totalThrows: 0, throws: [] };
     }
     const throws = [];
@@ -738,7 +737,7 @@ class GameStatsService {
         );
         stats.completionPercentage = completionResult.percentage.toFixed(1);
       } catch (error) {
-        console.warn('Error calculating completion percentage:', error);
+        logger.warn('Error calculating completion percentage:', error);
         stats.completionPercentage = '0.0';
       }
 
@@ -751,7 +750,7 @@ class GameStatsService {
         stats.dropRateSeverity = dropRateResult.severity;
         stats.dropRateRecommendation = dropRateResult.recommendation;
       } catch (error) {
-        console.warn('Error calculating drop rate:', error);
+        logger.warn('Error calculating drop rate:', error);
         stats.dropRate = '0.0';
       }
     }
@@ -767,7 +766,7 @@ class GameStatsService {
         stats.flagPullSampleSizeAdequate = flagPullResult.sampleSizeAdequate;
         stats.defensiveGrade = flagPullResult.defensiveGrade;
       } catch (error) {
-        console.warn('Error calculating flag pull success rate:', error);
+        logger.warn('Error calculating flag pull success rate:', error);
         stats.flagPullSuccessRate = '0.0';
       }
     }
@@ -811,7 +810,7 @@ class GameStatsService {
   exportAllGamesAsJSON() {
     const games = this.getAllGames({ forceSync: true });
     if (!Array.isArray(games)) {
-      console.warn("getAllGames() did not return an array in exportGames");
+      logger.warn("getAllGames() did not return an array in exportGames");
       return JSON.stringify([], null, 2);
     }
     return JSON.stringify(games, null, 2);
@@ -828,7 +827,7 @@ class GameStatsService {
       storageService.set(this.storageKey, games, { usePrefix: false });
       return true;
     } catch (error) {
-      console.error("Error importing games:", error);
+      logger.error("Error importing games:", error);
       return false;
     }
   }
@@ -843,7 +842,7 @@ class GameStatsService {
       storageService.remove(this.currentGameKey, { usePrefix: false });
       return true;
     } catch (error) {
-      console.error("Error clearing games:", error);
+      logger.error("Error clearing games:", error);
       return false;
     }
   }

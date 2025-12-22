@@ -1,8 +1,9 @@
-/* eslint-disable no-console */
 /**
  * Enhanced Top Bar Component
  * Handles keyboard shortcuts, enhanced search, notifications, and user menu
  */
+
+import { logger } from '../../logger.js';
 
 class EnhancedTopBar {
   constructor() {
@@ -49,7 +50,7 @@ class EnhancedTopBar {
   }
 
   setupSearch() {
-    if (!this.searchInput) return;
+    if (!this.searchInput) {return;}
 
     // Clear button functionality
     if (this.searchClear) {
@@ -114,7 +115,7 @@ class EnhancedTopBar {
   }
 
   handleSearchKeyboard(e) {
-    if (!this.searchResults || this.searchResults.hasAttribute('hidden')) return;
+    if (!this.searchResults || this.searchResults.hasAttribute('hidden')) {return;}
 
     const results = Array.from(
       this.searchResults.querySelectorAll('.result-item, [role="option"]')
@@ -147,7 +148,7 @@ class EnhancedTopBar {
   }
 
   setupNotifications() {
-    if (!this.notificationButton) return;
+    if (!this.notificationButton) {return;}
 
     this.notificationButton.addEventListener('click', () => {
       const isExpanded = this.notificationButton.getAttribute('aria-expanded') === 'true';
@@ -162,7 +163,7 @@ class EnhancedTopBar {
   }
 
   setupUserMenu() {
-    if (!this.userMenuButton || !this.userMenu) return;
+    if (!this.userMenuButton || !this.userMenu) {return;}
 
     this.userMenuButton.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -181,7 +182,7 @@ class EnhancedTopBar {
     const menuItems = Array.from(this.userMenu.querySelectorAll('.user-menu-item'));
     
     this.userMenu.addEventListener('keydown', (e) => {
-      if (this.userMenu.hasAttribute('hidden')) return;
+      if (this.userMenu.hasAttribute('hidden')) {return;}
 
       const currentIndex = menuItems.indexOf(document.activeElement);
 
@@ -233,7 +234,7 @@ class EnhancedTopBar {
   }
 
   setupThemeToggle() {
-    if (!this.themeToggle) return;
+    if (!this.themeToggle) {return;}
 
     this.themeToggle.addEventListener('click', () => {
       const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
@@ -277,7 +278,7 @@ class EnhancedTopBar {
   }
 
   setupScrollToTop() {
-    if (!this.scrollToTop) return;
+    if (!this.scrollToTop) {return;}
 
     // Show/hide scroll to top button
     window.addEventListener('scroll', () => {
@@ -299,7 +300,7 @@ class EnhancedTopBar {
 
   setupScrollEffects() {
     const topBar = document.querySelector('.top-bar');
-    if (!topBar) return;
+    if (!topBar) {return;}
 
     let lastScrollY = window.scrollY;
     
@@ -346,7 +347,7 @@ class EnhancedTopBar {
         );
       }
     } catch (e) {
-      console.warn('Could not load user info:', e);
+      logger.warn('Could not load user info:', e);
     }
   }
 
@@ -355,16 +356,16 @@ class EnhancedTopBar {
     const userNameEl = document.getElementById('user-menu-name');
     const userRoleEl = document.getElementById('user-menu-role');
     
-    if (userNameEl) userNameEl.textContent = name;
-    if (userRoleEl) userRoleEl.textContent = role;
+    if (userNameEl) {userNameEl.textContent = name;}
+    if (userRoleEl) {userRoleEl.textContent = role;}
 
     // Update user menu header
     const headerNameEl = document.getElementById('user-menu-header-name');
     const headerEmailEl = document.getElementById('user-menu-header-email');
     const headerInitialsEl = document.getElementById('user-menu-header-initials');
     
-    if (headerNameEl) headerNameEl.textContent = name;
-    if (headerEmailEl) headerEmailEl.textContent = email;
+    if (headerNameEl) {headerNameEl.textContent = name;}
+    if (headerEmailEl) {headerEmailEl.textContent = email;}
     if (headerInitialsEl) {
       headerInitialsEl.textContent = this.getInitials(name);
     }
@@ -382,7 +383,7 @@ class EnhancedTopBar {
   }
 
   getInitials(name) {
-    if (!name) return 'U';
+    if (!name) {return 'U';}
     const parts = name.trim().split(' ');
     if (parts.length >= 2) {
       return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();

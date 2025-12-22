@@ -1,14 +1,8 @@
-/* eslint-disable no-console */
 // FlagFit AI Chatbot Component
 // Provides intelligent responses about sports psychology, nutrition, speed training, injuries, recovery, etc.
 
-// Logger fallback - use window.logger if available, otherwise console
-const logger = window.logger || {
-  error: (...args) => console.error(...args),
-  warn: (...args) => console.warn(...args),
-  info: (...args) => console.info(...args),
-  debug: (...args) => console.debug(...args),
-};
+import { logger } from '../../logger.js';
+import { setSafeContent } from '../utils/shared.js';
 
 class FlagFitChatbot {
   constructor() {
@@ -362,7 +356,7 @@ class FlagFitChatbot {
     const quickActions = document.createElement("div");
     quickActions.className = "chatbot-quick-actions";
     
-    const topics = [
+    const quickTopics = [
       { topic: "psychology", label: "🧠 Psychology" },
       { topic: "nutrition", label: "🍎 Nutrition" },
       { topic: "speed", label: "⚡ Speed" },
@@ -370,7 +364,7 @@ class FlagFitChatbot {
       { topic: "recovery", label: "💤 Recovery" }
     ];
     
-    topics.forEach(({ topic, label }) => {
+    quickTopics.forEach(({ topic, label }) => {
       const quickBtn = document.createElement("button");
       quickBtn.className = "chatbot-quick-btn";
       quickBtn.setAttribute("data-topic", topic);
