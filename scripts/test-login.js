@@ -31,7 +31,7 @@ async function testLogin() {
     ];
     
     let passedTests = 0;
-    let totalTests = testCredentials.length;
+    const totalTests = testCredentials.length;
     
     for (const credentials of testCredentials) {
         log(`\n🔍 Testing login with: ${credentials.email} / ${credentials.password}`, 'cyan');

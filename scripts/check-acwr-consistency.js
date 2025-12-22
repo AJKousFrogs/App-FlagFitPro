@@ -114,7 +114,7 @@ async function checkConsistency(athleteId = null) {
         s.session_duration !== null && s.session_duration !== undefined
       ).length || 0;
       const withCalculatedLoad = loadMetrics?.filter(s => {
-        if (!s.session_rpe || !s.session_duration) return false;
+        if (!s.session_rpe || !s.session_duration) {return false;}
         const expectedLoad = s.session_rpe * s.session_duration;
         return s.training_load === expectedLoad;
       }).length || 0;

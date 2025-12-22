@@ -244,11 +244,7 @@ class AITrainingScheduler {
 
     // Determine phase
     let phase;
-    if (daysSinceEvent <= 1) phase = recoveryPhases["0-1"];
-    else if (daysSinceEvent <= 3) phase = recoveryPhases["2-3"];
-    else if (daysSinceEvent <= 5) phase = recoveryPhases["4-5"];
-    else if (daysSinceEvent <= 7) phase = recoveryPhases["6-7"];
-    else phase = null; // Recovery phase complete
+    if (daysSinceEvent <= 1) {phase = recoveryPhases["0-1"];} else if (daysSinceEvent <= 3) {phase = recoveryPhases["2-3"];} else if (daysSinceEvent <= 5) {phase = recoveryPhases["4-5"];} else if (daysSinceEvent <= 7) {phase = recoveryPhases["6-7"];} else {phase = null;} // Recovery phase complete
 
     return phase;
   }

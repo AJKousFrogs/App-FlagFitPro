@@ -61,7 +61,7 @@ export class WellnessService {
    * Convert wellness_logs format back to wellness_data format for compatibility
    */
   mapFromWellnessLogs(data) {
-    if (!data) return null;
+    if (!data) {return null;}
     
     return {
       id: data.id,
@@ -122,7 +122,7 @@ export class WellnessService {
           .select()
           .single();
 
-        if (error) throw error;
+        if (error) {throw error;}
         result = this.mapFromWellnessLogs(data);
         logger.success('[Wellness] Updated wellness entry for', date);
       } else {
@@ -133,7 +133,7 @@ export class WellnessService {
           .select()
           .single();
 
-        if (error) throw error;
+        if (error) {throw error;}
         result = this.mapFromWellnessLogs(data);
         logger.success('[Wellness] Created wellness entry for', date);
       }
@@ -230,7 +230,7 @@ export class WellnessService {
         .lte('log_date', endDate)
         .order('log_date', { ascending: false });
 
-      if (error) throw error;
+      if (error) {throw error;}
 
       // Map results back to wellness_data format
       const mappedData = (data || []).map(entry => this.mapFromWellnessLogs(entry));
@@ -292,7 +292,7 @@ export class WellnessService {
    * Calculate recovery score from wellness data
    */
   calculateRecoveryScore(data) {
-    if (!data) return null;
+    if (!data) {return null;}
 
     const metrics = {
       sleep: data.sleep || 5,
@@ -379,7 +379,7 @@ export class WellnessService {
       new Date().toISOString().split('T')[0],
     );
 
-    if (history.length === 0) return 0;
+    if (history.length === 0) {return 0;}
 
     // Sort by date descending (date field is mapped from log_date)
     const sorted = history.sort((a, b) => new Date(b.date || b.log_date) - new Date(a.date || a.log_date));

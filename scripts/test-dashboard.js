@@ -87,7 +87,7 @@ async function runTests() {
     ];
     
     let passedTests = 0;
-    let totalTests = tests.length;
+    const totalTests = tests.length;
     
     for (const test of tests) {
         const result = await testEndpoint(test.endpoint, test.description);

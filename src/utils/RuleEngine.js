@@ -69,7 +69,7 @@ export class WeatherImpactCalculator {
     };
 
     // Early return guard clause
-    if (!weather) return impact;
+    if (!weather) {return impact;}
 
     // Apply each strategy
     Object.entries(this.impactStrategies).forEach(([key, strategy]) => {
@@ -144,8 +144,8 @@ export class WeatherImpactCalculator {
       .reduce((sum, factor) => sum + factor.score, 0);
 
     // Guard clauses for risk level
-    if (score >= 5) return 'High';
-    if (score >= 3) return 'Medium';
+    if (score >= 5) {return 'High';}
+    if (score >= 3) {return 'Medium';}
     return 'Low';
   }
 }
@@ -223,7 +223,7 @@ export class Classifier {
    */
   static getColorByThreshold(value, thresholds) {
     // Guard clause for invalid input
-    if (value === null || value === undefined) return '#9E9E9E';
+    if (value === null || value === undefined) {return '#9E9E9E';}
 
     for (const threshold of thresholds) {
       if (value >= threshold.min) {
@@ -242,7 +242,7 @@ export class Classifier {
    */
   static getLabelByThreshold(value, thresholds) {
     // Guard clause
-    if (value === null || value === undefined) return 'Unknown';
+    if (value === null || value === undefined) {return 'Unknown';}
 
     for (const threshold of thresholds) {
       if (value >= threshold.min) {

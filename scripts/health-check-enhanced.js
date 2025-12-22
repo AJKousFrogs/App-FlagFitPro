@@ -153,9 +153,9 @@ class HealthChecker {
       case 'occupied': return '🔴';
       case 'timeout': return '⏱️';
       default: 
-        if (status.startsWith('http-2')) return '🟢'; // 2xx responses
-        if (status.startsWith('http-4')) return '🟡'; // 4xx responses
-        if (status.startsWith('http-5')) return '🔴'; // 5xx responses
+        if (status.startsWith('http-2')) {return '🟢';} // 2xx responses
+        if (status.startsWith('http-4')) {return '🟡';} // 4xx responses
+        if (status.startsWith('http-5')) {return '🔴';} // 5xx responses
         return '❓';
     }
   }

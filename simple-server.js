@@ -92,7 +92,7 @@ const cacheControl = {
 
 // Request logging utility
 const logRequest = (req, statusCode, size) => {
-  if (!LOG_REQUESTS) return;
+  if (!LOG_REQUESTS) {return;}
   const timestamp = new Date().toISOString();
   const method = req.method.padEnd(7);
   const status = statusCode.toString().padStart(3);
@@ -102,7 +102,7 @@ const logRequest = (req, statusCode, size) => {
 
 // Format bytes utility
 const formatBytes = (bytes) => {
-  if (bytes === 0) return "0 B";
+  if (bytes === 0) {return "0 B";}
   const k = 1024;
   const sizes = ["B", "KB", "MB", "GB"];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
@@ -121,8 +121,8 @@ const acceptsCompression = (req) => {
 // Get compression stream and encoding type
 const getCompressionStream = (req) => {
   const compression = acceptsCompression(req);
-  if (compression.gzip) return { stream: createGzip(), encoding: "gzip" };
-  if (compression.deflate) return { stream: createDeflate(), encoding: "deflate" };
+  if (compression.gzip) {return { stream: createGzip(), encoding: "gzip" };}
+  if (compression.deflate) {return { stream: createDeflate(), encoding: "deflate" };}
   return null;
 };
 

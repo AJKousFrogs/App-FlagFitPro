@@ -53,7 +53,7 @@ class FilterManager {
 
     handleFilterClick(button) {
         const container = this.findFilterContainer(button);
-        if (!container) return;
+        if (!container) {return;}
 
         const allButtons = container.querySelectorAll('button');
         allButtons.forEach(btn => {
@@ -85,8 +85,8 @@ class FilterManager {
     }
 
     getFilterGroup(container) {
-        if (container.classList.contains('wireframe-grid')) return 'grid';
-        if (container.classList.contains('wireframe-card')) return 'card';
+        if (container.classList.contains('wireframe-grid')) {return 'grid';}
+        if (container.classList.contains('wireframe-card')) {return 'card';}
         return container.className || 'unknown';
     }
 
@@ -104,7 +104,7 @@ class FilterManager {
 
     updateContent(button, container) {
         const contentArea = this.findContentArea(container);
-        if (!contentArea) return;
+        if (!contentArea) {return;}
 
         this.showLoadingState(contentArea);
 

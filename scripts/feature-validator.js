@@ -678,9 +678,9 @@ class FeatureValidator {
           totalFiles++;
           
           // Check for performance optimizations
-          if (content.includes("defer") || content.includes("async")) hasOptimizations++;
-          if (content.includes("preload") || content.includes("prefetch")) hasOptimizations++;
-          if (content.includes("min.css") || content.includes("min.js")) hasOptimizations++;
+          if (content.includes("defer") || content.includes("async")) {hasOptimizations++;}
+          if (content.includes("preload") || content.includes("prefetch")) {hasOptimizations++;}
+          if (content.includes("min.css") || content.includes("min.js")) {hasOptimizations++;}
         } catch {
           // File doesn't exist
         }
@@ -758,9 +758,9 @@ class FeatureValidator {
           totalFiles++;
           
           // Check for memory-efficient patterns
-          if (content.includes("WeakMap") || content.includes("WeakSet")) hasMemoryOptimizations++;
-          if (content.includes("removeEventListener")) hasMemoryOptimizations++;
-          if (content.includes("clearInterval") || content.includes("clearTimeout")) hasMemoryOptimizations++;
+          if (content.includes("WeakMap") || content.includes("WeakSet")) {hasMemoryOptimizations++;}
+          if (content.includes("removeEventListener")) {hasMemoryOptimizations++;}
+          if (content.includes("clearInterval") || content.includes("clearTimeout")) {hasMemoryOptimizations++;}
         } catch {
           // File doesn't exist
         }

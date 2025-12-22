@@ -833,7 +833,7 @@ class GameTrackerPage {
   }
 
   formatRouteDepth(play) {
-    if (!play.routeDepth && !play.routeDepthDisplay) return "";
+    if (!play.routeDepth && !play.routeDepthDisplay) {return "";}
     const preferredUnit = localStorage.getItem("flagfit_distance_unit") || "imperial";
     if (play.routeDepthDisplay && play.routeDepthUnit) {
       return `${play.routeDepthDisplay} ${play.routeDepthUnit === "imperial" ? "yds" : "m"}`;

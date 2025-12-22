@@ -155,7 +155,7 @@ export class ExerciseLibraryPage {
     
     const prevBtn = document.createElement("button");
     prevBtn.className = "pagination-btn";
-    if (prevDisabled) prevBtn.disabled = true;
+    if (prevDisabled) {prevBtn.disabled = true;}
     prevBtn.setAttribute("data-action", "prev");
     prevBtn.setAttribute("aria-label", "Previous page");
     const prevIcon = document.createElement("i");
@@ -168,7 +168,7 @@ export class ExerciseLibraryPage {
     
     const nextBtn = document.createElement("button");
     nextBtn.className = "pagination-btn";
-    if (nextDisabled) nextBtn.disabled = true;
+    if (nextDisabled) {nextBtn.disabled = true;}
     nextBtn.setAttribute("data-action", "next");
     nextBtn.setAttribute("aria-label", "Next page");
     const nextIcon = document.createElement("i");

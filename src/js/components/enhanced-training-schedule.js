@@ -147,7 +147,7 @@ class EnhancedTrainingSchedule {
     const eventType = payload.eventType || 'INSERT';
     const session = payload.new || payload.old;
 
-    if (!session) return;
+    if (!session) {return;}
 
     logger.debug('[TrainingSchedule] Real-time update:', eventType, session);
 
@@ -236,7 +236,7 @@ class EnhancedTrainingSchedule {
     const duration1 = session1.duration || 60;
     const duration2 = session2.duration || 60;
 
-    if (!time1 || !time2) return null;
+    if (!time1 || !time2) {return null;}
 
     const end1 = time1 + duration1;
     const end2 = time2 + duration2;
@@ -265,9 +265,9 @@ class EnhancedTrainingSchedule {
    * Parse time string to minutes
    */
   parseTime(timeStr) {
-    if (!timeStr) return null;
+    if (!timeStr) {return null;}
     const match = timeStr.match(/(\d+):(\d+)/);
-    if (!match) return null;
+    if (!match) {return null;}
     return parseInt(match[1]) * 60 + parseInt(match[2]);
   }
 
@@ -373,7 +373,7 @@ class EnhancedTrainingSchedule {
    * Render the schedule
    */
   render() {
-    if (!this.container) return;
+    if (!this.container) {return;}
 
     if (this.isLoading) {
       // Use setSafeContent to sanitize HTML before insertion

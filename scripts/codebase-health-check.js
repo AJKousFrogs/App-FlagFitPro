@@ -482,7 +482,7 @@ class CodebaseHealthCheck {
         console.log(`${index + 1}. ${issue.type}: ${issue.issue || issue.name}`);
         console.log(`   Severity: ${issue.severity.toUpperCase()}`);
         console.log(`   Impact: ${issue.impact}`);
-        if (issue.file) console.log(`   File: ${issue.file}`);
+        if (issue.file) {console.log(`   File: ${issue.file}`);}
         console.log('');
       });
     }
@@ -559,7 +559,7 @@ class CodebaseHealthCheck {
         markdown += `- **Issue**: ${issue.issue || issue.name}\n`;
         markdown += `- **Severity**: ${issue.severity}\n`;
         markdown += `- **Impact**: ${issue.impact}\n`;
-        if (issue.file) markdown += `- **File**: ${issue.file}\n`;
+        if (issue.file) {markdown += `- **File**: ${issue.file}\n`;}
         markdown += '\n';
       });
     }
@@ -625,14 +625,14 @@ class CodebaseHealthCheck {
   }
 
   calculateSeverity(funcName, files) {
-    if (files.length > 3) return 'high';
-    if (funcName.includes('Process') || funcName.includes('Calculate')) return 'high';
-    if (files.some(f => f.type === 'service')) return 'medium';
+    if (files.length > 3) {return 'high';}
+    if (funcName.includes('Process') || funcName.includes('Calculate')) {return 'high';}
+    if (files.some(f => f.type === 'service')) {return 'medium';}
     return 'low';
   }
 
   calculateHealthScore(totalIssues, filesScanned) {
-    if (filesScanned === 0) return 100;
+    if (filesScanned === 0) {return 100;}
     const issueRatio = totalIssues / filesScanned;
     const score = Math.max(0, 100 - (issueRatio * 20));
     return Math.round(score);

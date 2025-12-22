@@ -633,13 +633,13 @@ export const getPerformanceGrade = (current, targets, lowerIsBetter = false) => 
   }
 
   if (lowerIsBetter) {
-    if (current <= targets.elite) return "Elite";
-    if (current <= targets.good) return "Good";
-    if (current <= targets.average) return "Average";
+    if (current <= targets.elite) {return "Elite";}
+    if (current <= targets.good) {return "Good";}
+    if (current <= targets.average) {return "Average";}
   } else {
-    if (current >= targets.elite) return "Elite";
-    if (current >= targets.good) return "Good";
-    if (current >= targets.average) return "Average";
+    if (current >= targets.elite) {return "Elite";}
+    if (current >= targets.good) {return "Good";}
+    if (current >= targets.average) {return "Average";}
   }
 
   return "Needs Improvement";
@@ -653,7 +653,7 @@ export const getPerformanceGrade = (current, targets, lowerIsBetter = false) => 
  * @returns {number} Improvement percentage (positive = improvement)
  */
 export const calculatePerformanceImprovement = (current, previous, lowerIsBetter = false) => {
-  if (!previous || previous === 0) return 0;
+  if (!previous || previous === 0) {return 0;}
   
   if (lowerIsBetter) {
     // For time-based tests, improvement means lower time
@@ -677,15 +677,15 @@ export const getWellnessColor = (score, lowerIsBetter = false) => {
 
   if (lowerIsBetter) {
     // For stress, soreness - lower is better
-    if (score <= 3) return "var(--success)";
-    if (score <= 5) return "var(--accent)";
-    if (score <= 7) return "var(--warning)";
+    if (score <= 3) {return "var(--success)";}
+    if (score <= 5) {return "var(--accent)";}
+    if (score <= 7) {return "var(--warning)";}
     return "var(--error)";
   } else {
     // For sleep, energy, motivation - higher is better
-    if (score >= 8) return "var(--success)";
-    if (score >= 6) return "var(--accent)";
-    if (score >= 4) return "var(--warning)";
+    if (score >= 8) {return "var(--success)";}
+    if (score >= 6) {return "var(--accent)";}
+    if (score >= 4) {return "var(--warning)";}
     return "var(--error)";
   }
 };
@@ -697,14 +697,14 @@ export const getWellnessColor = (score, lowerIsBetter = false) => {
  * @returns {Array} Array of supplements that need reminders
  */
 export const getSupplementReminders = (schedule, reminderWindow = 1) => {
-  if (!Array.isArray(schedule)) return [];
+  if (!Array.isArray(schedule)) {return [];}
 
   const now = new Date();
   const currentHour = now.getHours();
   const currentDate = now.toISOString().split("T")[0];
 
   return schedule.filter((item) => {
-    if (item.taken || item.date !== currentDate) return false;
+    if (item.taken || item.date !== currentDate) {return false;}
     
     const supplementHour = parseInt(item.time.split(":")[0]);
     const timeDiff = Math.abs(currentHour - supplementHour);
@@ -720,7 +720,7 @@ export const getSupplementReminders = (schedule, reminderWindow = 1) => {
  * @returns {number} BMI value
  */
 export const calculateBMI = (weight, height) => {
-  if (!weight || !height || height <= 0) return null;
+  if (!weight || !height || height <= 0) {return null;}
   
   const heightInMeters = height / 100;
   return parseFloat((weight / (heightInMeters * heightInMeters)).toFixed(1));
@@ -732,11 +732,11 @@ export const calculateBMI = (weight, height) => {
  * @returns {string} BMI category
  */
 export const getBMICategory = (bmi) => {
-  if (!bmi || typeof bmi !== "number") return "Unknown";
+  if (!bmi || typeof bmi !== "number") {return "Unknown";}
   
-  if (bmi < 18.5) return "Underweight";
-  if (bmi < 25) return "Normal";
-  if (bmi < 30) return "Overweight";
+  if (bmi < 18.5) {return "Underweight";}
+  if (bmi < 25) {return "Normal";}
+  if (bmi < 30) {return "Overweight";}
   return "Obese";
 };
 
@@ -746,7 +746,7 @@ export const getBMICategory = (bmi) => {
  * @returns {number} Readiness score (1-10)
  */
 export const calculateReadinessScore = (wellness) => {
-  if (!wellness) return null;
+  if (!wellness) {return null;}
 
   const factors = {
     sleep: wellness.sleep || 5,
@@ -778,18 +778,18 @@ export const calculateReadinessScore = (wellness) => {
  * @returns {string} Trend: "improving", "declining", or "stable"
  */
 export const getPerformanceTrend = (current, previous, lowerIsBetter = false) => {
-  if (!previous || previous === 0) return "stable";
+  if (!previous || previous === 0) {return "stable";}
   
   const threshold = 0.01; // 1% change threshold
   
   if (lowerIsBetter) {
     const change = (previous - current) / previous;
-    if (change > threshold) return "improving";
-    if (change < -threshold) return "declining";
+    if (change > threshold) {return "improving";}
+    if (change < -threshold) {return "declining";}
   } else {
     const change = (current - previous) / previous;
-    if (change > threshold) return "improving";
-    if (change < -threshold) return "declining";
+    if (change > threshold) {return "improving";}
+    if (change < -threshold) {return "declining";}
   }
   
   return "stable";
@@ -841,10 +841,10 @@ export const validatePerformanceTest = (testName, value) => {
  * @returns {string} Formatted date string
  */
 export const formatDate = (date, format = "short") => {
-  if (!date) return "";
+  if (!date) {return "";}
   
   const dateObj = typeof date === "string" ? new Date(date) : date;
-  if (isNaN(dateObj.getTime())) return "";
+  if (isNaN(dateObj.getTime())) {return "";}
 
   const options = {
     short: { month: "short", day: "numeric", year: "numeric" },
@@ -865,10 +865,10 @@ export const formatDate = (date, format = "short") => {
  * @returns {number} Number of days since last test
  */
 export const getDaysSinceLastTest = (lastTestDate) => {
-  if (!lastTestDate) return null;
+  if (!lastTestDate) {return null;}
   
   const testDate = typeof lastTestDate === "string" ? new Date(lastTestDate) : lastTestDate;
-  if (isNaN(testDate.getTime())) return null;
+  if (isNaN(testDate.getTime())) {return null;}
   
   const now = new Date();
   const diffTime = Math.abs(now - testDate);
@@ -884,10 +884,10 @@ export const getDaysSinceLastTest = (lastTestDate) => {
  * @returns {boolean} True if test is due
  */
 export const isTestDue = (lastTestDate, frequency) => {
-  if (!lastTestDate) return true;
+  if (!lastTestDate) {return true;}
   
   const daysSince = getDaysSinceLastTest(lastTestDate);
-  if (daysSince === null) return true;
+  if (daysSince === null) {return true;}
   
   const frequencyDays = {
     Weekly: 7,
@@ -928,9 +928,7 @@ export const getBodyFatTarget = (gender, currentBodyFat) => {
   const genderTargets = targets[gender] || targets.male;
   
   let category = "Needs Improvement";
-  if (currentBodyFat <= genderTargets.elite) category = "Elite";
-  else if (currentBodyFat <= genderTargets.good) category = "Good";
-  else if (currentBodyFat <= genderTargets.average) category = "Average";
+  if (currentBodyFat <= genderTargets.elite) {category = "Elite";} else if (currentBodyFat <= genderTargets.good) {category = "Good";} else if (currentBodyFat <= genderTargets.average) {category = "Average";}
   
   return {
     category,

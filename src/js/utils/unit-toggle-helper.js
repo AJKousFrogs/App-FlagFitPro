@@ -216,7 +216,7 @@ export function convertValue(value, type, fromUnit, toUnit = null) {
              (type === 'time' ? 'minutes' : 'imperial');
   }
 
-  if (fromUnit === toUnit) return value;
+  if (fromUnit === toUnit) {return value;}
 
   switch (type) {
     case 'weight':

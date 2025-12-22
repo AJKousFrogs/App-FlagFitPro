@@ -389,7 +389,7 @@ class EnhancedSettings {
    */
   updatePrivacyToggles() {
     const privacySection = document.querySelector('.settings-section:nth-child(3)');
-    if (!privacySection) return;
+    if (!privacySection) {return;}
 
     const profileVisibleToggle = privacySection.querySelector('.setting-item:nth-child(1) .toggle-switch');
     if (profileVisibleToggle) {
@@ -424,7 +424,7 @@ class EnhancedSettings {
    */
   async setupRealtimeSubscription() {
     try {
-      if (!this.currentUserId) return;
+      if (!this.currentUserId) {return;}
 
       // Subscribe to user settings updates
       this.realtimeSubscription = realtimeManager.subscribe(
@@ -451,7 +451,7 @@ class EnhancedSettings {
     const eventType = payload.eventType || 'UPDATE';
     const settings = payload.new || payload.old;
 
-    if (!settings || settings.user_id !== this.currentUserId) return;
+    if (!settings || settings.user_id !== this.currentUserId) {return;}
 
     logger.debug('[Settings] Real-time update:', eventType, settings);
 
@@ -535,7 +535,7 @@ class EnhancedSettings {
     const indicator = document.getElementById('autoSaveIndicator');
     const text = document.getElementById('autoSaveText');
     
-    if (!indicator || !text) return;
+    if (!indicator || !text) {return;}
 
     indicator.classList.remove('show', 'saving', 'saved', 'error');
     
@@ -564,7 +564,7 @@ class EnhancedSettings {
    */
   updateSaveButton() {
     const saveButton = document.querySelector('button[onclick*="saveSettings"]');
-    if (!saveButton) return;
+    if (!saveButton) {return;}
 
     if (this.hasUnsavedChanges) {
       saveButton.classList.add('has-changes');
@@ -617,10 +617,10 @@ class EnhancedSettings {
    */
   validateField(fieldName, value, elementId = null) {
     const element = document.getElementById(elementId || fieldName);
-    if (!element) return true;
+    if (!element) {return true;}
 
     const rule = this.validationRules[fieldName];
-    if (!rule) return true;
+    if (!rule) {return true;}
 
     let isValid = true;
     let errorMessage = '';
@@ -688,8 +688,8 @@ class EnhancedSettings {
     if (isValid) {
       element.classList.remove('invalid');
       element.classList.add('valid');
-      if (errorElement) errorElement.style.display = 'none';
-      if (successElement) successElement.style.display = 'block';
+      if (errorElement) {errorElement.style.display = 'none';}
+      if (successElement) {successElement.style.display = 'block';}
     } else {
       element.classList.remove('valid');
       element.classList.add('invalid');
@@ -697,7 +697,7 @@ class EnhancedSettings {
         errorElement.textContent = errorMessage;
         errorElement.style.display = 'block';
       }
-      if (successElement) successElement.style.display = 'none';
+      if (successElement) {successElement.style.display = 'none';}
     }
   }
 

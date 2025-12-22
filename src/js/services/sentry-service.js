@@ -160,7 +160,7 @@ class SentryService {
    * Update user context for error reports
    */
   updateUserContext(user = null) {
-    if (!this.initialized || !this.Sentry) return;
+    if (!this.initialized || !this.Sentry) {return;}
 
     try {
       if (user) {
@@ -195,7 +195,7 @@ class SentryService {
    * Clear user context (on logout)
    */
   clearUserContext() {
-    if (!this.initialized || !this.Sentry) return;
+    if (!this.initialized || !this.Sentry) {return;}
 
     try {
       this.Sentry.setUser(null);
@@ -252,7 +252,7 @@ class SentryService {
    * Add breadcrumb (for debugging context)
    */
   addBreadcrumb(breadcrumb) {
-    if (!this.initialized || !this.Sentry) return;
+    if (!this.initialized || !this.Sentry) {return;}
 
     try {
       this.Sentry.addBreadcrumb({
@@ -268,7 +268,7 @@ class SentryService {
    * Set custom context
    */
   setContext(name, context) {
-    if (!this.initialized || !this.Sentry) return;
+    if (!this.initialized || !this.Sentry) {return;}
 
     try {
       this.Sentry.setContext(name, context);
@@ -281,7 +281,7 @@ class SentryService {
    * Set tag
    */
   setTag(key, value) {
-    if (!this.initialized || !this.Sentry) return;
+    if (!this.initialized || !this.Sentry) {return;}
 
     try {
       this.Sentry.setTag(key, value);
@@ -294,7 +294,7 @@ class SentryService {
    * Start a transaction (for performance monitoring)
    */
   startTransaction(name, op = 'navigation') {
-    if (!this.initialized || !this.Sentry) return null;
+    if (!this.initialized || !this.Sentry) {return null;}
 
     try {
       return this.Sentry.startTransaction({
