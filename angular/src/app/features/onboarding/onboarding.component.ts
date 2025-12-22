@@ -11,7 +11,7 @@ import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
-import { DropdownModule } from "primeng/dropdown";
+import { Select } from "primeng/select";
 import { StepsModule } from "primeng/steps";
 import { MessageService } from "primeng/api";
 import { ToastModule } from "primeng/toast";
@@ -33,7 +33,7 @@ interface OnboardingStep {
     CardModule,
     ButtonModule,
     InputTextModule,
-    DropdownModule,
+    Select,
     StepsModule,
     ToastModule,
     MainLayoutComponent,
@@ -71,14 +71,14 @@ interface OnboardingStep {
                 </div>
                 <div class="form-group">
                   <label for="position">Position</label>
-                  <p-dropdown
+                  <p-select
                     id="position"
                     [options]="positions"
                     [(ngModel)]="onboardingData.position"
                     placeholder="Select your position"
                     [showClear]="true"
                     class="w-full"
-                  ></p-dropdown>
+                  ></p-select>
                 </div>
               </div>
             } @else if (currentStep() === 1) {
@@ -107,13 +107,13 @@ interface OnboardingStep {
                 <h3>What's your experience level?</h3>
                 <div class="form-group">
                   <label for="experience">Experience Level</label>
-                  <p-dropdown
+                  <p-select
                     id="experience"
                     [options]="experienceLevels"
                     [(ngModel)]="onboardingData.experience"
                     placeholder="Select your experience level"
                     class="w-full"
-                  ></p-dropdown>
+                  ></p-select>
                 </div>
               </div>
             }

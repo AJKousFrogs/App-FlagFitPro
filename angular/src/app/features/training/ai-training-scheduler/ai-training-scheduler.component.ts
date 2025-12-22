@@ -10,7 +10,7 @@ import { FormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
-import { CalendarModule } from "primeng/calendar";
+import { DatePicker } from "primeng/datepicker";
 import { TagModule } from "primeng/tag";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
@@ -34,7 +34,7 @@ interface AISuggestion {
     CommonModule,
     CardModule,
     ButtonModule,
-    CalendarModule,
+    DatePicker,
     TagModule,
     MainLayoutComponent,
     PageHeaderComponent
@@ -100,11 +100,11 @@ interface AISuggestion {
             <ng-template pTemplate="header">
               <h3>Optimized Schedule</h3>
             </ng-template>
-            <p-calendar
+            <p-datepicker
               [(ngModel)]="selectedDate"
               [inline]="true"
               [showWeek]="true"
-            ></p-calendar>
+            ></p-datepicker>
           </p-card>
         </div>
       </div>
@@ -226,7 +226,7 @@ export class AiTrainingSchedulerComponent implements OnInit {
     this.suggestions.set(suggestions);
   }
 
-  getSuggestionSeverity(type: string): string {
+  getSuggestionSeverity(type: string): "success" | "info" | "warn" | "secondary" | "contrast" | "danger" | null | undefined {
     switch (type) {
       case "swap":
         return "info";

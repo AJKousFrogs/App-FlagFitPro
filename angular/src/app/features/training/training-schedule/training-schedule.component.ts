@@ -10,7 +10,7 @@ import { FormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
-import { CalendarModule } from "primeng/calendar";
+import { DatePicker } from "primeng/datepicker";
 import { TagModule } from "primeng/tag";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
@@ -34,7 +34,7 @@ interface TrainingSession {
     CommonModule,
     CardModule,
     ButtonModule,
-    CalendarModule,
+    DatePicker,
     TagModule,
     MainLayoutComponent,
     PageHeaderComponent
@@ -59,12 +59,12 @@ interface TrainingSession {
             <ng-template pTemplate="header">
               <h3>Training Calendar</h3>
             </ng-template>
-            <p-calendar
+            <p-datepicker
               [(ngModel)]="selectedDate"
               [inline]="true"
               [showWeek]="true"
               (onSelect)="onDateSelect($event)"
-            ></p-calendar>
+            ></p-datepicker>
           </p-card>
 
           <p-card class="sessions-card">
@@ -210,7 +210,7 @@ export class TrainingScheduleComponent implements OnInit {
     this.logger.debug("Create new session");
   }
 
-  getStatusSeverity(status: string): string {
+  getStatusSeverity(status: string): "success" | "info" | "warn" | "secondary" | "contrast" | "danger" | null | undefined {
     switch (status) {
       case "completed":
         return "success";

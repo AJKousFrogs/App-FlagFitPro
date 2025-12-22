@@ -7,6 +7,7 @@ import { LoggerService } from "./logger.service";
   providedIn: "root",
 })
 export class SupabaseService {
+  private logger = inject(LoggerService);
   private supabase: SupabaseClient;
   
   // UI State: Use signals instead of BehaviorSubject

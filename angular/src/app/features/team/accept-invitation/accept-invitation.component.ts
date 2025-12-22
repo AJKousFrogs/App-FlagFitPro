@@ -171,7 +171,7 @@ export class AcceptInvitationComponent implements OnInit {
   isLoading = signal(true);
   isProcessing = signal(false);
   isAccepted = signal(false);
-  invitationError = signal<string | null>(null);
+  invitationError = signal<string | undefined>(undefined);
   invitationData = signal<{
     teamName: string;
     inviterName: string;

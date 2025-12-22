@@ -15,7 +15,6 @@ import {
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
-import { InputTextareaModule } from "primeng/inputtextarea";
 import { MessageService } from "primeng/api";
 import { ToastModule } from "primeng/toast";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
@@ -31,7 +30,6 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
     CardModule,
     ButtonModule,
     InputTextModule,
-    InputTextareaModule,
     ToastModule,
     MainLayoutComponent,
     PageHeaderComponent
@@ -71,11 +69,10 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
               <label for="description">Description (Optional)</label>
               <textarea
                 id="description"
-                pInputTextarea
                 formControlName="description"
                 placeholder="Tell us about your team..."
                 rows="4"
-                class="w-full"
+                class="w-full p-inputtextarea"
               ></textarea>
             </div>
 

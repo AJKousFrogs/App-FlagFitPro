@@ -31,6 +31,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, tap, map } from 'rxjs/operators';
 import { ApiService } from './api.service';
 import { EvidenceConfigService } from './evidence-config.service';
+import { LoggerService } from './logger.service';
 
 export type ReadinessLevel = 'low' | 'moderate' | 'high';
 export type Suggestion = 'deload' | 'maintain' | 'push';

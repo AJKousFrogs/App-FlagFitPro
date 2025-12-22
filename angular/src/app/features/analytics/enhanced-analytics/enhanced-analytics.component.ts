@@ -9,7 +9,7 @@ import {
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { ChartModule } from "primeng/chart";
-import { TabViewModule } from "primeng/tabview";
+import { Tabs, TabPanel } from "primeng/tabs";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { ApiService } from "../../../core/services/api.service";
@@ -23,7 +23,8 @@ import { LoggerService } from "../../../core/services/logger.service";
     CardModule,
     ButtonModule,
     ChartModule,
-    TabViewModule,
+    Tabs,
+    TabPanel,
     MainLayoutComponent,
     PageHeaderComponent
   ],
@@ -43,8 +44,8 @@ import { LoggerService } from "../../../core/services/logger.service";
           ></p-button>
         </app-page-header>
 
-        <p-tabView>
-          <p-tabPanel header="Performance Trends">
+        <p-tabs>
+          <p-tabpanel header="Performance Trends">
             <p-card>
               <ng-template pTemplate="header">
                 <h3>7-Week Performance Trend</h3>
@@ -57,9 +58,9 @@ import { LoggerService } from "../../../core/services/logger.service";
                 ></p-chart>
               }
             </p-card>
-          </p-tabPanel>
+          </p-tabpanel>
 
-          <p-tabPanel header="Injury Risk">
+          <p-tabpanel header="Injury Risk">
             <p-card>
               <ng-template pTemplate="header">
                 <h3>Injury Risk Analysis</h3>
@@ -72,9 +73,9 @@ import { LoggerService } from "../../../core/services/logger.service";
                 </div>
               </div>
             </p-card>
-          </p-tabPanel>
+          </p-tabpanel>
 
-          <p-tabPanel header="Predictions">
+          <p-tabpanel header="Predictions">
             <p-card>
               <ng-template pTemplate="header">
                 <h3>Performance Predictions</h3>
@@ -83,8 +84,8 @@ import { LoggerService } from "../../../core/services/logger.service";
                 <p>AI-powered predictions coming soon...</p>
               </div>
             </p-card>
-          </p-tabPanel>
-        </p-tabView>
+          </p-tabpanel>
+        </p-tabs>
       </div>
     </app-main-layout>
   `,

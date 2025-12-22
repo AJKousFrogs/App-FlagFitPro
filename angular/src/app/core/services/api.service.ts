@@ -17,6 +17,7 @@ export interface ApiResponse<T = any> {
 })
 export class ApiService {
   private http = inject(HttpClient);
+  private logger = inject(LoggerService);
   private baseUrl = this.getApiBaseUrl();
 
   private getApiBaseUrl(): string {

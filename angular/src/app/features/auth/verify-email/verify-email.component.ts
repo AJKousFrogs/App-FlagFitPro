@@ -160,7 +160,7 @@ export class VerifyEmailComponent implements OnInit {
 
   isVerifying = signal(false);
   isVerified = signal(false);
-  verificationError = signal<string | null>(null);
+  verificationError = signal<string | undefined>(undefined);
   isResending = signal(false);
 
   ngOnInit(): void {
@@ -173,7 +173,7 @@ export class VerifyEmailComponent implements OnInit {
 
   async verifyEmail(token: string): Promise<void> {
     this.isVerifying.set(true);
-    this.verificationError.set(null);
+    this.verificationError.set(undefined);
 
     try {
       // TODO: Call API to verify email token

@@ -9,7 +9,7 @@ import {
 import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
-import { CalendarModule } from "primeng/calendar";
+import { DatePicker } from "primeng/datepicker";
 import { TagModule } from "primeng/tag";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
@@ -22,7 +22,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
     FormsModule,
     CardModule,
     ButtonModule,
-    CalendarModule,
+    DatePicker,
     TagModule,
     MainLayoutComponent,
     PageHeaderComponent
@@ -55,11 +55,11 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
           <ng-template pTemplate="header">
             <h3>Weekly Schedule</h3>
           </ng-template>
-          <p-calendar
+          <p-datepicker
             [(ngModel)]="selectedDate"
             [inline]="true"
             [showWeek]="true"
-          ></p-calendar>
+          ></p-datepicker>
         </p-card>
       </div>
     </app-main-layout>
