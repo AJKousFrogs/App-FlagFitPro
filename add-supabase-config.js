@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable no-console */
 /**
  * Add Supabase configuration to HTML files that don't have it
  */

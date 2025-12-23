@@ -5,6 +5,7 @@
 import express from "express";
 import path from "path";
 import cors from "cors";
+import { rateLimit } from "express-rate-limit";
 import { fileURLToPath } from "url";
 
 // ES module equivalent of __dirname
@@ -12,13 +13,28 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 4000;
+
+// Rate limiting
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // Limit each IP to 10 requests per windowMs for tests
+  message: {
+    success: false,
+    error: "Too many attempts. Please try again later.",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 // Enable CORS for all routes
 app.use(cors());
 
 // Parse JSON bodies
 app.use(express.json());
+
+// Apply rate limiter to auth routes
+app.use("/api/auth/", authLimiter);
 
 app.use(
   express.urlencoded({
@@ -180,6 +196,28 @@ app.get("/training-stats", (req, res) => {
   });
 });
 
+app.get("/api/training/stats", (req, res) => {
+  res.json({
+    success: true,
+    data: {
+      sessions: [],
+      totalHours: 0,
+    },
+  });
+});
+
+app.post("/api/training/session", (req, res) => {
+  res.status(201).json({
+    success: true,
+    data: {
+      session: {
+        id: "mock-session-id",
+        ...req.body,
+      },
+    },
+  });
+});
+
 // Analytics endpoints
 app.get("/api/analytics/summary", (req, res) => {
   res.json({
@@ -188,6 +226,69 @@ app.get("/api/analytics/summary", (req, res) => {
       performanceTrends: [],
       teamChemistry: [],
       trainingDistribution: [],
+    },
+  });
+});
+
+app.get("/api/dashboard/analytics", (req, res) => {
+  res.json({
+    success: true,
+    data: {
+      analytics: {},
+    },
+  });
+});
+
+// Olympic endpoints
+app.get("/api/olympic/qualification-status", (req, res) => {
+  res.json({
+    success: true,
+    data: {
+      qualification: {
+        status: "on_track",
+        score: 75,
+      },
+    },
+  });
+});
+
+app.post("/api/olympic/performance-update", (req, res) => {
+  res.status(201).json({
+    success: true,
+    data: {
+      qualificationImpact: 5.5,
+    },
+  });
+});
+
+// AI endpoints
+app.post("/api/ai/predict-performance", (req, res) => {
+  res.json({
+    success: true,
+    data: {
+      predictions: [],
+      confidenceScore: 0.85,
+    },
+  });
+});
+
+app.get("/api/ai/model-performance", (req, res) => {
+  res.json({
+    success: true,
+    data: {
+      accuracy: 0.89,
+    },
+  });
+});
+
+// System endpoints
+app.get("/api/system/performance-metrics", (req, res) => {
+  res.json({
+    success: true,
+    data: {
+      memoryOptimization: {
+        reductionPercentage: 95,
+      },
     },
   });
 });
@@ -410,8 +511,16 @@ app.get("*", (req, res) => {
 
 // Error handling middleware
 app.use((err, req, res, _next) => {
+  if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
+    return res.status(400).json({
+      success: false,
+      error: "Invalid JSON: " + err.message,
+    });
+  }
+
   console.error("Server error:", err);
   res.status(500).json({
+    success: false,
     error: "Internal server error",
     message: err.message,
   });
