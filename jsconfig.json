@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ES2020",
     "module": "ESNext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "allowJs": true,
@@ -12,16 +12,26 @@
     "noEmit": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": "."
   },
-  "include": ["src/**/*", "routes/**/*", "scripts/**/*", "*.js", "*.html"],
+  "include": ["src/**/*", "routes/**/*", "scripts/**/*.js"],
   "exclude": [
-    "node_modules/**",
+    "node_modules",
+    "node_modules.old",
     "dist",
     ".netlify",
     "database",
     "docs",
+    "angular",
+    "backups",
+    "tests",
     "**/*.test.js",
-    "**/*.spec.js"
-  ]
+    "**/*.spec.js",
+    "**/*.d.ts",
+    "**/node_modules/**"
+  ],
+  "typeAcquisition": {
+    "enable": false
+  }
 }
