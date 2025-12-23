@@ -1,5 +1,3 @@
-import React from "react";
-
 class FilterManager {
   constructor() {
     this.activeFilters = new Map();
@@ -256,24 +254,5 @@ class FilterManager {
     };
   }
 }
-
-// React Hook for using FilterManager
-export const useFilterManager = () => {
-  const [filterManager, setFilterManager] = React.useState(null);
-
-  React.useEffect(() => {
-    const manager = new FilterManager();
-    setFilterManager(manager);
-
-    return () => {
-      // Cleanup event listeners to prevent memory leak
-      if (manager && manager.cleanup) {
-        manager.cleanup();
-      }
-    };
-  }, []);
-
-  return filterManager;
-};
 
 export default FilterManager;
